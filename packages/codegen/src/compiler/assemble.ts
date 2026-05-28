@@ -51,7 +51,9 @@ import {
 	isTerminalValue,
 	isUnresolvedRef,
 	allSlotsOf,
-	setOptionalBodyKinds
+	setOptionalBodyKinds,
+	setParseKindCollisionRules,
+	drainParseKindCollisionDiagnostics
 } from './node-map.ts';
 import { simplifyRule, inlineRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { compileWordMatcher } from './common.ts';
@@ -87,198 +89,206 @@ export function assemble(
 	// constructors to consult during the rule walk below.
 	const optionalBodyKinds = collectOptionalBodyKinds(optimized.rules);
 	setOptionalBodyKinds(optionalBodyKinds);
+	setParseKindCollisionRules(optimized.simplifiedRules);
 
-	for (const [kind, rule] of Object.entries(optimized.rules)) {
-		const assemblyRule = optimized.topLevelAliasBodies?.get(kind) ?? rule;
-		// `inlinedRule` still uses inlineRefs here because the
-		// RAW rule path (for template emission + classification) isn't
-		// run through simplify. Only `simplifiedRule` (derivation view)
-		// picks up inlining from the simplify fixpoint.
-		//
-		// `hoistInnerFieldsForTemplate` then drops outer
-		// `field('outer', ...)` wrappers when their content carries an
-		// inner field tree-sitter would expose at the top level of the
-		// parent kind. The literal-stripping / single-member-collapsing
-		// work that simplify also does is intentionally NOT applied
-		// here — templates need anonymous delimiters (`,`, `(`, `;`,
-		// …) to surface as template text. See
-		// `project_simplify_template_walker_divergence.md`.
-		const inlinedRule = hoistInnerFieldsForTemplate(
-			inlineRefs(assemblyRule, optimized.rules)
-		);
-		const modelType = classifyNode(kind, inlinedRule, { variantParents });
-		// `simplifiedRules[kind]` and `renderRules[kind]` are both pre-computed
-		// by optimize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
-		const simplifiedRule = optimized.simplifiedRules[kind]!;
-		const renderRule: RenderRule = optimized.renderRules![kind]!;
-		const variantChildKinds = variantChildrenByParent.get(kind);
+	try {
+		for (const [kind, rule] of Object.entries(optimized.rules)) {
+			const assemblyRule = optimized.topLevelAliasBodies?.get(kind) ?? rule;
+			// `inlinedRule` still uses inlineRefs here because the
+			// RAW rule path (for template emission + classification) isn't
+			// run through simplify. Only `simplifiedRule` (derivation view)
+			// picks up inlining from the simplify fixpoint.
+			//
+			// `hoistInnerFieldsForTemplate` then drops outer
+			// `field('outer', ...)` wrappers when their content carries an
+			// inner field tree-sitter would expose at the top level of the
+			// parent kind. The literal-stripping / single-member-collapsing
+			// work that simplify also does is intentionally NOT applied
+			// here — templates need anonymous delimiters (`,`, `(`, `;`,
+			// …) to surface as template text. See
+			// `project_simplify_template_walker_divergence.md`.
+			const inlinedRule = hoistInnerFieldsForTemplate(
+				inlineRefs(assemblyRule, optimized.rules)
+			);
+			const modelType = classifyNode(kind, inlinedRule, { variantParents });
+			// `simplifiedRules[kind]` and `renderRules[kind]` are both pre-computed
+			// by optimize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
+			const simplifiedRule = optimized.simplifiedRules[kind]!;
+			const renderRule: RenderRule = optimized.renderRules![kind]!;
+			const variantChildKinds = variantChildrenByParent.get(kind);
 
-		switch (modelType) {
-			case 'branch': {
-				nodes.set(
-					kind,
-					new AssembledBranch(
+			switch (modelType) {
+				case 'branch': {
+					nodes.set(
 						kind,
-						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
-						simplifiedRule,
-						renderRule,
-						{
-							variantChildKinds,
-							kindEntries
-						}
-					)
-				);
-				break;
-			}
-			case 'polymorph': {
-				const polyForms = derivePolymorphForms(kind, assemblyRule);
-				const polySource =
-					assemblyRule.type === 'polymorph'
-						? (assemblyRule.source === 'override' ? 'override' : 'promoted')
-						: 'promoted';
-				const forms = buildAssembledFormGroups(kind, polyForms, polySource, kindEntries, optimized);
-				// Forms don't get top-level nodeMap entries — they're
-				// nested inside the parent polymorph's forms array.
-				// The polymorph itself + visible variant children (below)
-				// are the nodeMap-level entries.
-				for (const child of buildVisibleVariantChildGroups(polySource, polyForms, optimized, kindEntries)) {
-					nodes.set(child.kind, child);
-				}
-				const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms);
-				nodes.set(
-					kind,
-					new AssembledPolymorph(kind, assemblyRule as PolymorphRule | ChoiceRule, forms, {
-						source: polySource,
-						variantChildKinds
-					})
-				);
-				break;
-			}
-			case 'pattern': {
-				nodes.set(kind, new AssembledPattern(kind, assemblyRule as PatternRule | TerminalRule));
-				break;
-			}
-			case 'keyword': {
-				nodes.set(
-					kind,
-					new AssembledKeyword(kind, assemblyRule as StringRule, { kindEntries })
-				);
-				break;
-			}
-			case 'token': {
-				// Hidden — no factoryName; token kinds have StringRule bodies
-				nodes.set(kind, new AssembledToken(kind, assemblyRule as StringRule, { kindEntries }));
-				break;
-			}
-			case 'enum': {
-				nodes.set(kind, new AssembledEnum(kind, assemblyRule as EnumRule, { kindEntries }));
-				break;
-			}
-			case 'supertype': {
-				const subtypes = resolveSupertypeSubtypes(assemblyRule, optimized);
-				nodes.set(
-					kind,
-					new AssembledSupertype(kind, assemblyRule as SupertypeRule | ChoiceRule, subtypes)
-				);
-				break;
-			}
-			case 'group': {
-				const { groupRule, groupSimplified, groupRenderRule } = unwrapGroupRuleAndSimplified(
-					assemblyRule,
-					simplifiedRule,
-					renderRule
-				);
-				nodes.set(kind, new AssembledGroup(kind, groupRule, groupSimplified, groupRenderRule, { kindEntries }));
-				break;
-			}
-			case 'multi': {
-				const shape = extractRepeatShape(inlinedRule);
-				if (!shape) {
-					throw new Error(
-						`assemble: '${kind}' classified as 'multi' but extractRepeatShape ` +
-							`returned null — classifier and extractor must agree on shape.`
+						new AssembledBranch(
+							kind,
+							inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
+							simplifiedRule,
+							renderRule,
+							{
+								variantChildKinds,
+								kindEntries
+							}
+						)
 					);
+					break;
 				}
-				nodes.set(kind, new AssembledMulti(kind, shape.repeat));
-				break;
+				case 'polymorph': {
+					const polyForms = derivePolymorphForms(kind, assemblyRule);
+					const polySource =
+						assemblyRule.type === 'polymorph'
+							? (assemblyRule.source === 'override' ? 'override' : 'promoted')
+							: 'promoted';
+					const forms = buildAssembledFormGroups(kind, polyForms, polySource, kindEntries, optimized);
+					// Forms don't get top-level nodeMap entries — they're
+					// nested inside the parent polymorph's forms array.
+					// The polymorph itself + visible variant children (below)
+					// are the nodeMap-level entries.
+					for (const child of buildVisibleVariantChildGroups(polySource, polyForms, optimized, kindEntries)) {
+						nodes.set(child.kind, child);
+					}
+					const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms);
+					nodes.set(
+						kind,
+						new AssembledPolymorph(kind, assemblyRule as PolymorphRule | ChoiceRule, forms, {
+							source: polySource,
+							variantChildKinds
+						})
+					);
+					break;
+				}
+				case 'pattern': {
+					nodes.set(kind, new AssembledPattern(kind, assemblyRule as PatternRule | TerminalRule));
+					break;
+				}
+				case 'keyword': {
+					nodes.set(
+						kind,
+						new AssembledKeyword(kind, assemblyRule as StringRule, { kindEntries })
+					);
+					break;
+				}
+				case 'token': {
+					// Hidden — no factoryName; token kinds have StringRule bodies
+					nodes.set(kind, new AssembledToken(kind, assemblyRule as StringRule, { kindEntries }));
+					break;
+				}
+				case 'enum': {
+					nodes.set(kind, new AssembledEnum(kind, assemblyRule as EnumRule, { kindEntries }));
+					break;
+				}
+				case 'supertype': {
+					const subtypes = resolveSupertypeSubtypes(assemblyRule, optimized);
+					nodes.set(
+						kind,
+						new AssembledSupertype(kind, assemblyRule as SupertypeRule | ChoiceRule, subtypes)
+					);
+					break;
+				}
+				case 'group': {
+					const { groupRule, groupSimplified, groupRenderRule } = unwrapGroupRuleAndSimplified(
+						assemblyRule,
+						simplifiedRule,
+						renderRule
+					);
+					nodes.set(kind, new AssembledGroup(kind, groupRule, groupSimplified, groupRenderRule, { kindEntries }));
+					break;
+				}
+				case 'multi': {
+					const shape = extractRepeatShape(inlinedRule);
+					if (!shape) {
+						throw new Error(
+							`assemble: '${kind}' classified as 'multi' but extractRepeatShape ` +
+								`returned null — classifier and extractor must agree on shape.`
+						);
+					}
+					nodes.set(kind, new AssembledMulti(kind, shape.repeat));
+					break;
+				}
 			}
 		}
-	}
 
-	collectAnonymousNodes(optimized.rules, nodes, wordMatcher, kindEntries);
-	resolveCollidingNames(nodes);
-	resolveIrKeys(nodes);
-	markParameterlessKinds(nodes);
-	markUserFacing(nodes);
-	markVariantChildrenUserFacing(nodes, optimized.polymorphVariants ?? []);
-
-	// Clear the optional-body lookthrough — subsequent NodeMap consumers
-	// build slots from already-derived AssembledNonterminals and should
-	// not trigger the downgrade again. The set is per-assemble-call scope.
-	setOptionalBodyKinds(null);
-	// Slot-ref hydration is NOT done here — `hydrateSlotRefs(nodes)` is
-	// exported separately so the caller can serialize the unhydrated NodeMap
-	// (e.g. node-model.json5) BEFORE wiring up cyclic AssembledNode refs.
-	// Post-hydration the slot graph is cyclic and JSON.stringify breaks.
-
-	// Back-pointer maps — let downstream consumers (the new template
-	// emitter and friends) look up an AssembledNode / AssembledNonterminal
-	// from a rule's `id` without owner traversal. See
-	// feedback_ruleid_backpointer.
-	const nodeByRuleId = new Map<RuleId, AssembledNode>();
-	const slotByRuleId = new Map<RuleId, AssembledNonterminal>();
-	for (const [kind, rule] of Object.entries(optimized.rules)) {
-		const node = nodes.get(kind);
-		if (!node) continue;
-		if (rule.id) nodeByRuleId.set(rule.id, node);
-	}
-	for (const node of nodes.values()) {
-		for (const slot of allSlotsOf(node)) {
-			for (const id of slot.sourceRuleIds) slotByRuleId.set(id, slot);
+		const parseKindDiagnostics = drainParseKindCollisionDiagnostics();
+		for (const rec of parseKindDiagnostics) {
+			console.info(`[parsekind-collision] ${rec.ownerKind}.${rec.slotName}: ${rec.proposal}`);
 		}
-	}
 
-	// Back-compat: also index raw FieldRule ids from `optimized.rules` so that
-	// consumers holding a reference to the original field-wrapper rule (before
-	// applyWrapperDeletion stripped it) can still resolve the slot. The leaf's
-	// sourceRuleIds may differ from the FieldRule's id after wrapper-deletion
-	// pushes modifier attrs down; walking the raw rules and name-matching
-	// against the assembled slots bridges the gap without requiring the
-	// pipeline to thread the FieldRule id through to the RenderRule leaf.
-	for (const [kind, rawRule] of Object.entries(optimized.rules)) {
-		const node = nodes.get(kind);
-		if (!node) continue;
-		const slotsByName = new Map<string, AssembledNonterminal>();
-		for (const slot of allSlotsOf(node)) slotsByName.set(slot.name, slot);
-		// Walk the raw rule tree collecting FieldRule ids by name.
-		const walkForFieldIds = (r: Rule): void => {
-			if (r.type === 'field' && r.id) {
-				const slot = slotsByName.get(r.name);
-				if (slot && !slotByRuleId.has(r.id)) slotByRuleId.set(r.id, slot);
+		collectAnonymousNodes(optimized.rules, nodes, wordMatcher, kindEntries);
+		resolveCollidingNames(nodes);
+		resolveIrKeys(nodes);
+		markParameterlessKinds(nodes);
+		markUserFacing(nodes);
+		markVariantChildrenUserFacing(nodes, optimized.polymorphVariants ?? []);
+
+		// Slot-ref hydration is NOT done here — `hydrateSlotRefs(nodes)` is
+		// exported separately so the caller can serialize the unhydrated NodeMap
+		// (e.g. node-model.json5) BEFORE wiring up cyclic AssembledNode refs.
+		// Post-hydration the slot graph is cyclic and JSON.stringify breaks.
+
+		// Back-pointer maps — let downstream consumers (the new template
+		// emitter and friends) look up an AssembledNode / AssembledNonterminal
+		// from a rule's `id` without owner traversal. See
+		// feedback_ruleid_backpointer.
+		const nodeByRuleId = new Map<RuleId, AssembledNode>();
+		const slotByRuleId = new Map<RuleId, AssembledNonterminal>();
+		for (const [kind, rule] of Object.entries(optimized.rules)) {
+			const node = nodes.get(kind);
+			if (!node) continue;
+			if (rule.id) nodeByRuleId.set(rule.id, node);
+		}
+		for (const node of nodes.values()) {
+			for (const slot of allSlotsOf(node)) {
+				for (const id of slot.sourceRuleIds) slotByRuleId.set(id, slot);
 			}
-			if ('members' in r && Array.isArray((r as { members?: unknown }).members)) {
-				for (const m of (r as { members: Rule[] }).members) walkForFieldIds(m);
-			}
-			if ('content' in r && (r as { content?: Rule }).content) {
-				walkForFieldIds((r as { content: Rule }).content);
-			}
+		}
+
+		// Back-compat: also index raw FieldRule ids from `optimized.rules` so that
+		// consumers holding a reference to the original field-wrapper rule (before
+		// applyWrapperDeletion stripped it) can still resolve the slot. The leaf's
+		// sourceRuleIds may differ from the FieldRule's id after wrapper-deletion
+		// pushes modifier attrs down; walking the raw rules and name-matching
+		// against the assembled slots bridges the gap without requiring the
+		// pipeline to thread the FieldRule id through to the RenderRule leaf.
+		for (const [kind, rawRule] of Object.entries(optimized.rules)) {
+			const node = nodes.get(kind);
+			if (!node) continue;
+			const slotsByName = new Map<string, AssembledNonterminal>();
+			for (const slot of allSlotsOf(node)) slotsByName.set(slot.name, slot);
+			// Walk the raw rule tree collecting FieldRule ids by name.
+			const walkForFieldIds = (r: Rule): void => {
+				if (r.type === 'field' && r.id) {
+					const slot = slotsByName.get(r.name);
+					if (slot && !slotByRuleId.has(r.id)) slotByRuleId.set(r.id, slot);
+				}
+				if ('members' in r && Array.isArray((r as { members?: unknown }).members)) {
+					for (const m of (r as { members: Rule[] }).members) walkForFieldIds(m);
+				}
+				if ('content' in r && (r as { content?: Rule }).content) {
+					walkForFieldIds((r as { content: Rule }).content);
+				}
+			};
+			walkForFieldIds(rawRule);
+		}
+
+		return {
+			name: optimized.name,
+			nodes,
+			nodeByRuleId,
+			slotByRuleId,
+			signatures: computeSignatures(nodes),
+			derivations: optimized.derivations,
+			rules: optimized.rules,
+			word: optimized.word,
+			externals: optimized.externals ? new Set(optimized.externals) : undefined,
+			polymorphFormKinds: computePolymorphFormKinds(nodes),
+			refineForms: optimized.refineForms
 		};
-		walkForFieldIds(rawRule);
+	} finally {
+		setOptionalBodyKinds(null);
+		setParseKindCollisionRules(null);
+		drainParseKindCollisionDiagnostics();
 	}
-
-	return {
-		name: optimized.name,
-		nodes,
-		nodeByRuleId,
-		slotByRuleId,
-		signatures: computeSignatures(nodes),
-		derivations: optimized.derivations,
-		rules: optimized.rules,
-		word: optimized.word,
-		externals: optimized.externals ? new Set(optimized.externals) : undefined,
-		polymorphFormKinds: computePolymorphFormKinds(nodes),
-		refineForms: optimized.refineForms
-	};
 }
 
 /**

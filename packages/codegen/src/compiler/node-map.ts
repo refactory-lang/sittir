@@ -55,6 +55,11 @@ import { assertNever } from '../polymorph-variant.ts';
 import { fieldContentIsMultiSibling } from './field-shape.ts';
 import type { SlotOrigin } from './slot-model.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
+import {
+	diagnoseParseKindCollisions,
+	type ParseKindCollisionDiagnostic,
+	type ParseKindCollisionValue
+} from './diagnose-parsekind-collisions.ts';
 
 // ---------------------------------------------------------------------------
 // NodeOrTerminal — unified slot-content type
@@ -95,10 +100,25 @@ export { type Multiplicity } from './rule.ts';
 // to `'optional'`. Without this look-through, wrap-side reads would
 // assert required-singular and reject ASI-terminated corpus entries.
 let currentOptionalBodyKinds: ReadonlySet<string> | null = null;
+let currentParseKindCollisionRules: Readonly<Record<string, Rule>> | null = null;
+const _parseKindCollisionDiagnostics: ParseKindCollisionDiagnostic[] = [];
+const _parseKindCollisionSeen = new Set<string>();
 
 /** Set by `assemble.ts` before running the rule walk; cleared after. */
 export function setOptionalBodyKinds(kinds: ReadonlySet<string> | null): void {
 	currentOptionalBodyKinds = kinds;
+}
+
+/** Set by `assemble.ts` before building slots; cleared after. */
+export function setParseKindCollisionRules(rules: Readonly<Record<string, Rule>> | null): void {
+	currentParseKindCollisionRules = rules;
+}
+
+export function drainParseKindCollisionDiagnostics(): ParseKindCollisionDiagnostic[] {
+	const out = [..._parseKindCollisionDiagnostics];
+	_parseKindCollisionDiagnostics.length = 0;
+	_parseKindCollisionSeen.clear();
+	return out;
 }
 
 /** True iff `kindName` resolves to a wholly-optional rule body. */
@@ -821,6 +841,90 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 		}));
 	}
 	return Array.from(byName.values());
+}
+
+function recordParseKindCollisionDiagnostic(rec: ParseKindCollisionDiagnostic): void {
+	const key = `${rec.ownerKind} ${rec.slotName} ${rec.parseKind} ${rec.storageKinds.join('|')}`;
+	if (_parseKindCollisionSeen.has(key)) return;
+	_parseKindCollisionSeen.add(key);
+	_parseKindCollisionDiagnostics.push(rec);
+}
+
+export function storageKindOfValue(value: NodeOrTerminal): string | undefined {
+	if (value.kind === 'node-ref') {
+		return isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+	}
+	return value.resolvedKind ?? value.value;
+}
+
+function resolveParseKindCollisions(ownerKind: string, slots: readonly AssembledNonterminal[]): AssembledNonterminal[] {
+	if (slots.length === 0) return [...slots];
+	return mergeSlotsByName(slots.map((slot) => resolveParseKindCollisionsInSlot(ownerKind, slot)));
+}
+
+function resolveParseKindCollisionsInSlot(ownerKind: string, slot: AssembledNonterminal): AssembledNonterminal {
+	const describedValues: ParseKindCollisionValue<NodeOrTerminal>[] = slot.values.map((value) => {
+		const storageKind = storageKindOfValue(value);
+		return {
+			original: value,
+			parseKind: value.parseKind?.name,
+			storageKind,
+			structuralSignature: structuralSignatureOfValue(value, storageKind),
+			preferRepresentative: storageKind !== undefined && storageKind === value.parseKind?.name
+		};
+	});
+	const resolution = diagnoseParseKindCollisions({
+		ownerKind,
+		slotName: slot.name,
+		values: describedValues
+	});
+	for (const diagnostic of resolution.diagnostics) {
+		recordParseKindCollisionDiagnostic(diagnostic);
+	}
+	const nextValues = [...resolution.values];
+	const unchanged =
+		nextValues.length === slot.values.length &&
+		nextValues.every((value, index) => value === slot.values[index]);
+	return unchanged ? slot : slot.with({ values: dedupeValues(nextValues) });
+}
+
+function structuralSignatureOfValue(value: NodeOrTerminal, storageKind: string | undefined): string {
+	const surface = [
+		value.multiplicity,
+		value.separator ?? '',
+		value.trailing ? 't' : '',
+		value.leading ? 'l' : '',
+		value.kind === 'terminal' && value.immediate ? 'i' : '',
+		value.kind === 'terminal' && value.tokenized ? 'tok' : ''
+	].join('|');
+	if (value.kind === 'terminal') {
+		return `terminal:${value.value}:${value.resolvedKind ?? ''}:${surface}`;
+	}
+	return `node:${structuralSignatureOfStorageKind(storageKind)}:${surface}`;
+}
+
+function structuralSignatureOfStorageKind(storageKind: string | undefined): string {
+	if (storageKind === undefined) return 'missing';
+	const rule = currentParseKindCollisionRules?.[storageKind];
+	if (!rule) return `missing:${storageKind}`;
+	return stableRuleSignature(rule);
+}
+
+function stableRuleSignature(value: unknown): string {
+	return JSON.stringify(normalizeRuleSignature(value));
+}
+
+function normalizeRuleSignature(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map((member) => normalizeRuleSignature(member));
+	if (value === null || typeof value !== 'object') return value;
+	const obj = value as Record<string, unknown>;
+	const out: Record<string, unknown> = {};
+	for (const key of Object.keys(obj).sort()) {
+		if (key === 'id' || key === 'source') continue;
+		const normalized = normalizeRuleSignature(obj[key]);
+		if (normalized !== undefined) out[key] = normalized;
+	}
+	return out;
 }
 
 /**
@@ -2190,8 +2294,20 @@ function buildSlotsRecord(
 	renderRule?: RenderRule,
 	kindEntries?: readonly GeneratedKindEntry[]
 ): Readonly<Record<string, AssembledNonterminal>> {
+	const slots = [...deriveSlots(rule, kindEntries, kind)];
+	if (renderRule) {
+		for (const renderSlot of deriveSlots(renderRule, kindEntries, kind)) {
+			const existing = slots.find((slot) => slot.name === renderSlot.name);
+			if (!existing) continue;
+			const next = existing.with({
+				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, renderSlot.sourceRuleIds),
+			});
+			slots.splice(slots.indexOf(existing), 1, next);
+		}
+	}
+	const resolvedSlots = resolveParseKindCollisions(kind, slots);
 	const out: Record<string, AssembledNonterminal> = {};
-	for (const slot of deriveSlots(rule, kindEntries, kind)) {
+	for (const slot of resolvedSlots) {
 		// Strict design (FR-T05): inferred slots remap to 'child'/'children'
 		// keys and at most one unnamed slot per branch is permitted. Empirical
 		// check confirms 14 kinds across 3 grammars currently have >1 unnamed
@@ -2201,15 +2317,6 @@ function buildSlotsRecord(
 		// migration). Until then: keep the kind-derived name as the Record
 		// key, no collision throw, no >1-unnamed throw.
 		out[slot.name] = slot;
-	}
-	if (renderRule) {
-		for (const renderSlot of deriveSlots(renderRule, kindEntries, kind)) {
-			const existing = out[renderSlot.name];
-			if (!existing) continue;
-			out[renderSlot.name] = existing.with({
-				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, renderSlot.sourceRuleIds),
-			});
-		}
 	}
 
 	// storageName collision check. Multiple slots sharing the same NodeData
