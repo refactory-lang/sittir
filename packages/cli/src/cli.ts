@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import { registerValidate } from './commands/validate/index.ts';
 
 const program = new Command()
 	.name('sittir')
 	.description('Unified sittir command-line surface');
 
-// Namespaces are registered in later tasks.
+registerValidate(program);
 
 await program.parseAsync(process.argv);
