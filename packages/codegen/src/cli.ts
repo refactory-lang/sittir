@@ -186,14 +186,16 @@ function writeFile(path: string, content: string): void {
  * - Blocked diagnostics (canProceed === false) that are NOT in the allow-list
  *   cause an error to be thrown in non-interactive mode, or a prompt in
  *   interactive mode.
+ * - `confirm` overrides the default stdin-based TTY prompt (test seam).
  */
 async function runGrammarDiagnosticsPreflight(input: {
 	grammar: string;
 	allowDiagnostics: ReadonlySet<string>;
 	isTTY: boolean;
-	injectedDiagnostics?: readonly { readonly code: string; readonly canProceed: boolean }[];
+	injectedDiagnostics?: readonly GrammarDiagnostic[];
+	confirm?: (blocked: readonly GrammarDiagnostic[]) => Promise<boolean>;
 }): Promise<void> {
-	let diagnostics: readonly { readonly code: string; readonly canProceed: boolean }[];
+	let diagnostics: readonly GrammarDiagnostic[];
 	if (input.injectedDiagnostics !== undefined) {
 		diagnostics = input.injectedDiagnostics;
 	} else {
@@ -209,19 +211,18 @@ async function runGrammarDiagnosticsPreflight(input: {
 	);
 	if (blocked.length === 0) return;
 
-	process.stderr.write(formatGrammarDiagnostics(diagnostics as readonly GrammarDiagnostic[]) + '\n');
+	process.stderr.write(formatGrammarDiagnostics(diagnostics) + '\n');
 
 	if (!input.isTTY) {
-		throw new GrammarDiagnosticError(blocked as unknown as GrammarDiagnostic[]);
+		throw new GrammarDiagnosticError(blocked);
 	}
-	if (!(await confirmProceed(blocked))) {
-		throw new GrammarDiagnosticError(blocked as unknown as GrammarDiagnostic[]);
+	const proceed = await (input.confirm ?? confirmProceed)(blocked);
+	if (!proceed) {
+		throw new GrammarDiagnosticError(blocked);
 	}
 }
 
-async function confirmProceed(
-	diagnostics: readonly { readonly code: string }[]
-): Promise<boolean> {
+async function confirmProceed(diagnostics: readonly GrammarDiagnostic[]): Promise<boolean> {
 	process.stderr.write(
 		`Diagnostics present (${diagnostics.map((d) => d.code).join(', ')}). Proceed? [y/N] `
 	);
@@ -242,8 +243,11 @@ async function confirmProceed(
  * (or absent). Throws `GrammarDiagnosticError` when blocking diagnostics are
  * present and neither allowed nor confirmed interactively.
  *
- * The `env.diagnostics` injection seam bypasses real grammar loading so that
- * unit tests can exercise the gate logic without file system access.
+ * Test seams:
+ * - `env.diagnostics` — inject full `GrammarDiagnostic[]` to bypass grammar loading.
+ * - `env.confirm`     — inject a prompt callback to exercise the interactive TTY
+ *   path without reading from process.stdin.
+ * - `env.isTTY`       — override `process.stdin.isTTY` for the gate decision.
  *
  * Note: this function only covers the preflight phase. The full code-generation
  * pipeline (transpile, generate, write, roundtrip) runs only in `mainCli()`,
@@ -253,7 +257,8 @@ export async function runCodegenCli(
 	argv: string[],
 	env: {
 		isTTY?: boolean;
-		diagnostics?: readonly { readonly code: string; readonly canProceed: boolean }[];
+		diagnostics?: readonly GrammarDiagnostic[];
+		confirm?: (blocked: readonly GrammarDiagnostic[]) => Promise<boolean>;
 	} = {}
 ): Promise<number> {
 	const cliArgs = parseArgs(['node', 'cli.ts', ...argv]);
@@ -262,7 +267,8 @@ export async function runCodegenCli(
 		grammar: cliArgs.grammar ?? '',
 		allowDiagnostics,
 		isTTY: env.isTTY ?? Boolean((process.stdin as NodeJS.ReadStream).isTTY),
-		injectedDiagnostics: env.diagnostics
+		injectedDiagnostics: env.diagnostics,
+		confirm: env.confirm
 	});
 	return 0;
 }
