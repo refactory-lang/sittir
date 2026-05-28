@@ -75,6 +75,25 @@ importers:
         specifier: ^0.26.9
         version: 0.26.9
 
+  packages/cli:
+    dependencies:
+      '@sittir/codegen':
+        specifier: workspace:*
+        version: link:../codegen
+      '@sittir/tools':
+        specifier: workspace:*
+        version: link:../tools
+      '@sittir/validator':
+        specifier: workspace:*
+        version: link:../validator
+      commander:
+        specifier: ^15.0.0-0
+        version: 15.0.0-0
+    devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
+
   packages/codegen:
     dependencies:
       '@sittir/common':

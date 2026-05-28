@@ -1,0 +1,25 @@
+{
+	"name": "@sittir/cli",
+	"version": "0.1.0",
+	"description": "Unified sittir command-line surface",
+	"license": "MIT",
+	"type": "module",
+	"bin": { "sittir": "./src/cli.ts" },
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"build": "pnpm run clean && tsgo -p tsconfig.build.json",
+		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+		"test": "vitest run",
+		"type-check": "tsgo --noEmit"
+	},
+	"dependencies": {
+		"@sittir/codegen": "workspace:*",
+		"@sittir/validator": "workspace:*",
+		"@sittir/tools": "workspace:*",
+		"commander": "^15.0.0-0"
+	},
+	"devDependencies": {
+		"@types/node": "^25.6.0"
+	}
+}

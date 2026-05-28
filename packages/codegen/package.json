@@ -16,9 +16,6 @@
 		"url": "https://github.com/refactory-lang/sittir.git",
 		"directory": "packages/codegen"
 	},
-	"bin": {
-		"sittir": "./src/cli.ts"
-	},
 	"files": [
 		"dist"
 	],
