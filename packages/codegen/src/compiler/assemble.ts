@@ -52,6 +52,7 @@ import {
 	isTerminalValue,
 	isUnresolvedRef,
 	allSlotsOf,
+	type ParseKindCollisionContext,
 	resetParseKindCollisionDiagnostics,
 	setOptionalBodyKinds,
 	buildParseKindRuleSignatures
@@ -311,6 +312,7 @@ export function assemble(
 			parseKindCollisions: drainParseKindCollisionDiagnostics()
 		};
 	} finally {
+		resetParseKindCollisionDiagnostics();
 		setOptionalBodyKinds(null);
 	}
 }
@@ -420,7 +422,7 @@ function buildAssembledFormGroups(
 	polySource: 'override' | 'promoted',
 	kindEntries: readonly GeneratedKindEntry[],
 	optimized: OptimizedGrammar,
-	parseKindCollisionContext: { ruleSignatures: Readonly<Record<string, string>>; failOnDiagnostic: boolean }
+	parseKindCollisionContext: ParseKindCollisionContext
 ): AssembledGroup[] {
 	const nameCounts = new Map<string, number>();
 	return polyForms.map((form) => {
@@ -497,7 +499,7 @@ function buildVisibleVariantChildGroups(
 	polyForms: PolymorphRule['forms'],
 	optimized: OptimizedGrammar,
 	kindEntries: readonly GeneratedKindEntry[],
-	parseKindCollisionContext: { ruleSignatures: Readonly<Record<string, string>>; failOnDiagnostic: boolean }
+	parseKindCollisionContext: ParseKindCollisionContext
 ): AssembledNode[] {
 	if (polySource !== 'override') return [];
 	const groups: AssembledNode[] = [];

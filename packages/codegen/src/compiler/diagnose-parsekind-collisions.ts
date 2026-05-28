@@ -77,10 +77,6 @@ export function diagnoseParseKindCollisions<T>(
 			values.push(value.original);
 			continue;
 		}
-		if (parseKind === undefined) {
-			values.push(value.original);
-			continue;
-		}
 		if (emittedParseKinds.has(parseKind)) continue;
 		values.push(merged.original);
 		emittedParseKinds.add(parseKind);

@@ -859,7 +859,7 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 	return Array.from(byName.values());
 }
 
-interface ParseKindCollisionContext {
+export interface ParseKindCollisionContext {
 	readonly ruleSignatures: Readonly<Record<string, string>>;
 }
 
