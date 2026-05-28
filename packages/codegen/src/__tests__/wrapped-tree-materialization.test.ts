@@ -43,7 +43,7 @@ async function loadFreshWrapWitnessModule(): Promise<{
 		members: [{ type: 'field', name: 'value', content: { type: 'symbol', name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('list_splat', new AssembledBranch('list_splat', rule, rule));
+	nodes.set('list_splat', new AssembledBranch('list_splat', rule, rule, rule));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
@@ -293,7 +293,7 @@ describe('wrapped tree materialization', () => {
 				};
 			}>;
 		};
-		const exportStatement = root.statements()[0];
+		const exportStatement = root.statements()[0]!;
 		const declarationArm = exportStatement.children();
 
 		expect(() => declarationArm.declaration()).not.toThrow();

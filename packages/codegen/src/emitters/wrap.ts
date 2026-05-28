@@ -23,7 +23,7 @@ import type {
 	AssembledPolymorph,
 	AssembledSupertype
 } from '../compiler/node-map.ts';
-import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
+import { aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/node-map.ts';
 import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
 import { deriveUnnamedChildrenCardinality } from '../compiler/node-map.ts';
 import {
@@ -442,21 +442,10 @@ function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
-function collectValueParseKinds(slot: AssembledNonterminal): readonly string[] {
-	return [...new Set(slot.values.map((value) => value.parseKind?.name).filter((name): name is string => name !== undefined))];
-}
-
 function resolveSlotAliasRewrite(slot: AssembledNonterminal): readonly [string, string] | undefined {
-	const aliases = new Map<string, string>();
-	for (const value of slot.values) {
-		if (!isNodeRef(value)) continue;
-		const parseKind = value.parseKind?.name;
-		const sourceKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-		if (parseKind === undefined || parseKind === sourceKind) continue;
-		aliases.set(parseKind, sourceKind);
-	}
-	if (aliases.size !== 1) return undefined;
-	return aliases.entries().next().value;
+	const aliases = Object.entries(aliasTargetToSourceMapOf(slot));
+	if (aliases.length !== 1) return undefined;
+	return aliases[0];
 }
 
 /**
@@ -661,7 +650,7 @@ function emitFieldCarryingWrap(
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
 		const allowedKinds =
 			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...collectValueParseKinds(f)])]
+				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
 				: undefined;
 		// For kind-origin slots whose values reference one or more concrete
 		// kinds (possibly via a supertype), the native reader populates
@@ -711,7 +700,7 @@ function emitFieldCarryingWrap(
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
 		const allowedKinds =
 			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...collectValueParseKinds(f)])]
+				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
 				: undefined;
 		const { accessorBody } = resolveSlotDrillExprs(slot, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',

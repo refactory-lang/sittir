@@ -26,13 +26,11 @@
     "_class_heritage_implements_clause": "spread",
     "_const_marker": "text",
     "_export_specifier_export_kind": "text",
-    "_export_statement_default_decl_arm": "config",
     "_export_statement_default_decl_arm_default_kw": "config",
     "_export_statement_default_decl_arm_default_kw_value": "config",
     "export_statement_default_from_arm_star_from": "direct",
     "export_statement_default_from_arm_ns_from": "config",
     "export_statement_default_from_arm_clause_from": "config",
-    "_export_statement_default_from_arm": "config",
     "_export_statement_default_from_arm_clause_from": "config",
     "_export_statement_default_from_arm_ns_from": "config",
     "_export_statement_default_from_arm_star_from": "config",
@@ -332,7 +330,293 @@
     "with": "text",
     "yield": "text"
   },
-  "fieldAliasMap": {},
+  "fieldAliasMap": {
+    "_ambient_declaration_module.name": {
+      "property_identifier": "identifier"
+    },
+    "_arrow_function_parameter.parameter": {
+      "identifier": "_reserved_identifier"
+    },
+    "_export_statement_default_decl_arm.export_statement_default_decl_arm_default_kw": {
+      "export_statement_default_decl_arm_default_kw": "_export_statement_default_decl_arm_default_kw"
+    },
+    "_export_statement_default_decl_arm_default_kw.export_statement_default_decl_arm_default_kw_value": {
+      "export_statement_default_decl_arm_default_kw_value": "_export_statement_default_decl_arm_default_kw_value"
+    },
+    "_export_statement_default_from_arm.export_statement_default_from_arm_star_from": {
+      "export_statement_default_from_arm_star_from": "_export_statement_default_from_arm_star_from"
+    },
+    "_export_statement_default_from_arm.export_statement_default_from_arm_ns_from": {
+      "export_statement_default_from_arm_ns_from": "_export_statement_default_from_arm_ns_from"
+    },
+    "_export_statement_default_from_arm.export_statement_default_from_arm_clause_from": {
+      "export_statement_default_from_arm_clause_from": "_export_statement_default_from_arm_clause_from"
+    },
+    "_for_header.content": {
+      "for_header_lhs": "_for_header_lhs",
+      "for_header_var_kind": "_for_header_var_kind",
+      "for_header_let_const_kind": "_for_header_let_const_kind"
+    },
+    "_for_header_lhs.left": {
+      "identifier": "_reserved_identifier"
+    },
+    "_index_signature_colon.name": {
+      "identifier": "_reserved_identifier"
+    },
+    "_jsx_start_opening_element.name": {
+      "member_expression": "nested_identifier"
+    },
+    "_jsx_string.content": {
+      "string_fragment": "unescaped_single_jsx_string_fragment"
+    },
+    "_lhs_expression.content": {
+      "identifier": "_reserved_identifier"
+    },
+    "_type_query_call_expression.function": {
+      "member_expression": "_type_query_member_expression",
+      "subscript_expression": "_type_query_subscript_expression"
+    },
+    "_type_query_call_expression_in_type_annotation.function": {
+      "member_expression": "_type_query_member_expression_in_type_annotation"
+    },
+    "_type_query_instantiation_expression.function": {
+      "member_expression": "_type_query_member_expression",
+      "subscript_expression": "_type_query_subscript_expression"
+    },
+    "_type_query_member_expression.object": {
+      "subscript_expression": "_type_query_subscript_expression",
+      "member_expression": "_type_query_member_expression",
+      "call_expression": "_type_query_call_expression"
+    },
+    "_type_query_member_expression.property": {
+      "property_identifier": "identifier"
+    },
+    "_type_query_member_expression_in_type_annotation.object": {
+      "member_expression": "_type_query_member_expression_in_type_annotation",
+      "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "_type_query_member_expression_in_type_annotation.property": {
+      "property_identifier": "identifier"
+    },
+    "_type_query_subscript_expression.object": {
+      "subscript_expression": "_type_query_subscript_expression",
+      "member_expression": "_type_query_member_expression",
+      "call_expression": "_type_query_call_expression"
+    },
+    "abstract_class_declaration.name": {
+      "type_identifier": "identifier"
+    },
+    "ambient_declaration.ambient_declaration_declaration": {
+      "ambient_declaration_declaration": "_ambient_declaration_declaration"
+    },
+    "ambient_declaration.ambient_declaration_global": {
+      "ambient_declaration_global": "_ambient_declaration_global"
+    },
+    "ambient_declaration.ambient_declaration_module": {
+      "ambient_declaration_module": "_ambient_declaration_module"
+    },
+    "arrow_function_parameter.parameter": {
+      "identifier": "_reserved_identifier"
+    },
+    "arrow_function.arrow_function_parameter": {
+      "arrow_function_parameter": "_arrow_function_parameter"
+    },
+    "arrow_function.arrow_function__call_signature": {
+      "arrow_function__call_signature": "_arrow_function__call_signature"
+    },
+    "assignment_expression.left": {
+      "identifier": "_reserved_identifier"
+    },
+    "augmented_assignment_expression.left": {
+      "identifier": "_reserved_identifier"
+    },
+    "break_statement.label": {
+      "statement_identifier": "identifier"
+    },
+    "call_expression.call_expression_call": {
+      "call_expression_call": "_call_expression_call"
+    },
+    "call_expression.call_expression_template_call": {
+      "call_expression_template_call": "_call_expression_template_call"
+    },
+    "call_expression.call_expression_member": {
+      "call_expression_member": "_call_expression_member"
+    },
+    "class.name": {
+      "type_identifier": "identifier"
+    },
+    "class_body.content": {
+      "class_body_method": "_class_body_method",
+      "class_body_method_sig": "_class_body_method_sig",
+      "class_body_member": "_class_body_member"
+    },
+    "class_declaration.name": {
+      "type_identifier": "identifier"
+    },
+    "class_heritage.class_heritage_extends_clause": {
+      "class_heritage_extends_clause": "_class_heritage_extends_clause"
+    },
+    "class_heritage.class_heritage_implements_clause": {
+      "class_heritage_implements_clause": "_class_heritage_implements_clause"
+    },
+    "continue_statement.label": {
+      "statement_identifier": "identifier"
+    },
+    "decorator.content": {
+      "member_expression": "decorator_member_expression",
+      "call_expression": "decorator_call_expression",
+      "parenthesized_expression": "decorator_parenthesized_expression"
+    },
+    "decorator_call_expression.function": {
+      "member_expression": "decorator_member_expression"
+    },
+    "decorator_member_expression.object": {
+      "member_expression": "decorator_member_expression"
+    },
+    "decorator_member_expression.property": {
+      "property_identifier": "identifier"
+    },
+    "decorator_parenthesized_expression.content": {
+      "member_expression": "decorator_member_expression",
+      "call_expression": "decorator_call_expression"
+    },
+    "export_statement.export_statement_default": {
+      "export_statement_default": "_export_statement_default"
+    },
+    "export_statement.export_statement_type_export": {
+      "export_statement_type_export": "_export_statement_type_export"
+    },
+    "export_statement.export_statement_equals_export": {
+      "export_statement_equals_export": "_export_statement_equals_export"
+    },
+    "export_statement.export_statement_namespace_export": {
+      "export_statement_namespace_export": "_export_statement_namespace_export"
+    },
+    "extends_type_clause.type": {
+      "type_identifier": "identifier"
+    },
+    "for_in_statement.content": {
+      "for_header_lhs": "_for_header_lhs",
+      "for_header_var_kind": "_for_header_var_kind",
+      "for_header_let_const_kind": "_for_header_let_const_kind"
+    },
+    "generic_type.name": {
+      "type_identifier": "identifier"
+    },
+    "import_clause.import_clause_namespace_import": {
+      "import_clause_namespace_import": "_import_clause_namespace_import"
+    },
+    "import_clause.import_clause_named_imports": {
+      "import_clause_named_imports": "_import_clause_named_imports"
+    },
+    "import_clause.import_clause_default_import": {
+      "import_clause_default_import": "_import_clause_default_import"
+    },
+    "import_specifier.import_specifier_name": {
+      "import_specifier_name": "_import_specifier_name"
+    },
+    "import_specifier.import_specifier_as": {
+      "import_specifier_as": "_import_specifier_as"
+    },
+    "index_signature.index_signature_colon": {
+      "index_signature_colon": "_index_signature_colon"
+    },
+    "index_signature.index_signature_mapped_type_clause": {
+      "index_signature_mapped_type_clause": "_index_signature_mapped_type_clause"
+    },
+    "infer_type.type_identifier": {
+      "type_identifier": "identifier"
+    },
+    "interface_declaration.name": {
+      "type_identifier": "identifier"
+    },
+    "interface_declaration.body": {
+      "interface_body": "object_type"
+    },
+    "jsx_opening_element.name": {
+      "member_expression": "nested_identifier"
+    },
+    "jsx_self_closing_element.name": {
+      "member_expression": "nested_identifier"
+    },
+    "labeled_statement.label": {
+      "statement_identifier": "_statement_identifier"
+    },
+    "literal_type.content": {
+      "unary_expression": "_number"
+    },
+    "mapped_type_clause.name": {
+      "type_identifier": "identifier"
+    },
+    "member_expression.property": {
+      "property_identifier": "identifier"
+    },
+    "nested_identifier.object": {
+      "member_expression": "nested_identifier"
+    },
+    "nested_identifier.property": {
+      "property_identifier": "identifier"
+    },
+    "nested_type_identifier.name": {
+      "type_identifier": "identifier"
+    },
+    "object.properties": {
+      "shorthand_property_identifier": "_shorthand_property_identifier"
+    },
+    "object_assignment_pattern.left": {
+      "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
+    },
+    "object_pattern.properties": {
+      "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
+    },
+    "parenthesized_expression.parenthesized_expression_typed": {
+      "parenthesized_expression_typed": "_parenthesized_expression_typed"
+    },
+    "parenthesized_expression.parenthesized_expression_sequence": {
+      "parenthesized_expression_sequence": "_parenthesized_expression_sequence"
+    },
+    "public_field_definition.content": {
+      "public_field_definition_declare_first": "_public_field_definition_declare_first",
+      "public_field_definition_access_first": "_public_field_definition_access_first",
+      "public_field_definition_static_mods": "_public_field_definition_static_mods",
+      "public_field_definition_abstract_first": "_public_field_definition_abstract_first",
+      "public_field_definition_readonly_first": "_public_field_definition_readonly_first",
+      "public_field_definition_accessor_opt": "_public_field_definition_accessor_opt"
+    },
+    "rest_pattern.content": {
+      "identifier": "_reserved_identifier"
+    },
+    "string.contents": {
+      "string_fragment": "unescaped_single_string_fragment"
+    },
+    "template_literal_type.content": {
+      "string_fragment": "_template_chars"
+    },
+    "template_string.content": {
+      "string_fragment": "_template_chars"
+    },
+    "type_alias_declaration.name": {
+      "type_identifier": "identifier"
+    },
+    "type_parameter.name": {
+      "type_identifier": "identifier"
+    },
+    "type_predicate.name": {
+      "identifier": "predefined_type"
+    },
+    "type_query.content": {
+      "subscript_expression": "_type_query_subscript_expression",
+      "member_expression": "_type_query_member_expression",
+      "call_expression": "_type_query_call_expression",
+      "instantiation_expression": "_type_query_instantiation_expression"
+    },
+    "update_expression.update_expression_postfix": {
+      "update_expression_postfix": "_update_expression_postfix"
+    },
+    "update_expression.update_expression_prefix": {
+      "update_expression_prefix": "_update_expression_prefix"
+    }
+  },
   "factoryFields": {
     "_ambient_declaration_declaration": [
       "declaration"
@@ -386,11 +670,6 @@
     "_class_heritage_implements_clause": [
       "implements_clause"
     ],
-    "_export_statement_default_decl_arm": [
-      "decorator",
-      "declaration",
-      "export_statement_default_decl_arm_default_kw"
-    ],
     "_export_statement_default_decl_arm_default_kw": [
       "declaration",
       "export_statement_default_decl_arm_default_kw_value"
@@ -409,13 +688,6 @@
     "export_statement_default_from_arm_clause_from": [
       "export_clause",
       "source"
-    ],
-    "_export_statement_default_from_arm": [
-      "export_statement_default_from_arm_star_from",
-      "semicolon",
-      "export_statement_default_from_arm_ns_from",
-      "export_statement_default_from_arm_clause_from",
-      "export_clause"
     ],
     "_export_statement_default_from_arm_clause_from": [
       "export_clause",
@@ -1464,29 +1736,6 @@
         "nonEmpty": false
       }
     },
-    "_export_statement_default_decl_arm": {
-      "decorator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "declaration": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_statement_default_decl_arm_default_kw": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_export_statement_default_decl_arm_default_kw": {
       "declaration": {
         "unnamed": false,
@@ -1556,43 +1805,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_export_statement_default_from_arm": {
-      "export_statement_default_from_arm_star_from": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_statement_default_from_arm_ns_from": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_statement_default_from_arm_clause_from": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5305,15 +5517,6 @@
     }
   },
   "polymorphVariants": {
-    "_export_statement_default_from_arm": {
-      "source": "override",
-      "childKind": {
-        "export_statement_default_from_arm_star_from": "star_from",
-        "export_statement_default_from_arm_ns_from": "ns_from",
-        "export_statement_default_from_arm_clause_from": "clause_from",
-        "export_clause": "export_clause"
-      }
-    },
     "ambient_declaration": {
       "source": "override",
       "childKind": {

@@ -563,13 +563,6 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 			values: [...merged.values, ...slot.values],
 			hasTrailing: merged.hasTrailing || slot.hasTrailing,
 			hasLeading: merged.hasLeading || slot.hasLeading,
-			aliasSources:
-				merged.aliasSources || slot.aliasSources
-					? {
-							...merged.aliasSources,
-							...slot.aliasSources
-						}
-					: undefined
 		}),
 		first.with({ values: [...first.values] })
 	);

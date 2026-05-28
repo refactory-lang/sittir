@@ -37,6 +37,7 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFactoryEmission,
+	collectAliasSourceKinds,
 	warnSkippedParserSymbol
 } from './shared.ts';
 import {
@@ -272,36 +273,6 @@ function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, strin
 		lines.push(`const ${constName} = ${literal};`);
 	}
 	return leafReConsts;
-}
-
-/**
- * Collect all kind strings that appear as alias sources in any field across the node map.
- *
- * @param nodeMap - The assembled node map to scan.
- * @returns Set of kind strings that are alias sources.
- * @remarks
- *   Hidden rules (prefix `_`) are normally skipped — they're grammar machinery,
- *   not user-facing kinds. The exception: hidden rules that appear as alias sources.
- *   `alias($._match_block, $.block)` means the body's canonical shape is
- *   `_match_block`; validators drilling into an aliased field need a factory that
- *   accepts the source kind so alias-symmetric dispatch works through the
- *   `_fieldAliasMap`.
- */
-// Re-export the shared helper under the existing name used throughout
-// this module — collectAliasSourceKinds lives in ./shared.ts so the
-// template emitter can use the same rule.
-import { collectAliasSourceKinds as collectAliasSourceKindsShared } from './shared.ts';
-function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
-	const out = collectAliasSourceKindsShared(nodeMap);
-	// Also include slot-level aliasSources (the legacy channel —
-	// some paths populate this without a hidden-ref value slot).
-	for (const [, n] of nodeMap.nodes) {
-		for (const f of allSlotsOf(n)) {
-			if (!f.aliasSources) continue;
-			for (const source of Object.values(f.aliasSources)) out.add(source as string);
-		}
-	}
-	return out;
 }
 
 /**

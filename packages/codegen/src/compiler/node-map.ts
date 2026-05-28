@@ -1584,6 +1584,43 @@ export function kindsOf(slot: AssembledNonterminal): readonly string[] {
 	return out;
 }
 
+/**
+ * Distinct per-value parse-kind names from a slot's `values[]`.
+ *
+ * Unlike {@link projectSlotNaming}.parseNames, this excludes the field-name
+ * projection used for fielded slots and returns only the underlying
+ * value-carried CST / alias-target kinds.
+ */
+export function valueParseKindsOf(slot: { values: readonly NodeOrTerminal[] }): readonly string[] {
+	const seen = new Set<string>();
+	const out: string[] = [];
+	for (const value of slot.values) {
+		const parseKind = value.parseKind?.name;
+		if (parseKind === undefined || seen.has(parseKind)) continue;
+		seen.add(parseKind);
+		out.push(parseKind);
+	}
+	return out;
+}
+
+/**
+ * Derive the alias-target -> canonical-source map for a slot from per-value
+ * `parseKind` metadata.
+ */
+export function aliasTargetToSourceMapOf(
+	slot: { values: readonly NodeOrTerminal[] }
+): Readonly<Record<string, string>> {
+	const out: Record<string, string> = {};
+	for (const value of slot.values) {
+		if (!isNodeRef(value)) continue;
+		const parseKind = value.parseKind?.name;
+		const sourceKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+		if (parseKind === undefined || parseKind === sourceKind) continue;
+		out[parseKind] = sourceKind;
+	}
+	return out;
+}
+
 /** The slot-naming inputs a projection needs (the only stored facts). */
 export interface SlotNamingInputs {
 	readonly fieldName?: string;
@@ -1614,7 +1651,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	const parseNames =
 		slot.fieldName !== undefined
 			? [slot.fieldName]
-			: [...new Set(slot.values.map((v) => v.parseKind?.name).filter((n): n is string => n !== undefined))];
+			: valueParseKindsOf(slot);
 	// storageName derives from the STORAGE / render-source kind (`value.node` —
 	// how the value is stored and keyed via `drillAs`), NOT `parseKind`. The two
 	// projections are parallel and must NOT cross: storageKind→storageName,

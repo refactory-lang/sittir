@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "948fc67c1bba5ee370bd91306f9b573ea84c8a3bb3943edb82444f95e4959895",
+  "source_hash": "0994bfe6f132a7875b1a23f1ee86789022657c1df911f304def43b8c2836e4d2",
   "files": {
     "packages/python/.sittir/grammar.js": "1ae9d1b0be8c6a2d0e35cc56a915677af958e27e9c277f3da1c5b45bb33c41e1",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -13,7 +13,7 @@
     "packages/python/.sittir/src/tree_sitter/array.h": "31e60a1bff6f715afacce03b5b70efe42b58371b4f9595dd4af52a577ff9608c",
     "packages/python/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/python/.sittir/tree-sitter.json": "3950b01c1615b2635ff9b254e6dbfca6d068240af7df192da0c0cdd396115c62",
-    "packages/python/factory-map.json5": "1dfba9f7f79bbb735e6e41919828731f248c8548bf0d02029c1e275aec7378df",
+    "packages/python/factory-map.json5": "a178fb997245cf6176bcc766020cc049500e877c3db12dceb103272a7eec627a",
     "packages/python/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/python/src/backend.ts": "ab39be3c39cea0601de33e650b578c363d741609e7ba58a1632bd4680421895e",
     "packages/python/src/boundary.ts": "3d134bb2d602f2072fda61aa748bf51b557d915c70fb220e6faebd01522567e9",

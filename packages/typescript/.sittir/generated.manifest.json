@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "aea82c0155e3601db1436abc14aa4e5c1c8f93a4d7603bec1205df58aeab476f",
+  "source_hash": "5de713b63cc60bf18834119dc277bd48be95864950cbd911258341b18991b15b",
   "files": {
     "packages/typescript/.sittir/grammar.js": "51b82fdb803a14c42b4e2d59a13879885709f8e7b2121067f599ff6183fcf93a",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
@@ -13,7 +13,7 @@
     "packages/typescript/.sittir/src/tree_sitter/array.h": "31e60a1bff6f715afacce03b5b70efe42b58371b4f9595dd4af52a577ff9608c",
     "packages/typescript/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/typescript/.sittir/tree-sitter.json": "9f1a0a28bf7b0d72fde59956be9d85aea276447d08ad124cb9b474aa9575ae8e",
-    "packages/typescript/factory-map.json5": "802985d2a89d46b557fe2a539e273856adced3de2969b15affbaaffe50c97809",
+    "packages/typescript/factory-map.json5": "61f5e1fd28d9442d1f2c34e5755c792a7869ad07853b35ae91dcaa7638f44b0b",
     "packages/typescript/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/typescript/src/backend.ts": "9239f7f7667dcedf7783d6d90b05d0a0953ba8e0275fe6e42fd1df97a21ff05a",
     "packages/typescript/src/boundary.ts": "3d134bb2d602f2072fda61aa748bf51b557d915c70fb220e6faebd01522567e9",

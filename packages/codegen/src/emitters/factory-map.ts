@@ -19,6 +19,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
 import {
 	allSlotsOf,
+	aliasTargetToSourceMapOf,
 	deriveUnnamedChildrenCardinality,
 	deriveSlotCardinality,
 	structuralChildrenOf,
@@ -26,7 +27,7 @@ import {
 	isNodeRef,
 	isUnresolvedRef
 } from '../compiler/node-map.ts';
-import { classifyFactoryShape, resolveFactoryFieldNames } from './shared.ts';
+import { classifyFactoryShape, collectAliasSourceKinds, resolveFactoryFieldNames } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -83,8 +84,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const fieldAliasMap: Record<string, Record<string, string>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		for (const f of allSlotsOf(node)) {
-			if (!f.aliasSources) continue;
-			const pairs = Object.entries(f.aliasSources).filter(([t, s]) => t !== s);
+			const pairs = Object.entries(aliasTargetToSourceMapOf(f)).filter(([t, s]) => t !== s);
 			if (pairs.length === 0) continue;
 			fieldAliasMap[`${kind}.${f.name}`] = Object.fromEntries(pairs);
 		}
@@ -248,33 +248,6 @@ function createFactorySlotMeta(
 		slotCount,
 		...cardinality
 	};
-}
-
-function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
-	const out = new Set<string>();
-	// Slot-level alias sources (ADR-0006) — slots declared as
-	// `alias($.source, $.target)` in some other rule's value position.
-	for (const [, n] of nodeMap.nodes) {
-		for (const f of allSlotsOf(n)) {
-			if (!f.aliasSources) continue;
-			for (const source of Object.values(f.aliasSources)) out.add(source);
-		}
-	}
-	// Rule-level alias sources (canonical-hidden architecture, Option Y) —
-	// hidden kinds whose visible alias-target name is what tree-sitter
-	// emits at parse time. `wrapNode` canonicalizes the visible $type to
-	// the hidden source on receipt; the factory & validator surface for
-	// these kinds is keyed on the canonical hidden name. `markUserFacing`
-	// (assemble.ts) flagged them as `userFacing=true` for exactly this
-	// reason — re-derived here from the same predicate to keep both
-	// emitters consistent.
-	for (const [kind, n] of nodeMap.nodes) {
-		if (!kind.startsWith('_')) continue;
-		if (!n.userFacing) continue;
-		if (n.modelType === 'token' || n.modelType === 'multi') continue;
-		out.add(kind);
-	}
-	return out;
 }
 
 export function expandRuntimeDiscriminatorKinds(discriminatorKinds: readonly string[], nodeMap: NodeMap): string[] {
