@@ -75,3 +75,12 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		}).diagnostics
 	};
 }
+
+export function formatGrammarDiagnostics(
+	diagnostics: readonly GrammarDiagnostic[]
+): string {
+	if (diagnostics.length === 0) return 'No grammar diagnostics.';
+	return diagnostics
+		.map((d) => `[${d.severity}] ${d.code}  ${d.ownerKind}.${d.slotName ?? '-'}\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`)
+		.join('\n');
+}
