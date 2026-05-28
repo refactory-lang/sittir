@@ -11,6 +11,7 @@
 			"@sittir/core": ["./packages/core/src/index.ts"],
 			"@sittir/core/engine": ["./packages/core/src/engine-boundary.ts"],
 			"@sittir/codegen": ["./packages/codegen/src/index.ts"],
+			"@sittir/codegen/run-codegen": ["./packages/codegen/src/run-codegen.ts"],
 			"@sittir/codegen/validate/from": ["./packages/codegen/src/validate/from.ts"],
 			"@sittir/codegen/validate/factory-render-parse": ["./packages/codegen/src/validate/factory-render-parse.ts"],
 			"@sittir/codegen/validate/read-render-parse": ["./packages/codegen/src/validate/read-render-parse.ts"],

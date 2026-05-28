@@ -28,6 +28,12 @@
 			"source": "./src/index.ts",
 			"import": "./dist/index.js"
 		},
+		"./run-codegen": {
+			"types": "./src/run-codegen.ts",
+			"source": "./src/run-codegen.ts",
+			"import": "./dist/run-codegen.js",
+			"default": "./dist/run-codegen.js"
+		},
 		"./validate/from": {
 			"types": "./src/validate/from.ts",
 			"source": "./src/validate/from.ts",
