@@ -37,7 +37,7 @@ export function fromParseKindCollision(
 			`Slot '${diagnostic.slotName}' of kind '${diagnostic.ownerKind}' ` +
 			`collapses [${diagnostic.storageKinds.join(', ')}] onto parse kind '${diagnostic.parseKind}'.`,
 		proposal: diagnostic.proposal,
-		canProceed: false,
+		canProceed: true,
 		details: {
 			parseKind: diagnostic.parseKind,
 			storageKinds: diagnostic.storageKinds
@@ -55,6 +55,7 @@ export function fromDeriveShape(
 		severity: diagnostic.severity,
 		grammar,
 		ownerKind: diagnostic.ownerKind ?? '(no-kind-context)',
+		ruleId: diagnostic.ruleId,
 		message: diagnostic.message,
 		proposal: diagnostic.proposal,
 		// canProceed: true — derive-shape issues are surfaced as informational

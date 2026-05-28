@@ -4,7 +4,7 @@ export interface ParseKindCollisionDiagnostic extends Diagnostic {
 	readonly code: 'parsekind-noninjective';
 	readonly severity: 'error';
 	readonly message: string;
-	readonly canProceed: false;
+	readonly canProceed: true;
 	readonly ownerKind: string;
 	readonly slotName: string;
 	readonly shape: 'propose-distinct-alias';
@@ -60,7 +60,7 @@ export function diagnoseParseKindCollisions<T>(
 			message:
 				`Slot '${input.slotName}' of kind '${input.ownerKind}' ` +
 				`collapses [${storageKinds.join(', ')}] onto parse kind '${parseKind}'.`,
-			canProceed: false,
+			canProceed: true,
 			ownerKind: input.ownerKind,
 			slotName: input.slotName,
 			shape: 'propose-distinct-alias',

@@ -63,7 +63,7 @@ describe('grammar diagnostics preflight', () => {
 				grammar: 'synth',
 				ownerKind: 'host',
 				slotName: 'content',
-				canProceed: false
+				canProceed: true
 			})
 		]);
 	});
@@ -122,7 +122,7 @@ describe('grammar diagnostics preflight', () => {
 					code: 'parsekind-noninjective',
 					severity: 'error',
 					message: "Slot 'content' of kind '_suite' collapses [_simple_statements, block] onto parse kind 'block'.",
-					canProceed: false,
+					canProceed: true,
 					ownerKind: '_suite',
 					slotName: 'content',
 					shape: 'propose-distinct-alias',

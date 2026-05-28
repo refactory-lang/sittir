@@ -592,6 +592,7 @@ function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void 
 			ruleType: rule.type,
 			context,
 			ownerKind: currentAuditKind,
+			ruleId: rule.id,
 		})
 	);
 	const key = `${context}:${shape}`;
@@ -845,14 +846,23 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
  */
 function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEntry[], kindName?: string): AssembledNonterminal[] {
 	const canonical = deleteWrapper(rule) as Rule;
-	auditDerivationShape(canonical, 'fields');
-	// Nonterminal-driven collection (2026-05-21 design): one slot per
-	// `nonterminal` node, choice = one union slot, seq distributes. Replaces
-	// the `deriveSlotsRaw` fold/merge/effectiveMultiplicity walker. Same-name
-	// slots that appear in multiple positions (e.g. python `if_statement`'s
-	// `alternative` in both a repeat and an optional) are still folded into one
-	// AssembledNonterminal by `mergeSlotsByName`.
-	return mergeSlotsByName(collectSlots(canonical, kindName ?? currentAuditKind, kindEntries));
+	// Set the audit kind context for the duration of this derivation so
+	// auditDerivationShape() can attribute shapes to their originating kind.
+	// Save/restore guards against cross-kind bleed if derivations nest.
+	const prevAuditKind = currentAuditKind;
+	if (kindName !== undefined) setAuditKindContext(kindName);
+	try {
+		auditDerivationShape(canonical, 'fields');
+		// Nonterminal-driven collection (2026-05-21 design): one slot per
+		// `nonterminal` node, choice = one union slot, seq distributes. Replaces
+		// the `deriveSlotsRaw` fold/merge/effectiveMultiplicity walker. Same-name
+		// slots that appear in multiple positions (e.g. python `if_statement`'s
+		// `alternative` in both a repeat and an optional) are still folded into one
+		// AssembledNonterminal by `mergeSlotsByName`.
+		return mergeSlotsByName(collectSlots(canonical, kindName ?? currentAuditKind, kindEntries));
+	} finally {
+		setAuditKindContext(prevAuditKind);
+	}
 }
 
 /**

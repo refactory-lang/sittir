@@ -1,4 +1,5 @@
 import type { Diagnostic } from './diagnostics.ts';
+import type { RuleId } from './rule.ts';
 
 export type DeriveShapeCode =
 	| 'alias-collision'
@@ -14,6 +15,7 @@ export interface DeriveShapeDiagnostic extends Diagnostic {
 	readonly message: string;
 	readonly canProceed: false;
 	readonly ownerKind?: string;
+	readonly ruleId?: RuleId;
 	readonly proposal?: string;
 	readonly details: {
 		readonly rawShape: string;
@@ -28,6 +30,7 @@ export function describeDeriveShape(input: {
 	ruleType: string;
 	context: string;
 	ownerKind?: string;
+	ruleId?: RuleId;
 	expected?: readonly string[];
 }): DeriveShapeDiagnostic {
 	if (input.rawShape === 'seq-with-nested-seq') {
@@ -35,6 +38,7 @@ export function describeDeriveShape(input: {
 			code: 'seq-with-nested-seq',
 			severity: 'error',
 			ownerKind: input.ownerKind,
+			ruleId: input.ruleId,
 			message:
 				`Kind '${input.ownerKind ?? '(no-kind-context)'}' still contains a nested seq ` +
 				`that should have been flattened, grouped, or normalized before derive.`,
@@ -53,6 +57,7 @@ export function describeDeriveShape(input: {
 			code: 'seq-member-collision',
 			severity: 'error',
 			ownerKind: input.ownerKind,
+			ruleId: input.ruleId,
 			message:
 				`Kind '${input.ownerKind ?? '(no-kind-context)'}' has a seq member with a ` +
 				`noncanonical structural shape that must be grouped, merged, or variantized.`,
@@ -71,6 +76,7 @@ export function describeDeriveShape(input: {
 			code: 'choice-with-multiple-arm-shapes',
 			severity: 'error',
 			ownerKind: input.ownerKind,
+			ruleId: input.ruleId,
 			message:
 				`Kind '${input.ownerKind ?? '(no-kind-context)'}' has a choice whose arms ` +
 				`still carry multiple structural shapes at derive time.`,
@@ -89,6 +95,7 @@ export function describeDeriveShape(input: {
 			code: 'polymorph-classification-gap',
 			severity: 'error',
 			ownerKind: input.ownerKind,
+			ruleId: input.ruleId,
 			message:
 				`Kind '${input.ownerKind ?? '(no-kind-context)'}' reached derive in a shape ` +
 				`that should have been classified as polymorph earlier.`,
@@ -106,6 +113,7 @@ export function describeDeriveShape(input: {
 		code: 'rule-unexpected',
 		severity: 'error',
 		ownerKind: input.ownerKind,
+		ruleId: input.ruleId,
 		message:
 			`Kind '${input.ownerKind ?? '(no-kind-context)'}': we did not expect rule type ` +
 			`${input.ruleType} inside ${input.context}.`,
