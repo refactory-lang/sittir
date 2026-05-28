@@ -52,8 +52,7 @@ import {
 	isUnresolvedRef,
 	allSlotsOf,
 	setOptionalBodyKinds,
-	setParseKindCollisionRules,
-	drainParseKindCollisionDiagnostics
+	buildParseKindRuleSignatures
 } from './node-map.ts';
 import { simplifyRule, inlineRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { compileWordMatcher } from './common.ts';
@@ -89,7 +88,10 @@ export function assemble(
 	// constructors to consult during the rule walk below.
 	const optionalBodyKinds = collectOptionalBodyKinds(optimized.rules);
 	setOptionalBodyKinds(optionalBodyKinds);
-	setParseKindCollisionRules(optimized.simplifiedRules);
+	const parseKindCollisionContext = {
+		ruleSignatures: buildParseKindRuleSignatures(optimized.renderRules!),
+		failOnDiagnostic: true
+	} as const;
 
 	try {
 		for (const [kind, rule] of Object.entries(optimized.rules)) {
@@ -128,7 +130,8 @@ export function assemble(
 							renderRule,
 							{
 								variantChildKinds,
-								kindEntries
+								kindEntries,
+								parseKindCollisionContext
 							}
 						)
 					);
@@ -140,12 +143,25 @@ export function assemble(
 						assemblyRule.type === 'polymorph'
 							? (assemblyRule.source === 'override' ? 'override' : 'promoted')
 							: 'promoted';
-					const forms = buildAssembledFormGroups(kind, polyForms, polySource, kindEntries, optimized);
+					const forms = buildAssembledFormGroups(
+						kind,
+						polyForms,
+						polySource,
+						kindEntries,
+						optimized,
+						parseKindCollisionContext
+					);
 					// Forms don't get top-level nodeMap entries — they're
 					// nested inside the parent polymorph's forms array.
 					// The polymorph itself + visible variant children (below)
 					// are the nodeMap-level entries.
-					for (const child of buildVisibleVariantChildGroups(polySource, polyForms, optimized, kindEntries)) {
+					for (const child of buildVisibleVariantChildGroups(
+						polySource,
+						polyForms,
+						optimized,
+						kindEntries,
+						parseKindCollisionContext
+					)) {
 						nodes.set(child.kind, child);
 					}
 					const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms);
@@ -153,7 +169,8 @@ export function assemble(
 						kind,
 						new AssembledPolymorph(kind, assemblyRule as PolymorphRule | ChoiceRule, forms, {
 							source: polySource,
-							variantChildKinds
+							variantChildKinds,
+							parseKindCollisionContext
 						})
 					);
 					break;
@@ -192,7 +209,13 @@ export function assemble(
 						simplifiedRule,
 						renderRule
 					);
-					nodes.set(kind, new AssembledGroup(kind, groupRule, groupSimplified, groupRenderRule, { kindEntries }));
+					nodes.set(
+						kind,
+						new AssembledGroup(kind, groupRule, groupSimplified, groupRenderRule, {
+							kindEntries,
+							parseKindCollisionContext
+						})
+					);
 					break;
 				}
 				case 'multi': {
@@ -207,11 +230,6 @@ export function assemble(
 					break;
 				}
 			}
-		}
-
-		const parseKindDiagnostics = drainParseKindCollisionDiagnostics();
-		for (const rec of parseKindDiagnostics) {
-			console.info(`[parsekind-collision] ${rec.ownerKind}.${rec.slotName}: ${rec.proposal}`);
 		}
 
 		collectAnonymousNodes(optimized.rules, nodes, wordMatcher, kindEntries);
@@ -286,8 +304,6 @@ export function assemble(
 		};
 	} finally {
 		setOptionalBodyKinds(null);
-		setParseKindCollisionRules(null);
-		drainParseKindCollisionDiagnostics();
 	}
 }
 
@@ -395,7 +411,8 @@ function buildAssembledFormGroups(
 	polyForms: PolymorphRule['forms'],
 	polySource: 'override' | 'promoted',
 	kindEntries: readonly GeneratedKindEntry[],
-	optimized: OptimizedGrammar
+	optimized: OptimizedGrammar,
+	parseKindCollisionContext: { ruleSignatures: Readonly<Record<string, string>>; failOnDiagnostic: boolean }
 ): AssembledGroup[] {
 	const nameCounts = new Map<string, number>();
 	return polyForms.map((form) => {
@@ -422,7 +439,8 @@ function buildAssembledFormGroups(
 			name: disambiguated,
 			parentKind,
 			overridePassthrough: polySource === 'override' && !form.visibleChildKind,
-			kindEntries
+			kindEntries,
+			parseKindCollisionContext
 		});
 	});
 }
@@ -470,7 +488,8 @@ function buildVisibleVariantChildGroups(
 	polySource: 'override' | 'promoted',
 	polyForms: PolymorphRule['forms'],
 	optimized: OptimizedGrammar,
-	kindEntries: readonly GeneratedKindEntry[]
+	kindEntries: readonly GeneratedKindEntry[],
+	parseKindCollisionContext: { ruleSignatures: Readonly<Record<string, string>>; failOnDiagnostic: boolean }
 ): AssembledNode[] {
 	if (polySource !== 'override') return [];
 	const groups: AssembledNode[] = [];
@@ -496,7 +515,7 @@ function buildVisibleVariantChildGroups(
 						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
 						simplifiedRule,
 						renderRule,
-						{ kindEntries }
+						{ kindEntries, parseKindCollisionContext }
 					)
 				);
 				break;
@@ -579,7 +598,8 @@ function unwrapGroupRuleAndSimplified(
 	// wrapper-deleted inner content. Same for simplifiedRule (simplifyRule recurses
 	// through group wrappers preserving the outer group node).
 	const groupSimplified = rule.type === 'group' ? (simplifiedRule as GroupRule).content : simplifiedRule;
-	const groupRenderRule = rule.type === 'group' ? (renderRule as GroupRule).content : renderRule;
+	const groupRenderRule: RenderRule =
+		rule.type === 'group' ? ((renderRule as GroupRule).content as RenderRule) : renderRule;
 	return { groupRule, groupSimplified, groupRenderRule };
 }
 

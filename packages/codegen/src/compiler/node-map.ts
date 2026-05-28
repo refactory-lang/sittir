@@ -57,7 +57,6 @@ import type { SlotOrigin } from './slot-model.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import {
 	diagnoseParseKindCollisions,
-	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
 } from './diagnose-parsekind-collisions.ts';
 
@@ -100,25 +99,10 @@ export { type Multiplicity } from './rule.ts';
 // to `'optional'`. Without this look-through, wrap-side reads would
 // assert required-singular and reject ASI-terminated corpus entries.
 let currentOptionalBodyKinds: ReadonlySet<string> | null = null;
-let currentParseKindCollisionRules: Readonly<Record<string, Rule>> | null = null;
-const _parseKindCollisionDiagnostics: ParseKindCollisionDiagnostic[] = [];
-const _parseKindCollisionSeen = new Set<string>();
 
 /** Set by `assemble.ts` before running the rule walk; cleared after. */
 export function setOptionalBodyKinds(kinds: ReadonlySet<string> | null): void {
 	currentOptionalBodyKinds = kinds;
-}
-
-/** Set by `assemble.ts` before building slots; cleared after. */
-export function setParseKindCollisionRules(rules: Readonly<Record<string, Rule>> | null): void {
-	currentParseKindCollisionRules = rules;
-}
-
-export function drainParseKindCollisionDiagnostics(): ParseKindCollisionDiagnostic[] {
-	const out = [..._parseKindCollisionDiagnostics];
-	_parseKindCollisionDiagnostics.length = 0;
-	_parseKindCollisionSeen.clear();
-	return out;
 }
 
 /** True iff `kindName` resolves to a wholly-optional rule body. */
@@ -843,11 +827,17 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 	return Array.from(byName.values());
 }
 
-function recordParseKindCollisionDiagnostic(rec: ParseKindCollisionDiagnostic): void {
-	const key = `${rec.ownerKind} ${rec.slotName} ${rec.parseKind} ${rec.storageKinds.join('|')}`;
-	if (_parseKindCollisionSeen.has(key)) return;
-	_parseKindCollisionSeen.add(key);
-	_parseKindCollisionDiagnostics.push(rec);
+interface ParseKindCollisionContext {
+	readonly ruleSignatures: Readonly<Record<string, string>>;
+	readonly failOnDiagnostic: boolean;
+}
+
+export function buildParseKindRuleSignatures<T extends Rule>(
+	rules: Readonly<Record<string, T>>
+): Readonly<Record<string, string>> {
+	return Object.fromEntries(
+		Object.entries(rules).map(([kind, rule]) => [kind, canonicalRuleSignature(rule)])
+	);
 }
 
 export function storageKindOfValue(value: NodeOrTerminal): string | undefined {
@@ -857,19 +847,27 @@ export function storageKindOfValue(value: NodeOrTerminal): string | undefined {
 	return value.resolvedKind ?? value.value;
 }
 
-function resolveParseKindCollisions(ownerKind: string, slots: readonly AssembledNonterminal[]): AssembledNonterminal[] {
+function resolveParseKindCollisions(
+	ownerKind: string,
+	slots: readonly AssembledNonterminal[],
+	context?: ParseKindCollisionContext
+): AssembledNonterminal[] {
 	if (slots.length === 0) return [...slots];
-	return mergeSlotsByName(slots.map((slot) => resolveParseKindCollisionsInSlot(ownerKind, slot)));
+	return mergeSlotsByName(slots.map((slot) => resolveParseKindCollisionsInSlot(ownerKind, slot, context)));
 }
 
-function resolveParseKindCollisionsInSlot(ownerKind: string, slot: AssembledNonterminal): AssembledNonterminal {
+function resolveParseKindCollisionsInSlot(
+	ownerKind: string,
+	slot: AssembledNonterminal,
+	context?: ParseKindCollisionContext
+): AssembledNonterminal {
 	const describedValues: ParseKindCollisionValue<NodeOrTerminal>[] = slot.values.map((value) => {
 		const storageKind = storageKindOfValue(value);
 		return {
 			original: value,
 			parseKind: value.parseKind?.name,
 			storageKind,
-			structuralSignature: structuralSignatureOfValue(value, storageKind),
+			structuralSignature: structuralSignatureOfValue(value, storageKind, context),
 			preferRepresentative: storageKind !== undefined && storageKind === value.parseKind?.name
 		};
 	});
@@ -878,8 +876,8 @@ function resolveParseKindCollisionsInSlot(ownerKind: string, slot: AssembledNont
 		slotName: slot.name,
 		values: describedValues
 	});
-	for (const diagnostic of resolution.diagnostics) {
-		recordParseKindCollisionDiagnostic(diagnostic);
+	if (resolution.diagnostics.length > 0 && context?.failOnDiagnostic) {
+		throw new Error(formatParseKindCollisionDiagnostics(resolution.diagnostics));
 	}
 	const nextValues = [...resolution.values];
 	const unchanged =
@@ -888,7 +886,23 @@ function resolveParseKindCollisionsInSlot(ownerKind: string, slot: AssembledNont
 	return unchanged ? slot : slot.with({ values: dedupeValues(nextValues) });
 }
 
-function structuralSignatureOfValue(value: NodeOrTerminal, storageKind: string | undefined): string {
+function formatParseKindCollisionDiagnostics(
+	diagnostics: ReturnType<typeof diagnoseParseKindCollisions<NodeOrTerminal>>['diagnostics']
+): string {
+	const details = diagnostics
+		.map(
+			(diagnostic) =>
+				`${diagnostic.ownerKind}.${diagnostic.slotName} (${diagnostic.shape}): ${diagnostic.proposal}`
+		)
+		.join('\n');
+	return `Non-injective parseKind collision(s) detected:\n${details}`;
+}
+
+function structuralSignatureOfValue(
+	value: NodeOrTerminal,
+	storageKind: string | undefined,
+	context?: ParseKindCollisionContext
+): string {
 	const surface = [
 		value.multiplicity,
 		value.separator ?? '',
@@ -900,28 +914,29 @@ function structuralSignatureOfValue(value: NodeOrTerminal, storageKind: string |
 	if (value.kind === 'terminal') {
 		return `terminal:${value.value}:${value.resolvedKind ?? ''}:${surface}`;
 	}
-	return `node:${structuralSignatureOfStorageKind(storageKind)}:${surface}`;
+	return `node:${structuralSignatureOfStorageKind(storageKind, context)}:${surface}`;
 }
 
-function structuralSignatureOfStorageKind(storageKind: string | undefined): string {
+function structuralSignatureOfStorageKind(
+	storageKind: string | undefined,
+	context?: ParseKindCollisionContext
+): string {
 	if (storageKind === undefined) return 'missing';
-	const rule = currentParseKindCollisionRules?.[storageKind];
-	if (!rule) return `missing:${storageKind}`;
-	return stableRuleSignature(rule);
+	return context?.ruleSignatures[storageKind] ?? `missing:${storageKind}`;
 }
 
-function stableRuleSignature(value: unknown): string {
-	return JSON.stringify(normalizeRuleSignature(value));
+function canonicalRuleSignature(value: unknown): string {
+	return JSON.stringify(normalizeRuleForSignature(value));
 }
 
-function normalizeRuleSignature(value: unknown): unknown {
-	if (Array.isArray(value)) return value.map((member) => normalizeRuleSignature(member));
+function normalizeRuleForSignature(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map((member) => normalizeRuleForSignature(member));
 	if (value === null || typeof value !== 'object') return value;
 	const obj = value as Record<string, unknown>;
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(obj).sort()) {
 		if (key === 'id' || key === 'source') continue;
-		const normalized = normalizeRuleSignature(obj[key]);
+		const normalized = normalizeRuleForSignature(obj[key]);
 		if (normalized !== undefined) out[key] = normalized;
 	}
 	return out;
@@ -2292,7 +2307,8 @@ function buildSlotsRecord(
 	kind: string,
 	rule: Rule,
 	renderRule?: RenderRule,
-	kindEntries?: readonly GeneratedKindEntry[]
+	kindEntries?: readonly GeneratedKindEntry[],
+	parseKindCollisionContext?: ParseKindCollisionContext
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const slots = [...deriveSlots(rule, kindEntries, kind)];
 	if (renderRule) {
@@ -2305,7 +2321,7 @@ function buildSlotsRecord(
 			slots.splice(slots.indexOf(existing), 1, next);
 		}
 	}
-	const resolvedSlots = resolveParseKindCollisions(kind, slots);
+	const resolvedSlots = resolveParseKindCollisions(kind, slots, parseKindCollisionContext);
 	const out: Record<string, AssembledNonterminal> = {};
 	for (const slot of resolvedSlots) {
 		// Strict design (FR-T05): inferred slots remap to 'child'/'children'
@@ -2397,7 +2413,9 @@ function relaxSlotForCrossFormAbsence(slot: AssembledNonterminal): AssembledNont
 }
 
 function structuralSlotRecordFromForms(
-	forms: readonly AssembledGroup[]
+	forms: readonly AssembledGroup[],
+	ownerKind?: string,
+	parseKindCollisionContext?: ParseKindCollisionContext
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const slots = new Map<string, AssembledNonterminal>();
 	const slotPresence = new Map<string, number>();
@@ -2417,11 +2435,14 @@ function structuralSlotRecordFromForms(
 			}));
 		}
 	}
-	return freezeSlotRecord(
-		[...slots.values()].map((slot) =>
-			(slotPresence.get(slot.name) ?? 0) < forms.length ? relaxSlotForCrossFormAbsence(slot) : slot
-		)
+	const relaxedSlots = [...slots.values()].map((slot) =>
+		(slotPresence.get(slot.name) ?? 0) < forms.length ? relaxSlotForCrossFormAbsence(slot) : slot
 	);
+	const resolvedSlots =
+		ownerKind === undefined
+			? relaxedSlots
+			: resolveParseKindCollisions(ownerKind, relaxedSlots, parseKindCollisionContext);
+	return freezeSlotRecord(resolvedSlots);
 }
 
 export class AssembledBranch<
@@ -2508,6 +2529,7 @@ export class AssembledBranch<
 			source?: RuleSource;
 			variantChildKinds?: readonly string[];
 			kindEntries?: readonly GeneratedKindEntry[];
+			parseKindCollisionContext?: ParseKindCollisionContext;
 			slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
 		}
 	) {
@@ -2515,7 +2537,9 @@ export class AssembledBranch<
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		this._slots = opts?.slotRecord ?? buildSlotsRecord(kind, simplifiedRule, renderRule, opts?.kindEntries);
+		this._slots =
+			opts?.slotRecord ??
+			buildSlotsRecord(kind, simplifiedRule, renderRule, opts?.kindEntries, opts?.parseKindCollisionContext);
 	}
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
@@ -2883,6 +2907,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 			variantChildKinds?: readonly string[];
 			factoryName?: string;
 			irKey?: string;
+			parseKindCollisionContext?: ParseKindCollisionContext;
 		}
 	) {
 		const ruleSource = rule.type === 'polymorph' ? rule.source : undefined;
@@ -2894,7 +2919,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		this.#forms = forms;
 		this.source = opts?.source ?? 'promoted';
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		this.slots = structuralSlotRecordFromForms(forms);
+		this.slots = structuralSlotRecordFromForms(forms, kind, opts?.parseKindCollisionContext);
 	}
 
 	/** A polymorph's forms are hidden groups synthesized from the choice branches. */
@@ -3380,6 +3405,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 			parentKind?: string;
 			overridePassthrough?: boolean;
 			kindEntries?: readonly GeneratedKindEntry[];
+			parseKindCollisionContext?: ParseKindCollisionContext;
 		}
 	) {
 		// Groups always derive a factoryName — hidden groups emit fragment factories
@@ -3399,7 +3425,13 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
 		this.overridePassthrough = opts?.overridePassthrough;
-		this.slots = buildSlotsRecord(kind, simplifiedRule, renderRule, opts?.kindEntries);
+		this.slots = buildSlotsRecord(
+			kind,
+			simplifiedRule,
+			renderRule,
+			opts?.kindEntries,
+			opts?.parseKindCollisionContext
+		);
 	}
 
 	/**
