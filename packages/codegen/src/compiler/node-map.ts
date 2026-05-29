@@ -125,6 +125,46 @@ export function drainDeriveShapeDiagnostics(): DeriveShapeDiagnostic[] {
 	return out;
 }
 
+// ---------------------------------------------------------------------------
+// Assemble warning accumulator — mirrors parseKindCollisions pattern.
+// Records compiler-phase conditions discovered during the assemble pass
+// (typeName collisions, storageName collisions, unresolved slot refs) as
+// structured diagnostic payloads so they surface through the grammar-diagnostics
+// preflight rather than being silently swallowed when SITTIR_QUIET is set.
+// ---------------------------------------------------------------------------
+
+export interface AssembleWarning {
+	readonly code: string;
+	readonly message: string;
+	readonly ownerKind?: string;
+	readonly details?: Record<string, unknown>;
+}
+
+const _assembleWarnings: AssembleWarning[] = [];
+const _assembleWarningSeen = new Set<string>();
+
+function assembleWarningKey(w: AssembleWarning): string {
+	return `${w.code}|${w.ownerKind ?? ''}|${w.message}`;
+}
+
+export function recordAssembleWarning(w: AssembleWarning): void {
+	const key = assembleWarningKey(w);
+	if (_assembleWarningSeen.has(key)) return;
+	_assembleWarningSeen.add(key);
+	_assembleWarnings.push(w);
+}
+
+export function resetAssembleWarnings(): void {
+	_assembleWarnings.length = 0;
+	_assembleWarningSeen.clear();
+}
+
+export function drainAssembleWarnings(): AssembleWarning[] {
+	const out = [..._assembleWarnings];
+	resetAssembleWarnings();
+	return out;
+}
+
 /**
  * Per-value multiplicity tag. Each entry in a slot's `values` array carries
  * its own multiplicity derived from the grammar rule that produced it.
@@ -2407,31 +2447,33 @@ function buildSlotsRecord(
 	// before overrides apply. The generate() pipeline enforces zero
 	// collisions via the override layer; this warning surfaces any that
 	// slip through during development.
-	if (!process.env.SITTIR_QUIET) {
-		const byStorageName = new Map<string, AssembledNonterminal[]>();
-		for (const slot of Object.values(out)) {
-			const list = byStorageName.get(slot.storageName) ?? [];
-			list.push(slot);
-			byStorageName.set(slot.storageName, list);
-		}
-		for (const [storageName, slots] of byStorageName) {
-			if (slots.length > 1) {
-				const details = slots.map((s) => {
-					const kinds = s.values.map((v) =>
-						v.kind === 'terminal'
-							? `"${v.value}"`
-							: isUnresolvedRef(v.node)
-								? v.node.name
-								: (v.node as AssembledNode).kind
-					);
-					const mult = s.values.length > 0 ? s.values[0]!.multiplicity : 'single';
-					return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
-				});
-				process.stderr.write(
-					`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
-						`with storageName '${storageName}':\n${details.join('\n')}\n`
+	const byStorageName = new Map<string, AssembledNonterminal[]>();
+	for (const slot of Object.values(out)) {
+		const list = byStorageName.get(slot.storageName) ?? [];
+		list.push(slot);
+		byStorageName.set(slot.storageName, list);
+	}
+	for (const [storageName, slots] of byStorageName) {
+		if (slots.length > 1) {
+			const details = slots.map((s) => {
+				const kinds = s.values.map((v) =>
+					v.kind === 'terminal'
+						? `"${v.value}"`
+						: isUnresolvedRef(v.node)
+							? v.node.name
+							: (v.node as AssembledNode).kind
 				);
-			}
+				const mult = s.values.length > 0 ? s.values[0]!.multiplicity : 'single';
+				return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
+			});
+			recordAssembleWarning({
+				code: 'storagename-collision',
+				message:
+					`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
+					`with storageName '${storageName}':\n${details.join('\n')}`,
+				ownerKind: kind,
+				details: { storageName, slotCount: slots.length }
+			});
 		}
 	}
 

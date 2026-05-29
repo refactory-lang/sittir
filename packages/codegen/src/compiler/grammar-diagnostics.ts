@@ -3,6 +3,9 @@ import { link } from './link.ts';
 import { optimize } from './optimize.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
+import type { AssembleWarning } from './node-map.ts';
+import { drainSlotGroupingDiagnostics } from './simplify.ts';
+import type { SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
 import type { RawGrammar } from './types.ts';
 import type { GrammarDiagnostic } from './diagnostics.ts';
 
@@ -65,10 +68,46 @@ export function fromDeriveShape(
 	};
 }
 
+export function fromAssembleWarning(
+	grammar: string,
+	warning: AssembleWarning
+): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: warning.code,
+		severity: 'warning',
+		grammar,
+		ownerKind: warning.ownerKind,
+		message: warning.message,
+		// Assemble warnings are observational — codegen continues.
+		canProceed: true,
+		details: warning.details
+	};
+}
+
+export function fromSlotGrouping(
+	grammar: string,
+	diagnostic: SlotGroupingDiagnostic
+): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: diagnostic.code,
+		severity: diagnostic.severity,
+		grammar,
+		ownerKind: diagnostic.ownerKind,
+		message: diagnostic.message,
+		proposal: diagnostic.proposal,
+		canProceed: true,
+		details: { slotCount: diagnostic.slotCount }
+	};
+}
+
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
 	parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
 	deriveShapeDiagnostics?: readonly DeriveShapeDiagnostic[];
+	assembleWarnings?: readonly AssembleWarning[];
+	slotGroupingDiagnostics?: readonly SlotGroupingDiagnostic[];
 }): { diagnostics: readonly GrammarDiagnostic[] } {
 	const parseKindMapped = input.parseKindCollisions.map((diagnostic) =>
 		fromParseKindCollision(input.grammar, diagnostic)
@@ -76,19 +115,29 @@ export function collectGrammarDiagnostics(input: {
 	const deriveShapeMapped = (input.deriveShapeDiagnostics ?? []).map((diagnostic) =>
 		fromDeriveShape(input.grammar, diagnostic)
 	);
-	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped] };
+	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) =>
+		fromAssembleWarning(input.grammar, warning)
+	);
+	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((d) =>
+		fromSlotGrouping(input.grammar, d)
+	);
+	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
 }): { nodeMap: AssembledNodeMap; diagnostics: readonly GrammarDiagnostic[] } {
 	const nodeMap = assemble(optimize(link(input.rawGrammar)));
+	// drain slot-grouping diagnostics populated during the optimize() pass
+	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	return {
 		nodeMap,
 		diagnostics: collectGrammarDiagnostics({
 			grammar: input.rawGrammar.name,
 			parseKindCollisions: nodeMap.parseKindCollisions,
-			deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics
+			deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics,
+			assembleWarnings: nodeMap.assembleWarnings,
+			slotGroupingDiagnostics
 		}).diagnostics
 	};
 }

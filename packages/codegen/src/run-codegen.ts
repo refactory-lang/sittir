@@ -25,6 +25,7 @@ import {
 	collectGrammarDiagnosticsForGrammar,
 	GrammarDiagnosticError,
 	formatGrammarDiagnostics,
+	fromSlotGrouping,
 	type GrammarDiagnostic
 } from './compiler/grammar-diagnostics.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
@@ -165,9 +166,19 @@ export async function runGrammarDiagnosticsPreflight(input: {
 		diagnostics = collectGrammarDiagnosticsForGrammar({ rawGrammar }).diagnostics;
 	}
 
-	const blocked = diagnostics.filter(
-		(d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false
+	const blockedSet = new Set(
+		diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false)
 	);
+	const blocked = [...blockedSet];
+
+	// Non-blocking (and allow-listed) diagnostics are always surfaced as
+	// visible, non-fatal output so every collected grammar condition prints
+	// during `sittir gen`/regen, even when none are blocking.
+	const nonBlocking = diagnostics.filter((d) => !blockedSet.has(d));
+	if (nonBlocking.length > 0) {
+		process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
+	}
+
 	if (blocked.length === 0) return;
 
 	process.stderr.write(formatGrammarDiagnostics(blocked) + '\n');
@@ -282,6 +293,15 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 		emitRenderModule: all
 	});
 
+	// Surface slot-grouping diagnostics from the optimize phase. These are
+	// non-blocking propose-promotion suggestions; printing them here (after
+	// generate()) ensures they appear during `sittir gen --all` even when
+	// the preflight and generate() pipelines are separate.
+	if (result.slotGroupingDiagnostics.length > 0) {
+		const mapped = result.slotGroupingDiagnostics.map((d) => fromSlotGrouping(grammar, d));
+		process.stderr.write(formatGrammarDiagnostics(mapped) + '\n');
+	}
+
 	const outDir = outputDir;
 
 	// Write source files
@@ -377,6 +397,10 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 		console.log(
 			`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`
 		);
+		// Surface FR-011 coverage gap warnings as non-fatal stderr messages.
+		for (const w of extracted.warnings) {
+			process.stderr.write(`[warning] ${w}\n`);
+		}
 
 		// Rebuild the corresponding N-API binding so the native render path
 		// picks up the new templates. Askama compiles templates at the

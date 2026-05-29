@@ -47,6 +47,12 @@ export interface ExtractResult {
 	roundTripCount: number;
 	/** Kinds covered by at least one roundtrip fixture. */
 	coveredKinds: Set<string>;
+	/**
+	 * Non-fatal diagnostic messages from the extraction pass.
+	 * Currently used for FR-011 coverage gaps. Surfaced by runCodegen()
+	 * via formatGrammarDiagnostics so they appear in the regen output.
+	 */
+	warnings: string[];
 }
 
 /**
@@ -58,6 +64,7 @@ export interface ExtractResult {
 export async function extractParityFixtures(grammar: string, templatesPath: string): Promise<ExtractResult> {
 	const fixtures: ParityFixture[] = [];
 	const coveredKinds = new Set<string>();
+	const warnings: string[] = [];
 	let renderCount = 0;
 	let roundTripCount = 0;
 
@@ -91,7 +98,7 @@ export async function extractParityFixtures(grammar: string, templatesPath: stri
 	};
 	const missing = required.filter((k) => !isCovered(k));
 	if (missing.length > 0) {
-		console.warn(
+		warnings.push(
 			`[codegen] parity-fixtures[${grammar}]: FR-011 exception kind(s) not ` +
 				`covered: ${missing.join(', ')}. Fixtures may be stale — the RT ` +
 				`validator either doesn't exercise these kinds or they fail the ` +
@@ -100,7 +107,7 @@ export async function extractParityFixtures(grammar: string, templatesPath: stri
 		);
 	}
 
-	return { grammar, fixtures, renderCount, roundTripCount, coveredKinds };
+	return { grammar, fixtures, renderCount, roundTripCount, coveredKinds, warnings };
 }
 
 /**

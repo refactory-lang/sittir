@@ -44,6 +44,9 @@ import {
 	AssembledMulti,
 	drainParseKindCollisionDiagnostics,
 	drainDeriveShapeDiagnostics,
+	drainAssembleWarnings,
+	recordAssembleWarning,
+	resetAssembleWarnings,
 	hasAnyField,
 	hasAnyChild,
 	nameNode,
@@ -57,7 +60,8 @@ import {
 	resetParseKindCollisionDiagnostics,
 	resetDeriveShapeDiagnostics,
 	setOptionalBodyKinds,
-	buildParseKindRuleSignatures
+	buildParseKindRuleSignatures,
+	type AssembleWarning
 } from './node-map.ts';
 import { simplifyRule, inlineRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { compileWordMatcher } from './common.ts';
@@ -67,6 +71,7 @@ import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
 export interface AssembledNodeMap extends NodeMap {
 	readonly parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
 	readonly deriveShapeDiagnostics: readonly DeriveShapeDiagnostic[];
+	readonly assembleWarnings: readonly AssembleWarning[];
 }
 
 // ---------------------------------------------------------------------------
@@ -315,11 +320,13 @@ export function assemble(
 			polymorphFormKinds: computePolymorphFormKinds(nodes),
 			refineForms: optimized.refineForms,
 			parseKindCollisions: drainParseKindCollisionDiagnostics(),
-			deriveShapeDiagnostics: drainDeriveShapeDiagnostics()
+			deriveShapeDiagnostics: drainDeriveShapeDiagnostics(),
+			assembleWarnings: drainAssembleWarnings()
 		};
 	} finally {
 		resetParseKindCollisionDiagnostics();
 		resetDeriveShapeDiagnostics();
+		resetAssembleWarnings();
 		setOptionalBodyKinds(null);
 	}
 }
@@ -1203,10 +1210,14 @@ function renameCollidingHiddenKinds(visible: AssembledNode[], hidden: AssembledN
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
 		const newType = `_${typeName}`;
-		console.warn(
-			`[assemble] typeName collision: kind '${h.kind}' renamed ` +
-				`'${typeName}' → '${newType}' (visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(', ')})`
-		);
+		recordAssembleWarning({
+			code: 'typename-collision',
+			message:
+				`[assemble] typeName collision: kind '${h.kind}' renamed ` +
+				`'${typeName}' → '${newType}' (visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(', ')})`,
+			ownerKind: h.kind,
+			details: { typeName, newType, visibleKinds: visible.map((v) => v.kind) }
+		});
 		h.typeName = newType;
 		if (h.factoryName !== undefined) {
 			// _TypeName → _typeName (camelCase with leading _)
@@ -1232,13 +1243,17 @@ function renameCollidingVisibleKinds(visible: AssembledNode[], typeName: string)
 	for (let i = 1; i < sorted.length; i++) {
 		const n = sorted[i]!;
 		const newType = `${typeName}${i + 1}`;
-		console.warn(
-			`[assemble] typeName collision between visible kinds: '${n.kind}' renamed ` +
+		recordAssembleWarning({
+			code: 'typename-collision',
+			message:
+				`[assemble] typeName collision between visible kinds: '${n.kind}' renamed ` +
 				`'${typeName}' → '${newType}' (siblings: ${sorted
 					.slice(0, i)
 					.map((s) => `'${s.kind}'`)
-					.join(', ')})`
-		);
+					.join(', ')})`,
+			ownerKind: n.kind,
+			details: { typeName, newType, siblingKinds: sorted.slice(0, i).map((s) => s.kind) }
+		});
 		n.typeName = newType;
 		if (n.factoryName !== undefined) {
 			n.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1);
@@ -1260,7 +1275,12 @@ function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: strin
 	for (let i = 1; i < hidden.length; i++) {
 		const h = hidden[i]!;
 		const newType = `${typeName}${i + 1}`;
-		console.warn(`[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`);
+		recordAssembleWarning({
+			code: 'typename-collision',
+			message: `[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`,
+			ownerKind: h.kind,
+			details: { typeName, newType }
+		});
 		h.typeName = newType;
 		if (h.factoryName !== undefined) {
 			h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1);

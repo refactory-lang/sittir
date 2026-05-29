@@ -284,14 +284,11 @@ export function computeSimplifiedRules(
 	// treated as slot-position bodies (they represent seq content of inlined
 	// repeats), while normal branch kinds are silent at the top level.
 	const slotDiagnostics = diagnoseSlotGrouping(canonicalized, inlineKinds, polymorphSkipExtra);
-	const quiet = process.env['SITTIR_SLOT_GROUPING_QUIET'] === '1';
 	for (const rec of slotDiagnostics) {
 		// Dedup by (ownerKind, shape) across the multiple computeSimplifiedRules
 		// calls per run (and any repeated hits within one walk); log only the
 		// first occurrence.
-		if (recordSlotGroupingDiagnostic(rec) && !quiet) {
-			console.info(`[slot-grouping] ${rec.ownerKind} (${rec.code}): ${rec.proposal}`);
-		}
+		recordSlotGroupingDiagnostic(rec);
 	}
 
 	return canonicalized;
