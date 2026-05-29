@@ -34,7 +34,7 @@ nohup bash -c '
   # Regen all three so the artifacts (incl. test-fixtures.json) match the codegen.
   for g in rust python typescript; do
     echo "=== regen $g ===" >> .git/sittir-gate.log
-    pnpm exec tsx packages/codegen/src/cli.ts --grammar "$g" -a --output "packages/$g/src" >> .git/sittir-gate.log 2>&1
+    pnpm exec tsx packages/cli/src/cli.ts gen --grammar "$g" --all --output "packages/$g/src" >> .git/sittir-gate.log 2>&1
   done
   # Full native gate via the canonical script. Capture covPass + RT pass + AST match
   # (AST match is the real fidelity metric — covPass alone can hold while AST regresses).

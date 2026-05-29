@@ -16,7 +16,6 @@
     "_except_clause_as": "config",
     "_match_block": "config",
     "_match_block_block": "config",
-    "_simple_pattern_negative": "spread",
     "_simple_statements": "spread",
     "_splat_pattern_operator": "text",
     "_unary_operator_operator": "text",
@@ -313,9 +312,6 @@
     ],
     "_match_block_block": [
       "alternative"
-    ],
-    "_simple_pattern_negative": [
-      "content"
     ],
     "_simple_statements": [
       "simple_statement"
@@ -838,15 +834,6 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "_simple_pattern_negative": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
         "nonEmpty": false
       }
     },

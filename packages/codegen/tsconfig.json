@@ -1,7 +1,7 @@
 {
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {
-		"types": ["node"]
+		"types": ["node","web-tree-sitter","tree-sitter-cli/dsl.d.ts"]
 	},
 	"include": ["src", "tests"],
 	"exclude": ["node_modules", "dist", "src/emitters/*-ir.ts", "tests/unit/emitters/*-ir.test.ts"]

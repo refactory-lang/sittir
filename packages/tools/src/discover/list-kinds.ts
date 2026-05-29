@@ -5,8 +5,7 @@
  *   - list-groups.ts         (groups from the assembled nodeMap)
  *   - find-unaliased-groups.ts (groups without a visible non-group twin)
  *
- * And integrates the phantom detection already available in the codegen
- * diagnose-phantom-kinds script, called in-process (no subprocess).
+ * And integrates the shared phantom-kinds tool in-process (no subprocess).
  *
  * Usage:
  *   list-kinds [--grammar <g>] [--groups] [--unaliased] [--phantom]
@@ -29,86 +28,61 @@ import { existsSync } from 'node:fs';
 // ---------------------------------------------------------------------------
 
 interface AssembledNode {
-modelType: string;
+	modelType: string;
 }
 
 interface NodeMap {
-nodes: Map<string, AssembledNode>;
+	nodes: Map<string, AssembledNode>;
 }
 
 type PipelineStage = unknown;
 
 interface CodegenModules {
-evaluate: (path: string) => Promise<PipelineStage>;
-link: (raw: PipelineStage) => PipelineStage;
-optimize: (linked: PipelineStage) => PipelineStage;
-assemble: (optimized: PipelineStage) => NodeMap;
-resolveGrammarJsPath: (grammar: string) => string;
-resolveOverridesPath: (grammar: string) => string;
+	evaluate: (path: string) => Promise<PipelineStage>;
+	link: (raw: PipelineStage) => PipelineStage;
+	optimize: (linked: PipelineStage) => PipelineStage;
+	assemble: (optimized: PipelineStage) => NodeMap;
+	resolveGrammarJsPath: (grammar: string) => string;
+	resolveOverridesPath: (grammar: string) => string;
 }
 
 const CODEGEN_PATHS = {
-evaluate: '../../../codegen/src/compiler/evaluate.ts',
-link: '../../../codegen/src/compiler/link.ts',
-optimize: '../../../codegen/src/compiler/optimize.ts',
-assemble: '../../../codegen/src/compiler/assemble.ts',
-resolve: '../../../codegen/src/compiler/resolve-grammar.ts',
+	evaluate: '../../../codegen/src/compiler/evaluate.ts',
+	link: '../../../codegen/src/compiler/link.ts',
+	optimize: '../../../codegen/src/compiler/optimize.ts',
+	assemble: '../../../codegen/src/compiler/assemble.ts',
+	resolve: '../../../codegen/src/compiler/resolve-grammar.ts'
 } as const;
 
 async function loadCodegen(): Promise<CodegenModules> {
-const [evalMod, linkMod, optMod, assembleMod, resolveMod] = await Promise.all([
-import(CODEGEN_PATHS.evaluate),
-import(CODEGEN_PATHS.link),
-import(CODEGEN_PATHS.optimize),
-import(CODEGEN_PATHS.assemble),
-import(CODEGEN_PATHS.resolve),
-]);
-return {
-// cast-at-the-boundary: dynamic import returns untyped modules; we narrow
-// to the local interface here so downstream code stays fully typed.
-evaluate: evalMod.evaluate as CodegenModules['evaluate'],
-link: linkMod.link as CodegenModules['link'],
-optimize: optMod.optimize as CodegenModules['optimize'],
-assemble: assembleMod.assemble as CodegenModules['assemble'],
-resolveGrammarJsPath: resolveMod.resolveGrammarJsPath as CodegenModules['resolveGrammarJsPath'],
-resolveOverridesPath: resolveMod.resolveOverridesPath as CodegenModules['resolveOverridesPath'],
-};
+	const [evalMod, linkMod, optMod, assembleMod, resolveMod] = await Promise.all([
+		import(CODEGEN_PATHS.evaluate),
+		import(CODEGEN_PATHS.link),
+		import(CODEGEN_PATHS.optimize),
+		import(CODEGEN_PATHS.assemble),
+		import(CODEGEN_PATHS.resolve)
+	]);
+	return {
+		// cast-at-the-boundary: dynamic import returns untyped modules; we narrow
+		// to the local interface here so downstream code stays fully typed.
+		evaluate: evalMod.evaluate as CodegenModules['evaluate'],
+		link: linkMod.link as CodegenModules['link'],
+		optimize: optMod.optimize as CodegenModules['optimize'],
+		assemble: assembleMod.assemble as CodegenModules['assemble'],
+		resolveGrammarJsPath: resolveMod.resolveGrammarJsPath as CodegenModules['resolveGrammarJsPath'],
+		resolveOverridesPath: resolveMod.resolveOverridesPath as CodegenModules['resolveOverridesPath']
+	};
 }
 
 // ---------------------------------------------------------------------------
-// Arg parsing
+// Options interface
 // ---------------------------------------------------------------------------
 
-interface ParsedArgs {
-grammar: string;
-showGroups: boolean;
-showUnaliased: boolean;
-showPhantom: boolean;
-}
-
-function parseArgs(argv: string[]): ParsedArgs {
-let grammar = 'rust';
-let showGroups = false;
-let showUnaliased = false;
-let showPhantom = false;
-
-for (let i = 0; i < argv.length; i++) {
-const arg = argv[i];
-if (arg === '--grammar' && argv[i + 1]) {
-grammar = argv[++i]!;
-} else if (arg === '--groups') {
-showGroups = true;
-} else if (arg === '--unaliased') {
-showUnaliased = true;
-} else if (arg === '--phantom') {
-showPhantom = true;
-}
-}
-
-// Default mode when no flag is given.
-if (!showGroups && !showUnaliased && !showPhantom) showGroups = true;
-
-return { grammar, showGroups, showUnaliased, showPhantom };
+export interface ListKindsOptions {
+	grammar: string;
+	groups: boolean;
+	unaliased: boolean;
+	phantom: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -117,20 +91,20 @@ return { grammar, showGroups, showUnaliased, showPhantom };
 
 /** Resolve the grammar entry path (overrides.ts preferred over grammar.js). */
 function resolveEntryPath(
-grammar: string,
-mods: Pick<CodegenModules, 'resolveGrammarJsPath' | 'resolveOverridesPath'>,
+	grammar: string,
+	mods: Pick<CodegenModules, 'resolveGrammarJsPath' | 'resolveOverridesPath'>
 ): string {
-const overrides = mods.resolveOverridesPath(grammar);
-return existsSync(overrides) ? overrides : mods.resolveGrammarJsPath(grammar);
+	const overrides = mods.resolveOverridesPath(grammar);
+	return existsSync(overrides) ? overrides : mods.resolveGrammarJsPath(grammar);
 }
 
 /** Run evaluate -> link -> optimize -> assemble and return the NodeMap. */
 async function buildNodeMap(grammar: string, mods: CodegenModules): Promise<NodeMap> {
-const entryPath = resolveEntryPath(grammar, mods);
-const raw = await mods.evaluate(entryPath);
-const linked = mods.link(raw);
-const optimized = mods.optimize(linked);
-return mods.assemble(optimized);
+	const entryPath = resolveEntryPath(grammar, mods);
+	const raw = await mods.evaluate(entryPath);
+	const linked = mods.link(raw);
+	const optimized = mods.optimize(linked);
+	return mods.assemble(optimized);
 }
 
 // ---------------------------------------------------------------------------
@@ -138,12 +112,12 @@ return mods.assemble(optimized);
 // ---------------------------------------------------------------------------
 
 function listGroups(nm: NodeMap): void {
-const groups = [...nm.nodes.entries()]
-.filter(([, n]) => n.modelType === 'group')
-.map(([k]) => k)
-.sort();
-process.stdout.write(`${groups.length} group kinds\n`);
-for (const k of groups) process.stdout.write(`  ${k}\n`);
+	const groups = [...nm.nodes.entries()]
+		.filter(([, n]) => n.modelType === 'group')
+		.map(([k]) => k)
+		.sort();
+	process.stdout.write(`${groups.length} group kinds\n`);
+	for (const k of groups) process.stdout.write(`  ${k}\n`);
 }
 
 // ---------------------------------------------------------------------------
@@ -157,26 +131,20 @@ for (const k of groups) process.stdout.write(`  ${k}\n`);
  * case that `inlineGroupRefs` handles.
  */
 function listUnaliased(nm: NodeMap): void {
-const groups = [...nm.nodes.entries()].filter(
-([k, n]) =>
-n.modelType === 'group' &&
-k.startsWith('_') &&
-!k.includes('__form_') &&
-!/_form\d+$/.test(k),
-);
+	const groups = [...nm.nodes.entries()].filter(
+		([k, n]) => n.modelType === 'group' && k.startsWith('_') && !k.includes('__form_') && !/_form\d+$/.test(k)
+	);
 
-const unaliased: string[] = [];
-for (const [k] of groups) {
-const visibleTwinKey = k.slice(1); // strip leading underscore
-const twin = nm.nodes.get(visibleTwinKey);
-if (!twin || twin.modelType === 'group') unaliased.push(k);
-}
-unaliased.sort();
+	const unaliased: string[] = [];
+	for (const [k] of groups) {
+		const visibleTwinKey = k.slice(1); // strip leading underscore
+		const twin = nm.nodes.get(visibleTwinKey);
+		if (!twin || twin.modelType === 'group') unaliased.push(k);
+	}
+	unaliased.sort();
 
-process.stdout.write(
-`${unaliased.length} unaliased group kinds (surface via bare hidden symbol):\n`,
-);
-for (const k of unaliased) process.stdout.write(`  ${k}\n`);
+	process.stdout.write(`${unaliased.length} unaliased group kinds (surface via bare hidden symbol):\n`);
+	for (const k of unaliased) process.stdout.write(`  ${k}\n`);
 }
 
 // ---------------------------------------------------------------------------
@@ -185,72 +153,61 @@ for (const k of unaliased) process.stdout.write(`  ${k}\n`);
 
 /**
  * List phantom kinds for the requested grammar in-process by delegating to
- * the shared diagnose-phantom-kinds script. No subprocess is spawned -- the
- * script's `run()` export is imported dynamically and called directly.
+ * the shared phantom-kinds tool. No subprocess is spawned -- the tool's
+ * `run()` export is imported dynamically and called directly.
  */
 async function listPhantom(grammar: string): Promise<void> {
-// Relative path to the codegen script; resolved from this file's location.
-const PHANTOM_SCRIPT = '../../../codegen/src/scripts/diagnose-phantom-kinds.ts';
-type PhantomRunner = (argv: string[]) => Promise<number>;
-const mod: { run: PhantomRunner } = await import(PHANTOM_SCRIPT);
-// Pass the grammar as the sole positional arg so the script limits its
-// output to the requested grammar rather than all three.
-await mod.run([grammar]);
+	const { run: runPhantomKinds } = await import('./phantom.ts');
+	await runPhantomKinds({ grammars: [grammar] });
 }
 
 // ---------------------------------------------------------------------------
 // Entry point
 // ---------------------------------------------------------------------------
 
-export async function run(argv: string[]): Promise<number> {
-const { grammar, showGroups, showUnaliased, showPhantom } = parseArgs(argv);
+export async function run(opts: ListKindsOptions): Promise<number> {
+	const { grammar, unaliased: showUnaliased, phantom: showPhantom } = opts;
+	const showGroups = opts.groups || (!opts.groups && !opts.unaliased && !opts.phantom);
 
-let nm: NodeMap | null = null;
+	let nm: NodeMap | null = null;
 
-if (showGroups || showUnaliased) {
-process.stdout.write(`\n=== ${grammar} ===\n`);
-let mods: CodegenModules;
-try {
-mods = await loadCodegen();
-} catch (e) {
-process.stderr.write(`list-kinds: failed to load codegen -- ${(e as Error).message}\n`);
-return 1;
-}
-try {
-nm = await buildNodeMap(grammar, mods);
-} catch (e) {
-process.stderr.write(`${grammar}: ERROR building nodeMap -- ${(e as Error).message}\n`);
-return 1;
-}
+	if (showGroups || showUnaliased) {
+		process.stdout.write(`\n=== ${grammar} ===\n`);
+		let mods: CodegenModules;
+		try {
+			mods = await loadCodegen();
+		} catch (e) {
+			process.stderr.write(`list-kinds: failed to load codegen -- ${(e as Error).message}\n`);
+			return 1;
+		}
+		try {
+			nm = await buildNodeMap(grammar, mods);
+		} catch (e) {
+			process.stderr.write(`${grammar}: ERROR building nodeMap -- ${(e as Error).message}\n`);
+			return 1;
+		}
+	}
+
+	if (showGroups && nm) {
+		process.stdout.write('\n-- groups --\n');
+		listGroups(nm);
+	}
+
+	if (showUnaliased && nm) {
+		process.stdout.write('\n-- unaliased groups --\n');
+		listUnaliased(nm);
+	}
+
+	if (showPhantom) {
+		process.stdout.write(`\n-- phantom kinds (${grammar}) --\n`);
+		try {
+			await listPhantom(grammar);
+		} catch (e) {
+			process.stderr.write(`phantom: ERROR -- ${(e as Error).message}\n`);
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
-if (showGroups && nm) {
-process.stdout.write('\n-- groups --\n');
-listGroups(nm);
-}
-
-if (showUnaliased && nm) {
-process.stdout.write('\n-- unaliased groups --\n');
-listUnaliased(nm);
-}
-
-if (showPhantom) {
-process.stdout.write(`\n-- phantom kinds (${grammar}) --\n`);
-try {
-await listPhantom(grammar);
-} catch (e) {
-process.stderr.write(`phantom: ERROR -- ${(e as Error).message}\n`);
-return 1;
-}
-}
-
-return 0;
-}
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-run(process.argv.slice(2)).then(process.exit).catch((e) => {
-process.stderr.write(`list-kinds: ${(e as Error).stack ?? e}\n`);
-process.exit(1);
-});
-}

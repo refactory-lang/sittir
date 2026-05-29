@@ -68,7 +68,6 @@ export function link(
 	// Resolve include defaults: undefined means "include everything".
 	// Explicit empty arrays mean "include nothing of this category".
 	const includeRules = new Set(include?.rules ?? (['promoted'] as const));
-	const _includeFields = new Set(include?.fields ?? (['enriched', 'inferred', 'inlined'] as const));
 	const applyPromotedRules = includeRules.has('promoted');
 
 	// Derivation log — populated unconditionally; each entry records

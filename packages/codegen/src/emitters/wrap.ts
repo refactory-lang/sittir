@@ -21,10 +21,9 @@ import type {
 	AssembledNonterminal,
 	AssembledNode,
 	AssembledPolymorph,
-	AssembledSupertype,
-	UnresolvedRef
+	AssembledSupertype
 } from '../compiler/node-map.ts';
-import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
+import { aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/node-map.ts';
 import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
 import { deriveUnnamedChildrenCardinality } from '../compiler/node-map.ts';
 import {
@@ -443,6 +442,12 @@ function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
+function resolveSlotAliasRewrite(slot: AssembledNonterminal): readonly [string, string] | undefined {
+	const aliases = Object.entries(aliasTargetToSourceMapOf(slot));
+	if (aliases.length !== 1) return undefined;
+	return aliases[0];
+}
+
 /**
  * For a kind-origin slot whose `values[]` reference one or more concrete
  * grammar kinds (possibly through a supertype), collect the concrete
@@ -472,7 +477,7 @@ function collectConcreteStorageKeys(
 	slot: AssembledNonterminal,
 	nodeMap: NodeMap
 ): readonly string[] | undefined {
-	if (slot.origin !== 'kind') return undefined;
+	if (!slot.isUnnamed) return undefined;
 	// Route by the slot's parse-names — the kinds the parser can actually emit:
 	// ref-kinds PLUS alias targets (collect-slots now folds the targets into
 	// parseNames). Expand supertypes. No base→variant rewrite: parseNames
@@ -481,16 +486,7 @@ function collectConcreteStorageKeys(
 	// instantiation_expression) AND the alias target (real tree-sitter aliases
 	// like decorator, which the parser emits as the target). The old rewrite
 	// REPLACED base with target, mis-routing the validation-only case.
-	let refKinds: string[];
-	if (slot.parseNames && slot.parseNames.length > 0) {
-		refKinds = [...slot.parseNames];
-	} else {
-		refKinds = [];
-		for (const v of slot.values) {
-			if (!isNodeRef(v)) continue;
-			refKinds.push(isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind);
-		}
-	}
+	const refKinds = [...slot.parseNames];
 	if (refKinds.length === 0) return undefined;
 	const concrete = expandRuntimeDiscriminatorKinds(refKinds, nodeMap);
 	if (concrete.length === 0) return undefined;
@@ -649,12 +645,12 @@ function emitFieldCarryingWrap(
 	// `(data as any)` to access fields that may not exist on all union members.
 	for (const f of fields) {
 		const slot = createNamedSlotModel(f.name, isMultiple(f) ? 'many' : 'one');
-		const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : [];
+		const aliasRewrite = resolveSlotAliasRewrite(f);
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
 		const allowedKinds =
 			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...aliasEntries.flatMap(([from, to]) => [from, to])])]
+				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
 				: undefined;
 		// For kind-origin slots whose values reference one or more concrete
 		// kinds (possibly via a supertype), the native reader populates
@@ -665,7 +661,7 @@ function emitFieldCarryingWrap(
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
-			alias: aliasEntries[0],
+			alias: aliasRewrite,
 			storageInfo,
 			allowedKinds,
 			candidateStorageKeys
@@ -699,19 +695,19 @@ function emitFieldCarryingWrap(
 	for (const f of fields) {
 		const propName = f.propertyName;
 		const slot = createNamedSlotModel(f.name, isMultiple(f) ? 'many' : 'one');
-		const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : [];
+		const aliasRewrite = resolveSlotAliasRewrite(f);
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
 		const allowedKinds =
 			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...aliasEntries.flatMap(([from, to]) => [from, to])])]
+				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
 				: undefined;
 		const { accessorBody } = resolveSlotDrillExprs(slot, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
-			alias: aliasEntries[0],
+			alias: aliasRewrite,
 			storageInfo,
 			allowedKinds
 		});

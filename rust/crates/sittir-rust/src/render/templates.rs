@@ -1,5 +1,5 @@
 // @generated from packages/rust/node-model.json5 and packages/rust/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 //
 // Per-kind askama template structs + render functions for the rust
 // grammar. Every struct in this file is backed by a sibling `.jinja`

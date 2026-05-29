@@ -67,6 +67,11 @@ async function loadValidatorModules(): Promise<ValidatorModules> {
 
 const ALL_GRAMMARS: readonly Grammar[] = ['rust', 'typescript', 'python'];
 
+export interface ProfileOptions {
+	grammar?: string;
+	top: number;
+}
+
 interface Failure {
 	grammar: Grammar;
 	/** 'from' | 'rt-reparse' | 'rt-ast' | 'cov' | 'factory-reparse' | 'factory-ast' */
@@ -74,32 +79,6 @@ interface Failure {
 	kind: string;
 	message: string;
 	entry?: string;
-}
-
-// ---------------------------------------------------------------------------
-// Arg parsing
-// ---------------------------------------------------------------------------
-
-interface ParsedArgs {
-	grammars: readonly Grammar[];
-	top: number;
-}
-
-function parseArgs(argv: string[]): ParsedArgs {
-	let grammars: readonly Grammar[] = ALL_GRAMMARS;
-	let top = 15;
-	for (let i = 0; i < argv.length; i++) {
-		const arg = argv[i];
-		if (arg === '--grammar' && argv[i + 1]) {
-			const g = argv[++i] as Grammar;
-			if (ALL_GRAMMARS.includes(g)) grammars = [g];
-			else throw new Error(`Unknown grammar: ${g}. Must be one of: ${ALL_GRAMMARS.join(', ')}`);
-		} else if (arg === '--top' && argv[i + 1]) {
-			const n = parseInt(argv[++i] ?? '15', 10);
-			if (!isNaN(n) && n > 0) top = n;
-		}
-	}
-	return { grammars, top };
 }
 
 // ---------------------------------------------------------------------------
@@ -197,8 +176,9 @@ function report(all: Failure[], top: number): void {
 // Entry point
 // ---------------------------------------------------------------------------
 
-export async function run(argv: string[]): Promise<number> {
-	const { grammars, top } = parseArgs(argv);
+export async function run(opts: ProfileOptions): Promise<number> {
+	const grammars: readonly Grammar[] = opts.grammar ? [opts.grammar as Grammar] : ALL_GRAMMARS;
+	const top = opts.top;
 	const all: Failure[] = [];
 	for (const g of grammars) {
 		process.stdout.write(`\n>>> profiling ${g} ...\n`);
@@ -212,12 +192,4 @@ export async function run(argv: string[]): Promise<number> {
 	}
 	report(all, top);
 	return 0;
-}
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2)).then(process.exit).catch((e) => {
-		process.stderr.write(`profile-failures: ${(e as Error).stack ?? e}\n`);
-		process.exit(1);
-	});
 }

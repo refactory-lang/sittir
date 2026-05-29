@@ -238,7 +238,7 @@ export interface RefineForm {
 
 /**
  * Suggested override entry — emitted by the suggested.ts emitter from
- * fields whose `source` is `'enriched'` or `'inlined'`, and from rules
+ * fields whose `source` is `'enriched'`, and from rules
  * whose `source` is `'promoted'`. The classification work happens in
  * Link; this type is just the wire shape the emitter consumes.
  */
@@ -391,7 +391,7 @@ export interface LinkedGrammar {
  * be filtered out.
  */
 export type DerivedRuleSource = 'promoted';
-export type DerivedFieldSource = 'enriched' | 'inlined' | 'inferred';
+export type DerivedFieldSource = 'enriched' | 'inferred';
 
 export interface IncludeFilter {
 	/** Derived rule classifications to KEEP. Defaults to all. */

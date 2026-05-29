@@ -10,11 +10,6 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
 			"default": "./dist/index.js"
-		},
-		"./cli": {
-			"types": "./dist/cli.d.ts",
-			"import": "./dist/cli.js",
-			"default": "./dist/cli.js"
 		}
 	},
 	"scripts": {
@@ -25,6 +20,7 @@
 	},
 	"dependencies": {
 		"@sittir/codegen": "workspace:*",
+		"@sittir/common": "workspace:*",
 		"@sittir/core": "workspace:*",
 		"@sittir/types": "workspace:*",
 		"@sittir/validator": "workspace:*"

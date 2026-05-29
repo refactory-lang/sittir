@@ -2158,8 +2158,8 @@ export interface _ArrowFunctionUCallSignature {
 
 export interface _ArrowFunctionParameter {
   readonly $type: TSKindId._ArrowFunctionParameter;
-  readonly _parameter: ReservedIdentifier;
-  parameter(): ReservedIdentifier;
+  readonly _parameter: ReservedIdentifier | Identifier;
+  parameter(): ReservedIdentifier | Identifier;
 }
 
 export interface CallExpressionCall {
@@ -2459,9 +2459,9 @@ export interface _ImportSpecifierName {
 
 export interface IndexSignatureColon {
   readonly $type: TSKindId.IndexSignatureColon;
-  readonly _name: ReservedIdentifier;
+  readonly _name: Identifier | ReservedIdentifier;
   readonly _index_type: Type;
-  name(): ReservedIdentifier;
+  name(): Identifier | ReservedIdentifier;
   indexType(): Type;
 }
 
@@ -2792,8 +2792,8 @@ export interface ArrayType {
 
 export interface ArrowFunctionParameter {
   readonly $type: "arrow_function_parameter";
-  readonly _parameter: ReservedIdentifier;
-  parameter(): ReservedIdentifier;
+  readonly _parameter: ReservedIdentifier | Identifier;
+  parameter(): ReservedIdentifier | Identifier;
 }
 
 export interface ArrowFunctionUCallSignature {
@@ -2873,13 +2873,13 @@ export interface AssignmentPattern {
 
 export interface AugmentedAssignmentExpression {
   readonly $type: TSKindId.AugmentedAssignmentExpression;
-  readonly _left: MemberExpression | SubscriptExpression | ReservedIdentifier | ParenthesizedExpression | NonNullExpression;
+  readonly _left: MemberExpression | SubscriptExpression | ReservedIdentifier | Identifier | ParenthesizedExpression | NonNullExpression;
   readonly _operator: number;
   readonly _right: Expression;
   readonly __inputHints__?: {
     readonly operator: KindEnum<"+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=", TSKindId.PlusEq | TSKindId.DashEq | TSKindId.StarEq | TSKindId.SlashEq | TSKindId.PercentEq | TSKindId.CaretEq | TSKindId.AmpEq | TSKindId.PipeEq | TSKindId.GtGtEq | TSKindId.GtGtGtEq | TSKindId.LtLtEq | TSKindId.StarStarEq | TSKindId.AmpAmpEq | TSKindId.PipePipeEq | TSKindId.QmarkQmarkEq>;
   };
-  left(): MemberExpression | SubscriptExpression | ReservedIdentifier | ParenthesizedExpression | NonNullExpression;
+  left(): MemberExpression | SubscriptExpression | ReservedIdentifier | Identifier | ParenthesizedExpression | NonNullExpression;
   operator(): number;
   right(): Expression;
 }
@@ -4357,9 +4357,9 @@ export interface TypeParameters {
 
 export interface TypePredicate {
   readonly $type: TSKindId.TypePredicate;
-  readonly _name: PredefinedType | This;
+  readonly _name: Identifier | This | PredefinedType;
   readonly _type: Type;
-  name(): PredefinedType | This;
+  name(): Identifier | This | PredefinedType;
   type(): Type;
 }
 

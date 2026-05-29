@@ -60,6 +60,8 @@
  */
 
 import type { Rule } from '../compiler/rule.ts';
+import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
+import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
 import {
 	isSeqType,
 	isStringType,
@@ -82,7 +84,18 @@ export interface GrammarResult {
 	};
 }
 
-export function enrich(base: GrammarResult): GrammarResult {
+/**
+ * Type-level mirror of what `enrich()` does to the rules at runtime: each rule
+ * is replaced by its post-enrich shape (`EnrichRule`). Applied to a flat
+ * grammar-shape schema (`{ rules: {…} }`); other inputs (e.g. the internal
+ * `GrammarResult` wrapper) pass through unchanged.
+ */
+export type EnrichedGrammar<B> = B extends GrammarJson
+	? { readonly [K in keyof B]: K extends 'rules' ? { readonly [R in keyof B['rules']]: EnrichRule<B['rules'][R]> } : B[K] }
+	: B;
+
+export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
+	const base = baseInput as unknown as GrammarResult;
 	if (!base || typeof base !== 'object') {
 		throw new Error('enrich(): expected a grammar object, got ' + typeof base);
 	}
@@ -111,12 +124,12 @@ export function enrich(base: GrammarResult): GrammarResult {
 	// (they start with `_kw_`, a reserved prefix).
 	const mergedRules = { ...enrichedRules, ...kwRules };
 	if (hasWrapper) {
-		return { ...base, grammar: { ...base.grammar, rules: mergedRules } };
+		return { ...base, grammar: { ...base.grammar, rules: mergedRules } } as unknown as EnrichedGrammar<B>;
 	}
 	return {
 		...(base as unknown as object),
 		rules: mergedRules
-	} as unknown as GrammarResult;
+	} as unknown as EnrichedGrammar<B>;
 }
 
 function applyEnrichPasses(

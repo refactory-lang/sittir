@@ -358,6 +358,6 @@ export function assertGeneratedManifestsClean(grammars?: readonly Grammar[]): vo
 	}
 	lines.push('');
 	lines.push('To restore canonical state, regenerate the affected grammar(s):');
-	lines.push('  npx tsx packages/codegen/src/cli.ts --grammar <name> --all --output packages/<name>/src');
+	lines.push('  pnpm exec tsx packages/cli/src/cli.ts gen --grammar <name> --all --output packages/<name>/src');
 	throw new Error(lines.join('\n'));
 }

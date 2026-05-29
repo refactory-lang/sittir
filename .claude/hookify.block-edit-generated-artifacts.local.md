@@ -14,6 +14,6 @@ action: block
 Hand-editing it will be overwritten on the next regen and diverges from the source of truth. Instead:
 
 1. Fix the codegen — `packages/codegen/src/**` — or the grammar overrides — `packages/<lang>/overrides.ts` (note: `overrides.ts` is editable; `overrides.suggested.ts` is generated).
-2. Regenerate: `npx tsx packages/codegen/src/cli.ts --grammar <rust|python|typescript> --all --output packages/<lang>/src`
+2. Regenerate: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <rust|python|typescript> --all --output packages/<lang>/src`
 
 (Editable by design: `packages/codegen/src/**`, `packages/<lang>/overrides.ts`. Blocked: `packages/{rust,python,typescript}/{src,templates/*.jinja,.sittir}`, `factory-map.json5`, `overrides.suggested.ts`, `rust/crates/sittir-*/src/**` — including inside `.claude/worktrees/`.)

@@ -114,68 +114,15 @@ async function loadCodegenModules(): Promise<{
 }
 
 // ---------------------------------------------------------------------------
-// Arg parsing
+// Options
 // ---------------------------------------------------------------------------
 
-interface ParsedArgs {
-	mode: 'refs' | 'suggestions';
+export interface InspectRefsOptions {
+	mode: string;
 	grammar: string;
 	symbol: string;
 	useBase: boolean;
 	limit: number;
-	showHelp: boolean;
-}
-
-function parseArgs(argv: string[]): ParsedArgs {
-	let mode: 'refs' | 'suggestions' = 'refs';
-	let grammar = 'rust';
-	let symbol = '_type_identifier';
-	let useBase = false;
-	let limit = 10;
-	let showHelp = false;
-
-	for (let i = 0; i < argv.length; i++) {
-		const arg = argv[i];
-		if (arg === '--mode') {
-			if (argv[i + 1] === undefined) throw new Error('--mode requires a value');
-			const v = argv[++i];
-			if (v !== 'refs' && v !== 'suggestions') {
-				throw new Error(`--mode must be refs or suggestions, got: ${v ?? '(missing)'}`);
-			}
-			mode = v;
-		} else if (arg === '--grammar') {
-			grammar = argv[++i] ?? grammar;
-		} else if (arg === '--symbol') {
-			symbol = argv[++i] ?? symbol;
-		} else if (arg === '--base') {
-			useBase = true;
-		} else if (arg === '--limit') {
-			if (argv[i + 1] === undefined) throw new Error('--limit requires a value');
-			const raw = argv[++i];
-			const n = parseInt(raw ?? '', 10);
-			if (isNaN(n) || n < 1) throw new Error(`--limit must be a positive integer, got: ${raw}`);
-			limit = n;
-		} else if (arg === '--help') {
-			showHelp = true;
-		}
-	}
-
-	return { mode, grammar, symbol, useBase, limit, showHelp };
-}
-
-function printUsage(): void {
-	process.stdout.write(
-		[
-			'Usage: inspect-refs [--mode refs|suggestions] [--grammar <name>]',
-			'                    [--symbol <name>] [--base] [--limit <n>]',
-			'',
-			'  --mode         refs | suggestions  (default: refs)',
-			'  --grammar      grammar name        (default: rust)',
-			'  --symbol       symbol name         (refs mode only, default: _type_identifier)',
-			'  --base         use base grammar.js instead of overrides',
-			'  --limit        max entries per section in suggestions (default: 10)',
-		].join('\n') + '\n',
-	);
 }
 
 // ---------------------------------------------------------------------------
@@ -195,7 +142,7 @@ function resolveEntryPath(
 // Mode: refs
 // ---------------------------------------------------------------------------
 
-async function runRefs(args: ParsedArgs): Promise<number> {
+async function runRefs(args: InspectRefsOptions): Promise<number> {
 	const { evaluate, resolveGrammarJsPath, resolveOverridesPath } = await loadCodegenModules();
 	const entryPath = resolveEntryPath(
 		resolveOverridesPath(args.grammar),
@@ -239,7 +186,7 @@ async function runRefs(args: ParsedArgs): Promise<number> {
 // Mode: suggestions
 // ---------------------------------------------------------------------------
 
-async function runSuggestions(args: ParsedArgs): Promise<number> {
+async function runSuggestions(args: InspectRefsOptions): Promise<number> {
 	const { evaluate, link, resolveGrammarJsPath, resolveOverridesPath } =
 		await loadCodegenModules();
 	const entryPath = resolveEntryPath(
@@ -317,26 +264,7 @@ async function runSuggestions(args: ParsedArgs): Promise<number> {
 // Public run entry point
 // ---------------------------------------------------------------------------
 
-export async function run(argv: string[]): Promise<number> {
-	const args = parseArgs(argv);
-	if (args.showHelp) {
-		printUsage();
-		return 0;
-	}
-	if (args.mode === 'suggestions') return runSuggestions(args);
-	return runRefs(args);
-}
-
-// ---------------------------------------------------------------------------
-// _isMain guard
-// ---------------------------------------------------------------------------
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2))
-		.then(process.exit)
-		.catch((e: unknown) => {
-			process.stderr.write(`inspect-refs: ${(e as Error).stack ?? e}\n`);
-			process.exit(1);
-		});
+export async function run(opts: InspectRefsOptions): Promise<number> {
+	if (opts.mode === 'suggestions') return runSuggestions(opts);
+	return runRefs(opts);
 }

@@ -1728,7 +1728,7 @@ export function scopedIdentifierFrom(input: T.ScopedIdentifier.Loose): ReturnTyp
 export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifier.Loose): ReturnType<typeof F.scopedTypeIdentifier> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.scopedTypeIdentifier>;
   return F.scopedTypeIdentifier({
-    path: _resolveOne<T.Path | T.GenericTypeWithTurbofish | T.BracketedType>(input.path, _K6, _K35),
+    path: _resolveOne<T.Path | T.GenericTypeWithTurbofish | T.BracketedType | T.GenericType>(input.path, _K6, _K35),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
   });
 }

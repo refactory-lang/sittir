@@ -90,41 +90,14 @@ python: ['_match_block', 'match_statement'],
 };
 
 // ---------------------------------------------------------------------------
-// Arg parsing
+// Options
 // ---------------------------------------------------------------------------
 
-interface ParsedArgs {
-grammar: string;
-kinds: string[] | null; // null -> use defaults or --all
-modelTypeFilter: string | null;
-showAll: boolean;
-}
-
-function parseArgs(argv: string[]): ParsedArgs {
-let grammar = 'rust';
-const kinds: string[] = [];
-let modelTypeFilter: string | null = null;
-let showAll = false;
-
-for (let i = 0; i < argv.length; i++) {
-const arg = argv[i];
-if (arg === '--grammar' && argv[i + 1]) {
-grammar = argv[++i]!;
-} else if (arg === '--kind' && argv[i + 1]) {
-kinds.push(argv[++i]!);
-} else if (arg === '--modeltype' && argv[i + 1]) {
-modelTypeFilter = argv[++i]!;
-} else if (arg === '--all') {
-showAll = true;
-}
-}
-
-return {
-grammar,
-kinds: kinds.length > 0 ? kinds : null,
-modelTypeFilter,
-showAll,
-};
+export interface ClassifyOptions {
+	grammar: string;
+	kinds: string[] | null;
+	modelTypeFilter: string | null;
+	showAll: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -180,58 +153,49 @@ process.stdout.write(`    rule:\n${indented}\n`);
 // Entry point
 // ---------------------------------------------------------------------------
 
-export async function run(argv: string[]): Promise<number> {
-const { grammar, kinds, modelTypeFilter, showAll } = parseArgs(argv);
+export async function run(opts: ClassifyOptions): Promise<number> {
+	const { grammar, kinds, modelTypeFilter, showAll } = opts;
 
-let mods: CodegenModules;
-try {
-mods = await loadCodegen();
-} catch (e) {
-process.stderr.write(`classify: failed to load codegen -- ${(e as Error).message}\n`);
-return 1;
-}
+	let mods: CodegenModules;
+	try {
+		mods = await loadCodegen();
+	} catch (e) {
+		process.stderr.write(`classify: failed to load codegen -- ${(e as Error).message}\n`);
+		return 1;
+	}
 
-let nm: NodeMap;
-try {
-nm = await buildNodeMap(grammar, mods);
-} catch (e) {
-process.stderr.write(`${grammar}: ERROR building nodeMap -- ${(e as Error).message}\n`);
-return 1;
-}
+	let nm: NodeMap;
+	try {
+		nm = await buildNodeMap(grammar, mods);
+	} catch (e) {
+		process.stderr.write(`${grammar}: ERROR building nodeMap -- ${(e as Error).message}\n`);
+		return 1;
+	}
 
-process.stdout.write(`\n=== ${grammar} ===\n`);
+	process.stdout.write(`\n=== ${grammar} ===\n`);
 
-// Determine which kinds to show.
-let targets: string[];
-if (showAll || modelTypeFilter) {
-targets = [...nm.nodes.keys()].sort();
-} else if (kinds !== null) {
-targets = kinds;
-} else {
-targets = DEFAULT_TARGETS[grammar] ?? [];
-if (targets.length === 0) {
-process.stdout.write('(no default targets for this grammar; use --kind or --all)\n');
-return 0;
-}
-}
+	let targets: string[];
+	if (showAll || modelTypeFilter) {
+		targets = [...nm.nodes.keys()].sort();
+	} else if (kinds !== null) {
+		targets = kinds;
+	} else {
+		targets = DEFAULT_TARGETS[grammar] ?? [];
+		if (targets.length === 0) {
+			process.stdout.write('(no default targets for this grammar; use --kind or --all)\n');
+			return 0;
+		}
+	}
 
-for (const kind of targets) {
-const node = nm.nodes.get(kind);
-if (!node) {
-process.stdout.write(`  ${kind}: (not in nodeMap)\n`);
-continue;
-}
-if (modelTypeFilter && node.modelType !== modelTypeFilter) continue;
-printNode(kind, node);
-}
+	for (const kind of targets) {
+		const node = nm.nodes.get(kind);
+		if (!node) {
+			process.stdout.write(`  ${kind}: (not in nodeMap)\n`);
+			continue;
+		}
+		if (modelTypeFilter && node.modelType !== modelTypeFilter) continue;
+		printNode(kind, node);
+	}
 
-return 0;
-}
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-run(process.argv.slice(2)).then(process.exit).catch((e) => {
-process.stderr.write(`classify: ${(e as Error).stack ?? e}\n`);
-process.exit(1);
-});
+	return 0;
 }

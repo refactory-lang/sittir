@@ -1,5 +1,4 @@
 import { readFileSync } from 'node:fs';
-import { parseArgs } from 'node:util';
 import { createRenderer } from '@sittir/core';
 import type { AnyNodeData } from '@sittir/types';
 
@@ -106,10 +105,9 @@ interface FactoryArtifacts {
 	readonly polymorphVariants: Record<string, unknown>;
 }
 
-interface ParsedArgs {
-	readonly grammar: GrammarName;
-	readonly kinds: readonly string[];
-	readonly showHelp: boolean;
+export interface ExerciseOptions {
+	grammar: string;
+	kinds: string[];
 }
 
 const COMMON_MODULE_PATH = '../../../codegen/src/validate/common.ts';
@@ -185,43 +183,6 @@ export async function loadFactoryArtifacts(grammar: GrammarName): Promise<Factor
 		factorySlots: data.factorySlots ?? {},
 		polymorphVariants: data.polymorphVariants ?? {}
 	};
-}
-
-function isGrammarName(value: string): value is GrammarName {
-	return value === 'rust' || value === 'typescript' || value === 'python';
-}
-
-function parseCliArgs(argv: string[]): ParsedArgs {
-	const { values } = parseArgs({
-		args: argv,
-		options: {
-			grammar: { type: 'string', short: 'g', default: 'rust' },
-			kinds: { type: 'string', short: 'k' },
-			help: { type: 'boolean', short: 'h', default: false }
-		}
-	});
-	const grammarValue = values.grammar;
-	const grammar = typeof grammarValue === 'string' && isGrammarName(grammarValue) ? grammarValue : 'rust';
-	const kindsValue = values.kinds;
-	const kinds =
-		typeof kindsValue === 'string'
-			? kindsValue
-					.split(',')
-					.map((kind) => kind.trim())
-					.filter((kind): kind is string => kind.length > 0)
-			: [];
-	return { grammar, kinds, showHelp: values.help === true };
-}
-
-function printUsage(): void {
-	process.stdout.write(
-		[
-			'Usage: exercise [--grammar <rust|typescript|python>] [--kinds <kind,...>]',
-			'',
-			'  --grammar, -g  grammar name (default: rust)',
-			'  --kinds,   -k  optional comma-separated kind list'
-		].join('\n') + '\n'
-	);
 }
 
 function normalize(text: string): string {
@@ -365,16 +326,13 @@ async function resolveCases(
 	return selected;
 }
 
-export async function run(argv: string[]): Promise<number> {
-	const args = parseCliArgs(argv);
-	if (args.showHelp) {
-		printUsage();
-		return 0;
-	}
+export async function run(opts: ExerciseOptions): Promise<number> {
+	const { grammar: grammarStr, kinds } = opts;
+	const grammar = grammarStr as GrammarName;
 
 	const common = await loadCommon();
-	const artifacts = await loadFactoryArtifacts(args.grammar);
-	const rawKindIdFromName = await common.loadKindIdFromName(args.grammar);
+	const artifacts = await loadFactoryArtifacts(grammar);
+	const rawKindIdFromName = await common.loadKindIdFromName(grammar);
 	const kindIdFromName =
 		rawKindIdFromName === undefined
 			? undefined
@@ -385,17 +343,17 @@ export async function run(argv: string[]): Promise<number> {
 						return undefined;
 					}
 				};
-	const kindNameFromId = await common.loadKindNameFromId(args.grammar);
-	const kindNames = await common.loadKindNames(args.grammar);
-	const { render } = createRenderer(new URL(TEMPLATE_DIR_PATHS[args.grammar], import.meta.url).pathname, {
+	const kindNameFromId = await common.loadKindNameFromId(grammar);
+	const kindNames = await common.loadKindNames(grammar);
+	const { render } = createRenderer(new URL(TEMPLATE_DIR_PATHS[grammar], import.meta.url).pathname, {
 		kindNames
 	});
-	const { Parser, lang } = await common.loadLanguageForGrammar(args.grammar);
+	const { Parser, lang } = await common.loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
-	const cases = await resolveCases(args.grammar, args.kinds, common, parser);
+	const cases = await resolveCases(grammar, kinds, common, parser);
 	if (cases.length === 0) {
-		process.stderr.write(`exercise: no cases available for grammar '${args.grammar}'\n`);
+		process.stderr.write(`exercise: no cases available for grammar '${grammar}'\n`);
 		return 1;
 	}
 
@@ -422,7 +380,7 @@ export async function run(argv: string[]): Promise<number> {
 			);
 			continue;
 		}
-		const handle = common.buildReadHandle(args.grammar, tree, exercise.source, undefined, kindIdFromName);
+		const handle = common.buildReadHandle(grammar, tree, exercise.source, undefined, kindIdFromName);
 		const nativeCoords = common.findNativeNodeId(handle, exercise.find, kindNameFromId);
 		const readData = common.readNodeAt(handle, common.adaptNode(node), nativeCoords);
 		let rendered: string;
@@ -453,14 +411,4 @@ export async function run(argv: string[]): Promise<number> {
 
 	process.stdout.write(`\n${pass} pass, ${fail} fail, ${skip} skip\n`);
 	return fail === 0 ? 0 : 1;
-}
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2))
-		.then(process.exit)
-		.catch((error: unknown) => {
-			process.stderr.write(`exercise: ${(error as Error).stack ?? error}\n`);
-			process.exit(1);
-		});
 }

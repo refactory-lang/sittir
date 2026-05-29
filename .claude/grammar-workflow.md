@@ -5,14 +5,14 @@ Use this file for grammar generation, parser/debugging work, template fixes, or 
 ## Generation commands
 
 ```bash
-npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
-npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
-npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 ```
 
 ## Debugging and triage
 
-- Use `packages/codegen/src/scripts/probe-kind.ts` before writing one-off probe scripts.
+- Use `pnpm exec tsx packages/cli/src/cli.ts tool probe-kind` before writing one-off probe scripts.
 - Prefer explicit `packages/<lang>/overrides.ts` structure over heuristics that infer grammar intent from parse output.
 - For template/from/round-trip failures, check in this order:
   1. existing override correctness

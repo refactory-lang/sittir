@@ -1,6 +1,6 @@
 ---
 name: sittir-research
-description: Root-cause diagnosis for sittir tree-sitter codegen / render / read-render-parse failures. Use to find WHERE a render or AST-match break originates (wrap vs transport vs render) and WHICH codegen source is responsible — before any fix. Read-only: it diagnoses and reports a precise fix location; it does NOT edit code. Knows the diagnostic tools (probe-kind, dump-ast-mismatches, diff-failures), the deprecated-vs-active render path, and the wrap→transport→render layering. Pair with sittir-codegen (which implements the fix it pinpoints).
+description: "Root-cause diagnosis for sittir tree-sitter codegen / render / read-render-parse failures. Use to find WHERE a render or AST-match break originates (wrap vs transport vs render) and WHICH codegen source is responsible — before any fix. Read-only: it diagnoses and reports a precise fix location; it does NOT edit code. Knows the diagnostic tools (probe-kind, dump-ast-mismatches, diff-failures), the deprecated-vs-active render path, and the wrap→transport→render layering. Pair with sittir-codegen (which implements the fix it pinpoints)."
 tools: Bash, Read, Glob, Grep, LSP
 ---
 
@@ -10,7 +10,7 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
 
 - **`probe-kind`** — one native `parse → read → render` cycle for ONE kind. **THE RECIPE** (the default is now native + a focused native-pipeline view):
   ```sh
-  pnpm exec tsx packages/codegen/src/scripts/probe-kind.ts \
+  pnpm exec tsx packages/cli/src/cli.ts tool probe-kind \
       --grammar <rust|python|typescript> --source '<minimal code exercising the kind>' \
       --kind <k> --pretty > /tmp/pk.json 2>/dev/null
   ```
@@ -23,12 +23,12 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
   - `.rendered` / `.renderError` — native render. NOTE: `rendered` is whole-source best-effort, so it can carry an **outer-construct** error (`Missing field _expressions on ProgramTransport._statements`) even when the kind's own stages are fine — **read the stages, not just `rendered`**.
   - Extract with `python3 - /tmp/pk.json <<'EOF' … json.load(...)['wrapped'] … EOF`, or `rg '"rendered"|renderError'` for a quick verdict.
   - `--full` emits the complete multi-lane trace (typescript + native, shallow + deep) for the rare cross-engine compare. `--no-render` inspects the wrap alone.
-- **`dump-ast-mismatches`** — `pnpm exec tsx packages/tools/src/cli.ts dump-ast-mismatches --grammar <g> [--verbose]` — every read-render-parse AST mismatch with the rendered-vs-original child diff (`childCount 7 ≠ 3 [...] vs [...]`). This is how you see exactly which children a kind drops.
-- **`diff-failures`** — `pnpm exec tsx packages/tools/src/cli.ts diff-failures --grammar <g>` — per-kind validator failures; compare current failures vs a baseline (isolate regressions).
-- **`probe-stages`** — `pnpm exec tsx packages/tools/src/cli.ts probe-stages --grammar <g> --kind <k>` — dumps the rule's shape at EVERY compiler phase (`evaluate → link → optimize → simplify`). The single best tool for "where does this rule's shape change/diverge" — e.g. it revealed rust `parameters` desugaring to `_parameters_repeat1` (sittir/evaluate) vs `_parameters_optional1` (tree-sitter), the root of a body-pattern-group visibility bug. JSON to stdout (assemble warnings on stderr — capture `2>/dev/null`).
+- **`dump-ast-mismatches`** — `pnpm exec tsx packages/cli/src/cli.ts tool dump-ast-mismatches --grammar <g> [--verbose]` — every read-render-parse AST mismatch with the rendered-vs-original child diff (`childCount 7 ≠ 3 [...] vs [...]`). This is how you see exactly which children a kind drops.
+- **`diff-failures`** — `pnpm exec tsx packages/cli/src/cli.ts tool diff-failures --grammar <g>` — per-kind validator failures; compare current failures vs a baseline (isolate regressions).
+- **`probe-stages`** — `pnpm exec tsx packages/cli/src/cli.ts tool probe-stages --grammar <g> --kind <k>` — dumps the rule's shape at EVERY compiler phase (`evaluate → link → optimize → simplify`). The single best tool for "where does this rule's shape change/diverge" — e.g. it revealed rust `parameters` desugaring to `_parameters_repeat1` (sittir/evaluate) vs `_parameters_optional1` (tree-sitter), the root of a body-pattern-group visibility bug. JSON to stdout (assemble warnings on stderr — capture `2>/dev/null`).
 - **`probe-parity`** — `… probe-parity --grammar <g> --kind <k>` — template coverage for a target kind.
 - **`inspect-refs` / `compare-overrides`** — symbol-reference dump / override-key diffs.
-- **counts** — `SITTIR_AUDIT_DERIVE=1 pnpm exec tsx packages/validator/src/cli.ts counts --backend native <g>` (covPass / read-render-parsePass / read-render-parseAstMatchPass; prints first failing entries with names).
+- **counts** — `pnpm exec tsx packages/cli/src/cli.ts validate counts --backend native <g>` (covPass / read-render-parsePass / read-render-parseAstMatchPass; prints first failing entries with names).
 - **Native is ground truth.** ALWAYS measure/render with `--backend native` (rust napi). The JS render path is `@deprecated` (it throws "No render template for '0'" and silently diverges) — never trust JS-render or `probe-kind`'s deprecated engine lane for a verdict. Use `probe-kind --trace` (native.deep lane) / `--engine native` / `--no-render`, and `counts --backend native`.
 - Read baseline artifacts with `git show <ref>:<path>` (don't checkout — keep the tree clean).
 - **Search code structurally, not textually** (a hook nudges plain `rg`/`grep`). Locating *which codegen source is responsible* is your core job — do it with the right tool:

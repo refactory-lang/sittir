@@ -33,14 +33,23 @@
  * ```
  */
 
-import { parseArgs } from 'node:util';
 import { resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 
 type Grammar = 'rust' | 'python' | 'typescript';
 const GRAMMARS: readonly Grammar[] = ['rust', 'python', 'typescript'];
 
 type Mode = 'deep' | 'shallow' | 'diff';
+
+export interface DumpAstMismatchesOptions {
+	grammar: string;
+	allGrammars: boolean;
+	mode: string;
+	filter?: string;
+	cluster: boolean;
+	format: string;
+	verbose: boolean;
+}
 
 interface RunOptions {
 	grammar: Grammar;
@@ -198,95 +207,30 @@ async function runGrammar(opts: RunOptions): Promise<void> {
 	}
 }
 
-function printHelp(): void {
-	console.log([
-		'dump-ast-mismatches — diagnostic for read-render-parse AST gaps.',
-		'',
-		'Usage: sittir dump-ast-mismatches [flags]',
-		'',
-		'Flags:',
-		'  -g, --grammar <name>     rust | python | typescript (default: rust)',
-		'      --all-grammars       run all three grammars',
-		'  -m, --mode <m>           deep | shallow | diff (default: deep)',
-		'  -f, --filter <substr>    restrict to entries whose name contains substr',
-		'                           (implies verbose for matching entries)',
-		'  -c, --cluster            group mismatches by message pattern, print histogram',
-		'      --format <fmt>       list | json (default: list)',
-		'  -v, --verbose            print INPUT/RENDERED bodies for every mismatch',
-		'',
-		'Examples:',
-		'  sittir dump-ast-mismatches --grammar rust --mode diff --cluster',
-		'  sittir dump-ast-mismatches --grammar rust --filter "Functions with mutable parameters"',
-		'  sittir dump-ast-mismatches --all-grammars --cluster'
-	].join('\n'));
-}
-
-export async function run(argv: string[]): Promise<number> {
-	const { values } = parseArgs({
-		args: argv,
-		options: {
-			grammar: { type: 'string', short: 'g' },
-			'all-grammars': { type: 'boolean', default: false },
-			mode: { type: 'string', short: 'm', default: 'deep' },
-			filter: { type: 'string', short: 'f' },
-			cluster: { type: 'boolean', short: 'c', default: false },
-			format: { type: 'string', default: 'list' },
-			verbose: { type: 'boolean', short: 'v', default: false },
-			help: { type: 'boolean', short: 'h', default: false }
-		},
-		strict: true,
-		allowPositionals: false
-	});
-
-	if (values.help) {
-		printHelp();
-		return 0;
-	}
-
-	const mode = values.mode as Mode;
+export async function run(opts: DumpAstMismatchesOptions): Promise<number> {
+	const mode = opts.mode as Mode;
 	if (mode !== 'deep' && mode !== 'shallow' && mode !== 'diff') {
 		process.stderr.write(`invalid --mode '${mode}', expected one of: deep, shallow, diff\n`);
 		return 2;
 	}
-	const format = values.format as 'list' | 'json';
+	const format = opts.format as 'list' | 'json';
 	if (format !== 'list' && format !== 'json') {
 		process.stderr.write(`invalid --format '${format}', expected one of: list, json\n`);
 		return 2;
 	}
-
-	const grammars: readonly Grammar[] = values['all-grammars']
+	const grammars: readonly Grammar[] = opts.allGrammars
 		? GRAMMARS
-		: [((values.grammar as Grammar | undefined) ?? 'rust')];
-	for (const g of grammars) {
-		if (!GRAMMARS.includes(g)) {
-			process.stderr.write(`invalid --grammar '${g}', expected one of: ${GRAMMARS.join(', ')}\n`);
-			return 2;
-		}
-	}
-
+		: [opts.grammar as Grammar];
 	for (const grammar of grammars) {
 		if (grammars.length > 1) console.log(`\n# === ${grammar} ===`);
 		await runGrammar({
 			grammar,
 			mode,
-			filter: values.filter as string | undefined,
-			cluster: values.cluster as boolean,
+			filter: opts.filter,
+			cluster: opts.cluster,
 			format,
-			verbose: values.verbose as boolean
+			verbose: opts.verbose
 		});
 	}
 	return 0;
-}
-
-const isCli = (() => {
-	if (process.argv[1] == null) return false;
-	try {
-		return pathToFileURL(process.argv[1]).href === import.meta.url;
-	} catch {
-		return false;
-	}
-})();
-
-if (isCli) {
-	process.exit(await run(process.argv.slice(2)));
 }

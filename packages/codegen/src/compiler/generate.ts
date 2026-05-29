@@ -26,11 +26,13 @@ import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
+import { drainSlotGroupingDiagnostics } from './simplify.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { RoundTripDiagnostic } from '../emitters/suggested.ts';
 import type { GeneratedIdTables } from './generated-metadata.ts'; // exposed via GeneratedFiles
+import type { SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
 
 export interface GeneratedFiles {
 	grammar: string;
@@ -71,6 +73,12 @@ export interface GeneratedFiles {
 	generatedIdTables?: GeneratedIdTables;
 	/** Grammar-owned Rust render-module outputs, when requested by the caller. */
 	renderModule?: RenderModuleBundle;
+	/**
+	 * Slot-grouping diagnostics accumulated during the optimize phase.
+	 * Surfaced by runCodegen() via stderr so propose-promotion suggestions
+	 * print during `sittir gen --all` without requiring a separate preflight run.
+	 */
+	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 }
 
 export interface GenerateConfig {
@@ -295,7 +303,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
 		nodeMap,
 		generatedIdTables,
-		renderModule: emitted.renderModule
+		renderModule: emitted.renderModule,
+		// drain slot-grouping diagnostics accumulated during the optimize phase
+		slotGroupingDiagnostics: drainSlotGroupingDiagnostics()
 	};
 }
 

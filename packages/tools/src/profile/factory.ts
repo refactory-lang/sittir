@@ -68,33 +68,10 @@ async function loadValidatorModules(): Promise<ValidatorModules> {
 
 const ALL_GRAMMARS: readonly Grammar[] = ['rust', 'typescript', 'python'];
 
-// ---------------------------------------------------------------------------
-// Arg parsing
-// ---------------------------------------------------------------------------
-
-interface ParsedArgs {
-	grammars: readonly Grammar[];
+export interface ProfileFactoryOptions {
+	grammar?: string;
 	recursive: boolean;
 	showAst: boolean;
-}
-
-function parseArgs(argv: string[]): ParsedArgs {
-	let grammars: readonly Grammar[] = ALL_GRAMMARS;
-	let recursive = false;
-	let showAst = false;
-	for (let i = 0; i < argv.length; i++) {
-		const arg = argv[i];
-		if (arg === '--grammar' && argv[i + 1]) {
-			const g = argv[++i] as Grammar;
-			if (ALL_GRAMMARS.includes(g)) grammars = [g];
-			else throw new Error(`Unknown grammar: ${g}. Must be one of: ${ALL_GRAMMARS.join(', ')}`);
-		} else if (arg === '--recursive') {
-			recursive = true;
-		} else if (arg === '--ast') {
-			showAst = true;
-		}
-	}
-	return { grammars, recursive, showAst };
 }
 
 // ---------------------------------------------------------------------------
@@ -189,8 +166,9 @@ function reportGrammar(result: FactoryRenderParseResult, showAst: boolean): void
 // Entry point
 // ---------------------------------------------------------------------------
 
-export async function run(argv: string[]): Promise<number> {
-	const { grammars, recursive, showAst } = parseArgs(argv);
+export async function run(opts: ProfileFactoryOptions): Promise<number> {
+	const grammars: readonly Grammar[] = opts.grammar ? [opts.grammar as Grammar] : ALL_GRAMMARS;
+	const { recursive, showAst } = opts;
 	if (recursive) process.stdout.write('(recursive mode: SITTIR_VALIDATE_RECURSIVE=1 for each run)\n');
 
 	for (const g of grammars) {
@@ -202,12 +180,4 @@ export async function run(argv: string[]): Promise<number> {
 		}
 	}
 	return 0;
-}
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2)).then(process.exit).catch((e) => {
-		process.stderr.write(`profile-factory: ${(e as Error).stack ?? e}\n`);
-		process.exit(1);
-	});
 }

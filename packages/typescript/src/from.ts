@@ -659,7 +659,7 @@ export function arrayTypeFrom(input: T.ArrayType.Loose): ReturnType<typeof F.arr
 
 export function arrowFunctionParameterFrom(input: T.ArrowFunctionParameter.Loose): ReturnType<typeof F.arrowFunctionParameter> {
   if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("arrow_function_parameter")) return input as unknown as ReturnType<typeof F.arrowFunctionParameter>;
-  return F.arrowFunctionParameter(_resolveOne<T.ReservedIdentifier>((input !== null && typeof input === 'object' && !isNodeData(input) && "parameter" in input ? input.parameter : input), _super_property_identifier, _K2));
+  return F.arrowFunctionParameter(_resolveOne<T.ReservedIdentifier | T.Identifier>((input !== null && typeof input === 'object' && !isNodeData(input) && "parameter" in input ? input.parameter : input), _super_property_identifier, _K2));
 }
 
 export function arrowFunctionUCallSignatureFrom(input: T.ArrowFunctionUCallSignature.Loose): ReturnType<typeof F.arrowFunctionUCallSignature> {
@@ -735,7 +735,7 @@ export function assignmentPatternFrom(input: T.AssignmentPattern.Loose): ReturnT
 export function augmentedAssignmentExpressionFrom(input: T.AugmentedAssignmentExpression.Loose): ReturnType<typeof F.augmentedAssignmentExpression> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.augmentedAssignmentExpression>;
   return F.augmentedAssignmentExpression({
-    left: _resolveOne<T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression>(input.left, _super_property_identifier, _K15),
+    left: _resolveOne<T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression>(input.left, _super_property_identifier, _K15),
     operator: coerceKindEnumStorage(_resolveOneLeaf<T.AugmentedAssignmentExpressionOperator>(input.operator, "_augmented_assignment_expression_operator"), [["+=", kindIdFromName("+=")] as const, ["-=", kindIdFromName("-=")] as const, ["*=", kindIdFromName("*=")] as const, ["/=", kindIdFromName("/=")] as const, ["%=", kindIdFromName("%=")] as const, ["^=", kindIdFromName("^=")] as const, ["&=", kindIdFromName("&=")] as const, ["|=", kindIdFromName("|=")] as const, [">>=", kindIdFromName(">>=")] as const, [">>>=", kindIdFromName(">>>=")] as const, ["<<=", kindIdFromName("<<=")] as const, ["**=", kindIdFromName("**=")] as const, ["&&=", kindIdFromName("&&=")] as const, ["||=", kindIdFromName("||=")] as const, ["??=", kindIdFromName("??=")] as const]),
     right: _resolveOne<T.Expression>(input.right, _K6, _K11),
   });
@@ -2093,7 +2093,7 @@ export function typeParametersFrom(...input: readonly (T.TypeParameter | T.TypeP
 export function typePredicateFrom(input: T.TypePredicate.Loose): ReturnType<typeof F.typePredicate> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.typePredicate>;
   return F.typePredicate({
-    name: _resolveOne<T.PredefinedType | T.This>(input.name, _K43, _K2),
+    name: _resolveOne<T.Identifier | T.This | T.PredefinedType>(input.name, _K43, _K2),
     type: _resolveOne<T.Type>(input.type, _K4, _K5),
   });
 }

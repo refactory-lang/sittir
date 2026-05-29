@@ -637,8 +637,8 @@ export interface ConstraintTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: Box<AnyTransport>
   _type: TypeTransport
+  _content: Box<AnyTransport>
 }
 
 export interface ConstructorTypeTransport {
@@ -2832,8 +2832,8 @@ export interface TypeQueryMemberExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _object: Box<TypeQueryMemberExpressionObjectTransportSlot>
-  _content: Box<AnyTransport>
   _property: Box<PropertyNameTransport>
+  _content: Box<AnyTransport>
 }
 
 export interface TypeQuerySubscriptExpressionTransport {

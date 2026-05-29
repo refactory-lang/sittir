@@ -3214,7 +3214,7 @@ export function wrapScopedTypeIdentifier(data: T.ScopedTypeIdentifier, tree: Tre
     _path: normalizeSingularWrapSlot(data._path, "path", false, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
 
-    path() { return drillAs<T.Path | T.GenericTypeWithTurbofish | T.BracketedType | undefined>(this._path, tree, "generic_type", "generic_type_with_turbofish"); },
+    path() { return drillAs<T.Path | T.GenericTypeWithTurbofish | T.BracketedType | T.GenericType | undefined>(this._path, tree, "generic_type", "generic_type_with_turbofish"); },
     name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     $with: {
       path: (v: NonNullable<T.ScopedTypeIdentifier['_path']>) => wrapScopedTypeIdentifier({ ...data, _path: v }, tree),
@@ -3369,7 +3369,7 @@ export function wrapStructExpression(data: T.StructExpression, tree: TreeHandle)
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type, { tree, nodeType: data.$type, slotName: "body", span: (data as _NodeData).$span }),
 
-    name() { return drillAs<T.Identifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish>(this._name, tree, "type_identifier", "identifier"); },
+    name() { return drillIn<T.Identifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish>(this._name, tree); },
     body() { return drillIn<T.FieldInitializerList>(this._body, tree); },
     $with: {
       name: (v: NonNullable<T.StructExpression['_name']>) => wrapStructExpression({ ...data, _name: v }, tree),
@@ -4034,7 +4034,7 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle) {
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type, { tree, nodeType: data.$type, slotName: "left", span: (data as _NodeData).$span }),
     _bounds: normalizeSingularWrapSlot(data._bounds, "bounds", true, data.$type, { tree, nodeType: data.$type, slotName: "bounds", span: (data as _NodeData).$span }),
 
-    left() { return drillAs<T.Lifetime | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(this._left, tree, "type_identifier", "identifier"); },
+    left() { return drillIn<T.Lifetime | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(this._left, tree); },
     bounds() { return drillIn<T.TraitBounds>(this._bounds, tree); },
     $with: {
       left: (v: NonNullable<T.WherePredicate['_left']>) => wrapWherePredicate({ ...data, _left: v }, tree),

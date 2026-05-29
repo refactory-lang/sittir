@@ -204,7 +204,7 @@ export interface FieldRule extends RuleBase {
 	readonly type: 'field';
 	readonly name: string;
 	readonly content: Rule;
-	readonly source?: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
+	readonly source?: 'grammar' | 'override' | 'enriched' | 'inferred';
 	readonly nameFrom?: 'grammar' | 'kind' | 'override' | 'usage';
 	/**
 	 * True if the field's value is rendered as an indented block — its

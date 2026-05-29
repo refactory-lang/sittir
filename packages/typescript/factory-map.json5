@@ -26,13 +26,11 @@
     "_class_heritage_implements_clause": "spread",
     "_const_marker": "text",
     "_export_specifier_export_kind": "text",
-    "_export_statement_default_decl_arm": "config",
     "_export_statement_default_decl_arm_default_kw": "config",
     "_export_statement_default_decl_arm_default_kw_value": "config",
     "export_statement_default_from_arm_star_from": "direct",
     "export_statement_default_from_arm_ns_from": "config",
     "export_statement_default_from_arm_clause_from": "config",
-    "_export_statement_default_from_arm": "config",
     "_export_statement_default_from_arm_clause_from": "config",
     "_export_statement_default_from_arm_ns_from": "config",
     "_export_statement_default_from_arm_star_from": "config",
@@ -672,11 +670,6 @@
     "_class_heritage_implements_clause": [
       "implements_clause"
     ],
-    "_export_statement_default_decl_arm": [
-      "decorator",
-      "declaration",
-      "export_statement_default_decl_arm_default_kw"
-    ],
     "_export_statement_default_decl_arm_default_kw": [
       "declaration",
       "export_statement_default_decl_arm_default_kw_value"
@@ -695,13 +688,6 @@
     "export_statement_default_from_arm_clause_from": [
       "export_clause",
       "source"
-    ],
-    "_export_statement_default_from_arm": [
-      "export_statement_default_from_arm_star_from",
-      "semicolon",
-      "export_statement_default_from_arm_ns_from",
-      "export_statement_default_from_arm_clause_from",
-      "export_clause"
     ],
     "_export_statement_default_from_arm_clause_from": [
       "export_clause",
@@ -1750,29 +1736,6 @@
         "nonEmpty": false
       }
     },
-    "_export_statement_default_decl_arm": {
-      "decorator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "declaration": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_statement_default_decl_arm_default_kw": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_export_statement_default_decl_arm_default_kw": {
       "declaration": {
         "unnamed": false,
@@ -1842,43 +1805,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_export_statement_default_from_arm": {
-      "export_statement_default_from_arm_star_from": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_statement_default_from_arm_ns_from": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_statement_default_from_arm_clause_from": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5591,15 +5517,6 @@
     }
   },
   "polymorphVariants": {
-    "_export_statement_default_from_arm": {
-      "source": "override",
-      "childKind": {
-        "export_statement_default_from_arm_star_from": "star_from",
-        "export_statement_default_from_arm_ns_from": "ns_from",
-        "export_statement_default_from_arm_clause_from": "clause_from",
-        "export_clause": "export_clause"
-      }
-    },
     "ambient_declaration": {
       "source": "override",
       "childKind": {

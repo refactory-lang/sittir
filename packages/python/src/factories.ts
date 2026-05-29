@@ -570,7 +570,7 @@ export function caseClause(config: T.CaseClause.Config) {
     $with: {
       casePatterns: (...values: NonEmptyArray<T.CasePattern>) => caseClause({ ...config, casePattern: values }),
       guard: (value?: T.IfClause) => caseClause({ ...config, guard: value }),
-      consequence: (value: T.SimpleStatements | T.Newline) => caseClause({ ...config, consequence: value }),
+      consequence: (value: T.SimpleStatements | T.Block | T.Newline) => caseClause({ ...config, consequence: value }),
     },
   }, methodsEngine);
 }
@@ -622,7 +622,7 @@ export function classDefinition(config: T.ClassDefinition.Config) {
       name: (value: T.Identifier) => classDefinition({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameter) => classDefinition({ ...config, typeParameters: value }),
       superclasses: (value?: T.ArgumentList) => classDefinition({ ...config, superclasses: value }),
-      body: (value: T.SimpleStatements | T.Newline) => classDefinition({ ...config, body: value }),
+      body: (value: T.SimpleStatements | T.Block | T.Newline) => classDefinition({ ...config, body: value }),
     },
   }, methodsEngine);
 }
@@ -915,7 +915,7 @@ export function elifClause(config: T.ElifClause.Config) {
     consequence() { return _consequence; },
     $with: {
       condition: (value: T.Expression) => elifClause({ ...config, condition: value }),
-      consequence: (value: T.SimpleStatements | T.Newline) => elifClause({ ...config, consequence: value }),
+      consequence: (value: T.SimpleStatements | T.Block | T.Newline) => elifClause({ ...config, consequence: value }),
     },
   }, methodsEngine);
 }
@@ -1179,7 +1179,7 @@ export function forStatement(config: T.ForStatement.Config) {
       asyncMarker: (value?: NonNullable<Parameters<typeof forStatement>[0]>['asyncMarker']) => forStatement({ ...config, asyncMarker: value }),
       left: (value: T.LeftHandSide) => forStatement({ ...config, left: value }),
       right: (value: T.Expressions) => forStatement({ ...config, right: value }),
-      body: (value: T.SimpleStatements | T.Newline) => forStatement({ ...config, body: value }),
+      body: (value: T.SimpleStatements | T.Block | T.Newline) => forStatement({ ...config, body: value }),
       alternative: (value?: T.ElseClause) => forStatement({ ...config, alternative: value }),
     },
   }, methodsEngine);
@@ -1226,7 +1226,7 @@ export function functionDefinition(config: T.FunctionDefinition.Config) {
       typeParameters: (value?: T.TypeParameter) => functionDefinition({ ...config, typeParameters: value }),
       parameters: (value: T.Parameters) => functionDefinition({ ...config, parameters: value }),
       returnType: (value?: T.Type) => functionDefinition({ ...config, returnType: value }),
-      body: (value: T.SimpleStatements | T.Newline) => functionDefinition({ ...config, body: value }),
+      body: (value: T.SimpleStatements | T.Block | T.Newline) => functionDefinition({ ...config, body: value }),
     },
   }, methodsEngine);
 }
@@ -1334,7 +1334,7 @@ export function ifStatement(config: T.IfStatement.Config) {
     alternatives() { return _alternative; },
     $with: {
       condition: (value: T.Expression) => ifStatement({ ...config, condition: value }),
-      consequence: (value: T.SimpleStatements | T.Newline) => ifStatement({ ...config, consequence: value }),
+      consequence: (value: T.SimpleStatements | T.Block | T.Newline) => ifStatement({ ...config, consequence: value }),
       alternatives: (...values: (T.ElifClause | T.ElseClause)[]) => ifStatement({ ...config, alternative: values }),
     },
   }, methodsEngine);
@@ -1983,7 +1983,7 @@ export function tryStatement(config: T.TryStatement.Config) {
     elseClause() { return _else_clause; },
     finallyClause() { return _finally_clause; },
     $with: {
-      body: (value: T.SimpleStatements | T.Newline) => tryStatement({ ...config, body: value }),
+      body: (value: T.SimpleStatements | T.Block | T.Newline) => tryStatement({ ...config, body: value }),
       exceptClauses: (...values: T.ExceptClause[]) => tryStatement({ ...config, exceptClauses: values }),
       elseClause: (value?: T.ElseClause) => tryStatement({ ...config, elseClause: value }),
       finallyClause: (value?: T.FinallyClause) => tryStatement({ ...config, finallyClause: value }),
@@ -2176,7 +2176,7 @@ export function whileStatement(config: T.WhileStatement.Config) {
     alternative() { return _alternative; },
     $with: {
       condition: (value: T.Expression) => whileStatement({ ...config, condition: value }),
-      body: (value: T.SimpleStatements | T.Newline) => whileStatement({ ...config, body: value }),
+      body: (value: T.SimpleStatements | T.Block | T.Newline) => whileStatement({ ...config, body: value }),
       alternative: (value?: T.ElseClause) => whileStatement({ ...config, alternative: value }),
     },
   }, methodsEngine);
@@ -2277,7 +2277,7 @@ export function withStatement(config: T.WithStatement.Config) {
     $with: {
       asyncMarker: (value?: NonNullable<Parameters<typeof withStatement>[0]>['asyncMarker']) => withStatement({ ...config, asyncMarker: value }),
       withClause: (value: T.WithClause) => withStatement({ ...config, withClause: value }),
-      body: (value: T.SimpleStatements | T.Newline) => withStatement({ ...config, body: value }),
+      body: (value: T.SimpleStatements | T.Block | T.Newline) => withStatement({ ...config, body: value }),
     },
   }, methodsEngine);
 }

@@ -14,6 +14,9 @@ describe('tools cli dispatcher', () => {
 		expect(TOOL_NAMES.has('list-kinds')).toBe(true);
 		expect(TOOL_NAMES.has('walk')).toBe(true);
 		expect(TOOL_NAMES.has('exercise')).toBe(true);
+		expect(TOOL_NAMES.has('inspect-refs')).toBe(true);
+		expect(TOOL_NAMES.has('inspect-type')).toBe(true);
+		expect(TOOL_NAMES.has('grammar-diagnostics')).toBe(true);
 	});
 
 	it('returns 0 for --help', async () => {

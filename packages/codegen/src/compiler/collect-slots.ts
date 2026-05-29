@@ -39,7 +39,6 @@ import {
 	AssembledNonterminal,
 	type NodeOrTerminal,
 	deriveValuesForRule,
-	deriveAliasSources,
 	dedupeValues,
 	extractSeparatorString,
 	mergeSourceRuleIds,
@@ -215,10 +214,6 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 				hasTrailing: prev.hasTrailing || slot.hasTrailing,
 				hasLeading: prev.hasLeading || slot.hasLeading,
 				sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds),
-				aliasSources:
-					prev.aliasSources || slot.aliasSources
-						? { ...prev.aliasSources, ...slot.aliasSources }
-						: undefined,
 			}));
 		}
 	}
@@ -304,7 +299,6 @@ function buildSlot(
 	// --- Determine the slot name ---
 	let baseName: string | undefined = rule.fieldName;
 	let source: AssembledNonterminal['source'] = (rule as { source?: RuleSource }).source ?? 'grammar';
-	let origin: AssembledNonterminal['origin'];
 
 	if (baseName === undefined) {
 		switch (rule.type) {
@@ -320,13 +314,11 @@ function buildSlot(
 				// inner fields like `let_declaration.alternative` from parent
 				// coverage + render).
 				source = 'inferred';
-				origin = 'kind';
 				break;
 			}
 			case 'supertype': {
 				baseName = rule.name.replace(/^_+/, '') || rule.name;
 				source = 'inferred';
-				origin = 'kind';
 				break;
 			}
 			case 'choice':
@@ -358,7 +350,6 @@ function buildSlot(
 				}
 				baseName = 'content';
 				source = (rule as { source?: RuleSource }).source ?? 'inferred';
-				origin = 'kind';
 				break;
 			}
 			default:
@@ -371,7 +362,6 @@ function buildSlot(
 				// (e.g. token_repetition's operator enum + separator pattern).
 				baseName = 'content';
 				source = (rule as { source?: RuleSource }).source ?? 'inferred';
-				origin = 'kind';
 				break;
 		}
 	}
@@ -426,16 +416,12 @@ function buildSlot(
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
 	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);
 
-	const aliasSources = deriveAliasSources(rule);
-
 	return new AssembledNonterminal({
 		values,
 		fieldName: rule.fieldName,
 		hasTrailing,
 		hasLeading,
-		aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
 		source,
-		...(origin ? { origin } : {}),
 		sourceRuleIds: rule.id ? [rule.id] : [],
 	});
 }

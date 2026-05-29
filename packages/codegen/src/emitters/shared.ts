@@ -436,34 +436,19 @@ export function stampExpressionFor(
  *
  * `fieldTypeComponents` pre-inlines hidden single-literal keywords (the
  * `_kw_*` pattern) as `literal` components so consumer emitters don't
- * surface helper wrapper types. The alias-source projection
- * (ADR-0006) is also applied here once — callers don't rebuild the
- * resolver twice.
+ * surface helper wrapper types.
  */
 export type TypeComponent =
 	| { kind: 'nodeKind'; value: string; rawKind: string }
 	| { kind: 'literal'; value: string }
 	| { kind: 'missing'; value: string; rawKind: string };
 
-function resolveAliasedSlotKind(
-	slot: { aliasSources?: Record<string, string> },
-	kind: string,
-	nodeMap: NodeMap
-): string {
-	const source = slot.aliasSources?.[kind];
-	if (!source) return kind;
-	return nodeMap.nodes.get(source) ? source : kind;
-}
-
 /**
  * Compute the shared {@link TypeComponent} list for a field slot.
  *
- * Pure derivation over the slot's `values` + `aliasSources`. Applies:
- *   1. Alias-source rewrite (ADR-0006): if a content kind is the TARGET
- *      of `alias($.source, $.target)`, rewrite to `source` when `source`
- *      exists in the NodeMap.
- *   2. Hidden-keyword inlining: `_kw_async` → literal `"async"`.
- *   3. NodeMap lookup: resolved kind → `nodeKind`; missing → `missing`
+ * Pure derivation over the slot's `values`. Applies:
+ *   1. Hidden-keyword inlining: `_kw_async` → literal `"async"`.
+ *   2. NodeMap lookup: resolved kind → `nodeKind`; missing → `missing`
  *      (with a PascalCase fallback name for consumers that need one).
  *
  * Used by `types.ts::fieldTypeExpr` and `factories.ts::fieldElementType`
@@ -483,8 +468,7 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 			continue;
 		}
 		if (!isNodeRef(v)) continue;
-		const rawName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		const t = resolveAliasedSlotKind(field, rawName, nodeMap);
+		const t = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
 		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
 		if (lit !== undefined) {
 			out.push({ kind: 'literal', value: lit });
@@ -874,8 +858,7 @@ function classifyFieldStorageInfo(
 	const seenTexts = new Set<string>();
 	for (const value of field.values) {
 		if (isNodeRef(value)) {
-			const rawKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-			const resolvedKind = resolveAliasedSlotKind(field, rawKind, nodeMap);
+			const resolvedKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
 			const node = nodeMap.nodes.get(resolvedKind);
 			if (node instanceof AssembledEnum) {
 				if (node.values.length <= 1 || node.resolvedKinds.length === 0) {
@@ -1053,7 +1036,7 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 	if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'singular') return undefined;
 	const slot = slotClass.slot;
-	if (slot.source === 'inferred') return undefined;
+	if (slot.isUnnamed) return undefined;
 	return slot;
 }
 
@@ -1135,7 +1118,7 @@ export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMa
 	if (shape === 'spread') return 'spread';
 	if (shape !== 'direct') return null;
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
-	return slotClass.tag === 'singleSlot' && slotClass.slot.source === 'inferred' ? 'direct' : null;
+	return slotClass.tag === 'singleSlot' && slotClass.slot.isUnnamed ? 'direct' : null;
 }
 
 /**
@@ -1170,7 +1153,7 @@ export function classifyFactoryShape(
 					!hasOptionalUserContentChildren(node.children, nodeMap)
 				)
 					return 'direct';
-				if (slotClass.slot.source === 'inferred') return 'spread';
+				if (slotClass.slot.isUnnamed) return 'spread';
 				return 'config';
 			}
 			const fields = configurableFactoryFields(node.fields, nodeMap);

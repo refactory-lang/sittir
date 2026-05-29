@@ -1,4 +1,3 @@
-import { parseArgs } from 'node:util';
 import { createRenderer } from '@sittir/core';
 import type { AnyNodeData } from '@sittir/types';
 
@@ -31,11 +30,10 @@ interface WalkNode {
 	readonly [key: string]: unknown;
 }
 
-interface ParsedArgs {
-	grammar: GrammarName;
-	source: string;
+export interface WalkOptions {
+	grammar: string;
+	source?: string;
 	render: boolean;
-	showHelp: boolean;
 }
 
 const COMMON_MODULE_PATH = '../../../codegen/src/validate/common.ts';
@@ -53,44 +51,6 @@ const DEFAULT_SOURCES: Record<GrammarName, string> = {
 async function loadCommon(): Promise<CommonModule> {
 	const mod: CommonModule = await import(new URL(COMMON_MODULE_PATH, import.meta.url).pathname);
 	return mod;
-}
-
-function isGrammarName(value: string): value is GrammarName {
-	return value === 'rust' || value === 'typescript' || value === 'python';
-}
-
-function parseCliArgs(argv: string[]): ParsedArgs {
-	const { values } = parseArgs({
-		args: argv,
-		options: {
-			grammar: { type: 'string', short: 'g', default: 'rust' },
-			source: { type: 'string', short: 's' },
-			render: { type: 'boolean', default: false },
-			help: { type: 'boolean', short: 'h', default: false }
-		}
-	});
-	const grammarValue = values.grammar;
-	const grammar = typeof grammarValue === 'string' && isGrammarName(grammarValue) ? grammarValue : 'rust';
-	const sourceValue = values.source;
-
-	return {
-		grammar,
-		source: typeof sourceValue === 'string' ? sourceValue : DEFAULT_SOURCES[grammar],
-		render: values.render === true,
-		showHelp: values.help === true
-	};
-}
-
-function printUsage(): void {
-	process.stdout.write(
-		[
-			'Usage: walk [--grammar <rust|typescript|python>] [--source <text>] [--render]',
-			'',
-			'  --grammar, -g  grammar name (default: rust)',
-			'  --source,  -s  source text to parse',
-			'  --render       render each visited node'
-		].join('\n') + '\n'
-	);
 }
 
 function isWalkNode(value: unknown): value is WalkNode {
@@ -192,21 +152,19 @@ function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
 	visitValue(root);
 }
 
-export async function run(argv: string[]): Promise<number> {
-	const args = parseCliArgs(argv);
-	if (args.showHelp) {
-		printUsage();
-		return 0;
-	}
+export async function run(opts: WalkOptions): Promise<number> {
+	const grammar = opts.grammar as GrammarName;
+	const source = opts.source ?? DEFAULT_SOURCES[grammar] ?? '';
+	const render = opts.render;
 
 	const common = await loadCommon();
-	const readTreeNode = await common.loadReadTreeNode(args.grammar);
+	const readTreeNode = await common.loadReadTreeNode(grammar);
 	if (readTreeNode === null) {
-		process.stderr.write(`walk: no wrap module available for grammar '${args.grammar}'\n`);
+		process.stderr.write(`walk: no wrap module available for grammar '${grammar}'\n`);
 		return 1;
 	}
 
-	const rawKindIdFromName = await common.loadKindIdFromName(args.grammar);
+	const rawKindIdFromName = await common.loadKindIdFromName(grammar);
 	const kindIdFromName =
 		rawKindIdFromName === undefined
 			? undefined
@@ -217,21 +175,21 @@ export async function run(argv: string[]): Promise<number> {
 						return undefined;
 					}
 				};
-	const kindNameFromId = await common.loadKindNameFromId(args.grammar);
-	const kindNames = await common.loadKindNames(args.grammar);
-	const { render } = createRenderer(new URL(TEMPLATE_DIR_PATHS[args.grammar], import.meta.url).pathname, {
+	const kindNameFromId = await common.loadKindNameFromId(grammar);
+	const kindNames = await common.loadKindNames(grammar);
+	const { render: renderNode } = createRenderer(new URL(TEMPLATE_DIR_PATHS[grammar], import.meta.url).pathname, {
 		kindNames
 	});
-	const { Parser, lang } = await common.loadLanguageForGrammar(args.grammar);
+	const { Parser, lang } = await common.loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
-	const tree = parser.parse(args.source);
+	const tree = parser.parse(source);
 	if (tree === null) {
 		process.stderr.write('walk: parse returned null\n');
 		return 1;
 	}
 
-	const handle = common.treeHandle(tree, args.source, kindIdFromName);
+	const handle = common.treeHandle(tree, source, kindIdFromName);
 	const root = readTreeNode(handle);
 	const counts = new Map<string, number>();
 	let total = 0;
@@ -241,13 +199,13 @@ export async function run(argv: string[]): Promise<number> {
 		const kind = resolveKindName(node, kindNameFromId);
 		counts.set(kind, (counts.get(kind) ?? 0) + 1);
 		total += 1;
-		if (!args.render) return;
+		if (!render) return;
 		try {
 			const renderable = toRenderableNode(node);
 			if (!isAnyNodeData(renderable)) {
 				throw new Error('failed to materialize wrapped node as NodeData');
 			}
-			const rendered = render(renderable);
+			const rendered = renderNode(renderable);
 			process.stdout.write(`${kind}: ${JSON.stringify(rendered)}\n`);
 		} catch (error) {
 			renderFailures += 1;
@@ -261,18 +219,8 @@ export async function run(argv: string[]): Promise<number> {
 	}
 	process.stdout.write(
 		`\n${total} node(s), ${counts.size} distinct kind(s)` +
-			(args.render ? `, ${renderFailures} render failure(s)` : '') +
+			(render ? `, ${renderFailures} render failure(s)` : '') +
 			'\n'
 	);
 	return renderFailures === 0 ? 0 : 1;
-}
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2))
-		.then(process.exit)
-		.catch((error: unknown) => {
-			process.stderr.write(`walk: ${(error as Error).stack ?? error}\n`);
-			process.exit(1);
-		});
 }

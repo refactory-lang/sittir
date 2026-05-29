@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import type { TreeHandle } from '@sittir/common';
-import { AssembledBranch, AssembledPattern, type AssembledNode } from '../compiler/node-map.ts';
+import { AssembledBranch, AssembledNonterminal, AssembledPattern, type AssembledNode } from '../compiler/node-map.ts';
 import type { SeqRule } from '../compiler/rule.ts';
 import { emitWrap } from '../emitters/wrap.ts';
 import { verifyManifestForGrammar } from '../scripts/generated-manifest.ts';
@@ -43,7 +43,7 @@ async function loadFreshWrapWitnessModule(): Promise<{
 		members: [{ type: 'field', name: 'value', content: { type: 'symbol', name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('list_splat', new AssembledBranch('list_splat', rule, rule));
+	nodes.set('list_splat', new AssembledBranch('list_splat', rule, rule, rule));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
@@ -61,6 +61,59 @@ async function loadFreshWrapWitnessModule(): Promise<{
 	}).outputText;
 	return (await import(`data:text/javascript,${encodeURIComponent(transpiled)}`)) as {
 		wrapListSplat: (node: unknown, tree: TreeHandle) => unknown;
+	};
+}
+
+async function loadAliasRoutingWrapWitnessModule(): Promise<{
+	wrapAliasHolder: (node: unknown, tree: TreeHandle) => {
+		identifier: () => { $type: string };
+	};
+}> {
+	const rule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set(
+		'alias_holder',
+		new AssembledBranch('alias_holder', rule, rule, rule, {
+			slotRecord: Object.freeze({
+				identifier: new AssembledNonterminal({
+					values: [
+						{
+							kind: 'node-ref',
+							node: { kind: 'unresolved-ref', name: 'identifier' },
+							parseKind: { kind: 'unresolved-ref', name: 'decorator' },
+							multiplicity: 'single'
+						}
+					],
+					hasTrailing: false,
+					hasLeading: false,
+					source: 'grammar',
+					sourceRuleIds: []
+				})
+			})
+		}) as AssembledNode
+	);
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
+	const stubbedSource = [
+		'const readNodeJs = () => { throw new Error("unused"); };',
+		'const withMethods = (node) => node;',
+		'const methodsEngine = {};',
+		'const _factories = new Proxy({}, { get: () => () => { throw new Error("unused"); } });',
+		source.replace(/^import .*;\n/gm, '')
+	].join('\n');
+	const transpiled = ts.transpileModule(stubbedSource, {
+		compilerOptions: {
+			module: ts.ModuleKind.ESNext,
+			target: ts.ScriptTarget.ES2020
+		}
+	}).outputText;
+	return (await import(`data:text/javascript,${encodeURIComponent(transpiled)}`)) as {
+		wrapAliasHolder: (node: unknown, tree: TreeHandle) => {
+			identifier: () => { $type: string };
+		};
 	};
 }
 
@@ -239,7 +292,7 @@ describe('wrapped tree materialization', () => {
 				};
 			}>;
 		};
-		const exportStatement = root.statements()[0];
+		const exportStatement = root.statements()[0]!;
 		const declarationArm = exportStatement.children();
 
 		expect(() => declarationArm.declaration()).not.toThrow();
@@ -310,5 +363,18 @@ describe('wrapped tree materialization', () => {
 		expect((thrown as Error).message).toBe(
 			'singular slot "value" on "list_splat" received 2 values; got array(len=2, items=[node($type="identifier", $text="*"), node($type="identifier", $text="f")])'
 		);
+	});
+
+	it('routes unnamed alias slots from parseKind storage without slot alias maps', async () => {
+		const { wrapAliasHolder } = await loadAliasRoutingWrapWitnessModule();
+		const wrapped = wrapAliasHolder(
+			{
+				$type: 'alias_holder',
+				_decorator: { $type: 'decorator', $text: '@dec' }
+			},
+			{ get rootNode(): never { throw new Error('unused'); } } satisfies TreeHandle
+		);
+
+		expect(wrapped.identifier().$type).toBe('identifier');
 	});
 });

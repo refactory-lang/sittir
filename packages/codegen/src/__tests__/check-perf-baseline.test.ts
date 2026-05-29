@@ -15,7 +15,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { evaluateVerdict } from '../scripts/check-perf-baseline.ts';
+import { evaluateVerdict } from '../../../tools/src/validate/perf.ts';
 
 // ---------------------------------------------------------------------------
 // Helpers

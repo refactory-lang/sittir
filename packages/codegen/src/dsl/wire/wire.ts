@@ -42,6 +42,11 @@ import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
 import { applyAutoGroups } from './auto-groups.ts';
+import type { Rule } from '../../compiler/rule.ts';
+// Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
+import type { GrammarJson, GrammarNode, Sym, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
+import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
+
 
 // ---------------------------------------------------------------------------
 // RenderAsConfig — sittir-side rule bodies for external scanner symbols
@@ -292,12 +297,12 @@ export function withWireContext<T>(
  * keys, preserving the pre-generics behaviour of every call site that
  * doesn't supply a base type.
  */
-export type GrammarBase = Record<string, unknown> | { readonly rules: Record<string, unknown> };
+
 
 /** @internal — extract the rule-kind string union from a base grammar.
  *  Handles both shapes: `{ rules: { … } }` (tree-sitter native) and
  *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
-type BaseKind<Base extends GrammarBase> = Base extends {
+type BaseKind<Base extends GrammarJson = GrammarJson> = Base extends {
 	readonly rules: infer R;
 }
 	? keyof R & string
@@ -314,7 +319,7 @@ type BaseKind<Base extends GrammarBase> = Base extends {
  * names stay untyped — paths describe runtime descents into the rule
  * tree (`seq`/`choice` indices), suffixes are author-introduced.
  */
-export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> = Partial<
+export type PolymorphsConfig<Base extends GrammarJson = GrammarJson> = Partial<
 	Record<BaseKind<Base>, Record<string, string>>
 >;
 
@@ -373,9 +378,30 @@ export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
  * resolution deposits captured content into wire's context; the
  * deferred fns read deposits.
  */
-export type TransformsConfig<Base extends GrammarBase = GrammarBase> = Partial<
-	Record<BaseKind<Base>, PatchMap | PatchMap[]>
->;
+export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarNode] extends [Base['rules'][keyof Base['rules']]]
+	? // Loose default (`Base = GrammarJson`, rule values are the open
+		// `GrammarNode` union): use the plain `PatchMap` form. Mapping
+		// `PathKey<…>` over the OPEN union recurses unboundedly (TS2589); the
+		// per-rule precise form is only meaningful — and only safe — when
+		// `Base` is a CONCRETE `as const` schema (tuple rule bodies). The
+		// internal pipeline always sees this loose form.
+		Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
+	: Base extends { readonly rules: infer R }
+		? {
+				// Concrete `Base` (e.g. `RustGrammarShape`): per rule K, keys are
+				// segment-1-precise path strings. We derive them from the RAW node
+				// (`FastKeys` = PathKey<R[K]>) rather than the post-Enrich shape:
+				// `PathKey` only consumes the FIRST segment (`TopLevelKeys`), and
+				// enrich wraps top-level members IN PLACE (never adds/removes one),
+				// so `PathKey<EnrichRule<X>> ≡ PathKey<X>` (proven in
+				// wire-transforms.test-d.ts). FastKeys is therefore LOSSLESS for
+				// keys and avoids instantiating EnrichRule over the loose union
+				// (which is the TS2589 source). Array form = multi-patchset rules.
+				readonly [K in keyof R]?: R[K] extends GrammarNode
+					? TransformPatchMap<FastKeys<R[K]>> | TransformPatchMap<FastKeys<R[K]>>[]
+					: PatchMap | PatchMap[];
+			}
+		: Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>;
 
 /** A single patch-map — path-in-original → patch value. */
 export type PatchMap = Record<string, unknown>;
@@ -392,20 +418,64 @@ export type PatchMap = Record<string, unknown>;
  * to keep the hidden-name escape hatch for synthesized rules
  * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
  */
-export interface WireConfig<Base extends GrammarBase = GrammarBase> {
-	readonly name?: string;
-	readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> & Record<string, RuleFn>;
-	readonly polymorphs?: PolymorphsConfig<Base>;
-	readonly groups?: GroupsConfig;
-	readonly transforms?: TransformsConfig<Base>;
-	readonly conflicts?: ConflictsFn;
-	readonly externals?: DollarFn<unknown[]>;
-	readonly extras?: DollarFn<unknown[]>;
-	readonly supertypes?: DollarFn<unknown[]>;
-	readonly inline?: DollarFn<unknown[]>;
-	readonly word?: DollarFn<unknown>;
-	readonly precedences?: DollarFn<unknown[][]>;
-	readonly reserved?: Record<string, DollarFn<unknown[]>>;
+/**
+ * Clean `$` proxy: rule-name → symbol reference, mapped over the schema's
+ * CONCRETE rule names (including hidden `_`-prefixed rules). Crucially it has NO
+ * index signature, so `$.x` does NOT leak `| undefined` under
+ * `noUncheckedIndexedAccess` — unlike tree-sitter's `GrammarSymbols`, whose
+ * index-signature leak makes `$.x: SymbolRule | undefined` and breaks
+ * composition (`undefined ⊄ AuthoringRule`) in overrides.ts authoring.
+ */
+export type ShapedSymbols<B extends GrammarJson> = {
+	readonly [R in keyof B['rules'] & string]: Sym<R>;
+} & {
+	// Permissive fallback for alias-target / synthesized names not in the base
+	// grammar.json (e.g. `$.wildcard_pattern`). Known rules resolve via the
+	// mapped member above (precise `Sym<R>`, no `undefined`); only unknown names
+	// hit this index.
+	readonly [name: string]: Sym<string>;
+};
+
+export type WireConfig< B extends GrammarJson, NewRules extends string = string> = Omit<Grammar<NewRules, keyof B['rules'] & string>, 'rules' | 'conflicts'> & {
+	/**
+	 * Conflict sets — same clean-`$` typing as `rules`/`groups` (`ShapedSymbols<B>`,
+	 * no `undefined` leak). `previous` is the base grammar's conflict list.
+	 */
+	readonly conflicts?: (
+		$: ShapedSymbols<B>,
+		previous: readonly (readonly AuthoringRule[])[]
+	) => readonly (readonly AuthoringRule[])[];
+	/**
+	 * Rule bodies — clean-`$` builders. `previous`/`original` is typed PER RULE as
+	 * `B['rules'][K]` directly — the input rule's exact shape, preserved not
+	 * flattened. (`B` here is the ALREADY-ENRICHED schema from `enrich()`'s typed
+	 * return, so `B['rules'][K]` is the post-enrich shape; no re-application of
+	 * `EnrichRule`.) Keyed over the schema's CONCRETE rule names (mapping over
+	 * `NewRules` would absorb to `string` and lose per-key precision). Loose
+	 * `=> unknown` return accepts sittir DSL outputs.
+	 */
+	readonly rules?: {
+		readonly [K in keyof B['rules'] & string]?: (
+			$: ShapedSymbols<B>,
+			previous: B['rules'][K]
+		) => unknown;
+	} & {
+		// New rules the override ADDS (not in the base grammar.json, e.g. a
+		// synthesized `_wildcard_pattern`): `$` stays typed; no base `previous`.
+		// `any`-typed `previous` keeps the precise base-rule callbacks above
+		// assignable here (bivariant), so known keys retain their precise shape.
+		readonly [name: string]: ($: ShapedSymbols<B>, previous?: any) => unknown;
+	};
+	readonly polymorphs?: PolymorphsConfig<B>;
+	/**
+	 * Group-lift map — same `$` typing as `rules`. Path-mode entries are
+	 * `path → discriminator` records; body-pattern-mode entries are clean-`$`
+	 * builders (`($: ShapedSymbols<B>) => unknown`), not the untyped `RuleFn`.
+	 */
+	readonly groups?: Partial<
+		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarNode) => unknown)>
+	>;
+	readonly transforms?: TransformsConfig<B>;
 	/** Side-channel from `enrich()` — preserved unchanged. */
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	/**
@@ -448,7 +518,29 @@ export interface WiredOpts {
 	readonly __wireContext__?: WireContext;
 }
 
-type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown;
+// LOOSE-INTERNAL / NARROW-PUBLIC split (Phase-4 resolution to the
+// contravariance wall):
+//
+// `SittirRuleFn` is the INTERNAL rules-map element type. wire's own builder
+// fns — `makeDeferredContentFn`, `buildTransformParentFn`, `wiredPolymorphParent`,
+// `patternReplacingRuleFn`, and auto-groups' `makeStaticRuleFn` — return
+// sittir's dual-runtime raw rule shapes (lowercase + sittir-only variants,
+// heterogeneous literals, typed `unknown`/`RuntimeRule`), BROADER than
+// tree-sitter's `RuleOrLiteral`, so the return MUST stay `unknown`.
+//
+// The PARAMS are `any`, NOT `unknown` — this is load-bearing. The PUBLIC
+// authoring callbacks `WireConfig.rules` exposes are narrow
+// (`($: GrammarSymbols<…>) => unknown`). A narrow `$: GrammarSymbols` fn is
+// assignable to a loose `$: any` param (any is bivariant-compatible) but NOT
+// to `$: unknown` (function params are contravariant — `unknown` demands the
+// fn accept anything, which a `GrammarSymbols`-typed `$` does not). With
+// `$: unknown` the narrow public fns wouldn't flow into
+// `WireContext.rules: Record<string, SittirRuleFn>` without a cast; `$: any`
+// lets them flow with zero cast. The internal machinery still consumes this
+// loose type unchanged.
+type SittirRuleFn = ($: any, previous?: any) => unknown;
+/** @internal alias for the internal rules-map element type (the dual-runtime seam). */
+type RuleFn = SittirRuleFn;
 type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
@@ -472,26 +564,56 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
  *   `Object.keys()` snapshot; content resolves via deferred-content fns
  *   as tree-sitter iterates.
  */
-export function wire<Base extends GrammarBase = GrammarBase>(
-	config: WireConfig<Base>,
-	base?: { grammar?: { rules?: Record<string, RuleFn> }; rules?: Record<string, RuleFn> }
+// `B` infers from `base` (the enriched-base grammar), so the config
+// literal is contextually typed — and IntelliSense'd — against the
+// precise `WireConfig<B>` (typed `$`, per-rule `previous`/`original`).
+// No explicit `WireConfig` annotation is needed at the call site. When
+// `base` is omitted, `B` defaults to `any` (the loose form, identical to
+// the prior `C extends WireConfig<any>` behavior — there is nothing to
+// infer grammar precision from).
+//
+// NOTE on TS2589: routing the literal through the generic `WireConfig<B>`
+// is REQUIRED for base-present precision — but at a no-`base` call site
+// (where `B` reaches the generic with nothing to pin it) TS may eagerly
+// instantiate the precise `TransformsConfig<B>` mapped-type branch and
+// report "excessively deep". A call site that pins `B` to a lazy alias —
+// an explicit type-arg (`wire<EnrichedGrammar<RustGrammarShape>>(…)` in
+// overrides.ts) or a concrete `base` — evaluates that branch lazily and
+// stays shallow. The residual no-base artifact is editor-only typecheck
+// noise; runtime is unaffected (`config` is aliased to a loose
+// `WireConfig<any>` in the body below).
+export function wire<B extends GrammarJson = any> (
+	config: WireConfig<B>,
+	base?: B
 ): WiredOpts {
+	// Generics are contained to the SIGNATURE so `B` infers from `base`
+	// and the literal `config` is contextually checked against
+	// `WireConfig<B>`. The BODY operates on the loose runtime shapes wire
+	// has always worked on — alias to non-generic internal types ONCE
+	// here so the body never instantiates `WireConfig<B>['rules']`
+	// generically (which trips TS2589) nor reads `base.grammar` off a
+	// generic `B`. The runtime is unchanged; these are the sanctioned
+	// boundary casts (see the LOOSE-INTERNAL / NARROW-PUBLIC note above).
+	const cfg = config as unknown as WireConfig<any>;
+	const baseArg = base as unknown as
+		| { grammar?: { rules?: Record<string, RuleFn> }; rules?: Record<string, RuleFn> }
+		| undefined;
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
 		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
-		groups: config.groups,
-		polymorphsConfig: config.polymorphs,
-		renderAs: config.renderAs,
+		groups: cfg.groups,
+		polymorphsConfig: cfg.polymorphs,
+		renderAs: cfg.renderAs,
 		currentRuleKind: null,
-		authoredRuleNames: new Set(Object.keys(config.rules))
+		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
 
-	const polymorphs = config.polymorphs ?? {};
-	const transforms = config.transforms ?? {};
-	const outRules: Record<string, RuleFn> = { ...config.rules };
+	const polymorphs = cfg.polymorphs ?? {};
+	const transforms = cfg.transforms ?? {};
+	const outRules: Record<string, Rule> = { ...cfg.rules } as Record<string, Rule>;
 
 	// Transforms first, polymorphs second — transforms wrap the user
 	// fn innermost and see the base-shape rule tree; polymorphs wrap
@@ -520,8 +642,8 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 	// `previous` unchanged but then `applyWirePatternReplacement` wraps the
 	// passthrough so the body undergoes pattern replacement. Without this,
 	// unoverridden base rules bypass replacement entirely.
-	if (base && config.groups && hasBodyPatternGroups(config.groups)) {
-		const baseRules = (base.grammar?.rules ?? base.rules ?? {}) as Record<string, RuleFn>;
+	if (baseArg && cfg.groups && hasBodyPatternGroups(cfg.groups)) {
+		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
 			if (baseName in outRules) continue;
 			outRules[baseName] = passthroughBaseRuleFn;
@@ -532,7 +654,7 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 	// each candidate fn executes inside a proper wire context when eagerly
 	// evaluated. This is the tree-sitter-runtime path; evaluate.ts has its
 	// own post-evaluation pass for the sittir-pipeline path.
-	applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
+	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
 
 	// Auto-group-synthesis: SYNTHESIS-ONLY. Creates hidden helper rules
 	// for `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))`
@@ -549,11 +671,11 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 	// attribute stamping) is a separate concern that belongs in
 	// link/evaluate where it can operate on sittir's private rule-tree
 	// copy without affecting tree-sitter's view.
-	if (base) {
+	if (baseArg) {
 		const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
 			transforms,
 			polymorphs,
-			config.groups
+			cfg.groups
 		);
 		// DISABLED for PR0 close-out: activation introduces a downstream regression —
 		// sittir's codegen pipeline (link → node-model → factories) does not yet
@@ -567,7 +689,7 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 		// attributes, so synthesized hidden helpers integrate naturally
 		// via the standard inline-handling path.
 		applyAutoGroups(
-			base as Parameters<typeof applyAutoGroups>[0],
+			baseArg as Parameters<typeof applyAutoGroups>[0],
 			outRules,
 			context,
 			authoredSynthesisKinds
@@ -578,14 +700,14 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 		// param-element they now carry (e.g. rust `attributed_parameter` inside
 		// `_parameters_optional1`) would otherwise never be matched and aliased
 		// to its visible kind. The pass is idempotent on already-aliased bodies.
-		applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
+		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
 	}
 
-	const conflicts = wrapConflictsCallback(config.conflicts, context);
-	const inline = wrapInlineCallback(config.inline, context);
+	const conflicts = wrapConflictsCallback(cfg.conflicts, context);
+	const inline = wrapInlineCallback(cfg.inline, context);
 
 	const wired: WiredOpts = {
-		...config,
+		...cfg,
 		rules: outRules,
 		...(conflicts === undefined ? {} : { conflicts }),
 		...(inline === undefined ? {} : { inline })
@@ -680,10 +802,10 @@ function buildPolymorphParentFn(
 		patches[path] = variantPlaceholder(suffix);
 	}
 	const isHidden = parent.startsWith('_');
-	return function wiredPolymorphParent(this: unknown, $: unknown, original: unknown): unknown {
+	return function wiredPolymorphParent($, original) {
 		let base: unknown;
 		if (userFn) {
-			base = userFn.call(this, $, original);
+			base = userFn($, original);
 		} else if (isHidden && context.deposits.has(parent)) {
 			base = context.deposits.get(parent);
 		} else {
@@ -767,9 +889,9 @@ function composeOrSynthesizeTransformParents(rules: Record<string, RuleFn>, tran
  * rest-parameter signature so multi-patch-set rules behave exactly as
  * they did when the call was written inline in the rule body.
  */
-function buildTransformParentFn(patchSets: readonly PatchMap[], userFn: RuleFn | undefined): RuleFn {
-	return function wiredTransformParent(this: unknown, $: unknown, original: unknown): unknown {
-		const base = userFn ? userFn.call(this, $, original) : original;
+function buildTransformParentFn(patchSets: readonly PatchMap[], userFn: SittirRuleFn | undefined): SittirRuleFn {
+	return function wiredTransformParent($, original) {
+		const base = userFn ? userFn($, original) : original;
 		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
 	};
 }
@@ -866,8 +988,8 @@ function registerHiddenRuleForPlaceholder(
  *      Normally consumed by `evaluate`'s `prunePlaceholderOrphans` so
  *      BLANK orphans don't pollute the grammar.
  */
-function makeDeferredContentFn(context: WireContext, hiddenName: string): RuleFn {
-	return function deferredHiddenRule(this: unknown, _$: unknown, previous?: unknown): unknown {
+function makeDeferredContentFn(context: WireContext, hiddenName: string): SittirRuleFn {
+	return function deferredHiddenRule(_$, previous) {
 		const body = context.deposits.get(hiddenName);
 		if (body) return body;
 		if (previous !== undefined) return previous;
@@ -893,13 +1015,13 @@ function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): vo
  * currentRuleKind, installs this context, runs the fn, restores.
  */
 function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
-	return function wiredRuleFn(this: unknown, $: unknown, previous?: unknown): unknown {
+	return function wiredRuleFn($, previous) {
 		const prevContext = currentContext;
 		const prevKind = context.currentRuleKind;
 		currentContext = context;
 		context.currentRuleKind = name;
 		try {
-			return fn.call(this, $, previous);
+			return fn($, previous);
 		} finally {
 			context.currentRuleKind = prevKind;
 			currentContext = prevContext;
@@ -1053,9 +1175,9 @@ function hasBodyPatternGroups(groups: GroupsConfig): boolean {
  * Returns `previous` unchanged; the pattern-replacement pass wraps this
  * fn so the returned body is structurally walked and substituted.
  */
-function passthroughBaseRuleFn(this: unknown, _$: unknown, previous?: unknown): unknown {
+const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, previous) {
 	return previous;
-}
+};
 
 /** Minimal candidate record for wire-phase pattern replacement. */
 interface WirePatternCandidate {
@@ -1260,8 +1382,8 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
  * Wrap a rule fn so its return value has matching pattern sub-trees replaced.
  */
 function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCandidate[]): RuleFn {
-	return function patternReplacingRuleFn(this: unknown, $: unknown, previous?: unknown): unknown {
-		const result = fn.call(this, $, previous);
+	return function patternReplacingRuleFn($, previous) {
+		const result = fn($, previous);
 		return replaceInBodyRt(result, candidates);
 	};
 }

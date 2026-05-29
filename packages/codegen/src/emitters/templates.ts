@@ -1329,16 +1329,16 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// required value → scalar. Array / optional shapes carry their
 	// multiplicity attribute from the push-down pass.
 	//
-	// Bug 2 fix: When the slot is INFERRED (derived from the group-lift
-	// helper name rather than a declared grammar field) AND the rule is a
-	// group-lift symbol, we must NOT emit the inferred slot name — it is not
+	// Bug 2 fix: When the slot is UNNAMED (derived structurally from child
+	// positions rather than a declared grammar field) AND the rule is a
+	// group-lift symbol, we must NOT emit the helper-derived slot name — it is not
 	// a real FROM/read-populated field. Instead, fall through to the
 	// group-lift inlining path below. The inferred-slot path fires because
 	// assemble registers a back-pointer for EVERY rule position it processes,
 	// including auto-synthesized helpers. We skip it here so the group-lift
 	// inline logic handles it correctly.
 	const slot = lookupSlot(rule, ctx);
-	if (slot && !((slot.source as string) === 'inferred' && rule.source === 'group-lift')) {
+	if (slot && !(slot.isUnnamed && rule.source === 'group-lift')) {
 		return emitSlotReference(rule, slot);
 	}
 	// Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
@@ -1568,12 +1568,13 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 		// Skip terminal-only slots — values are all literals (no node-refs).
 		// The template emits their literal text, not a slot-name reference.
 		if (kindsOf(slot).length === 0) continue;
-		// Skip inferred slots — those are derived from choice-member kind names
+		// Skip unnamed slots — those are derived from child structure / dominant
+		// kind names rather than declared grammar fields
 		// (no `field()` wrapper), such as `_semicolon` rendered as `;` literal,
 		// or alternative choice arms from hidden-helper inlining. The emitter
 		// correctly handles these via symbol inlining or literal emission rather
 		// than named slot references. Checking them would produce false positives.
-		if (slot.source === 'inferred') continue;
+		if (slot.isUnnamed) continue;
 		// Skip link-sourced slots — derived from link-phase synthesized symbol
 		// rules (SymbolRule.source === 'link'). These are inlined as their
 		// literal text by emitSymbol (`rule.source === 'link'` → escapeLiteral),

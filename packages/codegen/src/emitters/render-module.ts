@@ -159,7 +159,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 
 function hashRsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The grammar-owned \`sittir-${lang}\` native module exports it as
@@ -172,7 +172,7 @@ function hashRsHeader(lang: Grammar): string {
 
 function hashTsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 //
 // Companion to ${renderModuleSrcDir(lang)}/hash.rs; the two must
 // agree byte-for-byte at runtime for the native backend to be picked
@@ -183,7 +183,7 @@ function hashTsHeader(lang: Grammar): string {
 
 function generatedHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 and packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src`;
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src`;
 }
 
 function templatesRsHeader(lang: Grammar): string {
@@ -563,13 +563,6 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 			values: [...merged.values, ...slot.values],
 			hasTrailing: merged.hasTrailing || slot.hasTrailing,
 			hasLeading: merged.hasLeading || slot.hasLeading,
-			aliasSources:
-				merged.aliasSources || slot.aliasSources
-					? {
-							...merged.aliasSources,
-							...slot.aliasSources
-						}
-					: undefined
 		}),
 		first.with({ values: [...first.values] })
 	);
@@ -611,8 +604,8 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 		slotsByKey.set(key, existing ? (mergeRenderSlots([existing, slot]) ?? existing) : slot);
 	}
 	const slots = [...slotsByKey.values()];
-	const named = slots.filter((slot) => slot.source !== 'inferred');
-	const unnamed = slots.filter((slot) => slot.source === 'inferred');
+	const named = slots.filter((slot) => !slot.isUnnamed);
+	const unnamed = slots.filter((slot) => slot.isUnnamed);
 	if (unnamed.length === 0) {
 		return {
 			named,
@@ -624,7 +617,7 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 	}
 	const unnamedKinds = [...new Set(unnamed.flatMap((slot) => kindsOf(slot)))];
 	const variantCardinalities = variants.map((variant) => {
-		const children = variant.filter((slot) => slot.source === 'inferred');
+		const children = variant.filter((slot) => slot.isUnnamed);
 		if (children.length === 0) return undefined;
 		const cardinality = deriveUnnamedChildrenCardinality(children);
 		return {
@@ -678,12 +671,12 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 			// alias that points back to the slot's single storage so the template
 			// variables all bind to the same transport field. Skip aliases that
 			// collide with another slot's own name — declared fields take
-			// precedence. Only register aliases for inferred MULTIPLE slots:
+			// precedence. Only register aliases for unnamed MULTIPLE slots:
 			// single-value slots store one transport-shaped value that cannot
 			// be re-routed through a kind-named template variable, and the
 			// template-walker's "kind as variable" pattern only applies to the
 			// list-style `{{ kind | join(...) }}` emission.
-			if (f.source === 'inferred' && mul) {
+			if (f.isUnnamed && mul) {
 				for (const k of kindsOf(f)) {
 					const alias = k.replace(/^_+/, '');
 					if (alias === f.name) continue;
@@ -696,12 +689,12 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 		}
 		for (const f of slotModel.unnamed) {
 			unnamedNames.add(f.name);
-			if (f.source === 'inferred' && isMultiple(f)) {
+			if (f.isUnnamed && isMultiple(f)) {
 				for (const k of kindsOf(f)) {
 					const alias = k.replace(/^_+/, '');
 					if (alias === f.name) continue;
 					// Only mark as unnamed-alias when the alias resolves to this
-					// inferred slot — see storageByName guard above.
+					// unnamed slot — see storageByName guard above.
 					if (storageByName.get(alias) === f.storageName) {
 						unnamedNames.add(alias);
 					}
@@ -2389,7 +2382,7 @@ function buildTypedTemplateBody(
 
 function libRsContents(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 
 pub mod bridge;
 pub mod dispatch;
@@ -4481,7 +4474,7 @@ function renderTransportDataStruct(
 					if (helperNode === undefined) continue;
 					const helperSlots = allSlotsOf(helperNode);
 					for (const innerSlot of helperSlots) {
-						if (innerSlot.source === 'inferred') continue; // skip unnamed inner slots
+						if (innerSlot.isUnnamed) continue; // skip unnamed inner slots
 						if (emittedStorageNames.has(innerSlot.storageName)) continue; // already present
 						// Emit the inner field directly on the parent struct.
 						// Use the HELPER node's kind/typeName so per-slot enum references

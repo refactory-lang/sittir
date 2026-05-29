@@ -652,52 +652,54 @@ function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
 function wire(config, base2) {
+  const cfg = config;
+  const baseArg = base2;
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
     polymorphVariants: [],
     conflictGroups: [],
     refineForms: /* @__PURE__ */ new Map(),
-    groups: config.groups,
-    polymorphsConfig: config.polymorphs,
-    renderAs: config.renderAs,
+    groups: cfg.groups,
+    polymorphsConfig: cfg.polymorphs,
+    renderAs: cfg.renderAs,
     currentRuleKind: null,
-    authoredRuleNames: new Set(Object.keys(config.rules))
+    authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
-  const polymorphs = config.polymorphs ?? {};
-  const transforms = config.transforms ?? {};
-  const outRules = { ...config.rules };
+  const polymorphs = cfg.polymorphs ?? {};
+  const transforms = cfg.transforms ?? {};
+  const outRules = { ...cfg.rules };
   composeOrSynthesizeTransformParents(outRules, transforms);
   composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
-  if (base2 && config.groups && hasBodyPatternGroups(config.groups)) {
-    const baseRules = base2.grammar?.rules ?? base2.rules ?? {};
+  if (baseArg && cfg.groups && hasBodyPatternGroups(cfg.groups)) {
+    const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
       outRules[baseName] = passthroughBaseRuleFn;
     }
   }
   wrapAllRuleFns(outRules, context);
-  applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
-  if (base2) {
+  applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+  if (baseArg) {
     const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
       transforms,
       polymorphs,
-      config.groups
+      cfg.groups
     );
     applyAutoGroups(
-      base2,
+      baseArg,
       outRules,
       context,
       authoredSynthesisKinds
     );
-    applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
+    applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
   }
-  const conflicts = wrapConflictsCallback(config.conflicts, context);
-  const inline = wrapInlineCallback(config.inline, context);
+  const conflicts = wrapConflictsCallback(cfg.conflicts, context);
+  const inline = wrapInlineCallback(cfg.inline, context);
   const wired = {
-    ...config,
+    ...cfg,
     rules: outRules,
     ...conflicts === void 0 ? {} : { conflicts },
     ...inline === void 0 ? {} : { inline }
@@ -737,7 +739,7 @@ function buildPolymorphParentFn(parent, armMap, userFn, context) {
   return function wiredPolymorphParent($, original) {
     let base2;
     if (userFn) {
-      base2 = userFn.call(this, $, original);
+      base2 = userFn($, original);
     } else if (isHidden && context.deposits.has(parent)) {
       base2 = context.deposits.get(parent);
     } else {
@@ -773,7 +775,7 @@ function composeOrSynthesizeTransformParents(rules, transforms) {
 }
 function buildTransformParentFn(patchSets, userFn) {
   return function wiredTransformParent($, original) {
-    const base2 = userFn ? userFn.call(this, $, original) : original;
+    const base2 = userFn ? userFn($, original) : original;
     return transform(base2, ...patchSets);
   };
 }
@@ -826,7 +828,7 @@ function wrapOneRuleFn(name, fn, context) {
     currentContext = context;
     context.currentRuleKind = name;
     try {
-      return fn.call(this, $, previous);
+      return fn($, previous);
     } finally {
       context.currentRuleKind = prevKind;
       currentContext = prevContext;
@@ -885,9 +887,9 @@ function hasBodyPatternGroups(groups) {
   }
   return false;
 }
-function passthroughBaseRuleFn(_$, previous) {
+var passthroughBaseRuleFn = function passthroughBaseRuleFn2(_$, previous) {
   return previous;
-}
+};
 function makeSimpleDollarProxy() {
   return new Proxy({}, {
     get(_target, name) {
@@ -990,7 +992,7 @@ function replaceInBodyRt(rule, candidates) {
 }
 function buildPatternReplacingFn(fn, candidates) {
   return function patternReplacingRuleFn($, previous) {
-    const result = fn.call(this, $, previous);
+    const result = fn($, previous);
     return replaceInBodyRt(result, candidates);
   };
 }
@@ -1584,7 +1586,8 @@ function role(symbol, roleName) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
-function enrich(base2) {
+function enrich(baseInput) {
+  const base2 = baseInput;
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }

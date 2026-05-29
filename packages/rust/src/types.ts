@@ -3897,9 +3897,9 @@ export interface ScopedIdentifier {
 
 export interface ScopedTypeIdentifier {
   readonly $type: TSKindId.ScopedTypeIdentifier;
-  readonly _path?: Path | GenericTypeWithTurbofish | BracketedType;
+  readonly _path?: Path | GenericTypeWithTurbofish | BracketedType | GenericType;
   readonly _name: Identifier;
-  path(): Path | GenericTypeWithTurbofish | BracketedType | undefined;
+  path(): Path | GenericTypeWithTurbofish | BracketedType | GenericType | undefined;
   name(): Identifier;
 }
 

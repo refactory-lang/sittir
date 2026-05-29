@@ -25,7 +25,13 @@ import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types'
 import type { TreeHandle } from '@sittir/common';
 import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
 import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
-import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
+import {
+	createNamedSlotModel,
+	createUnnamedChildrenSlotModel,
+	type SlotModel,
+	type SlotOrigin,
+} from '../compiler/slot-model.ts';
+import { readFacts } from '../compiler/opaque-facts.ts';
 import { pluralize, snakeToCamel } from '../compiler/node-map.ts';
 
 // ---------------------------------------------------------------------------
@@ -1463,8 +1469,15 @@ function shouldPromoteOrphanChildren(
 	return noFieldMatched;
 }
 
+/** Read the validator-only `origin` fact off a slot's opaque metadata. The
+ *  validator MAY branch on this (it's the deprecated-ish TS read path); the
+ *  compiler may not — hence the explicit `readFacts` seam. */
+function slotOrigin(slot: SlotModel): SlotOrigin {
+	return readFacts<{ origin: SlotOrigin }>(slot.metadata).origin;
+}
+
 function slotConfigKey(slot: SlotModel): string {
-	return slot.origin === 'kind' ? slot.name : slot.name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+	return slotOrigin(slot) === 'kind' ? slot.name : slot.name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
 }
 
 function memberValueOpts(
@@ -1524,7 +1537,7 @@ function hasDeclaredFactorySlot(
 }
 
 function shouldNormalizeConfigSlotAsMany(slot: SlotModel, slotMeta: FactorySlotMeta | undefined): boolean {
-	return slotModelArityFromMeta(slotMeta, slot.origin === 'kind') === 'many';
+	return slotModelArityFromMeta(slotMeta, slotOrigin(slot) === 'kind') === 'many';
 }
 
 function rawChildKindName(
@@ -1544,7 +1557,7 @@ function narrowSingularUnnamedChildrenValue(
 	childOpts: NodeToConfigOpts,
 	slotMeta: FactorySlotMeta | undefined
 ): readonly unknown[] | unknown {
-	if (slot.origin !== 'kind' || slot.name !== 'children' || !slotMeta || slotMeta.multiple || slotMeta.slotCount !== 1) {
+	if (slotOrigin(slot) !== 'kind' || slot.name !== 'children' || !slotMeta || slotMeta.multiple || slotMeta.slotCount !== 1) {
 		return value;
 	}
 	if (!Array.isArray(value) || value.length <= 1) return value;
