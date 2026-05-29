@@ -1,7 +1,12 @@
 import { Option } from 'commander';
 import type { CommandModule } from '../framework/command-module.ts';
 import { withGrammar, withOutput } from '../framework/options.ts';
-import { runCodegen, runFullRegen, type CodegenOptions } from '@sittir/codegen/run-codegen';
+import {
+	runCodegen,
+	runFullRegen,
+	runStandaloneSteps,
+	type CodegenOptions
+} from '@sittir/codegen/run-codegen';
 
 interface GenCliOptions {
 	grammar?: string;
@@ -47,11 +52,9 @@ export const gen: CommandModule = {
 			)
 			.action(async (opts: GenCliOptions) => {
 				if (!opts.grammar) throw new Error('Missing required option: --grammar');
-				if (!opts.output) throw new Error('Missing required option: --output');
-				if (!opts.all && !opts.nodes) throw new Error('Must provide --nodes or --all');
 				const codegenOpts: CodegenOptions = {
 					grammar: opts.grammar,
-					outputDir: opts.output,
+					outputDir: opts.output ?? '',
 					nodes: opts.all ? undefined : opts.nodes?.split(','),
 					all: opts.all,
 					testsDir: opts.testsDir,
@@ -64,6 +67,17 @@ export const gen: CommandModule = {
 					noEmitDiff: opts.emitDiff === false, // true only if --no-emit-diff
 					allowDiagnostics: opts.allowDiagnostic,
 				};
+
+				// Standalone maintenance steps (--transpile / --compile-parser /
+				// --ts-generate) run with only --grammar — no --output/--nodes/--all
+				// required. When no --output is given, they are the whole job.
+				if (opts.transpile || opts.compileParser || opts.tsGenerate) {
+					await runStandaloneSteps(codegenOpts);
+					if (!opts.output) return;
+				}
+
+				if (!opts.output) throw new Error('Missing required option: --output');
+				if (!opts.all && !opts.nodes) throw new Error('Must provide --nodes or --all');
 				if (opts.all) await runFullRegen(codegenOpts);
 				else await runCodegen(codegenOpts);
 			});

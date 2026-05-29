@@ -4,9 +4,17 @@
 	"description": "Unified sittir command-line surface",
 	"license": "MIT",
 	"type": "module",
-	"bin": { "sittir": "./src/cli.ts" },
+	"bin": { "sittir": "./dist/cli.js" },
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"source": "./src/index.ts",
+			"import": "./dist/index.js",
+			"default": "./dist/index.js"
+		}
+	},
 	"scripts": {
 		"build": "pnpm run clean && tsgo -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",

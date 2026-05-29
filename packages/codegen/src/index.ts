@@ -11,6 +11,7 @@ export type { GenerateConfig, GeneratedFiles } from './compiler/generate.ts';
 export {
 	runCodegen,
 	runFullRegen,
+	runStandaloneSteps,
 	runCodegenCli,
 	runGrammarDiagnosticsPreflight,
 	type CodegenOptions

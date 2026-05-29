@@ -104,6 +104,33 @@ export function runTreeSitterGenerate(grammar: string): void {
 	});
 }
 
+/**
+ * Run the explicitly-requested standalone parser-generation steps
+ * (`--transpile` / `--ts-generate` / `--compile-parser`) — the override/parser
+ * maintenance workflow. Mirrors the old CLI's standalone branch: usable with
+ * only `--grammar` (no `--output`/`--nodes`/`--all` required). Runs only the
+ * steps whose flag is set, in transpile → tree-sitter generate → compile-parser
+ * order.
+ */
+export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {
+	const { grammar } = opts;
+	const grammarDir = resolve('packages', grammar);
+	if (opts.transpile) {
+		console.log(`Transpiling ${grammar} overrides...`);
+		const tr = await transpileOverrides({ grammar });
+		console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
+	}
+	if (opts.tsGenerate) {
+		runTreeSitterGenerate(grammar);
+	}
+	if (opts.compileParser) {
+		console.log(`Compiling ${grammar} parser to WASM...`);
+		const { compileParser } = await import('./transpile/compile-parser.ts');
+		const wasmPath = await compileParser(grammarDir);
+		console.log(`  → ${wasmPath}`);
+	}
+}
+
 const RUST_RENDER_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
 // ---------------------------------------------------------------------------

@@ -4,10 +4,11 @@ import { Command } from 'commander';
 vi.mock('@sittir/codegen/run-codegen', () => ({
 	runCodegen: vi.fn().mockResolvedValue(undefined),
 	runFullRegen: vi.fn().mockResolvedValue(undefined),
+	runStandaloneSteps: vi.fn().mockResolvedValue(undefined),
 }));
 
 import { gen } from '../../src/commands/gen.ts';
-import { runFullRegen, runCodegen } from '@sittir/codegen/run-codegen';
+import { runFullRegen, runCodegen, runStandaloneSteps } from '@sittir/codegen/run-codegen';
 
 describe('gen command', () => {
 	it('registers a single gen command with --grammar/--all/--output/--nodes', () => {
@@ -40,5 +41,14 @@ describe('gen command', () => {
 		gen.register(program);
 		await program.parseAsync(['gen', '--grammar', 'rust', '--all', '--output', 'o', '--no-build-native', '--allow-diagnostic', 'parsekind-noninjective'], { from: 'user' });
 		expect(vi.mocked(runFullRegen)).toHaveBeenCalledWith(expect.objectContaining({ buildNative: false, allowDiagnostics: ['parsekind-noninjective'] }));
+	});
+	it('runs standalone --transpile with only --grammar (no --output/--nodes/--all)', async () => {
+		vi.clearAllMocks();
+		const program = new Command();
+		gen.register(program);
+		await program.parseAsync(['gen', '--grammar', 'rust', '--transpile'], { from: 'user' });
+		expect(vi.mocked(runStandaloneSteps)).toHaveBeenCalledWith(expect.objectContaining({ grammar: 'rust', transpile: true }));
+		expect(vi.mocked(runCodegen)).not.toHaveBeenCalled();
+		expect(vi.mocked(runFullRegen)).not.toHaveBeenCalled();
 	});
 });
