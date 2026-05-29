@@ -6,41 +6,33 @@
  *
  * @generated from overrides.json — review before committing
  */
-/// <reference types="tree-sitter-cli/dsl" />
-// grammar.js + tree-sitter's injected global DSL (`grammar`, `$._rule`
-// proxy, `seq` / `choice` / `prec` / ...) are intentionally untyped.
-// We narrow the @ts-nocheck blast radius by lifting the wire payload
-// into a typed `const config: WireConfig<RustGrammar>` — that
-// declaration type-checks with kind-name autocomplete + typo
-// protection on `polymorphs` / `transforms` / `rules` keys. Only the
-// final `grammar(enrich(base), wire(config))` line and the injected
-// DSL globals inside rule callbacks need suppression.
+// tree-sitter's ambient DSL (`Rule` / `RuleOrLiteral` / `GrammarSchema` /
+// `GrammarSymbols` / `RuleBuilder` + `grammar` / `seq` / `choice` / `prec` /
+// `repeat` / `repeat1` / `optional` / `token` / ...) is pulled in via
+// `tree-sitter-cli/dsl.d.ts` in tsconfig.overrides.json `types` — NOT a
+// `/// <reference>` directive (that fails TS2688 under this rootDir).
+//
+// The wire payload is lifted into a typed `const config:
+// WireConfig<RustGrammarShape>`. Because `WireConfig.rules` is tree-sitter's
+// `RuleBuilder` via the `Grammar<>` intersection, every rule/transform/
+// groups callback's `$` is a typed `GrammarSymbols` (rule-name autocomplete)
+// instead of an `any`/`unknown` sink; `transforms` keys are `PathKey<…>`
+// (bounds-checked first segment) and values accept the `field()`/`variant()`
+// placeholder return types. Only the final `grammar(...)` line needs a
+// localized suppression (sittir `GrammarResult` vs tree-sitter `GrammarSchema`).
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0_tree-sitter@0.22.4/node_modules/tree-sitter-rust/grammar.js';
 import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/index.ts';
 import type { WireConfig } from '../codegen/src/dsl/index.ts';
-import type { RustGrammar } from './src/grammar.ts';
+import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-shape.rust.ts';
 
-// Injected globals from tree-sitter's grammar() + DSL — declare so the
-// typed `config` below can reference `$.<rule>` / `seq(...)` / etc.
-// without pulling in an untyped `any` sink.
-declare const grammar: (base: unknown, opts: unknown) => unknown;
-declare const seq: (...args: unknown[]) => unknown;
-declare const choice: (...args: unknown[]) => unknown;
-declare const prec: {
-	(p: number, r: unknown): unknown;
-	left: (p: number, r: unknown) => unknown;
-	right: (p: number, r: unknown) => unknown;
-};
-declare const repeat: (r: unknown) => unknown;
-declare const repeat1: (r: unknown) => unknown;
-declare const optional: (r: unknown) => unknown;
-declare const token: {
-	(r: unknown): unknown;
-	immediate: (r: unknown) => unknown;
-};
+// `string` is the ONE DSL primitive with no ambient/exported declaration: it
+// is a runtime global injected by tree-sitter's `grammar()`, used solely
+// inside the `renderAs` callback below. All other DSL fns (`seq` / `choice` /
+// `prec` / `repeat` / `repeat1` / `optional` / `token` / `grammar`) are
+// tree-sitter ambient now (see the `types` note above) — no stubs needed.
 declare const string: (value: string) => unknown;
 
-const config: WireConfig<typeof base> = {
+const config: WireConfig<RustGrammarShape> = {
 	name: 'rust',
 	// `previous` is the base grammar's conflicts list — concat so we
 	// don't drop the base entries (`$._type`, `$._pattern`, etc.).
@@ -812,4 +804,11 @@ const config: WireConfig<typeof base> = {
 // pattern replacement and tree-sitter never emits the alias()-wrapped
 // visible kinds. Evaluating `enrich(base)` twice is intentional and cheap.
 const enrichedBase = enrich(base);
-export default grammar(enrichedBase, wire<RustGrammar>(config, enrichedBase));
+// `wire(config, …)` infers C from the typed `config` — no explicit type-arg.
+// The final `grammar(...)` line is the one designated suppression point (per
+// the file header): `enrich()` returns sittir's `GrammarResult` (`{grammar:
+// {…}}`) which wire's base-extraction handles at runtime, but its static type
+// doesn't match tree-sitter's flat `GrammarSchema`. @ts-expect-error keeps this
+// honest (it fails if the mismatch ever resolves) rather than a silent cast.
+// @ts-expect-error — GrammarResult ({grammar:{rules}}) vs tree-sitter's flat GrammarSchema; runtime-handled by wire's base extraction.
+export default grammar(enrichedBase, wire(config, enrichedBase));

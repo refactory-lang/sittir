@@ -464,24 +464,27 @@ export interface WiredOpts {
 	readonly __wireContext__?: WireContext;
 }
 
-// AUTHORING surface unification (the Phase-3 win): `WireConfig.rules` is
-// typed by tree-sitter's ambient `RuleBuilder<RuleName>` via the `Grammar<>`
-// intersection — so a transform/rule callback's `$` is `GrammarSymbols` (rule-
-// name autocomplete) and `previous` is the rule shape. That's what unblocks
-// overrides `$`; it needs no change here.
+// LOOSE-INTERNAL / NARROW-PUBLIC split (Phase-4 resolution to the
+// contravariance wall):
 //
-// `SittirRuleFn` (the INTERNAL rules-map element type, formerly `RuleFn`) is
-// deliberately NOT `RuleBuilder`. wire's own builder fns — `makeDeferredContentFn`,
-// `buildTransformParentFn`, `wiredPolymorphParent`, `patternReplacingRuleFn`,
-// and auto-groups' `makeStaticRuleFn` — return sittir's dual-runtime raw rule
-// shapes (lowercase + sittir-only variants, built as heterogeneous literals,
-// typed `unknown`/`RuntimeRule`), which are BROADER than tree-sitter's
-// `RuleOrLiteral`. Collapsing this onto `RuleBuilder` (`=> RuleOrLiteral`)
-// would only pass via a force-cast, which this refactor forbids. The redundant
-// part of the old `RuleFn` was the `this: unknown` + `$: unknown` PARAM noise
-// (dropped in the fn bodies); the `=> unknown` return is load-bearing
-// (dual-runtime). This is a genuine SEAM — reported as such.
-type SittirRuleFn = ($: unknown, previous?: unknown) => unknown;
+// `SittirRuleFn` is the INTERNAL rules-map element type. wire's own builder
+// fns — `makeDeferredContentFn`, `buildTransformParentFn`, `wiredPolymorphParent`,
+// `patternReplacingRuleFn`, and auto-groups' `makeStaticRuleFn` — return
+// sittir's dual-runtime raw rule shapes (lowercase + sittir-only variants,
+// heterogeneous literals, typed `unknown`/`RuntimeRule`), BROADER than
+// tree-sitter's `RuleOrLiteral`, so the return MUST stay `unknown`.
+//
+// The PARAMS are `any`, NOT `unknown` — this is load-bearing. The PUBLIC
+// authoring callbacks `WireConfig.rules` exposes are narrow
+// (`($: GrammarSymbols<…>) => unknown`). A narrow `$: GrammarSymbols` fn is
+// assignable to a loose `$: any` param (any is bivariant-compatible) but NOT
+// to `$: unknown` (function params are contravariant — `unknown` demands the
+// fn accept anything, which a `GrammarSymbols`-typed `$` does not). With
+// `$: unknown` the narrow public fns wouldn't flow into
+// `WireContext.rules: Record<string, SittirRuleFn>` without a cast; `$: any`
+// lets them flow with zero cast. The internal machinery still consumes this
+// loose type unchanged.
+type SittirRuleFn = ($: any, previous?: any) => unknown;
 /** @internal alias for the internal rules-map element type (the dual-runtime seam). */
 type RuleFn = SittirRuleFn;
 type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];

@@ -27,6 +27,12 @@
  */
 
 import type { GrammarNode, SeqNode, ChoiceNode, PrecNodeUnion, SingleContentWrapper } from './grammar-json.ts';
+// Type-only imports of the DSL primitive return interfaces (DRY value-axis;
+// no runtime cycle — primitives don't import grammar-shapes).
+import type { FieldPlaceholder } from '../dsl/primitives/field.ts';
+import type { VariantPlaceholder } from '../dsl/primitives/variant.ts';
+import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
+import type { FieldLike } from '../dsl/runtime-shapes.ts';
 
 // ---------------------------------------------------------------------------
 // Split a `/`-joined path into a segment tuple.
@@ -112,14 +118,32 @@ export type TopLevelKeys<N extends GrammarNode> = PeelPrec<N> extends infer P
 // PathKey — the type a transform patch-object KEY should have for rule `N`.
 //
 // Shallow-precise + deep-permissive: the FIRST segment autocompletes to the
-// rule's real top-level indices; deeper segments degrade to free-form via the
-// template-literal tail. This keeps editors offering the right first-level
-// completions while never REJECTING a deeper valid path (soundness: we never
-// claim a deep path is invalid when we can't prove it). Wildcard / kind-match
-// / field-traversal segments fall under the `string` tail too.
+// rule's real top-level INDICES (`TopLevelKeys`, bounds-checked), but the
+// `parsePath` grammar also admits non-numeric first segments the type model
+// can't bounds-check — wildcard `_`, kind-match `(name)`, field-traversal
+// `name:`, reverse index `-N` (see dsl/transform/transform-path.ts::parsePath).
+// Those are accepted permissively so authored paths like `'(_expression)'` /
+// `'_'` / `'-1'` don't false-reject. Deeper segments degrade to free-form via
+// the `/${string}` tail (soundness: never REJECT a deep path we can't prove
+// invalid).
+//
+// CRUCIAL: the precise numeric `TopLevelKeys` arm is preserved — the
+// permissive arms must NOT widen the whole union to `string`, or out-of-bounds
+// numeric keys (e.g. `'7'` on a 2-arm choice) would be silently accepted. That
+// OOB rejection is guarded by the negative-controlled @ts-expect-error in
+// intellisense-demo.test-d.ts.
 // ---------------------------------------------------------------------------
 
-export type PathKey<N extends GrammarNode> = TopLevelKeys<N> | `${TopLevelKeys<N>}/${string}`;
+/** Non-numeric first-segment forms from `parsePath` that the type model
+ *  cannot bounds-check, accepted permissively. (`name:` also admits junk like
+ *  `'5:'` — TS can't cheaply require a letter-initial; permissive is fine.) */
+type NonNumericFirstSegment = '_' | `(${string})` | `${string}:` | `-${number}`;
+
+export type PathKey<N extends GrammarNode> =
+	| TopLevelKeys<N>
+	| NonNumericFirstSegment
+	| `${TopLevelKeys<N>}/${string}`
+	| `${NonNumericFirstSegment}/${string}`;
 
 // ---------------------------------------------------------------------------
 // Per-rule transform patch-map types (Phase-2 TransformsConfig upgrade).
@@ -140,12 +164,26 @@ export type PathKey<N extends GrammarNode> = TopLevelKeys<N> | `${TopLevelKeys<N
 //     tsgo time.
 // ---------------------------------------------------------------------------
 
-/** Patch values accepted in a transform patch-map (kept loose: tree-sitter
- *  `RuleOrLiteral` plus sittir's placeholder objects). Structural, not
- *  imported, to avoid a value-side dependency cycle into dsl/primitives. */
+/** Patch values accepted in a transform patch-map: tree-sitter `RuleOrLiteral`
+ *  (native rule objects + literals) plus sittir's DSL placeholder/result types.
+ *  Sourced from the actual primitive return interfaces (DRY) via type-only
+ *  imports — no runtime cycle (primitives don't import grammar-shapes).
+ *
+ *  `field('x')` returns `FieldPlaceholder`; `field('x', content)` returns
+ *  `FieldLike`; `variant('y')` returns `VariantPlaceholder`. RESIDUAL:
+ *  `alias()` is typed `=> unknown` (source-side, overloaded — fixing it needs
+ *  overload signatures in dsl/primitives/alias.ts, outside this file set), so
+ *  alias-valued transform entries are NOT cleared by enriching this union.
+ *  `AliasPlaceholder` is included for the day `alias()` returns it; today it
+ *  has no effect on the `unknown`-typed alias() expression. Reported as a
+ *  residual — NOT papered with a `unknown`/`any` union (that would collapse
+ *  the whole value type and accept anything). */
 export type TransformPatchValue =
 	| RuleOrLiteral
-	| { readonly __sittirPlaceholder: 'field' | 'alias' | 'variant'; readonly name: string };
+	| FieldPlaceholder
+	| FieldLike
+	| VariantPlaceholder
+	| AliasPlaceholder;
 
 /** A single patch-map for one rule: path-key → patch value. */
 export type TransformPatchMap<Keys extends string> = Partial<Record<Keys, TransformPatchValue>>;

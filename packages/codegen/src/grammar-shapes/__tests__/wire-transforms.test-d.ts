@@ -13,8 +13,9 @@
  */
 import { describe, it, expectTypeOf, assertType } from 'vitest';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';
+import { field, variant } from '../../dsl/index.ts';
 import type { EnrichRule } from '../enrich-type.ts';
-import type { PathKey, FastKeys, PreciseKeys, TransformPatchMap, TopLevelKeys } from '../path-type.ts';
+import type { PathKey, FastKeys, PreciseKeys, TransformPatchMap, TopLevelKeys, TransformPatchValue } from '../path-type.ts';
 
 type Rules = typeof rustGrammarShape['rules'];
 
@@ -56,5 +57,32 @@ describe('per-rule transform patch-map (the TransformsConfig value surface)', ()
 		// @ts-expect-error — '7' is not a valid first segment for a 2-arm choice.
 		const _bad: Patch = { '7': { __sittirPlaceholder: 'field', name: 'x' } };
 		void _bad;
+	});
+
+	it('non-numeric path keys (wildcard / kind-match / reverse) are accepted', () => {
+		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
+		// These authored forms exist in real overrides.ts (`_pattern` uses `-1`,
+		// other rules use `(_expression)` / `_`) — must NOT false-reject.
+		assertType<Patch>({ '_': field('x') });
+		assertType<Patch>({ '(_expression)': field('elements') });
+		assertType<Patch>({ '-1': field('last') });
+	});
+
+	it('transform VALUE: a field()/variant() placeholder type-checks', () => {
+		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
+		// The real value-axis: field()/variant() RETURN types are accepted by
+		// TransformPatchValue (clears the TS2322 cascade on transform values).
+		assertType<Patch>({ '0/0': field('left') });
+		assertType<Patch>({ '0/0': variant('binary') });
+		// And the bare value type accepts them:
+		expectTypeOf<ReturnType<typeof field>>().toExtend<TransformPatchValue>();
+		expectTypeOf<ReturnType<typeof variant>>().toExtend<TransformPatchValue>();
+	});
+
+	it('transform VALUE: a bogus value is rejected (negative-controlled)', () => {
+		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
+		// @ts-expect-error — 42 is neither a RuleOrLiteral nor a DSL placeholder.
+		const _bad1: Patch = { '0/0': 42 };
+		void _bad1;
 	});
 });
