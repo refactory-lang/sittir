@@ -29,7 +29,10 @@ const SOURCES = [
 
 for (const src of SOURCES) {
 	const gj = JSON.parse(readFileSync(src.json, 'utf8'));
-	const slim = { name: gj.name, rules: gj.rules, supertypes: gj.supertypes ?? [] };
+	// Emit the supertype array under `supertypeNames` (NOT `supertypes`):
+	// tree-sitter's ambient `Grammar.supertypes` is an authoring callback, so
+	// the same key would block `GrammarJson extends GrammarSchema<string>`.
+	const slim = { name: gj.name, rules: gj.rules, supertypeNames: gj.supertypes ?? [] };
 	const body = JSON.stringify(slim, null, 1);
 	const real = realpathSync(src.json).replace(repoRoot + '/', '');
 	const header = [

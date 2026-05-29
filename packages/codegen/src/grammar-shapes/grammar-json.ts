@@ -1,123 +1,181 @@
 /**
- * grammar-json.ts — structural TypeScript types for the RAW upstream
- * tree-sitter `grammar.json` vocabulary.
+ * grammar-json.ts — tuple-precise REFINEMENT of tree-sitter's ambient `Rule`
+ * vocabulary (from `tree-sitter-cli/dsl.d.ts`, in tsconfig `types`).
  *
- * These mirror tree-sitter's compiled grammar.json node shapes (the
- * `src/grammar.json` a grammar ships). They are deliberately written so a
- * `... as const satisfies GrammarJson` emit type-checks while PRESERVING
- * literals + tuples — the `readonly` arrays + recursive `GrammarNode`
- * union accept the frozen `as const` shape without widening it.
+ * tree-sitter's `Rule` is shapeless for our purpose: `SeqRule = { type:'SEQ';
+ * members: Rule[] }` collapses every member to the `Rule` union, so there is
+ * no positional information for path addressing. We ADD the recursion by
+ * PARAMETERIZING each node over its content:
  *
- * Vocabulary (compiled grammar.json form):
- *   SEQ CHOICE SYMBOL STRING PATTERN REPEAT REPEAT1 FIELD ALIAS TOKEN
- *   IMMEDIATE_TOKEN PREC PREC_LEFT PREC_RIGHT PREC_DYNAMIC BLANK
+ *   Seq<M>      Choice<M>     — M extends readonly GrammarNode[] (tuple-precise)
+ *   Field<N,C>  Repeat<C> …   — C extends GrammarNode (single content slot)
+ *   Sym<N>      = tree-sitter's SymbolRule<N> (reused directly — a leaf)
+ *   Str<V> Pattern<V> Blank   — leaves
+ *
+ * SINGLE VOCABULARY: these are tree-sitter's discriminants, refined. Leaves
+ * reuse tree-sitter's types directly (`SymbolRule<N>`). The `as const`
+ * grammar.json emit instantiates these with concrete READONLY tuples; the
+ * deriver / Enrich<> / path types operate on that form.
+ *
+ * READONLY, by necessity (documented deviation from "node MUST extend Rule"):
+ * `as const` produces readonly tuples, and positional path indexing
+ * (`members[0]`) + `EnrichRule<>`'s `N extends Seq<…>` matching both REQUIRE
+ * readonly. But a readonly-membered container is NOT assignable to
+ * tree-sitter's mutable `Rule` (`{ members: Rule[] }`) — empirically proven.
+ * The two requirements (readonly-for-paths vs node⊑Rule) are mutually
+ * exclusive under one variance. Resolution:
+ *   - bound containers over `readonly GrammarNode[]` (our union), NOT
+ *     `readonly Rule[]` (which would demand GrammarNode ⊑ Rule → false).
+ *   - the `$` proxy returns `SymbolRule<R>` (a leaf, IS RuleOrLiteral) so
+ *     `$.r` still composes in seq()/choice(); it does NOT return the
+ *     readonly recursive shape (which wouldn't compose, and isn't what
+ *     tree-sitter returns at runtime anyway).
+ *   - the `GrammarJson extends GrammarSchema<string>` ladder is proven via
+ *     a `MutableDeep<>` bridge (below), not by making nodes literally ⊑ Rule.
  *
  * NOTE: compiled grammar.json has NO `OPTIONAL` node — tree-sitter lowers
  * `optional(x)` to `CHOICE(x, BLANK)`. The Enrich<> + path machinery match
  * on `CHOICE(_, BLANK)`, never a phantom OPTIONAL.
+ *
+ * `supertypes` rename: compiled grammar.json carries `supertypes: string[]`,
+ * but tree-sitter's ambient `Grammar.supertypes` is an AUTHORING CALLBACK
+ * (`($, prev) => RuleOrLiteral[]`). The two collide on the same key, blocking
+ * `GrammarJson extends GrammarSchema<string>`. We emit the array under
+ * `supertypeNames` instead. Nothing depends on the typed field (the runtime
+ * cross-check reads the raw `require`; the type-level supertype set is the
+ * hardcoded `RustSupertypes`).
  */
 
-export interface SeqNode {
+// ---------------------------------------------------------------------------
+// Parameterized node types — tree-sitter's discriminants, refined over content.
+// Containers bound over `readonly GrammarNode[]`; leaves reuse tree-sitter's
+// `SymbolRule` directly. `Rule` is the ambient tree-sitter union.
+// ---------------------------------------------------------------------------
+
+export interface Seq<M extends readonly GrammarNode[]> {
 	readonly type: 'SEQ';
-	readonly members: readonly GrammarNode[];
+	readonly members: M;
 }
-export interface ChoiceNode {
+export interface Choice<M extends readonly GrammarNode[]> {
 	readonly type: 'CHOICE';
-	readonly members: readonly GrammarNode[];
+	readonly members: M;
 }
-export interface SymbolNode {
-	readonly type: 'SYMBOL';
-	readonly name: string;
-}
-export interface StringNode {
+/** SYMBOL leaf — reuse tree-sitter's generic `SymbolRule<Name>` directly. */
+export type Sym<Name extends string = string> = SymbolRule<Name>;
+export interface Str<V extends string = string> {
 	readonly type: 'STRING';
-	readonly value: string;
+	readonly value: V;
 }
-export interface PatternNode {
+export interface Pattern<V extends string = string> {
 	readonly type: 'PATTERN';
-	readonly value: string;
+	readonly value: V;
 	readonly flags?: string;
 }
-export interface BlankNode {
+export interface Blank {
 	readonly type: 'BLANK';
 }
-export interface RepeatNode {
+export interface Repeat<C extends GrammarNode = GrammarNode> {
 	readonly type: 'REPEAT';
-	readonly content: GrammarNode;
+	readonly content: C;
 }
-export interface Repeat1Node {
+export interface Repeat1<C extends GrammarNode = GrammarNode> {
 	readonly type: 'REPEAT1';
-	readonly content: GrammarNode;
+	readonly content: C;
 }
-export interface FieldNode {
+export interface Field<N extends string = string, C extends GrammarNode = GrammarNode> {
 	readonly type: 'FIELD';
-	readonly name: string;
-	readonly content: GrammarNode;
+	readonly name: N;
+	readonly content: C;
 }
-export interface AliasNode {
+export interface Alias<V extends string = string, C extends GrammarNode = GrammarNode> {
 	readonly type: 'ALIAS';
-	readonly value: string;
+	readonly value: V;
 	readonly named: boolean;
-	readonly content: GrammarNode;
+	readonly content: C;
 }
-export interface TokenNode {
+export interface Token<C extends GrammarNode = GrammarNode> {
 	readonly type: 'TOKEN';
-	readonly content: GrammarNode;
+	readonly content: C;
 }
-export interface ImmediateTokenNode {
+export interface ImmediateToken<C extends GrammarNode = GrammarNode> {
 	readonly type: 'IMMEDIATE_TOKEN';
-	readonly content: GrammarNode;
+	readonly content: C;
 }
-export interface PrecNode {
+export interface Prec<C extends GrammarNode = GrammarNode> {
 	readonly type: 'PREC';
 	readonly value: number;
-	readonly content: GrammarNode;
+	readonly content: C;
 }
-export interface PrecLeftNode {
+export interface PrecLeft<C extends GrammarNode = GrammarNode> {
 	readonly type: 'PREC_LEFT';
 	readonly value: number;
-	readonly content: GrammarNode;
+	readonly content: C;
 }
-export interface PrecRightNode {
+export interface PrecRight<C extends GrammarNode = GrammarNode> {
 	readonly type: 'PREC_RIGHT';
 	readonly value: number;
-	readonly content: GrammarNode;
+	readonly content: C;
 }
-export interface PrecDynamicNode {
+export interface PrecDynamic<C extends GrammarNode = GrammarNode> {
 	readonly type: 'PREC_DYNAMIC';
 	readonly value: number;
-	readonly content: GrammarNode;
+	readonly content: C;
 }
 
-/** Union of every compiled-grammar.json node shape. */
+/** Union of every compiled-grammar.json node shape (loose any-node alias). */
 export type GrammarNode =
-	| SeqNode
-	| ChoiceNode
-	| SymbolNode
-	| StringNode
-	| PatternNode
-	| BlankNode
-	| RepeatNode
-	| Repeat1Node
-	| FieldNode
-	| AliasNode
-	| TokenNode
-	| ImmediateTokenNode
-	| PrecNode
-	| PrecLeftNode
-	| PrecRightNode
-	| PrecDynamicNode;
+	| Seq<readonly GrammarNode[]>
+	| Choice<readonly GrammarNode[]>
+	| Sym<string>
+	| Str<string>
+	| Pattern<string>
+	| Blank
+	| Repeat<GrammarNode>
+	| Repeat1<GrammarNode>
+	| Field<string, GrammarNode>
+	| Alias<string, GrammarNode>
+	| Token<GrammarNode>
+	| ImmediateToken<GrammarNode>
+	| Prec<GrammarNode>
+	| PrecLeft<GrammarNode>
+	| PrecRight<GrammarNode>
+	| PrecDynamic<GrammarNode>;
+
+// ---------------------------------------------------------------------------
+// Back-compat aliases — Phase-1 enrich-type.ts / path-type.ts reference the
+// `…Node` names. `readonly [...] ⊑ readonly GrammarNode[]` holds, so
+// `N extends SeqNode` etc. behave identically to the parameterized forms.
+// ---------------------------------------------------------------------------
+
+export type SeqNode = Seq<readonly GrammarNode[]>;
+export type ChoiceNode = Choice<readonly GrammarNode[]>;
+export type SymbolNode = Sym<string>;
+export type StringNode = Str<string>;
+export type PatternNode = Pattern<string>;
+export type BlankNode = Blank;
+export type RepeatNode = Repeat<GrammarNode>;
+export type Repeat1Node = Repeat1<GrammarNode>;
+export type FieldNode = Field<string, GrammarNode>;
+export type AliasNode = Alias<string, GrammarNode>;
+export type TokenNode = Token<GrammarNode>;
+export type ImmediateTokenNode = ImmediateToken<GrammarNode>;
+export type PrecNode = Prec<GrammarNode>;
+export type PrecLeftNode = PrecLeft<GrammarNode>;
+export type PrecRightNode = PrecRight<GrammarNode>;
+export type PrecDynamicNode = PrecDynamic<GrammarNode>;
 
 /** Top-level compiled grammar.json shape (the subset we type off). */
 export interface GrammarJson {
 	readonly name: string;
 	readonly rules: Readonly<Record<string, GrammarNode>>;
-	readonly supertypes?: readonly string[];
+	/** Compiled supertype-name array. Named `supertypeNames` (not
+	 *  `supertypes`) to avoid colliding with tree-sitter's authoring callback
+	 *  of the same name — see the file header. */
+	readonly supertypeNames?: readonly string[];
 }
 
 // ---------------------------------------------------------------------------
 // Discriminant guards used by the (purely type-level) Enrich<> + path types.
-// Kept here so structural facts live next to the node definitions.
 // ---------------------------------------------------------------------------
 
 /** PREC wrappers are transparent to path addressing (skip a segment). */
@@ -128,3 +186,17 @@ export type SingleContentWrapper = RepeatNode | Repeat1Node | FieldNode | AliasN
 
 /** Container nodes whose members are positionally addressable. */
 export type ContainerNode = SeqNode | ChoiceNode;
+
+// ---------------------------------------------------------------------------
+// MutableDeep<> — the readonly→mutable bridge used ONLY to PROVE the
+// subtyping ladder `GrammarJson ⊑ GrammarSchema<string>` (modulo readonly).
+// It recursively strips `readonly` so the result's containers become
+// `members: GrammarNode[]` (mutable), which IS assignable to tree-sitter's
+// `Rule`. Not used at any runtime/navigation site — purely an assertion aid.
+// ---------------------------------------------------------------------------
+
+export type MutableDeep<T> = T extends readonly (infer _U)[]
+	? { -readonly [K in keyof T]: MutableDeep<T[K]> }
+	: T extends object
+		? { -readonly [K in keyof T]: MutableDeep<T[K]> }
+		: T;

@@ -9644,7 +9644,7 @@ export const rustGrammarShape = {
    "value": "\\$[a-zA-Z_]\\w*"
   }
  },
- "supertypes": [
+ "supertypeNames": [
   "_expression",
   "_type",
   "_literal",
