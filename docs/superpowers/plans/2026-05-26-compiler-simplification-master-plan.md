@@ -31,10 +31,10 @@
 |----|----------------------------|-----------|:----:|:-----:|--------|--------|
 | ~~PR3~~ | Delete legacy render walker | — | — | — | — | ✅ DONE (#36 `ee3d7a0b`) |
 | ~~PR-A0~~ | Normalize losslessness fix | — | — | — | — | ✅ DONE (#36 `c38ffbf1`/`a91927c6`) |
-| **PR-A** | Reconcile `_new` naming → 0-diff WIDE probe | PR-A0 | 0 | no | `pr-a-reconcile-new-naming` | ⬜ next (plan written) |
-| **PR-B** | `AssembledNonterminal`→class; `kind`/`parseKind` refs; `sourceRuleIds` | A | 1 | no | `pr-b-assembled-nonterminal-class` | ⬜ |
-| **PR-C** | Eliminate `origin` + slot `aliasSources` → `value.parseKind`/`isUnnamed`; + §4d.1 non-injective-`parseKind` pass | B | 2 | no | `pr-c-eliminate-origin-aliassources` | ⬜ |
-| **PR-D** | wrap reads class; delete `SlotModel`; `$children`→`$other` (codegen+rust) | C | 3 | **yes** | `pr-d-wrap-reads-class` | ⬜ |
+| **PR-A** | Reconcile `_new` naming → 0-diff WIDE probe | PR-A0 | 0 | no | `pr-a-reconcile-new-naming` | ✅ DONE (#40) |
+| **PR-B** | `AssembledNonterminal`→class; `kind`/`parseKind` refs; `sourceRuleIds` | A | 1 | no | `pr-b-assembled-nonterminal-class` | ✅ DONE (#41) |
+| **PR-C** | Eliminate `origin` + slot `aliasSources` → `value.parseKind`/`isUnnamed`; + §4d.1 non-injective-`parseKind` pass | B | 2 | no | `pr-c-eliminate-origin-aliassources` | ✅ DONE (#43; +#44 unified-CLI merged in) |
+| **PR-D** | wrap reads class; delete `SlotModel`; `$children`→`$other` (codegen+rust) | C | 3 | **yes** | `pr-d-wrap-reads-class` | 🔄 PUSHED (A `9d1f1d1a` + B `bc3cb2d4`; ast 125/72/76 hold, cargo green; `$with` variadic deferred to final type-pass; PR not yet opened) |
 | **PR-D2** | Helper-name leak fix (H2 probe → 0) | D | 4 | no | `pr-d2-helper-name-leak` | ⬜ |
 | **PR-E** | transport + render read class; delete 2 visible-kind band-aids; delete deprecated `bridge.rs` | D2, B (A) | 5 | **yes** | `pr-e-transport-render-class` | ⬜ |
 | **PR-F** | factory + from + types read class | B (D for `$with` gate) | 5 | no | `pr-f-factory-from-types-class` | ⬜ |
@@ -98,4 +98,6 @@ The linear order over-serializes. The graph reveals genuine independence — but
 3. Execute via subagent-driven-development; gate on `pnpm validate:native` (+ cargo-verify if rust-emitting).
 4. On merge: update this row's Status to ✅ + record the last gate numbers, and link the per-PR plan.
 
-**Up next: PR-A** (plan: `docs/superpowers/plans/2026-05-25-pr-a-reconcile-new-naming.md`) — Task 0 re-measures the clean baseline (settling 181-vs-182), then the WIDE divergence probe.
+**Done so far:** PR-A (#40) → PR-B (#41) → PR-C (#43, +#44 unified-CLI) all merged. **PR-D** (`pr-d-wrap-reads-class`) pushed — Task A (wrap-reads-class + delete `slot-model.ts`) + Task B (`$children`→`$other`) done & independently re-verified (ast **125/72/76** hold, `cargo check` green); the `$with` variadic acceptance criterion is **deferred** to the single end-of-plan type-error cleanup pass (generated-code type errors are not gated mid-plan — render/parse via `validate:native` is the gate). PR-D's GitHub PR not yet opened.
+
+**Up next: PR-D2** (`pr-d2-helper-name-leak` — Helper-name leak fix, H2 probe → 0) — the formal dependency before **PR-E** (`pr-e-transport-render-class`: transport + render read class, delete the 2 visible-kind band-aids + deprecated `bridge.rs`). PR-E ‖ PR-F are the wave-5 concurrent pair. Current gate baseline to carry into D2/E: **rust ast 125 · ts ast 72 · python ast 76** (native, deep read-render-parse).
