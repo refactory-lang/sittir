@@ -29,15 +29,15 @@ export function fromParseKindCollision(
 	return {
 		scope: 'grammar',
 		code: diagnostic.code,
-		severity: 'error',
+		severity: diagnostic.severity,
 		grammar,
 		ownerKind: diagnostic.ownerKind,
 		slotName: diagnostic.slotName,
-		message:
-			`Slot '${diagnostic.slotName}' of kind '${diagnostic.ownerKind}' ` +
-			`collapses [${diagnostic.storageKinds.join(', ')}] onto parse kind '${diagnostic.parseKind}'.`,
+		// Forward the producer's message/severity/canProceed verbatim rather than
+		// regenerating — keeps the wording single-sourced in the producer.
+		message: diagnostic.message,
 		proposal: diagnostic.proposal,
-		canProceed: true,
+		canProceed: diagnostic.canProceed,
 		details: {
 			parseKind: diagnostic.parseKind,
 			storageKinds: diagnostic.storageKinds
