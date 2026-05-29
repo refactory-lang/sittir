@@ -5130,9 +5130,9 @@
           }
         },
         {
-          "name": "visibility_modifier_pub_parens",
-          "propertyName": "visibilityModifierPubParens",
-          "paramName": "visibilityModifierPubParens",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5140,8 +5140,29 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_visibility_modifier_pub_parens",
-              "parseKind": "_visibility_modifier_pub_parens",
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "super",
+              "parseKind": "super",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_visibility_modifier_in_path",
+              "parseKind": "visibility_modifier_in_path",
               "unresolved": true
             }
           ],
@@ -5149,7 +5170,10 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_visibility_modifier_pub_parens"
+              "self",
+              "super",
+              "crate",
+              "_visibility_modifier_in_path"
             ]
           }
         }
@@ -7326,9 +7350,9 @@
           }
         },
         {
-          "name": "const_item_optional1",
-          "propertyName": "constItemOptional1",
-          "paramName": "constItemOptional1",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7336,16 +7360,16 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_const_item_optional1",
-              "parseKind": "_const_item_optional1",
+              "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_const_item_optional1"
+              "_expression"
             ]
           }
         }
@@ -9120,9 +9144,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "for_expression_optional1",
-          "propertyName": "forExpressionOptional1",
-          "paramName": "forExpressionOptional1",
+          "name": "label",
+          "propertyName": "label",
+          "paramName": "label",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9130,16 +9154,16 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_for_expression_optional1",
-              "parseKind": "_for_expression_optional1",
+              "name": "label",
+              "parseKind": "label",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_for_expression_optional1"
+              "label"
             ]
           }
         },
@@ -9902,9 +9926,9 @@
           }
         },
         {
-          "name": "function_signature_item_optional1",
-          "propertyName": "functionSignatureItemOptional1",
-          "paramName": "functionSignatureItemOptional1",
+          "name": "return_type",
+          "propertyName": "returnType",
+          "paramName": "returnType",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9912,16 +9936,16 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_function_signature_item_optional1",
-              "parseKind": "_function_signature_item_optional1",
+              "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_function_signature_item_optional1"
+              "_type"
             ]
           }
         },
@@ -11636,9 +11660,9 @@
           }
         },
         {
-          "name": "let_declaration_optional3",
-          "propertyName": "letDeclarationOptional3",
-          "paramName": "letDeclarationOptional3",
+          "name": "alternative",
+          "propertyName": "alternative",
+          "paramName": "alternative",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11646,16 +11670,16 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_let_declaration_optional3",
-              "parseKind": "_let_declaration_optional3",
+              "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_let_declaration_optional3"
+              "block"
             ]
           }
         }
@@ -11897,9 +11921,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "loop_expression_optional1",
-          "propertyName": "loopExpressionOptional1",
-          "paramName": "loopExpressionOptional1",
+          "name": "label",
+          "propertyName": "label",
+          "paramName": "label",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11907,16 +11931,16 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_loop_expression_optional1",
-              "parseKind": "_loop_expression_optional1",
+              "name": "label",
+              "parseKind": "label",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_loop_expression_optional1"
+              "label"
             ]
           }
         },

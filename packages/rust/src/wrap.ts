@@ -1257,13 +1257,13 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
     ...data,
     $type: TSKindId.VisibilityModifierPub as const,
     _pub: projectKindEnumStorage(normalizeSingularWrapSlot(data._pub, "pub", true, data.$type, { tree, nodeType: data.$type, slotName: "pub", span: (data as _NodeData).$span })),
-    _visibility_modifier_pub_parens: normalizeSingularWrapSlot(data._visibility_modifier_pub_parens, "visibility_modifier_pub_parens", false, data.$type, { tree, nodeType: data.$type, slotName: "visibility_modifier_pub_parens", span: (data as _NodeData).$span }),
+    _content: normalizeSingularWrapSlot((data._self ?? data._super ?? data._crate ?? data._visibility_modifier_in_path ?? data._content), "content", false, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     pub() { return this._pub; },
-    visibilityModifierPubParens() { return drillIn<T.VisibilityModifierPubParens | undefined>(this._visibility_modifier_pub_parens, tree); },
+    content() { return drillAs<T.Self | T.Super | T.Crate | T.VisibilityModifierInPath | undefined>(this._content, tree, "visibility_modifier_in_path", "_visibility_modifier_in_path"); },
     $with: {
       pub: (v: NonNullable<T.VisibilityModifierPub['_pub']>) => wrapVisibilityModifierPub({ ...data, _pub: v }, tree),
-      visibilityModifierPubParens: (v: NonNullable<T.VisibilityModifierPub['_visibility_modifier_pub_parens']>) => wrapVisibilityModifierPub({ ...data, _visibility_modifier_pub_parens: v }, tree),
+      content: (v: NonNullable<T.VisibilityModifierPub['_content']>) => wrapVisibilityModifierPub({ ...data, _content: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1688,17 +1688,17 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle) {
     _visibility_modifier: normalizeSingularWrapSlot(data._visibility_modifier, "visibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "visibility_modifier", span: (data as _NodeData).$span }),
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
-    _const_item_optional1: normalizeSingularWrapSlot(data._const_item_optional1, "const_item_optional1", false, data.$type, { tree, nodeType: data.$type, slotName: "const_item_optional1", span: (data as _NodeData).$span }),
+    _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
     name() { return drillIn<T.Identifier>(this._name, tree); },
     type() { return drillIn<T._Type>(this._type, tree); },
-    constItemOptional1() { return drillIn<T.ConstItemOptional1 | undefined>(this._const_item_optional1, tree); },
+    value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
       visibilityModifier: (v: NonNullable<T.ConstItem['_visibility_modifier']>) => wrapConstItem({ ...data, _visibility_modifier: v }, tree),
       name: (v: NonNullable<T.ConstItem['_name']>) => wrapConstItem({ ...data, _name: v }, tree),
       type: (v: NonNullable<T.ConstItem['_type']>) => wrapConstItem({ ...data, _type: v }, tree),
-      constItemOptional1: (v: NonNullable<T.ConstItem['_const_item_optional1']>) => wrapConstItem({ ...data, _const_item_optional1: v }, tree),
+      value: (v: NonNullable<T.ConstItem['_value']>) => wrapConstItem({ ...data, _value: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2089,17 +2089,17 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForExpression as const,
-    _for_expression_optional1: normalizeSingularWrapSlot(data._for_expression_optional1, "for_expression_optional1", false, data.$type, { tree, nodeType: data.$type, slotName: "for_expression_optional1", span: (data as _NodeData).$span }),
+    _label: normalizeSingularWrapSlot(data._label, "label", false, data.$type, { tree, nodeType: data.$type, slotName: "label", span: (data as _NodeData).$span }),
     _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type, { tree, nodeType: data.$type, slotName: "pattern", span: (data as _NodeData).$span }),
     _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type, { tree, nodeType: data.$type, slotName: "body", span: (data as _NodeData).$span }),
 
-    forExpressionOptional1() { return drillIn<T.ForExpressionOptional1 | undefined>(this._for_expression_optional1, tree); },
+    label() { return drillIn<T.Label | undefined>(this._label, tree); },
     pattern() { return drillIn<T.Pattern>(this._pattern, tree); },
     value() { return drillIn<T.Expression>(this._value, tree); },
     body() { return drillIn<T.Block>(this._body, tree); },
     $with: {
-      forExpressionOptional1: (v: NonNullable<T.ForExpression['_for_expression_optional1']>) => wrapForExpression({ ...data, _for_expression_optional1: v }, tree),
+      label: (v: NonNullable<T.ForExpression['_label']>) => wrapForExpression({ ...data, _label: v }, tree),
       pattern: (v: NonNullable<T.ForExpression['_pattern']>) => wrapForExpression({ ...data, _pattern: v }, tree),
       value: (v: NonNullable<T.ForExpression['_value']>) => wrapForExpression({ ...data, _value: v }, tree),
       body: (v: NonNullable<T.ForExpression['_body']>) => wrapForExpression({ ...data, _body: v }, tree),
@@ -2214,7 +2214,7 @@ export function wrapFunctionSignatureItem(data: T.FunctionSignatureItem, tree: T
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
     _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type, { tree, nodeType: data.$type, slotName: "type_parameters", span: (data as _NodeData).$span }),
     _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type, { tree, nodeType: data.$type, slotName: "parameters", span: (data as _NodeData).$span }),
-    _function_signature_item_optional1: normalizeSingularWrapSlot(data._function_signature_item_optional1, "function_signature_item_optional1", false, data.$type, { tree, nodeType: data.$type, slotName: "function_signature_item_optional1", span: (data as _NodeData).$span }),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type, { tree, nodeType: data.$type, slotName: "return_type", span: (data as _NodeData).$span }),
     _where_clause: normalizeSingularWrapSlot(data._where_clause, "where_clause", false, data.$type, { tree, nodeType: data.$type, slotName: "where_clause", span: (data as _NodeData).$span }),
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
@@ -2222,7 +2222,7 @@ export function wrapFunctionSignatureItem(data: T.FunctionSignatureItem, tree: T
     name() { return drillIn<T.Identifier | T.Metavariable>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     parameters() { return drillIn<T.Parameters>(this._parameters, tree); },
-    functionSignatureItemOptional1() { return drillIn<T.FunctionSignatureItemOptional1 | undefined>(this._function_signature_item_optional1, tree); },
+    returnType() { return drillIn<T._Type | undefined>(this._return_type, tree); },
     whereClause() { return drillIn<T.WhereClause | undefined>(this._where_clause, tree); },
     $with: {
       visibilityModifier: (v: NonNullable<T.FunctionSignatureItem['_visibility_modifier']>) => wrapFunctionSignatureItem({ ...data, _visibility_modifier: v }, tree),
@@ -2230,7 +2230,7 @@ export function wrapFunctionSignatureItem(data: T.FunctionSignatureItem, tree: T
       name: (v: NonNullable<T.FunctionSignatureItem['_name']>) => wrapFunctionSignatureItem({ ...data, _name: v }, tree),
       typeParameters: (v: NonNullable<T.FunctionSignatureItem['_type_parameters']>) => wrapFunctionSignatureItem({ ...data, _type_parameters: v }, tree),
       parameters: (v: NonNullable<T.FunctionSignatureItem['_parameters']>) => wrapFunctionSignatureItem({ ...data, _parameters: v }, tree),
-      functionSignatureItemOptional1: (v: NonNullable<T.FunctionSignatureItem['_function_signature_item_optional1']>) => wrapFunctionSignatureItem({ ...data, _function_signature_item_optional1: v }, tree),
+      returnType: (v: NonNullable<T.FunctionSignatureItem['_return_type']>) => wrapFunctionSignatureItem({ ...data, _return_type: v }, tree),
       whereClause: (v: NonNullable<T.FunctionSignatureItem['_where_clause']>) => wrapFunctionSignatureItem({ ...data, _where_clause: v }, tree),
     },
   }, methodsEngine);
@@ -2547,19 +2547,19 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle) {
     _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type, { tree, nodeType: data.$type, slotName: "pattern", span: (data as _NodeData).$span }),
     _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
     _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),
-    _let_declaration_optional3: normalizeSingularWrapSlot(data._let_declaration_optional3, "let_declaration_optional3", false, data.$type, { tree, nodeType: data.$type, slotName: "let_declaration_optional3", span: (data as _NodeData).$span }),
+    _alternative: normalizeSingularWrapSlot(data._alternative, "alternative", false, data.$type, { tree, nodeType: data.$type, slotName: "alternative", span: (data as _NodeData).$span }),
 
     mutableSpecifier() { return this._mutable_specifier; },
     pattern() { return drillIn<T.Pattern>(this._pattern, tree); },
     type() { return drillIn<T._Type | undefined>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
-    letDeclarationOptional3() { return drillIn<T.LetDeclarationOptional3 | undefined>(this._let_declaration_optional3, tree); },
+    alternative() { return drillIn<T.Block | undefined>(this._alternative, tree); },
     $with: {
       mutableSpecifier: (v: NonNullable<T.LetDeclaration['_mutable_specifier']>) => wrapLetDeclaration({ ...data, _mutable_specifier: v }, tree),
       pattern: (v: NonNullable<T.LetDeclaration['_pattern']>) => wrapLetDeclaration({ ...data, _pattern: v }, tree),
       type: (v: NonNullable<T.LetDeclaration['_type']>) => wrapLetDeclaration({ ...data, _type: v }, tree),
       value: (v: NonNullable<T.LetDeclaration['_value']>) => wrapLetDeclaration({ ...data, _value: v }, tree),
-      letDeclarationOptional3: (v: NonNullable<T.LetDeclaration['_let_declaration_optional3']>) => wrapLetDeclaration({ ...data, _let_declaration_optional3: v }, tree),
+      alternative: (v: NonNullable<T.LetDeclaration['_alternative']>) => wrapLetDeclaration({ ...data, _alternative: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2620,13 +2620,13 @@ export function wrapLoopExpression(data: T.LoopExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.LoopExpression as const,
-    _loop_expression_optional1: normalizeSingularWrapSlot(data._loop_expression_optional1, "loop_expression_optional1", false, data.$type, { tree, nodeType: data.$type, slotName: "loop_expression_optional1", span: (data as _NodeData).$span }),
+    _label: normalizeSingularWrapSlot(data._label, "label", false, data.$type, { tree, nodeType: data.$type, slotName: "label", span: (data as _NodeData).$span }),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type, { tree, nodeType: data.$type, slotName: "body", span: (data as _NodeData).$span }),
 
-    loopExpressionOptional1() { return drillIn<T.LoopExpressionOptional1 | undefined>(this._loop_expression_optional1, tree); },
+    label() { return drillIn<T.Label | undefined>(this._label, tree); },
     body() { return drillIn<T.Block>(this._body, tree); },
     $with: {
-      loopExpressionOptional1: (v: NonNullable<T.LoopExpression['_loop_expression_optional1']>) => wrapLoopExpression({ ...data, _loop_expression_optional1: v }, tree),
+      label: (v: NonNullable<T.LoopExpression['_label']>) => wrapLoopExpression({ ...data, _label: v }, tree),
       body: (v: NonNullable<T.LoopExpression['_body']>) => wrapLoopExpression({ ...data, _body: v }, tree),
     },
   }, methodsEngine);
@@ -4347,7 +4347,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'closure_expression_static_marker': '_closure_expression_static_marker',
   'compound_assignment_expr_operator': '_compound_assignment_expr_operator',
   'condition': '_condition',
-  'const_item_optional1': '_const_item_optional1',
   'declaration_statement': '_declaration_statement',
   'delim_tokens': '_delim_tokens',
   'expression': '_expression',
@@ -4355,17 +4354,13 @@ const _aliasTargetToSource: Record<string, string> = {
   'expression_except_range': '_expression_except_range',
   'field_pattern_named': '_field_pattern_named',
   'field_pattern_ref_marker': '_field_pattern_ref_marker',
-  'for_expression_optional1': '_for_expression_optional1',
-  'function_signature_item_optional1': '_function_signature_item_optional1',
   'let_chain': '_let_chain',
-  'let_declaration_optional3': '_let_declaration_optional3',
   'line_comment_content': '_line_comment_content',
   'line_comment_doc': '_line_comment_doc',
   'line_comment_regular_dslash': '_line_comment_regular_dslash',
   'line_doc_content': '_line_doc_content',
   'literal': '_literal',
   'literal_pattern': '_literal_pattern',
-  'loop_expression_optional1': '_loop_expression_optional1',
   'match_arm_with_comma': '_match_arm_with_comma',
   'move_marker': '_move_marker',
   'operator': '_operator',
@@ -4396,7 +4391,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'use_clause': '_use_clause',
   'visibility_modifier_in_path': '_visibility_modifier_in_path',
   'visibility_modifier_pub': '_visibility_modifier_pub',
-  'visibility_modifier_pub_parens': '_visibility_modifier_pub_parens',
 };
 
 /** Wrap a NodeData into its lazy read-only view. */

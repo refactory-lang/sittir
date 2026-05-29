@@ -501,7 +501,6 @@ export interface ConstItemTransport {
   _visibility_modifier?: VisibilityModifierTransport
   _name: IdentifierTransport
   _type: _TypeTransport
-  _const_item_optional1?: ConstItemOptional1Transport
   _value?: ExpressionTransport
 }
 
@@ -965,11 +964,10 @@ export interface ForExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _label?: LabelTransport
   _pattern: Box<PatternTransport>
   _value: Box<ExpressionTransport>
   _body: Box<BlockTransport>
-  _for_expression_optional1?: ForExpressionOptional1Transport
-  _label?: LabelTransport
 }
 
 export interface ForLifetimesTransport {
@@ -1047,9 +1045,8 @@ export interface FunctionSignatureItemTransport {
   _name: PathTransport
   _type_parameters?: TypeParametersTransport
   _parameters: ParametersTransport
-  _where_clause?: WhereClauseTransport
-  _function_signature_item_optional1?: FunctionSignatureItemOptional1Transport
   _return_type?: _TypeTransport
+  _where_clause?: WhereClauseTransport
 }
 
 export interface FunctionTypeFnFormTransport {
@@ -1355,7 +1352,6 @@ export interface LetDeclarationTransport {
   _pattern: PatternTransport
   _type?: _TypeTransport
   _value?: ExpressionTransport
-  _let_declaration_optional3?: LetDeclarationOptional3Transport
   _alternative?: BlockTransport
 }
 
@@ -1430,9 +1426,8 @@ export interface LoopExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _body: Box<BlockTransport>
-  _loop_expression_optional1?: LoopExpressionOptional1Transport
   _label?: LabelTransport
+  _body: Box<BlockTransport>
 }
 
 export interface MacroDefinitionBraceTransport {
@@ -2816,7 +2811,7 @@ export interface VisibilityModifierPubTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _pub: Box<AnyTransport>
-  _visibility_modifier_pub_parens?: VisibilityModifierPubParensTransport
+  _content?: VisibilityModifierPubContentTransportSlot
 }
 
 export interface VisibilityModifierTransport {
