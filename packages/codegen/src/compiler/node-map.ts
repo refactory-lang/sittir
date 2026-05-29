@@ -1750,6 +1750,10 @@ export class AssembledNonterminal {
 	get paramName(): string { return projectSlotNaming(this).paramName; }
 	get parseNames(): readonly string[] { return projectSlotNaming(this).parseNames; }
 	get isUnnamed(): boolean { return this.fieldName === undefined; }
+	/** Multiplicity: 'many' when any value has array/nonEmptyArray multiplicity, 'one' otherwise. */
+	get arity(): 'one' | 'many' { return isMultiple(this) ? 'many' : 'one'; }
+	/** Canonical `_<storageName>` storage key (single source of truth for the `_` prefix convention). */
+	get storageKey(): string { return `_${this.storageName}`; }
 
 	constructor(init: AssembledNonterminalInit) {
 		this.values = init.values;

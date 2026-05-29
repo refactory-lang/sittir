@@ -24,7 +24,6 @@ import type {
 	AssembledSupertype
 } from '../compiler/node-map.ts';
 import { aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/node-map.ts';
-import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
 import { deriveUnnamedChildrenCardinality } from '../compiler/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
@@ -47,6 +46,18 @@ import {
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { expandRuntimeDiscriminatorKinds } from './factory-map.ts';
+
+// Local view-layer slot descriptor: the minimal `{ name, storageKey, arity }`
+// surface wrap.ts consumes. `AssembledNonterminal` structurally satisfies it
+// (it exposes `name`, `storageKey`, and `arity` getters — the single source of
+// truth for those derivations), so emitFieldCarryingWrap passes `f` directly.
+// The shape is retained only for the synthetic unnamed-children slot, which is
+// not a class instance (see resolveUnnamedSlotConfig; reworked in task B).
+interface SlotModel {
+	readonly name: string;
+	readonly storageKey: string;
+	readonly arity: 'one' | 'many';
+}
 
 export interface EmitWrapConfig {
 	grammar: string;
@@ -428,9 +439,11 @@ function resolveUnnamedSlotConfig(
 ): UnnamedChildrenSlotConfig {
 	const cardinality = deriveUnnamedChildrenCardinality(children);
 	return {
-		slot: createUnnamedChildrenSlotModel(
-			options?.forceSingular ? 'one' : children.length === 1 && !cardinality.multiple ? 'one' : 'many'
-		),
+		slot: {
+			name: 'children',
+			storageKey: '$children',
+			arity: options?.forceSingular ? 'one' : children.length === 1 && !cardinality.multiple ? 'one' : 'many'
+		} satisfies SlotModel,
 		elemType: childElementType({ children }, nodeMap),
 		required: options?.optional ? false : cardinality.required,
 		nonEmpty: cardinality.nonEmpty,
@@ -644,7 +657,7 @@ function emitFieldCarryingWrap(
 	// declare every field, but merged fields are a superset. Cast through
 	// `(data as any)` to access fields that may not exist on all union members.
 	for (const f of fields) {
-		const slot = createNamedSlotModel(f.name, isMultiple(f) ? 'many' : 'one');
+		// f IS AssembledNonterminal — read getters directly (DRY: single source for arity/storageKey).
 		const aliasRewrite = resolveSlotAliasRewrite(f);
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
@@ -656,7 +669,7 @@ function emitFieldCarryingWrap(
 		// kinds (possibly via a supertype), the native reader populates
 		// `_<concrete_kind>` not `_<slot.name>`. Probe each concrete key.
 		const candidateStorageKeys = collectConcreteStorageKeys(f, nodeMap);
-		const { storeExpr } = resolveSlotDrillExprs(slot, {
+		const { storeExpr } = resolveSlotDrillExprs(f, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
@@ -666,7 +679,7 @@ function emitFieldCarryingWrap(
 			allowedKinds,
 			candidateStorageKeys
 		});
-		lines.push(`    _${f.name}: ${storeExpr},`);
+		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $children is a $-prefixed metadata key, not a _<name> storage key, so
@@ -694,7 +707,7 @@ function emitFieldCarryingWrap(
 	// Inline method shorthand accessors: `name()` returns drilled value via `this._<name>`.
 	for (const f of fields) {
 		const propName = f.propertyName;
-		const slot = createNamedSlotModel(f.name, isMultiple(f) ? 'many' : 'one');
+		// f IS AssembledNonterminal — read getters directly (DRY: single source for arity/storageKey).
 		const aliasRewrite = resolveSlotAliasRewrite(f);
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
@@ -702,7 +715,7 @@ function emitFieldCarryingWrap(
 			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
 				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
 				: undefined;
-		const { accessorBody } = resolveSlotDrillExprs(slot, {
+		const { accessorBody } = resolveSlotDrillExprs(f, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
@@ -811,13 +824,13 @@ function emitInlineWithProperty(
 		if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 			const setterValueType = node.isPolymorph
 				? polymorphSetterType
-				: `NonNullable<T.${node.typeName}['_${f.name}']>[number]`;
+				: `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
 			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
-			lines.push(`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`);
+			lines.push(`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);
 		} else {
-			const setterValueType = node.isPolymorph ? polymorphSetterType : `NonNullable<T.${node.typeName}['_${f.name}']>`;
-			lines.push(`      ${method}: (v: ${setterValueType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`);
+			const setterValueType = node.isPolymorph ? polymorphSetterType : `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
+			lines.push(`      ${method}: (v: ${setterValueType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);
 		}
 	}
 	if (children.length > 0) {

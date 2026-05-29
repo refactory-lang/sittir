@@ -25,13 +25,28 @@ import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types'
 import type { TreeHandle } from '@sittir/common';
 import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
 import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
-import {
-	createNamedSlotModel,
-	createUnnamedChildrenSlotModel,
-	type SlotModel,
-	type SlotOrigin,
-} from '../compiler/slot-model.ts';
-import { readFacts } from '../compiler/opaque-facts.ts';
+import { opaqueFacts, readFacts } from '../compiler/opaque-facts.ts';
+
+// Validator-local slot model. validate/common.ts has no AssembledNonterminal
+// instances (it walks already-read napi NodeData), so slot descriptors are
+// built from bare name strings + locally-derived arity.
+// The validator is the ONLY allowed reader of the opaque `origin` fact
+// (feedback_metadata_not_behavior.md); the compiler never sees this type.
+type SlotArity = 'one' | 'many';
+type SlotOrigin = 'field' | 'kind';
+interface SlotModel {
+	readonly name: string;
+	readonly storageKey: string; // always `_<name>` (or `$children` for the legacy children slot)
+	readonly arity: SlotArity;
+	/** Validator-only facts; read ONLY via `readFacts` (never branched on by the compiler). */
+	readonly metadata: import('../compiler/opaque-facts.ts').OpaqueFacts;
+}
+function createNamedSlotModel(name: string, arity: SlotArity): SlotModel {
+	return { name, storageKey: `_${name}`, arity, metadata: opaqueFacts({ origin: 'field' satisfies SlotOrigin }) };
+}
+function createUnnamedChildrenSlotModel(arity: SlotArity): SlotModel {
+	return { name: 'children', storageKey: '$children', arity, metadata: opaqueFacts({ origin: 'kind' satisfies SlotOrigin }) };
+}
 import { pluralize, snakeToCamel } from '../compiler/node-map.ts';
 
 // ---------------------------------------------------------------------------

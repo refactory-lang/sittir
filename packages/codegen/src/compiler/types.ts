@@ -23,7 +23,6 @@ import type { Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from './rule
 import type { AssembledNode, AssembledNonterminal } from './node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
-export type { SlotArity, SlotModel } from './slot-model.ts';
 
 /**
  * One entry in the {@link LinkedGrammar.polymorphVariants} /
