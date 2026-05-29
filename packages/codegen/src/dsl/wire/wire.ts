@@ -464,7 +464,26 @@ export interface WiredOpts {
 	readonly __wireContext__?: WireContext;
 }
 
-type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown;
+// AUTHORING surface unification (the Phase-3 win): `WireConfig.rules` is
+// typed by tree-sitter's ambient `RuleBuilder<RuleName>` via the `Grammar<>`
+// intersection — so a transform/rule callback's `$` is `GrammarSymbols` (rule-
+// name autocomplete) and `previous` is the rule shape. That's what unblocks
+// overrides `$`; it needs no change here.
+//
+// `SittirRuleFn` (the INTERNAL rules-map element type, formerly `RuleFn`) is
+// deliberately NOT `RuleBuilder`. wire's own builder fns — `makeDeferredContentFn`,
+// `buildTransformParentFn`, `wiredPolymorphParent`, `patternReplacingRuleFn`,
+// and auto-groups' `makeStaticRuleFn` — return sittir's dual-runtime raw rule
+// shapes (lowercase + sittir-only variants, built as heterogeneous literals,
+// typed `unknown`/`RuntimeRule`), which are BROADER than tree-sitter's
+// `RuleOrLiteral`. Collapsing this onto `RuleBuilder` (`=> RuleOrLiteral`)
+// would only pass via a force-cast, which this refactor forbids. The redundant
+// part of the old `RuleFn` was the `this: unknown` + `$: unknown` PARAM noise
+// (dropped in the fn bodies); the `=> unknown` return is load-bearing
+// (dual-runtime). This is a genuine SEAM — reported as such.
+type SittirRuleFn = ($: unknown, previous?: unknown) => unknown;
+/** @internal alias for the internal rules-map element type (the dual-runtime seam). */
+type RuleFn = SittirRuleFn;
 type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
@@ -696,10 +715,10 @@ function buildPolymorphParentFn(
 		patches[path] = variantPlaceholder(suffix);
 	}
 	const isHidden = parent.startsWith('_');
-	return function wiredPolymorphParent(this: unknown, $: unknown, original: unknown): unknown {
+	return function wiredPolymorphParent($, original) {
 		let base: unknown;
 		if (userFn) {
-			base = userFn.call(this, $, original);
+			base = userFn($, original);
 		} else if (isHidden && context.deposits.has(parent)) {
 			base = context.deposits.get(parent);
 		} else {
@@ -783,9 +802,9 @@ function composeOrSynthesizeTransformParents(rules: Record<string, RuleFn>, tran
  * rest-parameter signature so multi-patch-set rules behave exactly as
  * they did when the call was written inline in the rule body.
  */
-function buildTransformParentFn(patchSets: readonly PatchMap[], userFn: RuleFn | undefined): RuleFn {
-	return function wiredTransformParent(this: unknown, $: unknown, original: unknown): unknown {
-		const base = userFn ? userFn.call(this, $, original) : original;
+function buildTransformParentFn(patchSets: readonly PatchMap[], userFn: SittirRuleFn | undefined): SittirRuleFn {
+	return function wiredTransformParent($, original) {
+		const base = userFn ? userFn($, original) : original;
 		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
 	};
 }
@@ -882,8 +901,8 @@ function registerHiddenRuleForPlaceholder(
  *      Normally consumed by `evaluate`'s `prunePlaceholderOrphans` so
  *      BLANK orphans don't pollute the grammar.
  */
-function makeDeferredContentFn(context: WireContext, hiddenName: string): RuleFn {
-	return function deferredHiddenRule(this: unknown, _$: unknown, previous?: unknown): unknown {
+function makeDeferredContentFn(context: WireContext, hiddenName: string): SittirRuleFn {
+	return function deferredHiddenRule(_$, previous) {
 		const body = context.deposits.get(hiddenName);
 		if (body) return body;
 		if (previous !== undefined) return previous;
@@ -909,13 +928,13 @@ function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): vo
  * currentRuleKind, installs this context, runs the fn, restores.
  */
 function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
-	return function wiredRuleFn(this: unknown, $: unknown, previous?: unknown): unknown {
+	return function wiredRuleFn($, previous) {
 		const prevContext = currentContext;
 		const prevKind = context.currentRuleKind;
 		currentContext = context;
 		context.currentRuleKind = name;
 		try {
-			return fn.call(this, $, previous);
+			return fn($, previous);
 		} finally {
 			context.currentRuleKind = prevKind;
 			currentContext = prevContext;
@@ -1069,9 +1088,9 @@ function hasBodyPatternGroups(groups: GroupsConfig): boolean {
  * Returns `previous` unchanged; the pattern-replacement pass wraps this
  * fn so the returned body is structurally walked and substituted.
  */
-function passthroughBaseRuleFn(this: unknown, _$: unknown, previous?: unknown): unknown {
+const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, previous) {
 	return previous;
-}
+};
 
 /** Minimal candidate record for wire-phase pattern replacement. */
 interface WirePatternCandidate {
@@ -1276,8 +1295,8 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
  * Wrap a rule fn so its return value has matching pattern sub-trees replaced.
  */
 function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCandidate[]): RuleFn {
-	return function patternReplacingRuleFn(this: unknown, $: unknown, previous?: unknown): unknown {
-		const result = fn.call(this, $, previous);
+	return function patternReplacingRuleFn($, previous) {
+		const result = fn($, previous);
 		return replaceInBodyRt(result, candidates);
 	};
 }
