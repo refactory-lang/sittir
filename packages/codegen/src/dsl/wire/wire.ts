@@ -43,6 +43,9 @@ import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
 import { applyAutoGroups } from './auto-groups.ts';
 import type { Rule } from '../../compiler/rule.ts';
+// Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
+import type { GrammarJson, GrammarNode } from '../../grammar-shapes/grammar-json.ts';
+import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 
 
 // ---------------------------------------------------------------------------
@@ -299,7 +302,7 @@ export function withWireContext<T>(
 /** @internal — extract the rule-kind string union from a base grammar.
  *  Handles both shapes: `{ rules: { … } }` (tree-sitter native) and
  *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
-type BaseKind<Base extends GrammarSchema<any> = GrammarSchema<any>> = Base extends {
+type BaseKind<Base extends GrammarJson = GrammarJson> = Base extends {
 	readonly rules: infer R;
 }
 	? keyof R & string
@@ -316,7 +319,7 @@ type BaseKind<Base extends GrammarSchema<any> = GrammarSchema<any>> = Base exten
  * names stay untyped — paths describe runtime descents into the rule
  * tree (`seq`/`choice` indices), suffixes are author-introduced.
  */
-export type PolymorphsConfig<Base extends GrammarSchema<any> = GrammarSchema<any>> = Partial<
+export type PolymorphsConfig<Base extends GrammarJson = GrammarJson> = Partial<
 	Record<BaseKind<Base>, Record<string, string>>
 >;
 
@@ -375,9 +378,30 @@ export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
  * resolution deposits captured content into wire's context; the
  * deferred fns read deposits.
  */
-export type TransformsConfig<Base extends GrammarSchema<any> = GrammarSchema<any>> = Partial<
-	Record<BaseKind<Base>, PatchMap | PatchMap[]>
->;
+export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarNode] extends [Base['rules'][keyof Base['rules']]]
+	? // Loose default (`Base = GrammarJson`, rule values are the open
+		// `GrammarNode` union): use the plain `PatchMap` form. Mapping
+		// `PathKey<…>` over the OPEN union recurses unboundedly (TS2589); the
+		// per-rule precise form is only meaningful — and only safe — when
+		// `Base` is a CONCRETE `as const` schema (tuple rule bodies). The
+		// internal pipeline always sees this loose form.
+		Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
+	: Base extends { readonly rules: infer R }
+		? {
+				// Concrete `Base` (e.g. `RustGrammarShape`): per rule K, keys are
+				// segment-1-precise path strings. We derive them from the RAW node
+				// (`FastKeys` = PathKey<R[K]>) rather than the post-Enrich shape:
+				// `PathKey` only consumes the FIRST segment (`TopLevelKeys`), and
+				// enrich wraps top-level members IN PLACE (never adds/removes one),
+				// so `PathKey<EnrichRule<X>> ≡ PathKey<X>` (proven in
+				// wire-transforms.test-d.ts). FastKeys is therefore LOSSLESS for
+				// keys and avoids instantiating EnrichRule over the loose union
+				// (which is the TS2589 source). Array form = multi-patchset rules.
+				readonly [K in keyof R]?: R[K] extends GrammarNode
+					? TransformPatchMap<FastKeys<R[K]>> | TransformPatchMap<FastKeys<R[K]>>[]
+					: PatchMap | PatchMap[];
+			}
+		: Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>;
 
 /** A single patch-map — path-in-original → patch value. */
 export type PatchMap = Record<string, unknown>;
@@ -394,7 +418,7 @@ export type PatchMap = Record<string, unknown>;
  * to keep the hidden-name escape hatch for synthesized rules
  * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
  */
-export type WireConfig< B extends GrammarSchema<any>, NewRules extends string = string> = Grammar<NewRules, keyof B['rules'] & string> & {
+export type WireConfig< B extends GrammarJson, NewRules extends string = string> = Grammar<NewRules, keyof B['rules'] & string> & {
 	readonly polymorphs?: PolymorphsConfig<B>;
 	readonly groups?: GroupsConfig;
 	readonly transforms?: TransformsConfig<B>;

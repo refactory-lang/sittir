@@ -120,3 +120,39 @@ export type TopLevelKeys<N extends GrammarNode> = PeelPrec<N> extends infer P
 // ---------------------------------------------------------------------------
 
 export type PathKey<N extends GrammarNode> = TopLevelKeys<N> | `${TopLevelKeys<N>}/${string}`;
+
+// ---------------------------------------------------------------------------
+// Per-rule transform patch-map types (Phase-2 TransformsConfig upgrade).
+//
+// `TransformPatchMap<RuleNode>` keys each patch entry by `PathKey<RuleNode>`
+// (segment-1-precise) and values by the patch-value union. `TransformsFor<S>`
+// maps EVERY rule kind in a schema to its `original`-shape's patch-map — this
+// is the 182-rule mapped type whose PERF is the stated risk, so it's
+// parameterized over `KeyOf<RuleNode>` (swap the key strategy without
+// touching the value/mapping machinery):
+//
+//   - PRECISE keys: `PathKey<EnrichRule<RuleNode>>` — instantiates EnrichRule
+//     per rule (the cost driver).
+//   - FAST keys: `PathKey<RuleNode>` on the RAW node — top-level member count
+//     is enrich-INVARIANT (enrich wraps in-place, never adds/removes a
+//     top-level member), so segment-1 autocomplete is identical without
+//     instantiating EnrichRule. Used as the perf fallback if PRECISE degrades
+//     tsgo time.
+// ---------------------------------------------------------------------------
+
+/** Patch values accepted in a transform patch-map (kept loose: tree-sitter
+ *  `RuleOrLiteral` plus sittir's placeholder objects). Structural, not
+ *  imported, to avoid a value-side dependency cycle into dsl/primitives. */
+export type TransformPatchValue =
+	| RuleOrLiteral
+	| { readonly __sittirPlaceholder: 'field' | 'alias' | 'variant'; readonly name: string };
+
+/** A single patch-map for one rule: path-key → patch value. */
+export type TransformPatchMap<Keys extends string> = Partial<Record<Keys, TransformPatchValue>>;
+
+/** PRECISE key strategy: segment-1 keys derived from the POST-Enrich shape. */
+export type PreciseKeys<RuleNode extends GrammarNode> = PathKey<import('./enrich-type.ts').EnrichRule<RuleNode>>;
+
+/** FAST key strategy: segment-1 keys from the RAW shape (enrich-invariant for
+ *  top-level member count). */
+export type FastKeys<RuleNode extends GrammarNode> = PathKey<RuleNode>;
