@@ -897,16 +897,39 @@ export function inlineRefs(
 				return reapplyInlinedLeafAttrs(rule, inlined);
 			}
 
-			// Not inline-listed. Visible symbols are never inlined.
-			if (!rule.hidden) return rule;
+			// Not inline-listed. Visible symbols are never inlined — with one
+			// exception: optional(seq) group-lift refs must bypass the hidden check
+			// and fall through to the GROUP/MULTI path below. These refs are
+			// synthesized by synthesizeOptionalGroups in auto-groups.ts and carry
+			// `source:'group-lift'` + `multiplicity:'optional'` but do NOT have
+			// `hidden:true` stamped (the synthesizer doesn't set it). Without the
+			// exception they bail here and leak as parent slot values (H2 helper-name
+			// leak, PR-D2). Note: the `hidden` guard below also catches the case where
+			// `!rule.hidden` could bail before the group-lift check.
+			const isOptionalGroupLift =
+				(rule as { source?: string }).source === 'group-lift' &&
+				(rule as { multiplicity?: string }).multiplicity === 'optional';
+			if (!rule.hidden && !isOptionalGroupLift) return rule;
 			if (visited.has(rule.name)) return rule;
 			const target = rules[rule.name];
 			if (!target) return rule;
 
-			// Don't inline group-lift synthesized symbol refs via the group/multi
-			// path — those are deliberate structural boundaries: the referenced kind
-			// should materialise as its own AssembledGroup, not be inlined away.
-			if ((rule as { source?: string }).source === 'group-lift') return rule;
+			// Don't inline repeat(seq) group-lift synthesized symbol refs via the
+			// group/multi path — those are deliberate structural boundaries: the
+			// referenced kind should materialise as its own AssembledGroup, not be
+			// inlined away (project_repeat_seq_group_synthesis design).
+			//
+			// Optional group-lifts (isOptionalGroupLift=true) fall through to the
+			// GROUP/MULTI inline path. Their seq content is spliced into the parent's
+			// slot tree so the helper name never survives as a slot value. This is the
+			// H2 fix: gate the bail on non-optional multiplicity only.
+			//
+			// Discriminator: repeat group-lifts carry multiplicity 'array' or
+			// 'nonEmptyArray' (wrapper-deletion pushes repeat's multiplicity onto the
+			// symbol ref); optional group-lifts carry multiplicity 'optional'. Any
+			// group-lift ref without a multiplicity attribute bails conservatively.
+			if ((rule as { source?: string }).source === 'group-lift' && !isOptionalGroupLift)
+				return rule;
 
 			// GROUP / MULTI path: inline hidden group and multi helpers.
 			const inlineTarget = resolveGroupOrMultiInlineTarget(target);

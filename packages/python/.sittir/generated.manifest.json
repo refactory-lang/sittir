@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "91f8c203bd4c4b8981a6e3fb2e041c608f510f8098a4d65fb0d0650bc3c37fb3",
+  "source_hash": "12c4893093d7271211ab9b0467625b2a5aac80593446a7d512b5eaabf546dfed",
   "files": {
     "packages/python/.sittir/grammar.js": "3dc29e8a5ebe88bb8a0a4e1d83b41e764b6dc96bb1e83d1ca75226d4a8fda37a",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -276,7 +276,7 @@
     "rust/crates/sittir-python/templates/with_item.jinja": "6de9ebfb84be05c1bf693a55855a5f65d4b30745e7bf7e94405ab675b3bcef8f",
     "rust/crates/sittir-python/templates/with_statement.jinja": "892f9897b8713eda534bd82a88d4687b73dbd9c834be164af7753a27a77120b3",
     "rust/crates/sittir-python/templates/yield.jinja": "4d27a116533eddf8b04d6e93058098c82ece52e0e4340320acad190d4ff6fcf7",
-    "rust/crates/sittir-python/test-fixtures.json": "de1ff01ff0660f90665d73598e8dbb1d6a04b82f9be6277c091e918ccfddc33c"
+    "rust/crates/sittir-python/test-fixtures.json": "dd6eb2f7b1a8743eb26704056892478153bfe19077497a912e9ae6ed070ae1a7"
   },
   "host_files": {
     "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "7004ac4ec9e40dde37fcbf6a07d9eeb475755d74d220472421135b16e2ace015"

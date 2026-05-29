@@ -163,12 +163,6 @@ pub struct _ClosureExpressionExprTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_const_item_optional1.jinja", escape = "none")]
-pub struct ConstItemOptional1Template<'a> {
-    pub value: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_delim_token_tree_brace.jinja", escape = "none")]
 pub struct _DelimTokenTreeBraceTemplate<'a> {
     pub delim_tokens: ListNonterminalView<'a>,
@@ -212,21 +206,9 @@ pub struct _FieldPatternShorthandTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_for_expression_optional1.jinja", escape = "none")]
-pub struct ForExpressionOptional1Template<'a> {
-    pub label: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_foreign_mod_item_body.jinja", escape = "none")]
 pub struct _ForeignModItemBodyTemplate<'a> {
     pub body: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_function_signature_item_optional1.jinja", escape = "none")]
-pub struct FunctionSignatureItemOptional1Template<'a> {
-    pub return_type: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -255,23 +237,11 @@ pub struct LetChainTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_let_declaration_optional3.jinja", escape = "none")]
-pub struct LetDeclarationOptional3Template<'a> {
-    pub alternative: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_line_comment_doc.jinja", escape = "none")]
 pub struct LineCommentDocTemplate<'a> {
     pub doc: SingleNonterminalView<'a>,
     pub inner: OptionalNonterminalView<'a>,
     pub outer: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_loop_expression_optional1.jinja", escape = "none")]
-pub struct LoopExpressionOptional1Template<'a> {
-    pub label: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -448,15 +418,9 @@ pub struct VisibilityModifierInPathTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_visibility_modifier_pub_parens.jinja", escape = "none")]
-pub struct VisibilityModifierPubParensTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
 pub struct VisibilityModifierPubTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
+    pub content: OptionalNonterminalView<'a>,
     pub pub_: SingleNonterminalView<'a>,
     pub visibility_modifier_pub_parens: OptionalNonterminalView<'a>,
 }

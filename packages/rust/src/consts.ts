@@ -1728,7 +1728,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
-    { name: 'constItemOptional1', required: false, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'const_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -1826,7 +1826,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   'for_expression': [
-    { name: 'forExpressionOptional1', required: false, multiple: false },
+    { name: 'label', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
@@ -1862,7 +1862,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
-    { name: 'functionSignatureItemOptional1', required: false, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
     { name: 'whereClause', required: false, multiple: false },
   ],
   'function_type': [
@@ -1944,7 +1944,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
-    { name: 'letDeclarationOptional3', required: false, multiple: false },
+    { name: 'alternative', required: false, multiple: false },
   ],
   'lifetime': [
     { name: 'identifier', required: true, multiple: false },
@@ -1959,7 +1959,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'lineCommentContent', required: true, multiple: false },
   ],
   'loop_expression': [
-    { name: 'loopExpressionOptional1', required: false, multiple: false },
+    { name: 'label', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'macro_definition': [

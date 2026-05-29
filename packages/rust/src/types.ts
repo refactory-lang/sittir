@@ -2640,12 +2640,12 @@ export interface VisibilityModifierInPath {
 export interface VisibilityModifierPub {
   readonly $type: TSKindId.VisibilityModifierPub;
   readonly _pub: number;
-  readonly _visibility_modifier_pub_parens?: VisibilityModifierPubParens;
+  readonly _content?: Self | Super | Crate | VisibilityModifierInPath;
   readonly __inputHints__?: {
     readonly pub: KindEnum<"pub", TSKindId.Pub>;
   };
   pub(): number;
-  visibilityModifierPubParens(): VisibilityModifierPubParens | undefined;
+  content(): Self | Super | Crate | VisibilityModifierInPath | undefined;
 }
 
 export interface WhileExpressionOptional1 {
@@ -2908,11 +2908,11 @@ export interface ConstItem {
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _name: Identifier;
   readonly _type: _Type;
-  readonly _const_item_optional1?: ConstItemOptional1;
+  readonly _value?: Expression;
   visibilityModifier(): VisibilityModifier | undefined;
   name(): Identifier;
   type(): _Type;
-  constItemOptional1(): ConstItemOptional1 | undefined;
+  value(): Expression | undefined;
 }
 
 export interface ConstParameter {
@@ -3148,11 +3148,11 @@ export interface FieldPatternUFormNamed {
 export type FieldPattern = FieldPatternUFormShorthand | FieldPatternUFormNamed;
 export interface ForExpression {
   readonly $type: TSKindId.ForExpression;
-  readonly _for_expression_optional1?: ForExpressionOptional1;
+  readonly _label?: Label;
   readonly _pattern: Pattern;
   readonly _value: Expression;
   readonly _body: Block;
-  forExpressionOptional1(): ForExpressionOptional1 | undefined;
+  label(): Label | undefined;
   pattern(): Pattern;
   value(): Expression;
   body(): Block;
@@ -3229,14 +3229,14 @@ export interface FunctionSignatureItem {
   readonly _name: Identifier | Metavariable;
   readonly _type_parameters?: TypeParameters;
   readonly _parameters: Parameters;
-  readonly _function_signature_item_optional1?: FunctionSignatureItemOptional1;
+  readonly _return_type?: _Type;
   readonly _where_clause?: WhereClause;
   visibilityModifier(): VisibilityModifier | undefined;
   functionModifiers(): FunctionModifiers | undefined;
   name(): Identifier | Metavariable;
   typeParameters(): TypeParameters | undefined;
   parameters(): Parameters;
-  functionSignatureItemOptional1(): FunctionSignatureItemOptional1 | undefined;
+  returnType(): _Type | undefined;
   whereClause(): WhereClause | undefined;
 }
 
@@ -3438,7 +3438,7 @@ export interface LetDeclaration {
   readonly _pattern: Pattern;
   readonly _type?: _Type;
   readonly _value?: Expression;
-  readonly _let_declaration_optional3?: LetDeclarationOptional3;
+  readonly _alternative?: Block;
   readonly __inputHints__?: {
     readonly mutable_specifier?: BooleanKeyword<"mut">;
   };
@@ -3446,7 +3446,7 @@ export interface LetDeclaration {
   pattern(): Pattern;
   type(): _Type | undefined;
   value(): Expression | undefined;
-  letDeclarationOptional3(): LetDeclarationOptional3 | undefined;
+  alternative(): Block | undefined;
 }
 
 export interface Lifetime {
@@ -3487,9 +3487,9 @@ export interface LineCommentUFormContent {
 export type LineComment = LineCommentUFormRegularDslash | LineCommentUFormDoc | LineCommentUFormContent;
 export interface LoopExpression {
   readonly $type: TSKindId.LoopExpression;
-  readonly _loop_expression_optional1?: LoopExpressionOptional1;
+  readonly _label?: Label;
   readonly _body: Block;
-  loopExpressionOptional1(): LoopExpressionOptional1 | undefined;
+  label(): Label | undefined;
   body(): Block;
 }
 

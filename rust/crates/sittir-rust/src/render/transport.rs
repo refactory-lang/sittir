@@ -10239,6 +10239,117 @@ impl RenderableTransport for TypeArgumentContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum VisibilityModifierPubContentTransportSlot {
+    Self_(Self_Transport),
+    Super(SuperTransport),
+    Crate(CrateTransport),
+    VisibilityModifierInPath(VisibilityModifierInPathTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierPubContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                139 => Ok(Self::Self_(
+                    Self_Transport::from_napi_value(env, napi_val)?
+                )),
+                140 => Ok(Self::Super(
+                    SuperTransport::from_napi_value(env, napi_val)?
+                )),
+                141 => Ok(Self::Crate(
+                    CrateTransport::from_napi_value(env, napi_val)?
+                )),
+                350 => Ok(Self::VisibilityModifierInPath(
+                    VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in VisibilityModifierPubContentTransportSlot",
+                ))),
+            };
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("VisibilityModifierPubContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in VisibilityModifierPubContentTransportSlot")
+        )?;
+        match kind_id {
+                139 => Ok(Self::Self_(
+                    Self_Transport::from_napi_value(env, napi_val)?
+                )),
+                140 => Ok(Self::Super(
+                    SuperTransport::from_napi_value(env, napi_val)?
+                )),
+                141 => Ok(Self::Crate(
+                    CrateTransport::from_napi_value(env, napi_val)?
+                )),
+                350 => Ok(Self::VisibilityModifierInPath(
+                    VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in VisibilityModifierPubContentTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierPubContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("VisibilityModifierPubContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierPubContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        VisibilityModifierPubContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierPubContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        VisibilityModifierPubContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn visibility_modifier_pub_content_transport_slot_to_any(t: VisibilityModifierPubContentTransportSlot) -> AnyTransport {
+    match t {
+        VisibilityModifierPubContentTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
+        VisibilityModifierPubContentTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        VisibilityModifierPubContentTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
+        VisibilityModifierPubContentTransportSlot::VisibilityModifierInPath(inner) => AnyTransport::VisibilityModifierInPath(inner),
+    }
+}
+
+impl RenderableTransport for VisibilityModifierPubContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            VisibilityModifierPubContentTransportSlot::Self_(inner) => render_self(inner, dest),
+            VisibilityModifierPubContentTransportSlot::Super(inner) => render_super(inner, dest),
+            VisibilityModifierPubContentTransportSlot::Crate(inner) => render_crate(inner, dest),
+            VisibilityModifierPubContentTransportSlot::VisibilityModifierInPath(inner) => render_visibility_modifier_in_path(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum AbstractTypeTraitTransportSlot {
     Identifier(IdentifierTransport),
     ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
@@ -24696,8 +24807,8 @@ pub struct VisibilityModifierPubTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pub"))]
     pub pub_: Box<AnyTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_pub_parens"))]
-    pub visibility_modifier_pub_parens: Option<VisibilityModifierPubParensTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<VisibilityModifierPubContentTransportSlot>,
 }
 
 impl RenderableTransport for VisibilityModifierPubTransport {
@@ -26394,8 +26505,6 @@ pub struct ConstItemTransport {
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: _TypeTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_const_item_optional1"))]
-    pub const_item_optional1: Option<ConstItemOptional1Transport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Option<ExpressionTransport>,
 }
@@ -28000,16 +28109,14 @@ pub struct ForExpressionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
+    pub label: Option<LabelTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: Box<PatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<BlockTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_expression_optional1"))]
-    pub for_expression_optional1: Option<ForExpressionOptional1Transport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
-    pub label: Option<LabelTransport>,
 }
 
 impl RenderableTransport for ForExpressionTransport {
@@ -28522,12 +28629,10 @@ pub struct FunctionSignatureItemTransport {
     pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: ParametersTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_clause"))]
-    pub where_clause: Option<WhereClauseTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_signature_item_optional1"))]
-    pub function_signature_item_optional1: Option<FunctionSignatureItemOptional1Transport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<_TypeTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_clause"))]
+    pub where_clause: Option<WhereClauseTransport>,
 }
 
 impl RenderableTransport for FunctionSignatureItemTransport {
@@ -29684,8 +29789,6 @@ pub struct LetDeclarationTransport {
     pub type_: Option<_TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Option<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_let_declaration_optional3"))]
-    pub let_declaration_optional3: Option<LetDeclarationOptional3Transport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<BlockTransport>,
 }
@@ -29898,12 +30001,10 @@ pub struct LoopExpressionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: Box<BlockTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_loop_expression_optional1"))]
-    pub loop_expression_optional1: Option<LoopExpressionOptional1Transport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<LabelTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: Box<BlockTransport>,
 }
 
 impl RenderableTransport for LoopExpressionTransport {
@@ -44131,18 +44232,10 @@ fn render_compound_assignment_expr_operator(t: &CompoundAssignmentExprOperatorEn
 }
 
 fn render_const_item_optional1(node: &ConstItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.value.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
+    if let Some(child) = &node.value {
+        render_expression(child, dest)?;
     }
-    let template = ConstItemOptional1Template {
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    template.render_into(dest)
+    Ok(())
 }
 
 fn render_const_parameter_optional1(node: &ConstParameterOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -44265,18 +44358,10 @@ fn render__field_pattern_shorthand(node: &_FieldPatternShorthandTransport, dest:
 }
 
 fn render_for_expression_optional1(node: &ForExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.label.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
+    if let Some(child) = &node.label {
+        render_label(child, dest)?;
     }
-    let template = ForExpressionOptional1Template {
-        label: match &node.label {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    template.render_into(dest)
+    Ok(())
 }
 
 fn render__foreign_mod_item_body(node: &_ForeignModItemBodyTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -44298,18 +44383,10 @@ fn render_function_item_optional1(node: &FunctionItemOptional1Transport, dest: &
 }
 
 fn render_function_signature_item_optional1(node: &FunctionSignatureItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.return_type.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
+    if let Some(child) = &node.return_type {
+        render__type(child, dest)?;
     }
-    let template = FunctionSignatureItemOptional1Template {
-        return_type: match &node.return_type {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    template.render_into(dest)
+    Ok(())
 }
 
 fn render__function_type_fn_form(node: &_FunctionTypeFnFormTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -44427,10 +44504,8 @@ fn render_let_declaration_optional2(node: &LetDeclarationOptional2Transport, des
 }
 
 fn render_let_declaration_optional3(node: &LetDeclarationOptional3Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = LetDeclarationOptional3Template {
-        alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alternative)),
-    };
-    template.render_into(dest)
+    render_block(&node.alternative, dest)?;
+    Ok(())
 }
 
 fn render_line_comment_content(t: &LineCommentContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -44457,18 +44532,10 @@ fn render_line_comment_regular_dslash(t: &LineCommentRegularDslashTransport, des
 }
 
 fn render_loop_expression_optional1(node: &LoopExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.label.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
+    if let Some(child) = &node.label {
+        render_label(child, dest)?;
     }
-    let template = LoopExpressionOptional1Template {
-        label: match &node.label {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    template.render_into(dest)
+    Ok(())
 }
 
 fn render__macro_definition_brace(node: &_MacroDefinitionBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -44923,12 +44990,12 @@ fn render_visibility_modifier_in_path(node: &VisibilityModifierInPathTransport, 
 
 fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierPubTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
-        pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.pub_.as_ref())),
-        visibility_modifier_pub_parens: match &node.visibility_modifier_pub_parens {
+        content: match &node.content {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
+        pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.pub_.as_ref())),
+        visibility_modifier_pub_parens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -45266,11 +45333,10 @@ fn render_const_item(node: &ConstItemTransport, dest: &mut dyn ::std::fmt::Write
     let template = ConstItemTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        value: node.value.as_ref().or_else(|| {
-            node.const_item_optional1.as_ref().and_then(|h| h.value.as_ref())
-        }).map_or(OptionalNonterminalView::Missing, |inner| {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
-        }),
+        value: match &node.value {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         visibility_modifier: match &node.visibility_modifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -45647,11 +45713,10 @@ fn render_field_pattern(node: &FieldPatternTransport, dest: &mut dyn ::std::fmt:
 fn render_for_expression(node: &ForExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForExpressionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        label: node.label.as_ref().or_else(|| {
-            node.for_expression_optional1.as_ref().and_then(|h| h.label.as_ref())
-        }).map_or(OptionalNonterminalView::Missing, |inner| {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
-        }),
+        label: match &node.label {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
@@ -45760,11 +45825,10 @@ fn render_function_signature_item(node: &FunctionSignatureItemTransport, dest: &
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
-        return_type: node.return_type.as_ref().or_else(|| {
-            node.function_signature_item_optional1.as_ref().and_then(|h| h.return_type.as_ref())
-        }).map_or(OptionalNonterminalView::Missing, |inner| {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
-        }),
+        return_type: match &node.return_type {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -45980,11 +46044,10 @@ fn render_let_condition(node: &LetConditionTransport, dest: &mut dyn ::std::fmt:
 
 fn render_let_declaration(node: &LetDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LetDeclarationTemplate {
-        alternative: node.alternative.as_ref().or_else(|| {
-            node.let_declaration_optional3.as_ref().map(|h| &h.alternative)
-        }).map_or(OptionalNonterminalView::Missing, |v| {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
-        }),
+        alternative: match &node.alternative {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         mutable_specifier: match &node.mutable_specifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -46033,11 +46096,10 @@ fn render_line_comment(node: &LineCommentTransport, dest: &mut dyn ::std::fmt::W
 fn render_loop_expression(node: &LoopExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LoopExpressionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        label: node.label.as_ref().or_else(|| {
-            node.loop_expression_optional1.as_ref().and_then(|h| h.label.as_ref())
-        }).map_or(OptionalNonterminalView::Missing, |inner| {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
-        }),
+        label: match &node.label {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -47353,10 +47415,8 @@ fn render_error_sentinel(t: &ErrorSentinelTransport, dest: &mut dyn ::std::fmt::
 }
 
 fn render_visibility_modifier_pub_parens(node: &VisibilityModifierPubParensTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = VisibilityModifierPubParensTemplate {
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-    };
-    template.render_into(dest)
+    node.content.render_into(dest)?;
+    Ok(())
 }
 
 fn render_bracket(t: &BracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -51773,8 +51833,8 @@ fn transport_to_node_visibility_modifier_pub(transport: VisibilityModifierPubTra
     fields.insert("pub".to_string(), transport_field_value(*transport.pub_)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.visibility_modifier_pub_parens {
-        children_buf.push(AnyTransport::VisibilityModifierPubParens(value));
+    if let Some(value) = transport.content {
+        children_buf.push(visibility_modifier_pub_content_transport_slot_to_any(value));
     }
     let children = if children_buf.is_empty() {
         None
@@ -52506,16 +52566,11 @@ fn transport_to_node_const_item(transport: ConstItemTransport) -> Result<Transpo
     }
     fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.type_))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.const_item_optional1 {
-        children_buf.push(AnyTransport::ConstItemOptional1(value));
+    if let Some(value) = transport.value {
+        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
     }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(185) /* "const_item" */,
@@ -53221,19 +53276,14 @@ fn transport_to_node_field_pattern(transport: FieldPatternTransport) -> Result<T
 
 fn transport_to_node_for_expression(transport: ForExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.label {
+        fields.insert("label".to_string(), transport_field_value(AnyTransport::Label(value))?);
+    }
     fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(*transport.pattern))?);
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(*transport.value))?);
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Block(*transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.for_expression_optional1 {
-        children_buf.push(AnyTransport::ForExpressionOptional1(value));
-    }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(279) /* "for_expression" */,
@@ -53416,19 +53466,14 @@ fn transport_to_node_function_signature_item(transport: FunctionSignatureItemTra
         fields.insert("type_parameters".to_string(), transport_field_value(AnyTransport::TypeParameters(value))?);
     }
     fields.insert("parameters".to_string(), transport_field_value(AnyTransport::Parameters(transport.parameters))?);
+    if let Some(value) = transport.return_type {
+        fields.insert("return_type".to_string(), transport_field_value(_type_transport_to_any(value))?);
+    }
     if let Some(value) = transport.where_clause {
         fields.insert("where_clause".to_string(), transport_field_value(AnyTransport::WhereClause(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.function_signature_item_optional1 {
-        children_buf.push(AnyTransport::FunctionSignatureItemOptional1(value));
-    }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(189) /* "function_signature_item" */,
@@ -53913,16 +53958,11 @@ fn transport_to_node_let_declaration(transport: LetDeclarationTransport) -> Resu
     if let Some(value) = transport.value {
         fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.let_declaration_optional3 {
-        children_buf.push(AnyTransport::LetDeclarationOptional3(value));
+    if let Some(value) = transport.alternative {
+        fields.insert("alternative".to_string(), transport_field_value(AnyTransport::Block(value))?);
     }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(203) /* "let_declaration" */,
@@ -54014,17 +54054,12 @@ fn transport_to_node_line_comment(transport: LineCommentTransport) -> Result<Tra
 
 fn transport_to_node_loop_expression(transport: LoopExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.label {
+        fields.insert("label".to_string(), transport_field_value(AnyTransport::Label(value))?);
+    }
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Block(*transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.loop_expression_optional1 {
-        children_buf.push(AnyTransport::LoopExpressionOptional1(value));
-    }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(278) /* "loop_expression" */,

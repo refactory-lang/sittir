@@ -18,7 +18,6 @@
     "_closure_expression_expr": "config",
     "_closure_expression_static_marker": "text",
     "_compound_assignment_expr_operator": "text",
-    "_const_item_optional1": "config",
     "_delim_token_tree_brace": "spread",
     "_delim_token_tree_bracket": "spread",
     "_delim_token_tree_paren": "spread",
@@ -27,18 +26,14 @@
     "_field_pattern_named": "config",
     "_field_pattern_ref_marker": "text",
     "_field_pattern_shorthand": "config",
-    "_for_expression_optional1": "config",
     "_foreign_mod_item_body": "config",
-    "_function_signature_item_optional1": "config",
     "_function_type_fn_form": "spread",
     "_function_type_trait_form": "config",
     "_impl_item_body": "config",
     "_let_chain": "config",
-    "_let_declaration_optional3": "config",
     "_line_comment_content": "text",
     "_line_comment_doc": "config",
     "_line_comment_regular_dslash": "text",
-    "_loop_expression_optional1": "config",
     "_macro_definition_brace": "spread",
     "_macro_definition_bracket": "spread",
     "_macro_definition_paren": "spread",
@@ -262,7 +257,6 @@
     "raw_string_literal_content": "text",
     "float_literal": "text",
     "_line_doc_content": "text",
-    "_visibility_modifier_pub_parens": "config",
     "async": "text",
     "static": "text",
     "as": "text",
@@ -331,6 +325,9 @@
     },
     "_type_parameters_repeat1.attributed_type_parameter": {
       "attributed_type_parameter": "_attributed_type_parameter"
+    },
+    "_visibility_modifier_pub.content": {
+      "visibility_modifier_in_path": "_visibility_modifier_in_path"
     },
     "abstract_type.trait": {
       "type_identifier": "identifier"
@@ -656,9 +653,6 @@
     "_closure_expression_expr": [
       "body"
     ],
-    "_const_item_optional1": [
-      "value"
-    ],
     "_delim_token_tree_brace": [
       "delim_tokens"
     ],
@@ -681,14 +675,8 @@
     "_field_pattern_shorthand": [
       "name"
     ],
-    "_for_expression_optional1": [
-      "label"
-    ],
     "_foreign_mod_item_body": [
       "body"
-    ],
-    "_function_signature_item_optional1": [
-      "return_type"
     ],
     "_function_type_fn_form": [
       "function_modifiers"
@@ -704,14 +692,8 @@
       "let_condition",
       "expression"
     ],
-    "_let_declaration_optional3": [
-      "alternative"
-    ],
     "_line_comment_doc": [
       "doc"
-    ],
-    "_loop_expression_optional1": [
-      "label"
     ],
     "_macro_definition_brace": [
       "macro_rule"
@@ -791,7 +773,7 @@
       "path"
     ],
     "_visibility_modifier_pub": [
-      "visibility_modifier_pub_parens"
+      "content"
     ],
     "abstract_type": [
       "type_parameters",
@@ -893,7 +875,7 @@
       "visibility_modifier",
       "name",
       "type",
-      "const_item_optional1"
+      "value"
     ],
     "const_parameter": [
       "name",
@@ -988,7 +970,7 @@
       "field_pattern_named"
     ],
     "for_expression": [
-      "for_expression_optional1",
+      "label",
       "pattern",
       "value",
       "body"
@@ -1023,7 +1005,7 @@
       "name",
       "type_parameters",
       "parameters",
-      "function_signature_item_optional1",
+      "return_type",
       "where_clause"
     ],
     "function_type_trait_form": [
@@ -1100,7 +1082,7 @@
       "pattern",
       "type",
       "value",
-      "let_declaration_optional3"
+      "alternative"
     ],
     "lifetime": [
       "identifier"
@@ -1115,7 +1097,7 @@
       "line_comment_content"
     ],
     "loop_expression": [
-      "loop_expression_optional1",
+      "label",
       "body"
     ],
     "macro_definition_paren": [
@@ -1442,9 +1424,6 @@
     ],
     "yield_expression": [
       "expression"
-    ],
-    "_visibility_modifier_pub_parens": [
-      "content"
     ]
   },
   "factorySlots": {
@@ -1615,15 +1594,6 @@
         "nonEmpty": false
       }
     },
-    "_const_item_optional1": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_delim_token_tree_brace": {
       "delim_tokens": {
         "unnamed": false,
@@ -1694,29 +1664,11 @@
         "nonEmpty": false
       }
     },
-    "_for_expression_optional1": {
-      "label": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_foreign_mod_item_body": {
       "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_function_signature_item_optional1": {
-      "return_type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1771,15 +1723,6 @@
         "nonEmpty": false
       }
     },
-    "_let_declaration_optional3": {
-      "alternative": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_line_comment_doc": {
       "outer": {
         "unnamed": false,
@@ -1799,15 +1742,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_loop_expression_optional1": {
-      "label": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2140,7 +2074,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "visibility_modifier_pub_parens": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2584,7 +2518,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "const_item_optional1": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2970,7 +2904,7 @@
       }
     },
     "for_expression": {
-      "for_expression_optional1": {
+      "label": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3150,7 +3084,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "function_signature_item_optional1": {
+      "return_type": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3508,7 +3442,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "let_declaration_optional3": {
+      "alternative": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3565,7 +3499,7 @@
       }
     },
     "loop_expression": {
-      "loop_expression_optional1": {
+      "label": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -5006,15 +4940,6 @@
         "multiple": false,
         "nonEmpty": false
       }
-    },
-    "_visibility_modifier_pub_parens": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
     }
   },
   "polymorphVariants": {
@@ -6019,7 +5944,10 @@
           "crate"
         ],
         "pub": [
-          "visibility_modifier_pub_parens"
+          "self",
+          "super",
+          "crate",
+          "visibility_modifier_in_path"
         ],
         "in_path": [
           "self",

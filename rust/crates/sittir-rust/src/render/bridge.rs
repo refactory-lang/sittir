@@ -1067,15 +1067,18 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         349 => { // "_visibility_modifier_pub" | "visibility_modifier_pub"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
-            let field_0 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("pub"), true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("pub"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("visibility_modifier_pub_parens"), false)?;
             let template = VisibilityModifierPubTemplate {
-                visibility_modifier_pub_parens: match children.kind {
+                content: match children.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
                     ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
                 },
-                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                visibility_modifier_pub_parens: match field_1.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                },
             };
             template.render_into(dest)
         }

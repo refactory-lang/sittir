@@ -840,17 +840,17 @@ export function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Con
 
 export function _visibilityModifierPub(config: Partial<T.VisibilityModifierPub.Config> = {}) {
   const _pub = coerceKindEnumStorage("pub" as const, [["pub", TSKindId.Pub] as const]);
-  const _visibility_modifier_pub_parens = config.visibilityModifierPubParens;
+  const _content = config.content;
   return withMethods({
     $type: TSKindId.VisibilityModifierPub as const,
     $source: 2 as const,
     $named: true as const,
     _pub,
-    _visibility_modifier_pub_parens,
+    _content,
     pub() { return _pub; },
-    visibilityModifierPubParens() { return _visibility_modifier_pub_parens; },
+    content() { return _content; },
     $with: {
-      visibilityModifierPubParens: (value?: T.VisibilityModifierPubParens) => _visibilityModifierPub({ ...config, visibilityModifierPubParens: value }),
+      content: (value?: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) => _visibilityModifierPub({ ...config, content: value }),
     },
   }, methodsEngine);
 }
@@ -1374,7 +1374,7 @@ export function constItem(config: T.ConstItem.Config) {
   const _visibility_modifier = config.visibilityModifier;
   const _name = config.name;
   const _type = config.type;
-  const _const_item_optional1 = config.constItemOptional1;
+  const _value = config.value;
   return withMethods({
     $type: TSKindId.ConstItem as const,
     $source: 2 as const,
@@ -1382,16 +1382,16 @@ export function constItem(config: T.ConstItem.Config) {
     _visibility_modifier,
     _name,
     _type,
-    _const_item_optional1,
+    _value,
     visibilityModifier() { return _visibility_modifier; },
     name() { return _name; },
     type() { return _type; },
-    constItemOptional1() { return _const_item_optional1; },
+    value() { return _value; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => constItem({ ...config, visibilityModifier: value }),
       name: (value: T.Identifier) => constItem({ ...config, name: value }),
       type: (value: T._Type) => constItem({ ...config, type: value }),
-      constItemOptional1: (value?: T.ConstItemOptional1) => constItem({ ...config, constItemOptional1: value }),
+      value: (value?: T.Expression) => constItem({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -1905,7 +1905,7 @@ export function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUForm
 }
 
 export function forExpression(config: T.ForExpression.Config) {
-  const _for_expression_optional1 = config.forExpressionOptional1;
+  const _label = config.label;
   const _pattern = config.pattern;
   const _value = config.value;
   const _body = config.body;
@@ -1913,16 +1913,16 @@ export function forExpression(config: T.ForExpression.Config) {
     $type: TSKindId.ForExpression as const,
     $source: 2 as const,
     $named: true as const,
-    _for_expression_optional1,
+    _label,
     _pattern,
     _value,
     _body,
-    forExpressionOptional1() { return _for_expression_optional1; },
+    label() { return _label; },
     pattern() { return _pattern; },
     value() { return _value; },
     body() { return _body; },
     $with: {
-      forExpressionOptional1: (value?: T.ForExpressionOptional1) => forExpression({ ...config, forExpressionOptional1: value }),
+      label: (value?: T.Label) => forExpression({ ...config, label: value }),
       pattern: (value: T.Pattern) => forExpression({ ...config, pattern: value }),
       value: (value: T.Expression) => forExpression({ ...config, value: value }),
       body: (value: T.Block) => forExpression({ ...config, body: value }),
@@ -2081,7 +2081,7 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
   const _name = config.name;
   const _type_parameters = config.typeParameters;
   const _parameters = config.parameters;
-  const _function_signature_item_optional1 = config.functionSignatureItemOptional1;
+  const _return_type = config.returnType;
   const _where_clause = config.whereClause;
   return withMethods({
     $type: TSKindId.FunctionSignatureItem as const,
@@ -2092,14 +2092,14 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
     _name,
     _type_parameters,
     _parameters,
-    _function_signature_item_optional1,
+    _return_type,
     _where_clause,
     visibilityModifier() { return _visibility_modifier; },
     functionModifiers() { return _function_modifiers; },
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     parameters() { return _parameters; },
-    functionSignatureItemOptional1() { return _function_signature_item_optional1; },
+    returnType() { return _return_type; },
     whereClause() { return _where_clause; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => functionSignatureItem({ ...config, visibilityModifier: value }),
@@ -2107,7 +2107,7 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
       name: (value: T.Identifier | T.Metavariable) => functionSignatureItem({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => functionSignatureItem({ ...config, typeParameters: value }),
       parameters: (value: T.Parameters) => functionSignatureItem({ ...config, parameters: value }),
-      functionSignatureItemOptional1: (value?: T.FunctionSignatureItemOptional1) => functionSignatureItem({ ...config, functionSignatureItemOptional1: value }),
+      returnType: (value?: T._Type) => functionSignatureItem({ ...config, returnType: value }),
       whereClause: (value?: T.WhereClause) => functionSignatureItem({ ...config, whereClause: value }),
     },
   }, methodsEngine);
@@ -2541,7 +2541,7 @@ export function letDeclaration(config: T.LetDeclaration.Config) {
   const _pattern = config.pattern;
   const _type = config.type;
   const _value = config.value;
-  const _let_declaration_optional3 = config.letDeclarationOptional3;
+  const _alternative = config.alternative;
   return withMethods({
     $type: TSKindId.LetDeclaration as const,
     $source: 2 as const,
@@ -2550,18 +2550,18 @@ export function letDeclaration(config: T.LetDeclaration.Config) {
     _pattern,
     _type,
     _value,
-    _let_declaration_optional3,
+    _alternative,
     mutableSpecifier() { return _mutable_specifier; },
     pattern() { return _pattern; },
     type() { return _type; },
     value() { return _value; },
-    letDeclarationOptional3() { return _let_declaration_optional3; },
+    alternative() { return _alternative; },
     $with: {
       mutableSpecifier: (value?: NonNullable<Parameters<typeof letDeclaration>[0]>['mutableSpecifier']) => letDeclaration({ ...config, mutableSpecifier: value }),
       pattern: (value: T.Pattern) => letDeclaration({ ...config, pattern: value }),
       type: (value?: T._Type) => letDeclaration({ ...config, type: value }),
       value: (value?: T.Expression) => letDeclaration({ ...config, value: value }),
-      letDeclarationOptional3: (value?: T.LetDeclarationOptional3) => letDeclaration({ ...config, letDeclarationOptional3: value }),
+      alternative: (value?: T.Block) => letDeclaration({ ...config, alternative: value }),
     },
   }, methodsEngine);
 }
@@ -2653,18 +2653,18 @@ export function lineCommentUFormContent(config: Omit<ConfigOf<T.LineCommentUForm
 }
 
 export function loopExpression(config: T.LoopExpression.Config) {
-  const _loop_expression_optional1 = config.loopExpressionOptional1;
+  const _label = config.label;
   const _body = config.body;
   return withMethods({
     $type: TSKindId.LoopExpression as const,
     $source: 2 as const,
     $named: true as const,
-    _loop_expression_optional1,
+    _label,
     _body,
-    loopExpressionOptional1() { return _loop_expression_optional1; },
+    label() { return _label; },
     body() { return _body; },
     $with: {
-      loopExpressionOptional1: (value?: T.LoopExpressionOptional1) => loopExpression({ ...config, loopExpressionOptional1: value }),
+      label: (value?: T.Label) => loopExpression({ ...config, label: value }),
       body: (value: T.Block) => loopExpression({ ...config, body: value }),
     },
   }, methodsEngine);

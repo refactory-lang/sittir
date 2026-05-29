@@ -788,7 +788,7 @@ export function constItemFrom(input: T.ConstItem.Loose): ReturnType<typeof F.con
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     type: _resolveOne<T._Type>(input.type, _K2, _K3),
-    constItemOptional1: _resolveOneBranch<T.ConstItemOptional1>(input.constItemOptional1, "_const_item_optional1"),
+    value: _resolveOne<T.Expression>(input.value, _K4, _K5),
   });
 }
 
@@ -1024,7 +1024,7 @@ export function fieldPatternUFormNamedFrom(input: Omit<ConfigOf<T.FieldPatternUF
 export function forExpressionFrom(input: T.ForExpression.Loose): ReturnType<typeof F.forExpression> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.forExpression>;
   return F.forExpression({
-    forExpressionOptional1: _resolveOneBranch<T.ForExpressionOptional1>(input.forExpressionOptional1, "_for_expression_optional1"),
+    label: _resolveOneBranch<T.Label>(input.label, "label"),
     pattern: _resolveOne<T.Pattern>(input.pattern, _K12, _K13),
     value: _resolveOne<T.Expression>(input.value, _K4, _K5),
     body: _resolveOneBranch<T.Block>(input.body, "block") ?? F.block(),
@@ -1105,7 +1105,7 @@ export function functionSignatureItemFrom(input: T.FunctionSignatureItem.Loose):
     name: _resolveOne<T.Identifier | T.Metavariable>(input.name, _K21, _K8),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters") ?? F.parameters(),
-    functionSignatureItemOptional1: _resolveOneBranch<T.FunctionSignatureItemOptional1>(input.functionSignatureItemOptional1, "_function_signature_item_optional1"),
+    returnType: _resolveOne<T._Type>(input.returnType, _K2, _K3),
     whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
   });
 }
@@ -1289,7 +1289,7 @@ export function letDeclarationFrom(input: T.LetDeclaration.Loose): ReturnType<ty
     pattern: _resolveOne<T.Pattern>(input.pattern, _K12, _K13),
     type: _resolveOne<T._Type>(input.type, _K2, _K3),
     value: _resolveOne<T.Expression>(input.value, _K4, _K5),
-    letDeclarationOptional3: _resolveOneBranch<T.LetDeclarationOptional3>(input.letDeclarationOptional3, "_let_declaration_optional3"),
+    alternative: _resolveOneBranch<T.Block>(input.alternative, "block"),
   });
 }
 
@@ -1334,7 +1334,7 @@ export function lineCommentUFormContentFrom(input: Omit<ConfigOf<T.LineCommentUF
 export function loopExpressionFrom(input: T.LoopExpression.Loose): ReturnType<typeof F.loopExpression> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.loopExpression>;
   return F.loopExpression({
-    loopExpressionOptional1: _resolveOneBranch<T.LoopExpressionOptional1>(input.loopExpressionOptional1, "_loop_expression_optional1"),
+    label: _resolveOneBranch<T.Label>(input.label, "label"),
     body: _resolveOneBranch<T.Block>(input.body, "block") ?? F.block(),
   });
 }
