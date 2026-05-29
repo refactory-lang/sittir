@@ -6,8 +6,8 @@ Generate typed factories, render templates, and native bindings from tree-sitter
 
 - Package manager: `pnpm`
 - Validate: `pnpm run validate:native`
-- Generate a grammar package: `npx tsx packages/codegen/src/cli.ts --grammar <rust|typescript|python> --all --output packages/<lang>/src`
-- Developer diagnostics: `pnpm exec tsx packages/tools/src/cli.ts <tool> [flags]` (run with `--help` for the list). Tools include `counts`, `dump-ast-mismatches`, `diff-failures`, `probe-kind`, `profile`, and others — see [project workflow doc](.claude/project-workflow.md#diagnostic-tools-sittirtools) for the full list and authoring conventions.
+- Generate a grammar package: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <rust|typescript|python> --all --output packages/<lang>/src`
+- Developer diagnostics: `pnpm exec tsx packages/cli/src/cli.ts tool <tool> [flags]` (run with `--help` for the list). Tools include `counts`, `dump-ast-mismatches`, `diff-failures`, `probe-kind`, `profile`, and others — see [project workflow doc](.claude/project-workflow.md#diagnostic-tools-sittirtools) for the full list and authoring conventions.
 
 ## Universal rules
 

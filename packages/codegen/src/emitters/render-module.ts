@@ -159,7 +159,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 
 function hashRsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The grammar-owned \`sittir-${lang}\` native module exports it as
@@ -172,7 +172,7 @@ function hashRsHeader(lang: Grammar): string {
 
 function hashTsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 //
 // Companion to ${renderModuleSrcDir(lang)}/hash.rs; the two must
 // agree byte-for-byte at runtime for the native backend to be picked
@@ -183,7 +183,7 @@ function hashTsHeader(lang: Grammar): string {
 
 function generatedHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 and packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src`;
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src`;
 }
 
 function templatesRsHeader(lang: Grammar): string {
@@ -2382,7 +2382,7 @@ function buildTypedTemplateBody(
 
 function libRsContents(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 
 pub mod bridge;
 pub mod dispatch;

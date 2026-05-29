@@ -224,6 +224,9 @@ importers:
       '@sittir/codegen':
         specifier: workspace:*
         version: link:../codegen
+      '@sittir/common':
+        specifier: workspace:*
+        version: link:../common
       '@sittir/core':
         specifier: workspace:*
         version: link:../core

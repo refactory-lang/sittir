@@ -13,7 +13,7 @@
  * - Interactive + user declines "n"                          → throws GrammarDiagnosticError
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { runCodegenCli } from '../cli.ts';
+import { runCodegenCli } from '../run-codegen.ts';
 import type { GrammarDiagnostic } from '../compiler/grammar-diagnostics.ts';
 
 /** Build a minimal-but-valid GrammarDiagnostic for preflight gate tests. */

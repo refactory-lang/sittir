@@ -25,7 +25,6 @@
 			"@sittir/rust/utils": ["./packages/rust/src/utils.ts"],
 			"@sittir/validator": ["./packages/validator/src/index.ts"],
 			"@sittir/tools": ["./packages/tools/src/index.ts"],
-			"@sittir/tools/cli": ["./packages/tools/src/cli.ts"],
 			"@sittir/cli": ["./packages/cli/src/cli.ts"]
 		},
 		"allowSyntheticDefaultImports": true,

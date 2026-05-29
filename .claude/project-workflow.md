@@ -14,7 +14,7 @@ Workspace packages use `tsgo` under their local `type-check`/`build` scripts; th
 
 ## Diagnostic tools (`@sittir/tools`)
 
-Developer diagnostics live behind a single CLI dispatcher at `packages/tools/src/cli.ts`. Prefer these over ad-hoc scripts. Invoke as `pnpm exec tsx packages/tools/src/cli.ts <tool> [flags]`. Run with `--help` for the full list. Highlights:
+Developer diagnostics live behind the unified `sittir` CLI (`@sittir/cli`). Prefer these over ad-hoc scripts. Invoke as `pnpm exec tsx packages/cli/src/cli.ts tool <tool> [flags]`. Run with `--help` for the full list. Highlights:
 
 - `counts` — per-grammar validator pass/total (rrp / shallow / factory-rp + AST match)
 - `diff-failures` — per-kind validator failure listing
@@ -28,7 +28,7 @@ Developer diagnostics live behind a single CLI dispatcher at `packages/tools/src
 - `inspect-type`, `inspect-refs`, `compare-overrides` — inspection tools
 - `walk`, `exercise` — round-trip exercise harnesses
 
-When adding a new diagnostic, follow the existing pattern: implementation as `export async function run(argv: string[]): Promise<number>` either in `packages/tools/src/<category>/` (full impl) or `packages/codegen/src/scripts/` (with a thin wrapper in `packages/tools/src/<category>/`). Register in the `TOOLS` map at `packages/tools/src/cli.ts` and add a line in `printHelp`. Don't drop ad-hoc one-shot scripts into `packages/codegen/src/scripts/` without registering them — they're discoverable only via grep otherwise.
+When adding a new diagnostic, implement it as `export async function run(opts: <Name>Options)` in `packages/tools/src/<category>/<name>.ts`, re-export it from `packages/tools/src/index.ts` (`export { run as <camelName>, type <Name>Options }`), add a `CommandModule` in `packages/cli/src/commands/tool/<name>.ts` (using the option mixins from `packages/cli/src/framework/options.ts`), and register it in the `toolModules` array in `packages/cli/src/commands/tool/index.ts`.
 
 ## Specs and branches
 

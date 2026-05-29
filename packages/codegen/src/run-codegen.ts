@@ -167,6 +167,38 @@ async function confirmProceed(diagnostics: readonly GrammarDiagnostic[]): Promis
 	return answer === 'y' || answer === 'yes';
 }
 
+/**
+ * Testable preflight gate entry. Parses `--grammar` and `--allow-diagnostic`
+ * from argv and runs the grammar-diagnostics preflight, returning 0 when no
+ * blocking diagnostic survives the allow-list (throws `GrammarDiagnosticError`
+ * otherwise). Test seams: `env.diagnostics` injects diagnostics (bypasses
+ * grammar loading), `env.confirm` overrides the TTY prompt, `env.isTTY`
+ * overrides the gate's interactivity decision.
+ */
+export async function runCodegenCli(
+	argv: string[],
+	env: {
+		isTTY?: boolean;
+		diagnostics?: readonly GrammarDiagnostic[];
+		confirm?: (blocked: readonly GrammarDiagnostic[]) => Promise<boolean>;
+	} = {}
+): Promise<number> {
+	let grammar = '';
+	const allowDiagnostics = new Set<string>();
+	for (let i = 0; i < argv.length; i++) {
+		if ((argv[i] === '--grammar' || argv[i] === '-g') && argv[i + 1]) grammar = argv[++i]!;
+		else if (argv[i] === '--allow-diagnostic' && argv[i + 1]) allowDiagnostics.add(argv[++i]!);
+	}
+	await runGrammarDiagnosticsPreflight({
+		grammar,
+		allowDiagnostics,
+		isTTY: env.isTTY ?? Boolean((process.stdin as NodeJS.ReadStream).isTTY),
+		injectedDiagnostics: env.diagnostics,
+		confirm: env.confirm
+	});
+	return 0;
+}
+
 // ---------------------------------------------------------------------------
 // Core codegen function
 // ---------------------------------------------------------------------------
