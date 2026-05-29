@@ -430,6 +430,30 @@ Dump a rule shape at every compiler phase
 pnpm exec tsx packages/cli/src/cli.ts tool probe-stages [options]
 ```
 
+### `tool probe-validate`
+
+Probe a corpus entry through read → wrap → render pipeline
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `-e, --entry <name>` — Corpus entry name (exact match)
+- `--entry-pattern <regex>` — Corpus entry name (regex match, first hit)
+- `--first-failing` — Probe the first RT-failing entry for the grammar
+- `-s, --source <text>` — Source text to probe (same as probe-kind)
+- `--stdin` — Read source from stdin
+- `--engine <engine>` — Render engine: js | native | both (default: native)
+- `--trace` — Emit full multi-lane trace
+- `--pretty` — Pretty-print JSON output
+- `--no-render` — Skip the render pass
+- `--no-wrap` — Use core readNode directly (skip grammar readTreeNode)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool probe-validate [options]
+```
+
 ### `tool profile`
 
 Aggregate validator failures across grammars

@@ -21,6 +21,7 @@ import { phantomKinds } from './phantom-kinds.ts';
 import { probeKind } from './probe-kind.ts';
 import { probeParity } from './probe-parity.ts';
 import { probeStages } from './probe-stages.ts';
+import { probeValidate } from './probe-validate.ts';
 import { profile } from './profile.ts';
 import { profileFactory } from './profile-factory.ts';
 import { walk } from './walk.ts';
@@ -46,6 +47,7 @@ export const toolModules: readonly CommandModule[] = [
 	probeKind,
 	probeParity,
 	probeStages,
+	probeValidate,
 	profile,
 	profileFactory,
 	walk

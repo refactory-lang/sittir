@@ -33,7 +33,7 @@
     "validate:probe-factory:js": "pnpm run regen:all && tsx packages/cli/src/cli.ts validate probe-factory --backend js",
     "validate:probe-factory:all": "pnpm run regen:all && tsx packages/cli/src/cli.ts validate probe-factory --backend all",
     "validate:history": "tsx packages/cli/src/cli.ts validate history",
-    "probe:validate": "tsx packages/codegen/src/scripts/probe-validate.ts",
+    "probe:validate": "tsx packages/cli/src/cli.ts tool probe-validate",
     "probe:kind": "tsx packages/cli/src/cli.ts tool probe-kind",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest --watch",

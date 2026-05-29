@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { stripStructuralNodeText, type WrappedNodeData } from '../validate/common.ts';
-import { materializeProbeWrappedNodeData, probeTrace, resolveNativeTraceNodeData } from '../../../tools/src/probe/kind.ts';
+import { stripStructuralNodeText, type WrappedNodeData } from '../../../codegen/src/validate/common.ts';
+import { materializeProbeWrappedNodeData, probeTrace, resolveNativeTraceNodeData } from '../../src/probe/kind.ts';
 
 function leaf(handle: number, text: string): WrappedNodeData {
 	return {

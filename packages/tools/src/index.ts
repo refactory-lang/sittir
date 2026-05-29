@@ -2,6 +2,7 @@ export { run as listKinds, type ListKindsOptions } from './discover/list-kinds.t
 export { run as probeKind, type ProbeKindOptions } from './probe/kind.ts';
 export { run as probeStages, type ProbeStagesOptions } from './probe/stages.ts';
 export { run as probeParity, type ProbeParityOptions } from './probe/parity.ts';
+export { run as probeValidate, type ProbeValidateOptions } from './probe/validate.ts';
 export { run as profile, type ProfileOptions } from './profile/failures.ts';
 export { run as profileFactory, type ProfileFactoryOptions } from './profile/factory.ts';
 export { run as bench, type BenchOptions } from './profile/bench.ts';

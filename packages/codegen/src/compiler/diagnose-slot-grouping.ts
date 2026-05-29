@@ -137,8 +137,6 @@ export interface SlotGroupingDiagnostic extends Diagnostic {
 	readonly canProceed: true;
 	/** The kind that owns the rule containing the violation. */
 	readonly ownerKind: string;
-	/** Which violation shape was detected. */
-	readonly shape: SlotGroupingShape;
 	/** The slot count of the offending sub-rule (for multi-slot-nested-seq). */
 	readonly slotCount: number;
 	/** Human-readable propose-promotion text for the author. */
@@ -199,7 +197,6 @@ export function diagnoseSlotGrouping(
 					message: `Kind '${ownerKind}' has ${contentCount} anonymous 'content' slots that would share the '_content' storage key.`,
 					canProceed: true,
 					ownerKind,
-					shape: 'content-collision',
 					slotCount: contentCount,
 					proposal:
 						`Kind '${ownerKind}' has ${contentCount} anonymous 'content' slots that would share ` +
@@ -298,7 +295,6 @@ function checkSeq(rule: Extract<Rule, { type: 'seq' }>, ownerKind: string, recor
 		message: `Kind '${ownerKind}' has a multi-slot seq with ${slotCount} slots in a slot-creating position.`,
 		canProceed: true,
 		ownerKind,
-		shape: 'multi-slot-nested-seq',
 		slotCount,
 		proposal:
 			`Kind '${ownerKind}' has a multi-slot seq with ${slotCount} slots in a slot-creating position. ` +
@@ -328,7 +324,6 @@ function checkRepeat(
 				message: `Kind '${ownerKind}' has a repeat(choice(..., literal, ...)) — heterogeneous repeating content with interleaved literals.`,
 				canProceed: true,
 				ownerKind,
-				shape: 'repeat-choice-with-literal',
 				slotCount: 1,
 				proposal:
 					`Kind '${ownerKind}' has a repeat(choice(..., literal, ...)) — ` +
@@ -376,7 +371,6 @@ function checkRepeatOfSymbol(
 		message: `Kind '${ownerKind}' has a repeat(${symName}) without a field name.`,
 		canProceed: true,
 		ownerKind,
-		shape: 'supertype-list',
 		slotCount: 1,
 		proposal:
 			`Kind '${ownerKind}' has a repeat(${symName}) without a field name. ` +

@@ -39,7 +39,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 		const inlineKinds = new Set(['_parent_repeat1']);
 		computeSimplifiedRules(renderRules, null, inlineKinds);
 		const diagnostics = drainSlotGroupingDiagnostics();
-		const multiSlot = diagnostics.filter((d) => d.shape === 'multi-slot-nested-seq');
+		const multiSlot = diagnostics.filter((d) => d.code === 'multi-slot-nested-seq');
 		expect(multiSlot.length).toBeGreaterThanOrEqual(1);
 		expect(multiSlot[0]!.ownerKind).toBe('_parent_repeat1');
 		expect(multiSlot[0]!.slotCount).toBeGreaterThanOrEqual(2);
@@ -60,7 +60,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 		};
 		computeSimplifiedRules(renderRules, null);
 		const diagnostics = drainSlotGroupingDiagnostics();
-		expect(diagnostics.filter((d) => d.shape === 'multi-slot-nested-seq')).toHaveLength(0);
+		expect(diagnostics.filter((d) => d.code === 'multi-slot-nested-seq')).toHaveLength(0);
 	});
 
 	it('a rule with no multi-slot substructure produces no diagnostics', () => {
