@@ -1,5 +1,5 @@
 // @generated from packages/typescript/node-model.json5 and packages/typescript/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
 //
 // Legacy direct NodeData render shim. Normal native package flow renders
 // typed transport payloads through render_transport_dispatch; this module

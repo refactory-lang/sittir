@@ -1,5 +1,5 @@
 // @generated from packages/typescript/node-model.json5 and packages/typescript/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
 //
 // Per-kind askama template structs + render functions for the typescript
 // grammar. Every struct in this file is backed by a sibling `.jinja`

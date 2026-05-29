@@ -1,5 +1,5 @@
 // @generated from packages/python/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 //
 // Companion to rust/crates/sittir-python/src/render/hash.rs; the two must
 // agree byte-for-byte at runtime for the native backend to be picked

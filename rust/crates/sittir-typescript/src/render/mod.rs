@@ -1,5 +1,5 @@
 // @generated from packages/typescript/node-model.json5 — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
 
 pub mod bridge;
 pub mod dispatch;

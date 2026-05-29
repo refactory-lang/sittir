@@ -1,5 +1,5 @@
 // @generated from packages/typescript/node-model.json5 and packages/typescript/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
 //
 // AnyTransport enum + FromNapiValue impls + per-kind transport structs +
 // typed dispatch (render_transport_dispatch) + transport bridge helpers.

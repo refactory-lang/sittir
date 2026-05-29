@@ -33,7 +33,11 @@ __export(overrides_exports, {
   default: () => overrides_default
 });
 module.exports = __toCommonJS(overrides_exports);
+
+// packages/rust/base.ts
 var import_grammar = __toESM(require("tree-sitter-rust/grammar.js"), 1);
+var base = import_grammar.default;
+var base_default = base;
 
 // packages/codegen/src/dsl/runtime-shapes.ts
 function isFieldLike(v) {
@@ -63,6 +67,14 @@ var isStringType = (t) => typeEq(t, "string");
 var isPlainRepeatType = (t) => typeEq(t, "repeat");
 var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
 var isBlankType = (t) => typeEq(t, "blank");
+
+// packages/codegen/src/dsl/primitives/variant.ts
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name) {
+  return { __sittirPlaceholder: "variant", name };
+}
 
 // packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
@@ -406,14 +418,6 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// packages/codegen/src/dsl/primitives/variant.ts
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name) {
-  return { __sittirPlaceholder: "variant", name };
-}
-
 // packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
@@ -435,694 +439,6 @@ function alias(rule, value) {
     return native(rule, value);
   }
   return native(rule, rule);
-}
-
-// packages/codegen/src/dsl/wire/auto-groups.ts
-function applyAutoGroups(base2, outRules, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
-  if (!base2) return;
-  const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
-  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
-  if (!rulesBag) return;
-  const dedupe = {};
-  const synthRules = {};
-  const rewrites = {};
-  for (const name of Object.keys(rulesBag)) {
-    if (authoredSynthesisKinds.has(name)) continue;
-    if (context.authoredRuleNames.has(name)) continue;
-    const rule = rulesBag[name];
-    if (!rule) continue;
-    const state = { opt: 0, rep: 0 };
-    let next = rule;
-    next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
-    next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
-    if (next !== rule) {
-      rewrites[name] = next;
-    }
-  }
-  for (const synName of Object.keys(synthRules)) {
-    if (synName in outRules || synName in rulesBag) continue;
-    outRules[synName] = makeStaticRuleFn(synthRules[synName]);
-    context.syntheticInline.add(synName);
-  }
-  for (const parentName of Object.keys(rewrites)) {
-    outRules[parentName] = makeStaticRuleFn(rewrites[parentName]);
-  }
-}
-function makeStaticRuleFn(body) {
-  return function staticAutoGroupRule() {
-    return body;
-  };
-}
-function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
-  const recursed = recurseChildren(
-    rule,
-    (r) => synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
-  );
-  if (isOptionalType(recursed.type)) {
-    const content = recursed.content;
-    if (!content || typeof content !== "object") return recursed;
-    if (!isSeqType(content.type)) return recursed;
-    const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
-    if (!(synName in synthRules)) synthRules[synName] = content;
-    const symbolRef = {
-      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-      name: synName,
-      source: "group-lift"
-    };
-    return { ...recursed, content: symbolRef };
-  }
-  if (isChoiceType(recursed.type)) {
-    const members = recursed.members;
-    if (!Array.isArray(members) || members.length !== 2) return recursed;
-    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
-    const seqIdx = members.findIndex((m) => isSeqType(m.type));
-    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
-    const seqMember = members[seqIdx];
-    const synName = synthesizeGroupName(seqMember, parentKind, "optional", state, dedupe);
-    if (!(synName in synthRules)) synthRules[synName] = seqMember;
-    const symbolRef = {
-      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-      name: synName,
-      source: "group-lift"
-    };
-    const newMembers = members.slice();
-    newMembers[seqIdx] = symbolRef;
-    return { ...recursed, members: newMembers };
-  }
-  return recursed;
-}
-function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
-  const recursed = recurseChildren(
-    rule,
-    (r) => synthesizeRepeatGroups(r, synthRules, parentKind, state, dedupe)
-  );
-  if (!isRepeatType(recursed.type)) return recursed;
-  const content = recursed.content;
-  if (!content || typeof content !== "object") return recursed;
-  const t = content.type;
-  if (!isSeqType(t)) return recursed;
-  const synName = synthesizeGroupName(content, parentKind, "repeat", state, dedupe);
-  if (!(synName in synthRules)) {
-    synthRules[synName] = content;
-  }
-  const symbolRef = {
-    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-    name: synName,
-    source: "group-lift"
-  };
-  return { ...recursed, content: symbolRef };
-}
-function detectCase(referenceRule) {
-  const t = referenceRule?.type ?? "";
-  return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
-}
-function synthesizeGroupName(content, parentKind, kind, state, dedupe) {
-  const key = canonicalStringify(content);
-  const existing = dedupe[key];
-  if (existing !== void 0) return existing;
-  const counterKey = kind === "optional" ? "opt" : "rep";
-  state[counterKey] += 1;
-  const n = state[counterKey];
-  const name = `_${parentKind}_${kind}${n}`;
-  dedupe[key] = name;
-  return name;
-}
-function canonicalStringify(value) {
-  if (value === null || typeof value !== "object") {
-    return JSON.stringify(value);
-  }
-  if (Array.isArray(value)) {
-    return "[" + value.map((v) => canonicalStringify(v)).join(",") + "]";
-  }
-  const obj = value;
-  const keys = Object.keys(obj).sort();
-  const parts = [];
-  for (const k of keys) {
-    const v = obj[k];
-    if (typeof v === "function" || typeof v === "undefined") continue;
-    parts.push(JSON.stringify(k) + ":" + canonicalStringify(v));
-  }
-  return "{" + parts.join(",") + "}";
-}
-function recurseChildren(rule, visit) {
-  if (!rule || typeof rule !== "object") return rule;
-  const t = rule.type;
-  if (!t) return rule;
-  if (isSeqType(t) || isChoiceType(t)) {
-    const members = rule.members;
-    if (!Array.isArray(members)) return rule;
-    let changed = false;
-    const newMembers = members.map((m) => {
-      const out = visit(m);
-      if (out !== m) changed = true;
-      return out;
-    });
-    return changed ? { ...rule, members: newMembers } : rule;
-  }
-  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant" || t === "clause") {
-    const content = rule.content;
-    if (content === void 0) return rule;
-    const out = visit(content);
-    if (out === content) return rule;
-    return { ...rule, content: out };
-  }
-  if (t === "polymorph") {
-    const forms = rule.forms;
-    if (!Array.isArray(forms)) return rule;
-    let changed = false;
-    const newForms = forms.map((f) => {
-      const out = visit(f.content);
-      if (out === f.content) return f;
-      changed = true;
-      return { ...f, content: out };
-    });
-    return changed ? { ...rule, forms: newForms } : rule;
-  }
-  return rule;
-}
-
-// packages/codegen/src/dsl/wire/wire.ts
-var currentContext = null;
-function wireRegisterSyntheticRule(name, content) {
-  if (!currentContext) return false;
-  currentContext.deposits.set(name, content);
-  return true;
-}
-function wireRegisterSyntheticInline(name) {
-  if (!currentContext) return false;
-  if (currentContext.authoredRuleNames.has(name)) return false;
-  currentContext.syntheticInline.add(name);
-  return true;
-}
-function wireRegisterPolymorphVariant(parent, child) {
-  if (!currentContext) return false;
-  const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
-  if (!exists) {
-    currentContext.polymorphVariants.push({ parent, child });
-  }
-  return true;
-}
-function wireRegisterConflict(names) {
-  if (!currentContext) return false;
-  if (names.length === 0) return true;
-  const key = names.join("\0");
-  const exists = currentContext.conflictGroups.some((g) => g.join("\0") === key);
-  if (!exists) {
-    currentContext.conflictGroups.push([...names]);
-  }
-  return true;
-}
-function wireGetCurrentRuleKind() {
-  return currentContext?.currentRuleKind ?? null;
-}
-function wire(config2, base2) {
-  const context = {
-    deposits: /* @__PURE__ */ new Map(),
-    syntheticInline: /* @__PURE__ */ new Set(),
-    polymorphVariants: [],
-    conflictGroups: [],
-    refineForms: /* @__PURE__ */ new Map(),
-    groups: config2.groups,
-    polymorphsConfig: config2.polymorphs,
-    renderAs: config2.renderAs,
-    currentRuleKind: null,
-    authoredRuleNames: new Set(Object.keys(config2.rules))
-  };
-  const polymorphs = config2.polymorphs ?? {};
-  const transforms = config2.transforms ?? {};
-  const outRules = { ...config2.rules };
-  composeOrSynthesizeTransformParents(outRules, transforms);
-  composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
-  injectHiddenRulePlaceholders(outRules, polymorphs, context);
-  injectTransformHiddenRulePlaceholders(outRules, transforms, context);
-  if (base2 && config2.groups && hasBodyPatternGroups(config2.groups)) {
-    const baseRules = base2.grammar?.rules ?? base2.rules ?? {};
-    for (const baseName of Object.keys(baseRules)) {
-      if (baseName in outRules) continue;
-      outRules[baseName] = passthroughBaseRuleFn;
-    }
-  }
-  wrapAllRuleFns(outRules, context);
-  applyWirePatternReplacement(outRules, context.authoredRuleNames, config2.groups, context);
-  if (base2) {
-    const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
-      transforms,
-      polymorphs,
-      config2.groups
-    );
-    applyAutoGroups(
-      base2,
-      outRules,
-      context,
-      authoredSynthesisKinds
-    );
-    applyWirePatternReplacement(outRules, context.authoredRuleNames, config2.groups, context);
-  }
-  const conflicts = wrapConflictsCallback(config2.conflicts, context);
-  const inline = wrapInlineCallback(config2.inline, context);
-  const wired = {
-    ...config2,
-    rules: outRules,
-    ...conflicts === void 0 ? {} : { conflicts },
-    ...inline === void 0 ? {} : { inline }
-  };
-  Object.defineProperty(wired, "__wireContext__", {
-    value: context,
-    enumerable: false,
-    configurable: true
-  });
-  return wired;
-}
-function collectAuthoredSynthesisKinds(transforms, polymorphs, groups) {
-  const kinds = /* @__PURE__ */ new Set();
-  for (const k of Object.keys(transforms)) kinds.add(k);
-  for (const k of Object.keys(polymorphs)) kinds.add(k);
-  if (groups) {
-    for (const [k, v] of Object.entries(groups)) {
-      if (typeof v === "function") continue;
-      kinds.add(k);
-    }
-  }
-  return kinds;
-}
-function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    const userFn = rules[parent];
-    rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
-  }
-}
-function buildPolymorphParentFn(parent, armMap, userFn, context) {
-  const patches = {};
-  for (const [path, suffix] of Object.entries(armMap)) {
-    patches[path] = variant(suffix);
-  }
-  const isHidden = parent.startsWith("_");
-  return function wiredPolymorphParent($, original) {
-    let base2;
-    if (userFn) {
-      base2 = userFn.call(this, $, original);
-    } else if (isHidden && context.deposits.has(parent)) {
-      base2 = context.deposits.get(parent);
-    } else {
-      base2 = original;
-    }
-    return transform(base2, patches);
-  };
-}
-function injectHiddenRulePlaceholders(rules, polymorphs, context) {
-  for (const [parent, armMap] of Object.entries(polymorphs)) {
-    if (!armMap) continue;
-    for (const suffix of Object.values(armMap)) {
-      const hiddenName = polymorphHiddenName(parent, suffix);
-      if (hiddenName in rules) continue;
-      rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    }
-  }
-}
-function polymorphVisibleName(parentKind, suffix) {
-  const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
-  return `${visibleParent}_${suffix}`;
-}
-function polymorphHiddenName(parentKind, suffix) {
-  return `_${polymorphVisibleName(parentKind, suffix)}`;
-}
-function composeOrSynthesizeTransformParents(rules, transforms) {
-  for (const [kind, entry] of Object.entries(transforms)) {
-    if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    const userFn = rules[kind];
-    rules[kind] = buildTransformParentFn(patchSets, userFn);
-  }
-}
-function buildTransformParentFn(patchSets, userFn) {
-  return function wiredTransformParent($, original) {
-    const base2 = userFn ? userFn.call(this, $, original) : original;
-    return transform(base2, ...patchSets);
-  };
-}
-function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
-  for (const [kind, entry] of Object.entries(transforms)) {
-    if (!entry) continue;
-    const patchSets = Array.isArray(entry) ? entry : [entry];
-    for (const patchMap of patchSets) {
-      for (const value of Object.values(patchMap)) {
-        registerHiddenRuleForPlaceholder(value, kind, rules, context);
-      }
-    }
-  }
-}
-function registerHiddenRuleForPlaceholder(value, parentKind, rules, context) {
-  if (isFieldPlaceholder(value)) {
-    const hiddenName = `_kw_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isVariantPlaceholder(value)) {
-    const hiddenName = `_${parentKind}_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-  if (isAliasPlaceholder(value)) {
-    const hiddenName = `_${value.name}`;
-    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
-    return;
-  }
-}
-function makeDeferredContentFn(context, hiddenName) {
-  return function deferredHiddenRule(_$, previous) {
-    const body = context.deposits.get(hiddenName);
-    if (body) return body;
-    if (previous !== void 0) return previous;
-    const blankFn = globalThis.blank;
-    return blankFn ? blankFn() : { type: "BLANK" };
-  };
-}
-function wrapAllRuleFns(rules, context) {
-  for (const [name, fn] of Object.entries(rules)) {
-    rules[name] = wrapOneRuleFn(name, fn, context);
-  }
-}
-function wrapOneRuleFn(name, fn, context) {
-  return function wiredRuleFn($, previous) {
-    const prevContext = currentContext;
-    const prevKind = context.currentRuleKind;
-    currentContext = context;
-    context.currentRuleKind = name;
-    try {
-      return fn.call(this, $, previous);
-    } finally {
-      context.currentRuleKind = prevKind;
-      currentContext = prevContext;
-    }
-  };
-}
-function wrapConflictsCallback(userConflicts, context) {
-  return buildWiredConflictsFn(userConflicts, context);
-}
-function wrapInlineCallback(userInline, context) {
-  return buildWiredInlineFn(userInline, context);
-}
-function buildWiredConflictsFn(userConflicts, context) {
-  return function wiredConflicts($, previous) {
-    const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
-    if (context.conflictGroups.length === 0) return base2;
-    const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
-    return [...base2, ...symbolized];
-  };
-}
-function buildWiredInlineFn(userInline, context) {
-  return function wiredInline($, previous) {
-    const base2 = userInline ? userInline.call(this, $, previous) : previous ?? [];
-    if (context.syntheticInline.size === 0) return base2;
-    const existingNames = collectInlineNames(base2);
-    const appended = [];
-    for (const name of context.syntheticInline) {
-      if (existingNames.has(name)) continue;
-      appended.push(nativeInlineRef($, name));
-    }
-    return appended.length === 0 ? base2 : [...base2, ...appended];
-  };
-}
-function collectInlineNames(entries) {
-  const names = /* @__PURE__ */ new Set();
-  for (const entry of entries) {
-    if (!entry || typeof entry !== "object") continue;
-    const symbol = entry;
-    if ((symbol.type === "symbol" || symbol.type === "SYMBOL") && typeof symbol.name === "string") {
-      names.add(symbol.name);
-    }
-  }
-  return names;
-}
-function nativeInlineRef($, name) {
-  const nativeSymbol = globalThis.symbol;
-  if (typeof nativeSymbol === "function") return nativeSymbol(name);
-  return $[name];
-}
-function symbolizeRef(_$, name) {
-  return { type: "SYMBOL", name };
-}
-function hasBodyPatternGroups(groups) {
-  for (const value of Object.values(groups)) {
-    if (typeof value === "function") return true;
-  }
-  return false;
-}
-function passthroughBaseRuleFn(_$, previous) {
-  return previous;
-}
-function makeSimpleDollarProxy() {
-  return new Proxy({}, {
-    get(_target, name) {
-      return { type: "SYMBOL", name };
-    }
-  });
-}
-function isComplexBodyRt(rule) {
-  const r = rule;
-  const t = r.type;
-  if (typeEq(t, "seq") || typeEq(t, "choice")) {
-    return Array.isArray(r.members) && r.members.length >= 2;
-  }
-  if (typeEq(t, "repeat") || typeEq(t, "repeat1")) {
-    const c = r.content;
-    if (!c || typeof c.type !== "string") return false;
-    return !typeEq(c.type, "string") && !typeEq(c.type, "symbol") && !typeEq(c.type, "pattern");
-  }
-  return false;
-}
-function unwrapOptionalChoiceRt(node) {
-  if (!node || typeof node !== "object") return node;
-  const r = node;
-  if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
-    const blankIdx = r.members.findIndex((m) => isBlankType(m?.type));
-    if (blankIdx !== -1) return { type: "optional", content: r.members[1 - blankIdx] };
-  }
-  return node;
-}
-function patternBodyEqual(aIn, bIn) {
-  const a = unwrapOptionalChoiceRt(aIn);
-  const b = unwrapOptionalChoiceRt(bIn);
-  if (!a || typeof a !== "object") return a === b;
-  if (!b || typeof b !== "object") return false;
-  const ra = a;
-  const rb = b;
-  if (!typeEq(ra.type, rb.type.toLowerCase())) return false;
-  const t = ra.type.toLowerCase();
-  if (t === "string" || t === "pattern") return ra.value === rb.value;
-  if (t === "symbol") return ra.name === rb.name;
-  if (t === "blank") return true;
-  if (t === "seq" || t === "choice") {
-    const ma = ra.members;
-    const mb = rb.members;
-    if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
-    if (ma.length !== mb.length) return false;
-    return ma.every((m, i) => patternBodyEqual(m, mb[i]));
-  }
-  if (t === "optional" || t === "repeat" || t === "repeat1") {
-    return patternBodyEqual(ra.content, rb.content);
-  }
-  if (t === "field") {
-    return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
-  }
-  if (t === "alias") {
-    const raa = ra;
-    const rba = rb;
-    return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
-  }
-  return false;
-}
-function replaceInBodyRt(rule, candidates) {
-  if (!rule || typeof rule !== "object") return rule;
-  const r = rule;
-  for (const c of candidates) {
-    if (patternBodyEqual(rule, c.body)) {
-      if (c.aliasAs !== void 0) {
-        return c.uppercase ? {
-          type: "ALIAS",
-          content: { type: "SYMBOL", name: c.name },
-          named: true,
-          value: c.aliasAs
-        } : {
-          type: "alias",
-          content: { type: "symbol", name: c.name, hidden: true },
-          named: true,
-          value: c.aliasAs
-        };
-      }
-      return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
-    }
-  }
-  const t = r.type.toLowerCase();
-  if (t === "seq" || t === "choice") {
-    const members = r.members;
-    if (!Array.isArray(members)) return rule;
-    let changed = false;
-    const newMembers = members.map((m) => {
-      const replaced = replaceInBodyRt(m, candidates);
-      if (replaced !== m) changed = true;
-      return replaced;
-    });
-    return changed ? { ...r, members: newMembers } : rule;
-  }
-  if (t === "optional" || t === "repeat" || t === "repeat1" || t === "field" || t === "prec" || t === "prec_left" || t === "prec_right" || t === "prec_dynamic" || t === "token") {
-    const newContent = replaceInBodyRt(r.content, candidates);
-    return newContent !== r.content ? { ...r, content: newContent } : rule;
-  }
-  return rule;
-}
-function buildPatternReplacingFn(fn, candidates) {
-  return function patternReplacingRuleFn($, previous) {
-    const result = fn.call(this, $, previous);
-    return replaceInBodyRt(result, candidates);
-  };
-}
-function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
-  const candidates = [];
-  const $ = makeSimpleDollarProxy();
-  for (const name of authoredRuleNames) {
-    if (!name.startsWith("_")) continue;
-    const fn = rules[name];
-    if (!fn) continue;
-    let body;
-    try {
-      const result = fn.call(void 0, $, void 0);
-      if (!result || typeof result !== "object" || typeof result.type !== "string") continue;
-      body = result;
-    } catch {
-      continue;
-    }
-    if (!isComplexBodyRt(body)) continue;
-    const uppercase = body.type === body.type.toUpperCase();
-    candidates.push({ name, body, uppercase });
-  }
-  if (groups) {
-    for (const [key, value] of Object.entries(groups)) {
-      if (typeof value !== "function") continue;
-      if (key.startsWith("_")) {
-        throw new Error(
-          `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
-        );
-      }
-      const hiddenName = `_${key}`;
-      let body;
-      try {
-        const result = value.call(void 0, $, void 0);
-        if (!result || typeof result !== "object" || typeof result.type !== "string") {
-          throw new Error(`groups['${key}']: body fn did not return a rule object`);
-        }
-        body = result;
-      } catch (e) {
-        throw new Error(`groups['${key}']: failed to evaluate body fn: ${e.message}`);
-      }
-      if (!isComplexBodyRt(body)) {
-        throw new Error(
-          `groups['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
-        );
-      }
-      const uppercase = body.type === body.type.toUpperCase();
-      candidates.push({ name: hiddenName, body, uppercase, aliasAs: key });
-      rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
-    }
-  }
-  if (candidates.length === 0) return;
-  const candidateNames = new Set(candidates.map((c) => c.name));
-  for (const [name, fn] of Object.entries(rules)) {
-    if (candidateNames.has(name)) continue;
-    rules[name] = buildPatternReplacingFn(fn, candidates);
-  }
-}
-
-// packages/codegen/src/dsl/primitives/field.ts
-function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
-  const c = content;
-  if (!c || typeof c.type !== "string") return content;
-  if (isStringType(c.type)) {
-    return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
-  }
-  if (isOptionalType(c.type)) {
-    return descendOptional(fieldName, content, wrapSyntheticBody, "optional");
-  }
-  if (isChoiceType(c.type)) {
-    const members = content.members;
-    if (Array.isArray(members) && members.length === 2) {
-      const blankIdx = members.findIndex((m) => m?.type === "BLANK" || m?.type === "blank");
-      if (blankIdx !== -1) {
-        return descendOptional(fieldName, content, wrapSyntheticBody, "choice-blank");
-      }
-    }
-    return content;
-  }
-  return content;
-}
-function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
-  const c = content;
-  const isUpperCase = c.type === "STRING";
-  const hiddenName = `_kw_${fieldName}`;
-  let body = content;
-  if (wrapSyntheticBody) body = wrapSyntheticBody(body);
-  if (!wireRegisterSyntheticRule(hiddenName, body)) {
-    throw new Error(
-      `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
-    );
-  }
-  wireRegisterSyntheticInline(hiddenName);
-  return {
-    type: isUpperCase ? "SYMBOL" : "symbol",
-    name: hiddenName
-  };
-}
-function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
-  let inner;
-  if (wrapperKind === "optional") {
-    inner = content.content;
-  } else {
-    const members = content.members;
-    const nonBlank = members.find((m) => m.type !== "BLANK" && m.type !== "blank");
-    inner = nonBlank;
-  }
-  const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
-  if (rewritten === inner) return content;
-  if (wrapperKind === "optional") {
-    const nativeOptional = globalThis.optional;
-    if (typeof nativeOptional !== "function") return content;
-    return nativeOptional(rewritten);
-  }
-  const c = content;
-  const newMembers = c.members.map((m) => m.type === "BLANK" || m.type === "blank" ? m : rewritten);
-  return { ...c, members: newMembers };
-}
-function isFieldPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
-}
-function field(name, content) {
-  if (content === void 0) {
-    return {
-      __sittirPlaceholder: "field",
-      name
-    };
-  }
-  const native = globalThis.field;
-  if (typeof native !== "function") {
-    throw new Error(
-      "field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
-    );
-  }
-  return buildTwoArgFieldResult(native, name, content);
-}
-function buildTwoArgFieldResult(native, name, content) {
-  const initial = native(name, content);
-  const inner = initial.content;
-  const symbolized = maybeKeywordSymbol(name, inner);
-  if (symbolized !== inner) {
-    const reconstructed = native(name, symbolized);
-    return {
-      ...reconstructed,
-      source: "override"
-    };
-  }
-  return { ...initial, source: "override" };
 }
 
 // packages/codegen/src/dsl/transform/transform.ts
@@ -1547,8 +863,699 @@ function extractNonEmpty(rule) {
   return null;
 }
 
+// packages/codegen/src/dsl/wire/auto-groups.ts
+function applyAutoGroups(base2, outRules, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
+  if (!base2) return;
+  const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
+  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
+  if (!rulesBag) return;
+  const dedupe = {};
+  const synthRules = {};
+  const rewrites = {};
+  for (const name of Object.keys(rulesBag)) {
+    if (authoredSynthesisKinds.has(name)) continue;
+    if (context.authoredRuleNames.has(name)) continue;
+    const rule = rulesBag[name];
+    if (!rule) continue;
+    const state = { opt: 0, rep: 0 };
+    let next = rule;
+    next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
+    next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
+    if (next !== rule) {
+      rewrites[name] = next;
+    }
+  }
+  for (const synName of Object.keys(synthRules)) {
+    if (synName in outRules || synName in rulesBag) continue;
+    outRules[synName] = makeStaticRuleFn(synthRules[synName]);
+    context.syntheticInline.add(synName);
+  }
+  for (const parentName of Object.keys(rewrites)) {
+    outRules[parentName] = makeStaticRuleFn(rewrites[parentName]);
+  }
+}
+function makeStaticRuleFn(body) {
+  return function staticAutoGroupRule() {
+    return body;
+  };
+}
+function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
+  const recursed = recurseChildren(
+    rule,
+    (r) => synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
+  );
+  if (isOptionalType(recursed.type)) {
+    const content = recursed.content;
+    if (!content || typeof content !== "object") return recursed;
+    if (!isSeqType(content.type)) return recursed;
+    const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = content;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    return { ...recursed, content: symbolRef };
+  }
+  if (isChoiceType(recursed.type)) {
+    const members = recursed.members;
+    if (!Array.isArray(members) || members.length !== 2) return recursed;
+    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
+    const seqIdx = members.findIndex((m) => isSeqType(m.type));
+    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
+    const seqMember = members[seqIdx];
+    const synName = synthesizeGroupName(seqMember, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = seqMember;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    const newMembers = members.slice();
+    newMembers[seqIdx] = symbolRef;
+    return { ...recursed, members: newMembers };
+  }
+  return recursed;
+}
+function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
+  const recursed = recurseChildren(
+    rule,
+    (r) => synthesizeRepeatGroups(r, synthRules, parentKind, state, dedupe)
+  );
+  if (!isRepeatType(recursed.type)) return recursed;
+  const content = recursed.content;
+  if (!content || typeof content !== "object") return recursed;
+  const t = content.type;
+  if (!isSeqType(t)) return recursed;
+  const synName = synthesizeGroupName(content, parentKind, "repeat", state, dedupe);
+  if (!(synName in synthRules)) {
+    synthRules[synName] = content;
+  }
+  const symbolRef = {
+    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+    name: synName,
+    source: "group-lift"
+  };
+  return { ...recursed, content: symbolRef };
+}
+function detectCase(referenceRule) {
+  const t = referenceRule?.type ?? "";
+  return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
+}
+function synthesizeGroupName(content, parentKind, kind, state, dedupe) {
+  const key = canonicalStringify(content);
+  const existing = dedupe[key];
+  if (existing !== void 0) return existing;
+  const counterKey = kind === "optional" ? "opt" : "rep";
+  state[counterKey] += 1;
+  const n = state[counterKey];
+  const name = `_${parentKind}_${kind}${n}`;
+  dedupe[key] = name;
+  return name;
+}
+function canonicalStringify(value) {
+  if (value === null || typeof value !== "object") {
+    return JSON.stringify(value);
+  }
+  if (Array.isArray(value)) {
+    return "[" + value.map((v) => canonicalStringify(v)).join(",") + "]";
+  }
+  const obj = value;
+  const keys = Object.keys(obj).sort();
+  const parts = [];
+  for (const k of keys) {
+    const v = obj[k];
+    if (typeof v === "function" || typeof v === "undefined") continue;
+    parts.push(JSON.stringify(k) + ":" + canonicalStringify(v));
+  }
+  return "{" + parts.join(",") + "}";
+}
+function recurseChildren(rule, visit) {
+  if (!rule || typeof rule !== "object") return rule;
+  const t = rule.type;
+  if (!t) return rule;
+  if (isSeqType(t) || isChoiceType(t)) {
+    const members = rule.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = visit(m);
+      if (out !== m) changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : rule;
+  }
+  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant" || t === "clause") {
+    const content = rule.content;
+    if (content === void 0) return rule;
+    const out = visit(content);
+    if (out === content) return rule;
+    return { ...rule, content: out };
+  }
+  if (t === "polymorph") {
+    const forms = rule.forms;
+    if (!Array.isArray(forms)) return rule;
+    let changed = false;
+    const newForms = forms.map((f) => {
+      const out = visit(f.content);
+      if (out === f.content) return f;
+      changed = true;
+      return { ...f, content: out };
+    });
+    return changed ? { ...rule, forms: newForms } : rule;
+  }
+  return rule;
+}
+
+// packages/codegen/src/dsl/wire/wire.ts
+var currentContext = null;
+function wireRegisterSyntheticRule(name, content) {
+  if (!currentContext) return false;
+  currentContext.deposits.set(name, content);
+  return true;
+}
+function wireRegisterSyntheticInline(name) {
+  if (!currentContext) return false;
+  if (currentContext.authoredRuleNames.has(name)) return false;
+  currentContext.syntheticInline.add(name);
+  return true;
+}
+function wireRegisterPolymorphVariant(parent, child) {
+  if (!currentContext) return false;
+  const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
+  if (!exists) {
+    currentContext.polymorphVariants.push({ parent, child });
+  }
+  return true;
+}
+function wireRegisterConflict(names) {
+  if (!currentContext) return false;
+  if (names.length === 0) return true;
+  const key = names.join("\0");
+  const exists = currentContext.conflictGroups.some((g) => g.join("\0") === key);
+  if (!exists) {
+    currentContext.conflictGroups.push([...names]);
+  }
+  return true;
+}
+function wireGetCurrentRuleKind() {
+  return currentContext?.currentRuleKind ?? null;
+}
+function wire(config, base2) {
+  const cfg = config;
+  const baseArg = base2;
+  const context = {
+    deposits: /* @__PURE__ */ new Map(),
+    syntheticInline: /* @__PURE__ */ new Set(),
+    polymorphVariants: [],
+    conflictGroups: [],
+    refineForms: /* @__PURE__ */ new Map(),
+    groups: cfg.groups,
+    polymorphsConfig: cfg.polymorphs,
+    renderAs: cfg.renderAs,
+    currentRuleKind: null,
+    authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
+  };
+  const polymorphs = cfg.polymorphs ?? {};
+  const transforms = cfg.transforms ?? {};
+  const outRules = { ...cfg.rules };
+  composeOrSynthesizeTransformParents(outRules, transforms);
+  composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
+  injectHiddenRulePlaceholders(outRules, polymorphs, context);
+  injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+  if (baseArg && cfg.groups && hasBodyPatternGroups(cfg.groups)) {
+    const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
+    for (const baseName of Object.keys(baseRules)) {
+      if (baseName in outRules) continue;
+      outRules[baseName] = passthroughBaseRuleFn;
+    }
+  }
+  wrapAllRuleFns(outRules, context);
+  applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+  if (baseArg) {
+    const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
+      transforms,
+      polymorphs,
+      cfg.groups
+    );
+    applyAutoGroups(
+      baseArg,
+      outRules,
+      context,
+      authoredSynthesisKinds
+    );
+    applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+  }
+  const conflicts = wrapConflictsCallback(cfg.conflicts, context);
+  const inline = wrapInlineCallback(cfg.inline, context);
+  const wired = {
+    ...cfg,
+    rules: outRules,
+    ...conflicts === void 0 ? {} : { conflicts },
+    ...inline === void 0 ? {} : { inline }
+  };
+  Object.defineProperty(wired, "__wireContext__", {
+    value: context,
+    enumerable: false,
+    configurable: true
+  });
+  return wired;
+}
+function collectAuthoredSynthesisKinds(transforms, polymorphs, groups) {
+  const kinds = /* @__PURE__ */ new Set();
+  for (const k of Object.keys(transforms)) kinds.add(k);
+  for (const k of Object.keys(polymorphs)) kinds.add(k);
+  if (groups) {
+    for (const [k, v] of Object.entries(groups)) {
+      if (typeof v === "function") continue;
+      kinds.add(k);
+    }
+  }
+  return kinds;
+}
+function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
+  for (const [parent, armMap] of Object.entries(polymorphs)) {
+    if (!armMap) continue;
+    const userFn = rules[parent];
+    rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
+  }
+}
+function buildPolymorphParentFn(parent, armMap, userFn, context) {
+  const patches = {};
+  for (const [path, suffix] of Object.entries(armMap)) {
+    patches[path] = variant(suffix);
+  }
+  const isHidden = parent.startsWith("_");
+  return function wiredPolymorphParent($, original) {
+    let base2;
+    if (userFn) {
+      base2 = userFn($, original);
+    } else if (isHidden && context.deposits.has(parent)) {
+      base2 = context.deposits.get(parent);
+    } else {
+      base2 = original;
+    }
+    return transform(base2, patches);
+  };
+}
+function injectHiddenRulePlaceholders(rules, polymorphs, context) {
+  for (const [parent, armMap] of Object.entries(polymorphs)) {
+    if (!armMap) continue;
+    for (const suffix of Object.values(armMap)) {
+      const hiddenName = polymorphHiddenName(parent, suffix);
+      if (hiddenName in rules) continue;
+      rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    }
+  }
+}
+function polymorphVisibleName(parentKind, suffix) {
+  const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
+  return `${visibleParent}_${suffix}`;
+}
+function polymorphHiddenName(parentKind, suffix) {
+  return `_${polymorphVisibleName(parentKind, suffix)}`;
+}
+function composeOrSynthesizeTransformParents(rules, transforms) {
+  for (const [kind, entry] of Object.entries(transforms)) {
+    if (!entry) continue;
+    const patchSets = Array.isArray(entry) ? entry : [entry];
+    const userFn = rules[kind];
+    rules[kind] = buildTransformParentFn(patchSets, userFn);
+  }
+}
+function buildTransformParentFn(patchSets, userFn) {
+  return function wiredTransformParent($, original) {
+    const base2 = userFn ? userFn($, original) : original;
+    return transform(base2, ...patchSets);
+  };
+}
+function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
+  for (const [kind, entry] of Object.entries(transforms)) {
+    if (!entry) continue;
+    const patchSets = Array.isArray(entry) ? entry : [entry];
+    for (const patchMap of patchSets) {
+      for (const value of Object.values(patchMap)) {
+        registerHiddenRuleForPlaceholder(value, kind, rules, context);
+      }
+    }
+  }
+}
+function registerHiddenRuleForPlaceholder(value, parentKind, rules, context) {
+  if (isFieldPlaceholder(value)) {
+    const hiddenName = `_kw_${value.name}`;
+    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    return;
+  }
+  if (isVariantPlaceholder(value)) {
+    const hiddenName = `_${parentKind}_${value.name}`;
+    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    return;
+  }
+  if (isAliasPlaceholder(value)) {
+    const hiddenName = `_${value.name}`;
+    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    return;
+  }
+}
+function makeDeferredContentFn(context, hiddenName) {
+  return function deferredHiddenRule(_$, previous) {
+    const body = context.deposits.get(hiddenName);
+    if (body) return body;
+    if (previous !== void 0) return previous;
+    const blankFn = globalThis.blank;
+    return blankFn ? blankFn() : { type: "BLANK" };
+  };
+}
+function wrapAllRuleFns(rules, context) {
+  for (const [name, fn] of Object.entries(rules)) {
+    rules[name] = wrapOneRuleFn(name, fn, context);
+  }
+}
+function wrapOneRuleFn(name, fn, context) {
+  return function wiredRuleFn($, previous) {
+    const prevContext = currentContext;
+    const prevKind = context.currentRuleKind;
+    currentContext = context;
+    context.currentRuleKind = name;
+    try {
+      return fn($, previous);
+    } finally {
+      context.currentRuleKind = prevKind;
+      currentContext = prevContext;
+    }
+  };
+}
+function wrapConflictsCallback(userConflicts, context) {
+  return buildWiredConflictsFn(userConflicts, context);
+}
+function wrapInlineCallback(userInline, context) {
+  return buildWiredInlineFn(userInline, context);
+}
+function buildWiredConflictsFn(userConflicts, context) {
+  return function wiredConflicts($, previous) {
+    const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
+    if (context.conflictGroups.length === 0) return base2;
+    const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
+    return [...base2, ...symbolized];
+  };
+}
+function buildWiredInlineFn(userInline, context) {
+  return function wiredInline($, previous) {
+    const base2 = userInline ? userInline.call(this, $, previous) : previous ?? [];
+    if (context.syntheticInline.size === 0) return base2;
+    const existingNames = collectInlineNames(base2);
+    const appended = [];
+    for (const name of context.syntheticInline) {
+      if (existingNames.has(name)) continue;
+      appended.push(nativeInlineRef($, name));
+    }
+    return appended.length === 0 ? base2 : [...base2, ...appended];
+  };
+}
+function collectInlineNames(entries) {
+  const names = /* @__PURE__ */ new Set();
+  for (const entry of entries) {
+    if (!entry || typeof entry !== "object") continue;
+    const symbol = entry;
+    if ((symbol.type === "symbol" || symbol.type === "SYMBOL") && typeof symbol.name === "string") {
+      names.add(symbol.name);
+    }
+  }
+  return names;
+}
+function nativeInlineRef($, name) {
+  const nativeSymbol = globalThis.symbol;
+  if (typeof nativeSymbol === "function") return nativeSymbol(name);
+  return $[name];
+}
+function symbolizeRef(_$, name) {
+  return { type: "SYMBOL", name };
+}
+function hasBodyPatternGroups(groups) {
+  for (const value of Object.values(groups)) {
+    if (typeof value === "function") return true;
+  }
+  return false;
+}
+var passthroughBaseRuleFn = function passthroughBaseRuleFn2(_$, previous) {
+  return previous;
+};
+function makeSimpleDollarProxy() {
+  return new Proxy({}, {
+    get(_target, name) {
+      return { type: "SYMBOL", name };
+    }
+  });
+}
+function isComplexBodyRt(rule) {
+  const r = rule;
+  const t = r.type;
+  if (typeEq(t, "seq") || typeEq(t, "choice")) {
+    return Array.isArray(r.members) && r.members.length >= 2;
+  }
+  if (typeEq(t, "repeat") || typeEq(t, "repeat1")) {
+    const c = r.content;
+    if (!c || typeof c.type !== "string") return false;
+    return !typeEq(c.type, "string") && !typeEq(c.type, "symbol") && !typeEq(c.type, "pattern");
+  }
+  return false;
+}
+function unwrapOptionalChoiceRt(node) {
+  if (!node || typeof node !== "object") return node;
+  const r = node;
+  if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
+    const blankIdx = r.members.findIndex((m) => isBlankType(m?.type));
+    if (blankIdx !== -1) return { type: "optional", content: r.members[1 - blankIdx] };
+  }
+  return node;
+}
+function patternBodyEqual(aIn, bIn) {
+  const a = unwrapOptionalChoiceRt(aIn);
+  const b = unwrapOptionalChoiceRt(bIn);
+  if (!a || typeof a !== "object") return a === b;
+  if (!b || typeof b !== "object") return false;
+  const ra = a;
+  const rb = b;
+  if (!typeEq(ra.type, rb.type.toLowerCase())) return false;
+  const t = ra.type.toLowerCase();
+  if (t === "string" || t === "pattern") return ra.value === rb.value;
+  if (t === "symbol") return ra.name === rb.name;
+  if (t === "blank") return true;
+  if (t === "seq" || t === "choice") {
+    const ma = ra.members;
+    const mb = rb.members;
+    if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
+    if (ma.length !== mb.length) return false;
+    return ma.every((m, i) => patternBodyEqual(m, mb[i]));
+  }
+  if (t === "optional" || t === "repeat" || t === "repeat1") {
+    return patternBodyEqual(ra.content, rb.content);
+  }
+  if (t === "field") {
+    return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
+  }
+  if (t === "alias") {
+    const raa = ra;
+    const rba = rb;
+    return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
+  }
+  return false;
+}
+function replaceInBodyRt(rule, candidates) {
+  if (!rule || typeof rule !== "object") return rule;
+  const r = rule;
+  for (const c of candidates) {
+    if (patternBodyEqual(rule, c.body)) {
+      if (c.aliasAs !== void 0) {
+        return c.uppercase ? {
+          type: "ALIAS",
+          content: { type: "SYMBOL", name: c.name },
+          named: true,
+          value: c.aliasAs
+        } : {
+          type: "alias",
+          content: { type: "symbol", name: c.name, hidden: true },
+          named: true,
+          value: c.aliasAs
+        };
+      }
+      return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
+    }
+  }
+  const t = r.type.toLowerCase();
+  if (t === "seq" || t === "choice") {
+    const members = r.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const replaced = replaceInBodyRt(m, candidates);
+      if (replaced !== m) changed = true;
+      return replaced;
+    });
+    return changed ? { ...r, members: newMembers } : rule;
+  }
+  if (t === "optional" || t === "repeat" || t === "repeat1" || t === "field" || t === "prec" || t === "prec_left" || t === "prec_right" || t === "prec_dynamic" || t === "token") {
+    const newContent = replaceInBodyRt(r.content, candidates);
+    return newContent !== r.content ? { ...r, content: newContent } : rule;
+  }
+  return rule;
+}
+function buildPatternReplacingFn(fn, candidates) {
+  return function patternReplacingRuleFn($, previous) {
+    const result = fn($, previous);
+    return replaceInBodyRt(result, candidates);
+  };
+}
+function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
+  const candidates = [];
+  const $ = makeSimpleDollarProxy();
+  for (const name of authoredRuleNames) {
+    if (!name.startsWith("_")) continue;
+    const fn = rules[name];
+    if (!fn) continue;
+    let body;
+    try {
+      const result = fn.call(void 0, $, void 0);
+      if (!result || typeof result !== "object" || typeof result.type !== "string") continue;
+      body = result;
+    } catch {
+      continue;
+    }
+    if (!isComplexBodyRt(body)) continue;
+    const uppercase = body.type === body.type.toUpperCase();
+    candidates.push({ name, body, uppercase });
+  }
+  if (groups) {
+    for (const [key, value] of Object.entries(groups)) {
+      if (typeof value !== "function") continue;
+      if (key.startsWith("_")) {
+        throw new Error(
+          `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
+        );
+      }
+      const hiddenName = `_${key}`;
+      let body;
+      try {
+        const result = value.call(void 0, $, void 0);
+        if (!result || typeof result !== "object" || typeof result.type !== "string") {
+          throw new Error(`groups['${key}']: body fn did not return a rule object`);
+        }
+        body = result;
+      } catch (e) {
+        throw new Error(`groups['${key}']: failed to evaluate body fn: ${e.message}`);
+      }
+      if (!isComplexBodyRt(body)) {
+        throw new Error(
+          `groups['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
+        );
+      }
+      const uppercase = body.type === body.type.toUpperCase();
+      candidates.push({ name: hiddenName, body, uppercase, aliasAs: key });
+      rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    }
+  }
+  if (candidates.length === 0) return;
+  const candidateNames = new Set(candidates.map((c) => c.name));
+  for (const [name, fn] of Object.entries(rules)) {
+    if (candidateNames.has(name)) continue;
+    rules[name] = buildPatternReplacingFn(fn, candidates);
+  }
+}
+
+// packages/codegen/src/dsl/primitives/field.ts
+function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
+  const c = content;
+  if (!c || typeof c.type !== "string") return content;
+  if (isStringType(c.type)) {
+    return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
+  }
+  if (isOptionalType(c.type)) {
+    return descendOptional(fieldName, content, wrapSyntheticBody, "optional");
+  }
+  if (isChoiceType(c.type)) {
+    const members = content.members;
+    if (Array.isArray(members) && members.length === 2) {
+      const blankIdx = members.findIndex((m) => m?.type === "BLANK" || m?.type === "blank");
+      if (blankIdx !== -1) {
+        return descendOptional(fieldName, content, wrapSyntheticBody, "choice-blank");
+      }
+    }
+    return content;
+  }
+  return content;
+}
+function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
+  const c = content;
+  const isUpperCase = c.type === "STRING";
+  const hiddenName = `_kw_${fieldName}`;
+  let body = content;
+  if (wrapSyntheticBody) body = wrapSyntheticBody(body);
+  if (!wireRegisterSyntheticRule(hiddenName, body)) {
+    throw new Error(
+      `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
+    );
+  }
+  wireRegisterSyntheticInline(hiddenName);
+  return {
+    type: isUpperCase ? "SYMBOL" : "symbol",
+    name: hiddenName
+  };
+}
+function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
+  let inner;
+  if (wrapperKind === "optional") {
+    inner = content.content;
+  } else {
+    const members = content.members;
+    const nonBlank = members.find((m) => m.type !== "BLANK" && m.type !== "blank");
+    inner = nonBlank;
+  }
+  const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
+  if (rewritten === inner) return content;
+  if (wrapperKind === "optional") {
+    const nativeOptional = globalThis.optional;
+    if (typeof nativeOptional !== "function") return content;
+    return nativeOptional(rewritten);
+  }
+  const c = content;
+  const newMembers = c.members.map((m) => m.type === "BLANK" || m.type === "blank" ? m : rewritten);
+  return { ...c, members: newMembers };
+}
+function isFieldPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "field";
+}
+function field(name, content) {
+  if (content === void 0) {
+    return {
+      __sittirPlaceholder: "field",
+      name
+    };
+  }
+  const native = globalThis.field;
+  if (typeof native !== "function") {
+    throw new Error(
+      "field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
+    );
+  }
+  return buildTwoArgFieldResult(native, name, content);
+}
+function buildTwoArgFieldResult(native, name, content) {
+  const initial = native(name, content);
+  const inner = initial.content;
+  const symbolized = maybeKeywordSymbol(name, inner);
+  if (symbolized !== inner) {
+    const reconstructed = native(name, symbolized);
+    return {
+      ...reconstructed,
+      source: "override"
+    };
+  }
+  return { ...initial, source: "override" };
+}
+
 // packages/codegen/src/dsl/enrich.ts
-function enrich(base2) {
+function enrich(baseInput) {
+  const base2 = baseInput;
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
@@ -1676,8 +1683,8 @@ function collectFieldNamesRuntime(rule) {
   const names = /* @__PURE__ */ new Set();
   if (!isSeqType(rule.type)) return names;
   const members = rule.members;
-  for (const raw of members) {
-    const m = normalizeMember(raw);
+  for (const raw2 of members) {
+    const m = normalizeMember(raw2);
     if (isFieldType(m.type) && typeof m.name === "string") {
       names.add(m.name);
       continue;
@@ -2196,8 +2203,14 @@ function rebuildOptional(optionalRule, newInner) {
   return { ...optionalRule, members: newMembers };
 }
 
+// packages/codegen/src/dsl/dsl-authoring.ts
+var field2 = field;
+var alias2 = alias;
+var transform2 = transform;
+
 // packages/rust/overrides.ts
-var config = {
+var enrichedBase = enrich(base_default);
+var overrides_default = grammar(enrichedBase, wire({
   name: "rust",
   // `previous` is the base grammar's conflicts list — concat so we
   // don't drop the base entries (`$._type`, `$._pattern`, etc.).
@@ -2338,7 +2351,7 @@ var config = {
     // Mirrors attributed_field_declaration (the brace-form `field_declaration_list`
     // sibling). A multi-slot repeated unit must be a visible node so the flat
     // parse can be reconstructed; this is step 1 of making multiplicity intrinsic.
-    attributed_ordered_field: ($) => seq(repeat($.attribute_item), optional($.visibility_modifier), field("type", $._type)),
+    attributed_ordered_field: ($) => seq(repeat($.attribute_item), optional($.visibility_modifier), field2("type", $._type)),
     // type_arguments: each comma-separated position after the first is
     // seq(choice(_type, type_binding, lifetime, _literal, block), optional(trait_bounds)).
     // The inner seq is a 2-slot unit (element type + optional bounds) that
@@ -2364,41 +2377,41 @@ var config = {
     // colliding on `_content` (the double `{{ content }}` in the template).
     // Name them so each gets its own slot.
     token_repetition: {
-      4: field("separator"),
-      5: field("operator")
+      4: field2("separator"),
+      5: field2("operator")
     },
     // token_repetition_pattern: same shape as token_repetition — the optional
     // separator pattern (pos 4) and the repetition operator enum (pos 5) are
     // both unnamed → 2 `content` slots. Name them.
     token_repetition_pattern: {
-      4: field("separator"),
-      5: field("operator")
+      4: field2("separator"),
+      5: field2("operator")
     },
     // field_initializer_list: name the naked initializers choice (was an
     // unresolvable `content` slot).
     field_initializer_list: {
-      1: field("initializers")
+      1: field2("initializers")
     },
     // tuple_pattern: name the naked elements choice (was an unresolvable
     // `content` slot).
     tuple_pattern: {
-      1: field("elements")
+      1: field2("elements")
     },
     // Naked-choice field names (was unresolvable `content` slots).
     closure_parameters: {
-      1: field("parameters")
+      1: field2("parameters")
     },
     struct_pattern: {
-      2: field("fields")
+      2: field2("fields")
     },
     trait_bounds: {
-      1: field("bounds")
+      1: field2("bounds")
     },
     use_bounds: {
-      2: field("bounds")
+      2: field2("bounds")
     },
     last_match_arm: {
-      0: field("attributes")
+      0: field2("attributes")
     },
     // async_block: seq('async', optional('move'), $.block).
     // Field-promotion wave 1 (016 task #23): label the standalone
@@ -2410,7 +2423,7 @@ var config = {
     // introduces (the `async move {}` parity fixture round-trips
     // only with this entry).
     async_block: {
-      "1/0": field("move_marker")
+      "1/0": field2("move_marker")
     },
     // array_expression polymorph splits '2/0' (semi) / '2/1' (list).
     // Only the outer `repeat($.attribute_item)` at pos 1 needs a field
@@ -2419,7 +2432,7 @@ var config = {
     // above) now carries each element's attribute_item(s) + _expression
     // pair as a self-contained unit, exactly as `attributed_argument`
     // does for call arguments.
-    array_expression: [{ 1: field("attributes") }],
+    array_expression: [{ 1: field2("attributes") }],
     // arguments: handled by the `attributed_argument` body-pattern group
     // (see groups: above) — each call arg is synthesized as a visible
     // `attributed_argument` kind, like `attributed_parameter`.
@@ -2430,7 +2443,7 @@ var config = {
     // pos 0 to a named field; the expression/arguments side already
     // has inner field() wrappers and stays as $children.
     attribute: {
-      0: field("path")
+      0: field2("path")
     },
     // block: seq(optional(seq(field('label', label), ':')), '{',
     // repeat(_statement), optional(_expression), '}').
@@ -2439,13 +2452,13 @@ var config = {
     // Promote the trailing expression to a named field; statements stay
     // as $children.
     block: {
-      3: field("trailing_expression")
+      3: field2("trailing_expression")
     },
     // bounded_type: 2 field(s)
     bounded_type: {
-      0: field("left"),
+      0: field2("left"),
       // lifetime | _type | use_bounds [struct=0]
-      2: field("right")
+      2: field2("right")
       // lifetime | _type | use_bounds [struct=1]
     },
     // closure_expression: prec(closure, seq(
@@ -2477,9 +2490,9 @@ var config = {
     // follow-up, task #27) is required to keep `let a = async move
     // || async move {}` from regressing to ERROR.
     closure_expression: {
-      "0/0": field("static_marker"),
-      "1/0": field("async_marker"),
-      "2/0": field("move_marker")
+      "0/0": field2("static_marker"),
+      "1/0": field2("async_marker"),
+      "2/0": field2("move_marker")
     },
     // extern_modifier: 1 field(s)
     extern_modifier: {},
@@ -2508,7 +2521,7 @@ var config = {
       // projects to a flags enum instead of an array. Deferred —
       // needs bitflag detection in the walker for the repeat1+field
       // combination, not just seq-positioned boolean-keyword slots.
-      _: field("modifier")
+      _: field2("modifier")
     },
     // visibility_modifier — replaces the hand-authored rule below
     // that wrapped bare keywords in `_kw_pub` / `_kw_in` hidden
@@ -2540,8 +2553,8 @@ var config = {
     //     ),
     //   )
     visibility_modifier: {
-      "1/0": field("pub"),
-      "1/1/0/1/3/0": field("in")
+      "1/0": field2("pub"),
+      "1/1/0/1/3/0": field2("in")
     },
     // function_type: top-level seq is
     //   [for_lifetimes, prec(call, seq(choice(trait, fn_form), parameters)),
@@ -2559,10 +2572,10 @@ var config = {
     // preserves it. Kept hand-promoted for the same render-spacing
     // reason as async_block (see note above).
     gen_block: {
-      "1/0": field("move_marker")
+      "1/0": field2("move_marker")
     },
     generic_type_with_turbofish: {
-      1: field("turbofish")
+      1: field2("turbofish")
     },
     // generic_type: base rule unchanged. ADR-0006 dispatches via
     // drillAs at alias-declared field sites so consumers see source-
@@ -2589,19 +2602,19 @@ var config = {
     //     literal inside the inner-seq's leading optional. The
     //     `negative` name is context-specific (not `bang_marker`).
     impl_item: {
-      "0/0": field("unsafe_marker"),
-      "3/0/0/0": field("negative")
+      "0/0": field2("unsafe_marker"),
+      "3/0/0/0": field2("negative")
     },
     // index_expression: 2 field(s)
     index_expression: {
-      0: field("object"),
+      0: field2("object"),
       // _expression [struct=0]
-      2: field("index")
+      2: field2("index")
       // _expression [struct=1]
     },
     // macro_invocation: 1 field(s)
     macro_invocation: {
-      2: field("token_tree")
+      2: field2("token_tree")
       // token_tree [struct=0]
     },
     // mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
@@ -2610,7 +2623,7 @@ var config = {
     mod_item: [],
     // negative_literal: 2 field(s)
     negative_literal: {
-      1: field("value")
+      1: field2("value")
       // integer_literal | float_literal [struct=0]
     },
     // ordered_field_declaration_list: 1 field(s)
@@ -2622,15 +2635,15 @@ var config = {
     // the outer level, so the position 2 override was structurally
     // incorrect. Only wrapping position 1 (the per-element group).
     ordered_field_declaration_list: {
-      1: field("attributes")
+      1: field2("attributes")
       // per-element group [struct=0]
     },
     // or_pattern polymorph splits '0' (binary) / '1' (prefix).
     // Field labels land on base-shape choice arms pre-alias.
     or_pattern: {
-      "0/0": field("left"),
-      "0/2": field("right"),
-      "1/1": field("right")
+      "0/0": field2("left"),
+      "0/2": field2("right"),
+      "1/1": field2("right")
     },
     // pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
     // Wrapping the choice as `field('mutable_specifier')` makes BOTH
@@ -2643,35 +2656,35 @@ var config = {
     },
     // raw_string_literal: 3 field(s)
     raw_string_literal: {
-      0: field("raw_string_literal_start"),
+      0: field2("raw_string_literal_start"),
       //  [struct=0]
-      1: field("string_content"),
+      1: field2("string_content"),
       // string_content [struct=1]
-      2: field("raw_string_literal_end")
+      2: field2("raw_string_literal_end")
       //  [struct=2]
     },
     // range_expression polymorph splits '0'..'3'. Field labels
     // land on base-shape choice arms pre-alias.
     range_expression: {
-      "0/0": field("start"),
-      "0/1": field("operator"),
-      "0/2": field("end"),
-      "1/0": field("start"),
-      "1/1": field("operator"),
-      "2/0": field("operator"),
-      "2/1": field("end"),
-      "3": field("operator")
+      "0/0": field2("start"),
+      "0/1": field2("operator"),
+      "0/2": field2("end"),
+      "1/0": field2("start"),
+      "1/1": field2("operator"),
+      "2/0": field2("operator"),
+      "2/1": field2("end"),
+      "3": field2("operator")
     },
     // reference_expression: 1 field(s)
     reference_expression: {
-      0: field("reference"),
+      0: field2("reference"),
       "1/0/1/0": variant("raw_const"),
       "1/0/1/1": variant("raw_mut")
       // mutable_specifier [struct=0]
     },
     // reference_pattern: 2 field(s)
     reference_pattern: {
-      2: field("pattern")
+      2: field2("pattern")
       // _pattern [struct=1]
     },
     // reference_type: 2 field(s)
@@ -2682,23 +2695,23 @@ var config = {
     // at pos 1 is the explicit lifetime name ('a etc.) — distinct
     // name to avoid colliding with pos 0's label.
     self_parameter: {
-      0: field("reference")
+      0: field2("reference")
       // optional('&')
     },
     // shorthand_field_initializer: 2 field(s)
     shorthand_field_initializer: {
-      0: field("attributes")
+      0: field2("attributes")
       // attribute_item [struct=0]
       // pos 1 $.identifier auto-labelled by enrich pass 1
     },
     // source_file: 2 field(s)
     source_file: {
-      1: field("statements")
+      1: field2("statements")
       // _statement [struct=1]
     },
     // static_item: 2 field(s)
     static_item: {
-      2: field("mutable_specifier")
+      2: field2("mutable_specifier")
       // mutable_specifier [struct=1]
     },
     // struct_item: three body shapes — brace (`{ ... }`), tuple
@@ -2717,20 +2730,20 @@ var config = {
     // hand-promoted for the same render-spacing reason as async_block
     // (see note above).
     trait_item: {
-      "1/0": field("unsafe_marker")
+      "1/0": field2("unsafe_marker")
     },
     // try_block: 1 field(s)
     // try_expression: 2 field(s)
     try_expression: {
-      0: field("value")
+      0: field2("value")
       // _expression [struct=0]
     },
     // tuple_expression: flat list of expressions comma-separated.
     // Kind-match labels every `_expression` as `elements` without
     // capturing the `,` separators (same pattern as array_expression).
     tuple_expression: {
-      1: field("attributes"),
-      "(_expression)": field("elements")
+      1: field2("attributes"),
+      "(_expression)": field2("elements")
     },
     // tuple_type: seq('(', sepBy1(',', $._type), optional(','), ')').
     // sepBy1 expands to seq($._type, repeat(seq(',', $._type))).
@@ -2741,13 +2754,13 @@ var config = {
     // field name so read_node collapses them into one ordered slot.
     // Uses transforms: (not rules:) so the parse is unchanged.
     tuple_type: {
-      "(_type)": field("type")
+      "(_type)": field2("type")
     },
     // type_item: 3 field(s)
     type_item: {
-      4: field("where_clause"),
+      4: field2("where_clause"),
       // where_clause [struct=1]
-      7: field("trailing_where_clause")
+      7: field2("trailing_where_clause")
       // where_clause [struct=2]
     },
     // type_parameters: handled by `attributed_type_parameter` body-
@@ -2760,14 +2773,14 @@ var config = {
     // fields so the template emits `$OPERATOR$OPERAND` instead of
     // `$OPERATOR $$$CHILDREN` (which reads empty after field promotion).
     unary_expression: {
-      0: field("operator"),
+      0: field2("operator"),
       // choice('-', '*', '!')
-      1: field("operand")
+      1: field2("operand")
       // $._expression
     },
     // use_wildcard: 1 field(s)
     use_wildcard: {
-      "0/0/0": field("path")
+      "0/0/0": field2("path")
       // optional($._path) inside the optional `path ::` prefix; excludes the `::` token
     },
     // variadic_parameter: 1 field(s)
@@ -2796,7 +2809,7 @@ var config = {
     // Promote attribute_item to named field; the variant child stays as
     // $children. Field patch (flat mode) runs before variant patches
     // (path mode) via array-of-patch-sets.
-    match_arm: [{ 0: field("attributes") }, { "3/0": variant("with_comma"), "3/1": variant("block_ending") }],
+    match_arm: [{ 0: field2("attributes") }, { "3/0": variant("with_comma"), "3/1": variant("block_ending") }],
     // line_comment: choice at pos 1 between regular double-slash,
     // doc-comment, and regular content. Each arm has its own
     // distinct literal prefix.
@@ -2867,8 +2880,8 @@ var config = {
     // patch value needs `$` (tree-sitter's symbol proxy) at call
     // time. `transforms:` values are evaluated at config-object-
     // literal time, before `$` exists. See ADR-0009 §Task-7.
-    _pattern: ($, original) => transform(original, {
-      "-1": alias($._wildcard_pattern, $.wildcard_pattern)
+    _pattern: ($, original) => transform2(original, {
+      "-1": alias2($._wildcard_pattern, $.wildcard_pattern)
     }),
     // The hidden rule `_wildcard_pattern` is just the `_` literal;
     // the named alias on `_pattern` above promotes it to a proper
@@ -2915,7 +2928,5 @@ var config = {
     _raw_string_literal_start: string('r#"'),
     _raw_string_literal_end: string('"#')
   })
-};
-var enrichedBase = enrich(import_grammar.default);
-var overrides_default = grammar(enrichedBase, wire(config, enrichedBase));
+}, enrichedBase));
 if (module.exports && module.exports.default) module.exports = module.exports.default;

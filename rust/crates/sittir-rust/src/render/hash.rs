@@ -1,5 +1,5 @@
 // @generated from packages/rust/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The grammar-owned `sittir-rust` native module exports it as

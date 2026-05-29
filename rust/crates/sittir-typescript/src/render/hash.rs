@@ -1,5 +1,5 @@
 // @generated from packages/typescript/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The grammar-owned `sittir-typescript` native module exports it as

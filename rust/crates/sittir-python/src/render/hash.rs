@@ -1,5 +1,5 @@
 // @generated from packages/python/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The grammar-owned `sittir-python` native module exports it as

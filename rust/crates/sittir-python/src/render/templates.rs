@@ -1,5 +1,5 @@
 // @generated from packages/python/node-model.json5 and packages/python/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 //
 // Per-kind askama template structs + render functions for the python
 // grammar. Every struct in this file is backed by a sibling `.jinja`

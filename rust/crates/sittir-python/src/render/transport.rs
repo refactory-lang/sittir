@@ -1,5 +1,5 @@
 // @generated from packages/python/node-model.json5 and packages/python/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+// Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 //
 // AnyTransport enum + FromNapiValue impls + per-kind transport structs +
 // typed dispatch (render_transport_dispatch) + transport bridge helpers.
