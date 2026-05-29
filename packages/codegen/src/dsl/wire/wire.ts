@@ -564,26 +564,56 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
  *   `Object.keys()` snapshot; content resolves via deferred-content fns
  *   as tree-sitter iterates.
  */
-export function wire<C extends WireConfig<any>> (
-	config: C,
-	base?: GrammarSchema<keyof C['rules'] & string>
+// `B` infers from `base` (the enriched-base grammar), so the config
+// literal is contextually typed — and IntelliSense'd — against the
+// precise `WireConfig<B>` (typed `$`, per-rule `previous`/`original`).
+// No explicit `WireConfig` annotation is needed at the call site. When
+// `base` is omitted, `B` defaults to `any` (the loose form, identical to
+// the prior `C extends WireConfig<any>` behavior — there is nothing to
+// infer grammar precision from).
+//
+// NOTE on TS2589: routing the literal through the generic `WireConfig<B>`
+// is REQUIRED for base-present precision — but at a no-`base` call site
+// (where `B` reaches the generic with nothing to pin it) TS may eagerly
+// instantiate the precise `TransformsConfig<B>` mapped-type branch and
+// report "excessively deep". A call site that pins `B` to a lazy alias —
+// an explicit type-arg (`wire<EnrichedGrammar<RustGrammarShape>>(…)` in
+// overrides.ts) or a concrete `base` — evaluates that branch lazily and
+// stays shallow. The residual no-base artifact is editor-only typecheck
+// noise; runtime is unaffected (`config` is aliased to a loose
+// `WireConfig<any>` in the body below).
+export function wire<B extends GrammarJson = any> (
+	config: WireConfig<B>,
+	base?: B
 ): WiredOpts {
+	// Generics are contained to the SIGNATURE so `B` infers from `base`
+	// and the literal `config` is contextually checked against
+	// `WireConfig<B>`. The BODY operates on the loose runtime shapes wire
+	// has always worked on — alias to non-generic internal types ONCE
+	// here so the body never instantiates `WireConfig<B>['rules']`
+	// generically (which trips TS2589) nor reads `base.grammar` off a
+	// generic `B`. The runtime is unchanged; these are the sanctioned
+	// boundary casts (see the LOOSE-INTERNAL / NARROW-PUBLIC note above).
+	const cfg = config as unknown as WireConfig<any>;
+	const baseArg = base as unknown as
+		| { grammar?: { rules?: Record<string, RuleFn> }; rules?: Record<string, RuleFn> }
+		| undefined;
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
 		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
-		groups: config.groups,
-		polymorphsConfig: config.polymorphs,
-		renderAs: config.renderAs,
+		groups: cfg.groups,
+		polymorphsConfig: cfg.polymorphs,
+		renderAs: cfg.renderAs,
 		currentRuleKind: null,
-		authoredRuleNames: new Set(Object.keys(config.rules ?? {}))
+		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
 
-	const polymorphs = config.polymorphs ?? {};
-	const transforms = config.transforms ?? {};
-	const outRules: Record<string, Rule> = { ...config.rules };
+	const polymorphs = cfg.polymorphs ?? {};
+	const transforms = cfg.transforms ?? {};
+	const outRules: Record<string, Rule> = { ...cfg.rules } as Record<string, Rule>;
 
 	// Transforms first, polymorphs second — transforms wrap the user
 	// fn innermost and see the base-shape rule tree; polymorphs wrap
@@ -612,8 +642,8 @@ export function wire<C extends WireConfig<any>> (
 	// `previous` unchanged but then `applyWirePatternReplacement` wraps the
 	// passthrough so the body undergoes pattern replacement. Without this,
 	// unoverridden base rules bypass replacement entirely.
-	if (base && config.groups && hasBodyPatternGroups(config.groups)) {
-		const baseRules = (base.grammar?.rules ?? base.rules ?? {}) as Record<string, RuleFn>;
+	if (baseArg && cfg.groups && hasBodyPatternGroups(cfg.groups)) {
+		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
 			if (baseName in outRules) continue;
 			outRules[baseName] = passthroughBaseRuleFn;
@@ -624,7 +654,7 @@ export function wire<C extends WireConfig<any>> (
 	// each candidate fn executes inside a proper wire context when eagerly
 	// evaluated. This is the tree-sitter-runtime path; evaluate.ts has its
 	// own post-evaluation pass for the sittir-pipeline path.
-	applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
+	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
 
 	// Auto-group-synthesis: SYNTHESIS-ONLY. Creates hidden helper rules
 	// for `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))`
@@ -641,11 +671,11 @@ export function wire<C extends WireConfig<any>> (
 	// attribute stamping) is a separate concern that belongs in
 	// link/evaluate where it can operate on sittir's private rule-tree
 	// copy without affecting tree-sitter's view.
-	if (base) {
+	if (baseArg) {
 		const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
 			transforms,
 			polymorphs,
-			config.groups
+			cfg.groups
 		);
 		// DISABLED for PR0 close-out: activation introduces a downstream regression —
 		// sittir's codegen pipeline (link → node-model → factories) does not yet
@@ -659,7 +689,7 @@ export function wire<C extends WireConfig<any>> (
 		// attributes, so synthesized hidden helpers integrate naturally
 		// via the standard inline-handling path.
 		applyAutoGroups(
-			base as Parameters<typeof applyAutoGroups>[0],
+			baseArg as Parameters<typeof applyAutoGroups>[0],
 			outRules,
 			context,
 			authoredSynthesisKinds
@@ -670,14 +700,14 @@ export function wire<C extends WireConfig<any>> (
 		// param-element they now carry (e.g. rust `attributed_parameter` inside
 		// `_parameters_optional1`) would otherwise never be matched and aliased
 		// to its visible kind. The pass is idempotent on already-aliased bodies.
-		applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
+		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
 	}
 
-	const conflicts = wrapConflictsCallback(config.conflicts, context);
-	const inline = wrapInlineCallback(config.inline, context);
+	const conflicts = wrapConflictsCallback(cfg.conflicts, context);
+	const inline = wrapInlineCallback(cfg.inline, context);
 
 	const wired: WiredOpts = {
-		...config,
+		...cfg,
 		rules: outRules,
 		...(conflicts === undefined ? {} : { conflicts }),
 		...(inline === undefined ? {} : { inline })
