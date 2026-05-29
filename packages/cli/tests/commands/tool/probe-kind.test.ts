@@ -36,4 +36,12 @@ describe('tool probe-kind command', () => {
 			trace: false,
 		}));
 	});
+
+	it('maps --no-render/--no-wrap to noRender/noWrap (commander stores the positive key)', async () => {
+		vi.clearAllMocks();
+		const program = new Command();
+		probeKindCmd.register(program);
+		await program.parseAsync(['probe-kind', '--grammar', 'rust', '--source', 'x', '--no-render', '--no-wrap'], { from: 'user' });
+		expect(vi.mocked(runProbeKind)).toHaveBeenCalledWith(expect.objectContaining({ noRender: true, noWrap: true }));
+	});
 });

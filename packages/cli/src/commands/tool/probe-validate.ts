@@ -28,9 +28,11 @@ export const probeValidate: CommandModule = {
 				engine?: string;
 				trace?: boolean;
 				pretty?: boolean;
-				noRender?: boolean;
-				noWrap?: boolean;
+				render?: boolean;
+				wrap?: boolean;
 			}) => {
+				// Commander stores `--no-render`/`--no-wrap` under the positive
+				// key (opts.render/opts.wrap === false when the flag is passed).
 				const code = await runProbeValidate({
 					grammar: opts.grammar ?? 'rust',
 					engine: opts.engine ?? 'native',
@@ -41,8 +43,8 @@ export const probeValidate: CommandModule = {
 					stdin: opts.stdin ?? false,
 					trace: opts.trace ?? true,
 					pretty: opts.pretty ?? true,
-					noRender: opts.noRender ?? false,
-					noWrap: opts.noWrap ?? false,
+					noRender: opts.render === false,
+					noWrap: opts.wrap === false,
 				});
 				if (code !== 0) process.exitCode = code;
 			});

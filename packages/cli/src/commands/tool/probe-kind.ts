@@ -28,8 +28,8 @@ export const probeKind: CommandModule = {
 				stdin?: boolean;
 				kind?: string;
 				range?: string;
-				noRender?: boolean;
-				noWrap?: boolean;
+				render?: boolean;
+				wrap?: boolean;
 				reparse?: boolean;
 				pretty?: boolean;
 				baseline?: string;
@@ -39,14 +39,16 @@ export const probeKind: CommandModule = {
 				logParse?: boolean;
 				full?: boolean;
 			}) => {
+				// Commander stores `--no-render`/`--no-wrap` under the positive
+				// key (opts.render/opts.wrap === false when the flag is passed).
 				const code = await runProbeKind({
 					grammar: opts.grammar ?? 'rust',
 					source: opts.source,
 					stdin: opts.stdin ?? false,
 					kind: opts.kind,
 					range: opts.range,
-					noRender: opts.noRender ?? false,
-					noWrap: opts.noWrap ?? false,
+					noRender: opts.render === false,
+					noWrap: opts.wrap === false,
 					reparse: opts.reparse ?? false,
 					pretty: opts.pretty ?? false,
 					baseline: opts.baseline,

@@ -16,15 +16,17 @@ withGrammar(program.command('probe-stages'))
 .action(async (opts: {
 grammar?: string;
 kind: string;
-noOverrides?: boolean;
+overrides?: boolean;
 compact?: boolean;
 skipEmit?: boolean;
 brief?: boolean;
 }) => {
+// Commander stores `--no-overrides` under the positive key
+// (opts.overrides === false when the flag is passed).
 const code = await runProbeStages({
 grammar: opts.grammar ?? 'rust',
 kind: opts.kind,
-noOverrides: opts.noOverrides ?? false,
+noOverrides: opts.overrides === false,
 compact: opts.compact ?? false,
 skipEmit: opts.skipEmit ?? false,
 brief: opts.brief ?? false

@@ -47,7 +47,7 @@ jobs:
         # contains a forbidden construct from the authoring subset
         # (extends/macro/include/match/set), or when a YAML template
         # file reappears under a templates/ directory.
-        run: npx tsx packages/tools/src/validate/jinja.ts
+        run: npx tsx packages/cli/src/cli.ts tool check-jinja
 
       - name: Format check
         run: pnpm run format:check
