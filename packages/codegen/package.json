@@ -16,9 +16,6 @@
 		"url": "https://github.com/refactory-lang/sittir.git",
 		"directory": "packages/codegen"
 	},
-	"bin": {
-		"sittir": "./src/cli.ts"
-	},
 	"files": [
 		"dist"
 	],
@@ -30,6 +27,12 @@
 			"types": "./dist/index.d.ts",
 			"source": "./src/index.ts",
 			"import": "./dist/index.js"
+		},
+		"./run-codegen": {
+			"types": "./src/run-codegen.ts",
+			"source": "./src/run-codegen.ts",
+			"import": "./dist/run-codegen.js",
+			"default": "./dist/run-codegen.js"
 		},
 		"./validate/from": {
 			"types": "./src/validate/from.ts",
@@ -48,12 +51,6 @@
 			"source": "./src/validate/read-render-parse.ts",
 			"import": "./dist/validate/read-render-parse.js",
 			"default": "./dist/validate/read-render-parse.js"
-		},
-		"./scripts/probe-kind": {
-			"types": "./src/scripts/probe-kind.ts",
-			"source": "./src/scripts/probe-kind.ts",
-			"import": "./dist/scripts/probe-kind.js",
-			"default": "./dist/scripts/probe-kind.js"
 		},
 		"./validate/template-coverage": {
 			"types": "./src/validate/template-coverage.ts",

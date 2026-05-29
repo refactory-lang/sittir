@@ -30,7 +30,7 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 		const rule = repeat(seq(sym('a'), sym('b')));
 		const records = diagnoseSlotGrouping({ foo: rule as any });
 		expect(records).toHaveLength(1);
-		expect(records[0]!.shape).toBe('multi-slot-nested-seq');
+		expect(records[0]!.code).toBe('multi-slot-nested-seq');
 		expect(records[0]!.ownerKind).toBe('foo');
 		expect(records[0]!.slotCount).toBe(2);
 	});
@@ -60,7 +60,7 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 			{ type: 'symbol', name: 'b', fieldName: 'b' }
 		));
 		const records = diagnoseSlotGrouping({ some_list: rule as any });
-		expect(records.filter((r) => r.shape === 'multi-slot-nested-seq')).toHaveLength(1);
+		expect(records.filter((r) => r.code === 'multi-slot-nested-seq')).toHaveLength(1);
 	});
 
 	it('auto-group helper body seq fires when kind is in inlineKinds', () => {
@@ -70,7 +70,7 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 		const inlineKinds = new Set(['_parent_repeat1']);
 		const records = diagnoseSlotGrouping({ _parent_repeat1: rule as any }, inlineKinds);
 		expect(records).toHaveLength(1);
-		expect(records[0]!.shape).toBe('multi-slot-nested-seq');
+		expect(records[0]!.code).toBe('multi-slot-nested-seq');
 	});
 
 	it('auto-group helper body seq is SILENT when NOT in inlineKinds', () => {
@@ -96,7 +96,7 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 		// choice(seq(sym a, sym b), seq(sym c, sym d)) — choice arms are slot position.
 		const rule = choice(seq(sym('a'), sym('b')), seq(sym('c'), sym('d')));
 		const records = diagnoseSlotGrouping({ choice_kind: rule as any });
-		expect(records.filter((r) => r.shape === 'multi-slot-nested-seq').length).toBeGreaterThanOrEqual(1);
+		expect(records.filter((r) => r.code === 'multi-slot-nested-seq').length).toBeGreaterThanOrEqual(1);
 	});
 });
 
@@ -105,7 +105,7 @@ describe('diagnoseSlotGrouping — supertype-list', () => {
 		const rule = repeat(sym('_type'));
 		const records = diagnoseSlotGrouping({ tuple_type: rule as any });
 		expect(records).toHaveLength(1);
-		expect(records[0]!.shape).toBe('supertype-list');
+		expect(records[0]!.code).toBe('supertype-list');
 		expect(records[0]!.ownerKind).toBe('tuple_type');
 	});
 
@@ -113,7 +113,7 @@ describe('diagnoseSlotGrouping — supertype-list', () => {
 		const rule = repeat1(sym('_expression'));
 		const records = diagnoseSlotGrouping({ expr_list: rule as any });
 		expect(records).toHaveLength(1);
-		expect(records[0]!.shape).toBe('supertype-list');
+		expect(records[0]!.code).toBe('supertype-list');
 	});
 
 	it('field-named repeat(sym) is SILENT (already named)', () => {
@@ -129,7 +129,7 @@ describe('diagnoseSlotGrouping — repeat-choice-with-literal', () => {
 		const rule = repeat(choice(sym('a'), str(',')));
 		const records = diagnoseSlotGrouping({ obj: rule as any });
 		expect(records).toHaveLength(1);
-		expect(records[0]!.shape).toBe('repeat-choice-with-literal');
+		expect(records[0]!.code).toBe('repeat-choice-with-literal');
 	});
 
 	it('repeat(choice(sym a, sym b)) → supertype-list (no literals)', () => {
@@ -138,7 +138,7 @@ describe('diagnoseSlotGrouping — repeat-choice-with-literal', () => {
 		const rule = repeat(choice(sym('a'), sym('b')));
 		const records = diagnoseSlotGrouping({ union: rule as any });
 		// choice(a, b) is a single union slot → supertype-list
-		expect(records.filter((r) => r.shape === 'supertype-list')).toHaveLength(1);
+		expect(records.filter((r) => r.code === 'supertype-list')).toHaveLength(1);
 	});
 });
 
@@ -222,7 +222,7 @@ describe('diagnoseSlotGrouping — polymorph skip-set', () => {
 		// A regular choice with seq arms (no polymorph) must still be detected.
 		const rule = choice(seq(sym('a'), sym('b')), seq(sym('c'), sym('d')));
 		const records = diagnoseSlotGrouping({ structural_kind: rule as any });
-		expect(records.filter((r) => r.shape === 'multi-slot-nested-seq').length).toBeGreaterThanOrEqual(1);
+		expect(records.filter((r) => r.code === 'multi-slot-nested-seq').length).toBeGreaterThanOrEqual(1);
 	});
 
 	it('repeat-helper auto-group case unchanged (rust regression guard)', () => {
@@ -232,6 +232,6 @@ describe('diagnoseSlotGrouping — polymorph skip-set', () => {
 		const inlineKinds = new Set(['_foo_repeat1']);
 		const records = diagnoseSlotGrouping({ _foo_repeat1: rule as any }, inlineKinds);
 		expect(records).toHaveLength(1);
-		expect(records[0]!.shape).toBe('multi-slot-nested-seq');
+		expect(records[0]!.code).toBe('multi-slot-nested-seq');
 	});
 });

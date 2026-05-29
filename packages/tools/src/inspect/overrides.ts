@@ -38,78 +38,12 @@ import { resolve, join } from 'node:path';
 // ---------------------------------------------------------------------------
 
 type GrammarName = 'rust' | 'python' | 'typescript';
-const ALL_GRAMMARS: GrammarName[] = ['rust', 'python', 'typescript'];
 
-interface ParsedArgs {
-	grammars: GrammarName[];
-	backupDir: string | undefined;
+export interface CompareOverridesOptions {
+	grammars: string[];
+	backupDir?: string;
 	backupFiles: Partial<Record<GrammarName, string>>;
 	suggestedDir: string;
-	showHelp: boolean;
-}
-
-function parseArgs(argv: string[]): ParsedArgs {
-	let grammarArg: string | undefined;
-	let backupDir: string | undefined;
-	const backupFiles: Partial<Record<GrammarName, string>> = {};
-	let suggestedDir = resolve(process.cwd(), 'packages');
-	let showHelp = false;
-
-	for (let i = 0; i < argv.length; i++) {
-		const arg = argv[i];
-		if (arg === '--grammar') {
-			if (argv[i + 1] === undefined) throw new Error('--grammar requires a value');
-			grammarArg = argv[++i];
-		} else if (arg === '--backup-dir') {
-			if (argv[i + 1] === undefined) throw new Error('--backup-dir requires a value');
-			backupDir = argv[++i];
-		} else if (arg === '--backup-rust') {
-			if (argv[i + 1] === undefined) throw new Error('--backup-rust requires a value');
-			backupFiles.rust = argv[++i];
-		} else if (arg === '--backup-python') {
-			if (argv[i + 1] === undefined) throw new Error('--backup-python requires a value');
-			backupFiles.python = argv[++i];
-		} else if (arg === '--backup-typescript') {
-			if (argv[i + 1] === undefined) throw new Error('--backup-typescript requires a value');
-			backupFiles.typescript = argv[++i];
-		} else if (arg === '--suggested-dir') {
-			if (argv[i + 1] === undefined) throw new Error('--suggested-dir requires a value');
-			const dir = argv[++i];
-			if (dir === undefined) throw new Error('--suggested-dir requires a value');
-			suggestedDir = resolve(dir);
-		} else if (arg === '--help') {
-			showHelp = true;
-		}
-	}
-
-	let grammars: GrammarName[];
-	if (grammarArg === undefined || grammarArg === 'all') {
-		grammars = ALL_GRAMMARS;
-	} else if (grammarArg === 'rust' || grammarArg === 'python' || grammarArg === 'typescript') {
-		grammars = [grammarArg];
-	} else {
-		throw new Error(`--grammar must be rust|python|typescript|all, got: ${grammarArg}`);
-	}
-
-	return { grammars, backupDir, backupFiles, suggestedDir, showHelp };
-}
-
-function printUsage(): void {
-	process.stdout.write(
-		[
-			'Usage: compare-overrides [--grammar rust|python|typescript|all]',
-			'  [--backup-dir <dir>] [--backup-rust <file>] [--backup-python <file>]',
-			'  [--backup-typescript <file>] [--suggested-dir <dir>]',
-			'',
-			'  --grammar           grammar(s) to compare (default: all)',
-			'  --backup-dir        directory with <grammar>-overrides.ts backup files',
-			'  --backup-rust       path to Rust backup file (overrides --backup-dir)',
-			'  --backup-python     path to Python backup file',
-			'  --backup-typescript path to TypeScript backup file',
-			'  --suggested-dir     packages root for overrides.suggested.ts lookup',
-			'                      (default: packages/ relative to cwd)',
-		].join('\n') + '\n',
-	);
 }
 
 // ---------------------------------------------------------------------------
@@ -177,16 +111,16 @@ interface CompareResult {
 
 function resolveBackupPath(
 	grammar: GrammarName,
-	args: ParsedArgs,
+	opts: CompareOverridesOptions,
 ): string | undefined {
-	if (args.backupFiles[grammar]) return resolve(args.backupFiles[grammar]!);
-	if (args.backupDir) return join(resolve(args.backupDir), `${grammar}-overrides.ts`);
+	if (opts.backupFiles[grammar]) return resolve(opts.backupFiles[grammar]!);
+	if (opts.backupDir) return join(resolve(opts.backupDir), `${grammar}-overrides.ts`);
 	return undefined;
 }
 
-function compareGrammar(grammar: GrammarName, args: ParsedArgs): CompareResult | null {
-	const backupPath = resolveBackupPath(grammar, args);
-	const suggestedPath = join(args.suggestedDir, grammar, 'overrides.suggested.ts');
+function compareGrammar(grammar: GrammarName, opts: CompareOverridesOptions): CompareResult | null {
+	const backupPath = resolveBackupPath(grammar, opts);
+	const suggestedPath = join(opts.suggestedDir, grammar, 'overrides.suggested.ts');
 
 	if (!backupPath) {
 		process.stderr.write(
@@ -279,16 +213,10 @@ function printResult(r: CompareResult): void {
 // Public run entry point
 // ---------------------------------------------------------------------------
 
-export async function run(argv: string[]): Promise<number> {
-	const args = parseArgs(argv);
-	if (args.showHelp) {
-		printUsage();
-		return 0;
-	}
-
+export async function run(opts: CompareOverridesOptions): Promise<number> {
 	let hasAnyBackup = false;
-	for (const grammar of args.grammars) {
-		const result = compareGrammar(grammar, args);
+	for (const grammar of opts.grammars) {
+		const result = compareGrammar(grammar as GrammarName, opts);
 		if (result !== null) {
 			hasAnyBackup = true;
 			printResult(result);
@@ -303,18 +231,4 @@ export async function run(argv: string[]): Promise<number> {
 	}
 
 	return 0;
-}
-
-// ---------------------------------------------------------------------------
-// _isMain guard
-// ---------------------------------------------------------------------------
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2))
-		.then(process.exit)
-		.catch((e: unknown) => {
-			process.stderr.write(`compare-overrides: ${(e as Error).stack ?? e}\n`);
-			process.exit(1);
-		});
 }

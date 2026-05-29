@@ -47,7 +47,7 @@ jobs:
         # contains a forbidden construct from the authoring subset
         # (extends/macro/include/match/set), or when a YAML template
         # file reappears under a templates/ directory.
-        run: npx tsx packages/tools/src/validate/jinja.ts
+        run: npx tsx packages/cli/src/cli.ts tool check-jinja
 
       - name: Format check
         run: pnpm run format:check
@@ -246,7 +246,7 @@ jobs:
           SITTIR_BACKEND=native SITTIR_METRICS=1 \
             npx tsx packages/codegen/src/scripts/collect-baseline.ts > /dev/null
       - name: Check perf baseline (warn-only window)
-        run: npx tsx packages/codegen/src/scripts/check-perf-baseline.ts
+        run: pnpm exec tsx packages/cli/src/cli.ts tool check-perf
       - name: Upload metrics artifact for inspection
         if: always()
         uses: actions/upload-artifact@v4
@@ -316,16 +316,16 @@ jobs:
         # render behavior — the pipeline fails LOUDLY if a codegen
         # change silently shifts the capture without a matching commit.
         run: |
-          npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
-          npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
-          npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+          tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
+          tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
+          tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
       - name: Fixture check — no drift from committed
         # ENFORCING (no per-step continue-on-error). 016 Cluster A
         # established that fixture drift → silent data-rot → 6
         # parity tests failing for the wrong reason. Failing CI
         # forces the next maintainer to commit the regen output
         # alongside whatever codegen change caused the drift.
-	        run: git diff --exit-code rust/crates/sittir-*/render/test-fixtures.json
+        run: git diff --exit-code rust/crates/sittir-*/render/test-fixtures.json
       - name: cargo test parity (--ignored for diagnostic)
         # Advisory until #[ignore]'d tests pass un-ignored — see job
         # docstring above.

@@ -53,7 +53,7 @@ import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-sl
 const _slotGroupingDiagnostics: SlotGroupingDiagnostic[] = [];
 const _slotGroupingSeen = new Set<string>();
 
-const slotGroupingKey = (rec: SlotGroupingDiagnostic): string => `${rec.ownerKind} ${rec.shape}`;
+const slotGroupingKey = (rec: SlotGroupingDiagnostic): string => `${rec.ownerKind} ${rec.code}`;
 
 /**
  * Push a record if its (ownerKind, shape) hasn't been seen this run. Returns
@@ -290,7 +290,7 @@ export function computeSimplifiedRules(
 		// calls per run (and any repeated hits within one walk); log only the
 		// first occurrence.
 		if (recordSlotGroupingDiagnostic(rec) && !quiet) {
-			console.info(`[slot-grouping] ${rec.ownerKind} (${rec.shape}): ${rec.proposal}`);
+			console.info(`[slot-grouping] ${rec.ownerKind} (${rec.code}): ${rec.proposal}`);
 		}
 	}
 

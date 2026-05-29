@@ -29,80 +29,19 @@ import * as fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 // ---------------------------------------------------------------------------
-// Arg parsing
+// Options
 // ---------------------------------------------------------------------------
 
-interface ParsedArgs {
+export interface InspectTypeOptions {
 	grammar: string;
 	namespaces: string[];
 	showSlots: boolean;
 	showConfig: boolean;
-	showHelp: boolean;
 }
 
-const DEFAULT_NAMESPACES: Record<string, string[]> = {
+export const DEFAULT_NAMESPACES: Record<string, string[]> = {
 	rust: ['FieldDeclarationNs'],
 };
-
-function parseArgs(argv: string[]): ParsedArgs {
-	let grammar = 'rust';
-	let entry: string | undefined;
-	let namespacesCsv: string | undefined;
-	let showSlots = false;
-	let showConfig = false;
-	let showHelp = false;
-
-	for (let i = 0; i < argv.length; i++) {
-		const arg = argv[i];
-		if (arg === '--grammar') {
-			grammar = argv[++i] ?? grammar;
-		} else if (arg === '--entry') {
-			if (argv[i + 1] === undefined) throw new Error('--entry requires a value');
-			entry = argv[++i];
-		} else if (arg === '--namespaces') {
-			if (argv[i + 1] === undefined) throw new Error('--namespaces requires a value');
-			namespacesCsv = argv[++i];
-		} else if (arg === '--slots') {
-			showSlots = true;
-		} else if (arg === '--config') {
-			showConfig = true;
-		} else if (arg === '--help') {
-			showHelp = true;
-		}
-	}
-
-	let namespaces: string[];
-	if (namespacesCsv !== undefined) {
-		namespaces = namespacesCsv
-			.split(',')
-			.map((s) => s.trim())
-			.filter(Boolean);
-	} else if (entry !== undefined) {
-		namespaces = [entry];
-	} else {
-		namespaces = DEFAULT_NAMESPACES[grammar] ?? ['FieldDeclarationNs'];
-	}
-
-	return { grammar, namespaces, showSlots, showConfig, showHelp };
-}
-
-function printUsage(): void {
-	process.stdout.write(
-		[
-			'Usage: inspect-type [--grammar <name>] [--entry <kindNs>]',
-			'                    [--namespaces <ns,...>] [--slots] [--config]',
-			'',
-			'NOTE: Rust-types-focused by default. Other grammars require the same',
-			'      <KindNs>.Loose / <KindNs>.Config namespace shape.',
-			'',
-			'  --grammar      grammar name (default: rust)',
-			'  --entry        single Ns interface (default: FieldDeclarationNs)',
-			'  --namespaces   comma-separated Ns list (overrides --entry)',
-			'  --slots        print each slot type on the resolved Loose shape',
-			'  --config       print Config shape for comparison',
-		].join('\n') + '\n',
-	);
-}
 
 // ---------------------------------------------------------------------------
 // Resolve types.ts path for a grammar
@@ -201,7 +140,7 @@ function inspectNs(
 	nsName: string,
 	source: ts.SourceFile,
 	checker: ts.TypeChecker,
-	args: ParsedArgs,
+	opts: InspectTypeOptions,
 ): void {
 	const nsSym = findDeclSymbol(nsName, source, checker);
 	if (!nsSym) {
@@ -237,18 +176,18 @@ function inspectNs(
 	} else {
 		const looseType = getMemberType(looseSym);
 		printType(`${nsName}.Loose`, looseType, checker);
-		if (args.showSlots) {
+		if (opts.showSlots) {
 			printSlotTypes(`${nsName}.Loose`, looseType, checker);
 		}
 	}
 
 	// Config (optional, shown with --config)
-	if (args.showConfig) {
+	if (opts.showConfig) {
 		const configSym = getMember(nsSym, 'Config');
 		if (configSym) {
 			const configType = getMemberType(configSym);
 			printType(`${nsName}.Config`, configType, checker);
-			if (args.showSlots) {
+			if (opts.showSlots) {
 				printSlotTypes(`${nsName}.Config`, configType, checker);
 			}
 		}
@@ -259,18 +198,12 @@ function inspectNs(
 // Public run entry point
 // ---------------------------------------------------------------------------
 
-export async function run(argv: string[]): Promise<number> {
-	const args = parseArgs(argv);
-	if (args.showHelp) {
-		printUsage();
-		return 0;
-	}
-
-	const typesPath = resolveTypesPath(args.grammar);
+export async function run(opts: InspectTypeOptions): Promise<number> {
+	const typesPath = resolveTypesPath(opts.grammar);
 	process.stdout.write(
-		`inspect-type: grammar=${args.grammar}\n` +
+		`inspect-type: grammar=${opts.grammar}\n` +
 			`entry: ${typesPath}\n` +
-			`namespaces: ${args.namespaces.join(', ')}\n`,
+			`namespaces: ${opts.namespaces.join(', ')}\n`,
 	);
 
 	const program = buildProgram(typesPath);
@@ -291,23 +224,9 @@ export async function run(argv: string[]): Promise<number> {
 		);
 	}
 
-	for (const nsName of args.namespaces) {
-		inspectNs(nsName, source, checker, args);
+	for (const nsName of opts.namespaces) {
+		inspectNs(nsName, source, checker, opts);
 	}
 
 	return 0;
-}
-
-// ---------------------------------------------------------------------------
-// _isMain guard
-// ---------------------------------------------------------------------------
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2))
-		.then(process.exit)
-		.catch((e: unknown) => {
-			process.stderr.write(`inspect-type: ${(e as Error).stack ?? e}\n`);
-			process.exit(1);
-		});
 }

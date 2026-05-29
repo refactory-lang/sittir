@@ -51,6 +51,10 @@ const CODEGEN_PATHS: Record<string, string> = {
 	resolve: '../../../codegen/src/compiler/resolve-grammar.ts',
 };
 
+export interface GrammarDiagnosticsOptions {
+	grammar: string;
+}
+
 async function loadCodegenModules(): Promise<{
 	collectGrammarDiagnosticsForGrammar: (input: {
 		rawGrammar: RawGrammar;
@@ -81,50 +85,11 @@ async function loadCodegenModules(): Promise<{
 }
 
 // ---------------------------------------------------------------------------
-// Arg parsing
-// ---------------------------------------------------------------------------
-
-interface ParsedArgs {
-	grammar: string;
-	showHelp: boolean;
-}
-
-function parseArgs(argv: string[]): ParsedArgs {
-	let grammar = 'rust';
-	let showHelp = false;
-
-	for (let i = 0; i < argv.length; i++) {
-		if (argv[i] === '--grammar' && argv[i + 1] !== undefined) {
-			grammar = argv[i + 1]!;
-			i++;
-		} else if (argv[i] === '--help') {
-			showHelp = true;
-		}
-	}
-
-	return { grammar, showHelp };
-}
-
-// ---------------------------------------------------------------------------
 // Entry point
 // ---------------------------------------------------------------------------
 
-export async function run(argv: string[]): Promise<number> {
-	const { grammar, showHelp } = parseArgs(argv);
-
-	if (showHelp) {
-		process.stdout.write(
-			'Usage: grammar-diagnostics [--grammar <name>]\n' +
-				'\n' +
-				'Options:\n' +
-				'  --grammar  grammar name (default: rust)\n' +
-				'\n' +
-				'Exit codes:\n' +
-				'  0  no diagnostics\n' +
-				'  1  diagnostics present\n',
-		);
-		return 0;
-	}
+export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
+	const { grammar } = opts;
 
 	const {
 		collectGrammarDiagnosticsForGrammar,
@@ -139,18 +104,4 @@ export async function run(argv: string[]): Promise<number> {
 
 	process.stdout.write(formatGrammarDiagnostics(diagnostics) + '\n');
 	return diagnostics.length > 0 ? 1 : 0;
-}
-
-// ---------------------------------------------------------------------------
-// _isMain guard
-// ---------------------------------------------------------------------------
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2))
-		.then(process.exit)
-		.catch((e: unknown) => {
-			process.stderr.write(`grammar-diagnostics: ${(e as Error).stack ?? e}\n`);
-			process.exit(1);
-		});
 }

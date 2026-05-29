@@ -1,39 +1,26 @@
-/**
- * validate/baseline — dispatcher over two codegen scripts:
- *   --collect  → packages/codegen/src/scripts/collect-baseline.ts
- *   --check    → packages/codegen/src/scripts/check-baseline-regression.ts (default)
- *
- * The tool name is `check-baseline`; default mode is check.
- */
-type ToolRunner = (argv: string[]) => Promise<number>;
-
-const CODEGEN_COLLECT = '../../../codegen/src/scripts/collect-baseline.ts';
-const CODEGEN_CHECK = '../../../codegen/src/scripts/check-baseline-regression.ts';
-
-async function loadCollect(): Promise<ToolRunner> {
-	const mod: { run: ToolRunner } = await import(CODEGEN_COLLECT);
-	return mod.run;
+export interface CheckBaselineOptions {
+	collect: boolean;
+	backend?: string;
+	metrics?: boolean;
+	base?: string;
+	head?: string;
 }
 
-async function loadCheck(): Promise<ToolRunner> {
-	const mod: { run: ToolRunner } = await import(CODEGEN_CHECK);
-	return mod.run;
-}
-
-export async function run(argv: string[]): Promise<number> {
-	if (argv.includes('--collect')) {
-		const rest = argv.filter((a) => a !== '--collect');
-		return (await loadCollect())(rest);
+export async function run(opts: CheckBaselineOptions): Promise<number> {
+	if (opts.collect) {
+		const { collectBaseline, serialiseBaseline } = await import('../../../codegen/src/scripts/collect-baseline.ts');
+		const baseline = await collectBaseline(opts.backend);
+		process.stdout.write(serialiseBaseline(baseline));
+		if (opts.metrics) {
+			const metricsBackend: 'ts' | 'native' = opts.backend === 'native' ? 'native' : 'ts';
+			const { dumpMetrics } = await import('@sittir/common');
+			dumpMetrics(metricsBackend);
+		}
+		return 0;
 	}
-	// --check is the default; strip the flag if present
-	const rest = argv.filter((a) => a !== '--check');
-	return (await loadCheck())(rest);
-}
-
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2)).then(process.exit).catch((e) => {
-		process.stderr.write(`check-baseline: ${(e as Error).stack ?? e}\n`);
-		process.exit(1);
-	});
+	const checkArgs: string[] = [];
+	if (opts.base) checkArgs.push('--base', opts.base);
+	if (opts.head) checkArgs.push('--head', opts.head);
+	const { run: runCheck } = await import('../../../codegen/src/scripts/check-baseline-regression.ts');
+	return runCheck(checkArgs);
 }

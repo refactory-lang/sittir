@@ -11,11 +11,11 @@
 			"@sittir/core": ["./packages/core/src/index.ts"],
 			"@sittir/core/engine": ["./packages/core/src/engine-boundary.ts"],
 			"@sittir/codegen": ["./packages/codegen/src/index.ts"],
+			"@sittir/codegen/run-codegen": ["./packages/codegen/src/run-codegen.ts"],
 			"@sittir/codegen/validate/from": ["./packages/codegen/src/validate/from.ts"],
 			"@sittir/codegen/validate/factory-render-parse": ["./packages/codegen/src/validate/factory-render-parse.ts"],
 			"@sittir/codegen/validate/read-render-parse": ["./packages/codegen/src/validate/read-render-parse.ts"],
 			"@sittir/codegen/validate/template-coverage": ["./packages/codegen/src/validate/template-coverage.ts"],
-			"@sittir/codegen/scripts/probe-kind": ["./packages/codegen/src/scripts/probe-kind.ts"],
 			"@sittir/python": ["./packages/python/src/index.ts"],
 			"@sittir/python/utils": ["./packages/python/src/utils.ts"],
 			"@sittir/typescript": ["./packages/typescript/src/index.ts"],
@@ -25,7 +25,7 @@
 			"@sittir/rust/utils": ["./packages/rust/src/utils.ts"],
 			"@sittir/validator": ["./packages/validator/src/index.ts"],
 			"@sittir/tools": ["./packages/tools/src/index.ts"],
-			"@sittir/tools/cli": ["./packages/tools/src/cli.ts"]
+			"@sittir/cli": ["./packages/cli/src/cli.ts"]
 		},
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
