@@ -24,7 +24,7 @@ fn typescript_lexical_declaration_reads_override_named_fields() {
     assert_eq!(data.type_, LEXICAL_DECLARATION);
     assert!(
         data.children.is_none(),
-        "named lexical declaration fields should not spill into $children"
+        "named lexical declaration fields should not spill into $other"
     );
 
     let kind = fields.get("kind").expect("kind field");

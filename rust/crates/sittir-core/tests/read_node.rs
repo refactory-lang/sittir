@@ -18,7 +18,7 @@ use sittir_core::types::{NodeData, Source};
 /// Recursively assert that every object-shaped JSON node in `value`
 /// (matching the NodeData wire shape) has only keys in
 /// the de-hoisted NodeData contract. Descends into `_<slot>` values and
-/// `$children` array entries.
+/// `$other` array entries.
 fn assert_shape(value: &Value, path: &str) {
     match value {
         Value::Object(map) => {
@@ -40,10 +40,10 @@ fn assert_shape(value: &Value, path: &str) {
                         assert_shape(value, &format!("{path}.{key}"));
                     }
                 }
-                // Recurse into $children.
-                if let Some(Value::Array(arr)) = map.get("$children") {
+                // Recurse into $other.
+                if let Some(Value::Array(arr)) = map.get("$other") {
                     for (i, child) in arr.iter().enumerate() {
-                        assert_shape(child, &format!("{path}.$children[{i}]"));
+                        assert_shape(child, &format!("{path}.$other[{i}]"));
                     }
                 }
             }
@@ -164,7 +164,7 @@ fn anonymous_leaf_children_do_not_invent_fields() {
         !params.contains_key("_|"),
         "native read must not invent _<text> fields for anonymous children"
     );
-    assert!(params.get("$children").is_none(), "anonymous-only leaf nodes should still collapse to text");
+    assert!(params.get("$other").is_none(), "anonymous-only leaf nodes should still collapse to text");
     assert_eq!(params.get("$text").and_then(Value::as_str), Some("||"));
 }
 
@@ -178,14 +178,14 @@ fn raw_native_children_payload_stays_array_shaped() {
     let json = serde_json::to_value(&node).expect("serialize");
 
     assert!(
-        json.get("$children").is_some_and(Value::is_array),
+        json.get("$other").is_some_and(Value::is_array),
         "raw native read payload must stay realized-shape for children"
     );
 }
 
 /// Pre-order walk over the JSON NodeData tree, collecting child stub
 /// `(childIndex, nodeHandle)` pairs. Recurses through `_<slot>` values
-/// and `$children`.
+/// and `$other`.
 fn collect_child_meta(value: &Value, out: &mut Vec<(u16, u32)>, is_child: bool) {
     match value {
         Value::Object(map) => {
@@ -203,7 +203,7 @@ fn collect_child_meta(value: &Value, out: &mut Vec<(u16, u32)>, is_child: bool) 
                     collect_child_meta(value, out, true);
                 }
             }
-            if let Some(Value::Array(arr)) = map.get("$children") {
+            if let Some(Value::Array(arr)) = map.get("$other") {
                 for c in arr {
                     collect_child_meta(c, out, true);
                 }
@@ -224,7 +224,7 @@ fn is_allowed_node_key(key: &str) -> bool {
         "$type"
             | "$source"
             | "$named"
-            | "$children"
+            | "$other"
             | "$text"
             | "$span"
             | "$nodeHandle"

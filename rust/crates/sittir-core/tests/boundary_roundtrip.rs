@@ -200,7 +200,7 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
     };
     let json = serde_json::to_string(&node).unwrap();
     let v = wire(&json);
-    assert_eq!(v["$children"][0].as_u64(), Some(55));
+    assert_eq!(v["$other"][0].as_u64(), Some(55));
 
     let parsed: NodeData = serde_json::from_str(&json).unwrap();
     let child = parsed
@@ -261,7 +261,7 @@ fn is_allowed_node_key(key: &str) -> bool {
         "$type"
             | "$source"
             | "$named"
-            | "$children"
+            | "$other"
             | "$text"
             | "$span"
             | "$nodeHandle"

@@ -162,7 +162,7 @@ fn is_allowed_node_key(key: &str) -> bool {
         "$type"
             | "$source"
             | "$named"
-            | "$children"
+            | "$other"
             | "$text"
             | "$span"
             | "$nodeHandle"
