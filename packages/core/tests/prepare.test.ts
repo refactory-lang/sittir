@@ -67,7 +67,7 @@ describe('prepare() — ADR-0013 Task 3', () => {
 		const ctx = makeCtx(config);
 		const node: AnyNodeData = {
 			$type: 'wrapper',
-			$children: [
+			$other: [
 				{ $type: 'alpha', $text: 'A', $named: true },
 				{ $type: 'beta', $text: 'B', $named: true },
 				{ $type: 'gamma', $text: 'C', $named: true }
@@ -95,7 +95,7 @@ describe('prepare() — ADR-0013 Task 3', () => {
 		const ctx = makeCtx(config);
 		const node: AnyNodeData = {
 			$type: 'outer',
-			$children: [{ $type: 'leaf', $text: 'x', $named: true }]
+			$other: [{ $type: 'leaf', $text: 'x', $named: true }]
 		};
 		const prepared = prepare(node, ctx as any);
 		expect(prepared.substitutions).toHaveLength(1);

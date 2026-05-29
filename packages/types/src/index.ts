@@ -288,14 +288,14 @@ type DerivedFields<G, K extends NodeKind<G>, Visited extends string[]> = {
 	readonly [F in OptionalFieldName<G, K>]?: ExpandSlot<G, FieldInfo<G, K, F>, Visited>;
 };
 
-/** Derived children slot for a node kind (positioned as `$children` sibling). */
+/** Derived children slot for a node kind (positioned as `$other` sibling). */
 type DerivedChildren<G, K extends NodeKind<G>, Visited extends string[]> = [ChildrenInfo<G, K>] extends [never]
 	? {}
 	: ChildrenInfo<G, K>['required'] extends true
-		? { readonly $children: ExpandSlot<G, ChildrenInfo<G, K>, Visited> }
-		: { readonly $children?: ExpandSlot<G, ChildrenInfo<G, K>, Visited> };
+		? { readonly $other: ExpandSlot<G, ChildrenInfo<G, K>, Visited> }
+		: { readonly $other?: ExpandSlot<G, ChildrenInfo<G, K>, Visited> };
 
-/** Full derived fields shape: just the named fields (children live as a sibling `$children` on NodeData). */
+/** Full derived fields shape: just the named fields (children live as a sibling `$other` on NodeData). */
 type DerivedFieldsShape<G, K extends NodeKind<G>, Visited extends string[] = []> = DerivedFields<G, K, [...Visited, K]>;
 
 /**
@@ -315,7 +315,7 @@ type ExpandNode<G, K extends NodeKind<G>, Visited extends string[]> = Readonly<{
  * A grammar-derived AST node. The single type for both construction
  * (factory output) and type-level projection.
  *
- * Branch nodes (have fields in grammar): `{ $type, $fields, $children? }`
+ * Branch nodes (have fields in grammar): `{ $type, $fields, $other? }`
  * Leaf nodes (no fields): `{ $type, $text }`
  *
  * Metadata keys are `$`-prefixed (spec 008 US7) so user-facing field
@@ -466,7 +466,7 @@ export type FluentNode<K extends string, C = unknown> = {
 	readonly $type: K;
 	readonly $source: 2;
 	readonly $named: true;
-} & (C extends { children: infer Ch } ? { readonly $children: NonNullable<Ch> } : {}) &
+} & (C extends { children: infer Ch } ? { readonly $other: NonNullable<Ch> } : {}) &
 	FluentSetters<C, 'children'> &
 	NodeMethods<K>;
 
@@ -482,7 +482,7 @@ export type FluentNode<K extends string, C = unknown> = {
  * - `$source: 2`
  * - `$named: true`
  * - `$fields` retained with its original shape (raw snake_case keys inside)
- * - `$children` retained when T has it (spec 008 US7 — no singular-to-array
+ * - `$other` retained when T has it (spec 008 US7 — no singular-to-array
  *   conversion; the concrete interface already encodes the grammar-declared
  *   child shape)
  * - render / toEdit / replace methods
@@ -546,18 +546,18 @@ type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHints
 
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
- * consumer code writes `config.children`, not `config.$children`. The
+ * consumer code writes `config.children`, not `config.$other`. The
  * `$`-prefixed metadata shape is internal NodeData.
  */
-type ChildSlotsOf<T> = T extends { readonly $children?: infer C } ? { readonly children: C } : {};
+type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: C } : {};
 
 /**
  * RuntimeChildSlots<T> — runtime (factory output) child-slot shape.
- * Keeps the `$children` metadata key (matches what factories emit) and
- * never converts singular to array — the concrete interface's `$children`
+ * Keeps the `$other` metadata key (matches what factories emit) and
+ * never converts singular to array — the concrete interface's `$other`
  * is already the grammar-declared shape.
  */
-type RuntimeChildSlots<T> = T extends { readonly $children?: infer C } ? { readonly $children: C } : {};
+type RuntimeChildSlots<T> = T extends { readonly $other?: infer C } ? { readonly $other: C } : {};
 
 /**
  * WrappedNode<T> — the read-only lazy view produced by the generated
@@ -571,7 +571,7 @@ export type WrappedNode<T> = Simplify<
 	T & {
 		readonly [K in keyof FieldsOf<T> & string as FieldKey<K, FieldsOf<T>[K]>]: FieldsOf<T>[K];
 	} & (T extends {
-			readonly $children?: infer C;
+			readonly $other?: infer C;
 		}
 			? NonNullable<C> extends readonly [infer Only]
 				? { readonly child: Only }
@@ -586,7 +586,7 @@ export type WrappedNode<T> = Simplify<
  * → X). Used by factories and resolvers to type child parameters
  * without repeating the slot-unwrapping ceremony.
  */
-export type ChildOf<T> = T extends { readonly $children?: infer C }
+export type ChildOf<T> = T extends { readonly $other?: infer C }
 	? NonNullable<C> extends readonly (infer E)[]
 		? E
 		: NonNullable<C>
@@ -603,7 +603,7 @@ export type ChildOf<T> = T extends { readonly $children?: infer C }
  *    at runtime; callers can omit `children` on zero-occurrence rules.
  *
  * 2. **Polymorph form variant** — a node with `$variant` and a single-child
- *    slot (`$children: C` or legacy `$children: readonly [C]`). The inner
+ *    slot (`$other: C` or legacy `$other: readonly [C]`). The inner
  *    child's Config is hoisted into the parent so callers write
  *    `ir.assignment.eq({ left, right })` instead of
  *    `ir.assignment.eq({ left, children: [ir.assignmentEq({ right })] })`.
@@ -630,7 +630,7 @@ export type ConfigOf<T> = T extends unknown
 				// the inner child's Config up when the inner has meaningful Config
 				// content (fields or further hoists). Two corner cases:
 				//
-				// - Inner's Config is empty (e.g. `$children: [Crate]` where
+				// - Inner's Config is empty (e.g. `$other: [Crate]` where
 				//   `Crate` is `Terminal<...>`): fall back to exposing
 				//   `children?: readonly [InnerType]` so the caller has a slot to
 				//   supply the content. Otherwise the form is un-constructible
@@ -644,9 +644,9 @@ export type ConfigOf<T> = T extends unknown
 				//   the inner's fields / children.
 				//
 				// - Inner is a polymorph supertype UNION (e.g.
-				//   `$children: readonly [VisibilityModifier]` where
+				//   `$other: readonly [VisibilityModifier]` where
 				//   `VisibilityModifier = UFormCrate | UFormPub`): drilling into
-				//   each arm's `$children[0]` distributes ConfigOf and exposes the
+				//   each arm's `$other[0]` distributes ConfigOf and exposes the
 				//   inner-inner contents (`Crate | Self | Super |
 				//   VisibilityModifierPubInPath`) instead of stopping at the
 				//   polymorph boundary. `IsSingleType<C>` gates the hoist to
@@ -658,7 +658,7 @@ export type ConfigOf<T> = T extends unknown
 				// `Partial<{ children }>` directly.
 				(T extends {
 					readonly $variant: string;
-					readonly $children?: readonly [infer C];
+					readonly $other?: readonly [infer C];
 				}
 					? IsSingleType<C> extends true
 						? keyof ConfigOf<C> extends never
@@ -667,7 +667,7 @@ export type ConfigOf<T> = T extends unknown
 						: Partial<ChildSlotsOf<T>>
 					: T extends {
 								readonly $variant: string;
-								readonly $children?: infer C;
+								readonly $other?: infer C;
 						  }
 						? NonNullable<C> extends readonly unknown[]
 							? Partial<ChildSlotsOf<T>>
@@ -679,7 +679,7 @@ export type ConfigOf<T> = T extends unknown
 						: Partial<ChildSlotsOf<T>>) &
 				// $variant discriminator: carried verbatim on the Config surface
 				// whenever the interface declares one (independent of whether the
-				// child-hoist fires). Forms without their own $children still need
+				// child-hoist fires). Forms without their own $other still need
 				// the tag so the dispatcher's switch narrows correctly.
 				(T extends { readonly $variant: infer V extends string } ? { readonly $variant: V } : {})
 		>
@@ -807,7 +807,7 @@ type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited e
 	readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>>
 		? CamelCase<K>
 		: never]?: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
-} & (T extends { readonly $children?: infer C }
+} & (T extends { readonly $other?: infer C }
 		? {
 				readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 			}

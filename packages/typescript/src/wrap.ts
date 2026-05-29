@@ -360,7 +360,7 @@ function _resolveVariant(kind: string, data: _NodeData): string | undefined {
   const desc = _variantTable[kind];
   if (!desc) return undefined;
   if (desc.source === "override") {
-    const firstChild = _wrapChildEntries(data.$children).find(
+    const firstChild = _wrapChildEntries(data.$other).find(
       (child) => child != null && typeof child === "object" && (child as { $named?: boolean }).$named !== false
     );
     const candidate = _kindNameOf(firstChild);
@@ -383,7 +383,7 @@ function _resolveVariant(kind: string, data: _NodeData): string | undefined {
   }
   for (const [variant, requiredSlots] of Object.entries(desc.slots) as [string, readonly string[]][]) {
     const matches = requiredSlots.every((slot) => {
-      if (slot === "$children") return _hasWrapChildren(data.$children);
+      if (slot === "$other") return _hasWrapChildren(data.$other);
       return (data as unknown as Record<string, unknown>)[slot] !== undefined;
     });
     if (matches) return variant;
@@ -398,7 +398,7 @@ export function wrap_AmbientDeclarationDeclaration(data: T._AmbientDeclarationDe
     _declaration: normalizeSingularWrapSlot((data._function_declaration ?? data._generator_function_declaration ?? data._class_declaration ?? data._lexical_declaration ?? data._variable_declaration ?? data._function_signature ?? data._abstract_class_declaration ?? data._module ?? data._internal_module ?? data._type_alias_declaration ?? data._enum_declaration ?? data._interface_declaration ?? data._import_alias ?? data._ambient_declaration ?? data._declaration), "declaration", true, data.$type, { tree, nodeType: data.$type, slotName: "declaration", span: (data as _NodeData).$span }),
 
     declaration() { return drillIn<T.Declaration>(this._declaration, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrap_AmbientDeclarationDeclaration({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrap_AmbientDeclarationDeclaration({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -592,7 +592,7 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
     _method_signature: normalizeSingularWrapSlot(data._method_signature, "method_signature", true, data.$type, { tree, nodeType: data.$type, slotName: "method_signature", span: (data as _NodeData).$span }),
 
     methodSignature() { return drillIn<T.MethodSignature>(this._method_signature, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapClassBodyMethodSig({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapClassBodyMethodSig({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -621,17 +621,17 @@ export function wrap_ClassHeritageImplementsClause(data: T._ClassHeritageImpleme
     _implements_clause: normalizeSingularWrapSlot(data._implements_clause, "implements_clause", true, data.$type, { tree, nodeType: data.$type, slotName: "implements_clause", span: (data as _NodeData).$span }),
 
     implementsClause() { return drillIn<T.ImplementsClause>(this._implements_clause, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrap_ClassHeritageImplementsClause({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrap_ClassHeritageImplementsClause({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
 
 export function wrapDestructuringPattern(data: T.DestructuringPattern, tree: TreeHandle) {
-  return drillIn<T.DestructuringPattern>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["object_pattern","array_pattern"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.DestructuringPattern>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["object_pattern","array_pattern"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {
-  return drillIn<T.ExportStatementDefault>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["_export_statement_default_from_arm","export_statement_default_from_arm","_export_statement_default_decl_arm","export_statement_default_decl_arm"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.ExportStatementDefault>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["_export_statement_default_from_arm","export_statement_default_from_arm","_export_statement_default_decl_arm","export_statement_default_decl_arm"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapExportStatementDefaultDeclArm(data: T.ExportStatementDefaultDeclArm, tree: TreeHandle) {
@@ -947,7 +947,7 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
 }
 
 export function wrapFormalParameter(data: T.FormalParameter, tree: TreeHandle) {
-  return drillIn<T.FormalParameter>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["required_parameter","optional_parameter"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.FormalParameter>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["required_parameter","optional_parameter"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapFromClause(data: T.FromClause, tree: TreeHandle) {
@@ -988,7 +988,7 @@ export function wrap_ImportClauseNamedImports(data: T._ImportClauseNamedImports,
     _named_imports: normalizeSingularWrapSlot(data._named_imports, "named_imports", true, data.$type, { tree, nodeType: data.$type, slotName: "named_imports", span: (data as _NodeData).$span }),
 
     namedImports() { return drillIn<T.NamedImports>(this._named_imports, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrap_ImportClauseNamedImports({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrap_ImportClauseNamedImports({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1000,13 +1000,13 @@ export function wrap_ImportClauseNamespaceImport(data: T._ImportClauseNamespaceI
     _namespace_import: normalizeSingularWrapSlot(data._namespace_import, "namespace_import", true, data.$type, { tree, nodeType: data.$type, slotName: "namespace_import", span: (data as _NodeData).$span }),
 
     namespaceImport() { return drillIn<T.NamespaceImport>(this._namespace_import, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrap_ImportClauseNamespaceImport({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrap_ImportClauseNamespaceImport({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
 
 export function wrapImportIdentifier(data: T.ImportIdentifier, tree: TreeHandle) {
-  return drillIn<T.ImportIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.ImportIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandle) {
@@ -1064,7 +1064,7 @@ export function wrap_IndexSignatureMappedTypeClause(data: T._IndexSignatureMappe
     _mapped_type_clause: normalizeSingularWrapSlot(data._mapped_type_clause, "mapped_type_clause", true, data.$type, { tree, nodeType: data.$type, slotName: "mapped_type_clause", span: (data as _NodeData).$span }),
 
     mappedTypeClause() { return drillIn<T.MappedTypeClause>(this._mapped_type_clause, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrap_IndexSignatureMappedTypeClause({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrap_IndexSignatureMappedTypeClause({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1101,7 +1101,7 @@ export function wrap_Module(data: T._Module, tree: TreeHandle) {
 }
 
 export function wrapModuleExportName(data: T.ModuleExportName, tree: TreeHandle) {
-  return drillIn<T.ModuleExportName>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","string"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.ModuleExportName>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["identifier","string"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrap_Number(data: T._Number, tree: TreeHandle) {
@@ -1154,7 +1154,7 @@ export function wrap_ParenthesizedExpressionSequence(data: T._ParenthesizedExpre
     _sequence_expression: normalizeSingularWrapSlot(data._sequence_expression, "sequence_expression", true, data.$type, { tree, nodeType: data.$type, slotName: "sequence_expression", span: (data as _NodeData).$span }),
 
     sequenceExpression() { return drillIn<T.SequenceExpression>(this._sequence_expression, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrap_ParenthesizedExpressionSequence({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrap_ParenthesizedExpressionSequence({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1177,11 +1177,11 @@ export function wrapParenthesizedExpressionTyped(data: T.ParenthesizedExpression
 }
 
 export function wrapPropertyIdentifier(data: T.PropertyIdentifier, tree: TreeHandle) {
-  return drillIn<T.PropertyIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.PropertyIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapPropertyName(data: T.PropertyName, tree: TreeHandle) {
-  return drillIn<T.PropertyName>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["_property_identifier","property_identifier","identifier","private_property_identifier","string","number","computed_property_name"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.PropertyName>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["_property_identifier","property_identifier","identifier","private_property_identifier","string","number","computed_property_name"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefinitionAbstractFirst, tree: TreeHandle) {
@@ -1236,7 +1236,7 @@ export function wrapPublicFieldDefinitionDeclareFirst(data: T.PublicFieldDefinit
     _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
 
     accessibilityModifier() { return this._accessibility_modifier; },
-    $with: { $children: (...vs: readonly [never]) => wrapPublicFieldDefinitionDeclareFirst({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapPublicFieldDefinitionDeclareFirst({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1279,19 +1279,19 @@ export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitio
 }
 
 export function wrapShorthandPropertyIdentifier(data: T.ShorthandPropertyIdentifier, tree: TreeHandle) {
-  return drillIn<T.ShorthandPropertyIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.ShorthandPropertyIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapShorthandPropertyIdentifierPattern(data: T.ShorthandPropertyIdentifierPattern, tree: TreeHandle) {
-  return drillIn<T.ShorthandPropertyIdentifierPattern>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.ShorthandPropertyIdentifierPattern>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeHandle) {
-  return drillIn<T.StatementIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.StatementIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapTupleTypeMember(data: T.TupleTypeMember, tree: TreeHandle) {
-  return drillIn<T.TupleTypeMember>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["tuple_parameter","optional_tuple_parameter","optional_type","rest_type","type"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.TupleTypeMember>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["tuple_parameter","optional_tuple_parameter","optional_type","rest_type","type"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapTypeQueryCallExpression(data: T.TypeQueryCallExpression, tree: TreeHandle) {
@@ -1514,7 +1514,7 @@ export function wrapAmbientDeclarationDeclaration(data: T.AmbientDeclarationDecl
     _declaration: normalizeSingularWrapSlot((data._function_declaration ?? data._generator_function_declaration ?? data._class_declaration ?? data._lexical_declaration ?? data._variable_declaration ?? data._function_signature ?? data._abstract_class_declaration ?? data._module ?? data._internal_module ?? data._type_alias_declaration ?? data._enum_declaration ?? data._interface_declaration ?? data._import_alias ?? data._ambient_declaration ?? data._declaration), "declaration", true, data.$type, { tree, nodeType: data.$type, slotName: "declaration", span: (data as _NodeData).$span }),
 
     declaration() { return drillIn<T.Declaration>(this._declaration, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapAmbientDeclarationDeclaration({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapAmbientDeclarationDeclaration({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1674,7 +1674,7 @@ export function wrapAsserts(data: T.Asserts, tree: TreeHandle) {
     _content: normalizeSingularWrapSlot((data._type_predicate ?? data._identifier ?? data._this ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     content() { return drillIn<T.TypePredicate | T.Identifier | T.This>(this._content, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapAsserts({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapAsserts({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1891,7 +1891,7 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
     _content: normalizeRepeatedWrapSlot(_concatInSourceOrder([data._class_body_method, data._class_body_method_sig, data._class_static_block, data._class_body_member, data._semi, data._content]), false, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     contents() { return drillInAll<T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ";">(this._content as readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ";")[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapClassBody({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapClassBody({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1944,7 +1944,7 @@ export function wrapClassHeritageImplementsClause(data: T.ClassHeritageImplement
     _implements_clause: normalizeSingularWrapSlot(data._implements_clause, "implements_clause", true, data.$type, { tree, nodeType: data.$type, slotName: "implements_clause", span: (data as _NodeData).$span }),
 
     implementsClause() { return drillIn<T.ImplementsClause>(this._implements_clause, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapClassHeritageImplementsClause({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapClassHeritageImplementsClause({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2112,7 +2112,7 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
 }
 
 export function wrapDeclaration(data: T.Declaration, tree: TreeHandle) {
-  return drillIn<T.Declaration>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["function_declaration","generator_function_declaration","class_declaration","lexical_declaration","variable_declaration","function_signature","abstract_class_declaration","module","internal_module","type_alias_declaration","enum_declaration","interface_declaration","import_alias","ambient_declaration"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.Declaration>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["function_declaration","generator_function_declaration","class_declaration","lexical_declaration","variable_declaration","function_signature","abstract_class_declaration","module","internal_module","type_alias_declaration","enum_declaration","interface_declaration","import_alias","ambient_declaration"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
@@ -2122,7 +2122,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
     _content: normalizeSingularWrapSlot((data._identifier ?? data._member_expression ?? data._call_expression ?? data._parenthesized_expression ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     content() { return drillIn<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression>(this._content, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapDecorator({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapDecorator({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2171,7 +2171,7 @@ export function wrapDecoratorParenthesizedExpression(data: T.DecoratorParenthesi
     _content: normalizeSingularWrapSlot((data._identifier ?? data._member_expression ?? data._call_expression ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     content() { return drillIn<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this._content, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapDecoratorParenthesizedExpression({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapDecoratorParenthesizedExpression({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2285,7 +2285,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle) {
     _export_specifier: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._export_specifier, ["export_specifier"]), false, "export_specifier", { tree, nodeType: data.$type, slotName: "export_specifier", span: (data as _NodeData).$span }),
 
     exportSpecifiers() { return drillInAll<T.ExportSpecifier>(this._export_specifier as readonly T.ExportSpecifier[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapExportClause({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapExportClause({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2385,7 +2385,7 @@ export function wrapExportStatement(data: T.ExportStatement, tree: TreeHandle) {
 }
 
 export function wrapExpression(data: T.Expression, tree: TreeHandle) {
-  return drillIn<T.Expression>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.Expression>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeHandle) {
@@ -2517,7 +2517,7 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
     _formal_parameter: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(_concatInSourceOrder([data._required_parameter, data._optional_parameter, data._formal_parameter]), ["_formal_parameter","required_parameter","optional_parameter"]), false, "formal_parameter", { tree, nodeType: data.$type, slotName: "formal_parameter", span: (data as _NodeData).$span }),
 
     formalParameters() { return drillInAll<T.FormalParameter>(this._formal_parameter as readonly T.FormalParameter[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapFormalParameters({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapFormalParameters({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2731,7 +2731,7 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
     _type: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(_concatInSourceOrder([data._parenthesized_type, data._predefined_type, data._type_identifier, data._nested_type_identifier, data._generic_type, data._object_type, data._array_type, data._tuple_type, data._flow_maybe_type, data._type_query, data._index_type_query, data._this, data._existential_type, data._literal_type, data._lookup_type, data._conditional_type, data._template_literal_type, data._intersection_type, data._union_type, data._function_type, data._readonly_type, data._constructor_type, data._infer_type, data._type_query_member_expression_in_type_annotation, data._type_query_call_expression_in_type_annotation, data._type]), ["type","primary_type","parenthesized_type","predefined_type","_type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"]), true, "type", { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
 
     types() { return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapImplementsClause({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapImplementsClause({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2776,7 +2776,7 @@ export function wrapImportClauseNamespaceImport(data: T.ImportClauseNamespaceImp
     _namespace_import: normalizeSingularWrapSlot(data._namespace_import, "namespace_import", true, data.$type, { tree, nodeType: data.$type, slotName: "namespace_import", span: (data as _NodeData).$span }),
 
     namespaceImport() { return drillIn<T.NamespaceImport>(this._namespace_import, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapImportClauseNamespaceImport({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapImportClauseNamespaceImport({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2787,7 +2787,7 @@ export function wrapImportClauseNamedImports(data: T.ImportClauseNamedImports, t
     _named_imports: normalizeSingularWrapSlot(data._named_imports, "named_imports", true, data.$type, { tree, nodeType: data.$type, slotName: "named_imports", span: (data as _NodeData).$span }),
 
     namedImports() { return drillIn<T.NamedImports>(this._named_imports, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapImportClauseNamedImports({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapImportClauseNamedImports({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2907,7 +2907,7 @@ export function wrapIndexSignatureMappedTypeClause(data: T.IndexSignatureMappedT
     _mapped_type_clause: normalizeSingularWrapSlot(data._mapped_type_clause, "mapped_type_clause", true, data.$type, { tree, nodeType: data.$type, slotName: "mapped_type_clause", span: (data as _NodeData).$span }),
 
     mappedTypeClause() { return drillIn<T.MappedTypeClause>(this._mapped_type_clause, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapIndexSignatureMappedTypeClause({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapIndexSignatureMappedTypeClause({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3084,7 +3084,7 @@ export function wrapLiteralType(data: T.LiteralType, tree: TreeHandle) {
     _content: normalizeSingularWrapSlot((data._unary_expression ?? data._number ?? data._string ?? data._true ?? data._false ?? data._null ?? data._undefined ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     content() { return drillAs<T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined>(this._content, tree, "unary_expression", "_number"); },
-    $with: { $children: (...vs: readonly [never]) => wrapLiteralType({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapLiteralType({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3261,7 +3261,7 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle) {
     _import_specifier: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._import_specifier, ["import_specifier"]), false, "import_specifier", { tree, nodeType: data.$type, slotName: "import_specifier", span: (data as _NodeData).$span }),
 
     importSpecifiers() { return drillInAll<T.ImportSpecifier>(this._import_specifier as readonly T.ImportSpecifier[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapNamedImports({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapNamedImports({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3273,7 +3273,7 @@ export function wrapNamespaceExport(data: T.NamespaceExport, tree: TreeHandle) {
     _module_export_name: normalizeSingularWrapSlot((data._identifier ?? data._string ?? data._module_export_name), "module_export_name", true, data.$type, { tree, nodeType: data.$type, slotName: "module_export_name", span: (data as _NodeData).$span }),
 
     moduleExportName() { return drillIn<T.ModuleExportName>(this._module_export_name, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapNamespaceExport({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapNamespaceExport({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3432,7 +3432,7 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
     _content: normalizeSingularWrapSlot((data._object_type_content_comma ?? data._object_type_content_semi ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     content() { return drillIn<T.ObjectTypeContentComma | T.ObjectTypeContentSemi>(this._content, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapObjectTypeContent({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapObjectTypeContent({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3444,7 +3444,7 @@ export function wrapObjectTypeContentComma(data: T.ObjectTypeContentComma, tree:
     _content: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(_concatInSourceOrder([data._export_statement, data._property_signature, data._call_signature, data._construct_signature, data._index_signature, data._method_signature, data._content]), ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature"]), false, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     contents() { return drillInAll<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>(this._content as readonly (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapObjectTypeContentComma({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapObjectTypeContentComma({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3456,7 +3456,7 @@ export function wrapObjectTypeContentSemi(data: T.ObjectTypeContentSemi, tree: T
     _content: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(_concatInSourceOrder([data._export_statement, data._property_signature, data._call_signature, data._construct_signature, data._index_signature, data._method_signature, data._content]), ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature"]), false, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     contents() { return drillInAll<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>(this._content as readonly (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapObjectTypeContentSemi({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapObjectTypeContentSemi({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3592,7 +3592,7 @@ export function wrapParenthesizedExpressionSequence(data: T.ParenthesizedExpress
     _sequence_expression: normalizeSingularWrapSlot(data._sequence_expression, "sequence_expression", true, data.$type, { tree, nodeType: data.$type, slotName: "sequence_expression", span: (data as _NodeData).$span }),
 
     sequenceExpression() { return drillIn<T.SequenceExpression>(this._sequence_expression, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapParenthesizedExpressionSequence({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapParenthesizedExpressionSequence({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3629,15 +3629,15 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
 }
 
 export function wrapPattern(data: T.Pattern, tree: TreeHandle) {
-  return drillIn<T.Pattern>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["member_expression","subscript_expression","undefined","identifier","object_pattern","array_pattern","non_null_expression","rest_pattern"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.Pattern>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["member_expression","subscript_expression","undefined","identifier","object_pattern","array_pattern","non_null_expression","rest_pattern"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapPrimaryExpression(data: T.PrimaryExpression, tree: TreeHandle) {
-  return drillIn<T.PrimaryExpression>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["subscript_expression","member_expression","parenthesized_expression","_identifier","identifier","undefined","_reserved_identifier","reserved_identifier","this","super","number","string","template_string","regex","true","false","null","object","array","function_expression","arrow_function","generator_function","class","meta_property","call_expression","non_null_expression"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.PrimaryExpression>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["subscript_expression","member_expression","parenthesized_expression","_identifier","identifier","undefined","_reserved_identifier","reserved_identifier","this","super","number","string","template_string","regex","true","false","null","object","array","function_expression","arrow_function","generator_function","class","meta_property","call_expression","non_null_expression"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapPrimaryType(data: T.PrimaryType, tree: TreeHandle) {
-  return drillIn<T.PrimaryType>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["parenthesized_type","predefined_type","_type_identifier","type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.PrimaryType>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["parenthesized_type","predefined_type","_type_identifier","type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapProgram(data: T.Program, tree: TreeHandle) {
@@ -3788,7 +3788,7 @@ export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle) {
     _content: normalizeSingularWrapSlot((data._member_expression ?? data._subscript_expression ?? data._undefined ?? data._identifier ?? data._object_pattern ?? data._array_pattern ?? data._non_null_expression ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     content() { return drillAs<T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression>(this._content, tree, "identifier", "_reserved_identifier"); },
-    $with: { $children: (...vs: readonly [never]) => wrapRestPattern({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapRestPattern({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3848,7 +3848,7 @@ export function wrapSequenceExpression(data: T.SequenceExpression, tree: TreeHan
     _expression: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(_concatInSourceOrder([data._as_expression, data._satisfies_expression, data._instantiation_expression, data._internal_module, data._type_assertion, data._subscript_expression, data._member_expression, data._parenthesized_expression, data._undefined, data._identifier, data._reserved_identifier, data._this, data._super, data._number, data._string, data._template_string, data._regex, data._true, data._false, data._null, data._object, data._array, data._function_expression, data._arrow_function, data._generator_function, data._class, data._meta_property, data._call_expression, data._non_null_expression, data._assignment_expression, data._augmented_assignment_expression, data._await_expression, data._unary_expression, data._binary_expression, data._ternary_expression, data._update_expression, data._new_expression, data._yield_expression, data._expression]), ["expression","as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","subscript_expression","member_expression","parenthesized_expression","_identifier","undefined","identifier","_reserved_identifier","this","super","number","string","template_string","regex","true","false","null","object","array","function_expression","arrow_function","generator_function","class","meta_property","call_expression","non_null_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression"]), true, "expression", { tree, nodeType: data.$type, slotName: "expression", span: (data as _NodeData).$span }),
 
     expressions() { return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapSequenceExpression({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapSequenceExpression({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3868,7 +3868,7 @@ export function wrapSpreadElement(data: T.SpreadElement, tree: TreeHandle) {
 }
 
 export function wrapStatement(data: T.Statement, tree: TreeHandle) {
-  return drillIn<T.Statement>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["export_statement","import_statement","debugger_statement","expression_statement","declaration","statement_block","if_statement","switch_statement","for_statement","for_in_statement","while_statement","do_statement","try_statement","with_statement","break_statement","continue_statement","return_statement","throw_statement","empty_statement","labeled_statement"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.Statement>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["export_statement","import_statement","debugger_statement","expression_statement","declaration","statement_block","if_statement","switch_statement","for_statement","for_in_statement","while_statement","do_statement","try_statement","with_statement","break_statement","continue_statement","return_statement","throw_statement","empty_statement","labeled_statement"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
@@ -3994,7 +3994,7 @@ export function wrapTemplateLiteralType(data: T.TemplateLiteralType, tree: TreeH
     _content: normalizeRepeatedWrapSlot(_concatInSourceOrder([data._string_fragment, data._template_type, data._content]), false, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     contents() { return drillAsAll<T.TemplateChars | T.TemplateType>(this._content, tree, "string_fragment", "_template_chars"); },
-    $with: { $children: (...vs: readonly [never]) => wrapTemplateLiteralType({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapTemplateLiteralType({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -4006,7 +4006,7 @@ export function wrapTemplateString(data: T.TemplateString, tree: TreeHandle) {
     _content: normalizeRepeatedWrapSlot(_concatInSourceOrder([data._string_fragment, data._escape_sequence, data._template_substitution, data._content]), false, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     contents() { return drillAsAll<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(this._content, tree, "string_fragment", "_template_chars"); },
-    $with: { $children: (...vs: readonly [never]) => wrapTemplateString({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapTemplateString({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -4018,7 +4018,7 @@ export function wrapTemplateSubstitution(data: T.TemplateSubstitution, tree: Tre
     _expressions: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._sequence_expression ?? data._expressions), "expressions", true, data.$type, { tree, nodeType: data.$type, slotName: "expressions", span: (data as _NodeData).$span }),
 
     expressions() { return drillIn<T.Expressions>(this._expressions, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTemplateSubstitution({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapTemplateSubstitution({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -4030,7 +4030,7 @@ export function wrapTemplateType(data: T.TemplateType, tree: TreeHandle) {
     _content: normalizeSingularWrapSlot((data._parenthesized_type ?? data._predefined_type ?? data._type_identifier ?? data._nested_type_identifier ?? data._generic_type ?? data._object_type ?? data._array_type ?? data._tuple_type ?? data._flow_maybe_type ?? data._type_query ?? data._index_type_query ?? data._this ?? data._existential_type ?? data._literal_type ?? data._lookup_type ?? data._conditional_type ?? data._template_literal_type ?? data._intersection_type ?? data._union_type ?? data._infer_type ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     content() { return drillIn<T.PrimaryType | T.InferType>(this._content, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTemplateType({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapTemplateType({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -4116,13 +4116,13 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle) {
     _tuple_type_member: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(_concatInSourceOrder([data._tuple_parameter, data._optional_tuple_parameter, data._optional_type, data._rest_type, data._parenthesized_type, data._predefined_type, data._type_identifier, data._nested_type_identifier, data._generic_type, data._object_type, data._array_type, data._tuple_type, data._flow_maybe_type, data._type_query, data._index_type_query, data._this, data._existential_type, data._literal_type, data._lookup_type, data._conditional_type, data._template_literal_type, data._intersection_type, data._union_type, data._function_type, data._readonly_type, data._constructor_type, data._infer_type, data._type_query_member_expression_in_type_annotation, data._type_query_call_expression_in_type_annotation, data._tuple_type_member]), ["_tuple_type_member","tuple_parameter","optional_tuple_parameter","optional_type","rest_type","type","primary_type","parenthesized_type","predefined_type","_type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"]), false, "tuple_type_member", { tree, nodeType: data.$type, slotName: "tuple_type_member", span: (data as _NodeData).$span }),
 
     tupleTypeMembers() { return drillInAll<T.TupleTypeMember>(this._tuple_type_member as readonly T.TupleTypeMember[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTupleType({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapTupleType({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
 
 export function wrapType(data: T.Type, tree: TreeHandle) {
-  return drillIn<T.Type>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","type_query_call_expression_in_type_annotation"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
+  return drillIn<T.Type>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","type_query_call_expression_in_type_annotation"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
 export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: TreeHandle) {
@@ -4169,7 +4169,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
     _type: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(_concatInSourceOrder([data._parenthesized_type, data._predefined_type, data._type_identifier, data._nested_type_identifier, data._generic_type, data._object_type, data._array_type, data._tuple_type, data._flow_maybe_type, data._type_query, data._index_type_query, data._this, data._existential_type, data._literal_type, data._lookup_type, data._conditional_type, data._template_literal_type, data._intersection_type, data._union_type, data._function_type, data._readonly_type, data._constructor_type, data._infer_type, data._type_query_member_expression_in_type_annotation, data._type_query_call_expression_in_type_annotation, data._type]), ["type","primary_type","parenthesized_type","predefined_type","_type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"]), true, "type", { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
 
     types() { return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTypeArguments({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapTypeArguments({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -4221,7 +4221,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
     _type_parameter: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._type_parameter, ["type_parameter"]), true, "type_parameter", { tree, nodeType: data.$type, slotName: "type_parameter", span: (data as _NodeData).$span }),
 
     typeParameters() { return drillInAll<T.TypeParameter>(this._type_parameter as readonly T.TypeParameter[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTypeParameters({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapTypeParameters({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -4264,7 +4264,7 @@ export function wrapTypeQuery(data: T.TypeQuery, tree: TreeHandle) {
     _content: normalizeSingularWrapSlot((data._subscript_expression ?? data._member_expression ?? data._call_expression ?? data._instantiation_expression ?? data._identifier ?? data._this ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     content() { return drillIn<T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This>(this._content, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTypeQuery({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrapTypeQuery({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }

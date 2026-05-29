@@ -51,7 +51,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('stamps $variant when the first named child kind is registered', () => {
 		const data = {
 			$type: KIND.assignment,
-			$children: [{ $type: KIND.assignment_eq, $named: true }]
+			$other: [{ $type: KIND.assignment_eq, $named: true }]
 		};
 		const cfg = nodeToConfig(data, makeOpts({ assignment_eq: 'eq', assignment_type: 'type' }));
 		expect(cfg.$variant).toBe('eq');
@@ -60,7 +60,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('does NOT stamp $variant when the first child kind is absent from the map', () => {
 		const data = {
 			$type: KIND.assignment,
-			$children: [{ $type: KIND.some_unregistered, $named: true }]
+			$other: [{ $type: KIND.some_unregistered, $named: true }]
 		};
 		const cfg = nodeToConfig(data, makeOpts({ assignment_eq: 'eq' }));
 		expect('$variant' in cfg).toBe(false);
@@ -69,7 +69,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('skips anonymous tokens — uses the first NAMED child', () => {
 		const data = {
 			$type: KIND.assignment,
-			$children: [
+			$other: [
 				{ $type: KIND.dotdot, $named: false },
 				{ $type: KIND.assignment_eq, $named: true }
 			]
@@ -84,8 +84,8 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		expect('$variant' in cfg).toBe(false);
 	});
 
-	it('does NOT stamp $variant when $children is empty', () => {
-		const data = { $type: KIND.assignment, $children: [] };
+	it('does NOT stamp $variant when $other is empty', () => {
+		const data = { $type: KIND.assignment, $other: [] };
 		const cfg = nodeToConfig(data, makeOpts({ assignment_eq: 'eq' }));
 		expect('$variant' in cfg).toBe(false);
 	});
@@ -93,7 +93,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('matches hidden helper child kinds by variant suffix when exact kind lookup misses', () => {
 		const data = {
 			$type: KIND.token_tree,
-			$children: [{ $type: KIND.delim_token_tree_paren, $named: true }]
+			$other: [{ $type: KIND.delim_token_tree_paren, $named: true }]
 		};
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
@@ -114,7 +114,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('prefers the longest matching variant suffix when matches overlap', () => {
 		const data = {
 			$type: KIND.token_tree,
-			$children: [{ $type: KIND.delim_token_tree_paren, $named: true }]
+			$other: [{ $type: KIND.delim_token_tree_paren, $named: true }]
 		};
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
@@ -134,7 +134,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('falls back to the CST wrapper child kind when native read collapsed the helper kind', () => {
 		const data = {
 			$type: KIND.token_tree,
-			$children: [{ $type: KIND.some_unregistered, $named: true }]
+			$other: [{ $type: KIND.some_unregistered, $named: true }]
 		};
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
@@ -155,7 +155,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('falls back to the CST node kind when the intermediate wrapper owns the discriminator', () => {
 		const data = {
 			$type: KIND.token_tree,
-			$children: [{ $type: KIND.some_unregistered, $named: true }]
+			$other: [{ $type: KIND.some_unregistered, $named: true }]
 		};
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
@@ -178,7 +178,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('falls back to later CST named children when the discriminating wrapper is not first', () => {
 		const data = {
 			$type: KIND.assignment,
-			$children: [{ $type: KIND.some_unregistered, $named: true }]
+			$other: [{ $type: KIND.some_unregistered, $named: true }]
 		};
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
@@ -200,7 +200,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('uses structural marker tokens from anonymous slots when wrapper kinds are absent', () => {
 		const data = {
 			$type: KIND.assignment,
-			$children: [{ $type: KIND.some_unregistered, $named: true }],
+			$other: [{ $type: KIND.some_unregistered, $named: true }],
 			'_,': { $type: KIND.dotdot, $named: false }
 		};
 		const cfg = nodeToConfig(data, {
@@ -245,7 +245,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 	it('falls back to the first two-form variant when no shared marker token is present', () => {
 		const data = {
 			$type: KIND.token_tree,
-			$children: [{ $type: KIND.some_unregistered, $named: true }]
+			$other: [{ $type: KIND.some_unregistered, $named: true }]
 		};
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
@@ -350,7 +350,7 @@ describe('nodeToConfig — polymorph $variant (no descriptor)', () => {
 	it('does NOT stamp $variant when polymorphVariants is absent', () => {
 		const data = {
 			$type: KIND.assignment,
-			$children: [{ $type: KIND.assignment_eq, $named: true }]
+			$other: [{ $type: KIND.assignment_eq, $named: true }]
 		};
 		const cfg = nodeToConfig(data, { kindNameFromId });
 		expect('$variant' in cfg).toBe(false);

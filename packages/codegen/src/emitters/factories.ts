@@ -1282,7 +1282,7 @@ function emitContainerFactory(
 	// Storage key + property name for the single unnamed slot. Falls back to the
 	// legacy `$children` / `children` shape only if no slot exists (defensive —
 	// shouldn't happen for branches that classifyChildFactorySurface accepts).
-	const storageKey = slot ? `_${slot.storageName}` : '$children';
+	const storageKey = slot ? `_${slot.storageName}` : '$other';
 	const propName = slot ? slot.propertyName : 'children';
 	if (anyMultiple) {
 		lines.push(`export function ${fn}(...children: ${elementType}[]) {`);
@@ -1611,7 +1611,7 @@ function emitHoistedPolymorphFormFactory(
 	for (const f of formFields) {
 		lines.push(`    _${f.name},`);
 	}
-	lines.push('    $children: children,');
+	lines.push('    $other: children,');
 	// Form-field getters: read the local const directly.
 	for (const f of formFields) {
 		const propName = f.propertyName;

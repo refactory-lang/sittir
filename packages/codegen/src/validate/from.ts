@@ -79,8 +79,8 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
 		}
 	}
 
-	if (node.$children) {
-		const children = Array.isArray(node.$children) ? node.$children : [node.$children];
+	if (node.$other) {
+		const children = Array.isArray(node.$other) ? node.$other : [node.$other];
 		children.forEach((c, i) => {
 			if (typeof c === 'object' && c !== null) {
 				results.push(...findUndefined(c, `${path}.children[${i}]`));
@@ -152,8 +152,8 @@ function structuralDiff(
 		typeof c !== 'number' &&
 		c?.$named !== false &&
 		!(polymorphPrefix && resolveChildName(c?.$type)?.startsWith(polymorphPrefix));
-	const aChildren = a.$children === undefined ? [] : Array.isArray(a.$children) ? a.$children : [a.$children];
-	const bChildren = b.$children === undefined ? [] : Array.isArray(b.$children) ? b.$children : [b.$children];
+	const aChildren = a.$other === undefined ? [] : Array.isArray(a.$other) ? a.$other : [a.$other];
+	const bChildren = b.$other === undefined ? [] : Array.isArray(b.$other) ? b.$other : [b.$other];
 	const aNamed = aChildren.filter(isRealNamedChild);
 	const bNamed = bChildren.filter(isRealNamedChild);
 	if (aNamed.length !== bNamed.length) diffs.push(`named children: ${aNamed.length} vs ${bNamed.length}`);

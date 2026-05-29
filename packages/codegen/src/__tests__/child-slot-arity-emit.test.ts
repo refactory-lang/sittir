@@ -91,22 +91,22 @@ describe('types emitter child slot arity', () => {
 		const requiredSrc = emitTypes({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
 		const optionalSrc = emitTypes({ grammar: 'synth', nodeMap: makeOptionalSingleChildNodeMap() });
 
-		expect(requiredSrc).toContain('readonly $children: Identifier;');
-		expect(requiredSrc).not.toContain('readonly $children: readonly [Identifier];');
-		expect(optionalSrc).toContain('readonly $children?: Identifier;');
+		expect(requiredSrc).toContain('readonly $other: Identifier;');
+		expect(requiredSrc).not.toContain('readonly $other: readonly [Identifier];');
+		expect(optionalSrc).toContain('readonly $other?: Identifier;');
 	});
 
 	it('keeps multi-slot unnamed children list-shaped instead of collapsing to a scalar', () => {
 		const src = emitTypes({ grammar: 'synth', nodeMap: makeMultiSingularChildNodeMap() });
 
-		expect(src).toContain('readonly $children: readonly [Identifier | NumberLiteral];');
-		expect(src).not.toContain('readonly $children: Identifier | NumberLiteral;');
+		expect(src).toContain('readonly $other: readonly [Identifier | NumberLiteral];');
+		expect(src).not.toContain('readonly $other: Identifier | NumberLiteral;');
 	});
 
 	it('drops inline terminal literals from child slot types', () => {
 		const src = emitTypes({ grammar: 'synth', nodeMap: makeOptionalKeywordChildNodeMap() });
 
-		expect(src).toContain('readonly $children?: Expression | ExpressionList;');
-		expect(src).not.toContain('readonly $children?: "from" | Expression | ExpressionList;');
+		expect(src).toContain('readonly $other?: Expression | ExpressionList;');
+		expect(src).not.toContain('readonly $other?: "from" | Expression | ExpressionList;');
 	});
 });

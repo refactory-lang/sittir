@@ -242,8 +242,8 @@ function nodeHasStructure(node: AnyNodeData): boolean {
 	for (const key of Object.keys(n)) {
 		if (key.startsWith('_')) return true;
 	}
-	// Unnamed children slot: `$children`.
-	if (n['$children'] != null) return true;
+	// Unnamed children slot: `$other`.
+	if (n['$other'] != null) return true;
 	// Legacy shape: `$fields` wrapper (pre-Phase-3a readNode — backward compat).
 	if (n['$fields'] != null) return true;
 	return false;
@@ -278,7 +278,7 @@ function resolveTemplate(
 		}
 		// 2. Detect from anonymous tokens in children
 		if (obj.detect) {
-			for (const child of childEntries(node.$children)) {
+			for (const child of childEntries(node.$other)) {
 				const c = child as AnyNodeData;
 				if (c.$named === false) {
 					for (const [subtype, token] of Object.entries(obj.detect)) {
@@ -309,7 +309,7 @@ function resolveTemplate(
 // placeholder in template order. Consumption tracking (mutable Set of
 // child indices) lives entirely inside prepare() — by the time it
 // returns, every slot value is a finished string and no further
-// reference to $children indices is needed.
+// reference to $other indices is needed.
 //
 // applyTemplate() does the regex-free substitution: iterate the
 // precomputed substitution list, apply column-aware re-indentation
@@ -359,7 +359,7 @@ function collectAnonText(node: AnyNodeData): string | null {
 	const fieldsAllAnon = [...iterNodeFields(node)].every(([, value]) =>
 		Array.isArray(value) ? value.every(isAnonEntry) : isAnonEntry(value)
 	);
-	const childrenAllAnon = childEntries(node.$children).every((child) => {
+	const childrenAllAnon = childEntries(node.$other).every((child) => {
 		return typeof child === 'object' && child !== null && (child as AnyNodeData).$named === false;
 	});
 	if (!fieldsAllAnon || !childrenAllAnon) return null;
@@ -373,7 +373,7 @@ function collectAnonText(node: AnyNodeData): string | null {
 			if (anon?.$text !== undefined) parts.push(anon.$text);
 		}
 	}
-	for (const child of childEntries(node.$children)) {
+	for (const child of childEntries(node.$other)) {
 		const anon = child as AnyNodeData | null | undefined;
 		if (anon?.$text !== undefined) parts.push(anon.$text);
 	}
@@ -531,7 +531,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 					parts.push(renderValue(item as AnyNodeData | string | number | boolean, ctx, fieldName));
 				}
 			}
-			for (const c of childEntries(node.$children)) {
+			for (const c of childEntries(node.$other)) {
 				if (c === undefined || c === null) continue;
 				parts.push(renderValue(c as AnyNodeData | string | number | boolean, ctx));
 			}
@@ -576,8 +576,8 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 				// patterns like rust's tuple_expression `seq(expr, ',')`
 				// produce a field (`elements`) containing the expressions
 				// AND an anon comma that gets promoted to $fields[','] or
-				// overflows to $children. flankSep probes $children for
-				// the trailing anon sep; when missing from $children it
+				// overflows to $children. flankSep probes $other for
+				// the trailing anon sep; when missing from $other it
 				// falls back to presence on $fields keyed by sep text.
 				if (!sep || sep.length === 0 || named.length === 0) return joined;
 				const prefix2 = ruleObj?.['joinByLeading'] === true ? flankSepForField(node, fieldKey, sep, 'leading') : '';
@@ -607,7 +607,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 		// delimiters are in template text, separators are in joinBy, keywords are
 		// in override fields. Only named children carry user content.
 		if ((pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) && fieldKey === 'children') {
-			const children = childEntries(node.$children);
+			const children = childEntries(node.$other);
 			if (children.length === 0) return '';
 			const remaining = children.filter((c, i) => !consumed.has(i) && (c as AnyNodeData).$named !== false);
 			const sep = resolveJoinBy(ruleObj, name);
@@ -657,7 +657,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 		// `impl_item`, `closure_expression`) don't steal unrelated
 		// content. Single-valued slot only (`$FIELD`, not `$$$FIELD`) —
 		// multi-valued slots fall through to existing logic.
-		const children = childEntries(node.$children);
+		const children = childEntries(node.$other);
 		if (
 			(pfx === prefix || pfx.length === 1) &&
 			children.length > 0 &&
@@ -826,7 +826,7 @@ function pickTemplate(
 				resolved++;
 				return '';
 			}
-			const children = childEntries(node.$children);
+			const children = childEntries(node.$other);
 			if (fieldKey === 'children' && children.length > 0) {
 				resolved++;
 				return '';
@@ -879,7 +879,7 @@ function renderClause(
 	if (!varPattern.test(clauseTemplate)) {
 		// Reset stateful regex — .test() advances lastIndex when global.
 		varPattern.lastIndex = 0;
-		const children = childEntries(node.$children);
+		const children = childEntries(node.$other);
 		if (children.length > 0) {
 			const idx = children.findIndex((c: any, i: number) => !consumed.has(i) && c?.$type === clauseTemplate);
 			if (idx >= 0) {
@@ -889,7 +889,7 @@ function renderClause(
 		}
 		// readNode promotes anonymous tokens to `_<text>` keys directly
 		// (ADR-0018 Phase 3a) so a bare-literal clause body like `!` resolves
-		// against `_!` rather than `$children`. Legacy `$fields[text]` is also
+		// against `_!` rather than `$other`. Legacy `$fields[text]` is also
 		// checked for backward compatibility (nodes from older readNode builds).
 		const n0 = node as unknown as Record<string, unknown>;
 		// Phase 3a: de-hoisted `_<text>` path (new readNode output)
@@ -911,7 +911,7 @@ function renderClause(
 		const fieldKey = name.toLowerCase();
 		if (hasNodeField(node, fieldKey)) return '';
 		// Also check children by kind
-		const children = childEntries(node.$children);
+		const children = childEntries(node.$other);
 		if (children.length > 0) {
 			const idx = children.findIndex((c: any, i: number) => !consumed.has(i) && c?.$type === fieldKey);
 			if (idx >= 0) return '';
@@ -946,7 +946,7 @@ function renderClause(
 			return renderValue(value, ctx, fieldKey);
 		}
 		// Children by kind fallback
-		const children = childEntries(node.$children);
+		const children = childEntries(node.$other);
 		if (children.length > 0) {
 			const idx = children.findIndex((c: any, i: number) => !consumed.has(i) && c?.$type === fieldKey);
 			if (idx >= 0) {
@@ -973,9 +973,9 @@ function renderClause(
 /**
  * Multi-valued field flank detector — companion to `flankSep` for the
  * `$$$FIELD` render path. readNode scatters anon tokens between
- * `$children` and `$fields[text]` depending on promotion order:
+ * `$other` and `$fields[text]` depending on promotion order:
  *   - First occurrence of each text → `$fields[text]`
- *   - Subsequent occurrences → `$children`
+ *   - Subsequent occurrences → `$other`
  * So the separator for a rule with the first-mandatory-comma pattern
  * (rust `seq(expr, ',')`) can end up either place. We can't infer
  * leading/trailing from membership alone.
@@ -1007,7 +1007,7 @@ function flankSepForField(node: AnyNodeData, fieldKey: string, sep: string, side
 	const boundary =
 		side === 'leading' ? Math.min(...fieldSpans.map((s) => s.start)) : Math.max(...fieldSpans.map((s) => s.end));
 	// Collect candidate anon sep tokens from `_<sep>` (Phase 3a), `$fields[sep]`
-	// (legacy), and `$children`. readNode promotes anonymous tokens:
+	// (legacy), and `$other`. readNode promotes anonymous tokens:
 	//   - Phase 3a+: `_<text>` top-level key on the node
 	//   - Legacy: `$fields[text]` wrapper
 	// Factory nodes don't have anonymous tokens in either location.
@@ -1028,7 +1028,7 @@ function flankSepForField(node: AnyNodeData, fieldKey: string, sep: string, side
 		for (const x of arr)
 			if (x && typeof x === 'object' && (x as AnyNodeData).$named === false) candidates.push(x as AnyNodeData);
 	}
-	for (const c of childEntries(node.$children))
+	for (const c of childEntries(node.$other))
 		if (c && typeof c === 'object' && (c as AnyNodeData).$named === false && (c as AnyNodeData).$text === sep)
 			candidates.push(c as AnyNodeData);
 	for (const c of candidates) {
@@ -1063,7 +1063,7 @@ function detectTrailingAnonForField(node: AnyNodeData, fieldKey: string, namedIt
 	if (boundary < 0) return '';
 
 	// Collect all anonymous token candidates from `_*` keys (Phase 3a),
-	// `$fields` (legacy), and `$children`. Skip the field itself in each case.
+	// `$fields` (legacy), and `$other`. Skip the field itself in each case.
 	const candidates: AnyNodeData[] = [];
 	const nodeRecA = node as unknown as Record<string, unknown>;
 	// Phase 3a: de-hoisted `_<key>` anonymous tokens (new readNode output)
@@ -1092,7 +1092,7 @@ function detectTrailingAnonForField(node: AnyNodeData, fieldKey: string, namedIt
 			}
 		}
 	}
-	for (const c of childEntries(node.$children)) {
+	for (const c of childEntries(node.$other)) {
 		if (c && typeof c === 'object' && (c as AnyNodeData).$named === false) {
 			candidates.push(c as AnyNodeData);
 		}
@@ -1320,7 +1320,7 @@ function buildNunjucksTemplateContext(
 	// flank inline when they match. Plain `join` ignores the
 	// side-channel.
 	const children: MutableFlankedChildArray = [];
-	const childNodes = childEntries(node.$children);
+	const childNodes = childEntries(node.$other);
 	if (childNodes.length > 0) {
 		let firstNamedIdx = -1;
 		let lastNamedIdx = -1;
@@ -1402,7 +1402,7 @@ function buildNunjucksTemplateContext(
 				parts.push(renderChild(item as AnyNodeData | string | number | boolean, fieldName));
 			}
 		}
-		for (const c of childEntries(node.$children)) {
+		for (const c of childEntries(node.$other)) {
 			if (c === undefined || c === null) continue;
 			parts.push(renderChild(c as AnyNodeData | string | number | boolean));
 		}

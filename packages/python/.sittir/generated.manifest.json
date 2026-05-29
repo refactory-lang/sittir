@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "f033b507597b8ca45115cc11ff2b73510683a2eeba4c62faab3d896e67c9540c",
+  "source_hash": "91f8c203bd4c4b8981a6e3fb2e041c608f510f8098a4d65fb0d0650bc3c37fb3",
   "files": {
     "packages/python/.sittir/grammar.js": "3dc29e8a5ebe88bb8a0a4e1d83b41e764b6dc96bb1e83d1ca75226d4a8fda37a",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -30,7 +30,7 @@
     "packages/python/src/type-test.ts": "f694bb4921240dccbfb842dd7dd538892f786f57f6aac998b9e205bec9638d8a",
     "packages/python/src/types.ts": "056396b3865a22d5c7886c3edaf23191eed13cb259a361c2d304193865cd705c",
     "packages/python/src/utils.ts": "b6265835f7a8605008a7d0d0188362d6ebe5a73876c19a94c0193d52b5532c9c",
-    "packages/python/src/wrap.ts": "60f25d482e31b782a7dd35a8d9f617feca5d1b67ae857f1194332c1f720fb57a",
+    "packages/python/src/wrap.ts": "4f645a8f662da365fdedbfac3b7dae87be6e41ad20ce6cff942ef6a56839783a",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/python/templates/_as_pattern.jinja": "06f9ddebb937586a9d2f50aa63c363c8861d14d45adae7dafdc3e053c3aca0d8",
     "packages/python/templates/_assignment_eq.jinja": "150fdea50d889b1fbef4e38bb862aee38d11abdebb18b80b93550b3bf5cd7f94",
@@ -276,9 +276,9 @@
     "rust/crates/sittir-python/templates/with_item.jinja": "6de9ebfb84be05c1bf693a55855a5f65d4b30745e7bf7e94405ab675b3bcef8f",
     "rust/crates/sittir-python/templates/with_statement.jinja": "892f9897b8713eda534bd82a88d4687b73dbd9c834be164af7753a27a77120b3",
     "rust/crates/sittir-python/templates/yield.jinja": "4d27a116533eddf8b04d6e93058098c82ece52e0e4340320acad190d4ff6fcf7",
-    "rust/crates/sittir-python/test-fixtures.json": "229c24f633de6bb5535861b053920f9c94bcf5e7636a352de3981db6fa333a47"
+    "rust/crates/sittir-python/test-fixtures.json": "de1ff01ff0660f90665d73598e8dbb1d6a04b82f9be6277c091e918ccfddc33c"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "4c223abdcfeb73e2de054e6653e18bac592a73117f1c6b55f554c42b9669f70b"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "7004ac4ec9e40dde37fcbf6a07d9eeb475755d74d220472421135b16e2ace015"
   }
 }

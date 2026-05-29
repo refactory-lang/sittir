@@ -36,7 +36,7 @@ type SlotArity = 'one' | 'many';
 type SlotOrigin = 'field' | 'kind';
 interface SlotModel {
 	readonly name: string;
-	readonly storageKey: string; // always `_<name>` (or `$children` for the legacy children slot)
+	readonly storageKey: string; // always `_<name>` (or `$other` for the catch-all unmatched-children slot)
 	readonly arity: SlotArity;
 	/** Validator-only facts; read ONLY via `readFacts` (never branched on by the compiler). */
 	readonly metadata: import('../compiler/opaque-facts.ts').OpaqueFacts;
@@ -45,7 +45,7 @@ function createNamedSlotModel(name: string, arity: SlotArity): SlotModel {
 	return { name, storageKey: `_${name}`, arity, metadata: opaqueFacts({ origin: 'field' satisfies SlotOrigin }) };
 }
 function createUnnamedChildrenSlotModel(arity: SlotArity): SlotModel {
-	return { name: 'children', storageKey: '$children', arity, metadata: opaqueFacts({ origin: 'kind' satisfies SlotOrigin }) };
+	return { name: 'children', storageKey: '$other', arity, metadata: opaqueFacts({ origin: 'kind' satisfies SlotOrigin }) };
 }
 import { pluralize, snakeToCamel } from '../compiler/node-map.ts';
 
@@ -417,7 +417,7 @@ export function findNativeNodeId(
 				pushCandidates(value, out);
 			}
 		}
-		const children = d.$children;
+		const children = d.$other;
 		if (children) {
 			pushCandidates(children, out);
 		}
@@ -425,7 +425,7 @@ export function findNativeNodeId(
 	}
 
 	function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
-		if (d.$children !== undefined) return true;
+		if (d.$other !== undefined) return true;
 		const rec = d as unknown as Record<string, unknown>;
 		for (const key of Object.keys(rec)) {
 			if (key.startsWith('_')) return true;
@@ -530,8 +530,8 @@ export function walkNativeForKind(
 				}
 			}
 		}
-		if (d.$children) {
-			const children = Array.isArray(d.$children) ? d.$children : [d.$children];
+		if (d.$other) {
+			const children = Array.isArray(d.$other) ? d.$other : [d.$other];
 			for (const c of children) {
 				if (c != null && typeof c === 'object' && '$type' in c) {
 					out.push(c as unknown as AnyNodeData);
@@ -542,7 +542,7 @@ export function walkNativeForKind(
 	}
 
 	function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
-		if (d.$children !== undefined) return true;
+		if (d.$other !== undefined) return true;
 		const rec = d as unknown as Record<string, unknown>;
 		for (const key of Object.keys(rec)) {
 			if (key.startsWith('_')) return true;
@@ -977,7 +977,7 @@ export function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => vo
 		}
 		visit(w);
 		for (const k of Object.keys(w)) {
-			if (k !== '$children' && !k.startsWith('_')) continue;
+			if (k !== '$other' && !k.startsWith('_')) continue;
 			const v = resolveWrappedStorageValue(w, k);
 			if (isWrappedNodeData(v)) recurse(v);
 			else if (Array.isArray(v)) for (const x of v) if (isWrappedNodeData(x)) recurse(x);
@@ -997,7 +997,7 @@ export function stripStructuralNodeText<T>(root: T): T {
 	const hasStructure = (record: Record<string, unknown>): boolean =>
 		Object.keys(record).some((key) => key.startsWith('_'))
 		|| (record.$fields != null && typeof record.$fields === 'object')
-		|| record.$children != null;
+		|| record.$other != null;
 	const recurse = (value: unknown): void => {
 		if (!isNodeData(value)) return;
 		if (seen.has(value)) return;
@@ -1008,7 +1008,7 @@ export function stripStructuralNodeText<T>(root: T): T {
 		}
 		for (const [key, child] of Object.entries(record)) {
 			if (key === '$with') continue;
-			if (key === '$children') {
+			if (key === '$other') {
 				if (Array.isArray(child)) {
 					for (const entry of child) recurse(entry);
 				} else {
@@ -1037,10 +1037,10 @@ function materializeWrappedValue(value: unknown): unknown {
 	const materialized: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
-		if (key === '$children') {
+		if (key === '$other') {
 			const resolved = resolveWrappedStorageValue(value, key);
 			if (resolved === undefined) continue;
-			materialized.$children = materializeWrappedValue(resolved);
+			materialized.$other = materializeWrappedValue(resolved);
 			continue;
 		}
 		if (key.startsWith('_')) {
@@ -1055,7 +1055,7 @@ function materializeWrappedValue(value: unknown): unknown {
 }
 
 function resolveWrappedStorageValue(node: WrappedNodeData, storageKey: string): unknown {
-	if (storageKey !== '$children' && !storageKey.startsWith('_')) {
+	if (storageKey !== '$other' && !storageKey.startsWith('_')) {
 		return node[storageKey];
 	}
 	for (const accessorName of accessorCandidatesForStorageKey(storageKey)) {
@@ -1072,7 +1072,7 @@ function resolveWrappedStorageValue(node: WrappedNodeData, storageKey: string): 
 }
 
 function accessorCandidatesForStorageKey(storageKey: string): readonly string[] {
-	if (storageKey === '$children') return ['children'];
+	if (storageKey === '$other') return ['children'];
 	if (!storageKey.startsWith('_')) return [];
 	const base = snakeToCamel(storageKey.slice(1));
 	const plural = pluralize(base);
@@ -1280,7 +1280,7 @@ interface ReadNodeLike {
 	readonly $text?: string;
 	readonly $nodeHandle?: number;
 	readonly $childIndex?: number;
-	readonly $children?: unknown | readonly unknown[];
+	readonly $other?: unknown | readonly unknown[];
 	readonly $named?: boolean;
 }
 
@@ -1726,7 +1726,7 @@ function findOverrideVariantChildNode(
 	kindNameFromId?: (id: number) => string | undefined
 ): ReadNodeLike | undefined {
 	const matches: ReadNodeLike[] = [];
-	for (const child of namedChildNodes(data.$children)) {
+	for (const child of namedChildNodes(data.$other)) {
 		let current: ReadNodeLike | undefined = child;
 		const seen = new Set<ReadNodeLike>();
 		while (current && !seen.has(current)) {
@@ -1735,7 +1735,7 @@ function findOverrideVariantChildNode(
 				matches.push(current);
 				break;
 			}
-			const descendants = namedChildNodes(current.$children);
+			const descendants = namedChildNodes(current.$other);
 			if (descendants.length !== 1) break;
 			current = descendants[0]!;
 		}
@@ -2025,9 +2025,9 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		out
 	);
 	const overrideHelperVariant = inferOverrideHelperVariant(parentKind, data, opts, out);
-	if (data.$children) {
+	if (data.$other) {
 		const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined;
-		const structuralChildren = filterStructuralChildren(data.$children);
+		const structuralChildren = filterStructuralChildren(data.$other);
 		const namedChildren = structuralChildren.filter(
 			(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
 		);
@@ -2039,7 +2039,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 			assignPositionPromotedChildren(declaredFields!, parentKind!, namedChildren, opts, out);
 		} else if (
 			!overrideHelperVariant &&
-			promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$children, opts, out)
+			promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$other, opts, out)
 		) {
 			// Ambiguous-free anonymous-token fill completed above.
 		} else if (shouldOmitResidualScalarChildren(parentKind, structuralChildren, opts, out)) {
@@ -2135,7 +2135,7 @@ function inferFromChildKind(
 	firstNamedChildKindHint?: string,
 	namedChildKindHints?: readonly string[]
 ): string | undefined {
-	const firstChild = namedChildNodes(data.$children)[0] as { $type?: string | number } | undefined;
+	const firstChild = namedChildNodes(data.$other)[0] as { $type?: string | number } | undefined;
 	const rawType = firstChild?.$type;
 	// Phase D: $type is numeric (TSKindId) or string (hidden/synthetic kind).
 	// Resolve to a kind-name string for childKind map lookup.
@@ -2164,7 +2164,7 @@ function inferFromChildKind(
 		const seen = new Set<ReadNodeLike>();
 		while (current && !seen.has(current)) {
 			seen.add(current);
-			const namedChildren: ReadNodeLike[] = namedChildNodes(current.$children);
+			const namedChildren: ReadNodeLike[] = namedChildNodes(current.$other);
 			if (namedChildren.length !== 1) return undefined;
 			const onlyChild: ReadNodeLike = namedChildren[0]!;
 			const onlyChildType = onlyChild.$type;
@@ -2312,7 +2312,7 @@ function collectStructuralTokens(
 	add(cstNodeKindHint, 1, true);
 	add(firstNamedChildKindHint, 2, true);
 	for (const hint of namedChildKindHints ?? []) add(hint, 2, true);
-	for (const child of childEntries(data.$children)) addNodeKind(child, 2);
+	for (const child of childEntries(data.$other)) addNodeKind(child, 2);
 
 	const raw = data as unknown as Record<string, unknown>;
 	for (const key of Object.keys(raw)) {

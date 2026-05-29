@@ -328,7 +328,7 @@ function buildWrapVariantDescriptors(nodeMap: NodeMap): Readonly<Record<string, 
 		const slots: Record<string, readonly string[]> = {};
 		for (const form of polymorph.forms) {
 			const requiredSlots = form.fields.map((field) => `_${field.name}`);
-			if (form.children.length > 0) requiredSlots.push('$children');
+			if (form.children.length > 0) requiredSlots.push('$other');
 			slots[form.name] = requiredSlots;
 		}
 		out[kind] = { source: 'promoted', slots };
@@ -441,7 +441,7 @@ function resolveUnnamedSlotConfig(
 	return {
 		slot: {
 			name: 'children',
-			storageKey: '$children',
+			storageKey: '$other',
 			arity: options?.forceSingular ? 'one' : children.length === 1 && !cardinality.multiple ? 'one' : 'many'
 		} satisfies SlotModel,
 		elemType: childElementType({ children }, nodeMap),
@@ -601,7 +601,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const allowedKinds = [...new Set(node.subtypes.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))];
 	return [
 		`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`,
-		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
+		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
 		`}`
 	].join('\n');
 }
@@ -682,11 +682,11 @@ function emitFieldCarryingWrap(
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
-	// $children is a $-prefixed metadata key, not a _<name> storage key, so
-	// $children doesn't have the `_` prefix convention — access via data.$children
+	// $other is a $-prefixed metadata key, not a _<name> storage key, so
+	// $other doesn't have the `_` prefix convention — access via data.$other
 	// which AnyNodeData declares as `readonly NodeMemberValue[] | undefined`.
 	// Polymorph parent types are unions of UForm interfaces — not all members
-	// may declare `$children`, but it is always present at runtime. Cast
+	// may declare `$other`, but it is always present at runtime. Cast
 	// through `(data as any)` to access the property without type errors.
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
@@ -700,7 +700,7 @@ function emitFieldCarryingWrap(
 			nonEmpty: childrenConfig.nonEmpty,
 			allowedKinds: childrenConfig.allowedKinds
 		});
-		lines.push(`    $children: ${storeExpr},`);
+		lines.push(`    $other: ${storeExpr},`);
 	}
 	lines.push('');
 
@@ -755,7 +755,7 @@ function emitFieldCarryingWrap(
 /**
  * Emit the inline `$with: { ... }` property for a wrap function literal.
  *
- * Container-shape nodes emit `$children`/`$child` lambdas calling the
+ * Container-shape nodes emit `$other`/`$child` lambdas calling the
  * rest-param factory. Field-carrying nodes emit per-field setters that
  * build a lazy config and call the factory with a patched value.
  *
@@ -777,7 +777,7 @@ function emitInlineWithProperty(
 	const wrapFn = `wrap${node.typeName}`;
 
 	// Polymorph parent types are unions of UForm interfaces. Spread-and-
-	// override (`{ ...data, $children: items }`) does not distribute over
+	// override (`{ ...data, $other: items }`) does not distribute over
 	// union types — TypeScript rejects the assignment. Cast `data` to `any`
 	// in the spread expression so the setter compiles. The cast is sound:
 	// the runtime object always has the right shape (dispatcher matches
@@ -792,11 +792,11 @@ function emitInlineWithProperty(
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		if (childrenConfig.slot.arity === 'one') {
-			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: v }, tree) },`);
+			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $other: v }, tree) },`);
 		} else {
 			const restType = childrenSetterRestType(children, childElem, childRest);
 			lines.push(
-				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $children: vs }, tree) },`
+				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $other: vs }, tree) },`
 			);
 		}
 		return;
@@ -840,10 +840,10 @@ function emitInlineWithProperty(
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		if (childrenConfig.slot.arity === 'one') {
-			lines.push(`      children: (item: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: item }, tree),`);
+			lines.push(`      children: (item: ${childElem}) => ${wrapFn}({ ${spreadData}, $other: item }, tree),`);
 		} else {
 			const restType = childrenSetterRestType(children, childElem, childRest);
-			lines.push(`      children: (...items: ${restType}) => ${wrapFn}({ ${spreadData}, $children: items }, tree),`);
+			lines.push(`      children: (...items: ${restType}) => ${wrapFn}({ ${spreadData}, $other: items }, tree),`);
 		}
 	}
 	lines.push('    },');
@@ -1283,7 +1283,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  const desc = _variantTable[kind];',
 						'  if (!desc) return undefined;',
 						'  if (desc.source === "override") {',
-						'    const firstChild = _wrapChildEntries(data.$children).find(',
+						'    const firstChild = _wrapChildEntries(data.$other).find(',
 						'      (child) => child != null && typeof child === "object" && (child as { $named?: boolean }).$named !== false',
 						'    );',
 						'    const candidate = _kindNameOf(firstChild);',
@@ -1306,7 +1306,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  }',
 						'  for (const [variant, requiredSlots] of Object.entries(desc.slots) as [string, readonly string[]][]) {',
 						'    const matches = requiredSlots.every((slot) => {',
-						'      if (slot === "$children") return _hasWrapChildren(data.$children);',
+						'      if (slot === "$other") return _hasWrapChildren(data.$other);',
 						'      return (data as unknown as Record<string, unknown>)[slot] !== undefined;',
 						'    });',
 						'    if (matches) return variant;',

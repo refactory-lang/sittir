@@ -10,7 +10,7 @@
 //! Invariants (enforced by struct + serde helpers):
 //! - `$type`, `$source`, `$named` are required on the wire.
 //! - Named slots serialize as top-level `_<slot>` keys.
-//! - `$children`, `$text`, `$span`, `$nodeHandle`, `$childIndex`
+//! - `$other`, `$text`, `$span`, `$nodeHandle`, `$childIndex`
 //!   are elided when `None` (`serde skip_serializing_if`).
 //! - No other top-level `$`-prefixed keys are emitted — enrichment
 //!   fields (`$variant`, `$raw`, supertype labels) live on the TS side.
@@ -197,7 +197,7 @@ impl ::napi::bindgen_prelude::TypeName for TransportTrivia {
 }
 
 /// Primitive NodeData — the wire shape. Fixed `$`-metadata plus dynamic
-/// `_<slot>` storage keys (and optional `$children`) matching the
+/// `_<slot>` storage keys (and optional `$other`) matching the
 /// ADR-0018 de-hoisted JS read/factory surface. Enrichment (`$variant`,
 /// etc.) is TS-side only.
 ///
@@ -259,7 +259,7 @@ struct NodeDataSer<'a> {
     #[serde(flatten, serialize_with = "serialize_slot_fields")]
     fields: &'a Option<HashMap<String, FieldValue>>,
     #[serde(
-        rename = "$children",
+        rename = "$other",
         default,
         skip_serializing_if = "Option::is_none",
         serialize_with = "serialize_children"
@@ -301,7 +301,7 @@ struct NodeDataDe {
     legacy_fields: HashMap<String, FieldValue>,
     #[serde(flatten, deserialize_with = "deserialize_slot_fields", default)]
     fields: Option<HashMap<String, FieldValue>>,
-    #[serde(rename = "$children", deserialize_with = "deserialize_children", default)]
+    #[serde(rename = "$other", deserialize_with = "deserialize_children", default)]
     children: Option<Vec<NodeData>>,
     #[serde(rename = "$text", default)]
     text: Option<String>,

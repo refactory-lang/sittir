@@ -17,7 +17,7 @@
 //! - `_<slot>`     — top-level named-slot storage populated via
 //!   `field_name_for_child()`. Multiple children on the same field name
 //!   collapse into `FieldValue::Multiple`; single → `FieldValue::Single`.
-//! - `$children`   — child entries with NO field name. Materialized leaf
+//! - `$other`   — child entries with NO field name. Materialized leaf
 //!   children are scalarized on the wire only for anonymous/token leaves;
 //!   named leaves and branch children remain objects.
 //! - `$text`       — full source text for leaves only.
@@ -85,8 +85,8 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
     // unused but harmless.
     let text = source.get(byte_range.clone()).map(|s| s.to_string());
 
-    // On leaves, drop the (possibly empty) `$children` entirely — the
-    // shape gate in T025 enforces that leaves don't carry `$children`
+    // On leaves, drop the (possibly empty) `$other` entirely — the
+    // shape gate in T025 enforces that leaves don't carry `$other`
     // even when empty, and purely-anonymous token structure is still
     // represented by `$text` for the native read surface.
     let children = if is_leaf { None } else { children };
@@ -113,7 +113,7 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
 ///
 /// Field-slot arity: multiple children on the same field name are
 /// collapsed into `FieldValue::Multiple`; a lone child becomes
-/// `FieldValue::Single`. No-field children stay in `$children`; this
+/// `FieldValue::Single`. No-field children stay in `$other`; this
 /// native path does not invent `_<text>` fields for anonymous tokens.
 fn read_children(
     node: tree_sitter::Node<'_>,

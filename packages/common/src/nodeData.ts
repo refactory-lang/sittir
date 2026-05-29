@@ -34,19 +34,19 @@ import type { AnyNodeData } from '@sittir/types';
  * @returns The frozen node (same reference, typed as `AnyNodeData`).
  *
  * @remarks
- * Per ADR-0018 R8, arrays stored under `_<name>` and `$children` are
+ * Per ADR-0018 R8, arrays stored under `_<name>` and `$other` are
  * frozen individually so they are also immutable. `$with.<name>([...])` on a
  * frozen-array slot returns a new frozen node — it does NOT mutate the array.
  * Top-level freeze is applied last so the `_*` array-freezing writes can
  * succeed before the top-level object is locked.
  */
 export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNodeData {
-	// Freeze any array-valued `_*` storage slots and `$children`. Internal
+	// Freeze any array-valued `_*` storage slots and `$other`. Internal
 	// cast bridges Object.keys/index access; the public signature preserves
 	// the caller's concrete `T`. Hygiene rule 4: generics carry type info.
 	const rec = node as unknown as Record<string, unknown>;
 	for (const key of Object.keys(rec)) {
-		if ((key.startsWith('_') || key === '$children') && Array.isArray(rec[key])) {
+		if ((key.startsWith('_') || key === '$other') && Array.isArray(rec[key])) {
 			Object.freeze(rec[key]);
 		}
 	}

@@ -26,7 +26,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'lexical_declaration',
 				_kind: { $type: 'const', $named: false, $text: 'const' },
 				'_;': { $type: ';', $named: false, $text: ';' },
-				$children: [
+				$other: [
 					{
 						$type: 'variable_declarator',
 						$named: true,
@@ -61,7 +61,7 @@ describe('nodeToConfig field promotion', () => {
 				'_{': { $type: '{', $named: false, $text: '{' },
 				'_;': { $type: ';', $named: false, $text: ';' },
 				'_}': { $type: '}', $named: false, $text: '}' },
-				$children: [
+				$other: [
 					{
 						$type: 'property_signature',
 						$named: true,
@@ -94,7 +94,7 @@ describe('nodeToConfig field promotion', () => {
 			$type: 'argument_list',
 			$source: 0,
 			$named: true,
-			$children: [55, { $type: 'identifier', $source: 0, $named: true, $text: 'x' }]
+			$other: [55, { $type: 'identifier', $source: 0, $named: true, $text: 'x' }]
 		} as never);
 
 		expect(config.children).toEqual([{ $type: 'identifier', $source: 0, $named: true, $text: 'x' }]);
@@ -158,7 +158,7 @@ describe('nodeToConfig field promotion', () => {
 				$named: true,
 				_type: [field],
 				_attributes: [attribute, attribute],
-				$children: [field]
+				$other: [field]
 			} as never,
 			{
 				factoryFields: {
@@ -184,7 +184,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'single_child_parent',
 				$source: 0,
 				$named: true,
-				$children: [left]
+				$other: [left]
 			} as never,
 			{
 				factorySlots: makeFactorySlots('single_child_parent', {
@@ -204,7 +204,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'pair_parent',
 				$source: 0,
 				$named: true,
-				$children: [left]
+				$other: [left]
 			} as never,
 			{
 				factorySlots: makeFactorySlots('pair_parent', {
@@ -224,7 +224,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'pair_parent',
 				$source: 0,
 				$named: true,
-				$children: [left, right]
+				$other: [left, right]
 			} as never,
 			{
 				factorySlots: makeFactorySlots('pair_parent', {
@@ -254,7 +254,7 @@ describe('nodeToConfig field promotion', () => {
 				$source: 0,
 				$named: true,
 				_statements: [stmtA, stmtB],
-				$children: [stmtA, stmtB]
+				$other: [stmtA, stmtB]
 			} as never,
 			{
 				factoryFields: {
@@ -278,7 +278,7 @@ describe('nodeToConfig field promotion', () => {
 				$source: 0,
 				$named: true,
 				_argument: ['async', 'await'],
-				$children: [12, 9]
+				$other: [12, 9]
 			} as never,
 			{
 				factoryFields: {
@@ -305,7 +305,7 @@ describe('nodeToConfig field promotion', () => {
 					$type: 'single_child_parent',
 					$source: 0,
 					$named: true,
-					$children: [leafA, leafB]
+					$other: [leafA, leafB]
 				} as never,
 				{
 					factorySlots: makeFactorySlots('single_child_parent', {
@@ -341,7 +341,7 @@ describe('nodeToConfig field promotion', () => {
 					$type: 'spread_child',
 					$source: 0,
 					$named: true,
-					$children: [leaf]
+					$other: [leaf]
 				}
 			} as never,
 			{
@@ -385,7 +385,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'direct_child',
 				$source: 0,
 				$named: true,
-				$children: [leaf]
+				$other: [leaf]
 			} as never,
 			{
 				factorySlots: makeFactorySlots('direct_child', {
@@ -435,7 +435,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'multi_child',
 				$source: 0,
 				$named: true,
-				$children: [left, right]
+				$other: [left, right]
 			} as never,
 			{ factorySlots: slots }
 		);
@@ -451,7 +451,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'return_statement',
 				$source: 0,
 				$named: true,
-				$children: [
+				$other: [
 					{ $type: 'return', $source: 0, $named: false, $text: 'return' },
 					expr
 				]
@@ -479,7 +479,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'type_query',
 				$source: 0,
 				$named: true,
-				$children: [17, expr]
+				$other: [17, expr]
 			} as never,
 			{
 				factorySlots: makeFactorySlots('type_query', {
@@ -508,7 +508,7 @@ describe('nodeToConfig field promotion', () => {
 				$named: true,
 				_async_marker: { $type: 'async', $source: 0, $named: false, $text: 'async' },
 				_parameters: parameters,
-				$children: [
+				$other: [
 					{
 						$type: 'closure_expression_expr',
 						$source: 0,
@@ -562,7 +562,7 @@ describe('nodeToConfig field promotion', () => {
 				$named: true,
 				_async_marker: 85,
 				_parameters: parameters,
-				$children: [body]
+				$other: [body]
 			} as never,
 			{
 				factoryFields: {
@@ -613,7 +613,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'assignment',
 				$source: 0,
 				$named: true,
-				$children: [
+				$other: [
 					{
 						$type: 'assignment_eq',
 						$source: 0,
@@ -661,7 +661,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'formal_parameters',
 				$source: 0,
 				$named: true,
-				$children: [22, first, 6, second, 24]
+				$other: [22, first, 6, second, 24]
 			} as never,
 			{
 				factorySlots: {
@@ -694,7 +694,7 @@ describe('nodeToConfig field promotion', () => {
 				$source: 0,
 				$named: true,
 				_type: type,
-				$children: [parameter]
+				$other: [parameter]
 			} as never,
 			{
 				factoryFields: {

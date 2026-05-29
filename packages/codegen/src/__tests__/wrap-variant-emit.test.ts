@@ -159,24 +159,24 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).toContain('"left": [');
 		expect(wrapSrc).toContain('"_left"');
 		expect(wrapSrc).toContain('"right": [');
-		expect(wrapSrc).toContain('"$children"');
+		expect(wrapSrc).toContain('"$other"');
 	});
 
 	it('emits unnamed slot storage and access through the shared slot path', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makePromotedPolymorphNodeMap() });
 
 		expect(wrapSrc).toContain(
-			'$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["identifier"]), "children", false, (data as any).$type),'
+			'$other: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$other, ["identifier"]), "children", false, (data as any).$type),'
 		);
 		expect(wrapSrc).toContain('children() { return drillIn<T.Identifier | undefined>(');
-		expect(wrapSrc).toContain('this.$children, tree');
+		expect(wrapSrc).toContain('this.$other, tree');
 	});
 
 	it('keeps override polymorph parent children singular on the wrap surface', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeOverridePolymorphNodeMap() });
 
 		expect(wrapSrc).toContain(
-			'$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["string_double","string_single"]), "children", false, (data as any).$type),'
+			'$other: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$other, ["string_double","string_single"]), "children", false, (data as any).$type),'
 		);
 		expect(wrapSrc).toContain('children() { return drillIn<(T.StringDouble | T.StringSingle) | undefined>(');
 	});

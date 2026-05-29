@@ -1201,14 +1201,14 @@ function emitChildrenSlotDeclaration(
 		const cardinality = deriveSlotCardinality(children[0]!);
 		if (cardinality.multiple) {
 			if (cardinality.nonEmpty) {
-				lines.push(`  readonly $children: NonEmptyArray<${union}>;`);
+				lines.push(`  readonly $other: NonEmptyArray<${union}>;`);
 			} else {
-				lines.push(`  readonly $children: readonly (${union})[];`);
+				lines.push(`  readonly $other: readonly (${union})[];`);
 			}
 		} else if (cardinality.required) {
-			lines.push(`  readonly $children: ${union};`);
+			lines.push(`  readonly $other: ${union};`);
 		} else {
-			lines.push(`  readonly $children?: ${union};`);
+			lines.push(`  readonly $other?: ${union};`);
 		}
 		return;
 	}
@@ -1216,12 +1216,12 @@ function emitChildrenSlotDeclaration(
 	const anyNonEmpty = children.some((c) => isNonEmpty(c));
 	if (anyMultiple) {
 		if (anyNonEmpty) {
-			lines.push(`  readonly $children: NonEmptyArray<${union}>;`);
+			lines.push(`  readonly $other: NonEmptyArray<${union}>;`);
 		} else {
-			lines.push(`  readonly $children: readonly (${union})[];`);
+			lines.push(`  readonly $other: readonly (${union})[];`);
 		}
 	} else {
-		lines.push(`  readonly $children: readonly [${union}];`);
+		lines.push(`  readonly $other: readonly [${union}];`);
 	}
 }
 
@@ -1293,7 +1293,7 @@ function emitFormInterface(
 // ---------------------------------------------------------------------------
 
 /**
- * Emit the `readonly $children` slot for a polymorph form interface, if the
+ * Emit the `readonly $other` slot for a polymorph form interface, if the
  * form contains children.
  *
  * @remarks
@@ -1324,10 +1324,10 @@ function emitFormChildrenSlot(
 	//   2. Hidden single-literal keywords (e.g. `_pointer_type_const` —
 	//      inlined at every reference via `resolveHiddenKeywordLiteral`).
 	//   3. Empty branches / groups — interface exists but has no
-	//      `$fields` and no `$children` (e.g. `_range_expression_postfix`
+	//      `$fields` and no `$other` (e.g. `_range_expression_postfix`
 	//      — a pure marker for the `postfix` variant).
 	//
-	// Leaving any of these in `$children` emits a dangling reference
+	// Leaving any of these in `$other` emits a dangling reference
 	// (the interface is skipped by `emitLeafTerminalAliases` / still
 	// produced as empty) and forces the factory to accept a caller
 	// value that carries no information beyond its kind.

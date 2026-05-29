@@ -124,7 +124,7 @@ describe('render', () => {
 				body: {
 					$type: 'block',
 					$fields: {},
-					$children: [{ $type: 'integer_literal', $text: '42' }]
+					$other: [{ $type: 'integer_literal', $text: '42' }]
 				}
 			}
 		};
@@ -173,7 +173,7 @@ describe('render', () => {
 		const node: AnyNodeData = {
 			$type: 'block',
 			$fields: {},
-			$children: [
+			$other: [
 				{ $type: 'identifier', $text: 'x' },
 				{ $type: 'identifier', $text: 'y' }
 			]
@@ -185,7 +185,7 @@ describe('render', () => {
 		const node: AnyNodeData = {
 			$type: 'block',
 			$fields: {},
-			$children: { $type: 'identifier', $text: 'x' }
+			$other: { $type: 'identifier', $text: 'x' }
 		};
 		expect(render(node)).toBe('{ x }');
 	});

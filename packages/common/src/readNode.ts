@@ -259,7 +259,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 		// Leaf nodes (no named slots / $children) always carry $text so the
 		// render fast-path and all leaf-consuming callers work correctly.
 		$text: !hasStructure || DEBUG_TEXT ? node.text() : undefined,
-		$children: children.length > 0 ? children : undefined,
+		$other: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
 		$nodeHandle: parentHandle,
 		$named: node.isNamed()

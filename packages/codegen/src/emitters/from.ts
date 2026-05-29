@@ -834,7 +834,7 @@ function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] 
  * child containers take `...children: T[]`. The from function has to match
  * the factory's signature at the call sites it forwards to.
  *
- * `data.$children` is undefined for empty collections that readNode represents
+ * `data.$other` is undefined for empty collections that readNode represents
  * without a children slot, and singular-child containers may carry one scalar
  * child rather than an array. Normalize to an array before spreading so the
  * rebuilt factory call matches both shapes.
@@ -980,14 +980,14 @@ function emitContainerFrom(
 	const tName = `T.${node.typeName}`;
 	// Post-unification: the unnamed slot lives in `node.fields[0]` with a
 	// kind-derived `storageName`. The interface declares `_<storageName>` per
-	// slot (no `$children`), so the element type is the slot's element type and
+	// slot (no `$other`), so the element type is the slot's element type and
 	// the data read is `data._<storageName>`.
 	const slot = node.fields?.[0];
 	const elementType = slot
 		? containerSlotElementType(slot, nodeMap)
-		: `NonNullable<T.${node.typeName}['$children']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$children']>`;
+		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
 	const childrenMultiple = slot ? isMultiple(slot) : node.children.some((c) => isMultiple(c));
-	const storageKey = slot ? `_${slot.storageName}` : '$children';
+	const storageKey = slot ? `_${slot.storageName}` : '$other';
 	if (childrenMultiple) {
 		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
 	}
@@ -1892,7 +1892,7 @@ interface WrapChildrenEntry {
 }
 
 /**
- * Collects all branch kinds that accept `$children` — used by the
+ * Collects all branch kinds that accept `$other` (catch-all children) — used by the
  * `_wrapWithChildren` runtime dispatch table in generated from.ts.
  *
  * @remarks

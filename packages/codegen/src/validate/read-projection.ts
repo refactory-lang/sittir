@@ -275,7 +275,7 @@ function checkNodeData(
 		}
 	}
 
-	const dataChildren = data.$children === undefined ? [] : Array.isArray(data.$children) ? data.$children : [data.$children];
+	const dataChildren = data.$other === undefined ? [] : Array.isArray(data.$other) ? data.$other : [data.$other];
 	const dataChildrenCount = dataChildren.filter((c: any) => c?.$named !== false).length;
 
 	const expectedNamedUnfielded = countUnfieldedNamedChildren(node);

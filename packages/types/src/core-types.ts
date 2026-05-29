@@ -72,15 +72,15 @@ export interface AnyNodeData {
 	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	$variant?: string;
-	$children?: NodeChildren;
+	$other?: NodeChildren;
 	/**
 	 * Source text for this node.
 	 *
-	 * **Leaf nodes** (no `_<name>` storage and no `$children`): always
+	 * **Leaf nodes** (no `_<name>` storage and no `$other`): always
 	 * populated — the render fast-path short-circuits to `$text` without
 	 * walking children.
 	 *
-	 * **Branch nodes** (`_<name>` storage and/or `$children` present): omitted by
+	 * **Branch nodes** (`_<name>` storage and/or `$other` present): omitted by
 	 * default. Branches reconstruct their text via the render template,
 	 * so carrying `$text` is redundant and confusing. Set the environment
 	 * variable `SITTIR_DEBUG_TEXT=1` before loading `@sittir/core` to

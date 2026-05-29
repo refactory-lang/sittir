@@ -128,7 +128,7 @@ describe('wrapped tree materialization', () => {
 			$nodeHandle: 1,
 			$childIndex: 0,
 			_value: leaf(10, 'raw-field'),
-			$children: leaf(20, 'raw-child'),
+			$other: leaf(20, 'raw-child'),
 			value() {
 				return wrappedFieldChild;
 			},
@@ -160,7 +160,7 @@ describe('wrapped tree materialization', () => {
 			$nodeHandle: 1,
 			$childIndex: 0,
 			_value: rawFieldChild,
-			$children: [rawChildrenChild],
+			$other: [rawChildrenChild],
 			value() {
 				throw new Error('boom');
 			},
@@ -197,7 +197,7 @@ describe('wrapped tree materialization', () => {
 			$nodeHandle: 1,
 			$childIndex: 0,
 			_value: leaf(10, 'raw-field'),
-			$children: leaf(20, 'raw-child'),
+			$other: leaf(20, 'raw-child'),
 			value() {
 				return wrappedFieldChild;
 			},
@@ -218,7 +218,7 @@ describe('wrapped tree materialization', () => {
 
 		expect(materialized.$type).toBe(1);
 		expect(materialized._value).toMatchObject({ $type: 11, $text: 'field' });
-		expect(materialized.$children).toEqual({ $type: 21, $source: 0, $named: true, $text: 'child', $nodeHandle: 21, $childIndex: 0 });
+		expect(materialized.$other).toEqual({ $type: 21, $source: 0, $named: true, $text: 'child', $nodeHandle: 21, $childIndex: 0 });
 		expect(materialized).not.toHaveProperty('value');
 		expect(materialized).not.toHaveProperty('children');
 		expect(materialized).not.toHaveProperty('$render');
@@ -253,11 +253,11 @@ describe('wrapped tree materialization', () => {
 				},
 				_parameters: {
 					$type: TSKindId.Parameters,
-					$children: [],
+					$other: [],
 				},
 				_body: {
 					$type: TSKindId.Block,
-					$children: [],
+					$other: [],
 				},
 			},
 			tree,

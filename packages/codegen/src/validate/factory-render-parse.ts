@@ -155,18 +155,18 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 		const value = rec[rawKey];
 		(result as unknown as Record<string, unknown>)[rawKey] = stripMemberValue(value);
 	}
-	if (data.$children) {
-		const childEntries = Array.isArray(data.$children) ? data.$children : [data.$children];
+	if (data.$other) {
+		const childEntries = Array.isArray(data.$other) ? data.$other : [data.$other];
 		// Factory nodes only have named children — filter anonymous
 		const namedChildren = childEntries.filter(
 			(c): c is NodeMemberValue => typeof c !== 'object' || c === null || (c as AnyNodeData).$named !== false
 		);
 		if (namedChildren.length > 0) {
-			result.$children = (
-				Array.isArray(data.$children)
+			result.$other = (
+				Array.isArray(data.$other)
 					? stripMemberValue(namedChildren)
 					: stripMemberValue(namedChildren[0])
-			) as AnyNodeData['$children'];
+			) as AnyNodeData['$other'];
 		}
 	}
 
@@ -492,11 +492,11 @@ function alignReadDataToRenderedKind(
 	kindNameFromId?: (id: number) => string | undefined
 ): AnyNodeData {
 	if (matchesRenderedKind(rawReadData, renderedKind, kindNameFromId)) return rawReadData;
-	const childEntries = rawReadData.$children === undefined
+	const childEntries = rawReadData.$other === undefined
 		? []
-		: Array.isArray(rawReadData.$children)
-			? rawReadData.$children
-			: [rawReadData.$children];
+		: Array.isArray(rawReadData.$other)
+			? rawReadData.$other
+			: [rawReadData.$other];
 	const matchingChildren =
 		childEntries.filter(
 			(child): child is AnyNodeData =>
@@ -569,7 +569,7 @@ function buildFactoryNodeData(
 	// Leaf check: no named fields (_<name> keys or legacy $fields) and no $children.
 	const hasLegacyFields = !!(readData as unknown as Record<string, unknown>)['$fields'];
 	const hasDehoistedFields = Object.keys(readData as unknown as Record<string, unknown>).some((k) => k.startsWith('_'));
-	if (!hasLegacyFields && !hasDehoistedFields && !readData.$children) {
+	if (!hasLegacyFields && !hasDehoistedFields && !readData.$other) {
 		// Leaf — render its text directly by preserving the original.
 		return readData;
 	}

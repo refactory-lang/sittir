@@ -89,12 +89,12 @@ function _deepReadNode(
 		// deepReadKinds is Set<number> — only numeric entries can be drilled.
 		typeof entry.$type === 'number' &&
 		deepReadKinds.has(entry.$type);
-	if (data.$children) {
-		const children = Array.isArray(data.$children) ? data.$children : [data.$children];
+	if (data.$other) {
+		const children = Array.isArray(data.$other) ? data.$other : [data.$other];
 		const drilled = children.map((c) =>
 			shouldDrill(c) ? _deepReadNode(tree, c.$nodeHandle, c.$childIndex, deepReadKinds) : c
 		);
-		(data as { $children?: AnyNodeData['$children'] }).$children = Array.isArray(data.$children) ? drilled : drilled[0];
+		(data as { $other?: AnyNodeData['$other'] }).$other = Array.isArray(data.$other) ? drilled : drilled[0];
 	}
 	// Iterate `_<name>` top-level keys (de-hoisted storage).
 	const rec = data as unknown as Record<string, unknown>;

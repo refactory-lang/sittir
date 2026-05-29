@@ -89,7 +89,7 @@ function assertNativeChildValue(value: unknown, path: string): asserts value is 
  *  - `$named` is a boolean
  *  - `$format` is absent (must be passed separately via TreeHandle.format)
  *  - no function-valued properties (methods like `render()` cannot cross napi)
- *  - nested `_<name>` storage keys and `$children` satisfy the same constraints
+ *  - nested `_<name>` storage keys and `$other` satisfy the same constraints
  *    recursively (ADR-0018 Phase 3a: `$fields` wrapper no longer emitted by readNode)
  *  - finite numeric `_<name>` storage is allowed for kind-enum projection
  */
@@ -121,7 +121,7 @@ function assertNativeNodeDataInternal(value: unknown, path: string): asserts val
 		if (value[key] === undefined) continue;
 		assertNativeFieldValue(value[key], `${path}.${key}`);
 	}
-	if (value.$children !== undefined) assertNativeChildren(value.$children, `${path}.$children`);
+	if (value.$other !== undefined) assertNativeChildren(value.$other, `${path}.$other`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
 	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
 	if (value.$nodeHandle !== undefined) assertFiniteNumber(value.$nodeHandle, `${path}.$nodeHandle`);
@@ -158,7 +158,7 @@ export function isRenderableNodeData(node: AnyNodeData): boolean {
  *  - `$named` is a boolean
  *  - `$format` is absent
  *  - no function-valued properties
- *  - `_<name>` storage keys and `$children` satisfy the same constraints recursively
+ *  - `_<name>` storage keys and `$other` satisfy the same constraints recursively
  *
  * @see {@link isRenderableNodeData} for the non-throwing predicate.
  */
