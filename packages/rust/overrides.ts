@@ -20,10 +20,11 @@
 // (bounds-checked first segment) and values accept the `field()`/`variant()`
 // placeholder return types. Only the final `grammar(...)` line needs a
 // localized suppression (sittir `GrammarResult` vs tree-sitter `GrammarSchema`).
-import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0_tree-sitter@0.22.4/node_modules/tree-sitter-rust/grammar.js';
-import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/index.ts';
-import type { WireConfig } from '../codegen/src/dsl/index.ts';
+import base from './base.ts';
+import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import type { WireConfig } from '../codegen/src/dsl/dsl-authoring.ts';
 import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-shape.rust.ts';
+import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 
 // `string` is the ONE DSL primitive with no ambient/exported declaration: it
 // is a runtime global injected by tree-sitter's `grammar()`, used solely
@@ -32,7 +33,7 @@ import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-sha
 // tree-sitter ambient now (see the `types` note above) — no stubs needed.
 declare const string: (value: string) => unknown;
 
-const config: WireConfig<RustGrammarShape> = {
+const config: WireConfig<EnrichedGrammar<RustGrammarShape>> = {
 	name: 'rust',
 	// `previous` is the base grammar's conflicts list — concat so we
 	// don't drop the base entries (`$._type`, `$._pattern`, etc.).

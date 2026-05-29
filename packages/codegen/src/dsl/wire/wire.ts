@@ -44,7 +44,7 @@ import { isVariantPlaceholder } from '../primitives/variant.ts';
 import { applyAutoGroups } from './auto-groups.ts';
 import type { Rule } from '../../compiler/rule.ts';
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
-import type { GrammarJson, GrammarNode } from '../../grammar-shapes/grammar-json.ts';
+import type { GrammarJson, GrammarNode, Sym, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 
 
@@ -418,9 +418,63 @@ export type PatchMap = Record<string, unknown>;
  * to keep the hidden-name escape hatch for synthesized rules
  * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
  */
-export type WireConfig< B extends GrammarJson, NewRules extends string = string> = Grammar<NewRules, keyof B['rules'] & string> & {
+/**
+ * Clean `$` proxy: rule-name → symbol reference, mapped over the schema's
+ * CONCRETE rule names (including hidden `_`-prefixed rules). Crucially it has NO
+ * index signature, so `$.x` does NOT leak `| undefined` under
+ * `noUncheckedIndexedAccess` — unlike tree-sitter's `GrammarSymbols`, whose
+ * index-signature leak makes `$.x: SymbolRule | undefined` and breaks
+ * composition (`undefined ⊄ AuthoringRule`) in overrides.ts authoring.
+ */
+export type ShapedSymbols<B extends GrammarJson> = {
+	readonly [R in keyof B['rules'] & string]: Sym<R>;
+} & {
+	// Permissive fallback for alias-target / synthesized names not in the base
+	// grammar.json (e.g. `$.wildcard_pattern`). Known rules resolve via the
+	// mapped member above (precise `Sym<R>`, no `undefined`); only unknown names
+	// hit this index.
+	readonly [name: string]: Sym<string>;
+};
+
+export type WireConfig< B extends GrammarJson, NewRules extends string = string> = Omit<Grammar<NewRules, keyof B['rules'] & string>, 'rules' | 'conflicts'> & {
+	/**
+	 * Conflict sets — same clean-`$` typing as `rules`/`groups` (`ShapedSymbols<B>`,
+	 * no `undefined` leak). `previous` is the base grammar's conflict list.
+	 */
+	readonly conflicts?: (
+		$: ShapedSymbols<B>,
+		previous: readonly (readonly AuthoringRule[])[]
+	) => readonly (readonly AuthoringRule[])[];
+	/**
+	 * Rule bodies — clean-`$` builders. `previous`/`original` is typed PER RULE as
+	 * `B['rules'][K]` directly — the input rule's exact shape, preserved not
+	 * flattened. (`B` here is the ALREADY-ENRICHED schema from `enrich()`'s typed
+	 * return, so `B['rules'][K]` is the post-enrich shape; no re-application of
+	 * `EnrichRule`.) Keyed over the schema's CONCRETE rule names (mapping over
+	 * `NewRules` would absorb to `string` and lose per-key precision). Loose
+	 * `=> unknown` return accepts sittir DSL outputs.
+	 */
+	readonly rules?: {
+		readonly [K in keyof B['rules'] & string]?: (
+			$: ShapedSymbols<B>,
+			previous: B['rules'][K]
+		) => unknown;
+	} & {
+		// New rules the override ADDS (not in the base grammar.json, e.g. a
+		// synthesized `_wildcard_pattern`): `$` stays typed; no base `previous`.
+		// `any`-typed `previous` keeps the precise base-rule callbacks above
+		// assignable here (bivariant), so known keys retain their precise shape.
+		readonly [name: string]: ($: ShapedSymbols<B>, previous?: any) => unknown;
+	};
 	readonly polymorphs?: PolymorphsConfig<B>;
-	readonly groups?: GroupsConfig;
+	/**
+	 * Group-lift map — same `$` typing as `rules`. Path-mode entries are
+	 * `path → discriminator` records; body-pattern-mode entries are clean-`$`
+	 * builders (`($: ShapedSymbols<B>) => unknown`), not the untyped `RuleFn`.
+	 */
+	readonly groups?: Partial<
+		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarNode) => unknown)>
+	>;
 	readonly transforms?: TransformsConfig<B>;
 	/** Side-channel from `enrich()` — preserved unchanged. */
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
@@ -524,7 +578,7 @@ export function wire<C extends WireConfig<any>> (
 		polymorphsConfig: config.polymorphs,
 		renderAs: config.renderAs,
 		currentRuleKind: null,
-		authoredRuleNames: new Set(Object.keys(config.rules))
+		authoredRuleNames: new Set(Object.keys(config.rules ?? {}))
 	};
 
 	const polymorphs = config.polymorphs ?? {};

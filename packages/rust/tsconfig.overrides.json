@@ -14,5 +14,5 @@
 		"//types": "tree-sitter-cli/dsl.d.ts pulls the ambient DSL (Rule, RuleOrLiteral, GrammarSchema, GrammarSymbols, RuleBuilder, seq/choice/prec/...) into overrides.ts — same mechanism codegen's tsconfig uses. Replaces the failing `/// <reference>` directive (TS2688 under this rootDir) and the hand-rolled `declare const seq/...` stubs.",
 		"types": ["node", "tree-sitter-cli/dsl.d.ts"]
 	},
-	"include": ["overrides.ts", "src/grammar.ts", "../codegen/src/**/*.ts"]
+	"include": ["overrides.ts", "base.ts", "src/grammar.ts", "../codegen/src/**/*.ts"]
 }

@@ -141,6 +141,17 @@ export type GrammarNode =
 	| PrecRight<GrammarNode>
 	| PrecDynamic<GrammarNode>;
 
+/**
+ * Authoring-surface input: what the sittir-owned DSL primitives (`seq`/`choice`/
+ * `field`/…) accept and compose in `overrides.ts`. A superset of the recursive
+ * grammar-shape nodes plus the bare literals tree-sitter allows. Deliberately
+ * NOT tree-sitter's `RuleOrLiteral` (whose `Rule` members are MUTABLE, so our
+ * readonly-tuple node types aren't assignable to it — that mismatch is what
+ * breaks `seq(choice(...))` composition). Our nodes ARE `⊑ AuthoringRule`, so
+ * they compose into each other.
+ */
+export type AuthoringRule = GrammarNode | string | RegExp;
+
 // ---------------------------------------------------------------------------
 // Back-compat aliases — Phase-1 enrich-type.ts / path-type.ts reference the
 // `…Node` names. `readonly [...] ⊑ readonly GrammarNode[]` holds, so
