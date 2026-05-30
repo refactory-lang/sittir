@@ -79,9 +79,10 @@ export class DiagnosticSink {
 		this._items.push(d);
 	}
 
-	/** Emit a blocking (fail) diagnostic. Caller supplies canProceed. */
-	fail(d: Omit<Diagnostic, 'severity'>): void {
-		this.emit({ ...d, severity: 'fail' });
+	/** Emit a blocking (fail) diagnostic. `canProceed` is forced to `false` —
+	 *  a `'fail'` is blocking by definition, so the caller cannot supply it. */
+	fail(d: Omit<Diagnostic, 'severity' | 'canProceed'>): void {
+		this.emit({ ...d, severity: 'fail', canProceed: false });
 	}
 
 	warn(d: Omit<Diagnostic, 'severity'>): void {
@@ -92,8 +93,9 @@ export class DiagnosticSink {
 		this.emit({ ...d, severity: 'info' });
 	}
 
+	/** Returns a shallow copy — callers cannot mutate the sink's backing array. */
 	all(): readonly Diagnostic[] {
-		return this._items;
+		return [...this._items];
 	}
 
 	/** Returns true iff at least one item has severity === 'fail'. */

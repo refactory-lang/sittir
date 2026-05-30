@@ -39,13 +39,21 @@ describe('DiagnosticSink', () => {
 		expect(sink.all()).toEqual([d1, d2]);
 	});
 
-	it('fail() sugar sets severity to fail, canProceed false', () => {
+	it('fail() sugar sets severity to fail and FORCES canProceed false', () => {
 		const sink = new DiagnosticSink();
-		sink.fail({ code: 'F1', message: 'bad', canProceed: false });
+		sink.fail({ code: 'F1', message: 'bad' });
 		const items = sink.all();
 		expect(items).toHaveLength(1);
 		expect(items[0]!.severity).toBe('fail');
 		expect(items[0]!.code).toBe('F1');
+		expect(items[0]!.canProceed).toBe(false);
+	});
+
+	it('all() returns a copy — external mutation does not corrupt the sink', () => {
+		const sink = new DiagnosticSink();
+		sink.info({ code: 'I1', message: 'note', canProceed: true });
+		(sink.all() as Diagnostic[]).push({ code: 'X', message: 'y', severity: 'fail', canProceed: false });
+		expect(sink.all()).toHaveLength(1);
 	});
 
 	it('warn() sugar sets severity to warning', () => {
@@ -66,7 +74,7 @@ describe('DiagnosticSink', () => {
 		// error + canProceed:false does NOT block — gate keys on 'fail', not 'error'/'canProceed'
 		expect(sink.hasBlocking()).toBe(false);
 
-		sink.fail({ code: 'F', message: 'fatal', canProceed: false });
+		sink.fail({ code: 'F', message: 'fatal' });
 		expect(sink.hasBlocking()).toBe(true);
 	});
 

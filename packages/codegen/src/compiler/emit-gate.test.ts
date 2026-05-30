@@ -28,16 +28,16 @@ describe('assertEmittable', () => {
 
 	it('throws EmitHaltedError when sink contains a fail diagnostic', () => {
 		const sink = new DiagnosticSink();
-		sink.fail({ code: 'HALT', message: 'fatal problem', canProceed: false });
+		sink.fail({ code: 'HALT', message: 'fatal problem' });
 		expect(() => assertEmittable(stubNodeMap, sink)).toThrow(EmitHaltedError);
 	});
 
 	it('blocking array contains only fail items (non-fail items filtered out)', () => {
 		const sink = new DiagnosticSink();
 		sink.warn({ code: 'W1', message: 'warning', canProceed: true });
-		sink.fail({ code: 'F1', message: 'fatal1', canProceed: false });
+		sink.fail({ code: 'F1', message: 'fatal1' });
 		sink.info({ code: 'I1', message: 'info', canProceed: true });
-		sink.fail({ code: 'F2', message: 'fatal2', canProceed: false });
+		sink.fail({ code: 'F2', message: 'fatal2' });
 
 		let caughtError: EmitHaltedError | undefined;
 		try {
