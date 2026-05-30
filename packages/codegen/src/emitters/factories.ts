@@ -868,10 +868,10 @@ function emitFieldCarryingFactory(
 	for (const f of fields) {
 		const stamp = autoStampExpression(f, nodeMap);
 		if (stamp !== undefined) {
-			lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
+			lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = ${slotStorageExpr(f, configAccess, nodeMap, kindEntries)};`);
+		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, configAccess, nodeMap, kindEntries)};`);
 	}
 
 	// Step 2: emit the literal. Storage uses property shorthand so the local
@@ -884,13 +884,13 @@ function emitFieldCarryingFactory(
 	lines.push('    $named: true as const,');
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
 	for (const f of fields) {
-		lines.push(`    _${f.name},`);
+		lines.push(`    ${f.storageKey},`);
 	}
 
 	// Pure getters — method shorthand, body returns the local const.
 	for (const f of fields) {
 		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return _${f.name}; },`);
+		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
 	}
 
 	// $with: setters call the factory directly with a patched config —
@@ -963,10 +963,10 @@ function emitSingleFieldFactory(
 	for (const f of allFields) {
 		const stamp = autoStampExpression(f, nodeMap);
 		if (stamp !== undefined) {
-			lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
+			lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)};`);
+		lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)};`);
 	}
 
 	// Emit the literal object with withMethods wrapper.
@@ -976,13 +976,13 @@ function emitSingleFieldFactory(
 	lines.push('    $named: true as const,');
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
 	for (const f of allFields) {
-		lines.push(`    _${f.name},`);
+		lines.push(`    ${f.storageKey},`);
 	}
 
 	// Pure getters.
 	for (const f of allFields) {
 		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return _${f.name}; },`);
+		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
 	}
 
 	// $with: setter calls the factory directly with the new value.
@@ -1091,27 +1091,27 @@ function emitRefineFormFactory(
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
 			lines.push(
-				`  const _${f.name} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries)};`
+				`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries)};`
 			);
 			continue;
 		}
 		const stamp = autoStampExpression(f, nodeMap);
 		if (stamp !== undefined) {
-			lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
+			lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
+		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
 	}
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	for (const f of fields) {
-		lines.push(`    _${f.name},`);
+		lines.push(`    ${f.storageKey},`);
 	}
 	for (const f of fields) {
 		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return _${f.name}; },`);
+		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
 	}
 	lines.push('    $with: {');
 	for (const f of fields) {
@@ -1282,7 +1282,7 @@ function emitContainerFactory(
 	// Storage key + property name for the single unnamed slot. Falls back to the
 	// legacy `$children` / `children` shape only if no slot exists (defensive —
 	// shouldn't happen for branches that classifyChildFactorySurface accepts).
-	const storageKey = slot ? `_${slot.storageName}` : '$other';
+	const storageKey = slot ? slot.storageKey : '$other';
 	const propName = slot ? slot.propertyName : 'children';
 	if (anyMultiple) {
 		lines.push(`export function ${fn}(...children: ${elementType}[]) {`);
@@ -1571,21 +1571,21 @@ function emitHoistedPolymorphFormFactory(
 		for (const f of hoist.innerFields) {
 			const stamp = autoStampExpression(f, nodeMap);
 			if (stamp !== undefined) {
-				lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
+				lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 				continue;
 			}
-			lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
+			lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
 		}
 		lines.push('  const inner = withMethods({');
 		lines.push(`    $type: ${factoryTypeDiscriminant(innerKind, nodeMap, kindEntries)},`);
 		lines.push(`    $source: 2 as const,`);
 		lines.push('    $named: true as const,');
 		for (const f of hoist.innerFields) {
-			lines.push(`    _${f.name},`);
+			lines.push(`    ${f.storageKey},`);
 		}
 		for (const f of hoist.innerFields) {
 			const propName = f.propertyName;
-			lines.push(`    ${propName}() { return _${f.name}; },`);
+			lines.push(`    ${propName}() { return ${f.storageKey}; },`);
 		}
 		lines.push('  }, methodsEngine);');
 	}
@@ -1598,10 +1598,10 @@ function emitHoistedPolymorphFormFactory(
 	for (const f of formFields) {
 		const stamp = autoStampExpression(f, nodeMap);
 		if (stamp !== undefined) {
-			lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
+			lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
+		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
 	}
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(parentKind, nodeMap, kindEntries)},`);
@@ -1609,13 +1609,13 @@ function emitHoistedPolymorphFormFactory(
 	lines.push('    $named: true as const,');
 	lines.push(`    $variant: '${variantName}' as const,`);
 	for (const f of formFields) {
-		lines.push(`    _${f.name},`);
+		lines.push(`    ${f.storageKey},`);
 	}
 	lines.push('    $other: children,');
 	// Form-field getters: read the local const directly.
 	for (const f of formFields) {
 		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return _${f.name}; },`);
+		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
 	}
 	// Inner-field getters: close over `inner` and read via the inner node's
 	// own getter (which delegates to inner's local const). `inner` is the

@@ -987,7 +987,7 @@ function emitContainerFrom(
 		? containerSlotElementType(slot, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
 	const childrenMultiple = slot ? isMultiple(slot) : node.children.some((c) => isMultiple(c));
-	const storageKey = slot ? `_${slot.storageName}` : '$other';
+	const storageKey = slot ? slot.storageKey : '$other';
 	if (childrenMultiple) {
 		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
 	}

@@ -1080,9 +1080,9 @@ function emitInterface(
 			const opt = isRequired(f) ? '' : '?';
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				emitFieldArrayDeclaration(lines, `_${f.name}`, opt, storageType, isNonEmpty(f));
+				emitFieldArrayDeclaration(lines, f.storageKey, opt, storageType, isNonEmpty(f));
 			} else {
-				lines.push(`  readonly _${f.name}${opt}: ${storageType};`);
+				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
 		}
 		emitFieldInputHints(lines, fields, node.kind, nodeMap, kindEntries);
@@ -1261,9 +1261,9 @@ function emitFormInterface(
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				lines.push(`  readonly _${f.name}${opt}: readonly (${storageType})[];`);
+				lines.push(`  readonly ${f.storageKey}${opt}: readonly (${storageType})[];`);
 			} else {
-				lines.push(`  readonly _${f.name}${opt}: ${storageType};`);
+				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
 		}
 		emitFieldInputHints(lines, form.fields, node.kind, nodeMap, kindEntries);
