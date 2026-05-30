@@ -89,12 +89,31 @@ function findNestedSeparator(rule: Rule): Rule['separator'] {
  * Tests install a spy via {@link setUnnamedChoiceWarner}.
  */
 const collectedUnnamedChoiceKinds = new Set<string>();
+// Extra listeners registered via addUnnamedChoiceListener (e.g. the DiagnosticSink
+// forwarder in generate.ts). These run IN ADDITION to the primary warner, so
+// drainUnnamedChoiceSlots() still returns the accumulated kinds correctly.
+const _extraUnnamedChoiceListeners: Array<(kind: string | undefined) => void> = [];
 let unnamedChoiceWarner: (kind: string | undefined) => void = (kind) => {
 	collectedUnnamedChoiceKinds.add(kind ?? '(unknown)');
+	for (const l of _extraUnnamedChoiceListeners) l(kind);
 };
 
 export function setUnnamedChoiceWarner(fn: (kind: string | undefined) => void): void {
 	unnamedChoiceWarner = fn;
+}
+
+/**
+ * Register an ADDITIONAL listener that fires alongside the default accumulator
+ * (not instead of it). Used by `generate.ts` to forward unnamed-choice events
+ * to the `DiagnosticSink` without breaking `drainUnnamedChoiceSlots`.
+ * Returns a cleanup function to remove the listener.
+ */
+export function addUnnamedChoiceListener(fn: (kind: string | undefined) => void): () => void {
+	_extraUnnamedChoiceListeners.push(fn);
+	return () => {
+		const idx = _extraUnnamedChoiceListeners.indexOf(fn);
+		if (idx >= 0) _extraUnnamedChoiceListeners.splice(idx, 1);
+	};
 }
 
 /**

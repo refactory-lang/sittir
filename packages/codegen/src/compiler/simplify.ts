@@ -38,6 +38,7 @@ import { deleteWrapper } from './wrapper-deletion.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from './rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
+import type { SimplifyCtx } from './transforms.ts';
 
 // ---------------------------------------------------------------------------
 // Slot-grouping diagnostic accumulator (propose-promotion only).
@@ -115,19 +116,20 @@ function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean
 }
 
 
-export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean = false): Rule {
+export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = false): Rule {
+	const wordMatcher = ctx?.compiledWord;
 	switch (rule.type) {
 		case 'seq':
-			return collapseSeq(rule, wordMatcher, inField);
+			return collapseSeq(rule, ctx, inField);
 		case 'choice': {
 			// Variant wrappers preserved for polymorph surface detection.
-			const members = rule.members.map((m) => simplifyRule(m, wordMatcher, inField));
+			const members = rule.members.map((m) => simplifyRule(m, ctx, inField));
 			// Fold empty-match members (pattern(""), empty seq) into optional.
 			const empty = members.findIndex(isEmptyMatchMember);
 			if (empty >= 0 && members.length > 1) {
 				const nonEmpty = members.filter((_, i) => i !== empty);
 				const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, { type: 'choice', members: nonEmpty });
-				return simplifyRule(withAttrsFrom(rule, { type: 'optional', content: inner }), wordMatcher, inField);
+				return simplifyRule(withAttrsFrom(rule, { type: 'optional', content: inner }), ctx, inField);
 			}
 			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
 			// Merge structurally-equivalent choice branches so same-
@@ -149,7 +151,7 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 			return withAttrsFrom(rule, hoistSharedFieldAcrossChoiceBranches(merged));
 		}
 		case 'optional': {
-			const inner = simplifyRule(rule.content, wordMatcher, inField);
+			const inner = simplifyRule(rule.content, ctx, inField);
 			// Fold to empty-seq when body vanished. Exception: inside
 			// a field, anonymous strings are structural content.
 			if (inner.type === 'seq' && inner.members.length === 0) {
@@ -166,14 +168,14 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 		case 'repeat': {
 			const next = {
 				...rule,
-				content: simplifyRule(rule.content, wordMatcher, inField)
+				content: simplifyRule(rule.content, ctx, inField)
 			};
 			return hoistFieldOutOfSingleContentWrapper(next);
 		}
 		case 'repeat1': {
 			const next = {
 				...rule,
-				content: simplifyRule(rule.content, wordMatcher, inField)
+				content: simplifyRule(rule.content, ctx, inField)
 			};
 			return hoistFieldOutOfSingleContentWrapper(next);
 		}
@@ -181,24 +183,24 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 			// Recurse with inField=true so optional(anon-string) survives.
 			const recursed: Rule = {
 				...rule,
-				content: simplifyRule(rule.content, wordMatcher, true)
+				content: simplifyRule(rule.content, ctx, true)
 			};
 			return hoistInnerFieldOutOfFieldWrapper(recursed);
 		}
 		case 'group':
 			return {
 				...rule,
-				content: simplifyRule(rule.content, wordMatcher, inField)
+				content: simplifyRule(rule.content, ctx, inField)
 			};
 		case 'variant':
 			return {
 				...rule,
-				content: simplifyRule(rule.content, wordMatcher, inField)
+				content: simplifyRule(rule.content, ctx, inField)
 			};
 		case 'clause':
 			return {
 				...rule,
-				content: simplifyRule(rule.content, wordMatcher, inField)
+				content: simplifyRule(rule.content, ctx, inField)
 			};
 		default:
 			return rule;
@@ -221,11 +223,12 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 export function simplifyRules(
 	rules: Record<string, Rule>,
 	wordMatcher?: RegExp,
-	inlineKinds: ReadonlySet<string> = new Set()
+	inlineKinds: ReadonlySet<string> = new Set(),
+	ctx?: SimplifyCtx
 ): Record<string, Rule> {
 	const out: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		out[name] = normalizeToFixpoint(rule, wordMatcher, rules, inlineKinds);
+		out[name] = normalizeToFixpoint(rule, wordMatcher, rules, inlineKinds, ctx);
 	}
 	return out;
 }
@@ -245,10 +248,17 @@ export function computeSimplifiedRules(
 	renderRules: Record<string, RenderRule>,
 	word: string | null,
 	inlineKinds: ReadonlySet<string> = new Set(),
-	polymorphSkipExtra: ReadonlySet<string> = new Set()
+	polymorphSkipExtra: ReadonlySet<string> = new Set(),
+	ctx?: SimplifyCtx
 ): Record<string, SimplifiedRule> {
 	const wordMatcher = compileWordMatcher(word, renderRules as Record<string, Rule>);
-	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher, inlineKinds);
+	// Build a SimplifyCtx carrying the compiled word matcher if a ctx base was
+	// provided but compiledWord wasn't already set, so simplifyRule / collapseSeq
+	// pick up the grammar-specific keyword pattern.
+	const simplifyCtx: SimplifyCtx | undefined = ctx
+		? { ...ctx, compiledWord: ctx.compiledWord ?? wordMatcher }
+		: undefined;
+	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher, inlineKinds, simplifyCtx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
 		// simplifyRules can re-introduce wrapper nodes (optional / field /
@@ -288,7 +298,18 @@ export function computeSimplifiedRules(
 		// Dedup by (ownerKind, shape) across the multiple computeSimplifiedRules
 		// calls per run (and any repeated hits within one walk); log only the
 		// first occurrence.
-		recordSlotGroupingDiagnostic(rec);
+		const isNew = recordSlotGroupingDiagnostic(rec);
+		// Also emit into ctx.diagnostics so the DiagnosticSink (PR-G) carries them.
+		// Only new (first-seen) records are emitted to avoid double-counting the
+		// module-level dedup's effect on the sink.
+		if (isNew && ctx) {
+			ctx.diagnostics.info({
+				code: rec.code,
+				message: rec.message,
+				canProceed: true,
+				proposal: rec.proposal,
+			});
+		}
 	}
 
 	return canonicalized;
@@ -321,12 +342,13 @@ function normalizeToFixpoint(
 	rule: Rule,
 	wordMatcher: RegExp | undefined,
 	rules: Readonly<Record<string, Rule>>,
-	inlineKinds: ReadonlySet<string> = new Set()
+	inlineKinds: ReadonlySet<string> = new Set(),
+	ctx?: SimplifyCtx
 ): Rule {
 	const MAX_ITERS = 16;
 	let current = rule;
 	for (let i = 0; i < MAX_ITERS; i++) {
-		const next = simplifyRule(inlineRefs(current, rules, inlineKinds), wordMatcher);
+		const next = simplifyRule(inlineRefs(current, rules, inlineKinds), ctx);
 		if (rulesStructurallyEqual(current, next)) return next;
 		current = next;
 	}
@@ -1033,9 +1055,10 @@ function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
  * (e.g. `array`) → `array`, rather than the survivor silently keeping its
  * narrower own.
  */
-function collapseSeq(rule: SeqRule, wordMatcher?: RegExp, inField: boolean = false): Rule {
+function collapseSeq(rule: SeqRule, ctx?: SimplifyCtx, inField: boolean = false): Rule {
+	const wordMatcher = ctx?.compiledWord;
 	const members = rule.members
-		.map((m) => simplifyRule(m, wordMatcher, inField))
+		.map((m) => simplifyRule(m, ctx, inField))
 		.filter((m) => {
 			// Strip non-keyword strings + empty-seq sentinels.
 			if (m.type === 'string' && !isKeywordShape(m.value, wordMatcher)) return false;

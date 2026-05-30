@@ -55,15 +55,46 @@ import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 // link() — main entry point
 // ---------------------------------------------------------------------------
 
+/**
+ * Phase context for the Link phase (spec §7.7).
+ *
+ * Folds the former positional `include?` + `generatedIdTables?` args into a
+ * single ctx object so every pipeline method follows the `(target, ctx)`
+ * convention (CW5). Both fields remain optional for backward compatibility with
+ * call sites that have not yet been migrated.
+ */
+export interface LinkCtx {
+	readonly include?: IncludeFilter;
+	readonly generatedIdTables?: GeneratedIdTables;
+}
+
+/** True iff `v` is a `LinkCtx` (discriminated by the presence of `generatedIdTables`). */
+function isLinkCtx(v: IncludeFilter | LinkCtx): v is LinkCtx {
+	return 'generatedIdTables' in v || 'include' in v;
+}
+
 export function link(
 	raw: RawGrammar,
-	include?: IncludeFilter,
+	includeOrCtx?: IncludeFilter | LinkCtx,
 	generatedIdTables?: GeneratedIdTables
 ): LinkedGrammar {
+	// Accept either the old positional form link(raw, include?, tables?) or
+	// the new ctx form link(raw, ctx?). A LinkCtx carries `include` and/or
+	// `generatedIdTables`; an IncludeFilter carries `rules` / `fields`.
+	let include: IncludeFilter | undefined;
+	let resolvedIdTables: GeneratedIdTables | undefined = generatedIdTables;
+	if (includeOrCtx !== undefined) {
+		if (isLinkCtx(includeOrCtx)) {
+			include = includeOrCtx.include;
+			resolvedIdTables = includeOrCtx.generatedIdTables ?? generatedIdTables;
+		} else {
+			include = includeOrCtx;
+		}
+	}
 	const supertypes = new Set(raw.supertypes);
 	const externalRoles = buildExternalRolesMap(raw.externalRoles);
 	const references = [...raw.references];
-	const kindEntries = collectGeneratedKindEntries(generatedIdTables);
+	const kindEntries = collectGeneratedKindEntries(resolvedIdTables);
 
 	// Resolve include defaults: undefined means "include everything".
 	// Explicit empty arrays mean "include nothing of this category".

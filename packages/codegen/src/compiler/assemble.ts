@@ -64,6 +64,24 @@ import { simplifyRule, inlineRefs, extractRepeatShape, hoistInnerFieldsForTempla
 import { compileWordMatcher } from './common.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
+import type { DiagnosticSink } from './diagnostics.ts';
+
+/**
+ * Phase context for the Assemble phase (spec §7.7 / CW5).
+ *
+ * `nodeMap` is the cross-node store the post-passes need for
+ * `markUserFacing` / resolveColliding / resolveIrKeys / collectAnonymous — it
+ * carries the mutable Map so the post-passes can read peers. `kindEntries` feeds
+ * the same per-node constructors that previously received it positionally.
+ * `diagnostics` is the PR-G DiagnosticSink; slot-level diagnostics (unnamed-
+ * choice slots, unslotted-child failures) emit here rather than to module-global
+ * accumulators.
+ */
+export interface AssembleCtx {
+	readonly kindEntries?: readonly GeneratedKindEntry[];
+	readonly nodeMap: Map<string, AssembledNode>;
+	readonly diagnostics: DiagnosticSink;
+}
 
 export interface AssembledNodeMap extends NodeMap {
 	readonly parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
@@ -77,11 +95,12 @@ export interface AssembledNodeMap extends NodeMap {
 
 export function assemble(
 	optimized: OptimizedGrammar,
-	generatedIdTables?: GeneratedIdTables
+	generatedIdTables?: GeneratedIdTables,
+	assembleCtx?: AssembleCtx
 ): AssembledNodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	const wordMatcher = compileWordMatcher(optimized.word, optimized.rules);
-	const kindEntries = collectGeneratedKindEntries(generatedIdTables);
+	const kindEntries = assembleCtx?.kindEntries ?? collectGeneratedKindEntries(generatedIdTables);
 	resetParseKindCollisionDiagnostics();
 	resetDeriveShapeDiagnostics();
 	// Parents that went through Link's variant() push-down keep their
