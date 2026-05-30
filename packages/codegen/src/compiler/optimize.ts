@@ -19,6 +19,7 @@ import { computeSimplifiedRules, resetSlotGroupingDiagnostics } from './simplify
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
 import { buildPolymorphSkipSetFromRules } from './diagnose-slot-grouping.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
+import { deriveComplexAliasTargetHidden } from './evaluate.ts';
 
 /**
  * Run the full ordered pipeline of non-lossy normalization passes over the
@@ -107,7 +108,12 @@ export function optimize(
 	// Slot-grouping diagnostics accumulate across the several computeSimplifiedRules
 	// calls below; reset per run so one grammar's records never leak into the next.
 	resetSlotGroupingDiagnostics();
-	const rules = applyNormalizationPasses(linked.rules, linked.patternReplacementKinds);
+	// Derive the preserve-set once from linked.rules — structural on-demand
+	// replacement for the old patternReplacementKinds cache. Both
+	// applyNormalizationPasses calls below share this single derived set so
+	// they behave identically to the old code that threaded the same cached set.
+	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
+	const rules = applyNormalizationPasses(linked.rules, preserveKinds.size > 0 ? preserveKinds : undefined);
 	const renderRules = applyWrapperDeletion(rules);
 
 	// Build a base polymorph skip-set from polymorphVariants metadata.
@@ -131,7 +137,7 @@ export function optimize(
 	// assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
 	if (linked.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(linked.topLevelAliasBodies);
-		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, linked.patternReplacementKinds);
+		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, preserveKinds.size > 0 ? preserveKinds : undefined);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
 		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, linked.word, inlineKinds, variantSkip);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
@@ -201,8 +207,7 @@ export function optimize(
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
 		polymorphVariants: linked.polymorphVariants,
-		refineForms: linked.refineForms,
-		patternReplacementKinds: linked.patternReplacementKinds
+		refineForms: linked.refineForms
 	};
 }
 
