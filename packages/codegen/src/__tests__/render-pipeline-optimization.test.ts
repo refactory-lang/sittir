@@ -1,6 +1,5 @@
-import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { basename, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
@@ -219,104 +218,12 @@ function makeTokenOnlyGeneratedIdTables(): GeneratedIdTables {
 	};
 }
 
+// NOTE: assertRustRenderRuntimeBehavior previously verified render_dispatch (bridge.rs path)
+// by spinning up a temp Rust crate. Since render_dispatch + bridge.rs are retired (PR-E2),
+// this function is removed. Transport-path correctness is verified by cargo test --workspace.
 function assertRustRenderRuntimeBehavior(): void {
-	const emitted = emitRenderModule(
-		'rust',
-		[
-			{
-				filename: 'token_child_parent.jinja',
-				content: '{{ children }}'
-			}
-		],
-		makeTokenOnlyChildrenNodeMap(),
-		makeTokenOnlyGeneratedIdTables()
-	);
-	const runtimeDir = resolve(repoRoot, 'scratch/render-module-runtime-fixture');
-	rmSync(runtimeDir, { recursive: true, force: true });
-	try {
-		mkdirSync(resolve(runtimeDir, 'src/render'), { recursive: true });
-		mkdirSync(resolve(runtimeDir, 'templates'), { recursive: true });
-		mkdirSync(resolve(runtimeDir, 'tests'), { recursive: true });
-
-		writeFileSync(
-			resolve(runtimeDir, 'Cargo.toml'),
-			`[package]
-name = "render_runtime_fixture"
-version = "0.0.0"
-edition = "2021"
-
-[workspace]
-
-[features]
-napi-bindings = []
-debug-transport = []
-
-[dependencies]
-sittir-core = { path = ${JSON.stringify(resolve(repoRoot, 'rust/crates/sittir-core'))} }
-askama = "0.15"
-serde = { version = "1", features = ["derive"] }
-`
-		);
-		writeFileSync(resolve(runtimeDir, 'src/lib.rs'), 'pub mod render;\n');
-		for (const file of [
-			emitted.hashRs,
-			emitted.templatesRs,
-			emitted.dispatchRs,
-			emitted.transportRs,
-			emitted.bridgeRs,
-			emitted.libRs
-		]) {
-			writeFileSync(resolve(runtimeDir, 'src/render', basename(file.path)), file.contents);
-		}
-		writeFileSync(resolve(runtimeDir, 'src/render/kind_ids.rs'), '');
-		writeFileSync(resolve(runtimeDir, 'templates/token_child_parent.jinja'), '{{ children }}');
-		writeFileSync(
-			resolve(runtimeDir, 'tests/runtime.rs'),
-			`use render_runtime_fixture::render::render_dispatch;
-use sittir_core::types::{KindId, NodeData, Source};
-
-fn node(kind: u16, named: bool, text: Option<&str>, children: Option<Vec<NodeData>>) -> NodeData {
-    NodeData {
-        type_: KindId(kind),
-        source: Source::Factory,
-        named,
-        fields: None,
-        children,
-        text: text.map(str::to_string),
-        span: None,
-        node_handle: None,
-        child_index: None,
-        trivia_data: None,
-    }
-}
-
-#[test]
-fn token_only_child_renders_exactly() {
-    let parent = node(1, true, None, Some(vec![node(2, true, Some("jjjj"), None)]));
-    let rendered = render_dispatch(&parent).expect("render succeeds");
-    assert_eq!(rendered, "jjjj");
-}
-
-#[test]
-fn missing_required_children_errors() {
-    let parent = node(1, true, None, None);
-    let err = render_dispatch(&parent).expect_err("missing required children should fail");
-    let message = err.to_string();
-    assert!(
-        message.contains("missing required field 'children'"),
-        "unexpected error: {message}"
-    );
-}
-`
-		);
-
-		execFileSync('cargo', ['test', '--quiet'], {
-			cwd: runtimeDir,
-			stdio: 'pipe'
-		});
-	} finally {
-		rmSync(runtimeDir, { recursive: true, force: true });
-	}
+	// Bridge/dispatch path retired — nothing to verify at runtime here.
+	// The token-only child rendering is now exercised exclusively via the transport path.
 }
 
 describe('render pipeline optimization — retained baseline convergence', () => {
@@ -410,8 +317,8 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(required.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
 		expect(optional.templatesRs.contents).toContain("pub struct OptionalChildParentTemplate<'a> {");
 		expect(optional.templatesRs.contents).toContain("    pub children: OptionalNonterminalView<'a>,");
-		expect(optional.bridgeRs.contents).toContain('if children.is_empty() {');
-		expect(optional.bridgeRs.contents).toContain('return Ok(ResolvedField::default());');
+		// bridge.rs retired (PR-E2) — optional slot handling is now in transport.rs
+		expect(optional.transportRs.contents).toContain('optional_child_parent');
 		expect(repeated.templatesRs.contents).toContain("pub struct RepeatedChildParentTemplate<'a> {");
 		expect(repeated.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
 	});
@@ -569,43 +476,20 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.templatesRs.contents).toContain(
 			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
 		);
-		// Bridge helpers live in bridge.rs (spec 024 split).
-		expect(emitted.bridgeRs.contents).toContain('fn resolve_leaf');
-		expect(emitted.bridgeRs.contents).toContain('fn resolve_optional');
-		expect(emitted.bridgeRs.contents).toContain('fn resolve_required');
-		expect(emitted.bridgeRs.contents).toContain('fn missing_required_field');
-		expect(emitted.bridgeRs.contents).toContain("enum SlotAccessor<'a>");
-		expect(emitted.bridgeRs.contents).toContain('fn resolve_slot(');
-		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_unnamed_children');
-		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_children');
-		expect(emitted.bridgeRs.contents).not.toContain('consumed_fields');
-		// render_dispatch is a thin shim in dispatch.rs delegating to bridge::render_nodedata_into.
-		expect(emitted.dispatchRs.contents).toContain('/// Legacy direct NodeData render entrypoint.');
-		expect(emitted.dispatchRs.contents).toContain('pub fn render_dispatch(node: &NodeData)');
-		expect(emitted.dispatchRs.contents).toContain('render_nodedata_into(node, &mut buf)');
-		// Per-kind render functions are inlined into bridge::render_nodedata_into.
-		expect(emitted.bridgeRs.contents).toContain('/// Legacy direct NodeData render bridge.');
-		expect(emitted.bridgeRs.contents).toContain('fn render_nodedata_into(');
-		// Phase D: dispatch inlined into bridge uses numeric KindId (42).
-		expect(emitted.bridgeRs.contents).toContain('42 =>');
-		expect(emitted.bridgeRs.contents).toContain('resolve_slot(node, SlotAccessor::Field("name"), true)');
-		expect(emitted.bridgeRs.contents).not.toContain('resolve_slot(node, SlotAccessor::Children');
-		expect(emitted.bridgeRs.contents).toContain(
-			`format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_)`
-		);
+		// bridge.rs and dispatch.rs retired (PR-E2). No bridge/dispatch artifacts emitted.
+		expect(emitted).not.toHaveProperty('bridgeRs');
+		expect(emitted).not.toHaveProperty('dispatchRs');
+		// transport.rs is the only render path — emits per-kind render functions.
+		expect(emitted.transportRs.contents).toContain('fn render_function_item(');
 		// templates.rs has no render functions — only struct definitions.
 		expect(emitted.templatesRs.contents).not.toContain('fn render_function_item(');
 		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
 		expect(emitted.templatesRs.contents).not.toContain('pub struct RustGrammarMeta');
-		// mod.rs re-exports from dispatch and transport (spec 024 split).
-		expect(emitted.libRs.contents).toContain(
-			'#[deprecated(note = "legacy direct NodeData render bridge; normal native flow uses render_transport_dispatch via typed transport")]'
-		);
-		expect(emitted.libRs.contents).toContain('pub use bridge::render_nodedata_into;');
-		expect(emitted.libRs.contents).toContain(
-			'#[deprecated(note = "legacy direct NodeData render entrypoint; normal native flow uses render_transport_dispatch via typed transport")]'
-		);
-		expect(emitted.libRs.contents).toContain('pub use dispatch::render_dispatch;');
+		// mod.rs re-exports from transport only (bridge/dispatch retired).
+		expect(emitted.libRs.contents).not.toContain('pub mod bridge');
+		expect(emitted.libRs.contents).not.toContain('pub mod dispatch');
+		expect(emitted.libRs.contents).not.toContain('render_nodedata_into');
+		expect(emitted.libRs.contents).not.toContain('render_dispatch');
 		expect(emitted.libRs.contents).toContain(
 			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);
@@ -639,8 +523,8 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
 
-		// Per-kind render logic is inlined into bridge::render_nodedata_into.
-		expect(emitted.bridgeRs.contents).toContain('resolve_slot(node, SlotAccessor::Field("name"), true)');
+		// Per-kind render logic is in transport.rs (bridge.rs retired in PR-E2).
+		expect(emitted.transportRs.contents).toContain('render_function_item(');
 	});
 
 	it('routes unnamed children through the shared slot accessor path', () => {
@@ -684,17 +568,20 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			generatedIdTables
 		);
 
-		expect(emitted.bridgeRs.contents).toContain('resolve_slot(node, SlotAccessor::Children, true)');
-		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_unnamed_children');
-		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_children');
+		// bridge.rs retired (PR-E2) — render_nodedata_into/SlotAccessor no longer emitted.
+		// The transport path emits direct struct field access, not slot accessors.
+		expect(emitted).not.toHaveProperty('bridgeRs');
+		expect(emitted.transportRs.contents).toContain('render_required_child_parent(');
 	});
 
-	it('removes the shared prepare bridge while keeping the native render boundary unchanged', () => {
+	it('removes the shared prepare bridge and direct NodeData render path (PR-E2 bridge-sunset)', () => {
 		const coreLib = readFileSync(resolve(repoRoot, 'rust/crates/sittir-core/src/lib.rs'), 'utf8');
 		const rustNapi = readFileSync(resolve(repoRoot, 'rust/crates/sittir-rust/src/lib.rs'), 'utf8');
 
 		expect(coreLib).not.toContain('pub mod prepare;');
-		expect(rustNapi).toContain('render_nodedata_into(node');
+		// render_nodedata_into retired (PR-E2) — lib.rs uses transport path only.
+		expect(rustNapi).not.toContain('render_nodedata_into');
 		expect(rustNapi).not.toContain('build_template_context');
+		expect(rustNapi).toContain('render_transport_parts');
 	});
 });

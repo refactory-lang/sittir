@@ -83,15 +83,11 @@ export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
 	/** `packages/{lang}/src/hash.ts` */
 	hashTs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/templates.rs` — per-kind Template structs + render functions */
+	/** `rust/crates/sittir-{lang}/src/render/templates.rs` — per-kind Template structs */
 	templatesRs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/dispatch.rs` — render_dispatch match table */
-	dispatchRs: { path: string; contents: string };
 	/** `rust/crates/sittir-{lang}/src/render/transport.rs` — AnyTransport + FromNapiValue + typed dispatch + transport bridge */
 	transportRs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/bridge.rs` — field/child resolution helpers */
-	bridgeRs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/mod.rs` (T028 — exposes render_dispatch) */
+	/** `rust/crates/sittir-{lang}/src/render/mod.rs` — exposes transport render entrypoints */
 	libRs: { path: string; contents: string };
 }
 
@@ -2377,24 +2373,18 @@ function buildTypedTemplateBody(
 }
 
 // ----------------------------------------------------------------------
-// lib.rs — expose legacy direct render + transport render entrypoints
+// lib.rs — expose transport render entrypoints
 // ----------------------------------------------------------------------
 
 function libRsContents(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${lang} --all --output packages/${lang}/src
 
-pub mod bridge;
-pub mod dispatch;
 pub mod hash;
 pub mod kind_ids;
 pub mod templates;
 pub mod transport;
 
-#[deprecated(note = "legacy direct NodeData render bridge; normal native flow uses render_transport_dispatch via typed transport")]
-pub use bridge::render_nodedata_into;
-#[deprecated(note = "legacy direct NodeData render entrypoint; normal native flow uses render_transport_dispatch via typed transport")]
-pub use dispatch::render_dispatch;
 pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};
 pub use hash::TEMPLATE_BUNDLE_HASH;
 pub use kind_ids::*;
@@ -2470,48 +2460,19 @@ export function emitRenderModule(
 		? buildKindIdByKind(collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables))
 		: undefined;
 
-	// --- bridge.rs ---
-	// Field/child resolution helpers + render_nodedata_into (the unified
-	// streaming render entry point). render_node_value calls
-	// render_nodedata_into directly — no cross-module dispatch needed.
-	const bridgeRs = [
-		bridgeRsHeader(lang),
-		'',
-		commonRustUseImports(hasNumericDispatch),
-		'use ::askama::Template as _AskamaTemplate;',
-		'use super::templates::*;',
-		'',
-		renderDirectSupport(meta, kindIdByKind),
-		'',
-		renderNodedataIntoFn(structs, kindIdByKind)
-	].join('\n');
-
 	// --- templates.rs ---
-	// Per-kind Template structs (no render functions — those are inlined
-	// into bridge::render_nodedata_into match arms). The `filters` module
-	// must live here because Askama resolves custom filters by searching
-	// for a sibling `filters` module at the `#[derive(Template)]` site.
+	// Per-kind Template structs. The `filters` module must live here because
+	// Askama resolves custom filters by searching for a sibling `filters`
+	// module at the `#[derive(Template)]` site.
 	const templatesRs = [
 		templatesRsHeader(lang),
 		'',
 		commonRustUseImports(hasNumericDispatch),
 		'use ::askama::Template as _AskamaTemplate;',
-		'use super::bridge::*;',
 		'',
 		filtersModule(),
 		'',
 		renderStructDefs(structs)
-	].join('\n');
-
-	// --- dispatch.rs ---
-	// Thin wrapper: render_dispatch delegates to bridge::render_nodedata_into.
-	const dispatchRs = [
-		dispatchRsHeader(lang),
-		'',
-		commonRustUseImports(hasNumericDispatch),
-		'use super::bridge::render_nodedata_into;',
-		'',
-		renderDispatchFn(structs, kindIdByKind)
 	].join('\n');
 
 	// --- transport.rs ---
@@ -2523,8 +2484,6 @@ export function emitRenderModule(
 		commonRustUseImports(hasNumericDispatch),
 		'use ::sittir_core::render_with_trivia;',
 		'use ::askama::Template as _AskamaTemplate;',
-		'use super::bridge::*;',
-		'use super::dispatch::render_dispatch;',
 		'use super::templates::*;',
 		'',
 		renderTransportSupport(nodeMap, structs, meta, generatedIdTables)
@@ -2537,17 +2496,9 @@ export function emitRenderModule(
 			path: `${renderModuleSrcDir(lang)}/templates.rs`,
 			contents: templatesRs + '\n'
 		},
-		dispatchRs: {
-			path: `${renderModuleSrcDir(lang)}/dispatch.rs`,
-			contents: dispatchRs + '\n'
-		},
 		transportRs: {
 			path: `${renderModuleSrcDir(lang)}/transport.rs`,
 			contents: transportRs + '\n'
-		},
-		bridgeRs: {
-			path: `${renderModuleSrcDir(lang)}/bridge.rs`,
-			contents: bridgeRs + '\n'
 		},
 		libRs: {
 			path: `${renderModuleSrcDir(lang)}/mod.rs`,

@@ -330,15 +330,16 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 		templateFiles.push({ filename: `${kind}.jinja`, content: body });
 	}
 	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
-	const bridge = emit.bridgeRs.contents;
-
-	// variant_for emits lines of the form:
-	//   (parent_id, child_id) => Some("label"), // ("parent_kind", "child_kind")
-	// Verify array_expression_list → "list", NOT "semi"
-	expect(bridge).toContain(`Some("list"), // ("array_expression", "array_expression_list")`);
-	expect(bridge).toContain(`Some("semi"), // ("array_expression", "array_expression_semi")`);
-	// The key regression guard: list must NOT be paired to the first form's label "semi"
-	expect(bridge).not.toContain(`Some("semi"), // ("array_expression", "array_expression_list")`);
+	// bridge.rs has been retired (PR-E2) — variant pairing is now structural in transport.rs.
+	// The transport struct for array_expression has distinct fields for list and semi,
+	// each with their own napi js_name. Verify the transport reflects correct naming.
+	const transport = emit.transportRs.contents;
+	// The list form's napi slot should use "_array_expression_list" (not "_array_expression_semi")
+	// and the semi form should use "_array_expression_semi".
+	expect(transport).toContain(`"_array_expression_list"`);
+	expect(transport).toContain(`"_array_expression_semi"`);
+	// Key regression guard: list field must not be labelled as semi
+	expect(transport).not.toContain(`array_expression_list: Box<ArrayExpressionSemiTransport>`);
 }, 60_000);
 
 it('collectMetaData path matches buildMetaDataFromEntries path (render metadata parity)', async () => {

@@ -19,8 +19,6 @@ use ::napi_derive::napi;
 
 use ::sittir_core::render_with_trivia;
 use ::askama::Template as _AskamaTemplate;
-use super::bridge::*;
-use super::dispatch::render_dispatch;
 use super::templates::*;
 
 #[derive(Debug, Clone)]
