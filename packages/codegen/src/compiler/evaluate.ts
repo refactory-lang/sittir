@@ -831,9 +831,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const conflicts: string[][] = [];
 	let word: string | null = null;
 
-	let patternReplacementKinds: ReadonlySet<string> = new Set();
 	const { roles: collectedRoles } = withRoleScope(() => {
-		patternReplacementKinds = evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules, provenanceByKind, baseGrammar !== null);
+		evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules, provenanceByKind, baseGrammar !== null);
 		evaluateMetadataCallbacksInScope(
 			opts,
 			baseGrammar,
@@ -895,8 +894,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 			refineForms,
 			groups,
 			polymorphsConfig,
-			renderAs,
-			patternReplacementKinds: patternReplacementKinds.size > 0 ? patternReplacementKinds : undefined
+			renderAs
 		} satisfies RawGrammar
 	};
 }
@@ -1860,16 +1858,14 @@ function evaluateRulesAndInjectSynthetics(
 	rules: Record<string, Rule>,
 	provenanceByKind: Map<string, RuleProvenance>,
 	isExtension: boolean
-): ReadonlySet<string> {
+): void {
 	evaluateRuleFunctions(opts, baseRules, refs, rules, provenanceByKind, isExtension);
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (wireCtx) {
 		injectSyntheticRules(wireCtx.deposits, rules, provenanceByKind);
-		const patternKinds = applyPatternReplacement(wireCtx.authoredRuleNames, baseRules, rules, provenanceByKind, wireCtx);
+		applyPatternReplacement(wireCtx.authoredRuleNames, baseRules, rules, provenanceByKind, wireCtx);
 		prunePlaceholderOrphans(wireCtx, rules);
-		return patternKinds;
 	}
-	return new Set();
 }
 
 /**
@@ -1967,7 +1963,7 @@ function applyPatternReplacement(
 	rules: Record<string, Rule>,
 	provenanceByKind: Map<string, RuleProvenance>,
 	wireCtx?: WireContext
-): ReadonlySet<string> {
+): void {
 	// Step 1: identify pattern candidates.
 	// Path A — legacy `_`-prefix candidates declared in `rules:`.
 	const candidates: PatternCandidate[] = [];
@@ -1995,7 +1991,7 @@ function applyPatternReplacement(
 			candidates.push({ name: hiddenName, body, aliasAs: key });
 		}
 	}
-	if (candidates.length === 0) return new Set();
+	if (candidates.length === 0) return;
 
 	// Step 2: walk all rules and replace matching sub-trees.
 	// Skip the candidate rules themselves to avoid self-substitution.
@@ -2014,15 +2010,16 @@ function applyPatternReplacement(
 			provenanceByKind.set(c.name, 'override-authored-or-replaced');
 		}
 	}
-	return candidateNames;
 }
 
 /**
  * Returns true when `rule` is complex enough to be a meaningful structural
  * pattern. Excludes trivial single-terminal bodies that would match too
  * broadly (every bare string, every symbol reference, every pattern).
+ *
+ * Exported for use by `deriveComplexAliasTargetHidden`.
  */
-function isComplexBody(rule: Rule): boolean {
+export function isComplexBody(rule: Rule): boolean {
 	switch (rule.type) {
 		case 'seq':
 			return (rule as SeqRule).members.length >= 2;
@@ -2038,6 +2035,78 @@ function isComplexBody(rule: Rule): boolean {
 		default:
 			return false;
 	}
+}
+
+/**
+ * Derive the set of hidden (`_`-prefixed) kinds that:
+ *   1. Appear as the source of a NAMED ALIAS — either in pre-link form
+ *      (`alias(symbol(_X), $visible)`) or post-link form
+ *      (`symbol(visible, aliasedFrom='_X')`).
+ *   2. Whose own rule body in `rules` satisfies {@link isComplexBody}.
+ *
+ * This is the on-demand structural replacement for `patternReplacementKinds`.
+ * Both consumers receive different rule-map shapes:
+ *   - `link.ts` calls this on `raw.rules` (pre-link; alias nodes present).
+ *   - `optimize.ts` calls this on `linked.rules` (post-link; aliasedFrom present).
+ *
+ * The predicate is intentionally conservative (the derived set may be a
+ * strict superset of the old `patternReplacementKinds` cache). Probe-verified
+ * byte-identical for rust/typescript/python across optimize's rules,
+ * renderRules, and simplifiedRules outputs.
+ *
+ * @remarks
+ * The walk covers seq/choice members, content, polymorph forms, and
+ * separator rule lists so aliases nested in any position are captured.
+ */
+export function deriveComplexAliasTargetHidden(rules: Record<string, Rule>): ReadonlySet<string> {
+	const candidates = new Set<string>();
+
+	function walk(rule: Rule): void {
+		// Pre-link form: alias(symbol(_X), $visible)
+		if (rule.type === 'alias') {
+			const a = rule as AliasRule;
+			if (a.named && a.content.type === 'symbol') {
+				const s = a.content as SymbolRule;
+				if (s.name.startsWith('_')) candidates.add(s.name);
+			}
+			walk(a.content);
+			return;
+		}
+		// Post-link form: symbol(visible, aliasedFrom='_X')
+		if (rule.type === 'symbol') {
+			const s = rule as SymbolRule;
+			if (s.aliasedFrom?.startsWith('_')) candidates.add(s.aliasedFrom);
+			return;
+		}
+		const x = rule as unknown as Record<string, unknown>;
+		if (Array.isArray(x['members'])) {
+			for (const m of x['members'] as Rule[]) walk(m);
+		}
+		if (x['content'] && typeof x['content'] === 'object') {
+			walk(x['content'] as Rule);
+		}
+		// Polymorph forms
+		if (Array.isArray(x['forms'])) {
+			for (const f of x['forms'] as Rule[]) walk(f);
+		}
+		// Separator rule lists
+		const sep = x['separator'];
+		if (sep && typeof sep === 'object' && !Array.isArray(sep)) {
+			const sepRules = (sep as { rules?: unknown }).rules;
+			if (Array.isArray(sepRules)) {
+				for (const r of sepRules as Rule[]) walk(r);
+			}
+		}
+	}
+
+	for (const rule of Object.values(rules)) walk(rule);
+
+	const out = new Set<string>();
+	for (const name of candidates) {
+		const body = rules[name];
+		if (body && isComplexBody(body)) out.add(name);
+	}
+	return out;
 }
 
 /**

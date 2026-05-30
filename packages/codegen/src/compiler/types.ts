@@ -211,15 +211,6 @@ export interface RawGrammar {
 	 * bodies (e.g. `{ type: 'string', value: '!' }`).
 	 */
 	readonly renderAs?: Record<string, Rule>;
-	/**
-	 * Pattern-replacement candidate kinds: author-declared `_`-prefixed rules
-	 * whose bodies were used as structural patterns to rewrite the merged grammar.
-	 * These rules must NOT be inlined by `inlineSingleUseHidden` (they exist to
-	 * group sub-trees that the IR pipeline treats as atomic units). Threaded
-	 * through RawGrammar → LinkedGrammar → OptimizedGrammar so optimize's
-	 * inlining pass can skip them.
-	 */
-	readonly patternReplacementKinds?: ReadonlySet<string>;
 }
 
 /**
@@ -380,8 +371,6 @@ export interface LinkedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule>;
 	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
-	/** @see {@link RawGrammar.patternReplacementKinds} */
-	readonly patternReplacementKinds?: ReadonlySet<string>;
 }
 
 /**
@@ -437,8 +426,6 @@ export interface OptimizedGrammar {
 	readonly derivations: DerivationLog;
 	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
-	/** @see {@link RawGrammar.patternReplacementKinds} */
-	readonly patternReplacementKinds?: ReadonlySet<string>;
 }
 
 // ---------------------------------------------------------------------------

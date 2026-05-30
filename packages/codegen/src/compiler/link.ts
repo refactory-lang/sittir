@@ -45,7 +45,7 @@ import type {
 } from './types.ts';
 import { hasAnyField, hasAnyChild } from './node-map.ts';
 import { collectFieldNames } from './rule.ts';
-import { isHiddenKind } from './evaluate.ts';
+import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';
 import { validateRefineForms } from './link-refine.ts';
 import { applyGroupOverrides, stampStaticRenderAs } from './group-synthesis.ts';
@@ -148,12 +148,13 @@ export function link(
 	hoistIndentIntoRepeat(rules);
 	annotateBlockBearerFields(rules);
 	collectRepeatedShapes(rules, derivations.repeatedShapes);
+	const complexAliasTargetHidden = deriveComplexAliasTargetHidden(raw.rules);
 	const topLevelAliasBodies = collectTopLevelAliasBodies(
 		raw.rules,
 		rules,
 		supertypes,
 		externalRoles,
-		raw.patternReplacementKinds
+		complexAliasTargetHidden.size > 0 ? complexAliasTargetHidden : undefined
 	);
 	canonicalizeCatalogLiteralRefs(rules, kindEntries);
 	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, kindEntries);
@@ -183,8 +184,7 @@ export function link(
 		aliasedHiddenKinds,
 		topLevelAliasBodies,
 		polymorphVariants: raw.polymorphVariants,
-		refineForms: raw.refineForms,
-		patternReplacementKinds: raw.patternReplacementKinds
+		refineForms: raw.refineForms
 	};
 }
 
@@ -513,7 +513,7 @@ function collectTopLevelAliasBodies(
 	resolvedRules: Record<string, Rule>,
 	supertypes: Set<string>,
 	externalRoles: Map<string, ExternalRole>,
-	patternReplacementKinds?: ReadonlySet<string>
+	complexAliasTargetHidden?: ReadonlySet<string>
 ): Map<string, Rule> {
 	const out = new Map<string, Rule>();
 	for (const [name, rule] of Object.entries(rawRules)) {
@@ -523,10 +523,11 @@ function collectTopLevelAliasBodies(
 		// LOAD-BEARING GUARD — NOT a removable band-aid (isolation-test-verified).
 		// Never inline a named-alias-target's hidden body into the visible-alias
 		// parent. Body-pattern groups produce `alias(SYMBOL(_hidden), $.visible)`
-		// where `_hidden` is a pattern-replacement kind. The alias' content is a
-		// symbol ref to the hidden rule (`_type_argument` etc.), but the render
-		// template must reference the VISIBLE kind (e.g. `type_argument`) — not
-		// inline the hidden rule's body. Skip these entries so `renderRules[name]`
+		// where `_hidden` is a complex-body alias-target kind (derived via
+		// `deriveComplexAliasTargetHidden`). The alias' content is a symbol ref
+		// to the hidden rule (`_type_argument` etc.), but the render template
+		// must reference the VISIBLE kind (e.g. `type_argument`) — not inline
+		// the hidden rule's body. Skip these entries so `renderRules[name]`
 		// keeps the wrapper-deleted `SYMBOL(visible, aliasedFrom='_hidden')` form
 		// set by the main normalization path, rather than being overwritten with
 		// the hidden rule's body.
@@ -535,15 +536,14 @@ function collectTopLevelAliasBodies(
 		// (`{{ type_argument | joinWithTrailing(",") }}` → `{{ content }}…`) and
 		// leaks the hidden kinds' slots (`content`/`trait_bounds`) into the LIVE
 		// transport render surface — proven by delete→regen→diff, NOT a static
-		// probe (a guard-free nodeMap dump reads `patternReplacementKinds` empty
-		// because it bypasses the evaluate pipeline that populates it). The clean
-		// relocation (exclude `patternReplacementKinds` from `inlinableKinds`) is
-		// unverified — isolation-test before adopting. See
-		// project_pr_e_spec_premises_false.
+		// probe (a guard-free nodeMap dump reads the derived set empty because it
+		// bypasses the evaluate pipeline). The predicate is now derived on-demand
+		// from `raw.rules` via `deriveComplexAliasTargetHidden` (structural
+		// derivation, not a cached set). See project_pr_e_spec_premises_false.
 		if (
-			patternReplacementKinds &&
+			complexAliasTargetHidden &&
 			content.type === 'symbol' &&
-			patternReplacementKinds.has(content.name)
+			complexAliasTargetHidden.has(content.name)
 		) {
 			continue;
 		}
