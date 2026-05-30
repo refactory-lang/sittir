@@ -520,14 +520,26 @@ function collectTopLevelAliasBodies(
 		if (!name.startsWith('_')) continue;
 		const content = extractTopLevelNamedAliasContent(rule);
 		if (!content) continue;
-		// Body-pattern groups produce `alias(SYMBOL(_hidden), $.visible)` where
-		// `_hidden` is a pattern-replacement kind. The alias' content is a symbol
-		// ref to the hidden rule (`_type_argument` etc.), but the render template
-		// must reference the VISIBLE kind (e.g. `type_argument`) — not inline the
-		// hidden rule's body. Skip these entries so `renderRules[name]` keeps the
-		// wrapper-deleted `SYMBOL(visible, aliasedFrom='_hidden')` form set by the
-		// main normalization path, rather than being overwritten with the hidden
-		// rule's body.
+		// LOAD-BEARING GUARD — NOT a removable band-aid (isolation-test-verified).
+		// Never inline a named-alias-target's hidden body into the visible-alias
+		// parent. Body-pattern groups produce `alias(SYMBOL(_hidden), $.visible)`
+		// where `_hidden` is a pattern-replacement kind. The alias' content is a
+		// symbol ref to the hidden rule (`_type_argument` etc.), but the render
+		// template must reference the VISIBLE kind (e.g. `type_argument`) — not
+		// inline the hidden rule's body. Skip these entries so `renderRules[name]`
+		// keeps the wrapper-deleted `SYMBOL(visible, aliasedFrom='_hidden')` form
+		// set by the main normalization path, rather than being overwritten with
+		// the hidden rule's body.
+		//
+		// Removing this skip REGRESSES `type_arguments`/`type_parameters` jinja
+		// (`{{ type_argument | joinWithTrailing(",") }}` → `{{ content }}…`) and
+		// leaks the hidden kinds' slots (`content`/`trait_bounds`) into the LIVE
+		// transport render surface — proven by delete→regen→diff, NOT a static
+		// probe (a guard-free nodeMap dump reads `patternReplacementKinds` empty
+		// because it bypasses the evaluate pipeline that populates it). The clean
+		// relocation (exclude `patternReplacementKinds` from `inlinableKinds`) is
+		// unverified — isolation-test before adopting. See
+		// project_pr_e_spec_premises_false.
 		if (
 			patternReplacementKinds &&
 			content.type === 'symbol' &&
