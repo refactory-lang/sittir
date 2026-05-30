@@ -22,12 +22,12 @@ use napi_derive::napi;
 #[cfg(feature = "napi-bindings")]
 use sittir_core::engine::{Engine, EngineGrammar};
 #[cfg(feature = "napi-bindings")]
-use sittir_core::types::{Edit, FormatRecord, NodeData};
+use sittir_core::types::{Edit, FormatRecord};
 #[cfg(feature = "napi-bindings")]
 use sittir_core::{apply_render_format, panic_msg, ParseResult, ParsedTree};
 
 #[cfg(feature = "napi-bindings")]
-use render::{render_nodedata_into, render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
+use render::{render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
 
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 1;
@@ -49,11 +49,6 @@ impl EngineGrammar for RustGrammar {
         TEMPLATE_BUNDLE_HASH
     }
 
-    fn render(self, node: &NodeData) -> std::result::Result<String, String> {
-        let mut buf = String::new();
-        render_nodedata_into(node, &mut buf).map_err(|e| e.to_string())?;
-        Ok(buf)
-    }
 }
 
 #[cfg(feature = "napi-bindings")]

@@ -2,14 +2,13 @@
 //!
 //! For each grammar:
 //!   - load its `rust/crates/sittir-{lang}/test-fixtures.json`
-//!   - for every `RenderFixture`: call the grammar's direct native
-//!     `render_dispatch` on the captured `NodeData`,
-//!     assert the output matches `expectedOutput` BYTE-FOR-BYTE
-//!     (SC-001a).
-//!   - for every `RoundTripFixture`: render the captured source via
-//!     the same path, re-parse with tree-sitter, and assert the
-//!     resulting tree's s-expression equals `expectedReparseTree`
-//!     (SC-001b, semantic).
+//!   - for every `RoundTripFixture`: re-parse the captured source with
+//!     tree-sitter and assert the resulting subtree's s-expression equals
+//!     `expectedReparseTree` (SC-001b, semantic).
+//!
+//! Note: `RenderFixture` (SC-001a byte-for-byte render-dispatch parity)
+//! has been retired — `render_dispatch` is removed as part of the
+//! bridge-sunset (PR-E2). Production render uses the transport path.
 //!
 //! Any divergence fails the test with the fixture index + the
 //! diff, so a CI signal pinpoints which kind regressed.
@@ -18,17 +17,13 @@
 //! covered by per-crate tests. This harness isolates
 //! grammar crate render module + sittir-core engine parity.
 
-use sittir_core::types::NodeData;
 use sittir_parity_tests::{load_fixtures, ParityFixture};
 use tree_sitter::Parser;
 
-type Renderer = fn(&NodeData) -> Result<String, askama::Error>;
-
 /// One grammar's engine binding — everything the harness needs to
-/// drive the render + reparse pipeline end-to-end.
+/// drive the reparse pipeline end-to-end.
 struct Engine {
     name: &'static str,
-    render: Renderer,
     language: tree_sitter::Language,
     /// Whether to run this engine's fixtures. Stubbed when the grammar's
     /// fixtures aren't yet extractable (e.g. an upstream cluster still
@@ -40,7 +35,6 @@ struct Engine {
 fn rust_engine() -> Engine {
     Engine {
         name: "rust",
-        render: sittir_rust::render::render_dispatch,
         language: sittir_rust::language(),
         enabled: true,
     }
@@ -49,7 +43,6 @@ fn rust_engine() -> Engine {
 fn typescript_engine() -> Engine {
     Engine {
         name: "typescript",
-        render: sittir_typescript::render::render_dispatch,
         language: sittir_typescript::language(),
         enabled: true,
     }
@@ -58,36 +51,9 @@ fn typescript_engine() -> Engine {
 fn python_engine() -> Engine {
     Engine {
         name: "python",
-        render: sittir_python::render::render_dispatch,
         language: sittir_python::language(),
         enabled: true,
     }
-}
-
-/// Render a NodeData through the engine's direct native dispatch.
-fn render_node(engine: &Engine, node: &NodeData) -> Result<String, askama::Error> {
-    (engine.render)(node)
-}
-
-/// Run the render-parity assertion for a single fixture.
-///
-/// # Panics
-/// Emits a targeted assert failure with the fixture's kind (`$type`)
-/// + the diff when the rendered output doesn't match `expectedOutput`
-/// byte-for-byte.
-fn assert_render_parity(engine: &Engine, idx: usize, input: &NodeData, expected: &str) {
-    let actual = match render_node(engine, input) {
-        Ok(s) => s,
-        Err(e) => panic!(
-            "[{}][render #{idx}] kind={} render errored: {e}",
-            engine.name, input.type_
-        ),
-    };
-    assert_eq!(
-        actual, expected,
-        "[{}][render #{idx}] kind={} render divergence\n  expected: {expected:?}\n  actual:   {actual:?}",
-        engine.name, input.type_
-    );
 }
 
 /// Run the round-trip-parity assertion for a single fixture.
@@ -204,17 +170,11 @@ fn run_parity_suite(engine: Engine) {
         return;
     }
     let fixtures = load_fixtures(engine.name);
-    let mut render_count = 0usize;
     let mut rt_count = 0usize;
     for (idx, fx) in fixtures.iter().enumerate() {
         match fx {
-            ParityFixture::Render {
-                input,
-                expected_output,
-                ..
-            } => {
-                assert_render_parity(&engine, idx, input, expected_output);
-                render_count += 1;
+            ParityFixture::Render { .. } => {
+                // render_dispatch retired (PR-E2 bridge-sunset) — skip render fixtures.
             }
             ParityFixture::RoundTrip {
                 source_in,
@@ -240,7 +200,7 @@ fn run_parity_suite(engine: Engine) {
         }
     }
     eprintln!(
-        "[{}] parity PASS — {render_count} render fixtures + {rt_count} roundtrip fixtures",
+        "[{}] parity PASS — {rt_count} roundtrip fixtures (render fixtures retired PR-E2)",
         engine.name
     );
 }

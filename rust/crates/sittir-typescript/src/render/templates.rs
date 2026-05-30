@@ -25,7 +25,6 @@ use ::sittir_core::types::{
 use ::napi_derive::napi;
 
 use ::askama::Template as _AskamaTemplate;
-use super::bridge::*;
 
 pub mod filters {
     //! Askama resolves custom-filter names by searching for a

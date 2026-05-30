@@ -64,12 +64,8 @@ async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	mkdirSync(dirname(emit.templatesRs.path), { recursive: true });
 	writeFileSync(emit.templatesRs.path, emit.templatesRs.contents, 'utf8');
 	console.log(`  → ${emit.templatesRs.path} (${emit.templatesRs.contents.length} bytes)`);
-	writeFileSync(emit.dispatchRs.path, emit.dispatchRs.contents, 'utf8');
-	console.log(`  → ${emit.dispatchRs.path} (${emit.dispatchRs.contents.length} bytes)`);
 	writeFileSync(emit.transportRs.path, emit.transportRs.contents, 'utf8');
 	console.log(`  → ${emit.transportRs.path} (${emit.transportRs.contents.length} bytes)`);
-	writeFileSync(emit.bridgeRs.path, emit.bridgeRs.contents, 'utf8');
-	console.log(`  → ${emit.bridgeRs.path} (${emit.bridgeRs.contents.length} bytes)`);
 	writeFileSync(emit.libRs.path, emit.libRs.contents, 'utf8');
 	console.log(`  → ${emit.libRs.path} (${emit.libRs.contents.length} bytes)`);
 

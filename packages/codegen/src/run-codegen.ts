@@ -340,9 +340,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 		writeFile(emit.hashRs.path, emit.hashRs.contents);
 		writeFile(emit.hashTs.path, emit.hashTs.contents);
 		writeFile(emit.templatesRs.path, emit.templatesRs.contents);
-		writeFile(emit.dispatchRs.path, emit.dispatchRs.contents);
 		writeFile(emit.transportRs.path, emit.transportRs.contents);
-		writeFile(emit.bridgeRs.path, emit.bridgeRs.contents);
 		writeFile(emit.libRs.path, emit.libRs.contents);
 		// Copy the per-kind `.jinja` files into the grammar crate's templates/
 		// directory so askama's build-time `#[template(path = ...)]` can
