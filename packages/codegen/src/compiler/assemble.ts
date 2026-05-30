@@ -269,8 +269,29 @@ export function assemble(
 		collectAnonymousNodes(optimized.rules, nodes, wordMatcher, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
-		markUserFacing(nodes);
-		markVariantChildrenUserFacing(nodes, optimized.polymorphVariants ?? []);
+		// Pre-compute the two cross-node sets once, then run the merged
+		// markUserFacing pass (M3 — one pass marks both alias-source + variant-
+		// children; see _UserFacingCtx / markUserFacing JSDoc).
+		const aliasSourceKinds = new Set<string>();
+		for (const n of nodes.values()) {
+			for (const slot of allSlotsOf(n)) {
+				for (const v of slot.values) {
+					if (!isNodeRef(v)) continue;
+					const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+					if (name.startsWith('_')) aliasSourceKinds.add(name);
+				}
+			}
+		}
+		const variantChildKindsSet = new Set<string>(
+			(optimized.polymorphVariants ?? []).map((pv) => `${pv.parent}_${pv.child}`)
+		);
+		const userFacingCtx: _UserFacingCtx = {
+			aliasSourceKinds,
+			variantChildKinds: variantChildKindsSet
+		};
+		for (const node of nodes.values()) {
+			markUserFacing(node, userFacingCtx);
+		}
 
 		// Attach the node map to every branch/group so their `parameterless`
 		// getter can resolve UnresolvedRef slots by name before hydrateSlotRefs
@@ -995,55 +1016,68 @@ function hydrateSlots(
 	}
 }
 
-function markUserFacing(nodes: Map<string, AssembledNode>): void {
-	const aliasSourceKinds = new Set<string>();
-	for (const [, n] of nodes) {
-		for (const slot of allSlotsOf(n)) {
-			for (const v of slot.values) {
-				if (!isNodeRef(v)) continue;
-				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-				if (name.startsWith('_')) aliasSourceKinds.add(name);
-			}
-		}
-	}
-	for (const [kind, n] of nodes) {
-		if (n.modelType === 'token' || n.modelType === 'multi') {
-			n.userFacing = false;
-			continue;
-		}
-		if (!kind.startsWith('_')) {
-			n.userFacing = true;
-			continue;
-		}
-		// Hidden — user-facing only when referenced as alias source,
-		// or when it's a polymorph (dispatched into via $variant).
-		n.userFacing = aliasSourceKinds.has(kind) || n.modelType === 'polymorph';
-	}
+/**
+ * Per-node context for {@link markUserFacing} — carries the two cross-node
+ * sets pre-computed once before the per-node loop (M3 / spec §7.7 / principle
+ * #14: cross-node state lives on ctx, not a getter-with-arg).
+ *
+ * @internal — not exported; used only by the post-pass driver inside assemble().
+ */
+interface _UserFacingCtx {
+	/** Hidden kinds that appear as alias sources in at least one other node's slot. */
+	readonly aliasSourceKinds: ReadonlySet<string>;
+	/**
+	 * Hidden variant-child kind strings (`${parent}_${child}`) registered via
+	 * `polymorphVariants`. These are NOT slot-reachable when the parent is a
+	 * supertype, so they must be promoted independently of `aliasSourceKinds`.
+	 */
+	readonly variantChildKinds: ReadonlySet<string>;
 }
 
 /**
- * Ensure hidden variant-child rules are marked user-facing so the template
- * and factory emitters include them.
+ * Mark every node in `nodes` with its `userFacing` flag (M3 — merged pass).
  *
- * @param nodes - Assembled node map; modified in place.
- * @param variants - Polymorph variant registrations from the grammar.
- * @remarks
- *   When the variant parent is classified as a supertype (e.g. python's
- *   `_simple_pattern`), `markUserFacing`'s slot walker never iterates
- *   supertype subtypes, so the hidden variant-child rule
- *   (`_${parent}_${child}`, e.g. `_simple_pattern_negative`) never enters
- *   `aliasSourceKinds` and stays `userFacing=false`. This pass explicitly
- *   marks each hidden child so its `.jinja` template, wrap-table entry,
- *   and `_aliasTargetToSource` remap are emitted by downstream emitters.
+ * A single `(node, ctx)` pass that replaces the former two-pass sequence
+ * (`markUserFacing` + `markVariantChildrenUserFacing`). The set of kinds
+ * marked `userFacing=true` is the union of:
+ *
+ *   (a) visible (non-`_`-prefixed) non-token/multi kinds,
+ *   (b) hidden polymorph kinds (dispatched into via `$variant`),
+ *   (c) hidden kinds that surface as alias sources in another node's slots
+ *       (`ctx.aliasSourceKinds`), and
+ *   (d) hidden variant-child kinds from `polymorphVariants` that the slot
+ *       walker never reaches when the parent is a supertype
+ *       (`ctx.variantChildKinds`).
+ *
+ * Per principle #14, `userFacing` is cross-node state (whether THIS hidden
+ * kind appears in ANOTHER node's slot, or in the `polymorphVariants` list),
+ * so it MUST be a `(node, ctx)` pass — never a getter-with-arg. Emitters read
+ * the populated `node.userFacing` field; no read-site changes needed.
+ *
+ * @param node - The node to mark; `node.userFacing` is written in place.
+ * @param ctx - Pre-computed cross-node sets (built once before the loop).
  */
-function markVariantChildrenUserFacing(nodes: Map<string, AssembledNode>, variants: readonly PolymorphVariant[]): void {
-	for (const v of variants) {
-		const hiddenChildKind = `${v.parent}_${v.child}`;
-		const childNode = nodes.get(hiddenChildKind);
-		if (childNode && !childNode.userFacing) {
-			childNode.userFacing = true;
-		}
+function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
+	const { kind } = node;
+	if (node.modelType === 'token' || node.modelType === 'multi') {
+		// token/multi are structural delimiters — never directly user-facing.
+		// NOTE: the OR with variantChildKinds is intentionally AFTER the
+		// token/multi guard so that a theoretical token/multi variant-child
+		// would still be promoted. The original pass-2 applied unconditionally
+		// after pass-1 set token/multi→false, so this matches the union exactly.
+		node.userFacing = ctx.variantChildKinds.has(kind);
+		return;
 	}
+	if (!kind.startsWith('_')) {
+		// Visible kinds are always user-facing.
+		node.userFacing = true;
+		return;
+	}
+	// Hidden — user-facing when any of the four conditions above hold (b/c/d).
+	node.userFacing =
+		node.modelType === 'polymorph' ||
+		ctx.aliasSourceKinds.has(kind) ||
+		ctx.variantChildKinds.has(kind);
 }
 
 function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
