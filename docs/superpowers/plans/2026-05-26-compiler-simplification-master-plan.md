@@ -45,7 +45,7 @@
 | **PR-I** | General choice-slot→factory submethods + `$variant` removal | **M** | 8 | **yes** | `pr-i-choice-slot-submethods` | ⬜ |
 | **PR-K** | `factory-map.json5`→`node-model.json5` + elevate/relabel surfacing | I/M | 9 | no | `pr-k-node-model-registration` | ⬜ |
 | **PR-N** | enrich-widening — name easy positional symbols | — (enrich-side; ≺ L) | ‖ | no | `pr-n-enrich-widening` | ⬜ |
-| **PR-O** | Structural de-dup (M1/MO2/P1 — non-behavioral) + **`separator-canonical`** (collapse the `separator` union → `string`+sibling `trailing`/`leading`; spec `2026-05-30-separator-canonical-design.md`) | B, H (files) | ‖ | no | `pr-o-structural-dedup` | ⬜ |
+| **PR-O** | Structural de-dup (M1/MO2/P1 — non-behavioral) + **`separator-canonical`** (normalize the `separator` union → `Rule[]` to support multi/choice separators; render gated on the future **non-slot-variables** design; spec `2026-05-30-separator-canonical-design.md`) | B, H (files) | ‖ | no | `pr-o-structural-dedup` | ⬜ |
 | **PR-P** | Terminal + flat Enum → predicates; + `TerminalValue`→`NodeRef` value unification (fixes terminal→`content`) | H (rename) | 10 | **yes** | `pr-p-terminal-enum-predicates` | ⬜ |
 | **PR-Q** | Enum recursive-widening (count-gated) | **P** | 11 | **yes** | `pr-q-enum-recursive-widening` | ⬜ |
 | **PR-L** | Flip heuristics → `propose-*` fail-diagnostics (LAST) | M, I, N, G | 12 | no | `pr-l-heuristics-to-fail` | ⬜ |

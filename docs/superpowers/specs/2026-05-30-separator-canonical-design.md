@@ -4,15 +4,25 @@
 
 **Goal:** Collapse the 3-way `RuleBase.separator` union to **one canonical form** so every walker/render consumer stops branching on separator *shape* — the same shape-variance reduction class as PR-C (`origin`/`aliasSources` → `parseKind`/`isUnnamed`) and the `patternReplacementKinds` cut.
 
-## ⚠ Reframing — the target is NOT `Rule[]`
+## Target — `Rule[]` (structured), NOT `string` (CORRECTED 2026-05-30)
 
-The original ask was "separator as `Rule[]`." **The survey rejects that** on evidence:
+The first survey recommended collapsing to `string` because *today* every separator reduces to a single literal (`extractSeparatorString`, `separatorToString`, `NodeRef.separator: string`). **That recommendation is rejected by the design authority** — it mistakes a *limitation* for a *property*:
 
-1. **The bare `readonly Rule[]` union member has ZERO producers.** `sg -p 'separator: [$$$]'` + `rg 'separator:\s*\['` over `packages/codegen/src` → no assignments. It's a *phantom* member consumers defensively branch on.
-2. **Every terminal consumer reduces separator to a `string`** (`extractSeparatorString` node-map.ts:1051, `separatorToString` templates.ts:1067, consumed `NodeRef.separator: string` node-map.ts:280). The *structure* is never consumed as structure — even the alias-walk over `sep.rules` can never fire on a real `,`/`;`/`\n` literal.
-3. **`RepeatRule`/`Repeat1Rule`, `NodeRef`, `TerminalValue` ALL already use `separator: string` + sibling `trailing?`/`leading?` booleans.** The object-union on `RuleBase` is the lone outlier.
+- **Single-literal-separator is the current GAP, not the goal** (`project_multi_separator_templates`: "walker/render assumes one-separator-per-field"). Collapsing to `string` would CEMENT that limitation.
+- **We need to support MULTIPLE separators and CHOICE separators** (`choice(',', ';')`, alternating delimiters, etc.). A `string` cannot represent a choice or a list; only a **structured `Rule[]`** (each entry a `Rule` — possibly a `ChoiceRule`/`SeqRule`/`StringRule`) can.
+- The "`Rule[]` has zero producers" finding is *because* nothing currently emits structured separators — that's the capability this PR ADDS, not evidence against it.
 
-So `Rule[]` is the *least* clean target (no producer, no structural consumer, would force every `string` producer to wrap as `StringRule` for zero benefit, *diverging further* from the existing majority). **Recommended target: option B — string + sibling flags.**
+**Canonical target: `separator?: readonly Rule[]`** — subsumes single-literal (one `StringRule`), choice (`[ChoiceRule]`), and multiple (a list). The `string`-reductions in consumers become the thing to FIX, not the form to adopt.
+
+### ⚠ The real work is the RENDER path — and it RELIES ON the future "non-slot variables" design
+
+Normalizing the *data* to `Rule[]` is mechanical. The hard part — and the reason this is a real feature, not just a de-dup — is **rendering a structured separator**:
+- `emitListSlot` (templates.ts:1180) currently emits `{{ name | join("<literal>") }}` with a fixed string. A **choice** separator (`,` | `;`) has no single literal — render must **preserve which delimiter the source used, per occurrence**. That per-occurrence choice is **NOT a child-node slot** — it's render-time state read from the source. 
+- **DEPENDENCY: this relies on the future "non-slot variables" design** (render-time variables captured from the source that aren't child slots). The choice-separator selection is the canonical motivating case for non-slot variables: the read side records "this gap used `;`", and render replays it — without it being a slot/parameter. **This PR is gated on that design landing.** (A multiple/sequence separator the walker emits per gap; a single-literal collapses to today's behavior.)
+- `selectJoinFilter` / `joinWithTrailing`/`joinWithLeading`/`joinWithFlanks` assume one literal + flat flags; they generalize to a rule-rendered separator + the non-slot-variable lookup.
+- Resolves `project_multi_separator_templates` + relates to `project_template_walker_adjacency`.
+
+(Flags `trailing`/`leading` still need a home — likely siblings on the rule alongside the `Rule[]`, OR folded into the structured representation; resolve alongside the render + non-slot-variable design.)
 
 ## Current shape (the problem)
 
@@ -25,9 +35,11 @@ readonly separator?:
 ```
 But `RepeatRule`/`Repeat1Rule` already **override** this to `separator?: string` + sibling `trailing?`/`leading?` (rule.ts:186-196). Two separator vocabularies coexist. Cost: ~10 consumers each carry a bespoke shape-branch (`typeof === 'string'` / `Array.isArray` / `'rules' in sep`); `rule-attrs.ts:135` resorts to `JSON.stringify` comparison because the shape is non-uniform.
 
-## Target canonical form (B — string + sibling flags)
+## ~~REJECTED first-pass: string + sibling flags~~ — kept ONLY for the inventory
 
-Make `RuleBase.separator` match the existing majority:
+> ⚠ The string-collapse design below is **REJECTED** (it entrenches single-separator; see corrected target above). The sections below are retained **only** for their *consumer-site + producer-location inventory*, which is valid for either target. The "After → string" columns do **NOT** apply — under `Rule[]`, consumers **preserve** the structure (and the choice-render path needs the non-slot-variable lookup). The `string` body is reference, not the plan.
+
+~~Make `RuleBase.separator` match the existing majority:~~
 ```ts
 readonly separator?: string;
 readonly trailing?: boolean;
@@ -81,5 +93,9 @@ Pass-throughs needing only the type change: `wrapper-deletion.ts:38`, `simplify.
 3. `findRepeatSeparator` latent type bug — migration fixes + surfaces it; `dump-ast-mismatches` confirms no hidden shift.
 4. Phantom `Rule[]` removal safe (no producer; `rg` confirms none) — double-check `__tests__`.
 
-## Placement
-**PR-O `separator-canonical` sub-item.** Depends-on: **PR-B ✅** + **PR-H ⬜** (PR-H renames `optimize.ts`→`normalize.ts` + relocates transforms; `optimize.ts:675,774` are separator producers; plan already serializes PR-O after "PR-B value model + PR-H transforms.ts settle"). Lands after PR-H. Does NOT depend on the M→I→K polymorph chain.
+## Placement — FORWARD-LOOKING (gated on the non-slot-variables design)
+**Own PR `separator-canonical` (or a PR-O sub-item for the data-shape part).** Depends-on:
+- **PR-B ✅** + **PR-H ⬜** (the data-shape touches `optimize.ts:675,774` separator producers; PR-H renames `optimize.ts`→`normalize.ts`).
+- **The future "non-slot variables" design — REQUIRED for choice-separator render** (the per-occurrence delimiter selection is a non-slot variable). Full multi/choice-separator support is GATED on it.
+
+Sequencing: the `Rule[]` data normalization could land with PR-O (after PR-H), but the *capability* (rendering choice/multiple separators) waits on the non-slot-variables design. Does NOT depend on the M→I→K polymorph chain. **Next design step: spec the non-slot-variables design, which this builds on.**
