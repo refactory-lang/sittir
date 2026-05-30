@@ -27,6 +27,8 @@ import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
+import { DiagnosticSink } from './diagnostics.ts';
+import { assertEmittable } from './emit-gate.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
@@ -135,6 +137,10 @@ export interface GenerateConfig {
  * evaluate(grammar.js) → link → optimize → assemble → adapter → emitters
  */
 export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
+	// PR-G: Diagnostics accumulator for the Assemble→Project gate.
+	// Currently empty — PR-H will thread it into the phase contexts.
+	const diagnostics = new DiagnosticSink();
+
 	// Resolve grammar.js path
 	const grammarJsPath = resolveGrammarJsPath(cfg.grammar);
 
@@ -217,6 +223,11 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Phase 4: Assemble
 	const nodeMap = assemble(optimized, generatedIdTables);
 	traceAssembleNodes('assemble', nodeMap.nodes);
+
+	// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so
+	// the sink is empty and this never throws. Threading real diagnostics into
+	// `diagnostics` is PR-H's job (phase contexts).
+	assertEmittable(nodeMap, diagnostics);
 
 	// Extract all semantic roles from the grammar's highlights.scm + tags.scm.
 	// Trivia kinds are used to type the `$trivia()` signature in utils.ts.
