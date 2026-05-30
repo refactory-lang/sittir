@@ -2064,37 +2064,39 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, Rule>): Rea
 	function walk(rule: Rule): void {
 		// Pre-link form: alias(symbol(_X), $visible)
 		if (rule.type === 'alias') {
-			const a = rule as AliasRule;
-			if (a.named && a.content.type === 'symbol') {
-				const s = a.content as SymbolRule;
-				if (s.name.startsWith('_')) candidates.add(s.name);
+			if (rule.named && rule.content.type === 'symbol' && rule.content.name.startsWith('_')) {
+				candidates.add(rule.content.name);
 			}
-			walk(a.content);
+			walk(rule.content);
 			return;
 		}
 		// Post-link form: symbol(visible, aliasedFrom='_X')
 		if (rule.type === 'symbol') {
-			const s = rule as SymbolRule;
-			if (s.aliasedFrom?.startsWith('_')) candidates.add(s.aliasedFrom);
+			if (rule.aliasedFrom?.startsWith('_')) candidates.add(rule.aliasedFrom);
 			return;
 		}
-		const x = rule as unknown as Record<string, unknown>;
-		if (Array.isArray(x['members'])) {
-			for (const m of x['members'] as Rule[]) walk(m);
+		// Polymorph: `forms` is PolymorphForm[] (content-bearing), NOT Rule[] —
+		// recurse into each form's `.content`.
+		if (rule.type === 'polymorph') {
+			for (const form of rule.forms) walk(form.content);
+			return;
 		}
-		if (x['content'] && typeof x['content'] === 'object') {
-			walk(x['content'] as Rule);
+		// Generic structural recursion via typed `in` narrowing (no Record cast).
+		if ('members' in rule && Array.isArray(rule.members)) {
+			for (const m of rule.members) walk(m);
 		}
-		// Polymorph forms
-		if (Array.isArray(x['forms'])) {
-			for (const f of x['forms'] as Rule[]) walk(f);
+		if ('content' in rule && rule.content && typeof rule.content === 'object') {
+			walk(rule.content);
 		}
-		// Separator rule lists
-		const sep = x['separator'];
-		if (sep && typeof sep === 'object' && !Array.isArray(sep)) {
-			const sepRules = (sep as { rules?: unknown }).rules;
-			if (Array.isArray(sepRules)) {
-				for (const r of sepRules as Rule[]) walk(r);
+		// `separator` may be a string (a literal delimiter — no nested rules),
+		// a readonly Rule[], OR `{ rules: Rule[] }` — handle the rule-bearing forms
+		// so aliases nested in either are captured.
+		if ('separator' in rule && rule.separator) {
+			const sep = rule.separator;
+			if (Array.isArray(sep)) {
+				for (const r of sep) walk(r);
+			} else if (typeof sep === 'object' && 'rules' in sep) {
+				for (const r of sep.rules) walk(r);
 			}
 		}
 	}
