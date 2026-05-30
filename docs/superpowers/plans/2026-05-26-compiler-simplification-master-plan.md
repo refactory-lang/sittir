@@ -34,10 +34,11 @@
 | **PR-A** | Reconcile `_new` naming → 0-diff WIDE probe | PR-A0 | 0 | no | `pr-a-reconcile-new-naming` | ✅ DONE (#40) |
 | **PR-B** | `AssembledNonterminal`→class; `kind`/`parseKind` refs; `sourceRuleIds` | A | 1 | no | `pr-b-assembled-nonterminal-class` | ✅ DONE (#41) |
 | **PR-C** | Eliminate `origin` + slot `aliasSources` → `value.parseKind`/`isUnnamed`; + §4d.1 non-injective-`parseKind` pass | B | 2 | no | `pr-c-eliminate-origin-aliassources` | ✅ DONE (#43; +#44 unified-CLI merged in) |
-| **PR-D** | wrap reads class; delete `SlotModel`; `$children`→`$other` (codegen+rust) | C | 3 | **yes** | `pr-d-wrap-reads-class` | 🔄 PUSHED (A `9d1f1d1a` + B `bc3cb2d4`; ast 125/72/76 hold, cargo green; `$with` variadic deferred to final type-pass; PR not yet opened) |
-| **PR-D2** | Helper-name leak fix (H2 probe → 0) | D | 4 | no | `pr-d2-helper-name-leak` | ⬜ |
-| **PR-E** | transport + render read class; delete 2 visible-kind band-aids; delete deprecated `bridge.rs` | D2, B (A) | 5 | **yes** | `pr-e-transport-render-class` | ⬜ |
-| **PR-F** | factory + from + types read class | B (D for `$with` gate) | 5 | no | `pr-f-factory-from-types-class` | ⬜ |
+| **PR-D** | wrap reads class; delete `SlotModel`; `$children`→`$other` (codegen+rust) | C | 3 | **yes** | `pr-d-wrap-reads-class` | ✅ DONE (#45; `$with` variadic deferred to final type-pass) |
+| **PR-D2** | Helper-name leak fix (H2 probe → 0) | D | 4 | no | `pr-d2-helper-name-leak` | ✅ DONE (#46; leak 6→0) |
+| **PR-E** | ~~transport+render read class; delete 2 band-aids; delete `bridge.rs`~~ **RE-SCOPED** (premises false; `project_pr_e_spec_premises_false`): read-class already wired (FOLD-1 present); `bridge.rs` → PR-E2; band-aids → cleanup | D2, B (A) | 5 | — | `pr-e-bandaid-cleanup` | ✅ DONE (cleanup: delete dead band-aid 1 + RELABEL load-bearing band-aid 2; byte-neutral) |
+| **PR-E2** | sunset deprecated `bridge.rs` NodeData render path (split from PR-E) | E (impl) | 5 | **yes** | `pr-e2-bridge-render-sunset` | ✅ DONE (#48; −8.8K dead lines; cargo test parity gate) |
+| **PR-F** | factory + from + types read class | B (D for `$with` gate) | 5 | no | `pr-f-factory-from-types-class` | ✅ DONE (#47; render-neutral storageKey getter) |
 | **PR-G** | Diagnostics severity model + Assemble→Project gate (additive) | — (≺ H, L) | 1‖ | no | `pr-g-diagnostics-gate` | ⬜ |
 | **PR-H** | Phase rename `optimize.ts`→`normalize.ts`; `transforms.ts`; ctx; node-behavior→class | G | 6 | no | `pr-h-phase-rename-ctx` | ⬜ |
 | **PR-M** | Sittir-invention rule-IR cut + `AssembledPolymorph`→`AssembledBranch` | core (B); **≺ I** | 7 | **yes** | `pr-m-rule-ir-cut` | ⬜ |
@@ -98,6 +99,8 @@ The linear order over-serializes. The graph reveals genuine independence — but
 3. Execute via subagent-driven-development; gate on `pnpm validate:native` (+ cargo-verify if rust-emitting).
 4. On merge: update this row's Status to ✅ + record the last gate numbers, and link the per-PR plan.
 
-**Done so far:** PR-A (#40) → PR-B (#41) → PR-C (#43, +#44 unified-CLI) all merged. **PR-D** (`pr-d-wrap-reads-class`) pushed — Task A (wrap-reads-class + delete `slot-model.ts`) + Task B (`$children`→`$other`) done & independently re-verified (ast **125/72/76** hold, `cargo check` green); the `$with` variadic acceptance criterion is **deferred** to the single end-of-plan type-error cleanup pass (generated-code type errors are not gated mid-plan — render/parse via `validate:native` is the gate). PR-D's GitHub PR not yet opened.
+**Done so far:** PR-A (#40) → PR-B (#41) → PR-C (#43, +#44 unified-CLI) → **PR-D (#45)** → **PR-D2 (#46)** → **PR-F (#47)** → **PR-E2 (#48)** all merged, + the **PR-E band-aid cleanup** (delete dead band-aid 1, relabel load-bearing band-aid 2; byte-neutral). The `$with` variadic criterion is **deferred** to the single end-of-plan type-error cleanup pass (generated-code type errors are not gated mid-plan — `validate:native` render/parse is the gate). Gate held at **rust ast 125 · ts ast 72 · python ast 76** through all of it.
 
-**Up next: PR-D2** (`pr-d2-helper-name-leak` — Helper-name leak fix, H2 probe → 0) — the formal dependency before **PR-E** (`pr-e-transport-render-class`: transport + render read class, delete the 2 visible-kind band-aids + deprecated `bridge.rs`). PR-E ‖ PR-F are the wave-5 concurrent pair. Current gate baseline to carry into D2/E: **rust ast 125 · ts ast 72 · python ast 76** (native, deep read-render-parse).
+**PR-E learning (`project_pr_e_spec_premises_false`):** PR-E's original row ("read class + delete 2 band-aids + delete bridge.rs") was **false on every premise** — read-class was already wired (FOLD-1 present), band-aid 2 is **load-bearing** (removing it regresses `type_arguments` jinja), and `bridge.rs` had a **live caller** (a coordinated sunset, not dead-code delete). It dissolved into: PR-E2 (bridge sunset, done) + the band-aid cleanup (done) + nothing for "read class" (already done). **Lesson: isolation-test "this is removable" claims (delete→regen→diff), never trust a static probe or a "temporary"/"band-aid" comment.**
+
+**Up next: PR-G** (`pr-g-diagnostics-gate` — additive diagnostics severity model + Assemble→Project gate; must land before PR-H) then the spine resumes **PR-H → PR-M → PR-I → PR-K → … → PR-L**. Baseline to carry forward: **rust ast 125 · ts ast 72 · python ast 76** (native, deep read-render-parse).
