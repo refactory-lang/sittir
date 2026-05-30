@@ -1,6 +1,6 @@
 # Design Spec — Canonicalize the `separator` rule-shape
 
-> **Status:** spec for a strangler PR. Slots into **PR-O** (`pr-o-structural-dedup`) as the named sub-item **`separator-canonical`** (or its own letter), gated on PR-H. Non-rust-emitting (compiler-side data shape; rust render is the *gate*, not edited).
+> **Status:** spec for a strangler PR. The **behavioral sub-item of PR-O** (`pr-o-structural-dedup`), named **`separator-canonical`**, with its **own gate** (PR-O's structural half stays non-behavioral). Gated on **PR-H** (the lift moves into `applyWrapperDeletion`, in the phase PR-H renames/reshapes). Compiler-side data shape; rust render is the *gate*, not edited — render support is separately gated on the future non-slot-variables design.
 
 **Goal:** Collapse the 3-way `RuleBase.separator` union to **one canonical form** so every walker/render consumer stops branching on separator *shape* — the same shape-variance reduction class as PR-C (`origin`/`aliasSources` → `parseKind`/`isUnnamed`) and the `patternReplacementKinds` cut.
 
@@ -14,23 +14,34 @@ The first survey recommended collapsing to `string` because *today* every separa
 
 **Canonical target: `separator?: Rule` — a SINGLE rule** (CORRECTED again: `Rule[]` is the wrong shape — a *list* of alternatives is just a `ChoiceRule`, so one `Rule` already subsumes everything: single-literal (`StringRule`), choice (`ChoiceRule`), sequence/multiple (`SeqRule`)). One field, no list, no union. The `string`-reductions in consumers become the thing to FIX, not the form to adopt.
 
-## Phasing — diagnostic NOW, full support LATER
+## Phasing — DEFER separator assignment to the push-down phase
 
-The full `separator: Rule` normalization + choice-separator render is **gated on non-slot-variables** (below). But the *gap* is surfaceable immediately:
+> **Superseded the original "standalone diagnostic NOW" plan (2026-05-30, design authority).** A workflow proved a standalone diagnose-pass walking `optimize().rules` (or the extraction helpers `extractSeparatorString`/`findNestedSeparator`) **can never fire** — the choice separator is already destroyed upstream. The correct move is structural: stop assigning separators early, and **defer the lift to push-down**, where assignment becomes a single non-lossy site. This is **PR-O's `separator-canonical` behavioral sub-item**, gated on **PR-H** (which settles `normalize.ts`/`transforms.ts`, the phase that owns `applyWrapperDeletion`).
 
-- **Phase 1 (now, implementable):** emit a **diagnostic** wherever a separator is anything other than a single terminal literal — i.e. **multiple separators** OR a **separator whose value has `terminal === false`** (a non-terminal / choice / structured separator). These are the cases the current single-literal render *cannot* faithfully reproduce; surfacing them makes the gap VISIBLE instead of silently mis-rendering. **Severity = `warning`, NOT `propose-*`** (design authority, 2026-05-30): a `propose-*` implies an actionable promotion the consumer can adopt now; there is NO handling path for multi/choice separators until the non-slot-variables design lands, so this is an unsupported-case **warning** ("we render this wrong, be aware"), not a proposal. Not `fail` either — emit must not halt. No non-slot-variables needed.
-  - **The choice-factoring already exists** (verified): `factorChoiceBranches` (`optimize.ts:365`, in the normalize pipeline) turns `rep(choice(seq(x,','), seq(x,';')))` → `rep(seq(x, choice(',',';')))` (factors the common element out, common-prefix=`x`, alternatives → a `ChoiceRule` in the separator slot). So a choice-separator **already lands as a `ChoiceRule`** at extraction. The diagnostic is therefore a **guard at the existing extraction point** — `extractSeparatorString` (node-map.ts:1051) / `findNestedSeparator` (collect-slots.ts:60): when the separator rule is a `choice` (or any `terminal===false` rule), emit a diagnostic instead of flattening to a string. New diagnose-`*` pass (cf. `diagnose-slot-grouping.ts`) surfaced via `runGrammarDiagnosticsPreflight` — independent of PR-G's sink and PR-H.
-- **Phase 2 (gated on non-slot-variables):** normalize `separator` to a single `Rule` + render choice/multiple separators (the per-occurrence delimiter via a non-slot variable). The Phase-1 diagnostics become the test corpus / the things that flip from "diagnosed" to "supported."
+### Why a standalone diagnostic can't work (the two-site proof)
 
-### ⚠ The real work is the RENDER path — and it RELIES ON the future "non-slot variables" design
+`.separator` is **always a plain `string`** by the time `optimize()` finishes (probe: rust 24/0 non-string, ts 19/0, py 30/0) because the choice dies in TWO earlier places, and a single post-optimize `.separator` walk sees NEITHER:
 
-Normalizing the *data* to `Rule[]` is mechanical. The hard part — and the reason this is a real feature, not just a de-dup — is **rendering a structured separator**:
-- `emitListSlot` (templates.ts:1180) currently emits `{{ name | join("<literal>") }}` with a fixed string. A **choice** separator (`,` | `;`) has no single literal — render must **preserve which delimiter the source used, per occurrence**. That per-occurrence choice is **NOT a child-node slot** — it's render-time state read from the source. 
-- **DEPENDENCY: this relies on the future "non-slot variables" design** (render-time variables captured from the source that aren't child slots). The choice-separator selection is the canonical motivating case for non-slot variables: the read side records "this gap used `;`", and render replays it — without it being a slot/parameter. **This PR is gated on that design landing.** (A multiple/sequence separator the walker emits per gap; a single-literal collapses to today's behavior.)
-- `selectJoinFilter` / `joinWithTrailing`/`joinWithLeading`/`joinWithFlanks` assume one literal + flat flags; they generalize to a rule-rendered separator + the non-slot-variable lookup.
-- Resolves `project_multi_separator_templates` + relates to `project_template_walker_adjacency`.
+- **SITE 1 — eager evaluate lift (lossy).** `extractRepeatSeparator` (evaluate.ts:389-409, lines ~399-405) lifts an authored `repeat(seq(x, choice(',', _semicolon)))` separator by calling `extractFirstStringFromChoice` (evaluate.ts:427) — taking ONLY the first literal, **discarding** `_semicolon`. The choice is gone at Phase 1.
+- **SITE 2 — post-fanout, never re-lifted.** `factorChoiceBranches` (optimize.ts:365) rewrites `repeat(choice(seq(x,','), seq(x,';')))` → `repeat(seq(x, choice(',',';')))`. But evaluate already ran (saw a repeat-OF-choice → `extractRepeatSeparator` returned null → lifted no `.separator`), so this fanout-produced choice sits in **structural** position and is never lifted into `.separator`.
 
-(Flags `trailing`/`leading` still need a home — likely siblings on the rule alongside the `Rule[]`, OR folded into the structured representation; resolve alongside the render + non-slot-variable design.)
+So separator-lift is smeared across phases (evaluate `extractRepeatSeparator`/`liftCommaSep`, link's `'\n'` stamp, then `applyWrapperDeletion`'s push-down). The glossary already designates **`applyWrapperDeletion` as the home** ("Separator-lift and attribute stamping are a separate concern handled in `applyWrapperDeletion` / simplify"; it pushes `separator` to leaf `RuleBase` attributes) — but the eager evaluate lift front-runs it and flattens.
+
+### The work — consolidate the lift into `applyWrapperDeletion` (push-down)
+
+1. **Stop the eager evaluate-side lift.** Let `seq(content, SEP)` ride structurally through evaluate → link → normalize untouched (honors *Normalize non-lossy*; `[[feedback_no_lossy_distillation]]`). The choice survives.
+2. **Lift ONCE, in `applyWrapperDeletion`**, assigning `.separator` as a **single `Rule`** (the `ChoiceRule` preserved, not flattened). By Phase 3 both SITE-1 and SITE-2 classes have converged to the same structural `repeat(seq(content, sep))` shape → **one assignment site, one detection site.**
+3. **Emit the `warning` at that single site** — when the lifted separator `Rule` is multiple OR `terminal === false` (a choice / non-terminal). **Severity = `warning`, NOT `propose-*`** (no handling path until non-slot-variables; an unsupported-case warning, not an adoptable proposal) and **never `fail`** (emit must not halt). The standalone two-site diagnostic dissolves into this one push-down-site check.
+4. **0 real witnesses today is EXPECTED** — the canonical case (ts `object_type`) was rewritten to visible per-delimiter kinds (`[[project_object_type_rewrite_and_native_list_gaps]]`). This is a forward-looking guard; unit tests exercise the choice/multi shapes synthetically.
+
+### Render (per-occurrence replay) stays gated on non-slot-variables
+
+Normalizing the *data* to a single `Rule` is mechanical; the hard part is **rendering** a structured separator:
+- `emitListSlot` (templates.ts:1180) emits `{{ name | join("<literal>") }}` with a fixed string. A **choice** separator (`,` | `;`) has no single literal — render must **preserve which delimiter the source used, per occurrence**. That per-occurrence choice is **NOT a child-node slot** — it's render-time state read from the source.
+- **DEPENDENCY: the future "non-slot variables" design** (render-time variables captured from source that aren't child slots). Choice-separator selection is its canonical motivating case: the read side records "this gap used `;`", render replays it. **Render support is gated on that design landing** — the push-down assignment + the `warning` land first (this PR-O sub-item); render follows.
+- `selectJoinFilter` / `joinWithTrailing`/`joinWithLeading`/`joinWithFlanks` assume one literal + flat flags; they generalize to a rule-rendered separator + the non-slot-variable lookup. Resolves `[[project_multi_separator_templates]]`; relates to `[[project_template_walker_adjacency]]`.
+
+(Flags `trailing`/`leading`: keep as siblings on the rule alongside the single-`Rule` separator, stamped at the push-down lift; resolve alongside the render + non-slot-variable design.)
 
 ## Current shape (the problem)
 
@@ -101,9 +112,9 @@ Pass-throughs needing only the type change: `wrapper-deletion.ts:38`, `simplify.
 3. `findRepeatSeparator` latent type bug — migration fixes + surfaces it; `dump-ast-mismatches` confirms no hidden shift.
 4. Phantom `Rule[]` removal safe (no producer; `rg` confirms none) — double-check `__tests__`.
 
-## Placement — FORWARD-LOOKING (gated on the non-slot-variables design)
-**Own PR `separator-canonical` (or a PR-O sub-item for the data-shape part).** Depends-on:
-- **PR-B ✅** + **PR-H ⬜** (the data-shape touches `optimize.ts:675,774` separator producers; PR-H renames `optimize.ts`→`normalize.ts`).
-- **The future "non-slot variables" design — REQUIRED for choice-separator render** (the per-occurrence delimiter selection is a non-slot variable). Full multi/choice-separator support is GATED on it.
+## Placement — PR-O behavioral sub-item (design authority, 2026-05-30)
+**`separator-canonical` stays inside PR-O but as its explicitly-BEHAVIORAL sub-item with its own gate** (PR-O's other half — M1/MO2/P1 structural de-dup — remains non-behavioral). Depends-on:
+- **PR-B ✅** + **PR-H ⬜** — the lift moves into `applyWrapperDeletion`, which lives in the phase PR-H renames (`optimize.ts`→`normalize.ts`) and reshapes (`transforms.ts`). Hard dependency, not just file-overlap.
+- **The future "non-slot variables" design — REQUIRED for choice-separator RENDER only** (per-occurrence delimiter selection is a non-slot variable). The push-down *assignment* (single `Rule`) + the unsupported-case `warning` land in this PR-O sub-item; render is gated on that design.
 
-Sequencing: the `Rule[]` data normalization could land with PR-O (after PR-H), but the *capability* (rendering choice/multiple separators) waits on the non-slot-variables design. Does NOT depend on the M→I→K polymorph chain. **Next design step: spec the non-slot-variables design, which this builds on.**
+**Own gate** (it is behavioral, unlike PR-O's structural half): `validate:native` hold (rust 125 / ts 72 / py 76) **+ generated byte-diff classified, not assumed empty** — relocating the lift from evaluate to push-down can shift rendered bytes; every drift must be explained. Does NOT depend on the M→I→K polymorph chain. **Next design step: spec the non-slot-variables design, which the render half builds on.**
