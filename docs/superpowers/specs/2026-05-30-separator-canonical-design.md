@@ -4,7 +4,7 @@
 
 **Goal:** Collapse the 3-way `RuleBase.separator` union to **one canonical form** so every walker/render consumer stops branching on separator *shape* — the same shape-variance reduction class as PR-C (`origin`/`aliasSources` → `parseKind`/`isUnnamed`) and the `patternReplacementKinds` cut.
 
-## Target — `Rule[]` (structured), NOT `string` (CORRECTED 2026-05-30)
+## Target — a single structured `Rule`, NOT `string` (CORRECTED 2026-05-30)
 
 The first survey recommended collapsing to `string` because *today* every separator reduces to a single literal (`extractSeparatorString`, `separatorToString`, `NodeRef.separator: string`). **That recommendation is rejected by the design authority** — it mistakes a *limitation* for a *property*:
 
@@ -12,7 +12,14 @@ The first survey recommended collapsing to `string` because *today* every separa
 - **We need to support MULTIPLE separators and CHOICE separators** (`choice(',', ';')`, alternating delimiters, etc.). A `string` cannot represent a choice or a list; only a **structured `Rule[]`** (each entry a `Rule` — possibly a `ChoiceRule`/`SeqRule`/`StringRule`) can.
 - The "`Rule[]` has zero producers" finding is *because* nothing currently emits structured separators — that's the capability this PR ADDS, not evidence against it.
 
-**Canonical target: `separator?: readonly Rule[]`** — subsumes single-literal (one `StringRule`), choice (`[ChoiceRule]`), and multiple (a list). The `string`-reductions in consumers become the thing to FIX, not the form to adopt.
+**Canonical target: `separator?: Rule` — a SINGLE rule** (CORRECTED again: `Rule[]` is the wrong shape — a *list* of alternatives is just a `ChoiceRule`, so one `Rule` already subsumes everything: single-literal (`StringRule`), choice (`ChoiceRule`), sequence/multiple (`SeqRule`)). One field, no list, no union. The `string`-reductions in consumers become the thing to FIX, not the form to adopt.
+
+## Phasing — diagnostic NOW, full support LATER
+
+The full `separator: Rule` normalization + choice-separator render is **gated on non-slot-variables** (below). But the *gap* is surfaceable immediately:
+
+- **Phase 1 (now, implementable — uses PR-G's `DiagnosticSink`):** emit a **diagnostic** wherever a separator is anything other than a single terminal literal — i.e. **multiple separators** OR a **separator whose value has `terminal === false`** (a non-terminal / choice / structured separator). These are the cases the current single-literal render *cannot* faithfully reproduce; surfacing them (a `propose-*`/warning, not `fail`) makes the gap VISIBLE instead of silently mis-rendering. No non-slot-variables needed — this is pure detection at assemble/collect-slots time, fed to the sink.
+- **Phase 2 (gated on non-slot-variables):** normalize `separator` to a single `Rule` + render choice/multiple separators (the per-occurrence delimiter via a non-slot variable). The Phase-1 diagnostics become the test corpus / the things that flip from "diagnosed" to "supported."
 
 ### ⚠ The real work is the RENDER path — and it RELIES ON the future "non-slot variables" design
 
