@@ -1,0 +1,87 @@
+{
+  "capturedAt": "2026-05-31",
+  "description": "Native AST-passing renders for overridePassthrough form kinds. These are the form kinds that actually pass read-render-parse validation today. These templates are NOT changed by PR-I (form templates remain unchanged; only parent dispatch changes).",
+  "data": [
+    {
+      "grammar": "rust",
+      "parentKind": "expression_statement",
+      "formKind": "_expression_statement_block_ending",
+      "instances": [
+        {
+          "sourceIn": "try {}",
+          "rendered": "try {}"
+        },
+        {
+          "sourceIn": "match x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}",
+          "rendered": "match x {\n  Some(x) => \"some\",\n  std::None() => \"none\"\n}"
+        },
+        {
+          "sourceIn": "match x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  & mut  z => z,\n}",
+          "rendered": "match x {\n  A(ref x) => x.0,\n  ref mut y => y,\n  & mut  z => z,\n}"
+        },
+        {
+          "sourceIn": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}",
+          "rendered": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}"
+        },
+        {
+          "sourceIn": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
+          "rendered": "match y {\n    None::<T> => 17,\n    _ => 42,\n}"
+        }
+      ]
+    },
+    {
+      "grammar": "rust",
+      "parentKind": "visibility_modifier",
+      "formKind": "_visibility_modifier_crate",
+      "instances": [
+        {
+          "sourceIn": "crate",
+          "rendered": "crate"
+        },
+        {
+          "sourceIn": "crate",
+          "rendered": "crate"
+        },
+        {
+          "sourceIn": "crate",
+          "rendered": "crate"
+        },
+        {
+          "sourceIn": "crate",
+          "rendered": "crate"
+        },
+        {
+          "sourceIn": "crate",
+          "rendered": "crate"
+        }
+      ]
+    },
+    {
+      "grammar": "rust",
+      "parentKind": "visibility_modifier",
+      "formKind": "_visibility_modifier_pub",
+      "instances": [
+        {
+          "sourceIn": "pub",
+          "rendered": "pub"
+        },
+        {
+          "sourceIn": "pub",
+          "rendered": "pub"
+        },
+        {
+          "sourceIn": "pub",
+          "rendered": "pub"
+        },
+        {
+          "sourceIn": "pub",
+          "rendered": "pub"
+        },
+        {
+          "sourceIn": "pub",
+          "rendered": "pub"
+        }
+      ]
+    }
+  ]
+}

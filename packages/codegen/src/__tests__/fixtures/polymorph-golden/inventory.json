@@ -1,0 +1,379 @@
+{
+  "capturedAt": "2026-05-31",
+  "branchHead": "a9c1c9c0",
+  "totalPolymorphKinds": 36,
+  "counts": {
+    "rust": 21,
+    "typescript": 11,
+    "python": 4
+  },
+  "allSourceOverride": true,
+  "sharedSignatureCount": 0,
+  "carveOutCount": 0,
+  "notes": [
+    "All 36 polymorph kinds have source=override.",
+    "0 shared-signature: every form has a distinct named CST discriminator.",
+    "0 carve-outs: all kinds can have $variant removed post-rewrite.",
+    "Partition uses form-group CST kind presence (kind.replace(__form_, _) in node-types.json).",
+    "ROUTE-EXISTING: form-group CST kinds all present → emit via emitBranchTemplate against existing slots.",
+    "MUST-CONSTRUCT: form-group CST kinds missing or hidden → need merged-renderRule builder (3 kinds).",
+    "Native render path is BROKEN for all parent polymorph kinds (transport requires all form fields simultaneously).",
+    "Form-kind render (JS path) works for overridePassthrough forms."
+  ],
+  "partitionTable": [
+    {
+      "grammar": "rust",
+      "kind": "array_expression",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "array_expression_semi",
+        "array_expression_list"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "closure_expression",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "closure_expression_block",
+        "closure_expression_expr"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "delim_token_tree",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "delim_token_tree_paren",
+        "delim_token_tree_bracket",
+        "delim_token_tree_brace"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "expression_statement",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "expression_statement_with_semi",
+        "expression_statement_block_ending"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "field_pattern",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "field_pattern_shorthand",
+        "field_pattern_named"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "foreign_mod_item",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "foreign_mod_item_semi",
+        "foreign_mod_item_body"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "function_type",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "function_type_trait_form",
+        "function_type_fn_form"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "impl_item",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "impl_item_body",
+        "impl_item_semi"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "line_comment",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "line_comment_regular_dslash",
+        "line_comment_doc",
+        "line_comment_content"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "macro_definition",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "macro_definition_paren",
+        "macro_definition_bracket",
+        "macro_definition_brace"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "match_arm",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "match_arm_with_comma",
+        "match_arm_block_ending"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "mod_item",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "mod_item_external",
+        "mod_item_inline"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "or_pattern",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "or_pattern_binary",
+        "or_pattern_prefix"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "pointer_type",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "pointer_type_const",
+        "pointer_type_mut"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_expression",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "range_expression_bare"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_pattern",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "range_pattern_prefix",
+        "range_pattern_left_with_right",
+        "range_pattern_left_bare"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "reference_expression",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "struct_item",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "struct_item_brace",
+        "struct_item_tuple",
+        "struct_item_unit"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "token_tree_paren",
+        "token_tree_bracket",
+        "token_tree_brace"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree_pattern",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "token_tree_pattern_paren",
+        "token_tree_pattern_bracket",
+        "token_tree_pattern_brace"
+      ]
+    },
+    {
+      "grammar": "rust",
+      "kind": "visibility_modifier",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "visibility_modifier_crate",
+        "visibility_modifier_pub",
+        "visibility_modifier_in_path"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "_export_statement_default_from_arm",
+      "partition": "MUST-CONSTRUCT",
+      "forms": [
+        "_export_statement_default_from_arm_star_from",
+        "_export_statement_default_from_arm_ns_from",
+        "_export_statement_default_from_arm_clause_from",
+        "_export_statement_default_from_arm_export_clause"
+      ],
+      "note": "form-group kinds not in node-types.json (hidden prefix); unique discriminators: export_statement_default_from_arm_star_from etc."
+    },
+    {
+      "grammar": "typescript",
+      "kind": "ambient_declaration",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "ambient_declaration_declaration",
+        "ambient_declaration_global",
+        "ambient_declaration_module"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "arrow_function",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "arrow_function_parameter",
+        "arrow_function__call_signature"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "call_expression",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "call_expression_call",
+        "call_expression_template_call",
+        "call_expression_member"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "class_heritage",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "class_heritage_extends_clause",
+        "class_heritage_implements_clause"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "export_statement",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "export_statement_default",
+        "export_statement_type_export",
+        "export_statement_equals_export",
+        "export_statement_namespace_export"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "import_clause",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "import_clause_namespace_import",
+        "import_clause_named_imports",
+        "import_clause_default_import"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "import_specifier",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "import_specifier_name",
+        "import_specifier_as"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "index_signature",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "index_signature_colon",
+        "index_signature_mapped_type_clause"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "parenthesized_expression",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "parenthesized_expression_typed",
+        "parenthesized_expression_sequence"
+      ]
+    },
+    {
+      "grammar": "typescript",
+      "kind": "update_expression",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "update_expression_postfix",
+        "update_expression_prefix"
+      ]
+    },
+    {
+      "grammar": "python",
+      "kind": "_match_block",
+      "partition": "MUST-CONSTRUCT",
+      "forms": [
+        "_match_block_block"
+      ],
+      "note": "hidden kind; form-group kind not in node-types.json; unique discriminator: match_block_block"
+    },
+    {
+      "grammar": "python",
+      "kind": "assignment",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "assignment_eq",
+        "assignment_type",
+        "assignment_typed"
+      ]
+    },
+    {
+      "grammar": "python",
+      "kind": "expression_statement",
+      "partition": "MUST-CONSTRUCT",
+      "forms": [
+        "expression_statement_tuple",
+        "expression_statement_expression",
+        "expression_statement_assignment",
+        "expression_statement_augmented_assignment",
+        "expression_statement_yield"
+      ],
+      "note": "expression_statement_expression not in node-types.json; forms have distinct unique discriminators (expression, expression_statement_tuple, assignment, augmented_assignment, yield)"
+    },
+    {
+      "grammar": "python",
+      "kind": "with_clause",
+      "partition": "ROUTE-EXISTING",
+      "forms": [
+        "with_clause_bare",
+        "with_clause_paren"
+      ]
+    }
+  ],
+  "carveOutSet": [],
+  "baseline": {
+    "capturedVia": "pnpm validate:native (sittir-prh branch pr-i-polymorph-emit-rewrite, head a9c1c9c0)",
+    "rustAstMatch": 125,
+    "typescriptAstMatch": 72,
+    "pythonAstMatch": 76
+  }
+}
