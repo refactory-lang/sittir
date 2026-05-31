@@ -218,8 +218,8 @@ function serializeNode(node: AssembledNode): SerializedNode {
 		irKey: node.irKey,
 		hidden: node.hidden,
 		source: node.source,
-		isParameterless: node.isParameterless,
-		stampExpression: node.stampExpression
+		...(node.isParameterless ? { isParameterless: true } : {}),
+		...(node.stampExpression !== undefined ? { stampExpression: node.stampExpression } : {})
 	};
 	switch (node.modelType) {
 		case 'branch': {

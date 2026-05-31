@@ -47,7 +47,7 @@ import { existsSync } from 'node:fs';
 import { resolveGrammarJsPath } from '../../../codegen/src/compiler/resolve-grammar.ts';
 import { evaluate } from '../../../codegen/src/compiler/evaluate.ts';
 import { link } from '../../../codegen/src/compiler/link.ts';
-import { optimize } from '../../../codegen/src/compiler/optimize.ts';
+import { normalizeGrammar } from '../../../codegen/src/compiler/normalize.ts';
 import { assemble, hydrateSlotRefs } from '../../../codegen/src/compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
 import { emitTypes } from '../../../codegen/src/emitters/types.ts';
@@ -89,7 +89,7 @@ stages.evaluate = raw.rules[kind] ?? null;
 const linked = link(raw, undefined);
 stages.link = linked.rules[kind] ?? null;
 
-const optimized = optimize(linked);
+const optimized = normalizeGrammar(linked);
 stages.optimize = optimized.rules[kind] ?? null;
 stages.simplify = optimized.simplifiedRules?.[kind] ?? null;
 

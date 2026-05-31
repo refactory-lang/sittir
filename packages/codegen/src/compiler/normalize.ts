@@ -1,5 +1,5 @@
 /**
- * compiler/optimize.ts — Optimize phase.
+ * compiler/normalize.ts — Normalize phase.
  *
  * Restructures seq/choice/optional/repeat for SIMPLIFICATION (fan-out,
  * factoring, prefix/suffix extraction, wrapper collapsing, dedupe,
@@ -8,7 +8,7 @@
  *
  * Variant tagging and polymorph promotion live in Link — those are
  * classification, not simplification. Pipeline order is fixed in
- * `optimize()` below: collapse → fan-out → factor → dedupe → inline →
+ * `normalizeGrammar()` below: collapse → fan-out → factor → dedupe → inline →
  * re-collapse.
  */
 
@@ -20,6 +20,7 @@ import { applyWrapperDeletion } from './wrapper-deletion.ts';
 import { buildPolymorphSkipSetFromRules } from './diagnose-slot-grouping.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
+import type { NormalizeCtx } from './transforms.ts';
 
 /**
  * Run the full ordered pipeline of non-lossy normalization passes over the
@@ -64,47 +65,44 @@ function dbgChoiceId(label: string, rules: Record<string, Rule>): void {
 
 function applyNormalizationPasses(
 	rawRules: Record<string, Rule>,
-	preserveKinds?: ReadonlySet<string>
+	preserveKinds?: ReadonlySet<string>,
+	ctx?: NormalizeCtx
 ): Record<string, Rule> {
 	let rules: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rawRules)) {
-		rules[name] = collapseWrappers(rule);
+		rules[name] = collapseWrappers(rule, ctx);
 	}
 	dbgChoiceId('after collapseWrappers#1', rules);
 	for (const name of Object.keys(rules)) {
-		rules[name] = fanOutSeqChoices(rules[name]!);
+		rules[name] = fanOutSeqChoices(rules[name]!, ctx);
 	}
 	dbgChoiceId('after fanOutSeqChoices', rules);
 	for (const name of Object.keys(rules)) {
-		rules[name] = factorChoiceBranches(rules[name]!);
+		rules[name] = factorChoiceBranches(rules[name]!, ctx);
 	}
 	dbgChoiceId('after factorChoiceBranches', rules);
 	for (const name of Object.keys(rules)) {
-		rules[name] = dedupeSeqMembers(rules[name]!);
+		rules[name] = dedupeSeqMembers(rules[name]!, ctx);
 	}
 	dbgChoiceId('after dedupeSeqMembers', rules);
-	rules = inlineSingleUseHidden(rules, preserveKinds);
+	rules = inlineSingleUseHidden(rules, ctx, preserveKinds);
 	dbgChoiceId('after inlineSingleUseHidden', rules);
 	for (const name of Object.keys(rules)) {
-		rules[name] = collapseWrappers(rules[name]!);
+		rules[name] = collapseWrappers(rules[name]!, ctx);
 	}
 	dbgChoiceId('after collapseWrappers#2', rules);
 	return rules;
 }
 
-export function optimize(
+export function normalizeGrammar(
 	linked: LinkedGrammar,
-	inlineKinds: ReadonlySet<string> = new Set(),
-	/**
-	 * Optional extra polymorph skip-set for the slot-grouping diagnostic.
-	 * Callers that have access to `raw.polymorphsConfig` (e.g. `generate.ts`)
-	 * can pre-populate this with all polymorphs-config parent + hidden child
-	 * kind names so the diagnostic doesn't fire on inlined polymorph arms
-	 * (like `_public_field_definition_abstract_first`) whose simplified rule
-	 * type is no longer `polymorph` after inlining.
-	 */
-	extraPolymorphSkip: ReadonlySet<string> = new Set()
+	ctx?: NormalizeCtx
 ): OptimizedGrammar {
+	// Read phase-shared state from ctx; fall back to empty defaults when called
+	// without ctx (e.g. existing tests that only pass `linked`).
+	const inlineKinds: ReadonlySet<string> = ctx?.inlineKinds ?? new Set();
+	const extraPolymorphSkip: ReadonlySet<string> = ctx?.polymorphSkip ?? new Set();
+
 	// Slot-grouping diagnostics accumulate across the several computeSimplifiedRules
 	// calls below; reset per run so one grammar's records never leak into the next.
 	resetSlotGroupingDiagnostics();
@@ -113,7 +111,7 @@ export function optimize(
 	// applyNormalizationPasses calls below share this single derived set so
 	// they behave identically to the old code that threaded the same cached set.
 	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
-	const rules = applyNormalizationPasses(linked.rules, preserveKinds.size > 0 ? preserveKinds : undefined);
+	const rules = applyNormalizationPasses(linked.rules, preserveKinds.size > 0 ? preserveKinds : undefined, ctx);
 	const renderRules = applyWrapperDeletion(rules);
 
 	// Build a base polymorph skip-set from polymorphVariants metadata.
@@ -130,16 +128,16 @@ export function optimize(
 		variantSkip.add(pv.child);
 	}
 
-	const simplifiedRules = computeSimplifiedRules(renderRules, linked.word, inlineKinds, variantSkip);
+	const simplifiedRules = computeSimplifiedRules(renderRules, linked.word, inlineKinds, variantSkip, ctx);
 
 	// Alias-body kinds: thread the alias-target bodies through the same pipeline
 	// so renderRules / simplifiedRules cover them too. Eliminates the
 	// assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
 	if (linked.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(linked.topLevelAliasBodies);
-		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, preserveKinds.size > 0 ? preserveKinds : undefined);
+		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, preserveKinds.size > 0 ? preserveKinds : undefined, ctx);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
-		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, linked.word, inlineKinds, variantSkip);
+		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, linked.word, inlineKinds, variantSkip, ctx);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			renderRules[kind] = rule;
 		}
@@ -186,7 +184,7 @@ export function optimize(
 			? polySkipFromRules
 			: new Set([...polySkipFromRules, ...variantSkip]);
 		const polyFormRender = applyWrapperDeletion(polyFormBodies);
-		const polyFormSimplified = computeSimplifiedRules(polyFormRender, linked.word, inlineKinds, polySkip);
+		const polyFormSimplified = computeSimplifiedRules(polyFormRender, linked.word, inlineKinds, polySkip, ctx);
 		for (const [kind, rule] of Object.entries(polyFormRender)) {
 			renderRules[kind] = rule;
 		}
@@ -227,10 +225,10 @@ export function optimize(
  * through `optional`, `repeat`, `field`, `variant`, `clause`,
  * `group`, `token` wrappers. Non-lossy.
  */
-export function fanOutSeqChoices(rule: Rule): Rule {
+export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
 	switch (rule.type) {
 		case 'seq': {
-			const members = rule.members.map(fanOutSeqChoices);
+			const members = rule.members.map((m) => fanOutSeqChoices(m));
 			const choiceIdx = members.findIndex(isChoice);
 			if (choiceIdx < 0) return { ...rule, members };
 			// Only fan out when there's exactly one inner choice.
@@ -259,7 +257,7 @@ export function fanOutSeqChoices(rule: Rule): Rule {
 			return { ...choice, type: 'choice', members: branches, ...(rule.id !== undefined ? { id: rule.id } : {}) };
 		}
 		case 'choice': {
-			const members = rule.members.map(fanOutSeqChoices);
+			const members = rule.members.map((m) => fanOutSeqChoices(m));
 			return { ...rule, members };
 		}
 		case 'optional':
@@ -271,7 +269,7 @@ export function fanOutSeqChoices(rule: Rule): Rule {
 		case 'group':
 			return { ...rule, content: fanOutSeqChoices(rule.content) };
 		case 'polymorph':
-			return mapPolymorphForms(rule, fanOutSeqChoices);
+			return mapPolymorphForms(rule, (r) => fanOutSeqChoices(r));
 		default:
 			return rule;
 	}
@@ -362,10 +360,10 @@ function extractFactoredChoiceBody(
  * via `rulesEqual`). Only applies at the top level of a `choice`;
  * recurses through wrappers for nested choices. Non-lossy.
  */
-export function factorChoiceBranches(rule: Rule): Rule {
+export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
 	switch (rule.type) {
 		case 'choice': {
-			const members = rule.members.map(factorChoiceBranches);
+			const members = rule.members.map((m) => factorChoiceBranches(m));
 			const unwrapped = members.map((m) => (m.type === 'variant' ? m.content : m));
 			// Bare atoms normalized to single-member seqs for uniform factoring.
 			const canFactor = unwrapped.length >= 2 && unwrapped.every((b) => b.type === 'seq' || isAtomForFactoring(b));
@@ -391,7 +389,7 @@ export function factorChoiceBranches(rule: Rule): Rule {
 			return outerMembers.length === 1 ? outerMembers[0]! : { type: 'seq', members: outerMembers };
 		}
 		case 'seq': {
-			const members = rule.members.map(factorChoiceBranches);
+			const members = rule.members.map((m) => factorChoiceBranches(m));
 			return { ...rule, members };
 		}
 		case 'optional':
@@ -403,7 +401,7 @@ export function factorChoiceBranches(rule: Rule): Rule {
 		case 'group':
 			return { ...rule, content: factorChoiceBranches(rule.content) };
 		case 'polymorph':
-			return mapPolymorphForms(rule, factorChoiceBranches);
+			return mapPolymorphForms(rule, (r) => factorChoiceBranches(r));
 		default:
 			return rule;
 	}
@@ -422,10 +420,10 @@ export function factorChoiceBranches(rule: Rule): Rule {
  * adjacent duplicates; non-adjacent duplicates are almost always
  * intentional repetition in the grammar.
  */
-export function dedupeSeqMembers(rule: Rule): Rule {
+export function dedupeSeqMembers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 	switch (rule.type) {
 		case 'seq': {
-			const members = rule.members.map(dedupeSeqMembers);
+			const members = rule.members.map((m) => dedupeSeqMembers(m));
 			const deduped: Rule[] = [];
 			for (const m of members) {
 				const prev = deduped[deduped.length - 1];
@@ -435,7 +433,7 @@ export function dedupeSeqMembers(rule: Rule): Rule {
 			return { ...rule, members: deduped };
 		}
 		case 'choice':
-			return { ...rule, members: rule.members.map(dedupeSeqMembers) };
+			return { ...rule, members: rule.members.map((m) => dedupeSeqMembers(m)) };
 		case 'optional':
 		case 'repeat':
 		case 'token':
@@ -445,7 +443,7 @@ export function dedupeSeqMembers(rule: Rule): Rule {
 		case 'group':
 			return { ...rule, content: dedupeSeqMembers(rule.content) };
 		case 'polymorph':
-			return mapPolymorphForms(rule, dedupeSeqMembers);
+			return mapPolymorphForms(rule, (r) => dedupeSeqMembers(r));
 		default:
 			return rule;
 	}
@@ -473,8 +471,11 @@ export function dedupeSeqMembers(rule: Rule): Rule {
  * produce the same downstream shape whether the helper exists as
  * its own entry or as an expansion in its parent.
  */
-function inlineSingleUseHidden(rules: Record<string, Rule>, preserveKinds?: ReadonlySet<string>): Record<string, Rule> {
+function inlineSingleUseHidden(rules: Record<string, Rule>, ctx?: NormalizeCtx, preserveKinds?: ReadonlySet<string>): Record<string, Rule> {
 	// Work on a shallow copy — we mutate entries and delete keys.
+	// ctx is currently unused-but-uniform: it is threaded so the
+	// future trace wrapper (#14) can intercept all normalize passes.
+	void ctx;
 	const work: Record<string, Rule> = { ...rules };
 	iterateInliningToFixedPoint(work, preserveKinds);
 	return work;
@@ -659,7 +660,7 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
  * equivalents. Non-lossy — every collapse preserves the set of
  * strings the rule matches.
  */
-export function collapseWrappers(rule: Rule): Rule {
+export function collapseWrappers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 	switch (rule.type) {
 		case 'optional': {
 			const inner = collapseWrappers(rule.content);
@@ -679,7 +680,7 @@ export function collapseWrappers(rule: Rule): Rule {
 			return { ...rule, content: inner };
 		}
 		case 'seq': {
-			const members = rule.members.map(collapseWrappers);
+			const members = rule.members.map((m) => collapseWrappers(m));
 			if (members.length === 1) {
 				const survivor = members[0]!;
 				const carried = withAttrsFrom(rule, survivor);
@@ -700,7 +701,7 @@ export function collapseWrappers(rule: Rule): Rule {
 			return { ...rule, members };
 		}
 		case 'choice': {
-			const members = rule.members.map(collapseWrappers);
+			const members = rule.members.map((m) => collapseWrappers(m));
 			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
 			return { ...rule, members };
 		}
@@ -711,7 +712,7 @@ export function collapseWrappers(rule: Rule): Rule {
 		case 'token':
 			return { ...rule, content: collapseWrappers(rule.content) };
 		case 'polymorph':
-			return mapPolymorphForms(rule, collapseWrappers);
+			return mapPolymorphForms(rule, (r) => collapseWrappers(r));
 		default:
 			return rule;
 	}

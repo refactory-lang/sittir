@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-	optimize,
+	normalizeGrammar,
 	factorSeqChoice,
 	rulesEqual,
 	wrapVariants,
@@ -12,7 +12,7 @@ import {
 	fanOutSeqChoices,
 	factorChoiceBranches,
 	dedupeSeqMembers
-} from '../compiler/optimize.ts';
+} from '../compiler/normalize.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type { LinkedGrammar, ExternalRole } from '../compiler/types.ts';
 
@@ -167,7 +167,7 @@ describe('Optimize — optimize()', () => {
 			},
 			block: { type: 'string', value: '{}' }
 		});
-		const optimized = optimize(linked);
+		const optimized = normalizeGrammar(linked);
 		expect(optimized.name).toBe('test');
 		expect(optimized.rules['item']).toBeDefined();
 		// Field metadata must be preserved

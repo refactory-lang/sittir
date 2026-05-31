@@ -15,7 +15,7 @@ import { dirname, join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
-import { optimize } from '../compiler/optimize.ts';
+import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble, hydrateSlotRefs } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -52,7 +52,7 @@ async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
-	const optimized = optimize(linked);
+	const optimized = normalizeGrammar(linked);
 	const nodeMap = assemble(optimized);
 	hydrateSlotRefs(nodeMap);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);

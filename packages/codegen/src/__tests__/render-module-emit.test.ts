@@ -26,7 +26,7 @@ import type { AssembledNonterminal, AssembledNode } from '../compiler/node-map.t
 import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
-import { optimize } from '../compiler/optimize.ts';
+import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../compiler/generated-metadata.ts';
@@ -152,7 +152,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
-	const optimized = optimize(linked);
+	const optimized = normalizeGrammar(linked);
 	const nodeMap = assemble(optimized);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
@@ -296,7 +296,7 @@ async function buildRustFixtureForParity() {
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
-	const optimized = optimize(linked);
+	const optimized = normalizeGrammar(linked);
 	const nodeMap = assemble(optimized);
 
 	// loadGeneratedIdTables uses process.cwd() which is packages/codegen when vitest runs.

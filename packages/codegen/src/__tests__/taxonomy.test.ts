@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
-import { optimize } from '../compiler/optimize.ts';
+import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath } from '../compiler/resolve-grammar.ts';
 import { classifyBranchSlots } from '../emitters/shared.ts';
@@ -26,7 +26,7 @@ beforeAll(async () => {
 	const grammar = resolveGrammarJsPath('rust');
 	const raw = await evaluate(grammar);
 	const linked = link(raw);
-	const optimized = optimize(linked);
+	const optimized = normalizeGrammar(linked);
 	nodeMap = assemble(optimized);
 });
 

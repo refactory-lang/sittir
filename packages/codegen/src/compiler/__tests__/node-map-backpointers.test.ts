@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { choice, field, seq } from '../evaluate.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
-import { optimize } from '../optimize.ts';
+import { normalizeGrammar } from '../normalize.ts';
 import { assemble } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
 import type { ChoiceRule, FieldRule, RenderRule, Rule } from '../rule.ts';
@@ -43,7 +43,7 @@ describe('NodeMap back-pointer maps', () => {
 			references: []
 		};
 		const linked = link(raw);
-		const optimized = optimize(linked);
+		const optimized = normalizeGrammar(linked);
 		const nodeMap = assemble(optimized);
 		// Return the post-optimize rules — that's what assemble walks, so
 		// the ids on these rules are what nodeByRuleId / slotByRuleId key
@@ -54,7 +54,7 @@ describe('NodeMap back-pointer maps', () => {
 
 	function buildNodeMap(
 		rules: Record<string, Rule>
-	): ReturnType<typeof optimize> & { nodeMap: ReturnType<typeof assemble> } {
+	): ReturnType<typeof normalizeGrammar> & { nodeMap: ReturnType<typeof assemble> } {
 		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules);
 		const raw: RawGrammar = {
 			name: 'synth',
@@ -69,7 +69,7 @@ describe('NodeMap back-pointer maps', () => {
 			references: []
 		};
 		const linked = link(raw);
-		const optimized = optimize(linked);
+		const optimized = normalizeGrammar(linked);
 		return { ...optimized, nodeMap: assemble(optimized) };
 	}
 

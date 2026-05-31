@@ -49,7 +49,7 @@ import type {
 import { isSeq, isField } from './rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { findGeneratedKindEntry } from './generated-metadata.ts';
-import { tokenToName } from './optimize.ts';
+import { tokenToName } from './normalize.ts';
 import { collectSlots } from './collect-slots.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { fieldContentIsMultiSibling } from './field-shape.ts';
@@ -1512,27 +1512,37 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	/**
 	 * True when this kind requires NO user-supplied arguments to construct.
 	 *
-	 * Populated by the `markParameterlessKinds` fixpoint pass in
-	 * `assemble.ts`. Two classes of parameterless kinds:
+	 * Structural getter — replaces the former `markParameterlessKinds`
+	 * fixpoint pass. Two classes of parameterless kinds:
 	 *
-	 * - **Single-literal terminals** (`AssembledKeyword`): factory takes
-	 *   `()` and emits a fixed `$text` value. Stamp via `stampExpression`.
-	 * - **Parameterless compounds**: every required field/child slot
-	 *   either auto-stamps (literal or referenced keyword) OR references
-	 *   another parameterless kind. The whole compound can be constructed
-	 *   by calling its factory with no arguments: `stampExpression` holds
-	 *   the call expression string (e.g. `"breakExpression()"`).
+	 * - **Single-literal terminals** (`AssembledKeyword`, `AssembledToken`):
+	 *   overridden to return `true` unconditionally (or conditionally for
+	 *   tokens — only `string`-rule tokens are parameterless).
+	 * - **Parameterless compounds** (`AssembledBranch`, `AssembledGroup`):
+	 *   computed recursively — a compound is parameterless iff it has at
+	 *   least one required slot AND every slot passes `_isAutoStampSlot`
+	 *   (which recurses into child nodes via their own `parameterless`
+	 *   getter). A cycle guard (`#computing` flag) breaks re-entrant
+	 *   calls conservatively (returns `false`), replicating the
+	 *   least-fixed-point-from-false semantics of the old iterative pass.
 	 *
 	 * Emitters use this to decide whether a slot pointing at this kind
 	 * can be auto-stamped in parent factories and omitted from parent
-	 * Config types.
+	 * Config types. The result is memoized after the first evaluation.
 	 */
-	isParameterless?: boolean;
+	get parameterless(): boolean {
+		return false;
+	}
+
+	/** @deprecated Use `parameterless` getter instead. Kept for emitter back-compat. */
+	get isParameterless(): boolean {
+		return this.parameterless;
+	}
 
 	/**
 	 * Code-gen stamp expression for this parameterless kind — **field
 	 * context**. Used when a parent stamps this kind into its
-	 * `$fields` slot. Defined iff `isParameterless` is true. Two shapes:
+	 * `$fields` slot. Defined iff `parameterless` is true. Two shapes:
 	 *
 	 * - **Keyword / terminal**: JSON-encoded literal with `as const`
 	 *   (e.g. `'"break" as const'`). Matches the interface's field type
@@ -1541,10 +1551,12 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 * - **Parameterless compound**: factory-call string
 	 *   (e.g. `"breakExpression()"`). Returns the full NodeData.
 	 *
-	 * Self-set by `AssembledKeyword` / `AssembledToken` constructors;
-	 * set for compounds by `markParameterlessKinds` fixpoint pass.
+	 * Overridden by `AssembledKeyword`, `AssembledToken` (constructors set
+	 * a backing field); compounds derive from `rawFactoryName`.
 	 */
-	stampExpression?: string;
+	get stampExpression(): string | undefined {
+		return undefined;
+	}
 
 	/**
 	 * Stamp expression for this kind in **child context** — used when a
@@ -2556,6 +2568,54 @@ function structuralSlotRecordFromForms(
 	return freezeSlotRecord(resolvedSlots);
 }
 
+/**
+ * Determine whether a single slot is auto-stamp-eligible for the purposes
+ * of the `parameterless` getter on compounds (AssembledBranch / AssembledGroup).
+ *
+ * This replicates the `isAutoStampSlot` predicate from the former
+ * `markParameterlessKinds` fixpoint pass, but reads `node.parameterless`
+ * recursively instead of consulting a pre-computed stored field.
+ *
+ * Eligibility rules (all must hold for required slots; optional is always OK):
+ * - Optional slots never block parameterless.
+ * - Required repeated (multiple) slots are never auto-stamp-eligible.
+ * - Must have exactly one value.
+ * - That value is either a TerminalValue OR a NodeRef pointing to a
+ *   node whose own `parameterless` getter returns true (the cascade).
+ *
+ * @param nodes - The assembled node map, used to resolve UnresolvedRef by name
+ *   before hydration. When provided, an unresolved ref is looked up by name and
+ *   its `.parameterless` getter consulted (replicating the old fixpoint's name
+ *   lookup). When absent (test fixtures), unresolved refs conservatively return
+ *   false. No `_<name>` hidden-source fallback — the old fixpoint had none.
+ */
+function _isAutoStampSlotForParameterless(
+	slot: AssembledNonterminal,
+	nodes?: ReadonlyMap<string, AssembledNodeBase<Rule>>
+): boolean {
+	if (!isRequired(slot)) return true; // optional — does not block
+	if (isMultiple(slot)) return false; // required repeated — user must supply
+
+	if (slot.values.length !== 1) return false;
+	const v = slot.values[0]!;
+
+	if (isTerminalValue(v)) return true;
+
+	if (isNodeRef(v)) {
+		if (isUnresolvedRef(v.node)) {
+			// Pre-hydration path: resolve by name via the node map, exactly
+			// as the former markParameterlessKinds fixpoint did.
+			if (!nodes) return false; // no map available (test fixture) — conservative false
+			const target = nodes.get(v.node.name);
+			if (!target) return false; // unknown kind — conservative false
+			return target.parameterless; // cascade: recurse into child node
+		}
+		return v.node.parameterless; // cascade: recurse into child node
+	}
+
+	return false;
+}
+
 export class AssembledBranch<
 	R extends SeqRule | ChoiceRule | RepeatRule | Repeat1Rule | PolymorphRule =
 		| SeqRule
@@ -2698,6 +2758,70 @@ export class AssembledBranch<
 	 */
 	get isContainerShape(): boolean {
 		return !hasAnyField(this.rule);
+	}
+
+	// Cycle guard for the parameterless getter. Breaks re-entrant calls
+	// (cyclic slot graphs) conservatively, replicating LFP-from-false semantics.
+	// No memoization — results must not be cached pre-hydration (before
+	// hydrateSlotRefs runs, slot values are UnresolvedRef and would produce a
+	// false-negative that would be incorrectly cached for the post-hydration call).
+	#computing = false;
+
+	// Node map back-reference for pre-hydration UnresolvedRef resolution in the
+	// parameterless getter. Attached by assemble() after all nodes are constructed
+	// (via attachNodeMap). Not set in test fixtures — those resolve false.
+	// Private to prevent serialization walks from descending into the whole map.
+	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule>> | undefined = undefined;
+
+	/**
+	 * Attach the assembled node map so the `parameterless` getter can resolve
+	 * UnresolvedRef slots by name before `hydrateSlotRefs` runs. Called by
+	 * assemble() after all nodes are populated. Safe to call multiple times
+	 * (idempotent for the same map reference).
+	 */
+	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule>>): void {
+		this.#nodes = nodes;
+	}
+
+	/**
+	 * Recursive, cascade-preserving parameterless check. Replicates the
+	 * former `markParameterlessKinds` fixpoint semantics as a structural
+	 * getter:
+	 *
+	 * - At least one required slot must exist (no "vacuous" parameterless).
+	 * - Every slot must be auto-stamp-eligible (optional, or single-value
+	 *   terminal, or single-value ref to a parameterless child).
+	 * - The node must have a `rawFactoryName` (hidden nodes can't be stamped).
+	 * - Cycle guard: re-entrant calls return `false` (LFP-from-false semantics).
+	 *
+	 * Not memoized: slot refs are UnresolvedRef until `hydrateSlotRefs` runs;
+	 * caching before hydration would lock in a spurious `false`.
+	 */
+	override get parameterless(): boolean {
+		if (this.#computing) return false; // cycle — conservative false
+		this.#computing = true;
+		try {
+			return this.#computeParameterless();
+		} finally {
+			this.#computing = false;
+		}
+	}
+
+	#computeParameterless(): boolean {
+		if (!this.rawFactoryName) return false; // hidden nodes have no factory
+		const allSlots = Object.values(this._slots);
+		const requiredSlots = allSlots.filter((s) => isRequired(s));
+		if (requiredSlots.length === 0) return false; // no determined content — not parameterless
+		return allSlots.every((s) => _isAutoStampSlotForParameterless(s, this.#nodes));
+	}
+
+	/**
+	 * Compound stamp: factory call with no arguments, e.g. `"breakExpression()"`.
+	 * Only defined when `parameterless` is true.
+	 */
+	override get stampExpression(): string | undefined {
+		const fn = this.rawFactoryName;
+		return this.parameterless && fn ? `${fn}()` : undefined;
 	}
 
 	/**
@@ -3242,18 +3366,21 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	) {
 		super(kind, rule, opts);
 		this.resolvedKind = findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind;
-		// Keywords are always parameterless — they produce a fixed
-		// single text value. The field stamp is the literal (as const)
-		// so parent factories can inline it directly into `$fields`.
-		// The `markParameterlessKinds` fixpoint pass propagates this
-		// status upward to compounds that reference the keyword.
-		this.isParameterless = true;
-		this.stampExpression = `${JSON.stringify(this.rule.value)} as const`;
 	}
 
 	/** The literal text this keyword produces (read from the StringRule). */
 	get text(): string {
 		return this.rule.value;
+	}
+
+	/** Keywords are always parameterless — they produce a fixed single text value. */
+	override get parameterless(): boolean {
+		return true;
+	}
+
+	/** Field-context stamp: JSON literal with `as const`. */
+	override get stampExpression(): string {
+		return `${JSON.stringify(this.rule.value)} as const`;
 	}
 
 	/**
@@ -3278,19 +3405,27 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 		super(kind, rule, { hidden: true });
 		this.resolvedKind =
 			rule.type === 'string' ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
-		// Single-literal tokens are parameterless — they stamp to the
-		// literal (as const) the same way keywords do. Pattern-based
-		// tokens (TokenRule) carry no single user-visible string and
-		// stay non-parameterless. The classifier splits keyword vs
-		// token on word-shape — non-word single-strings like `..` /
-		// `=>` land here but should still auto-stamp from parent
-		// required-single-literal fields.
-		if (rule.type === 'string') {
-			this.isParameterless = true;
-			this.stampExpression = `${JSON.stringify(rule.value)} as const`;
-		}
 	}
 	// No emitFactory — tokens are always hidden, no factoryName.
+
+	/**
+	 * Single-literal tokens (StringRule) are parameterless — they stamp to
+	 * the literal (as const) the same way keywords do. Pattern-based tokens
+	 * (TokenRule) carry no single user-visible string and stay
+	 * non-parameterless.
+	 */
+	override get parameterless(): boolean {
+		return this.rule.type === 'string';
+	}
+
+	/**
+	 * Field-context stamp: JSON literal with `as const`.
+	 * Only defined when the rule is a string (parameterless case).
+	 */
+	override get stampExpression(): string | undefined {
+		if (this.rule.type !== 'string') return undefined;
+		return `${JSON.stringify(this.rule.value)} as const`;
+	}
 
 	/**
 	 * Child-context stamp: wrap the single-literal text in a NodeData
@@ -3543,6 +3678,54 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 			opts?.kindEntries,
 			opts?.parseKindCollisionContext
 		);
+	}
+
+	// Cycle guard for the parameterless getter. Same rationale as AssembledBranch.
+	// No memoization — see AssembledBranch comment.
+	#computing = false;
+
+	// Node map back-reference for pre-hydration UnresolvedRef resolution.
+	// See AssembledBranch.#nodes for full rationale.
+	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule>> | undefined = undefined;
+
+	/**
+	 * Attach the assembled node map so the `parameterless` getter can resolve
+	 * UnresolvedRef slots by name before `hydrateSlotRefs` runs. See
+	 * {@link AssembledBranch.attachNodeMap} for full documentation.
+	 */
+	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule>>): void {
+		this.#nodes = nodes;
+	}
+
+	/**
+	 * Recursive, cascade-preserving parameterless check. Same semantics as
+	 * `AssembledBranch.parameterless` — see that getter for full documentation.
+	 */
+	override get parameterless(): boolean {
+		if (this.#computing) return false; // cycle — conservative false
+		this.#computing = true;
+		try {
+			return this.#computeParameterless();
+		} finally {
+			this.#computing = false;
+		}
+	}
+
+	#computeParameterless(): boolean {
+		if (!this.rawFactoryName) return false; // hidden nodes have no factory
+		const allSlots = Object.values(this.slots);
+		const requiredSlots = allSlots.filter((s) => isRequired(s));
+		if (requiredSlots.length === 0) return false; // no determined content — not parameterless
+		return allSlots.every((s) => _isAutoStampSlotForParameterless(s, this.#nodes));
+	}
+
+	/**
+	 * Compound stamp: factory call with no arguments, e.g. `"breakExpression()"`.
+	 * Only defined when `parameterless` is true.
+	 */
+	override get stampExpression(): string | undefined {
+		const fn = this.rawFactoryName;
+		return this.parameterless && fn ? `${fn}()` : undefined;
 	}
 
 	/**

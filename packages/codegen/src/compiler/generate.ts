@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
-import { optimize } from './optimize.ts';
+import { normalizeGrammar } from './normalize.ts';
 import { assemble, hydrateSlotRefs, classifyNode } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
@@ -24,11 +24,14 @@ import { emitEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.ts';
-import { loadGeneratedIdTables } from './generated-metadata.ts';
+import { loadGeneratedIdTables, collectGeneratedKindEntries } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
 import { DiagnosticSink } from './diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
+import { addUnnamedChoiceListener } from './collect-slots.ts';
+import type { NormalizeCtx } from './transforms.ts';
+import type { AssembleCtx } from './assemble.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
@@ -138,8 +141,20 @@ export interface GenerateConfig {
  */
 export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// PR-G: Diagnostics accumulator for the Assemble→Project gate.
-	// Currently empty — PR-H will thread it into the phase contexts.
+	// PR-H: threaded into phase contexts so pipeline diagnostics flow here.
 	const diagnostics = new DiagnosticSink();
+
+	// PR-H: forward unnamed-choice-slot events to the DiagnosticSink in addition
+	// to the module-global accumulator (drainUnnamedChoiceSlots still works).
+	// addUnnamedChoiceListener does NOT replace the primary warner, so tests that
+	// install spies via setUnnamedChoiceWarner are unaffected.
+	const removeUnnamedChoiceListener = addUnnamedChoiceListener((kind) => {
+		diagnostics.info({
+			code: 'unnamed-choice-slot',
+			message: `Unnamed choice slot in kind '${kind ?? '(unknown)'}'`,
+			canProceed: true,
+		});
+	});
 
 	// Resolve grammar.js path
 	const grammarJsPath = resolveGrammarJsPath(cfg.grammar);
@@ -213,15 +228,31 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		}
 	}
 
-	// Phase 3: Optimize — pass the inline-decision set so computeSimplifiedRules's
-	// inlineRefs inlines exactly the grammar.inline group-lift / structural
-	// helpers (excluding supertypes / keywords / tokens).
-	const optimized = optimize(linked, inlinableKinds, polymorphsConfigSkip);
+	// Phase 3: Optimize — build a NormalizeCtx carrying the inline-decision set
+	// and polymorph skip-set; pass it to optimize so the simplify phase can read
+	// them off ctx (PR-H ctx threading).
+	const normalizeCtx: NormalizeCtx = {
+		rules: linked.rules,
+		inlineKinds: inlinableKinds,
+		diagnostics,
+		polymorphSkip: polymorphsConfigSkip,
+	};
+	const optimized = normalizeGrammar(linked, normalizeCtx);
 	tracePhaseRules('optimize', optimized.rules);
 	tracePhaseRules('simplify', optimized.simplifiedRules);
 
-	// Phase 4: Assemble
-	const nodeMap = assemble(optimized, generatedIdTables);
+	// Phase 4: Assemble — build AssembleCtx with kindEntries + the sink.
+	// nodeMap is populated during assemble(); pass the nodes Map directly so
+	// AssembleCtx carries a live reference (post-passes read peers from it).
+	const generatedKindEntries = generatedIdTables
+		? collectGeneratedKindEntries(generatedIdTables)
+		: undefined;
+	const assembleCtx: AssembleCtx = {
+		kindEntries: generatedKindEntries,
+		nodeMap: new Map(), // placeholder; assemble() builds the real map internally
+		diagnostics,
+	};
+	const nodeMap = assemble(optimized, generatedIdTables, assembleCtx);
 	traceAssembleNodes('assemble', nodeMap.nodes);
 
 	// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so
@@ -288,7 +319,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		emitRenderModule: cfg.emitRenderModule
 	});
 
-	return {
+	const result: GeneratedFiles = {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
 		engine: emitEngine({ grammar: cfg.grammar }),
 		types: emitted.types,
@@ -318,6 +349,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		// drain slot-grouping diagnostics accumulated during the optimize phase
 		slotGroupingDiagnostics: drainSlotGroupingDiagnostics()
 	};
+	// Clean up the unnamed-choice listener to avoid double-forwarding on
+	// subsequent generate() calls in long-lived processes.
+	removeUnnamedChoiceListener();
+	return result;
 }
 
 /**

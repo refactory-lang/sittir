@@ -50,10 +50,7 @@ import {
 	hasAnyField,
 	hasAnyChild,
 	nameNode,
-	isRequired,
-	isMultiple,
 	isNodeRef,
-	isTerminalValue,
 	isUnresolvedRef,
 	allSlotsOf,
 	type ParseKindCollisionContext,
@@ -67,6 +64,24 @@ import { simplifyRule, inlineRefs, extractRepeatShape, hoistInnerFieldsForTempla
 import { compileWordMatcher } from './common.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
+import type { DiagnosticSink } from './diagnostics.ts';
+
+/**
+ * Phase context for the Assemble phase (spec §7.7 / CW5).
+ *
+ * `nodeMap` is the cross-node store the post-passes need for
+ * `markUserFacing` / resolveColliding / resolveIrKeys / collectAnonymous — it
+ * carries the mutable Map so the post-passes can read peers. `kindEntries` feeds
+ * the same per-node constructors that previously received it positionally.
+ * `diagnostics` is the PR-G DiagnosticSink; slot-level diagnostics (unnamed-
+ * choice slots, unslotted-child failures) emit here rather than to module-global
+ * accumulators.
+ */
+export interface AssembleCtx {
+	readonly kindEntries?: readonly GeneratedKindEntry[];
+	readonly nodeMap: Map<string, AssembledNode>;
+	readonly diagnostics: DiagnosticSink;
+}
 
 export interface AssembledNodeMap extends NodeMap {
 	readonly parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
@@ -80,11 +95,12 @@ export interface AssembledNodeMap extends NodeMap {
 
 export function assemble(
 	optimized: OptimizedGrammar,
-	generatedIdTables?: GeneratedIdTables
+	generatedIdTables?: GeneratedIdTables,
+	assembleCtx?: AssembleCtx
 ): AssembledNodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	const wordMatcher = compileWordMatcher(optimized.word, optimized.rules);
-	const kindEntries = collectGeneratedKindEntries(generatedIdTables);
+	const kindEntries = assembleCtx?.kindEntries ?? collectGeneratedKindEntries(generatedIdTables);
 	resetParseKindCollisionDiagnostics();
 	resetDeriveShapeDiagnostics();
 	// Parents that went through Link's variant() push-down keep their
@@ -253,9 +269,45 @@ export function assemble(
 		collectAnonymousNodes(optimized.rules, nodes, wordMatcher, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
-		markParameterlessKinds(nodes);
-		markUserFacing(nodes);
-		markVariantChildrenUserFacing(nodes, optimized.polymorphVariants ?? []);
+		// Pre-compute the two cross-node sets once, then run the merged
+		// markUserFacing pass (M3 — one pass marks both alias-source + variant-
+		// children; see _UserFacingCtx / markUserFacing JSDoc).
+		const aliasSourceKinds = new Set<string>();
+		for (const n of nodes.values()) {
+			for (const slot of allSlotsOf(n)) {
+				for (const v of slot.values) {
+					if (!isNodeRef(v)) continue;
+					const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+					if (name.startsWith('_')) aliasSourceKinds.add(name);
+				}
+			}
+		}
+		const variantChildKindsSet = new Set<string>(
+			(optimized.polymorphVariants ?? []).map((pv) => `${pv.parent}_${pv.child}`)
+		);
+		const userFacingCtx: _UserFacingCtx = {
+			aliasSourceKinds,
+			variantChildKinds: variantChildKindsSet
+		};
+		for (const node of nodes.values()) {
+			markUserFacing(node, userFacingCtx);
+		}
+
+		// Attach the node map to every branch/group so their `parameterless`
+		// getter can resolve UnresolvedRef slots by name before hydrateSlotRefs
+		// runs (pre-hydration == node-model.json5 serialization). This
+		// replicates the former markParameterlessKinds fixpoint's name-lookup
+		// and prevents spurious false-negatives on compound kinds whose only
+		// required slot is an unresolved ref to a parameterless child.
+		for (const node of nodes.values()) {
+			if (node.modelType === 'branch' || node.modelType === 'group') {
+				node.attachNodeMap(nodes);
+			} else if (node.modelType === 'polymorph') {
+				for (const form of node.forms) {
+					form.attachNodeMap(nodes);
+				}
+			}
+		}
 
 		// Slot-ref hydration is NOT done here — `hydrateSlotRefs(nodes)` is
 		// exported separately so the caller can serialize the unhydrated NodeMap
@@ -653,157 +705,6 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
 	for (const node of phase2) assignIrKeyWithFallback(node, claimed);
 }
 
-// ---------------------------------------------------------------------------
-// markParameterlessKinds — fixpoint pass
-// ---------------------------------------------------------------------------
-
-/**
- * Determine whether a single slot (field or child) is auto-stamp-eligible.
- *
- * A slot is eligible when:
- * - It is optional (`isRequired(slot) === false`) — user can omit it; we
- *   treat it as a non-blocking empty slot.
- * - It is required, non-repeated, and its value is fixed:
- *   (a) exactly one TerminalValue in values
- *   (b) exactly one NodeRef pointing to a parameterless kind (already marked)
- *
- * Required repeated slots are NOT eligible — their cardinality is
- * user-determined.
- */
-function isAutoStampSlot(slot: AssembledNonterminal, nodes: Map<string, AssembledNode>): boolean {
-	if (!isRequired(slot)) return true; // optional slots never block parameterless
-	if (isMultiple(slot)) return false; // required repeated slot needs user input
-
-	// Must be single-value to auto-stamp
-	if (slot.values.length !== 1) return false;
-	const v = slot.values[0]!;
-
-	// Source A: inline literal
-	if (isTerminalValue(v)) return true;
-
-	// Source B/C: single NodeRef whose target is parameterless
-	if (isNodeRef(v)) {
-		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		const ref = nodes.get(kindName);
-		if (ref?.isParameterless) return true;
-	}
-
-	return false;
-}
-
-/**
- * Get all slots for compound-like nodes that support the parameterless
- * fixpoint. Returns `undefined` for nodes that have no slot model
- * (supertypes, tokens, multis — these are never parameterless compounds).
- */
-function getSlotsForParameterless(node: AssembledNode): readonly AssembledNonterminal[] | undefined {
-	switch (node.modelType) {
-		case 'branch':
-		case 'group':
-			return Object.values(node.slots);
-		default:
-			return undefined;
-	}
-}
-
-/**
- * Compute the stamp expression for a single auto-stamp-eligible REQUIRED slot.
- *
- * Returns `undefined` when the slot is optional (optional slots produce no
- * stamp — we simply omit them from the factory call for parameterless
- * compounds).
- */
-function _stampExpressionForSlot(slot: AssembledNonterminal, nodes: Map<string, AssembledNode>): string | undefined {
-	if (!isRequired(slot)) return undefined; // optional — no stamp needed
-	if (slot.values.length !== 1) return undefined;
-	const v = slot.values[0]!;
-
-	// Source A: inline literal
-	if (isTerminalValue(v)) {
-		return JSON.stringify(v.value);
-	}
-
-	// Source B/C: single referenced parameterless kind
-	if (isNodeRef(v)) {
-		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		const ref = nodes.get(kindName);
-		if (ref?.isParameterless && ref.stampExpression !== undefined) {
-			return ref.stampExpression;
-		}
-	}
-
-	return undefined;
-}
-
-/**
- * Mark a node as parameterless and set its stampExpression.
- */
-function markNode(node: AssembledNode, stamp: string): void {
-	node.isParameterless = true;
-	node.stampExpression = stamp;
-}
-
-/**
- * Fixpoint pass: propagate parameterless status from terminals up to compounds.
- *
- * Step 1: mark AssembledKeyword nodes. These are the "roots" — a keyword
- * factory already takes `()` and emits a fixed text. Their stamp expression
- * (as seen by parent factories) is the JSON literal of their text.
- *
- * Step 2 (fixpoint): iteratively mark any compound whose every required
- * slot auto-stamps. Converges in ≤ O(depth) passes — for real grammars
- * typically 2–3 passes. Safety cap at 20 iterations.
- *
- * After the pass: `node.isParameterless === true` iff the kind needs no
- * user-supplied arguments. `node.stampExpression` is the code-gen string
- * a parent factory emits to produce a value for a slot pointing at this kind.
- */
-function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
-	// Step 1: single-literal terminals self-initialize `isParameterless`
-	// and `stampExpression` in their constructors — see
-	// `AssembledKeyword` and `AssembledToken` in node-map.ts. No work
-	// needed here.
-
-	// Step 2: fixpoint over compounds.
-	const MAX_ITERS = 20;
-	let changed = true;
-	let iters = 0;
-	while (changed) {
-		if (iters++ >= MAX_ITERS) {
-			throw new Error(
-				`markParameterlessKinds: fixpoint did not converge after ${MAX_ITERS} iterations. ` +
-					`Possible circular dependency in auto-stamp slot resolution.`
-			);
-		}
-		changed = false;
-		for (const [kind, node] of nodes) {
-			if (node.isParameterless) continue; // already marked
-
-			const allSlots = getSlotsForParameterless(node);
-			if (!allSlots) continue; // not a compound with slots
-
-			// A compound is parameterless iff it has at least ONE required slot AND
-			// every required slot auto-stamps. Vacuous truth (no required slots at
-			// all, or only optional slots) does NOT qualify — such kinds are
-			// "callable without args" but not "structurally determined," so stamping
-			// their factory call produces an empty/arbitrary node rather than a
-			// fixed one. Optional slots are permitted (they can be omitted at the
-			// stamp site) as long as they're not the only content.
-			const requiredSlots = allSlots.filter((s) => isRequired(s));
-			if (requiredSlots.length === 0) continue; // no determined content — not parameterless
-
-			const allAutoStamp = allSlots.every((s) => isAutoStampSlot(s, nodes));
-			if (!allAutoStamp) continue;
-
-			const fn = node.rawFactoryName;
-			if (!fn) continue; // hidden nodes have no factory; skip
-			markNode(node, `${fn}()`);
-			changed = true;
-			void kind; // suppress unused warning
-		}
-	}
-}
-
 /**
  * Resolve hidden rule names (`_foo`) referenced as subtypes to the
  * concrete kinds that actually appear in the parse tree.
@@ -1115,55 +1016,68 @@ function hydrateSlots(
 	}
 }
 
-function markUserFacing(nodes: Map<string, AssembledNode>): void {
-	const aliasSourceKinds = new Set<string>();
-	for (const [, n] of nodes) {
-		for (const slot of allSlotsOf(n)) {
-			for (const v of slot.values) {
-				if (!isNodeRef(v)) continue;
-				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-				if (name.startsWith('_')) aliasSourceKinds.add(name);
-			}
-		}
-	}
-	for (const [kind, n] of nodes) {
-		if (n.modelType === 'token' || n.modelType === 'multi') {
-			n.userFacing = false;
-			continue;
-		}
-		if (!kind.startsWith('_')) {
-			n.userFacing = true;
-			continue;
-		}
-		// Hidden — user-facing only when referenced as alias source,
-		// or when it's a polymorph (dispatched into via $variant).
-		n.userFacing = aliasSourceKinds.has(kind) || n.modelType === 'polymorph';
-	}
+/**
+ * Per-node context for {@link markUserFacing} — carries the two cross-node
+ * sets pre-computed once before the per-node loop (M3 / spec §7.7 / principle
+ * #14: cross-node state lives on ctx, not a getter-with-arg).
+ *
+ * @internal — not exported; used only by the post-pass driver inside assemble().
+ */
+interface _UserFacingCtx {
+	/** Hidden kinds that appear as alias sources in at least one other node's slot. */
+	readonly aliasSourceKinds: ReadonlySet<string>;
+	/**
+	 * Hidden variant-child kind strings (`${parent}_${child}`) registered via
+	 * `polymorphVariants`. These are NOT slot-reachable when the parent is a
+	 * supertype, so they must be promoted independently of `aliasSourceKinds`.
+	 */
+	readonly variantChildKinds: ReadonlySet<string>;
 }
 
 /**
- * Ensure hidden variant-child rules are marked user-facing so the template
- * and factory emitters include them.
+ * Mark every node in `nodes` with its `userFacing` flag (M3 — merged pass).
  *
- * @param nodes - Assembled node map; modified in place.
- * @param variants - Polymorph variant registrations from the grammar.
- * @remarks
- *   When the variant parent is classified as a supertype (e.g. python's
- *   `_simple_pattern`), `markUserFacing`'s slot walker never iterates
- *   supertype subtypes, so the hidden variant-child rule
- *   (`_${parent}_${child}`, e.g. `_simple_pattern_negative`) never enters
- *   `aliasSourceKinds` and stays `userFacing=false`. This pass explicitly
- *   marks each hidden child so its `.jinja` template, wrap-table entry,
- *   and `_aliasTargetToSource` remap are emitted by downstream emitters.
+ * A single `(node, ctx)` pass that replaces the former two-pass sequence
+ * (`markUserFacing` + `markVariantChildrenUserFacing`). The set of kinds
+ * marked `userFacing=true` is the union of:
+ *
+ *   (a) visible (non-`_`-prefixed) non-token/multi kinds,
+ *   (b) hidden polymorph kinds (dispatched into via `$variant`),
+ *   (c) hidden kinds that surface as alias sources in another node's slots
+ *       (`ctx.aliasSourceKinds`), and
+ *   (d) hidden variant-child kinds from `polymorphVariants` that the slot
+ *       walker never reaches when the parent is a supertype
+ *       (`ctx.variantChildKinds`).
+ *
+ * Per principle #14, `userFacing` is cross-node state (whether THIS hidden
+ * kind appears in ANOTHER node's slot, or in the `polymorphVariants` list),
+ * so it MUST be a `(node, ctx)` pass — never a getter-with-arg. Emitters read
+ * the populated `node.userFacing` field; no read-site changes needed.
+ *
+ * @param node - The node to mark; `node.userFacing` is written in place.
+ * @param ctx - Pre-computed cross-node sets (built once before the loop).
  */
-function markVariantChildrenUserFacing(nodes: Map<string, AssembledNode>, variants: readonly PolymorphVariant[]): void {
-	for (const v of variants) {
-		const hiddenChildKind = `${v.parent}_${v.child}`;
-		const childNode = nodes.get(hiddenChildKind);
-		if (childNode && !childNode.userFacing) {
-			childNode.userFacing = true;
-		}
+function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
+	const { kind } = node;
+	if (node.modelType === 'token' || node.modelType === 'multi') {
+		// token/multi are structural delimiters — never directly user-facing.
+		// NOTE: the OR with variantChildKinds is intentionally AFTER the
+		// token/multi guard so that a theoretical token/multi variant-child
+		// would still be promoted. The original pass-2 applied unconditionally
+		// after pass-1 set token/multi→false, so this matches the union exactly.
+		node.userFacing = ctx.variantChildKinds.has(kind);
+		return;
 	}
+	if (!kind.startsWith('_')) {
+		// Visible kinds are always user-facing.
+		node.userFacing = true;
+		return;
+	}
+	// Hidden — user-facing when any of the four conditions above hold (b/c/d).
+	node.userFacing =
+		node.modelType === 'polymorph' ||
+		ctx.aliasSourceKinds.has(kind) ||
+		ctx.variantChildKinds.has(kind);
 }
 
 function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
