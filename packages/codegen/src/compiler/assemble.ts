@@ -1673,3 +1673,367 @@ function extractVariantChildSymbol(rule: Rule): string | null {
 function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
 }
+
+// ---------------------------------------------------------------------------
+// buildBranchRenderRuleFromForms — Task 1 (PR-I)
+//
+// Constructs a merged `seq(sharedPrefix..., clause(arm0), clause(arm1)…, sharedSuffix...)`
+// RenderRule that `emitBranchTemplate` can render directly, replacing the
+// `emitPolymorphTemplate` variant-switch approach for MUST-CONSTRUCT polymorph
+// kinds.
+//
+// The −32 lesson: hoisted shared literals MUST retain their text (same object);
+// hoisted shared slots MUST retain a `sourceRuleId` that resolves via
+// `slotByRuleId` (same object). This is guaranteed by REUSING the exact member
+// objects from `form.renderRule.members` — never constructing fresh rule nodes.
+//
+// Why clause, not choice:
+//   `emitChoice` looks up a registered slot by rule id. The discriminating
+//   middle has no registered slot (it is a synthetic node), so emitChoice
+//   falls back to emitting only the first non-empty arm — losing all other
+//   arms. Instead, each form's middle becomes a `ClauseRule` whose `name` is
+//   the discriminating symbol of that arm. `emitClause` emits:
+//       `{% if disc_name | isPresent %}<arm body>{% endif %}`
+//   All arms are included; exactly one fires at runtime (exclusive choice
+//   guaranteed by the grammar). The discriminating name is extracted from
+//   the first or only symbol-typed member of the arm (the kind-named
+//   discriminator the grammar inserted).
+//
+// Algorithm:
+//   1. Collect all form renderRules. If any is not a `seq`, or if member
+//      counts differ (mixed-arity, e.g. range_pattern), degrade to a flat
+//      sequence of per-form clause wrappers so every id is preserved.
+//   2. Find shared prefix length P: positions where ALL forms share the
+//      same `id` across forms (structural identity in the optimized grammar).
+//   3. Find shared suffix length S: likewise from the right.
+//   4. For each form, the middle slice (after removing P prefix + S suffix)
+//      is the discriminating arm. Wrap it in a `ClauseRule` whose `name` =
+//      the discriminating symbol name extracted from the arm.
+//   5. Build: seq([...sharedPrefix, clause(arm0), clause(arm1)…, ...sharedSuffix])
+// ---------------------------------------------------------------------------
+
+/**
+ * Extract the discriminating symbol name from an arm's middle slice.
+ *
+ * For single-member arms: returns the symbol name directly if the member is
+ * a `symbol`, or the first symbol found inside a `seq`.
+ * For multi-member arms: returns the name of the first `symbol`-typed member.
+ * Falls back to a synthetic name derived from the form kind to ensure the
+ * clause always has a meaningful name even for unusual arm shapes.
+ */
+function _extractDiscriminatorName(armMembers: readonly Rule[], formKind: string): string {
+	for (const m of armMembers) {
+		if (m.type === 'symbol' && !m.name.startsWith('_')) return m.name;
+		// Peek inside a nested seq for the discriminating symbol.
+		if (m.type === 'seq') {
+			for (const inner of m.members) {
+				if (inner.type === 'symbol' && !inner.name.startsWith('_')) return inner.name;
+			}
+		}
+	}
+	// Fallback: use the formKind's suffix as a discriminator name.
+	const parts = formKind.split('__form_');
+	return parts[parts.length - 1]!.replace(/[^a-z0-9_]/gi, '_');
+}
+
+/**
+ * Structural equality check for Rule nodes used in inner-prefix extraction.
+ * Two rules are "structurally equal" if they carry the same identifying
+ * characteristic: same string value (for `string` rules) or same symbol name
+ * (for `symbol` rules). Other types are not considered equal (to be conservative
+ * — if we can't confirm equality, we don't hoist).
+ */
+function _rulesStructurallyEqual(a: Rule, b: Rule): boolean {
+	if (a.type !== b.type) return false;
+	if (a.type === 'string' && b.type === 'string') {
+		return a.value === b.value;
+	}
+	if (a.type === 'symbol' && b.type === 'symbol') {
+		return a.name === b.name;
+	}
+	// For other types: use id if both have one, otherwise not equal.
+	if (a.id && b.id) return a.id === b.id;
+	return false;
+}
+
+/**
+ * Build a merged `seq(sharedPrefix, choice(arm0, arm1…), sharedSuffix)` RenderRule
+ * for a MUST-CONSTRUCT polymorph kind.
+ *
+ * Designed for Task 1 of PR-I. Called in isolation (not yet wired into
+ * `classifyNode` / render dispatch) and tested against the Task-0 golden.
+ *
+ * @param forms  The AssembledGroup array from `AssembledPolymorph.forms`.
+ *   Each form's `renderRule` must be a wrapper-free RenderRule (the
+ *   `optimized.renderRules[formKind]` snapshot, already wrapper-deleted).
+ * @returns A single RenderRule suitable for `emitBranchTemplate`. The
+ *   returned rule's member objects are the SAME objects as in the source
+ *   renderRules — no reconstruction, preserving all `id` / `fieldName` /
+ *   `value` attributes necessary for `slotByRuleId` resolution.
+ */
+export function buildBranchRenderRuleFromForms(forms: readonly AssembledGroup[]): RenderRule {
+	if (forms.length === 0) {
+		// Degenerate: no forms → empty seq.
+		const empty: SeqRule = { type: 'seq', members: [] };
+		return empty as RenderRule;
+	}
+	if (forms.length === 1) {
+		// Single form — return its renderRule directly.
+		return forms[0]!.renderRule;
+	}
+
+	// Collect form renderRules.
+	const formRules = forms.map((f) => f.renderRule);
+	const allSeqs = formRules.every((r): r is SeqRule => r.type === 'seq');
+
+	if (!allSeqs) {
+		// Degrade: wrap each form's full renderRule in a clause.
+		return _makeClauseSequenceFromForms(forms);
+	}
+
+	const seqs = formRules as SeqRule[];
+	const memberCount = seqs[0]!.members.length;
+
+	// Degrade if member counts differ (mixed-arity, e.g. range_pattern).
+	if (!seqs.every((s) => s.members.length === memberCount)) {
+		return _makeClauseSequenceFromForms(forms);
+	}
+
+	// Find shared prefix length P: positions where ALL forms share the same rule id.
+	// A position is shared when every form's member at that index has an id AND
+	// all ids are identical (same rule object identity in the optimized grammar).
+	let P = 0;
+	for (let i = 0; i < memberCount; i++) {
+		const refId = seqs[0]!.members[i]!.id;
+		if (!refId) break;
+		if (seqs.every((s) => s.members[i]!.id === refId)) {
+			P++;
+		} else {
+			break;
+		}
+	}
+
+	// Find shared suffix length S: positions from the right with the same rule id.
+	let S = 0;
+	for (let i = memberCount - 1; i >= P; i--) {
+		const refId = seqs[0]!.members[i]!.id;
+		if (!refId) break;
+		if (seqs.every((s) => s.members[i]!.id === refId)) {
+			S++;
+		} else {
+			break;
+		}
+	}
+
+	const middleLen = memberCount - P - S;
+	if (middleLen <= 0) {
+		// No discriminating middle — all positions shared. Degrade to clause sequence.
+		return _makeClauseSequenceFromForms(forms);
+	}
+
+	// Build the merged rule.
+	// Shared prefix: the exact member objects from form[0] (same id/fieldName/value).
+	const sharedPrefix: Rule[] = seqs[0]!.members.slice(0, P);
+	// Shared suffix: same.
+	const sharedSuffix: Rule[] = seqs[0]!.members.slice(memberCount - S);
+
+	// Per-form discriminating arms — build a REAL ChoiceRule (exclusive arms).
+	//
+	// Why ChoiceRule, not a flat list of clause/optional members:
+	//   The seq spacing algorithm computes boundaries BETWEEN consecutive
+	//   members. When discriminating arms are flat members in the outer seq
+	//   (e.g. optSym_const, optSym_mut), the "outer-absent" boundary check
+	//   fires between `*` and the second arm even when only the first fires,
+	//   inserting a spurious space (`* mut` instead of `*mut`).
+	//
+	//   Wrapping the arms in a single ChoiceRule makes the discriminating
+	//   middle ONE member. The seq boundary is computed ONCE against the choice
+	//   as a unit. `emitChoice` (no-slot path) emits ALL arms as concatenated
+	//   conditionals; JINJA_COND_FULL_RE sees the result as a single conditional
+	//   block (greedy match from first {% if %} to last {% endif %}), so the
+	//   boundary checker's inner-present logic fires correctly against the
+	//   first arm's content and no outer-absent space is ever inserted.
+	//
+	// Arm shapes:
+	//   Single-member middle: the Rule is included directly as a choice member.
+	//   Multi-member middle: wrapped in a seq so the choice member is a single Rule.
+	//
+	// Inner-prefix extraction for multi-member arms:
+	//   When ALL arms are multi-member seqs and share a common inner prefix
+	//   (matching by string value or symbol name), the shared prefix is hoisted
+	//   to the outer seq so the choice's arms remain as minimal as possible.
+	//   This prevents `raw` (or other shared literals) from duplicating inside
+	//   every arm of the choice (e.g. reference_expression's `raw const`/`raw mut`
+	//   arms both start with `raw` → hoist `raw` before the choice).
+	//
+	// REUSE rule objects from `form.renderRule.members` — same id/fieldName/value
+	// preserved for slotByRuleId resolution.
+	//
+	// Collect the discriminating "arm members" for each form: expand single-seq
+	// middles to their inner members so we can do cross-arm prefix extraction
+	// at a uniform granularity.
+	const middles: Rule[][] = forms.map((_, idx) => {
+		const m = seqs[idx]!.members.slice(P, memberCount - S);
+		// If the middle is a single seq with no id (a synthetic wrapper), flatten it
+		// so inner-prefix extraction can compare across arms at member granularity.
+		if (m.length === 1 && m[0]!.type === 'seq' && !m[0]!.id) {
+			return (m[0] as SeqRule).members.slice();
+		}
+		return m;
+	});
+
+	// Inner-prefix extraction: when all middles have > 1 member AND share a
+	// common prefix (by string value or symbol name), hoist the prefix to the
+	// outer seq so the choice's arms remain as minimal as possible.
+	// This prevents shared literals (e.g. `raw` in reference_expression's
+	// `raw const`/`raw mut` arms) from appearing in every choice arm's output.
+	let innerPrefix: Rule[] = [];
+	let innerSuffix: Rule[] = [];
+	const allMultiMember = middles.every((m) => m.length > 1);
+	if (allMultiMember) {
+		const innerLen = middles[0]!.length;
+		let innerP = 0;
+		for (let i = 0; i < innerLen; i++) {
+			const ref = middles[0]![i]!;
+			const allMatch = middles.every((m) => m[i] !== undefined && _rulesStructurallyEqual(m[i]!, ref));
+			if (allMatch) innerP++;
+			else break;
+		}
+		let innerS = 0;
+		for (let i = innerLen - 1; i >= innerP; i--) {
+			const ref = middles[0]![i]!;
+			const allMatch = middles.every((m) => m[i] !== undefined && _rulesStructurallyEqual(m[i]!, ref));
+			if (allMatch) innerS++;
+			else break;
+		}
+		if (innerP > 0 || innerS > 0) {
+			innerPrefix = middles[0]!.slice(0, innerP);
+			if (innerS > 0) innerSuffix = middles[0]!.slice(innerLen - innerS);
+		}
+	}
+	const innerPLen = innerPrefix.length;
+	const innerSLen = innerSuffix.length;
+
+	const choiceMembers: Rule[] = middles.map((middle) => {
+		const armCore = (innerPLen > 0 || innerSLen > 0)
+			? middle.slice(innerPLen, innerSLen > 0 ? middle.length - innerSLen : undefined)
+			: middle;
+		if (armCore.length === 0) {
+			// Degenerate: arm fully covered by inner prefix/suffix — shouldn't occur
+			// if innerP + innerS < innerLen. Return a no-op placeholder.
+			return middle[innerPLen] ?? middle[0]!;
+		}
+		if (armCore.length === 1) {
+			return armCore[0]!;
+		}
+		const armSeq: SeqRule = { type: 'seq', members: armCore };
+		return armSeq;
+	});
+	// Sentinel id `__synthetic_exclusive_choice__` signals to `emitChoice`
+	// that this is a builder-synthetic exclusive-arms choice (NOT a grammar
+	// choice with a registered slot or literal arms). `emitChoice` emits ALL
+	// arms as concatenated conditionals for synthetic choices; for real grammar
+	// choices (no id, or a different id) it uses the original first-arm logic.
+	const discriminatingChoice: ChoiceRule = {
+		type: 'choice',
+		members: choiceMembers,
+		id: '__synthetic_exclusive_choice__' as import('./rule.ts').RuleId
+	};
+
+	const mergedMembers: Rule[] = [
+		...sharedPrefix,
+		...innerPrefix,
+		discriminatingChoice,
+		...innerSuffix,
+		...sharedSuffix
+	];
+	const mergedSeq: SeqRule = { type: 'seq', members: mergedMembers };
+	return mergedSeq as RenderRule;
+}
+
+/**
+ * Degrade path: forms are not uniform-length seqs (mixed arity, e.g. range_pattern).
+ *
+ * Strategy: partition forms by structural type (symbol vs seq of same length),
+ * apply the standard P/S merge recursively to each same-type group, then wrap
+ * all group results in a top-level ChoiceRule.
+ *
+ * This produces correct exclusive-arms rendering for mixed forms like range_pattern:
+ *   - group A (symbols): form[0] = sym(prefix)
+ *   - group B (seqs len=2): form[1] = seq(left, left_with_right),
+ *                           form[2] = seq(left, left_bare)
+ *   → choice(sym(prefix), seq(left, choice(left_with_right, left_bare)))
+ *
+ * Falls back to direct member inclusion when groups can't be merged (single-form
+ * groups or non-seq rules other than symbols).
+ */
+function _makeClauseSequenceFromForms(forms: readonly AssembledGroup[]): RenderRule {
+	if (forms.length === 1) {
+		return forms[0]!.renderRule;
+	}
+
+	// Group forms by structural key: 'symbol' or 'seq:<len>' or 'other'
+	type Group = { key: string; forms: AssembledGroup[] };
+	const groupMap = new Map<string, AssembledGroup[]>();
+	for (const form of forms) {
+		let key: string;
+		if (form.renderRule.type === 'symbol') {
+			key = 'symbol';
+		} else if (form.renderRule.type === 'seq') {
+			key = `seq:${(form.renderRule as SeqRule).members.length}`;
+		} else {
+			key = `other:${form.renderRule.type}`;
+		}
+		const existing = groupMap.get(key);
+		if (existing) existing.push(form);
+		else groupMap.set(key, [form]);
+	}
+
+	// Build a Rule for each group, then combine all groups in a ChoiceRule.
+	const groupRules: Rule[] = [];
+	for (const [, groupForms] of groupMap) {
+		if (groupForms.length === 1) {
+			// Single-form group: use the renderRule directly.
+			groupRules.push(groupForms[0]!.renderRule);
+		} else if (groupForms.every((f) => f.renderRule.type === 'symbol')) {
+			// Multiple symbol forms: build a synthetic exclusive-arms choice.
+			const choiceMembers = groupForms.map((f) => f.renderRule);
+			const choice: ChoiceRule = {
+				type: 'choice',
+				members: choiceMembers,
+				id: '__synthetic_exclusive_choice__' as import('./rule.ts').RuleId
+			};
+			groupRules.push(choice);
+		} else if (groupForms.every((f) => f.renderRule.type === 'seq')) {
+			// Multiple seq forms of uniform length: apply recursive merge.
+			const merged = buildBranchRenderRuleFromForms(groupForms);
+			groupRules.push(merged);
+		} else {
+			// Fallback: wrap each form in a clause (original degrade behaviour).
+			for (const form of groupForms) {
+				if (form.renderRule.type === 'symbol') {
+					groupRules.push(form.renderRule);
+				} else {
+					const members = form.renderRule.type === 'seq'
+						? (form.renderRule as SeqRule).members
+						: [form.renderRule];
+					const discName = _extractDiscriminatorName(members, form.kind);
+					const clause: Rule = { type: 'clause', name: discName, content: form.renderRule };
+					groupRules.push(clause);
+				}
+			}
+		}
+	}
+
+	if (groupRules.length === 1) {
+		return groupRules[0] as RenderRule;
+	}
+
+	// Combine all group rules in a top-level synthetic exclusive ChoiceRule.
+	const topChoice: ChoiceRule = {
+		type: 'choice',
+		members: groupRules,
+		id: '__synthetic_exclusive_choice__' as import('./rule.ts').RuleId
+	};
+	return topChoice as RenderRule;
+}
