@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
-import { optimize } from './optimize.ts';
+import { normalizeGrammar } from './normalize.ts';
 import { assemble, hydrateSlotRefs, classifyNode } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
@@ -237,7 +237,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		diagnostics,
 		polymorphSkip: polymorphsConfigSkip,
 	};
-	const optimized = optimize(linked, normalizeCtx);
+	const optimized = normalizeGrammar(linked, normalizeCtx);
 	tracePhaseRules('optimize', optimized.rules);
 	tracePhaseRules('simplify', optimized.simplifiedRules);
 

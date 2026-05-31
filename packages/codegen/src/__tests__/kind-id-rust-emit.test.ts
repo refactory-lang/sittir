@@ -3,7 +3,7 @@ import { field, seq } from '../compiler/evaluate.ts';
 import { buildRuleCatalog } from '../compiler/rule-catalog.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { link } from '../compiler/link.ts';
-import { optimize } from '../compiler/optimize.ts';
+import { normalizeGrammar } from '../compiler/normalize.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
 import type { RawGrammar } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -65,7 +65,7 @@ describe('emitKindIdRust', () => {
 	it('emits per-kind KindId constants in SCREAMING_SNAKE_CASE', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
-		const optimized = optimize(linked);
+		const optimized = normalizeGrammar(linked);
 		const nodeMap = assemble(optimized);
 
 		const out = emitKindIdRust({
@@ -82,7 +82,7 @@ describe('emitKindIdRust', () => {
 	it('emits generated header comment referencing the grammar', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
-		const optimized = optimize(linked);
+		const optimized = normalizeGrammar(linked);
 		const nodeMap = assemble(optimized);
 
 		const out = emitKindIdRust({
@@ -98,7 +98,7 @@ describe('emitKindIdRust', () => {
 	it('entries are sorted by numeric id', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
-		const optimized = optimize(linked);
+		const optimized = normalizeGrammar(linked);
 		const nodeMap = assemble(optimized);
 
 		const out = emitKindIdRust({
@@ -201,7 +201,7 @@ describe('emitKindIdRust', () => {
 		};
 
 		const linked = link(raw);
-		const optimized = optimize(linked);
+		const optimized = normalizeGrammar(linked);
 		const nodeMap = assemble(optimized);
 
 		const out = emitKindIdRust({

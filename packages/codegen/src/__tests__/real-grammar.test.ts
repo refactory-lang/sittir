@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
-import { optimize } from '../compiler/optimize.ts';
+import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath } from '../compiler/resolve-grammar.ts';
 
@@ -75,7 +75,7 @@ describe('Full pipeline — evaluate → link → optimize → assemble', () => 
 	it('processes Python through all 4 phases', async () => {
 		const raw = await evaluate(pythonGrammar);
 		const linked = link(raw);
-		const optimized = optimize(linked);
+		const optimized = normalizeGrammar(linked);
 		const nodeMap = assemble(optimized);
 
 		expect(nodeMap.name).toBe('python');
@@ -93,7 +93,7 @@ describe('Full pipeline — evaluate → link → optimize → assemble', () => 
 	it('processes Rust through all 4 phases', async () => {
 		const raw = await evaluate(rustGrammar);
 		const linked = link(raw);
-		const optimized = optimize(linked);
+		const optimized = normalizeGrammar(linked);
 		const nodeMap = assemble(optimized);
 
 		expect(nodeMap.name).toBe('rust');

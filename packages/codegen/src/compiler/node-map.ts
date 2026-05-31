@@ -49,7 +49,7 @@ import type {
 import { isSeq, isField } from './rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { findGeneratedKindEntry } from './generated-metadata.ts';
-import { tokenToName } from './optimize.ts';
+import { tokenToName } from './normalize.ts';
 import { collectSlots } from './collect-slots.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { fieldContentIsMultiSibling } from './field-shape.ts';

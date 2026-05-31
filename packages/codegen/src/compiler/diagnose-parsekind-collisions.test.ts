@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { choice, alias, seq } from './evaluate.ts';
 import { buildRuleCatalog } from './rule-catalog.ts';
 import { link } from './link.ts';
-import { optimize } from './optimize.ts';
+import { normalizeGrammar } from './normalize.ts';
 import { assemble } from './assemble.ts';
 import type { RawGrammar } from './types.ts';
 import { AssembledNonterminal, AssembledPolymorph } from './node-map.ts';
@@ -22,7 +22,7 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		word: null,
 		references: []
 	};
-	return assemble(optimize(link(raw)));
+	return assemble(normalizeGrammar(link(raw)));
 }
 
 describe('diagnoseParseKindCollisions', () => {

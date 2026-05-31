@@ -1,6 +1,6 @@
 import { assemble, type AssembledNodeMap } from './assemble.ts';
 import { link } from './link.ts';
-import { optimize } from './optimize.ts';
+import { normalizeGrammar } from './normalize.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
 import type { AssembleWarning } from './node-map.ts';
@@ -127,7 +127,7 @@ export function collectGrammarDiagnostics(input: {
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
 }): { nodeMap: AssembledNodeMap; diagnostics: readonly GrammarDiagnostic[] } {
-	const nodeMap = assemble(optimize(link(input.rawGrammar)));
+	const nodeMap = assemble(normalizeGrammar(link(input.rawGrammar)));
 	// drain slot-grouping diagnostics populated during the optimize() pass
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	return {

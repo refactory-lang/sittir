@@ -94,7 +94,7 @@ function applyNormalizationPasses(
 	return rules;
 }
 
-export function optimize(
+export function normalizeGrammar(
 	linked: LinkedGrammar,
 	ctx?: NormalizeCtx
 ): OptimizedGrammar {

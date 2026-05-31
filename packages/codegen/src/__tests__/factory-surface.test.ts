@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
-import { optimize } from '../compiler/optimize.ts';
+import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath } from '../compiler/resolve-grammar.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -25,13 +25,13 @@ beforeAll(async () => {
 	const rustGrammar = resolveGrammarJsPath('rust');
 	const rustRaw = await evaluate(rustGrammar);
 	const rustLinked = link(rustRaw);
-	const rustOptimized = optimize(rustLinked);
+	const rustOptimized = normalizeGrammar(rustLinked);
 	nodeMap = assemble(rustOptimized);
 
 	const typescriptGrammar = resolveGrammarJsPath('typescript');
 	const typescriptRaw = await evaluate(typescriptGrammar);
 	const typescriptLinked = link(typescriptRaw);
-	const typescriptOptimized = optimize(typescriptLinked);
+	const typescriptOptimized = normalizeGrammar(typescriptLinked);
 	typescriptNodeMap = assemble(typescriptOptimized);
 
 });

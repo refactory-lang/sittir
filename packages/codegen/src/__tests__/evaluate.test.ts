@@ -17,7 +17,7 @@ import {
 	evaluate
 } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
-import { optimize } from '../compiler/optimize.ts';
+import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { transform, insert, replace } from '../dsl/transform/transform.ts';
 import type { SymbolRef } from '../compiler/rule.ts';
@@ -602,7 +602,7 @@ describe('Evaluate — evaluate()', () => {
 			walk(raw.rules['binary_expression']);
 			expect(operatorKinds.sort()).toEqual(['enum', 'string', 'string']);
 
-			const nodeMap = assemble(optimize(link(raw)));
+			const nodeMap = assemble(normalizeGrammar(link(raw)));
 			const node = nodeMap.nodes.get('binary_expression');
 			expect(node && 'slots' in node).toBe(true);
 			const operatorSlot = node && 'slots' in node ? node.slots.operator : undefined;
