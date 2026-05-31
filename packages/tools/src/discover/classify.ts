@@ -54,7 +54,7 @@ resolveOverridesPath: (grammar: string) => string;
 const CODEGEN_PATHS = {
 evaluate: '../../../codegen/src/compiler/evaluate.ts',
 link: '../../../codegen/src/compiler/link.ts',
-optimize: '../../../codegen/src/compiler/optimize.ts',
+optimize: '../../../codegen/src/compiler/normalize.ts',
 assemble: '../../../codegen/src/compiler/assemble.ts',
 resolve: '../../../codegen/src/compiler/resolve-grammar.ts',
 } as const;

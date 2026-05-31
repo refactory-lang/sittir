@@ -1,5 +1,5 @@
 /**
- * compiler/optimize.ts — Optimize phase.
+ * compiler/normalize.ts — Normalize phase.
  *
  * Restructures seq/choice/optional/repeat for SIMPLIFICATION (fan-out,
  * factoring, prefix/suffix extraction, wrapper collapsing, dedupe,
@@ -8,7 +8,7 @@
  *
  * Variant tagging and polymorph promotion live in Link — those are
  * classification, not simplification. Pipeline order is fixed in
- * `optimize()` below: collapse → fan-out → factor → dedupe → inline →
+ * `normalizeGrammar()` below: collapse → fan-out → factor → dedupe → inline →
  * re-collapse.
  */
 
