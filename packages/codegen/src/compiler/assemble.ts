@@ -451,7 +451,7 @@ function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<stri
  *   been attached by `tagVariants`, so the form kinds stay collision-free and
  *   obviously generated.
  */
-function derivePolymorphForms(kind: string, rule: Rule): PolymorphRule['forms'] {
+export function derivePolymorphForms(kind: string, rule: Rule): PolymorphRule['forms'] {
 	if (rule.type === 'polymorph') return rule.forms;
 	if (rule.type === 'choice') {
 		return rule.members.map((m, i) => ({

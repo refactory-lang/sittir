@@ -3116,22 +3116,20 @@ function hasExternalBoundaries(seqRule: Rule, externals: ReadonlySet<string>): b
 	return isExternalTerminalMember(first, externals) && isExternalTerminalMember(last, externals);
 }
 
-export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
+export class AssembledPolymorph extends AssembledBranch<PolymorphRule | ChoiceRule> {
+	// TS2416: overriding 'branch' literal with 'polymorph'. The base class
+	// uses `= 'branch' as const` so TypeScript infers a literal type that
+	// prevents narrowing subclass overrides. The runtime value is correct
+	// ('polymorph' is assigned by the field initializer after super()); the
+	// suppression is type-only. PR-M Task 2 — PR-I will delete this class.
+	// @ts-expect-error TS2416 — modelType override from 'branch' to 'polymorph' is intentional
 	readonly modelType = 'polymorph' as const;
 	// #forms is stored separately because AssembledGroup instances are
 	// constructed by assemble.ts and passed in — they don't live on the rule.
 	readonly #forms: AssembledGroup[];
-	readonly source: 'promoted' | 'override';
-	/**
-	 * For source='override' polymorphs: the visible variant child kinds
-	 * (e.g., ['assignment_eq', 'assignment_type', 'assignment_typed']).
-	 * These are real kinds in the parse tree (created by the alias() in
-	 * transform patches) and need to appear as the children union on
-	 * the parent polymorph's interface. Empty for source='promoted'.
-	 */
-	readonly variantChildKinds: readonly string[];
-	slotClass?: BranchSlotClass;
-	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
+	// source is narrowed from AssembledNodeBase's optional RuleSource to a
+	// required 'promoted' | 'override' — represents the polymorph's origin.
+	override readonly source: 'promoted' | 'override';
 
 	constructor(
 		kind: string,
@@ -3146,15 +3144,20 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		}
 	) {
 		const ruleSource = rule.type === 'polymorph' ? rule.source : undefined;
-		super(kind, rule as PolymorphRule, {
+		// Pass the rule as both simplifiedRule and renderRule — polymorph nodes
+		// don't use simplifiedRule/renderRule directly (their forms each carry
+		// their own renderRule). The slotRecord bypasses buildSlotsRecord so the
+		// slot set comes from structuralSlotRecordFromForms, not grammar derivation.
+		const slotRecord = structuralSlotRecordFromForms(forms, kind, opts?.parseKindCollisionContext);
+		super(kind, rule, rule as Rule, rule as RenderRule, {
 			factoryName: opts?.factoryName,
 			irKey: opts?.irKey,
-			source: ruleSource
+			source: ruleSource,
+			variantChildKinds: opts?.variantChildKinds,
+			slotRecord
 		});
 		this.#forms = forms;
 		this.source = opts?.source ?? 'promoted';
-		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		this.slots = structuralSlotRecordFromForms(forms, kind, opts?.parseKindCollisionContext);
 	}
 
 	/** A polymorph's forms are hidden groups synthesized from the choice branches. */
