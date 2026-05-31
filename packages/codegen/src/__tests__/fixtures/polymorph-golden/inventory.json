@@ -12,361 +12,269 @@
   "carveOutCount": 0,
   "notes": [
     "All 36 polymorph kinds have source=override.",
-    "0 shared-signature: every form has a distinct named CST discriminator.",
-    "0 carve-outs: all kinds can have $variant removed post-rewrite.",
-    "Partition uses form-group CST kind presence (kind.replace(__form_, _) in node-types.json).",
-    "ROUTE-EXISTING: form-group CST kinds all present → emit via emitBranchTemplate against existing slots.",
-    "MUST-CONSTRUCT: form-group CST kinds missing or hidden → need merged-renderRule builder (3 kinds).",
+    "0 shared-signature: every form has a distinct named CST discriminator (read-axis).",
+    "0 carve-outs: all 36 kinds can have $variant removed post-rewrite (read-axis).",
+    "Read-axis (carve-out): injective = each form has a distinct named CST child. 0 non-injective.",
+    "Render-axis (partition): ROUTE-EXISTING = all form contents are bare symbol/alias refs (the form-group kind wraps everything; just flip dispatch to emitBranchTemplate, no construction). MUST-CONSTRUCT = form content is seq(shared_prefix, discriminating_middle, shared_suffix); needs buildBranchRenderRuleFromForms builder (the -32 zone).",
+    "These two axes are INDEPENDENT: a kind can be injective (no carve-out) AND must-construct (fused prefix/suffix). reference_expression is exactly this case.",
+    "range_pattern is MIXED: first form is a bare symbol; second and third are seqs. Treat as MUST-CONSTRUCT.",
     "Native render path is BROKEN for all parent polymorph kinds (transport requires all form fields simultaneously).",
-    "Form-kind render (JS path) works for overridePassthrough forms."
+    "Form-kind render (overridePassthrough forms) works via native path.",
+    "MUST-CONSTRUCT count: rust 13, typescript 5, python 1 = 20 kinds total (the -32 risk surface).",
+    "ROUTE-EXISTING count: rust 8, typescript 6, python 3 = 16 kinds (pure dispatch flip)."
   ],
   "partitionTable": [
     {
       "grammar": "rust",
       "kind": "array_expression",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "array_expression_semi",
-        "array_expression_list"
-      ]
+      "forms": ["array_expression_semi", "array_expression_list"],
+      "note": "each form is $.array_expression_semi / $.array_expression_list"
     },
     {
       "grammar": "rust",
       "kind": "closure_expression",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "closure_expression_block",
-        "closure_expression_expr"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["closure_expression_block", "closure_expression_expr"],
+      "note": "each form is seq(5 members) sharing _closure_expression_static_marker prefix"
     },
     {
       "grammar": "rust",
       "kind": "delim_token_tree",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "delim_token_tree_paren",
-        "delim_token_tree_bracket",
-        "delim_token_tree_brace"
-      ]
+      "forms": ["delim_token_tree_paren", "delim_token_tree_bracket", "delim_token_tree_brace"],
+      "note": "each form is a bare $.delim_token_tree_* symbol"
     },
     {
       "grammar": "rust",
       "kind": "expression_statement",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "expression_statement_with_semi",
-        "expression_statement_block_ending"
-      ]
+      "forms": ["expression_statement_with_semi", "expression_statement_block_ending"],
+      "note": "each form is a bare $.expression_statement_* symbol"
     },
     {
       "grammar": "rust",
       "kind": "field_pattern",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "field_pattern_shorthand",
-        "field_pattern_named"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["field_pattern_shorthand", "field_pattern_named"],
+      "note": "each form is seq(3 members) sharing _field_pattern_ref_marker prefix"
     },
     {
       "grammar": "rust",
       "kind": "foreign_mod_item",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "foreign_mod_item_semi",
-        "foreign_mod_item_body"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["foreign_mod_item_semi", "foreign_mod_item_body"],
+      "note": "each form is seq(3 members) sharing visibility_modifier prefix"
     },
     {
       "grammar": "rust",
       "kind": "function_type",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "function_type_trait_form",
-        "function_type_fn_form"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["function_type_trait_form", "function_type_fn_form"],
+      "note": "each form is seq(4 members) sharing for_lifetimes prefix"
     },
     {
       "grammar": "rust",
       "kind": "impl_item",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "impl_item_body",
-        "impl_item_semi"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["impl_item_body", "impl_item_semi"],
+      "note": "each form is seq(7 members) sharing _unsafe_marker prefix"
     },
     {
       "grammar": "rust",
       "kind": "line_comment",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "line_comment_regular_dslash",
-        "line_comment_doc",
-        "line_comment_content"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["line_comment_regular_dslash", "line_comment_doc", "line_comment_content"],
+      "note": "each form is seq(2 members) sharing '//' prefix"
     },
     {
       "grammar": "rust",
       "kind": "macro_definition",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "macro_definition_paren",
-        "macro_definition_bracket",
-        "macro_definition_brace"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["macro_definition_paren", "macro_definition_bracket", "macro_definition_brace"],
+      "note": "each form is seq(3 members) sharing 'macro_rules!' + name prefix"
     },
     {
       "grammar": "rust",
       "kind": "match_arm",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "match_arm_with_comma",
-        "match_arm_block_ending"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["match_arm_with_comma", "match_arm_block_ending"],
+      "note": "each form is seq(4 members) sharing match_pattern + guard prefix"
     },
     {
       "grammar": "rust",
       "kind": "mod_item",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "mod_item_external",
-        "mod_item_inline"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["mod_item_external", "mod_item_inline"],
+      "note": "each form is seq(4 members) sharing visibility_modifier + 'mod' + name prefix"
     },
     {
       "grammar": "rust",
       "kind": "or_pattern",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "or_pattern_binary",
-        "or_pattern_prefix"
-      ]
+      "forms": ["or_pattern_binary", "or_pattern_prefix"],
+      "note": "each form is a bare $.or_pattern_* symbol"
     },
     {
       "grammar": "rust",
       "kind": "pointer_type",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "pointer_type_const",
-        "pointer_type_mut"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["pointer_type_const", "pointer_type_mut"],
+      "note": "each form is seq(3 members) sharing '*' prefix; const/mut anonymous tokens are the discriminator"
     },
     {
       "grammar": "rust",
       "kind": "range_expression",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "range_expression_binary",
-        "range_expression_postfix",
-        "range_expression_prefix",
-        "range_expression_bare"
-      ]
+      "forms": ["range_expression_binary", "range_expression_postfix", "range_expression_prefix", "range_expression_bare"],
+      "note": "each form is a bare $.range_expression_* symbol"
     },
     {
       "grammar": "rust",
       "kind": "range_pattern",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "range_pattern_prefix",
-        "range_pattern_left_with_right",
-        "range_pattern_left_bare"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["range_pattern_prefix", "range_pattern_left_with_right", "range_pattern_left_bare"],
+      "note": "MIXED: prefix form is bare $.range_pattern_prefix; left_with_right and left_bare are seq(2 members). Treat as MUST-CONSTRUCT."
     },
     {
       "grammar": "rust",
       "kind": "reference_expression",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "reference_expression_raw_const",
-        "reference_expression_raw_mut"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["reference_expression_raw_const", "reference_expression_raw_mut"],
+      "note": "each form is seq(3 members): & + raw + reference_expression_raw_* + value. The -32 trap: shared '&' prefix and value suffix must be hoisted. NOT a carve-out (raw_const vs raw_mut are distinct named discriminators)."
     },
     {
       "grammar": "rust",
       "kind": "struct_item",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "struct_item_brace",
-        "struct_item_tuple",
-        "struct_item_unit"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["struct_item_brace", "struct_item_tuple", "struct_item_unit"],
+      "note": "each form is seq(5 members) sharing visibility_modifier + 'struct' + name prefix"
     },
     {
       "grammar": "rust",
       "kind": "token_tree",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "token_tree_paren",
-        "token_tree_bracket",
-        "token_tree_brace"
-      ]
+      "forms": ["token_tree_paren", "token_tree_bracket", "token_tree_brace"],
+      "note": "each form is a bare $.token_tree_* symbol"
     },
     {
       "grammar": "rust",
       "kind": "token_tree_pattern",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "token_tree_pattern_paren",
-        "token_tree_pattern_bracket",
-        "token_tree_pattern_brace"
-      ]
+      "forms": ["token_tree_pattern_paren", "token_tree_pattern_bracket", "token_tree_pattern_brace"],
+      "note": "each form is a bare $.token_tree_pattern_* symbol"
     },
     {
       "grammar": "rust",
       "kind": "visibility_modifier",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "visibility_modifier_crate",
-        "visibility_modifier_pub",
-        "visibility_modifier_in_path"
-      ]
+      "forms": ["visibility_modifier_crate", "visibility_modifier_pub", "visibility_modifier_in_path"],
+      "note": "each form is a bare $.visibility_modifier_* symbol"
     },
     {
       "grammar": "typescript",
       "kind": "_export_statement_default_from_arm",
       "partition": "MUST-CONSTRUCT",
-      "forms": [
-        "_export_statement_default_from_arm_star_from",
-        "_export_statement_default_from_arm_ns_from",
-        "_export_statement_default_from_arm_clause_from",
-        "_export_statement_default_from_arm_export_clause"
-      ],
-      "note": "form-group kinds not in node-types.json (hidden prefix); unique discriminators: export_statement_default_from_arm_star_from etc."
+      "forms": ["_export_statement_default_from_arm_star_from", "_export_statement_default_from_arm_ns_from", "_export_statement_default_from_arm_clause_from", "_export_statement_default_from_arm_export_clause"],
+      "note": "each form is seq(3 members) sharing 'export' prefix; form-group CST kinds are hidden (_-prefixed)"
     },
     {
       "grammar": "typescript",
       "kind": "ambient_declaration",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "ambient_declaration_declaration",
-        "ambient_declaration_global",
-        "ambient_declaration_module"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["ambient_declaration_declaration", "ambient_declaration_global", "ambient_declaration_module"],
+      "note": "each form is seq(2 members) sharing 'declare' prefix"
     },
     {
       "grammar": "typescript",
       "kind": "arrow_function",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "arrow_function_parameter",
-        "arrow_function__call_signature"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["arrow_function_parameter", "arrow_function__call_signature"],
+      "note": "each form is seq(4 members) sharing _async_marker prefix"
     },
     {
       "grammar": "typescript",
       "kind": "call_expression",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "call_expression_call",
-        "call_expression_template_call",
-        "call_expression_member"
-      ]
+      "forms": ["call_expression_call", "call_expression_template_call", "call_expression_member"],
+      "note": "each form is a bare $.call_expression_* symbol"
     },
     {
       "grammar": "typescript",
       "kind": "class_heritage",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "class_heritage_extends_clause",
-        "class_heritage_implements_clause"
-      ]
+      "forms": ["class_heritage_extends_clause", "class_heritage_implements_clause"],
+      "note": "each form is a bare $.class_heritage_* symbol"
     },
     {
       "grammar": "typescript",
       "kind": "export_statement",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "export_statement_default",
-        "export_statement_type_export",
-        "export_statement_equals_export",
-        "export_statement_namespace_export"
-      ]
+      "forms": ["export_statement_default", "export_statement_type_export", "export_statement_equals_export", "export_statement_namespace_export"],
+      "note": "each form is a bare $.export_statement_* symbol"
     },
     {
       "grammar": "typescript",
       "kind": "import_clause",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "import_clause_namespace_import",
-        "import_clause_named_imports",
-        "import_clause_default_import"
-      ]
+      "forms": ["import_clause_namespace_import", "import_clause_named_imports", "import_clause_default_import"],
+      "note": "each form is a bare $.import_clause_* symbol"
     },
     {
       "grammar": "typescript",
       "kind": "import_specifier",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "import_specifier_name",
-        "import_specifier_as"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["import_specifier_name", "import_specifier_as"],
+      "note": "each form is seq(2 members) sharing _export_specifier_export_kind prefix"
     },
     {
       "grammar": "typescript",
       "kind": "index_signature",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "index_signature_colon",
-        "index_signature_mapped_type_clause"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["index_signature_colon", "index_signature_mapped_type_clause"],
+      "note": "each form is seq(5 members) sharing '[' prefix"
     },
     {
       "grammar": "typescript",
       "kind": "parenthesized_expression",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "parenthesized_expression_typed",
-        "parenthesized_expression_sequence"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["parenthesized_expression_typed", "parenthesized_expression_sequence"],
+      "note": "each form is seq(3 members) sharing '(' prefix"
     },
     {
       "grammar": "typescript",
       "kind": "update_expression",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "update_expression_postfix",
-        "update_expression_prefix"
-      ]
+      "forms": ["update_expression_postfix", "update_expression_prefix"],
+      "note": "each form is a bare $.update_expression_* symbol"
     },
     {
       "grammar": "python",
       "kind": "_match_block",
-      "partition": "MUST-CONSTRUCT",
-      "forms": [
-        "_match_block_block"
-      ],
-      "note": "hidden kind; form-group kind not in node-types.json; unique discriminator: match_block_block"
+      "partition": "ROUTE-EXISTING",
+      "forms": ["match_block_block"],
+      "note": "hidden kind; form content is bare $.match_block_block symbol"
     },
     {
       "grammar": "python",
       "kind": "assignment",
-      "partition": "ROUTE-EXISTING",
-      "forms": [
-        "assignment_eq",
-        "assignment_type",
-        "assignment_typed"
-      ]
+      "partition": "MUST-CONSTRUCT",
+      "forms": ["assignment_eq", "assignment_type", "assignment_typed"],
+      "note": "each form is seq(2 members) sharing _left_hand_side prefix"
     },
     {
       "grammar": "python",
       "kind": "expression_statement",
-      "partition": "MUST-CONSTRUCT",
-      "forms": [
-        "expression_statement_tuple",
-        "expression_statement_expression",
-        "expression_statement_assignment",
-        "expression_statement_augmented_assignment",
-        "expression_statement_yield"
-      ],
-      "note": "expression_statement_expression not in node-types.json; forms have distinct unique discriminators (expression, expression_statement_tuple, assignment, augmented_assignment, yield)"
+      "partition": "ROUTE-EXISTING",
+      "forms": ["expression_statement_tuple", "expression", "assignment", "augmented_assignment", "yield"],
+      "note": "all forms are bare symbols: $.expression, $.expression_statement_tuple, $.assignment, $.augmented_assignment, $.yield"
     },
     {
       "grammar": "python",
       "kind": "with_clause",
       "partition": "ROUTE-EXISTING",
-      "forms": [
-        "with_clause_bare",
-        "with_clause_paren"
-      ]
+      "forms": ["with_clause_bare", "with_clause_paren"],
+      "note": "each form is a bare $.with_clause_* symbol"
     }
   ],
   "carveOutSet": [],

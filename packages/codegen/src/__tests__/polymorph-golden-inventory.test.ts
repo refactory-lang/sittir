@@ -101,18 +101,28 @@ describe('polymorph golden inventory — Task 0 guard', () => {
 				);
 
 				if (entry.partition === 'ROUTE-EXISTING') {
-					// All form-group CST kinds should be in node-types.json
-					for (const cstKind of formGroupCstKinds) {
+					// ROUTE-EXISTING: all form contents are bare symbol/alias refs.
+					// Each form content in the PolymorphRule should be a single symbol or alias.
+					const parentRule = optimized.rules[entry.kind] ?? optimized.topLevelAliasBodies?.get(entry.kind);
+					if (parentRule && parentRule.type === 'polymorph') {
+						for (const form of parentRule.forms) {
+							const isBare = form.content.type === 'symbol' || form.content.type === 'alias';
+							expect(
+								isBare,
+								`${grammar}/${entry.kind} form '${form.name}' content is bare symbol/alias (ROUTE-EXISTING)`
+							).toBe(true);
+						}
+					}
+				} else if (entry.partition === 'MUST-CONSTRUCT') {
+					// MUST-CONSTRUCT: at least one form has a seq content (fused).
+					const parentRule = optimized.rules[entry.kind] ?? optimized.topLevelAliasBodies?.get(entry.kind);
+					if (parentRule && parentRule.type === 'polymorph') {
+						const hasFused = parentRule.forms.some(f => f.content.type === 'seq');
 						expect(
-							cstKinds.has(cstKind),
-							`${grammar}/${entry.kind} form CST kind '${cstKind}' in node-types.json`
+							hasFused,
+							`${grammar}/${entry.kind} has at least one fused (seq) form (MUST-CONSTRUCT)`
 						).toBe(true);
 					}
-					// All distinct
-					expect(
-						new Set(formGroupCstKinds).size,
-						`${grammar}/${entry.kind} form-group CST kinds are distinct`
-					).toBe(formGroupCstKinds.length);
 				}
 			}
 		});
