@@ -25,7 +25,7 @@ function _attach<T extends (...args: never[]) => unknown, P extends Record<strin
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const condition = {
   unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
-  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression, "rawConst": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "raw_const": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "rawMut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }), "raw_mut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }) }),
+  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
   try: _attach(FR.tryExpressionFrom, { from: FR.tryExpressionFrom, strict: F.tryExpression }),
   binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
   assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
@@ -110,7 +110,7 @@ export const delimTokens = {
 
 export const expression = {
   unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
-  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression, "rawConst": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "raw_const": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "rawMut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }), "raw_mut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }) }),
+  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
   try: _attach(FR.tryExpressionFrom, { from: FR.tryExpressionFrom, strict: F.tryExpression }),
   binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
   assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
@@ -171,7 +171,7 @@ export const expressionEndingWithBlock = {
 
 export const expressionExceptRange = {
   unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
-  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression, "rawConst": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "raw_const": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "rawMut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }), "raw_mut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }) }),
+  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
   try: _attach(FR.tryExpressionFrom, { from: FR.tryExpressionFrom, strict: F.tryExpression }),
   binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
   assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
@@ -514,8 +514,7 @@ export const ir = {
   rangePattern: _attach(FR.rangePatternFrom, { from: FR.rangePatternFrom, strict: F.rangePattern, "prefix": _attach(FR.rangePatternUFormPrefixFrom, { from: FR.rangePatternUFormPrefixFrom, strict: F.rangePatternUFormPrefix }), "leftWithRight": _attach(FR.rangePatternUFormLeftWithRightFrom, { from: FR.rangePatternUFormLeftWithRightFrom, strict: F.rangePatternUFormLeftWithRight }), "left_with_right": _attach(FR.rangePatternUFormLeftWithRightFrom, { from: FR.rangePatternUFormLeftWithRightFrom, strict: F.rangePatternUFormLeftWithRight }), "leftBare": _attach(FR.rangePatternUFormLeftBareFrom, { from: FR.rangePatternUFormLeftBareFrom, strict: F.rangePatternUFormLeftBare }), "left_bare": _attach(FR.rangePatternUFormLeftBareFrom, { from: FR.rangePatternUFormLeftBareFrom, strict: F.rangePatternUFormLeftBare }) }),
   rawStringLiteral: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
   refPattern: _attach(FR.refPatternFrom, { from: FR.refPatternFrom, strict: F.refPattern }),
-  referenceExpressionRawMut: _attach(FR.referenceExpressionRawMutFrom, { from: FR.referenceExpressionRawMutFrom, strict: F.referenceExpressionRawMut }),
-  referenceExpression: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression, "rawConst": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "raw_const": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "rawMut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }), "raw_mut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }) }),
+  referenceExpression: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
   referencePattern: _attach(FR.referencePatternFrom, { from: FR.referencePatternFrom, strict: F.referencePattern }),
   referenceType: _attach(FR.referenceTypeFrom, { from: FR.referenceTypeFrom, strict: F.referenceType }),
   removedTraitBound: _attach(FR.removedTraitBoundFrom, { from: FR.removedTraitBoundFrom, strict: F.removedTraitBound }),
@@ -644,7 +643,7 @@ export const ir = {
   range: _attach(FR.rangeExpressionFrom, { from: FR.rangeExpressionFrom, strict: F.rangeExpression, "binary": _attach(FR.rangeExpressionUFormBinaryFrom, { from: FR.rangeExpressionUFormBinaryFrom, strict: F.rangeExpressionUFormBinary }), "postfix": _attach(FR.rangeExpressionUFormPostfixFrom, { from: FR.rangeExpressionUFormPostfixFrom, strict: F.rangeExpressionUFormPostfix }), "prefix": _attach(FR.rangeExpressionUFormPrefixFrom, { from: FR.rangeExpressionUFormPrefixFrom, strict: F.rangeExpressionUFormPrefix }), "bare": _attach(FR.rangeExpressionUFormBareFrom, { from: FR.rangeExpressionUFormBareFrom, strict: F.rangeExpressionUFormBare }) }),
   rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
   ref: _attach(FR.refPatternFrom, { from: FR.refPatternFrom, strict: F.refPattern }),
-  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression, "rawConst": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "raw_const": _attach(FR.referenceExpressionUFormRawConstFrom, { from: FR.referenceExpressionUFormRawConstFrom, strict: F.referenceExpressionUFormRawConst }), "rawMut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }), "raw_mut": _attach(FR.referenceExpressionUFormRawMutFrom, { from: FR.referenceExpressionUFormRawMutFrom, strict: F.referenceExpressionUFormRawMut }) }),
+  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
   removedTrait: _attach(FR.removedTraitBoundFrom, { from: FR.removedTraitBoundFrom, strict: F.removedTraitBound }),
   return: _attach(FR.returnExpressionFrom, { from: FR.returnExpressionFrom, strict: F.returnExpression }),
   scoped: _attach(FR.scopedIdentifierFrom, { from: FR.scopedIdentifierFrom, strict: F.scopedIdentifier }),

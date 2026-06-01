@@ -342,7 +342,7 @@ pub struct RangePatternPrefixTemplate<'a> {
 
 #[derive(::askama::Template)]
 #[template(path = "_reference_expression_raw_mut.jinja", escape = "none")]
-pub struct _ReferenceExpressionRawMutTemplate<'a> {
+pub struct ReferenceExpressionRawMutTemplate<'a> {
     pub mutable_specifier: SingleNonterminalView<'a>,
 }
 
@@ -1213,18 +1213,9 @@ pub struct RefPatternTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "reference_expression_raw_mut.jinja", escape = "none")]
-pub struct ReferenceExpressionRawMutTemplate<'a> {
-    pub mutable_specifier: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "reference_expression.jinja", escape = "none")]
 pub struct ReferenceExpressionTemplate<'a> {
-    pub variant: &'a str,
-    pub reference: SingleNonterminalView<'a>,
-    pub reference_expression_raw_const: SingleNonterminalView<'a>,
-    pub reference_expression_raw_mut: SingleNonterminalView<'a>,
+    pub content: OptionalNonterminalView<'a>,
     pub value: SingleNonterminalView<'a>,
 }
 

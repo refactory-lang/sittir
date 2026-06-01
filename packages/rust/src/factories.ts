@@ -659,10 +659,20 @@ export function _rangePatternPrefix(config: T.RangePatternPrefix.Config) {
   }, methodsEngine);
 }
 
-export function _referenceExpressionRawMut(_config?: T._ReferenceExpressionRawMut.Config) {
+export function referenceExpressionRawConst(text: string) {
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_reference_expression_raw_const: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.ReferenceExpressionRawConst as const,
+    $source: 2 as const,
+    $named: true as const,
+    $text: text,
+  }, methodsEngine);
+}
+
+export function referenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
   const _mutable_specifier = "mut" as const;
   return withMethods({
-    $type: TSKindId._ReferenceExpressionRawMut as const,
+    $type: TSKindId.ReferenceExpressionRawMut as const,
     $source: 2 as const,
     $named: true as const,
     _mutable_specifier,
@@ -3393,65 +3403,20 @@ export function refPattern(pattern: T.RefPattern.Config['pattern']) {
   }, methodsEngine);
 }
 
-export function referenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
-  const _mutable_specifier = "mut" as const;
-  return withMethods({
-    $type: TSKindId._ReferenceExpressionRawMut as const,
-    $source: 2 as const,
-    $named: true as const,
-    _mutable_specifier,
-    mutableSpecifier() { return _mutable_specifier; },
-    $with: {
-    },
-  }, methodsEngine);
-}
-
-export function referenceExpression(config: ConfigOf<T.ReferenceExpressionUFormRawConst>): ReturnType<typeof referenceExpressionUFormRawConst>;
-export function referenceExpression(config: ConfigOf<T.ReferenceExpressionUFormRawMut>): ReturnType<typeof referenceExpressionUFormRawMut>;
-export function referenceExpression(config: ConfigOf<T.ReferenceExpressionUFormRawConst> | ConfigOf<T.ReferenceExpressionUFormRawMut>) {
-  switch (config.$variant) {
-    case 'raw_const': return referenceExpressionUFormRawConst(config as Parameters<typeof referenceExpressionUFormRawConst>[0]);
-    case 'raw_mut': return referenceExpressionUFormRawMut(config as Parameters<typeof referenceExpressionUFormRawMut>[0]);
-  }
-  throw new Error(`referenceExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'raw_const' | 'raw_mut'.`);
-}
-export function referenceExpressionUFormRawConst(config: Omit<ConfigOf<T.ReferenceExpressionUFormRawConst>, '$variant'>) {
-  const _reference = coerceKindEnumStorage("&" as const, []);
-  const _reference_expression_raw_const = coerceKindEnumStorage("const" as const, []);
+export function referenceExpression(config: T.ReferenceExpression.Config) {
+  const _content = config.content;
   const _value = config.value;
   return withMethods({
     $type: TSKindId.ReferenceExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'raw_const' as const,
-    _reference,
-    _reference_expression_raw_const,
+    _content,
     _value,
-    reference() { return _reference; },
-    referenceExpressionRawConst() { return _reference_expression_raw_const; },
+    content() { return _content; },
     value() { return _value; },
     $with: {
-      value: (value: T.Expression) => referenceExpressionUFormRawConst({ ...config, value: value }),
-    },
-  }, methodsEngine);
-}
-export function referenceExpressionUFormRawMut(config: Omit<ConfigOf<T.ReferenceExpressionUFormRawMut>, '$variant'>) {
-  const _reference = coerceKindEnumStorage("&" as const, []);
-  const _reference_expression_raw_mut = _referenceExpressionRawMut();
-  const _value = config.value;
-  return withMethods({
-    $type: TSKindId.ReferenceExpression as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'raw_mut' as const,
-    _reference,
-    _reference_expression_raw_mut,
-    _value,
-    reference() { return _reference; },
-    referenceExpressionRawMut() { return _reference_expression_raw_mut; },
-    value() { return _value; },
-    $with: {
-      value: (value: T.Expression) => referenceExpressionUFormRawMut({ ...config, value: value }),
+      content: (value?: T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier) => referenceExpression({ ...config, content: value }),
+      value: (value: T.Expression) => referenceExpression({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -4763,7 +4728,8 @@ export type FluentKindMap = {
   "_range_expression_prefix": T.RangeExpressionPrefix;
   "_range_pattern_left_with_right": T.RangePatternLeftWithRight;
   "_range_pattern_prefix": T.RangePatternPrefix;
-  "_reference_expression_raw_mut": FluentNode<"_reference_expression_raw_mut", T._ReferenceExpressionRawMut.Config>;
+  "_reference_expression_raw_const": T.ReferenceExpressionRawConst;
+  "_reference_expression_raw_mut": FluentNode<"_reference_expression_raw_mut", T.ReferenceExpressionRawMut.Config>;
   "_struct_item_brace": T.StructItemBrace;
   "_struct_item_tuple": T.StructItemTuple;
   "_token_tree_brace": FluentNode<"_token_tree_brace", T._TokenTreeBrace.Config>;
@@ -4892,7 +4858,6 @@ export type FluentKindMap = {
   "range_pattern": FluentNode<"range_pattern", T.RangePattern.Config>;
   "raw_string_literal": FluentNode<"raw_string_literal", T.RawStringLiteral.Config>;
   "ref_pattern": FluentNode<"ref_pattern", T.RefPattern.Config>;
-  "reference_expression_raw_mut": FluentNode<"reference_expression_raw_mut", T.ReferenceExpressionRawMut.Config>;
   "reference_expression": FluentNode<"reference_expression", T.ReferenceExpression.Config>;
   "reference_pattern": FluentNode<"reference_pattern", T.ReferencePattern.Config>;
   "reference_type": FluentNode<"reference_type", T.ReferenceType.Config>;
@@ -5005,7 +4970,8 @@ export const _factoryMap = {
   "_range_expression_prefix": _rangeExpressionPrefix,
   "_range_pattern_left_with_right": _rangePatternLeftWithRight,
   "_range_pattern_prefix": _rangePatternPrefix,
-  "_reference_expression_raw_mut": _referenceExpressionRawMut,
+  "_reference_expression_raw_const": referenceExpressionRawConst,
+  "_reference_expression_raw_mut": referenceExpressionRawMut,
   "_struct_item_brace": _structItemBrace,
   "_struct_item_tuple": _structItemTuple,
   "_token_tree_brace": _tokenTreeBrace,
@@ -5134,7 +5100,6 @@ export const _factoryMap = {
   "range_pattern": rangePattern,
   "raw_string_literal": rawStringLiteral,
   "ref_pattern": refPattern,
-  "reference_expression_raw_mut": referenceExpressionRawMut,
   "reference_expression": referenceExpression,
   "reference_pattern": referencePattern,
   "reference_type": referenceType,

@@ -352,14 +352,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec = nativeRequired("prec");
+  const prec2 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec[variant2];
+    const fn = prec2[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec(value, newContent);
+  return prec2(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -2675,13 +2675,11 @@ var overrides_default = grammar(enrichedBase, wire({
       "2/1": field2("end"),
       "3": field2("operator")
     },
-    // reference_expression: 1 field(s)
-    reference_expression: {
-      0: field2("reference"),
-      "1/0/1/0": variant("raw_const"),
-      "1/0/1/1": variant("raw_mut")
-      // mutable_specifier [struct=0]
-    },
+    // reference_expression — full rule replacement in `rules:` below.
+    // The reference-mode is a single optional choice slot whose arms are
+    // real alias kinds that OWN their full surface (`raw const` / `raw mut`),
+    // so `&` stays a bare mandatory literal and `& mut x` / `& x` render
+    // correctly with no polymorph/forms machinery. See rules: reference_expression.
     // reference_pattern: 2 field(s)
     reference_pattern: {
       2: field2("pattern")
@@ -2886,7 +2884,32 @@ var overrides_default = grammar(enrichedBase, wire({
     // The hidden rule `_wildcard_pattern` is just the `_` literal;
     // the named alias on `_pattern` above promotes it to a proper
     // `wildcard_pattern` kind at parse time.
-    _wildcard_pattern: ($) => "_"
+    _wildcard_pattern: ($) => "_",
+    // reference_expression — reference-mode is a SINGLE optional choice slot.
+    // Each raw arm is a real alias kind that OWNS its `raw` prefix (the
+    // co-optional group `seq('raw', discriminator)`), so member-1 is a clean
+    // choice-over-kinds and the branch emitters render it faithfully — no
+    // forms / $variant / per-form transport. `&` is a bare mandatory literal
+    // (NOT a field — fielding it forced the `_kw_reference` LR routing we no
+    // longer need). `& mut x` → bare mutable_specifier arm; `& x` → optional
+    // absent. raw_const/raw_mut stay real kindId-bearing kinds → factory
+    // submethods derive from the choice arms as sugar.
+    _reference_expression_raw_const: ($) => seq("raw", "const"),
+    _reference_expression_raw_mut: ($) => seq("raw", $.mutable_specifier),
+    reference_expression: ($) => prec(
+      12,
+      seq(
+        "&",
+        optional(
+          choice(
+            alias2($._reference_expression_raw_const, $.reference_expression_raw_const),
+            alias2($._reference_expression_raw_mut, $.reference_expression_raw_mut),
+            $.mutable_specifier
+          )
+        ),
+        field2("value", $._expression)
+      )
+    )
   },
   // renderAs — sittir-side rule bodies for external scanner symbols.
   // These bodies are used by sittir's slot/render/factory pipeline ONLY;

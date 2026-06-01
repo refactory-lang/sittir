@@ -1967,17 +1967,6 @@ export interface ReferenceExpressionRawMutTransport {
   _mutable_specifier: MutableSpecifierTransport
 }
 
-export interface ReferenceExpressionRawMutTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _mutable_specifier: MutableSpecifierTransport
-}
-
 export interface ReferenceExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1986,10 +1975,8 @@ export interface ReferenceExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _reference: BinaryExpressionOperatorUX26Transport
   _value: Box<ExpressionTransport>
-  _reference_expression_raw_const: ReferenceExpressionRawConstTransport
-  _reference_expression_raw_mut: ReferenceExpressionRawMutTransport
+  _content?: ReferenceExpressionContentTransportSlot
 }
 
 export interface ReferencePatternTransport {

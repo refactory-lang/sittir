@@ -360,13 +360,6 @@ const _variantTable: Record<string, _WrapVariantDescriptor> = {
       "range_pattern_left_bare": "left_bare"
     }
   },
-  "reference_expression": {
-    "source": "override",
-    "childKind": {
-      "reference_expression_raw_const": "raw_const",
-      "reference_expression_raw_mut": "raw_mut"
-    }
-  },
   "struct_item": {
     "source": "override",
     "childKind": {
@@ -1068,15 +1061,15 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
   return _node;
 }
 
-export function wrap_ReferenceExpressionRawMut(data: T._ReferenceExpressionRawMut, tree: TreeHandle) {
+export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $type: TSKindId._ReferenceExpressionRawMut as const,
+    $type: TSKindId.ReferenceExpressionRawMut as const,
     _mutable_specifier: normalizeSingularWrapSlot(data._mutable_specifier, "mutable_specifier", true, data.$type, { tree, nodeType: data.$type, slotName: "mutable_specifier", span: (data as _NodeData).$span }),
 
     mutableSpecifier() { return drillIn<T.MutableSpecifier>(this._mutable_specifier, tree); },
     $with: {
-      mutableSpecifier: (v: NonNullable<T._ReferenceExpressionRawMut['_mutable_specifier']>) => wrap_ReferenceExpressionRawMut({ ...data, _mutable_specifier: v }, tree),
+      mutableSpecifier: (v: NonNullable<T.ReferenceExpressionRawMut['_mutable_specifier']>) => wrapReferenceExpressionRawMut({ ...data, _mutable_specifier: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3091,37 +3084,18 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle) {
   return _node;
 }
 
-export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut, tree: TreeHandle) {
-  const _node = withMethods({
-    ...data,
-    _mutable_specifier: normalizeSingularWrapSlot(data._mutable_specifier, "mutable_specifier", true, data.$type, { tree, nodeType: data.$type, slotName: "mutable_specifier", span: (data as _NodeData).$span }),
-
-    mutableSpecifier() { return drillIn<T.MutableSpecifier>(this._mutable_specifier, tree); },
-    $with: {
-      mutableSpecifier: (v: NonNullable<T.ReferenceExpressionRawMut['_mutable_specifier']>) => wrapReferenceExpressionRawMut({ ...data, _mutable_specifier: v }, tree),
-    },
-  }, methodsEngine);
-  return _node;
-}
-
 export function wrapReferenceExpression(data: T.ReferenceExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReferenceExpression as const,
-    _reference: projectKindEnumStorage(normalizeSingularWrapSlot((data as any)._reference, "reference", true, (data as any).$type, { tree, nodeType: (data as any).$type, slotName: "reference", span: ((data as any) as _NodeData).$span })),
-    _reference_expression_raw_const: coerceBooleanKeywordStorage(normalizeSingularWrapSlot((data as any)._reference_expression_raw_const, "reference_expression_raw_const", false, (data as any).$type, { tree, nodeType: (data as any).$type, slotName: "reference_expression_raw_const", span: ((data as any) as _NodeData).$span })),
-    _value: normalizeSingularWrapSlot((data as any)._value, "value", true, (data as any).$type, { tree, nodeType: (data as any).$type, slotName: "value", span: ((data as any) as _NodeData).$span }),
-    _reference_expression_raw_mut: normalizeSingularWrapSlot((data as any)._reference_expression_raw_mut, "reference_expression_raw_mut", false, (data as any).$type, { tree, nodeType: (data as any).$type, slotName: "reference_expression_raw_mut", span: ((data as any) as _NodeData).$span }),
+    _content: normalizeSingularWrapSlot((data._reference_expression_raw_const ?? data._reference_expression_raw_mut ?? data._mutable_specifier ?? data._content), "content", false, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),
 
-    reference() { return this._reference; },
-    referenceExpressionRawConst() { return this._reference_expression_raw_const; },
+    content() { return drillIn<T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier | undefined>(this._content, tree); },
     value() { return drillIn<T.Expression>(this._value, tree); },
-    referenceExpressionRawMut() { return drillAs<T._ReferenceExpressionRawMut | undefined>(this._reference_expression_raw_mut, tree, "reference_expression_raw_mut", "_reference_expression_raw_mut"); },
     $with: {
-      reference: (v: number) => wrapReferenceExpression({ ...(data as any), _reference: v }, tree),
-      referenceExpressionRawConst: (v: boolean) => wrapReferenceExpression({ ...(data as any), _reference_expression_raw_const: v }, tree),
-      value: (v: T.Expression) => wrapReferenceExpression({ ...(data as any), _value: v }, tree),
-      referenceExpressionRawMut: (v: T._ReferenceExpressionRawMut) => wrapReferenceExpression({ ...(data as any), _reference_expression_raw_mut: v }, tree),
+      content: (v: NonNullable<T.ReferenceExpression['_content']>) => wrapReferenceExpression({ ...data, _content: v }, tree),
+      value: (v: NonNullable<T.ReferenceExpression['_value']>) => wrapReferenceExpression({ ...data, _value: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -4128,7 +4102,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_range_pattern_left_with_right': (d, t) => wrapRangePatternLeftWithRight(d as unknown as T.RangePatternLeftWithRight, t),
   '_range_pattern_prefix': (d, t) => wrapRangePatternPrefix(d as unknown as T.RangePatternPrefix, t),
   '_reference_expression_raw_const': (d) => ({ ...d, $type: TSKindId.ReferenceExpressionRawConst as const }),
-  '_reference_expression_raw_mut': (d, t) => wrap_ReferenceExpressionRawMut(d as unknown as T._ReferenceExpressionRawMut, t),
+  '_reference_expression_raw_mut': (d, t) => wrapReferenceExpressionRawMut(d as unknown as T.ReferenceExpressionRawMut, t),
   '_statement': (d, t) => wrapStatement(d as unknown as T.Statement, t),
   '_struct_item_brace': (d, t) => wrapStructItemBrace(d as unknown as T.StructItemBrace, t),
   '_struct_item_tuple': (d, t) => wrapStructItemTuple(d as unknown as T.StructItemTuple, t),
@@ -4262,7 +4236,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'range_pattern': (d, t) => wrapRangePattern(d as unknown as T.RangePattern, t),
   'raw_string_literal': (d, t) => wrapRawStringLiteral(d as unknown as T.RawStringLiteral, t),
   'ref_pattern': (d, t) => wrapRefPattern(d as unknown as T.RefPattern, t),
-  'reference_expression_raw_mut': (d, t) => wrapReferenceExpressionRawMut(d as unknown as T.ReferenceExpressionRawMut, t),
   'reference_expression': (d, t) => wrapReferenceExpression(d as unknown as T.ReferenceExpression, t),
   'reference_pattern': (d, t) => wrapReferencePattern(d as unknown as T.ReferencePattern, t),
   'reference_type': (d, t) => wrapReferenceType(d as unknown as T.ReferenceType, t),
@@ -4377,6 +4350,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'range_pattern_left_with_right': '_range_pattern_left_with_right',
   'range_pattern_prefix': '_range_pattern_prefix',
   'reference_expression_raw_const': '_reference_expression_raw_const',
+  'reference_expression_raw_mut': '_reference_expression_raw_mut',
   'reserved_identifier': '_reserved_identifier',
   'statement': '_statement',
   'struct_item_brace': '_struct_item_brace',

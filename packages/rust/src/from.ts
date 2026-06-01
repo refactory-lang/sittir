@@ -125,7 +125,6 @@ export const _fromMap = {
   "range_pattern": rangePatternFrom,
   "raw_string_literal": rawStringLiteralFrom,
   "ref_pattern": refPatternFrom,
-  "reference_expression_raw_mut": referenceExpressionRawMutFrom,
   "reference_expression": referenceExpressionFrom,
   "reference_pattern": referencePatternFrom,
   "reference_type": referenceTypeFrom,
@@ -541,20 +540,22 @@ const _K29: readonly string[] = ["integer_literal","float_literal"];
 const _K30: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","_reserved_identifier","_wildcard_pattern","self"];
 const _K31: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","self","identifier","metavariable","super","crate","_reserved_identifier"];
 const _K32: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier"];
-const _K33: readonly string[] = ["scoped_identifier","bracketed_type","generic_type_with_turbofish"];
-const _K34: readonly string[] = ["identifier","super"];
-const _K35: readonly string[] = ["scoped_identifier","generic_type_with_turbofish","bracketed_type","generic_type"];
-const _K36: readonly string[] = ["scoped_identifier","generic_type_with_turbofish"];
-const _K37: readonly string[] = ["scoped_type_identifier_in_expression_position","generic_type_with_turbofish"];
-const _K38: readonly string[] = ["metavariable","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate"];
-const _K39: readonly string[] = ["token_tree","token_repetition","string_literal","raw_string_literal"];
-const _K40: readonly string[] = ["token_tree_pattern","token_repetition_pattern","token_binding_pattern","string_literal","raw_string_literal"];
-const _K41: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","lifetime","higher_ranked_trait_bound"];
-const _K42: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation","closure_expression"];
-const _K43: readonly string[] = ["lifetime"];
-const _K44: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
-const _K45: readonly string[] = ["identifier","_primitive_type"];
-const _K46: readonly string[] = ["lifetime","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
+const _K33: readonly string[] = ["_reference_expression_raw_const","mutable_specifier"];
+const _K34: readonly string[] = ["_reference_expression_raw_mut"];
+const _K35: readonly string[] = ["scoped_identifier","bracketed_type","generic_type_with_turbofish"];
+const _K36: readonly string[] = ["identifier","super"];
+const _K37: readonly string[] = ["scoped_identifier","generic_type_with_turbofish","bracketed_type","generic_type"];
+const _K38: readonly string[] = ["scoped_identifier","generic_type_with_turbofish"];
+const _K39: readonly string[] = ["scoped_type_identifier_in_expression_position","generic_type_with_turbofish"];
+const _K40: readonly string[] = ["metavariable","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate"];
+const _K41: readonly string[] = ["token_tree","token_repetition","string_literal","raw_string_literal"];
+const _K42: readonly string[] = ["token_tree_pattern","token_repetition_pattern","token_binding_pattern","string_literal","raw_string_literal"];
+const _K43: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","lifetime","higher_ranked_trait_bound"];
+const _K44: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation","closure_expression"];
+const _K45: readonly string[] = ["lifetime"];
+const _K46: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
+const _K47: readonly string[] = ["identifier","_primitive_type"];
+const _K48: readonly string[] = ["lifetime","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
 
 export function abstractTypeFrom(input: T.AbstractType.Loose): ReturnType<typeof F.abstractType> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.abstractType>;
@@ -1656,32 +1657,10 @@ export function refPatternFrom(input: T.RefPattern.Loose): ReturnType<typeof F.r
   return F.refPattern(_resolveOne<T.Pattern>((input !== null && typeof input === 'object' && !isNodeData(input) && "pattern" in input ? input.pattern : input), _K12, _K13));
 }
 
-export function referenceExpressionRawMutFrom(input: T.ReferenceExpressionRawMut.Loose): ReturnType<typeof F.referenceExpressionRawMut> {
-  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.referenceExpressionRawMut>;
-  return F.referenceExpressionRawMut({
-    mutableSpecifier: _resolveOneLeaf<T.MutableSpecifier>(input.mutableSpecifier, "mutable_specifier"),
-  });
-}
-
-export function referenceExpressionFrom(input?: T.ReferenceExpression.Loose): ReturnType<typeof F.referenceExpression> {
-  if (input !== undefined && isNodeData(input)) {
-    if ((input.$type as string | number) === kindIdFromName("reference_expression")) return input as unknown as ReturnType<typeof F.referenceExpression>;
-  }
-  return _applyFactory(F.referenceExpression, input);
-}
-
-export function referenceExpressionUFormRawConstFrom(input: Omit<ConfigOf<T.ReferenceExpressionUFormRawConst>, '$variant'>): ReturnType<typeof F.referenceExpressionUFormRawConst> {
-  return F.referenceExpressionUFormRawConst({
-    reference: coerceKindEnumStorage(_resolveOne<"&">("&", _K8, _K8), []),
-    referenceExpressionRawConst: coerceKindEnumStorage(_resolveOneLeaf<"const">("const", "_reference_expression_raw_const"), []),
-    value: _resolveOne<T.Expression>(input.value, _K4, _K5),
-  });
-}
-
-export function referenceExpressionUFormRawMutFrom(input: Omit<ConfigOf<T.ReferenceExpressionUFormRawMut>, '$variant'>): ReturnType<typeof F.referenceExpressionUFormRawMut> {
-  return F.referenceExpressionUFormRawMut({
-    reference: coerceKindEnumStorage(_resolveOne<"&">("&", _K8, _K8), []),
-    referenceExpressionRawMut: _resolveOneBranch<T._ReferenceExpressionRawMut>(input.referenceExpressionRawMut, "_reference_expression_raw_mut"),
+export function referenceExpressionFrom(input: T.ReferenceExpression.Loose): ReturnType<typeof F.referenceExpression> {
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.referenceExpression>;
+  return F.referenceExpression({
+    content: _resolveOne<T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier>(input.content, _K33, _K34),
     value: _resolveOne<T.Expression>(input.value, _K4, _K5),
   });
 }
@@ -1720,15 +1699,15 @@ export function returnExpressionFrom(input?: T.Expression | T.ReturnExpression):
 export function scopedIdentifierFrom(input: T.ScopedIdentifier.Loose): ReturnType<typeof F.scopedIdentifier> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.scopedIdentifier>;
   return F.scopedIdentifier({
-    path: _resolveOne<T.Path | T.BracketedType | T.GenericTypeWithTurbofish>(input.path, _K6, _K33),
-    name: _resolveOne<T.Identifier | T.Super>(input.name, _K34, _K8),
+    path: _resolveOne<T.Path | T.BracketedType | T.GenericTypeWithTurbofish>(input.path, _K6, _K35),
+    name: _resolveOne<T.Identifier | T.Super>(input.name, _K36, _K8),
   });
 }
 
 export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifier.Loose): ReturnType<typeof F.scopedTypeIdentifier> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.scopedTypeIdentifier>;
   return F.scopedTypeIdentifier({
-    path: _resolveOne<T.Path | T.GenericTypeWithTurbofish | T.BracketedType | T.GenericType>(input.path, _K6, _K35),
+    path: _resolveOne<T.Path | T.GenericTypeWithTurbofish | T.BracketedType | T.GenericType>(input.path, _K6, _K37),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
   });
 }
@@ -1736,7 +1715,7 @@ export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifier.Loose): R
 export function scopedTypeIdentifierInExpressionPositionFrom(input: T.ScopedTypeIdentifierInExpressionPosition.Loose): ReturnType<typeof F.scopedTypeIdentifierInExpressionPosition> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.scopedTypeIdentifierInExpressionPosition>;
   return F.scopedTypeIdentifierInExpressionPosition({
-    path: _resolveOne<T.Path | T.GenericTypeWithTurbofish>(input.path, _K6, _K36),
+    path: _resolveOne<T.Path | T.GenericTypeWithTurbofish>(input.path, _K6, _K38),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
   });
 }
@@ -1818,7 +1797,7 @@ export function stringLiteralFrom(...input: readonly ((T.EscapeSequence | T.Stri
 export function structExpressionFrom(input: T.StructExpression.Loose): ReturnType<typeof F.structExpression> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.structExpression>;
   return F.structExpression({
-    name: _resolveOne<T.Identifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish>(input.name, _K0, _K37),
+    name: _resolveOne<T.Identifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish>(input.name, _K0, _K39),
     body: _resolveOneBranch<T.FieldInitializerList>(input.body, "field_initializer_list") ?? F.fieldInitializerList(),
   });
 }
@@ -1881,7 +1860,7 @@ export function tokenBindingPatternFrom(input: T.TokenBindingPattern.Loose): Ret
 export function tokenRepetitionFrom(input: T.TokenRepetition.Loose): ReturnType<typeof F.tokenRepetition> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.tokenRepetition>;
   return F.tokenRepetition({
-    tokens: _resolveMany<T.Tokens>(input.tokens, _K38, _K39),
+    tokens: _resolveMany<T.Tokens>(input.tokens, _K40, _K41),
     separator: _resolveBooleanKeyword(input.separator),
     operator: coerceKindEnumStorage(_resolveOneLeaf<T.Operator>(input.operator, "_operator"), [["+", kindIdFromName("+")] as const, ["*", kindIdFromName("*")] as const, ["?", kindIdFromName("?")] as const]),
   });
@@ -1890,7 +1869,7 @@ export function tokenRepetitionFrom(input: T.TokenRepetition.Loose): ReturnType<
 export function tokenRepetitionPatternFrom(input: T.TokenRepetitionPattern.Loose): ReturnType<typeof F.tokenRepetitionPattern> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.tokenRepetitionPattern>;
   return F.tokenRepetitionPattern({
-    tokenPattern: _resolveMany<T.TokenPattern>(input.tokenPattern, _K38, _K40),
+    tokenPattern: _resolveMany<T.TokenPattern>(input.tokenPattern, _K40, _K42),
     separator: _resolveBooleanKeyword(input.separator),
     operator: coerceKindEnumStorage(_resolveOneLeaf<T.Operator>(input.operator, "_operator"), [["+", kindIdFromName("+")] as const, ["*", kindIdFromName("*")] as const, ["?", kindIdFromName("?")] as const]),
   });
@@ -1972,7 +1951,7 @@ export function tokenTreePatternUFormBraceFrom(input: Omit<ConfigOf<T.TokenTreeP
 
 export function traitBoundsFrom(input: T.TraitBounds.Loose): ReturnType<typeof F.traitBounds> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.traitBounds>;
-  const _ne_bounds = _resolveMany<T._Type | T.Lifetime | T.HigherRankedTraitBound>(input.bounds, _K2, _K41);
+  const _ne_bounds = _resolveMany<T._Type | T.Lifetime | T.HigherRankedTraitBound>(input.bounds, _K2, _K43);
   _assertNonEmpty(_ne_bounds, 'trait_bounds.bounds');
   return F.traitBounds({
     bounds: _ne_bounds,
@@ -2013,14 +1992,14 @@ export function tupleExpressionFrom(input?: T.TupleExpression.Loose): ReturnType
 export function tuplePatternFrom(input?: T.TuplePattern.Loose): ReturnType<typeof F.tuplePattern> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.tuplePattern>;
   return F.tuplePattern({
-    elements: _resolveMany<T.Pattern | T.ClosureExpression>(input?.elements, _K12, _K42),
+    elements: _resolveMany<T.Pattern | T.ClosureExpression>(input?.elements, _K12, _K44),
   });
 }
 
 export function tupleStructPatternFrom(input: T.TupleStructPattern.Loose): ReturnType<typeof F.tupleStructPattern> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.tupleStructPattern>;
   return F.tupleStructPattern({
-    type: _resolveOne<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(input.type, _K0, _K36),
+    type: _resolveOne<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(input.type, _K0, _K38),
     pattern: _resolveMany<T.Pattern>(input.pattern, _K12, _K13),
   });
 }
@@ -2137,7 +2116,7 @@ export function useAsClauseFrom(input: T.UseAsClause.Loose): ReturnType<typeof F
 export function useBoundsFrom(input?: T.UseBounds.Loose): ReturnType<typeof F.useBounds> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.useBounds>;
   return F.useBounds({
-    bounds: _resolveMany<T.Lifetime | T.Identifier>(input?.bounds, _K0, _K43),
+    bounds: _resolveMany<T.Lifetime | T.Identifier>(input?.bounds, _K0, _K45),
   });
 }
 
@@ -2145,7 +2124,7 @@ export function useDeclarationFrom(input: T.UseDeclaration.Loose): ReturnType<ty
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.useDeclaration>;
   return F.useDeclaration({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-    argument: _resolveOne<T.UseClause>(input.argument, _K6, _K44),
+    argument: _resolveOne<T.UseClause>(input.argument, _K6, _K46),
   });
 }
 
@@ -2217,7 +2196,7 @@ export function whereClauseFrom(...input: readonly (T.WherePredicate | T.WhereCl
 export function wherePredicateFrom(input: T.WherePredicate.Loose): ReturnType<typeof F.wherePredicate> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.wherePredicate>;
   return F.wherePredicate({
-    left: _resolveOne<T.Lifetime | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(input.left, _K45, _K46),
+    left: _resolveOne<T.Lifetime | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(input.left, _K47, _K48),
     bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
   });
 }

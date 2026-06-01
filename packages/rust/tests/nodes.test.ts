@@ -1332,28 +1332,15 @@ describe('ref_pattern', () => {
   });
 });
 
-describe('reference_expression_raw_mut', () => {
+describe('reference_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.referenceExpressionRawMut({ mutableSpecifier: { $type: TSKindId.MutableSpecifier, $text: 'mut', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId._ReferenceExpressionRawMut);
+    const node = ir.referenceExpression({ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$type).toBe(TSKindId.ReferenceExpression);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.referenceExpressionRawMut({ mutableSpecifier: { $type: TSKindId.MutableSpecifier, $text: 'mut', $source: 2, $named: true } as any });
+    const node = ir.referenceExpression({ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
-  });
-});
-
-describe('reference_expression', () => {
-  it('raw_const form produces correct type', () => {
-    const node = ir.referenceExpression.raw_const({ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.ReferenceExpression);
-    expect(node.$source).toBe(2);
-  });
-  it('raw_mut form produces correct type', () => {
-    const node = ir.referenceExpression.raw_mut({ referenceExpressionRawMut: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.ReferenceExpression);
-    expect(node.$source).toBe(2);
   });
 });
 

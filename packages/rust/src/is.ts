@@ -50,7 +50,7 @@ export interface IsGuards {
     ModItemInline<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ModItemInline };
     PointerTypeMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._PointerTypeMut };
     RangeExpressionBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._RangeExpressionBare };
-    ReferenceExpressionRawMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ReferenceExpressionRawMut };
+    ReferenceExpressionRawMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
     TokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeBrace };
     TokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeBracket };
     TokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeParen };
@@ -243,7 +243,7 @@ export interface AssertGuards {
     ModItemInline(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ModItemInline };
     PointerTypeMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._PointerTypeMut };
     RangeExpressionBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._RangeExpressionBare };
-    ReferenceExpressionRawMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ReferenceExpressionRawMut };
+    ReferenceExpressionRawMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
     TokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeBrace };
     TokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeBracket };
     TokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeParen };
@@ -418,22 +418,22 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
     return (v) => ids.has(v.$type);
 }
 
-const _supertype_condition_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 129, 313, 126, 151, 1, 139, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 142, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246, 268, 269]);
+const _supertype_condition_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 128, 313, 125, 151, 1, 138, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 141, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246, 268, 269]);
 const _supertype_declarationStatement_ids = new Set<number>([185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
-const _supertype_delimTokens_ids = new Set<number>([311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141, 240]);
-const _supertype_expression_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 129, 313, 126, 151, 1, 139, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 142, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246]);
+const _supertype_delimTokens_ids = new Set<number>([311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140, 240]);
+const _supertype_expression_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 128, 313, 125, 151, 1, 138, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 141, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280]);
-const _supertype_expressionExceptRange_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 129, 313, 126, 151, 1, 139, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 142, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280]);
-const _supertype_literal_ids = new Set<number>([311, 312, 129, 313, 126, 151]);
-const _supertype_literalPattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 310]);
-const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
-const _supertype_path_ids = new Set<number>([139, 1, 142, 140, 141, 243]);
-const _supertype_pattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 320]);
+const _supertype_expressionExceptRange_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 128, 313, 125, 151, 1, 138, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 141, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280]);
+const _supertype_literal_ids = new Set<number>([311, 312, 128, 313, 125, 151]);
+const _supertype_literalPattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 310]);
+const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
+const _supertype_path_ids = new Set<number>([138, 1, 141, 139, 140, 243]);
+const _supertype_pattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 320]);
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
-const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
-const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
-const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 413, 239, 236, 228, 198]);
-const _supertype_useClause_ids = new Set<number>([139, 1, 142, 140, 141, 243, 208, 207, 206, 209]);
+const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
+const _supertype_tokens_ids = new Set<number>([168, 169, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
+const _supertype_type_ids = new Set<number>([235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 413, 239, 236, 228, 198]);
+const _supertype_useClause_ids = new Set<number>([138, 1, 141, 139, 140, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
     ["identifier", TSKindId.Identifier],
@@ -482,6 +482,7 @@ const _kindIdByKind = new Map<string, number>([
     ["super", TSKindId.Super],
     ["crate", TSKindId.Crate],
     ["metavariable", TSKindId.Metavariable],
+    ["raw", TSKindId.Raw],
     ["move", TSKindId.Move],
     ["_line_comment_content", TSKindId.LineCommentContent],
     ["string_content", TSKindId.StringContent],
@@ -634,6 +635,8 @@ const _kindIdByKind = new Map<string, number>([
     ["line_comment", TSKindId.LineComment],
     ["block_comment", TSKindId.BlockComment],
     ["_wildcard_pattern", TSKindId.WildcardPattern],
+    ["_reference_expression_raw_const", TSKindId.ReferenceExpressionRawConst],
+    ["_reference_expression_raw_mut", TSKindId.ReferenceExpressionRawMut],
     ["_array_expression_semi", TSKindId.ArrayExpressionSemi],
     ["_array_expression_list", TSKindId.ArrayExpressionList],
     ["_closure_expression_block", TSKindId.ClosureExpressionBlock],
@@ -662,8 +665,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_visibility_modifier_in_path", TSKindId.VisibilityModifierInPath],
     ["_pointer_type_const", TSKindId.PointerTypeConst],
     ["_pointer_type_mut", TSKindId._PointerTypeMut],
-    ["_reference_expression_raw_const", TSKindId.ReferenceExpressionRawConst],
-    ["_reference_expression_raw_mut", TSKindId._ReferenceExpressionRawMut],
     ["_expression_statement_with_semi", TSKindId._ExpressionStatementWithSemi],
     ["_expression_statement_block_ending", TSKindId._ExpressionStatementBlockEnding],
     ["_foreign_mod_item_body", TSKindId._ForeignModItemBody],
@@ -716,7 +717,7 @@ export const is = {
     ModItemInline: _g(TSKindId._ModItemInline),
     PointerTypeMut: _g(TSKindId._PointerTypeMut),
     RangeExpressionBare: _g(TSKindId._RangeExpressionBare),
-    ReferenceExpressionRawMut: _g(TSKindId._ReferenceExpressionRawMut),
+    ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
     TokenTreeBrace: _g(TSKindId._TokenTreeBrace),
     TokenTreeBracket: _g(TSKindId._TokenTreeBracket),
     TokenTreeParen: _g(TSKindId._TokenTreeParen),

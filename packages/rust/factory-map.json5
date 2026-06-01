@@ -189,7 +189,6 @@
     "range_pattern": "config",
     "raw_string_literal": "direct",
     "ref_pattern": "direct",
-    "reference_expression_raw_mut": "config",
     "reference_expression": "config",
     "reference_pattern": "direct",
     "reference_type": "config",
@@ -290,6 +289,7 @@
     "use": "text",
     "where": "text",
     "while": "text",
+    "raw": "text",
     "dyn": "text",
     "extern": "text",
     "try": "text",
@@ -512,10 +512,8 @@
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "reference_expression.reference_expression_raw_const": {
-      "reference_expression_raw_const": "_reference_expression_raw_const"
-    },
-    "reference_expression.reference_expression_raw_mut": {
+    "reference_expression.content": {
+      "reference_expression_raw_const": "_reference_expression_raw_const",
       "reference_expression_raw_mut": "_reference_expression_raw_mut"
     },
     "scoped_identifier.path": {
@@ -1201,8 +1199,8 @@
       "pattern"
     ],
     "reference_expression": [
-      "value",
-      "reference_expression_raw_mut"
+      "content",
+      "value"
     ],
     "reference_pattern": [
       "pattern"
@@ -3955,24 +3953,8 @@
         "nonEmpty": false
       }
     },
-    "reference_expression_raw_mut": {
-      "mutable_specifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "reference_expression": {
-      "reference": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "reference_expression_raw_const": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3983,13 +3965,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "reference_expression_raw_mut": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5750,22 +5725,6 @@
           "crate",
           "scoped_identifier",
           "reserved_identifier"
-        ]
-      }
-    },
-    "reference_expression": {
-      "source": "override",
-      "childKind": {
-        "reference_expression_raw_const": "raw_const",
-        "reference_expression_raw_mut": "raw_mut"
-      },
-      "helperKind": {
-        "raw_const": "_reference_expression_raw_const",
-        "raw_mut": "_reference_expression_raw_mut"
-      },
-      "helperChildKind": {
-        "raw_mut": [
-          "mutable_specifier"
         ]
       }
     },

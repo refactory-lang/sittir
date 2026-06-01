@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  3  (0 applied, 3 held)
-// Rule promotions:   104  (95 applied, 9 held)
+// Rule promotions:   101  (93 applied, 8 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -58,12 +58,6 @@ export const suggestedTransforms = {
       1: field("bounds"),  // $.trait_bounds
   },
 
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  reference_expression: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   return_expression: {
@@ -273,6 +267,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_type", classification: "supertype", applied: true },
   { kind: "_use_clause", classification: "supertype", applied: true },
   { kind: "_line_comment_regular_dslash", classification: "terminal", applied: true },
+  { kind: "_reference_expression_raw_const", classification: "terminal", applied: true },
   { kind: "char_literal", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
   { kind: "integer_literal", classification: "terminal", applied: true },
@@ -338,10 +333,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "range_pattern_left_bare", classification: "polymorph", applied: true },
   { kind: "range_pattern_left_with_right", classification: "polymorph", applied: true },
   { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
-  { kind: "reference_expression", classification: "polymorph", applied: false },
-  { kind: "reference_expression", classification: "polymorph", applied: true },
-  { kind: "reference_expression_raw_const", classification: "polymorph", applied: true },
-  { kind: "reference_expression_raw_mut", classification: "polymorph", applied: true },
   { kind: "return_expression", classification: "polymorph", applied: false },
   { kind: "struct_item", classification: "polymorph", applied: true },
   { kind: "struct_item_brace", classification: "polymorph", applied: true },

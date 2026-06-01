@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 398,
+  "nodeCount": 397,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -71,8 +71,6 @@
     "range_pattern__form_left_bare",
     "range_pattern__form_left_with_right",
     "range_pattern__form_prefix",
-    "reference_expression__form_raw_const",
-    "reference_expression__form_raw_mut",
     "struct_item__form_brace",
     "struct_item__form_tuple",
     "struct_item__form_unit",
@@ -1042,16 +1040,6 @@
         }
       ],
       "children": []
-    },
-    {
-      "kind": "_binary_expression_operator__x26",
-      "modelType": "token",
-      "typeName": "BinaryExpressionOperatorUX26",
-      "irKey": "binaryExpressionOperatorUX26",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"&\" as const",
-      "text": "&"
     },
     {
       "kind": "_closure_expression_async_marker",
@@ -4222,24 +4210,21 @@
     },
     {
       "kind": "_reference_expression_raw_const",
-      "modelType": "keyword",
+      "modelType": "pattern",
       "typeName": "ReferenceExpressionRawConst",
       "factoryName": "referenceExpressionRawConst",
       "irKey": "referenceExpressionRawConst",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"const\" as const",
-      "text": "const"
+      "hidden": false
     },
     {
       "kind": "_reference_expression_raw_mut",
       "modelType": "branch",
-      "typeName": "_ReferenceExpressionRawMut",
-      "factoryName": "_referenceExpressionRawMut",
-      "irKey": "_referenceExpressionRawMut",
+      "typeName": "ReferenceExpressionRawMut",
+      "factoryName": "referenceExpressionRawMut",
+      "irKey": "referenceExpressionRawMut",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "_referenceExpressionRawMut()",
+      "stampExpression": "referenceExpressionRawMut()",
       "fields": [
         {
           "name": "mutable_specifier",
@@ -14174,6 +14159,16 @@
       ]
     },
     {
+      "kind": "raw",
+      "modelType": "keyword",
+      "typeName": "Raw",
+      "irKey": "raw",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"raw\" as const",
+      "text": "raw"
+    },
+    {
       "kind": "raw_string_literal",
       "modelType": "branch",
       "typeName": "RawStringLiteral",
@@ -14263,207 +14258,37 @@
     },
     {
       "kind": "reference_expression",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "ReferenceExpression",
       "factoryName": "referenceExpression",
       "irKey": "referenceExpression",
       "hidden": false,
-      "source": "override",
-      "polymorphSource": "override",
-      "variantChildKinds": [
-        "reference_expression_raw_const",
-        "reference_expression_raw_mut"
-      ],
-      "forms": [
-        {
-          "kind": "reference_expression__form_raw_const",
-          "name": "raw_const",
-          "typeName": "ReferenceExpressionUFormRawConst",
-          "factoryName": "referenceExpressionUFormRawConst",
-          "irKey": "referenceExpressionUFormRawConst",
-          "parentKind": "reference_expression",
-          "fields": [
-            {
-              "name": "reference",
-              "propertyName": "reference",
-              "paramName": "reference",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_binary_expression_operator__x26",
-                  "parseKind": "_binary_expression_operator__x26",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_binary_expression_operator__x26"
-                ]
-              }
-            },
-            {
-              "name": "reference_expression_raw_const",
-              "propertyName": "referenceExpressionRawConst",
-              "paramName": "referenceExpressionRawConst",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_reference_expression_raw_const",
-                  "parseKind": "reference_expression_raw_const",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_reference_expression_raw_const"
-                ]
-              }
-            },
-            {
-              "name": "value",
-              "propertyName": "value",
-              "paramName": "value",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_expression",
-                  "parseKind": "_expression",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_expression"
-                ]
-              }
-            }
-          ],
-          "children": []
-        },
-        {
-          "kind": "reference_expression__form_raw_mut",
-          "name": "raw_mut",
-          "typeName": "ReferenceExpressionUFormRawMut",
-          "factoryName": "referenceExpressionUFormRawMut",
-          "irKey": "referenceExpressionUFormRawMut",
-          "parentKind": "reference_expression",
-          "fields": [
-            {
-              "name": "reference",
-              "propertyName": "reference",
-              "paramName": "reference",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_binary_expression_operator__x26",
-                  "parseKind": "_binary_expression_operator__x26",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_binary_expression_operator__x26"
-                ]
-              }
-            },
-            {
-              "name": "reference_expression_raw_mut",
-              "propertyName": "referenceExpressionRawMut",
-              "paramName": "referenceExpressionRawMut",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_reference_expression_raw_mut",
-                  "parseKind": "reference_expression_raw_mut",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_reference_expression_raw_mut"
-                ]
-              }
-            },
-            {
-              "name": "value",
-              "propertyName": "value",
-              "paramName": "value",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_expression",
-                  "parseKind": "_expression",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_expression"
-                ]
-              }
-            }
-          ],
-          "children": []
-        }
-      ]
-    },
-    {
-      "kind": "reference_expression_raw_mut",
-      "modelType": "branch",
-      "typeName": "ReferenceExpressionRawMut",
-      "factoryName": "referenceExpressionRawMut",
-      "irKey": "referenceExpressionRawMut",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "referenceExpressionRawMut()",
       "fields": [
         {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
-          "required": true,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
+              "name": "_reference_expression_raw_const",
+              "parseKind": "reference_expression_raw_const",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_reference_expression_raw_mut",
+              "parseKind": "reference_expression_raw_mut",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
               "name": "mutable_specifier",
               "parseKind": "mutable_specifier",
               "unresolved": true
@@ -14473,7 +14298,33 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "_reference_expression_raw_const",
+              "_reference_expression_raw_mut",
               "mutable_specifier"
+            ]
+          }
+        },
+        {
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_expression",
+              "parseKind": "_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expression"
             ]
           }
         }
