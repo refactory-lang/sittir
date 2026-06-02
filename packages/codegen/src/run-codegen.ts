@@ -407,9 +407,19 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 		// previous templates baked in. Opt out with --no-build-native.
 		if (buildNative !== false) {
 			const nativeCrate = `rust/crates/sittir-${grammar}`;
-			console.log(`  → rebuilding grammar-owned N-API binding for ${grammar}…`);
+			// Dev/gate loop can build the napi crate in DEBUG via SITTIR_NATIVE_DEBUG=1.
+			// The validate gate only needs a CORRECT .node (AST-match), not an optimized
+			// one — and the debug profile enables incremental compilation (the release
+			// profile has `incremental = false`), so a codegen edit → regen recompiles
+			// only the changed crate + relinks instead of a full from-scratch optimized
+			// build. Keep the default `build` (`--release`) for CI / production artifacts.
+			const nativeBuildScript = process.env.SITTIR_NATIVE_DEBUG === '1' ? 'build:debug' : 'build';
+			console.log(
+				`  → rebuilding grammar-owned N-API binding for ${grammar}` +
+					`${nativeBuildScript === 'build:debug' ? ' (debug + incremental)' : ''}…`
+			);
 			try {
-				execSync(`pnpm -C ${nativeCrate} run build`, {
+				execSync(`pnpm -C ${nativeCrate} run ${nativeBuildScript}`, {
 					stdio: 'inherit',
 					cwd: process.cwd()
 				});

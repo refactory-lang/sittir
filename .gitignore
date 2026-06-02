@@ -74,3 +74,6 @@ packages/tools/src/**/*.js
 packages/tools/src/**/*.js.map
 packages/tools/src/**/*.d.ts
 packages/tools/src/**/*.d.ts.map
+
+# Local cargo build tuning (e.g. lld linker) — per-machine, requires lld installed
+.cargo/config.toml
