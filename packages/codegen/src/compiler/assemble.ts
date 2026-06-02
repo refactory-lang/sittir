@@ -8,7 +8,6 @@
 import type {
 	Rule,
 	RenderRule,
-	PolymorphRule,
 	GroupRule,
 	SymbolRule,
 	SeqRule,
@@ -24,8 +23,8 @@ import type {
 import { isLinkSymbol } from './rule.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
-import type { RuleId } from './rule.ts';
 import { computePolymorphFormKinds } from './types.ts';
+import type { RuleId } from './rule.ts';
 import {
 	collectGeneratedKindEntries,
 	type GeneratedIdTables,
@@ -34,7 +33,6 @@ import {
 import type { AssembledNode, AssembledNonterminal, UnresolvedRef } from './node-map.ts';
 import {
 	AssembledBranch,
-	AssembledPolymorph,
 	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken,
@@ -176,44 +174,6 @@ export function assemble(
 					);
 					break;
 				}
-				case 'polymorph': {
-					const polyForms = derivePolymorphForms(kind, assemblyRule);
-					const polySource =
-						assemblyRule.type === 'polymorph'
-							? (assemblyRule.source === 'override' ? 'override' : 'promoted')
-							: 'promoted';
-					const forms = buildAssembledFormGroups(
-						kind,
-						polyForms,
-						polySource,
-						kindEntries,
-						optimized,
-						parseKindCollisionContext
-					);
-					// Forms don't get top-level nodeMap entries — they're
-					// nested inside the parent polymorph's forms array.
-					// The polymorph itself + visible variant children (below)
-					// are the nodeMap-level entries.
-					for (const child of buildVisibleVariantChildGroups(
-						polySource,
-						polyForms,
-						optimized,
-						kindEntries,
-						parseKindCollisionContext
-					)) {
-						nodes.set(child.kind, child);
-					}
-					const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms);
-					nodes.set(
-						kind,
-						new AssembledPolymorph(kind, assemblyRule as PolymorphRule | ChoiceRule, forms, {
-							source: polySource,
-							variantChildKinds,
-							parseKindCollisionContext
-						})
-					);
-					break;
-				}
 				case 'pattern': {
 					nodes.set(kind, new AssembledPattern(kind, assemblyRule as PatternRule | TerminalRule));
 					break;
@@ -307,10 +267,6 @@ export function assemble(
 		for (const node of nodes.values()) {
 			if (node.modelType === 'branch' || node.modelType === 'group') {
 				node.attachNodeMap(nodes);
-			} else if (node.modelType === 'polymorph') {
-				for (const form of node.forms) {
-					form.attachNodeMap(nodes);
-				}
 			}
 		}
 
@@ -432,179 +388,6 @@ function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<stri
 		}
 	}
 	return out;
-}
-
-// ---------------------------------------------------------------------------
-// Polymorph assembly helpers
-// ---------------------------------------------------------------------------
-
-/**
- * Derive the list of polymorph forms for the given kind and rule.
- *
- * @param kind - The kind name, used in error messages.
- * @param rule - The rule as it appears in `optimized.rules` (pre-inlining).
- * @returns The array of `{ name, content }` form descriptors from the
- *   `PolymorphRule`, or synthesised entries when the rule is a raw `choice`
- *   (terminal fallback path).
- * @throws {Error} When the rule is neither a `polymorph` nor a `choice`.
- * @remarks
- *   `PolymorphRule` is Link/Optimize's output — normally already has forms in
- *   declaration order. The classifier may tag a raw `choice` as
- *   `polymorph` when promotion was held back (strict debug mode). In that case
- *   synthetic forms are created from the choice members with numerical names
- *   (`'form0'`, `'form1'`, …) rather than any variant label that might have
- *   been attached by `tagVariants`, so the form kinds stay collision-free and
- *   obviously generated.
- */
-export function derivePolymorphForms(kind: string, rule: Rule): PolymorphRule['forms'] {
-	if (rule.type === 'polymorph') return rule.forms;
-	if (rule.type === 'choice') {
-		return rule.members.map((m, i) => ({
-			name: `form${i}`,
-			content: m.type === 'variant' ? m.content : m
-		}));
-	}
-	throw new Error(
-		`assemble: kind '${kind}' classified as polymorph but rule.type=${rule.type}. ` +
-			`promotePolymorph in Optimize should have wrapped it.`
-	);
-}
-
-/**
- * Build `AssembledGroup` instances for each form of a polymorph, registering
- * disambiguated kind names and computing per-form simplified rules.
- *
- * @param parentKind - The kind string of the parent polymorph node.
- * @param polyForms - The form list from {@link derivePolymorphForms}.
- * @param polySource - Whether the polymorph was produced from a user override
- *   or by Optimize's promotion pass.
- * @returns One `AssembledGroup` per form, with unique kind names that never
- *   collide with visible variant-child kinds.
- * @remarks
- *   Duplicate form names (two variants with the same name over different shapes
- *   — e.g. python's `expression_statement`) are disambiguated with a numeric
- *   suffix. For `source='override'` polymorphs the form kind is
- *   `${parentKind}__form_${name}` to avoid colliding with the real visible
- *   variant-child kinds that carry the same base name.
- */
-function buildAssembledFormGroups(
-	parentKind: string,
-	polyForms: PolymorphRule['forms'],
-	polySource: 'override' | 'promoted',
-	kindEntries: readonly GeneratedKindEntry[],
-	optimized: OptimizedGrammar,
-	parseKindCollisionContext: ParseKindCollisionContext
-): AssembledGroup[] {
-	const nameCounts = new Map<string, number>();
-	return polyForms.map((form) => {
-		const seen = nameCounts.get(form.name) ?? 0;
-		nameCounts.set(form.name, seen + 1);
-		const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`;
-		const formKind =
-			polySource === 'override' ? `${parentKind}__form_${disambiguated}` : `${parentKind}_${disambiguated}`;
-		const formNames = nameNode(formKind);
-		// Snapshot lookup: optimize.ts pre-computes renderRules + simplifiedRules for each
-		// form's content under the same formKind key (PR2 Task 3.B-prereq-snapshots Site 1).
-		// Fall back to per-call computation only when the snapshot is absent (should not
-		// happen in normal operation — the fallback guards against future gaps).
-		// Snapshot lookup: if the form kind isn't pre-snapshotted (e.g. in
-		// test fixtures that skip the optimize pipeline), apply deleteWrapper
-		// after simplifyRule to maintain the wrapper-free invariant.
-		const formSimplified =
-			optimized.simplifiedRules[formKind] ??
-			(deleteWrapper(simplifyRule(form.content)) as ReturnType<typeof simplifyRule>);
-		const formRender = optimized.renderRules[formKind] ?? deleteWrapper(form.content);
-		return new AssembledGroup(formKind, form.content, formSimplified, formRender, {
-			factoryName: formNames.factoryName,
-			irKey: formNames.irKey,
-			name: disambiguated,
-			parentKind,
-			overridePassthrough: polySource === 'override' && !form.visibleChildKind,
-			kindEntries,
-			parseKindCollisionContext
-		});
-	});
-}
-
-/**
- * Collect the real visible variant-child kind names referenced inside each
- * override-polymorph form's content.
- *
- * @param polySource - The origin of the polymorph; only `'override'` forms
- *   carry fused symbol references to real child kinds.
- * @param polyForms - The form list from {@link derivePolymorphForms}.
- * @returns An array of kind names for real parse-tree nodes referenced by the
- *   forms, or an empty array for promoted polymorphs.
- * @remarks
- *   For `source='override'` polymorphs each form's content is the fused
- *   `seq(prefix…, $.variant_child_kind, suffix…)` (or just `$.variant_child_kind`
- *   directly) produced by Link. These are the real visible kinds the children
- *   union on the parent polymorph references.
- */
-function collectOverrideVariantChildKinds(
-	polySource: 'override' | 'promoted',
-	polyForms: PolymorphRule['forms']
-): string[] {
-	if (polySource !== 'override') return [];
-	return polyForms
-		.map((form) => form.visibleChildKind ?? extractVariantChildSymbol(form.content))
-		.filter((visibleKind): visibleKind is string => !!visibleKind);
-}
-
-/**
- * Register visible variant-child kinds for override polymorphs as standalone
- * NodeMap entries backed by their hidden source rules.
- *
- * @remarks
- * `variant()` adoption rewrites the parent into an override polymorph whose
- * internal form groups use `${parent}__form_${child}` names to avoid colliding
- * with the real parse-tree kind `${parent}_${child}`. The parser still emits
- * that visible child kind, so NodeMap needs a concrete node entry for it when
- * the hidden source rule `_${parent}_${child}` exists. Without this entry the
- * generated template set omits kinds like `with_clause_bare` and
- * `expression_statement_tuple`, leaving them un-renderable even though the
- * structural source rule is present in `optimized.rules`.
- */
-function buildVisibleVariantChildGroups(
-	polySource: 'override' | 'promoted',
-	polyForms: PolymorphRule['forms'],
-	optimized: OptimizedGrammar,
-	kindEntries: readonly GeneratedKindEntry[],
-	parseKindCollisionContext: ParseKindCollisionContext
-): AssembledNode[] {
-	if (polySource !== 'override') return [];
-	const groups: AssembledNode[] = [];
-	for (const form of polyForms) {
-		const visibleKind = form.visibleChildKind ?? extractVariantChildSymbol(form.content);
-		if (!visibleKind) continue;
-		const hiddenKind = `_${visibleKind}`;
-		const sourceRule = optimized.rules[hiddenKind];
-		if (!sourceRule) continue;
-		const inlinedRule = hoistInnerFieldsForTemplate(inlineRefs(sourceRule, optimized.rules));
-		// hiddenKind exists in optimized.rules (guarded above) — renderRules and
-		// simplifiedRules always cover the same key set as rules (applyWrapperDeletion
-		// + computeSimplifiedRules iterate over the same map). The fallbacks are dead
-		// code. Assert rather than silently fall back so violations surface fast.
-		const simplifiedRule = optimized.simplifiedRules[hiddenKind]!;
-		const renderRule: RenderRule = optimized.renderRules[hiddenKind]!;
-		const modelType = classifyNode(visibleKind, inlinedRule);
-		switch (modelType) {
-			case 'branch':
-				groups.push(
-					new AssembledBranch(
-						visibleKind,
-						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
-						simplifiedRule,
-						renderRule,
-						{ kindEntries, parseKindCollisionContext }
-					)
-				);
-				break;
-			default:
-				break;
-		}
-	}
-	return groups;
 }
 
 // ---------------------------------------------------------------------------
@@ -1452,21 +1235,12 @@ export function classifyNode(
 			return 'group';
 		case 'terminal':
 			return 'pattern';
-		case 'polymorph':
-			return 'polymorph';
 		case 'pattern':
 			return 'pattern';
 		case 'string':
 			return /^\w+$/.test(rule.value) ? 'keyword' : 'token';
 	}
 
-	// Auto-polymorph promotion removed.
-	// Grammar authors declare polymorph shapes explicitly via
-	// `polymorphs: { parent: { 'path': 'name' } }` in overrides.ts.
-	// Kinds without an adoption classify as plain branches /
-	// containers; the derive walker's cross-branch merging handles
-	// heterogeneous-field-per-arm shapes without inventing anonymous
-	// polymorph identities.
 	if (isHiddenRepeatHelper(kind, rule, opts?.parentAliasedKinds)) return 'multi';
 	const branchOrContainer = classifyBranchOrContainer(rule);
 	if (branchOrContainer !== null) return branchOrContainer;
@@ -1673,25 +1447,6 @@ export function nameField(fieldName: string): {
 // fixpoint and re-exported for the remaining assemble call sites). The
 // function's own semantics are unchanged — peels optional / variant /
 // clause / group / token wrappers to expose a `repeat` / `repeat1`.
-
-// ---------------------------------------------------------------------------
-// extractVariantChildSymbol — recover the variant child kind name from a
-// source='override' polymorph form's content. Each form's content is
-// `seq(prefix..., $.variant_child_kind, suffix...)` (after Link's fuse)
-// or just `$.variant_child_kind` directly. Returns the symbol's name.
-// ---------------------------------------------------------------------------
-
-function extractVariantChildSymbol(rule: Rule): string | null {
-	if (rule.type === 'symbol') return rule.name;
-	if (rule.type === 'seq') {
-		for (const m of rule.members) {
-			if (m.type === 'symbol') return m.name;
-			if (m.type === 'variant' && m.content.type === 'symbol') return m.content.name;
-		}
-	}
-	if (rule.type === 'variant' && rule.content.type === 'symbol') return rule.content.name;
-	return null;
-}
 
 // ---------------------------------------------------------------------------
 // Signatures & Projections (stubs — full implementation in refinement)

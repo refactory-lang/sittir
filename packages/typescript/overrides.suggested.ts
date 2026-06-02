@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   77  (72 applied, 5 held)
+// Rule promotions:   72  (72 applied, 0 held)
 // Repeated shapes:   9  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,41 +25,6 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: type_annotation
-  as_expression: {
-      "2/0": variant("form0"),
-      "2/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: condition
-  for_statement: {
-      "3/0": variant("form0"),
-      "3/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: from_clause
-  import_statement: {
-      "2/0": variant("form0"),
-      "2/1": variant("form1"),
-      "2/2": variant("form2"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  member_expression: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: expression
-  yield_expression: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
-
 };
 
 // ---------------------------------------------------------------
@@ -346,7 +311,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "ambient_declaration_module", classification: "polymorph", applied: true },
   { kind: "arrow_function__call_signature", classification: "polymorph", applied: true },
   { kind: "arrow_function_parameter", classification: "polymorph", applied: true },
-  { kind: "as_expression", classification: "polymorph", applied: false },
   { kind: "call_expression_call", classification: "polymorph", applied: true },
   { kind: "call_expression_member", classification: "polymorph", applied: true },
   { kind: "call_expression_template_call", classification: "polymorph", applied: true },
@@ -356,16 +320,13 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "export_statement_equals_export", classification: "polymorph", applied: true },
   { kind: "export_statement_namespace_export", classification: "polymorph", applied: true },
   { kind: "export_statement_type_export", classification: "polymorph", applied: true },
-  { kind: "for_statement", classification: "polymorph", applied: false },
   { kind: "import_clause_default_import", classification: "polymorph", applied: true },
   { kind: "import_clause_named_imports", classification: "polymorph", applied: true },
   { kind: "import_clause_namespace_import", classification: "polymorph", applied: true },
   { kind: "import_specifier_as", classification: "polymorph", applied: true },
   { kind: "import_specifier_name", classification: "polymorph", applied: true },
-  { kind: "import_statement", classification: "polymorph", applied: false },
   { kind: "index_signature_colon", classification: "polymorph", applied: true },
   { kind: "index_signature_mapped_type_clause", classification: "polymorph", applied: true },
-  { kind: "member_expression", classification: "polymorph", applied: false },
   { kind: "parenthesized_expression_sequence", classification: "polymorph", applied: true },
   { kind: "parenthesized_expression_typed", classification: "polymorph", applied: true },
   { kind: "public_field_definition_abstract_first", classification: "polymorph", applied: true },
@@ -376,7 +337,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "public_field_definition_static_mods", classification: "polymorph", applied: true },
   { kind: "update_expression_postfix", classification: "polymorph", applied: true },
   { kind: "update_expression_prefix", classification: "polymorph", applied: true },
-  { kind: "yield_expression", classification: "polymorph", applied: false },
 ];
 
 export interface InferredField {

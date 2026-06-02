@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   37  (30 applied, 7 held)
+// Rule promotions:   30  (30 applied, 0 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,46 +25,6 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  _suite: {
-      "0": variant("form0"),
-      "1": variant("form1"),
-      "2": variant("form2"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  expression_list: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  future_import_statement: {
-      "3/0": variant("form0"),
-      "3/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: wildcard_import
-  import_from_statement: {
-      "3/0": variant("form0"),
-      "3/1": variant("form1"),
-      "3/2": variant("form2"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  pattern_list: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
-
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  yield: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
-
 };
 
 // ---------------------------------------------------------------
@@ -228,19 +188,12 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "integer", classification: "terminal", applied: true },
   { kind: "line_continuation", classification: "terminal", applied: true },
   { kind: "_match_block_block", classification: "polymorph", applied: true },
-  { kind: "_suite", classification: "polymorph", applied: false },
   { kind: "assignment_eq", classification: "polymorph", applied: true },
   { kind: "assignment_type", classification: "polymorph", applied: true },
   { kind: "assignment_typed", classification: "polymorph", applied: true },
-  { kind: "expression_list", classification: "polymorph", applied: false },
   { kind: "expression_statement_tuple", classification: "polymorph", applied: true },
-  { kind: "future_import_statement", classification: "polymorph", applied: false },
-  { kind: "import_from_statement", classification: "polymorph", applied: false },
-  { kind: "pattern_list", classification: "polymorph", applied: false },
-  { kind: "splat_pattern", classification: "polymorph", applied: false },
   { kind: "with_clause_bare", classification: "polymorph", applied: true },
   { kind: "with_clause_paren", classification: "polymorph", applied: true },
-  { kind: "yield", classification: "polymorph", applied: false },
 ];
 
 export interface InferredField {

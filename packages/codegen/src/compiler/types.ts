@@ -554,17 +554,8 @@ export interface NodeMap {
 	scc?: SCCAnalysis;
 }
 
-export function computePolymorphFormKinds(nodes: Map<string, AssembledNode>): Set<string> {
-	const result = new Set<string>();
-	for (const [, node] of nodes) {
-		if (node.modelType !== 'polymorph') continue;
-		// All polymorph form kinds need to be skipped from direct kind
-		// iteration — both promoted (synthesized `${parent}_${variant}`)
-		// and override (disambiguated `${parent}__form_${variant}`).
-		// The variant child kinds for source='override' polymorphs are
-		// distinct from form kinds (after disambiguation) and remain
-		// in nodes Map for normal branch emission.
-		for (const form of node.forms) result.add(form.kind);
-	}
-	return result;
+// No PolymorphRule/AssembledPolymorph model types exist at runtime —
+// polymorphFormKinds is always empty. Kept in NodeMap for API stability.
+export function computePolymorphFormKinds(_nodes: Map<string, AssembledNode>): Set<string> {
+	return new Set<string>();
 }

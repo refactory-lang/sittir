@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  3  (0 applied, 3 held)
-// Rule promotions:   79  (71 applied, 8 held)
+// Rule promotions:   71  (71 applied, 0 held)
 // Repeated shapes:   6  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,44 +25,10 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
-  // [held] polymorph — 1 choice position(s), 5 arm(s) total
-  _attributed_parameter: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-      "1/2": variant("form2"),
-      "1/3": variant("form3"),
-      "1/4": variant("form4"),
-  },
-
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: body
-  _closure_expression_expr: {
-      "0": variant("form0"),
-      "1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 5 arm(s) total
-  _let_chain: {
-      "0": variant("form0"),
-      "1": variant("form1"),
-      "2": variant("form2"),
-      "3": variant("form3"),
-      "4": variant("form4"),
-  },
-
-
   // _type_argument: 1 inferred field(s)
   _type_argument: {
       // [held] 100% agreement, 5 parents
       1: field("bounds"),  // $.trait_bounds
-  },
-
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  return_expression: {
-      "0": variant("form0"),
-      "1": variant("form1"),
   },
 
   // slice_pattern: 1 inferred field(s)
@@ -70,12 +36,6 @@ export const suggestedTransforms = {
 
   // tuple_struct_pattern: 1 inferred field(s)
   // [held] tuple_struct_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  yield_expression: {
-      "0": variant("form0"),
-      "1": variant("form1"),
-  },
 
 };
 
@@ -291,11 +251,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "integer_literal", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
-  { kind: "_attributed_parameter", classification: "polymorph", applied: false },
-  { kind: "_block_doc_comment_marker", classification: "polymorph", applied: false },
-  { kind: "_closure_expression_expr", classification: "polymorph", applied: false },
-  { kind: "_let_chain", classification: "polymorph", applied: false },
-  { kind: "_line_doc_comment_marker", classification: "polymorph", applied: false },
   { kind: "array_expression_list", classification: "polymorph", applied: true },
   { kind: "array_expression_semi", classification: "polymorph", applied: true },
   { kind: "closure_expression_block", classification: "polymorph", applied: true },
@@ -329,11 +284,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "range_expression_binary", classification: "polymorph", applied: true },
   { kind: "range_expression_postfix", classification: "polymorph", applied: true },
   { kind: "range_expression_prefix", classification: "polymorph", applied: true },
-  { kind: "range_pattern", classification: "polymorph", applied: false },
   { kind: "range_pattern_left_bare", classification: "polymorph", applied: true },
   { kind: "range_pattern_left_with_right", classification: "polymorph", applied: true },
   { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
-  { kind: "return_expression", classification: "polymorph", applied: false },
   { kind: "struct_item_brace", classification: "polymorph", applied: true },
   { kind: "struct_item_tuple", classification: "polymorph", applied: true },
   { kind: "struct_item_unit", classification: "polymorph", applied: true },
@@ -346,7 +299,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "visibility_modifier_crate", classification: "polymorph", applied: true },
   { kind: "visibility_modifier_in_path", classification: "polymorph", applied: true },
   { kind: "visibility_modifier_pub", classification: "polymorph", applied: true },
-  { kind: "yield_expression", classification: "polymorph", applied: false },
 ];
 
 export interface InferredField {

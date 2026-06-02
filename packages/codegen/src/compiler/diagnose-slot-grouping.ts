@@ -36,7 +36,7 @@
  * and console during regen so the author can act.
  */
 
-import type { PolymorphRule, Rule, SimplifiedRule } from './rule.ts';
+import type { Rule, SimplifiedRule } from './rule.ts';
 import { countSlots, countContentSlots } from './slot-count.ts';
 import type { Diagnostic } from './diagnostics.ts';
 
@@ -46,78 +46,15 @@ import type { Diagnostic } from './diagnostics.ts';
 
 /**
  * Build the set of kind names that belong to the polymorph system and should
- * be skipped by shape ① detection.  Includes:
+ * be skipped by shape ① detection.
  *
- *   - Every kind whose rule is a `PolymorphRule` (`rule.type === 'polymorph'`).
- *   - Every synthesized form kind name derived from those polymorphs using the
- *     same disambiguation formula as `optimize.ts` / `assemble.ts`:
- *       promoted  → `${parentKind}_${disambiguated}`
- *       override  → `${parentKind}__form_${disambiguated}`
- *   - Hidden (`_`-prefixed) kinds whose name starts with `_${parentKind}_` for
- *     any polymorph parent. These are the `polymorphs:`-config synthesized arms
- *     (e.g. `_public_field_definition_abstract_first`) that are inlined into the
- *     parent's body and already handled by the polymorph dispatch machinery.
- *
- * These are structural dispatch mechanisms — the variant() / promotePolymorph
- * machinery resolves them correctly; flagging them as "multi-slot nested seqs"
- * would be a false positive.
- *
- * Also exported so `optimize.ts` can pre-build the skip-set from the full
- * rules map and pass it to the polyform-bodies `computeSimplifiedRules` call,
- * where the rules map is a subset that lacks the parent polymorph entries.
+ * PolymorphRule was removed in PR-M-φ2; no rule ever has `type === 'polymorph'`
+ * at runtime. This function now always returns an empty set.  It is retained for
+ * API stability (callers still thread polymorphSkipExtra through the pipeline for
+ * variant() skip-set entries added by the caller).
  */
-export function buildPolymorphSkipSetFromRules(rules: Record<string, unknown>): ReadonlySet<string> {
-	return buildPolymorphSkipSet(rules as Record<string, SimplifiedRule>);
-}
-
-function buildPolymorphSkipSet(rules: Record<string, SimplifiedRule>): ReadonlySet<string> {
-	const skip = new Set<string>();
-	const polymorphParentKinds = new Set<string>();
-
-	for (const [parentKind, rule] of Object.entries(rules)) {
-		if (rule.type !== 'polymorph') continue;
-		skip.add(parentKind);
-		polymorphParentKinds.add(parentKind);
-		const polySource = (rule as unknown as PolymorphRule).source === 'override' ? 'override' : 'promoted';
-		const nameCounts = new Map<string, number>();
-		for (const form of (rule as unknown as PolymorphRule).forms) {
-			const seen = nameCounts.get(form.name) ?? 0;
-			nameCounts.set(form.name, seen + 1);
-			const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`;
-			const formKind =
-				polySource === 'override'
-					? `${parentKind}__form_${disambiguated}`
-					: `${parentKind}_${disambiguated}`;
-			skip.add(formKind);
-			// Also skip the visible child kind (the actual grammar rule name used by
-			// variant() adoption, e.g. `_public_field_definition_abstract_first`).
-			// These are inlined grammar rules that carry the form body directly and
-			// are already handled by the polymorph dispatch machinery.
-			if (form.visibleChildKind !== undefined) {
-				skip.add(form.visibleChildKind);
-			}
-		}
-	}
-
-	// Second pass: add hidden (`_`-prefixed) rules whose name starts with
-	// `_${parentKind}_` for any polymorph parent. These are `polymorphs:`-config
-	// synthesized arm rules like `_public_field_definition_abstract_first` that
-	// don't appear as explicit form entries (they're inlined by tree-sitter), but
-	// ARE polymorph arms already handled by the dispatch machinery.
-	if (polymorphParentKinds.size > 0) {
-		for (const kind of Object.keys(rules)) {
-			if (!kind.startsWith('_')) continue;
-			const withoutLeadingUnderscore = kind.slice(1); // e.g. 'public_field_definition_abstract_first'
-			for (const parentKind of polymorphParentKinds) {
-				if (withoutLeadingUnderscore.startsWith(parentKind + '_')) {
-					skip.add(kind);
-					break;
-				}
-			}
-		}
-	}
-
-	return skip;
+export function buildPolymorphSkipSetFromRules(_rules: Record<string, unknown>): ReadonlySet<string> {
+	return new Set<string>();
 }
 
 // ---------------------------------------------------------------------------
@@ -163,15 +100,10 @@ export function diagnoseSlotGrouping(
 	inlineKinds: ReadonlySet<string> = new Set(),
 	polymorphSkipExtra: ReadonlySet<string> = new Set()
 ): SlotGroupingDiagnostic[] {
-	// Build polymorph skip-set once for the whole rules map, then merge any
-	// caller-provided extra entries (used when the rules map is a subset that
-	// lacks the parent polymorph entries, e.g. the polyform-bodies pass in
-	// optimize.ts).
-	const polymorphSkipLocal = buildPolymorphSkipSet(rules);
-	const polymorphSkip: ReadonlySet<string> =
-		polymorphSkipExtra.size === 0
-			? polymorphSkipLocal
-			: new Set([...polymorphSkipLocal, ...polymorphSkipExtra]);
+	// PolymorphRule was removed; the built-in skip-set is always empty.
+	// Use only the caller-provided extra entries (variant() skip-set from
+	// polymorphVariants metadata threaded through normalize.ts).
+	const polymorphSkip: ReadonlySet<string> = polymorphSkipExtra;
 
 	const records: SlotGroupingDiagnostic[] = [];
 	for (const [ownerKind, rule] of Object.entries(rules)) {
@@ -181,14 +113,7 @@ export function diagnoseSlotGrouping(
 		// — so at least one needs a `field()` name. Counted on the simplified rule,
 		// BEFORE mergeSlotsByName folds the duplicate `content` slots into one
 		// (which masks the collision).
-		//
-		// Applies to EVERY concrete-bodied kind, INCLUDING polymorph arm bodies: a
-		// form like `_class_body_member` can have 2 content slots of its own, and
-		// the parent's variant dispatch resolves only WHICH arm is chosen — not the
-		// arm's internal `_content` ambiguity. So this runs ahead of (and is not
-		// gated by) the polymorph skip below; only a true polymorph PARENT rule
-		// (`type === 'polymorph'` — a dispatch node with no body) is exempt.
-		if (rule.type !== 'polymorph') {
+		{
 			const contentCount = countContentSlots(rule);
 			if (contentCount > 1) {
 				records.push({

@@ -40,8 +40,6 @@ import type {
 	TokenRule,
 	EnumRule,
 	SupertypeRule,
-	PolymorphRule,
-	PolymorphForm,
 	TerminalRule,
 	Multiplicity,
 	RuleId
@@ -772,8 +770,6 @@ function classifyTopLevelShape(rule: Rule): string {
 		case 'group':
 		case 'alias':
 			return `wrapper-${rule.type}`;
-		case 'polymorph':
-			return 'top-level-polymorph';
 		default:
 			return `other-${(rule as Rule).type}`;
 	}
@@ -2022,7 +2018,6 @@ function childrenMayBeEmpty(rule: Rule): boolean {
 		case 'supertype':
 		case 'enum':
 		case 'terminal':
-		case 'polymorph':
 		case 'alias':
 		case 'indent':
 		case 'dedent':
@@ -3138,7 +3133,6 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 			case 'field':
 			case 'enum':
 			case 'supertype':
-			case 'polymorph':
 			case 'string':
 			case 'pattern':
 			case 'indent':
@@ -3279,24 +3273,29 @@ function hasExternalBoundaries(seqRule: Rule, externals: ReadonlySet<string>): b
 	return isExternalTerminalMember(first, externals) && isExternalTerminalMember(last, externals);
 }
 
-export class AssembledPolymorph extends AssembledBranch<PolymorphRule | ChoiceRule> {
-	// TS2416: overriding 'branch' literal with 'polymorph'. The base class
-	// uses `= 'branch' as const` so TypeScript infers a literal type that
-	// prevents narrowing subclass overrides. The runtime value is correct
-	// ('polymorph' is assigned by the field initializer after super()); the
-	// suppression is type-only. PR-M Task 2 — PR-I will delete this class.
-	// @ts-expect-error TS2416 — modelType override from 'branch' to 'polymorph' is intentional
-	readonly modelType = 'polymorph' as const;
-	// #forms is stored separately because AssembledGroup instances are
-	// constructed by assemble.ts and passed in — they don't live on the rule.
-	readonly #forms: AssembledGroup[];
-	// source is narrowed from AssembledNodeBase's optional RuleSource to a
-	// required 'promoted' | 'override' — represents the polymorph's origin.
+/**
+ * AssembledPolymorph — dead-class shell retained for import-compat after PR-M-φ2.
+ *
+ * No grammar rule ever produces `modelType:'polymorph'` at runtime — the
+ * PolymorphRule IR type was removed. Every `instanceof AssembledPolymorph` or
+ * `node.modelType === 'polymorph'` branch in emitter code is unreachable dead
+ * code. This class exists only so those import sites compile without changes;
+ * they will be purged in PR-I.
+ *
+ * The `@ts-expect-error TS2416` suppression that previously appeared on the
+ * `modelType` override (the Codex P1) is resolved here: the override is gone
+ * entirely — `modelType` is inherited as `'branch'` from `AssembledBranch`.
+ * Callers comparing `node.modelType === 'polymorph'` will simply never match.
+ */
+export class AssembledPolymorph extends AssembledBranch<ChoiceRule> {
+	// No modelType override — inherits 'branch' from AssembledBranch.
+	// Resolves the P1 @ts-expect-error TS2416 that existed in the old class.
 	override readonly source: 'promoted' | 'override';
+	readonly #forms: AssembledGroup[];
 
 	constructor(
 		kind: string,
-		rule: PolymorphRule | ChoiceRule,
+		rule: ChoiceRule,
 		forms: AssembledGroup[],
 		opts?: {
 			source?: 'promoted' | 'override';
@@ -3306,16 +3305,10 @@ export class AssembledPolymorph extends AssembledBranch<PolymorphRule | ChoiceRu
 			parseKindCollisionContext?: ParseKindCollisionContext;
 		}
 	) {
-		const ruleSource = rule.type === 'polymorph' ? rule.source : undefined;
-		// Pass the rule as both simplifiedRule and renderRule — polymorph nodes
-		// don't use simplifiedRule/renderRule directly (their forms each carry
-		// their own renderRule). The slotRecord bypasses buildSlotsRecord so the
-		// slot set comes from structuralSlotRecordFromForms, not grammar derivation.
 		const slotRecord = structuralSlotRecordFromForms(forms, kind, opts?.parseKindCollisionContext);
 		super(kind, rule, rule as Rule, rule as RenderRule, {
 			factoryName: opts?.factoryName,
 			irKey: opts?.irKey,
-			source: ruleSource,
 			variantChildKinds: opts?.variantChildKinds,
 			slotRecord
 		});
@@ -3323,77 +3316,14 @@ export class AssembledPolymorph extends AssembledBranch<PolymorphRule | ChoiceRu
 		this.source = opts?.source ?? 'promoted';
 	}
 
-	/** A polymorph's forms are hidden groups synthesized from the choice branches. */
-	get forms(): AssembledGroup[] {
-		return this.#forms;
-	}
-
-	get formRules(): readonly PolymorphForm[] {
-		return this.rule.type === 'polymorph' ? this.rule.forms : [];
-	}
-
-	/**
-	 * Flattened field list across all forms — the union of every form's
-	 * named slots (source !== 'inferred'). Used by emitters that need
-	 * "all fields this polymorph may carry" without caring which form owns
-	 * each one.
-	 *
-	 * Single derivation point for the `forms.flatMap(f => f.fields)` pattern
-	 * that multiple emitters previously duplicated.
-	 */
-	get allFormFields(): readonly AssembledNonterminal[] {
-		return this.#forms.flatMap((f) => f.fields);
-	}
-
-	/**
-	 * Dedup'd union of form fields — keeps first-occurrence per name so the
-	 * order matches what emitters see when iterating `this.forms`. Distinct
-	 * from `allFormFields` (raw flatten with name duplicates) and from
-	 * `forms[i].fields` (per-form view).
-	 *
-	 * Lives only on `AssembledPolymorph` because the dedup semantics are
-	 * polymorph-specific. Branch/Group consumers should use `.fields`
-	 * directly; AssembledNode-iterating consumers should narrow on
-	 * `modelType === 'polymorph'` before calling this.
-	 */
-	get structuralFields(): readonly AssembledNonterminal[] {
-		return this.fields;
-	}
-
-	/**
-	 * Dedup'd union of every slot across forms — the "all slots" sibling
-	 * to {@link structuralFields}. Includes both named-grammar-field
-	 * slots (`source !== 'inferred'`) and inferred positional slots
-	 * (`source === 'inferred'`). First-occurrence wins per slot name.
-	 *
-	 * Used by graph-traversal walks that don't care about the
-	 * field/child distinction — kind reachability, alias-source
-	 * collection, userFacing classification, etc. The fields-only and
-	 * children-only views remain available via {@link structuralFields}
-	 * + filtering when the TS-emission shape differs by slot kind.
-	 */
-	get structuralSlots(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots);
-	}
-
-	/**
-	 * All slots — both field-named (origin='field') and kind-named (origin='kind').
-	 * After unified-slot refactor (spec 2026-05-17): all slots have a name and
-	 * `_<name>` storage key. The dedup'd union across forms is stored directly in
-	 * `this.slots` via structuralSlotRecordFromForms.
-	 */
-	get fields(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots);
-	}
-
-	/**
-	 * Retired post-unification — no longer a separate slot category.
-	 * Kept as empty-returning getter for back-compat with un-migrated callers.
-	 */
-	get children(): readonly AssembledNonterminal[] {
-		return [];
-	}
-
+	get forms(): AssembledGroup[] { return this.#forms; }
+	/** Always empty — no PolymorphForm IR type exists anymore. */
+	get formRules(): readonly never[] { return []; }
+	get allFormFields(): readonly AssembledNonterminal[] { return this.#forms.flatMap((f) => f.fields); }
+	get structuralFields(): readonly AssembledNonterminal[] { return this.fields; }
+	get structuralSlots(): readonly AssembledNonterminal[] { return Object.values(this.slots); }
+	override get fields(): readonly AssembledNonterminal[] { return Object.values(this.slots); }
+	override get children(): readonly AssembledNonterminal[] { return []; }
 }
 
 /**
@@ -3928,110 +3858,70 @@ export type AssembledNode =
 // Canonical structural-view helpers
 // ============================================================================
 //
-// Two distinct facts about a polymorph's slot inventory:
-//
-//   1. Dedup'd structural view — one entry per name across forms. The
-//      "what slots does this kind expose" view used by emitters that
-//      build types, factories, and renderers.
-//
-//   2. Raw cross-form flatten — every form's fields/children
-//      concatenated. The "what literals can ever appear at this kind"
-//      view used by transport projection for literal collection.
-//
 // Branch and Group expose `.fields` / `.children` directly; non-
 // structural kinds (leaf/keyword/token/enum/supertype/multi) have no
 // structural surface. These helpers narrow over `AssembledNode` and
 // give consumers one canonical entry point per fact.
 
 /**
- * Dedup'd structural fields for a node — Branch/Group/Polymorph return
- * their own `.fields`;
+ * Dedup'd structural fields for a node — Branch/Group return their `.fields`;
  * non-structural kinds return `[]`.
  *
  * Use this when emitting types, factories, or anything that asks
- * "what fields does this kind have." For literal collection across
- * polymorph variants, see {@link allFormFieldsOf}.
+ * "what fields does this kind have."
  */
 export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'polymorph') return node.fields;
-	return [];
-}
-
-/**
- * Structural children for a node — Branch/Group/Polymorph return their
- * own `.children`; non-structural kinds return `[]`.
- *
- * Use this for emitters that read child slots on the kind itself.
- */
-export function structuralChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'polymorph') return node.children;
-	return [];
-}
-
-/**
- * Raw cross-form flatten of fields — Polymorph yields every form's
- * fields concatenated (duplicates preserved); Branch/Group return
- * their own `.fields`; non-structural kinds return `[]`.
- *
- * Use this for transport projection / literal collection where each
- * variant's literal contributions must be visible. For the dedup'd
- * structural view used by type and factory emitters, see
- * {@link structuralFieldsOf}.
- */
-export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph') return node.forms.flatMap((form) => form.fields);
 	if (node.modelType === 'branch' || node.modelType === 'group') return node.fields;
 	return [];
 }
 
 /**
- * Raw cross-form flatten of children — Polymorph yields every form's
- * children concatenated; Branch/Group return their own `.children`;
+ * Structural children for a node — Branch/Group return their `.children`;
  * non-structural kinds return `[]`.
- *
- * Use this for transport projection. For structural-view children,
- * see {@link structuralChildrenOf}.
  */
-export function allFormChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph') return node.forms.flatMap((form) => form.children);
+export function structuralChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
 	if (node.modelType === 'branch' || node.modelType === 'group') return node.children;
 	return [];
 }
 
 /**
- * Every slot reachable from a node — Branch/Group return all entries
- * of their own `.slots`; Polymorph returns every form's slots
- * concatenated (raw cross-form flatten, duplicates preserved); non-
- * structural kinds return `[]`.
+ * Raw cross-form flatten of fields — Branch/Group return their `.fields`;
+ * non-structural kinds return `[]`.
  *
- * The "all slots" sibling of {@link allFormFieldsOf} — covers both
- * field-shaped slots (`source !== 'inferred'`) and inferred positional
- * children. Use this when the consumer doesn't care about the
- * field/child distinction (graph traversal, kind reachability,
- * alias-source collection, userFacing classification). When TS-
- * emission shape differs by slot kind (factories, types, render
- * templates), keep {@link structuralFieldsOf} / {@link structuralChildrenOf}
- * for the typed-emission split.
+ * (Previously Polymorph returned per-form fields; no polymorphs exist at runtime.)
+ */
+export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (node.modelType === 'branch' || node.modelType === 'group') return node.fields;
+	return [];
+}
+
+/**
+ * Raw cross-form flatten of children — Branch/Group return their `.children`;
+ * non-structural kinds return `[]`.
+ */
+export function allFormChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (node.modelType === 'branch' || node.modelType === 'group') return node.children;
+	return [];
+}
+
+/**
+ * Every slot reachable from a node — Branch/Group return all entries of their
+ * `.slots`; non-structural kinds return `[]`.
+ *
+ * Use this when the consumer doesn't care about the field/child distinction
+ * (graph traversal, kind reachability, alias-source collection, etc.).
  */
 export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph') return node.forms.flatMap((form) => Object.values(form.slots));
 	if (node.modelType === 'branch' || node.modelType === 'group') return Object.values(node.slots);
 	return [];
 }
 
 /**
- * Dedup'd union of every slot across forms — the "all slots" sibling
- * of {@link structuralFieldsOf}. Polymorph/Branch/Group return all entries of their
- * own `.slots`; non-structural kinds return `[]`.
- *
- * Use this when consumers want the dedup'd view regardless of slot
- * kind. For most polymorph-aware walks the raw {@link allSlotsOf}
- * suffices; pick the structural variant only when name-uniqueness
- * matters to the consumer (e.g. set-collecting where dupes inflate
- * count without changing meaning).
+ * Dedup'd union of every slot — Branch/Group return all entries of their
+ * `.slots`; non-structural kinds return `[]`.
  */
 export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'polymorph')
+	if (node.modelType === 'branch' || node.modelType === 'group')
 		return Object.values(node.slots);
 	return [];
 }

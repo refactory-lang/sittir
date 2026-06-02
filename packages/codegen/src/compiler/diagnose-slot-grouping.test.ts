@@ -162,14 +162,13 @@ describe('diagnoseSlotGrouping — silent cases', () => {
 });
 
 describe('diagnoseSlotGrouping — polymorph skip-set', () => {
-	// Simulate a polymorph rule (type: 'polymorph') and its synthesized form kinds.
-	// The naming formula mirrors optimize.ts / assemble.ts:
-	//   promoted  → `${parentKind}_${disambiguated}`
-	//   override  → `${parentKind}__form_${disambiguated}`
+	// PolymorphRule was removed in PR-M-φ2; buildPolymorphSkipSet now always returns
+	// an empty set. Form kinds are treated as regular rules.
 
-	it('PolymorphRule kind is SILENT (parent kind skipped)', () => {
-		// A kind whose rule is `type: 'polymorph'` must be skipped entirely.
-		const polymorphRule = {
+	it('unknown rule type (e.g. legacy type: polymorph) is SILENT', () => {
+		// An unknown rule type hits the default case in walkRule and produces no
+		// diagnostic. This is a defensive check for any legacy/synthetic rule objects.
+		const unknownRule = {
 			type: 'polymorph',
 			source: 'promoted',
 			forms: [
@@ -177,44 +176,8 @@ describe('diagnoseSlotGrouping — polymorph skip-set', () => {
 				{ name: 'string', content: seq(sym('quote'), sym('body')) },
 			],
 		};
-		// binary_expression is a polymorph parent — should be silent.
-		const records = diagnoseSlotGrouping({ binary_expression: polymorphRule as any });
-		expect(records).toHaveLength(0);
-	});
-
-	it('promoted form kind (parentKind_formName) is SILENT', () => {
-		// When the rules map contains both the parent polymorph and its form bodies
-		// (as optimize.ts injects them), the form kinds must be skipped.
-		const polymorphRule = {
-			type: 'polymorph',
-			source: 'promoted',
-			forms: [{ name: 'foo', content: seq(sym('a'), sym('b')) }],
-		};
-		// The form body is a multi-slot seq that would normally fire — but it's
-		// in the polymorph skip-set as `binary_expression_foo`.
-		const formBody = seq(sym('a'), sym('b'));
-		const rules = {
-			binary_expression: polymorphRule as any,
-			binary_expression_foo: formBody as any, // promoted form kind
-		};
-		const inlineKinds = new Set<string>(['binary_expression_foo']); // treated as slot-pos
-		const records = diagnoseSlotGrouping(rules, inlineKinds);
-		expect(records).toHaveLength(0);
-	});
-
-	it('override form kind (parentKind__form_formName) is SILENT', () => {
-		const polymorphRule = {
-			type: 'polymorph',
-			source: 'override',
-			forms: [{ name: 'bar', content: seq(sym('x'), sym('y')) }],
-		};
-		const formBody = seq(sym('x'), sym('y'));
-		const rules = {
-			some_kind: polymorphRule as any,
-			'some_kind__form_bar': formBody as any,
-		};
-		const inlineKinds = new Set<string>(['some_kind__form_bar']);
-		const records = diagnoseSlotGrouping(rules, inlineKinds);
+		// A rule with an unrecognized type should not fire any diagnostic.
+		const records = diagnoseSlotGrouping({ binary_expression: unknownRule as any });
 		expect(records).toHaveLength(0);
 	});
 
