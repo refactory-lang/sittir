@@ -205,7 +205,8 @@ export function normalizeGrammar(
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
 		polymorphVariants: linked.polymorphVariants,
-		refineForms: linked.refineForms
+		refineForms: linked.refineForms,
+		parentAliasedKinds: linked.parentAliasedKinds
 	};
 }
 

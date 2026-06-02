@@ -4,12 +4,15 @@
 export const NODE_KINDS = [
   '_as_pattern',
   '_comprehension_clauses',
+  '_except_clause_list',
+  '_expression_statement_tuple',
   '_list_pattern',
   '_match_block',
   '_simple_pattern_negative',
   '_simple_statements',
   '_suite',
   '_tuple_pattern',
+  '_with_clause_bare',
   '_with_clause_paren',
   'aliased_import',
   'argument_list',
@@ -49,7 +52,6 @@ export const NODE_KINDS = [
   'exec_statement',
   'expression_list',
   'expression_statement',
-  'expression_statement_tuple',
   'finally_clause',
   'for_in_clause',
   'for_statement',
@@ -111,8 +113,6 @@ export const NODE_KINDS = [
   'union_type',
   'while_statement',
   'with_clause',
-  'with_clause_bare',
-  'with_clause_paren',
   'with_item',
   'with_statement',
   'yield',
@@ -497,8 +497,11 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "await": 237,
   "positional_separator": 238,
   "keyword_separator": 239,
+  "_expression_statement_tuple": 243,
+  "_with_clause_bare": 244,
   "_with_clause_paren": 245,
   "_simple_pattern_negative": 248,
+  "_except_clause_list": 250,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -692,8 +695,11 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [237]: "await",
   [238]: "positional_separator",
   [239]: "keyword_separator",
+  [243]: "_expression_statement_tuple",
+  [244]: "_with_clause_bare",
   [245]: "_with_clause_paren",
   [248]: "_simple_pattern_negative",
+  [250]: "_except_clause_list",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -887,8 +893,11 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "await", id: 237, enumName: "Await", cName: "sym_await" },
   { name: "positional_separator", id: 238, enumName: "PositionalSeparator", cName: "sym_positional_separator" },
   { name: "keyword_separator", id: 239, enumName: "KeywordSeparator", cName: "sym_keyword_separator" },
+  { name: "_expression_statement_tuple", id: 243, enumName: "ExpressionStatementTuple", cName: "sym__expression_statement_tuple" },
+  { name: "_with_clause_bare", id: 244, enumName: "WithClauseBare", cName: "sym__with_clause_bare" },
   { name: "_with_clause_paren", id: 245, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
   { name: "_simple_pattern_negative", id: 248, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
+  { name: "_except_clause_list", id: 250, enumName: "ExceptClauseList", cName: "sym__except_clause_list" },
 ] as const;
 
 export const enum TSFieldId {
@@ -1145,6 +1154,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'forInClause', required: true, multiple: false },
     { name: 'contents', required: false, multiple: true },
   ],
+  '_except_clause_list': [
+    { name: 'values', required: true, multiple: true },
+  ],
+  '_expression_statement_tuple': [
+    { name: 'expressions', required: true, multiple: true },
+  ],
   '_list_pattern': [
     { name: 'casePatterns', required: false, multiple: true },
   ],
@@ -1165,6 +1180,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_tuple_pattern': [
     { name: 'casePatterns', required: false, multiple: true },
   ],
+  '_with_clause_bare': [
+    { name: 'withItems', required: true, multiple: true },
+  ],
   '_with_clause_paren': [
     { name: 'withItems', required: true, multiple: true },
   ],
@@ -1184,9 +1202,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'assignment': [
     { name: 'left', required: true, multiple: false },
-    { name: 'assignmentEq', required: true, multiple: false },
-    { name: 'assignmentType', required: true, multiple: false },
-    { name: 'assignmentTyped', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'attribute': [
     { name: 'object', required: true, multiple: false },
@@ -1313,14 +1329,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expressions', required: true, multiple: true },
   ],
   'expression_statement': [
-    { name: 'expression', required: true, multiple: false },
-    { name: 'expressionStatementTuple', required: true, multiple: false },
-    { name: 'assignment', required: true, multiple: false },
-    { name: 'augmentedAssignment', required: true, multiple: false },
-    { name: 'yield', required: true, multiple: false },
-  ],
-  'expression_statement_tuple': [
-    { name: 'expressions', required: true, multiple: true },
+    { name: 'content', required: true, multiple: false },
   ],
   'finally_clause': [
     { name: 'block', required: true, multiple: false },
@@ -1552,14 +1561,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: false, multiple: false },
   ],
   'with_clause': [
-    { name: 'withClauseBare', required: true, multiple: false },
-    { name: 'withClauseParen', required: true, multiple: false },
-  ],
-  'with_clause_bare': [
-    { name: 'withItems', required: true, multiple: true },
-  ],
-  'with_clause_paren': [
-    { name: 'withItems', required: true, multiple: true },
+    { name: 'content', required: true, multiple: false },
   ],
   'with_item': [
     { name: 'value', required: true, multiple: false },

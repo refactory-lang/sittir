@@ -48,20 +48,14 @@ describe('assert_statement', () => {
 });
 
 describe('assignment', () => {
-  it('eq form produces correct type', () => {
-    const node = ir.assignment.eq({ left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, assignmentEq: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+  it('factory produces correct type', () => {
+    const node = ir.assignment({ left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.Assignment);
     expect(node.$source).toBe(2);
   });
-  it('type form produces correct type', () => {
-    const node = ir.assignment.type({ left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, assignmentType: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.Assignment);
-    expect(node.$source).toBe(2);
-  });
-  it('typed form produces correct type', () => {
-    const node = ir.assignment.typed({ left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, assignmentTyped: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.Assignment);
-    expect(node.$source).toBe(2);
+  it('render produces non-empty string', () => {
+    const node = ir.assignment({ left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -453,37 +447,9 @@ describe('expression_list', () => {
   });
 });
 
-describe('expression_statement_tuple', () => {
-  it('factory produces correct type', () => {
-    const node = ir.expressionStatementTuple();
-    expect(node.$type).toBe(TSKindId._ExpressionStatementTuple);
-    expect(node.$source).toBe(2);
-  });
-});
-
 describe('expression_statement', () => {
-  it('expression form produces correct type', () => {
-    const node = ir.expressionStatement.expression({ expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.ExpressionStatement);
-    expect(node.$source).toBe(2);
-  });
-  it('tuple form produces correct type', () => {
-    const node = ir.expressionStatement.tuple({ expressionStatementTuple: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.ExpressionStatement);
-    expect(node.$source).toBe(2);
-  });
-  it('assignment form produces correct type', () => {
-    const node = ir.expressionStatement.assignment({ assignment: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.ExpressionStatement);
-    expect(node.$source).toBe(2);
-  });
-  it('augmented_assignment form produces correct type', () => {
-    const node = ir.expressionStatement.augmented_assignment({ augmentedAssignment: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.ExpressionStatement);
-    expect(node.$source).toBe(2);
-  });
-  it('yield form produces correct type', () => {
-    const node = ir.expressionStatement.yield({ yield: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+  it('factory produces correct type', () => {
+    const node = ir.expressionStatement();
     expect(node.$type).toBe(TSKindId.ExpressionStatement);
     expect(node.$source).toBe(2);
   });
@@ -1198,30 +1164,9 @@ describe('while_statement', () => {
   });
 });
 
-describe('with_clause_bare', () => {
-  it('factory produces correct type', () => {
-    const node = ir.withClauseBare();
-    expect(node.$type).toBe(TSKindId._WithClauseBare);
-    expect(node.$source).toBe(2);
-  });
-});
-
-describe('with_clause_paren', () => {
-  it('factory produces correct type', () => {
-    const node = ir.withClauseParen();
-    expect(node.$type).toBe(TSKindId._WithClauseParen);
-    expect(node.$source).toBe(2);
-  });
-});
-
 describe('with_clause', () => {
-  it('bare form produces correct type', () => {
-    const node = ir.withClause.bare({ withClauseBare: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.WithClause);
-    expect(node.$source).toBe(2);
-  });
-  it('paren form produces correct type', () => {
-    const node = ir.withClause.paren({ withClauseParen: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+  it('factory produces correct type', () => {
+    const node = ir.withClause();
     expect(node.$type).toBe(TSKindId.WithClause);
     expect(node.$source).toBe(2);
   });

@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   41  (34 applied, 7 held)
+// Rule promotions:   37  (30 applied, 7 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -227,21 +227,17 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "import_prefix", classification: "terminal", applied: true },
   { kind: "integer", classification: "terminal", applied: true },
   { kind: "line_continuation", classification: "terminal", applied: true },
-  { kind: "_match_block", classification: "polymorph", applied: true },
   { kind: "_match_block_block", classification: "polymorph", applied: true },
   { kind: "_suite", classification: "polymorph", applied: false },
-  { kind: "assignment", classification: "polymorph", applied: true },
   { kind: "assignment_eq", classification: "polymorph", applied: true },
   { kind: "assignment_type", classification: "polymorph", applied: true },
   { kind: "assignment_typed", classification: "polymorph", applied: true },
   { kind: "expression_list", classification: "polymorph", applied: false },
-  { kind: "expression_statement", classification: "polymorph", applied: true },
   { kind: "expression_statement_tuple", classification: "polymorph", applied: true },
   { kind: "future_import_statement", classification: "polymorph", applied: false },
   { kind: "import_from_statement", classification: "polymorph", applied: false },
   { kind: "pattern_list", classification: "polymorph", applied: false },
   { kind: "splat_pattern", classification: "polymorph", applied: false },
-  { kind: "with_clause", classification: "polymorph", applied: true },
   { kind: "with_clause_bare", classification: "polymorph", applied: true },
   { kind: "with_clause_paren", classification: "polymorph", applied: true },
   { kind: "yield", classification: "polymorph", applied: false },

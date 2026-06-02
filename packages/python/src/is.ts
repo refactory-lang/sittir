@@ -27,12 +27,15 @@ import type {
 export interface IsGuards {
     AsPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._AsPattern };
     ComprehensionClauses<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ComprehensionClauses };
+    ExceptClauseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseList };
+    ExpressionStatementTuple<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatementTuple };
     ListPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ListPattern };
     MatchBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchBlock };
     SimplePatternNegative<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePatternNegative };
     SimpleStatements<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimpleStatements };
     TuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TuplePattern };
-    WithClauseParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._WithClauseParen };
+    WithClauseBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseBare };
+    WithClauseParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseParen };
     aliasedImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AliasedImport };
     argumentList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArgumentList };
     asPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AsPattern };
@@ -156,12 +159,15 @@ export interface IsGuards {
 export interface AssertGuards {
     AsPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._AsPattern };
     ComprehensionClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ComprehensionClauses };
+    ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
+    ExpressionStatementTuple(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
     ListPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ListPattern };
     MatchBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchBlock };
     SimplePatternNegative(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimplePatternNegative };
     SimpleStatements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimpleStatements };
     TuplePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TuplePattern };
-    WithClauseParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._WithClauseParen };
+    WithClauseBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseBare };
+    WithClauseParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseParen };
     aliasedImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AliasedImport };
     argumentList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentList };
     asPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AsPattern };
@@ -476,22 +482,28 @@ const _kindIdByKind = new Map<string, number>([
     ["_assignment_eq", TSKindId.AssignmentEq],
     ["_assignment_type", TSKindId.AssignmentType],
     ["_assignment_typed", TSKindId.AssignmentTyped],
-    ["_with_clause_paren", TSKindId._WithClauseParen],
+    ["_expression_statement_tuple", TSKindId.ExpressionStatementTuple],
+    ["_with_clause_bare", TSKindId.WithClauseBare],
+    ["_with_clause_paren", TSKindId.WithClauseParen],
     ["_match_block_block", TSKindId.MatchBlockBlock],
     ["_simple_pattern_negative", TSKindId.SimplePatternNegative],
     ["_except_clause_as", TSKindId.ExceptClauseAs],
+    ["_except_clause_list", TSKindId.ExceptClauseList],
     ["_comparison_operator_comparator", TSKindId.ComparisonOperatorComparator],
 ]);
 
 export const is = {
     AsPattern: _g(TSKindId._AsPattern),
     ComprehensionClauses: _g(TSKindId.ComprehensionClauses),
+    ExceptClauseList: _g(TSKindId.ExceptClauseList),
+    ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
     ListPattern: _g(TSKindId._ListPattern),
     MatchBlock: _g(TSKindId.MatchBlock),
     SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
     SimpleStatements: _g(TSKindId.SimpleStatements),
     TuplePattern: _g(TSKindId._TuplePattern),
-    WithClauseParen: _g(TSKindId._WithClauseParen),
+    WithClauseBare: _g(TSKindId.WithClauseBare),
+    WithClauseParen: _g(TSKindId.WithClauseParen),
     aliasedImport: _g(TSKindId.AliasedImport),
     argumentList: _g(TSKindId.ArgumentList),
     asPattern: _g(TSKindId.AsPattern),
@@ -639,11 +651,14 @@ function _makeAssertKind(guard: _AnyGuard) {
 export const assert = {
     AsPattern: _makeAssert('AsPattern', is.AsPattern as _AnyGuard),
     ComprehensionClauses: _makeAssert('ComprehensionClauses', is.ComprehensionClauses as _AnyGuard),
+    ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
+    ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple as _AnyGuard),
     ListPattern: _makeAssert('ListPattern', is.ListPattern as _AnyGuard),
     MatchBlock: _makeAssert('MatchBlock', is.MatchBlock as _AnyGuard),
     SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
     SimpleStatements: _makeAssert('SimpleStatements', is.SimpleStatements as _AnyGuard),
     TuplePattern: _makeAssert('TuplePattern', is.TuplePattern as _AnyGuard),
+    WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
     WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
     aliasedImport: _makeAssert('aliasedImport', is.aliasedImport as _AnyGuard),
     argumentList: _makeAssert('argumentList', is.argumentList as _AnyGuard),

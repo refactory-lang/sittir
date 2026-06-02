@@ -371,6 +371,19 @@ export interface LinkedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule>;
 	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
+	/**
+	 * Set of hidden (`_`-prefixed) kind names that appear as the CONTENT of a
+	 * named alias (`alias(symbol(_X), $.visible)`) in any parent rule body.
+	 *
+	 * These hidden kinds produce REAL runtime CST nodes (the parser exposes
+	 * them under the alias target name). They must NOT be classified as
+	 * `multi` (inlined repeat helpers) even when their rule body is a
+	 * `repeat1` after normalization — they need their own `branch` type so
+	 * the transport can match on their kind ID at decode time.
+	 *
+	 * Optional so hand-constructed test fixtures can omit it.
+	 */
+	readonly parentAliasedKinds?: ReadonlySet<string>;
 }
 
 /**
@@ -397,6 +410,8 @@ export interface OptimizedGrammar {
 	readonly rules: Record<string, Rule>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule>;
+	/** Propagated from {@link LinkedGrammar.parentAliasedKinds}. */
+	readonly parentAliasedKinds?: ReadonlySet<string>;
 	/**
 	 * Derivation-only view of every rule in `rules`, produced by
 	 * `simplifyRule` as the final pass in `optimize()`. Downstream

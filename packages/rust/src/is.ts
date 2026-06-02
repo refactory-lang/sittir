@@ -31,34 +31,34 @@ export interface IsGuards {
     AttributedFieldDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedFieldDeclaration };
     AttributedParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedParameter };
     AttributedTypeParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedTypeParameter };
-    ClosureExpressionExpr<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ClosureExpressionExpr };
-    DelimTokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._DelimTokenTreeBrace };
-    DelimTokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._DelimTokenTreeBracket };
-    DelimTokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._DelimTokenTreeParen };
-    ExpressionStatementBlockEnding<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExpressionStatementBlockEnding };
-    ExpressionStatementWithSemi<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExpressionStatementWithSemi };
-    FieldPatternShorthand<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FieldPatternShorthand };
-    ForeignModItemBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ForeignModItemBody };
-    FunctionTypeFnForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FunctionTypeFnForm };
-    FunctionTypeTraitForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FunctionTypeTraitForm };
-    ImplItemBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImplItemBody };
+    ClosureExpressionExpr<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClosureExpressionExpr };
+    DelimTokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DelimTokenTreeBrace };
+    DelimTokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DelimTokenTreeBracket };
+    DelimTokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DelimTokenTreeParen };
+    ExpressionStatementBlockEnding<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatementBlockEnding };
+    ExpressionStatementWithSemi<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatementWithSemi };
+    FieldPatternShorthand<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldPatternShorthand };
+    ForeignModItemBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForeignModItemBody };
+    FunctionTypeFnForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionTypeFnForm };
+    FunctionTypeTraitForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionTypeTraitForm };
+    ImplItemBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImplItemBody };
     LetChain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LetChain };
-    MacroDefinitionBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._MacroDefinitionBrace };
-    MacroDefinitionBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._MacroDefinitionBracket };
-    MacroDefinitionParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._MacroDefinitionParen };
-    MatchArmBlockEnding<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._MatchArmBlockEnding };
-    ModItemInline<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ModItemInline };
-    PointerTypeMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._PointerTypeMut };
-    RangeExpressionBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._RangeExpressionBare };
+    MacroDefinitionBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroDefinitionBrace };
+    MacroDefinitionBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroDefinitionBracket };
+    MacroDefinitionParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroDefinitionParen };
+    MatchArmBlockEnding<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchArmBlockEnding };
+    ModItemInline<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ModItemInline };
+    PointerTypeMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PointerTypeMut };
+    RangeExpressionBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangeExpressionBare };
     ReferenceExpressionRawMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
-    TokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeBrace };
-    TokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeBracket };
-    TokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeParen };
-    TokenTreePatternBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreePatternBrace };
-    TokenTreePatternBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreePatternBracket };
-    TokenTreePatternParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreePatternParen };
+    TokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBrace };
+    TokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBracket };
+    TokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeParen };
+    TokenTreePatternBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreePatternBrace };
+    TokenTreePatternBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreePatternBracket };
+    TokenTreePatternParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreePatternParen };
     TypeArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArgument };
-    VisibilityModifierCrate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._VisibilityModifierCrate };
+    VisibilityModifierCrate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifierCrate };
     abstractType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractType };
     arguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Arguments };
     arrayExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayExpression };
@@ -224,34 +224,34 @@ export interface AssertGuards {
     AttributedFieldDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
     AttributedParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedParameter };
     AttributedTypeParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedTypeParameter };
-    ClosureExpressionExpr(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ClosureExpressionExpr };
-    DelimTokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._DelimTokenTreeBrace };
-    DelimTokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._DelimTokenTreeBracket };
-    DelimTokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._DelimTokenTreeParen };
-    ExpressionStatementBlockEnding(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExpressionStatementBlockEnding };
-    ExpressionStatementWithSemi(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExpressionStatementWithSemi };
-    FieldPatternShorthand(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FieldPatternShorthand };
-    ForeignModItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ForeignModItemBody };
-    FunctionTypeFnForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FunctionTypeFnForm };
-    FunctionTypeTraitForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FunctionTypeTraitForm };
-    ImplItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImplItemBody };
+    ClosureExpressionExpr(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClosureExpressionExpr };
+    DelimTokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBrace };
+    DelimTokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBracket };
+    DelimTokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeParen };
+    ExpressionStatementBlockEnding(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionStatementBlockEnding };
+    ExpressionStatementWithSemi(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionStatementWithSemi };
+    FieldPatternShorthand(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldPatternShorthand };
+    ForeignModItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForeignModItemBody };
+    FunctionTypeFnForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeFnForm };
+    FunctionTypeTraitForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeTraitForm };
+    ImplItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImplItemBody };
     LetChain(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LetChain };
-    MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._MacroDefinitionBrace };
-    MacroDefinitionBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._MacroDefinitionBracket };
-    MacroDefinitionParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._MacroDefinitionParen };
-    MatchArmBlockEnding(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._MatchArmBlockEnding };
-    ModItemInline(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ModItemInline };
-    PointerTypeMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._PointerTypeMut };
-    RangeExpressionBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._RangeExpressionBare };
+    MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
+    MacroDefinitionBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
+    MacroDefinitionParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionParen };
+    MatchArmBlockEnding(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchArmBlockEnding };
+    ModItemInline(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ModItemInline };
+    PointerTypeMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PointerTypeMut };
+    RangeExpressionBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RangeExpressionBare };
     ReferenceExpressionRawMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
-    TokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeBrace };
-    TokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeBracket };
-    TokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeParen };
-    TokenTreePatternBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreePatternBrace };
-    TokenTreePatternBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreePatternBracket };
-    TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreePatternParen };
+    TokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBrace };
+    TokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBracket };
+    TokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeParen };
+    TokenTreePatternBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternBrace };
+    TokenTreePatternBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternBracket };
+    TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternParen };
     TypeArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgument };
-    VisibilityModifierCrate(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._VisibilityModifierCrate };
+    VisibilityModifierCrate(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VisibilityModifierCrate };
     abstractType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractType };
     arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
     arrayExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayExpression };
@@ -432,7 +432,7 @@ const _supertype_pattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 31
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
-const _supertype_type_ids = new Set<number>([235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 413, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 416, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([138, 1, 141, 139, 140, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -637,50 +637,53 @@ const _kindIdByKind = new Map<string, number>([
     ["_wildcard_pattern", TSKindId.WildcardPattern],
     ["_reference_expression_raw_const", TSKindId.ReferenceExpressionRawConst],
     ["_reference_expression_raw_mut", TSKindId.ReferenceExpressionRawMut],
+    ["_impl_item_unsafe_marker", TSKindId.ImplItemUnsafeMarker],
+    ["_impl_item_body", TSKindId.ImplItemBody],
+    ["_impl_item_positive_clause", TSKindId.ImplItemPositiveClause],
+    ["_impl_item_negative_clause", TSKindId.ImplItemNegativeClause],
     ["_array_expression_semi", TSKindId.ArrayExpressionSemi],
     ["_array_expression_list", TSKindId.ArrayExpressionList],
     ["_closure_expression_block", TSKindId.ClosureExpressionBlock],
-    ["_closure_expression_expr", TSKindId._ClosureExpressionExpr],
-    ["_field_pattern_shorthand", TSKindId._FieldPatternShorthand],
+    ["_closure_expression_expr", TSKindId.ClosureExpressionExpr],
+    ["_field_pattern_shorthand", TSKindId.FieldPatternShorthand],
     ["_field_pattern_named", TSKindId.FieldPatternNamed],
-    ["_function_type_trait_form", TSKindId._FunctionTypeTraitForm],
-    ["_function_type_fn_form", TSKindId._FunctionTypeFnForm],
-    ["_impl_item_body", TSKindId._ImplItemBody],
-    ["_macro_definition_paren", TSKindId._MacroDefinitionParen],
-    ["_macro_definition_bracket", TSKindId._MacroDefinitionBracket],
-    ["_macro_definition_brace", TSKindId._MacroDefinitionBrace],
-    ["_mod_item_inline", TSKindId._ModItemInline],
+    ["_function_type_trait_form", TSKindId.FunctionTypeTraitForm],
+    ["_function_type_fn_form", TSKindId.FunctionTypeFnForm],
+    ["_macro_definition_paren", TSKindId.MacroDefinitionParen],
+    ["_macro_definition_bracket", TSKindId.MacroDefinitionBracket],
+    ["_macro_definition_brace", TSKindId.MacroDefinitionBrace],
+    ["_mod_item_inline", TSKindId.ModItemInline],
     ["_or_pattern_binary", TSKindId.OrPatternBinary],
     ["_or_pattern_prefix", TSKindId.OrPatternPrefix],
     ["_range_expression_binary", TSKindId.RangeExpressionBinary],
     ["_range_expression_postfix", TSKindId.RangeExpressionPostfix],
     ["_range_expression_prefix", TSKindId.RangeExpressionPrefix],
-    ["_range_expression_bare", TSKindId._RangeExpressionBare],
+    ["_range_expression_bare", TSKindId.RangeExpressionBare],
     ["_range_pattern_prefix", TSKindId.RangePatternPrefix],
     ["_range_pattern_left_with_right", TSKindId.RangePatternLeftWithRight],
     ["_struct_item_brace", TSKindId.StructItemBrace],
     ["_struct_item_tuple", TSKindId.StructItemTuple],
-    ["_visibility_modifier_crate", TSKindId._VisibilityModifierCrate],
+    ["_visibility_modifier_crate", TSKindId.VisibilityModifierCrate],
     ["_visibility_modifier_pub", TSKindId.VisibilityModifierPub],
     ["_visibility_modifier_in_path", TSKindId.VisibilityModifierInPath],
     ["_pointer_type_const", TSKindId.PointerTypeConst],
-    ["_pointer_type_mut", TSKindId._PointerTypeMut],
-    ["_expression_statement_with_semi", TSKindId._ExpressionStatementWithSemi],
-    ["_expression_statement_block_ending", TSKindId._ExpressionStatementBlockEnding],
-    ["_foreign_mod_item_body", TSKindId._ForeignModItemBody],
+    ["_pointer_type_mut", TSKindId.PointerTypeMut],
+    ["_expression_statement_with_semi", TSKindId.ExpressionStatementWithSemi],
+    ["_expression_statement_block_ending", TSKindId.ExpressionStatementBlockEnding],
+    ["_foreign_mod_item_body", TSKindId.ForeignModItemBody],
     ["_match_arm_with_comma", TSKindId.MatchArmWithComma],
-    ["_match_arm_block_ending", TSKindId._MatchArmBlockEnding],
+    ["_match_arm_block_ending", TSKindId.MatchArmBlockEnding],
     ["_line_comment_regular_dslash", TSKindId.LineCommentRegularDslash],
     ["_line_comment_doc", TSKindId.LineCommentDoc],
-    ["_token_tree_pattern_paren", TSKindId._TokenTreePatternParen],
-    ["_token_tree_pattern_bracket", TSKindId._TokenTreePatternBracket],
-    ["_token_tree_pattern_brace", TSKindId._TokenTreePatternBrace],
-    ["_token_tree_paren", TSKindId._TokenTreeParen],
-    ["_token_tree_bracket", TSKindId._TokenTreeBracket],
-    ["_token_tree_brace", TSKindId._TokenTreeBrace],
-    ["_delim_token_tree_paren", TSKindId._DelimTokenTreeParen],
-    ["_delim_token_tree_bracket", TSKindId._DelimTokenTreeBracket],
-    ["_delim_token_tree_brace", TSKindId._DelimTokenTreeBrace],
+    ["_token_tree_pattern_paren", TSKindId.TokenTreePatternParen],
+    ["_token_tree_pattern_bracket", TSKindId.TokenTreePatternBracket],
+    ["_token_tree_pattern_brace", TSKindId.TokenTreePatternBrace],
+    ["_token_tree_paren", TSKindId.TokenTreeParen],
+    ["_token_tree_bracket", TSKindId.TokenTreeBracket],
+    ["_token_tree_brace", TSKindId.TokenTreeBrace],
+    ["_delim_token_tree_paren", TSKindId.DelimTokenTreeParen],
+    ["_delim_token_tree_bracket", TSKindId.DelimTokenTreeBracket],
+    ["_delim_token_tree_brace", TSKindId.DelimTokenTreeBrace],
     ["_attributed_field_declaration", TSKindId.AttributedFieldDeclaration],
     ["_attributed_enum_variant", TSKindId.AttributedEnumVariant],
     ["_attributed_parameter", TSKindId.AttributedParameter],
@@ -698,34 +701,34 @@ export const is = {
     AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
     AttributedParameter: _g(TSKindId.AttributedParameter),
     AttributedTypeParameter: _g(TSKindId.AttributedTypeParameter),
-    ClosureExpressionExpr: _g(TSKindId._ClosureExpressionExpr),
-    DelimTokenTreeBrace: _g(TSKindId._DelimTokenTreeBrace),
-    DelimTokenTreeBracket: _g(TSKindId._DelimTokenTreeBracket),
-    DelimTokenTreeParen: _g(TSKindId._DelimTokenTreeParen),
-    ExpressionStatementBlockEnding: _g(TSKindId._ExpressionStatementBlockEnding),
-    ExpressionStatementWithSemi: _g(TSKindId._ExpressionStatementWithSemi),
-    FieldPatternShorthand: _g(TSKindId._FieldPatternShorthand),
-    ForeignModItemBody: _g(TSKindId._ForeignModItemBody),
-    FunctionTypeFnForm: _g(TSKindId._FunctionTypeFnForm),
-    FunctionTypeTraitForm: _g(TSKindId._FunctionTypeTraitForm),
-    ImplItemBody: _g(TSKindId._ImplItemBody),
+    ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
+    DelimTokenTreeBrace: _g(TSKindId.DelimTokenTreeBrace),
+    DelimTokenTreeBracket: _g(TSKindId.DelimTokenTreeBracket),
+    DelimTokenTreeParen: _g(TSKindId.DelimTokenTreeParen),
+    ExpressionStatementBlockEnding: _g(TSKindId.ExpressionStatementBlockEnding),
+    ExpressionStatementWithSemi: _g(TSKindId.ExpressionStatementWithSemi),
+    FieldPatternShorthand: _g(TSKindId.FieldPatternShorthand),
+    ForeignModItemBody: _g(TSKindId.ForeignModItemBody),
+    FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
+    FunctionTypeTraitForm: _g(TSKindId.FunctionTypeTraitForm),
+    ImplItemBody: _g(TSKindId.ImplItemBody),
     LetChain: _g(TSKindId.LetChain),
-    MacroDefinitionBrace: _g(TSKindId._MacroDefinitionBrace),
-    MacroDefinitionBracket: _g(TSKindId._MacroDefinitionBracket),
-    MacroDefinitionParen: _g(TSKindId._MacroDefinitionParen),
-    MatchArmBlockEnding: _g(TSKindId._MatchArmBlockEnding),
-    ModItemInline: _g(TSKindId._ModItemInline),
-    PointerTypeMut: _g(TSKindId._PointerTypeMut),
-    RangeExpressionBare: _g(TSKindId._RangeExpressionBare),
+    MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
+    MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
+    MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
+    MatchArmBlockEnding: _g(TSKindId.MatchArmBlockEnding),
+    ModItemInline: _g(TSKindId.ModItemInline),
+    PointerTypeMut: _g(TSKindId.PointerTypeMut),
+    RangeExpressionBare: _g(TSKindId.RangeExpressionBare),
     ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
-    TokenTreeBrace: _g(TSKindId._TokenTreeBrace),
-    TokenTreeBracket: _g(TSKindId._TokenTreeBracket),
-    TokenTreeParen: _g(TSKindId._TokenTreeParen),
-    TokenTreePatternBrace: _g(TSKindId._TokenTreePatternBrace),
-    TokenTreePatternBracket: _g(TSKindId._TokenTreePatternBracket),
-    TokenTreePatternParen: _g(TSKindId._TokenTreePatternParen),
+    TokenTreeBrace: _g(TSKindId.TokenTreeBrace),
+    TokenTreeBracket: _g(TSKindId.TokenTreeBracket),
+    TokenTreeParen: _g(TSKindId.TokenTreeParen),
+    TokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
+    TokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
+    TokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
     TypeArgument: _g(TSKindId.TypeArgument),
-    VisibilityModifierCrate: _g(TSKindId._VisibilityModifierCrate),
+    VisibilityModifierCrate: _g(TSKindId.VisibilityModifierCrate),
     abstractType: _g(TSKindId.AbstractType),
     arguments: _g(TSKindId.Arguments),
     arrayExpression: _g(TSKindId.ArrayExpression),

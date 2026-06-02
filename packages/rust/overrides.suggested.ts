@@ -15,8 +15,8 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  3  (0 applied, 3 held)
-// Rule promotions:   101  (93 applied, 8 held)
-// Repeated shapes:   4  (advisory — suggested supertypes/groups)
+// Rule promotions:   79  (71 applied, 8 held)
+// Repeated shapes:   6  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
 // suggestedTransforms — drop entries into your overrides.ts
@@ -136,11 +136,17 @@ export const suggestedRules = {
   _use_clause: $ => choice($._path, $.self, $.identifier, $.metavariable, $.super, $.crate, $.scoped_identifier, $.use_as_clause, $.use_list, $.scoped_use_list, $.use_wildcard),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
+  // parents: _range_pattern_left_with_right, _range_pattern_prefix, range_pattern
+  _shared_2: $ => choice($._literal_pattern, $._path),
+
   // parents: _function_type_trait_form, struct_pattern
   _type_identifier: $ => choice($._type_identifier, $.scoped_type_identifier),
 
-  // parents: _range_pattern_left_with_right, _range_pattern_prefix
-  _shared_2: $ => choice($._literal_pattern, $._path),
+  // parents: last_match_arm, match_arm
+  _attribute_item: $ => choice($.attribute_item, $.inner_attribute_item),
+
+  // parents: _impl_item_negative_clause, _impl_item_positive_clause
+  _shared_3: $ => choice($._type_identifier, $.generic_type, $.scoped_type_identifier),
 
 };
 
@@ -214,9 +220,21 @@ export const suggestedGroups = {
     '1/0/0': 'outer',
   },
 
+  // [held] 3 candidate(s)
+  function_type: {
+    '1/0': 'function_type_trait_form',
+    '1/1': 'function_type_fn_form',
+    '2/0': 'return_type',
+  },
+
   // [held] 1 candidate(s)
   match_block: {
     '1': 'match_arm',
+  },
+
+  // [held] 1 candidate(s)
+  range_pattern: {
+    '0': 'left',
   },
 
   // [held] 1 candidate(s)
@@ -278,75 +296,53 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_closure_expression_expr", classification: "polymorph", applied: false },
   { kind: "_let_chain", classification: "polymorph", applied: false },
   { kind: "_line_doc_comment_marker", classification: "polymorph", applied: false },
-  { kind: "array_expression", classification: "polymorph", applied: true },
   { kind: "array_expression_list", classification: "polymorph", applied: true },
   { kind: "array_expression_semi", classification: "polymorph", applied: true },
-  { kind: "closure_expression", classification: "polymorph", applied: true },
   { kind: "closure_expression_block", classification: "polymorph", applied: true },
   { kind: "closure_expression_expr", classification: "polymorph", applied: true },
-  { kind: "delim_token_tree", classification: "polymorph", applied: true },
   { kind: "delim_token_tree_brace", classification: "polymorph", applied: true },
   { kind: "delim_token_tree_bracket", classification: "polymorph", applied: true },
   { kind: "delim_token_tree_paren", classification: "polymorph", applied: true },
-  { kind: "expression_statement", classification: "polymorph", applied: true },
   { kind: "expression_statement_block_ending", classification: "polymorph", applied: true },
   { kind: "expression_statement_with_semi", classification: "polymorph", applied: true },
-  { kind: "field_pattern", classification: "polymorph", applied: true },
   { kind: "field_pattern_named", classification: "polymorph", applied: true },
   { kind: "field_pattern_shorthand", classification: "polymorph", applied: true },
-  { kind: "foreign_mod_item", classification: "polymorph", applied: true },
   { kind: "foreign_mod_item_body", classification: "polymorph", applied: true },
   { kind: "foreign_mod_item_semi", classification: "polymorph", applied: true },
-  { kind: "function_type", classification: "polymorph", applied: true },
   { kind: "function_type_fn_form", classification: "polymorph", applied: true },
   { kind: "function_type_trait_form", classification: "polymorph", applied: true },
-  { kind: "impl_item", classification: "polymorph", applied: true },
-  { kind: "impl_item_body", classification: "polymorph", applied: true },
-  { kind: "impl_item_semi", classification: "polymorph", applied: true },
-  { kind: "line_comment", classification: "polymorph", applied: true },
   { kind: "line_comment_content", classification: "polymorph", applied: true },
   { kind: "line_comment_doc", classification: "polymorph", applied: true },
   { kind: "line_comment_regular_dslash", classification: "polymorph", applied: true },
-  { kind: "macro_definition", classification: "polymorph", applied: true },
   { kind: "macro_definition_brace", classification: "polymorph", applied: true },
   { kind: "macro_definition_bracket", classification: "polymorph", applied: true },
   { kind: "macro_definition_paren", classification: "polymorph", applied: true },
-  { kind: "match_arm", classification: "polymorph", applied: true },
   { kind: "match_arm_block_ending", classification: "polymorph", applied: true },
   { kind: "match_arm_with_comma", classification: "polymorph", applied: true },
-  { kind: "mod_item", classification: "polymorph", applied: true },
   { kind: "mod_item_external", classification: "polymorph", applied: true },
   { kind: "mod_item_inline", classification: "polymorph", applied: true },
-  { kind: "or_pattern", classification: "polymorph", applied: true },
   { kind: "or_pattern_binary", classification: "polymorph", applied: true },
   { kind: "or_pattern_prefix", classification: "polymorph", applied: true },
-  { kind: "pointer_type", classification: "polymorph", applied: true },
   { kind: "pointer_type_const", classification: "polymorph", applied: true },
   { kind: "pointer_type_mut", classification: "polymorph", applied: true },
-  { kind: "range_expression", classification: "polymorph", applied: true },
   { kind: "range_expression_bare", classification: "polymorph", applied: true },
   { kind: "range_expression_binary", classification: "polymorph", applied: true },
   { kind: "range_expression_postfix", classification: "polymorph", applied: true },
   { kind: "range_expression_prefix", classification: "polymorph", applied: true },
   { kind: "range_pattern", classification: "polymorph", applied: false },
-  { kind: "range_pattern", classification: "polymorph", applied: true },
   { kind: "range_pattern_left_bare", classification: "polymorph", applied: true },
   { kind: "range_pattern_left_with_right", classification: "polymorph", applied: true },
   { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
   { kind: "return_expression", classification: "polymorph", applied: false },
-  { kind: "struct_item", classification: "polymorph", applied: true },
   { kind: "struct_item_brace", classification: "polymorph", applied: true },
   { kind: "struct_item_tuple", classification: "polymorph", applied: true },
   { kind: "struct_item_unit", classification: "polymorph", applied: true },
-  { kind: "token_tree", classification: "polymorph", applied: true },
   { kind: "token_tree_brace", classification: "polymorph", applied: true },
   { kind: "token_tree_bracket", classification: "polymorph", applied: true },
   { kind: "token_tree_paren", classification: "polymorph", applied: true },
-  { kind: "token_tree_pattern", classification: "polymorph", applied: true },
   { kind: "token_tree_pattern_brace", classification: "polymorph", applied: true },
   { kind: "token_tree_pattern_bracket", classification: "polymorph", applied: true },
   { kind: "token_tree_pattern_paren", classification: "polymorph", applied: true },
-  { kind: "visibility_modifier", classification: "polymorph", applied: true },
   { kind: "visibility_modifier_crate", classification: "polymorph", applied: true },
   { kind: "visibility_modifier_in_path", classification: "polymorph", applied: true },
   { kind: "visibility_modifier_pub", classification: "polymorph", applied: true },
@@ -375,8 +371,10 @@ export interface RepeatedShape {
   readonly shape: 'supertype' | 'group';
 }
 export const repeatedShapes: readonly RepeatedShape[] = [
+  { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left_with_right","_range_pattern_prefix","range_pattern"], shape: "supertype" },
   { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["_function_type_trait_form","struct_pattern"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left_with_right","_range_pattern_prefix"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["identifier","metavariable"], parents: ["function_item","function_signature_item"], shape: "supertype" },
+  { suggestedName: "_attribute_item", kinds: ["attribute_item","inner_attribute_item"], parents: ["last_match_arm","match_arm"], shape: "supertype" },
+  { suggestedName: "_shared_3", kinds: ["_type_identifier","generic_type","scoped_type_identifier"], parents: ["_impl_item_negative_clause","_impl_item_positive_clause"], shape: "supertype" },
 ];

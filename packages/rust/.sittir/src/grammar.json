@@ -2660,7 +2660,7 @@
               "name": "unsafe_marker",
               "content": {
                 "type": "SYMBOL",
-                "name": "_kw_unsafe_marker"
+                "name": "_impl_item_unsafe_marker"
               },
               "source": "override"
             },
@@ -2674,74 +2674,52 @@
           "value": "impl"
         },
         {
-          "type": "FIELD",
-          "name": "type_parameters",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "type_parameters",
+              "content": {
                 "type": "SYMBOL",
                 "name": "type_parameters"
               },
-              {
-                "type": "BLANK"
-              }
-            ],
-            "fieldName": "type_parameters",
-            "nonterminal": true
-          }
+              "source": "override"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "FIELD",
-                      "name": "negative",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "_kw_negative"
-                      },
-                      "source": "override"
+              "type": "FIELD",
+              "name": "trait_clause",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_impl_item_positive_clause"
                     },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "FIELD",
-                  "name": "trait",
-                  "content": {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "_type_identifier"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "scoped_type_identifier"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "generic_type"
-                      }
-                    ],
-                    "fieldName": "trait",
-                    "nonterminal": true
+                    "named": true,
+                    "value": "impl_item_positive_clause"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_impl_item_negative_clause"
+                    },
+                    "named": true,
+                    "value": "impl_item_negative_clause"
                   }
-                },
-                {
-                  "type": "STRING",
-                  "value": "for"
-                }
-              ]
+                ]
+              },
+              "source": "override"
             },
             {
               "type": "BLANK"
@@ -2753,10 +2731,9 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "_type",
-            "fieldName": "type",
-            "nonterminal": true
-          }
+            "name": "_type"
+          },
+          "source": "override"
         },
         {
           "type": "CHOICE",
@@ -2766,11 +2743,9 @@
               "name": "where_clause",
               "content": {
                 "type": "SYMBOL",
-                "name": "where_clause",
-                "fieldName": "where_clause",
-                "nonterminal": true
+                "name": "where_clause"
               },
-              "source": "enriched"
+              "source": "override"
             },
             {
               "type": "BLANK"
@@ -9474,6 +9449,84 @@
         }
       ]
     },
+    "_impl_item_unsafe_marker": {
+      "type": "STRING",
+      "value": "unsafe"
+    },
+    "_impl_item_body": {
+      "type": "SYMBOL",
+      "name": "declaration_list"
+    },
+    "_impl_item_semi": {
+      "type": "STRING",
+      "value": ";"
+    },
+    "_impl_item_positive_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "trait",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_type_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "scoped_type_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "generic_type"
+              }
+            ]
+          },
+          "source": "override"
+        },
+        {
+          "type": "STRING",
+          "value": "for"
+        }
+      ]
+    },
+    "_impl_item_negative_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "!"
+        },
+        {
+          "type": "FIELD",
+          "name": "trait",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_type_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "scoped_type_identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "generic_type"
+              }
+            ]
+          },
+          "source": "override"
+        },
+        {
+          "type": "STRING",
+          "value": "for"
+        }
+      ]
+    },
     "_array_expression_semi": {
       "type": "SEQ",
       "members": [
@@ -9779,20 +9832,6 @@
           }
         ]
       }
-    },
-    "_impl_item_body": {
-      "type": "FIELD",
-      "name": "body",
-      "content": {
-        "type": "SYMBOL",
-        "name": "declaration_list",
-        "fieldName": "body",
-        "nonterminal": true
-      }
-    },
-    "_impl_item_semi": {
-      "type": "STRING",
-      "value": ";"
     },
     "_macro_definition_paren": {
       "type": "SEQ",
@@ -10438,14 +10477,6 @@
       "type": "STRING",
       "value": "::"
     },
-    "_kw_unsafe_marker": {
-      "type": "STRING",
-      "value": "unsafe"
-    },
-    "_kw_negative": {
-      "type": "STRING",
-      "value": "!"
-    },
     "_kw_object": {
       "type": "BLANK"
     },
@@ -10494,6 +10525,10 @@
     "_kw_mutable_specifier": {
       "type": "STRING",
       "value": "ref"
+    },
+    "_kw_unsafe_marker": {
+      "type": "STRING",
+      "value": "unsafe"
     },
     "_kw_type": {
       "type": "BLANK"
@@ -11766,11 +11801,10 @@
     "_kw_pub",
     "_kw_in",
     "_kw_turbofish",
-    "_kw_unsafe_marker",
-    "_kw_negative",
     "_kw_operator",
     "_kw_reference",
-    "_kw_mutable_specifier"
+    "_kw_mutable_specifier",
+    "_kw_unsafe_marker"
   ],
   "supertypes": [
     "_expression",

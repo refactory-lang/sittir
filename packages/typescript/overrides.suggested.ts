@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   87  (82 applied, 5 held)
+// Rule promotions:   77  (72 applied, 5 held)
 // Repeated shapes:   9  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -72,9 +72,6 @@ export const suggestedRules = {
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
   _destructuring_pattern: $ => choice($.object_pattern, $.array_pattern),
-
-  // [applied] promoted supertype
-  _export_statement_default: $ => choice($._export_statement_default_from_arm, $._export_statement_default_decl_arm),
 
   // [applied] promoted supertype
   _expressions: $ => choice($.expression, $.sequence_expression),
@@ -252,6 +249,11 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
+  index_signature: {
+    '0/0': 'sign',
+  },
+
+  // [held] 1 candidate(s)
   infer_type: {
     '2/0/0': 'type',
   },
@@ -299,7 +301,6 @@ export interface PromotedRule {
 }
 export const promotedRules: readonly PromotedRule[] = [
   { kind: "_destructuring_pattern", classification: "supertype", applied: true },
-  { kind: "_export_statement_default", classification: "supertype", applied: true },
   { kind: "_expressions", classification: "supertype", applied: true },
   { kind: "_formal_parameter", classification: "supertype", applied: true },
   { kind: "_identifier", classification: "supertype", applied: true },
@@ -335,44 +336,36 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "predefined_type", classification: "terminal", applied: true },
   { kind: "private_property_identifier", classification: "terminal", applied: true },
   { kind: "regex_pattern", classification: "terminal", applied: true },
+  { kind: "_export_statement_default_decl_arm", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_clause_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_ns_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_star_from", classification: "polymorph", applied: true },
-  { kind: "ambient_declaration", classification: "polymorph", applied: true },
   { kind: "ambient_declaration_declaration", classification: "polymorph", applied: true },
   { kind: "ambient_declaration_global", classification: "polymorph", applied: true },
   { kind: "ambient_declaration_module", classification: "polymorph", applied: true },
-  { kind: "arrow_function", classification: "polymorph", applied: true },
   { kind: "arrow_function__call_signature", classification: "polymorph", applied: true },
   { kind: "arrow_function_parameter", classification: "polymorph", applied: true },
   { kind: "as_expression", classification: "polymorph", applied: false },
-  { kind: "call_expression", classification: "polymorph", applied: true },
   { kind: "call_expression_call", classification: "polymorph", applied: true },
   { kind: "call_expression_member", classification: "polymorph", applied: true },
   { kind: "call_expression_template_call", classification: "polymorph", applied: true },
-  { kind: "class_heritage", classification: "polymorph", applied: true },
   { kind: "class_heritage_extends_clause", classification: "polymorph", applied: true },
   { kind: "class_heritage_implements_clause", classification: "polymorph", applied: true },
-  { kind: "export_statement", classification: "polymorph", applied: true },
   { kind: "export_statement_default", classification: "polymorph", applied: true },
   { kind: "export_statement_equals_export", classification: "polymorph", applied: true },
   { kind: "export_statement_namespace_export", classification: "polymorph", applied: true },
   { kind: "export_statement_type_export", classification: "polymorph", applied: true },
   { kind: "for_statement", classification: "polymorph", applied: false },
-  { kind: "import_clause", classification: "polymorph", applied: true },
   { kind: "import_clause_default_import", classification: "polymorph", applied: true },
   { kind: "import_clause_named_imports", classification: "polymorph", applied: true },
   { kind: "import_clause_namespace_import", classification: "polymorph", applied: true },
-  { kind: "import_specifier", classification: "polymorph", applied: true },
   { kind: "import_specifier_as", classification: "polymorph", applied: true },
   { kind: "import_specifier_name", classification: "polymorph", applied: true },
   { kind: "import_statement", classification: "polymorph", applied: false },
-  { kind: "index_signature", classification: "polymorph", applied: true },
   { kind: "index_signature_colon", classification: "polymorph", applied: true },
   { kind: "index_signature_mapped_type_clause", classification: "polymorph", applied: true },
   { kind: "member_expression", classification: "polymorph", applied: false },
-  { kind: "parenthesized_expression", classification: "polymorph", applied: true },
   { kind: "parenthesized_expression_sequence", classification: "polymorph", applied: true },
   { kind: "parenthesized_expression_typed", classification: "polymorph", applied: true },
   { kind: "public_field_definition_abstract_first", classification: "polymorph", applied: true },
@@ -381,7 +374,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "public_field_definition_declare_first", classification: "polymorph", applied: true },
   { kind: "public_field_definition_readonly_first", classification: "polymorph", applied: true },
   { kind: "public_field_definition_static_mods", classification: "polymorph", applied: true },
-  { kind: "update_expression", classification: "polymorph", applied: true },
   { kind: "update_expression_postfix", classification: "polymorph", applied: true },
   { kind: "update_expression_prefix", classification: "polymorph", applied: true },
   { kind: "yield_expression", classification: "polymorph", applied: false },

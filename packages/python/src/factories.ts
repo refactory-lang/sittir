@@ -2,7 +2,7 @@
 
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
-import type { ConfigOf, FluentNode, NonEmptyArray } from '@sittir/types';
+import type { FluentNode, NonEmptyArray } from '@sittir/types';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';
 
 function _configChildren<T>(config: unknown, fallback: T): T {
@@ -141,6 +141,33 @@ export function _exceptClauseAs(config: T.ExceptClauseAs.Config) {
   }, methodsEngine);
 }
 
+export function exceptClauseList(config: T.ExceptClauseList.Config) {
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.ExceptClauseList as const,
+    $source: 2 as const,
+    $named: true as const,
+    _value,
+    values() { return _value; },
+    $with: {
+      values: (...values: NonEmptyArray<T.Expression>) => exceptClauseList({ ...config, value: values }),
+    },
+  }, methodsEngine);
+}
+
+export function expressionStatementTuple(...children: T.Expression[]) {
+  _assertNonEmpty(children, '_expression_statement_tuple.children');
+  const _expression = children;
+  return withMethods({
+    $type: TSKindId.ExpressionStatementTuple as const,
+    $source: 2 as const,
+    $named: true as const,
+    _expression,
+    expressions() { return _expression; },
+    $with: { $children: (...vs: T.Expression[]) => expressionStatementTuple(...vs) },
+  }, methodsEngine);
+}
+
 export function _importList(config: T.ImportList.Config) {
   const _name = config.name;
   return withMethods({
@@ -195,21 +222,15 @@ export function _listPattern(...children: T.CasePattern[]) {
   }, methodsEngine);
 }
 
-export function matchBlock(config: Omit<ConfigOf<T.MatchBlockUFormBlock>, '$variant'>) {
-  return matchBlockUFormBlock(config as Parameters<typeof matchBlockUFormBlock>[0]);
-}
-export function matchBlockUFormBlock(config: Omit<ConfigOf<T.MatchBlockUFormBlock>, '$variant'>) {
-  const _match_block_block = config.matchBlockBlock;
+export function matchBlock(child: T.MatchBlockBlock) {
+  const _match_block_block = child;
   return withMethods({
     $type: TSKindId.MatchBlock as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'block' as const,
     _match_block_block,
     matchBlockBlock() { return _match_block_block; },
-    $with: {
-      matchBlockBlock: (value: T.MatchBlockBlock) => matchBlockUFormBlock({ ...config, matchBlockBlock: value }),
-    },
+    $with: { $child: (v: T.MatchBlockBlock) => matchBlock(v) },
   }, methodsEngine);
 }
 
@@ -274,16 +295,29 @@ export function _tuplePattern(...children: T.CasePattern[]) {
   }, methodsEngine);
 }
 
-export function _withClauseParen(...children: T.WithItem[]) {
-  _assertNonEmpty(children, '_with_clause_paren.children');
+export function withClauseBare(...children: T.WithItem[]) {
+  _assertNonEmpty(children, '_with_clause_bare.children');
   const _with_item = children;
   return withMethods({
-    $type: TSKindId._WithClauseParen as const,
+    $type: TSKindId.WithClauseBare as const,
     $source: 2 as const,
     $named: true as const,
     _with_item,
     withItems() { return _with_item; },
-    $with: { $children: (...vs: T.WithItem[]) => _withClauseParen(...vs) },
+    $with: { $children: (...vs: T.WithItem[]) => withClauseBare(...vs) },
+  }, methodsEngine);
+}
+
+export function withClauseParen(...children: T.WithItem[]) {
+  _assertNonEmpty(children, '_with_clause_paren.children');
+  const _with_item = children;
+  return withMethods({
+    $type: TSKindId.WithClauseParen as const,
+    $source: 2 as const,
+    $named: true as const,
+    _with_item,
+    withItems() { return _with_item; },
+    $with: { $children: (...vs: T.WithItem[]) => withClauseParen(...vs) },
   }, methodsEngine);
 }
 
@@ -350,68 +384,20 @@ export function assertStatement(...children: T.Expression[]) {
   }, methodsEngine);
 }
 
-export function assignment(config: ConfigOf<T.AssignmentUFormEq>): ReturnType<typeof assignmentUFormEq>;
-export function assignment(config: ConfigOf<T.AssignmentUFormType>): ReturnType<typeof assignmentUFormType>;
-export function assignment(config: ConfigOf<T.AssignmentUFormTyped>): ReturnType<typeof assignmentUFormTyped>;
-export function assignment(config: ConfigOf<T.AssignmentUFormEq> | ConfigOf<T.AssignmentUFormType> | ConfigOf<T.AssignmentUFormTyped>) {
-  switch (config.$variant) {
-    case 'eq': return assignmentUFormEq(config as Parameters<typeof assignmentUFormEq>[0]);
-    case 'type': return assignmentUFormType(config as Parameters<typeof assignmentUFormType>[0]);
-    case 'typed': return assignmentUFormTyped(config as Parameters<typeof assignmentUFormTyped>[0]);
-  }
-  throw new Error(`assignment: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'eq' | 'type' | 'typed'.`);
-}
-export function assignmentUFormEq(config: Omit<ConfigOf<T.AssignmentUFormEq>, '$variant'>) {
+export function assignment(config: T.Assignment.Config) {
   const _left = config.left;
-  const _assignment_eq = config.assignmentEq;
+  const _content = config.content;
   return withMethods({
     $type: TSKindId.Assignment as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'eq' as const,
     _left,
-    _assignment_eq,
+    _content,
     left() { return _left; },
-    assignmentEq() { return _assignment_eq; },
+    content() { return _content; },
     $with: {
-      left: (value: T.LeftHandSide) => assignmentUFormEq({ ...config, left: value }),
-      assignmentEq: (value: T.AssignmentEq) => assignmentUFormEq({ ...config, assignmentEq: value }),
-    },
-  }, methodsEngine);
-}
-export function assignmentUFormType(config: Omit<ConfigOf<T.AssignmentUFormType>, '$variant'>) {
-  const _left = config.left;
-  const _assignment_type = config.assignmentType;
-  return withMethods({
-    $type: TSKindId.Assignment as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'type' as const,
-    _left,
-    _assignment_type,
-    left() { return _left; },
-    assignmentType() { return _assignment_type; },
-    $with: {
-      left: (value: T.LeftHandSide) => assignmentUFormType({ ...config, left: value }),
-      assignmentType: (value: T.AssignmentType) => assignmentUFormType({ ...config, assignmentType: value }),
-    },
-  }, methodsEngine);
-}
-export function assignmentUFormTyped(config: Omit<ConfigOf<T.AssignmentUFormTyped>, '$variant'>) {
-  const _left = config.left;
-  const _assignment_typed = config.assignmentTyped;
-  return withMethods({
-    $type: TSKindId.Assignment as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'typed' as const,
-    _left,
-    _assignment_typed,
-    left() { return _left; },
-    assignmentTyped() { return _assignment_typed; },
-    $with: {
-      left: (value: T.LeftHandSide) => assignmentUFormTyped({ ...config, left: value }),
-      assignmentTyped: (value: T.AssignmentTyped) => assignmentUFormTyped({ ...config, assignmentTyped: value }),
+      left: (value: T.LeftHandSide) => assignment({ ...config, left: value }),
+      content: (value: T.AssignmentEq | T.AssignmentType | T.AssignmentTyped) => assignment({ ...config, content: value }),
     },
   }, methodsEngine);
 }
@@ -1001,102 +987,15 @@ export function expressionList(...children: T.Expression[]) {
   }, methodsEngine);
 }
 
-export function expressionStatementTuple(...children: T.Expression[]) {
-  _assertNonEmpty(children, 'expression_statement_tuple.children');
-  const _expression = children;
-  return withMethods({
-    $type: TSKindId._ExpressionStatementTuple as const,
-    $source: 2 as const,
-    $named: true as const,
-    _expression,
-    expressions() { return _expression; },
-    $with: { $children: (...vs: T.Expression[]) => expressionStatementTuple(...vs) },
-  }, methodsEngine);
-}
-
-export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormExpression>): ReturnType<typeof expressionStatementUFormExpression>;
-export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormTuple>): ReturnType<typeof expressionStatementUFormTuple>;
-export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormAssignment>): ReturnType<typeof expressionStatementUFormAssignment>;
-export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormAugmentedAssignment>): ReturnType<typeof expressionStatementUFormAugmentedAssignment>;
-export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormYield>): ReturnType<typeof expressionStatementUFormYield>;
-export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormExpression> | ConfigOf<T.ExpressionStatementUFormTuple> | ConfigOf<T.ExpressionStatementUFormAssignment> | ConfigOf<T.ExpressionStatementUFormAugmentedAssignment> | ConfigOf<T.ExpressionStatementUFormYield>) {
-  switch (config.$variant) {
-    case 'expression': return expressionStatementUFormExpression(config as Parameters<typeof expressionStatementUFormExpression>[0]);
-    case 'tuple': return expressionStatementUFormTuple(config as Parameters<typeof expressionStatementUFormTuple>[0]);
-    case 'assignment': return expressionStatementUFormAssignment(config as Parameters<typeof expressionStatementUFormAssignment>[0]);
-    case 'augmented_assignment': return expressionStatementUFormAugmentedAssignment(config as Parameters<typeof expressionStatementUFormAugmentedAssignment>[0]);
-    case 'yield': return expressionStatementUFormYield(config as Parameters<typeof expressionStatementUFormYield>[0]);
-  }
-  throw new Error(`expressionStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'expression' | 'tuple' | 'assignment' | 'augmented_assignment' | 'yield'.`);
-}
-export function expressionStatementUFormExpression(config: Omit<ConfigOf<T.ExpressionStatementUFormExpression>, '$variant'>) {
-  const _expression = config.expression;
+export function expressionStatement(child: (T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.ExpressionStatement as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'expression' as const,
-    _expression,
-    expression() { return _expression; },
-    $with: {
-      expression: (value: T.Expression) => expressionStatementUFormExpression({ ...config, expression: value }),
-    },
-  }, methodsEngine);
-}
-export function expressionStatementUFormTuple(config: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
-  const _expression_statement_tuple = config.expressionStatementTuple;
-  return withMethods({
-    $type: TSKindId.ExpressionStatement as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'tuple' as const,
-    _expression_statement_tuple,
-    expressionStatementTuple() { return _expression_statement_tuple; },
-    $with: {
-      expressionStatementTuple: (value: T._ExpressionStatementTuple) => expressionStatementUFormTuple({ ...config, expressionStatementTuple: value }),
-    },
-  }, methodsEngine);
-}
-export function expressionStatementUFormAssignment(config: Omit<ConfigOf<T.ExpressionStatementUFormAssignment>, '$variant'>) {
-  const _assignment = config.assignment;
-  return withMethods({
-    $type: TSKindId.ExpressionStatement as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'assignment' as const,
-    _assignment,
-    assignment() { return _assignment; },
-    $with: {
-      assignment: (value: T.Assignment) => expressionStatementUFormAssignment({ ...config, assignment: value }),
-    },
-  }, methodsEngine);
-}
-export function expressionStatementUFormAugmentedAssignment(config: Omit<ConfigOf<T.ExpressionStatementUFormAugmentedAssignment>, '$variant'>) {
-  const _augmented_assignment = config.augmentedAssignment;
-  return withMethods({
-    $type: TSKindId.ExpressionStatement as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'augmented_assignment' as const,
-    _augmented_assignment,
-    augmentedAssignment() { return _augmented_assignment; },
-    $with: {
-      augmentedAssignment: (value: T.AugmentedAssignment) => expressionStatementUFormAugmentedAssignment({ ...config, augmentedAssignment: value }),
-    },
-  }, methodsEngine);
-}
-export function expressionStatementUFormYield(config: Omit<ConfigOf<T.ExpressionStatementUFormYield>, '$variant'>) {
-  const _yield = config.yield;
-  return withMethods({
-    $type: TSKindId.ExpressionStatement as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'yield' as const,
-    _yield,
-    yield() { return _yield; },
-    $with: {
-      yield: (value: T.Yield) => expressionStatementUFormYield({ ...config, yield: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield)) => expressionStatement(v) },
   }, methodsEngine);
 }
 
@@ -2182,67 +2081,15 @@ export function whileStatement(config: T.WhileStatement.Config) {
   }, methodsEngine);
 }
 
-export function withClauseBare(...children: T.WithItem[]) {
-  _assertNonEmpty(children, 'with_clause_bare.children');
-  const _with_item = children;
-  return withMethods({
-    $type: TSKindId._WithClauseBare as const,
-    $source: 2 as const,
-    $named: true as const,
-    _with_item,
-    withItems() { return _with_item; },
-    $with: { $children: (...vs: T.WithItem[]) => withClauseBare(...vs) },
-  }, methodsEngine);
-}
-
-export function withClauseParen(...children: T.WithItem[]) {
-  _assertNonEmpty(children, 'with_clause_paren.children');
-  const _with_item = children;
-  return withMethods({
-    $type: TSKindId._WithClauseParen as const,
-    $source: 2 as const,
-    $named: true as const,
-    _with_item,
-    withItems() { return _with_item; },
-    $with: { $children: (...vs: T.WithItem[]) => withClauseParen(...vs) },
-  }, methodsEngine);
-}
-
-export function withClause(config: ConfigOf<T.WithClauseUFormBare>): ReturnType<typeof withClauseUFormBare>;
-export function withClause(config: ConfigOf<T.WithClauseUFormParen>): ReturnType<typeof withClauseUFormParen>;
-export function withClause(config: ConfigOf<T.WithClauseUFormBare> | ConfigOf<T.WithClauseUFormParen>) {
-  switch (config.$variant) {
-    case 'bare': return withClauseUFormBare(config as Parameters<typeof withClauseUFormBare>[0]);
-    case 'paren': return withClauseUFormParen(config as Parameters<typeof withClauseUFormParen>[0]);
-  }
-  throw new Error(`withClause: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'bare' | 'paren'.`);
-}
-export function withClauseUFormBare(config: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>) {
-  const _with_clause_bare = config.withClauseBare;
+export function withClause(child: (T.WithClauseBare | T.WithClauseParen)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.WithClause as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'bare' as const,
-    _with_clause_bare,
-    withClauseBare() { return _with_clause_bare; },
-    $with: {
-      withClauseBare: (value: T._WithClauseBare) => withClauseUFormBare({ ...config, withClauseBare: value }),
-    },
-  }, methodsEngine);
-}
-export function withClauseUFormParen(config: Omit<ConfigOf<T.WithClauseUFormParen>, '$variant'>) {
-  const _with_clause_paren = config.withClauseParen;
-  return withMethods({
-    $type: TSKindId.WithClause as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'paren' as const,
-    _with_clause_paren,
-    withClauseParen() { return _with_clause_paren; },
-    $with: {
-      withClauseParen: (value: T._WithClauseParen) => withClauseUFormParen({ ...config, withClauseParen: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.WithClauseBare | T.WithClauseParen)) => withClause(v) },
   }, methodsEngine);
 }
 
@@ -2418,6 +2265,8 @@ export type FluentKindMap = {
   "_comparison_operator_comparator": T.ComparisonOperatorComparator;
   "_comprehension_clauses": FluentNode<"_comprehension_clauses", T.ComprehensionClauses.Config>;
   "_except_clause_as": T.ExceptClauseAs;
+  "_except_clause_list": FluentNode<"_except_clause_list", T.ExceptClauseList.Config>;
+  "_expression_statement_tuple": FluentNode<"_expression_statement_tuple", T.ExpressionStatementTuple.Config>;
   "_import_list": T.ImportList;
   "_is_not": T.IsNot;
   "_key_value_pattern": T.KeyValuePattern;
@@ -2428,7 +2277,8 @@ export type FluentKindMap = {
   "_simple_pattern_negative": FluentNode<"_simple_pattern_negative", T.SimplePatternNegative.Config>;
   "_simple_statements": FluentNode<"_simple_statements", T.SimpleStatements.Config>;
   "_tuple_pattern": FluentNode<"_tuple_pattern", T._TuplePattern.Config>;
-  "_with_clause_paren": FluentNode<"_with_clause_paren", T._WithClauseParen.Config>;
+  "_with_clause_bare": FluentNode<"_with_clause_bare", T.WithClauseBare.Config>;
+  "_with_clause_paren": FluentNode<"_with_clause_paren", T.WithClauseParen.Config>;
   "aliased_import": FluentNode<"aliased_import", T.AliasedImport.Config>;
   "argument_list": FluentNode<"argument_list", T.ArgumentList.Config>;
   "as_pattern": FluentNode<"as_pattern", T.AsPattern.Config>;
@@ -2470,7 +2320,6 @@ export type FluentKindMap = {
   "except_clause": FluentNode<"except_clause", T.ExceptClause.Config>;
   "exec_statement": FluentNode<"exec_statement", T.ExecStatement.Config>;
   "expression_list": FluentNode<"expression_list", T.ExpressionList.Config>;
-  "expression_statement_tuple": FluentNode<"expression_statement_tuple", T.ExpressionStatementTuple.Config>;
   "expression_statement": FluentNode<"expression_statement", T.ExpressionStatement.Config>;
   "false": T.False;
   "finally_clause": FluentNode<"finally_clause", T.FinallyClause.Config>;
@@ -2541,8 +2390,6 @@ export type FluentKindMap = {
   "union_pattern": FluentNode<"union_pattern", T.UnionPattern.Config>;
   "union_type": FluentNode<"union_type", T.UnionType.Config>;
   "while_statement": FluentNode<"while_statement", T.WhileStatement.Config>;
-  "with_clause_bare": FluentNode<"with_clause_bare", T.WithClauseBare.Config>;
-  "with_clause_paren": FluentNode<"with_clause_paren", T.WithClauseParen.Config>;
   "with_clause": FluentNode<"with_clause", T.WithClause.Config>;
   "with_item": FluentNode<"with_item", T.WithItem.Config>;
   "with_statement": FluentNode<"with_statement", T.WithStatement.Config>;
@@ -2568,6 +2415,8 @@ export const _factoryMap = {
   "_comparison_operator_comparator": _comparisonOperatorComparator,
   "_comprehension_clauses": comprehensionClauses,
   "_except_clause_as": _exceptClauseAs,
+  "_except_clause_list": exceptClauseList,
+  "_expression_statement_tuple": expressionStatementTuple,
   "_import_list": _importList,
   "_is_not": isNot,
   "_key_value_pattern": _keyValuePattern,
@@ -2578,7 +2427,8 @@ export const _factoryMap = {
   "_simple_pattern_negative": simplePatternNegative,
   "_simple_statements": simpleStatements,
   "_tuple_pattern": _tuplePattern,
-  "_with_clause_paren": _withClauseParen,
+  "_with_clause_bare": withClauseBare,
+  "_with_clause_paren": withClauseParen,
   "aliased_import": aliasedImport,
   "argument_list": argumentList,
   "as_pattern": asPattern,
@@ -2620,7 +2470,6 @@ export const _factoryMap = {
   "except_clause": exceptClause,
   "exec_statement": execStatement,
   "expression_list": expressionList,
-  "expression_statement_tuple": expressionStatementTuple,
   "expression_statement": expressionStatement,
   "false": false_,
   "finally_clause": finallyClause,
@@ -2691,8 +2540,6 @@ export const _factoryMap = {
   "union_pattern": unionPattern,
   "union_type": unionType,
   "while_statement": whileStatement,
-  "with_clause_bare": withClauseBare,
-  "with_clause_paren": withClauseParen,
   "with_clause": withClause,
   "with_item": withItem,
   "with_statement": withStatement,

@@ -2243,7 +2243,8 @@ var overrides_default = grammar(enrichedBase, wire({
     closure_expression: { "4/0": "block", "4/1": "expr" },
     field_pattern: { "2/0": "shorthand", "2/1": "named" },
     function_type: { "1/0/0": "trait_form", "1/0/1": "fn_form" },
-    impl_item: { "6/0": "body", "6/1": "semi" },
+    // impl_item — converted to a full rules: replacement (de-polymorph).
+    // Was: impl_item: { '6/0': 'body', '6/1': 'semi' },
     macro_definition: { "2/0": "paren", "2/1": "bracket", "2/2": "brace" },
     mod_item: { "3/0": "external", "3/1": "inline" },
     or_pattern: { "0": "binary", "1": "prefix" },
@@ -2601,10 +2602,9 @@ var overrides_default = grammar(enrichedBase, wire({
     //     (negative trait impl). Path `3/0/0/0` reaches the bare `!`
     //     literal inside the inner-seq's leading optional. The
     //     `negative` name is context-specific (not `bang_marker`).
-    impl_item: {
-      "0/0": field2("unsafe_marker"),
-      "3/0/0/0": field2("negative")
-    },
+    // impl_item — field promotion (unsafe_marker, negative) is handled inline in the
+    // rules: replacement (de-polymorph). Was:
+    // impl_item: { '0/0': field('unsafe_marker'), '3/0/0/0': field('negative') },
     // index_expression: 2 field(s)
     index_expression: {
       0: field2("object"),
@@ -2908,6 +2908,41 @@ var overrides_default = grammar(enrichedBase, wire({
           )
         ),
         field2("value", $._expression)
+      )
+    ),
+    // impl_item — full rule replacement (de-polymorph). The co-optional trait
+    // clause is owned by alias'd positive/negative clause kinds so it renders as a
+    // unit (no conditional-key-on-sub-optional bug); body/semi arms are alias kinds.
+    _impl_item_unsafe_marker: ($) => "unsafe",
+    _impl_item_body: ($) => $.declaration_list,
+    _impl_item_semi: ($) => ";",
+    _impl_item_positive_clause: ($) => seq(
+      field2("trait", choice($._type_identifier, $.scoped_type_identifier, $.generic_type)),
+      "for"
+    ),
+    _impl_item_negative_clause: ($) => seq(
+      "!",
+      field2("trait", choice($._type_identifier, $.scoped_type_identifier, $.generic_type)),
+      "for"
+    ),
+    impl_item: ($) => seq(
+      optional(field2("unsafe_marker", $._impl_item_unsafe_marker)),
+      "impl",
+      optional(field2("type_parameters", $.type_parameters)),
+      optional(
+        field2(
+          "trait_clause",
+          choice(
+            alias2($._impl_item_positive_clause, $.impl_item_positive_clause),
+            alias2($._impl_item_negative_clause, $.impl_item_negative_clause)
+          )
+        )
+      ),
+      field2("type", $._type),
+      optional(field2("where_clause", $.where_clause)),
+      choice(
+        alias2($._impl_item_body, $.impl_item_body),
+        alias2($._impl_item_semi, $.impl_item_semi)
       )
     )
   },

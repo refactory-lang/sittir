@@ -74,6 +74,8 @@ export const enum SyntaxKind {
   ComparisonOperatorComparator = "_comparison_operator_comparator",
   ComprehensionClauses = "_comprehension_clauses",
   ExceptClauseAs = "_except_clause_as",
+  ExceptClauseList = "_except_clause_list",
+  ExpressionStatementTuple = "_expression_statement_tuple",
   ImportList = "_import_list",
   KeyValuePattern = "_key_value_pattern",
   _ListPattern = "_list_pattern",
@@ -83,7 +85,8 @@ export const enum SyntaxKind {
   SimpleStatements = "_simple_statements",
   Suite = "_suite",
   _TuplePattern = "_tuple_pattern",
-  _WithClauseParen = "_with_clause_paren",
+  WithClauseBare = "_with_clause_bare",
+  WithClauseParen = "_with_clause_paren",
   AliasedImport = "aliased_import",
   ArgumentList = "argument_list",
   AsPattern = "as_pattern",
@@ -121,7 +124,6 @@ export const enum SyntaxKind {
   ExceptClause = "except_clause",
   ExecStatement = "exec_statement",
   ExpressionList = "expression_list",
-  ExpressionStatementTuple = "expression_statement_tuple",
   ExpressionStatement = "expression_statement",
   FinallyClause = "finally_clause",
   ForInClause = "for_in_clause",
@@ -183,8 +185,6 @@ export const enum SyntaxKind {
   UnionPattern = "union_pattern",
   UnionType = "union_type",
   WhileStatement = "while_statement",
-  WithClauseBare = "with_clause_bare",
-  WithClauseParen = "with_clause_paren",
   WithClause = "with_clause",
   WithItem = "with_item",
   WithStatement = "with_statement",
@@ -506,9 +506,9 @@ export const enum TSKindId {
   AssignmentEq = 240,
   AssignmentType = 241,
   AssignmentTyped = 242,
-  _ExpressionStatementTuple = 243,
-  _WithClauseBare = 244,
-  _WithClauseParen = 245,
+  ExpressionStatementTuple = 243,
+  WithClauseBare = 244,
+  WithClauseParen = 245,
   MatchBlockBlock = 246,
   DictPatternKv = 247,
   SimplePatternNegative = 248,
@@ -1083,9 +1083,9 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_assignment_eq": return TSKindId.AssignmentEq;
     case "_assignment_type": return TSKindId.AssignmentType;
     case "_assignment_typed": return TSKindId.AssignmentTyped;
-    case "_expression_statement_tuple": return TSKindId._ExpressionStatementTuple;
-    case "_with_clause_bare": return TSKindId._WithClauseBare;
-    case "_with_clause_paren": return TSKindId._WithClauseParen;
+    case "_expression_statement_tuple": return TSKindId.ExpressionStatementTuple;
+    case "_with_clause_bare": return TSKindId.WithClauseBare;
+    case "_with_clause_paren": return TSKindId.WithClauseParen;
     case "_match_block_block": return TSKindId.MatchBlockBlock;
     case "_dict_pattern_kv": return TSKindId.DictPatternKv;
     case "_simple_pattern_negative": return TSKindId.SimplePatternNegative;
@@ -1179,9 +1179,9 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "assignment_eq": return TSKindId.AssignmentEq;
     case "assignment_type": return TSKindId.AssignmentType;
     case "assignment_typed": return TSKindId.AssignmentTyped;
-    case "expression_statement_tuple": return TSKindId._ExpressionStatementTuple;
-    case "with_clause_bare": return TSKindId._WithClauseBare;
-    case "with_clause_paren": return TSKindId._WithClauseParen;
+    case "expression_statement_tuple": return TSKindId.ExpressionStatementTuple;
+    case "with_clause_bare": return TSKindId.WithClauseBare;
+    case "with_clause_paren": return TSKindId.WithClauseParen;
     case "match_block_block": return TSKindId.MatchBlockBlock;
     case "dict_pattern_kv": return TSKindId.DictPatternKv;
     case "simple_pattern_negative": return TSKindId.SimplePatternNegative;
@@ -1413,6 +1413,18 @@ export interface ExceptClauseAs {
   alias(): Expression | undefined;
 }
 
+export interface ExceptClauseList {
+  readonly $type: TSKindId.ExceptClauseList;
+  readonly _value: NonEmptyArray<Expression>;
+  values(): NonEmptyArray<Expression>;
+}
+
+export interface ExpressionStatementTuple {
+  readonly $type: TSKindId.ExpressionStatementTuple;
+  readonly _expression: NonEmptyArray<Expression>;
+  expressions(): NonEmptyArray<Expression>;
+}
+
 export interface ImportList {
   readonly $type: TSKindId.ImportList;
   readonly _name: NonEmptyArray<DottedName | AliasedImport>;
@@ -1433,14 +1445,12 @@ export interface _ListPattern {
   casePatterns(): readonly (CasePattern)[];
 }
 
-export interface MatchBlockUFormBlock {
+export interface MatchBlock {
   readonly $type: TSKindId.MatchBlock;
-  readonly $variant: 'block';
   readonly _match_block_block: MatchBlockBlock;
   matchBlockBlock(): MatchBlockBlock;
 }
 
-export type MatchBlock = MatchBlockUFormBlock;
 export interface MatchBlockBlock {
   readonly $type: TSKindId.MatchBlockBlock;
   readonly _alternative?: readonly (CaseClause)[];
@@ -1475,8 +1485,14 @@ export interface _TuplePattern {
   casePatterns(): readonly (CasePattern)[];
 }
 
-export interface _WithClauseParen {
-  readonly $type: TSKindId._WithClauseParen;
+export interface WithClauseBare {
+  readonly $type: TSKindId.WithClauseBare;
+  readonly _with_item: NonEmptyArray<WithItem>;
+  withItems(): NonEmptyArray<WithItem>;
+}
+
+export interface WithClauseParen {
+  readonly $type: TSKindId.WithClauseParen;
   readonly _with_item: NonEmptyArray<WithItem>;
   withItems(): NonEmptyArray<WithItem>;
 }
@@ -1509,34 +1525,14 @@ export interface AssertStatement {
   expressions(): NonEmptyArray<Expression>;
 }
 
-export interface AssignmentUFormEq {
+export interface Assignment {
   readonly $type: TSKindId.Assignment;
-  readonly $variant: 'eq';
   readonly _left: LeftHandSide;
-  readonly _assignment_eq: AssignmentEq;
+  readonly _content: AssignmentEq | AssignmentType | AssignmentTyped;
   left(): LeftHandSide;
-  assignmentEq(): AssignmentEq;
+  content(): AssignmentEq | AssignmentType | AssignmentTyped;
 }
 
-export interface AssignmentUFormType {
-  readonly $type: TSKindId.Assignment;
-  readonly $variant: 'type';
-  readonly _left: LeftHandSide;
-  readonly _assignment_type: AssignmentType;
-  left(): LeftHandSide;
-  assignmentType(): AssignmentType;
-}
-
-export interface AssignmentUFormTyped {
-  readonly $type: TSKindId.Assignment;
-  readonly $variant: 'typed';
-  readonly _left: LeftHandSide;
-  readonly _assignment_typed: AssignmentTyped;
-  left(): LeftHandSide;
-  assignmentTyped(): AssignmentTyped;
-}
-
-export type Assignment = AssignmentUFormEq | AssignmentUFormType | AssignmentUFormTyped;
 export interface Attribute {
   readonly $type: TSKindId.Attribute;
   readonly _object: PrimaryExpression;
@@ -1797,48 +1793,12 @@ export interface ExpressionList {
   expressions(): NonEmptyArray<Expression>;
 }
 
-export interface ExpressionStatementTuple {
-  readonly $type: "expression_statement_tuple";
-  readonly _expression: NonEmptyArray<Expression>;
-  expressions(): NonEmptyArray<Expression>;
-}
-
-export interface ExpressionStatementUFormExpression {
+export interface ExpressionStatement {
   readonly $type: TSKindId.ExpressionStatement;
-  readonly $variant: 'expression';
-  readonly _expression: Expression;
-  expression(): Expression;
+  readonly _content: Expression | ExpressionStatementTuple | Assignment | AugmentedAssignment | Yield;
+  content(): Expression | ExpressionStatementTuple | Assignment | AugmentedAssignment | Yield;
 }
 
-export interface ExpressionStatementUFormTuple {
-  readonly $type: TSKindId.ExpressionStatement;
-  readonly $variant: 'tuple';
-  readonly _expression_statement_tuple: _ExpressionStatementTuple;
-  expressionStatementTuple(): _ExpressionStatementTuple;
-}
-
-export interface ExpressionStatementUFormAssignment {
-  readonly $type: TSKindId.ExpressionStatement;
-  readonly $variant: 'assignment';
-  readonly _assignment: Assignment;
-  assignment(): Assignment;
-}
-
-export interface ExpressionStatementUFormAugmentedAssignment {
-  readonly $type: TSKindId.ExpressionStatement;
-  readonly $variant: 'augmented_assignment';
-  readonly _augmented_assignment: AugmentedAssignment;
-  augmentedAssignment(): AugmentedAssignment;
-}
-
-export interface ExpressionStatementUFormYield {
-  readonly $type: TSKindId.ExpressionStatement;
-  readonly $variant: 'yield';
-  readonly _yield: Yield;
-  yield(): Yield;
-}
-
-export type ExpressionStatement = ExpressionStatementUFormExpression | ExpressionStatementUFormTuple | ExpressionStatementUFormAssignment | ExpressionStatementUFormAugmentedAssignment | ExpressionStatementUFormYield;
 export interface FinallyClause {
   readonly $type: TSKindId.FinallyClause;
   readonly _block: SimpleStatements | Block | Newline;
@@ -2315,33 +2275,12 @@ export interface WhileStatement {
   alternative(): ElseClause | undefined;
 }
 
-export interface WithClauseBare {
-  readonly $type: "with_clause_bare";
-  readonly _with_item: NonEmptyArray<WithItem>;
-  withItems(): NonEmptyArray<WithItem>;
-}
-
-export interface WithClauseParen {
-  readonly $type: "with_clause_paren";
-  readonly _with_item: NonEmptyArray<WithItem>;
-  withItems(): NonEmptyArray<WithItem>;
-}
-
-export interface WithClauseUFormBare {
+export interface WithClause {
   readonly $type: TSKindId.WithClause;
-  readonly $variant: 'bare';
-  readonly _with_clause_bare: _WithClauseBare;
-  withClauseBare(): _WithClauseBare;
+  readonly _content: WithClauseBare | WithClauseParen;
+  content(): WithClauseBare | WithClauseParen;
 }
 
-export interface WithClauseUFormParen {
-  readonly $type: TSKindId.WithClause;
-  readonly $variant: 'paren';
-  readonly _with_clause_paren: _WithClauseParen;
-  withClauseParen(): _WithClauseParen;
-}
-
-export type WithClause = WithClauseUFormBare | WithClauseUFormParen;
 export interface WithItem {
   readonly $type: TSKindId.WithItem;
   readonly _value: Expression;
@@ -2411,25 +2350,24 @@ export interface AssignmentTypedTree extends AnyTreeNode { readonly type: "_assi
 export interface ComparisonOperatorComparatorTree extends AnyTreeNode { readonly type: "_comparison_operator_comparator"; }
 export interface ComprehensionClausesTree extends AnyTreeNode { readonly type: "_comprehension_clauses"; }
 export interface ExceptClauseAsTree extends AnyTreeNode { readonly type: "_except_clause_as"; }
+export interface ExceptClauseListTree extends AnyTreeNode { readonly type: "_except_clause_list"; }
+export interface ExpressionStatementTupleTree extends AnyTreeNode { readonly type: "_expression_statement_tuple"; }
 export interface ImportListTree extends AnyTreeNode { readonly type: "_import_list"; }
 export interface KeyValuePatternTree extends AnyTreeNode { readonly type: "_key_value_pattern"; }
 export interface _ListPatternTree extends AnyTreeNode { readonly type: "_list_pattern"; }
 export interface MatchBlockTree extends AnyTreeNode { readonly type: "_match_block"; }
-export interface MatchBlockUFormBlockTree extends AnyTreeNode {}
 export interface MatchBlockBlockTree extends AnyTreeNode { readonly type: "_match_block_block"; }
 export interface SimplePatternNegativeTree extends AnyTreeNode { readonly type: "_simple_pattern_negative"; }
 export interface SimpleStatementsTree extends AnyTreeNode { readonly type: "_simple_statements"; }
 export interface SuiteTree extends AnyTreeNode { readonly type: "_suite"; }
 export interface _TuplePatternTree extends AnyTreeNode { readonly type: "_tuple_pattern"; }
-export interface _WithClauseParenTree extends AnyTreeNode { readonly type: "_with_clause_paren"; }
+export interface WithClauseBareTree extends AnyTreeNode { readonly type: "_with_clause_bare"; }
+export interface WithClauseParenTree extends AnyTreeNode { readonly type: "_with_clause_paren"; }
 export interface AliasedImportTree extends TreeNode<'aliased_import'> {}
 export interface ArgumentListTree extends TreeNode<'argument_list'> {}
 export interface AsPatternTree extends TreeNode<'as_pattern'> {}
 export interface AssertStatementTree extends TreeNode<'assert_statement'> {}
 export interface AssignmentTree extends TreeNode<'assignment'> {}
-export interface AssignmentUFormEqTree extends TreeNode<'assignment'> {}
-export interface AssignmentUFormTypeTree extends TreeNode<'assignment'> {}
-export interface AssignmentUFormTypedTree extends TreeNode<'assignment'> {}
 export interface AttributeTree extends TreeNode<'attribute'> {}
 export interface AugmentedAssignmentTree extends TreeNode<'augmented_assignment'> {}
 export interface AwaitTree extends TreeNode<'await'> {}
@@ -2462,13 +2400,7 @@ export interface ElseClauseTree extends TreeNode<'else_clause'> {}
 export interface ExceptClauseTree extends TreeNode<'except_clause'> {}
 export interface ExecStatementTree extends TreeNode<'exec_statement'> {}
 export interface ExpressionListTree extends TreeNode<'expression_list'> {}
-export interface ExpressionStatementTupleTree extends TreeNode<'expression_statement_tuple'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementUFormExpressionTree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementUFormTupleTree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementUFormAssignmentTree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementUFormAugmentedAssignmentTree extends TreeNode<'expression_statement'> {}
-export interface ExpressionStatementUFormYieldTree extends TreeNode<'expression_statement'> {}
 export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
 export interface ForInClauseTree extends TreeNode<'for_in_clause'> {}
 export interface ForStatementTree extends TreeNode<'for_statement'> {}
@@ -2529,11 +2461,7 @@ export interface UnaryOperatorTree extends TreeNode<'unary_operator'> {}
 export interface UnionPatternTree extends TreeNode<'union_pattern'> {}
 export interface UnionTypeTree extends TreeNode<'union_type'> {}
 export interface WhileStatementTree extends TreeNode<'while_statement'> {}
-export interface WithClauseBareTree extends TreeNode<'with_clause_bare'> {}
-export interface WithClauseParenTree extends TreeNode<'with_clause_paren'> {}
 export interface WithClauseTree extends TreeNode<'with_clause'> {}
-export interface WithClauseUFormBareTree extends TreeNode<'with_clause'> {}
-export interface WithClauseUFormParenTree extends TreeNode<'with_clause'> {}
 export interface WithItemTree extends TreeNode<'with_item'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
@@ -2809,6 +2737,8 @@ export type PythonNode =
   | ComparisonOperatorComparator
   | ComprehensionClauses
   | ExceptClauseAs
+  | ExceptClauseList
+  | ExpressionStatementTuple
   | ImportList
   | KeyValuePattern
   | _ListPattern
@@ -2818,7 +2748,8 @@ export type PythonNode =
   | SimpleStatements
   | Suite
   | _TuplePattern
-  | _WithClauseParen
+  | WithClauseBare
+  | WithClauseParen
   | AliasedImport
   | ArgumentList
   | AsPattern
@@ -2856,7 +2787,6 @@ export type PythonNode =
   | ExceptClause
   | ExecStatement
   | ExpressionList
-  | ExpressionStatementTuple
   | ExpressionStatement
   | FinallyClause
   | ForInClause
@@ -2918,8 +2848,6 @@ export type PythonNode =
   | UnionPattern
   | UnionType
   | WhileStatement
-  | WithClauseBare
-  | WithClauseParen
   | WithClause
   | WithItem
   | WithStatement
@@ -2934,6 +2862,8 @@ export interface KindMap {
   '_comparison_operator_comparator': ComparisonOperatorComparator;
   '_comprehension_clauses': ComprehensionClauses;
   '_except_clause_as': ExceptClauseAs;
+  '_except_clause_list': ExceptClauseList;
+  '_expression_statement_tuple': ExpressionStatementTuple;
   '_import_list': ImportList;
   '_key_value_pattern': KeyValuePattern;
   '_list_pattern': _ListPattern;
@@ -2943,7 +2873,8 @@ export interface KindMap {
   '_simple_statements': SimpleStatements;
   '_suite': Suite;
   '_tuple_pattern': _TuplePattern;
-  '_with_clause_paren': _WithClauseParen;
+  '_with_clause_bare': WithClauseBare;
+  '_with_clause_paren': WithClauseParen;
   'aliased_import': AliasedImport;
   'argument_list': ArgumentList;
   'as_pattern': AsPattern;
@@ -2981,7 +2912,6 @@ export interface KindMap {
   'except_clause': ExceptClause;
   'exec_statement': ExecStatement;
   'expression_list': ExpressionList;
-  'expression_statement_tuple': ExpressionStatementTuple;
   'expression_statement': ExpressionStatement;
   'finally_clause': FinallyClause;
   'for_in_clause': ForInClause;
@@ -3043,8 +2973,6 @@ export interface KindMap {
   'union_pattern': UnionPattern;
   'union_type': UnionType;
   'while_statement': WhileStatement;
-  'with_clause_bare': WithClauseBare;
-  'with_clause_paren': WithClauseParen;
   'with_clause': WithClause;
   'with_item': WithItem;
   'with_statement': WithStatement;
@@ -3082,13 +3010,6 @@ export interface KindMap {
   'except': Except;
 }
 
-export interface VariantMap {
-  '_match_block': { block: MatchBlockUFormBlock };
-  'assignment': { eq: AssignmentUFormEq; type: AssignmentUFormType; typed: AssignmentUFormTyped };
-  'expression_statement': { expression: ExpressionStatementUFormExpression; tuple: ExpressionStatementUFormTuple; assignment: ExpressionStatementUFormAssignment; augmented_assignment: ExpressionStatementUFormAugmentedAssignment; yield: ExpressionStatementUFormYield };
-  'with_clause': { bare: WithClauseUFormBare; paren: WithClauseUFormParen };
-}
-
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
 export interface _AsPatternNs extends NodeNs<_AsPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3097,6 +3018,8 @@ export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap
 export interface ComparisonOperatorComparatorNs extends NodeNs<ComparisonOperatorComparator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ComprehensionClausesNs extends NodeNs<ComprehensionClauses, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseAsNs extends NodeNs<ExceptClauseAs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExceptClauseListNs extends NodeNs<ExceptClauseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExpressionStatementTupleNs extends NodeNs<ExpressionStatementTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportListNs extends NodeNs<ImportList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface KeyValuePatternNs extends NodeNs<KeyValuePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ListPatternNs extends NodeNs<_ListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3106,7 +3029,8 @@ export interface SimplePatternNegativeNs extends NodeNs<SimplePatternNegative, L
 export interface SimpleStatementsNs extends NodeNs<SimpleStatements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SuiteNs extends NodeNs<Suite, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _TuplePatternNs extends NodeNs<_TuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _WithClauseParenNs extends NodeNs<_WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithClauseBareNs extends NodeNs<WithClauseBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AliasedImportNs extends NodeNs<AliasedImport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArgumentListNs extends NodeNs<ArgumentList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AsPatternNs extends NodeNs<AsPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3144,7 +3068,6 @@ export interface ElseClauseNs extends NodeNs<ElseClause, LeafScalarMap, LeafStri
 export interface ExceptClauseNs extends NodeNs<ExceptClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExecStatementNs extends NodeNs<ExecStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionListNs extends NodeNs<ExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExpressionStatementTupleNs extends NodeNs<ExpressionStatementTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionStatementNs extends NodeNs<ExpressionStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FinallyClauseNs extends NodeNs<FinallyClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ForInClauseNs extends NodeNs<ForInClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3206,8 +3129,6 @@ export interface UnaryOperatorNs extends NodeNs<UnaryOperator, LeafScalarMap, Le
 export interface UnionPatternNs extends NodeNs<UnionPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface UnionTypeNs extends NodeNs<UnionType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WhileStatementNs extends NodeNs<WhileStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithClauseBareNs extends NodeNs<WithClauseBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithClauseNs extends NodeNs<WithClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithItemNs extends NodeNs<WithItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithStatementNs extends NodeNs<WithStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3221,6 +3142,8 @@ export interface NamespaceMap {
   '_comparison_operator_comparator': ComparisonOperatorComparatorNs;
   '_comprehension_clauses': ComprehensionClausesNs;
   '_except_clause_as': ExceptClauseAsNs;
+  '_except_clause_list': ExceptClauseListNs;
+  '_expression_statement_tuple': ExpressionStatementTupleNs;
   '_import_list': ImportListNs;
   '_key_value_pattern': KeyValuePatternNs;
   '_list_pattern': _ListPatternNs;
@@ -3230,7 +3153,8 @@ export interface NamespaceMap {
   '_simple_statements': SimpleStatementsNs;
   '_suite': SuiteNs;
   '_tuple_pattern': _TuplePatternNs;
-  '_with_clause_paren': _WithClauseParenNs;
+  '_with_clause_bare': WithClauseBareNs;
+  '_with_clause_paren': WithClauseParenNs;
   'aliased_import': AliasedImportNs;
   'argument_list': ArgumentListNs;
   'as_pattern': AsPatternNs;
@@ -3268,7 +3192,6 @@ export interface NamespaceMap {
   'except_clause': ExceptClauseNs;
   'exec_statement': ExecStatementNs;
   'expression_list': ExpressionListNs;
-  'expression_statement_tuple': ExpressionStatementTupleNs;
   'expression_statement': ExpressionStatementNs;
   'finally_clause': FinallyClauseNs;
   'for_in_clause': ForInClauseNs;
@@ -3330,8 +3253,6 @@ export interface NamespaceMap {
   'union_pattern': UnionPatternNs;
   'union_type': UnionTypeNs;
   'while_statement': WhileStatementNs;
-  'with_clause_bare': WithClauseBareNs;
-  'with_clause_paren': WithClauseParenNs;
   'with_clause': WithClauseNs;
   'with_item': WithItemNs;
   'with_statement': WithStatementNs;
@@ -3393,6 +3314,20 @@ export namespace ExceptClauseAs {
   export type Loose = LooseFor<'_except_clause_as'>;
   export type Tree = TreeFor<'_except_clause_as'>;
   export type Kind = '_except_clause_as';
+}
+export namespace ExceptClauseList {
+  export type Config = ConfigFor<'_except_clause_list'>;
+  export type Fluent = FluentFor<'_except_clause_list'>;
+  export type Loose = LooseFor<'_except_clause_list'>;
+  export type Tree = TreeFor<'_except_clause_list'>;
+  export type Kind = '_except_clause_list';
+}
+export namespace ExpressionStatementTuple {
+  export type Config = ConfigFor<'_expression_statement_tuple'>;
+  export type Fluent = FluentFor<'_expression_statement_tuple'>;
+  export type Loose = LooseFor<'_expression_statement_tuple'>;
+  export type Tree = TreeFor<'_expression_statement_tuple'>;
+  export type Kind = '_expression_statement_tuple';
 }
 export namespace ImportList {
   export type Config = ConfigFor<'_import_list'>;
@@ -3457,7 +3392,14 @@ export namespace _TuplePattern {
   export type Tree = TreeFor<'_tuple_pattern'>;
   export type Kind = '_tuple_pattern';
 }
-export namespace _WithClauseParen {
+export namespace WithClauseBare {
+  export type Config = ConfigFor<'_with_clause_bare'>;
+  export type Fluent = FluentFor<'_with_clause_bare'>;
+  export type Loose = LooseFor<'_with_clause_bare'>;
+  export type Tree = TreeFor<'_with_clause_bare'>;
+  export type Kind = '_with_clause_bare';
+}
+export namespace WithClauseParen {
   export type Config = ConfigFor<'_with_clause_paren'>;
   export type Fluent = FluentFor<'_with_clause_paren'>;
   export type Loose = LooseFor<'_with_clause_paren'>;
@@ -3722,13 +3664,6 @@ export namespace ExpressionList {
   export type Loose = LooseFor<'expression_list'>;
   export type Tree = TreeFor<'expression_list'>;
   export type Kind = 'expression_list';
-}
-export namespace ExpressionStatementTuple {
-  export type Config = ConfigFor<'expression_statement_tuple'>;
-  export type Fluent = FluentFor<'expression_statement_tuple'>;
-  export type Loose = LooseFor<'expression_statement_tuple'>;
-  export type Tree = TreeFor<'expression_statement_tuple'>;
-  export type Kind = 'expression_statement_tuple';
 }
 export namespace ExpressionStatement {
   export type Config = ConfigFor<'expression_statement'>;
@@ -4156,20 +4091,6 @@ export namespace WhileStatement {
   export type Loose = LooseFor<'while_statement'>;
   export type Tree = TreeFor<'while_statement'>;
   export type Kind = 'while_statement';
-}
-export namespace WithClauseBare {
-  export type Config = ConfigFor<'with_clause_bare'>;
-  export type Fluent = FluentFor<'with_clause_bare'>;
-  export type Loose = LooseFor<'with_clause_bare'>;
-  export type Tree = TreeFor<'with_clause_bare'>;
-  export type Kind = 'with_clause_bare';
-}
-export namespace WithClauseParen {
-  export type Config = ConfigFor<'with_clause_paren'>;
-  export type Fluent = FluentFor<'with_clause_paren'>;
-  export type Loose = LooseFor<'with_clause_paren'>;
-  export type Tree = TreeFor<'with_clause_paren'>;
-  export type Kind = 'with_clause_paren';
 }
 export namespace WithClause {
   export type Config = ConfigFor<'with_clause'>;

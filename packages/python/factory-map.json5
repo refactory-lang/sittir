@@ -14,11 +14,14 @@
     "_complex_pattern_operator": "text",
     "_comprehension_clauses": "config",
     "_except_clause_as": "config",
-    "_match_block": "config",
+    "_except_clause_list": "config",
+    "_expression_statement_tuple": "spread",
+    "_match_block": "spread",
     "_match_block_block": "config",
     "_simple_statements": "spread",
     "_splat_pattern_operator": "text",
     "_unary_operator_operator": "text",
+    "_with_clause_bare": "spread",
     "_with_clause_paren": "spread",
     "aliased_import": "config",
     "argument_list": "config",
@@ -61,8 +64,7 @@
     "except_clause": "config",
     "exec_statement": "config",
     "expression_list": "spread",
-    "expression_statement_tuple": "spread",
-    "expression_statement": "config",
+    "expression_statement": "direct",
     "false": "text",
     "finally_clause": "direct",
     "float": "text",
@@ -133,9 +135,7 @@
     "union_pattern": "spread",
     "union_type": "config",
     "while_statement": "config",
-    "with_clause_bare": "spread",
-    "with_clause_paren": "spread",
-    "with_clause": "config",
+    "with_clause": "direct",
     "with_item": "direct",
     "with_statement": "config",
     "yield": "config",
@@ -200,13 +200,9 @@
     "as_pattern.alias": {
       "as_pattern_target": "expression"
     },
-    "assignment.assignment_eq": {
-      "assignment_eq": "_assignment_eq"
-    },
-    "assignment.assignment_type": {
-      "assignment_type": "_assignment_type"
-    },
-    "assignment.assignment_typed": {
+    "assignment.content": {
+      "assignment_eq": "_assignment_eq",
+      "assignment_type": "_assignment_type",
       "assignment_typed": "_assignment_typed"
     },
     "case_clause.consequence": {
@@ -240,7 +236,7 @@
     "except_clause.newline": {
       "block": "_newline"
     },
-    "expression_statement.expression_statement_tuple": {
+    "expression_statement.content": {
       "expression_statement_tuple": "_expression_statement_tuple"
     },
     "finally_clause.block": {
@@ -270,10 +266,8 @@
     "while_statement.body": {
       "block": "_newline"
     },
-    "with_clause.with_clause_bare": {
-      "with_clause_bare": "_with_clause_bare"
-    },
-    "with_clause.with_clause_paren": {
+    "with_clause.content": {
+      "with_clause_bare": "_with_clause_bare",
       "with_clause_paren": "_with_clause_paren"
     },
     "with_statement.body": {
@@ -307,6 +301,12 @@
       "value",
       "alias"
     ],
+    "_except_clause_list": [
+      "value"
+    ],
+    "_expression_statement_tuple": [
+      "expression"
+    ],
     "_match_block": [
       "match_block_block"
     ],
@@ -315,6 +315,9 @@
     ],
     "_simple_statements": [
       "simple_statement"
+    ],
+    "_with_clause_bare": [
+      "with_item"
     ],
     "_with_clause_paren": [
       "with_item"
@@ -335,9 +338,7 @@
     ],
     "assignment": [
       "left",
-      "assignment_eq",
-      "assignment_type",
-      "assignment_typed"
+      "content"
     ],
     "attribute": [
       "object",
@@ -463,15 +464,8 @@
     "expression_list": [
       "expression"
     ],
-    "expression_statement_tuple": [
-      "expression"
-    ],
     "expression_statement": [
-      "expression",
-      "expression_statement_tuple",
-      "assignment",
-      "augmented_assignment",
-      "yield"
+      "content"
     ],
     "finally_clause": [
       "block"
@@ -698,15 +692,8 @@
       "body",
       "alternative"
     ],
-    "with_clause_bare": [
-      "with_item"
-    ],
-    "with_clause_paren": [
-      "with_item"
-    ],
     "with_clause": [
-      "with_clause_bare",
-      "with_clause_paren"
+      "content"
     ],
     "with_item": [
       "value"
@@ -819,6 +806,24 @@
         "nonEmpty": false
       }
     },
+    "_except_clause_list": {
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_expression_statement_tuple": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "_match_block": {
       "match_block_block": {
         "unnamed": false,
@@ -839,6 +844,15 @@
     },
     "_simple_statements": {
       "simple_statement": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_with_clause_bare": {
+      "with_item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -913,24 +927,10 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "assignment_eq": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "assignment_type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "assignment_typed": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1419,48 +1419,11 @@
         "nonEmpty": true
       }
     },
-    "expression_statement_tuple": {
-      "expression": {
+    "expression_statement": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "expression_statement": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "expression_statement_tuple": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "assignment": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "augmented_assignment": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "yield": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2348,36 +2311,11 @@
         "nonEmpty": false
       }
     },
-    "with_clause_bare": {
-      "with_item": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "with_clause_paren": {
-      "with_item": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
     "with_clause": {
-      "with_clause_bare": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "with_clause_paren": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2435,7 +2373,7 @@
     "_match_block": {
       "source": "override",
       "childKind": {
-        "match_block_block": "block"
+        "_match_block_block": "block"
       }
     },
     "assignment": {
@@ -2444,97 +2382,6 @@
         "assignment_eq": "eq",
         "assignment_type": "type",
         "assignment_typed": "typed"
-      },
-      "helperKind": {
-        "eq": "_assignment_eq",
-        "type": "_assignment_type",
-        "typed": "_assignment_typed"
-      },
-      "helperChildKind": {
-        "eq": [
-          "comparison_operator",
-          "not_operator",
-          "boolean_operator",
-          "lambda",
-          "await",
-          "binary_operator",
-          "identifier",
-          "keyword_identifier",
-          "string",
-          "concatenated_string",
-          "integer",
-          "float",
-          "true",
-          "false",
-          "none",
-          "unary_operator",
-          "attribute",
-          "subscript",
-          "call",
-          "list",
-          "list_comprehension",
-          "dictionary",
-          "dictionary_comprehension",
-          "set",
-          "set_comprehension",
-          "tuple",
-          "parenthesized_expression",
-          "generator_expression",
-          "ellipsis",
-          "list_splat_pattern",
-          "conditional_expression",
-          "named_expression",
-          "as_pattern",
-          "expression_list",
-          "assignment",
-          "augmented_assignment",
-          "pattern_list",
-          "yield"
-        ],
-        "type": [
-          "type"
-        ],
-        "typed": [
-          "type",
-          "comparison_operator",
-          "not_operator",
-          "boolean_operator",
-          "lambda",
-          "await",
-          "binary_operator",
-          "identifier",
-          "keyword_identifier",
-          "string",
-          "concatenated_string",
-          "integer",
-          "float",
-          "true",
-          "false",
-          "none",
-          "unary_operator",
-          "attribute",
-          "subscript",
-          "call",
-          "list",
-          "list_comprehension",
-          "dictionary",
-          "dictionary_comprehension",
-          "set",
-          "set_comprehension",
-          "tuple",
-          "parenthesized_expression",
-          "generator_expression",
-          "ellipsis",
-          "list_splat_pattern",
-          "conditional_expression",
-          "named_expression",
-          "as_pattern",
-          "expression_list",
-          "assignment",
-          "augmented_assignment",
-          "pattern_list",
-          "yield"
-        ]
       }
     },
     "dict_pattern": {
@@ -2553,46 +2400,7 @@
     "expression_statement": {
       "source": "override",
       "childKind": {
-        "comparison_operator": "expression",
-        "not_operator": "expression",
-        "boolean_operator": "expression",
-        "lambda": "expression",
-        "await": "expression",
-        "binary_operator": "expression",
-        "identifier": "expression",
-        "keyword_identifier": "expression",
-        "string": "expression",
-        "concatenated_string": "expression",
-        "integer": "expression",
-        "float": "expression",
-        "true": "expression",
-        "false": "expression",
-        "none": "expression",
-        "unary_operator": "expression",
-        "attribute": "expression",
-        "subscript": "expression",
-        "call": "expression",
-        "list": "expression",
-        "list_comprehension": "expression",
-        "dictionary": "expression",
-        "dictionary_comprehension": "expression",
-        "set": "expression",
-        "set_comprehension": "expression",
-        "tuple": "expression",
-        "parenthesized_expression": "expression",
-        "generator_expression": "expression",
-        "ellipsis": "expression",
-        "list_splat_pattern": "expression",
-        "conditional_expression": "expression",
-        "named_expression": "expression",
-        "as_pattern": "expression",
-        "expression_statement_tuple": "tuple",
-        "assignment": "assignment",
-        "augmented_assignment": "augmented_assignment",
-        "yield": "yield"
-      },
-      "helperKind": {
-        "tuple": "_expression_statement_tuple"
+        "expression_statement_tuple": "tuple"
       }
     },
     "with_clause": {
@@ -2600,15 +2408,6 @@
       "childKind": {
         "with_clause_bare": "bare",
         "with_clause_paren": "paren"
-      },
-      "helperKind": {
-        "bare": "_with_clause_bare",
-        "paren": "_with_clause_paren"
-      },
-      "helperChildKind": {
-        "paren": [
-          "with_item"
-        ]
       }
     }
   }

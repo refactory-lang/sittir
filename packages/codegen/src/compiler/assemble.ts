@@ -146,7 +146,10 @@ export function assemble(
 			const inlinedRule = hoistInnerFieldsForTemplate(
 				inlineRefs(assemblyRule, optimized.rules)
 			);
-			const modelType = classifyNode(kind, inlinedRule, { variantParents });
+			const modelType = classifyNode(kind, inlinedRule, {
+				variantParents,
+				parentAliasedKinds: optimized.parentAliasedKinds
+			});
 			// `simplifiedRules[kind]` and `renderRules[kind]` are both pre-computed
 			// by optimize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
 			const simplifiedRule = optimized.simplifiedRules[kind]!;
@@ -1433,7 +1436,11 @@ type ModelType = AssembledNode['modelType'];
  * left is distinguishing branch (has fields) from container (has children
  * only) for ordinary seq rules — that's a one-level check.
  */
-export function classifyNode(kind: string, rule: Rule, opts?: { variantParents?: ReadonlySet<string> }): ModelType {
+export function classifyNode(
+	kind: string,
+	rule: Rule,
+	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string> }
+): ModelType {
 	switch (rule.type) {
 		case 'enum':
 			return 'enum';
@@ -1458,8 +1465,7 @@ export function classifyNode(kind: string, rule: Rule, opts?: { variantParents?:
 	// containers; the derive walker's cross-branch merging handles
 	// heterogeneous-field-per-arm shapes without inventing anonymous
 	// polymorph identities.
-	void opts;
-	if (isHiddenRepeatHelper(kind, rule)) return 'multi';
+	if (isHiddenRepeatHelper(kind, rule, opts?.parentAliasedKinds)) return 'multi';
 	const branchOrContainer = classifyBranchOrContainer(rule);
 	if (branchOrContainer !== null) return branchOrContainer;
 	return classifyTerminalFallback(kind, rule);
@@ -1470,15 +1476,34 @@ export function classifyNode(kind: string, rule: Rule, opts?: { variantParents?:
  *
  * @param kind - The rule kind name (snake_case, may start with `_`).
  * @param rule - The rule body for that kind.
- * @returns `true` when the kind is hidden and its body unwraps to a repeat.
+ * @param parentAliasedKinds - Optional set of hidden kind names that appear
+ *   as the content of a named alias in a parent rule. When provided, kinds
+ *   in this set are excluded from the `multi` classification even if their
+ *   rule body is a repeat: they surface as REAL runtime CST nodes (under
+ *   the alias target name) and need their own `branch` transport type.
+ * @returns `true` when the kind is hidden, its body unwraps to a repeat,
+ *   AND it is NOT aliased by a parent rule.
  * @remarks
  *   Hidden repeat helpers are inlined by tree-sitter at parse time, so they never
  *   surface as concrete nodes. Classifying them as `multi` lets downstream emitters
  *   skip the interface/factory/resolver and the walker inlines the repeat at
  *   referrers (rest-params factory, multi-valued child slot). See AssembledMulti doc.
+ *
+ *   Aliased hidden kinds (e.g. `_with_clause_bare` aliased to `with_clause_bare`)
+ *   are NOT inlined — tree-sitter exposes them as concrete named nodes. They must
+ *   classify as `branch` so the Rust transport can dispatch on their kind ID.
  */
-function isHiddenRepeatHelper(kind: string, rule: Rule): boolean {
-	return kind.startsWith('_') && extractRepeatShape(rule) !== null;
+function isHiddenRepeatHelper(
+	kind: string,
+	rule: Rule,
+	parentAliasedKinds?: ReadonlySet<string>
+): boolean {
+	if (!kind.startsWith('_')) return false;
+	if (extractRepeatShape(rule) === null) return false;
+	// If this kind appears as the content of a named alias in any parent rule,
+	// it produces a real runtime CST node — do NOT classify as multi.
+	if (parentAliasedKinds?.has(kind)) return false;
+	return true;
 }
 
 /**
