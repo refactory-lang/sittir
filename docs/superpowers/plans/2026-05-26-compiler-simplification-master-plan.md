@@ -42,8 +42,10 @@
 | **PR-G** | Diagnostics severity model + Assemble→Project gate (additive) | — (≺ H, L) | 1‖ | no | `pr-g-diagnostics-gate` | ✅ DONE (#50; inert gate, `severity:'fail'` + `assertEmittable`) |
 | ~~PRK~~ | Eliminate cached `patternReplacementKinds` → structural `deriveComplexAliasTargetHidden` | E | — | no | `pr-prk-eliminate` | ✅ DONE (#51; byte-neutral) |
 | **PR-H** | Phase rename `optimize.ts`→`normalize.ts`; `transforms.ts`; ctx; node-behavior→class | G | 6 | no | `pr-h-phase-rename` | ✅ DONE (#54; rename via @lspeasy/cli; op-body relocation → PR-O M1) |
-| **PR-M** | Sittir-invention rule-IR cut + `AssembledPolymorph`→`AssembledBranch` | core (B); **≺ I** | 7 | **yes** | `pr-m-rule-ir-cut` | ⬜ |
-| **PR-I** | General choice-slot→factory submethods + `$variant` removal | **M** | 8 | **yes** | `pr-i-choice-slot-submethods` | ⬜ |
+| **PR-M** | Sittir-invention rule-IR cut + `AssembledPolymorph`→`AssembledBranch` | core (B); **≺ I** | 7 | **yes** | `pr-m-rule-ir-cut` | 🚧 **φ1 spiked** (#57) — see §φ1 note |
+| **PR-M-φ2** | finish the formal rule-IR cut + `$variant`-machinery removal (φ1 mechanism landed #57) | M-φ1 (#57) | 7 | **yes** | `pr-m2-rule-ir-cut-phase2` | ⬜ |
+| **PR-I** | General choice-slot→factory submethods + `$variant` removal | **M** | 8 | **yes** | `pr-i-choice-slot-submethods` | 🚧 **φ1 spiked** (#57) — see §φ1 note |
+| **PR-I-φ2** | remaining polymorph kinds→branches + submethods; **match_arm residual** (§φ1 note) | **M-φ2** | 8 | **yes** | `pr-i2-choice-slot-submethods-phase2` | ⬜ |
 | **PR-K** | `factory-map.json5`→`node-model.json5` + elevate/relabel surfacing | I/M | 9 | no | `pr-k-node-model-registration` | ⬜ |
 | **PR-N** | enrich-widening — name easy positional symbols | — (enrich-side; ≺ L) | ‖ | no | `pr-n-enrich-widening` | ⬜ |
 | **PR-O** | **(a)** Structural de-dup M1/MO2/P1 — *non-behavioral* · **(b) `separator-canonical` — _BEHAVIORAL sub-item, own gate_:** **defer separator-lift to `applyWrapperDeletion`** (the push-down phase) — stop the eager evaluate-side `extractRepeatSeparator` flatten, lift the separator **once** at push-down as a **single `Rule`** (choice preserved, non-lossy); emit a **`warning`** (NOT `propose-*` — no handling path yet) at that one site for multi / non-terminal (choice) separators; render gated on the EXISTING **`separator`-role child-slot** design (`2026-05-26-non-slot-separator-rules-design.md`), NOT a new non-slot-variables model. spec `2026-05-30-separator-canonical-design.md` | B, **H** (sub-b) | ‖ | no | `pr-o-structural-dedup` | ⬜ |
@@ -52,6 +54,14 @@
 | **PR-L** | Flip heuristics → `propose-*` fail-diagnostics (LAST) | M, I, N, G | 12 | no | `pr-l-heuristics-to-fail` | ⬜ |
 
 **Authoritative linear order (spec §5):** A → B → C → D → D2 → E → F → G → H → M → I → K → N → O → P → Q → L.
+
+### §φ1 note — de-polymorph spike (#57, 2026-06-02, branch `pr-i-polymorph-emit-rewrite`)
+
+A combined PR-M+PR-I **φ1 spike** landed ahead of the formal M→I sequencing. **rust deep read-render-parse AstMatch 100 → 111 (+11); ts 69 / py 74 held.**
+
+- **Landed:** the de-polymorph cut (`applyOverridePolymorphs` reclassification removed) + classifier fix (named-aliases→branch, not supertype-erasable / `multi`; `parentAliasedKinds`); `AssembledPolymorph`→`AssembledBranch` mechanism; `reference_expression` / `impl_item` → clean alias-owned branches; **token_tree visible-alias parseKind union** — one deep-walk `collectAliasedByParents` yields both the classifier guard and the visible→visible alias-target map (`token_tree.content` accepts `delim_token_tree_*`), **parseKinds as the single source, NO `aliasSources` sidecar**; `match_block` `last_arm` field (the "multiple unnamed children in sequence" case).
+- **Deferred → PR-M-φ2 / PR-I-φ2:** the formal rule-IR cut + `$variant`-machinery removal; remaining polymorph kinds→branches; and the **`match_arm` residual (6 fixtures)**: a render `childCount 4 ≠ 3` over-emission **and** content-undefined on complex arm bodies. Likely structural fix = move slot **normalization/throw into the lazy wrap getter, not the eager `storeExpr`** (`packages/codegen/src/emitters/wrap.ts:384`) — confirmed `drillAs` already kind-maps `match_arm`→`last_match_arm` at the getter, but eager construction throws first. Also specced: a **slot-collision diagnostic** (any seq/nested-seq where a `storageName` appears >1 — kinds aliased to each other, named or unnamed) run **during assemble after folding is turned off** (`foldParseKindDuplicateSingularSlots` is the band-aid it would supersede).
+- **Up-next is a genuine choice, not forced:** PR-M is **not blocked** (its only dep, PR-B, is ✅ DONE; φ1 already landed its mechanism). So either **PR-M-φ2** (finish the polymorph chain) **or PR-P** (off-chain — depends only on PR-H ✅, unblocks the keyword-valued slots) can go next. Decision pending.
 
 ---
 
