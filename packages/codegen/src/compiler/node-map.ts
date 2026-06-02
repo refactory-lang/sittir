@@ -2773,7 +2773,7 @@ function _isAutoStampSlotForParameterless(
 }
 
 export class AssembledBranch<
-	R extends SeqRule | ChoiceRule | RepeatRule | Repeat1Rule | PolymorphRule =
+	R extends SeqRule | ChoiceRule | RepeatRule | Repeat1Rule =
 		| SeqRule
 		| ChoiceRule
 		| RepeatRule
