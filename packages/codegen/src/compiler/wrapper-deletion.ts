@@ -15,15 +15,14 @@
  * - Default multiplicity ('single') is NOT stamped — only non-default
  *   values are written to avoid polluting leaf rule objects.
  * - Structural rules (seq / choice / group / clause / variant / terminal /
- *   polymorph / token) are recursed into so ALL wrappers in the tree are
- *   eliminated.
+ *   token) are recursed into so ALL wrappers in the tree are eliminated.
  * - Leaf terminals (string / pattern / symbol / enum / supertype /
  *   indent / dedent / newline / alias / token — anything not structural and
  *   not a wrapper) are returned with the accumulated modifier attributes
  *   spread onto them.
  */
 
-import type { Rule, RenderRule, PolymorphRule } from './rule.ts';
+import type { Rule, RenderRule } from './rule.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import { combineMultiplicity } from './rule-attrs.ts';
@@ -229,15 +228,6 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 				nonterminal: attrs.nonterminal ?? (rule.named || undefined),
 			};
 			return deleteWrapperWith(rule.content, next);
-		}
-
-		case 'polymorph': {
-			const poly = rule as PolymorphRule;
-			const rewritten: PolymorphRule = {
-				...poly,
-				forms: poly.forms.map((f) => ({ ...f, content: deleteWrapperWith(f.content, {}) })),
-			};
-			return stampAttrs(rewritten, attrs);
 		}
 
 		// ----- Leaf cases — stamp attrs and return -----

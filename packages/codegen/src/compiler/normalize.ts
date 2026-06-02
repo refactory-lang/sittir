@@ -6,18 +6,17 @@
  * single-use hidden-rule inlining). Does NOT change named content.
  * Non-lossy.
  *
- * Variant tagging and polymorph promotion live in Link — those are
- * classification, not simplification. Pipeline order is fixed in
+ * Variant tagging lives in Link — that is classification, not simplification.
+ * Pipeline order is fixed in
  * `normalizeGrammar()` below: collapse → fan-out → factor → dedupe → inline →
  * re-collapse.
  */
 
-import type { Rule, SeqRule, PolymorphRule } from './rule.ts';
+import type { Rule, SeqRule } from './rule.ts';
 import { isChoice } from './rule.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics } from './simplify.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
-import { buildPolymorphSkipSetFromRules } from './diagnose-slot-grouping.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
 import type { NormalizeCtx } from './transforms.ts';
@@ -114,14 +113,10 @@ export function normalizeGrammar(
 	const rules = applyNormalizationPasses(linked.rules, preserveKinds.size > 0 ? preserveKinds : undefined, ctx);
 	const renderRules = applyWrapperDeletion(rules);
 
-	// Build a base polymorph skip-set from polymorphVariants metadata.
+	// Build a base variant skip-set from polymorphVariants metadata.
 	// `polymorphVariants` records every `variant('x')` override as
-	// `{parent, child}` — `child` is the actual grammar rule name (e.g.
-	// `_public_field_definition_abstract_first`) that carries the variant body.
-	// These kinds are already resolved by the polymorph dispatch machinery;
+	// `{parent, child}` — these kinds are already resolved by variant dispatch;
 	// flagging them as multi-slot seqs in the diagnostic would be a false positive.
-	// We collect both parent kinds and child variant kinds into a single base skip
-	// that augments the structural PolymorphRule detection in diagnoseSlotGrouping.
 	const variantSkip = extraPolymorphSkip.size === 0 ? new Set<string>() : new Set<string>(extraPolymorphSkip);
 	for (const pv of linked.polymorphVariants ?? []) {
 		variantSkip.add(pv.parent);
@@ -142,53 +137,6 @@ export function normalizeGrammar(
 			renderRules[kind] = rule;
 		}
 		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
-			simplifiedRules[kind] = rule;
-		}
-	}
-
-	// Polymorph form contents: each form of a polymorph becomes an AssembledGroup
-	// in assemble.ts under a synthesized kind name (formKind). Snapshot
-	// renderRule + simplifiedRule for each form's content under that same key so
-	// assemble's buildAssembledFormGroups can look them up from the snapshot
-	// instead of computing per-call simplifyRule / deleteWrapper.
-	//
-	// Disambiguation must exactly mirror buildAssembledFormGroups in assemble.ts:
-	//   - first occurrence of a form name → bare name
-	//   - duplicate names → `${name}${count + 1}` (one-indexed second occurrence)
-	//
-	// polySource = 'override' when rule.source === 'override' (same logic as assemble),
-	// giving formKind = `${parentKind}__form_${disambiguated}` vs `${parentKind}_${disambiguated}`.
-	const polyFormBodies: Record<string, Rule> = {};
-	for (const [parentKind, rule] of Object.entries(rules)) {
-		if (rule.type !== 'polymorph') continue;
-		const polySource = rule.source === 'override' ? 'override' : 'promoted';
-		const nameCounts = new Map<string, number>();
-		for (const form of (rule as PolymorphRule).forms) {
-			const seen = nameCounts.get(form.name) ?? 0;
-			nameCounts.set(form.name, seen + 1);
-			const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`;
-			const formKind =
-				polySource === 'override'
-					? `${parentKind}__form_${disambiguated}`
-					: `${parentKind}_${disambiguated}`;
-			polyFormBodies[formKind] = form.content;
-		}
-	}
-	if (Object.keys(polyFormBodies).length > 0) {
-		// Pre-build the polymorph skip-set from the full rules map so the diagnostic
-		// in computeSimplifiedRules knows to skip form kinds even when the rules map
-		// passed to that call only contains form body entries (not the parent polymorphs).
-		const polySkipFromRules = buildPolymorphSkipSetFromRules(rules);
-		// Merge structural polymorph skip-set with variant-metadata skip-set.
-		const polySkip = variantSkip.size === 0
-			? polySkipFromRules
-			: new Set([...polySkipFromRules, ...variantSkip]);
-		const polyFormRender = applyWrapperDeletion(polyFormBodies);
-		const polyFormSimplified = computeSimplifiedRules(polyFormRender, linked.word, inlineKinds, polySkip, ctx);
-		for (const [kind, rule] of Object.entries(polyFormRender)) {
-			renderRules[kind] = rule;
-		}
-		for (const [kind, rule] of Object.entries(polyFormSimplified)) {
 			simplifiedRules[kind] = rule;
 		}
 	}
@@ -270,8 +218,6 @@ export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
 		case 'clause':
 		case 'group':
 			return { ...rule, content: fanOutSeqChoices(rule.content) };
-		case 'polymorph':
-			return mapPolymorphForms(rule, (r) => fanOutSeqChoices(r));
 		default:
 			return rule;
 	}
@@ -296,7 +242,7 @@ export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
  * `seq([atom])`.
  *
  * Excluded: `optional`, `repeat`, `choice`, `variant`, `clause`, `group`,
- * `polymorph`, `supertype`, `enum`, `terminal`, `indent`, `dedent`,
+ * `supertype`, `enum`, `terminal`, `indent`, `dedent`,
  * `newline`. Those either carry composite structure that the factor
  * extractor would mis-align, or already represent the "zero-or-more"
  * semantics that factoring produces.
@@ -402,8 +348,6 @@ export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
 		case 'clause':
 		case 'group':
 			return { ...rule, content: factorChoiceBranches(rule.content) };
-		case 'polymorph':
-			return mapPolymorphForms(rule, (r) => factorChoiceBranches(r));
 		default:
 			return rule;
 	}
@@ -444,8 +388,6 @@ export function dedupeSeqMembers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 		case 'clause':
 		case 'group':
 			return { ...rule, content: dedupeSeqMembers(rule.content) };
-		case 'polymorph':
-			return mapPolymorphForms(rule, (r) => dedupeSeqMembers(r));
 		default:
 			return rule;
 	}
@@ -462,7 +404,7 @@ export function dedupeSeqMembers(rule: Rule, _ctx?: NormalizeCtx): Rule {
  *
  * Iterates to a fixed point: inlining can expose new single-use
  * refs when nested helpers reference each other. Rules classified
- * as `supertype`, `polymorph`, `enum`, `terminal`, or `group` are
+ * as `supertype`, `enum`, `terminal`, or `group` are
  * skipped — those already carry explicit structural meaning that
  * downstream classification relies on. Only raw `seq` / `choice` /
  * `optional` / `repeat` helpers get inlined.
@@ -521,14 +463,13 @@ function iterateInliningToFixedPoint(work: Record<string, Rule>, preserveKinds?:
  * @param rule - The rule to test.
  * @returns `true` when the rule must be preserved as its own map entry.
  * @remarks
- * Rules of type `supertype`, `polymorph`, `enum`, `terminal`, and `group`
+ * Rules of type `supertype`, `enum`, `terminal`, and `group`
  * already have explicit structural meaning. Only raw `seq`, `choice`,
  * `optional`, and `repeat` helpers get inlined.
  */
 function isStructurallyMeaningfulHiddenRule(rule: Rule): boolean {
 	return (
 		rule.type === 'supertype' ||
-		rule.type === 'polymorph' ||
 		rule.type === 'enum' ||
 		rule.type === 'terminal' ||
 		rule.type === 'group'
@@ -594,9 +535,6 @@ function walkSymbols(rule: Rule, visit: (name: string) => void): void {
 		case 'terminal':
 			walkSymbols(rule.content, visit);
 			return;
-		case 'polymorph':
-			for (const form of rule.forms) walkSymbols(form.content, visit);
-			return;
 		case 'supertype':
 			for (const sub of rule.subtypes) visit(sub);
 			return;
@@ -640,16 +578,6 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
 		case 'group': {
 			const inner = replaceSymbolRef(rule.content, targetName, targetRule);
 			return inner === rule.content ? rule : { ...rule, content: inner };
-		}
-		case 'polymorph': {
-			let changed = false;
-			const forms = rule.forms.map((f) => {
-				const rewritten = replaceSymbolRef(f.content, targetName, targetRule);
-				if (rewritten === f.content) return f;
-				changed = true;
-				return { ...f, content: rewritten };
-			});
-			return changed ? { ...rule, forms } : rule;
 		}
 		default:
 			return rule;
@@ -713,8 +641,6 @@ export function collapseWrappers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 		case 'group':
 		case 'token':
 			return { ...rule, content: collapseWrappers(rule.content) };
-		case 'polymorph':
-			return mapPolymorphForms(rule, (r) => collapseWrappers(r));
 		default:
 			return rule;
 	}
@@ -730,15 +656,6 @@ function outerFromParts(prefix: Rule[], suffix: Rule[]): Rule {
 	}
 	if (members.length === 1) return members[0]!;
 	return { type: 'seq', members };
-}
-
-// Keep in sync when adding new Optimize passes — polymorph forms must
-// receive the same rewrite as top-level rules.
-function mapPolymorphForms(rule: PolymorphRule, rewrite: (r: Rule) => Rule): Rule {
-	return {
-		...rule,
-		forms: rule.forms.map((f) => ({ ...f, content: rewrite(f.content) }))
-	};
 }
 
 // ---------------------------------------------------------------------------

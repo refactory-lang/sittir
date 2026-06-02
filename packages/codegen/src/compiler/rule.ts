@@ -115,7 +115,6 @@ export type Rule =
 	| SupertypeRule
 	| GroupRule
 	| TerminalRule
-	| PolymorphRule
 
 	// Terminals
 	| StringRule
@@ -135,7 +134,7 @@ export type Rule =
  * A Rule shape produced by `applyWrapperDeletion` in optimize.ts. Modifier
  * wrappers (`optional` / `field` / `repeat` / `repeat1`) have been pushed
  * down to leaf attributes; structural rules (`seq` / `choice` / `variant` /
- * `group` / `polymorph`) are preserved.
+ * `group`) are preserved.
  *
  * Structurally a `Rule` minus the wrapper variants — typed as a brand so
  * mismatches between RawRule and RenderRule consumption surface at compile
@@ -151,7 +150,7 @@ export type RenderRule = Exclude<Rule, OptionalRule | FieldRule | RepeatRule | R
  *
  * Structurally a `RenderRule` (wrappers already pushed-down to leaf
  * attributes), additionally satisfying the universal seq-of-leaves
- * invariant: every branch/polymorph/group/multi body is a `seq` /
+ * invariant: every branch/group/multi body is a `seq` /
  * `choice` / `repeat` / leaf-terminal (`enum` / `string` / `pattern`).
  *
  * Branded so SimplifiedRule consumers can't be silently called with a
@@ -243,8 +242,7 @@ export interface ClauseRule extends RuleBase {
  *   'override' — an overrides.ts patch produced this rule.
  *   'promoted' — Link derived this classification from rule shape (hidden
  *                choice-of-strings → enum, hidden choice-of-symbols →
- *                supertype, field-free symbol-free subtree → terminal,
- *                heterogeneous-field choice → polymorph).
+ *                supertype, field-free symbol-free subtree → terminal).
  *
  * Suggestion check is uniform across all rule-level sources:
  *    isSuggestion = source !== 'grammar' && source !== 'override'
@@ -314,42 +312,6 @@ export interface TerminalRule extends RuleBase {
 	readonly type: 'terminal';
 	readonly content: Rule;
 	/** Always 'promoted' today — Link synthesises terminals from shape. */
-	readonly source?: RuleSource;
-}
-
-/**
- * PolymorphRule — choice-of-variants with heterogeneous field sets.
- *
- * A structural dispatch: multiple named variants, each with its own
- * field shape. Added by Optimize when it detects that a variant-bearing
- * choice has variants with different field sets (the homogeneous case
- * is a branch, not a polymorph). Assemble routes this directly to
- * `modelType: 'polymorph'` and builds one form per variant — no
- * simplifyRule or content guessing.
- */
-export interface PolymorphForm {
-	readonly name: string;
-	readonly content: Rule;
-	/**
-	 * For override polymorphs, the real visible parse-tree child kind used by
-	 * variant() adoption (e.g. `with_clause_paren`). Absent on passthrough
-	 * forms that keep their original bare symbol arm.
-	 */
-	readonly visibleChildKind?: string;
-	/**
-	 * Runtime child kinds that select this form in readNode→factory/.from()
-	 * resolution. May name a concrete kind (`assignment`) or a supertype
-	 * (`expression`) that later expands to concrete child kinds in the
-	 * validator metadata emitter.
-	 */
-	readonly discriminatorKinds?: readonly string[];
-}
-
-export interface PolymorphRule extends RuleBase {
-	readonly type: 'polymorph';
-	/** Ordered list of forms (one per variant, in declaration order). */
-	readonly forms: Array<PolymorphForm>;
-	/** Always 'promoted' today — Link synthesises polymorphs from shape. */
 	readonly source?: RuleSource;
 }
 
@@ -436,13 +398,11 @@ export const isOptional = (r: Rule): r is OptionalRule => r.type === 'optional';
 export const isRepeat = (r: Rule): r is RepeatRule => r.type === 'repeat';
 export const isRepeat1 = (r: Rule): r is Repeat1Rule => r.type === 'repeat1';
 export const isField = (r: Rule): r is FieldRule => r.type === 'field';
-export const isVariant = (r: Rule): r is VariantRule => r.type === 'variant';
 export const isClause = (r: Rule): r is ClauseRule => r.type === 'clause';
 export const isEnum = (r: Rule): r is EnumRule => r.type === 'enum';
 export const isSupertype = (r: Rule): r is SupertypeRule => r.type === 'supertype';
 export const isGroup = (r: Rule): r is GroupRule => r.type === 'group';
 export const isTerminal = (r: Rule): r is TerminalRule => r.type === 'terminal';
-export const isPolymorph = (r: Rule): r is PolymorphRule => r.type === 'polymorph';
 export const isString = (r: Rule): r is StringRule => r.type === 'string';
 export const isPattern = (r: Rule): r is PatternRule => r.type === 'pattern';
 export const isIndent = (r: Rule): r is IndentRule => r.type === 'indent';
@@ -462,8 +422,7 @@ export const literalTextOf = (r: Rule): string | undefined =>
 /**
  * Collect the set of field names referenced anywhere in a rule tree.
  * Returns names only — cheap one-pass walker with no AssembledField
- * allocation. Pre-assembly phases (classifier, link's polymorph-
- * promotion heuristics) that only need field-set equality call this
+ * allocation. Pre-assembly phases (classifier) that only need field-set equality call this
  * instead of constructing full AssembledField objects just to extract
  * names.
  */

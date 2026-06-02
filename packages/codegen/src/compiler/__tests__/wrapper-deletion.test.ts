@@ -3,9 +3,8 @@
  *
  * Verifies that wrapper rules (optional / field / repeat / repeat1) are
  * pushed down to RuleBase modifier attributes (multiplicity / fieldName /
- * separator) on the leaf rule, and that structural rules (seq / choice /
- * polymorph) are recursed into so all wrappers are eliminated throughout the
- * tree.
+ * separator) on the leaf rule, and that structural rules (seq / choice)
+ * are recursed into so all wrappers are eliminated throughout the tree.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -18,8 +17,6 @@ import type {
 	FieldRule,
 	SymbolRule,
 	SeqRule,
-	PolymorphRule,
-	PolymorphForm,
 } from '../rule.ts';
 
 // ---------------------------------------------------------------------------
@@ -157,31 +154,6 @@ describe('deleteWrapper — idempotence', () => {
 		const once = deleteWrapper(wrapped);
 		const twice = deleteWrapper(once as Rule);
 		expect(twice).toEqual(once);
-	});
-});
-
-// ---------------------------------------------------------------------------
-// Polymorph recursion
-// ---------------------------------------------------------------------------
-
-describe('deleteWrapper — polymorph recursion', () => {
-	it('recurses into polymorph forms and removes wrappers inside each form', () => {
-		const form1: PolymorphForm = {
-			name: 'with_optional',
-			content: { type: 'optional', content: sym('expression') } as OptionalRule,
-		};
-		const form2: PolymorphForm = {
-			name: 'plain',
-			content: sym('statement'),
-		};
-		const poly: PolymorphRule = { type: 'polymorph', forms: [form1, form2] };
-		const out = deleteWrapper(poly);
-		expect(out.type).toBe('polymorph');
-		const forms = (out as PolymorphRule).forms;
-		expect(forms[0]!.content.type).toBe('symbol');
-		expect(forms[0]!.content.multiplicity).toBe('optional');
-		expect(forms[1]!.content.type).toBe('symbol');
-		expect(forms[1]!.content.multiplicity).toBeUndefined();
 	});
 });
 

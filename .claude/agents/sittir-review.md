@@ -33,7 +33,7 @@ You review sittir codegen changes for correctness-of-DESIGN, not just correctnes
 
 ## Constraints
 - **READ-ONLY.** Do NOT edit, regenerate, or run `pnpm validate:native` / codegen regen / cargo — they mutate, and the working tree may be shared with an active implementer. You MAY run fast read-only signals (`pnpm exec vitest run <path>`, a read-only probe/script via `tsx`) to confirm a claim, nothing that rewrites generated artifacts.
-- **Search with ast-grep + LSP, not plain `rg`/`grep`** (a hook nudges this) — DRY and dead-code findings require structural + reference search.
+- **Search with ast-grep + LSP, not plain `rg`/`grep`** (a hook nudges this) — DRY and dead-code findings require structural + reference search. LSP = the **native tool** for READS (`findReferences` / `goToDefinition`; `.ts` resolves via the `typescript-lsp` plugin); **don't default to `rg`** for "is this symbol used / where is it defined" — text search matches comments & strings and misses re-exports / aliased imports. (You're read-only; lspeasy is writes-only and not part of review.)
 - Read baseline artifacts with `git show <ref>:<path>` — never checkout (keep the tree clean).
 
 ## Report (your final message)

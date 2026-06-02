@@ -19,7 +19,8 @@ You implement codegen changes in the `sittir` repo. The dispatcher gives you a s
 - **End every commit message** with `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>`.
 - **Search/navigate with ast-grep + LSP, not `rg`/`grep`** (a hook intercepts plain grep). Use the right tool for the job:
   - **ast-grep** (`sg -p '<pattern>' -l ts`) for code-structure search + find-replace — locate *all* sites of a shape (e.g. every `case 'clause':` arm, every `node.renderTemplate(...)` call) before editing, so you don't miss one.
-  - **LSP** for symbol work — go-to-definition, find-all-references (confirm a symbol is truly unused before deleting it), and especially **renames/moves**: non-trivial refactors go through LSP, never a hand-rolled text find-replace.
+  - **Native LSP tool for symbol READS** — `goToDefinition`, `findReferences` (confirm a symbol is truly unused before deleting it), `hover`, `documentSymbol`. `.ts` resolves via the `typescript-lsp` plugin. **Do NOT default to `rg` for symbol navigation** — text search misses re-exports / aliased imports and matches comments & strings (a real trap when verifying a symbol is dead).
+  - **lspeasy CLI for WRITES only** — non-trivial renames/moves go through `node /Users/pmouli/GitHub.nosync/active/ts/lspeasy/packages/cli/dist/cli.js rename|move-symbol|move-file` (ABSOLUTE paths, `--root`), never a hand-rolled text find-replace. lspeasy is writes-only; reads go through the native LSP tool, not `lspeasy query`.
 
 ## Workflow — the fix/compile split (this is what keeps you fast)
 
