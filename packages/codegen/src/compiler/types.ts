@@ -371,6 +371,33 @@ export interface LinkedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule>;
 	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
+	/**
+	 * Set of hidden (`_`-prefixed) kind names that appear as the CONTENT of a
+	 * named alias (`alias(symbol(_X), $.visible)`) in any parent rule body.
+	 *
+	 * These hidden kinds produce REAL runtime CST nodes (the parser exposes
+	 * them under the alias target name). They must NOT be classified as
+	 * `multi` (inlined repeat helpers) even when their rule body is a
+	 * `repeat1` after normalization — they need their own `branch` type so
+	 * the transport can match on their kind ID at decode time.
+	 *
+	 * Optional so hand-constructed test fixtures can omit it.
+	 */
+	readonly parentAliasedKinds?: ReadonlySet<string>;
+	/**
+	 * Visible→visible alias target map: for each `alias($.source, $.target)` in
+	 * any grammar rule body where BOTH source and target are visible (non-`_`-prefixed
+	 * named kinds), records `target → [source, ...]`.
+	 *
+	 * Used downstream (assemble → buildSlotsRecord) to augment a kind's slot values
+	 * with the concrete parse-surface children of any visible source aliased to it.
+	 * Example: `alias($.delim_token_tree, $.token_tree)` adds `delim_token_tree_paren/
+	 * bracket/brace` parseKinds to the `token_tree.content` slot so the wrap accept-set
+	 * covers macro invocations that surface `delim_token_tree_*` nodes.
+	 *
+	 * Optional so hand-constructed test fixtures can omit it.
+	 */
+	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 }
 
 /**
@@ -397,6 +424,10 @@ export interface OptimizedGrammar {
 	readonly rules: Record<string, Rule>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule>;
+	/** Propagated from {@link LinkedGrammar.parentAliasedKinds}. */
+	readonly parentAliasedKinds?: ReadonlySet<string>;
+	/** Propagated from {@link LinkedGrammar.visibleAliasTargets}. */
+	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	/**
 	 * Derivation-only view of every rule in `rules`, produced by
 	 * `simplifyRule` as the final pass in `optimize()`. Downstream

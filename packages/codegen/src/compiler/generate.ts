@@ -204,7 +204,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		[...inlineKinds].filter((k) => {
 			const rule = linked.rules[k];
 			if (!rule) return true; // un-classifiable (no IR rule) — leave inlinable
-			return !NON_INLINABLE_MODEL_TYPES.has(classifyNode(k, rule));
+			return !NON_INLINABLE_MODEL_TYPES.has(
+				classifyNode(k, rule, { parentAliasedKinds: linked.parentAliasedKinds })
+			);
 		})
 	);
 

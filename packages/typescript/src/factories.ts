@@ -2,7 +2,7 @@
 
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
-import type { ConfigOf, FluentNode, NonEmptyArray } from '@sittir/types';
+import type { FluentNode, NonEmptyArray } from '@sittir/types';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';
 
 function _configChildren<T>(config: unknown, fallback: T): T {
@@ -29,15 +29,15 @@ const _leafRe_unescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
 const _leafRe_unescapedSingleJsxStringFragment = /^(?:([^'&]|&[^#A-Za-z])+)/u;
 const _leafRe_unescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
 
-export function _ambientDeclarationDeclaration(child: T.Declaration) {
+export function ambientDeclarationDeclaration(child: T.Declaration) {
   const _declaration = child;
   return withMethods({
-    $type: TSKindId._AmbientDeclarationDeclaration as const,
+    $type: TSKindId.AmbientDeclarationDeclaration as const,
     $source: 2 as const,
     $named: true as const,
     _declaration,
     declaration() { return _declaration; },
-    $with: { $child: (v: T.Declaration) => _ambientDeclarationDeclaration(v) },
+    $with: { $child: (v: T.Declaration) => ambientDeclarationDeclaration(v) },
   }, methodsEngine);
 }
 
@@ -77,12 +77,12 @@ export function _ambientDeclarationModule(config: T.AmbientDeclarationModule.Con
   }, methodsEngine);
 }
 
-export function _arrowFunctionUCallSignature(config: T._ArrowFunctionUCallSignature.Config) {
+export function arrowFunctionUCallSignature(config: T.ArrowFunctionUCallSignature.Config) {
   const _type_parameters = config.typeParameters;
   const _parameters = config.parameters;
   const _return_type = config.returnType;
   return withMethods({
-    $type: TSKindId._ArrowFunctionUCallSignature as const,
+    $type: TSKindId.ArrowFunctionUCallSignature as const,
     $source: 2 as const,
     $named: true as const,
     _type_parameters,
@@ -92,23 +92,23 @@ export function _arrowFunctionUCallSignature(config: T._ArrowFunctionUCallSignat
     parameters() { return _parameters; },
     returnType() { return _return_type; },
     $with: {
-      typeParameters: (value?: T.TypeParameters) => _arrowFunctionUCallSignature({ ...config, typeParameters: value }),
-      parameters: (value: T.FormalParameters) => _arrowFunctionUCallSignature({ ...config, parameters: value }),
-      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => _arrowFunctionUCallSignature({ ...config, returnType: value }),
+      typeParameters: (value?: T.TypeParameters) => arrowFunctionUCallSignature({ ...config, typeParameters: value }),
+      parameters: (value: T.FormalParameters) => arrowFunctionUCallSignature({ ...config, parameters: value }),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => arrowFunctionUCallSignature({ ...config, returnType: value }),
     },
   }, methodsEngine);
 }
 
-export function _arrowFunctionParameter(config: T._ArrowFunctionParameter.Config) {
+export function arrowFunctionParameter(config: T.ArrowFunctionParameter.Config) {
   const _parameter = config.parameter;
   return withMethods({
-    $type: TSKindId._ArrowFunctionParameter as const,
+    $type: TSKindId.ArrowFunctionParameter as const,
     $source: 2 as const,
     $named: true as const,
     _parameter,
     parameter() { return _parameter; },
     $with: {
-      parameter: (value: T.ReservedIdentifier | T.Identifier) => _arrowFunctionParameter({ ...config, parameter: value }),
+      parameter: (value: T.ReservedIdentifier | T.Identifier) => arrowFunctionParameter({ ...config, parameter: value }),
     },
   }, methodsEngine);
 }
@@ -249,11 +249,11 @@ export function classBodyMethodSig(child: T.MethodSignature) {
   }, methodsEngine);
 }
 
-export function _classHeritageExtendsClause(config: T._ClassHeritageExtendsClause.Config) {
+export function classHeritageExtendsClause(config: T.ClassHeritageExtendsClause.Config) {
   const _extends_clause = config.extendsClause;
   const _implements_clause = config.implementsClause;
   return withMethods({
-    $type: TSKindId._ClassHeritageExtendsClause as const,
+    $type: TSKindId.ClassHeritageExtendsClause as const,
     $source: 2 as const,
     $named: true as const,
     _extends_clause,
@@ -261,21 +261,33 @@ export function _classHeritageExtendsClause(config: T._ClassHeritageExtendsClaus
     extendsClause() { return _extends_clause; },
     implementsClause() { return _implements_clause; },
     $with: {
-      extendsClause: (value: T.ExtendsClause) => _classHeritageExtendsClause({ ...config, extendsClause: value }),
-      implementsClause: (value?: T.ImplementsClause) => _classHeritageExtendsClause({ ...config, implementsClause: value }),
+      extendsClause: (value: T.ExtendsClause) => classHeritageExtendsClause({ ...config, extendsClause: value }),
+      implementsClause: (value?: T.ImplementsClause) => classHeritageExtendsClause({ ...config, implementsClause: value }),
     },
   }, methodsEngine);
 }
 
-export function _classHeritageImplementsClause(child: T.ImplementsClause) {
+export function classHeritageImplementsClause(child: T.ImplementsClause) {
   const _implements_clause = child;
   return withMethods({
-    $type: TSKindId._ClassHeritageImplementsClause as const,
+    $type: TSKindId.ClassHeritageImplementsClause as const,
     $source: 2 as const,
     $named: true as const,
     _implements_clause,
     implementsClause() { return _implements_clause; },
-    $with: { $child: (v: T.ImplementsClause) => _classHeritageImplementsClause(v) },
+    $with: { $child: (v: T.ImplementsClause) => classHeritageImplementsClause(v) },
+  }, methodsEngine);
+}
+
+export function exportStatementDefault(child: (T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm)) {
+  const _content = child;
+  return withMethods({
+    $type: TSKindId.ExportStatementDefault as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm)) => exportStatementDefault(v) },
   }, methodsEngine);
 }
 
@@ -337,34 +349,20 @@ export function _exportStatementDefaultDeclArmDefaultKwValue(config: T.ExportSta
   }, methodsEngine);
 }
 
-export function exportStatementDefaultFromArmStarFrom(source: T.ExportStatementDefaultFromArmStarFrom.Config['source']) {
-  const _source = source;
+export function exportStatementDefaultFromArm(config: T.ExportStatementDefaultFromArm.Config) {
+  const _content = config.content;
+  const _semicolon = config.semicolon;
   return withMethods({
-    $type: TSKindId._ExportStatementDefaultFromArmStarFrom as const,
+    $type: TSKindId.ExportStatementDefaultFromArm as const,
     $source: 2 as const,
     $named: true as const,
-    _source,
-    source() { return _source; },
+    _content,
+    _semicolon,
+    content() { return _content; },
+    semicolon() { return _semicolon; },
     $with: {
-      source: (value: T.ExportStatementDefaultFromArmStarFrom.Config['source']) => exportStatementDefaultFromArmStarFrom(value),
-    },
-  }, methodsEngine);
-}
-
-export function exportStatementDefaultFromArmNsFrom(config: T.ExportStatementDefaultFromArmNsFrom.Config) {
-  const _namespace_export = config.namespaceExport;
-  const _source = config.source;
-  return withMethods({
-    $type: TSKindId._ExportStatementDefaultFromArmNsFrom as const,
-    $source: 2 as const,
-    $named: true as const,
-    _namespace_export,
-    _source,
-    namespaceExport() { return _namespace_export; },
-    source() { return _source; },
-    $with: {
-      namespaceExport: (value: T.NamespaceExport) => exportStatementDefaultFromArmNsFrom({ ...config, namespaceExport: value }),
-      source: (value: T.String) => exportStatementDefaultFromArmNsFrom({ ...config, source: value }),
+      content: (value: T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause) => exportStatementDefaultFromArm({ ...config, content: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArm({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -373,7 +371,7 @@ export function exportStatementDefaultFromArmClauseFrom(config: T.ExportStatemen
   const _export_clause = config.exportClause;
   const _source = config.source;
   return withMethods({
-    $type: TSKindId._ExportStatementDefaultFromArmClauseFrom as const,
+    $type: TSKindId.ExportStatementDefaultFromArmClauseFrom as const,
     $source: 2 as const,
     $named: true as const,
     _export_clause,
@@ -387,115 +385,11 @@ export function exportStatementDefaultFromArmClauseFrom(config: T.ExportStatemen
   }, methodsEngine);
 }
 
-export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormStarFrom>): ReturnType<typeof exportStatementDefaultFromArmUFormStarFrom>;
-export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormNsFrom>): ReturnType<typeof exportStatementDefaultFromArmUFormNsFrom>;
-export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormClauseFrom>): ReturnType<typeof exportStatementDefaultFromArmUFormClauseFrom>;
-export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormExportClause>): ReturnType<typeof exportStatementDefaultFromArmUFormExportClause>;
-export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormStarFrom> | ConfigOf<T.ExportStatementDefaultFromArmUFormNsFrom> | ConfigOf<T.ExportStatementDefaultFromArmUFormClauseFrom> | ConfigOf<T.ExportStatementDefaultFromArmUFormExportClause>) {
-  switch (config.$variant) {
-    case 'star_from': return exportStatementDefaultFromArmUFormStarFrom(config as Parameters<typeof exportStatementDefaultFromArmUFormStarFrom>[0]);
-    case 'ns_from': return exportStatementDefaultFromArmUFormNsFrom(config as Parameters<typeof exportStatementDefaultFromArmUFormNsFrom>[0]);
-    case 'clause_from': return exportStatementDefaultFromArmUFormClauseFrom(config as Parameters<typeof exportStatementDefaultFromArmUFormClauseFrom>[0]);
-    case 'export_clause': return exportStatementDefaultFromArmUFormExportClause(config as Parameters<typeof exportStatementDefaultFromArmUFormExportClause>[0]);
-  }
-  throw new Error(`exportStatementDefaultFromArm: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'star_from' | 'ns_from' | 'clause_from' | 'export_clause'.`);
-}
-export function exportStatementDefaultFromArmUFormStarFrom(config: Omit<ConfigOf<T.ExportStatementDefaultFromArmUFormStarFrom>, '$variant'>) {
-  const _export_statement_default_from_arm_star_from = config.exportStatementDefaultFromArmStarFrom;
-  const _semicolon = config.semicolon;
-  return withMethods({
-    $type: TSKindId.ExportStatementDefaultFromArm as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'star_from' as const,
-    _export_statement_default_from_arm_star_from,
-    _semicolon,
-    exportStatementDefaultFromArmStarFrom() { return _export_statement_default_from_arm_star_from; },
-    semicolon() { return _semicolon; },
-    $with: {
-      exportStatementDefaultFromArmStarFrom: (value: T._ExportStatementDefaultFromArmStarFrom) => exportStatementDefaultFromArmUFormStarFrom({ ...config, exportStatementDefaultFromArmStarFrom: value }),
-      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArmUFormStarFrom({ ...config, semicolon: value }),
-    },
-  }, methodsEngine);
-}
-export function exportStatementDefaultFromArmUFormNsFrom(config: Omit<ConfigOf<T.ExportStatementDefaultFromArmUFormNsFrom>, '$variant'>) {
-  const _export_statement_default_from_arm_ns_from = config.exportStatementDefaultFromArmNsFrom;
-  const _semicolon = config.semicolon;
-  return withMethods({
-    $type: TSKindId.ExportStatementDefaultFromArm as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'ns_from' as const,
-    _export_statement_default_from_arm_ns_from,
-    _semicolon,
-    exportStatementDefaultFromArmNsFrom() { return _export_statement_default_from_arm_ns_from; },
-    semicolon() { return _semicolon; },
-    $with: {
-      exportStatementDefaultFromArmNsFrom: (value: T._ExportStatementDefaultFromArmNsFrom) => exportStatementDefaultFromArmUFormNsFrom({ ...config, exportStatementDefaultFromArmNsFrom: value }),
-      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArmUFormNsFrom({ ...config, semicolon: value }),
-    },
-  }, methodsEngine);
-}
-export function exportStatementDefaultFromArmUFormClauseFrom(config: Omit<ConfigOf<T.ExportStatementDefaultFromArmUFormClauseFrom>, '$variant'>) {
-  const _export_statement_default_from_arm_clause_from = config.exportStatementDefaultFromArmClauseFrom;
-  const _semicolon = config.semicolon;
-  return withMethods({
-    $type: TSKindId.ExportStatementDefaultFromArm as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'clause_from' as const,
-    _export_statement_default_from_arm_clause_from,
-    _semicolon,
-    exportStatementDefaultFromArmClauseFrom() { return _export_statement_default_from_arm_clause_from; },
-    semicolon() { return _semicolon; },
-    $with: {
-      exportStatementDefaultFromArmClauseFrom: (value: T._ExportStatementDefaultFromArmClauseFrom) => exportStatementDefaultFromArmUFormClauseFrom({ ...config, exportStatementDefaultFromArmClauseFrom: value }),
-      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArmUFormClauseFrom({ ...config, semicolon: value }),
-    },
-  }, methodsEngine);
-}
-export function exportStatementDefaultFromArmUFormExportClause(config: Omit<ConfigOf<T.ExportStatementDefaultFromArmUFormExportClause>, '$variant'>) {
-  const _export_clause = config.exportClause;
-  const _semicolon = config.semicolon;
-  return withMethods({
-    $type: TSKindId.ExportStatementDefaultFromArm as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'export_clause' as const,
-    _export_clause,
-    _semicolon,
-    exportClause() { return _export_clause; },
-    semicolon() { return _semicolon; },
-    $with: {
-      exportClause: (value: T.ExportClause) => exportStatementDefaultFromArmUFormExportClause({ ...config, exportClause: value }),
-      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArmUFormExportClause({ ...config, semicolon: value }),
-    },
-  }, methodsEngine);
-}
-
-export function _exportStatementDefaultFromArmClauseFrom(config: T._ExportStatementDefaultFromArmClauseFrom.Config) {
-  const _export_clause = config.exportClause;
-  const _source = config.source;
-  return withMethods({
-    $type: TSKindId._ExportStatementDefaultFromArmClauseFrom as const,
-    $source: 2 as const,
-    $named: true as const,
-    _export_clause,
-    _source,
-    exportClause() { return _export_clause; },
-    source() { return _source; },
-    $with: {
-      exportClause: (value: T.ExportClause) => _exportStatementDefaultFromArmClauseFrom({ ...config, exportClause: value }),
-      source: (value: T.String) => _exportStatementDefaultFromArmClauseFrom({ ...config, source: value }),
-    },
-  }, methodsEngine);
-}
-
-export function _exportStatementDefaultFromArmNsFrom(config: T._ExportStatementDefaultFromArmNsFrom.Config) {
+export function exportStatementDefaultFromArmNsFrom(config: T.ExportStatementDefaultFromArmNsFrom.Config) {
   const _namespace_export = config.namespaceExport;
   const _source = config.source;
   return withMethods({
-    $type: TSKindId._ExportStatementDefaultFromArmNsFrom as const,
+    $type: TSKindId.ExportStatementDefaultFromArmNsFrom as const,
     $source: 2 as const,
     $named: true as const,
     _namespace_export,
@@ -503,31 +397,31 @@ export function _exportStatementDefaultFromArmNsFrom(config: T._ExportStatementD
     namespaceExport() { return _namespace_export; },
     source() { return _source; },
     $with: {
-      namespaceExport: (value: T.NamespaceExport) => _exportStatementDefaultFromArmNsFrom({ ...config, namespaceExport: value }),
-      source: (value: T.String) => _exportStatementDefaultFromArmNsFrom({ ...config, source: value }),
+      namespaceExport: (value: T.NamespaceExport) => exportStatementDefaultFromArmNsFrom({ ...config, namespaceExport: value }),
+      source: (value: T.String) => exportStatementDefaultFromArmNsFrom({ ...config, source: value }),
     },
   }, methodsEngine);
 }
 
-export function _exportStatementDefaultFromArmStarFrom(config: T._ExportStatementDefaultFromArmStarFrom.Config) {
+export function exportStatementDefaultFromArmStarFrom(config: T.ExportStatementDefaultFromArmStarFrom.Config) {
   const _source = config.source;
   return withMethods({
-    $type: TSKindId._ExportStatementDefaultFromArmStarFrom as const,
+    $type: TSKindId.ExportStatementDefaultFromArmStarFrom as const,
     $source: 2 as const,
     $named: true as const,
     _source,
     source() { return _source; },
     $with: {
-      source: (value: T.String) => _exportStatementDefaultFromArmStarFrom({ ...config, source: value }),
+      source: (value: T.String) => exportStatementDefaultFromArmStarFrom({ ...config, source: value }),
     },
   }, methodsEngine);
 }
 
-export function _exportStatementEqualsExport(config: T._ExportStatementEqualsExport.Config) {
+export function exportStatementEqualsExport(config: T.ExportStatementEqualsExport.Config) {
   const _expression = config.expression;
   const _semicolon = config.semicolon;
   return withMethods({
-    $type: TSKindId._ExportStatementEqualsExport as const,
+    $type: TSKindId.ExportStatementEqualsExport as const,
     $source: 2 as const,
     $named: true as const,
     _expression,
@@ -535,17 +429,17 @@ export function _exportStatementEqualsExport(config: T._ExportStatementEqualsExp
     expression() { return _expression; },
     semicolon() { return _semicolon; },
     $with: {
-      expression: (value: T.Expression) => _exportStatementEqualsExport({ ...config, expression: value }),
-      semicolon: (value?: T.Semicolon) => _exportStatementEqualsExport({ ...config, semicolon: value }),
+      expression: (value: T.Expression) => exportStatementEqualsExport({ ...config, expression: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementEqualsExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
 
-export function _exportStatementNamespaceExport(config: T._ExportStatementNamespaceExport.Config) {
+export function exportStatementNamespaceExport(config: T.ExportStatementNamespaceExport.Config) {
   const _identifier = config.identifier;
   const _semicolon = config.semicolon;
   return withMethods({
-    $type: TSKindId._ExportStatementNamespaceExport as const,
+    $type: TSKindId.ExportStatementNamespaceExport as const,
     $source: 2 as const,
     $named: true as const,
     _identifier,
@@ -553,18 +447,18 @@ export function _exportStatementNamespaceExport(config: T._ExportStatementNamesp
     identifier() { return _identifier; },
     semicolon() { return _semicolon; },
     $with: {
-      identifier: (value: T.Identifier) => _exportStatementNamespaceExport({ ...config, identifier: value }),
-      semicolon: (value?: T.Semicolon) => _exportStatementNamespaceExport({ ...config, semicolon: value }),
+      identifier: (value: T.Identifier) => exportStatementNamespaceExport({ ...config, identifier: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementNamespaceExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
 
-export function _exportStatementTypeExport(config: T._ExportStatementTypeExport.Config) {
+export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Config) {
   const _export_clause = config.exportClause;
   const _source = config.source;
   const _semicolon = config.semicolon;
   return withMethods({
-    $type: TSKindId._ExportStatementTypeExport as const,
+    $type: TSKindId.ExportStatementTypeExport as const,
     $source: 2 as const,
     $named: true as const,
     _export_clause,
@@ -574,9 +468,9 @@ export function _exportStatementTypeExport(config: T._ExportStatementTypeExport.
     source() { return _source; },
     semicolon() { return _semicolon; },
     $with: {
-      exportClause: (value: T.ExportClause) => _exportStatementTypeExport({ ...config, exportClause: value }),
-      source: (value?: T.String) => _exportStatementTypeExport({ ...config, source: value }),
-      semicolon: (value?: T.Semicolon) => _exportStatementTypeExport({ ...config, semicolon: value }),
+      exportClause: (value: T.ExportClause) => exportStatementTypeExport({ ...config, exportClause: value }),
+      source: (value?: T.String) => exportStatementTypeExport({ ...config, source: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementTypeExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -685,11 +579,11 @@ export function _fromClause(config: T.FromClause.Config) {
   }, methodsEngine);
 }
 
-export function _importClauseDefaultImport(config: T._ImportClauseDefaultImport.Config) {
+export function importClauseDefaultImport(config: T.ImportClauseDefaultImport.Config) {
   const _import_identifier = config.importIdentifier;
   const _content = config.content;
   return withMethods({
-    $type: TSKindId._ImportClauseDefaultImport as const,
+    $type: TSKindId.ImportClauseDefaultImport as const,
     $source: 2 as const,
     $named: true as const,
     _import_identifier,
@@ -697,33 +591,33 @@ export function _importClauseDefaultImport(config: T._ImportClauseDefaultImport.
     importIdentifier() { return _import_identifier; },
     content() { return _content; },
     $with: {
-      importIdentifier: (value: T.ImportIdentifier) => _importClauseDefaultImport({ ...config, importIdentifier: value }),
-      content: (value?: T.NamespaceImport | T.NamedImports) => _importClauseDefaultImport({ ...config, content: value }),
+      importIdentifier: (value: T.ImportIdentifier) => importClauseDefaultImport({ ...config, importIdentifier: value }),
+      content: (value?: T.NamespaceImport | T.NamedImports) => importClauseDefaultImport({ ...config, content: value }),
     },
   }, methodsEngine);
 }
 
-export function _importClauseNamedImports(child: T.NamedImports) {
+export function importClauseNamedImports(child: T.NamedImports) {
   const _named_imports = child;
   return withMethods({
-    $type: TSKindId._ImportClauseNamedImports as const,
+    $type: TSKindId.ImportClauseNamedImports as const,
     $source: 2 as const,
     $named: true as const,
     _named_imports,
     namedImports() { return _named_imports; },
-    $with: { $child: (v: T.NamedImports) => _importClauseNamedImports(v) },
+    $with: { $child: (v: T.NamedImports) => importClauseNamedImports(v) },
   }, methodsEngine);
 }
 
-export function _importClauseNamespaceImport(child: T.NamespaceImport) {
+export function importClauseNamespaceImport(child: T.NamespaceImport) {
   const _namespace_import = child;
   return withMethods({
-    $type: TSKindId._ImportClauseNamespaceImport as const,
+    $type: TSKindId.ImportClauseNamespaceImport as const,
     $source: 2 as const,
     $named: true as const,
     _namespace_import,
     namespaceImport() { return _namespace_import; },
-    $with: { $child: (v: T.NamespaceImport) => _importClauseNamespaceImport(v) },
+    $with: { $child: (v: T.NamespaceImport) => importClauseNamespaceImport(v) },
   }, methodsEngine);
 }
 
@@ -745,16 +639,16 @@ export function _importSpecifierAs(config: T.ImportSpecifierAs.Config) {
   }, methodsEngine);
 }
 
-export function _importSpecifierName(config: T._ImportSpecifierName.Config) {
+export function importSpecifierName(config: T.ImportSpecifierName.Config) {
   const _name = config.name;
   return withMethods({
-    $type: TSKindId._ImportSpecifierName as const,
+    $type: TSKindId.ImportSpecifierName as const,
     $source: 2 as const,
     $named: true as const,
     _name,
     name() { return _name; },
     $with: {
-      name: (value: T.ImportIdentifier) => _importSpecifierName({ ...config, name: value }),
+      name: (value: T.ImportIdentifier) => importSpecifierName({ ...config, name: value }),
     },
   }, methodsEngine);
 }
@@ -777,15 +671,15 @@ export function _indexSignatureColon(config: T.IndexSignatureColon.Config) {
   }, methodsEngine);
 }
 
-export function _indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
+export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
   const _mapped_type_clause = child;
   return withMethods({
-    $type: TSKindId._IndexSignatureMappedTypeClause as const,
+    $type: TSKindId.IndexSignatureMappedTypeClause as const,
     $source: 2 as const,
     $named: true as const,
     _mapped_type_clause,
     mappedTypeClause() { return _mapped_type_clause; },
-    $with: { $child: (v: T.MappedTypeClause) => _indexSignatureMappedTypeClause(v) },
+    $with: { $child: (v: T.MappedTypeClause) => indexSignatureMappedTypeClause(v) },
   }, methodsEngine);
 }
 
@@ -869,15 +763,15 @@ export function _parameterName(config: T.ParameterName.Config) {
   }, methodsEngine);
 }
 
-export function _parenthesizedExpressionSequence(child: T.SequenceExpression) {
+export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
   const _sequence_expression = child;
   return withMethods({
-    $type: TSKindId._ParenthesizedExpressionSequence as const,
+    $type: TSKindId.ParenthesizedExpressionSequence as const,
     $source: 2 as const,
     $named: true as const,
     _sequence_expression,
     sequenceExpression() { return _sequence_expression; },
-    $with: { $child: (v: T.SequenceExpression) => _parenthesizedExpressionSequence(v) },
+    $with: { $child: (v: T.SequenceExpression) => parenthesizedExpressionSequence(v) },
   }, methodsEngine);
 }
 
@@ -1246,69 +1140,15 @@ export function addingTypeAnnotation(type: T.AddingTypeAnnotation.Config['type']
   }, methodsEngine);
 }
 
-export function ambientDeclarationDeclaration(child: T.Declaration) {
-  const _declaration = child;
-  return withMethods({
-    $type: TSKindId._AmbientDeclarationDeclaration as const,
-    $source: 2 as const,
-    $named: true as const,
-    _declaration,
-    declaration() { return _declaration; },
-    $with: { $child: (v: T.Declaration) => ambientDeclarationDeclaration(v) },
-  }, methodsEngine);
-}
-
-export function ambientDeclaration(config: ConfigOf<T.AmbientDeclarationUFormDeclaration>): ReturnType<typeof ambientDeclarationUFormDeclaration>;
-export function ambientDeclaration(config: ConfigOf<T.AmbientDeclarationUFormGlobal>): ReturnType<typeof ambientDeclarationUFormGlobal>;
-export function ambientDeclaration(config: ConfigOf<T.AmbientDeclarationUFormModule>): ReturnType<typeof ambientDeclarationUFormModule>;
-export function ambientDeclaration(config: ConfigOf<T.AmbientDeclarationUFormDeclaration> | ConfigOf<T.AmbientDeclarationUFormGlobal> | ConfigOf<T.AmbientDeclarationUFormModule>) {
-  switch (config.$variant) {
-    case 'declaration': return ambientDeclarationUFormDeclaration(config as Parameters<typeof ambientDeclarationUFormDeclaration>[0]);
-    case 'global': return ambientDeclarationUFormGlobal(config as Parameters<typeof ambientDeclarationUFormGlobal>[0]);
-    case 'module': return ambientDeclarationUFormModule(config as Parameters<typeof ambientDeclarationUFormModule>[0]);
-  }
-  throw new Error(`ambientDeclaration: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'declaration' | 'global' | 'module'.`);
-}
-export function ambientDeclarationUFormDeclaration(config: Omit<ConfigOf<T.AmbientDeclarationUFormDeclaration>, '$variant'>) {
-  const _ambient_declaration_declaration = config.ambientDeclarationDeclaration;
+export function ambientDeclaration(child: (T.AmbientDeclarationDeclaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.AmbientDeclaration as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'declaration' as const,
-    _ambient_declaration_declaration,
-    ambientDeclarationDeclaration() { return _ambient_declaration_declaration; },
-    $with: {
-      ambientDeclarationDeclaration: (value: T._AmbientDeclarationDeclaration) => ambientDeclarationUFormDeclaration({ ...config, ambientDeclarationDeclaration: value }),
-    },
-  }, methodsEngine);
-}
-export function ambientDeclarationUFormGlobal(config: Omit<ConfigOf<T.AmbientDeclarationUFormGlobal>, '$variant'>) {
-  const _ambient_declaration_global = config.ambientDeclarationGlobal;
-  return withMethods({
-    $type: TSKindId.AmbientDeclaration as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'global' as const,
-    _ambient_declaration_global,
-    ambientDeclarationGlobal() { return _ambient_declaration_global; },
-    $with: {
-      ambientDeclarationGlobal: (value: T.AmbientDeclarationGlobal) => ambientDeclarationUFormGlobal({ ...config, ambientDeclarationGlobal: value }),
-    },
-  }, methodsEngine);
-}
-export function ambientDeclarationUFormModule(config: Omit<ConfigOf<T.AmbientDeclarationUFormModule>, '$variant'>) {
-  const _ambient_declaration_module = config.ambientDeclarationModule;
-  return withMethods({
-    $type: TSKindId.AmbientDeclaration as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'module' as const,
-    _ambient_declaration_module,
-    ambientDeclarationModule() { return _ambient_declaration_module; },
-    $with: {
-      ambientDeclarationModule: (value: T.AmbientDeclarationModule) => ambientDeclarationUFormModule({ ...config, ambientDeclarationModule: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.AmbientDeclarationDeclaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule)) => ambientDeclaration(v) },
   }, methodsEngine);
 }
 
@@ -1368,92 +1208,24 @@ export function arrayType(primaryType: T.ArrayType.Config['primaryType']) {
   }, methodsEngine);
 }
 
-export function arrowFunctionParameter(parameter: T.ArrowFunctionParameter.Config['parameter']) {
-  const _parameter = parameter;
-  return withMethods({
-    $type: TSKindId._ArrowFunctionParameter as const,
-    $source: 2 as const,
-    $named: true as const,
-    _parameter,
-    parameter() { return _parameter; },
-    $with: {
-      parameter: (value: T.ArrowFunctionParameter.Config['parameter']) => arrowFunctionParameter(value),
-    },
-  }, methodsEngine);
-}
-
-export function arrowFunctionUCallSignature(config: T.ArrowFunctionUCallSignature.Config) {
-  const _type_parameters = config.typeParameters;
-  const _parameters = config.parameters;
-  const _return_type = config.returnType;
-  return withMethods({
-    $type: TSKindId._ArrowFunctionUCallSignature as const,
-    $source: 2 as const,
-    $named: true as const,
-    _type_parameters,
-    _parameters,
-    _return_type,
-    typeParameters() { return _type_parameters; },
-    parameters() { return _parameters; },
-    returnType() { return _return_type; },
-    $with: {
-      typeParameters: (value?: T.TypeParameters) => arrowFunctionUCallSignature({ ...config, typeParameters: value }),
-      parameters: (value: T.FormalParameters) => arrowFunctionUCallSignature({ ...config, parameters: value }),
-      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => arrowFunctionUCallSignature({ ...config, returnType: value }),
-    },
-  }, methodsEngine);
-}
-
-export function arrowFunction(config: ConfigOf<T.ArrowFunctionUFormParameter>): ReturnType<typeof arrowFunctionUFormParameter>;
-export function arrowFunction(config: ConfigOf<T.ArrowFunctionUFormUCallSignature>): ReturnType<typeof arrowFunctionUFormUCallSignature>;
-export function arrowFunction(config: ConfigOf<T.ArrowFunctionUFormParameter> | ConfigOf<T.ArrowFunctionUFormUCallSignature>) {
-  switch (config.$variant) {
-    case 'parameter': return arrowFunctionUFormParameter(config as Parameters<typeof arrowFunctionUFormParameter>[0]);
-    case '_call_signature': return arrowFunctionUFormUCallSignature(config as Parameters<typeof arrowFunctionUFormUCallSignature>[0]);
-  }
-  throw new Error(`arrowFunction: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'parameter' | '_call_signature'.`);
-}
-export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctionUFormParameter>, '$variant'>) {
+export function arrowFunction(config: T.ArrowFunction.Config) {
   const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-  const _arrow_function_parameter = config.arrowFunctionParameter;
+  const _content = config.content;
   const _body = config.body;
   return withMethods({
     $type: TSKindId.ArrowFunction as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'parameter' as const,
     _async_marker,
-    _arrow_function_parameter,
+    _content,
     _body,
     asyncMarker() { return _async_marker; },
-    arrowFunctionParameter() { return _arrow_function_parameter; },
+    content() { return _content; },
     body() { return _body; },
     $with: {
-      asyncMarker: (value?: NonNullable<Parameters<typeof arrowFunctionUFormParameter>[0]>['asyncMarker']) => arrowFunctionUFormParameter({ ...config, asyncMarker: value }),
-      arrowFunctionParameter: (value: T._ArrowFunctionParameter) => arrowFunctionUFormParameter({ ...config, arrowFunctionParameter: value }),
-      body: (value: T.Expression | T.StatementBlock) => arrowFunctionUFormParameter({ ...config, body: value }),
-    },
-  }, methodsEngine);
-}
-export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFunctionUFormUCallSignature>, '$variant'>) {
-  const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-  const _arrow_function__call_signature = config.arrowFunction_CallSignature;
-  const _body = config.body;
-  return withMethods({
-    $type: TSKindId.ArrowFunction as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: '_call_signature' as const,
-    _async_marker,
-    _arrow_function__call_signature,
-    _body,
-    asyncMarker() { return _async_marker; },
-    arrowFunction_CallSignature() { return _arrow_function__call_signature; },
-    body() { return _body; },
-    $with: {
-      asyncMarker: (value?: NonNullable<Parameters<typeof arrowFunctionUFormUCallSignature>[0]>['asyncMarker']) => arrowFunctionUFormUCallSignature({ ...config, asyncMarker: value }),
-      arrowFunction_CallSignature: (value: T._ArrowFunctionUCallSignature) => arrowFunctionUFormUCallSignature({ ...config, arrowFunction_CallSignature: value }),
-      body: (value: T.Expression | T.StatementBlock) => arrowFunctionUFormUCallSignature({ ...config, body: value }),
+      asyncMarker: (value?: NonNullable<Parameters<typeof arrowFunction>[0]>['asyncMarker']) => arrowFunction({ ...config, asyncMarker: value }),
+      content: (value: T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature) => arrowFunction({ ...config, content: value }),
+      body: (value: T.Expression | T.StatementBlock) => arrowFunction({ ...config, body: value }),
     },
   }, methodsEngine);
 }
@@ -1614,57 +1386,15 @@ export function breakStatement(config: Partial<T.BreakStatement.Config> = {}) {
   }, methodsEngine);
 }
 
-export function callExpression(config: ConfigOf<T.CallExpressionUFormCall>): ReturnType<typeof callExpressionUFormCall>;
-export function callExpression(config: ConfigOf<T.CallExpressionUFormTemplateCall>): ReturnType<typeof callExpressionUFormTemplateCall>;
-export function callExpression(config: ConfigOf<T.CallExpressionUFormMember>): ReturnType<typeof callExpressionUFormMember>;
-export function callExpression(config: ConfigOf<T.CallExpressionUFormCall> | ConfigOf<T.CallExpressionUFormTemplateCall> | ConfigOf<T.CallExpressionUFormMember>) {
-  switch (config.$variant) {
-    case 'call': return callExpressionUFormCall(config as Parameters<typeof callExpressionUFormCall>[0]);
-    case 'template_call': return callExpressionUFormTemplateCall(config as Parameters<typeof callExpressionUFormTemplateCall>[0]);
-    case 'member': return callExpressionUFormMember(config as Parameters<typeof callExpressionUFormMember>[0]);
-  }
-  throw new Error(`callExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'call' | 'template_call' | 'member'.`);
-}
-export function callExpressionUFormCall(config: Omit<ConfigOf<T.CallExpressionUFormCall>, '$variant'>) {
-  const _call_expression_call = config.callExpressionCall;
+export function callExpression(child: (T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.CallExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'call' as const,
-    _call_expression_call,
-    callExpressionCall() { return _call_expression_call; },
-    $with: {
-      callExpressionCall: (value: T.CallExpressionCall) => callExpressionUFormCall({ ...config, callExpressionCall: value }),
-    },
-  }, methodsEngine);
-}
-export function callExpressionUFormTemplateCall(config: Omit<ConfigOf<T.CallExpressionUFormTemplateCall>, '$variant'>) {
-  const _call_expression_template_call = config.callExpressionTemplateCall;
-  return withMethods({
-    $type: TSKindId.CallExpression as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'template_call' as const,
-    _call_expression_template_call,
-    callExpressionTemplateCall() { return _call_expression_template_call; },
-    $with: {
-      callExpressionTemplateCall: (value: T.CallExpressionTemplateCall) => callExpressionUFormTemplateCall({ ...config, callExpressionTemplateCall: value }),
-    },
-  }, methodsEngine);
-}
-export function callExpressionUFormMember(config: Omit<ConfigOf<T.CallExpressionUFormMember>, '$variant'>) {
-  const _call_expression_member = config.callExpressionMember;
-  return withMethods({
-    $type: TSKindId.CallExpression as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'member' as const,
-    _call_expression_member,
-    callExpressionMember() { return _call_expression_member; },
-    $with: {
-      callExpressionMember: (value: T.CallExpressionMember) => callExpressionUFormMember({ ...config, callExpressionMember: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember)) => callExpression(v) },
   }, methodsEngine);
 }
 
@@ -1784,71 +1514,15 @@ export function classDeclaration(config: T.ClassDeclaration.Config) {
   }, methodsEngine);
 }
 
-export function classHeritageExtendsClause(config: T.ClassHeritageExtendsClause.Config) {
-  const _extends_clause = config.extendsClause;
-  const _implements_clause = config.implementsClause;
-  return withMethods({
-    $type: TSKindId._ClassHeritageExtendsClause as const,
-    $source: 2 as const,
-    $named: true as const,
-    _extends_clause,
-    _implements_clause,
-    extendsClause() { return _extends_clause; },
-    implementsClause() { return _implements_clause; },
-    $with: {
-      extendsClause: (value: T.ExtendsClause) => classHeritageExtendsClause({ ...config, extendsClause: value }),
-      implementsClause: (value?: T.ImplementsClause) => classHeritageExtendsClause({ ...config, implementsClause: value }),
-    },
-  }, methodsEngine);
-}
-
-export function classHeritageImplementsClause(child: T.ImplementsClause) {
-  const _implements_clause = child;
-  return withMethods({
-    $type: TSKindId._ClassHeritageImplementsClause as const,
-    $source: 2 as const,
-    $named: true as const,
-    _implements_clause,
-    implementsClause() { return _implements_clause; },
-    $with: { $child: (v: T.ImplementsClause) => classHeritageImplementsClause(v) },
-  }, methodsEngine);
-}
-
-export function classHeritage(config: ConfigOf<T.ClassHeritageUFormExtendsClause>): ReturnType<typeof classHeritageUFormExtendsClause>;
-export function classHeritage(config: ConfigOf<T.ClassHeritageUFormImplementsClause>): ReturnType<typeof classHeritageUFormImplementsClause>;
-export function classHeritage(config: ConfigOf<T.ClassHeritageUFormExtendsClause> | ConfigOf<T.ClassHeritageUFormImplementsClause>) {
-  switch (config.$variant) {
-    case 'extends_clause': return classHeritageUFormExtendsClause(config as Parameters<typeof classHeritageUFormExtendsClause>[0]);
-    case 'implements_clause': return classHeritageUFormImplementsClause(config as Parameters<typeof classHeritageUFormImplementsClause>[0]);
-  }
-  throw new Error(`classHeritage: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'extends_clause' | 'implements_clause'.`);
-}
-export function classHeritageUFormExtendsClause(config: Omit<ConfigOf<T.ClassHeritageUFormExtendsClause>, '$variant'>) {
-  const _class_heritage_extends_clause = config.classHeritageExtendsClause;
+export function classHeritage(child: (T.ClassHeritageExtendsClause | T.ClassHeritageImplementsClause)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.ClassHeritage as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'extends_clause' as const,
-    _class_heritage_extends_clause,
-    classHeritageExtendsClause() { return _class_heritage_extends_clause; },
-    $with: {
-      classHeritageExtendsClause: (value: T._ClassHeritageExtendsClause) => classHeritageUFormExtendsClause({ ...config, classHeritageExtendsClause: value }),
-    },
-  }, methodsEngine);
-}
-export function classHeritageUFormImplementsClause(config: Omit<ConfigOf<T.ClassHeritageUFormImplementsClause>, '$variant'>) {
-  const _class_heritage_implements_clause = config.classHeritageImplementsClause;
-  return withMethods({
-    $type: TSKindId.ClassHeritage as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'implements_clause' as const,
-    _class_heritage_implements_clause,
-    classHeritageImplementsClause() { return _class_heritage_implements_clause; },
-    $with: {
-      classHeritageImplementsClause: (value: T._ClassHeritageImplementsClause) => classHeritageUFormImplementsClause({ ...config, classHeritageImplementsClause: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.ClassHeritageExtendsClause | T.ClassHeritageImplementsClause)) => classHeritage(v) },
   }, methodsEngine);
 }
 
@@ -2234,131 +1908,15 @@ export function exportSpecifier(config: T.ExportSpecifier.Config) {
   }, methodsEngine);
 }
 
-export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Config) {
-  const _export_clause = config.exportClause;
-  const _source = config.source;
-  const _semicolon = config.semicolon;
-  return withMethods({
-    $type: TSKindId._ExportStatementTypeExport as const,
-    $source: 2 as const,
-    $named: true as const,
-    _export_clause,
-    _source,
-    _semicolon,
-    exportClause() { return _export_clause; },
-    source() { return _source; },
-    semicolon() { return _semicolon; },
-    $with: {
-      exportClause: (value: T.ExportClause) => exportStatementTypeExport({ ...config, exportClause: value }),
-      source: (value?: T.String) => exportStatementTypeExport({ ...config, source: value }),
-      semicolon: (value?: T.Semicolon) => exportStatementTypeExport({ ...config, semicolon: value }),
-    },
-  }, methodsEngine);
-}
-
-export function exportStatementEqualsExport(config: T.ExportStatementEqualsExport.Config) {
-  const _expression = config.expression;
-  const _semicolon = config.semicolon;
-  return withMethods({
-    $type: TSKindId._ExportStatementEqualsExport as const,
-    $source: 2 as const,
-    $named: true as const,
-    _expression,
-    _semicolon,
-    expression() { return _expression; },
-    semicolon() { return _semicolon; },
-    $with: {
-      expression: (value: T.Expression) => exportStatementEqualsExport({ ...config, expression: value }),
-      semicolon: (value?: T.Semicolon) => exportStatementEqualsExport({ ...config, semicolon: value }),
-    },
-  }, methodsEngine);
-}
-
-export function exportStatementNamespaceExport(config: T.ExportStatementNamespaceExport.Config) {
-  const _identifier = config.identifier;
-  const _semicolon = config.semicolon;
-  return withMethods({
-    $type: TSKindId._ExportStatementNamespaceExport as const,
-    $source: 2 as const,
-    $named: true as const,
-    _identifier,
-    _semicolon,
-    identifier() { return _identifier; },
-    semicolon() { return _semicolon; },
-    $with: {
-      identifier: (value: T.Identifier) => exportStatementNamespaceExport({ ...config, identifier: value }),
-      semicolon: (value?: T.Semicolon) => exportStatementNamespaceExport({ ...config, semicolon: value }),
-    },
-  }, methodsEngine);
-}
-
-export function exportStatement(config: ConfigOf<T.ExportStatementUFormDefault>): ReturnType<typeof exportStatementUFormDefault>;
-export function exportStatement(config: ConfigOf<T.ExportStatementUFormTypeExport>): ReturnType<typeof exportStatementUFormTypeExport>;
-export function exportStatement(config: ConfigOf<T.ExportStatementUFormEqualsExport>): ReturnType<typeof exportStatementUFormEqualsExport>;
-export function exportStatement(config: ConfigOf<T.ExportStatementUFormNamespaceExport>): ReturnType<typeof exportStatementUFormNamespaceExport>;
-export function exportStatement(config: ConfigOf<T.ExportStatementUFormDefault> | ConfigOf<T.ExportStatementUFormTypeExport> | ConfigOf<T.ExportStatementUFormEqualsExport> | ConfigOf<T.ExportStatementUFormNamespaceExport>) {
-  switch (config.$variant) {
-    case 'default': return exportStatementUFormDefault(config as Parameters<typeof exportStatementUFormDefault>[0]);
-    case 'type_export': return exportStatementUFormTypeExport(config as Parameters<typeof exportStatementUFormTypeExport>[0]);
-    case 'equals_export': return exportStatementUFormEqualsExport(config as Parameters<typeof exportStatementUFormEqualsExport>[0]);
-    case 'namespace_export': return exportStatementUFormNamespaceExport(config as Parameters<typeof exportStatementUFormNamespaceExport>[0]);
-  }
-  throw new Error(`exportStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'default' | 'type_export' | 'equals_export' | 'namespace_export'.`);
-}
-export function exportStatementUFormDefault(config: Omit<ConfigOf<T.ExportStatementUFormDefault>, '$variant'>) {
-  const _export_statement_default = config.exportStatementDefault;
+export function exportStatement(child: (T.ExportStatementDefault | T.ExportStatementTypeExport | T.ExportStatementEqualsExport | T.ExportStatementNamespaceExport)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.ExportStatement as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'default' as const,
-    _export_statement_default,
-    exportStatementDefault() { return _export_statement_default; },
-    $with: {
-      exportStatementDefault: (value: T.ExportStatementDefault) => exportStatementUFormDefault({ ...config, exportStatementDefault: value }),
-    },
-  }, methodsEngine);
-}
-export function exportStatementUFormTypeExport(config: Omit<ConfigOf<T.ExportStatementUFormTypeExport>, '$variant'>) {
-  const _export_statement_type_export = config.exportStatementTypeExport;
-  return withMethods({
-    $type: TSKindId.ExportStatement as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'type_export' as const,
-    _export_statement_type_export,
-    exportStatementTypeExport() { return _export_statement_type_export; },
-    $with: {
-      exportStatementTypeExport: (value: T._ExportStatementTypeExport) => exportStatementUFormTypeExport({ ...config, exportStatementTypeExport: value }),
-    },
-  }, methodsEngine);
-}
-export function exportStatementUFormEqualsExport(config: Omit<ConfigOf<T.ExportStatementUFormEqualsExport>, '$variant'>) {
-  const _export_statement_equals_export = config.exportStatementEqualsExport;
-  return withMethods({
-    $type: TSKindId.ExportStatement as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'equals_export' as const,
-    _export_statement_equals_export,
-    exportStatementEqualsExport() { return _export_statement_equals_export; },
-    $with: {
-      exportStatementEqualsExport: (value: T._ExportStatementEqualsExport) => exportStatementUFormEqualsExport({ ...config, exportStatementEqualsExport: value }),
-    },
-  }, methodsEngine);
-}
-export function exportStatementUFormNamespaceExport(config: Omit<ConfigOf<T.ExportStatementUFormNamespaceExport>, '$variant'>) {
-  const _export_statement_namespace_export = config.exportStatementNamespaceExport;
-  return withMethods({
-    $type: TSKindId.ExportStatement as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'namespace_export' as const,
-    _export_statement_namespace_export,
-    exportStatementNamespaceExport() { return _export_statement_namespace_export; },
-    $with: {
-      exportStatementNamespaceExport: (value: T._ExportStatementNamespaceExport) => exportStatementUFormNamespaceExport({ ...config, exportStatementNamespaceExport: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.ExportStatementDefault | T.ExportStatementTypeExport | T.ExportStatementEqualsExport | T.ExportStatementNamespaceExport)) => exportStatement(v) },
   }, methodsEngine);
 }
 
@@ -2823,99 +2381,15 @@ export function importAttribute(object: T.ImportAttribute.Config['object']) {
   }, methodsEngine);
 }
 
-export function importClauseNamespaceImport(child: T.NamespaceImport) {
-  const _namespace_import = child;
+export function importClause(child: (T.ImportClauseNamespaceImport | T.ImportClauseNamedImports | T.ImportClauseDefaultImport)) {
+  const _content = child;
   return withMethods({
-    $type: TSKindId._ImportClauseNamespaceImport as const,
+    $type: TSKindId.ImportClause as const,
     $source: 2 as const,
     $named: true as const,
-    _namespace_import,
-    namespaceImport() { return _namespace_import; },
-    $with: { $child: (v: T.NamespaceImport) => importClauseNamespaceImport(v) },
-  }, methodsEngine);
-}
-
-export function importClauseNamedImports(child: T.NamedImports) {
-  const _named_imports = child;
-  return withMethods({
-    $type: TSKindId._ImportClauseNamedImports as const,
-    $source: 2 as const,
-    $named: true as const,
-    _named_imports,
-    namedImports() { return _named_imports; },
-    $with: { $child: (v: T.NamedImports) => importClauseNamedImports(v) },
-  }, methodsEngine);
-}
-
-export function importClauseDefaultImport(config: T.ImportClauseDefaultImport.Config) {
-  const _import_identifier = config.importIdentifier;
-  const _content = config.content;
-  return withMethods({
-    $type: TSKindId._ImportClauseDefaultImport as const,
-    $source: 2 as const,
-    $named: true as const,
-    _import_identifier,
     _content,
-    importIdentifier() { return _import_identifier; },
     content() { return _content; },
-    $with: {
-      importIdentifier: (value: T.ImportIdentifier) => importClauseDefaultImport({ ...config, importIdentifier: value }),
-      content: (value?: T.NamespaceImport | T.NamedImports) => importClauseDefaultImport({ ...config, content: value }),
-    },
-  }, methodsEngine);
-}
-
-export function importClause(config: ConfigOf<T.ImportClauseUFormNamespaceImport>): ReturnType<typeof importClauseUFormNamespaceImport>;
-export function importClause(config: ConfigOf<T.ImportClauseUFormNamedImports>): ReturnType<typeof importClauseUFormNamedImports>;
-export function importClause(config: ConfigOf<T.ImportClauseUFormDefaultImport>): ReturnType<typeof importClauseUFormDefaultImport>;
-export function importClause(config: ConfigOf<T.ImportClauseUFormNamespaceImport> | ConfigOf<T.ImportClauseUFormNamedImports> | ConfigOf<T.ImportClauseUFormDefaultImport>) {
-  switch (config.$variant) {
-    case 'namespace_import': return importClauseUFormNamespaceImport(config as Parameters<typeof importClauseUFormNamespaceImport>[0]);
-    case 'named_imports': return importClauseUFormNamedImports(config as Parameters<typeof importClauseUFormNamedImports>[0]);
-    case 'default_import': return importClauseUFormDefaultImport(config as Parameters<typeof importClauseUFormDefaultImport>[0]);
-  }
-  throw new Error(`importClause: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'namespace_import' | 'named_imports' | 'default_import'.`);
-}
-export function importClauseUFormNamespaceImport(config: Omit<ConfigOf<T.ImportClauseUFormNamespaceImport>, '$variant'>) {
-  const _import_clause_namespace_import = config.importClauseNamespaceImport;
-  return withMethods({
-    $type: TSKindId.ImportClause as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'namespace_import' as const,
-    _import_clause_namespace_import,
-    importClauseNamespaceImport() { return _import_clause_namespace_import; },
-    $with: {
-      importClauseNamespaceImport: (value: T._ImportClauseNamespaceImport) => importClauseUFormNamespaceImport({ ...config, importClauseNamespaceImport: value }),
-    },
-  }, methodsEngine);
-}
-export function importClauseUFormNamedImports(config: Omit<ConfigOf<T.ImportClauseUFormNamedImports>, '$variant'>) {
-  const _import_clause_named_imports = config.importClauseNamedImports;
-  return withMethods({
-    $type: TSKindId.ImportClause as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'named_imports' as const,
-    _import_clause_named_imports,
-    importClauseNamedImports() { return _import_clause_named_imports; },
-    $with: {
-      importClauseNamedImports: (value: T._ImportClauseNamedImports) => importClauseUFormNamedImports({ ...config, importClauseNamedImports: value }),
-    },
-  }, methodsEngine);
-}
-export function importClauseUFormDefaultImport(config: Omit<ConfigOf<T.ImportClauseUFormDefaultImport>, '$variant'>) {
-  const _import_clause_default_import = config.importClauseDefaultImport;
-  return withMethods({
-    $type: TSKindId.ImportClause as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'default_import' as const,
-    _import_clause_default_import,
-    importClauseDefaultImport() { return _import_clause_default_import; },
-    $with: {
-      importClauseDefaultImport: (value: T._ImportClauseDefaultImport) => importClauseUFormDefaultImport({ ...config, importClauseDefaultImport: value }),
-    },
+    $with: { $child: (v: (T.ImportClauseNamespaceImport | T.ImportClauseNamedImports | T.ImportClauseDefaultImport)) => importClause(v) },
   }, methodsEngine);
 }
 
@@ -2937,62 +2411,20 @@ export function importRequireClause(config: T.ImportRequireClause.Config) {
   }, methodsEngine);
 }
 
-export function importSpecifierName(name: T.ImportSpecifierName.Config['name']) {
-  const _name = name;
-  return withMethods({
-    $type: TSKindId._ImportSpecifierName as const,
-    $source: 2 as const,
-    $named: true as const,
-    _name,
-    name() { return _name; },
-    $with: {
-      name: (value: T.ImportSpecifierName.Config['name']) => importSpecifierName(value),
-    },
-  }, methodsEngine);
-}
-
-export function importSpecifier(config: ConfigOf<T.ImportSpecifierUFormName>): ReturnType<typeof importSpecifierUFormName>;
-export function importSpecifier(config: ConfigOf<T.ImportSpecifierUFormAs>): ReturnType<typeof importSpecifierUFormAs>;
-export function importSpecifier(config: ConfigOf<T.ImportSpecifierUFormName> | ConfigOf<T.ImportSpecifierUFormAs>) {
-  switch (config.$variant) {
-    case 'name': return importSpecifierUFormName(config as Parameters<typeof importSpecifierUFormName>[0]);
-    case 'as': return importSpecifierUFormAs(config as Parameters<typeof importSpecifierUFormAs>[0]);
-  }
-  throw new Error(`importSpecifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'name' | 'as'.`);
-}
-export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifierUFormName>, '$variant'>) {
+export function importSpecifier(config: T.ImportSpecifier.Config) {
   const _import_kind = coerceKindEnumStorage(config.importKind, [["type", TSKindId.Type] as const, ["typeof", TSKindId.Typeof] as const]);
-  const _import_specifier_name = config.importSpecifierName;
+  const _content = config.content;
   return withMethods({
     $type: TSKindId.ImportSpecifier as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'name' as const,
     _import_kind,
-    _import_specifier_name,
+    _content,
     importKind() { return _import_kind; },
-    importSpecifierName() { return _import_specifier_name; },
+    content() { return _content; },
     $with: {
-      importKind: (value?: NonNullable<Parameters<typeof importSpecifierUFormName>[0]>['importKind']) => importSpecifierUFormName({ ...config, importKind: value }),
-      importSpecifierName: (value: T._ImportSpecifierName) => importSpecifierUFormName({ ...config, importSpecifierName: value }),
-    },
-  }, methodsEngine);
-}
-export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUFormAs>, '$variant'>) {
-  const _import_kind = coerceKindEnumStorage(config.importKind, [["type", TSKindId.Type] as const, ["typeof", TSKindId.Typeof] as const]);
-  const _import_specifier_as = config.importSpecifierAs;
-  return withMethods({
-    $type: TSKindId.ImportSpecifier as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'as' as const,
-    _import_kind,
-    _import_specifier_as,
-    importKind() { return _import_kind; },
-    importSpecifierAs() { return _import_specifier_as; },
-    $with: {
-      importKind: (value?: NonNullable<Parameters<typeof importSpecifierUFormAs>[0]>['importKind']) => importSpecifierUFormAs({ ...config, importKind: value }),
-      importSpecifierAs: (value: T.ImportSpecifierAs) => importSpecifierUFormAs({ ...config, importSpecifierAs: value }),
+      importKind: (value?: NonNullable<Parameters<typeof importSpecifier>[0]>['importKind']) => importSpecifier({ ...config, importKind: value }),
+      content: (value: T.ImportSpecifierName | T.ImportSpecifierAs) => importSpecifier({ ...config, content: value }),
     },
   }, methodsEngine);
 }
@@ -3023,68 +2455,24 @@ export function importStatement(config: T.ImportStatement.Config) {
   }, methodsEngine);
 }
 
-export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
-  const _mapped_type_clause = child;
-  return withMethods({
-    $type: TSKindId._IndexSignatureMappedTypeClause as const,
-    $source: 2 as const,
-    $named: true as const,
-    _mapped_type_clause,
-    mappedTypeClause() { return _mapped_type_clause; },
-    $with: { $child: (v: T.MappedTypeClause) => indexSignatureMappedTypeClause(v) },
-  }, methodsEngine);
-}
-
-export function indexSignature(config: ConfigOf<T.IndexSignatureUFormColon>): ReturnType<typeof indexSignatureUFormColon>;
-export function indexSignature(config: ConfigOf<T.IndexSignatureUFormMappedTypeClause>): ReturnType<typeof indexSignatureUFormMappedTypeClause>;
-export function indexSignature(config: ConfigOf<T.IndexSignatureUFormColon> | ConfigOf<T.IndexSignatureUFormMappedTypeClause>) {
-  switch (config.$variant) {
-    case 'colon': return indexSignatureUFormColon(config as Parameters<typeof indexSignatureUFormColon>[0]);
-    case 'mapped_type_clause': return indexSignatureUFormMappedTypeClause(config as Parameters<typeof indexSignatureUFormMappedTypeClause>[0]);
-  }
-  throw new Error(`indexSignature: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'colon' | 'mapped_type_clause'.`);
-}
-export function indexSignatureUFormColon(config: Omit<ConfigOf<T.IndexSignatureUFormColon>, '$variant'>) {
+export function indexSignature(config: T.IndexSignature.Config) {
   const _sign = coerceKindEnumStorage(config.sign, [["-", TSKindId.Dash] as const, ["+", TSKindId.Plus] as const]);
-  const _index_signature_colon = config.indexSignatureColon;
+  const _content = config.content;
   const _type = config.type;
   return withMethods({
     $type: TSKindId.IndexSignature as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'colon' as const,
     _sign,
-    _index_signature_colon,
+    _content,
     _type,
     sign() { return _sign; },
-    indexSignatureColon() { return _index_signature_colon; },
+    content() { return _content; },
     type() { return _type; },
     $with: {
-      sign: (value?: NonNullable<Parameters<typeof indexSignatureUFormColon>[0]>['sign']) => indexSignatureUFormColon({ ...config, sign: value }),
-      indexSignatureColon: (value: T.IndexSignatureColon) => indexSignatureUFormColon({ ...config, indexSignatureColon: value }),
-      type: (value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => indexSignatureUFormColon({ ...config, type: value }),
-    },
-  }, methodsEngine);
-}
-export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.IndexSignatureUFormMappedTypeClause>, '$variant'>) {
-  const _sign = coerceKindEnumStorage(config.sign, [["-", TSKindId.Dash] as const, ["+", TSKindId.Plus] as const]);
-  const _index_signature_mapped_type_clause = config.indexSignatureMappedTypeClause;
-  const _type = config.type;
-  return withMethods({
-    $type: TSKindId.IndexSignature as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'mapped_type_clause' as const,
-    _sign,
-    _index_signature_mapped_type_clause,
-    _type,
-    sign() { return _sign; },
-    indexSignatureMappedTypeClause() { return _index_signature_mapped_type_clause; },
-    type() { return _type; },
-    $with: {
-      sign: (value?: NonNullable<Parameters<typeof indexSignatureUFormMappedTypeClause>[0]>['sign']) => indexSignatureUFormMappedTypeClause({ ...config, sign: value }),
-      indexSignatureMappedTypeClause: (value: T._IndexSignatureMappedTypeClause) => indexSignatureUFormMappedTypeClause({ ...config, indexSignatureMappedTypeClause: value }),
-      type: (value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => indexSignatureUFormMappedTypeClause({ ...config, type: value }),
+      sign: (value?: NonNullable<Parameters<typeof indexSignature>[0]>['sign']) => indexSignature({ ...config, sign: value }),
+      content: (value: T.IndexSignatureColon | T.IndexSignatureMappedTypeClause) => indexSignature({ ...config, content: value }),
+      type: (value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => indexSignature({ ...config, type: value }),
     },
   }, methodsEngine);
 }
@@ -3871,53 +3259,15 @@ export function pairPattern(config: T.PairPattern.Config) {
   }, methodsEngine);
 }
 
-export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
-  const _sequence_expression = child;
-  return withMethods({
-    $type: TSKindId._ParenthesizedExpressionSequence as const,
-    $source: 2 as const,
-    $named: true as const,
-    _sequence_expression,
-    sequenceExpression() { return _sequence_expression; },
-    $with: { $child: (v: T.SequenceExpression) => parenthesizedExpressionSequence(v) },
-  }, methodsEngine);
-}
-
-export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressionUFormTyped>): ReturnType<typeof parenthesizedExpressionUFormTyped>;
-export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressionUFormSequence>): ReturnType<typeof parenthesizedExpressionUFormSequence>;
-export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressionUFormTyped> | ConfigOf<T.ParenthesizedExpressionUFormSequence>) {
-  switch (config.$variant) {
-    case 'typed': return parenthesizedExpressionUFormTyped(config as Parameters<typeof parenthesizedExpressionUFormTyped>[0]);
-    case 'sequence': return parenthesizedExpressionUFormSequence(config as Parameters<typeof parenthesizedExpressionUFormSequence>[0]);
-  }
-  throw new Error(`parenthesizedExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'typed' | 'sequence'.`);
-}
-export function parenthesizedExpressionUFormTyped(config: Omit<ConfigOf<T.ParenthesizedExpressionUFormTyped>, '$variant'>) {
-  const _parenthesized_expression_typed = config.parenthesizedExpressionTyped;
+export function parenthesizedExpression(child: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.ParenthesizedExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'typed' as const,
-    _parenthesized_expression_typed,
-    parenthesizedExpressionTyped() { return _parenthesized_expression_typed; },
-    $with: {
-      parenthesizedExpressionTyped: (value: T.ParenthesizedExpressionTyped) => parenthesizedExpressionUFormTyped({ ...config, parenthesizedExpressionTyped: value }),
-    },
-  }, methodsEngine);
-}
-export function parenthesizedExpressionUFormSequence(config: Omit<ConfigOf<T.ParenthesizedExpressionUFormSequence>, '$variant'>) {
-  const _parenthesized_expression_sequence = config.parenthesizedExpressionSequence;
-  return withMethods({
-    $type: TSKindId.ParenthesizedExpression as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'sequence' as const,
-    _parenthesized_expression_sequence,
-    parenthesizedExpressionSequence() { return _parenthesized_expression_sequence; },
-    $with: {
-      parenthesizedExpressionSequence: (value: T._ParenthesizedExpressionSequence) => parenthesizedExpressionUFormSequence({ ...config, parenthesizedExpressionSequence: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => parenthesizedExpression(v) },
   }, methodsEngine);
 }
 
@@ -4772,41 +4122,15 @@ export function unionType(config: T.UnionType.Config) {
   }, methodsEngine);
 }
 
-export function updateExpression(config: ConfigOf<T.UpdateExpressionUFormPostfix>): ReturnType<typeof updateExpressionUFormPostfix>;
-export function updateExpression(config: ConfigOf<T.UpdateExpressionUFormPrefix>): ReturnType<typeof updateExpressionUFormPrefix>;
-export function updateExpression(config: ConfigOf<T.UpdateExpressionUFormPostfix> | ConfigOf<T.UpdateExpressionUFormPrefix>) {
-  switch (config.$variant) {
-    case 'postfix': return updateExpressionUFormPostfix(config as Parameters<typeof updateExpressionUFormPostfix>[0]);
-    case 'prefix': return updateExpressionUFormPrefix(config as Parameters<typeof updateExpressionUFormPrefix>[0]);
-  }
-  throw new Error(`updateExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'postfix' | 'prefix'.`);
-}
-export function updateExpressionUFormPostfix(config: Omit<ConfigOf<T.UpdateExpressionUFormPostfix>, '$variant'>) {
-  const _update_expression_postfix = config.updateExpressionPostfix;
+export function updateExpression(child: (T.UpdateExpressionPostfix | T.UpdateExpressionPrefix)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.UpdateExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $variant: 'postfix' as const,
-    _update_expression_postfix,
-    updateExpressionPostfix() { return _update_expression_postfix; },
-    $with: {
-      updateExpressionPostfix: (value: T.UpdateExpressionPostfix) => updateExpressionUFormPostfix({ ...config, updateExpressionPostfix: value }),
-    },
-  }, methodsEngine);
-}
-export function updateExpressionUFormPrefix(config: Omit<ConfigOf<T.UpdateExpressionUFormPrefix>, '$variant'>) {
-  const _update_expression_prefix = config.updateExpressionPrefix;
-  return withMethods({
-    $type: TSKindId.UpdateExpression as const,
-    $source: 2 as const,
-    $named: true as const,
-    $variant: 'prefix' as const,
-    _update_expression_prefix,
-    updateExpressionPrefix() { return _update_expression_prefix; },
-    $with: {
-      updateExpressionPrefix: (value: T.UpdateExpressionPrefix) => updateExpressionUFormPrefix({ ...config, updateExpressionPrefix: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.UpdateExpressionPostfix | T.UpdateExpressionPrefix)) => updateExpression(v) },
   }, methodsEngine);
 }
 
@@ -4961,11 +4285,11 @@ export function errorRecovery(text: string) {
 }
 
 export type FluentKindMap = {
-  "_ambient_declaration_declaration": FluentNode<"_ambient_declaration_declaration", T._AmbientDeclarationDeclaration.Config>;
+  "_ambient_declaration_declaration": FluentNode<"_ambient_declaration_declaration", T.AmbientDeclarationDeclaration.Config>;
   "_ambient_declaration_global": T.AmbientDeclarationGlobal;
   "_ambient_declaration_module": T.AmbientDeclarationModule;
-  "_arrow_function__call_signature": FluentNode<"_arrow_function__call_signature", T._ArrowFunctionUCallSignature.Config>;
-  "_arrow_function_parameter": FluentNode<"_arrow_function_parameter", T._ArrowFunctionParameter.Config>;
+  "_arrow_function__call_signature": FluentNode<"_arrow_function__call_signature", T.ArrowFunctionUCallSignature.Config>;
+  "_arrow_function_parameter": FluentNode<"_arrow_function_parameter", T.ArrowFunctionParameter.Config>;
   "_call_expression_call": T.CallExpressionCall;
   "_call_expression_member": T.CallExpressionMember;
   "_call_expression_template_call": T.CallExpressionTemplateCall;
@@ -4973,39 +4297,37 @@ export type FluentKindMap = {
   "_class_body_member": T.ClassBodyMember;
   "_class_body_method": T.ClassBodyMethod;
   "_class_body_method_sig": FluentNode<"_class_body_method_sig", T.ClassBodyMethodSig.Config>;
-  "_class_heritage_extends_clause": FluentNode<"_class_heritage_extends_clause", T._ClassHeritageExtendsClause.Config>;
-  "_class_heritage_implements_clause": FluentNode<"_class_heritage_implements_clause", T._ClassHeritageImplementsClause.Config>;
+  "_class_heritage_extends_clause": FluentNode<"_class_heritage_extends_clause", T.ClassHeritageExtendsClause.Config>;
+  "_class_heritage_implements_clause": FluentNode<"_class_heritage_implements_clause", T.ClassHeritageImplementsClause.Config>;
+  "_export_statement_default": FluentNode<"_export_statement_default", T.ExportStatementDefault.Config>;
   "_export_statement_default_decl_arm": T.ExportStatementDefaultDeclArm;
   "_export_statement_default_decl_arm_default_kw": T.ExportStatementDefaultDeclArmDefaultKw;
   "_export_statement_default_decl_arm_default_kw_value": T.ExportStatementDefaultDeclArmDefaultKwValue;
-  "export_statement_default_from_arm_star_from": FluentNode<"export_statement_default_from_arm_star_from", T.ExportStatementDefaultFromArmStarFrom.Config>;
-  "export_statement_default_from_arm_ns_from": FluentNode<"export_statement_default_from_arm_ns_from", T.ExportStatementDefaultFromArmNsFrom.Config>;
-  "export_statement_default_from_arm_clause_from": FluentNode<"export_statement_default_from_arm_clause_from", T.ExportStatementDefaultFromArmClauseFrom.Config>;
   "_export_statement_default_from_arm": FluentNode<"_export_statement_default_from_arm", T.ExportStatementDefaultFromArm.Config>;
-  "_export_statement_default_from_arm_clause_from": FluentNode<"_export_statement_default_from_arm_clause_from", T._ExportStatementDefaultFromArmClauseFrom.Config>;
-  "_export_statement_default_from_arm_ns_from": FluentNode<"_export_statement_default_from_arm_ns_from", T._ExportStatementDefaultFromArmNsFrom.Config>;
-  "_export_statement_default_from_arm_star_from": FluentNode<"_export_statement_default_from_arm_star_from", T._ExportStatementDefaultFromArmStarFrom.Config>;
-  "_export_statement_equals_export": FluentNode<"_export_statement_equals_export", T._ExportStatementEqualsExport.Config>;
-  "_export_statement_namespace_export": FluentNode<"_export_statement_namespace_export", T._ExportStatementNamespaceExport.Config>;
-  "_export_statement_type_export": FluentNode<"_export_statement_type_export", T._ExportStatementTypeExport.Config>;
+  "_export_statement_default_from_arm_clause_from": FluentNode<"_export_statement_default_from_arm_clause_from", T.ExportStatementDefaultFromArmClauseFrom.Config>;
+  "_export_statement_default_from_arm_ns_from": FluentNode<"_export_statement_default_from_arm_ns_from", T.ExportStatementDefaultFromArmNsFrom.Config>;
+  "_export_statement_default_from_arm_star_from": FluentNode<"_export_statement_default_from_arm_star_from", T.ExportStatementDefaultFromArmStarFrom.Config>;
+  "_export_statement_equals_export": FluentNode<"_export_statement_equals_export", T.ExportStatementEqualsExport.Config>;
+  "_export_statement_namespace_export": FluentNode<"_export_statement_namespace_export", T.ExportStatementNamespaceExport.Config>;
+  "_export_statement_type_export": FluentNode<"_export_statement_type_export", T.ExportStatementTypeExport.Config>;
   "_extends_clause_single": T.ExtendsClauseSingle;
   "_for_header": T.ForHeader;
   "_for_header_let_const_kind": T.ForHeaderLetConstKind;
   "_for_header_lhs": FluentNode<"_for_header_lhs", T.ForHeaderLhs.Config>;
   "_for_header_var_kind": T.ForHeaderVarKind;
   "_from_clause": T.FromClause;
-  "_import_clause_default_import": FluentNode<"_import_clause_default_import", T._ImportClauseDefaultImport.Config>;
-  "_import_clause_named_imports": FluentNode<"_import_clause_named_imports", T._ImportClauseNamedImports.Config>;
-  "_import_clause_namespace_import": FluentNode<"_import_clause_namespace_import", T._ImportClauseNamespaceImport.Config>;
+  "_import_clause_default_import": FluentNode<"_import_clause_default_import", T.ImportClauseDefaultImport.Config>;
+  "_import_clause_named_imports": FluentNode<"_import_clause_named_imports", T.ImportClauseNamedImports.Config>;
+  "_import_clause_namespace_import": FluentNode<"_import_clause_namespace_import", T.ImportClauseNamespaceImport.Config>;
   "_import_specifier_as": T.ImportSpecifierAs;
-  "_import_specifier_name": FluentNode<"_import_specifier_name", T._ImportSpecifierName.Config>;
+  "_import_specifier_name": FluentNode<"_import_specifier_name", T.ImportSpecifierName.Config>;
   "_index_signature_colon": T.IndexSignatureColon;
-  "_index_signature_mapped_type_clause": FluentNode<"_index_signature_mapped_type_clause", T._IndexSignatureMappedTypeClause.Config>;
+  "_index_signature_mapped_type_clause": FluentNode<"_index_signature_mapped_type_clause", T.IndexSignatureMappedTypeClause.Config>;
   "_initializer": T.Initializer;
   "_module": T._Module;
   "_number": T._Number;
   "_parameter_name": T.ParameterName;
-  "_parenthesized_expression_sequence": FluentNode<"_parenthesized_expression_sequence", T._ParenthesizedExpressionSequence.Config>;
+  "_parenthesized_expression_sequence": FluentNode<"_parenthesized_expression_sequence", T.ParenthesizedExpressionSequence.Config>;
   "_parenthesized_expression_typed": T.ParenthesizedExpressionTyped;
   "_public_field_definition_abstract_first": T.PublicFieldDefinitionAbstractFirst;
   "_public_field_definition_access_first": T.PublicFieldDefinitionAccessFirst;
@@ -5026,14 +4348,11 @@ export type FluentKindMap = {
   "abstract_method_signature": FluentNode<"abstract_method_signature", T.AbstractMethodSignature.Config>;
   "accessibility_modifier": T.AccessibilityModifier;
   "adding_type_annotation": FluentNode<"adding_type_annotation", T.AddingTypeAnnotation.Config>;
-  "ambient_declaration_declaration": FluentNode<"ambient_declaration_declaration", T.AmbientDeclarationDeclaration.Config>;
   "ambient_declaration": FluentNode<"ambient_declaration", T.AmbientDeclaration.Config>;
   "arguments": FluentNode<"arguments", T.Arguments.Config>;
   "array": FluentNode<"array", T.Array.Config>;
   "array_pattern": FluentNode<"array_pattern", T.ArrayPattern.Config>;
   "array_type": FluentNode<"array_type", T.ArrayType.Config>;
-  "arrow_function_parameter": FluentNode<"arrow_function_parameter", T.ArrowFunctionParameter.Config>;
-  "arrow_function__call_signature": FluentNode<"arrow_function__call_signature", T.ArrowFunctionUCallSignature.Config>;
   "arrow_function": FluentNode<"arrow_function", T.ArrowFunction.Config>;
   "as_expression": FluentNode<"as_expression", T.AsExpression.Config>;
   "asserts": FluentNode<"asserts", T.Asserts.Config>;
@@ -5050,8 +4369,6 @@ export type FluentKindMap = {
   "class": FluentNode<"class", T.Class.Config>;
   "class_body": FluentNode<"class_body", T.ClassBody.Config>;
   "class_declaration": FluentNode<"class_declaration", T.ClassDeclaration.Config>;
-  "class_heritage_extends_clause": FluentNode<"class_heritage_extends_clause", T.ClassHeritageExtendsClause.Config>;
-  "class_heritage_implements_clause": FluentNode<"class_heritage_implements_clause", T.ClassHeritageImplementsClause.Config>;
   "class_heritage": FluentNode<"class_heritage", T.ClassHeritage.Config>;
   "class_static_block": FluentNode<"class_static_block", T.ClassStaticBlock.Config>;
   "comment": T.Comment;
@@ -5075,9 +4392,6 @@ export type FluentKindMap = {
   "escape_sequence": T.EscapeSequence;
   "export_clause": FluentNode<"export_clause", T.ExportClause.Config>;
   "export_specifier": FluentNode<"export_specifier", T.ExportSpecifier.Config>;
-  "export_statement_type_export": FluentNode<"export_statement_type_export", T.ExportStatementTypeExport.Config>;
-  "export_statement_equals_export": FluentNode<"export_statement_equals_export", T.ExportStatementEqualsExport.Config>;
-  "export_statement_namespace_export": FluentNode<"export_statement_namespace_export", T.ExportStatementNamespaceExport.Config>;
   "export_statement": FluentNode<"export_statement", T.ExportStatement.Config>;
   "expression_statement": FluentNode<"expression_statement", T.ExpressionStatement.Config>;
   "extends_clause": FluentNode<"extends_clause", T.ExtendsClause.Config>;
@@ -5102,15 +4416,10 @@ export type FluentKindMap = {
   "import": T.Import;
   "import_alias": FluentNode<"import_alias", T.ImportAlias.Config>;
   "import_attribute": FluentNode<"import_attribute", T.ImportAttribute.Config>;
-  "import_clause_namespace_import": FluentNode<"import_clause_namespace_import", T.ImportClauseNamespaceImport.Config>;
-  "import_clause_named_imports": FluentNode<"import_clause_named_imports", T.ImportClauseNamedImports.Config>;
-  "import_clause_default_import": FluentNode<"import_clause_default_import", T.ImportClauseDefaultImport.Config>;
   "import_clause": FluentNode<"import_clause", T.ImportClause.Config>;
   "import_require_clause": FluentNode<"import_require_clause", T.ImportRequireClause.Config>;
-  "import_specifier_name": FluentNode<"import_specifier_name", T.ImportSpecifierName.Config>;
   "import_specifier": FluentNode<"import_specifier", T.ImportSpecifier.Config>;
   "import_statement": FluentNode<"import_statement", T.ImportStatement.Config>;
-  "index_signature_mapped_type_clause": FluentNode<"index_signature_mapped_type_clause", T.IndexSignatureMappedTypeClause.Config>;
   "index_signature": FluentNode<"index_signature", T.IndexSignature.Config>;
   "index_type_query": FluentNode<"index_type_query", T.IndexTypeQuery.Config>;
   "infer_type": FluentNode<"infer_type", T.InferType.Config>;
@@ -5152,7 +4461,6 @@ export type FluentKindMap = {
   "override_modifier": T.OverrideModifier;
   "pair": FluentNode<"pair", T.Pair.Config>;
   "pair_pattern": FluentNode<"pair_pattern", T.PairPattern.Config>;
-  "parenthesized_expression_sequence": FluentNode<"parenthesized_expression_sequence", T.ParenthesizedExpressionSequence.Config>;
   "parenthesized_expression": FluentNode<"parenthesized_expression", T.ParenthesizedExpression.Config>;
   "parenthesized_type": FluentNode<"parenthesized_type", T.ParenthesizedType.Config>;
   "predefined_type": T.PredefinedType;
@@ -5219,11 +4527,11 @@ export type FluentKindMap = {
 };
 
 export const _factoryMap = {
-  "_ambient_declaration_declaration": _ambientDeclarationDeclaration,
+  "_ambient_declaration_declaration": ambientDeclarationDeclaration,
   "_ambient_declaration_global": _ambientDeclarationGlobal,
   "_ambient_declaration_module": _ambientDeclarationModule,
-  "_arrow_function__call_signature": _arrowFunctionUCallSignature,
-  "_arrow_function_parameter": _arrowFunctionParameter,
+  "_arrow_function__call_signature": arrowFunctionUCallSignature,
+  "_arrow_function_parameter": arrowFunctionParameter,
   "_call_expression_call": _callExpressionCall,
   "_call_expression_member": _callExpressionMember,
   "_call_expression_template_call": _callExpressionTemplateCall,
@@ -5231,39 +4539,37 @@ export const _factoryMap = {
   "_class_body_member": _classBodyMember,
   "_class_body_method": _classBodyMethod,
   "_class_body_method_sig": classBodyMethodSig,
-  "_class_heritage_extends_clause": _classHeritageExtendsClause,
-  "_class_heritage_implements_clause": _classHeritageImplementsClause,
+  "_class_heritage_extends_clause": classHeritageExtendsClause,
+  "_class_heritage_implements_clause": classHeritageImplementsClause,
+  "_export_statement_default": exportStatementDefault,
   "_export_statement_default_decl_arm": _exportStatementDefaultDeclArm,
   "_export_statement_default_decl_arm_default_kw": _exportStatementDefaultDeclArmDefaultKw,
   "_export_statement_default_decl_arm_default_kw_value": _exportStatementDefaultDeclArmDefaultKwValue,
-  "export_statement_default_from_arm_star_from": exportStatementDefaultFromArmStarFrom,
-  "export_statement_default_from_arm_ns_from": exportStatementDefaultFromArmNsFrom,
-  "export_statement_default_from_arm_clause_from": exportStatementDefaultFromArmClauseFrom,
   "_export_statement_default_from_arm": exportStatementDefaultFromArm,
-  "_export_statement_default_from_arm_clause_from": _exportStatementDefaultFromArmClauseFrom,
-  "_export_statement_default_from_arm_ns_from": _exportStatementDefaultFromArmNsFrom,
-  "_export_statement_default_from_arm_star_from": _exportStatementDefaultFromArmStarFrom,
-  "_export_statement_equals_export": _exportStatementEqualsExport,
-  "_export_statement_namespace_export": _exportStatementNamespaceExport,
-  "_export_statement_type_export": _exportStatementTypeExport,
+  "_export_statement_default_from_arm_clause_from": exportStatementDefaultFromArmClauseFrom,
+  "_export_statement_default_from_arm_ns_from": exportStatementDefaultFromArmNsFrom,
+  "_export_statement_default_from_arm_star_from": exportStatementDefaultFromArmStarFrom,
+  "_export_statement_equals_export": exportStatementEqualsExport,
+  "_export_statement_namespace_export": exportStatementNamespaceExport,
+  "_export_statement_type_export": exportStatementTypeExport,
   "_extends_clause_single": _extendsClauseSingle,
   "_for_header": _forHeader,
   "_for_header_let_const_kind": _forHeaderLetConstKind,
   "_for_header_lhs": forHeaderLhs,
   "_for_header_var_kind": _forHeaderVarKind,
   "_from_clause": _fromClause,
-  "_import_clause_default_import": _importClauseDefaultImport,
-  "_import_clause_named_imports": _importClauseNamedImports,
-  "_import_clause_namespace_import": _importClauseNamespaceImport,
+  "_import_clause_default_import": importClauseDefaultImport,
+  "_import_clause_named_imports": importClauseNamedImports,
+  "_import_clause_namespace_import": importClauseNamespaceImport,
   "_import_specifier_as": _importSpecifierAs,
-  "_import_specifier_name": _importSpecifierName,
+  "_import_specifier_name": importSpecifierName,
   "_index_signature_colon": _indexSignatureColon,
-  "_index_signature_mapped_type_clause": _indexSignatureMappedTypeClause,
+  "_index_signature_mapped_type_clause": indexSignatureMappedTypeClause,
   "_initializer": _initializer,
   "_module": _module,
   "_number": _number,
   "_parameter_name": _parameterName,
-  "_parenthesized_expression_sequence": _parenthesizedExpressionSequence,
+  "_parenthesized_expression_sequence": parenthesizedExpressionSequence,
   "_parenthesized_expression_typed": _parenthesizedExpressionTyped,
   "_public_field_definition_abstract_first": _publicFieldDefinitionAbstractFirst,
   "_public_field_definition_access_first": _publicFieldDefinitionAccessFirst,
@@ -5284,14 +4590,11 @@ export const _factoryMap = {
   "abstract_method_signature": abstractMethodSignature,
   "accessibility_modifier": accessibilityModifier,
   "adding_type_annotation": addingTypeAnnotation,
-  "ambient_declaration_declaration": ambientDeclarationDeclaration,
   "ambient_declaration": ambientDeclaration,
   "arguments": arguments_,
   "array": array,
   "array_pattern": arrayPattern,
   "array_type": arrayType,
-  "arrow_function_parameter": arrowFunctionParameter,
-  "arrow_function__call_signature": arrowFunctionUCallSignature,
   "arrow_function": arrowFunction,
   "as_expression": asExpression,
   "asserts": asserts,
@@ -5308,8 +4611,6 @@ export const _factoryMap = {
   "class": class_,
   "class_body": classBody,
   "class_declaration": classDeclaration,
-  "class_heritage_extends_clause": classHeritageExtendsClause,
-  "class_heritage_implements_clause": classHeritageImplementsClause,
   "class_heritage": classHeritage,
   "class_static_block": classStaticBlock,
   "comment": comment,
@@ -5333,9 +4634,6 @@ export const _factoryMap = {
   "escape_sequence": escapeSequence,
   "export_clause": exportClause,
   "export_specifier": exportSpecifier,
-  "export_statement_type_export": exportStatementTypeExport,
-  "export_statement_equals_export": exportStatementEqualsExport,
-  "export_statement_namespace_export": exportStatementNamespaceExport,
   "export_statement": exportStatement,
   "expression_statement": expressionStatement,
   "extends_clause": extendsClause,
@@ -5360,15 +4658,10 @@ export const _factoryMap = {
   "import": import_,
   "import_alias": importAlias,
   "import_attribute": importAttribute,
-  "import_clause_namespace_import": importClauseNamespaceImport,
-  "import_clause_named_imports": importClauseNamedImports,
-  "import_clause_default_import": importClauseDefaultImport,
   "import_clause": importClause,
   "import_require_clause": importRequireClause,
-  "import_specifier_name": importSpecifierName,
   "import_specifier": importSpecifier,
   "import_statement": importStatement,
-  "index_signature_mapped_type_clause": indexSignatureMappedTypeClause,
   "index_signature": indexSignature,
   "index_type_query": indexTypeQuery,
   "infer_type": inferType,
@@ -5410,7 +4703,6 @@ export const _factoryMap = {
   "override_modifier": overrideModifier,
   "pair": pair,
   "pair_pattern": pairPattern,
-  "parenthesized_expression_sequence": parenthesizedExpressionSequence,
   "parenthesized_expression": parenthesizedExpression,
   "parenthesized_type": parenthesizedType,
   "predefined_type": predefinedType,

@@ -8,6 +8,7 @@ export const NODE_KINDS = [
   '_class_body_method_sig',
   '_class_heritage_extends_clause',
   '_class_heritage_implements_clause',
+  '_export_statement_default',
   '_export_statement_default_from_arm',
   '_export_statement_default_from_arm_clause_from',
   '_export_statement_default_from_arm_ns_from',
@@ -30,14 +31,11 @@ export const NODE_KINDS = [
   'abstract_method_signature',
   'adding_type_annotation',
   'ambient_declaration',
-  'ambient_declaration_declaration',
   'arguments',
   'array',
   'array_pattern',
   'array_type',
   'arrow_function',
-  'arrow_function__call_signature',
-  'arrow_function_parameter',
   'as_expression',
   'asserts',
   'asserts_annotation',
@@ -54,8 +52,6 @@ export const NODE_KINDS = [
   'class_body',
   'class_declaration',
   'class_heritage',
-  'class_heritage_extends_clause',
-  'class_heritage_implements_clause',
   'class_static_block',
   'computed_property_name',
   'conditional_type',
@@ -77,12 +73,6 @@ export const NODE_KINDS = [
   'export_clause',
   'export_specifier',
   'export_statement',
-  'export_statement_default_from_arm_clause_from',
-  'export_statement_default_from_arm_ns_from',
-  'export_statement_default_from_arm_star_from',
-  'export_statement_equals_export',
-  'export_statement_namespace_export',
-  'export_statement_type_export',
   'expression_statement',
   'extends_clause',
   'extends_type_clause',
@@ -104,15 +94,10 @@ export const NODE_KINDS = [
   'import_alias',
   'import_attribute',
   'import_clause',
-  'import_clause_default_import',
-  'import_clause_named_imports',
-  'import_clause_namespace_import',
   'import_require_clause',
   'import_specifier',
-  'import_specifier_name',
   'import_statement',
   'index_signature',
-  'index_signature_mapped_type_clause',
   'index_type_query',
   'infer_type',
   'instantiation_expression',
@@ -157,7 +142,6 @@ export const NODE_KINDS = [
   'pair',
   'pair_pattern',
   'parenthesized_expression',
-  'parenthesized_expression_sequence',
   'parenthesized_type',
   'program',
   'property_signature',
@@ -732,6 +716,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "object_type_content": 354,
   "object_type_content_comma": 355,
   "object_type_content_semi": 356,
+  "_export_statement_default": 357,
   "_export_statement_default_from_arm": 358,
   "_arrow_function_parameter": 361,
   "_arrow_function__call_signature": 362,
@@ -1012,6 +997,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [354]: "object_type_content",
   [355]: "object_type_content_comma",
   [356]: "object_type_content_semi",
+  [357]: "_export_statement_default",
   [358]: "_export_statement_default_from_arm",
   [361]: "_arrow_function_parameter",
   [362]: "_arrow_function__call_signature",
@@ -1292,6 +1278,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "object_type_content", id: 354, enumName: "ObjectTypeContent", cName: "sym_object_type_content" },
   { name: "object_type_content_comma", id: 355, enumName: "ObjectTypeContentComma", cName: "sym_object_type_content_comma" },
   { name: "object_type_content_semi", id: 356, enumName: "ObjectTypeContentSemi", cName: "sym_object_type_content_semi" },
+  { name: "_export_statement_default", id: 357, enumName: "ExportStatementDefault", cName: "sym__export_statement_default" },
   { name: "_export_statement_default_from_arm", id: 358, enumName: "ExportStatementDefaultFromArm", cName: "sym__export_statement_default_from_arm" },
   { name: "_arrow_function_parameter", id: 361, enumName: "ArrowFunctionParameter", cName: "sym__arrow_function_parameter" },
   { name: "_arrow_function__call_signature", id: 362, enumName: "ArrowFunctionCallSignature", cName: "sym__arrow_function__call_signature" },
@@ -1664,12 +1651,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_class_heritage_implements_clause': [
     { name: 'implementsClause', required: true, multiple: false },
   ],
+  '_export_statement_default': [
+    { name: 'content', required: true, multiple: false },
+  ],
   '_export_statement_default_from_arm': [
-    { name: 'exportStatementDefaultFromArmStarFrom', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
     { name: 'semicolon', required: false, multiple: false },
-    { name: 'exportStatementDefaultFromArmNsFrom', required: true, multiple: false },
-    { name: 'exportStatementDefaultFromArmClauseFrom', required: true, multiple: false },
-    { name: 'exportClause', required: true, multiple: false },
   ],
   '_export_statement_default_from_arm_clause_from': [
     { name: 'exportClause', required: true, multiple: false },
@@ -1750,12 +1737,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'ambient_declaration': [
-    { name: 'ambientDeclarationDeclaration', required: true, multiple: false },
-    { name: 'ambientDeclarationGlobal', required: true, multiple: false },
-    { name: 'ambientDeclarationModule', required: true, multiple: false },
-  ],
-  'ambient_declaration_declaration': [
-    { name: 'declaration', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'arguments': [
     { name: 'arguments', required: false, multiple: true },
@@ -1771,17 +1753,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'arrow_function': [
     { name: 'asyncMarker', required: false, multiple: false },
-    { name: 'arrowFunctionParameter', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
-    { name: 'arrowFunction_CallSignature', required: true, multiple: false },
-  ],
-  'arrow_function__call_signature': [
-    { name: 'typeParameters', required: false, multiple: false },
-    { name: 'parameters', required: true, multiple: false },
-    { name: 'returnType', required: false, multiple: false },
-  ],
-  'arrow_function_parameter': [
-    { name: 'parameter', required: true, multiple: false },
   ],
   'as_expression': [
     { name: 'expression', required: true, multiple: false },
@@ -1819,9 +1792,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'semicolon', required: false, multiple: false },
   ],
   'call_expression': [
-    { name: 'callExpressionCall', required: true, multiple: false },
-    { name: 'callExpressionTemplateCall', required: true, multiple: false },
-    { name: 'callExpressionMember', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'call_signature': [
     { name: 'typeParameters', required: false, multiple: false },
@@ -1851,15 +1822,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'class_heritage': [
-    { name: 'classHeritageExtendsClause', required: true, multiple: false },
-    { name: 'classHeritageImplementsClause', required: true, multiple: false },
-  ],
-  'class_heritage_extends_clause': [
-    { name: 'extendsClause', required: true, multiple: false },
-    { name: 'implementsClause', required: false, multiple: false },
-  ],
-  'class_heritage_implements_clause': [
-    { name: 'implementsClause', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'class_static_block': [
     { name: 'body', required: true, multiple: false },
@@ -1944,34 +1907,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'export_statement': [
-    { name: 'exportStatementDefault', required: true, multiple: false },
-    { name: 'exportStatementTypeExport', required: true, multiple: false },
-    { name: 'exportStatementEqualsExport', required: true, multiple: false },
-    { name: 'exportStatementNamespaceExport', required: true, multiple: false },
-  ],
-  'export_statement_default_from_arm_clause_from': [
-    { name: 'exportClause', required: true, multiple: false },
-    { name: 'source', required: true, multiple: false },
-  ],
-  'export_statement_default_from_arm_ns_from': [
-    { name: 'namespaceExport', required: true, multiple: false },
-    { name: 'source', required: true, multiple: false },
-  ],
-  'export_statement_default_from_arm_star_from': [
-    { name: 'source', required: true, multiple: false },
-  ],
-  'export_statement_equals_export': [
-    { name: 'expression', required: true, multiple: false },
-    { name: 'semicolon', required: false, multiple: false },
-  ],
-  'export_statement_namespace_export': [
-    { name: 'identifier', required: true, multiple: false },
-    { name: 'semicolon', required: false, multiple: false },
-  ],
-  'export_statement_type_export': [
-    { name: 'exportClause', required: true, multiple: false },
-    { name: 'source', required: false, multiple: false },
-    { name: 'semicolon', required: false, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'expression_statement': [
     { name: 'expressions', required: true, multiple: false },
@@ -2077,19 +2013,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'object', required: true, multiple: false },
   ],
   'import_clause': [
-    { name: 'importClauseNamespaceImport', required: true, multiple: false },
-    { name: 'importClauseNamedImports', required: true, multiple: false },
-    { name: 'importClauseDefaultImport', required: true, multiple: false },
-  ],
-  'import_clause_default_import': [
-    { name: 'importIdentifier', required: true, multiple: false },
-    { name: 'content', required: false, multiple: false },
-  ],
-  'import_clause_named_imports': [
-    { name: 'namedImports', required: true, multiple: false },
-  ],
-  'import_clause_namespace_import': [
-    { name: 'namespaceImport', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'import_require_clause': [
     { name: 'identifier', required: true, multiple: false },
@@ -2097,11 +2021,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_specifier': [
     { name: 'importKind', required: false, multiple: false },
-    { name: 'importSpecifierName', required: true, multiple: false },
-    { name: 'importSpecifierAs', required: true, multiple: false },
-  ],
-  'import_specifier_name': [
-    { name: 'name', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'import_statement': [
     { name: 'importClause', required: false, multiple: false },
@@ -2111,12 +2031,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'index_signature': [
     { name: 'sign', required: false, multiple: false },
-    { name: 'indexSignatureColon', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
-    { name: 'indexSignatureMappedTypeClause', required: true, multiple: false },
-  ],
-  'index_signature_mapped_type_clause': [
-    { name: 'mappedTypeClause', required: true, multiple: false },
   ],
   'index_type_query': [
     { name: 'primaryType', required: true, multiple: false },
@@ -2308,11 +2224,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'parenthesized_expression': [
-    { name: 'parenthesizedExpressionTyped', required: true, multiple: false },
-    { name: 'parenthesizedExpressionSequence', required: true, multiple: false },
-  ],
-  'parenthesized_expression_sequence': [
-    { name: 'sequenceExpression', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'parenthesized_type': [
     { name: 'type', required: true, multiple: false },
@@ -2478,8 +2390,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'update_expression': [
-    { name: 'updateExpressionPostfix', required: true, multiple: false },
-    { name: 'updateExpressionPrefix', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'variable_declaration': [
     { name: 'declarators', required: true, multiple: true },

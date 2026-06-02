@@ -1,0 +1,1728 @@
+{
+  "capturedAt": "2026-05-31",
+  "description": "Current JS-engine render output for parent polymorph kinds. PROVENANCE ONLY — not the correctness target. Most render empty due to broken $variant dispatch in emitPolymorphTemplate. After the rewrite, parent kinds should render via emitBranchTemplate and match sourceIn (source round-trip).",
+  "renderPipelineUsed": "JS (Nunjucks via createRenderer + loadReadTreeNode for wrapped data)",
+  "nativePathStatus": "BROKEN for all 36 parent polymorph kinds (transport requires all form fields simultaneously)",
+  "data": [
+    {
+      "grammar": "rust",
+      "kind": "expression_statement",
+      "entryName": "Await expression",
+      "sourceIn": "futures.await;",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "expression_statement",
+      "entryName": "Await expression",
+      "sourceIn": "futures.await?;",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "expression_statement",
+      "entryName": "Await expression",
+      "sourceIn": "futures.await?.await?;",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "expression_statement",
+      "entryName": "Await expression",
+      "sourceIn": "futures.await?.function().await?;",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "expression_statement",
+      "entryName": "Async Block",
+      "sourceIn": "async {}",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "expression_statement",
+      "entryName": "Async Block",
+      "sourceIn": "async { let x = 10; }",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "expression_statement",
+      "entryName": "Async Block",
+      "sourceIn": "async move {}",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "closure_expression",
+      "entryName": "Async closure",
+      "sourceIn": "async || ()",
+      "rendered": " async || ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "closure_expression",
+      "entryName": "Async move async move closure",
+      "sourceIn": "async move || async move {}",
+      "rendered": " async move || ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "expression_statement",
+      "entryName": "Try Block",
+      "sourceIn": "try {}",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "mod_item",
+      "entryName": "Modules",
+      "sourceIn": "mod english;",
+      "rendered": "mod english ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "mod_item",
+      "entryName": "Modules",
+      "sourceIn": "mod english {}",
+      "rendered": "mod english ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "mod_item",
+      "entryName": "Modules",
+      "sourceIn": "mod english {\n    mod greetings {}\n    mod farewells {}\n}",
+      "rendered": "mod english ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "mod_item",
+      "entryName": "Modules",
+      "sourceIn": "mod greetings {}",
+      "rendered": "mod greetings ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "mod_item",
+      "entryName": "Modules",
+      "sourceIn": "mod farewells {}",
+      "rendered": "mod farewells ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "mod_item",
+      "entryName": "Modules",
+      "sourceIn": "pub mod english;",
+      "rendered": "mod english ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "visibility_modifier",
+      "entryName": "Modules",
+      "sourceIn": "pub",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "visibility_modifier",
+      "entryName": "Extern crate declarations",
+      "sourceIn": "pub",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "array_expression",
+      "entryName": "Function declarations",
+      "sourceIn": "[1, 2]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "function_type",
+      "entryName": "Function declarations",
+      "sourceIn": "FnOnce() -> result::Result<T, E>",
+      "rendered": " ()->result::Result <T, E>",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree",
+      "entryName": "Function declarations",
+      "sourceIn": "(\"Got: {}\", slice)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "line_comment",
+      "entryName": "Extern function declarations",
+      "sourceIn": "// CHECK: call void @llvm.va_start",
+      "rendered": "//",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "line_comment",
+      "entryName": "Extern function declarations",
+      "sourceIn": "// CHECK: call void @llvm.va_end",
+      "rendered": "//",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "pointer_type",
+      "entryName": "Extern function declarations",
+      "sourceIn": "*const c_char",
+      "rendered": "* c_char",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "pointer_type",
+      "entryName": "Extern function declarations",
+      "sourceIn": "*const i8",
+      "rendered": "* i8",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "visibility_modifier",
+      "entryName": "Extern function declarations",
+      "sourceIn": "pub",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "visibility_modifier",
+      "entryName": "Use declarations",
+      "sourceIn": "pub",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "field_pattern",
+      "entryName": "Let-else Statements",
+      "sourceIn": "texts",
+      "rendered": " ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "field_pattern",
+      "entryName": "Let-else Statements",
+      "sourceIn": "values",
+      "rendered": " ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "struct_item",
+      "entryName": "Structs",
+      "sourceIn": "struct Proton;",
+      "rendered": "struct Proton ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "struct_item",
+      "entryName": "Structs",
+      "sourceIn": "struct Electron {}",
+      "rendered": "struct Electron ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "struct_item",
+      "entryName": "Structs",
+      "sourceIn": "struct Person {pub name: String, pub age: u32}",
+      "rendered": "struct Person ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "struct_item",
+      "entryName": "Structs",
+      "sourceIn": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
+      "rendered": "struct Point ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "struct_item",
+      "entryName": "Structs",
+      "sourceIn": "struct Color(pub i32, i32, i32);",
+      "rendered": "struct Color ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "struct_item",
+      "entryName": "Structs",
+      "sourceIn": "struct Inches(i32);",
+      "rendered": "struct Inches ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "struct_item",
+      "entryName": "Structs",
+      "sourceIn": "struct Empty(pub ());",
+      "rendered": "struct Empty ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "visibility_modifier",
+      "entryName": "Structs",
+      "sourceIn": "pub",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "visibility_modifier",
+      "entryName": "Structs",
+      "sourceIn": "pub",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "visibility_modifier",
+      "entryName": "Structs",
+      "sourceIn": "pub",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "visibility_modifier",
+      "entryName": "Structs",
+      "sourceIn": "pub",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "struct_item",
+      "entryName": "Generic structs",
+      "sourceIn": "struct A<B> {}",
+      "rendered": "struct A <B> ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "pointer_type",
+      "entryName": "Static items",
+      "sourceIn": "*mut ::c_char",
+      "rendered": "* ::c_char",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "function_type",
+      "entryName": "Type aliases",
+      "sourceIn": "FnOnce() -> Capture",
+      "rendered": " ()->Capture",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "mod_item",
+      "entryName": "Attributes",
+      "sourceIn": "mod macos_only {}",
+      "rendered": "mod macos_only ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree",
+      "entryName": "Attributes",
+      "sourceIn": "(Debug)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree",
+      "entryName": "Attributes",
+      "sourceIn": "(Debug, Eq,)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree",
+      "entryName": "Attributes",
+      "sourceIn": "(target_os = \"macos\")",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree",
+      "entryName": "Attributes",
+      "sourceIn": "(clippy::useless_transmute)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "match_arm",
+      "entryName": "Inner attributes",
+      "sourceIn": "#![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\n    syn::Type::Array(ty) => self.visit_type(&ty.elem),",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "mod_item",
+      "entryName": "Inner attributes",
+      "sourceIn": "mod macos_only {\n  #![cfg(target_os = \"macos\")]\n}",
+      "rendered": "mod macos_only ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "reference_expression",
+      "entryName": "Inner attributes",
+      "sourceIn": "&ty.elem",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree",
+      "entryName": "Inner attributes",
+      "sourceIn": "(target_os = \"macos\")",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree",
+      "entryName": "Inner attributes",
+      "sourceIn": "(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree",
+      "entryName": "Inner attributes",
+      "sourceIn": "(test, exhaustive)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "line_comment",
+      "entryName": "Derive macro helper attributes",
+      "sourceIn": "// Example from https://github.com/dtolnay/thiserror/blob/21c26903e29cb92ba1a7ff11e82ae2001646b60d/README.md",
+      "rendered": "//",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "array_expression",
+      "entryName": "Attributes and Expressions",
+      "sourceIn": "[#[hello] 2, 7, 8]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "impl_item",
+      "entryName": "Inherent Impls",
+      "sourceIn": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+      "rendered": "impl Person ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "impl_item",
+      "entryName": "Inherent Impls",
+      "sourceIn": "impl Machine<{State::Init}> {}",
+      "rendered": "impl Machine <{State::Init}> ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "impl_item",
+      "entryName": "Trait impls",
+      "sourceIn": "impl<'a> iter::Iterator for Self::Iter<'a> {\n}",
+      "rendered": "impl <'a> Self::Iter <'a> ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "impl_item",
+      "entryName": "Trait impls",
+      "sourceIn": "impl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 { *self as i64 }\n}",
+      "rendered": "impl i32 ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "impl_item",
+      "entryName": "Unsafe impls",
+      "sourceIn": "unsafe impl Foo {\n}",
+      "rendered": "unsafe impl Foo ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "impl_item",
+      "entryName": "Disable automatically derived trait impls",
+      "sourceIn": "impl !Send for Foo {}",
+      "rendered": "impl ! Send for Foo ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "impl_item",
+      "entryName": "Impl dyn with parentheses",
+      "sourceIn": "unsafe impl Trait for dyn (::std::any::Any) + Send { }",
+      "rendered": "unsafe impl dyn (::std::any::Any)+Send ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "impl_item",
+      "entryName": "Trait impl signature",
+      "sourceIn": "impl<K: Debug + Ord> Debug for OccupiedError<K>;",
+      "rendered": "impl <K: Debug + Ord> OccupiedError <K> ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "line_comment",
+      "entryName": "Impls with default functions",
+      "sourceIn": "// Make 'default' still works as an identifier",
+      "rendered": "//",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "pointer_type",
+      "entryName": "Function parameter names that match built-in type names",
+      "sourceIn": "*const c_char",
+      "rendered": "* c_char",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "function_type",
+      "entryName": "Where clauses",
+      "sourceIn": "FnMut(&Pat) -> bool",
+      "rendered": " ()->bool",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "pointer_type",
+      "entryName": "Where clauses",
+      "sourceIn": "*mut A",
+      "rendered": "* A",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "reference_expression",
+      "entryName": "Reference expressions",
+      "sourceIn": "&a",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "reference_expression",
+      "entryName": "Reference expressions",
+      "sourceIn": "&mut self.name",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "reference_expression",
+      "entryName": "Reference expressions",
+      "sourceIn": "&raw const b",
+      "rendered": "& raw  b",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "reference_expression",
+      "entryName": "Reference expressions",
+      "sourceIn": "&raw mut self.age",
+      "rendered": "& raw  self.age",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "reference_expression",
+      "entryName": "Try expressions",
+      "sourceIn": "&a?",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_expression",
+      "entryName": "Range expressions",
+      "sourceIn": "1..2",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_expression",
+      "entryName": "Range expressions",
+      "sourceIn": "3..",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_expression",
+      "entryName": "Range expressions",
+      "sourceIn": "..4",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_expression",
+      "entryName": "Range expressions",
+      "sourceIn": "..",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_expression",
+      "entryName": "Range expressions",
+      "sourceIn": "1..b",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_expression",
+      "entryName": "Range expressions",
+      "sourceIn": "a..b",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_expression",
+      "entryName": "Range expressions",
+      "sourceIn": "1..(1)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_expression",
+      "entryName": "Range expressions",
+      "sourceIn": "(1)..1",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "array_expression",
+      "entryName": "Array expressions",
+      "sourceIn": "[]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "array_expression",
+      "entryName": "Array expressions",
+      "sourceIn": "[1, 2, 3]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "array_expression",
+      "entryName": "Array expressions",
+      "sourceIn": "[\"a\", \"b\", \"c\"]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "array_expression",
+      "entryName": "Array expressions",
+      "sourceIn": "[0; 128]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "array_expression",
+      "entryName": "Array expressions",
+      "sourceIn": "[\n    #[cfg(foo)]\n    \"foo\",\n    #[cfg(bar)]\n    \"bar\",\n]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "closure_expression",
+      "entryName": "If let expressions",
+      "sourceIn": "|| baz && quux",
+      "rendered": " || ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "closure_expression",
+      "entryName": "If let expressions",
+      "sourceIn": "|| c || d && e",
+      "rendered": " || ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "match_arm",
+      "entryName": "Match expressions",
+      "sourceIn": "1 => { \"one\" }",
+      "rendered": " 1=>",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "match_arm",
+      "entryName": "Match expressions",
+      "sourceIn": "2 => \"two\",",
+      "rendered": " 2=>",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "match_arm",
+      "entryName": "Match expressions",
+      "sourceIn": "-1 => 1,",
+      "rendered": " -1=>",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "match_arm",
+      "entryName": "Match expressions",
+      "sourceIn": "-3.14 => 3,",
+      "rendered": " -3.14=>",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "match_arm",
+      "entryName": "Match expressions",
+      "sourceIn": "#[attr1]\n    3 => \"three\",",
+      "rendered": "#[attr1 =] 3=>",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "match_arm",
+      "entryName": "Match expressions",
+      "sourceIn": "macro!(4) => \"four\",",
+      "rendered": " macro!=>",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "match_arm",
+      "entryName": "Match expressions",
+      "sourceIn": "_ => \"something else\",",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "or_pattern",
+      "entryName": "Match expressions",
+      "sourceIn": "0 | 1 | 10",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "or_pattern",
+      "entryName": "Match expressions",
+      "sourceIn": "0 | 1",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "array_expression",
+      "entryName": "Index expressions",
+      "sourceIn": "[1, 2, 3, 4]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "closure_expression",
+      "entryName": "Closures",
+      "sourceIn": "|(b, c)| b.push(c)",
+      "rendered": " |(b,c)| ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "closure_expression",
+      "entryName": "Closures",
+      "sourceIn": "move |mut e| {\n    f(e);\n    g(e)\n}",
+      "rendered": " move |mut e| ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "closure_expression",
+      "entryName": "Closures",
+      "sourceIn": "|| -> i { j }",
+      "rendered": " || ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "closure_expression",
+      "entryName": "Closures with typed parameteres",
+      "sourceIn": "|b: usize| b.push(c)",
+      "rendered": " |b:usize| ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "reference_expression",
+      "entryName": "Inline const or Const blocks as expression",
+      "sourceIn": "&4i32.pow(4)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "line_comment",
+      "entryName": "Macro invocation with comments",
+      "sourceIn": "// one",
+      "rendered": "//",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "macro_definition",
+      "entryName": "Macro definition",
+      "sourceIn": "macro_rules! say_hello {\n    () => (\n        println!(\"Hello!\");\n    )\n}",
+      "rendered": "macro_rules!say_hello ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "macro_definition",
+      "entryName": "Macro definition",
+      "sourceIn": "macro_rules! four {\n    () => {1 + 3};\n}",
+      "rendered": "macro_rules!four ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "macro_definition",
+      "entryName": "Macro definition",
+      "sourceIn": "macro_rules! foo {\n    (x => $e:expr) => (println!(\"mode X: {}\", $e));\n    (y => $e:expr) => (println!(\"mode Y: {}\", $e))\n}",
+      "rendered": "macro_rules!foo ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "macro_definition",
+      "entryName": "Macro definition",
+      "sourceIn": "macro_rules! o_O {\n    (\n      $($x:expr; [ $( $y:expr ),* ]);*\n    ) => {\n      $($($x + $e),*),*\n    }\n}",
+      "rendered": "macro_rules!o_O ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "macro_definition",
+      "entryName": "Macro definition",
+      "sourceIn": "macro_rules! zero_or_one {\n    ($($e:expr),?) => {\n        $($e),?\n    };\n}",
+      "rendered": "macro_rules!zero_or_one ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "macro_definition",
+      "entryName": "Macro definition",
+      "sourceIn": "macro_rules! empty [\n    () => {};\n];",
+      "rendered": "macro_rules!empty ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree_pattern",
+      "entryName": "Macro definition",
+      "sourceIn": "()",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree_pattern",
+      "entryName": "Macro definition",
+      "sourceIn": "()",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree_pattern",
+      "entryName": "Macro definition",
+      "sourceIn": "(x => $e:expr)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree_pattern",
+      "entryName": "Macro definition",
+      "sourceIn": "(y => $e:expr)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree_pattern",
+      "entryName": "Macro definition",
+      "sourceIn": "(\n      $($x:expr; [ $( $y:expr ),* ]);*\n    )",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree_pattern",
+      "entryName": "Macro definition",
+      "sourceIn": "[ $( $y:expr ),* ]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree_pattern",
+      "entryName": "Macro definition",
+      "sourceIn": "($($e:expr),?)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "token_tree_pattern",
+      "entryName": "Macro definition",
+      "sourceIn": "()",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "field_pattern",
+      "entryName": "Struct patterns",
+      "sourceIn": "name",
+      "rendered": " ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "field_pattern",
+      "entryName": "Struct patterns",
+      "sourceIn": "age",
+      "rendered": " ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "field_pattern",
+      "entryName": "Struct patterns",
+      "sourceIn": "name: adult_name",
+      "rendered": " ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "field_pattern",
+      "entryName": "Struct patterns",
+      "sourceIn": "age: _",
+      "rendered": " ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "field_pattern",
+      "entryName": "Ignored patterns",
+      "sourceIn": "f: g",
+      "rendered": " ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "or_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "a @ A(_) | b @ B(..)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "or_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "| \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\"",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "or_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "| \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "or_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "| \"IPV6_FLOWINFO\"",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "1 ... 5",
+      "rendered": "1 ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "1 ... 5",
+      "rendered": "1 ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "b...c",
+      "rendered": "b ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "b..=c",
+      "rendered": "b ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "d..",
+      "rendered": "d ",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "..d",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "range_pattern",
+      "entryName": "Captured patterns",
+      "sourceIn": "..=5",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "or_pattern",
+      "entryName": "Or patterns",
+      "sourceIn": "A(x) | B(x)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "or_pattern",
+      "entryName": "Or patterns",
+      "sourceIn": "A(x) | B(x)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "reference_expression",
+      "entryName": "Or patterns",
+      "sourceIn": "&x",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "pointer_type",
+      "entryName": "Raw pointer types",
+      "sourceIn": "*mut B",
+      "rendered": "* B",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "pointer_type",
+      "entryName": "Raw pointer types",
+      "sourceIn": "*const str",
+      "rendered": "* str",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "function_type",
+      "entryName": "Function types",
+      "sourceIn": "fn(i32)",
+      "rendered": " ()",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "function_type",
+      "entryName": "Function types",
+      "sourceIn": "fn(i32) -> i32",
+      "rendered": " ()->i32",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "function_type",
+      "entryName": "Function types",
+      "sourceIn": "FnOnce(i32) -> i32",
+      "rendered": " ()->i32",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "function_type",
+      "entryName": "Function types",
+      "sourceIn": "for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C",
+      "rendered": "for<'a, 'b>  ()->C",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "function_type",
+      "entryName": "Unsafe and extern function types",
+      "sourceIn": "extern \"C\" fn(*mut c_void)",
+      "rendered": " ()",
+      "renderError": null
+    },
+    {
+      "grammar": "rust",
+      "kind": "pointer_type",
+      "entryName": "Unsafe and extern function types",
+      "sourceIn": "*mut c_void",
+      "rendered": "* c_void",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "ambient_declaration",
+      "entryName": "Flow-style ambient class declarations with commas",
+      "sourceIn": "declare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
+      "rendered": "declare ",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "ambient_declaration",
+      "entryName": "Flow-style ambient class declarations with commas",
+      "sourceIn": "declare class Foo {\n  bar(): number,\n  baz(): Baz,\n}",
+      "rendered": "declare ",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "ambient_declaration",
+      "entryName": "Flow module.exports declarations",
+      "sourceIn": "declare module.exports: {\n  foo: string;\n}",
+      "rendered": "declare ",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "export_statement",
+      "entryName": "Ambient exports",
+      "sourceIn": "export default function point(x: number, y: number) {\n    return { x, y };\n}",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "export_statement",
+      "entryName": "Ambient exports",
+      "sourceIn": "export default class A {}",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "export_statement",
+      "entryName": "Ambient exports",
+      "sourceIn": "export async function readFile(filename: string): Promise<Buffer>",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "ambient_declaration",
+      "entryName": "Typeof types",
+      "sourceIn": "declare class Linter {\n    static findConfiguration: typeof findConfiguration;\n}",
+      "rendered": "declare ",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "export_statement",
+      "entryName": "Export assignments",
+      "sourceIn": "export = Linter;",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "export_statement",
+      "entryName": "Export assignments",
+      "sourceIn": "export = {};",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "export_statement",
+      "entryName": "Export import aliases",
+      "sourceIn": "export module N {\n    }",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "export_statement",
+      "entryName": "Export import aliases",
+      "sourceIn": "export import X = N;",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "export_statement",
+      "entryName": "Property signatures with accessibility modifiers",
+      "sourceIn": "export interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "update_expression",
+      "entryName": "Property signatures with accessibility modifiers",
+      "sourceIn": "CloningRepositoryID++",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "ambient_declaration",
+      "entryName": "Ambient type declarations",
+      "sourceIn": "declare type IndexableType = string | number | Date | Array<string | number | Date>;",
+      "rendered": "declare ",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "ambient_declaration",
+      "entryName": "Ambient type alias declarations in namespaces",
+      "sourceIn": "declare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}",
+      "rendered": "declare ",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "ambient_declaration",
+      "entryName": "Export interfaces in namespaces",
+      "sourceIn": "declare namespace Foo {\n  export interface Bar {\n  }\n}",
+      "rendered": "declare ",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "call_expression",
+      "entryName": "Classes with decorator calls that have type arguments",
+      "sourceIn": "bar<T>()",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "class_heritage",
+      "entryName": "Classes with methods with and without trailing semicolons on one line",
+      "sourceIn": "extends Baz",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "ambient_declaration",
+      "entryName": "Global namespace declarations",
+      "sourceIn": "declare global {\n}",
+      "rendered": "declare ",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "parenthesized_expression",
+      "entryName": "Decorator with parenthesized expression",
+      "sourceIn": "(super.decorate)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "class_heritage",
+      "entryName": "Classes with generic parameters",
+      "sourceIn": "extends A<\n  X,\n  Y,\n>",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "call_expression",
+      "entryName": "Classes with extensions",
+      "sourceIn": "B<C>(D)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "call_expression",
+      "entryName": "Classes with extensions",
+      "sourceIn": "B<C>(D)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "call_expression",
+      "entryName": "Classes with extensions",
+      "sourceIn": "B<C>(D)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "call_expression",
+      "entryName": "Classes with extensions",
+      "sourceIn": "B<C>(D)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "class_heritage",
+      "entryName": "Classes with extensions",
+      "sourceIn": "extends B<C>(D) implements C",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "class_heritage",
+      "entryName": "Classes with extensions",
+      "sourceIn": "extends B<C>(D) implements C",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "class_heritage",
+      "entryName": "Classes with extensions",
+      "sourceIn": "extends B<C>(D)<E> implements C",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "class_heritage",
+      "entryName": "Classes with extensions",
+      "sourceIn": "extends B<C>(D)<E> implements C",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "class_heritage",
+      "entryName": "Classes with extensions",
+      "sourceIn": "extends B<C, D> implements C",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "class_heritage",
+      "entryName": "Override modifier",
+      "sourceIn": "extends Foo",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "index_signature",
+      "entryName": "As expressions",
+      "sourceIn": "[t: T]: T",
+      "rendered": "[]:T",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "index_signature",
+      "entryName": "As expressions",
+      "sourceIn": "[t: T]: T",
+      "rendered": "[]:T",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "index_signature",
+      "entryName": "As expressions",
+      "sourceIn": "[g: G]: G",
+      "rendered": "[]:G",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "index_signature",
+      "entryName": "Satisfies expressions",
+      "sourceIn": "[t: T]: T",
+      "rendered": "[]:T",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "index_signature",
+      "entryName": "Satisfies expressions",
+      "sourceIn": "[t: T]: T",
+      "rendered": "[]:T",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "index_signature",
+      "entryName": "Satisfies expressions",
+      "sourceIn": "[g: G]: G",
+      "rendered": "[]:G",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "call_expression",
+      "entryName": "Subscript expressions in if statements",
+      "sourceIn": "set[ 1 ].apply()",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "parenthesized_expression",
+      "entryName": "Subscript expressions in if statements",
+      "sourceIn": "( foo )",
+      "rendered": "()",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "parenthesized_expression",
+      "entryName": "Assignment to non-null LHS",
+      "sourceIn": "(foo)",
+      "rendered": "()",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "parenthesized_expression",
+      "entryName": "Assignment to non-null LHS",
+      "sourceIn": "(foo)",
+      "rendered": "()",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "call_expression",
+      "entryName": "Generic calls",
+      "sourceIn": "f<T>(x)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "call_expression",
+      "entryName": "Function calls with array and tuple type arguments",
+      "sourceIn": "a.b<[C]>()",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "arrow_function",
+      "entryName": "Arrow functions and generators with call signatures",
+      "sourceIn": "<A>(amount, interestRate, duration): number => 2",
+      "rendered": "=>2",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "arrow_function",
+      "entryName": "Arrow functions and generators with call signatures",
+      "sourceIn": "(module: any): number => 2",
+      "rendered": "=>2",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "arrow_function",
+      "entryName": "Arrow function with parameter named async",
+      "sourceIn": "async => async",
+      "rendered": "=>async",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "index_signature",
+      "entryName": "Ambiguity between function signature and function declaration",
+      "sourceIn": "[key: foo]: bar",
+      "rendered": "[]:bar",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "index_signature",
+      "entryName": "Ambiguity between function signature and function declaration",
+      "sourceIn": "[key: foo]: bar",
+      "rendered": "[]:bar",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "parenthesized_expression",
+      "entryName": "Type annotations in parenthesized expressions",
+      "sourceIn": "(document: any)",
+      "rendered": "()",
+      "renderError": null
+    },
+    {
+      "grammar": "typescript",
+      "kind": "update_expression",
+      "entryName": "Non-null assertion operator",
+      "sourceIn": "foo++",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "assignment",
+      "entryName": "Identifiers with Greek letters",
+      "sourceIn": "ψ1 = β_γ + Ψ_5",
+      "rendered": "ψ1 ",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "expression_statement",
+      "entryName": "Identifiers with Greek letters",
+      "sourceIn": "ψ1 = β_γ + Ψ_5",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "expression_statement",
+      "entryName": "Subscript expressions",
+      "sourceIn": "a[1]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "expression_statement",
+      "entryName": "Subscript expressions",
+      "sourceIn": "b[2, 3]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "expression_statement",
+      "entryName": "Subscript expressions",
+      "sourceIn": "c[4, 5,]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "expression_statement",
+      "entryName": "Subscript slice expressions",
+      "sourceIn": "a[:]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "expression_statement",
+      "entryName": "Subscript slice expressions",
+      "sourceIn": "b[5:]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "expression_statement",
+      "entryName": "Subscript slice expressions",
+      "sourceIn": "b[5:6, ...]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "expression_statement",
+      "entryName": "Subscript slice expressions",
+      "sourceIn": "c[::]",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "assignment",
+      "entryName": "Async / await used as identifiers",
+      "sourceIn": "async = 4",
+      "rendered": "async ",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "assignment",
+      "entryName": "Async / await used as identifiers",
+      "sourceIn": "await = 5",
+      "rendered": "await ",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "assignment",
+      "entryName": "Assignments",
+      "sourceIn": "a = 1",
+      "rendered": "a ",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "assignment",
+      "entryName": "Assignments",
+      "sourceIn": "a, b = 1, 2",
+      "rendered": "a, b ",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "assignment",
+      "entryName": "Assignments",
+      "sourceIn": "a, *c = 1, 2, 3",
+      "rendered": "a, *c ",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "assignment",
+      "entryName": "Assignments",
+      "sourceIn": "a, = 1, 2",
+      "rendered": "a, ",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "assignment",
+      "entryName": "Assignments",
+      "sourceIn": "a[b] = c = d",
+      "rendered": "a[b] ",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "with_clause",
+      "entryName": "Async context managers and iterators",
+      "sourceIn": "a as b",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "with_clause",
+      "entryName": "With statements",
+      "sourceIn": "a as b",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "with_clause",
+      "entryName": "With statements",
+      "sourceIn": "(open('d') as d,\n      open('e') as e)",
+      "rendered": "",
+      "renderError": null
+    },
+    {
+      "grammar": "python",
+      "kind": "with_clause",
+      "entryName": "With statements",
+      "sourceIn": "e as f, g as h,",
+      "rendered": "",
+      "renderError": null
+    }
+  ]
+}

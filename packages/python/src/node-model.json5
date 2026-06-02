@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 260,
+  "nodeCount": 257,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -33,19 +33,7 @@
     "string_start",
     "}"
   ],
-  "polymorphFormKinds": [
-    "_match_block__form_block",
-    "assignment__form_eq",
-    "assignment__form_type",
-    "assignment__form_typed",
-    "expression_statement__form_assignment",
-    "expression_statement__form_augmented_assignment",
-    "expression_statement__form_expression",
-    "expression_statement__form_tuple",
-    "expression_statement__form_yield",
-    "with_clause__form_bare",
-    "with_clause__form_paren"
-  ],
+  "polymorphFormKinds": [],
   "nodes": [
     {
       "kind": "(",
@@ -668,30 +656,6 @@
       "hidden": false,
       "fields": [
         {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "paramName": "forInClause",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "for_in_clause",
-              "parseKind": "for_in_clause",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_in_clause"
-            ]
-          }
-        },
-        {
           "name": "content",
           "propertyName": "contents",
           "paramName": "contents",
@@ -807,28 +771,73 @@
     },
     {
       "kind": "_except_clause_list",
-      "modelType": "multi",
+      "modelType": "branch",
       "typeName": "ExceptClauseList",
+      "factoryName": "exceptClauseList",
       "irKey": "exceptClauseList",
-      "hidden": true,
-      "nonEmpty": true,
-      "separator": ",",
-      "elementKinds": [
-        "expression"
-      ]
+      "hidden": false,
+      "fields": [
+        {
+          "name": "value",
+          "propertyName": "values",
+          "paramName": "values",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_expression_statement_tuple",
-      "modelType": "multi",
-      "typeName": "_ExpressionStatementTuple",
+      "modelType": "branch",
+      "typeName": "ExpressionStatementTuple",
+      "factoryName": "expressionStatementTuple",
       "irKey": "expressionStatementTuple",
-      "hidden": true,
-      "nonEmpty": true,
-      "separator": ",",
-      "trailing": true,
-      "elementKinds": [
-        "expression"
-      ]
+      "hidden": false,
+      "fields": [
+        {
+          "name": "expression",
+          "propertyName": "expressions",
+          "paramName": "expressions",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_expression_within_for_in_clause",
@@ -1066,53 +1075,38 @@
     },
     {
       "kind": "_match_block",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "MatchBlock",
       "factoryName": "matchBlock",
       "irKey": "matchBlock",
       "hidden": false,
-      "source": "override",
-      "polymorphSource": "override",
-      "variantChildKinds": [
-        "match_block_block"
-      ],
-      "forms": [
+      "fields": [
         {
-          "kind": "_match_block__form_block",
-          "name": "block",
-          "typeName": "MatchBlockUFormBlock",
-          "factoryName": "matchBlockUFormBlock",
-          "irKey": "matchBlockUFormBlock",
-          "parentKind": "_match_block",
-          "fields": [
+          "name": "match_block_block",
+          "propertyName": "matchBlockBlock",
+          "paramName": "matchBlockBlock",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
-              "name": "match_block_block",
-              "propertyName": "matchBlockBlock",
-              "paramName": "matchBlockBlock",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_match_block_block",
-                  "parseKind": "match_block_block",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_match_block_block"
-                ]
-              }
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_match_block_block",
+              "parseKind": "match_block_block",
+              "unresolved": true
             }
           ],
-          "children": []
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_match_block_block"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "_match_block_block",
@@ -1527,23 +1521,45 @@
     },
     {
       "kind": "_with_clause_bare",
-      "modelType": "multi",
-      "typeName": "_WithClauseBare",
+      "modelType": "branch",
+      "typeName": "WithClauseBare",
+      "factoryName": "withClauseBare",
       "irKey": "withClauseBare",
-      "hidden": true,
-      "nonEmpty": true,
-      "separator": ",",
-      "trailing": true,
-      "elementKinds": [
-        "with_item"
-      ]
+      "hidden": false,
+      "fields": [
+        {
+          "name": "with_item",
+          "propertyName": "withItems",
+          "paramName": "withItems",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "with_item",
+              "parseKind": "with_item",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "with_item"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_with_clause_paren",
       "modelType": "branch",
-      "typeName": "_WithClauseParen",
-      "factoryName": "_withClauseParen",
-      "irKey": "_withClauseParen",
+      "typeName": "WithClauseParen",
+      "factoryName": "withClauseParen",
+      "irKey": "withClauseParen",
       "hidden": false,
       "fields": [
         {
@@ -1835,197 +1851,78 @@
     },
     {
       "kind": "assignment",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "Assignment",
       "factoryName": "assignment",
       "irKey": "assignment",
       "hidden": false,
-      "source": "override",
-      "polymorphSource": "override",
-      "variantChildKinds": [
-        "assignment_eq",
-        "assignment_type",
-        "assignment_typed"
-      ],
-      "forms": [
+      "fields": [
         {
-          "kind": "assignment__form_eq",
-          "name": "eq",
-          "typeName": "AssignmentUFormEq",
-          "factoryName": "assignmentUFormEq",
-          "irKey": "assignmentUFormEq",
-          "parentKind": "assignment",
-          "fields": [
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
-              "name": "left",
-              "propertyName": "left",
-              "paramName": "left",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_left_hand_side",
-                  "parseKind": "_left_hand_side",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_left_hand_side"
-                ]
-              }
-            },
-            {
-              "name": "assignment_eq",
-              "propertyName": "assignmentEq",
-              "paramName": "assignmentEq",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_assignment_eq",
-                  "parseKind": "assignment_eq",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_assignment_eq"
-                ]
-              }
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_left_hand_side",
+              "parseKind": "_left_hand_side",
+              "unresolved": true
             }
           ],
-          "children": []
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_left_hand_side"
+            ]
+          }
         },
         {
-          "kind": "assignment__form_type",
-          "name": "type",
-          "typeName": "AssignmentUFormType",
-          "factoryName": "assignmentUFormType",
-          "irKey": "assignmentUFormType",
-          "parentKind": "assignment",
-          "fields": [
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
-              "name": "left",
-              "propertyName": "left",
-              "paramName": "left",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_left_hand_side",
-                  "parseKind": "_left_hand_side",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_left_hand_side"
-                ]
-              }
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_assignment_eq",
+              "parseKind": "assignment_eq",
+              "unresolved": true
             },
             {
-              "name": "assignment_type",
-              "propertyName": "assignmentType",
-              "paramName": "assignmentType",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_assignment_type",
-                  "parseKind": "assignment_type",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_assignment_type"
-                ]
-              }
-            }
-          ],
-          "children": []
-        },
-        {
-          "kind": "assignment__form_typed",
-          "name": "typed",
-          "typeName": "AssignmentUFormTyped",
-          "factoryName": "assignmentUFormTyped",
-          "irKey": "assignmentUFormTyped",
-          "parentKind": "assignment",
-          "fields": [
-            {
-              "name": "left",
-              "propertyName": "left",
-              "paramName": "left",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_left_hand_side",
-                  "parseKind": "_left_hand_side",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_left_hand_side"
-                ]
-              }
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_assignment_type",
+              "parseKind": "assignment_type",
+              "unresolved": true
             },
             {
-              "name": "assignment_typed",
-              "propertyName": "assignmentTyped",
-              "paramName": "assignmentTyped",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_assignment_typed",
-                  "parseKind": "assignment_typed",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_assignment_typed"
-                ]
-              }
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_assignment_typed",
+              "parseKind": "assignment_typed",
+              "unresolved": true
             }
           ],
-          "children": []
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_assignment_eq",
+              "_assignment_type",
+              "_assignment_typed"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "async",
@@ -4284,219 +4181,53 @@
     },
     {
       "kind": "expression_statement",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "ExpressionStatement",
       "factoryName": "expressionStatement",
       "irKey": "expressionStatement",
       "hidden": false,
-      "source": "override",
-      "polymorphSource": "override",
-      "variantChildKinds": [
-        "expression",
-        "expression_statement_tuple",
-        "assignment",
-        "augmented_assignment",
-        "yield"
-      ],
-      "forms": [
-        {
-          "kind": "expression_statement__form_expression",
-          "name": "expression",
-          "typeName": "ExpressionStatementUFormExpression",
-          "factoryName": "expressionStatementUFormExpression",
-          "irKey": "expressionStatementUFormExpression",
-          "parentKind": "expression_statement",
-          "fields": [
-            {
-              "name": "expression",
-              "propertyName": "expression",
-              "paramName": "expression",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "expression",
-                  "parseKind": "expression",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "expression"
-                ]
-              }
-            }
-          ],
-          "children": []
-        },
-        {
-          "kind": "expression_statement__form_tuple",
-          "name": "tuple",
-          "typeName": "ExpressionStatementUFormTuple",
-          "factoryName": "expressionStatementUFormTuple",
-          "irKey": "expressionStatementUFormTuple",
-          "parentKind": "expression_statement",
-          "fields": [
-            {
-              "name": "expression_statement_tuple",
-              "propertyName": "expressionStatementTuple",
-              "paramName": "expressionStatementTuple",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_expression_statement_tuple",
-                  "parseKind": "expression_statement_tuple",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_expression_statement_tuple"
-                ]
-              }
-            }
-          ],
-          "children": []
-        },
-        {
-          "kind": "expression_statement__form_assignment",
-          "name": "assignment",
-          "typeName": "ExpressionStatementUFormAssignment",
-          "factoryName": "expressionStatementUFormAssignment",
-          "irKey": "expressionStatementUFormAssignment",
-          "parentKind": "expression_statement",
-          "fields": [
-            {
-              "name": "assignment",
-              "propertyName": "assignment",
-              "paramName": "assignment",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "assignment",
-                  "parseKind": "assignment",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "assignment"
-                ]
-              }
-            }
-          ],
-          "children": []
-        },
-        {
-          "kind": "expression_statement__form_augmented_assignment",
-          "name": "augmented_assignment",
-          "typeName": "ExpressionStatementUFormAugmentedAssignment",
-          "factoryName": "expressionStatementUFormAugmentedAssignment",
-          "irKey": "expressionStatementUFormAugmentedAssignment",
-          "parentKind": "expression_statement",
-          "fields": [
-            {
-              "name": "augmented_assignment",
-              "propertyName": "augmentedAssignment",
-              "paramName": "augmentedAssignment",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "augmented_assignment",
-                  "parseKind": "augmented_assignment",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "augmented_assignment"
-                ]
-              }
-            }
-          ],
-          "children": []
-        },
-        {
-          "kind": "expression_statement__form_yield",
-          "name": "yield",
-          "typeName": "ExpressionStatementUFormYield",
-          "factoryName": "expressionStatementUFormYield",
-          "irKey": "expressionStatementUFormYield",
-          "parentKind": "expression_statement",
-          "fields": [
-            {
-              "name": "yield",
-              "propertyName": "yield",
-              "paramName": "yield_",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "yield",
-                  "parseKind": "yield",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "yield"
-                ]
-              }
-            }
-          ],
-          "children": []
-        }
-      ]
-    },
-    {
-      "kind": "expression_statement_tuple",
-      "modelType": "branch",
-      "typeName": "ExpressionStatementTuple",
-      "factoryName": "expressionStatementTuple",
-      "irKey": "expressionStatementTuple",
-      "hidden": false,
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "expression",
               "parseKind": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_expression_statement_tuple",
+              "parseKind": "expression_statement_tuple",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "assignment",
+              "parseKind": "assignment",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "augmented_assignment",
+              "parseKind": "augmented_assignment",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "yield",
+              "parseKind": "yield",
               "unresolved": true
             }
           ],
@@ -4504,7 +4235,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression"
+              "expression",
+              "_expression_statement_tuple",
+              "assignment",
+              "augmented_assignment",
+              "yield"
             ]
           }
         }
@@ -6777,6 +6512,20 @@
               "name": "yield",
               "parseKind": "yield",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "parenthesized_list_splat",
+              "parseKind": "parenthesized_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "list_splat",
+              "parseKind": "list_splat",
+              "unresolved": true
             }
           ],
           "source": "inferred",
@@ -6784,7 +6533,9 @@
             "typeName": "",
             "kinds": [
               "expression",
-              "yield"
+              "yield",
+              "parenthesized_list_splat",
+              "list_splat"
             ]
           }
         }
@@ -8643,111 +8394,32 @@
     },
     {
       "kind": "with_clause",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "WithClause",
       "factoryName": "withClause",
       "irKey": "withClause",
       "hidden": false,
-      "source": "override",
-      "polymorphSource": "override",
-      "variantChildKinds": [
-        "with_clause_bare",
-        "with_clause_paren"
-      ],
-      "forms": [
-        {
-          "kind": "with_clause__form_bare",
-          "name": "bare",
-          "typeName": "WithClauseUFormBare",
-          "factoryName": "withClauseUFormBare",
-          "irKey": "withClauseUFormBare",
-          "parentKind": "with_clause",
-          "fields": [
-            {
-              "name": "with_clause_bare",
-              "propertyName": "withClauseBare",
-              "paramName": "withClauseBare",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_with_clause_bare",
-                  "parseKind": "with_clause_bare",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_with_clause_bare"
-                ]
-              }
-            }
-          ],
-          "children": []
-        },
-        {
-          "kind": "with_clause__form_paren",
-          "name": "paren",
-          "typeName": "WithClauseUFormParen",
-          "factoryName": "withClauseUFormParen",
-          "irKey": "withClauseUFormParen",
-          "parentKind": "with_clause",
-          "fields": [
-            {
-              "name": "with_clause_paren",
-              "propertyName": "withClauseParen",
-              "paramName": "withClauseParen",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_with_clause_paren",
-                  "parseKind": "with_clause_paren",
-                  "unresolved": true
-                }
-              ],
-              "source": "inferred",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "_with_clause_paren"
-                ]
-              }
-            }
-          ],
-          "children": []
-        }
-      ]
-    },
-    {
-      "kind": "with_clause_bare",
-      "modelType": "branch",
-      "typeName": "WithClauseBare",
-      "factoryName": "withClauseBare",
-      "irKey": "withClauseBare",
-      "hidden": false,
       "fields": [
         {
-          "name": "with_item",
-          "propertyName": "withItems",
-          "paramName": "withItems",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "with_item",
-              "parseKind": "with_item",
+              "multiplicity": "single",
+              "name": "_with_clause_bare",
+              "parseKind": "with_clause_bare",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_with_clause_paren",
+              "parseKind": "with_clause_paren",
               "unresolved": true
             }
           ],
@@ -8755,42 +8427,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "with_item"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "with_clause_paren",
-      "modelType": "branch",
-      "typeName": "WithClauseParen",
-      "factoryName": "withClauseParen",
-      "irKey": "withClauseParen",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "with_item",
-          "propertyName": "withItems",
-          "paramName": "withItems",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "with_item",
-              "parseKind": "with_item",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "with_item"
+              "_with_clause_bare",
+              "_with_clause_paren"
             ]
           }
         }

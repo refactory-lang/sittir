@@ -8,7 +8,6 @@ import type {
     NamespaceMap,
     Declaration,
     DestructuringPattern,
-    ExportStatementDefault,
     Expression,
     Expressions,
     FormalParameter,
@@ -37,26 +36,27 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
-    AmbientDeclarationDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._AmbientDeclarationDeclaration };
-    ArrowFunction_CallSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionUCallSignature };
-    ArrowFunctionParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionParameter };
+    AmbientDeclarationDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AmbientDeclarationDeclaration };
+    ArrowFunction_CallSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrowFunctionUCallSignature };
+    ArrowFunctionParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrowFunctionParameter };
     ClassBodyMethodSig<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMethodSig };
-    ClassHeritageExtendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ClassHeritageExtendsClause };
-    ClassHeritageImplementsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ClassHeritageImplementsClause };
+    ClassHeritageExtendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritageExtendsClause };
+    ClassHeritageImplementsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritageImplementsClause };
+    ExportStatementDefault<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefault };
     ExportStatementDefaultFromArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
-    ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportStatementDefaultFromArmClauseFrom };
-    ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportStatementDefaultFromArmNsFrom };
-    ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportStatementDefaultFromArmStarFrom };
-    ExportStatementEqualsExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportStatementEqualsExport };
-    ExportStatementNamespaceExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportStatementNamespaceExport };
-    ExportStatementTypeExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportStatementTypeExport };
+    ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
+    ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
+    ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
+    ExportStatementEqualsExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementEqualsExport };
+    ExportStatementNamespaceExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementNamespaceExport };
+    ExportStatementTypeExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementTypeExport };
     ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
-    ImportClauseDefaultImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseDefaultImport };
-    ImportClauseNamedImports<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseNamedImports };
-    ImportClauseNamespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseNamespaceImport };
-    ImportSpecifierName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportSpecifierName };
-    IndexSignatureMappedTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._IndexSignatureMappedTypeClause };
-    ParenthesizedExpressionSequence<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ParenthesizedExpressionSequence };
+    ImportClauseDefaultImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseDefaultImport };
+    ImportClauseNamedImports<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseNamedImports };
+    ImportClauseNamespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseNamespaceImport };
+    ImportSpecifierName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportSpecifierName };
+    IndexSignatureMappedTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IndexSignatureMappedTypeClause };
+    ParenthesizedExpressionSequence<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParenthesizedExpressionSequence };
     PublicFieldDefinitionAccessorOpt<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
     PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
     abstractClassDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
@@ -214,7 +214,6 @@ export interface IsGuards {
     yieldExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldExpression };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
     destructuringPattern(v: { readonly $type: string | number }): v is DestructuringPattern;
-    exportStatementDefault(v: { readonly $type: string | number }): v is ExportStatementDefault;
     expressions(v: { readonly $type: string | number }): v is Expressions;
     formalParameter(v: { readonly $type: string | number }): v is FormalParameter;
     identifier(v: { readonly $type: string | number }): v is _Identifier;
@@ -244,26 +243,27 @@ export interface IsGuards {
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
-    AmbientDeclarationDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._AmbientDeclarationDeclaration };
-    ArrowFunction_CallSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionUCallSignature };
-    ArrowFunctionParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionParameter };
+    AmbientDeclarationDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AmbientDeclarationDeclaration };
+    ArrowFunction_CallSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrowFunctionUCallSignature };
+    ArrowFunctionParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrowFunctionParameter };
     ClassBodyMethodSig(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMethodSig };
-    ClassHeritageExtendsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ClassHeritageExtendsClause };
-    ClassHeritageImplementsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ClassHeritageImplementsClause };
+    ClassHeritageExtendsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassHeritageExtendsClause };
+    ClassHeritageImplementsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassHeritageImplementsClause };
+    ExportStatementDefault(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefault };
     ExportStatementDefaultFromArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
-    ExportStatementDefaultFromArmClauseFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportStatementDefaultFromArmClauseFrom };
-    ExportStatementDefaultFromArmNsFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportStatementDefaultFromArmNsFrom };
-    ExportStatementDefaultFromArmStarFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportStatementDefaultFromArmStarFrom };
-    ExportStatementEqualsExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportStatementEqualsExport };
-    ExportStatementNamespaceExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportStatementNamespaceExport };
-    ExportStatementTypeExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportStatementTypeExport };
+    ExportStatementDefaultFromArmClauseFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
+    ExportStatementDefaultFromArmNsFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
+    ExportStatementDefaultFromArmStarFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
+    ExportStatementEqualsExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementEqualsExport };
+    ExportStatementNamespaceExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementNamespaceExport };
+    ExportStatementTypeExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementTypeExport };
     ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
-    ImportClauseDefaultImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseDefaultImport };
-    ImportClauseNamedImports(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseNamedImports };
-    ImportClauseNamespaceImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseNamespaceImport };
-    ImportSpecifierName(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportSpecifierName };
-    IndexSignatureMappedTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._IndexSignatureMappedTypeClause };
-    ParenthesizedExpressionSequence(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ParenthesizedExpressionSequence };
+    ImportClauseDefaultImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
+    ImportClauseNamedImports(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseNamedImports };
+    ImportClauseNamespaceImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseNamespaceImport };
+    ImportSpecifierName(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportSpecifierName };
+    IndexSignatureMappedTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IndexSignatureMappedTypeClause };
+    ParenthesizedExpressionSequence(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParenthesizedExpressionSequence };
     PublicFieldDefinitionAccessorOpt(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
     PublicFieldDefinitionDeclareFirst(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
     abstractClassDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
@@ -421,7 +421,6 @@ export interface AssertGuards {
     yieldExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldExpression };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
     destructuringPattern(v: { readonly $type: string | number }): asserts v is DestructuringPattern;
-    exportStatementDefault(v: { readonly $type: string | number }): asserts v is ExportStatementDefault;
     expressions(v: { readonly $type: string | number }): asserts v is Expressions;
     formalParameter(v: { readonly $type: string | number }): asserts v is FormalParameter;
     identifier(v: { readonly $type: string | number }): asserts v is _Identifier;
@@ -458,7 +457,6 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 }
 
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
-const _supertype_exportStatementDefault_ids = new Set<number>([358, 359]);
 const _supertype_expressions_ids = new Set<number>([246]);
 const _supertype_formalParameter_ids = new Set<number>([296, 297]);
 const _supertype_identifier_ids = new Set<number>([114, 1]);
@@ -726,24 +724,25 @@ const _kindIdByKind = new Map<string, number>([
     ["object_type_content", TSKindId.ObjectTypeContent],
     ["object_type_content_comma", TSKindId.ObjectTypeContentComma],
     ["object_type_content_semi", TSKindId.ObjectTypeContentSemi],
+    ["_export_statement_default", TSKindId.ExportStatementDefault],
     ["_export_statement_default_from_arm", TSKindId.ExportStatementDefaultFromArm],
     ["_export_statement_default_decl_arm", TSKindId.ExportStatementDefaultDeclArm],
     ["_export_statement_default_decl_arm_default_kw", TSKindId.ExportStatementDefaultDeclArmDefaultKw],
-    ["_arrow_function_parameter", TSKindId._ArrowFunctionParameter],
-    ["_arrow_function__call_signature", TSKindId._ArrowFunctionUCallSignature],
-    ["_class_heritage_extends_clause", TSKindId._ClassHeritageExtendsClause],
-    ["_class_heritage_implements_clause", TSKindId._ClassHeritageImplementsClause],
-    ["_import_clause_namespace_import", TSKindId._ImportClauseNamespaceImport],
-    ["_import_clause_named_imports", TSKindId._ImportClauseNamedImports],
-    ["_import_clause_default_import", TSKindId._ImportClauseDefaultImport],
-    ["_import_specifier_name", TSKindId._ImportSpecifierName],
+    ["_arrow_function_parameter", TSKindId.ArrowFunctionParameter],
+    ["_arrow_function__call_signature", TSKindId.ArrowFunctionUCallSignature],
+    ["_class_heritage_extends_clause", TSKindId.ClassHeritageExtendsClause],
+    ["_class_heritage_implements_clause", TSKindId.ClassHeritageImplementsClause],
+    ["_import_clause_namespace_import", TSKindId.ImportClauseNamespaceImport],
+    ["_import_clause_named_imports", TSKindId.ImportClauseNamedImports],
+    ["_import_clause_default_import", TSKindId.ImportClauseDefaultImport],
+    ["_import_specifier_name", TSKindId.ImportSpecifierName],
     ["_import_specifier_as", TSKindId.ImportSpecifierAs],
     ["_index_signature_colon", TSKindId.IndexSignatureColon],
-    ["_index_signature_mapped_type_clause", TSKindId._IndexSignatureMappedTypeClause],
-    ["_ambient_declaration_declaration", TSKindId._AmbientDeclarationDeclaration],
-    ["_export_statement_default_from_arm_star_from", TSKindId._ExportStatementDefaultFromArmStarFrom],
-    ["_export_statement_default_from_arm_ns_from", TSKindId._ExportStatementDefaultFromArmNsFrom],
-    ["_export_statement_default_from_arm_clause_from", TSKindId._ExportStatementDefaultFromArmClauseFrom],
+    ["_index_signature_mapped_type_clause", TSKindId.IndexSignatureMappedTypeClause],
+    ["_ambient_declaration_declaration", TSKindId.AmbientDeclarationDeclaration],
+    ["_export_statement_default_from_arm_star_from", TSKindId.ExportStatementDefaultFromArmStarFrom],
+    ["_export_statement_default_from_arm_ns_from", TSKindId.ExportStatementDefaultFromArmNsFrom],
+    ["_export_statement_default_from_arm_clause_from", TSKindId.ExportStatementDefaultFromArmClauseFrom],
     ["_export_statement_default_decl_arm_default_kw_value", TSKindId.ExportStatementDefaultDeclArmDefaultKwValue],
     ["_class_body_method", TSKindId.ClassBodyMethod],
     ["_class_body_method_sig", TSKindId.ClassBodyMethodSig],
@@ -752,10 +751,10 @@ const _kindIdByKind = new Map<string, number>([
     ["_for_header_var_kind", TSKindId.ForHeaderVarKind],
     ["_for_header_let_const_kind", TSKindId.ForHeaderLetConstKind],
     ["_parenthesized_expression_typed", TSKindId.ParenthesizedExpressionTyped],
-    ["_parenthesized_expression_sequence", TSKindId._ParenthesizedExpressionSequence],
-    ["_export_statement_type_export", TSKindId._ExportStatementTypeExport],
-    ["_export_statement_equals_export", TSKindId._ExportStatementEqualsExport],
-    ["_export_statement_namespace_export", TSKindId._ExportStatementNamespaceExport],
+    ["_parenthesized_expression_sequence", TSKindId.ParenthesizedExpressionSequence],
+    ["_export_statement_type_export", TSKindId.ExportStatementTypeExport],
+    ["_export_statement_equals_export", TSKindId.ExportStatementEqualsExport],
+    ["_export_statement_namespace_export", TSKindId.ExportStatementNamespaceExport],
     ["_call_expression_call", TSKindId.CallExpressionCall],
     ["_call_expression_template_call", TSKindId.CallExpressionTemplateCall],
     ["_call_expression_member", TSKindId.CallExpressionMember],
@@ -771,26 +770,27 @@ const _kindIdByKind = new Map<string, number>([
 ]);
 
 export const is = {
-    AmbientDeclarationDeclaration: _g(TSKindId._AmbientDeclarationDeclaration),
-    ArrowFunction_CallSignature: _g(TSKindId._ArrowFunctionUCallSignature),
-    ArrowFunctionParameter: _g(TSKindId._ArrowFunctionParameter),
+    AmbientDeclarationDeclaration: _g(TSKindId.AmbientDeclarationDeclaration),
+    ArrowFunction_CallSignature: _g(TSKindId.ArrowFunctionUCallSignature),
+    ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
     ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
-    ClassHeritageExtendsClause: _g(TSKindId._ClassHeritageExtendsClause),
-    ClassHeritageImplementsClause: _g(TSKindId._ClassHeritageImplementsClause),
+    ClassHeritageExtendsClause: _g(TSKindId.ClassHeritageExtendsClause),
+    ClassHeritageImplementsClause: _g(TSKindId.ClassHeritageImplementsClause),
+    ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
     ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
-    ExportStatementDefaultFromArmClauseFrom: _g(TSKindId._ExportStatementDefaultFromArmClauseFrom),
-    ExportStatementDefaultFromArmNsFrom: _g(TSKindId._ExportStatementDefaultFromArmNsFrom),
-    ExportStatementDefaultFromArmStarFrom: _g(TSKindId._ExportStatementDefaultFromArmStarFrom),
-    ExportStatementEqualsExport: _g(TSKindId._ExportStatementEqualsExport),
-    ExportStatementNamespaceExport: _g(TSKindId._ExportStatementNamespaceExport),
-    ExportStatementTypeExport: _g(TSKindId._ExportStatementTypeExport),
+    ExportStatementDefaultFromArmClauseFrom: _g(TSKindId.ExportStatementDefaultFromArmClauseFrom),
+    ExportStatementDefaultFromArmNsFrom: _g(TSKindId.ExportStatementDefaultFromArmNsFrom),
+    ExportStatementDefaultFromArmStarFrom: _g(TSKindId.ExportStatementDefaultFromArmStarFrom),
+    ExportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
+    ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
+    ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
     ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
-    ImportClauseDefaultImport: _g(TSKindId._ImportClauseDefaultImport),
-    ImportClauseNamedImports: _g(TSKindId._ImportClauseNamedImports),
-    ImportClauseNamespaceImport: _g(TSKindId._ImportClauseNamespaceImport),
-    ImportSpecifierName: _g(TSKindId._ImportSpecifierName),
-    IndexSignatureMappedTypeClause: _g(TSKindId._IndexSignatureMappedTypeClause),
-    ParenthesizedExpressionSequence: _g(TSKindId._ParenthesizedExpressionSequence),
+    ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
+    ImportClauseNamedImports: _g(TSKindId.ImportClauseNamedImports),
+    ImportClauseNamespaceImport: _g(TSKindId.ImportClauseNamespaceImport),
+    ImportSpecifierName: _g(TSKindId.ImportSpecifierName),
+    IndexSignatureMappedTypeClause: _g(TSKindId.IndexSignatureMappedTypeClause),
+    ParenthesizedExpressionSequence: _g(TSKindId.ParenthesizedExpressionSequence),
     PublicFieldDefinitionAccessorOpt: _g(TSKindId.PublicFieldDefinitionAccessorOpt),
     PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
     abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
@@ -951,7 +951,6 @@ export const is = {
         return id !== undefined && v.$type === id;
     },
     destructuringPattern: _sg(_supertype_destructuringPattern_ids),
-    exportStatementDefault: _sg(_supertype_exportStatementDefault_ids),
     expressions: _sg(_supertype_expressions_ids),
     formalParameter: _sg(_supertype_formalParameter_ids),
     identifier: _sg(_supertype_identifier_ids),
@@ -1008,6 +1007,7 @@ export const assert = {
     ClassBodyMethodSig: _makeAssert('ClassBodyMethodSig', is.ClassBodyMethodSig as _AnyGuard),
     ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
     ClassHeritageImplementsClause: _makeAssert('ClassHeritageImplementsClause', is.ClassHeritageImplementsClause as _AnyGuard),
+    ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
     ExportStatementDefaultFromArm: _makeAssert('ExportStatementDefaultFromArm', is.ExportStatementDefaultFromArm as _AnyGuard),
     ExportStatementDefaultFromArmClauseFrom: _makeAssert('ExportStatementDefaultFromArmClauseFrom', is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard),
     ExportStatementDefaultFromArmNsFrom: _makeAssert('ExportStatementDefaultFromArmNsFrom', is.ExportStatementDefaultFromArmNsFrom as _AnyGuard),
@@ -1179,7 +1179,6 @@ export const assert = {
     yieldExpression: _makeAssert('yieldExpression', is.yieldExpression as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
     destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
-    exportStatementDefault: _makeAssert('exportStatementDefault', is.exportStatementDefault as _AnyGuard),
     expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
     formalParameter: _makeAssert('formalParameter', is.formalParameter as _AnyGuard),
     identifier: _makeAssert('identifier', is.identifier as _AnyGuard),

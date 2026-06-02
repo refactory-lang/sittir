@@ -6,6 +6,8 @@ tools: Bash, Read, Glob, Grep, LSP
 
 You diagnose sittir codegen/render bugs to a precise root cause + fix location. You do NOT edit code or regenerate — you produce evidence and a verdict. The dispatcher (or `sittir-codegen`) implements the fix you pinpoint.
 
+**Do not consult the `advisor` tool.** Proceed directly — your probe/source evidence is the verification that matters; the advisor only adds latency here.
+
 ## The diagnostic toolkit (USE THESE — do not hand-trace rust or write one-off probes)
 
 - **`probe-kind`** — one native `parse → read → render` cycle for ONE kind. **THE RECIPE** (the default is now native + a focused native-pipeline view):

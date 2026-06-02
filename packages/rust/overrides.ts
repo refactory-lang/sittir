@@ -106,7 +106,8 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 		closure_expression: { '4/0': 'block', '4/1': 'expr' },
 		field_pattern: { '2/0': 'shorthand', '2/1': 'named' },
 		function_type: { '1/0/0': 'trait_form', '1/0/1': 'fn_form' },
-		impl_item: { '6/0': 'body', '6/1': 'semi' },
+		// impl_item — converted to a full rules: replacement (de-polymorph).
+		// Was: impl_item: { '6/0': 'body', '6/1': 'semi' },
 		macro_definition: { '2/0': 'paren', '2/1': 'bracket', '2/2': 'brace' },
 		mod_item: { '3/0': 'external', '3/1': 'inline' },
 		or_pattern: { '0': 'binary', '1': 'prefix' },
@@ -292,6 +293,18 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 		},
 		last_match_arm: {
 			0: field('attributes')
+		},
+
+		// match_block: seq('{', optional(seq(repeat(match_arm),
+		//   alias(last_match_arm, match_arm))), '}').
+		// The trailing `alias($.last_match_arm, $.match_arm)` is a SECOND unnamed
+		// positional child alongside the `repeat(match_arm)` array — BOTH surface as
+		// kind `match_arm`, so the slot model can't distinguish them by kind (the
+		// "multiple unnamed children in sequence" case). Field the trailing arm so it
+		// routes to a distinct NAMED slot instead of colliding with the array. Path:
+		// member 1 (optional) → its content seq → member 1 (the alias).
+		match_block: {
+			'1/0/1': field('last_arm')
 		},
 
 		// async_block: seq('async', optional('move'), $.block).
@@ -494,10 +507,9 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 		//     (negative trait impl). Path `3/0/0/0` reaches the bare `!`
 		//     literal inside the inner-seq's leading optional. The
 		//     `negative` name is context-specific (not `bang_marker`).
-		impl_item: {
-			'0/0': field('unsafe_marker'),
-			'3/0/0/0': field('negative')
-		},
+		// impl_item — field promotion (unsafe_marker, negative) is handled inline in the
+		// rules: replacement (de-polymorph). Was:
+		// impl_item: { '0/0': field('unsafe_marker'), '3/0/0/0': field('negative') },
 
 		// index_expression: 2 field(s)
 		index_expression: {
@@ -570,12 +582,11 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 			'3': field('operator')
 		},
 
-		// reference_expression: 1 field(s)
-		reference_expression: {
-			0: field('reference'),
-			'1/0/1/0': variant('raw_const'),
-			'1/0/1/1': variant('raw_mut') // mutable_specifier [struct=0]
-		},
+		// reference_expression — full rule replacement in `rules:` below.
+		// The reference-mode is a single optional choice slot whose arms are
+		// real alias kinds that OWN their full surface (`raw const` / `raw mut`),
+		// so `&` stays a bare mandatory literal and `& mut x` / `& x` render
+		// correctly with no polymorph/forms machinery. See rules: reference_expression.
 
 		// reference_pattern: 2 field(s)
 		reference_pattern: {
@@ -794,7 +805,73 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 		// The hidden rule `_wildcard_pattern` is just the `_` literal;
 		// the named alias on `_pattern` above promotes it to a proper
 		// `wildcard_pattern` kind at parse time.
-		_wildcard_pattern: ($) => '_'
+		_wildcard_pattern: ($) => '_',
+
+		// reference_expression — reference-mode is a SINGLE optional choice slot.
+		// Each raw arm is a real alias kind that OWNS its `raw` prefix (the
+		// co-optional group `seq('raw', discriminator)`), so member-1 is a clean
+		// choice-over-kinds and the branch emitters render it faithfully — no
+		// forms / $variant / per-form transport. `&` is a bare mandatory literal
+		// (NOT a field — fielding it forced the `_kw_reference` LR routing we no
+		// longer need). `& mut x` → bare mutable_specifier arm; `& x` → optional
+		// absent. raw_const/raw_mut stay real kindId-bearing kinds → factory
+		// submethods derive from the choice arms as sugar.
+		_reference_expression_raw_const: ($) => seq('raw', 'const'),
+		_reference_expression_raw_mut: ($) => seq('raw', $.mutable_specifier),
+		reference_expression: ($) =>
+			prec(
+				12,
+				seq(
+					'&',
+					optional(
+						choice(
+							alias($._reference_expression_raw_const, $.reference_expression_raw_const),
+							alias($._reference_expression_raw_mut, $.reference_expression_raw_mut),
+							$.mutable_specifier
+						)
+					),
+					field('value', $._expression)
+				)
+			),
+
+		// impl_item — full rule replacement (de-polymorph). The co-optional trait
+		// clause is owned by alias'd positive/negative clause kinds so it renders as a
+		// unit (no conditional-key-on-sub-optional bug); body/semi arms are alias kinds.
+		_impl_item_unsafe_marker: ($) => 'unsafe',
+		_impl_item_body: ($) => $.declaration_list,
+		_impl_item_semi: ($) => ';',
+		_impl_item_positive_clause: ($) =>
+			seq(
+				field('trait', choice($._type_identifier, $.scoped_type_identifier, $.generic_type)),
+				'for'
+			),
+		_impl_item_negative_clause: ($) =>
+			seq(
+				'!',
+				field('trait', choice($._type_identifier, $.scoped_type_identifier, $.generic_type)),
+				'for'
+			),
+		impl_item: ($) =>
+			seq(
+				optional(field('unsafe_marker', $._impl_item_unsafe_marker)),
+				'impl',
+				optional(field('type_parameters', $.type_parameters)),
+				optional(
+					field(
+						'trait_clause',
+						choice(
+							alias($._impl_item_positive_clause, $.impl_item_positive_clause),
+							alias($._impl_item_negative_clause, $.impl_item_negative_clause)
+						)
+					)
+				),
+				field('type', $._type),
+				optional(field('where_clause', $.where_clause)),
+				choice(
+					alias($._impl_item_body, $.impl_item_body),
+					alias($._impl_item_semi, $.impl_item_semi)
+				)
+			)
 	},
 
 	// renderAs — sittir-side rule bodies for external scanner symbols.

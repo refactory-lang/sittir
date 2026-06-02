@@ -3162,30 +3162,16 @@
     "type": "impl_item",
     "named": true,
     "fields": {
-      "negative": {
+      "trait_clause": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "!",
-            "named": false
-          }
-        ]
-      },
-      "trait": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "generic_type",
+            "type": "impl_item_negative_clause",
             "named": true
           },
           {
-            "type": "scoped_type_identifier",
-            "named": true
-          },
-          {
-            "type": "type_identifier",
+            "type": "impl_item_positive_clause",
             "named": true
           }
         ]
@@ -3249,13 +3235,60 @@
   {
     "type": "impl_item_body",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "declaration_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "impl_item_negative_clause",
+    "named": true,
     "fields": {
-      "body": {
+      "trait": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "declaration_list",
+            "type": "generic_type",
+            "named": true
+          },
+          {
+            "type": "scoped_type_identifier",
+            "named": true
+          },
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "impl_item_positive_clause",
+    "named": true,
+    "fields": {
+      "trait": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "generic_type",
+            "named": true
+          },
+          {
+            "type": "scoped_type_identifier",
+            "named": true
+          },
+          {
+            "type": "type_identifier",
             "named": true
           }
         ]
@@ -3828,7 +3861,18 @@
   {
     "type": "match_block",
     "named": true,
-    "fields": {},
+    "fields": {
+      "last_arm": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "match_arm",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
@@ -4563,16 +4607,6 @@
     "type": "reference_expression",
     "named": true,
     "fields": {
-      "reference": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "&",
-            "named": false
-          }
-        ]
-      },
       "value": {
         "multiple": false,
         "required": true,

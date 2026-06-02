@@ -754,14 +754,83 @@ function needsSeqSpace(
 }
 
 /**
+ * Detect whether a template string is a "pure top-level multi-conditional" —
+ * two or more `{% if %}...{% endif %}` segments that are IMMEDIATELY ADJACENT
+ * (no non-tag, non-whitespace content between `{% endif %}` and the next `{% if %}`).
+ *
+ * Example → true:
+ *   `{% if A %}body_A{% endif %}{% if B %}body_B{% endif %}`
+ *   `{% if A %}body_A{% endif %}{% if B %}body_B{% endif %}{% if C %}body_C{% endif %}`
+ *
+ * Example → false (nested):
+ *   `{% if outer %}{% if A %}...{% endif %}{% if B %}...{% endif %}{% endif %}`
+ *   (inner conditionals are at depth 1, not top-level)
+ *
+ * Example → false (interleaved non-tag content):
+ *   `{% if type_params %}...{% endif %}{{ params }}{% if return_type %}...{% endif %}`
+ *   (`{{ params }}` is non-tag content between the top-level segments)
+ *
+ * This distinction is critical: seq templates for nonterminals often have multiple
+ * top-level conditionals separated by non-conditional content (slots, literals).
+ * Only synthetic exclusive-arm choices produce PURE adjacent multi-conditionals.
+ *
+ * Algorithm: scan depth-tracking; when a top-level `{% endif %}` is found, check
+ * if the immediately-following non-whitespace content is another `{% if %}` or
+ * `{%-`. If YES: increment adjacentRun. If NO: reset to 0 (broken by non-tag).
+ * Return true iff adjacentRun ever reaches ≥ 1 (meaning ≥ 2 adjacent segments).
+ */
+function isTopLevelMultiConditional(cond: string): boolean {
+	let depth = 0;
+	let adjacentRun = 0; // count of consecutive adjacent top-level segments seen so far
+	const TAG_RE = /\{%-? (?:if [^%]+|endif) -?%\}/g;
+	let m: RegExpExecArray | null;
+	while ((m = TAG_RE.exec(cond)) !== null) {
+		const isEndif = m[0]!.includes('endif');
+		if (!isEndif) {
+			depth++;
+		} else {
+			depth--;
+			if (depth === 0) {
+				// Check adjacency: is the next non-whitespace content another `{% if %}`?
+				const afterEnd = TAG_RE.lastIndex;
+				const restTrimmed = cond.slice(afterEnd).trimStart();
+				if (restTrimmed.startsWith('{%-') || restTrimmed.startsWith('{%')) {
+					// Potentially adjacent — will be confirmed when the next `{% if %}` is found
+					adjacentRun++;
+					if (adjacentRun >= 1) return true; // ≥ 2 segments adjacent
+				} else {
+					// Non-tag content follows (slot, literal, or end) → reset
+					adjacentRun = 0;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+/**
  * Absorb a leading space INTO a Jinja conditional body so the space only
  * renders when the conditional fires. Converts
  * `{% if x | isPresent %}body{% endif %}` →
  * `{% if x | isPresent %} body{% endif %}`.
  *
- * Falls back to unconditional space prepend if the pattern doesn't match.
+ * For top-level multi-conditional strings (synthetic exclusive choices from
+ * `buildBranchRenderRuleFromForms`), each arm is a top-level segment:
+ * `{% if A %}body_A{% endif %}{% if B %}body_B{% endif %}`. Each segment's
+ * opening `{% if %}` needs a space absorbed so that whichever arm fires, the
+ * preceding prefix gets a space.
+ *
+ * Uses `isTopLevelMultiConditional` to distinguish top-level multi-conditionals
+ * from nested conditionals (where inner `{% if %}` tags must NOT get spaces).
+ *
+ * Falls back to unconditional space prepend if no tag matches.
  */
 function absorbLeadingSpaceIntoConditional(cond: string): string {
+	if (isTopLevelMultiConditional(cond)) {
+		// Insert space after each TOP-LEVEL `{% if %}` opening tag, using
+		// string-scan with depth tracking to identify the correct positions.
+		return _insertAfterTopLevelIfTags(cond, ' ');
+	}
 	return cond.replace(/^(\{%-? if [^%]+-?%\})/, '$1 ');
 }
 
@@ -771,10 +840,81 @@ function absorbLeadingSpaceIntoConditional(cond: string): string {
  * `{% if x | isPresent %}body{% endif %}` →
  * `{% if x | isPresent %}body {% endif %}`.
  *
- * Falls back to unconditional space append if the pattern doesn't match.
+ * For top-level multi-conditional strings (exclusive-arms synthetic choices,
+ * produced by `buildBranchRenderRuleFromForms`), absorbs trailing space into
+ * EVERY TOP-LEVEL `{% endif %}` tag so that whichever arm fires, the following
+ * suffix gets a space:
+ * `{% if A %}{{ a }}{% endif %}{% if B %}{{ b }}{% endif %}` →
+ * `{% if A %}{{ a }} {% endif %}{% if B %}{{ b }} {% endif %}`.
+ *
+ * Single-conditional strings use `$` anchor (original behaviour).
  */
 function absorbTrailingSpaceIntoConditional(cond: string): string {
+	if (isTopLevelMultiConditional(cond)) {
+		return _insertBeforeTopLevelEndifTags(cond, ' ');
+	}
 	return cond.replace(/(\{%-? endif -?%\})$/, ' $1');
+}
+
+/**
+ * Insert `insert` immediately AFTER each top-level `{% if ... %}` opening tag
+ * in `str`. "Top-level" means at depth 0 in the if/endif nesting.
+ */
+function _insertAfterTopLevelIfTags(str: string, insert: string): string {
+	const TAG_RE = /(\{%-? if [^%]+-?%\}|\{%-? endif -?%\})/g;
+	let depth = 0;
+	let result = '';
+	let lastEnd = 0;
+	let m: RegExpExecArray | null;
+	while ((m = TAG_RE.exec(str)) !== null) {
+		const tag = m[1]!;
+		const isIf = !tag.includes('endif');
+		result += str.slice(lastEnd, m.index);
+		result += tag;
+		lastEnd = TAG_RE.lastIndex;
+		if (isIf) {
+			if (depth === 0) {
+				// Top-level `{% if %}` — insert after it
+				result += insert;
+			}
+			depth++;
+		} else {
+			depth--;
+		}
+	}
+	result += str.slice(lastEnd);
+	return result;
+}
+
+/**
+ * Insert `insert` immediately BEFORE each top-level `{% endif %}` closing tag
+ * in `str`. "Top-level" means the tag transitions from depth 1 to depth 0.
+ */
+function _insertBeforeTopLevelEndifTags(str: string, insert: string): string {
+	const TAG_RE = /(\{%-? if [^%]+-?%\}|\{%-? endif -?%\})/g;
+	let depth = 0;
+	let result = '';
+	let lastEnd = 0;
+	let m: RegExpExecArray | null;
+	while ((m = TAG_RE.exec(str)) !== null) {
+		const tag = m[1]!;
+		const isIf = !tag.includes('endif');
+		result += str.slice(lastEnd, m.index);
+		if (!isIf) {
+			depth--;
+			if (depth === 0) {
+				// Top-level `{% endif %}` — insert before it
+				result += insert;
+			}
+			result += tag;
+		} else {
+			result += tag;
+			depth++;
+		}
+		lastEnd = TAG_RE.lastIndex;
+	}
+	result += str.slice(lastEnd);
+	return result;
 }
 
 export function emitRule(rule: Rule, ctx: EmitCtx): string {
@@ -1475,8 +1615,29 @@ function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): stri
 	if (rule.fieldName !== undefined) {
 		return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
 	}
-	// No slot, no fieldName → a choice of pure literals/patterns (no data slot).
-	// Emit the first non-empty branch's literal text.
+	// No slot, no fieldName. Two sub-cases:
+	//
+	// A) Synthetic exclusive-arms choice (from `buildBranchRenderRuleFromForms`):
+	//    Identified by the sentinel id `__synthetic_exclusive_choice__`. Arms
+	//    are mutually exclusive at runtime (grammar guarantee) but we must emit
+	//    ALL of them as conditionals so every arm can fire. Each arm emits as
+	//    `{% if disc | isPresent %}...{% endif %}`. Concatenating them is correct
+	//    because only one fires at runtime.
+	//
+	//    JINJA_COND_FULL_RE's greedy match treats the concatenated result as a
+	//    single conditional block, so the seq boundary checker sees the whole
+	//    choice as one conditional unit (correct inner-present boundary; no
+	//    outer-absent space inserted between prefix and a non-firing arm).
+	//
+	// B) Pure-literal choice (punctuation alternates, no data slot): emit
+	//    only the first non-empty arm (original behaviour). This also covers
+	//    real grammar choices with no registered slot (e.g. group-internal
+	//    unregistered choices) — these use first-arm semantics.
+	if (rule.id === '__synthetic_exclusive_choice__') {
+		// Emit ALL arms — concatenated conditionals, only one fires at runtime.
+		return rule.members.map((m) => emitRule(m, ctx)).join('');
+	}
+	// Pure-literal or unregistered choice — emit the first non-empty arm's text.
 	for (const member of rule.members) {
 		const text = emitRule(member, ctx);
 		if (text) return text;

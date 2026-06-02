@@ -165,7 +165,29 @@ export function link(
 		}
 	}
 
-	classifyAndLogHiddenRules(rules, raw.inline, supertypes, references, derivations, applyPromotedRules);
+	// Compute classification guards from the RAW (pre-resolveRule) rules so
+	// the original alias structure is still visible.
+	//
+	// - hiddenChoicesWithNamedAliasMembers: hidden choice kinds whose own
+	//   body has named-alias members → must NOT be promoted to supertype.
+	// - parentAliasedKinds: hidden kinds that appear as the content of a
+	//   named alias in any parent rule → real runtime CST nodes even when
+	//   their normalized body is a repeat1 → must NOT be classified as multi.
+	const hiddenChoicesWithNamedAliasMembers = collectHiddenChoicesWithNamedAliasMembers(raw.rules);
+	// ONE deep-walk yields BOTH the hidden-aliased set (classifier guard) and the
+	// visible→visible alias-target map (slot accept-set union), derived together so
+	// the two facets of `alias(symbol(X), $.target)` can never drift apart.
+	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(raw.rules);
+
+	classifyAndLogHiddenRules(
+		rules,
+		raw.inline,
+		supertypes,
+		references,
+		derivations,
+		applyPromotedRules,
+		hiddenChoicesWithNamedAliasMembers
+	);
 	promoteAndLogTerminalRules(rules, derivations, applyPromotedRules);
 	runFieldNameInferencePass(rules, references, derivations);
 
@@ -215,7 +237,9 @@ export function link(
 		aliasedHiddenKinds,
 		topLevelAliasBodies,
 		polymorphVariants: raw.polymorphVariants,
-		refineForms: raw.refineForms
+		refineForms: raw.refineForms,
+		parentAliasedKinds,
+		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined
 	};
 }
 
@@ -380,11 +404,18 @@ function classifyAndLogHiddenRules(
 	supertypes: Set<string>,
 	references: SymbolRef[],
 	derivations: DerivationLog,
-	applyPromotedRules: boolean
+	applyPromotedRules: boolean,
+	hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>
 ): void {
 	for (const [name, rule] of Object.entries(rules)) {
 		if (isHiddenKind(name, inline) || supertypes.has(name)) {
-			const classified = classifyHiddenRule(name, rule, supertypes, references);
+			const classified = classifyHiddenRule(
+				name,
+				rule,
+				supertypes,
+				references,
+				hiddenChoicesWithNamedAliasMembers
+			);
 			if (
 				classified !== rule &&
 				(classified.type === 'enum' || classified.type === 'supertype') &&
@@ -537,6 +568,98 @@ function extractTopLevelAliasTarget(rule: Rule): string | undefined {
 		return extractTopLevelAliasTarget((rule as { content: Rule }).content);
 	}
 	return undefined;
+}
+
+/**
+ * Collect the set of hidden (`_`-prefixed) kind names whose OWN raw rule
+ * body is a `choice` where **ALL** members are named aliases.
+ *
+ * These are pure alias-dispatch choices like `_export_statement_default`
+ * where every choice arm is `alias(symbol(_child), $.visible)`. After
+ * `resolveRule` collapses named aliases to plain `symbol` refs, such a choice
+ * looks identical to a bare-symbol supertype — but every alias target IS a
+ * real runtime CST node, not an erased abstraction. Classifying them as
+ * `supertype` would make the transport expect transparent subtype dispatch,
+ * which fails at decode when the reader sees the concrete kind ID.
+ *
+ * Mixed choices (some alias + some symbol, like `_match_block`) are
+ * intentionally excluded: they may still need supertype treatment for the
+ * non-aliased arms. Only pure alias-dispatch choices need the branch override.
+ *
+ * Used in `classifyHiddenChoiceRule` to block unwanted supertype promotion.
+ *
+ * @param rawRules - The EVALUATED (pre-link/pre-resolveRule) rules map.
+ *   Must be called before `resolveRule` flattens alias nodes to symbols.
+ */
+function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule>): ReadonlySet<string> {
+	const out = new Set<string>();
+	for (const [name, rule] of Object.entries(rawRules)) {
+		if (!name.startsWith('_')) continue;
+		// Only pure alias-dispatch choices: every member must be a named alias.
+		if (
+			rule.type === 'choice' &&
+			rule.members.length > 0 &&
+			rule.members.every((m) => m.type === 'alias' && m.named)
+		) {
+			out.add(name);
+		}
+	}
+	return out;
+}
+
+/**
+ * Single deep-walk over raw rule bodies collecting BOTH facets of
+ * `alias(symbol(X), $.target)` usage — derived from ONE traversal so the
+ * hidden-aliased set and the visible-alias-target map can never drift:
+ *
+ * - `parentAliasedKinds`: hidden (`_`-prefixed) source kinds `X`. These produce
+ *   REAL runtime CST nodes (tree-sitter exposes them under the alias target,
+ *   e.g. `_with_clause_bare` → `with_clause_bare`). Even when normalized to a
+ *   `repeat1` body (making `isHiddenRepeatHelper` fire) they must NOT be
+ *   classified `multi` — they need their own `branch` type so the Rust transport
+ *   matches their concrete kind ID at decode.
+ * - `visibleAliasTargets`: `target → [visibleSource, ...]` for VISIBLE→VISIBLE
+ *   aliases (e.g. `alias($.delim_token_tree, $.token_tree)`). An aliased instance
+ *   surfaces under `target` carrying the SOURCE's body, so the target kind's slot
+ *   accept-set must union the source's parse-surface children. Hidden sources are
+ *   already handled structurally via the `aliasedFrom` mechanism, so only visible
+ *   sources need this union — hence the split.
+ *
+ * @param rawRules - The EVALUATED (pre-resolveRule) rules map, alias nodes present.
+ */
+function collectAliasedByParents(rawRules: Record<string, Rule>): {
+	parentAliasedKinds: ReadonlySet<string>;
+	visibleAliasTargets: ReadonlyMap<string, readonly string[]>;
+} {
+	const parentAliasedKinds = new Set<string>();
+	const visibleAliasTargets = new Map<string, string[]>();
+	function walk(rule: Rule): void {
+		if (rule.type === 'alias') {
+			if (rule.named && rule.content.type === 'symbol') {
+				const source = rule.content.name;
+				if (source.startsWith('_')) {
+					parentAliasedKinds.add(source);
+				} else if (typeof rule.value === 'string' && !rule.value.startsWith('_')) {
+					const arr = visibleAliasTargets.get(rule.value);
+					if (arr) {
+						if (!arr.includes(source)) arr.push(source);
+					} else {
+						visibleAliasTargets.set(rule.value, [source]);
+					}
+				}
+			}
+			walk(rule.content);
+			return;
+		}
+		if ('members' in rule && Array.isArray((rule as ChoiceRule | SeqRule).members)) {
+			for (const m of (rule as ChoiceRule | SeqRule).members) walk(m);
+		}
+		if ('content' in rule && (rule as { content?: Rule }).content) {
+			walk((rule as { content: Rule }).content);
+		}
+	}
+	for (const rule of Object.values(rawRules)) walk(rule);
+	return { parentAliasedKinds, visibleAliasTargets };
 }
 
 function collectTopLevelAliasBodies(
@@ -969,19 +1092,20 @@ export function applyOverridePolymorphs(
 			continue;
 		}
 
-		const forms = buildOverridePolymorphForms(parentKind, children, found, rules);
-
-		rules[parentKind] = {
-			type: 'polymorph',
-			forms,
-			source: 'override'
-		} satisfies PolymorphRule;
-
-		derivations.promotedRules.push({
-			kind: parentKind,
-			classification: 'polymorph',
-			applied: true
-		});
+		// DE-POLYMORPH (2026-06-01): wire already injected the variant-child
+		// aliases into this choice (confirmed by anyChildMemberInFoundChoice
+		// above). We intentionally STOP here — no longer reclassifying the
+		// parent into a PolymorphRule / modelType:'polymorph' with forms. The
+		// rule stays the wire-produced seq(..., choice(alias_a, alias_b, …), …)
+		// and flows through as a plain BRANCH: faithful order-preserving render
+		// over a single choice slot, no forms / no $variant dispatch. The
+		// `polymorphs:` / `variant()` overlay and wire's alias synthesis are
+		// retained, so factory submethod sugar derives from the choice arms
+		// (the alias kinds) rather than from a forms list.
+		//
+		// (Was: rules[parentKind] = { type:'polymorph',
+		//   forms: buildOverridePolymorphForms(parentKind, children, found, rules),
+		//   source:'override' }.)
 	}
 }
 
@@ -1996,14 +2120,20 @@ function resolveSymbolRoleOrPass(
 // classifyHiddenRule — determine what a hidden rule IS
 // ---------------------------------------------------------------------------
 
-function classifyHiddenRule(name: string, rule: Rule, supertypes: Set<string>, _references: SymbolRef[]): Rule {
+function classifyHiddenRule(
+	name: string,
+	rule: Rule,
+	supertypes: Set<string>,
+	_references: SymbolRef[],
+	hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>
+): Rule {
 	// Already classified (e.g., enum from Evaluate)
 	if (rule.type === 'enum' || rule.type === 'supertype' || rule.type === 'group') {
 		return rule;
 	}
 
 	if (rule.type === 'choice') {
-		return classifyHiddenChoiceRule(name, rule, supertypes);
+		return classifyHiddenChoiceRule(name, rule, supertypes, hiddenChoicesWithNamedAliasMembers);
 	}
 
 	if (isSeq(rule)) {
@@ -2037,13 +2167,27 @@ function classifyHiddenRule(name: string, rule: Rule, supertypes: Set<string>, _
  *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
  *   structural members (seq, field, nested choice/optional/repeat) disqualify.
  */
-function classifyHiddenChoiceRule(name: string, rule: ChoiceRule, supertypes: Set<string>): Rule {
+function classifyHiddenChoiceRule(
+	name: string,
+	rule: ChoiceRule,
+	supertypes: Set<string>,
+	hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>
+): Rule {
 	if (rule.members.every((m): m is StringRule => m.type === 'string')) {
 		return normalizeEnumMembers(rule.members, 'promoted');
 	}
 
+	// If this hidden choice's ORIGINAL (pre-resolveRule) rule body contained
+	// named-alias members, its choice arms represent REAL aliased CST nodes —
+	// NOT abstract supertypes that tree-sitter erases at parse time. Block
+	// supertype promotion so these kinds fall through to branch classification.
+	// Grammar-declared supertypes (in grammar.supertypes) are never blocked.
+	if (hiddenChoicesWithNamedAliasMembers.has(name) && !supertypes.has(name)) {
+		return rule;
+	}
+
 	const supertypeCompatible = (m: Rule): boolean =>
-		m.type === 'symbol' || (m.type === 'alias' && m.named) || m.type === 'enum' || m.type === 'string';
+		m.type === 'symbol' || m.type === 'enum' || m.type === 'string';
 	const allCompatible = rule.members.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
 		const subtypes = collectSubtypeNames(rule);
