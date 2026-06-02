@@ -30019,9 +30019,9 @@ pub struct LastMatchArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
     pub attributes: Option<Vec<DeclarationStatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: MatchPatternTransport,
+    pub pattern: Box<MatchPatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for LastMatchArmTransport {
@@ -30594,6 +30594,8 @@ pub struct MatchBlockTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_last_arm"))]
+    pub last_arm: Option<Box<LastMatchArmTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_arm"))]
     pub match_arm: Option<Vec<MatchArmTransport>>,
 }
@@ -30647,7 +30649,7 @@ pub struct MatchExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: MatchBlockTransport,
+    pub body: Box<MatchBlockTransport>,
 }
 
 impl RenderableTransport for MatchExpressionTransport {
@@ -30697,9 +30699,9 @@ pub struct MatchPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: PatternTransport,
+    pub pattern: Box<PatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
-    pub condition: Option<ConditionTransport>,
+    pub condition: Option<Box<ConditionTransport>>,
 }
 
 impl RenderableTransport for MatchPatternTransport {
@@ -45818,7 +45820,7 @@ fn render_match_arm(node: &MatchArmTransport, dest: &mut dyn ::std::fmt::Write) 
 }
 
 fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.match_arm.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.last_arm.is_none() && node.match_arm.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
@@ -45828,6 +45830,10 @@ fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Wri
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = MatchBlockTemplate {
+        last_arm: match &node.last_arm {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         match_arm: ListNonterminalView {
             items: match_arm_buf.as_slice(),
             separator: "",
@@ -52966,8 +52972,8 @@ fn transport_to_node_last_match_arm(transport: LastMatchArmTransport) -> Result<
     if let Some(value) = transport.attributes {
         fields.insert("attributes".to_string(), transport_field_values(value.into_iter().map(|v| declaration_statement_transport_to_any(v)).collect::<Vec<_>>())?);
     }
-    fields.insert("pattern".to_string(), transport_field_value(AnyTransport::MatchPattern(transport.pattern))?);
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
+    fields.insert("pattern".to_string(), transport_field_value(AnyTransport::MatchPattern(*transport.pattern))?);
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(*transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -53239,6 +53245,9 @@ fn transport_to_node_match_arm(transport: MatchArmTransport) -> Result<Transport
 
 fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.last_arm {
+        fields.insert("last_arm".to_string(), transport_field_value(AnyTransport::LastMatchArm(*value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.match_arm {
@@ -53268,7 +53277,7 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
 fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(*transport.value))?);
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::MatchBlock(transport.body))?);
+    fields.insert("body".to_string(), transport_field_value(AnyTransport::MatchBlock(*transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -53289,9 +53298,9 @@ fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Re
 
 fn transport_to_node_match_pattern(transport: MatchPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
+    fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(*transport.pattern))?);
     if let Some(value) = transport.condition {
-        fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(value))?);
+        fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(*value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;

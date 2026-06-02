@@ -11037,6 +11037,30 @@
               "match_arm"
             ]
           }
+        },
+        {
+          "name": "last_arm",
+          "propertyName": "lastArm",
+          "paramName": "lastArm",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "last_match_arm",
+              "parseKind": "match_arm",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "last_match_arm"
+            ]
+          }
         }
       ],
       "children": []

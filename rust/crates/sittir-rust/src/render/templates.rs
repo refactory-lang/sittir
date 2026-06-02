@@ -968,6 +968,7 @@ pub struct MatchArmTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "match_block.jinja", escape = "none")]
 pub struct MatchBlockTemplate<'a> {
+    pub last_arm: OptionalNonterminalView<'a>,
     pub match_arm: ListNonterminalView<'a>,
 }
 

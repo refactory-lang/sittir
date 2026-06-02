@@ -295,6 +295,18 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 			0: field('attributes')
 		},
 
+		// match_block: seq('{', optional(seq(repeat(match_arm),
+		//   alias(last_match_arm, match_arm))), '}').
+		// The trailing `alias($.last_match_arm, $.match_arm)` is a SECOND unnamed
+		// positional child alongside the `repeat(match_arm)` array — BOTH surface as
+		// kind `match_arm`, so the slot model can't distinguish them by kind (the
+		// "multiple unnamed children in sequence" case). Field the trailing arm so it
+		// routes to a distinct NAMED slot instead of colliding with the array. Path:
+		// member 1 (optional) → its content seq → member 1 (the alias).
+		match_block: {
+			'1/0/1': field('last_arm')
+		},
+
 		// async_block: seq('async', optional('move'), $.block).
 		// Field-promotion wave 1 (016 task #23): label the standalone
 		// optional `move` punct as `move_marker` so render preserves it

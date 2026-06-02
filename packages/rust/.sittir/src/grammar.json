@@ -7005,9 +7005,34 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_match_block_optional1",
-              "source": "group-lift"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "match_arm",
+                    "multiplicity": "array",
+                    "nonterminal": true
+                  },
+                  "multiplicity": "array",
+                  "nonterminal": true
+                },
+                {
+                  "type": "FIELD",
+                  "name": "last_arm",
+                  "content": {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "last_match_arm"
+                    },
+                    "named": true,
+                    "value": "match_arm"
+                  },
+                  "source": "override"
+                }
+              ]
             },
             {
               "type": "BLANK"
@@ -10430,6 +10455,9 @@
     "_kw_attributes": {
       "type": "BLANK"
     },
+    "_kw_last_arm": {
+      "type": "BLANK"
+    },
     "_kw_move_marker": {
       "type": "STRING",
       "value": "move"
@@ -11552,31 +11580,6 @@
         }
       ]
     },
-    "_match_block_optional1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "match_arm",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "last_match_arm"
-          },
-          "named": true,
-          "value": "match_arm"
-        }
-      ]
-    },
     "_match_pattern_optional1": {
       "type": "SEQ",
       "members": [
@@ -11791,7 +11794,6 @@
     "_for_lifetimes_repeat1",
     "_type_arguments_repeat1",
     "_arguments_optional1",
-    "_match_block_optional1",
     "_match_pattern_optional1",
     "_while_expression_optional1",
     "_slice_pattern_optional1",

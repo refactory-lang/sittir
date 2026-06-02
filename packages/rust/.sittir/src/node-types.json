@@ -3861,7 +3861,18 @@
   {
     "type": "match_block",
     "named": true,
-    "fields": {},
+    "fields": {
+      "last_arm": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "match_arm",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,

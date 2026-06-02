@@ -774,20 +774,20 @@ export const enum TSKindId {
   TupleExpressionRepeat1 = 395,
   TupleExpressionRepeat2 = 396,
   FieldInitializerListRepeat1 = 397,
-  MatchArmRepeat1 = 398,
-  ClosureParametersRepeat1 = 399,
-  TuplePatternRepeat1 = 400,
-  StructPatternRepeat1 = 401,
-  StringLiteralRepeat1 = 402,
-  _ArrayExpressionListRepeat1 = 403,
-  _MacroDefinitionParenRepeat1 = 404,
-  _DelimTokenTreeParenRepeat1 = 405,
-  _EnumVariantListOptional1Repeat1 = 406,
-  _FieldDeclarationListOptional1Repeat1 = 407,
-  _WhereClauseOptional1Repeat1 = 408,
-  _UseListOptional1Repeat1 = 409,
-  _ParametersOptional1Repeat1 = 410,
-  _MatchBlockOptional1Repeat1 = 411,
+  MatchBlockRepeat1 = 398,
+  MatchArmRepeat1 = 399,
+  ClosureParametersRepeat1 = 400,
+  TuplePatternRepeat1 = 401,
+  StructPatternRepeat1 = 402,
+  StringLiteralRepeat1 = 403,
+  _ArrayExpressionListRepeat1 = 404,
+  _MacroDefinitionParenRepeat1 = 405,
+  _DelimTokenTreeParenRepeat1 = 406,
+  _EnumVariantListOptional1Repeat1 = 407,
+  _FieldDeclarationListOptional1Repeat1 = 408,
+  _WhereClauseOptional1Repeat1 = 409,
+  _UseListOptional1Repeat1 = 410,
+  _ParametersOptional1Repeat1 = 411,
   _SlicePatternOptional1Repeat1 = 412,
   FieldIdentifier = 413,
   _ShorthandFieldIdentifier = 415,
@@ -1192,20 +1192,20 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [395, "tuple_expression_repeat1"],
   [396, "tuple_expression_repeat2"],
   [397, "field_initializer_list_repeat1"],
-  [398, "match_arm_repeat1"],
-  [399, "closure_parameters_repeat1"],
-  [400, "tuple_pattern_repeat1"],
-  [401, "struct_pattern_repeat1"],
-  [402, "string_literal_repeat1"],
-  [403, "_array_expression_list_repeat1"],
-  [404, "_macro_definition_paren_repeat1"],
-  [405, "_delim_token_tree_paren_repeat1"],
-  [406, "_enum_variant_list_optional1_repeat1"],
-  [407, "_field_declaration_list_optional1_repeat1"],
-  [408, "_where_clause_optional1_repeat1"],
-  [409, "_use_list_optional1_repeat1"],
-  [410, "_parameters_optional1_repeat1"],
-  [411, "_match_block_optional1_repeat1"],
+  [398, "match_block_repeat1"],
+  [399, "match_arm_repeat1"],
+  [400, "closure_parameters_repeat1"],
+  [401, "tuple_pattern_repeat1"],
+  [402, "struct_pattern_repeat1"],
+  [403, "string_literal_repeat1"],
+  [404, "_array_expression_list_repeat1"],
+  [405, "_macro_definition_paren_repeat1"],
+  [406, "_delim_token_tree_paren_repeat1"],
+  [407, "_enum_variant_list_optional1_repeat1"],
+  [408, "_field_declaration_list_optional1_repeat1"],
+  [409, "_where_clause_optional1_repeat1"],
+  [410, "_use_list_optional1_repeat1"],
+  [411, "_parameters_optional1_repeat1"],
   [412, "_slice_pattern_optional1_repeat1"],
   [413, "_field_identifier"],
   [415, "_shorthand_field_identifier"],
@@ -1611,6 +1611,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "tuple_expression_repeat1": return TSKindId.TupleExpressionRepeat1;
     case "tuple_expression_repeat2": return TSKindId.TupleExpressionRepeat2;
     case "field_initializer_list_repeat1": return TSKindId.FieldInitializerListRepeat1;
+    case "match_block_repeat1": return TSKindId.MatchBlockRepeat1;
     case "match_arm_repeat1": return TSKindId.MatchArmRepeat1;
     case "closure_parameters_repeat1": return TSKindId.ClosureParametersRepeat1;
     case "tuple_pattern_repeat1": return TSKindId.TuplePatternRepeat1;
@@ -1624,7 +1625,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_where_clause_optional1_repeat1": return TSKindId._WhereClauseOptional1Repeat1;
     case "_use_list_optional1_repeat1": return TSKindId._UseListOptional1Repeat1;
     case "_parameters_optional1_repeat1": return TSKindId._ParametersOptional1Repeat1;
-    case "_match_block_optional1_repeat1": return TSKindId._MatchBlockOptional1Repeat1;
     case "_slice_pattern_optional1_repeat1": return TSKindId._SlicePatternOptional1Repeat1;
     case "_field_identifier": return TSKindId.FieldIdentifier;
     case "_shorthand_field_identifier": return TSKindId._ShorthandFieldIdentifier;
@@ -3313,7 +3313,9 @@ export interface MatchArm {
 export interface MatchBlock {
   readonly $type: TSKindId.MatchBlock;
   readonly _match_arm?: readonly (MatchArm)[];
+  readonly _last_arm?: LastMatchArm;
   matchArms(): readonly (MatchArm)[];
+  lastArm(): LastMatchArm | undefined;
 }
 
 export interface MatchExpression {
