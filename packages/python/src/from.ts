@@ -258,6 +258,7 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
 }
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
+  "_comprehension_clauses": TSKindId.ComprehensionClauses,
   "_expression_statement_tuple": TSKindId.ExpressionStatementTuple,
   "_match_block": TSKindId.MatchBlock,
   "_simple_pattern_negative": TSKindId.SimplePatternNegative,
@@ -299,6 +300,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
   switch (kind) {
+    case "_comprehension_clauses": return F.comprehensionClauses(...(children as Parameters<typeof F.comprehensionClauses>));
     case "_expression_statement_tuple": return F.expressionStatementTuple(...(children as Parameters<typeof F.expressionStatementTuple>));
     case "_match_block": return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
     case "_simple_pattern_negative": return F.simplePatternNegative(...(children as Parameters<typeof F.simplePatternNegative>));
@@ -717,7 +719,7 @@ export function dictionaryComprehensionFrom(input: T.DictionaryComprehension.Loo
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.dictionaryComprehension>;
   return F.dictionaryComprehension({
     body: _resolveOneBranch<T.Pair>(input.body, "pair"),
-    comprehensionClauses: _resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, "_comprehension_clauses"),
+    comprehensionClauses: _resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, "_comprehension_clauses") ?? F.comprehensionClauses(),
   });
 }
 
@@ -872,7 +874,7 @@ export function generatorExpressionFrom(input: T.GeneratorExpression.Loose): Ret
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.generatorExpression>;
   return F.generatorExpression({
     body: _resolveOne<T.Expression>(input.body, _K0, _K2),
-    comprehensionClauses: _resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, "_comprehension_clauses"),
+    comprehensionClauses: _resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, "_comprehension_clauses") ?? F.comprehensionClauses(),
   });
 }
 
@@ -1010,7 +1012,7 @@ export function listComprehensionFrom(input: T.ListComprehension.Loose): ReturnT
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.listComprehension>;
   return F.listComprehension({
     body: _resolveOne<T.Expression>(input.body, _K0, _K2),
-    comprehensionClauses: _resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, "_comprehension_clauses"),
+    comprehensionClauses: _resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, "_comprehension_clauses") ?? F.comprehensionClauses(),
   });
 }
 
@@ -1110,7 +1112,7 @@ export function parametersFrom(input?: T._Parameters | T.Parameters): ReturnType
   return F.parameters(input as Parameters<typeof F.parameters>[0]);
 }
 
-export function parenthesizedExpressionFrom(input?: (T.Expression | T.Yield) | T.ParenthesizedExpression): ReturnType<typeof F.parenthesizedExpression> {
+export function parenthesizedExpressionFrom(input?: (T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) | T.ParenthesizedExpression): ReturnType<typeof F.parenthesizedExpression> {
   if (isNodeData(input) && input.$type === TSKindId.ParenthesizedExpression) {
     const data = input;
     const child = (data as unknown as { _content?: unknown })._content;
@@ -1189,7 +1191,7 @@ export function setComprehensionFrom(input: T.SetComprehension.Loose): ReturnTyp
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.setComprehension>;
   return F.setComprehension({
     body: _resolveOne<T.Expression>(input.body, _K0, _K2),
-    comprehensionClauses: _resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, "_comprehension_clauses"),
+    comprehensionClauses: _resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, "_comprehension_clauses") ?? F.comprehensionClauses(),
   });
 }
 

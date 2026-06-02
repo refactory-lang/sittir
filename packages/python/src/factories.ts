@@ -105,21 +105,15 @@ export function _comparisonOperatorComparator(config: T.ComparisonOperatorCompar
   }, methodsEngine);
 }
 
-export function comprehensionClauses(config: T.ComprehensionClauses.Config) {
-  const _for_in_clause = config.forInClause;
-  const _content = config.content;
+export function comprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
+  const _content = children;
   return withMethods({
     $type: TSKindId.ComprehensionClauses as const,
     $source: 2 as const,
     $named: true as const,
-    _for_in_clause,
     _content,
-    forInClause() { return _for_in_clause; },
     contents() { return _content; },
-    $with: {
-      forInClause: (value: T.ForInClause) => comprehensionClauses({ ...config, forInClause: value }),
-      contents: (...values: (T.ForInClause | T.IfClause)[]) => comprehensionClauses({ ...config, content: values }),
-    },
+    $with: { $children: (...vs: (T.ForInClause | T.IfClause)[]) => comprehensionClauses(...vs) },
   }, methodsEngine);
 }
 
@@ -1607,7 +1601,7 @@ export function parameters(child?: T.Parameters) {
   }, methodsEngine);
 }
 
-export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
+export function parenthesizedExpression(child: (T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.ParenthesizedExpression as const,
@@ -1615,7 +1609,7 @@ export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.Expression | T.Yield)) => parenthesizedExpression(v) },
+    $with: { $child: (v: (T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat)) => parenthesizedExpression(v) },
   }, methodsEngine);
 }
 

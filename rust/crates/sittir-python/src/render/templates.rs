@@ -127,7 +127,7 @@ pub struct ComparisonOperatorComparatorTemplate<'a> {
 #[template(path = "_comprehension_clauses.jinja", escape = "none")]
 pub struct ComprehensionClausesTemplate<'a> {
     pub content: ListNonterminalView<'a>,
-    pub for_in_clause: SingleNonterminalView<'a>,
+    pub for_in_clause: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

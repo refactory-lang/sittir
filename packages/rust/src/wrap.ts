@@ -2345,14 +2345,9 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
     ...data,
     $type: TSKindId.MatchBlock as const,
     _match_arm: normalizeRepeatedWrapSlot(data._match_arm, false, "match_arm", { tree, nodeType: data.$type, slotName: "match_arm", span: (data as _NodeData).$span }),
-    _last_match_arm: normalizeSingularWrapSlot((data._match_arm ?? data._last_match_arm), "last_match_arm", false, data.$type, { tree, nodeType: data.$type, slotName: "last_match_arm", span: (data as _NodeData).$span }),
 
     matchArms() { return drillInAll<T.MatchArm>(this._match_arm as readonly T.MatchArm[] | undefined, tree); },
-    lastMatchArm() { return drillAs<T.LastMatchArm | undefined>(this._last_match_arm, tree, "match_arm", "last_match_arm"); },
-    $with: {
-      matchArms: (...v: NonNullable<T.MatchBlock['_match_arm']>[number][]) => wrapMatchBlock({ ...data, _match_arm: v }, tree),
-      lastMatchArm: (v: NonNullable<T.MatchBlock['_last_match_arm']>) => wrapMatchBlock({ ...data, _last_match_arm: v }, tree),
-    },
+    $with: { $children: (...vs: readonly [never]) => wrapMatchBlock({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2978,9 +2973,9 @@ export function wrapTokenTree(data: T.TokenTree, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TokenTree as const,
-    _content: normalizeSingularWrapSlot((data._token_tree_paren ?? data._token_tree_bracket ?? data._token_tree_brace ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+    _content: normalizeSingularWrapSlot((data._token_tree_paren ?? data._token_tree_bracket ?? data._token_tree_brace ?? data._delim_token_tree_paren ?? data._delim_token_tree_bracket ?? data._delim_token_tree_brace ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    content() { return drillIn<T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace>(this._content, tree); },
+    content() { return drillIn<T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace | T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace>(this._content, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapTokenTree({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;

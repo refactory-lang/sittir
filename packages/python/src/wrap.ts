@@ -321,15 +321,10 @@ export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ComprehensionClauses as const,
-    _for_in_clause: normalizeSingularWrapSlot(data._for_in_clause, "for_in_clause", true, data.$type, { tree, nodeType: data.$type, slotName: "for_in_clause", span: (data as _NodeData).$span }),
     _content: normalizeRepeatedWrapSlot(_concatInSourceOrder([data._for_in_clause, data._if_clause, data._content]), false, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    forInClause() { return drillIn<T.ForInClause>(this._for_in_clause, tree); },
     contents() { return drillInAll<T.ForInClause | T.IfClause>(this._content as readonly (T.ForInClause | T.IfClause)[] | undefined, tree); },
-    $with: {
-      forInClause: (v: NonNullable<T.ComprehensionClauses['_for_in_clause']>) => wrapComprehensionClauses({ ...data, _for_in_clause: v }, tree),
-      contents: (...v: NonNullable<T.ComprehensionClauses['_content']>[number][]) => wrapComprehensionClauses({ ...data, _content: v }, tree),
-    },
+    $with: { $children: (...vs: readonly [never]) => wrapComprehensionClauses({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1662,9 +1657,9 @@ export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedExpression as const,
-    _content: normalizeSingularWrapSlot((data._comparison_operator ?? data._not_operator ?? data._boolean_operator ?? data._lambda ?? data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._conditional_expression ?? data._named_expression ?? data._as_pattern ?? data._yield ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+    _content: normalizeSingularWrapSlot((data._comparison_operator ?? data._not_operator ?? data._boolean_operator ?? data._lambda ?? data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._conditional_expression ?? data._named_expression ?? data._as_pattern ?? data._yield ?? data._list_splat ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    content() { return drillIn<T.Expression | T.Yield>(this._content, tree); },
+    content() { return drillAs<T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat>(this._content, tree, "parenthesized_expression", "parenthesized_list_splat"); },
     $with: { $children: (...vs: readonly [never]) => wrapParenthesizedExpression({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;

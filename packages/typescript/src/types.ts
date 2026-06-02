@@ -3735,8 +3735,8 @@ export interface PairPattern {
 
 export interface ParenthesizedExpression {
   readonly $type: TSKindId.ParenthesizedExpression;
-  readonly _content: ParenthesizedExpressionTyped | ParenthesizedExpressionSequence;
-  content(): ParenthesizedExpressionTyped | ParenthesizedExpressionSequence;
+  readonly _content: ParenthesizedExpressionTyped | ParenthesizedExpressionSequence | Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+  content(): ParenthesizedExpressionTyped | ParenthesizedExpressionSequence | Identifier | DecoratorMemberExpression | DecoratorCallExpression;
 }
 
 export interface ParenthesizedType {

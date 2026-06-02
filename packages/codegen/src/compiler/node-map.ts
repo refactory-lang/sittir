@@ -2409,6 +2409,144 @@ function escapeJinjaBraceCollisions(s: string): string {
 }
 
 /**
+ * Fold singular slots whose every parseKind is already covered by a sibling
+ * ARRAY slot into that array slot, then drop the singular slot.
+ *
+ * Background: `alias($.last_match_arm, $.match_arm)` causes `deriveValuesForRule`
+ * to produce a `symbol{name:'match_arm', aliasedFrom:'last_match_arm'}` value.
+ * `projectSlotNaming` derives `storageName='last_match_arm'` (from the aliasedFrom
+ * side), creating a SEPARATE singular slot with `parseKind='match_arm'` — colliding
+ * with the existing array `match_arm` slot. At parse time every node appears as
+ * `match_arm`; there is no `last_match_arm` kind in the CST. The array slot already
+ * covers all of them. The singular slot is spurious and causes the native reader to
+ * route ALL match_arm nodes into the singular slot ("received N values; got array").
+ *
+ * The fix: if a singular (arity='one') unnamed slot's EVERY value has a `parseKind`
+ * that is ALSO present in a sibling array (arity='many') unnamed slot, merge the
+ * singular slot's values into the array slot and drop the singular slot. Uses
+ * `parseKind` as the routing key — the single source of truth for CST dispatch.
+ */
+function foldParseKindDuplicateSingularSlots(slots: readonly AssembledNonterminal[]): AssembledNonterminal[] {
+	// Build a map from parseKind → array slot(s) that already cover it.
+	const arrayParseKinds = new Set<string>();
+	for (const slot of slots) {
+		if (slot.arity !== 'many' || slot.fieldName !== undefined) continue;
+		for (const v of slot.values) {
+			const pk = v.parseKind?.name;
+			if (pk !== undefined) arrayParseKinds.add(pk);
+		}
+	}
+	if (arrayParseKinds.size === 0) return [...slots];
+
+	const out: AssembledNonterminal[] = [];
+	const toMergeIntoArraySlot = new Map<string, NodeOrTerminal[]>(); // arraySlotName → values
+
+	for (const slot of slots) {
+		// Only consider unnamed singular slots as candidates for folding.
+		if (slot.arity !== 'one' || slot.fieldName !== undefined || slot.values.length === 0) {
+			out.push(slot);
+			continue;
+		}
+		// A singular slot is foldable when ALL its parseKinds are covered by an array slot.
+		const allCovered = slot.values.every((v) => {
+			const pk = v.parseKind?.name;
+			return pk !== undefined && arrayParseKinds.has(pk);
+		});
+		if (!allCovered) {
+			out.push(slot);
+			continue;
+		}
+		// Find the array slot that covers this slot's first parseKind.
+		const pk0 = slot.values[0]?.parseKind?.name;
+		if (pk0 === undefined) { out.push(slot); continue; }
+		// Drop this slot — values are already covered by the array slot.
+		// Nothing to merge since the parseKinds are identical and the array
+		// slot already accepts them at the native reader level.
+		void pk0;
+		// Intentionally not pushing to out — this slot is folded away.
+		void toMergeIntoArraySlot; // suppress unused-var lint: map is populated below if needed
+	}
+	return out;
+}
+
+/**
+ * Augment an unnamed slot's values with the concrete parse-surface children
+ * of any visible rules aliased TO the owning kind via a visible→visible alias.
+ *
+ * Example: `token_tree.content` slot has parseKinds `{token_tree_paren, ...}`.
+ * `visibleAliasTargets` contains `token_tree → [delim_token_tree]`. The
+ * `delim_token_tree` rule's simplified form has children `delim_token_tree_paren/
+ * bracket/brace`. This function adds those as additional values so the wrap
+ * accept-set covers macro invocations where the `token_tree` field holds a
+ * `delim_token_tree_*` node.
+ *
+ * The lookup key is the OWNING KIND name (e.g. `token_tree`), not a slot value's
+ * parseKind. When `owningKind` appears as a target in `visibleAliasTargets`, each
+ * listed source kind's simplified rule is expanded into values and added to the
+ * slot's value set (deduped by parseKind).
+ *
+ * Only runs for UNNAMED slots (kind-named routing, not field-name routing).
+ * Named (field-named) slots route by field name at the CST level; the native reader
+ * uses field names, not kind IDs, for those — no expansion needed.
+ */
+function expandSlotWithVisibleAliasSources(
+	slot: AssembledNonterminal,
+	owningKind: string,
+	visibleAliasTargets: ReadonlyMap<string, readonly string[]>,
+	simplifiedRules: Record<string, Rule>,
+	kindEntries?: readonly GeneratedKindEntry[]
+): AssembledNonterminal {
+	// Only expand unnamed (kind-routed) slots.
+	if (slot.fieldName !== undefined) return slot;
+
+	// Look up the owning kind as a VISIBLE ALIAS TARGET.
+	// `token_tree → [delim_token_tree]` means `delim_token_tree` is aliased TO `token_tree`.
+	// We need to derive the concrete children of each source kind and add them as extra values.
+	const sources = visibleAliasTargets.get(owningKind);
+	if (!sources || sources.length === 0) return slot;
+
+	// Use the dominant multiplicity of this slot's values for the expansion.
+	const dominantMult = slot.values.reduce<Multiplicity>(
+		(acc, v) => {
+			if (v.multiplicity === 'nonEmptyArray' || v.multiplicity === 'array') return v.multiplicity;
+			if (acc === 'single' && v.multiplicity === 'optional') return 'optional';
+			return acc;
+		},
+		'single'
+	);
+
+	const extraValues: NodeOrTerminal[] = [];
+	for (const sourceKind of sources) {
+		const sourceRule = simplifiedRules[sourceKind];
+		if (!sourceRule) continue;
+		// Only expand when the source kind's rule is a top-level CHOICE or
+		// a sequence of wrappers around a choice — i.e., the source kind IS
+		// itself a choice of sub-kinds (like `delim_token_tree` which is a
+		// choice of `delim_token_tree_paren/bracket/brace`). SEQ-bodied kinds
+		// (like `last_match_arm`) are NOT expanded here — their alias relationship
+		// is handled by the `foldParseKindDuplicateSingularSlots` pass instead.
+		// This prevents spuriously injecting all of `last_match_arm`'s fields
+		// (attributes, pattern, body) into `match_arm.content`.
+		const unwrappedSource = unwrapStructuralPassthroughs(sourceRule);
+		if (unwrappedSource.type !== 'choice') continue;
+		// Derive values from the source kind's simplified rule.
+		const derived = deriveValuesForRule(sourceRule, dominantMult, kindEntries);
+		for (const d of derived) {
+			const dpk = d.parseKind?.name;
+			if (dpk === undefined) continue;
+			// Only add if this parseKind is not already present.
+			const alreadyPresent =
+				slot.values.some((existing) => existing.parseKind?.name === dpk) ||
+				extraValues.some((existing) => existing.parseKind?.name === dpk);
+			if (!alreadyPresent) extraValues.push(d);
+		}
+	}
+	if (extraValues.length === 0) return slot;
+
+	return slot.with({ values: dedupeValues([...slot.values, ...extraValues]) });
+}
+
+/**
  * Build the frozen slot Record for an AssembledBranch (or any kind that
  * uses the slot-Record surface). Walks `deriveSlots(rule)` once and
  * keys each slot by its name. Insertion order = declared rule order.
@@ -2429,7 +2567,9 @@ function buildSlotsRecord(
 	rule: Rule,
 	renderRule?: RenderRule,
 	kindEntries?: readonly GeneratedKindEntry[],
-	parseKindCollisionContext?: ParseKindCollisionContext
+	parseKindCollisionContext?: ParseKindCollisionContext,
+	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>,
+	simplifiedRules?: Record<string, Rule>
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const slots = [...deriveSlots(rule, kindEntries, kind)];
 	if (renderRule) {
@@ -2442,7 +2582,28 @@ function buildSlotsRecord(
 			slots.splice(slots.indexOf(existing), 1, next);
 		}
 	}
-	const resolvedSlots = resolveParseKindCollisions(kind, slots, parseKindCollisionContext);
+	let resolvedSlots = resolveParseKindCollisions(kind, slots, parseKindCollisionContext);
+
+	// Fold singular slots whose every parseKind is already covered by a sibling
+	// array slot into that array slot. This handles the visible→visible alias case
+	// where `alias($.last_match_arm, $.match_arm)` mints a separate `last_match_arm`
+	// singular slot with parseKind `match_arm` — identical to the existing array slot.
+	// At parse time there IS no `last_match_arm` kind; all nodes appear as `match_arm`.
+	// Keeping a separate singular slot causes the native reader to route ALL match_arm
+	// nodes (including the repeated ones) into it → "received N values; got array".
+	resolvedSlots = foldParseKindDuplicateSingularSlots(resolvedSlots);
+
+	// Augment slot values with the concrete parse-surface children of any visible
+	// rule aliased TO the owning kind. Example: `alias($.delim_token_tree, $.token_tree)`
+	// means the `token_tree.content` slot must also accept `delim_token_tree_paren/
+	// bracket/brace` parseKinds, which are the concrete children that the native reader
+	// delivers when a macro_invocation's `token_tree` field holds a delim_token_tree.
+	if (visibleAliasTargets && simplifiedRules) {
+		resolvedSlots = resolvedSlots.map((slot) =>
+			expandSlotWithVisibleAliasSources(slot, kind, visibleAliasTargets, simplifiedRules, kindEntries)
+		);
+	}
+
 	const out: Record<string, AssembledNonterminal> = {};
 	for (const slot of resolvedSlots) {
 		// Strict design (FR-T05): inferred slots remap to 'child'/'children'
@@ -2702,6 +2863,8 @@ export class AssembledBranch<
 			kindEntries?: readonly GeneratedKindEntry[];
 			parseKindCollisionContext?: ParseKindCollisionContext;
 			slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
+			visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+			simplifiedRules?: Record<string, Rule>;
 		}
 	) {
 		super(kind, rule, opts);
@@ -2710,7 +2873,7 @@ export class AssembledBranch<
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
 		this._slots =
 			opts?.slotRecord ??
-			buildSlotsRecord(kind, simplifiedRule, renderRule, opts?.kindEntries, opts?.parseKindCollisionContext);
+			buildSlotsRecord(kind, simplifiedRule, renderRule, opts?.kindEntries, opts?.parseKindCollisionContext, opts?.visibleAliasTargets, opts?.simplifiedRules);
 	}
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {

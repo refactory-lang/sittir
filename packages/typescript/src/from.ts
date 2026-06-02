@@ -1499,7 +1499,7 @@ export function pairPatternFrom(input: T.PairPattern.Loose): ReturnType<typeof F
   });
 }
 
-export function parenthesizedExpressionFrom(input?: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence) | T.ParenthesizedExpression): ReturnType<typeof F.parenthesizedExpression> {
+export function parenthesizedExpressionFrom(input?: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression) | T.ParenthesizedExpression): ReturnType<typeof F.parenthesizedExpression> {
   if (isNodeData(input) && input.$type === TSKindId.ParenthesizedExpression) {
     const data = input;
     const child = (data as unknown as { _content?: unknown })._content;

@@ -149,7 +149,7 @@
     "macro_invocation": "config",
     "macro_rule": "config",
     "match_arm": "config",
-    "match_block": "config",
+    "match_block": "spread",
     "match_expression": "config",
     "match_pattern": "config",
     "metavariable": "text",
@@ -411,9 +411,6 @@
       "match_arm_with_comma": "_match_arm_with_comma",
       "match_arm_block_ending": "_match_arm_block_ending"
     },
-    "match_block.last_match_arm": {
-      "match_arm": "last_match_arm"
-    },
     "mod_item.content": {
       "mod_item_external": "_mod_item_external",
       "mod_item_inline": "_mod_item_inline"
@@ -485,7 +482,10 @@
     "token_tree.content": {
       "token_tree_paren": "_token_tree_paren",
       "token_tree_bracket": "_token_tree_bracket",
-      "token_tree_brace": "_token_tree_brace"
+      "token_tree_brace": "_token_tree_brace",
+      "delim_token_tree_paren": "_delim_token_tree_paren",
+      "delim_token_tree_bracket": "_delim_token_tree_bracket",
+      "delim_token_tree_brace": "_delim_token_tree_brace"
     },
     "token_tree_pattern.content": {
       "token_tree_pattern_paren": "_token_tree_pattern_paren",
@@ -1003,8 +1003,7 @@
       "content"
     ],
     "match_block": [
-      "match_arm",
-      "last_match_arm"
+      "match_arm"
     ],
     "match_expression": [
       "value",
@@ -3271,13 +3270,6 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
-      },
-      "last_match_arm": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
         "nonEmpty": false
       }
     },

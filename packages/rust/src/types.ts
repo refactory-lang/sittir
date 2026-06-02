@@ -3313,9 +3313,7 @@ export interface MatchArm {
 export interface MatchBlock {
   readonly $type: TSKindId.MatchBlock;
   readonly _match_arm?: readonly (MatchArm)[];
-  readonly _last_match_arm?: LastMatchArm;
   matchArms(): readonly (MatchArm)[];
-  lastMatchArm(): LastMatchArm | undefined;
 }
 
 export interface MatchExpression {
@@ -3640,8 +3638,8 @@ export interface TokenRepetitionPattern {
 
 export interface TokenTree {
   readonly $type: TSKindId.TokenTree;
-  readonly _content: TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
-  content(): TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
+  readonly _content: TokenTreeParen | TokenTreeBracket | TokenTreeBrace | DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace;
+  content(): TokenTreeParen | TokenTreeBracket | TokenTreeBrace | DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace;
 }
 
 export interface TokenTreePattern {

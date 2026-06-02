@@ -3259,7 +3259,7 @@ export function pairPattern(config: T.PairPattern.Config) {
   }, methodsEngine);
 }
 
-export function parenthesizedExpression(child: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence)) {
+export function parenthesizedExpression(child: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.ParenthesizedExpression as const,
@@ -3267,7 +3267,7 @@ export function parenthesizedExpression(child: (T.ParenthesizedExpressionTyped |
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence)) => parenthesizedExpression(v) },
+    $with: { $child: (v: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => parenthesizedExpression(v) },
   }, methodsEngine);
 }
 

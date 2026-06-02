@@ -656,30 +656,6 @@
       "hidden": false,
       "fields": [
         {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "paramName": "forInClause",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "for_in_clause",
-              "parseKind": "for_in_clause",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_in_clause"
-            ]
-          }
-        },
-        {
           "name": "content",
           "propertyName": "contents",
           "paramName": "contents",
@@ -6536,6 +6512,20 @@
               "name": "yield",
               "parseKind": "yield",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "parenthesized_list_splat",
+              "parseKind": "parenthesized_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "list_splat",
+              "parseKind": "list_splat",
+              "unresolved": true
             }
           ],
           "source": "inferred",
@@ -6543,7 +6533,9 @@
             "typeName": "",
             "kinds": [
               "expression",
-              "yield"
+              "yield",
+              "parenthesized_list_splat",
+              "list_splat"
             ]
           }
         }

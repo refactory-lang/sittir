@@ -3170,9 +3170,9 @@ export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedExpression as const,
-    _content: normalizeSingularWrapSlot((data._parenthesized_expression_typed ?? data._parenthesized_expression_sequence ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+    _content: normalizeSingularWrapSlot((data._parenthesized_expression_typed ?? data._parenthesized_expression_sequence ?? data._identifier ?? data._member_expression ?? data._call_expression ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    content() { return drillIn<T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence>(this._content, tree); },
+    content() { return drillIn<T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this._content, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapParenthesizedExpression({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;

@@ -7887,6 +7887,405 @@ impl RenderableTransport for ImportStatementNameTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ParenthesizedExpressionContentTransportSlot {
+    ComparisonOperator(ComparisonOperatorTransport),
+    NotOperator(NotOperatorTransport),
+    BooleanOperator(BooleanOperatorTransport),
+    Lambda(LambdaTransport),
+    Await(AwaitTransport),
+    BinaryOperator(BinaryOperatorTransport),
+    Identifier(IdentifierTransport),
+    KeywordIdentifier(KeywordIdentifierTransport),
+    String(StringTransport),
+    ConcatenatedString(ConcatenatedStringTransport),
+    Integer(IntegerTransport),
+    Float(FloatTransport),
+    True(TrueTransport),
+    False(FalseTransport),
+    None(NoneTransport),
+    UnaryOperator(UnaryOperatorTransport),
+    Attribute(AttributeTransport),
+    Subscript(SubscriptTransport),
+    Call(CallTransport),
+    List(ListTransport),
+    ListComprehension(ListComprehensionTransport),
+    Dictionary(DictionaryTransport),
+    DictionaryComprehension(DictionaryComprehensionTransport),
+    Set(SetTransport),
+    SetComprehension(SetComprehensionTransport),
+    Tuple(TupleTransport),
+    ParenthesizedExpression(ParenthesizedExpressionTransport),
+    GeneratorExpression(GeneratorExpressionTransport),
+    Ellipsis2(Ellipsis2Transport),
+    ListSplatPattern(ListSplatPatternTransport),
+    ConditionalExpression(ConditionalExpressionTransport),
+    NamedExpression(NamedExpressionTransport),
+    AsPattern(AsPatternTransport),
+    Yield(YieldTransport),
+    ParenthesizedListSplat(ParenthesizedListSplatTransport),
+    ListSplat(ListSplatTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                195 => Ok(Self::ComparisonOperator(
+                    ComparisonOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                189 => Ok(Self::NotOperator(
+                    NotOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                190 => Ok(Self::BooleanOperator(
+                    BooleanOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                196 => Ok(Self::Lambda(
+                    LambdaTransport::from_napi_value(env, napi_val)?
+                )),
+                237 => Ok(Self::Await(
+                    AwaitTransport::from_napi_value(env, napi_val)?
+                )),
+                191 => Ok(Self::BinaryOperator(
+                    BinaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                231 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                230 => Ok(Self::ConcatenatedString(
+                    ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                )),
+                86 => Ok(Self::Integer(
+                    IntegerTransport::from_napi_value(env, napi_val)?
+                )),
+                87 => Ok(Self::Float(
+                    FloatTransport::from_napi_value(env, napi_val)?
+                )),
+                89 => Ok(Self::True(
+                    TrueTransport::from_napi_value(env, napi_val)?
+                )),
+                90 => Ok(Self::False(
+                    FalseTransport::from_napi_value(env, napi_val)?
+                )),
+                91 => Ok(Self::None(
+                    NoneTransport::from_napi_value(env, napi_val)?
+                )),
+                192 => Ok(Self::UnaryOperator(
+                    UnaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                203 => Ok(Self::Attribute(
+                    AttributeTransport::from_napi_value(env, napi_val)?
+                )),
+                204 => Ok(Self::Subscript(
+                    SubscriptTransport::from_napi_value(env, napi_val)?
+                )),
+                206 => Ok(Self::Call(
+                    CallTransport::from_napi_value(env, napi_val)?
+                )),
+                215 => Ok(Self::List(
+                    ListTransport::from_napi_value(env, napi_val)?
+                )),
+                220 => Ok(Self::ListComprehension(
+                    ListComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                218 => Ok(Self::Dictionary(
+                    DictionaryTransport::from_napi_value(env, napi_val)?
+                )),
+                221 => Ok(Self::DictionaryComprehension(
+                    DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                216 => Ok(Self::Set(
+                    SetTransport::from_napi_value(env, napi_val)?
+                )),
+                222 => Ok(Self::SetComprehension(
+                    SetComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                217 => Ok(Self::Tuple(
+                    TupleTransport::from_napi_value(env, napi_val)?
+                )),
+                225 => Ok(Self::ParenthesizedExpression(
+                    ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                223 => Ok(Self::GeneratorExpression(
+                    GeneratorExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                80 => Ok(Self::Ellipsis2(
+                    Ellipsis2Transport::from_napi_value(env, napi_val)?
+                )),
+                183 => Ok(Self::ListSplatPattern(
+                    ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                )),
+                229 => Ok(Self::ConditionalExpression(
+                    ConditionalExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                123 => Ok(Self::NamedExpression(
+                    NamedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                185 => Ok(Self::AsPattern(
+                    AsPatternTransport::from_napi_value(env, napi_val)?
+                )),
+                202 => Ok(Self::Yield(
+                    YieldTransport::from_napi_value(env, napi_val)?
+                )),
+                156 => Ok(Self::ParenthesizedListSplat(
+                    ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                )),
+                148 => Ok(Self::ListSplat(
+                    ListSplatTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ParenthesizedExpressionContentTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ParenthesizedExpressionContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ParenthesizedExpressionContentTransportSlot")
+        )?;
+        match kind_id {
+                195 => Ok(Self::ComparisonOperator(
+                    ComparisonOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                189 => Ok(Self::NotOperator(
+                    NotOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                190 => Ok(Self::BooleanOperator(
+                    BooleanOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                196 => Ok(Self::Lambda(
+                    LambdaTransport::from_napi_value(env, napi_val)?
+                )),
+                237 => Ok(Self::Await(
+                    AwaitTransport::from_napi_value(env, napi_val)?
+                )),
+                191 => Ok(Self::BinaryOperator(
+                    BinaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                231 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                230 => Ok(Self::ConcatenatedString(
+                    ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                )),
+                86 => Ok(Self::Integer(
+                    IntegerTransport::from_napi_value(env, napi_val)?
+                )),
+                87 => Ok(Self::Float(
+                    FloatTransport::from_napi_value(env, napi_val)?
+                )),
+                89 => Ok(Self::True(
+                    TrueTransport::from_napi_value(env, napi_val)?
+                )),
+                90 => Ok(Self::False(
+                    FalseTransport::from_napi_value(env, napi_val)?
+                )),
+                91 => Ok(Self::None(
+                    NoneTransport::from_napi_value(env, napi_val)?
+                )),
+                192 => Ok(Self::UnaryOperator(
+                    UnaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                203 => Ok(Self::Attribute(
+                    AttributeTransport::from_napi_value(env, napi_val)?
+                )),
+                204 => Ok(Self::Subscript(
+                    SubscriptTransport::from_napi_value(env, napi_val)?
+                )),
+                206 => Ok(Self::Call(
+                    CallTransport::from_napi_value(env, napi_val)?
+                )),
+                215 => Ok(Self::List(
+                    ListTransport::from_napi_value(env, napi_val)?
+                )),
+                220 => Ok(Self::ListComprehension(
+                    ListComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                218 => Ok(Self::Dictionary(
+                    DictionaryTransport::from_napi_value(env, napi_val)?
+                )),
+                221 => Ok(Self::DictionaryComprehension(
+                    DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                216 => Ok(Self::Set(
+                    SetTransport::from_napi_value(env, napi_val)?
+                )),
+                222 => Ok(Self::SetComprehension(
+                    SetComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                217 => Ok(Self::Tuple(
+                    TupleTransport::from_napi_value(env, napi_val)?
+                )),
+                225 => Ok(Self::ParenthesizedExpression(
+                    ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                223 => Ok(Self::GeneratorExpression(
+                    GeneratorExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                80 => Ok(Self::Ellipsis2(
+                    Ellipsis2Transport::from_napi_value(env, napi_val)?
+                )),
+                183 => Ok(Self::ListSplatPattern(
+                    ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                )),
+                229 => Ok(Self::ConditionalExpression(
+                    ConditionalExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                123 => Ok(Self::NamedExpression(
+                    NamedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                185 => Ok(Self::AsPattern(
+                    AsPatternTransport::from_napi_value(env, napi_val)?
+                )),
+                202 => Ok(Self::Yield(
+                    YieldTransport::from_napi_value(env, napi_val)?
+                )),
+                156 => Ok(Self::ParenthesizedListSplat(
+                    ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                )),
+                148 => Ok(Self::ListSplat(
+                    ListSplatTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ParenthesizedExpressionContentTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ParenthesizedExpressionContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ParenthesizedExpressionContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ParenthesizedExpressionContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ParenthesizedExpressionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedExpressionContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ParenthesizedExpressionContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn parenthesized_expression_content_transport_slot_to_any(t: ParenthesizedExpressionContentTransportSlot) -> AnyTransport {
+    match t {
+        ParenthesizedExpressionContentTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
+        ParenthesizedExpressionContentTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
+        ParenthesizedExpressionContentTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
+        ParenthesizedExpressionContentTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
+        ParenthesizedExpressionContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
+        ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
+        ParenthesizedExpressionContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ParenthesizedExpressionContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
+        ParenthesizedExpressionContentTransportSlot::String(inner) => AnyTransport::String(inner),
+        ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
+        ParenthesizedExpressionContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
+        ParenthesizedExpressionContentTransportSlot::Float(inner) => AnyTransport::Float(inner),
+        ParenthesizedExpressionContentTransportSlot::True(inner) => AnyTransport::True(inner),
+        ParenthesizedExpressionContentTransportSlot::False(inner) => AnyTransport::False(inner),
+        ParenthesizedExpressionContentTransportSlot::None(inner) => AnyTransport::None(inner),
+        ParenthesizedExpressionContentTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
+        ParenthesizedExpressionContentTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
+        ParenthesizedExpressionContentTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
+        ParenthesizedExpressionContentTransportSlot::Call(inner) => AnyTransport::Call(inner),
+        ParenthesizedExpressionContentTransportSlot::List(inner) => AnyTransport::List(inner),
+        ParenthesizedExpressionContentTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
+        ParenthesizedExpressionContentTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
+        ParenthesizedExpressionContentTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
+        ParenthesizedExpressionContentTransportSlot::Set(inner) => AnyTransport::Set(inner),
+        ParenthesizedExpressionContentTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
+        ParenthesizedExpressionContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
+        ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        ParenthesizedExpressionContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
+        ParenthesizedExpressionContentTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ParenthesizedExpressionContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
+        ParenthesizedExpressionContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
+        ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
+        ParenthesizedExpressionContentTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
+        ParenthesizedExpressionContentTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
+        ParenthesizedExpressionContentTransportSlot::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(inner),
+        ParenthesizedExpressionContentTransportSlot::ListSplat(inner) => AnyTransport::ListSplat(inner),
+        ParenthesizedExpressionContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ParenthesizedExpressionContentTransportSlot::ComparisonOperator(inner) => render_comparison_operator(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::NotOperator(inner) => render_not_operator(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::BooleanOperator(inner) => render_boolean_operator(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Lambda(inner) => render_lambda(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Await(inner) => render_await(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::String(inner) => render_string(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Integer(inner) => render_integer(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Float(inner) => render_float(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::True(inner) => render_true(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::False(inner) => render_false(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::None(inner) => render_none(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::UnaryOperator(inner) => render_unary_operator(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Attribute(inner) => render_attribute(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Subscript(inner) => render_subscript(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Call(inner) => render_call(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::List(inner) => render_list(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::ListComprehension(inner) => render_list_comprehension(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Dictionary(inner) => render_dictionary(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::DictionaryComprehension(inner) => render_dictionary_comprehension(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Set(inner) => render_set(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::SetComprehension(inner) => render_set_comprehension(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Tuple(inner) => render_tuple(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::GeneratorExpression(inner) => render_generator_expression(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Ellipsis2(inner) => render_ellipsis2(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::ListSplatPattern(inner) => render_list_splat_pattern(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::ConditionalExpression(inner) => render_conditional_expression(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::NamedExpression(inner) => render_named_expression(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::AsPattern(inner) => render_as_pattern(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Yield(inner) => render_yield(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::ParenthesizedListSplat(inner) => render_parenthesized_list_splat(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::ListSplat(inner) => render_list_splat(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ParenthesizedListSplatContentTransportSlot {
     ParenthesizedListSplat(ParenthesizedListSplatTransport),
     ListSplat(ListSplatTransport),
@@ -10249,8 +10648,6 @@ pub struct ComprehensionClausesTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_in_clause"))]
-    pub for_in_clause: Box<ForInClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<ComprehensionClausesContentTransportSlot>>,
 }
@@ -13540,7 +13937,7 @@ pub struct DictionaryComprehensionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<PairTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
-    pub comprehension_clauses: Box<ComprehensionClausesTransport>,
+    pub comprehension_clauses: ComprehensionClausesTransport,
 }
 
 impl RenderableTransport for DictionaryComprehensionTransport {
@@ -14506,7 +14903,7 @@ pub struct ForInClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
     pub async_marker: Option<AsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: Box<LeftHandSideTransport>,
+    pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Vec<ExpressionWithinForInClauseTransport>,
 }
@@ -14778,7 +15175,7 @@ pub struct GeneratorExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
-    pub comprehension_clauses: Box<ComprehensionClausesTransport>,
+    pub comprehension_clauses: ComprehensionClausesTransport,
 }
 
 impl RenderableTransport for GeneratorExpressionTransport {
@@ -16052,7 +16449,7 @@ pub struct ListComprehensionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
-    pub comprehension_clauses: Box<ComprehensionClausesTransport>,
+    pub comprehension_clauses: ComprehensionClausesTransport,
 }
 
 impl RenderableTransport for ListComprehensionTransport {
@@ -16152,7 +16549,7 @@ pub struct ListSplatTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: ExpressionTransport,
+    pub expression: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for ListSplatTransport {
@@ -16762,7 +17159,7 @@ pub struct ParenthesizedExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Box<FExpressionTransport>,
+    pub content: Box<ParenthesizedExpressionContentTransportSlot>,
 }
 
 impl RenderableTransport for ParenthesizedExpressionTransport {
@@ -17374,7 +17771,7 @@ pub struct SetComprehensionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comprehension_clauses"))]
-    pub comprehension_clauses: Box<ComprehensionClausesTransport>,
+    pub comprehension_clauses: ComprehensionClausesTransport,
 }
 
 impl RenderableTransport for SetComprehensionTransport {
@@ -27886,6 +28283,11 @@ fn render_complex_pattern_operator(t: &ComplexPatternOperatorEnum, dest: &mut dy
 }
 
 fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let content_owned = node.content.as_deref().unwrap_or(&[]);
     let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -27897,7 +28299,12 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut
             leading: false,
             trailing: false,
         },
-        for_in_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.for_in_clause)),
+        for_in_clause: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render_into(dest)
 }
@@ -31044,7 +31451,6 @@ fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::ForInClause(*transport.for_in_clause));
     if let Some(value) = transport.content {
         children_buf.extend(value.into_iter().map(|v| comprehension_clauses_content_transport_slot_to_any(v)).collect::<Vec<_>>());
     }
@@ -32295,7 +32701,7 @@ fn transport_to_node_dictionary_comprehension(transport: DictionaryComprehension
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Pair(*transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::ComprehensionClauses(*transport.comprehension_clauses));
+    children_buf.push(AnyTransport::ComprehensionClauses(transport.comprehension_clauses));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -32645,7 +33051,7 @@ fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<Tr
     if let Some(value) = transport.async_marker {
         fields.insert("async_marker".to_string(), transport_field_value(AnyTransport::AsyncMarker(value))?);
     }
-    fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(*transport.left))?);
+    fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     fields.insert("right".to_string(), transport_field_values(transport.right.into_iter().map(|v| expression_within_for_in_clause_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -32780,7 +33186,7 @@ fn transport_to_node_generator_expression(transport: GeneratorExpressionTranspor
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(*transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::ComprehensionClauses(*transport.comprehension_clauses));
+    children_buf.push(AnyTransport::ComprehensionClauses(transport.comprehension_clauses));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -33228,7 +33634,7 @@ fn transport_to_node_list_comprehension(transport: ListComprehensionTransport) -
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(*transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::ComprehensionClauses(*transport.comprehension_clauses));
+    children_buf.push(AnyTransport::ComprehensionClauses(transport.comprehension_clauses));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -33280,7 +33686,7 @@ fn transport_to_node_list_pattern(transport: ListPatternTransport) -> Result<Tra
 
 fn transport_to_node_list_splat(transport: ListSplatTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
+    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(*transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -33537,7 +33943,7 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(fexpression_transport_to_any(*transport.content));
+    children_buf.push(parenthesized_expression_content_transport_slot_to_any(*transport.content));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -33790,7 +34196,7 @@ fn transport_to_node_set_comprehension(transport: SetComprehensionTransport) -> 
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(*transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::ComprehensionClauses(*transport.comprehension_clauses));
+    children_buf.push(AnyTransport::ComprehensionClauses(transport.comprehension_clauses));
     let children = if children_buf.is_empty() {
         None
     } else {

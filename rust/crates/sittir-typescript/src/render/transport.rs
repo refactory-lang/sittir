@@ -18146,6 +18146,10 @@ impl RenderableTransport for PairPatternValueTransportSlot {
 pub enum ParenthesizedExpressionContentTransportSlot {
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
+    Identifier(IdentifierTransport),
+    DecoratorMemberExpression(DecoratorMemberExpressionTransport),
+    DecoratorCallExpression(DecoratorCallExpressionTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -18162,10 +18166,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                 384 => Ok(Self::ParenthesizedExpressionSequence(
                     ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
                 )),
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                254 => Ok(Self::DecoratorMemberExpression(
+                    DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                255 => Ok(Self::DecoratorCallExpression(
+                    DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
+                )),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in ParenthesizedExpressionContentTransportSlot",
                 ))),
             };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
             .map_err(|_| ::napi::Error::from_reason("ParenthesizedExpressionContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
@@ -18178,6 +18194,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                 )),
                 384 => Ok(Self::ParenthesizedExpressionSequence(
                     ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
+                )),
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                254 => Ok(Self::DecoratorMemberExpression(
+                    DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                255 => Ok(Self::DecoratorCallExpression(
+                    DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in ParenthesizedExpressionContentTransportSlot",
@@ -18220,6 +18245,10 @@ fn parenthesized_expression_content_transport_slot_to_any(t: ParenthesizedExpres
     match t {
         ParenthesizedExpressionContentTransportSlot::ParenthesizedExpressionTyped(inner) => AnyTransport::ParenthesizedExpressionTyped(inner),
         ParenthesizedExpressionContentTransportSlot::ParenthesizedExpressionSequence(inner) => AnyTransport::ParenthesizedExpressionSequence(inner),
+        ParenthesizedExpressionContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ParenthesizedExpressionContentTransportSlot::DecoratorMemberExpression(inner) => AnyTransport::DecoratorMemberExpression(inner),
+        ParenthesizedExpressionContentTransportSlot::DecoratorCallExpression(inner) => AnyTransport::DecoratorCallExpression(inner),
+        ParenthesizedExpressionContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -18231,6 +18260,10 @@ impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
         match self {
             ParenthesizedExpressionContentTransportSlot::ParenthesizedExpressionTyped(inner) => render_parenthesized_expression_typed(inner, dest),
             ParenthesizedExpressionContentTransportSlot::ParenthesizedExpressionSequence(inner) => render_parenthesized_expression_sequence(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::DecoratorMemberExpression(inner) => render_decorator_member_expression(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::DecoratorCallExpression(inner) => render_decorator_call_expression(inner, dest),
+            ParenthesizedExpressionContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }

@@ -174,7 +174,10 @@ export function link(
 	//   named alias in any parent rule → real runtime CST nodes even when
 	//   their normalized body is a repeat1 → must NOT be classified as multi.
 	const hiddenChoicesWithNamedAliasMembers = collectHiddenChoicesWithNamedAliasMembers(raw.rules);
-	const parentAliasedKinds = collectHiddenKindsAliasedByParents(raw.rules);
+	// ONE deep-walk yields BOTH the hidden-aliased set (classifier guard) and the
+	// visible→visible alias-target map (slot accept-set union), derived together so
+	// the two facets of `alias(symbol(X), $.target)` can never drift apart.
+	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(raw.rules);
 
 	classifyAndLogHiddenRules(
 		rules,
@@ -235,7 +238,8 @@ export function link(
 		topLevelAliasBodies,
 		polymorphVariants: raw.polymorphVariants,
 		refineForms: raw.refineForms,
-		parentAliasedKinds
+		parentAliasedKinds,
+		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined
 	};
 }
 
@@ -604,26 +608,45 @@ function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule
 }
 
 /**
- * Collect the set of hidden (`_`-prefixed) kind names that appear as the
- * CONTENT of a named alias (`alias(symbol(_X), $.visible)`) anywhere in
- * the grammar rule bodies.
+ * Single deep-walk over raw rule bodies collecting BOTH facets of
+ * `alias(symbol(X), $.target)` usage — derived from ONE traversal so the
+ * hidden-aliased set and the visible-alias-target map can never drift:
  *
- * These hidden kinds produce REAL runtime CST nodes: tree-sitter exposes
- * them under the alias-target name (e.g. `_with_clause_bare` → the
- * `with_clause_bare` node). Even when such a kind normalizes to a `repeat1`
- * body (making `isHiddenRepeatHelper` fire), it must NOT be classified as
- * `multi` — it needs its own `branch` type so the Rust transport can match
- * on its concrete kind ID at decode time.
+ * - `parentAliasedKinds`: hidden (`_`-prefixed) source kinds `X`. These produce
+ *   REAL runtime CST nodes (tree-sitter exposes them under the alias target,
+ *   e.g. `_with_clause_bare` → `with_clause_bare`). Even when normalized to a
+ *   `repeat1` body (making `isHiddenRepeatHelper` fire) they must NOT be
+ *   classified `multi` — they need their own `branch` type so the Rust transport
+ *   matches their concrete kind ID at decode.
+ * - `visibleAliasTargets`: `target → [visibleSource, ...]` for VISIBLE→VISIBLE
+ *   aliases (e.g. `alias($.delim_token_tree, $.token_tree)`). An aliased instance
+ *   surfaces under `target` carrying the SOURCE's body, so the target kind's slot
+ *   accept-set must union the source's parse-surface children. Hidden sources are
+ *   already handled structurally via the `aliasedFrom` mechanism, so only visible
+ *   sources need this union — hence the split.
  *
- * @param rawRules - The EVALUATED (pre-resolveRule) rules map, where alias
- *   nodes are still present.
+ * @param rawRules - The EVALUATED (pre-resolveRule) rules map, alias nodes present.
  */
-function collectHiddenKindsAliasedByParents(rawRules: Record<string, Rule>): ReadonlySet<string> {
-	const out = new Set<string>();
+function collectAliasedByParents(rawRules: Record<string, Rule>): {
+	parentAliasedKinds: ReadonlySet<string>;
+	visibleAliasTargets: ReadonlyMap<string, readonly string[]>;
+} {
+	const parentAliasedKinds = new Set<string>();
+	const visibleAliasTargets = new Map<string, string[]>();
 	function walk(rule: Rule): void {
 		if (rule.type === 'alias') {
-			if (rule.named && rule.content.type === 'symbol' && rule.content.name.startsWith('_')) {
-				out.add(rule.content.name);
+			if (rule.named && rule.content.type === 'symbol') {
+				const source = rule.content.name;
+				if (source.startsWith('_')) {
+					parentAliasedKinds.add(source);
+				} else if (typeof rule.value === 'string' && !rule.value.startsWith('_')) {
+					const arr = visibleAliasTargets.get(rule.value);
+					if (arr) {
+						if (!arr.includes(source)) arr.push(source);
+					} else {
+						visibleAliasTargets.set(rule.value, [source]);
+					}
+				}
 			}
 			walk(rule.content);
 			return;
@@ -636,7 +659,7 @@ function collectHiddenKindsAliasedByParents(rawRules: Record<string, Rule>): Rea
 		}
 	}
 	for (const rule of Object.values(rawRules)) walk(rule);
-	return out;
+	return { parentAliasedKinds, visibleAliasTargets };
 }
 
 function collectTopLevelAliasBodies(

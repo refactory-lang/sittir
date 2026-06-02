@@ -1162,8 +1162,8 @@ export interface LastMatchArmTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<DeclarationStatementTransport>
-  _pattern: Box<MatchPatternTransport>
-  _value: Box<ExpressionTransport>
+  _pattern: MatchPatternTransport
+  _value: ExpressionTransport
 }
 
 export interface LetChainTransport {
@@ -1422,7 +1422,6 @@ export interface MatchBlockTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _match_arm?: Array<MatchArmTransport>
-  _last_match_arm?: Box<LastMatchArmTransport>
 }
 
 export interface MatchExpressionTransport {
@@ -1434,7 +1433,7 @@ export interface MatchExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _value: Box<ExpressionTransport>
-  _body: Box<MatchBlockTransport>
+  _body: MatchBlockTransport
 }
 
 export interface MatchPatternOptional1Transport {
@@ -1456,8 +1455,8 @@ export interface MatchPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pattern: Box<PatternTransport>
-  _condition?: Box<ConditionTransport>
+  _pattern: PatternTransport
+  _condition?: ConditionTransport
 }
 
 export interface ModItemInlineTransport {

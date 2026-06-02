@@ -1909,7 +1909,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'match_block': [
     { name: 'matchArms', required: false, multiple: true },
-    { name: 'lastMatchArm', required: false, multiple: false },
   ],
   'match_expression': [
     { name: 'value', required: true, multiple: false },

@@ -168,7 +168,9 @@ export function assemble(
 							{
 								variantChildKinds,
 								kindEntries,
-								parseKindCollisionContext
+								parseKindCollisionContext,
+								visibleAliasTargets: optimized.visibleAliasTargets,
+								simplifiedRules: optimized.simplifiedRules
 							}
 						)
 					);

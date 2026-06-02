@@ -1399,9 +1399,7 @@ export interface ComparisonOperatorComparator {
 
 export interface ComprehensionClauses {
   readonly $type: TSKindId.ComprehensionClauses;
-  readonly _for_in_clause: ForInClause;
   readonly _content?: readonly (ForInClause | IfClause)[];
-  forInClause(): ForInClause;
   contents(): readonly (ForInClause | IfClause)[];
 }
 
@@ -2062,8 +2060,8 @@ export interface Parameters {
 
 export interface ParenthesizedExpression {
   readonly $type: TSKindId.ParenthesizedExpression;
-  readonly _content: Expression | Yield;
-  content(): Expression | Yield;
+  readonly _content: Expression | Yield | ParenthesizedListSplat | ListSplat;
+  content(): Expression | Yield | ParenthesizedListSplat | ListSplat;
 }
 
 export interface ParenthesizedListSplat {

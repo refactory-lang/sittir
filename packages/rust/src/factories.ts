@@ -2308,21 +2308,15 @@ export function matchArm(config: T.MatchArm.Config) {
   }, methodsEngine);
 }
 
-export function matchBlock(config: Partial<T.MatchBlock.Config> = {}) {
-  const _match_arm = config.matchArm;
-  const _last_match_arm = config.lastMatchArm;
+export function matchBlock(...children: T.MatchArm[]) {
+  const _match_arm = children;
   return withMethods({
     $type: TSKindId.MatchBlock as const,
     $source: 2 as const,
     $named: true as const,
     _match_arm,
-    _last_match_arm,
     matchArms() { return _match_arm; },
-    lastMatchArm() { return _last_match_arm; },
-    $with: {
-      matchArms: (...values: T.MatchArm[]) => matchBlock({ ...config, matchArm: values }),
-      lastMatchArm: (value?: T.LastMatchArm) => matchBlock({ ...config, lastMatchArm: value }),
-    },
+    $with: { $children: (...vs: T.MatchArm[]) => matchBlock(...vs) },
   }, methodsEngine);
 }
 
@@ -3025,7 +3019,7 @@ export function tokenRepetitionPattern(config: T.TokenRepetitionPattern.Config) 
   }, methodsEngine);
 }
 
-export function tokenTree(child: (T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace)) {
+export function tokenTree(child: (T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace | T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.TokenTree as const,
@@ -3033,7 +3027,7 @@ export function tokenTree(child: (T.TokenTreeParen | T.TokenTreeBracket | T.Toke
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace)) => tokenTree(v) },
+    $with: { $child: (v: (T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace | T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace)) => tokenTree(v) },
   }, methodsEngine);
 }
 

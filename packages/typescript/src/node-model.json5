@@ -14872,6 +14872,27 @@
               "name": "_parenthesized_expression_sequence",
               "parseKind": "parenthesized_expression_sequence",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "decorator_member_expression",
+              "parseKind": "member_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "decorator_call_expression",
+              "parseKind": "call_expression",
+              "unresolved": true
             }
           ],
           "source": "inferred",
@@ -14879,7 +14900,10 @@
             "typeName": "",
             "kinds": [
               "_parenthesized_expression_typed",
-              "_parenthesized_expression_sequence"
+              "_parenthesized_expression_sequence",
+              "identifier",
+              "decorator_member_expression",
+              "decorator_call_expression"
             ]
           }
         }

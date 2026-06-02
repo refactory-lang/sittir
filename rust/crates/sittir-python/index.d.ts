@@ -309,7 +309,6 @@ export interface ComprehensionClausesTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _for_in_clause: Box<ForInClauseTransport>
   _content?: Array<ComprehensionClausesContentTransportSlot>
 }
 
@@ -404,7 +403,7 @@ export interface DictionaryComprehensionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: Box<PairTransport>
-  _comprehension_clauses: Box<ComprehensionClausesTransport>
+  _comprehension_clauses: ComprehensionClausesTransport
 }
 
 export interface DictionarySplatPatternTransport {
@@ -591,7 +590,7 @@ export interface ForInClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _async_marker?: AsyncMarkerTransport
-  _left: Box<LeftHandSideTransport>
+  _left: LeftHandSideTransport
   _right: Array<ExpressionWithinForInClauseTransport>
 }
 
@@ -657,7 +656,7 @@ export interface GeneratorExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: Box<ExpressionTransport>
-  _comprehension_clauses: Box<ComprehensionClausesTransport>
+  _comprehension_clauses: ComprehensionClausesTransport
 }
 
 export interface GenericTypeTransport {
@@ -845,7 +844,7 @@ export interface ListComprehensionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: Box<ExpressionTransport>
-  _comprehension_clauses: Box<ComprehensionClausesTransport>
+  _comprehension_clauses: ComprehensionClausesTransport
 }
 
 export interface ListPatternTransport {
@@ -889,7 +888,7 @@ export interface ListSplatTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression: ExpressionTransport
+  _expression: Box<ExpressionTransport>
 }
 
 export interface ListTransport {
@@ -1026,7 +1025,7 @@ export interface ParenthesizedExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: Box<FExpressionTransport>
+  _content: Box<ParenthesizedExpressionContentTransportSlot>
 }
 
 export interface ParenthesizedListSplatTransport {
@@ -1107,7 +1106,7 @@ export interface SetComprehensionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: Box<ExpressionTransport>
-  _comprehension_clauses: Box<ComprehensionClausesTransport>
+  _comprehension_clauses: ComprehensionClausesTransport
 }
 
 export interface SetTransport {

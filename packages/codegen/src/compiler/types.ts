@@ -384,6 +384,20 @@ export interface LinkedGrammar {
 	 * Optional so hand-constructed test fixtures can omit it.
 	 */
 	readonly parentAliasedKinds?: ReadonlySet<string>;
+	/**
+	 * Visible→visible alias target map: for each `alias($.source, $.target)` in
+	 * any grammar rule body where BOTH source and target are visible (non-`_`-prefixed
+	 * named kinds), records `target → [source, ...]`.
+	 *
+	 * Used downstream (assemble → buildSlotsRecord) to augment a kind's slot values
+	 * with the concrete parse-surface children of any visible source aliased to it.
+	 * Example: `alias($.delim_token_tree, $.token_tree)` adds `delim_token_tree_paren/
+	 * bracket/brace` parseKinds to the `token_tree.content` slot so the wrap accept-set
+	 * covers macro invocations that surface `delim_token_tree_*` nodes.
+	 *
+	 * Optional so hand-constructed test fixtures can omit it.
+	 */
+	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 }
 
 /**
@@ -412,6 +426,8 @@ export interface OptimizedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule>;
 	/** Propagated from {@link LinkedGrammar.parentAliasedKinds}. */
 	readonly parentAliasedKinds?: ReadonlySet<string>;
+	/** Propagated from {@link LinkedGrammar.visibleAliasTargets}. */
+	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	/**
 	 * Derivation-only view of every rule in `rules`, produced by
 	 * `simplifyRule` as the final pass in `optimize()`. Downstream

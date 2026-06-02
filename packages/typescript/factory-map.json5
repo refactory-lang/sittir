@@ -528,7 +528,9 @@
     },
     "parenthesized_expression.content": {
       "parenthesized_expression_typed": "_parenthesized_expression_typed",
-      "parenthesized_expression_sequence": "_parenthesized_expression_sequence"
+      "parenthesized_expression_sequence": "_parenthesized_expression_sequence",
+      "member_expression": "decorator_member_expression",
+      "call_expression": "decorator_call_expression"
     },
     "public_field_definition.content": {
       "public_field_definition_declare_first": "_public_field_definition_declare_first",

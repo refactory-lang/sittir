@@ -11037,30 +11037,6 @@
               "match_arm"
             ]
           }
-        },
-        {
-          "name": "last_match_arm",
-          "propertyName": "lastMatchArm",
-          "paramName": "lastMatchArm",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "last_match_arm",
-              "parseKind": "match_arm",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "last_match_arm"
-            ]
-          }
         }
       ],
       "children": []
@@ -13696,6 +13672,27 @@
               "name": "_token_tree_brace",
               "parseKind": "token_tree_brace",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_delim_token_tree_paren",
+              "parseKind": "delim_token_tree_paren",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_delim_token_tree_bracket",
+              "parseKind": "delim_token_tree_bracket",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_delim_token_tree_brace",
+              "parseKind": "delim_token_tree_brace",
+              "unresolved": true
             }
           ],
           "source": "inferred",
@@ -13704,7 +13701,10 @@
             "kinds": [
               "_token_tree_paren",
               "_token_tree_bracket",
-              "_token_tree_brace"
+              "_token_tree_brace",
+              "_delim_token_tree_paren",
+              "_delim_token_tree_bracket",
+              "_delim_token_tree_brace"
             ]
           }
         }

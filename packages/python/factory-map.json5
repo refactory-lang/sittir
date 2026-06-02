@@ -12,7 +12,7 @@
     "_augmented_assignment_operator": "text",
     "_comparison_operator_comparator": "config",
     "_complex_pattern_operator": "text",
-    "_comprehension_clauses": "config",
+    "_comprehension_clauses": "spread",
     "_except_clause_as": "config",
     "_except_clause_list": "config",
     "_expression_statement_tuple": "spread",
@@ -257,6 +257,9 @@
     "match_statement.body": {
       "block": "_match_block"
     },
+    "parenthesized_expression.content": {
+      "parenthesized_expression": "parenthesized_list_splat"
+    },
     "parenthesized_list_splat.content": {
       "parenthesized_expression": "parenthesized_list_splat"
     },
@@ -294,7 +297,6 @@
       "primary_expression"
     ],
     "_comprehension_clauses": [
-      "for_in_clause",
       "content"
     ],
     "_except_clause_as": [
@@ -775,13 +777,6 @@
       }
     },
     "_comprehension_clauses": {
-      "for_in_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,

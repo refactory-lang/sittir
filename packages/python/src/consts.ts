@@ -1151,7 +1151,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'identifier', required: true, multiple: false },
   ],
   '_comprehension_clauses': [
-    { name: 'forInClause', required: true, multiple: false },
     { name: 'contents', required: false, multiple: true },
   ],
   '_except_clause_list': [
