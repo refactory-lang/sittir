@@ -36,7 +36,7 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
 - Read baseline artifacts with `git show <ref>:<path>` (don't checkout — keep the tree clean).
 - **Search code structurally, not textually** (a hook nudges plain `rg`/`grep`). Locating *which codegen source is responsible* is your core job — do it with the right tool:
   - **ast-grep** (`sg -p '<pattern>' -l ts`) for code-shape search: every `case 'clause':` arm, every `node.renderTemplate(...)` / `emitRule(...)` call, a `seq`/`choice` rule-shape match. Structural patterns find what text search misses (multiline, whitespace-agnostic, AST-precise).
-  - **LSP** for symbol work: go-to-definition + find-all-references / call sites for a symbol (where `collectSlots` is defined and *every* consumer of `renderRule`). This is how you prove a function is dead vs has a live caller — far more reliable than grepping the name.
+  - **Native LSP tool for symbol READS**: `goToDefinition` + `findReferences` / call sites (where `collectSlots` is defined and *every* consumer of `renderRule`), `hover`, `documentSymbol`. `.ts` resolves via the `typescript-lsp` plugin. This proves a function is dead vs has a live caller — far more reliable than grepping the name (text search misses re-exports / aliased imports and matches comments & strings). **Don't default to `rg` for symbol navigation.** You're read-only; lspeasy is for writes (not your job).
 
 ## Architecture you must know (so you don't diagnose dead code)
 
