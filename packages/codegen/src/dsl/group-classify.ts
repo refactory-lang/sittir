@@ -1,0 +1,181 @@
+/**
+ * dsl/group-classify.ts — shared predicates for inline-safe vs inline-unsafe
+ * group classification.
+ *
+ * **Scope: DSL layer only.** Uses dual-case `runtime-shapes.ts` predicates so
+ * these work on both sittir-lowercase and tree-sitter-uppercase rule forms.
+ *
+ * Two exported functions, used by enrich (hoist decision) and, later, the
+ * wire pass:
+ *
+ *   • `ruleMatchesEmpty(rule)` — conservative: returns true iff the rule can
+ *     produce the empty string. Guards both the inline-safe hoist and the
+ *     inline-unsafe alias paths: tree-sitter rejects named rules (and aliases)
+ *     that match the empty string.
+ *
+ *   • `isInlineSafe(seqBody)` — true iff the seq body reduces to exactly ONE
+ *     slot that is a `field` or `symbol` (NOT a bare `choice`) after dropping
+ *     pure literals/punctuation and `blank`. The inline+gate render path can
+ *     key on that single slot; multi-slot or bare-choice bodies need to be
+ *     visible (their own AssembledGroup template).
+ */
+
+import {
+	isBlankType,
+	isFieldLike,
+	isFieldType,
+	isOptionalType,
+	isPrecWrapper,
+	isRepeatType,
+	isSeqType,
+	isStringType,
+	isSymbolLike,
+	isSymbolType,
+	typeEq,
+} from './runtime-shapes.ts';
+
+// ---------------------------------------------------------------------------
+// ruleMatchesEmpty
+// ---------------------------------------------------------------------------
+
+/**
+ * Conservative empty-matching predicate. Returns true iff the rule can produce
+ * the empty string:
+ *   - `optional` / `repeat` / `blank`                      → always matches empty
+ *   - `repeat1`                                             → iff content matches empty
+ *   - `seq`                                                 → iff ALL members match empty
+ *   - `choice`                                              → iff ANY member matches empty
+ *   - `field` / prec-wrapper                               → iff content matches empty
+ *   - `string` / `symbol` / `token` / `pattern`            → false (non-empty)
+ */
+export function ruleMatchesEmpty(rule: unknown): boolean {
+	if (!rule || typeof rule !== 'object') return false;
+	const r = rule as Record<string, unknown>;
+	const t = typeof r.type === 'string' ? r.type : '';
+
+	// Always-empty wrappers
+	if (isOptionalType(t) || isPlainRepeatType(t) || isBlankType(t)) return true;
+
+	// repeat1 — empty iff content is empty (unusual, but guard conservatively)
+	if (typeEq(t, 'repeat1')) {
+		return ruleMatchesEmpty(r.content);
+	}
+
+	// seq — ALL members must match empty
+	if (isSeqType(t)) {
+		const members = r.members;
+		if (!Array.isArray(members) || members.length === 0) return true;
+		return members.every((m) => ruleMatchesEmpty(m));
+	}
+
+	// choice — ANY member matches empty
+	if (typeEq(t, 'choice')) {
+		const members = r.members;
+		if (!Array.isArray(members)) return false;
+		return members.some((m) => ruleMatchesEmpty(m));
+	}
+
+	// field / prec — delegate to content
+	if (isFieldType(t) || isPrecWrapper(r as { type: string })) {
+		return ruleMatchesEmpty(r.content);
+	}
+
+	// string / symbol / token / pattern — conservatively non-empty
+	if (isStringType(t) || isSymbolType(t) || typeEq(t, 'token') || typeEq(t, 'pattern')) return false;
+
+	// Unknown rule type — conservatively non-empty
+	return false;
+}
+
+/** plain repeat (not repeat1) — duplicates the one in runtime-shapes but keeps
+ *  this module self-contained for the dual-case check it needs internally. */
+function isPlainRepeatType(t: string): boolean {
+	return t === 'repeat' || t === 'REPEAT';
+}
+
+// ---------------------------------------------------------------------------
+// isInlineSafe
+// ---------------------------------------------------------------------------
+
+/**
+ * Collects the "slot" members of a seq body after dropping pure
+ * literals/punctuation and `blank`. Descends transparently through `prec`
+ * wrappers and `field` wrappers to find the underlying slot type.
+ *
+ * A "slot" is a member that contributes structured content — `field`,
+ * `symbol`, `choice`, `repeat`, `repeat1`, `seq` (nested), or any non-literal
+ * non-blank rule. Pure literals (`string`, `token`) and `blank` are dropped.
+ */
+function collectSlots(members: unknown[]): unknown[] {
+	const slots: unknown[] = [];
+	for (const m of members) {
+		if (!m || typeof m !== 'object') continue;
+		const r = m as Record<string, unknown>;
+		const t = typeof r.type === 'string' ? r.type : '';
+
+		// Drop pure literals and blank
+		if (isStringType(t) || typeEq(t, 'token') || isBlankType(t)) continue;
+
+		// Everything else is a slot
+		slots.push(m);
+	}
+	return slots;
+}
+
+/**
+ * Unwrap `prec`/`field` wrappers to reach the underlying slot type. Descends
+ * through a single chain of prec + field layers. Returns the innermost rule
+ * that is not a prec or field wrapper.
+ */
+function unwrapPrecField(rule: unknown): unknown {
+	let cur = rule;
+	while (cur && typeof cur === 'object') {
+		const r = cur as Record<string, unknown>;
+		const t = typeof r.type === 'string' ? r.type : '';
+		if (isPrecWrapper(r as { type: string }) || isFieldType(t)) {
+			cur = r.content;
+		} else {
+			break;
+		}
+	}
+	return cur;
+}
+
+/**
+ * Returns true iff the seq body is "inline-safe":
+ *   - After dropping pure literals (`string`, `token`) and `blank` from the
+ *     seq's direct members, exactly ONE slot remains.
+ *   - That slot (after descending through `prec`/`field` transparently) is a
+ *     `field` or `symbol` — NOT a bare `choice`, `repeat`, `repeat1`, `seq`,
+ *     or any other multi-valued / compound type.
+ *
+ * Multi-slot or bare-choice bodies are "inline-unsafe" and require a visible
+ * AssembledGroup template for correct rendering.
+ *
+ * @param seqBody — the rule to classify. Typically the body of an
+ *   `optional(seq)` position, but may also be called with non-seq bodies
+ *   (returns false for them).
+ */
+export function isInlineSafe(seqBody: unknown): boolean {
+	if (!seqBody || typeof seqBody !== 'object') return false;
+	const r = seqBody as Record<string, unknown>;
+	const t = typeof r.type === 'string' ? r.type : '';
+
+	if (!isSeqType(t)) return false;
+
+	const members = r.members;
+	if (!Array.isArray(members)) return false;
+
+	const slots = collectSlots(members);
+
+	// Must have exactly one slot
+	if (slots.length !== 1) return false;
+
+	// The single slot must be a field or symbol (not a bare choice, repeat, etc.)
+	const core = unwrapPrecField(slots[0]);
+	if (!core || typeof core !== 'object') return false;
+	const coreType = (core as Record<string, unknown>).type;
+	if (typeof coreType !== 'string') return false;
+
+	return isFieldType(coreType) || isSymbolType(coreType);
+}

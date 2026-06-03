@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "37c9af07e14a017847947d4b5aaaa010490805df422ee4595f9b761cea784021",
+  "source_hash": "19299a58064cb731081de511b4c4f09f41ce8691e04774a107f16317169dc25c",
   "files": {
     "packages/typescript/.sittir/grammar.js": "c7a1df944c7843a86ed539abc892a828ac38ea730bedd575b7e19920a5a1da22",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
@@ -467,6 +467,6 @@
     "rust/crates/sittir-typescript/test-fixtures.json": "b2b47c6c4febec8c397380ee8a7f9a3f67d4205be034e7f970cbb0b58fa95199"
   },
   "host_files": {
-    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "c24d37e6411b2357fa3bf80e67c42394713c1c3bc312608678efa8693050d787"
+    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "df3093cd80da9d65fcc91fdb397fc3843d48a5420aefa708483cf14da75016c8"
   }
 }
