@@ -1,5 +1,23 @@
 # PR-M-φ2 (re-scoped) — Wrapper-aware classification + runtime-variant-dispatch removal — Implementation Plan
 
+> **⚠️ STATUS 2026-06-02 — LARGELY SUPERSEDED / CLOSED OUT.** This plan was scoped around a "validation RED" segfault that turned out to be a **debug-build-only pre-existing UB** in `rust/crates/sittir-core/src/engine.rs` (transmute self-referential node table) — NOT a clause-hoist regression. The WIP it was built on is **release-green at floor** (rust 111 / ts 69 / py 74; gate with `env -u SITTIR_NATIVE_DEBUG pnpm validate:native`). So Chunks 0/2/3 (runtime-variant-dispatch removal, wrapper-aware classification, harness-hardening-for-the-segfault) lost their driving urgency — they remain *architecturally valid cleanup* but are **not** needed to ship the cut.
+>
+> **What actually finished the ClauseRule cut:**
+> - `d77e0d25` — enrich clause-hoist **pass-ordering fix** (run after field-wrapping so it catches `source:'enriched'` fields). Catches every mandatory-field clause (abstract_type, for_expression, loop_expression, function_signature_item, let_declaration, …).
+> - `6976f7e6` — **deleted `detectClause`**; **`@deprecated` ClauseRule + isClause** (no remaining producer). The type + 23 `'clause'` switch arms + `emitClause` are retained as inert dead code (a follow-up folds them into `'group'`).
+> - `c20001ef`+`1b833cce` — the `--isolate` native-validation harness (built; should gate release-only).
+>
+> **Architectural rule that emerged** (see memory `project_hoisted_group_slot_visibility_rule`): a hoisted group with a **single mandatory slot** inlines + gates by that slot (done); an **optional-single-slot or multi-slot** group must be made **VISIBLE (not inlined)** because inlining loses group-presence (the render dual-path surfaces the direct inner field; gating the unpopulated group slot regressed 111→79).
+>
+> **Remaining for a FUTURE increment (not urgent):**
+> 1. **Visible-group mechanism** for optional-single-slot / multi-slot groups → unblocks the 2 deferred stragglers (rust `use_wildcard` renders `::*`; python `except_clause` `as` form) and lets `ClauseRule`/`emitClause`/the 23 arms be fully **deleted** (currently deprecated).
+> 2. Optional cleanup: runtime-variant-dispatch removal (Chunk 2) + wrapper-aware classification (Chunk 3) — valid but no longer segfault-driven.
+> 3. The engine.rs debug-build UB (orthogonal infra).
+>
+> The original (now-deprioritized) plan body follows for reference.
+
+---
+
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development or superpowers:executing-plans. Steps use checkbox (`- [ ]`) syntax. Implementer = **sittir-codegen**; root-cause diagnosis = **sittir-research**. Supersedes the un-finished Chunk 1 of `2026-06-02-pr-m-phi2-enrich-clause-convergence.md`; that plan's clause-hoist is already landed as WIP checkpoint `d9a1a5cc`.
 
 **Goal:** Make the enrich clause-hoist safe end-to-end by (a) removing the stale runtime variant dispatch in the validator, (b) making compile-time polymorph/group/transform classification wrapper-aware (resolve through enrich's `source:'enriched'`/`source:'group-lift'` wrappers), and (c) hardening the native gate to report crashing kinds — then finishing the ClauseRule cut.
