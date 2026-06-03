@@ -943,6 +943,15 @@ export async function validateReadRenderParse(
 						tsVisibleKind
 					);
 
+					// Emit a per-kind progress breadcrumb to stderr when running as
+					// an isolation worker (SITTIR_ISOLATE_WORKER=1). Written
+					// synchronously BEFORE render() so that if the native engine
+					// SIGSEGVs the breadcrumb is already on stderr and the parent
+					// can attribute the crash to the last attempted kind.
+					if (process.env['SITTIR_ISOLATE_WORKER'] === '1') {
+						const kindName = kindNameFromId ? (kindNameFromId(kind) ?? String(kind)) : String(kind);
+						process.stderr.write(`[isolate-progress] ${grammar} ${kindName}\n`);
+					}
 					try {
 						const rendered = render(data);
 
