@@ -698,12 +698,19 @@ export function wire<B extends GrammarJson = any> (
 		// consumes node.renderRule (RenderRule shape) which carries leaf
 		// attributes, so synthesized hidden helpers integrate naturally
 		// via the standard inline-handling path.
-		applyAutoGroups(
-			baseArg as Parameters<typeof applyAutoGroups>[0],
-			outRules,
-			context,
-			authoredSynthesisKinds
-		);
+		// DISABLED (auto-group-visibility Chunk 2): enrich now hoists every
+		// `optional(seq)`/`repeat(seq)`/`repeat1(seq)` — inline-SAFE into a hidden
+		// `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible
+		// `alias(<content>, $._<parent>_group<N>)` content-alias which link's
+		// `mintContentAliasKinds` registers as a real IR kind. applyAutoGroups ran
+		// at wire (BEFORE link) and would pre-consume the very inline-unsafe seqs
+		// link must see as inline content. Retired physically in Chunk 3.
+		// applyAutoGroups(
+		// 	baseArg as Parameters<typeof applyAutoGroups>[0],
+		// 	outRules,
+		// 	context,
+		// 	authoredSynthesisKinds
+		// );
 		// Re-run body-pattern replacement AFTER applyAutoGroups: the optional/
 		// repeat helpers it synthesizes (e.g. `_parameters_optional1`) are created
 		// after the first pass (above) wrapped the original rules, so the

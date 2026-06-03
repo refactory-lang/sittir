@@ -111,6 +111,18 @@ export function link(
 		rules[name] = resolveRule(rule, name, raw.rules, supertypes, externalRoles);
 	}
 
+	// Mint visible kinds from enrich content-aliases. enrich wraps an
+	// inline-unsafe `optional(seq)` / bare `choice` in
+	// `alias(<non-symbol content>, $.<name>)` tagged `metadata.source==='enrich'`.
+	// resolveRule (above) already turned the PARENT reference into a clean
+	// `symbol(<name>)` ref — but the referenced rule body does not exist yet.
+	// Walk the RAW rule bodies (before resolveRule collapsed the alias) and
+	// register `<name> = resolveRule(<content>)` so codegen has the IR rule
+	// (template / type / slots). The kindId itself is real — tree-sitter emits
+	// the alias as a node in parser.c; this pass only supplies the matching IR
+	// entry. SYMBOL aliases keep their `aliasedFrom` provenance (untouched).
+	mintContentAliasKinds(raw.rules, rules, supertypes, externalRoles);
+
 	stripResolvedRoleRules(rules);
 	createSyntheticExternalRules(rules, raw.externals);
 
@@ -609,6 +621,66 @@ function collectAliasedByParents(rawRules: Record<string, Rule>): {
 	}
 	for (const rule of Object.values(rawRules)) walk(rule);
 	return { parentAliasedKinds, visibleAliasTargets };
+}
+
+/**
+ * Mint visible IR kinds from enrich content-aliases.
+ *
+ * enrich surfaces an inline-unsafe `optional(seq)` / bare `choice` as a visible
+ * CST node by wrapping its CONTENT in `alias(<content>, $.<name>)` tagged
+ * `metadata.source === 'enrich'`. tree-sitter assigns `<name>` a real kindId in
+ * `parser.c` (the alias lives in the grammar) — so the kind is a real CST kind.
+ * This pass supplies the matching IR rule entry: it registers
+ * `rules[<name>] = resolveRule(<content>)` so codegen emits the kind's template,
+ * type, and slots.
+ *
+ * The alias is keyed on **non-symbol** content — `alias($._sym, $.name)` keeps
+ * its existing `aliasedFrom` provenance (handled by
+ * `resolveNamedAliasWithProvenance`) and is NOT minted here. An existing rule of
+ * the same name is left byte-unchanged (no clobber).
+ *
+ * Runs after the `resolveRule` loop (which already turned the PARENT alias
+ * reference into a clean `symbol(<name>)` ref) and before
+ * `classifyAndLogHiddenRules` / assemble, so the minted kind classifies and
+ * assembles via the normal path.
+ *
+ * @param rawRules - The EVALUATED (pre-resolveRule) rules — alias nodes present.
+ * @param rules - The mutable resolved rules map; minted bodies are added here.
+ */
+function mintContentAliasKinds(
+	rawRules: Record<string, Rule>,
+	rules: Record<string, Rule>,
+	supertypes: Set<string>,
+	externalRoles: Map<string, ExternalRole>
+): void {
+	function isEnrichContentAlias(rule: Rule): boolean {
+		if (rule.type !== 'alias') return false;
+		const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+		if (meta?.source !== 'enrich') return false;
+		// Non-symbol content only — symbol aliases keep `aliasedFrom` handling.
+		const content = (rule as { content?: Rule }).content;
+		return content !== undefined && content.type !== 'symbol';
+	}
+	function walk(rule: Rule, ownerName: string): void {
+		if (rule.type === 'alias') {
+			const value = (rule as { value?: string }).value;
+			const content = (rule as { content?: Rule }).content;
+			if (isEnrichContentAlias(rule) && typeof value === 'string' && value.length > 0 && content) {
+				if (!(value in rules)) {
+					rules[value] = resolveRule(content, value, rawRules, supertypes, externalRoles);
+				}
+			}
+			if (content) walk(content, ownerName);
+			return;
+		}
+		if ('members' in rule && Array.isArray((rule as ChoiceRule | SeqRule).members)) {
+			for (const m of (rule as ChoiceRule | SeqRule).members) walk(m, ownerName);
+		}
+		if ('content' in rule && (rule as { content?: Rule }).content) {
+			walk((rule as { content: Rule }).content, ownerName);
+		}
+	}
+	for (const [name, rule] of Object.entries(rawRules)) walk(rule, name);
 }
 
 function collectTopLevelAliasBodies(
@@ -1470,7 +1542,25 @@ function resolveRule(
 			// Flatten: extract content
 			return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
 
-		case 'alias':
+		case 'alias': {
+			// enrich content-alias (`alias(<non-symbol content>, $.<name>)` tagged
+			// metadata.source='enrich'): the PARENT must reference the minted kind
+			// by a clean SYMBOL ref so codegen emits the visible group via its own
+			// AssembledGroup template. `mintContentAliasKinds` registers the body
+			// under `<name>`. Fire for BOTH declared (`parens`) and default
+			// (`_enum_body_group1`) names — the default name is `_`-prefixed, so we
+			// must NOT route it through the generic `!startsWith('_')` branch (which
+			// would inline the content instead of referencing the kind).
+			const aliasMeta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+			if (
+				aliasMeta?.source === 'enrich' &&
+				rule.named &&
+				typeof rule.value === 'string' &&
+				rule.value.length > 0 &&
+				rule.content.type !== 'symbol'
+			) {
+				return { type: 'symbol', name: rule.value } as Rule;
+			}
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
 				return resolveNamedAliasWithProvenance(rule.content, rule.value, supertypes);
 			}
@@ -1493,6 +1583,7 @@ function resolveRule(
 				return { type: 'string', value: rule.value };
 			}
 			return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
+		}
 
 		case 'symbol':
 			return resolveSymbolRoleOrPass(rule, allRules, externalRoles);

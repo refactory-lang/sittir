@@ -20,4 +20,9 @@ describe('isInlineSafe — exactly 1 non-choice field/symbol slot after dropping
   it('bare choice slot is NOT inline-safe', () => expect(isInlineSafe(seq(str('('), choice(sym('self'), sym('super')), str(')')))).toBe(false));
   it('two slots is NOT inline-safe', () => expect(isInlineSafe(seq(field('name', sym('id')), field('val', sym('expr'))))).toBe(false));
   it('repeat1(choice(...)) body is NOT inline-safe', () => expect(isInlineSafe(seq({ type: 'repeat1', content: choice(field('name', sym('id')), sym('enum_assignment')) }))).toBe(false));
+
+  // Bare repeat/repeat1 body = a LIST = one flat slot → inline-safe (stays
+  // inline-flat off the alias path; e.g. formal_parameters, class_body, enum_body).
+  it('bare repeat1 body is inline-safe (a list is one flat slot)', () => expect(isInlineSafe({ type: 'repeat1', content: field('parameter', sym('parameter')) })).toBe(true));
+  it('bare repeat body is inline-safe', () => expect(isInlineSafe({ type: 'repeat', content: sym('statement') })).toBe(true));
 });

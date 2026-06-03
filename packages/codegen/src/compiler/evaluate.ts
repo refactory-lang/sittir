@@ -952,6 +952,18 @@ function rewriteInlineAliases(
 	switch (rule.type) {
 		case 'alias':
 			if (rule.named && rule.value) {
+				// Enrich content-aliases own their minting in link.ts
+				// (`mintContentAliasKinds`). They must NOT be rewritten here into
+				// `_${target}` hidden symbols: doing so makes link's mint guards
+				// (`content.type !== 'symbol'`) dead, the kind lands as a `branch`
+				// under the `_`-name, and the parent slot mis-derives optional-scalar
+				// while the underlying rule is a `repeat1` (array) → wrap returns null
+				// → empty render. Leave the content as the literal seq so link mints
+				// the kind under the non-`_` parser name (`<parent>_group<N>`).
+				const aliasMeta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+				if (aliasMeta?.source === 'enrich') {
+					return { ...rule, content: recurse(rule.content) };
+				}
 				const inner = rule.content;
 				// Treat both declared rules AND external scanner tokens as
 				// "existing" sources — externals already carry parser-assigned

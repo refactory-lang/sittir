@@ -301,6 +301,13 @@ function descendThroughPrecWrapper(
  * marker (the legacy top-level `source: 'group-lift'` field is being retired).
  */
 function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
+	// MUST be a SYMBOL — an enrich content-alias (`alias(<content>, $.<name>)`)
+	// also carries `metadata.source === 'enrich'` but is handled separately by
+	// `isEnrichContentAlias` / `descendThroughEnrichContentAlias`. Without the
+	// type guard, an alias would match here and `descendThroughGroupLiftSymbol`
+	// would throw "group-lift symbol has no name" (an alias has no `.name`).
+	const t = (rule as { type?: string }).type;
+	if (t !== 'symbol' && t !== 'SYMBOL') return false;
 	const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
 	return meta?.source === 'enrich';
 }

@@ -220,6 +220,15 @@ export function isInlineSafe(seqBody: unknown): boolean {
 	const r = seqBody as Record<string, unknown>;
 	const t = typeof r.type === 'string' ? r.type : '';
 
+	// Bare `repeat`/`repeat1` body — a LIST is one flat slot (e.g.
+	// `formal_parameters = repeat1(parameter, SEP)`, `class_body`, `enum_body`).
+	// Like the separated-list seq shape below, aliasing a bare repeat makes
+	// tree-sitter DISTRIBUTE the alias across every element (one alias node per
+	// element) instead of one group → array-of-siblings → empty render. A list
+	// stays INLINE-FLAT (one list slot); only genuine co-optional groups (a bare
+	// `choice`, e.g. rust `visibility_modifier`) take the visible-alias path.
+	if (isRepeatLike(t)) return true;
+
 	if (!isSeqType(t)) return false;
 
 	const members = r.members;

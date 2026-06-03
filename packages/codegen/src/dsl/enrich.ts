@@ -128,11 +128,15 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// applyAutoGroups's dedupe map so identical clause seqs in different
 	// parents reuse the same hidden rule.
 	const clauseDedupeMap: Record<string, string> = {};
+	// Cross-parent dedupe map for inline-UNSAFE visible content-aliases:
+	// canonicalStringify(content) → `_<parent>_group<N>` name. Identical
+	// inline-unsafe bodies in different parents reuse the same visible kind.
+	const groupDedupeMap: Record<string, string> = {};
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
 		enrichedRules[name] = rule
-			? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap)
+			? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap)
 			: rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
@@ -202,7 +206,8 @@ function applyEnrichPasses(
 	supertypeNames: ReadonlySet<string>,
 	rulesBag: Record<string, Rule>,
 	clauseGroupRules: Record<string, Rule>,
-	clauseDedupeMap: Record<string, string>
+	clauseDedupeMap: Record<string, string>,
+	groupDedupeMap: Record<string, string>
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -248,8 +253,8 @@ function applyEnrichPasses(
 	// `for <type_parameters>`), leaving those for detectClause. One pass: once a
 	// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
 	// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
-	const clauseHoistCounter = { opt: 0 };
-	r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter);
+	const clauseHoistCounter = { opt: 0, grp: 0 };
+	r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter, groupDedupeMap);
 	return r;
 }
 
@@ -1278,6 +1283,12 @@ interface ClauseHoistCounter {
 	// If enrich started its own counter at 1, it would emit _optional1 and
 	// collide with applyAutoGroups's emission for the non-clause position.
 	opt: number;
+	// Counts inline-UNSAFE positions surfaced as visible content-aliases
+	// (`_<parent>_group<N>`). Independent of `opt` — the visible-alias name
+	// space is distinct from the hidden hoist name space, and applyAutoGroups
+	// is disabled this chunk so there is no cross-pass numbering to keep in
+	// sync for the visible groups.
+	grp: number;
 }
 
 /**
@@ -1359,13 +1370,14 @@ function applyClauseHoist(
 	rulesBag: Record<string, Rule>,
 	clauseGroupRules: Record<string, Rule>,
 	dedupeMap: Record<string, string>,
-	counter: ClauseHoistCounter
+	counter: ClauseHoistCounter,
+	groupDedupeMap: Record<string, string>
 ): Rule {
 	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
 	const peeled = peelOptionalSeq(rule);
 	if (peeled !== null) {
 		// Post-order: recurse into the seq body FIRST, then classify.
-		const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter);
+		const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
 
 		if (ruleMatchesEmpty(recursedSeqBody)) {
 			// Empty-matching body: tree-sitter rejects named rules that match the
@@ -1406,12 +1418,28 @@ function applyClauseHoist(
 			// before the collision was detected — see that function's comments.)
 			return rule;
 		} else {
-			// Inline-unsafe: multi-slot or bare-choice body. applyAutoGroups
-			// (still running this chunk) will hoist this later. Increment counter
-			// to keep numbering in sync with applyAutoGroups.
+			// Inline-unsafe: multi-slot or bare-choice body. Surface it as a
+			// VISIBLE CST kind by wrapping the content in a tagged content-alias
+			// `alias(<content>, $.<name>)`. tree-sitter mints a real kindId for
+			// `<name>`; link's `mintContentAliasKinds` registers the IR rule.
+			// Keep `counter.opt` advancing too — the hidden-hoist name space must
+			// stay consistent with applyAutoGroups's ordinal numbering for any
+			// run where it is still active (it is disabled this chunk, but the
+			// invariant is cheap to preserve).
 			counter.opt += 1;
-			// Rebuild the optional/choice wrapper with the recursed seq body
-			// (no hoist — left inline for applyAutoGroups to handle).
+			const aliasName = visibleGroupSynthName(recursedSeqBody, parentKind, groupDedupeMap, counter, rulesBag);
+			if (aliasName !== null) {
+				const aliasRule = makeContentAlias(rule, recursedSeqBody, aliasName);
+				if (peeled.form === 'optional') {
+					return rebuildOptional(rule, aliasRule);
+				} else {
+					const members = (rule as unknown as { members: Rule[] }).members;
+					const newMembers = members.slice() as Rule[];
+					newMembers[peeled.seqIdx] = aliasRule;
+					return { ...rule, members: newMembers } as Rule;
+				}
+			}
+			// aliasName === null: collision — leave inline (un-aliased).
 			if (recursedSeqBody === peeled.seqBody) return rule;
 			if (peeled.form === 'optional') {
 				return rebuildOptional(rule, recursedSeqBody);
@@ -1430,7 +1458,7 @@ function applyClauseHoist(
 		if (!Array.isArray(members)) return rule;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter);
+			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
 			if (out !== m) changed = true;
 			return out;
 		});
@@ -1444,7 +1472,7 @@ function applyClauseHoist(
 		if (!Array.isArray(members)) return rule;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter);
+			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
 			if (out !== m) changed = true;
 			return out;
 		});
@@ -1455,7 +1483,7 @@ function applyClauseHoist(
 	if (isRepeatType(rule.type) || isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (!content) return rule;
-		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter);
+		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
 	}
@@ -1464,7 +1492,7 @@ function applyClauseHoist(
 	if (isFieldType(rule.type)) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (!content) return rule;
-		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter);
+		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
 	}
@@ -1519,6 +1547,40 @@ function clauseHoistSynthName(
 }
 
 /**
+ * @internal — get the synthesized visible-group name for an inline-UNSAFE seq
+ * body that enrich surfaces as a content-alias. Unlike `clauseHoistSynthName`,
+ * this does NOT inject a hidden rule into `clauseGroupRules` — the content-alias
+ * carries the body itself, and link's `mintContentAliasKinds` registers the IR
+ * rule from the alias. This helper only mints the stable `<name>` and dedupes
+ * identical bodies across parents.
+ *
+ * Naming: `_<parent>_group<N>` (per-parent 1-indexed `grp` counter); cross-parent
+ * dedupe via `canonicalStringifyClause`. Returns `null` on a name collision with
+ * an existing rule in `rulesBag` (caller leaves the body inline).
+ */
+function visibleGroupSynthName(
+	content: Rule,
+	parentKind: string,
+	groupDedupeMap: Record<string, string>,
+	counter: ClauseHoistCounter,
+	rulesBag: Record<string, Rule>
+): string | null {
+	const key = canonicalStringifyClause(content);
+	const existing = groupDedupeMap[key];
+	if (existing !== undefined) return existing;
+	counter.grp += 1;
+	const name = `${parentKind}_group${counter.grp}`;
+	if (name in rulesBag) {
+		process.stderr.write(
+			`enrich: visible-group skipped for '${parentKind}' — rule '${name}' already exists in base.grammar.rules\n`
+		);
+		return null;
+	}
+	groupDedupeMap[key] = name;
+	return name;
+}
+
+/**
  * @internal — build a SYMBOL reference for a synthesized enrich group-lift
  * (clause hoist today; all `optional(seq)`/`repeat(seq)` once the hoist
  * generalizes), case-matched to the optional/choice wrapper's type convention.
@@ -1549,6 +1611,33 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
 		type: isUpper ? 'SYMBOL' : 'symbol',
 		name,
 		source: 'group-lift',
+		metadata: { source: 'enrich' }
+	} as unknown as Rule;
+}
+
+/**
+ * @internal — wrap inline-UNSAFE content in a TAGGED content-alias so it
+ * surfaces as a visible CST kind.
+ *
+ * Shape (confirmed against generated grammar.json ALIAS nodes):
+ *   `{ type: 'ALIAS'|'alias', content: <body>, named: true, value: '<name>',
+ *      metadata: { source: 'enrich' } }`
+ *
+ * - The aliased thing is the CONTENT itself (not a hidden symbol) — so NO new
+ *   rule enters the grammar → no LR conflict. tree-sitter emits a visible CST
+ *   node for `<name>` (a real kindId in parser.c).
+ * - `metadata.source === 'enrich'` is REQUIRED: transform-path travels THROUGH
+ *   it for authored path-patches, and link's `mintContentAliasKinds` keys on it
+ *   to register `<name> = <content>` as the IR rule.
+ * - Case mirrors the wrapper (`detectCase`): a CHOICE/OPTIONAL wrapper → ALIAS;
+ *   lowercase → alias.
+ */
+function makeContentAlias(referenceRule: Rule, content: Rule, name: string): Rule {
+	return {
+		type: detectCase(referenceRule) === 'upper' ? 'ALIAS' : 'alias',
+		content,
+		named: true,
+		value: name,
 		metadata: { source: 'enrich' }
 	} as unknown as Rule;
 }
