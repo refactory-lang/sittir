@@ -303,13 +303,13 @@ const _supertype_fExpression_ids = new Set<number>([161, 200, 202]);
 const _supertype_leftHandSide_ids = new Set<number>([200]);
 const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 198, 199, 200, 202]);
-const _supertype_simplePattern_ids = new Set<number>([173, 172, 166, 167, 168, 169, 231, 230, 89, 90, 91, 248, 174, 162]);
+const _supertype_simplePattern_ids = new Set<number>([173, 172, 166, 167, 168, 169, 231, 230, 88, 89, 90, 248, 174, 162]);
 const _supertype_simpleStatement_ids = new Set<number>([114, 111, 115, 119, 121, 122, 125, 126, 127, 128, 129, 130, 150, 151, 152, 153]);
 const _supertype_statement_ids = new Set<number>([110, 131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_expression_ids = new Set<number>([195, 189, 190, 196, 229, 123, 185]);
 const _supertype_parameter_ids = new Set<number>([1, 207, 181, 182, 183, 179, 184]);
 const _supertype_pattern_ids = new Set<number>([1, 204, 203, 183, 179, 180]);
-const _supertype_primaryExpression_ids = new Set<number>([237, 191, 1, 231, 230, 86, 87, 89, 90, 91, 192, 203, 204, 206, 215, 220, 218, 221, 216, 222, 217, 225, 223, 183]);
+const _supertype_primaryExpression_ids = new Set<number>([237, 191, 1, 231, 230, 85, 86, 88, 89, 90, 192, 203, 204, 206, 215, 220, 218, 221, 216, 222, 217, 225, 223, 183]);
 
 const _kindIdByKind = new Map<string, number>([
     ["identifier", TSKindId.Identifier],

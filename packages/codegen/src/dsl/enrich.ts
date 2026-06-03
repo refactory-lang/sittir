@@ -70,6 +70,7 @@ import {
 	isOptionalType,
 	isChoiceType,
 	isRepeatType,
+	isBlankType,
 	isPrecWrapper
 } from './runtime-shapes.ts';
 
@@ -115,28 +116,77 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// via `registerKwRule` below; the final rule map merges it with the
 	// enriched user rules.
 	const kwRules: Record<string, Rule> = {};
+	// Clause-hoist hidden-rule bag. The clause-hoist pass injects hoisted
+	// optional(seq(STRING,FIELD…)) groups here so tree-sitter sees them
+	// from base.grammar.rules (same path as _kw_* rules).
+	const clauseGroupRules: Record<string, Rule> = {};
+	// Cross-parent dedupe map for clause-hoist: canonicalStringify(seq) → name.
+	// Shared across all parent rules within a single enrich() call — mirrors
+	// applyAutoGroups's dedupe map so identical clause seqs in different
+	// parents reuse the same hidden rule.
+	const clauseDedupeMap: Record<string, string> = {};
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
-		enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames) : rule!;
+		enrichedRules[name] = rule
+			? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap)
+			: rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
 	// (they start with `_kw_`, a reserved prefix).
-	const mergedRules = { ...enrichedRules, ...kwRules };
-	if (hasWrapper) {
-		return { ...base, grammar: { ...base.grammar, rules: mergedRules } } as unknown as EnrichedGrammar<B>;
+	// Inject clause-group rules — user rules NEVER shadow them either
+	// (they start with `_<parentKind>_optional`, a synthesized prefix).
+	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+	// Attach the set of clause-group names as a well-known non-enumerable
+	// property on the enriched grammar. Wire.ts reads this to register the
+	// hoisted groups in `context.syntheticInline` so they get added to the
+	// grammar's `inline:` list — without inlining, tree-sitter creates LR
+	// conflicts for the new hidden rules. Non-enumerable so it is invisible
+	// to rule iteration, JSON serialization, and spread operators.
+	const clauseGroupNames = new Set(Object.keys(clauseGroupRules));
+	const result: unknown = hasWrapper
+		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
+		: { ...(base as unknown as object), rules: mergedRules };
+	if (clauseGroupNames.size > 0) {
+		Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
+			value: clauseGroupNames,
+			enumerable: false,
+			writable: false,
+			configurable: true
+		});
 	}
-	return {
-		...(base as unknown as object),
-		rules: mergedRules
-	} as unknown as EnrichedGrammar<B>;
+	return result as unknown as EnrichedGrammar<B>;
+}
+
+/**
+ * Well-known non-enumerable key attached by `enrich()` to the grammar result
+ * when clause-hoist synthesized any hidden group rules. Wire.ts reads this to
+ * register the hoisted names in `WireContext.syntheticInline` so they end up
+ * in the grammar's `inline:` list (required to prevent tree-sitter LR
+ * conflicts from the newly-injected hidden rules).
+ */
+export const ENRICH_CLAUSE_GROUPS_KEY = '__enrichedClauseGroups__' as const;
+
+/**
+ * Extract the set of enrich-hoisted clause-group names from an enriched grammar
+ * result. Returns an empty set when the grammar was not enriched or no clause
+ * groups were synthesized.
+ */
+export function getEnrichClauseGroups(grammar: unknown): ReadonlySet<string> {
+	if (!grammar || typeof grammar !== 'object') return new Set();
+	const names = (grammar as Record<string, unknown>)[ENRICH_CLAUSE_GROUPS_KEY];
+	if (names instanceof Set) return names as ReadonlySet<string>;
+	return new Set();
 }
 
 function applyEnrichPasses(
 	ruleName: string,
 	rule: Rule,
 	kwRules: Record<string, Rule>,
-	supertypeNames: ReadonlySet<string>
+	supertypeNames: ReadonlySet<string>,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>,
+	clauseDedupeMap: Record<string, string>
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -149,6 +199,14 @@ function applyEnrichPasses(
 	// that accidentally produces ever-changing output.
 	const MAX_ITERATIONS = 8;
 	let r = rule;
+	// Clause-hoist pass: runs ONCE before the fixed-point loop (it is not
+	// idempotent-by-design in the same sense — once a seq is hoisted its
+	// replacement is an optional(SYMBOL), which will not re-trigger). The
+	// per-parent counter is local to this rule's pass so each rule gets a
+	// fresh 1-indexed sequence; dedupeMap and clauseGroupRules are shared
+	// across all rules.
+	const clauseHoistCounter = { opt: 0 };
+	r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter);
 	for (let i = 0; i < MAX_ITERATIONS; i++) {
 		const before = r;
 		r = applySymbolToField(ruleName, r, supertypeNames);
@@ -1166,5 +1224,297 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
 		return t === 'BLANK' || t === 'blank' ? m : newInner;
 	});
 	return { ...optionalRule, members: newMembers } as Rule;
+}
+
+// ---------------------------------------------------------------------------
+// Pass: clause-hoist — optional(seq(STRING, FIELD…)) → optional(SYMBOL(_N))
+// ---------------------------------------------------------------------------
+// Hoists `optional(seq(...))` whose seq contains ≥1 STRING and ≥1 FIELD
+// member into a hidden rule `_<parent>_optional<N>` injected into
+// `base.grammar.rules`, so tree-sitter (kindId) AND the IR (evaluate→link)
+// both see it from one source. This matches detectClause's exact predicate
+// (link.ts:2043–2045) so the pass covers precisely the clause-shaped optionals.
+//
+// Predicate: `members.some(isString) && members.some(isField)` — no
+// restriction on seq member count; multi-member seqs (string + field1 +
+// field2) also match. Does NOT fire on:
+//   - optional(field(X))         — no inner seq
+//   - optional(seq(field, field)) — seq has no string
+//   - optional(seq(symbol, …))   — seq has no field
+//
+// Handles both the sittir-shape `optional(seq(...))` and the tree-sitter-
+// normalized `CHOICE[seq, BLANK]` form (same descent as the existing
+// peelOptional helper).
+//
+// Collision-aware: when the synthesized name is already claimed in
+// `rulesBag` (base.grammar.rules), skip with a stderr notice.
+//
+// Naming: `_<parentKind>_optional<N>` (per-parent 1-indexed counter);
+// cross-parent dedupe via canonicalStringify (same convention as
+// auto-groups.ts synthesizeGroupName).
+
+interface ClauseHoistCounter {
+	// Counts ALL optional(seq) positions in traversal order — both clause
+	// (which enrich hoists) and non-clause (which applyAutoGroups hoists).
+	// Keeping the counter global across both kinds ensures that the numbers
+	// enrich assigns to clause-seqs never collide with the numbers
+	// applyAutoGroups assigns to non-clause-seqs in the same parent.
+	//
+	// Example: index_signature has two optional(seq) positions:
+	//   pos 1 — non-clause seq(sign_field, ...)   → applyAutoGroups takes _optional1
+	//   pos 2 — clause seq('readonly', field(...)) → enrich takes _optional2
+	// If enrich started its own counter at 1, it would emit _optional1 and
+	// collide with applyAutoGroups's emission for the non-clause position.
+	opt: number;
+}
+
+/**
+ * @internal — canonical JSON stringify with sorted object keys. Ensures
+ * that two structurally-equal rule bodies stringify identically even
+ * when property insertion order differs between rule construction paths.
+ * Mirrors the helper in auto-groups.ts (kept in sync, not shared yet —
+ * DRY extraction is scheduled for Task 2.1).
+ */
+function canonicalStringifyClause(value: unknown): string {
+	if (value === null || typeof value !== 'object') {
+		return JSON.stringify(value);
+	}
+	if (Array.isArray(value)) {
+		return '[' + value.map((v) => canonicalStringifyClause(v)).join(',') + ']';
+	}
+	const obj = value as Record<string, unknown>;
+	const keys = Object.keys(obj).sort();
+	const parts: string[] = [];
+	for (const k of keys) {
+		const v = obj[k];
+		if (typeof v === 'function' || typeof v === 'undefined') continue;
+		parts.push(JSON.stringify(k) + ':' + canonicalStringifyClause(v));
+	}
+	return '{' + parts.join(',') + '}';
+}
+
+/**
+ * @internal — true when a seq's members contain ≥1 string/STRING and ≥1
+ * field/FIELD — the clause predicate matching detectClause's check in
+ * link.ts:2043–2045.
+ */
+function isClauseSeq(members: unknown[]): boolean {
+	let hasString = false;
+	let hasField = false;
+	for (const m of members) {
+		const norm = normalizeMember(m);
+		if (isStringType(norm.type)) hasString = true;
+		if (isFieldType(norm.type)) hasField = true;
+		if (hasString && hasField) return true;
+	}
+	return false;
+}
+
+/**
+ * @internal — peel an optional wrapper from a rule node. Returns the inner
+ * seq content if the rule is `optional(seq)` (sittir form) or
+ * `CHOICE[seq, BLANK]` (tree-sitter normalized form). Returns null if the
+ * rule is not an optional-wrapping-a-seq pattern.
+ *
+ * Also returns the seq member and the index of the seq in the members array
+ * (for CHOICE form) so callers can rebuild the CHOICE with a different member.
+ */
+function peelOptionalSeq(rule: Rule): {
+	seqBody: Rule;
+	form: 'optional' | 'choice';
+	seqIdx: number;
+} | null {
+	if (isOptionalType(rule.type)) {
+		const content = (rule as unknown as { content?: Rule }).content;
+		if (content && isSeqType((content as { type?: string }).type)) {
+			return { seqBody: content, form: 'optional', seqIdx: -1 };
+		}
+		return null;
+	}
+	if (isChoiceType(rule.type)) {
+		const members = (rule as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(members) || members.length !== 2) return null;
+		const blankIdx = members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
+		const seqIdx = members.findIndex((m) => isSeqType((m as { type?: string }).type));
+		if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return null;
+		return { seqBody: members[seqIdx]!, form: 'choice', seqIdx };
+	}
+	return null;
+}
+
+/**
+ * @internal — walk `rule` and hoist any `optional(seq(STRING,FIELD…))` /
+ * `CHOICE[seq(STRING,FIELD…),BLANK]` positions into hidden group rules.
+ * Returns a (possibly rewritten) rule; never mutates the input.
+ *
+ * COUNTER DISCIPLINE: the `counter.opt` increments for EVERY `optional(seq)`
+ * shape encountered in traversal order — both clause-seqs (which this pass
+ * hoists) and non-clause-seqs (which applyAutoGroups hoists later). This
+ * keeps the numbering in sync so the two passes never assign the same number
+ * to different bodies within the same parent. applyAutoGroups resets its
+ * own counter per-parent to 0 and counts from 1; after enrich, any position
+ * where enrich hoisted is now `optional(SYMBOL)` — applyAutoGroups skips
+ * those (not a seq) so its counter only increments for the non-clause
+ * positions, which are the ones enrich skipped and left with their counter
+ * slots intact.
+ */
+function applyClauseHoist(
+	parentKind: string,
+	rule: Rule,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>,
+	dedupeMap: Record<string, string>,
+	counter: ClauseHoistCounter
+): Rule {
+	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
+	const peeled = peelOptionalSeq(rule);
+	if (peeled !== null) {
+		const seqMembers = (peeled.seqBody as unknown as { members: unknown[] }).members;
+		if (isClauseSeq(seqMembers)) {
+			// Clause-seq: this pass hoists it. Increment counter for this position.
+			const name = clauseHoistSynthName(peeled.seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
+			if (name !== null) {
+				const symbolRef = makeClauseSymbol(rule, name);
+				if (peeled.form === 'optional') {
+					return rebuildOptional(rule, symbolRef);
+				} else {
+					// CHOICE[seq, BLANK] form
+					const members = (rule as unknown as { members: Rule[] }).members;
+					const newMembers = members.slice() as Rule[];
+					newMembers[peeled.seqIdx] = symbolRef;
+					return { ...rule, members: newMembers } as Rule;
+				}
+			}
+			// name === null: collision — skip but still count the position.
+			// (Counter was already incremented inside clauseHoistSynthName
+			// before the collision was detected — see that function's comments.)
+			return rule;
+		} else {
+			// Non-clause optional(seq): applyAutoGroups will hoist this later.
+			// IMPORTANT: increment our counter so that subsequent clause-seqs
+			// in this parent get numbers that don't collide with applyAutoGroups.
+			counter.opt += 1;
+			// Descend into the seq body looking for nested clause-seqs.
+			const newSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter);
+			if (newSeqBody === peeled.seqBody) return rule;
+			// Rebuild the optional/choice wrapper with the updated seq body.
+			if (peeled.form === 'optional') {
+				return rebuildOptional(rule, newSeqBody);
+			} else {
+				const members = (rule as unknown as { members: Rule[] }).members;
+				const newMembers = members.slice() as Rule[];
+				newMembers[peeled.seqIdx] = newSeqBody;
+				return { ...rule, members: newMembers } as Rule;
+			}
+		}
+	}
+
+	// Descend into seq members.
+	if (isSeqType(rule.type)) {
+		const members = (rule as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(members)) return rule;
+		let changed = false;
+		const newMembers = members.map((m) => {
+			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter);
+			if (out !== m) changed = true;
+			return out;
+		});
+		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
+	}
+
+	// Descend into choice branches that are NOT optional(seq) wrappers
+	// (those were handled above via peelOptionalSeq).
+	if (isChoiceType(rule.type)) {
+		const members = (rule as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(members)) return rule;
+		let changed = false;
+		const newMembers = members.map((m) => {
+			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter);
+			if (out !== m) changed = true;
+			return out;
+		});
+		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
+	}
+
+	// Descend into repeat / repeat1 / prec wrappers.
+	if (isRepeatType(rule.type) || isPrecWrapper(rule as { type: string })) {
+		const content = (rule as unknown as { content?: Rule }).content;
+		if (!content) return rule;
+		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter);
+		if (newContent === content) return rule;
+		return { ...rule, content: newContent } as Rule;
+	}
+
+	// Descend into field content (a field-wrapped optional(seq) is also a target).
+	if (isFieldType(rule.type)) {
+		const content = (rule as unknown as { content?: Rule }).content;
+		if (!content) return rule;
+		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter);
+		if (newContent === content) return rule;
+		return { ...rule, content: newContent } as Rule;
+	}
+
+	return rule;
+}
+
+/**
+ * @internal — get or create the synthesized hidden-rule name for a given
+ * clause-seq body. Increments the per-parent counter and injects the seq
+ * into `clauseGroupRules` on first encounter; dedupes across parents via
+ * `dedupeMap`.
+ *
+ * Returns `null` when the synthesized name would collide with an existing
+ * rule in `rulesBag` (already-authored rule with the same name). A stderr
+ * notice is emitted in that case. The counter is incremented BEFORE the
+ * collision check so the ordinal-position invariant with applyAutoGroups
+ * is maintained even when a collision prevents hoisting.
+ */
+function clauseHoistSynthName(
+	seqBody: Rule,
+	parentKind: string,
+	dedupeMap: Record<string, string>,
+	counter: ClauseHoistCounter,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>
+): string | null {
+	const key = canonicalStringifyClause(seqBody);
+	const existing = dedupeMap[key];
+	if (existing !== undefined) {
+		// Dedupe hit: reuse the already-assigned name. Do NOT increment the
+		// counter again — the ordinal slot was consumed when the name was first
+		// created. Inject into clauseGroupRules if not there yet.
+		if (!(existing in clauseGroupRules)) {
+			clauseGroupRules[existing] = seqBody;
+		}
+		return existing;
+	}
+	// Increment FIRST so the slot is reserved before any collision check.
+	counter.opt += 1;
+	const name = `_${parentKind}_optional${counter.opt}`;
+	// Collision guard: if base.grammar.rules already has this name, skip.
+	if (name in rulesBag) {
+		process.stderr.write(
+			`enrich: clause-hoist skipped for '${parentKind}' — rule '${name}' already exists in base.grammar.rules\n`
+		);
+		return null;
+	}
+	dedupeMap[key] = name;
+	clauseGroupRules[name] = seqBody;
+	return name;
+}
+
+/**
+ * @internal — build a SYMBOL reference for the synthesized clause-group,
+ * case-matched to the optional/choice wrapper's type convention.
+ */
+function makeClauseSymbol(referenceRule: Rule, name: string): Rule {
+	const t = (referenceRule as { type?: string }).type ?? '';
+	// Upper-case wrapper (CHOICE, OPTIONAL) → SYMBOL; lower-case → symbol.
+	const isUpper = t.length > 0 && t === t.toUpperCase();
+	return {
+		type: isUpper ? 'SYMBOL' : 'symbol',
+		name,
+		source: 'group-lift'
+	} as unknown as Rule;
 }
 

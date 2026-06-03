@@ -271,16 +271,16 @@
     "global": "text",
     "async": "text",
     "const": "text",
+    "as": "text",
     "export": "text",
     "default": "text",
-    "as": "text",
     "namespace": "text",
     "var": "text",
     "from": "text",
+    "readonly": "text",
     "accessor": "text",
     "await": "text",
     "declare": "text",
-    "readonly": "text",
     "static": "text",
     "using": "text",
     "override": "text",
@@ -317,6 +317,9 @@
     "yield": "text"
   },
   "fieldAliasMap": {
+    "__jsx_start_opening_element_optional1.name": {
+      "member_expression": "nested_identifier"
+    },
     "_ambient_declaration_module.name": {
       "property_identifier": "identifier"
     },

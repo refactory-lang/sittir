@@ -350,6 +350,13 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 		});
 		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
 	}
+	// NOTE: token / TOKEN / immediate_token / IMMEDIATE_TOKEN are deliberately
+	// EXCLUDED from this descent list. A token() reduces to a single terminal
+	// at parse time and may not contain a rule reference; hoisting an
+	// `optional(seq(...))` out of one (e.g. tree-sitter-typescript's `_number`
+	// token, whose body is `seq(optional('_'), /\d(_?\d)*/)`) would inject a
+	// SYMBOL into the token and trip tree-sitter's "Unexpected rule `_<x>_optionalN`
+	// in `token()` call". Returning the token unchanged keeps its content atomic.
 	if (
 		isOptionalType(t) ||
 		isRepeatType(t) ||
@@ -357,10 +364,6 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 		isPrecWrapper(rule as { type: string }) ||
 		t === 'alias' ||
 		t === 'ALIAS' ||
-		t === 'token' ||
-		t === 'TOKEN' ||
-		t === 'immediate_token' ||
-		t === 'IMMEDIATE_TOKEN' ||
 		t === 'group' ||
 		t === 'variant' ||
 		t === 'clause'

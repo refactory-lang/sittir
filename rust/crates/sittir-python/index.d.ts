@@ -620,6 +620,17 @@ export interface ForStatementTransport {
   _alternative?: ElseClauseTransport
 }
 
+export interface FunctionDefinitionOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _return_type: TypeTransport
+}
+
 export interface FunctionDefinitionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1060,6 +1071,17 @@ export interface PrintStatementTransport {
   '$triviaData'?: TransportTrivia
   _argument?: Array<ExpressionTransport>
   _chevron?: ChevronTransport
+}
+
+export interface RaiseStatementOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _cause: ExpressionTransport
 }
 
 export interface RaiseStatementTransport {

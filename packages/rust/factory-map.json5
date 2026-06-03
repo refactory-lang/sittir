@@ -283,6 +283,9 @@
     "_impl_item_negative_clause.trait": {
       "type_identifier": "identifier"
     },
+    "_impl_item_optional1.trait": {
+      "type_identifier": "identifier"
+    },
     "_impl_item_positive_clause.trait": {
       "type_identifier": "identifier"
     },

@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 257,
+  "nodeCount": 259,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -875,6 +875,42 @@
       ]
     },
     {
+      "kind": "_function_definition_optional1",
+      "modelType": "group",
+      "typeName": "FunctionDefinitionOptional1",
+      "factoryName": "_functionDefinitionOptional1",
+      "irKey": "functionDefinitionOptional1",
+      "hidden": false,
+      "name": "_function_definition_optional1",
+      "fields": [
+        {
+          "name": "return_type",
+          "propertyName": "returnType",
+          "paramName": "returnType",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type",
+              "parseKind": "type",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
       "kind": "_import_list",
       "modelType": "group",
       "typeName": "ImportList",
@@ -1206,6 +1242,42 @@
       "elementKinds": [
         "pattern"
       ]
+    },
+    {
+      "kind": "_raise_statement_optional1",
+      "modelType": "group",
+      "typeName": "RaiseStatementOptional1",
+      "factoryName": "_raiseStatementOptional1",
+      "irKey": "raiseStatementOptional1",
+      "hidden": false,
+      "name": "_raise_statement_optional1",
+      "fields": [
+        {
+          "name": "cause",
+          "propertyName": "cause",
+          "paramName": "cause",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_right_hand_side",

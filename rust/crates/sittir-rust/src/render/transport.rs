@@ -35,6 +35,7 @@ pub enum AnyTransport {
     AttributedTypeParameter(AttributedTypeParameterTransport),
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
     ClosureExpressionExpr(ClosureExpressionExprTransport),
+    ClosureExpressionOptional1(ClosureExpressionOptional1Transport),
     CompoundAssignmentExprOperator(CompoundAssignmentExprOperatorEnum),
     ConstItemOptional1(ConstItemOptional1Transport),
     ConstParameterOptional1(ConstParameterOptional1Transport),
@@ -54,9 +55,11 @@ pub enum AnyTransport {
     FunctionItemOptional1(FunctionItemOptional1Transport),
     FunctionSignatureItemOptional1(FunctionSignatureItemOptional1Transport),
     FunctionTypeFnForm(FunctionTypeFnFormTransport),
+    FunctionTypeOptional1(FunctionTypeOptional1Transport),
     FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
     ImplItemBody(ImplItemBodyTransport),
     ImplItemNegativeClause(ImplItemNegativeClauseTransport),
+    ImplItemOptional1(ImplItemOptional1Transport),
     ImplItemPositiveClause(ImplItemPositiveClauseTransport),
     ImplItemSemi(ImplItemSemiTransport),
     ImplItemUnsafeMarker(ImplItemUnsafeMarkerTransport),
@@ -112,6 +115,7 @@ pub enum AnyTransport {
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     ReferenceExpressionRawMut(ReferenceExpressionRawMutTransport),
     ReservedIdentifier(ReservedIdentifierEnum),
+    StaticItemOptional1(StaticItemOptional1Transport),
     StructItemBrace(StructItemBraceTransport),
     StructItemTuple(StructItemTupleTransport),
     StructItemUnit(StructItemUnitTransport),
@@ -129,6 +133,7 @@ pub enum AnyTransport {
     TypeParametersRepeat1(TypeParametersRepeat1Transport),
     UnaryExpressionOperator(UnaryExpressionOperatorEnum),
     UnsafeMarker(UnsafeMarkerTransport),
+    VariadicParameterOptional1(VariadicParameterOptional1Transport),
     VisibilityModifierCrate(VisibilityModifierCrateTransport),
     VisibilityModifierInPath(VisibilityModifierInPathTransport),
     VisibilityModifierPub(VisibilityModifierPubTransport),
@@ -9051,6 +9056,114 @@ impl RenderableTransport for ImplItemNegativeClauseTraitTransportSlot {
             ImplItemNegativeClauseTraitTransportSlot::ScopedTypeIdentifier(inner) => render_scoped_type_identifier(inner, dest),
             ImplItemNegativeClauseTraitTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
             ImplItemNegativeClauseTraitTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ImplItemOptional1TraitTransportSlot {
+    Identifier(IdentifierTransport),
+    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
+    GenericType(GenericTypeTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ImplItemOptional1TraitTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                245 => Ok(Self::ScopedTypeIdentifier(
+                    ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                226 => Ok(Self::GenericType(
+                    GenericTypeTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ImplItemOptional1TraitTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ImplItemOptional1TraitTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ImplItemOptional1TraitTransportSlot")
+        )?;
+        match kind_id {
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                245 => Ok(Self::ScopedTypeIdentifier(
+                    ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                226 => Ok(Self::GenericType(
+                    GenericTypeTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ImplItemOptional1TraitTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ImplItemOptional1TraitTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ImplItemOptional1TraitTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ImplItemOptional1TraitTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ImplItemOptional1TraitTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplItemOptional1TraitTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ImplItemOptional1TraitTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn impl_item_optional1_trait_transport_slot_to_any(t: ImplItemOptional1TraitTransportSlot) -> AnyTransport {
+    match t {
+        ImplItemOptional1TraitTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ImplItemOptional1TraitTransportSlot::ScopedTypeIdentifier(inner) => AnyTransport::ScopedTypeIdentifier(inner),
+        ImplItemOptional1TraitTransportSlot::GenericType(inner) => AnyTransport::GenericType(inner),
+        ImplItemOptional1TraitTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ImplItemOptional1TraitTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ImplItemOptional1TraitTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            ImplItemOptional1TraitTransportSlot::ScopedTypeIdentifier(inner) => render_scoped_type_identifier(inner, dest),
+            ImplItemOptional1TraitTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
+            ImplItemOptional1TraitTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -18089,7 +18202,7 @@ pub struct ArrayTypeOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_length"))]
-    pub length: Option<ExpressionTransport>,
+    pub length: ExpressionTransport,
 }
 
 impl RenderableTransport for ArrayTypeOptional1Transport {
@@ -18537,6 +18650,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClosureExpressionExprTransport
     }
 }
 
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ClosureExpressionOptional1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    pub return_type: _TypeTransport,
+}
+
+impl RenderableTransport for ClosureExpressionOptional1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_closure_expression_optional1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClosureExpressionOptional1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ClosureExpressionOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClosureExpressionOptional1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ClosureExpressionOptional1Transport::to_napi_value(env, *val)
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompoundAssignmentExprOperatorEnum {
     PlusEq,
@@ -18697,7 +18860,7 @@ pub struct ConstItemOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for ConstItemOptional1Transport {
@@ -18747,7 +18910,7 @@ pub struct ConstParameterOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ConstParameterOptional1ValueTransportSlot>,
+    pub value: ConstParameterOptional1ValueTransportSlot,
 }
 
 impl RenderableTransport for ConstParameterOptional1Transport {
@@ -18947,7 +19110,7 @@ pub struct EnumVariantOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for EnumVariantOptional1Transport {
@@ -19551,7 +19714,7 @@ pub struct FunctionItemOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<_TypeTransport>,
+    pub return_type: _TypeTransport,
 }
 
 impl RenderableTransport for FunctionItemOptional1Transport {
@@ -19601,7 +19764,7 @@ pub struct FunctionSignatureItemOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<_TypeTransport>,
+    pub return_type: _TypeTransport,
 }
 
 impl RenderableTransport for FunctionSignatureItemOptional1Transport {
@@ -19680,6 +19843,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionTypeFnFormTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         FunctionTypeFnFormTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct FunctionTypeOptional1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    pub return_type: _TypeTransport,
+}
+
+impl RenderableTransport for FunctionTypeOptional1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_function_type_optional1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionTypeOptional1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FunctionTypeOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionTypeOptional1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FunctionTypeOptional1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -19830,6 +20043,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplItemNegativeClauseTranspor
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ImplItemNegativeClauseTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ImplItemOptional1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trait"))]
+    pub trait_: ImplItemOptional1TraitTransportSlot,
+}
+
+impl RenderableTransport for ImplItemOptional1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_impl_item_optional1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ImplItemOptional1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ImplItemOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplItemOptional1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ImplItemOptional1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -21239,7 +21502,7 @@ pub struct LetDeclarationOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<_TypeTransport>,
+    pub type_: _TypeTransport,
 }
 
 impl RenderableTransport for LetDeclarationOptional1Transport {
@@ -21289,7 +21552,7 @@ pub struct LetDeclarationOptional2Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for LetDeclarationOptional2Transport {
@@ -24405,6 +24668,56 @@ impl RenderableTransport for ReservedIdentifierEnum {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct StaticItemOptional1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    pub value: ExpressionTransport,
+}
+
+impl RenderableTransport for StaticItemOptional1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_static_item_optional1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StaticItemOptional1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StaticItemOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StaticItemOptional1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StaticItemOptional1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct StructItemBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -25311,7 +25624,7 @@ pub struct TypeParameterOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_type"))]
-    pub default_type: Option<_TypeTransport>,
+    pub default_type: _TypeTransport,
 }
 
 impl RenderableTransport for TypeParameterOptional1Transport {
@@ -25608,6 +25921,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnsafeMarkerTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         UnsafeMarkerTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct VariadicParameterOptional1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    pub pattern: PatternTransport,
+}
+
+impl RenderableTransport for VariadicParameterOptional1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_variadic_parameter_optional1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VariadicParameterOptional1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        VariadicParameterOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VariadicParameterOptional1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        VariadicParameterOptional1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -43918,9 +44281,7 @@ fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, dest: &mut 
 }
 
 fn render_array_type_optional1(node: &ArrayTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.length {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.length, dest)?;
     Ok(())
 }
 
@@ -44042,21 +44403,22 @@ fn render_closure_expression_expr(node: &ClosureExpressionExprTransport, dest: &
     template.render_into(dest)
 }
 
+fn render_closure_expression_optional1(node: &ClosureExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    render__type(&node.return_type, dest)?;
+    Ok(())
+}
+
 fn render_compound_assignment_expr_operator(t: &CompoundAssignmentExprOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
 fn render_const_item_optional1(node: &ConstItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.value {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.value, dest)?;
     Ok(())
 }
 
 fn render_const_parameter_optional1(node: &ConstParameterOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.value {
-        child.render_into(dest)?;
-    }
+    node.value.render_into(dest)?;
     Ok(())
 }
 
@@ -44124,9 +44486,7 @@ fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, dest: &mut
 }
 
 fn render_enum_variant_optional1(node: &EnumVariantOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.value {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.value, dest)?;
     Ok(())
 }
 
@@ -44187,16 +44547,12 @@ fn render_foreign_mod_item_semi(t: &ForeignModItemSemiTransport, dest: &mut dyn 
 }
 
 fn render_function_item_optional1(node: &FunctionItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.return_type {
-        render__type(child, dest)?;
-    }
+    render__type(&node.return_type, dest)?;
     Ok(())
 }
 
 fn render_function_signature_item_optional1(node: &FunctionSignatureItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.return_type {
-        render__type(child, dest)?;
-    }
+    render__type(&node.return_type, dest)?;
     Ok(())
 }
 
@@ -44213,6 +44569,11 @@ fn render_function_type_fn_form(node: &FunctionTypeFnFormTransport, dest: &mut d
         },
     };
     template.render_into(dest)
+}
+
+fn render_function_type_optional1(node: &FunctionTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    render__type(&node.return_type, dest)?;
+    Ok(())
 }
 
 fn render_function_type_trait_form(node: &FunctionTypeTraitFormTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -44234,6 +44595,11 @@ fn render_impl_item_negative_clause(node: &ImplItemNegativeClauseTransport, dest
         trait_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.trait_)),
     };
     template.render_into(dest)
+}
+
+fn render_impl_item_optional1(node: &ImplItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    node.trait_.render_into(dest)?;
+    Ok(())
 }
 
 fn render_impl_item_positive_clause(node: &ImplItemPositiveClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -44311,16 +44677,12 @@ fn render_let_chain(node: &LetChainTransport, dest: &mut dyn ::std::fmt::Write) 
 }
 
 fn render_let_declaration_optional1(node: &LetDeclarationOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.type_ {
-        render__type(child, dest)?;
-    }
+    render__type(&node.type_, dest)?;
     Ok(())
 }
 
 fn render_let_declaration_optional2(node: &LetDeclarationOptional2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.value {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.value, dest)?;
     Ok(())
 }
 
@@ -44598,6 +44960,11 @@ fn render_reserved_identifier(t: &ReservedIdentifierEnum, dest: &mut dyn ::std::
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
+fn render_static_item_optional1(node: &StaticItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    render_expression(&node.value, dest)?;
+    Ok(())
+}
+
 fn render_struct_item_brace(node: &StructItemBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = StructItemBraceTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
@@ -44775,9 +45142,7 @@ fn render_type_identifier(t: &TypeIdentifierTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_type_parameter_optional1(node: &TypeParameterOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.default_type {
-        render__type(child, dest)?;
-    }
+    render__type(&node.default_type, dest)?;
     Ok(())
 }
 
@@ -44792,6 +45157,11 @@ fn render_unary_expression_operator(t: &UnaryExpressionOperatorEnum, dest: &mut 
 
 fn render_unsafe_marker(t: &UnsafeMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_variadic_parameter_optional1(node: &VariadicParameterOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    render_pattern(&node.pattern, dest)?;
+    Ok(())
 }
 
 fn render_visibility_modifier_crate(node: &VisibilityModifierCrateTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -47603,6 +47973,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::AttributedTypeParameter(t) => render_attributed_type_parameter(t, dest),
             AnyTransport::ClosureExpressionBlock(t) => render_closure_expression_block(t, dest),
             AnyTransport::ClosureExpressionExpr(t) => render_closure_expression_expr(t, dest),
+            AnyTransport::ClosureExpressionOptional1(t) => render_closure_expression_optional1(t, dest),
             AnyTransport::CompoundAssignmentExprOperator(t) => t.render_into(dest),
             AnyTransport::ConstItemOptional1(t) => render_const_item_optional1(t, dest),
             AnyTransport::ConstParameterOptional1(t) => render_const_parameter_optional1(t, dest),
@@ -47622,9 +47993,11 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::FunctionItemOptional1(t) => render_function_item_optional1(t, dest),
             AnyTransport::FunctionSignatureItemOptional1(t) => render_function_signature_item_optional1(t, dest),
             AnyTransport::FunctionTypeFnForm(t) => render_function_type_fn_form(t, dest),
+            AnyTransport::FunctionTypeOptional1(t) => render_function_type_optional1(t, dest),
             AnyTransport::FunctionTypeTraitForm(t) => render_function_type_trait_form(t, dest),
             AnyTransport::ImplItemBody(t) => render_impl_item_body(t, dest),
             AnyTransport::ImplItemNegativeClause(t) => render_impl_item_negative_clause(t, dest),
+            AnyTransport::ImplItemOptional1(t) => render_impl_item_optional1(t, dest),
             AnyTransport::ImplItemPositiveClause(t) => render_impl_item_positive_clause(t, dest),
             AnyTransport::ImplItemSemi(t) => t.render_into(dest),
             AnyTransport::ImplItemUnsafeMarker(t) => t.render_into(dest),
@@ -47680,6 +48053,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ReferenceExpressionRawConst(t) => t.render_into(dest),
             AnyTransport::ReferenceExpressionRawMut(t) => render_reference_expression_raw_mut(t, dest),
             AnyTransport::ReservedIdentifier(t) => t.render_into(dest),
+            AnyTransport::StaticItemOptional1(t) => render_static_item_optional1(t, dest),
             AnyTransport::StructItemBrace(t) => render_struct_item_brace(t, dest),
             AnyTransport::StructItemTuple(t) => render_struct_item_tuple(t, dest),
             AnyTransport::StructItemUnit(t) => t.render_into(dest),
@@ -47697,6 +48071,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::TypeParametersRepeat1(t) => render_type_parameters_repeat1(t, dest),
             AnyTransport::UnaryExpressionOperator(t) => t.render_into(dest),
             AnyTransport::UnsafeMarker(t) => t.render_into(dest),
+            AnyTransport::VariadicParameterOptional1(t) => render_variadic_parameter_optional1(t, dest),
             AnyTransport::VisibilityModifierCrate(t) => render_visibility_modifier_crate(t, dest),
             AnyTransport::VisibilityModifierInPath(t) => render_visibility_modifier_in_path(t, dest),
             AnyTransport::VisibilityModifierPub(t) => render_visibility_modifier_pub(t, dest),
@@ -47988,6 +48363,7 @@ impl AnyTransport {
             Self::AttributedTypeParameter(t) => t.transport_named,
             Self::ClosureExpressionBlock(t) => t.transport_named,
             Self::ClosureExpressionExpr(t) => t.transport_named,
+            Self::ClosureExpressionOptional1(t) => t.transport_named,
             Self::ConstItemOptional1(t) => t.transport_named,
             Self::ConstParameterOptional1(t) => t.transport_named,
             Self::DelimTokenTreeBrace(t) => t.transport_named,
@@ -48006,9 +48382,11 @@ impl AnyTransport {
             Self::FunctionItemOptional1(t) => t.transport_named,
             Self::FunctionSignatureItemOptional1(t) => t.transport_named,
             Self::FunctionTypeFnForm(t) => t.transport_named,
+            Self::FunctionTypeOptional1(t) => t.transport_named,
             Self::FunctionTypeTraitForm(t) => t.transport_named,
             Self::ImplItemBody(t) => t.transport_named,
             Self::ImplItemNegativeClause(t) => t.transport_named,
+            Self::ImplItemOptional1(t) => t.transport_named,
             Self::ImplItemPositiveClause(t) => t.transport_named,
             Self::ImplItemSemi(t) => t.transport_named,
             Self::ImplItemUnsafeMarker(t) => t.transport_named,
@@ -48061,6 +48439,7 @@ impl AnyTransport {
             Self::RawStringLiteralStart(t) => t.transport_named,
             Self::ReferenceExpressionRawConst(t) => t.transport_named,
             Self::ReferenceExpressionRawMut(t) => t.transport_named,
+            Self::StaticItemOptional1(t) => t.transport_named,
             Self::StructItemBrace(t) => t.transport_named,
             Self::StructItemTuple(t) => t.transport_named,
             Self::StructItemUnit(t) => t.transport_named,
@@ -48076,6 +48455,7 @@ impl AnyTransport {
             Self::TypeParameterOptional1(t) => t.transport_named,
             Self::TypeParametersRepeat1(t) => t.transport_named,
             Self::UnsafeMarker(t) => t.transport_named,
+            Self::VariadicParameterOptional1(t) => t.transport_named,
             Self::VisibilityModifierCrate(t) => t.transport_named,
             Self::VisibilityModifierInPath(t) => t.transport_named,
             Self::VisibilityModifierPub(t) => t.transport_named,
@@ -48398,6 +48778,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::AttributedTypeParameter(data) => transport_to_node_attributed_type_parameter(data),
         AnyTransport::ClosureExpressionBlock(data) => transport_to_node_closure_expression_block(data),
         AnyTransport::ClosureExpressionExpr(data) => transport_to_node_closure_expression_expr(data),
+        AnyTransport::ClosureExpressionOptional1(data) => transport_to_node_closure_expression_optional1(data),
         AnyTransport::CompoundAssignmentExprOperator(data) => transport_to_node_compound_assignment_expr_operator(data),
         AnyTransport::ConstItemOptional1(data) => transport_to_node_const_item_optional1(data),
         AnyTransport::ConstParameterOptional1(data) => transport_to_node_const_parameter_optional1(data),
@@ -48417,9 +48798,11 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::FunctionItemOptional1(data) => transport_to_node_function_item_optional1(data),
         AnyTransport::FunctionSignatureItemOptional1(data) => transport_to_node_function_signature_item_optional1(data),
         AnyTransport::FunctionTypeFnForm(data) => transport_to_node_function_type_fn_form(data),
+        AnyTransport::FunctionTypeOptional1(data) => transport_to_node_function_type_optional1(data),
         AnyTransport::FunctionTypeTraitForm(data) => transport_to_node_function_type_trait_form(data),
         AnyTransport::ImplItemBody(data) => transport_to_node_impl_item_body(data),
         AnyTransport::ImplItemNegativeClause(data) => transport_to_node_impl_item_negative_clause(data),
+        AnyTransport::ImplItemOptional1(data) => transport_to_node_impl_item_optional1(data),
         AnyTransport::ImplItemPositiveClause(data) => transport_to_node_impl_item_positive_clause(data),
         AnyTransport::ImplItemSemi(data) => transport_to_node_impl_item_semi(data),
         AnyTransport::ImplItemUnsafeMarker(data) => transport_to_node_impl_item_unsafe_marker(data),
@@ -48475,6 +48858,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::ReferenceExpressionRawConst(data) => transport_to_node_reference_expression_raw_const(data),
         AnyTransport::ReferenceExpressionRawMut(data) => transport_to_node_reference_expression_raw_mut(data),
         AnyTransport::ReservedIdentifier(data) => transport_to_node_reserved_identifier(data),
+        AnyTransport::StaticItemOptional1(data) => transport_to_node_static_item_optional1(data),
         AnyTransport::StructItemBrace(data) => transport_to_node_struct_item_brace(data),
         AnyTransport::StructItemTuple(data) => transport_to_node_struct_item_tuple(data),
         AnyTransport::StructItemUnit(data) => transport_to_node_struct_item_unit(data),
@@ -48492,6 +48876,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::TypeParametersRepeat1(data) => transport_to_node_type_parameters_repeat1(data),
         AnyTransport::UnaryExpressionOperator(data) => transport_to_node_unary_expression_operator(data),
         AnyTransport::UnsafeMarker(data) => transport_to_node_unsafe_marker(data),
+        AnyTransport::VariadicParameterOptional1(data) => transport_to_node_variadic_parameter_optional1(data),
         AnyTransport::VisibilityModifierCrate(data) => transport_to_node_visibility_modifier_crate(data),
         AnyTransport::VisibilityModifierInPath(data) => transport_to_node_visibility_modifier_in_path(data),
         AnyTransport::VisibilityModifierPub(data) => transport_to_node_visibility_modifier_pub(data),
@@ -48846,9 +49231,7 @@ fn transport_to_node_array_expression_semi(transport: ArrayExpressionSemiTranspo
 
 fn transport_to_node_array_type_optional1(transport: ArrayTypeOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.length {
-        fields.insert("length".to_string(), transport_field_value(expression_transport_to_any(value))?);
-    }
+    fields.insert("length".to_string(), transport_field_value(expression_transport_to_any(transport.length))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -49089,6 +49472,27 @@ fn transport_to_node_closure_expression_expr(transport: ClosureExpressionExprTra
     ))
 }
 
+fn transport_to_node_closure_expression_optional1(transport: ClosureExpressionOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("return_type".to_string(), transport_field_value(_type_transport_to_any(transport.return_type))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_closure_expression_optional1" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
 fn transport_to_node_compound_assignment_expr_operator(transport: CompoundAssignmentExprOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_compound_assignment_expr_operator" — no parser symbol */,
@@ -49107,9 +49511,7 @@ fn transport_to_node_compound_assignment_expr_operator(transport: CompoundAssign
 
 fn transport_to_node_const_item_optional1(transport: ConstItemOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
-    }
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -49130,9 +49532,7 @@ fn transport_to_node_const_item_optional1(transport: ConstItemOptional1Transport
 
 fn transport_to_node_const_parameter_optional1(transport: ConstParameterOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_value(const_parameter_optional1_value_transport_slot_to_any(value))?);
-    }
+    fields.insert("value".to_string(), transport_field_value(const_parameter_optional1_value_transport_slot_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -49237,9 +49637,7 @@ fn transport_to_node_delim_token_tree_paren(transport: DelimTokenTreeParenTransp
 
 fn transport_to_node_enum_variant_optional1(transport: EnumVariantOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
-    }
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -49454,9 +49852,7 @@ fn transport_to_node_foreign_mod_item_semi(transport: ForeignModItemSemiTranspor
 
 fn transport_to_node_function_item_optional1(transport: FunctionItemOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.return_type {
-        fields.insert("return_type".to_string(), transport_field_value(_type_transport_to_any(value))?);
-    }
+    fields.insert("return_type".to_string(), transport_field_value(_type_transport_to_any(transport.return_type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -49477,9 +49873,7 @@ fn transport_to_node_function_item_optional1(transport: FunctionItemOptional1Tra
 
 fn transport_to_node_function_signature_item_optional1(transport: FunctionSignatureItemOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.return_type {
-        fields.insert("return_type".to_string(), transport_field_value(_type_transport_to_any(value))?);
-    }
+    fields.insert("return_type".to_string(), transport_field_value(_type_transport_to_any(transport.return_type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -49513,6 +49907,27 @@ fn transport_to_node_function_type_fn_form(transport: FunctionTypeFnFormTranspor
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(335) /* "_function_type_fn_form" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_function_type_optional1(transport: FunctionTypeOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("return_type".to_string(), transport_field_value(_type_transport_to_any(transport.return_type))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_function_type_optional1" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -49581,6 +49996,27 @@ fn transport_to_node_impl_item_negative_clause(transport: ImplItemNegativeClause
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(327) /* "_impl_item_negative_clause" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_impl_item_optional1(transport: ImplItemOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("trait".to_string(), transport_field_value(impl_item_optional1_trait_transport_slot_to_any(transport.trait_))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_impl_item_optional1" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -49855,9 +50291,7 @@ fn transport_to_node_let_chain(transport: LetChainTransport) -> Result<Transport
 
 fn transport_to_node_let_declaration_optional1(transport: LetDeclarationOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.type_ {
-        fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(value))?);
-    }
+    fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.type_))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -49878,9 +50312,7 @@ fn transport_to_node_let_declaration_optional1(transport: LetDeclarationOptional
 
 fn transport_to_node_let_declaration_optional2(transport: LetDeclarationOptional2Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
-    }
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -50706,6 +51138,27 @@ fn transport_to_node_reserved_identifier(transport: ReservedIdentifierEnum) -> R
     ))
 }
 
+fn transport_to_node_static_item_optional1(transport: StaticItemOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_static_item_optional1" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
 fn transport_to_node_struct_item_brace(transport: StructItemBraceTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("body".to_string(), transport_field_value(AnyTransport::FieldDeclarationList(transport.body))?);
@@ -51039,9 +51492,7 @@ fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Resu
 
 fn transport_to_node_type_parameter_optional1(transport: TypeParameterOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.default_type {
-        fields.insert("default_type".to_string(), transport_field_value(_type_transport_to_any(value))?);
-    }
+    fields.insert("default_type".to_string(), transport_field_value(_type_transport_to_any(transport.default_type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -51115,6 +51566,27 @@ fn transport_to_node_unsafe_marker(transport: UnsafeMarkerTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_variadic_parameter_optional1(transport: VariadicParameterOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_variadic_parameter_optional1" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
         trivia_data,
     ))
 }

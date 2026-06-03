@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 424,
+  "nodeCount": 429,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -343,6 +343,114 @@
         "in",
         "of"
       ]
+    },
+    {
+      "kind": "__jsx_start_opening_element_optional1",
+      "modelType": "group",
+      "typeName": "JsxStartOpeningElementOptional1",
+      "factoryName": "_jsxStartOpeningElementOptional1",
+      "irKey": "jsxStartOpeningElementOptional1",
+      "hidden": false,
+      "name": "__jsx_start_opening_element_optional1",
+      "fields": [
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_jsx_identifier",
+              "parseKind": "_jsx_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "jsx_namespace_name",
+              "parseKind": "jsx_namespace_name",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "nested_identifier",
+              "parseKind": "member_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_jsx_identifier",
+              "jsx_namespace_name",
+              "identifier",
+              "nested_identifier"
+            ]
+          }
+        },
+        {
+          "name": "type_arguments",
+          "propertyName": "typeArguments",
+          "paramName": "typeArguments",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_arguments",
+              "parseKind": "type_arguments",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type_arguments"
+            ]
+          }
+        },
+        {
+          "name": "attribute",
+          "propertyName": "attributes",
+          "paramName": "attributes",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_jsx_attribute",
+              "parseKind": "_jsx_attribute",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_jsx_attribute"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "__number_operator",
@@ -1081,6 +1189,74 @@
       "children": []
     },
     {
+      "kind": "_catch_clause_optional1",
+      "modelType": "group",
+      "typeName": "CatchClauseOptional1",
+      "factoryName": "_catchClauseOptional1",
+      "irKey": "catchClauseOptional1",
+      "hidden": false,
+      "name": "_catch_clause_optional1",
+      "fields": [
+        {
+          "name": "parameter",
+          "propertyName": "parameter",
+          "paramName": "parameter",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_destructuring_pattern",
+              "parseKind": "_destructuring_pattern",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier",
+              "_destructuring_pattern"
+            ]
+          }
+        },
+        {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_annotation",
+              "parseKind": "type_annotation",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type_annotation"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
       "kind": "_class_body_member",
       "modelType": "group",
       "typeName": "ClassBodyMember",
@@ -1416,6 +1592,42 @@
         "type",
         "typeof"
       ]
+    },
+    {
+      "kind": "_export_specifier_optional1",
+      "modelType": "group",
+      "typeName": "ExportSpecifierOptional1",
+      "factoryName": "_exportSpecifierOptional1",
+      "irKey": "exportSpecifierOptional1",
+      "hidden": false,
+      "name": "_export_specifier_optional1",
+      "fields": [
+        {
+          "name": "alias",
+          "propertyName": "alias",
+          "paramName": "alias",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_module_export_name",
+              "parseKind": "_module_export_name",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_module_export_name"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_export_statement_default",
@@ -2915,6 +3127,45 @@
       "children": []
     },
     {
+      "kind": "_index_signature_optional1",
+      "modelType": "group",
+      "typeName": "IndexSignatureOptional1",
+      "factoryName": "_indexSignatureOptional1",
+      "irKey": "indexSignatureOptional1",
+      "hidden": false,
+      "name": "_index_signature_optional1",
+      "fields": [
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+",
+              "parseKind": "plus"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        }
+      ],
+      "children": []
+    },
+    {
       "kind": "_initializer",
       "modelType": "group",
       "typeName": "Initializer",
@@ -3041,12 +3292,11 @@
     },
     {
       "kind": "_jsx_start_opening_element",
-      "modelType": "group",
+      "modelType": "branch",
       "typeName": "JsxStartOpeningElement",
-      "factoryName": "_jsxStartOpeningElement",
+      "factoryName": "jsxStartOpeningElement",
       "irKey": "jsxStartOpeningElement",
       "hidden": false,
-      "name": "_jsx_start_opening_element",
       "fields": [
         {
           "name": "name",
@@ -3408,6 +3658,42 @@
               "_reserved_identifier",
               "_destructuring_pattern",
               "non_null_expression"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_mapped_type_clause_optional1",
+      "modelType": "group",
+      "typeName": "MappedTypeClauseOptional1",
+      "factoryName": "_mappedTypeClauseOptional1",
+      "irKey": "mappedTypeClauseOptional1",
+      "hidden": false,
+      "name": "_mapped_type_clause_optional1",
+      "fields": [
+        {
+          "name": "alias",
+          "propertyName": "alias",
+          "paramName": "alias",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type",
+              "parseKind": "type",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type"
             ]
           }
         }

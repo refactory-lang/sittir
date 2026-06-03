@@ -367,6 +367,18 @@ export interface CallSignatureTransport {
   _return_type?: CallSignatureReturnTypeTransportSlot
 }
 
+export interface CatchClauseOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _parameter: CatchClauseOptional1ParameterTransportSlot
+  _type?: TypeAnnotationTransport
+}
+
 export interface CatchClauseTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -722,6 +734,17 @@ export interface ExportClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _export_specifier?: Array<ExportSpecifierTransport>
+}
+
+export interface ExportSpecifierOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _alias: ModuleExportNameTransport
 }
 
 export interface ExportSpecifierTransport {
@@ -1344,6 +1367,17 @@ export interface IndexSignatureMappedTypeClauseTransport {
   _mapped_type_clause: MappedTypeClauseTransport
 }
 
+export interface IndexSignatureOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _sign?: Box<AnyTransport>
+}
+
 export interface IndexSignatureTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1525,6 +1559,19 @@ export interface JsxSelfClosingElementTransport {
   _attribute?: Array<_JsxAttributeTransport>
 }
 
+export interface JsxStartOpeningElementOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _name: JsxElementNameTransport
+  _type_arguments?: TypeArgumentsTransport
+  _attribute?: Array<_JsxAttributeTransport>
+}
+
 export interface JsxStartOpeningElementTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1606,6 +1653,17 @@ export interface LookupTypeTransport {
   '$triviaData'?: TransportTrivia
   _primary_type: Box<PrimaryTypeTransport>
   _index_type: Box<TypeTransport>
+}
+
+export interface MappedTypeClauseOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _alias: TypeTransport
 }
 
 export interface MappedTypeClauseTransport {

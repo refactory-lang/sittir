@@ -91,6 +91,7 @@ export const enum SyntaxKind {
   AttributedTypeParameter = "_attributed_type_parameter",
   ClosureExpressionBlock = "_closure_expression_block",
   ClosureExpressionExpr = "_closure_expression_expr",
+  ClosureExpressionOptional1 = "_closure_expression_optional1",
   ConstItemOptional1 = "_const_item_optional1",
   ConstParameterOptional1 = "_const_parameter_optional1",
   DelimTokenTreeBrace = "_delim_token_tree_brace",
@@ -107,9 +108,11 @@ export const enum SyntaxKind {
   FunctionItemOptional1 = "_function_item_optional1",
   FunctionSignatureItemOptional1 = "_function_signature_item_optional1",
   FunctionTypeFnForm = "_function_type_fn_form",
+  FunctionTypeOptional1 = "_function_type_optional1",
   FunctionTypeTraitForm = "_function_type_trait_form",
   ImplItemBody = "_impl_item_body",
   ImplItemNegativeClause = "_impl_item_negative_clause",
+  ImplItemOptional1 = "_impl_item_optional1",
   ImplItemPositiveClause = "_impl_item_positive_clause",
   LetChain = "_let_chain",
   LetDeclarationOptional1 = "_let_declaration_optional1",
@@ -135,6 +138,7 @@ export const enum SyntaxKind {
   RangePatternLeftWithRight = "_range_pattern_left_with_right",
   RangePatternPrefix = "_range_pattern_prefix",
   ReferenceExpressionRawMut = "_reference_expression_raw_mut",
+  StaticItemOptional1 = "_static_item_optional1",
   StructItemBrace = "_struct_item_brace",
   StructItemTuple = "_struct_item_tuple",
   TokenTreeBrace = "_token_tree_brace",
@@ -147,6 +151,7 @@ export const enum SyntaxKind {
   TypeArgumentsRepeat1 = "_type_arguments_repeat1",
   TypeParameterOptional1 = "_type_parameter_optional1",
   TypeParametersRepeat1 = "_type_parameters_repeat1",
+  VariadicParameterOptional1 = "_variadic_parameter_optional1",
   VisibilityModifierCrate = "_visibility_modifier_crate",
   VisibilityModifierInPath = "_visibility_modifier_in_path",
   VisibilityModifierPub = "_visibility_modifier_pub",
@@ -2157,8 +2162,8 @@ export interface ArrayExpressionSemi {
 
 export interface ArrayTypeOptional1 {
   readonly $type: "_array_type_optional1";
-  readonly _length?: Expression;
-  length(): Expression | undefined;
+  readonly _length: Expression;
+  length(): Expression;
 }
 
 export interface AttributedArgument {
@@ -2225,16 +2230,22 @@ export interface ClosureExpressionExpr {
   body(): Expression | "_";
 }
 
+export interface ClosureExpressionOptional1 {
+  readonly $type: "_closure_expression_optional1";
+  readonly _return_type: _Type;
+  returnType(): _Type;
+}
+
 export interface ConstItemOptional1 {
   readonly $type: "_const_item_optional1";
-  readonly _value?: Expression;
-  value(): Expression | undefined;
+  readonly _value: Expression;
+  value(): Expression;
 }
 
 export interface ConstParameterOptional1 {
   readonly $type: "_const_parameter_optional1";
-  readonly _value?: Block | Identifier | Literal | NegativeLiteral;
-  value(): Block | Identifier | Literal | NegativeLiteral | undefined;
+  readonly _value: Block | Identifier | Literal | NegativeLiteral;
+  value(): Block | Identifier | Literal | NegativeLiteral;
 }
 
 export interface DelimTokenTreeBrace {
@@ -2257,8 +2268,8 @@ export interface DelimTokenTreeParen {
 
 export interface EnumVariantOptional1 {
   readonly $type: "_enum_variant_optional1";
-  readonly _value?: Expression;
-  value(): Expression | undefined;
+  readonly _value: Expression;
+  value(): Expression;
 }
 
 export interface ExpressionStatementBlockEnding {
@@ -2307,20 +2318,26 @@ export interface ForeignModItemBody {
 
 export interface FunctionItemOptional1 {
   readonly $type: "_function_item_optional1";
-  readonly _return_type?: _Type;
-  returnType(): _Type | undefined;
+  readonly _return_type: _Type;
+  returnType(): _Type;
 }
 
 export interface FunctionSignatureItemOptional1 {
   readonly $type: "_function_signature_item_optional1";
-  readonly _return_type?: _Type;
-  returnType(): _Type | undefined;
+  readonly _return_type: _Type;
+  returnType(): _Type;
 }
 
 export interface FunctionTypeFnForm {
   readonly $type: TSKindId.FunctionTypeFnForm;
   readonly _function_modifiers?: FunctionModifiers;
   functionModifiers(): FunctionModifiers | undefined;
+}
+
+export interface FunctionTypeOptional1 {
+  readonly $type: "_function_type_optional1";
+  readonly _return_type: _Type;
+  returnType(): _Type;
 }
 
 export interface FunctionTypeTraitForm {
@@ -2337,6 +2354,12 @@ export interface ImplItemBody {
 
 export interface ImplItemNegativeClause {
   readonly $type: TSKindId.ImplItemNegativeClause;
+  readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
+  trait(): Identifier | ScopedTypeIdentifier | GenericType;
+}
+
+export interface ImplItemOptional1 {
+  readonly $type: "_impl_item_optional1";
   readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
   trait(): Identifier | ScopedTypeIdentifier | GenericType;
 }
@@ -2359,14 +2382,14 @@ export interface LetChain {
 
 export interface LetDeclarationOptional1 {
   readonly $type: "_let_declaration_optional1";
-  readonly _type?: _Type;
-  type(): _Type | undefined;
+  readonly _type: _Type;
+  type(): _Type;
 }
 
 export interface LetDeclarationOptional2 {
   readonly $type: "_let_declaration_optional2";
-  readonly _value?: Expression;
-  value(): Expression | undefined;
+  readonly _value: Expression;
+  value(): Expression;
 }
 
 export interface LetDeclarationOptional3 {
@@ -2535,6 +2558,12 @@ export interface ReferenceExpressionRawMut {
   mutableSpecifier(): MutableSpecifier;
 }
 
+export interface StaticItemOptional1 {
+  readonly $type: "_static_item_optional1";
+  readonly _value: Expression;
+  value(): Expression;
+}
+
 export interface StructItemBrace {
   readonly $type: TSKindId.StructItemBrace;
   readonly _where_clause?: WhereClause;
@@ -2603,14 +2632,20 @@ export interface TypeArgumentsRepeat1 {
 
 export interface TypeParameterOptional1 {
   readonly $type: "_type_parameter_optional1";
-  readonly _default_type?: _Type;
-  defaultType(): _Type | undefined;
+  readonly _default_type: _Type;
+  defaultType(): _Type;
 }
 
 export interface TypeParametersRepeat1 {
   readonly $type: "_type_parameters_repeat1";
   readonly _attributed_type_parameter: AttributedTypeParameter;
   attributedTypeParameter(): AttributedTypeParameter;
+}
+
+export interface VariadicParameterOptional1 {
+  readonly $type: "_variadic_parameter_optional1";
+  readonly _pattern: Pattern;
+  pattern(): Pattern;
 }
 
 export interface VisibilityModifierCrate {
@@ -3939,6 +3974,7 @@ export interface AttributedParameterTree extends AnyTreeNode { readonly type: "_
 export interface AttributedTypeParameterTree extends AnyTreeNode { readonly type: "_attributed_type_parameter"; }
 export interface ClosureExpressionBlockTree extends AnyTreeNode { readonly type: "_closure_expression_block"; }
 export interface ClosureExpressionExprTree extends AnyTreeNode { readonly type: "_closure_expression_expr"; }
+export interface ClosureExpressionOptional1Tree extends AnyTreeNode { readonly type: "_closure_expression_optional1"; }
 export interface ConstItemOptional1Tree extends AnyTreeNode { readonly type: "_const_item_optional1"; }
 export interface ConstParameterOptional1Tree extends AnyTreeNode { readonly type: "_const_parameter_optional1"; }
 export interface DelimTokenTreeBraceTree extends AnyTreeNode { readonly type: "_delim_token_tree_brace"; }
@@ -3955,9 +3991,11 @@ export interface ForeignModItemBodyTree extends AnyTreeNode { readonly type: "_f
 export interface FunctionItemOptional1Tree extends AnyTreeNode { readonly type: "_function_item_optional1"; }
 export interface FunctionSignatureItemOptional1Tree extends AnyTreeNode { readonly type: "_function_signature_item_optional1"; }
 export interface FunctionTypeFnFormTree extends AnyTreeNode { readonly type: "_function_type_fn_form"; }
+export interface FunctionTypeOptional1Tree extends AnyTreeNode { readonly type: "_function_type_optional1"; }
 export interface FunctionTypeTraitFormTree extends AnyTreeNode { readonly type: "_function_type_trait_form"; }
 export interface ImplItemBodyTree extends AnyTreeNode { readonly type: "_impl_item_body"; }
 export interface ImplItemNegativeClauseTree extends AnyTreeNode { readonly type: "_impl_item_negative_clause"; }
+export interface ImplItemOptional1Tree extends AnyTreeNode { readonly type: "_impl_item_optional1"; }
 export interface ImplItemPositiveClauseTree extends AnyTreeNode { readonly type: "_impl_item_positive_clause"; }
 export interface LetChainTree extends AnyTreeNode { readonly type: "_let_chain"; }
 export interface LetDeclarationOptional1Tree extends AnyTreeNode { readonly type: "_let_declaration_optional1"; }
@@ -3983,6 +4021,7 @@ export interface RangeExpressionPrefixTree extends AnyTreeNode { readonly type: 
 export interface RangePatternLeftWithRightTree extends AnyTreeNode { readonly type: "_range_pattern_left_with_right"; }
 export interface RangePatternPrefixTree extends AnyTreeNode { readonly type: "_range_pattern_prefix"; }
 export interface ReferenceExpressionRawMutTree extends AnyTreeNode { readonly type: "_reference_expression_raw_mut"; }
+export interface StaticItemOptional1Tree extends AnyTreeNode { readonly type: "_static_item_optional1"; }
 export interface StructItemBraceTree extends AnyTreeNode { readonly type: "_struct_item_brace"; }
 export interface StructItemTupleTree extends AnyTreeNode { readonly type: "_struct_item_tuple"; }
 export interface TokenTreeBraceTree extends AnyTreeNode { readonly type: "_token_tree_brace"; }
@@ -3995,6 +4034,7 @@ export interface TypeArgumentTree extends AnyTreeNode { readonly type: "_type_ar
 export interface TypeArgumentsRepeat1Tree extends AnyTreeNode { readonly type: "_type_arguments_repeat1"; }
 export interface TypeParameterOptional1Tree extends AnyTreeNode { readonly type: "_type_parameter_optional1"; }
 export interface TypeParametersRepeat1Tree extends AnyTreeNode { readonly type: "_type_parameters_repeat1"; }
+export interface VariadicParameterOptional1Tree extends AnyTreeNode { readonly type: "_variadic_parameter_optional1"; }
 export interface VisibilityModifierCrateTree extends AnyTreeNode { readonly type: "_visibility_modifier_crate"; }
 export interface VisibilityModifierInPathTree extends AnyTreeNode { readonly type: "_visibility_modifier_in_path"; }
 export interface VisibilityModifierPubTree extends AnyTreeNode { readonly type: "_visibility_modifier_pub"; }
@@ -4629,6 +4669,7 @@ export type RustNode =
   | AttributedTypeParameter
   | ClosureExpressionBlock
   | ClosureExpressionExpr
+  | ClosureExpressionOptional1
   | ConstItemOptional1
   | ConstParameterOptional1
   | DelimTokenTreeBrace
@@ -4645,9 +4686,11 @@ export type RustNode =
   | FunctionItemOptional1
   | FunctionSignatureItemOptional1
   | FunctionTypeFnForm
+  | FunctionTypeOptional1
   | FunctionTypeTraitForm
   | ImplItemBody
   | ImplItemNegativeClause
+  | ImplItemOptional1
   | ImplItemPositiveClause
   | LetChain
   | LetDeclarationOptional1
@@ -4673,6 +4716,7 @@ export type RustNode =
   | RangePatternLeftWithRight
   | RangePatternPrefix
   | ReferenceExpressionRawMut
+  | StaticItemOptional1
   | StructItemBrace
   | StructItemTuple
   | TokenTreeBrace
@@ -4685,6 +4729,7 @@ export type RustNode =
   | TypeArgumentsRepeat1
   | TypeParameterOptional1
   | TypeParametersRepeat1
+  | VariadicParameterOptional1
   | VisibilityModifierCrate
   | VisibilityModifierInPath
   | VisibilityModifierPub
@@ -4844,6 +4889,7 @@ export interface KindMap {
   '_attributed_type_parameter': AttributedTypeParameter;
   '_closure_expression_block': ClosureExpressionBlock;
   '_closure_expression_expr': ClosureExpressionExpr;
+  '_closure_expression_optional1': ClosureExpressionOptional1;
   '_const_item_optional1': ConstItemOptional1;
   '_const_parameter_optional1': ConstParameterOptional1;
   '_delim_token_tree_brace': DelimTokenTreeBrace;
@@ -4860,9 +4906,11 @@ export interface KindMap {
   '_function_item_optional1': FunctionItemOptional1;
   '_function_signature_item_optional1': FunctionSignatureItemOptional1;
   '_function_type_fn_form': FunctionTypeFnForm;
+  '_function_type_optional1': FunctionTypeOptional1;
   '_function_type_trait_form': FunctionTypeTraitForm;
   '_impl_item_body': ImplItemBody;
   '_impl_item_negative_clause': ImplItemNegativeClause;
+  '_impl_item_optional1': ImplItemOptional1;
   '_impl_item_positive_clause': ImplItemPositiveClause;
   '_let_chain': LetChain;
   '_let_declaration_optional1': LetDeclarationOptional1;
@@ -4888,6 +4936,7 @@ export interface KindMap {
   '_range_pattern_left_with_right': RangePatternLeftWithRight;
   '_range_pattern_prefix': RangePatternPrefix;
   '_reference_expression_raw_mut': ReferenceExpressionRawMut;
+  '_static_item_optional1': StaticItemOptional1;
   '_struct_item_brace': StructItemBrace;
   '_struct_item_tuple': StructItemTuple;
   '_token_tree_brace': TokenTreeBrace;
@@ -4900,6 +4949,7 @@ export interface KindMap {
   '_type_arguments_repeat1': TypeArgumentsRepeat1;
   '_type_parameter_optional1': TypeParameterOptional1;
   '_type_parameters_repeat1': TypeParametersRepeat1;
+  '_variadic_parameter_optional1': VariadicParameterOptional1;
   '_visibility_modifier_crate': VisibilityModifierCrate;
   '_visibility_modifier_in_path': VisibilityModifierInPath;
   '_visibility_modifier_pub': VisibilityModifierPub;
@@ -5090,6 +5140,7 @@ export interface AttributedParameterNs extends NodeNs<AttributedParameter, LeafS
 export interface AttributedTypeParameterNs extends NodeNs<AttributedTypeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionBlockNs extends NodeNs<ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionExprNs extends NodeNs<ClosureExpressionExpr, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ClosureExpressionOptional1Ns extends NodeNs<ClosureExpressionOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ConstItemOptional1Ns extends NodeNs<ConstItemOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ConstParameterOptional1Ns extends NodeNs<ConstParameterOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface DelimTokenTreeBraceNs extends NodeNs<DelimTokenTreeBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5106,9 +5157,11 @@ export interface ForeignModItemBodyNs extends NodeNs<ForeignModItemBody, LeafSca
 export interface FunctionItemOptional1Ns extends NodeNs<FunctionItemOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FunctionSignatureItemOptional1Ns extends NodeNs<FunctionSignatureItemOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FunctionTypeFnFormNs extends NodeNs<FunctionTypeFnForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionTypeOptional1Ns extends NodeNs<FunctionTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FunctionTypeTraitFormNs extends NodeNs<FunctionTypeTraitForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemBodyNs extends NodeNs<ImplItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemNegativeClauseNs extends NodeNs<ImplItemNegativeClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ImplItemOptional1Ns extends NodeNs<ImplItemOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemPositiveClauseNs extends NodeNs<ImplItemPositiveClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LetChainNs extends NodeNs<LetChain, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LetDeclarationOptional1Ns extends NodeNs<LetDeclarationOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5134,6 +5187,7 @@ export interface RangeExpressionPrefixNs extends NodeNs<RangeExpressionPrefix, L
 export interface RangePatternLeftWithRightNs extends NodeNs<RangePatternLeftWithRight, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangePatternPrefixNs extends NodeNs<RangePatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ReferenceExpressionRawMutNs extends NodeNs<ReferenceExpressionRawMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface StaticItemOptional1Ns extends NodeNs<StaticItemOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemBraceNs extends NodeNs<StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemTupleNs extends NodeNs<StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TokenTreeBraceNs extends NodeNs<TokenTreeBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5146,6 +5200,7 @@ export interface TypeArgumentNs extends NodeNs<TypeArgument, LeafScalarMap, Leaf
 export interface TypeArgumentsRepeat1Ns extends NodeNs<TypeArgumentsRepeat1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeParameterOptional1Ns extends NodeNs<TypeParameterOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeParametersRepeat1Ns extends NodeNs<TypeParametersRepeat1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface VariadicParameterOptional1Ns extends NodeNs<VariadicParameterOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VisibilityModifierCrateNs extends NodeNs<VisibilityModifierCrate, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VisibilityModifierInPathNs extends NodeNs<VisibilityModifierInPath, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VisibilityModifierPubNs extends NodeNs<VisibilityModifierPub, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5304,6 +5359,7 @@ export interface NamespaceMap {
   '_attributed_type_parameter': AttributedTypeParameterNs;
   '_closure_expression_block': ClosureExpressionBlockNs;
   '_closure_expression_expr': ClosureExpressionExprNs;
+  '_closure_expression_optional1': ClosureExpressionOptional1Ns;
   '_const_item_optional1': ConstItemOptional1Ns;
   '_const_parameter_optional1': ConstParameterOptional1Ns;
   '_delim_token_tree_brace': DelimTokenTreeBraceNs;
@@ -5320,9 +5376,11 @@ export interface NamespaceMap {
   '_function_item_optional1': FunctionItemOptional1Ns;
   '_function_signature_item_optional1': FunctionSignatureItemOptional1Ns;
   '_function_type_fn_form': FunctionTypeFnFormNs;
+  '_function_type_optional1': FunctionTypeOptional1Ns;
   '_function_type_trait_form': FunctionTypeTraitFormNs;
   '_impl_item_body': ImplItemBodyNs;
   '_impl_item_negative_clause': ImplItemNegativeClauseNs;
+  '_impl_item_optional1': ImplItemOptional1Ns;
   '_impl_item_positive_clause': ImplItemPositiveClauseNs;
   '_let_chain': LetChainNs;
   '_let_declaration_optional1': LetDeclarationOptional1Ns;
@@ -5348,6 +5406,7 @@ export interface NamespaceMap {
   '_range_pattern_left_with_right': RangePatternLeftWithRightNs;
   '_range_pattern_prefix': RangePatternPrefixNs;
   '_reference_expression_raw_mut': ReferenceExpressionRawMutNs;
+  '_static_item_optional1': StaticItemOptional1Ns;
   '_struct_item_brace': StructItemBraceNs;
   '_struct_item_tuple': StructItemTupleNs;
   '_token_tree_brace': TokenTreeBraceNs;
@@ -5360,6 +5419,7 @@ export interface NamespaceMap {
   '_type_arguments_repeat1': TypeArgumentsRepeat1Ns;
   '_type_parameter_optional1': TypeParameterOptional1Ns;
   '_type_parameters_repeat1': TypeParametersRepeat1Ns;
+  '_variadic_parameter_optional1': VariadicParameterOptional1Ns;
   '_visibility_modifier_crate': VisibilityModifierCrateNs;
   '_visibility_modifier_in_path': VisibilityModifierInPathNs;
   '_visibility_modifier_pub': VisibilityModifierPubNs;
@@ -5591,6 +5651,13 @@ export namespace ClosureExpressionExpr {
   export type Tree = TreeFor<'_closure_expression_expr'>;
   export type Kind = '_closure_expression_expr';
 }
+export namespace ClosureExpressionOptional1 {
+  export type Config = ConfigFor<'_closure_expression_optional1'>;
+  export type Fluent = FluentFor<'_closure_expression_optional1'>;
+  export type Loose = LooseFor<'_closure_expression_optional1'>;
+  export type Tree = TreeFor<'_closure_expression_optional1'>;
+  export type Kind = '_closure_expression_optional1';
+}
 export namespace ConstItemOptional1 {
   export type Config = ConfigFor<'_const_item_optional1'>;
   export type Fluent = FluentFor<'_const_item_optional1'>;
@@ -5703,6 +5770,13 @@ export namespace FunctionTypeFnForm {
   export type Tree = TreeFor<'_function_type_fn_form'>;
   export type Kind = '_function_type_fn_form';
 }
+export namespace FunctionTypeOptional1 {
+  export type Config = ConfigFor<'_function_type_optional1'>;
+  export type Fluent = FluentFor<'_function_type_optional1'>;
+  export type Loose = LooseFor<'_function_type_optional1'>;
+  export type Tree = TreeFor<'_function_type_optional1'>;
+  export type Kind = '_function_type_optional1';
+}
 export namespace FunctionTypeTraitForm {
   export type Config = ConfigFor<'_function_type_trait_form'>;
   export type Fluent = FluentFor<'_function_type_trait_form'>;
@@ -5723,6 +5797,13 @@ export namespace ImplItemNegativeClause {
   export type Loose = LooseFor<'_impl_item_negative_clause'>;
   export type Tree = TreeFor<'_impl_item_negative_clause'>;
   export type Kind = '_impl_item_negative_clause';
+}
+export namespace ImplItemOptional1 {
+  export type Config = ConfigFor<'_impl_item_optional1'>;
+  export type Fluent = FluentFor<'_impl_item_optional1'>;
+  export type Loose = LooseFor<'_impl_item_optional1'>;
+  export type Tree = TreeFor<'_impl_item_optional1'>;
+  export type Kind = '_impl_item_optional1';
 }
 export namespace ImplItemPositiveClause {
   export type Config = ConfigFor<'_impl_item_positive_clause'>;
@@ -5899,6 +5980,13 @@ export namespace ReferenceExpressionRawMut {
   export type Tree = TreeFor<'_reference_expression_raw_mut'>;
   export type Kind = '_reference_expression_raw_mut';
 }
+export namespace StaticItemOptional1 {
+  export type Config = ConfigFor<'_static_item_optional1'>;
+  export type Fluent = FluentFor<'_static_item_optional1'>;
+  export type Loose = LooseFor<'_static_item_optional1'>;
+  export type Tree = TreeFor<'_static_item_optional1'>;
+  export type Kind = '_static_item_optional1';
+}
 export namespace StructItemBrace {
   export type Config = ConfigFor<'_struct_item_brace'>;
   export type Fluent = FluentFor<'_struct_item_brace'>;
@@ -5982,6 +6070,13 @@ export namespace TypeParametersRepeat1 {
   export type Loose = LooseFor<'_type_parameters_repeat1'>;
   export type Tree = TreeFor<'_type_parameters_repeat1'>;
   export type Kind = '_type_parameters_repeat1';
+}
+export namespace VariadicParameterOptional1 {
+  export type Config = ConfigFor<'_variadic_parameter_optional1'>;
+  export type Fluent = FluentFor<'_variadic_parameter_optional1'>;
+  export type Loose = LooseFor<'_variadic_parameter_optional1'>;
+  export type Tree = TreeFor<'_variadic_parameter_optional1'>;
+  export type Kind = '_variadic_parameter_optional1';
 }
 export namespace VisibilityModifierCrate {
   export type Config = ConfigFor<'_visibility_modifier_crate'>;

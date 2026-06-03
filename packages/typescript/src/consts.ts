@@ -22,6 +22,7 @@ export const NODE_KINDS = [
   '_import_clause_namespace_import',
   '_import_specifier_name',
   '_index_signature_mapped_type_clause',
+  '_jsx_start_opening_element',
   '_jsx_string',
   '_lhs_expression',
   '_parenthesized_expression_sequence',
@@ -1700,6 +1701,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_index_signature_mapped_type_clause': [
     { name: 'mappedTypeClause', required: true, multiple: false },
+  ],
+  '_jsx_start_opening_element': [
+    { name: 'name', required: false, multiple: false },
+    { name: 'typeArguments', required: false, multiple: false },
+    { name: 'attributes', required: false, multiple: true },
   ],
   '_jsx_string': [
     { name: 'contents', required: false, multiple: true },

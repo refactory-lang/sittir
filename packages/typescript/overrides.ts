@@ -16,8 +16,15 @@
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
 import { transform, enrich, field, wire, refine, variant } from '../codegen/src/dsl/index.ts';
 
+// Unified composition (matches rust): bind `enrich(base)` once and pass the
+// SAME enriched grammar to both grammar() and wire(). wire needs the enriched
+// base so its base-dependent passes (auto-group synthesis, body-pattern groups,
+// and the enrich-hoisted-clause inline registration) operate on the post-enrich
+// shape. Without the 2nd arg those passes silently no-op (the historical
+// migration gap that left enrich-hoisted clause groups un-inlined → LR conflicts).
+const enrichedBase = enrich(base);
 export default grammar(
-	enrich(base),
+	enrichedBase,
 	wire({
 		name: 'typescript',
 		// Conflict markers for variant() adoption on kinds where splitting
@@ -1080,5 +1087,5 @@ export default grammar(
 			// is needed, a follow-up can add a codegen pass that mirrors
 			// `object_type`'s refineForms onto the alias-target kind.
 		}
-	})
+	}, enrichedBase)
 );

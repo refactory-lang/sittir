@@ -119,11 +119,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  function_definition: {
-    '5/0': 'return_type',
-  },
-
-  // [held] 1 candidate(s)
   future_import_statement: {
     '3/1': 'import_list',
   },
@@ -136,11 +131,6 @@ export const suggestedGroups = {
   // [held] 1 candidate(s)
   print_statement: {
     '1/0': 'chevron',
-  },
-
-  // [held] 1 candidate(s)
-  raise_statement: {
-    '2/0': 'cause',
   },
 
   // [held] 1 candidate(s)

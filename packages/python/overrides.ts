@@ -11,8 +11,13 @@
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
 import { role, enrich, field, alias, wire } from '../codegen/src/dsl/index.ts';
 
+// Unified composition (matches rust + typescript): bind `enrich(base)` once and
+// pass the SAME enriched grammar to both grammar() and wire(), so wire's
+// base-dependent passes (auto-group synthesis, body-pattern groups, and the
+// enrich-hoisted-clause inline registration) operate on the post-enrich shape.
+const enrichedBase = enrich(base);
 export default grammar(
-	enrich(base),
+	enrichedBase,
 	wire({
 		name: 'python',
 		// Structural-whitespace role bindings — declared inline in the
@@ -344,5 +349,5 @@ export default grammar(
 				)
 			}
 		}
-	})
+	}, enrichedBase)
 );

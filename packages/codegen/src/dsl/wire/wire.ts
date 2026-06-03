@@ -42,6 +42,7 @@ import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
 import { applyAutoGroups } from './auto-groups.ts';
+import { getEnrichClauseGroups } from '../enrich.ts';
 import type { Rule } from '../../compiler/rule.ts';
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
 import type { GrammarJson, GrammarNode, Sym, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
@@ -672,6 +673,15 @@ export function wire<B extends GrammarJson = any> (
 	// link/evaluate where it can operate on sittir's private rule-tree
 	// copy without affecting tree-sitter's view.
 	if (baseArg) {
+		// Drain enrich-hoisted clause-group names into syntheticInline so they
+		// appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
+		// rules directly into base.grammar.rules before wire runs; without
+		// inlining, tree-sitter creates LR conflicts for those hidden rules.
+		// getEnrichClauseGroups reads the __enrichedClauseGroups__ non-enumerable
+		// property that enrich() attaches to the grammar result.
+		for (const name of getEnrichClauseGroups(base)) {
+			context.syntheticInline.add(name);
+		}
 		const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
 			transforms,
 			polymorphs,
