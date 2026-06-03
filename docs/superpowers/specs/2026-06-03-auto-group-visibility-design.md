@@ -63,6 +63,17 @@ Making a group visible wraps the rule's **content** in `alias(<content>, $.<name
 
 This is the same `alias(...)`-based surfacing the existing body-pattern `groups:` (`attributed_*`) already rely on; the wire pass generalizes it to every inline-unsafe auto-hoisted position.
 
+### Rule-entry creation for visible aliased kinds (kindId) — REQUIRED
+
+Aliasing inline content surfaces a CST node named `<aliasname>` but introduces **no explicit rule/symbol** for it. The IR pipeline (evaluate → link → assemble) keys kinds off rule entries, so without one the visible kind has **no kindId, no template, no type** — and it would violate the invariant that every kind has a kindId (memory `project_every_kind_has_kindid_invariant`). Therefore the wire pass **must explicitly register a rule entry** for each visible aliased kind (`<aliasname>` → the lifted content) so codegen sees it as an `AssembledGroup` kind.
+
+The exact tree-sitter realization that simultaneously yields **(a) a visible node, (b) a kindId-bearing rule entry, and (c) no LR conflict** is the central thing the implementation must pin down empirically (gate on RELEASE per increment). Two candidate forms to evaluate:
+
+1. **alias of an inlined hidden rule** — register `_<aliasname>` → content into `base.grammar.rules` (kindId + reaches tree-sitter), keep it in `syntheticInline` (parser inlines it → no conflict, same as inline-safe groups), and reference it as `alias($._<aliasname>, $.<aliasname>)` so the alias surfaces the otherwise-inlined kind as a visible node (this is exactly how body-pattern `attributed_*` groups already make inlined hidden rules appear). Preferred starting point — it satisfies the kindId invariant via real base-rule injection rather than a TS-side-only virtual kind.
+2. **alias of inline content + a parallel IR-only kind entry** — `alias(<content>, $.<aliasname>)` for the parser, plus a synthesized IR kind entry so codegen emits the kind. Avoids any hidden rule but introduces a TS-side-only kind, which the kindId invariant discourages; fall back only if (1) reintroduces conflicts.
+
+Decide (1) vs (2) by the conflict/kindId outcome under the RELEASE gate, not a priori.
+
 ### Declared `groups:` = alias-name supplier (only)
 
 A declared entry (`_visibility_modifier_pub: { '1': 'parens' }`) **only changes what the auto-visible group is called.** Codegen has already decided (structurally) that the position is visible; the declaration supplies the alias name (`parens` → `_visibility_modifier_pub_parens`). It does **not** synthesize a second group and does **not** rewrite the body — which is why the earlier `derefGroupLift` merge (which resolved/rewrote bodies and corrupted sibling groups `type_argument` / `attributed_*` → `unknown node …`) is **not** the approach. Naming-only = no body rewrite = no sibling corruption.
