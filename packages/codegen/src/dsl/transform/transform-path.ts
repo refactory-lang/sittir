@@ -215,6 +215,20 @@ export function applyPath(
 		return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
 	}
 
+	// Enrich content-aliases are ALSO transparent to path addressing. enrich
+	// wraps an inline-unsafe `optional(seq)` / bare `choice` in
+	// `alias(<content>, $.<name>)` (the visible-kind form) tagged
+	// `metadata.source === 'enrich'`. enrich runs BEFORE the authored
+	// transform()/variant()/groups path-patches, so a patch whose path was
+	// written against the pre-alias content must travel THROUGH the alias into
+	// that content. Without this, `descendThroughAlias` (single-content, index 0
+	// only) rejects any index ≥1 a real patch uses (e.g. rust visibility_modifier
+	// `1/1/0/1/3`). We descend into `content` WITHOUT consuming a segment
+	// (transparent, like prec / the group-lift symbol) and rebuild the alias.
+	if (isEnrichContentAlias(rule)) {
+		return descendThroughEnrichContentAlias(rule, segments, patch, precStack);
+	}
+
 	const [head, ...rest] = segments;
 	const t = rule.type;
 
@@ -347,6 +361,42 @@ function descendThroughGroupLiftSymbol(
 	const newBody = applyPath(body, segments, patch, precStack);
 	groupLiftRuleMap?.set(name, newBody);
 	return rule;
+}
+
+/**
+ * True when `rule` is an enrich-synthesized content-alias — an `alias`/`ALIAS`
+ * node tagged `metadata.source === 'enrich'`. enrich wraps an inline-unsafe
+ * `optional(seq)` / bare `choice` in `alias(<content>, $.<name>)` to surface it
+ * as a visible CST kind; path-descent travels THROUGH it (see
+ * `descendThroughEnrichContentAlias`), unlike a normal aliased symbol (which
+ * keeps `descendThroughAlias`'s single-content / index-0 behaviour).
+ */
+function isEnrichContentAlias(rule: RuntimeRule): boolean {
+	const t = (rule as { type?: string }).type;
+	if (t !== 'alias' && t !== 'ALIAS') return false;
+	const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+	return meta?.source === 'enrich';
+}
+
+/**
+ * Travel through an enrich content-alias transparently: descend into its
+ * `content` with the SAME segments (the alias is invisible to addressing,
+ * because the authored path was written against the pre-alias content), then
+ * rebuild the alias around the patched content. Mirrors
+ * `descendThroughGroupLiftSymbol` for the ALIAS form.
+ */
+function descendThroughEnrichContentAlias(
+	rule: RuntimeRule,
+	segments: readonly PathSegment[],
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+	precStack: readonly RuntimeRule[] | undefined
+): RuntimeRule {
+	const body = (rule as unknown as { content?: RuntimeRule }).content;
+	if (body === undefined) {
+		throw new ApplyPathSkip('applyPath: enrich content-alias has no content to travel through');
+	}
+	const newBody = applyPath(body, segments, patch, precStack);
+	return { ...(rule as unknown as Record<string, unknown>), content: newBody } as unknown as RuntimeRule;
 }
 
 /**

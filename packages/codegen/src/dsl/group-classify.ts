@@ -145,6 +145,61 @@ function unwrapPrec(rule: unknown): unknown {
 	return cur;
 }
 
+function isRepeatLike(t: string): boolean {
+	return isRepeatType(t) || typeEq(t, 'repeat1');
+}
+
+/**
+ * A loose "slot kind key" — the unwrapped (prec + field) type, lowercased. Two
+ * slots with the same key are treated as the same repeated element for
+ * separated-list detection. Choices compare by type alone (a list of
+ * choice-shaped elements is still a list).
+ */
+function slotKindKey(m: unknown): string {
+	let cur = m;
+	while (cur && typeof cur === 'object') {
+		const r = cur as Record<string, unknown>;
+		const t = typeof r.type === 'string' ? r.type : '';
+		if (isPrecWrapper(r as { type: string }) || isFieldType(t)) {
+			cur = r.content;
+		} else {
+			return t.toLowerCase();
+		}
+	}
+	return '';
+}
+
+/**
+ * Separated-list (comma-list) detector. The raw grammar shape of `commaSep1(E)`
+ * is `seq(E, repeat(seq(SEP, E)), optional(SEP)?)` — a single logical repeated
+ * slot. tree-sitter renders/parses it flat (the repeat is the list), so it must
+ * stay INLINE (one list slot), NOT be aliased: aliasing a repeat-bearing seq
+ * makes tree-sitter distribute the alias across every element (one alias node
+ * per element) instead of one group — the `enum_body` regression the opus spike
+ * surfaced. We detect: a `repeat`/`repeat1` member whose inner element kind
+ * matches the seq's head element kind.
+ */
+function isSeparatedList(members: unknown[]): boolean {
+	const headSlots = collectSlots(members);
+	if (headSlots.length === 0) return false;
+	const headKey = slotKindKey(headSlots[0]);
+	if (!headKey) return false;
+	for (const m of members) {
+		if (!m || typeof m !== 'object') continue;
+		const r = m as Record<string, unknown>;
+		const t = typeof r.type === 'string' ? r.type : '';
+		if (!isRepeatLike(t)) continue;
+		const content = r.content;
+		if (!content || typeof content !== 'object') continue;
+		const ct = (content as Record<string, unknown>).type;
+		const inner = isSeqType(typeof ct === 'string' ? ct : '')
+			? collectSlots((content as Record<string, unknown>).members as unknown[])
+			: collectSlots([content]);
+		if (inner.length >= 1 && slotKindKey(inner[inner.length - 1]) === headKey) return true;
+	}
+	return false;
+}
+
 /**
  * Returns true iff the seq body is "inline-safe":
  *   - After dropping pure literals (`string`, `token`) and `blank` from the
@@ -169,6 +224,12 @@ export function isInlineSafe(seqBody: unknown): boolean {
 
 	const members = r.members;
 	if (!Array.isArray(members)) return false;
+
+	// Separated/comma list (`E, repeat(seq(SEP, E)), optional(SEP)?`) is ONE
+	// logical repeated slot → stays inline/flat. Aliasing it would make
+	// tree-sitter distribute the alias across each element (the enum_body
+	// regression). Treat as inline-safe.
+	if (isSeparatedList(members)) return true;
 
 	const slots = collectSlots(members);
 
