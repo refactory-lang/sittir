@@ -49,7 +49,11 @@ Increment 1 of the spec. Outcome: enrich hoists inline-safe `optional(seq)` (gen
 
 - [ ] **Step 1 — Hand-wire the content-alias** for ONE case (rust `visibility_modifier`'s parens seq) in `packages/rust/overrides.ts` as `alias(<the parens seq content>, $.parens)`; `pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all`. Confirm: (a) `tree-sitter generate` accepts it, (b) `parens` appears as a visible kind in `packages/rust/.sittir/src/node-types.json` (→ a kindId in `parser.c`), (c) the native build compiles.
 
-- [ ] **Step 2 — If the content form mints the kind → done; record it.** If NOT, fall back in order: (1) string `alias(<content>, 'parens')`; (2) last resort — the known-working symbol form `alias($._parens_synth, $.parens)` with a real `_parens_synth = <content>` rule (reintroduces a rule → may need a `conflicts:` entry). Record the winning form as a docstring at the alias-creation site (`enrich.ts`); it decides Chunk 1's emission and Chunk 2's link-pass key (`$.name` symbol vs `'name'` string).
+- [ ] **Step 2 — If the content form mints the kind → done; record it.** If NOT, fall back in order:
+  1. string name: `alias(<content>, 'parens')`;
+  2. register a placeholder rule **`parens: ($) => blank()`** in the rule tree (so the symbol `$.parens` exists), then `alias(<content>, $.parens)`. **Caveat:** named empty rules are normally rejected at `tree-sitter generate` — confirm it accepts a `blank()` rule used *only* as an alias target; if not, use a minimal non-empty body.
+
+  Record the winning form as a docstring at the alias-creation site (`enrich.ts`); it decides Chunk 1's emission and Chunk 2's link-pass key (`$.name` symbol vs `'name'` string).
 
 - [ ] **Step 3 — Revert the hand-wire** (`git checkout HEAD -- packages/rust`). The spike's only output is the recorded decision.
 
