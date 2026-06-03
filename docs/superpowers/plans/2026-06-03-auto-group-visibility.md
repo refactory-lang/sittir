@@ -45,14 +45,11 @@ Increment 1 of the spec. Outcome: enrich hoists inline-safe `optional(seq)` (gen
 
 ### Task 1.0 (SPIKE): Settle the tree-sitter form for a content-alias visible node
 
-**THE one pre-flight unknown.** `alias(<content>, $.name)` invents a *new* visible kind `name` that has **no rule** at parse time (link mints the IR rule later, but tree-sitter runs first). Determine the form that makes inline content surface as a visible CST node `name` so wrap can read it. Read `.claude/grammar-workflow.md` first.
+**THE one confirmation.** We already KNOW `alias($.source, $.target)` (symbol → target) mints a real kindId for `target` in `parser.c` — that is the existing body-pattern-groups mechanism. The only unknown is whether **`alias(<content>, $.target)`** — aliasing inline CONTENT rather than a symbol — does the same. (Content is preferred: a symbol target reintroduces a rule and its LR-conflict risk.) Read `.claude/grammar-workflow.md` first.
 
-- [ ] **Step 1 — Hand-wire ONE inline-unsafe case** (rust `visibility_modifier`'s parens seq) directly in `packages/rust/overrides.ts` and `pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all`. Try the three forms in order, stopping at the first that (a) `tree-sitter generate` accepts, (b) emits a visible `name` node in `packages/rust/.sittir/src/node-types.json`, and (c) compiles the native build:
-  1. **Phantom symbol:** `alias(<content>, $.name)` where `name` is not a defined rule.
-  2. **String name:** `alias(<content>, 'name')`.
-  3. **Real trivial rule + alias:** register `name = <body>` then `alias(<content>, $.name)`. Note `blank()` matches empty → tree-sitter rejects named empty rules, so try the content itself or a minimal non-empty body; confirm no `matches the empty string` error.
+- [ ] **Step 1 — Hand-wire the content-alias** for ONE case (rust `visibility_modifier`'s parens seq) in `packages/rust/overrides.ts` as `alias(<the parens seq content>, $.parens)`; `pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all`. Confirm: (a) `tree-sitter generate` accepts it, (b) `parens` appears as a visible kind in `packages/rust/.sittir/src/node-types.json` (→ a kindId in `parser.c`), (c) the native build compiles.
 
-- [ ] **Step 2 — Record the winning form** as a docstring at the alias-creation site (`enrich.ts`) with the node-types.json evidence. This decides Chunk 1's alias emission AND whether Chunk 2's link pass keys on `alias(content, $.name)` (symbol) or `alias(content, 'name')` (string).
+- [ ] **Step 2 — If the content form mints the kind → done; record it.** If NOT, fall back in order: (1) string `alias(<content>, 'parens')`; (2) last resort — the known-working symbol form `alias($._parens_synth, $.parens)` with a real `_parens_synth = <content>` rule (reintroduces a rule → may need a `conflicts:` entry). Record the winning form as a docstring at the alias-creation site (`enrich.ts`); it decides Chunk 1's emission and Chunk 2's link-pass key (`$.name` symbol vs `'name'` string).
 
 - [ ] **Step 3 — Revert the hand-wire** (`git checkout HEAD -- packages/rust`). The spike's only output is the recorded decision.
 

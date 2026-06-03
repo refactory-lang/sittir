@@ -40,10 +40,12 @@ enrich (pre-wire) / wire
     • else (inline-unsafe)     → wrap content in  alias(<content>, $.<name>)   ← alias of CONTENT, not a
                                   symbol → no new rule → no LR conflict; name from groups: or default
 
+  (alias is in the grammar → tree-sitter assigns <name> a real kindId in parser.c → real CST node)
+
 link  (NEW rule-registration pass)
   when traversing the rule tree, for each  alias(<non-symbol content>, $.<name>):
-    • add  <name> = <content>  to the linkedRule list  → mints the visible kind (template/type/slots)
-    • generic — no manual per-group registration, no base.grammar.rules injection, no kindId machinery
+    • add  <name> = <content>  to the linkedRule list  → gives codegen the IR rule (template/type/slots)
+    • generic — no manual per-group registration; kindId is already real (from the grammar alias)
 
 retire applyAutoGroups (step 3) — inline-safe → enrich; inline-unsafe alias → enrich/wire + link pass.
 ```
@@ -63,13 +65,15 @@ Making a group visible has two halves:
 
 1. **enrich (or wire) wraps the inline-unsafe content in `alias(<content>, $.<name>)`** in the rule tree. The aliased thing is the **content itself, not a hidden symbol** — so **no new rule is introduced into the grammar → no LR conflict** (the rejected approach aliased/promoted a symbol, which adds a rule). tree-sitter emits a visible CST node for `<name>`; wrap reads it.
 
-2. **New link enhancement — `alias(non-symbol content, $.name)` → `name = content` added to the linkedRule list.** When link traverses the rule tree and finds an alias whose aliased child is **non-symbol content** (an inline seq/choice/…), it registers `<name>` as a kind (body = the aliased content) in the linked rules map. This mints the visible kind (template / type / slots) **generically** — no manual per-group rule registration, no separate `base.grammar.rules` injection, no kindId machinery. The restriction to **non-symbol** content is what scopes the enhancement to these visible groups; `alias($._symbol, $.name)` keeps its existing `aliasedFrom` handling untouched.
+2. **New link enhancement — `alias(non-symbol content, $.name)` → `name = content` added to the linkedRule list.** When link traverses the rule tree and finds an alias whose aliased child is **non-symbol content** (an inline seq/choice/…), it registers `<name>` as a kind (body = the aliased content) in the linked rules map. This gives codegen the **IR rule entry** (template / type / slots) — **generically**, no manual per-group registration. The restriction to **non-symbol** content scopes it to these visible groups; `alias($._symbol, $.name)` keeps its existing `aliasedFrom` handling untouched.
+
+   **The kindId is already real.** Because the alias lives in the grammar, **tree-sitter assigns a kindId for `name` in `parser.c`** — so the visible kind is a *real CST kind* (the every-kind-has-a-kindId invariant holds via the parser, not a TS-side-only virtual kind), and **wrap reads a real aliased node — no flat-CST reconstruction**. The link pass does NOT mint the kindId; it only supplies the matching IR rule entry so codegen emits the kind.
 
 **Declared `groups:` registration supplies the friendly `<name>`** for the alias (`_visibility_modifier_pub: {'1':'parens'}` → `alias(<the parens seq>, $.parens)`); undeclared inline-unsafe positions get an auto-derived default name.
 
 Consequences: no LR conflict (alias of content, not a symbol/rule), no TS-side kindId machinery (link mints the IR kind from the alias it finds), and the kind renders the choice via its own `AssembledGroup` template — sidestepping the inline disjunction-gate that named Rust keywords (`super`) as template variables.
 
-**The one pre-flight unknown (spike):** `alias(<content>, $.name)` invents a visible kind `name` that has **no rule at parse time** (tree-sitter runs before link mints the IR rule). The plan's Task 1.0 spikes which tree-sitter form actually emits a visible CST node for such a new name: (1) phantom symbol `alias(content, $.name)`, (2) string `alias(content, 'name')`, or (3) a real trivial rule `name = <minimal non-empty body>` + alias (NOT `blank()` — named empty rules are rejected). The winning form decides the alias emission and whether the link pass keys on a symbol-target or string-name alias.
+**The one pre-flight confirmation (spike):** we already KNOW `alias($.source, $.target)` (symbol→target) mints a real kindId in `parser.c` (the existing body-pattern groups). Task 1.0 confirms whether **`alias(<content>, $.target)`** — aliasing inline content, not a symbol — does the same (content is preferred: a symbol target reintroduces a rule + LR-conflict risk). If the content form does not mint the kind, fall back to a string alias `alias(content, 'name')`, else the known-working symbol form with a real `_synth = content` rule. The winning form decides the alias emission and the link-pass key.
 
 `enrich` therefore hoists only inline-**safe** `optional(seq)` (hidden `_<parent>_N` symbol + rule, reaching parser+IR, inline+gate render); inline-unsafe content is **aliased visible** (by enrich or wire) and **registered as a kind by the new link pass**.
 
