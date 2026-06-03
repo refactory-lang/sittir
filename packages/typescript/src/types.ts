@@ -62,6 +62,7 @@ export type LeafStringMap = {
   var: "var";
   from: "from";
   readonly: "readonly";
+  extends: "extends";
   accessor: "accessor";
   await: "await";
   declare: "declare";
@@ -72,7 +73,6 @@ export type LeafStringMap = {
   in: "in";
   break: "break";
   catch: "catch";
-  extends: "extends";
   new: "new";
   continue: "continue";
   debugger: "debugger";
@@ -144,6 +144,7 @@ export const enum SyntaxKind {
   IndexSignatureColon = "_index_signature_colon",
   IndexSignatureMappedTypeClause = "_index_signature_mapped_type_clause",
   IndexSignatureOptional1 = "_index_signature_optional1",
+  InferTypeOptional1 = "_infer_type_optional1",
   Initializer = "_initializer",
   JsxStartOpeningElement = "_jsx_start_opening_element",
   JsxString = "_jsx_string",
@@ -403,6 +404,7 @@ export const enum SyntaxKind {
   Var = "var",
   From = "from",
   Readonly = "readonly",
+  Extends = "extends",
   Accessor = "accessor",
   Await = "await",
   Declare = "declare",
@@ -413,7 +415,6 @@ export const enum SyntaxKind {
   In = "in",
   Break = "break",
   Catch = "catch",
-  Extends = "extends",
   New = "new",
   Continue = "continue",
   Debugger = "debugger",
@@ -2443,6 +2444,12 @@ export interface IndexSignatureOptional1 {
   sign(): number | undefined;
 }
 
+export interface InferTypeOptional1 {
+  readonly $type: "_infer_type_optional1";
+  readonly _type?: Type;
+  type(): Type | undefined;
+}
+
 export interface Initializer {
   readonly $type: TSKindId.Initializer;
   readonly _value: Expression;
@@ -4277,6 +4284,7 @@ export interface ImportSpecifierNameTree extends AnyTreeNode { readonly type: "_
 export interface IndexSignatureColonTree extends AnyTreeNode { readonly type: "_index_signature_colon"; }
 export interface IndexSignatureMappedTypeClauseTree extends AnyTreeNode { readonly type: "_index_signature_mapped_type_clause"; }
 export interface IndexSignatureOptional1Tree extends AnyTreeNode { readonly type: "_index_signature_optional1"; }
+export interface InferTypeOptional1Tree extends AnyTreeNode { readonly type: "_infer_type_optional1"; }
 export interface InitializerTree extends AnyTreeNode { readonly type: "_initializer"; }
 export interface JsxStartOpeningElementTree extends AnyTreeNode { readonly type: "_jsx_start_opening_element"; }
 export interface JsxStringTree extends AnyTreeNode { readonly type: "_jsx_string"; }
@@ -4521,6 +4529,7 @@ export interface NamespaceTree extends AnyTreeNode { readonly type: "namespace";
 export interface VarTree extends AnyTreeNode { readonly type: "var"; }
 export interface FromTree extends AnyTreeNode { readonly type: "from"; }
 export interface ReadonlyTree extends AnyTreeNode { readonly type: "readonly"; }
+export interface ExtendsTree extends AnyTreeNode { readonly type: "extends"; }
 export interface AccessorTree extends AnyTreeNode { readonly type: "accessor"; }
 export interface AwaitTree extends AnyTreeNode { readonly type: "await"; }
 export interface DeclareTree extends AnyTreeNode { readonly type: "declare"; }
@@ -4531,7 +4540,6 @@ export interface InstanceofTree extends AnyTreeNode { readonly type: "instanceof
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface BreakTree extends AnyTreeNode { readonly type: "break"; }
 export interface CatchTree extends AnyTreeNode { readonly type: "catch"; }
-export interface ExtendsTree extends AnyTreeNode { readonly type: "extends"; }
 export interface NewTree extends AnyTreeNode { readonly type: "new"; }
 export interface ContinueTree extends AnyTreeNode { readonly type: "continue"; }
 export interface DebuggerTree extends AnyTreeNode { readonly type: "debugger"; }
@@ -4902,6 +4910,7 @@ export type TypescriptNode =
   | IndexSignatureColon
   | IndexSignatureMappedTypeClause
   | IndexSignatureOptional1
+  | InferTypeOptional1
   | Initializer
   | JsxStartOpeningElement
   | JsxString
@@ -5132,6 +5141,7 @@ export interface KindMap {
   '_index_signature_colon': IndexSignatureColon;
   '_index_signature_mapped_type_clause': IndexSignatureMappedTypeClause;
   '_index_signature_optional1': IndexSignatureOptional1;
+  '_infer_type_optional1': InferTypeOptional1;
   '_initializer': Initializer;
   '_jsx_start_opening_element': JsxStartOpeningElement;
   '_jsx_string': JsxString;
@@ -5410,6 +5420,7 @@ export interface ImportSpecifierNameNs extends NodeNs<ImportSpecifierName, LeafS
 export interface IndexSignatureColonNs extends NodeNs<IndexSignatureColon, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface IndexSignatureMappedTypeClauseNs extends NodeNs<IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface IndexSignatureOptional1Ns extends NodeNs<IndexSignatureOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface InferTypeOptional1Ns extends NodeNs<InferTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface InitializerNs extends NodeNs<Initializer, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface JsxStartOpeningElementNs extends NodeNs<JsxStartOpeningElement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface JsxStringNs extends NodeNs<JsxString, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5639,6 +5650,7 @@ export interface NamespaceMap {
   '_index_signature_colon': IndexSignatureColonNs;
   '_index_signature_mapped_type_clause': IndexSignatureMappedTypeClauseNs;
   '_index_signature_optional1': IndexSignatureOptional1Ns;
+  '_infer_type_optional1': InferTypeOptional1Ns;
   '_initializer': InitializerNs;
   '_jsx_start_opening_element': JsxStartOpeningElementNs;
   '_jsx_string': JsxStringNs;
@@ -6126,6 +6138,13 @@ export namespace IndexSignatureOptional1 {
   export type Loose = LooseFor<'_index_signature_optional1'>;
   export type Tree = TreeFor<'_index_signature_optional1'>;
   export type Kind = '_index_signature_optional1';
+}
+export namespace InferTypeOptional1 {
+  export type Config = ConfigFor<'_infer_type_optional1'>;
+  export type Fluent = FluentFor<'_infer_type_optional1'>;
+  export type Loose = LooseFor<'_infer_type_optional1'>;
+  export type Tree = TreeFor<'_infer_type_optional1'>;
+  export type Kind = '_infer_type_optional1';
 }
 export namespace Initializer {
   export type Config = ConfigFor<'_initializer'>;

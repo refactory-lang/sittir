@@ -628,7 +628,7 @@ export interface FunctionDefinitionOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _return_type: TypeTransport
+  _return_type?: TypeTransport
 }
 
 export interface FunctionDefinitionTransport {

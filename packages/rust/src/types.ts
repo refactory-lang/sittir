@@ -38,10 +38,10 @@ export type LeafStringMap = {
   mutable_specifier: "mut";
   self: "self";
   super: "super";
+  for: "for";
   _: "_";
   as: "as";
   fn: "fn";
-  for: "for";
   unsafe: "unsafe";
   async: "async";
   in: "in";
@@ -80,6 +80,7 @@ export type LeafStringMap = {
 };
 
 export const enum SyntaxKind {
+  AbstractTypeOptional1 = "_abstract_type_optional1",
   ArrayExpressionList = "_array_expression_list",
   ArrayExpressionSemi = "_array_expression_semi",
   ArrayTypeOptional1 = "_array_type_optional1",
@@ -89,6 +90,7 @@ export const enum SyntaxKind {
   AttributedOrderedField = "_attributed_ordered_field",
   AttributedParameter = "_attributed_parameter",
   AttributedTypeParameter = "_attributed_type_parameter",
+  BlockOptional1 = "_block_optional1",
   ClosureExpressionBlock = "_closure_expression_block",
   ClosureExpressionExpr = "_closure_expression_expr",
   ClosureExpressionOptional1 = "_closure_expression_optional1",
@@ -340,10 +342,10 @@ export const enum SyntaxKind {
   FloatLiteral = "float_literal",
   LineDocContent = "_line_doc_content",
   ErrorSentinel = "_error_sentinel",
+  For = "for",
   Anonymous = "_",
   As = "as",
   Fn = "fn",
-  For = "for",
   Unsafe = "unsafe",
   Async = "async",
   In = "in",
@@ -2142,6 +2144,12 @@ export const enum UseClauseKind {
 }
 
 // Node types — concrete interfaces
+export interface AbstractTypeOptional1 {
+  readonly $type: "_abstract_type_optional1";
+  readonly _type_parameters: TypeParameters;
+  typeParameters(): TypeParameters;
+}
+
 export interface ArrayExpressionList {
   readonly $type: TSKindId.ArrayExpressionList;
   readonly _attributes?: readonly (AttributeItem)[];
@@ -2162,8 +2170,8 @@ export interface ArrayExpressionSemi {
 
 export interface ArrayTypeOptional1 {
   readonly $type: "_array_type_optional1";
-  readonly _length: Expression;
-  length(): Expression;
+  readonly _length?: Expression;
+  length(): Expression | undefined;
 }
 
 export interface AttributedArgument {
@@ -2216,6 +2224,12 @@ export interface AttributedTypeParameter {
   content(): Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
 }
 
+export interface BlockOptional1 {
+  readonly $type: "_block_optional1";
+  readonly _label?: Label;
+  label(): Label | undefined;
+}
+
 export interface ClosureExpressionBlock {
   readonly $type: TSKindId.ClosureExpressionBlock;
   readonly _return_type?: _Type;
@@ -2232,20 +2246,20 @@ export interface ClosureExpressionExpr {
 
 export interface ClosureExpressionOptional1 {
   readonly $type: "_closure_expression_optional1";
-  readonly _return_type: _Type;
-  returnType(): _Type;
+  readonly _return_type?: _Type;
+  returnType(): _Type | undefined;
 }
 
 export interface ConstItemOptional1 {
   readonly $type: "_const_item_optional1";
-  readonly _value: Expression;
-  value(): Expression;
+  readonly _value?: Expression;
+  value(): Expression | undefined;
 }
 
 export interface ConstParameterOptional1 {
   readonly $type: "_const_parameter_optional1";
-  readonly _value: Block | Identifier | Literal | NegativeLiteral;
-  value(): Block | Identifier | Literal | NegativeLiteral;
+  readonly _value?: Block | Identifier | Literal | NegativeLiteral;
+  value(): Block | Identifier | Literal | NegativeLiteral | undefined;
 }
 
 export interface DelimTokenTreeBrace {
@@ -2268,8 +2282,8 @@ export interface DelimTokenTreeParen {
 
 export interface EnumVariantOptional1 {
   readonly $type: "_enum_variant_optional1";
-  readonly _value: Expression;
-  value(): Expression;
+  readonly _value?: Expression;
+  value(): Expression | undefined;
 }
 
 export interface ExpressionStatementBlockEnding {
@@ -2318,14 +2332,14 @@ export interface ForeignModItemBody {
 
 export interface FunctionItemOptional1 {
   readonly $type: "_function_item_optional1";
-  readonly _return_type: _Type;
-  returnType(): _Type;
+  readonly _return_type?: _Type;
+  returnType(): _Type | undefined;
 }
 
 export interface FunctionSignatureItemOptional1 {
   readonly $type: "_function_signature_item_optional1";
-  readonly _return_type: _Type;
-  returnType(): _Type;
+  readonly _return_type?: _Type;
+  returnType(): _Type | undefined;
 }
 
 export interface FunctionTypeFnForm {
@@ -2336,8 +2350,8 @@ export interface FunctionTypeFnForm {
 
 export interface FunctionTypeOptional1 {
   readonly $type: "_function_type_optional1";
-  readonly _return_type: _Type;
-  returnType(): _Type;
+  readonly _return_type?: _Type;
+  returnType(): _Type | undefined;
 }
 
 export interface FunctionTypeTraitForm {
@@ -2382,14 +2396,14 @@ export interface LetChain {
 
 export interface LetDeclarationOptional1 {
   readonly $type: "_let_declaration_optional1";
-  readonly _type: _Type;
-  type(): _Type;
+  readonly _type?: _Type;
+  type(): _Type | undefined;
 }
 
 export interface LetDeclarationOptional2 {
   readonly $type: "_let_declaration_optional2";
-  readonly _value: Expression;
-  value(): Expression;
+  readonly _value?: Expression;
+  value(): Expression | undefined;
 }
 
 export interface LetDeclarationOptional3 {
@@ -2560,8 +2574,8 @@ export interface ReferenceExpressionRawMut {
 
 export interface StaticItemOptional1 {
   readonly $type: "_static_item_optional1";
-  readonly _value: Expression;
-  value(): Expression;
+  readonly _value?: Expression;
+  value(): Expression | undefined;
 }
 
 export interface StructItemBrace {
@@ -2632,8 +2646,8 @@ export interface TypeArgumentsRepeat1 {
 
 export interface TypeParameterOptional1 {
   readonly $type: "_type_parameter_optional1";
-  readonly _default_type: _Type;
-  defaultType(): _Type;
+  readonly _default_type?: _Type;
+  defaultType(): _Type | undefined;
 }
 
 export interface TypeParametersRepeat1 {
@@ -2644,8 +2658,8 @@ export interface TypeParametersRepeat1 {
 
 export interface VariadicParameterOptional1 {
   readonly $type: "_variadic_parameter_optional1";
-  readonly _pattern: Pattern;
-  pattern(): Pattern;
+  readonly _pattern?: Pattern;
+  pattern(): Pattern | undefined;
 }
 
 export interface VisibilityModifierCrate {
@@ -3963,6 +3977,7 @@ export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
 export type BlockCommentContent = Terminal<TSKindId._BlockCommentContent, string>;
 
 // Tree types
+export interface AbstractTypeOptional1Tree extends AnyTreeNode { readonly type: "_abstract_type_optional1"; }
 export interface ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
 export interface ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "_array_expression_semi"; }
 export interface ArrayTypeOptional1Tree extends AnyTreeNode { readonly type: "_array_type_optional1"; }
@@ -3972,6 +3987,7 @@ export interface AttributedFieldDeclarationTree extends AnyTreeNode { readonly t
 export interface AttributedOrderedFieldTree extends AnyTreeNode { readonly type: "_attributed_ordered_field"; }
 export interface AttributedParameterTree extends AnyTreeNode { readonly type: "_attributed_parameter"; }
 export interface AttributedTypeParameterTree extends AnyTreeNode { readonly type: "_attributed_type_parameter"; }
+export interface BlockOptional1Tree extends AnyTreeNode { readonly type: "_block_optional1"; }
 export interface ClosureExpressionBlockTree extends AnyTreeNode { readonly type: "_closure_expression_block"; }
 export interface ClosureExpressionExprTree extends AnyTreeNode { readonly type: "_closure_expression_expr"; }
 export interface ClosureExpressionOptional1Tree extends AnyTreeNode { readonly type: "_closure_expression_optional1"; }
@@ -4211,9 +4227,9 @@ export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface LineDocContentTree extends AnyTreeNode { readonly type: "_line_doc_content"; }
 export interface ErrorSentinelTree extends AnyTreeNode { readonly type: "_error_sentinel"; }
+export interface ForTree extends AnyTreeNode { readonly type: "for"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface FnTree extends AnyTreeNode { readonly type: "fn"; }
-export interface ForTree extends AnyTreeNode { readonly type: "for"; }
 export interface UnsafeTree extends AnyTreeNode { readonly type: "unsafe"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
@@ -4658,6 +4674,7 @@ export type TokDollar = Terminal<"$">;
 export interface TokDollarTree extends AnyTreeNode { readonly type: "$"; }
 
 export type RustNode =
+  | AbstractTypeOptional1
   | ArrayExpressionList
   | ArrayExpressionSemi
   | ArrayTypeOptional1
@@ -4667,6 +4684,7 @@ export type RustNode =
   | AttributedOrderedField
   | AttributedParameter
   | AttributedTypeParameter
+  | BlockOptional1
   | ClosureExpressionBlock
   | ClosureExpressionExpr
   | ClosureExpressionOptional1
@@ -4878,6 +4896,7 @@ export type RustNode =
 ;
 
 export interface KindMap {
+  '_abstract_type_optional1': AbstractTypeOptional1;
   '_array_expression_list': ArrayExpressionList;
   '_array_expression_semi': ArrayExpressionSemi;
   '_array_type_optional1': ArrayTypeOptional1;
@@ -4887,6 +4906,7 @@ export interface KindMap {
   '_attributed_ordered_field': AttributedOrderedField;
   '_attributed_parameter': AttributedParameter;
   '_attributed_type_parameter': AttributedTypeParameter;
+  '_block_optional1': BlockOptional1;
   '_closure_expression_block': ClosureExpressionBlock;
   '_closure_expression_expr': ClosureExpressionExpr;
   '_closure_expression_optional1': ClosureExpressionOptional1;
@@ -5129,6 +5149,7 @@ export interface KindMap {
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
+export interface AbstractTypeOptional1Ns extends NodeNs<AbstractTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayTypeOptional1Ns extends NodeNs<ArrayTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5138,6 +5159,7 @@ export interface AttributedFieldDeclarationNs extends NodeNs<AttributedFieldDecl
 export interface AttributedOrderedFieldNs extends NodeNs<AttributedOrderedField, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AttributedParameterNs extends NodeNs<AttributedParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AttributedTypeParameterNs extends NodeNs<AttributedTypeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BlockOptional1Ns extends NodeNs<BlockOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionBlockNs extends NodeNs<ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionExprNs extends NodeNs<ClosureExpressionExpr, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionOptional1Ns extends NodeNs<ClosureExpressionOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5348,6 +5370,7 @@ export interface YieldExpressionNs extends NodeNs<YieldExpression, LeafScalarMap
 export interface VisibilityModifierPubParensNs extends NodeNs<VisibilityModifierPubParens, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
+  '_abstract_type_optional1': AbstractTypeOptional1Ns;
   '_array_expression_list': ArrayExpressionListNs;
   '_array_expression_semi': ArrayExpressionSemiNs;
   '_array_type_optional1': ArrayTypeOptional1Ns;
@@ -5357,6 +5380,7 @@ export interface NamespaceMap {
   '_attributed_ordered_field': AttributedOrderedFieldNs;
   '_attributed_parameter': AttributedParameterNs;
   '_attributed_type_parameter': AttributedTypeParameterNs;
+  '_block_optional1': BlockOptional1Ns;
   '_closure_expression_block': ClosureExpressionBlockNs;
   '_closure_expression_expr': ClosureExpressionExprNs;
   '_closure_expression_optional1': ClosureExpressionOptional1Ns;
@@ -5574,6 +5598,13 @@ export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Namespace sugar — merges with each data interface so consumers can write
 // <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.
+export namespace AbstractTypeOptional1 {
+  export type Config = ConfigFor<'_abstract_type_optional1'>;
+  export type Fluent = FluentFor<'_abstract_type_optional1'>;
+  export type Loose = LooseFor<'_abstract_type_optional1'>;
+  export type Tree = TreeFor<'_abstract_type_optional1'>;
+  export type Kind = '_abstract_type_optional1';
+}
 export namespace ArrayExpressionList {
   export type Config = ConfigFor<'_array_expression_list'>;
   export type Fluent = FluentFor<'_array_expression_list'>;
@@ -5636,6 +5667,13 @@ export namespace AttributedTypeParameter {
   export type Loose = LooseFor<'_attributed_type_parameter'>;
   export type Tree = TreeFor<'_attributed_type_parameter'>;
   export type Kind = '_attributed_type_parameter';
+}
+export namespace BlockOptional1 {
+  export type Config = ConfigFor<'_block_optional1'>;
+  export type Fluent = FluentFor<'_block_optional1'>;
+  export type Loose = LooseFor<'_block_optional1'>;
+  export type Tree = TreeFor<'_block_optional1'>;
+  export type Kind = '_block_optional1';
 }
 export namespace ClosureExpressionBlock {
   export type Config = ConfigFor<'_closure_expression_block'>;

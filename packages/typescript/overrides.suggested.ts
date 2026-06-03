@@ -209,11 +209,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  infer_type: {
-    '2/0/0': 'type',
-  },
-
-  // [held] 1 candidate(s)
   jsx_attribute: {
     '1': 'jsx_attribute_value',
   },

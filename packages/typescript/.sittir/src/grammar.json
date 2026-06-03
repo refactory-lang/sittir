@@ -9653,24 +9653,9 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": "extends"
-                    },
-                    {
-                      "type": "FIELD",
-                      "name": "type",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "type",
-                        "fieldName": "type",
-                        "nonterminal": true
-                      },
-                      "source": "enriched"
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "_infer_type_optional1",
+                  "source": "group-lift"
                 },
                 {
                   "type": "BLANK"
@@ -11262,7 +11247,9 @@
           "name": "alias",
           "content": {
             "type": "SYMBOL",
-            "name": "_module_export_name"
+            "name": "_module_export_name",
+            "fieldName": "alias",
+            "nonterminal": true
           }
         }
       ]
@@ -11288,7 +11275,9 @@
                 "type": "SYMBOL",
                 "name": "_destructuring_pattern"
               }
-            ]
+            ],
+            "fieldName": "parameter",
+            "nonterminal": true
           }
         },
         {
@@ -11299,7 +11288,9 @@
               "name": "type",
               "content": {
                 "type": "SYMBOL",
-                "name": "type_annotation"
+                "name": "type_annotation",
+                "fieldName": "type",
+                "nonterminal": true
               }
             },
             {
@@ -11310,6 +11301,26 @@
         {
           "type": "STRING",
           "value": ")"
+        }
+      ]
+    },
+    "_infer_type_optional1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "extends"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type",
+            "fieldName": "type",
+            "nonterminal": true
+          },
+          "source": "enriched"
         }
       ]
     },
@@ -11325,7 +11336,9 @@
           "name": "alias",
           "content": {
             "type": "SYMBOL",
-            "name": "type"
+            "name": "type",
+            "fieldName": "alias",
+            "nonterminal": true
           }
         }
       ]
@@ -11355,7 +11368,9 @@
               {
                 "type": "BLANK"
               }
-            ]
+            ],
+            "fieldName": "sign",
+            "nonterminal": true
           }
         },
         {
@@ -14419,6 +14434,7 @@
     "_public_field_definition_accessor_opt",
     "_export_specifier_optional1",
     "_catch_clause_optional1",
+    "_infer_type_optional1",
     "_mapped_type_clause_optional1",
     "_index_signature_optional1",
     "_export_clause_optional1",

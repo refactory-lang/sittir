@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 429,
+  "nodeCount": 430,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -3160,6 +3160,42 @@
           "projection": {
             "typeName": "",
             "kinds": []
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_infer_type_optional1",
+      "modelType": "group",
+      "typeName": "InferTypeOptional1",
+      "factoryName": "_inferTypeOptional1",
+      "irKey": "inferTypeOptional1",
+      "hidden": false,
+      "name": "_infer_type_optional1",
+      "fields": [
+        {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type",
+              "parseKind": "type",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type"
+            ]
           }
         }
       ],

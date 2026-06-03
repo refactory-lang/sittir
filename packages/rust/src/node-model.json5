@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 377,
+  "nodeCount": 379,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -388,6 +388,42 @@
       ]
     },
     {
+      "kind": "_abstract_type_optional1",
+      "modelType": "group",
+      "typeName": "AbstractTypeOptional1",
+      "factoryName": "_abstractTypeOptional1",
+      "irKey": "abstractTypeOptional1",
+      "hidden": false,
+      "name": "_abstract_type_optional1",
+      "fields": [
+        {
+          "name": "type_parameters",
+          "propertyName": "typeParameters",
+          "paramName": "typeParameters",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_parameters",
+              "parseKind": "type_parameters",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type_parameters"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
       "kind": "_array_expression_list",
       "modelType": "group",
       "typeName": "ArrayExpressionList",
@@ -544,13 +580,13 @@
           "name": "length",
           "propertyName": "length",
           "paramName": "length",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_expression",
               "parseKind": "_expression",
               "unresolved": true
@@ -1001,6 +1037,42 @@
       "children": []
     },
     {
+      "kind": "_block_optional1",
+      "modelType": "group",
+      "typeName": "BlockOptional1",
+      "factoryName": "_blockOptional1",
+      "irKey": "blockOptional1",
+      "hidden": false,
+      "name": "_block_optional1",
+      "fields": [
+        {
+          "name": "label",
+          "propertyName": "label",
+          "paramName": "label",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "label",
+              "parseKind": "label",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "label"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
       "kind": "_closure_expression_block",
       "modelType": "group",
       "typeName": "ClosureExpressionBlock",
@@ -1114,13 +1186,13 @@
           "name": "return_type",
           "propertyName": "returnType",
           "paramName": "returnType",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_type",
               "parseKind": "_type",
               "unresolved": true
@@ -1227,13 +1299,13 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_expression",
               "parseKind": "_expression",
               "unresolved": true
@@ -1263,34 +1335,34 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "block",
               "parseKind": "block",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_literal",
               "parseKind": "_literal",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "negative_literal",
               "parseKind": "negative_literal",
               "unresolved": true
@@ -1482,13 +1554,13 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_expression",
               "parseKind": "_expression",
               "unresolved": true
@@ -1948,13 +2020,13 @@
           "name": "return_type",
           "propertyName": "returnType",
           "paramName": "returnType",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_type",
               "parseKind": "_type",
               "unresolved": true
@@ -1984,13 +2056,13 @@
           "name": "return_type",
           "propertyName": "returnType",
           "paramName": "returnType",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_type",
               "parseKind": "_type",
               "unresolved": true
@@ -2055,13 +2127,13 @@
           "name": "return_type",
           "propertyName": "returnType",
           "paramName": "returnType",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_type",
               "parseKind": "_type",
               "unresolved": true
@@ -2535,13 +2607,13 @@
           "name": "type",
           "propertyName": "type",
           "paramName": "type",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_type",
               "parseKind": "_type",
               "unresolved": true
@@ -2571,13 +2643,13 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_expression",
               "parseKind": "_expression",
               "unresolved": true
@@ -4456,13 +4528,13 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_expression",
               "parseKind": "_expression",
               "unresolved": true
@@ -5067,13 +5139,13 @@
           "name": "default_type",
           "propertyName": "defaultType",
           "paramName": "defaultType",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_type",
               "parseKind": "_type",
               "unresolved": true
@@ -5182,13 +5254,13 @@
           "name": "pattern",
           "propertyName": "pattern",
           "paramName": "pattern",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_pattern",
               "parseKind": "_pattern",
               "unresolved": true

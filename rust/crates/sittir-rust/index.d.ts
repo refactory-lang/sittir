@@ -41,6 +41,17 @@ export declare class SittirEngine {
   dispose(): void
 }
 
+export interface AbstractTypeOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _type_parameters: TypeParametersTransport
+}
+
 export interface AbstractTypeTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -108,7 +119,7 @@ export interface ArrayTypeOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _length: ExpressionTransport
+  _length?: ExpressionTransport
 }
 
 export interface ArrayTypeTransport {
@@ -306,6 +317,17 @@ export interface BlockCommentTransport {
   _doc?: Box<AnyTransport>
 }
 
+export interface BlockOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _label?: LabelTransport
+}
+
 export interface BlockTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -409,7 +431,7 @@ export interface ClosureExpressionOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _return_type: _TypeTransport
+  _return_type?: _TypeTransport
 }
 
 export interface ClosureExpressionTransport {
@@ -481,7 +503,7 @@ export interface ConstItemOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value: ExpressionTransport
+  _value?: ExpressionTransport
 }
 
 export interface ConstItemTransport {
@@ -506,7 +528,7 @@ export interface ConstParameterOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value: ConstParameterOptional1ValueTransportSlot
+  _value?: ConstParameterOptional1ValueTransportSlot
 }
 
 export interface ConstParameterTransport {
@@ -648,7 +670,7 @@ export interface EnumVariantOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value: ExpressionTransport
+  _value?: ExpressionTransport
 }
 
 export interface EnumVariantTransport {
@@ -898,7 +920,7 @@ export interface FunctionItemOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _return_type: _TypeTransport
+  _return_type?: _TypeTransport
 }
 
 export interface FunctionItemTransport {
@@ -938,7 +960,7 @@ export interface FunctionSignatureItemOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _return_type: _TypeTransport
+  _return_type?: _TypeTransport
 }
 
 export interface FunctionSignatureItemTransport {
@@ -977,7 +999,7 @@ export interface FunctionTypeOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _return_type: _TypeTransport
+  _return_type?: _TypeTransport
 }
 
 export interface FunctionTypeTraitFormTransport {
@@ -1232,7 +1254,7 @@ export interface LetDeclarationOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type: _TypeTransport
+  _type?: _TypeTransport
 }
 
 export interface LetDeclarationOptional2Transport {
@@ -1243,7 +1265,7 @@ export interface LetDeclarationOptional2Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value: ExpressionTransport
+  _value?: ExpressionTransport
 }
 
 export interface LetDeclarationOptional3Transport {
@@ -1959,7 +1981,7 @@ export interface StaticItemOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value: ExpressionTransport
+  _value?: ExpressionTransport
 }
 
 export interface StaticItemTransport {
@@ -2355,7 +2377,7 @@ export interface TypeParameterOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _default_type: _TypeTransport
+  _default_type?: _TypeTransport
 }
 
 export interface TypeParametersRepeat1Transport {
@@ -2496,7 +2518,7 @@ export interface VariadicParameterOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pattern: PatternTransport
+  _pattern?: PatternTransport
 }
 
 export interface VariadicParameterTransport {

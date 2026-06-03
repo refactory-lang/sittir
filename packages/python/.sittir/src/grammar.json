@@ -6308,7 +6308,9 @@
           "name": "cause",
           "content": {
             "type": "SYMBOL",
-            "name": "expression"
+            "name": "expression",
+            "fieldName": "cause",
+            "nonterminal": true
           }
         }
       ]
@@ -6325,7 +6327,9 @@
           "name": "alias",
           "content": {
             "type": "SYMBOL",
-            "name": "expression"
+            "name": "expression",
+            "fieldName": "alias",
+            "nonterminal": true
           }
         }
       ]
@@ -6342,7 +6346,9 @@
           "name": "return_type",
           "content": {
             "type": "SYMBOL",
-            "name": "type"
+            "name": "type",
+            "fieldName": "return_type",
+            "nonterminal": true
           }
         }
       ]

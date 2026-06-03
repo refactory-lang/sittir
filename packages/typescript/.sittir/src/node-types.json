@@ -4019,12 +4019,16 @@
     "named": true,
     "fields": {
       "constraint": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
           {
             "type": "extends",
             "named": false
+          },
+          {
+            "type": "type",
+            "named": true
           }
         ]
       },

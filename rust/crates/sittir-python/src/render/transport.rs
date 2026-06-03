@@ -10853,7 +10853,7 @@ pub struct FunctionDefinitionOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: TypeTransport,
+    pub return_type: Option<TypeTransport>,
 }
 
 impl RenderableTransport for FunctionDefinitionOptional1Transport {
@@ -28463,7 +28463,9 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, d
 }
 
 fn render_function_definition_optional1(node: &FunctionDefinitionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_type(&node.return_type, dest)?;
+    if let Some(child) = &node.return_type {
+        render_type(child, dest)?;
+    }
     Ok(())
 }
 
@@ -31666,7 +31668,9 @@ fn transport_to_node_expression_statement_tuple(transport: ExpressionStatementTu
 
 fn transport_to_node_function_definition_optional1(transport: FunctionDefinitionOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("return_type".to_string(), transport_field_value(AnyTransport::Type(transport.return_type))?);
+    if let Some(value) = transport.return_type {
+        fields.insert("return_type".to_string(), transport_field_value(AnyTransport::Type(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());

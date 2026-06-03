@@ -1068,20 +1068,24 @@ function getEnrichClauseGroups(grammar2) {
 function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap) {
   const MAX_ITERATIONS = 8;
   let r = rule;
-  const clauseHoistCounter = { opt: 0 };
-  r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter);
+  let converged = false;
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
     r = applyOptionalKeyword(ruleName, r, kwRules);
     r = enrichFieldWrappers(r);
     r = enrichMultiplicityWrappers(r);
-    if (r === before) return r;
+    if (r === before) {
+      converged = true;
+      break;
+    }
   }
-  if (!process.env.SITTIR_QUIET) {
+  if (!converged && !process.env.SITTIR_QUIET) {
     process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
 `);
   }
+  const clauseHoistCounter = { opt: 0 };
+  r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter);
   return r;
 }
 function extractSupertypeNames(base2, hasWrapper) {
@@ -2533,8 +2537,6 @@ var overrides_default = grammar(enrichedBase, wire({
     type_argument: ($) => seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds))
   },
   transforms: {
-    // abstract_type: 1 field(s)
-    abstract_type: {},
     // token_repetition: `$( _tokens* ) <sep>? <op>` —
     //   seq('$'[0], '('[1], repeat(_tokens)[2], ')'[3],
     //       optional(pattern '[^+*?]+')[4], enum('+'|'*'|'?')[5]).

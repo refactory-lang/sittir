@@ -156,18 +156,8 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  abstract_type: {
-    '1/0': 'type_parameters',
-  },
-
-  // [held] 1 candidate(s)
   attribute: {
     '1/0/0': 'value',
-  },
-
-  // [held] 1 candidate(s)
-  block: {
-    '0/0': 'label',
   },
 
   // [held] 1 candidate(s)

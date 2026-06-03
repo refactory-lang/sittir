@@ -887,13 +887,13 @@
           "name": "return_type",
           "propertyName": "returnType",
           "paramName": "returnType",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "type",
               "parseKind": "type",
               "unresolved": true

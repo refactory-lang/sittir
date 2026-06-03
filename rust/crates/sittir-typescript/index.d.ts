@@ -1402,6 +1402,17 @@ export interface IndexTypeQueryTransport {
   _primary_type: Box<PrimaryTypeTransport>
 }
 
+export interface InferTypeOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _type?: TypeTransport
+}
+
 export interface InferTypeTransport {
   '$source'?: Source
   '$named'?: boolean

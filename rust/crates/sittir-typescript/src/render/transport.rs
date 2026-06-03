@@ -76,6 +76,7 @@ pub enum AnyTransport {
     IndexSignatureColon(IndexSignatureColonTransport),
     IndexSignatureMappedTypeClause(IndexSignatureMappedTypeClauseTransport),
     IndexSignatureOptional1(IndexSignatureOptional1Transport),
+    InferTypeOptional1(InferTypeOptional1Transport),
     Initializer(InitializerTransport),
     JsxStartOpeningElement(JsxStartOpeningElementTransport),
     JsxString(JsxStringTransport),
@@ -341,6 +342,7 @@ pub enum AnyTransport {
     Var(VarTransport),
     From(FromTransport),
     Readonly(ReadonlyTransport),
+    Extends(ExtendsTransport),
     Lt(LtTransport),
     TokDq(TokDqTransport),
     TokSq(TokSqTransport),
@@ -385,7 +387,6 @@ pub enum AnyTransport {
     Brace(BraceTransport),
     Semi(SemiTransport),
     CloseBrace(CloseBraceTransport),
-    Extends(ExtendsTransport),
     New(NewTransport),
     Continue(ContinueTransport),
     Debugger(DebuggerTransport),
@@ -1500,6 +1501,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 125 => Ok(AnyTransport::Readonly(
                     ReadonlyTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: extends (EXTENDS)
+                138 => Ok(AnyTransport::Extends(
+                    ExtendsTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: < (LT)
                 81 => Ok(AnyTransport::Lt(
                     LtTransport::from_napi_value(env, napi_val)?
@@ -1663,10 +1668,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: } (CLOSE_BRACE)
                 7 => Ok(AnyTransport::CloseBrace(
                     CloseBraceTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: extends (EXTENDS)
-                138 => Ok(AnyTransport::Extends(
-                    ExtendsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: new (NEW)
                 51 => Ok(AnyTransport::New(
@@ -23101,6 +23102,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IndexSignatureOptional1Transpo
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct InferTypeOptional1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    pub type_: Option<TypeTransport>,
+}
+
+impl RenderableTransport for InferTypeOptional1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_infer_type_optional1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<InferTypeOptional1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        InferTypeOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<InferTypeOptional1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        InferTypeOptional1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct InitializerTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -40968,6 +41019,108 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ReadonlyTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct ExtendsTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for ExtendsTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "extends".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "extends".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "extends".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExtendsTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExtendsTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExtendsTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExtendsTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExtendsTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct LtTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -45456,108 +45609,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CloseBraceTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ExtendsTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for ExtendsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
-            text
-        } else if u16::from_napi_value(env, napi_val).is_ok() {
-            "extends".to_string()
-        } else {
-            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_else(|| "extends".to_string())
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "extends".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExtendsTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExtendsTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExtendsTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExtendsTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExtendsTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct NewTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -50020,6 +50071,13 @@ fn render_index_signature_optional1(node: &IndexSignatureOptional1Transport, des
     Ok(())
 }
 
+fn render_infer_type_optional1(node: &InferTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if let Some(child) = &node.type_ {
+        render_type(child, dest)?;
+    }
+    Ok(())
+}
+
 fn render_initializer(node: &InitializerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     render_expression(&node.value, dest)?;
     Ok(())
@@ -51391,6 +51449,7 @@ fn render_index_type_query(node: &IndexTypeQueryTransport, dest: &mut dyn ::std:
 
 fn render_infer_type(node: &InferTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = InferTypeTemplate {
+        constraint: OptionalNonterminalView::Missing,
         type_: match &node.type_ {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -52846,6 +52905,10 @@ fn render_readonly(t: &ReadonlyTransport, dest: &mut dyn ::std::fmt::Write) -> R
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_extends(t: &ExtendsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_lt(t: &LtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -53019,10 +53082,6 @@ fn render_semi(t: &SemiTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
 }
 
 fn render_close_brace(t: &CloseBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_extends(t: &ExtendsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -53533,6 +53592,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::IndexSignatureColon(t) => render_index_signature_colon(t, dest),
             AnyTransport::IndexSignatureMappedTypeClause(t) => render_index_signature_mapped_type_clause(t, dest),
             AnyTransport::IndexSignatureOptional1(t) => render_index_signature_optional1(t, dest),
+            AnyTransport::InferTypeOptional1(t) => render_infer_type_optional1(t, dest),
             AnyTransport::Initializer(t) => render_initializer(t, dest),
             AnyTransport::JsxStartOpeningElement(t) => render_jsx_start_opening_element(t, dest),
             AnyTransport::JsxString(t) => render_jsx_string(t, dest),
@@ -53798,6 +53858,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Var(t) => t.render_into(dest),
             AnyTransport::From(t) => t.render_into(dest),
             AnyTransport::Readonly(t) => t.render_into(dest),
+            AnyTransport::Extends(t) => t.render_into(dest),
             AnyTransport::Lt(t) => t.render_into(dest),
             AnyTransport::TokDq(t) => t.render_into(dest),
             AnyTransport::TokSq(t) => t.render_into(dest),
@@ -53842,7 +53903,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Brace(t) => t.render_into(dest),
             AnyTransport::Semi(t) => t.render_into(dest),
             AnyTransport::CloseBrace(t) => t.render_into(dest),
-            AnyTransport::Extends(t) => t.render_into(dest),
             AnyTransport::New(t) => t.render_into(dest),
             AnyTransport::Continue(t) => t.render_into(dest),
             AnyTransport::Debugger(t) => t.render_into(dest),
@@ -53954,6 +54014,7 @@ impl AnyTransport {
             Self::IndexSignatureColon(t) => t.transport_named,
             Self::IndexSignatureMappedTypeClause(t) => t.transport_named,
             Self::IndexSignatureOptional1(t) => t.transport_named,
+            Self::InferTypeOptional1(t) => t.transport_named,
             Self::Initializer(t) => t.transport_named,
             Self::JsxStartOpeningElement(t) => t.transport_named,
             Self::JsxString(t) => t.transport_named,
@@ -54211,6 +54272,7 @@ impl AnyTransport {
             Self::Var(t) => t.transport_named,
             Self::From(t) => t.transport_named,
             Self::Readonly(t) => t.transport_named,
+            Self::Extends(t) => t.transport_named,
             Self::Lt(t) => t.transport_named,
             Self::TokDq(t) => t.transport_named,
             Self::TokSq(t) => t.transport_named,
@@ -54255,7 +54317,6 @@ impl AnyTransport {
             Self::Brace(t) => t.transport_named,
             Self::Semi(t) => t.transport_named,
             Self::CloseBrace(t) => t.transport_named,
-            Self::Extends(t) => t.transport_named,
             Self::New(t) => t.transport_named,
             Self::Continue(t) => t.transport_named,
             Self::Debugger(t) => t.transport_named,
@@ -54411,6 +54472,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::IndexSignatureColon(data) => transport_to_node_index_signature_colon(data),
         AnyTransport::IndexSignatureMappedTypeClause(data) => transport_to_node_index_signature_mapped_type_clause(data),
         AnyTransport::IndexSignatureOptional1(data) => transport_to_node_index_signature_optional1(data),
+        AnyTransport::InferTypeOptional1(data) => transport_to_node_infer_type_optional1(data),
         AnyTransport::Initializer(data) => transport_to_node_initializer(data),
         AnyTransport::JsxStartOpeningElement(data) => transport_to_node_jsx_start_opening_element(data),
         AnyTransport::JsxString(data) => transport_to_node_jsx_string(data),
@@ -54676,6 +54738,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Var(data) => transport_to_node_var(data),
         AnyTransport::From(data) => transport_to_node_from(data),
         AnyTransport::Readonly(data) => transport_to_node_readonly(data),
+        AnyTransport::Extends(data) => transport_to_node_extends(data),
         AnyTransport::Lt(data) => transport_to_node_lt(data),
         AnyTransport::TokDq(data) => transport_to_node_tok_dq(data),
         AnyTransport::TokSq(data) => transport_to_node_tok_sq(data),
@@ -54720,7 +54783,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Brace(data) => transport_to_node_brace(data),
         AnyTransport::Semi(data) => transport_to_node_semi(data),
         AnyTransport::CloseBrace(data) => transport_to_node_close_brace(data),
-        AnyTransport::Extends(data) => transport_to_node_extends(data),
         AnyTransport::New(data) => transport_to_node_new(data),
         AnyTransport::Continue(data) => transport_to_node_continue(data),
         AnyTransport::Debugger(data) => transport_to_node_debugger(data),
@@ -56030,6 +56092,29 @@ fn transport_to_node_index_signature_optional1(transport: IndexSignatureOptional
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(0) /* "_index_signature_optional1" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_infer_type_optional1(transport: InferTypeOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.type_ {
+        fields.insert("type".to_string(), transport_field_value(type_transport_to_any(value))?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_infer_type_optional1" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -62162,6 +62247,23 @@ fn transport_to_node_readonly(transport: ReadonlyTransport) -> Result<TransportN
     ))
 }
 
+fn transport_to_node_extends(transport: ExtendsTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(138) /* "extends" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
 fn transport_to_node_lt(transport: LtTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
@@ -62897,23 +62999,6 @@ fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<Trans
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(7) /* "}" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        None,
-        None,
-        trivia_data,
-    ))
-}
-
-fn transport_to_node_extends(transport: ExtendsTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(138) /* "extends" */,
         transport.transport_source,
         transport.transport_named,
         true,

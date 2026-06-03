@@ -1439,8 +1439,8 @@ export interface ExpressionStatementTuple {
 
 export interface FunctionDefinitionOptional1 {
   readonly $type: "_function_definition_optional1";
-  readonly _return_type: Type;
-  returnType(): Type;
+  readonly _return_type?: Type;
+  returnType(): Type | undefined;
 }
 
 export interface ImportList {

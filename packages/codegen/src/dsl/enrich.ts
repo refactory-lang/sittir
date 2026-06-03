@@ -199,14 +199,7 @@ function applyEnrichPasses(
 	// that accidentally produces ever-changing output.
 	const MAX_ITERATIONS = 8;
 	let r = rule;
-	// Clause-hoist pass: runs ONCE before the fixed-point loop (it is not
-	// idempotent-by-design in the same sense — once a seq is hoisted its
-	// replacement is an optional(SYMBOL), which will not re-trigger). The
-	// per-parent counter is local to this rule's pass so each rule gets a
-	// fresh 1-indexed sequence; dedupeMap and clauseGroupRules are shared
-	// across all rules.
-	const clauseHoistCounter = { opt: 0 };
-	r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter);
+	let converged = false;
 	for (let i = 0; i < MAX_ITERATIONS; i++) {
 		const before = r;
 		r = applySymbolToField(ruleName, r, supertypeNames);
@@ -226,17 +219,21 @@ function applyEnrichPasses(
 		// ordering-invariance test in enrich-multiplicity-wrappers.test.ts).
 		r = enrichFieldWrappers(r);
 		r = enrichMultiplicityWrappers(r);
-		// Auto-group-synthesis (hidden-group rules for `optional(seq(...))`
-		// / `repeat(seq(...))` shapes) lives in dsl/wire/auto-groups.ts.
-		// It runs at wire() time AFTER authored `groups:` synthesis so
-		// authored declared rules survive untouched — running it inside
-		// enrich() (before Link's applyGroupOverrides) caused authored
-		// rules to be clobbered.
-		if (r === before) return r;
+		if (r === before) { converged = true; break; }
 	}
-	if (!process.env.SITTIR_QUIET) {
+	if (!converged && !process.env.SITTIR_QUIET) {
 		process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations\n`);
 	}
+	// Clause-hoist runs AFTER the field-wrapping loop has converged — it must
+	// see the enrich-inferred (`source:'enriched'`) FIELDs, because its trigger
+	// is `optional(seq(…))` with `some(isString) && some(isField)`. Running it
+	// first (the original placement) missed every clause whose field is added
+	// by applySymbolToField/enrichFieldWrappers (e.g. rust `abstract_type`'s
+	// `for <type_parameters>`), leaving those for detectClause. One pass: once a
+	// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
+	// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
+	const clauseHoistCounter = { opt: 0 };
+	r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter);
 	return r;
 }
 

@@ -243,9 +243,6 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 			seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds))
 	},
 	transforms: {
-		// abstract_type: 1 field(s)
-		abstract_type: {},
-
 		// token_repetition: `$( _tokens* ) <sep>? <op>` —
 		//   seq('$'[0], '('[1], repeat(_tokens)[2], ')'[3],
 		//       optional(pattern '[^+*?]+')[4], enum('+'|'*'|'?')[5]).

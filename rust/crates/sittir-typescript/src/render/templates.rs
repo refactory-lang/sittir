@@ -982,6 +982,7 @@ pub struct IndexTypeQueryTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "infer_type.jinja", escape = "none")]
 pub struct InferTypeTemplate<'a> {
+    pub constraint: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
     pub type_identifier: SingleNonterminalView<'a>,
 }
