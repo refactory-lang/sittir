@@ -114,7 +114,6 @@ export const enum SyntaxKind {
   FunctionTypeTraitForm = "_function_type_trait_form",
   ImplItemBody = "_impl_item_body",
   ImplItemNegativeClause = "_impl_item_negative_clause",
-  ImplItemOptional1 = "_impl_item_optional1",
   ImplItemPositiveClause = "_impl_item_positive_clause",
   LetChain = "_let_chain",
   LetDeclarationOptional1 = "_let_declaration_optional1",
@@ -2376,12 +2375,6 @@ export interface ImplItemNegativeClause {
   trait(): Identifier | ScopedTypeIdentifier | GenericType;
 }
 
-export interface ImplItemOptional1 {
-  readonly $type: "_impl_item_optional1";
-  readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
-  trait(): Identifier | ScopedTypeIdentifier | GenericType;
-}
-
 export interface ImplItemPositiveClause {
   readonly $type: TSKindId.ImplItemPositiveClause;
   readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
@@ -4021,7 +4014,6 @@ export interface FunctionTypeOptional1Tree extends AnyTreeNode { readonly type: 
 export interface FunctionTypeTraitFormTree extends AnyTreeNode { readonly type: "_function_type_trait_form"; }
 export interface ImplItemBodyTree extends AnyTreeNode { readonly type: "_impl_item_body"; }
 export interface ImplItemNegativeClauseTree extends AnyTreeNode { readonly type: "_impl_item_negative_clause"; }
-export interface ImplItemOptional1Tree extends AnyTreeNode { readonly type: "_impl_item_optional1"; }
 export interface ImplItemPositiveClauseTree extends AnyTreeNode { readonly type: "_impl_item_positive_clause"; }
 export interface LetChainTree extends AnyTreeNode { readonly type: "_let_chain"; }
 export interface LetDeclarationOptional1Tree extends AnyTreeNode { readonly type: "_let_declaration_optional1"; }
@@ -4719,7 +4711,6 @@ export type RustNode =
   | FunctionTypeTraitForm
   | ImplItemBody
   | ImplItemNegativeClause
-  | ImplItemOptional1
   | ImplItemPositiveClause
   | LetChain
   | LetDeclarationOptional1
@@ -4942,7 +4933,6 @@ export interface KindMap {
   '_function_type_trait_form': FunctionTypeTraitForm;
   '_impl_item_body': ImplItemBody;
   '_impl_item_negative_clause': ImplItemNegativeClause;
-  '_impl_item_optional1': ImplItemOptional1;
   '_impl_item_positive_clause': ImplItemPositiveClause;
   '_let_chain': LetChain;
   '_let_declaration_optional1': LetDeclarationOptional1;
@@ -5196,7 +5186,6 @@ export interface FunctionTypeOptional1Ns extends NodeNs<FunctionTypeOptional1, L
 export interface FunctionTypeTraitFormNs extends NodeNs<FunctionTypeTraitForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemBodyNs extends NodeNs<ImplItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemNegativeClauseNs extends NodeNs<ImplItemNegativeClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ImplItemOptional1Ns extends NodeNs<ImplItemOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemPositiveClauseNs extends NodeNs<ImplItemPositiveClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LetChainNs extends NodeNs<LetChain, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LetDeclarationOptional1Ns extends NodeNs<LetDeclarationOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5418,7 +5407,6 @@ export interface NamespaceMap {
   '_function_type_trait_form': FunctionTypeTraitFormNs;
   '_impl_item_body': ImplItemBodyNs;
   '_impl_item_negative_clause': ImplItemNegativeClauseNs;
-  '_impl_item_optional1': ImplItemOptional1Ns;
   '_impl_item_positive_clause': ImplItemPositiveClauseNs;
   '_let_chain': LetChainNs;
   '_let_declaration_optional1': LetDeclarationOptional1Ns;
@@ -5850,13 +5838,6 @@ export namespace ImplItemNegativeClause {
   export type Loose = LooseFor<'_impl_item_negative_clause'>;
   export type Tree = TreeFor<'_impl_item_negative_clause'>;
   export type Kind = '_impl_item_negative_clause';
-}
-export namespace ImplItemOptional1 {
-  export type Config = ConfigFor<'_impl_item_optional1'>;
-  export type Fluent = FluentFor<'_impl_item_optional1'>;
-  export type Loose = LooseFor<'_impl_item_optional1'>;
-  export type Tree = TreeFor<'_impl_item_optional1'>;
-  export type Kind = '_impl_item_optional1';
 }
 export namespace ImplItemPositiveClause {
   export type Config = ConfigFor<'_impl_item_positive_clause'>;

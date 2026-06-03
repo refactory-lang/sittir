@@ -1136,17 +1136,6 @@ export interface ImplItemNegativeClauseTransport {
   _trait: ImplItemNegativeClauseTraitTransportSlot
 }
 
-export interface ImplItemOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _trait: ImplItemOptional1TraitTransportSlot
-}
-
 export interface ImplItemPositiveClauseTransport {
   '$source'?: Source
   '$named'?: boolean

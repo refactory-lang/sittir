@@ -99,14 +99,14 @@ export const suggestedRules = {
   // parents: _range_pattern_left_with_right, _range_pattern_prefix, range_pattern
   _shared_2: $ => choice($._literal_pattern, $._path),
 
-  // parents: _impl_item_negative_clause, _impl_item_optional1, _impl_item_positive_clause
-  _shared_3: $ => choice($._type_identifier, $.generic_type, $.scoped_type_identifier),
-
   // parents: _function_type_trait_form, struct_pattern
   _type_identifier: $ => choice($._type_identifier, $.scoped_type_identifier),
 
   // parents: last_match_arm, match_arm
   _attribute_item: $ => choice($.attribute_item, $.inner_attribute_item),
+
+  // parents: _impl_item_negative_clause, _impl_item_positive_clause
+  _shared_3: $ => choice($._type_identifier, $.generic_type, $.scoped_type_identifier),
 
 };
 
@@ -293,9 +293,9 @@ export interface RepeatedShape {
 }
 export const repeatedShapes: readonly RepeatedShape[] = [
   { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left_with_right","_range_pattern_prefix","range_pattern"], shape: "supertype" },
-  { suggestedName: "_shared_3", kinds: ["_type_identifier","generic_type","scoped_type_identifier"], parents: ["_impl_item_negative_clause","_impl_item_optional1","_impl_item_positive_clause"], shape: "supertype" },
   { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["_function_type_trait_form","struct_pattern"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["identifier","metavariable"], parents: ["function_item","function_signature_item"], shape: "supertype" },
   { suggestedName: "_attribute_item", kinds: ["attribute_item","inner_attribute_item"], parents: ["last_match_arm","match_arm"], shape: "supertype" },
+  { suggestedName: "_shared_3", kinds: ["_type_identifier","generic_type","scoped_type_identifier"], parents: ["_impl_item_negative_clause","_impl_item_positive_clause"], shape: "supertype" },
 ];

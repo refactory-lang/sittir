@@ -1,12 +1,14 @@
 /**
  * enrich-clause-hoist.test.ts — unit tests for the enrich clause-hoist pass.
  *
- * The pass lives in `dsl/enrich.ts` and hoists `optional(seq(STRING, FIELD…))`
- * patterns into a hidden `_<parent>_optional<N>` group injected into
+ * The pass lives in `dsl/enrich.ts` and hoists `optional(seq(…))` patterns
+ * into a hidden `_<parent>_optional<N>` group injected into
  * `base.grammar.rules`, so tree-sitter (kindId) AND the IR see it from one source.
  *
- * Predicate: seq must have ≥1 string AND ≥1 field member — mirrors
- * detectClause's exact predicate in link.ts:2043–2045.
+ * Predicate (generalized from old clause-only check):
+ *   • `ruleMatchesEmpty(seqBody)` → leave un-hoisted (tree-sitter rejects empty named rules)
+ *   • `isInlineSafe(seqBody)` → hoist (exactly ONE field/symbol slot after dropping literals)
+ *   • else (inline-unsafe: bare-choice slot OR ≥2 slots) → leave inline for applyAutoGroups
  */
 
 import { describe, it, expect } from 'vitest';
@@ -172,8 +174,9 @@ describe('enrich clause-hoist pass — CHOICE[seq, BLANK] form', () => {
 // ---------------------------------------------------------------------------
 
 describe('enrich clause-hoist pass — predicate exactness', () => {
-	it('fires on multi-member seq with string + field (not just 2-member)', () => {
-		// seq('trait', field('name', …), field('bounds', …)) — 3 members, has string + field
+	it('does NOT fire on multi-slot seq (string + 2 fields) — inline-unsafe, left for applyAutoGroups', () => {
+		// seq('trait', field('name', …), field('bounds', …)) — 3 members, 2 field slots
+		// isInlineSafe requires exactly 1 slot; 2 slots → inline-unsafe → not hoisted by enrich.
 		const input = mkGrammar({
 			parent: {
 				type: 'seq',
@@ -193,8 +196,9 @@ describe('enrich clause-hoist pass — predicate exactness', () => {
 			}
 		});
 		const result = runEnrich(input);
-		// Must synthesize — has ≥1 string and ≥1 field
-		expect(result.grammar.rules['_parent_optional1']).toBeDefined();
+		// 2 slots → inline-unsafe → applyAutoGroups handles this, enrich leaves it inline
+		const synthKinds = Object.keys(result.grammar.rules).filter((k) => /^_parent_optional\d+$/.test(k));
+		expect(synthKinds).toEqual([]);
 	});
 
 	it('does NOT fire on optional(field(X)) — no seq inside', () => {
@@ -218,7 +222,9 @@ describe('enrich clause-hoist pass — predicate exactness', () => {
 		expect(synthKinds).toEqual([]);
 	});
 
-	it('does NOT fire on optional(seq(field, field)) — no string member', () => {
+	it('does NOT fire on optional(seq(field, field)) — 2 slots, inline-unsafe', () => {
+		// seq(field('a', A), field('b', B)) — 2 slots after dropping literals.
+		// isInlineSafe requires exactly 1 slot; 2 slots → inline-unsafe → not hoisted by enrich.
 		const input = mkGrammar({
 			parent: {
 				type: 'seq',
@@ -241,7 +247,9 @@ describe('enrich clause-hoist pass — predicate exactness', () => {
 		expect(synthKinds).toEqual([]);
 	});
 
-	it('does NOT fire on optional(seq(symbol, symbol)) — no string, no field', () => {
+	it('does NOT fire on optional(seq(symbol, symbol)) — 2 slots, inline-unsafe', () => {
+		// seq(sym('A'), sym('B')) — 2 symbol slots.
+		// isInlineSafe requires exactly 1 slot; 2 slots → inline-unsafe → not hoisted by enrich.
 		const input = mkGrammar({
 			parent: {
 				type: 'seq',

@@ -123,16 +123,20 @@ function collectSlots(members: unknown[]): unknown[] {
 }
 
 /**
- * Unwrap `prec`/`field` wrappers to reach the underlying slot type. Descends
- * through a single chain of prec + field layers. Returns the innermost rule
- * that is not a prec or field wrapper.
+ * Unwrap `prec` wrappers to reach the underlying slot type. Descends through
+ * a chain of prec layers only. Returns the innermost rule that is not a prec
+ * wrapper.
+ *
+ * NOTE: we do NOT descend through `field` here because a `field` slot is
+ * itself the thing we are classifying (it is field-typed → inline-safe). If
+ * we descended through it we would see its content (e.g. a bare `choice`),
+ * which would incorrectly mark the slot as unsafe.
  */
-function unwrapPrecField(rule: unknown): unknown {
+function unwrapPrec(rule: unknown): unknown {
 	let cur = rule;
 	while (cur && typeof cur === 'object') {
 		const r = cur as Record<string, unknown>;
-		const t = typeof r.type === 'string' ? r.type : '';
-		if (isPrecWrapper(r as { type: string }) || isFieldType(t)) {
+		if (isPrecWrapper(r as { type: string })) {
 			cur = r.content;
 		} else {
 			break;
@@ -171,8 +175,11 @@ export function isInlineSafe(seqBody: unknown): boolean {
 	// Must have exactly one slot
 	if (slots.length !== 1) return false;
 
-	// The single slot must be a field or symbol (not a bare choice, repeat, etc.)
-	const core = unwrapPrecField(slots[0]);
+	// The single slot must be a field or symbol (not a bare choice, repeat, etc.).
+	// Descend through prec wrappers only — a field slot is itself field-typed and
+	// is already inline-safe; descending into it would expose its content (possibly
+	// a choice), which would incorrectly classify the slot as unsafe.
+	const core = unwrapPrec(slots[0]);
 	if (!core || typeof core !== 'object') return false;
 	const coreType = (core as Record<string, unknown>).type;
 	if (typeof coreType !== 'string') return false;

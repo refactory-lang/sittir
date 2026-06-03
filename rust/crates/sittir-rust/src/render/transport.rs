@@ -61,7 +61,6 @@ pub enum AnyTransport {
     FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
     ImplItemBody(ImplItemBodyTransport),
     ImplItemNegativeClause(ImplItemNegativeClauseTransport),
-    ImplItemOptional1(ImplItemOptional1Transport),
     ImplItemPositiveClause(ImplItemPositiveClauseTransport),
     ImplItemSemi(ImplItemSemiTransport),
     ImplItemUnsafeMarker(ImplItemUnsafeMarkerTransport),
@@ -9063,114 +9062,6 @@ impl RenderableTransport for ImplItemNegativeClauseTraitTransportSlot {
             ImplItemNegativeClauseTraitTransportSlot::ScopedTypeIdentifier(inner) => render_scoped_type_identifier(inner, dest),
             ImplItemNegativeClauseTraitTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
             ImplItemNegativeClauseTraitTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ImplItemOptional1TraitTransportSlot {
-    Identifier(IdentifierTransport),
-    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
-    GenericType(GenericTypeTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ImplItemOptional1TraitTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            return match kind_id {
-                1 => Ok(Self::Identifier(
-                    IdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                245 => Ok(Self::ScopedTypeIdentifier(
-                    ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                226 => Ok(Self::GenericType(
-                    GenericTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ImplItemOptional1TraitTransportSlot",
-                ))),
-            };
-        }
-        if let Ok(text) = String::from_napi_value(env, napi_val) {
-            return Ok(Self::Verbatim(VerbatimTransport { text }));
-        }
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("ImplItemOptional1TraitTransportSlot: expected u16 kind_id, string, or object with $type"))?;
-        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in ImplItemOptional1TraitTransportSlot")
-        )?;
-        match kind_id {
-                1 => Ok(Self::Identifier(
-                    IdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                245 => Ok(Self::ScopedTypeIdentifier(
-                    ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                226 => Ok(Self::GenericType(
-                    GenericTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ImplItemOptional1TraitTransportSlot",
-                ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImplItemOptional1TraitTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ImplItemOptional1TraitTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ImplItemOptional1TraitTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ImplItemOptional1TraitTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplItemOptional1TraitTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ImplItemOptional1TraitTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn impl_item_optional1_trait_transport_slot_to_any(t: ImplItemOptional1TraitTransportSlot) -> AnyTransport {
-    match t {
-        ImplItemOptional1TraitTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ImplItemOptional1TraitTransportSlot::ScopedTypeIdentifier(inner) => AnyTransport::ScopedTypeIdentifier(inner),
-        ImplItemOptional1TraitTransportSlot::GenericType(inner) => AnyTransport::GenericType(inner),
-        ImplItemOptional1TraitTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for ImplItemOptional1TraitTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ImplItemOptional1TraitTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ImplItemOptional1TraitTransportSlot::ScopedTypeIdentifier(inner) => render_scoped_type_identifier(inner, dest),
-            ImplItemOptional1TraitTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
-            ImplItemOptional1TraitTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -20150,56 +20041,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplItemNegativeClauseTranspor
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ImplItemNegativeClauseTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct ImplItemOptional1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trait"))]
-    pub trait_: ImplItemOptional1TraitTransportSlot,
-}
-
-impl RenderableTransport for ImplItemOptional1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_impl_item_optional1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ImplItemOptional1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ImplItemOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplItemOptional1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ImplItemOptional1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -44782,11 +44623,6 @@ fn render_impl_item_negative_clause(node: &ImplItemNegativeClauseTransport, dest
     template.render_into(dest)
 }
 
-fn render_impl_item_optional1(node: &ImplItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    node.trait_.render_into(dest)?;
-    Ok(())
-}
-
 fn render_impl_item_positive_clause(node: &ImplItemPositiveClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ImplItemPositiveClauseTemplate {
         trait_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.trait_)),
@@ -48199,7 +48035,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::FunctionTypeTraitForm(t) => render_function_type_trait_form(t, dest),
             AnyTransport::ImplItemBody(t) => render_impl_item_body(t, dest),
             AnyTransport::ImplItemNegativeClause(t) => render_impl_item_negative_clause(t, dest),
-            AnyTransport::ImplItemOptional1(t) => render_impl_item_optional1(t, dest),
             AnyTransport::ImplItemPositiveClause(t) => render_impl_item_positive_clause(t, dest),
             AnyTransport::ImplItemSemi(t) => t.render_into(dest),
             AnyTransport::ImplItemUnsafeMarker(t) => t.render_into(dest),
@@ -48591,7 +48426,6 @@ impl AnyTransport {
             Self::FunctionTypeTraitForm(t) => t.transport_named,
             Self::ImplItemBody(t) => t.transport_named,
             Self::ImplItemNegativeClause(t) => t.transport_named,
-            Self::ImplItemOptional1(t) => t.transport_named,
             Self::ImplItemPositiveClause(t) => t.transport_named,
             Self::ImplItemSemi(t) => t.transport_named,
             Self::ImplItemUnsafeMarker(t) => t.transport_named,
@@ -49010,7 +48844,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::FunctionTypeTraitForm(data) => transport_to_node_function_type_trait_form(data),
         AnyTransport::ImplItemBody(data) => transport_to_node_impl_item_body(data),
         AnyTransport::ImplItemNegativeClause(data) => transport_to_node_impl_item_negative_clause(data),
-        AnyTransport::ImplItemOptional1(data) => transport_to_node_impl_item_optional1(data),
         AnyTransport::ImplItemPositiveClause(data) => transport_to_node_impl_item_positive_clause(data),
         AnyTransport::ImplItemSemi(data) => transport_to_node_impl_item_semi(data),
         AnyTransport::ImplItemUnsafeMarker(data) => transport_to_node_impl_item_unsafe_marker(data),
@@ -50265,27 +50098,6 @@ fn transport_to_node_impl_item_negative_clause(transport: ImplItemNegativeClause
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(328) /* "_impl_item_negative_clause" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        transport.transport_text,
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        fields,
-        children,
-        trivia_data,
-    ))
-}
-
-fn transport_to_node_impl_item_optional1(transport: ImplItemOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let mut fields = TransportHashMap::new();
-    fields.insert("trait".to_string(), transport_field_value(impl_item_optional1_trait_transport_slot_to_any(transport.trait_))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_impl_item_optional1" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,

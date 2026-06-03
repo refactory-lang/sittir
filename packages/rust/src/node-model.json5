@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 380,
+  "nodeCount": 379,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -2236,58 +2236,6 @@
       "irKey": "implItemNegativeClause",
       "hidden": false,
       "name": "_impl_item_negative_clause",
-      "fields": [
-        {
-          "name": "trait",
-          "propertyName": "trait",
-          "paramName": "trait",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "type_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "scoped_type_identifier",
-              "parseKind": "scoped_type_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "generic_type",
-              "parseKind": "generic_type",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier",
-              "scoped_type_identifier",
-              "generic_type"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "_impl_item_optional1",
-      "modelType": "group",
-      "typeName": "ImplItemOptional1",
-      "factoryName": "_implItemOptional1",
-      "irKey": "implItemOptional1",
-      "hidden": false,
-      "name": "_impl_item_optional1",
       "fields": [
         {
           "name": "trait",

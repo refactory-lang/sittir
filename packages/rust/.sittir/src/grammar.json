@@ -9467,50 +9467,6 @@
         }
       ]
     },
-    "_impl_item_optional1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "!"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "FIELD",
-          "name": "trait",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_type_identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "scoped_type_identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "generic_type"
-              }
-            ],
-            "fieldName": "trait",
-            "nonterminal": true
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "for"
-        }
-      ]
-    },
     "_const_parameter_optional1": {
       "type": "SEQ",
       "members": [
@@ -11836,7 +11792,6 @@
     "_enum_variant_optional1",
     "_extern_crate_declaration_optional1",
     "_function_item_optional1",
-    "_impl_item_optional1",
     "_const_parameter_optional1",
     "_type_parameter_optional1",
     "_let_declaration_optional1",

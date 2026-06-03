@@ -75,6 +75,7 @@ import {
 } from './runtime-shapes.ts';
 import type { RuntimeRule } from './runtime-shapes.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
+import { ruleMatchesEmpty, isInlineSafe } from './group-classify.ts';
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
 // The outer wrapper is `{ grammar: {...} }` because tree-sitter's
@@ -1305,23 +1306,6 @@ function canonicalStringifyClause(value: unknown): string {
 }
 
 /**
- * @internal — true when a seq's members contain ≥1 string/STRING and ≥1
- * field/FIELD — the clause predicate matching detectClause's check in
- * link.ts:2043–2045.
- */
-function isClauseSeq(members: unknown[]): boolean {
-	let hasString = false;
-	let hasField = false;
-	for (const m of members) {
-		const norm = normalizeMember(m);
-		if (isStringType(norm.type)) hasString = true;
-		if (isFieldType(norm.type)) hasField = true;
-		if (hasString && hasField) return true;
-	}
-	return false;
-}
-
-/**
  * @internal — peel an optional wrapper from a rule node. Returns the inner
  * seq content if the rule is `optional(seq)` (sittir form) or
  * `CHOICE[seq, BLANK]` (tree-sitter normalized form). Returns null if the
@@ -1380,10 +1364,31 @@ function applyClauseHoist(
 	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
 	const peeled = peelOptionalSeq(rule);
 	if (peeled !== null) {
-		const seqMembers = (peeled.seqBody as unknown as { members: unknown[] }).members;
-		if (isClauseSeq(seqMembers)) {
-			// Clause-seq: this pass hoists it. Increment counter for this position.
-			const name = clauseHoistSynthName(peeled.seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
+		// Post-order: recurse into the seq body FIRST, then classify.
+		const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter);
+
+		if (ruleMatchesEmpty(recursedSeqBody)) {
+			// Empty-matching body: tree-sitter rejects named rules that match the
+			// empty string — never hoist. Counter must still increment because
+			// applyAutoGroups does NOT check empty-matching and will consume this
+			// counter slot for its own numbering.
+			counter.opt += 1;
+			// Rebuild wrapper with the recursed (possibly updated) seq body, but
+			// leave this position un-hoisted.
+			if (recursedSeqBody === peeled.seqBody) return rule;
+			if (peeled.form === 'optional') {
+				return rebuildOptional(rule, recursedSeqBody);
+			} else {
+				const members = (rule as unknown as { members: Rule[] }).members;
+				const newMembers = members.slice() as Rule[];
+				newMembers[peeled.seqIdx] = recursedSeqBody;
+				return { ...rule, members: newMembers } as Rule;
+			}
+		} else if (isInlineSafe(recursedSeqBody)) {
+			// Inline-safe: exactly one field/symbol slot after dropping literals.
+			// Hoist into a hidden _<parent>_optionalN rule (today's clause path).
+			// clauseHoistSynthName increments the counter internally.
+			const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
 			if (name !== null) {
 				const symbolRef = makeGroupLiftSymbol(rule, name);
 				if (peeled.form === 'optional') {
@@ -1401,20 +1406,19 @@ function applyClauseHoist(
 			// before the collision was detected — see that function's comments.)
 			return rule;
 		} else {
-			// Non-clause optional(seq): applyAutoGroups will hoist this later.
-			// IMPORTANT: increment our counter so that subsequent clause-seqs
-			// in this parent get numbers that don't collide with applyAutoGroups.
+			// Inline-unsafe: multi-slot or bare-choice body. applyAutoGroups
+			// (still running this chunk) will hoist this later. Increment counter
+			// to keep numbering in sync with applyAutoGroups.
 			counter.opt += 1;
-			// Descend into the seq body looking for nested clause-seqs.
-			const newSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter);
-			if (newSeqBody === peeled.seqBody) return rule;
-			// Rebuild the optional/choice wrapper with the updated seq body.
+			// Rebuild the optional/choice wrapper with the recursed seq body
+			// (no hoist — left inline for applyAutoGroups to handle).
+			if (recursedSeqBody === peeled.seqBody) return rule;
 			if (peeled.form === 'optional') {
-				return rebuildOptional(rule, newSeqBody);
+				return rebuildOptional(rule, recursedSeqBody);
 			} else {
 				const members = (rule as unknown as { members: Rule[] }).members;
 				const newMembers = members.slice() as Rule[];
-				newMembers[peeled.seqIdx] = newSeqBody;
+				newMembers[peeled.seqIdx] = recursedSeqBody;
 				return { ...rule, members: newMembers } as Rule;
 			}
 		}

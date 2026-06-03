@@ -16,6 +16,7 @@ describe('ruleMatchesEmpty', () => {
 
 describe('isInlineSafe — exactly 1 non-choice field/symbol slot after dropping literals', () => {
   it('clause seq(STRING, field) is inline-safe', () => expect(isInlineSafe(seq(str('as'), field('alias', sym('expr'))))).toBe(true));
+  it('field wrapping a choice is inline-safe (field is the slot, not the choice inside)', () => expect(isInlineSafe(seq(field('sign', choice(str('-'), str('+'))), str('readonly')))).toBe(true));
   it('bare choice slot is NOT inline-safe', () => expect(isInlineSafe(seq(str('('), choice(sym('self'), sym('super')), str(')')))).toBe(false));
   it('two slots is NOT inline-safe', () => expect(isInlineSafe(seq(field('name', sym('id')), field('val', sym('expr'))))).toBe(false));
   it('repeat1(choice(...)) body is NOT inline-safe', () => expect(isInlineSafe(seq({ type: 'repeat1', content: choice(field('name', sym('id')), sym('enum_assignment')) }))).toBe(false));

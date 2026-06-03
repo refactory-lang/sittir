@@ -609,6 +609,73 @@ function recurseChildren(rule, visit) {
   return rule;
 }
 
+// packages/codegen/src/dsl/group-classify.ts
+function ruleMatchesEmpty(rule) {
+  if (!rule || typeof rule !== "object") return false;
+  const r = rule;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (isOptionalType(t) || isPlainRepeatType2(t) || isBlankType(t)) return true;
+  if (typeEq(t, "repeat1")) {
+    return ruleMatchesEmpty(r.content);
+  }
+  if (isSeqType(t)) {
+    const members = r.members;
+    if (!Array.isArray(members) || members.length === 0) return true;
+    return members.every((m) => ruleMatchesEmpty(m));
+  }
+  if (typeEq(t, "choice")) {
+    const members = r.members;
+    if (!Array.isArray(members)) return false;
+    return members.some((m) => ruleMatchesEmpty(m));
+  }
+  if (isFieldType(t) || isPrecWrapper(r)) {
+    return ruleMatchesEmpty(r.content);
+  }
+  if (isStringType(t) || isSymbolType(t) || typeEq(t, "token") || typeEq(t, "pattern")) return false;
+  return false;
+}
+function isPlainRepeatType2(t) {
+  return t === "repeat" || t === "REPEAT";
+}
+function collectSlots(members) {
+  const slots = [];
+  for (const m of members) {
+    if (!m || typeof m !== "object") continue;
+    const r = m;
+    const t = typeof r.type === "string" ? r.type : "";
+    if (isStringType(t) || typeEq(t, "token") || isBlankType(t)) continue;
+    slots.push(m);
+  }
+  return slots;
+}
+function unwrapPrec(rule) {
+  let cur = rule;
+  while (cur && typeof cur === "object") {
+    const r = cur;
+    if (isPrecWrapper(r)) {
+      cur = r.content;
+    } else {
+      break;
+    }
+  }
+  return cur;
+}
+function isInlineSafe(seqBody) {
+  if (!seqBody || typeof seqBody !== "object") return false;
+  const r = seqBody;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (!isSeqType(t)) return false;
+  const members = r.members;
+  if (!Array.isArray(members)) return false;
+  const slots = collectSlots(members);
+  if (slots.length !== 1) return false;
+  const core = unwrapPrec(slots[0]);
+  if (!core || typeof core !== "object") return false;
+  const coreType = core.type;
+  if (typeof coreType !== "string") return false;
+  return isFieldType(coreType) || isSymbolType(coreType);
+}
+
 // packages/codegen/src/dsl/enrich.ts
 function enrich(baseInput) {
   const base2 = baseInput;
@@ -1300,17 +1367,6 @@ function canonicalStringifyClause(value) {
   }
   return "{" + parts.join(",") + "}";
 }
-function isClauseSeq(members) {
-  let hasString = false;
-  let hasField = false;
-  for (const m of members) {
-    const norm = normalizeMember(m);
-    if (isStringType(norm.type)) hasString = true;
-    if (isFieldType(norm.type)) hasField = true;
-    if (hasString && hasField) return true;
-  }
-  return false;
-}
 function peelOptionalSeq(rule) {
   if (isOptionalType(rule.type)) {
     const content = rule.content;
@@ -1332,9 +1388,20 @@ function peelOptionalSeq(rule) {
 function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter) {
   const peeled = peelOptionalSeq(rule);
   if (peeled !== null) {
-    const seqMembers = peeled.seqBody.members;
-    if (isClauseSeq(seqMembers)) {
-      const name = clauseHoistSynthName(peeled.seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
+    const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter);
+    if (ruleMatchesEmpty(recursedSeqBody)) {
+      counter.opt += 1;
+      if (recursedSeqBody === peeled.seqBody) return rule;
+      if (peeled.form === "optional") {
+        return rebuildOptional(rule, recursedSeqBody);
+      } else {
+        const members = rule.members;
+        const newMembers = members.slice();
+        newMembers[peeled.seqIdx] = recursedSeqBody;
+        return { ...rule, members: newMembers };
+      }
+    } else if (isInlineSafe(recursedSeqBody)) {
+      const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
       if (name !== null) {
         const symbolRef = makeGroupLiftSymbol(rule, name);
         if (peeled.form === "optional") {
@@ -1349,14 +1416,13 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       return rule;
     } else {
       counter.opt += 1;
-      const newSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter);
-      if (newSeqBody === peeled.seqBody) return rule;
+      if (recursedSeqBody === peeled.seqBody) return rule;
       if (peeled.form === "optional") {
-        return rebuildOptional(rule, newSeqBody);
+        return rebuildOptional(rule, recursedSeqBody);
       } else {
         const members = rule.members;
         const newMembers = members.slice();
-        newMembers[peeled.seqIdx] = newSeqBody;
+        newMembers[peeled.seqIdx] = recursedSeqBody;
         return { ...rule, members: newMembers };
       }
     }
