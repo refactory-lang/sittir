@@ -3524,30 +3524,9 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "path",
-                  "content": {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "_path"
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
-                  },
-                  "source": "override"
-                },
-                {
-                  "type": "STRING",
-                  "value": "::"
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "_use_wildcard_optional1",
+              "source": "group-lift"
             },
             {
               "type": "BLANK"
@@ -11503,6 +11482,27 @@
         }
       ]
     },
+    "_use_wildcard_optional1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_path"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "::"
+        }
+      ]
+    },
     "_parameters_optional1": {
       "type": "SEQ",
       "members": [
@@ -11792,6 +11792,7 @@
     "_where_clause_optional1",
     "_type_parameters_repeat1",
     "_use_list_optional1",
+    "_use_wildcard_optional1",
     "_parameters_optional1",
     "_for_lifetimes_repeat1",
     "_type_arguments_repeat1",

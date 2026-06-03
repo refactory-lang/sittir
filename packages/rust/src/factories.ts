@@ -3459,17 +3459,15 @@ export function useList(...children: T.UseClause[]) {
   }, methodsEngine);
 }
 
-export function useWildcard(path?: T.UseWildcard.Config['path']) {
-  const _path = path;
+export function useWildcard(child?: T.Path) {
+  const _path = child;
   return withMethods({
     $type: TSKindId.UseWildcard as const,
     $source: 2 as const,
     $named: true as const,
     _path,
     path() { return _path; },
-    $with: {
-      path: (value?: T.UseWildcard.Config['path']) => useWildcard(value),
-    },
+    $with: { $child: (v: T.Path) => useWildcard(v) },
   }, methodsEngine);
 }
 

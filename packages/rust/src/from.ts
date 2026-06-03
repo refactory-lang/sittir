@@ -331,6 +331,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "type_arguments": TSKindId.TypeArguments,
   "type_parameters": TSKindId.TypeParameters,
   "use_list": TSKindId.UseList,
+  "use_wildcard": TSKindId.UseWildcard,
   "visibility_modifier": TSKindId.VisibilityModifier,
   "where_clause": TSKindId.WhereClause,
   "yield_expression": TSKindId.YieldExpression,
@@ -377,6 +378,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "type_arguments": return F.typeArguments(...(children as Parameters<typeof F.typeArguments>));
     case "type_parameters": return F.typeParameters(...(children as Parameters<typeof F.typeParameters>));
     case "use_list": return F.useList(...(children as Parameters<typeof F.useList>));
+    case "use_wildcard": return F.useWildcard(children[0] as Parameters<typeof F.useWildcard>[0]);
     case "visibility_modifier": return F.visibilityModifier(children[0] as Parameters<typeof F.visibilityModifier>[0]);
     case "where_clause": return F.whereClause(...(children as Parameters<typeof F.whereClause>));
     case "yield_expression": return F.yieldExpression(children[0] as Parameters<typeof F.yieldExpression>[0]);
@@ -1703,9 +1705,13 @@ export function useListFrom(...input: readonly (T.UseClause | T.UseList)[]): Ret
   return F.useList(...(input as unknown as Parameters<typeof F.useList>));
 }
 
-export function useWildcardFrom(input?: T.UseWildcard.Loose): ReturnType<typeof F.useWildcard> {
-  if (input !== undefined && isNodeData(input) && (input.$type as string | number) === kindIdFromName("use_wildcard")) return input as unknown as ReturnType<typeof F.useWildcard>;
-  return F.useWildcard(_resolveOne<T.Path>((input !== null && typeof input === 'object' && !isNodeData(input) && "path" in input ? input.path : input), _K6, _K7));
+export function useWildcardFrom(input?: T.Path | T.UseWildcard): ReturnType<typeof F.useWildcard> {
+  if (isNodeData(input) && input.$type === TSKindId.UseWildcard) {
+    const data = input;
+    const child = (data as unknown as { _path?: unknown })._path;
+    return F.useWildcard(child as Parameters<typeof F.useWildcard>[0]);
+  }
+  return F.useWildcard(input as Parameters<typeof F.useWildcard>[0]);
 }
 
 export function variadicParameterFrom(input?: T.VariadicParameter.Loose): ReturnType<typeof F.variadicParameter> {

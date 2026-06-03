@@ -228,6 +228,14 @@ export interface VariantRule extends RuleBase {
 	readonly content: Rule;
 }
 
+/**
+ * @deprecated No remaining producer. `optional(seq(STRING, FIELD…))` clauses
+ * are hoisted into real `_<parent>_optionalN` groups by the enrich clause-hoist
+ * pass (dsl/enrich.ts); `detectClause` (its sole live producer) was deleted.
+ * The type + its `'clause'` switch arms + `emitClause` are retained as inert
+ * dead code pending a follow-up fold into the `'group'` path. Do not produce
+ * new ClauseRules.
+ */
 export interface ClauseRule extends RuleBase {
 	readonly type: 'clause';
 	readonly name: string;
@@ -398,6 +406,7 @@ export const isOptional = (r: Rule): r is OptionalRule => r.type === 'optional';
 export const isRepeat = (r: Rule): r is RepeatRule => r.type === 'repeat';
 export const isRepeat1 = (r: Rule): r is Repeat1Rule => r.type === 'repeat1';
 export const isField = (r: Rule): r is FieldRule => r.type === 'field';
+/** @deprecated ClauseRule has no remaining producer — see {@link ClauseRule}. */
 export const isClause = (r: Rule): r is ClauseRule => r.type === 'clause';
 export const isEnum = (r: Rule): r is EnumRule => r.type === 'enum';
 export const isSupertype = (r: Rule): r is SupertypeRule => r.type === 'supertype';

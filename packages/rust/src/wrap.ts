@@ -3365,12 +3365,10 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UseWildcard as const,
-    _path: normalizeSingularWrapSlot(data._path, "path", false, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
+    _path: normalizeSingularWrapSlot((data._self ?? data._identifier ?? data._metavariable ?? data._super ?? data._crate ?? data._scoped_identifier ?? data._reserved_identifier ?? data._path), "path", false, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
 
     path() { return drillIn<T.Path | undefined>(this._path, tree); },
-    $with: {
-      path: (v: NonNullable<T.UseWildcard['_path']>) => wrapUseWildcard({ ...data, _path: v }, tree),
-    },
+    $with: { $children: (...vs: readonly [never]) => wrapUseWildcard({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }

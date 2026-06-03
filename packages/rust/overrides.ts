@@ -685,10 +685,13 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 			1: field('operand') // $._expression
 		},
 
-		// use_wildcard: 1 field(s)
-		use_wildcard: {
-			'0/0/0': field('path') // optional($._path) inside the optional `path ::` prefix; excludes the `::` token
-		},
+		// use_wildcard — transform override dropped so enrich infers `path` and
+		// hoists `optional(seq(path, '::'))` into a group. KNOWN STRAGGLER: the base
+		// is a DOUBLE optional `seq(optional(seq(optional($._path), '::')), '*')`, so
+		// the inner `path` is optional and the hoisted group has no mandatory slot to
+		// gate the `::` literal — it renders `::*` for the (rare, ~invalid) bare-path
+		// `use ::*` form. Corpus-blind (no AST regression). Proper fix = visible-group
+		// for optional-single-slot groups (see project_hoisted_group_slot_visibility_rule).
 
 		// variadic_parameter: 1 field(s)
 		variadic_parameter: {},

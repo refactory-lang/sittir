@@ -55646,11 +55646,16 @@ fn transport_to_node_use_list(transport: UseListTransport) -> Result<TransportNo
 
 fn transport_to_node_use_wildcard(transport: UseWildcardTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.path {
-        fields.insert("path".to_string(), transport_field_value(path_transport_to_any(value))?);
-    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    if let Some(value) = transport.path {
+        children_buf.push(path_transport_to_any(value));
+    }
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(209) /* "use_wildcard" */,

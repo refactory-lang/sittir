@@ -188,7 +188,7 @@ export const suggestedGroups = {
 
   // [held] 1 candidate(s)
   use_wildcard: {
-    '0/0': 'path',
+    '0': 'path',
   },
 
 };

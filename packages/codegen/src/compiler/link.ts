@@ -1455,12 +1455,13 @@ function resolveRule(
 			};
 
 		case 'optional': {
+			// Plain optional resolution. Clause-shaped `optional(seq(STRING, FIELD…))`
+			// is now hoisted into a real `_<parent>_optionalN` group by the enrich
+			// clause-hoist pass (dsl/enrich.ts) BEFORE the IR pipeline runs, so by
+			// the time resolveRule sees an `optional` its content is a SYMBOL, never
+			// a seq — `detectClause` (deleted) is obsolete. ClauseRule is @deprecated.
 			const content = resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
-			// Clause detection: optional(seq(STRING, FIELD, ...))
-			// Preserve original rule.id through detectClause's fresh object construction
-			// so NodeMap.nodeByRuleId can register optional-rooted kinds.
-			const detected = detectClause(content, currentName);
-			return rule.id !== undefined ? { ...detected, id: rule.id } : detected;
+			return { ...rule, content };
 		}
 
 		case 'repeat':
@@ -2035,26 +2036,13 @@ function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
 }
 
 // ---------------------------------------------------------------------------
-// detectClause — optional(seq(STRING, FIELD, ...)) → clause
+// detectClause — DELETED. `optional(seq(STRING, FIELD…))` clauses are now
+// hoisted into real `_<parent>_optionalN` groups by the enrich clause-hoist
+// pass (dsl/enrich.ts) before the IR pipeline runs. Single-mandatory-slot
+// groups inline + render co-conditionally; the bespoke ClauseRule is
+// @deprecated (no remaining producer). use_wildcard's straggler shape is
+// handled by a rule redefinition in packages/rust/overrides.ts.
 // ---------------------------------------------------------------------------
-
-function detectClause(content: Rule, currentName: string): Rule {
-	if (isSeq(content)) {
-		const hasString = content.members.some(isString);
-		const hasField = content.members.some(isField);
-		if (hasString && hasField) {
-			// Name the clause from the first field
-			const firstField = content.members.find(isField);
-			const clauseName = firstField?.name ?? currentName;
-			return {
-				type: 'clause',
-				name: clauseName,
-				content
-			} satisfies ClauseRule;
-		}
-	}
-	return { type: 'optional', content };
-}
 
 // ---------------------------------------------------------------------------
 // Field name inference
