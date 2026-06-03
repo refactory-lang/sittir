@@ -1616,6 +1616,10 @@ describe('use_wildcard', () => {
     expect(node.$type).toBe(TSKindId.UseWildcard);
     expect(node.$source).toBe(2);
   });
+  it('render produces non-empty string', () => {
+    const node = ir.useWildcard({ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
 });
 
 describe('variadic_parameter', () => {

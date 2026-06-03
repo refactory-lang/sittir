@@ -2499,6 +2499,17 @@ export interface UseListTransport {
   _use_clause?: Array<UseClauseTransport>
 }
 
+export interface UseWildcardClauseTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _path: PathTransport
+}
+
 export interface UseWildcardTransport {
   '$source'?: Source
   '$named'?: boolean

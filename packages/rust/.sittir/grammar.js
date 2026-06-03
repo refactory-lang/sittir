@@ -2954,13 +2954,10 @@ var overrides_default = grammar(enrichedBase, wire({
       1: field2("operand")
       // $._expression
     },
-    // use_wildcard — transform override dropped so enrich infers `path` and
-    // hoists `optional(seq(path, '::'))` into a group. KNOWN STRAGGLER: the base
-    // is a DOUBLE optional `seq(optional(seq(optional($._path), '::')), '*')`, so
-    // the inner `path` is optional and the hoisted group has no mandatory slot to
-    // gate the `::` literal — it renders `::*` for the (rare, ~invalid) bare-path
-    // `use ::*` form. Corpus-blind (no AST regression). Proper fix = visible-group
-    // for optional-single-slot groups (see project_hoisted_group_slot_visibility_rule).
+    // use_wildcard — manually re-authored in `rules:` below as a VISIBLE
+    // (non-inlined) clause group `_use_wildcard_clause`, so it has a real
+    // presence slot to gate the co-mandatory `::` (the enrich auto-hoist
+    // inlined it, losing presence → `::*`). See rules: use_wildcard.
     // variadic_parameter: 1 field(s)
     variadic_parameter: {},
     // expression_statement: choice(seq(_expression, ';'),
@@ -3033,6 +3030,16 @@ var overrides_default = grammar(enrichedBase, wire({
     // branch.
   },
   rules: {
+    // use_wildcard — re-authored as a VISIBLE clause group. Base was the
+    // double-optional `seq(optional(seq(optional($._path), '::')), '*')`, which
+    // (once detectClause is gone) the enrich auto-hoist inlines into a presence-
+    // less group → renders `::*`. Here the `path ::` prefix is a hidden but
+    // NON-inlined group `_use_wildcard_clause` with a single mandatory `path`
+    // field: as a real node it carries a populated presence slot, so the parent
+    // gates the whole prefix (incl. `::`) by the clause's presence → `path::*`
+    // or `*`. (Drops the ~invalid bare-path `use ::*` form, which was never valid.)
+    use_wildcard: ($) => seq(optional($._use_wildcard_clause), "*"),
+    _use_wildcard_clause: ($) => seq(field2("path", $._path), "::"),
     // Hidden `_kw_*` rules that previously sat here
     // (`_kw_async` / `_kw_default` / `_kw_const` / `_kw_unsafe` /
     // `_kw_pub` / `_kw_in`) have been deleted. They're now

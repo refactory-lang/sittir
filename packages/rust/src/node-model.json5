@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 379,
+  "nodeCount": 380,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -5240,6 +5240,42 @@
         "use_list",
         "use_wildcard"
       ]
+    },
+    {
+      "kind": "_use_wildcard_clause",
+      "modelType": "group",
+      "typeName": "UseWildcardClause",
+      "factoryName": "_useWildcardClause",
+      "irKey": "useWildcardClause",
+      "hidden": false,
+      "name": "_use_wildcard_clause",
+      "fields": [
+        {
+          "name": "path",
+          "propertyName": "path",
+          "paramName": "path",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_path",
+              "parseKind": "_path",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_path"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_variadic_parameter_optional1",
@@ -15544,7 +15580,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [

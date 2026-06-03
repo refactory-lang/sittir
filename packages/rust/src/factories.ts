@@ -844,6 +844,20 @@ export function typeIdentifier(text: string) {
   }, methodsEngine);
 }
 
+export function _useWildcardClause(config: T.UseWildcardClause.Config) {
+  const _path = config.path;
+  return withMethods({
+    $type: TSKindId.UseWildcardClause as const,
+    $source: 2 as const,
+    $named: true as const,
+    _path,
+    path() { return _path; },
+    $with: {
+      path: (value: T.Path) => _useWildcardClause({ ...config, path: value }),
+    },
+  }, methodsEngine);
+}
+
 export function visibilityModifierCrate(_config?: T.VisibilityModifierCrate.Config) {
   const _crate = coerceKindEnumStorage("crate" as const, []);
   return withMethods({
@@ -3459,15 +3473,17 @@ export function useList(...children: T.UseClause[]) {
   }, methodsEngine);
 }
 
-export function useWildcard(child?: T.Path) {
-  const _path = child;
+export function useWildcard(path?: T.UseWildcard.Config['path']) {
+  const _path = path;
   return withMethods({
     $type: TSKindId.UseWildcard as const,
     $source: 2 as const,
     $named: true as const,
     _path,
     path() { return _path; },
-    $with: { $child: (v: T.Path) => useWildcard(v) },
+    $with: {
+      path: (value?: T.UseWildcard.Config['path']) => useWildcard(value),
+    },
   }, methodsEngine);
 }
 
@@ -3671,6 +3687,7 @@ export type FluentKindMap = {
   "_token_tree_pattern_paren": FluentNode<"_token_tree_pattern_paren", T.TokenTreePatternParen.Config>;
   "_type_argument": FluentNode<"_type_argument", T.TypeArgument.Config>;
   "_type_identifier": T.TypeIdentifier;
+  "_use_wildcard_clause": T.UseWildcardClause;
   "_visibility_modifier_crate": FluentNode<"_visibility_modifier_crate", T.VisibilityModifierCrate.Config>;
   "_visibility_modifier_in_path": T.VisibilityModifierInPath;
   "_visibility_modifier_pub": T.VisibilityModifierPub;
@@ -3890,6 +3907,7 @@ export const _factoryMap = {
   "_token_tree_pattern_paren": tokenTreePatternParen,
   "_type_argument": typeArgument,
   "_type_identifier": typeIdentifier,
+  "_use_wildcard_clause": _useWildcardClause,
   "_visibility_modifier_crate": visibilityModifierCrate,
   "_visibility_modifier_in_path": _visibilityModifierInPath,
   "_visibility_modifier_pub": _visibilityModifierPub,

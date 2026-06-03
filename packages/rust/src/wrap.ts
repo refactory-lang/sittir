@@ -1033,6 +1033,20 @@ export function wrapUseClause(data: T.UseClause, tree: TreeHandle) {
   return drillIn<T.UseClause>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["_path","path","self","identifier","metavariable","super","crate","scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
+export function wrapUseWildcardClause(data: T.UseWildcardClause, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.UseWildcardClause as const,
+    _path: normalizeSingularWrapSlot(data._path, "path", true, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
+
+    path() { return drillIn<T.Path>(this._path, tree); },
+    $with: {
+      path: (v: NonNullable<T.UseWildcardClause['_path']>) => wrapUseWildcardClause({ ...data, _path: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapVisibilityModifierCrate(data: T.VisibilityModifierCrate, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
@@ -3365,10 +3379,12 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UseWildcard as const,
-    _path: normalizeSingularWrapSlot((data._self ?? data._identifier ?? data._metavariable ?? data._super ?? data._crate ?? data._scoped_identifier ?? data._reserved_identifier ?? data._path), "path", false, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
+    _path: normalizeSingularWrapSlot(data._path, "path", false, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
 
     path() { return drillIn<T.Path | undefined>(this._path, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapUseWildcard({ ...data, $other: vs }, tree) },
+    $with: {
+      path: (v: NonNullable<T.UseWildcard['_path']>) => wrapUseWildcard({ ...data, _path: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -3533,6 +3549,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_type_argument': (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
   '_type_identifier': (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
   '_use_clause': (d, t) => wrapUseClause(d as unknown as T.UseClause, t),
+  '_use_wildcard_clause': (d, t) => wrapUseWildcardClause(d as unknown as T.UseWildcardClause, t),
   '_visibility_modifier_crate': (d, t) => wrapVisibilityModifierCrate(d as unknown as T.VisibilityModifierCrate, t),
   '_visibility_modifier_in_path': (d, t) => wrapVisibilityModifierInPath(d as unknown as T.VisibilityModifierInPath, t),
   '_visibility_modifier_pub': (d, t) => wrapVisibilityModifierPub(d as unknown as T.VisibilityModifierPub, t),
