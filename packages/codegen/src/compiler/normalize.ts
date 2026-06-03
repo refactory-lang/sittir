@@ -215,7 +215,6 @@ export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
 		case 'token':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return { ...rule, content: fanOutSeqChoices(rule.content) };
 		default:
@@ -345,7 +344,6 @@ export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
 		case 'token':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return { ...rule, content: factorChoiceBranches(rule.content) };
 		default:
@@ -385,7 +383,6 @@ export function dedupeSeqMembers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 		case 'token':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return { ...rule, content: dedupeSeqMembers(rule.content) };
 		default:
@@ -530,7 +527,6 @@ function walkSymbols(rule: Rule, visit: (name: string) => void): void {
 		case 'token':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'terminal':
 			walkSymbols(rule.content, visit);
@@ -574,7 +570,6 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
 		case 'token':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group': {
 			const inner = replaceSymbolRef(rule.content, targetName, targetRule);
 			return inner === rule.content ? rule : { ...rule, content: inner };
@@ -637,7 +632,6 @@ export function collapseWrappers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 		}
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 			return { ...rule, content: collapseWrappers(rule.content) };

@@ -343,7 +343,6 @@ function singleContentOf(rule: Rule): Rule | undefined {
 		case 'repeat1':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'terminal':
 			return rule.content;

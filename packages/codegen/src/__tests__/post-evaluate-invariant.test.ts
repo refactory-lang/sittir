@@ -35,7 +35,6 @@ const KNOWN_RULE_TYPES = new Set([
 	// Named patterns
 	'field',
 	'variant',
-	'clause',
 	'enum',
 	'supertype',
 	'group',

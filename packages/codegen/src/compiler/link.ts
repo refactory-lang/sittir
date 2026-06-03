@@ -4,7 +4,7 @@
  * Resolves what nodes ARE.
  * After Link: no symbol, alias, token. `repeat1` is preserved — see rule.ts header.
  * Terminals (string, pattern) and structural whitespace (indent, dedent, newline) survive.
- * All field nodes enriched with provenance. Clauses detected.
+ * All field nodes enriched with provenance.
  *
  * Link does NOT restructure the tree — shape identical before and after.
  * Link does NOT process overrides — already applied by Evaluate.
@@ -16,7 +16,6 @@ import type {
 	FieldRule,
 	SupertypeRule,
 	EnumRule,
-	ClauseRule,
 	GroupRule,
 	SeqRule,
 	ChoiceRule,
@@ -335,7 +334,6 @@ function canonicalizeRuleLiterals(
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'terminal':
 		case 'token':
@@ -513,7 +511,6 @@ function extractTopLevelAliasTarget(rule: Rule): string | undefined {
 	if (
 		rule.type === 'group' ||
 		rule.type === 'variant' ||
-		rule.type === 'clause' ||
 		rule.type === 'token' ||
 		rule.type === 'terminal'
 	) {
@@ -667,7 +664,6 @@ function extractTopLevelNamedAliasContent(rule: Rule): Rule | undefined {
 	if (
 		rule.type === 'group' ||
 		rule.type === 'variant' ||
-		rule.type === 'clause' ||
 		rule.type === 'token' ||
 		rule.type === 'terminal'
 	) {
@@ -731,7 +727,6 @@ function extractAliasedFromName(content: Rule, supertypes: Set<string>): string 
 	if (
 		content.type === 'variant' ||
 		content.type === 'group' ||
-		content.type === 'clause' ||
 		content.type === 'token' ||
 		content.type === 'terminal'
 	) {
@@ -1071,7 +1066,6 @@ function rewriteSeqWithVariantAliasChoice(
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'field':
 		case 'token':
@@ -1378,7 +1372,6 @@ function isTerminalShape(rule: Rule): boolean {
 		case 'repeat1':
 			return isTerminalShape_allowBareTerm(rule.content);
 		case 'variant':
-		case 'clause':
 			return isTerminalShape_allowBareTerm(rule.content);
 		case 'alias':
 		case 'token':
@@ -1419,7 +1412,6 @@ function isTerminalShape_allowBareTerm(rule: Rule): boolean {
 		case 'repeat1':
 			return isTerminalShape_allowBareTerm(rule.content);
 		case 'variant':
-		case 'clause':
 			return isTerminalShape_allowBareTerm(rule.content);
 		case 'alias':
 		case 'token':
@@ -1455,11 +1447,6 @@ function resolveRule(
 			};
 
 		case 'optional': {
-			// Plain optional resolution. Clause-shaped `optional(seq(STRING, FIELD…))`
-			// is now hoisted into a real `_<parent>_optionalN` group by the enrich
-			// clause-hoist pass (dsl/enrich.ts) BEFORE the IR pipeline runs, so by
-			// the time resolveRule sees an `optional` its content is a SYMBOL, never
-			// a seq — `detectClause` (deleted) is obsolete. ClauseRule is @deprecated.
 			const content = resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
 			return { ...rule, content };
 		}
@@ -1516,7 +1503,6 @@ function resolveRule(
 		case 'enum':
 		case 'supertype':
 		case 'group':
-		case 'clause':
 		case 'variant':
 		case 'indent':
 		case 'dedent':
@@ -1766,7 +1752,6 @@ function collectSubtypeNames(rule: Rule): string[] {
 				return;
 			case 'group':
 			case 'variant':
-			case 'clause':
 			case 'token':
 			case 'terminal':
 			case 'optional':
@@ -1861,7 +1846,6 @@ function walkForIndentHoist(rule: Rule, rules: Record<string, Rule>): void {
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 		case 'alias':
@@ -1973,7 +1957,6 @@ function containsIndent(rule: Rule): boolean {
 		case 'repeat1':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 		case 'alias':
@@ -1996,7 +1979,6 @@ function referencesBearer(rule: Rule, bearers: ReadonlySet<string>): boolean {
 		case 'repeat1':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 		case 'alias':
@@ -2023,7 +2005,6 @@ function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 		case 'alias':
@@ -2034,15 +2015,6 @@ function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
 			return;
 	}
 }
-
-// ---------------------------------------------------------------------------
-// detectClause — DELETED. `optional(seq(STRING, FIELD…))` clauses are now
-// hoisted into real `_<parent>_optionalN` groups by the enrich clause-hoist
-// pass (dsl/enrich.ts) before the IR pipeline runs. Single-mandatory-slot
-// groups inline + render co-conditionally; the bespoke ClauseRule is
-// @deprecated (no remaining producer). use_wildcard's straggler shape is
-// handled by a rule redefinition in packages/rust/overrides.ts.
-// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Field name inference
@@ -2193,7 +2165,6 @@ function applyInferredFields(
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group': {
 			const r = applyInferredFields(rule.content, ruleName, inferred, apply, log, _insideField);
 			return {
@@ -2235,11 +2206,11 @@ function collectSeqSiblingDuplicates(members: Rule[]): Set<string> {
  *
  * @param r - A rule to inspect.
  * @returns The symbol name if `r` is a symbol or wraps one through
- *   `optional`/`variant`/`clause`/`group`; `null` otherwise.
+ *   `optional`/`variant`/`group`; `null` otherwise.
  */
 function unwrapSymRef(r: Rule): string | null {
 	if (r.type === 'symbol') return r.name;
-	if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') {
+	if (r.type === 'optional' || r.type === 'variant' || r.type === 'group') {
 		return unwrapSymRef(r.content);
 	}
 	return null;
@@ -2337,7 +2308,6 @@ function collectFieldKindSets(rule: Rule, yield_: (kinds: readonly string[]) => 
 		case 'repeat':
 		case 'token':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			collectFieldKindSets(rule.content, yield_);
 			return;
@@ -2361,7 +2331,6 @@ function directContentKinds(rule: Rule): string[] {
 		case 'repeat':
 		case 'token':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return directContentKinds(rule.content);
 		default:

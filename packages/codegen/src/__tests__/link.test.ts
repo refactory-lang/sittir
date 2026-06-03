@@ -147,39 +147,6 @@ describe('Link — hidden rule classification', () => {
 	});
 });
 
-describe('Link — clause detection', () => {
-	it('detects optional(seq(STRING, FIELD, ...)) as a clause', () => {
-		const raw = makeRaw({
-			function_def: {
-				type: 'seq',
-				members: [
-					{ type: 'string', value: 'fn' },
-					{
-						type: 'optional',
-						content: {
-							type: 'seq',
-							members: [
-								{ type: 'string', value: '->' },
-								{
-									type: 'field',
-									name: 'return_type',
-									content: { type: 'symbol', name: 'type' }
-								}
-							]
-						}
-					}
-				]
-			},
-			type: { type: 'pattern', value: '[A-Z]\\w*' }
-		});
-		const linked = link(raw);
-		const fnDef = linked.rules['function_def'] as any;
-		// The optional should be detected as a clause
-		const optionalMember = fnDef.members[1];
-		expect(optionalMember.type).toBe('clause');
-	});
-});
-
 describe('Link — field provenance', () => {
 	it('preserves field source from override', () => {
 		const raw = makeRaw({

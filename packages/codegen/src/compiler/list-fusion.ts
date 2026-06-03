@@ -124,7 +124,6 @@ function recurseChildren(rule: Rule, fn: (r: Rule) => Rule): Rule {
 		case 'repeat1':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 		case 'alias':

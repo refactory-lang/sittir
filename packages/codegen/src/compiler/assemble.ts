@@ -662,7 +662,6 @@ function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen:
 		case 'string':
 			return /^[A-Za-z_][A-Za-z0-9_]*$/.test(rule.value) ? [] : [rule.value];
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 		case 'terminal':
@@ -1180,9 +1179,6 @@ function walkForStrings(rule: Rule, out: Map<string, string>): void {
 		case 'variant':
 			walkForStrings(rule.content, out);
 			break;
-		case 'clause':
-			walkForStrings(rule.content, out);
-			break;
 		case 'group':
 			walkForStrings(rule.content, out);
 			break;
@@ -1344,7 +1340,6 @@ function isAllTextShape(rule: Rule): boolean {
 		case 'repeat':
 		case 'token':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return isAllTextShape(rule.content);
 		default:

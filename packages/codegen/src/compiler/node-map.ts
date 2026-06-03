@@ -541,7 +541,6 @@ export function hasAnyField(rule: Rule): boolean {
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return hasAnyField(rule.content);
 		default:
@@ -566,7 +565,6 @@ export function hasAnyChild(rule: Rule): boolean {
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return hasAnyChild(rule.content);
 		default:
@@ -705,15 +703,6 @@ function classifyTopLevelShape(rule: Rule): string {
 		case 'dedent':
 		case 'newline':
 			return 'canonical';
-		case 'clause': {
-			// A `clause` wrapper is sittir's "this seq position owns
-			// a structural token" marker (e.g. field-semicolon, body-
-			// brace). The walker descends through it the same as any
-			// other single-content wrapper; treat its content the
-			// same way the top-level classifier does.
-			const inner = classifyTopLevelShape(rule.content);
-			return inner === 'canonical' ? 'canonical' : `clause-wrapping-${inner}`;
-		}
 		case 'variant': {
 			// `variant` wrappers below the top level — usually a
 			// polymorph discriminator that simplify couldn't hoist
@@ -1296,7 +1285,6 @@ export function deriveValuesForRule(
 			// Nested field inside a choice — recurse into its content
 			return deriveValuesForRule(rule.content, multiplicity, kindEntries);
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return deriveValuesForRule(rule.content, multiplicity, kindEntries);
 		case 'token':
@@ -2025,7 +2013,6 @@ function childrenMayBeEmpty(rule: Rule): boolean {
 			return false;
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return childrenMayBeEmpty(rule.content);
 		default:
@@ -3080,7 +3067,6 @@ function isAllPunct(rule: Rule): boolean {
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return isAllPunct((rule as { content: Rule }).content);
 		default:
@@ -3119,7 +3105,6 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 		switch (r.type) {
 			case 'optional':
 			case 'variant':
-			case 'clause':
 			case 'group':
 			case 'alias':
 			case 'token':

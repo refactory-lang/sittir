@@ -163,8 +163,7 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 					m.type === 'choice' ||
 					m.type === 'seq' ||
 					m.type === 'group' ||
-					m.type === 'variant' ||
-					m.type === 'clause';
+					m.type === 'variant';
 				const memberAttrs: WrapperAttrs =
 					multToPush !== undefined && isSlotBearingShape ? { multiplicity: multToPush } : {};
 				return deleteWrapperWith(m, memberAttrs);
@@ -187,11 +186,6 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		}
 
 		case 'variant': {
-			const content = deleteWrapperWith(rule.content, {});
-			return stampAttrs({ ...rule, content }, attrs);
-		}
-
-		case 'clause': {
 			const content = deleteWrapperWith(rule.content, {});
 			return stampAttrs({ ...rule, content }, attrs);
 		}

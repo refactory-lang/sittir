@@ -38,7 +38,6 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
 			return undefined;
 		case 'optional':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'field':
 			return findRepeatSeparator(rule.content);
@@ -82,7 +81,6 @@ export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolea
 			return rule.members.some((m) => findRepeatFlag(m, flag));
 		case 'optional':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'field':
 			return findRepeatFlag(rule.content, flag);
@@ -120,7 +118,6 @@ function collectFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading', a
 		case 'repeat1':
 		case 'optional':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			collectFieldsWithRepeatFlag(rule.content, flag, acc);
 			return;

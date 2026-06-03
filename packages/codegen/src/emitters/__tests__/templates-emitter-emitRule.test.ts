@@ -13,7 +13,6 @@ import { describe, expect, it } from 'vitest';
 import type {
 	AliasRule,
 	ChoiceRule,
-	ClauseRule,
 	DedentRule,
 	EnumRule,
 	FieldRule,
@@ -458,43 +457,6 @@ describe('emitRule — choice', () => {
 			]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('');
-	});
-});
-
-describe('emitRule — clause', () => {
-	it('wraps the body in a conditional keyed by the inner symbol fieldName attribute', () => {
-		// PR2 Task 3.B3: RenderRule has no FieldRule wrappers. The field facts
-		// live as leaf attributes (fieldName) on the inner symbol. pickConditionalKey
-		// checks fieldName attribute first, then falls back to the legacy field
-		// wrapper check (for tests and any transitional code paths).
-		const body: SeqRule = {
-			type: 'seq',
-			members: [
-				{ type: 'string', value: ':' },
-				{
-					type: 'symbol',
-					name: 'type',
-					id: 's3',
-					fieldName: 'return_type'
-				}
-			]
-		};
-		const rule: ClauseRule = { type: 'clause', name: 'return_type', content: body };
-		const slot = makeSlot({
-			name: 'return_type',
-			propertyName: 'returnType',
-			storageName: 'return_type'
-		});
-		const ctx = makeCtx({
-			nodeMap: {
-				slotByRuleId: new Map([['s3', slot]]),
-				nodeByRuleId: new Map(),
-				nodes: new Map()
-			} as unknown as EmitCtx['nodeMap']
-		});
-		expect(emitRule(rule, ctx)).toBe(
-			'{% if return_type | isPresent %}:{{ return_type }}{% endif %}'
-		);
 	});
 });
 

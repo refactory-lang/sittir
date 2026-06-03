@@ -6,7 +6,6 @@ function unwrapStructuralPassthroughs(content: Rule): Rule {
 		case 'optional':
 		case 'group':
 		case 'variant':
-		case 'clause':
 		case 'token':
 		case 'terminal':
 			return unwrapStructuralPassthroughs(content.content);
@@ -31,7 +30,6 @@ export function fieldContentIsMultiSibling(content: Rule): boolean {
 		while (
 			unwrapped.type === 'optional' ||
 			unwrapped.type === 'variant' ||
-			unwrapped.type === 'clause' ||
 			unwrapped.type === 'group' ||
 			unwrapped.type === 'token' ||
 			unwrapped.type === 'terminal'

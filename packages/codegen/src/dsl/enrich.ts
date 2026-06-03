@@ -987,8 +987,7 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 		t === 'immediate_token' ||
 		t === 'IMMEDIATE_TOKEN' ||
 		t === 'group' ||
-		t === 'variant' ||
-		t === 'clause'
+		t === 'variant'
 	) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (content === undefined) return rule;

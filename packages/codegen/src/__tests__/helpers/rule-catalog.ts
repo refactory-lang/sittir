@@ -49,7 +49,6 @@ export function walkRule(rule: Rule, visit: (rule: Rule) => void): void {
 		case 'repeat1':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'terminal':
 		case 'alias':

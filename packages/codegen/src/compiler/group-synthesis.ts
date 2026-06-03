@@ -54,7 +54,6 @@ function stepInto(rule: Rule, idx: number, fullPath: string): Rule {
 		case 'token':
 		case 'alias':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			if (idx !== 0) {
 				throw new Error(
@@ -214,7 +213,6 @@ function hasStructuralMember(rule: Rule): boolean {
 		case 'token':
 		case 'alias':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return hasStructuralMember((rule as { content: Rule }).content);
 		default:
@@ -446,7 +444,6 @@ function rewriteRuleForStamp(
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule;
 

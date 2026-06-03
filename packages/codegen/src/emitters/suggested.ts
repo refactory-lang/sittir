@@ -129,7 +129,7 @@ function _locateTopLevelChoice(rule: Rule): { choicePath: string; arms: string[]
 			// and the author can optionally drop the outer field wrapper.
 			return walk(node.content, path === '' ? '0' : `${path}/0`);
 		}
-		if (node.type === 'optional' || node.type === 'variant' || node.type === 'group' || node.type === 'clause') {
+		if (node.type === 'optional' || node.type === 'variant' || node.type === 'group') {
 			return walk(node.content, path === '' ? '0' : `${path}/0`);
 		}
 		return null;
@@ -151,7 +151,6 @@ function findSymbolPosition(rule: Rule, targetSymbol: string, fieldName: string)
 			case 'optional':
 			case 'variant':
 			case 'group':
-			case 'clause':
 				return unwrap(r.content);
 			default:
 				return r;
@@ -757,7 +756,6 @@ function walkBodyForGroups(
 		case 'token':
 		case 'alias':
 		case 'variant':
-		case 'clause':
 			// For non-cardinality-with-structural-seq cases, descend normally.
 			walkBodyForGroups((rule as { content: Rule }).content, [...path, 0], childCtx, out);
 			break;
@@ -792,7 +790,6 @@ function hasGroupableStructure(rule: Rule): boolean {
 		case 'token':
 		case 'alias':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return hasGroupableStructure((rule as { content: Rule }).content);
 		default:
@@ -823,7 +820,6 @@ function guessGroupDiscriminator(rule: Rule, path: readonly number[]): string {
 			case 'token':
 			case 'alias':
 			case 'variant':
-			case 'clause':
 			case 'group':
 				return peel((r as { content: Rule }).content);
 			default:

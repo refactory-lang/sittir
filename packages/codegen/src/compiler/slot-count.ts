@@ -42,7 +42,6 @@ export function countSlots(rule: Rule): number {
 
 		case 'variant':
 		case 'group':
-		case 'clause':
 			// Transparent wrappers — their content's count is this node's count.
 			return countSlots(rule.content);
 
@@ -82,7 +81,6 @@ export function countContentSlots(rule: Rule): number {
 				: rule.members.reduce((sum, m) => sum + countContentSlots(m), 0);
 		case 'variant':
 		case 'group':
-		case 'clause':
 			return countContentSlots(rule.content);
 		default:
 			return isContentSlot(rule) ? 1 : 0;

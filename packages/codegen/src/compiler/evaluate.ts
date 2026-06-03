@@ -991,7 +991,6 @@ function rewriteInlineAliases(
 		case 'field':
 		case 'token':
 		case 'variant':
-		case 'clause':
 		case 'group':
 			return {
 				...rule,
@@ -1193,7 +1192,6 @@ function walkFieldEnums(rule: Rule, parentKind: string, rules: Record<string, Ru
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 			walkFieldEnums((rule as { content: Rule }).content, parentKind, rules, out);
@@ -1509,7 +1507,6 @@ function rewriteFieldEnums(
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token': {
 			const newContent = recurse((rule as { content: Rule }).content);

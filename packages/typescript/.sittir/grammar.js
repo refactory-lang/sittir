@@ -561,7 +561,7 @@ function recurseChildren(rule, visit) {
     });
     return changed ? { ...rule, members: newMembers } : rule;
   }
-  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "group" || t === "variant" || t === "clause") {
+  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "group" || t === "variant") {
     const content = rule.content;
     if (content === void 0) return rule;
     const out = visit(content);
@@ -1093,7 +1093,7 @@ function recurseChildren2(rule, visit) {
     });
     return changed ? { ...rule, members: newMembers } : rule;
   }
-  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant" || t === "clause") {
+  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant") {
     const content = rule.content;
     if (content === void 0) return rule;
     const out = visit(content);

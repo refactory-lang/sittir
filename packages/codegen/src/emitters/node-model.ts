@@ -392,7 +392,6 @@ function extractElementKinds(rule: Rule): string[] {
 			case 'repeat':
 			case 'repeat1':
 			case 'variant':
-			case 'clause':
 			case 'group':
 			case 'field':
 				walk(r.content);

@@ -131,7 +131,6 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'terminal':
 		case 'token':
@@ -195,7 +194,6 @@ function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly Build
 		case 'repeat':
 		case 'repeat1':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'terminal':
 		case 'field':
@@ -276,7 +274,6 @@ function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): R
 		case 'seq':
 		case 'optional':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'polymorph':
 			// Recursive: nonterminal iff any child is.
@@ -313,7 +310,6 @@ function ruleChildren(rule: Rule): readonly Rule[] {
 		case 'alias':
 		case 'optional':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'terminal':
 			return [rule.content];

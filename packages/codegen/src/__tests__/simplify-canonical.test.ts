@@ -30,11 +30,6 @@ const variant = (name: string, content: Rule): Rule => ({
 const optional = (content: Rule): Rule => ({ type: 'optional', content });
 const repeat1 = (content: Rule, separator?: string): Rule =>
 	separator !== undefined ? { type: 'repeat1', content, separator } : { type: 'repeat1', content };
-const clause = (name: string, content: Rule): Rule => ({
-	type: 'clause',
-	name,
-	content
-});
 
 describe('simplifyRule — mergeChoiceBranches', () => {
 	it("merges same-shape branches that differ only in one field's literal", () => {
@@ -184,21 +179,10 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 	// hoist the inner field is the top-level reference the walker sees,
 	// matching tree-sitter's parse-tree shape.
 	//
-	// Canonical case (typescript `infer_type`):
-	//   field('constraint', clause('type', seq('extends', field('type', X))))
-	//   → clause('type', seq('extends', field('type', X)))
-
 	it('hoists an inner field out of `field(outer, optional(seq(literal, field(inner))))`', () => {
 		// Pre-clause-detection shape of typescript `infer_type`.
 		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
 		const expected = optional(seq(str('extends'), field('type', sym('type'))));
-		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(expected);
-	});
-
-	it('hoists through a `clause` wrapper', () => {
-		// Post-Link-detectClause shape of typescript `infer_type`.
-		const input = field('constraint', clause('type', seq(str('extends'), field('type', sym('type')))));
-		const expected = clause('type', seq(str('extends'), field('type', sym('type'))));
 		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(expected);
 	});
 

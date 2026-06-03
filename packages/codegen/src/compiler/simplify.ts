@@ -197,11 +197,6 @@ export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = f
 				...rule,
 				content: simplifyRule(rule.content, ctx, inField)
 			};
-		case 'clause':
-			return {
-				...rule,
-				content: simplifyRule(rule.content, ctx, inField)
-			};
 		default:
 			return rule;
 	}
@@ -437,7 +432,6 @@ function hasNamedSiblingOfInnerField(rule: Rule): boolean {
 		case 'optional':
 		case 'repeat':
 		case 'repeat1':
-		case 'clause':
 		case 'group':
 		case 'variant':
 			return hasNamedSiblingOfInnerField(rule.content);
@@ -455,7 +449,6 @@ function isNamedReference(rule: Rule): boolean {
 		case 'optional':
 		case 'repeat':
 		case 'repeat1':
-		case 'clause':
 		case 'group':
 		case 'variant':
 		case 'token':
@@ -473,7 +466,6 @@ function hasInnerFieldAtExposableDepth(rule: Rule): boolean {
 		case 'optional':
 		case 'repeat':
 		case 'repeat1':
-		case 'clause':
 		case 'group':
 		case 'variant':
 			return hasInnerFieldAtExposableDepth(rule.content);
@@ -828,7 +820,6 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 		case 'repeat1':
 		case 'group':
 		case 'variant':
-		case 'clause':
 		case 'token':
 		case 'terminal':
 			return {
@@ -975,7 +966,6 @@ export function inlineRefs(
 		case 'repeat1':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 			return {
@@ -1135,7 +1125,6 @@ function pushAttrsToLeaves(
 		}
 		case 'group':
 		case 'variant':
-		case 'clause':
 		case 'token':
 		case 'alias':
 		case 'optional':
@@ -1171,7 +1160,6 @@ export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Ru
 			return { repeat: rule, nonEmpty: true };
 		case 'optional':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 			return extractRepeatShape((rule as { content: Rule }).content);
@@ -1235,7 +1223,6 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 		case 'repeat1':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 		case 'alias':

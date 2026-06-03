@@ -70,7 +70,6 @@ function findNestedSeparator(rule: Rule): Rule['separator'] {
 			return undefined;
 		case 'optional':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'field':
 			return findNestedSeparator(rule.content);
@@ -166,7 +165,6 @@ function carriesNamedField(rule: Rule): boolean {
 		case 'repeat1':
 		case 'field':
 		case 'variant':
-		case 'clause':
 		case 'group':
 		case 'token':
 		case 'alias':
@@ -469,24 +467,6 @@ export function collectSlots(
 			const seqSep = rule.separator ?? inheritedSeparator;
 			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, inherited, seqSep));
 		}
-
-		case 'clause':
-			// A `clause` is a sittir DSL node representing an OPTIONAL clause
-			// (e.g. impl_item's `optional(seq(negative, field('trait'), 'for'))`).
-			// It survives the pipeline as a named transparent wrapper but the
-			// original `optional` multiplicity is NOT stamped on the node — so
-			// treat clause content as optional unconditionally (matching the old
-			// `deriveSlotsRaw` walker: "clause acts like optional"). Without this
-			// a field inside the clause (`impl_item.trait`) is mis-derived as
-			// required `single`, and read fails on inherent impls (`impl Foo`)
-			// that legitimately omit the trait.
-			return collectSlots(
-				rule.content,
-				kindForName,
-				kindEntries,
-				'optional',
-				rule.separator ?? inheritedSeparator
-			);
 
 		case 'variant':
 		case 'group':

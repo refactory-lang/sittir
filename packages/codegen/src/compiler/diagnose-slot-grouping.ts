@@ -195,7 +195,6 @@ function walkRule(rule: Rule, ownerKind: string, records: SlotGroupingDiagnostic
 
 		case 'variant':
 		case 'group':
-		case 'clause':
 			// Transparent structural wrappers — propagate current slot position.
 			walkRule((rule as { content: Rule }).content, ownerKind, records, inSlotPosition);
 			break;

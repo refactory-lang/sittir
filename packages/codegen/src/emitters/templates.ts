@@ -478,7 +478,6 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
 		case 'repeat1':
 		case 'variant':
 		case 'group':
-		case 'clause':
 		case 'field':
 		case 'alias':
 		case 'token':
@@ -549,7 +548,6 @@ function leftmostBoundary(rule: Rule): BoundaryEnd {
 		case 'repeat1':
 		case 'variant':
 		case 'group':
-		case 'clause':
 		case 'field':
 		case 'alias':
 		case 'token':
@@ -599,7 +597,6 @@ function isLeftmostTerminalImmediate(rule: Rule): boolean {
 		case 'repeat1':
 		case 'variant':
 		case 'group':
-		case 'clause':
 		case 'field':
 		case 'alias':
 		case 'terminal':
@@ -1099,9 +1096,6 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 
 		case 'choice':
 			return emitChoice(rule, ctx);
-
-		case 'clause':
-			return emitClause(rule, ctx);
 
 		case 'indent':
 			return '\n  ';
@@ -1643,16 +1637,6 @@ function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): stri
 		if (text) return text;
 	}
 	return '';
-}
-
-function emitClause(rule: Extract<Rule, { type: 'clause' }>, ctx: EmitCtx): string {
-	const body = emitRule(rule.content, ctx);
-	if (!body) return '';
-	// The clause name is the field name to gate on per `detectClause`'s
-	// invariant. Use the RAW lowercased name to match the walker's
-	// `emitJinjaConditional(rule.name, body)` shape.
-	const slotKey = pickConditionalKey(rule.content, ctx) ?? rule.name.toLowerCase();
-	return `{% if ${slotKey} | isPresent %}${body}{% endif %}`;
 }
 
 // ---------------------------------------------------------------------------
