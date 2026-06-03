@@ -1644,7 +1644,10 @@
             {
               "type": "SYMBOL",
               "name": "_enum_variant_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -1869,7 +1872,10 @@
             {
               "type": "SYMBOL",
               "name": "_extern_crate_declaration_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -1938,7 +1944,10 @@
             {
               "type": "SYMBOL",
               "name": "_enum_variant_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -2043,7 +2052,10 @@
             {
               "type": "SYMBOL",
               "name": "_enum_variant_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -2266,7 +2278,10 @@
             {
               "type": "SYMBOL",
               "name": "_function_item_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -2402,7 +2417,10 @@
             {
               "type": "SYMBOL",
               "name": "_function_item_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -3169,7 +3187,10 @@
             {
               "type": "SYMBOL",
               "name": "_const_parameter_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -3218,7 +3239,10 @@
               {
                 "type": "SYMBOL",
                 "name": "_type_parameter_optional1",
-                "source": "group-lift"
+                "source": "group-lift",
+                "metadata": {
+                  "source": "enrich"
+                }
               },
               {
                 "type": "BLANK"
@@ -3307,7 +3331,10 @@
             {
               "type": "SYMBOL",
               "name": "_let_declaration_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -3320,7 +3347,10 @@
             {
               "type": "SYMBOL",
               "name": "_enum_variant_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -3333,7 +3363,10 @@
             {
               "type": "SYMBOL",
               "name": "_let_declaration_optional2",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -3675,7 +3708,10 @@
             {
               "type": "SYMBOL",
               "name": "_variadic_parameter_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -4045,7 +4081,10 @@
             {
               "type": "SYMBOL",
               "name": "_array_type_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -4176,7 +4215,10 @@
             {
               "type": "SYMBOL",
               "name": "_function_item_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -4761,7 +4803,10 @@
             {
               "type": "SYMBOL",
               "name": "_abstract_type_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -7123,7 +7168,10 @@
             {
               "type": "SYMBOL",
               "name": "_match_pattern_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -7141,7 +7189,10 @@
             {
               "type": "SYMBOL",
               "name": "_while_expression_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -7183,7 +7234,10 @@
             {
               "type": "SYMBOL",
               "name": "_while_expression_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -7215,7 +7269,10 @@
             {
               "type": "SYMBOL",
               "name": "_while_expression_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -7775,7 +7832,10 @@
             {
               "type": "SYMBOL",
               "name": "_while_expression_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -9924,7 +9984,10 @@
               {
                 "type": "SYMBOL",
                 "name": "_function_item_optional1",
-                "source": "group-lift"
+                "source": "group-lift",
+                "metadata": {
+                  "source": "enrich"
+                }
               },
               {
                 "type": "BLANK"

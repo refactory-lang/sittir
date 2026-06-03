@@ -203,6 +203,18 @@ export function applyPath(
 		return descendThroughPrecWrapper(rule, segments, patch, precStack);
 	}
 
+	// Enrich group-lift symbols are transparent to path addressing, like prec
+	// wrappers. enrich hoists `optional(seq)` / `repeat(seq)` into a SYMBOL ref
+	// tagged `metadata.source === 'enrich'` that carries the hoisted seq body on
+	// `content`. An authored patch whose path was written against the pre-hoist
+	// seq must travel THROUGH the symbol into that body. We descend without
+	// consuming a segment (transparent) and rebuild the symbol around the patched
+	// body. Works in both runtimes (sittir evaluate + tree-sitter generate)
+	// because the tag + body ride the symbol object itself — no rule-map resolver.
+	if (isEnrichGroupLiftSymbol(rule)) {
+		return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
+	}
+
 	const [head, ...rest] = segments;
 	const t = rule.type;
 
@@ -264,6 +276,77 @@ function descendThroughPrecWrapper(
 	const newStack = precStack ? [...precStack, rule] : [rule];
 	const newContent = applyPath(contentOf(rule), segments, patch, newStack);
 	return reconstructPrec(rule, newContent);
+}
+
+/**
+ * True when `rule` is an enrich-synthesized group-lift symbol — a SYMBOL ref
+ * tagged `metadata.source === 'enrich'`. enrich hoists `optional(seq)` /
+ * `repeat(seq)` into such a symbol and carries the original seq body inline on
+ * `content` so path-descent can travel THROUGH it (see
+ * `descendThroughGroupLiftSymbol`). The tag is the new canonical provenance
+ * marker (the legacy top-level `source: 'group-lift'` field is being retired).
+ */
+function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
+	const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+	return meta?.source === 'enrich';
+}
+
+/**
+ * Look up the body of an enrich group-lift's referenced hidden rule by name.
+ * The body is NOT carried on the symbol (that leaks the seq into grammar.json);
+ * enrich registers its merged rule-map here so path-descent can resolve and
+ * patch the referenced `_<parent>_<kind><N>` rule. Both runtimes work: enrich
+ * runs first (registering), rule fns run later (consuming), within one grammar's
+ * processing. `set` writes a patched body back so the materialized group kind
+ * AND the parser seed reflect the patch.
+ */
+export interface GroupLiftRuleMap {
+	get(name: string): RuntimeRule | undefined;
+	set(name: string, body: RuntimeRule): void;
+}
+
+let groupLiftRuleMap: GroupLiftRuleMap | undefined;
+
+/**
+ * Register (or clear) the rule-map path-descent uses to resolve enrich
+ * group-lift symbol bodies. Called by `enrich()` with its merged rules map
+ * after synthesis; passing `undefined` clears it.
+ */
+export function setGroupLiftRuleMap(map: GroupLiftRuleMap | undefined): void {
+	groupLiftRuleMap = map;
+}
+
+/**
+ * Travel through an enrich group-lift symbol by LOOKING UP its referenced rule
+ * body (not by descending into carried content). Descends into the resolved
+ * body without consuming a path segment, patches it, and writes the patched
+ * body back into the rule-map so the hidden group rule — and thus its
+ * materialized kind + the parser's seed — reflect the patch. The symbol ref
+ * itself is returned unchanged (it still points at the same name).
+ *
+ * @throws {ApplyPathSkip} If no rule-map is registered or the referenced rule is
+ *   absent — surfaces loudly rather than silently dropping the patch.
+ */
+function descendThroughGroupLiftSymbol(
+	rule: RuntimeRule,
+	segments: readonly PathSegment[],
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+	precStack: readonly RuntimeRule[] | undefined
+): RuntimeRule {
+	const name = (rule as unknown as { name?: string }).name;
+	if (!name) {
+		throw new ApplyPathSkip('applyPath: enrich group-lift symbol has no name to resolve its body');
+	}
+	const body = groupLiftRuleMap?.get(name);
+	if (body === undefined) {
+		throw new ApplyPathSkip(
+			`applyPath: enrich group-lift symbol '${name}' — referenced rule not found in the group-lift rule map ` +
+				`(enrich resolver not registered, or the name was pruned)`
+		);
+	}
+	const newBody = applyPath(body, segments, patch, precStack);
+	groupLiftRuleMap?.set(name, newBody);
+	return rule;
 }
 
 /**

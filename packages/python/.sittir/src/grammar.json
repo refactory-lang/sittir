@@ -680,7 +680,10 @@
             {
               "type": "SYMBOL",
               "name": "_raise_statement_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -1479,7 +1482,10 @@
             {
               "type": "SYMBOL",
               "name": "_function_definition_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -6667,7 +6673,10 @@
             {
               "type": "SYMBOL",
               "name": "_except_clause_optional1",
-              "source": "group-lift"
+              "source": "group-lift",
+              "metadata": {
+                "source": "enrich"
+              }
             },
             {
               "type": "BLANK"

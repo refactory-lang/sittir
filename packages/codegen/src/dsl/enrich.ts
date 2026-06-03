@@ -73,6 +73,8 @@ import {
 	isBlankType,
 	isPrecWrapper
 } from './runtime-shapes.ts';
+import type { RuntimeRule } from './runtime-shapes.ts';
+import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
 // The outer wrapper is `{ grammar: {...} }` because tree-sitter's
@@ -137,6 +139,19 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// Inject clause-group rules — user rules NEVER shadow them either
 	// (they start with `_<parentKind>_optional`, a synthesized prefix).
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+	// Register the merged rule-map so transform()/groups path-descent can resolve
+	// (and patch) enrich group-lift symbol bodies by name — the lookup that lets a
+	// path patch travel THROUGH a hoisted `_<parent>_<kind><N>` symbol into its
+	// referenced body. Write-back mutates THIS object (the grammar's `rules` point
+	// at it below), so a patched group rule reaches both the parser seed and the
+	// IR-materialized kind. Last-registration-wins is safe: codegen processes one
+	// grammar at a time and enrich runs before any transform fn executes.
+	setGroupLiftRuleMap({
+		get: (n) => mergedRules[n] as unknown as RuntimeRule | undefined,
+		set: (n, b) => {
+			mergedRules[n] = b as unknown as Rule;
+		}
+	});
 	// Attach the set of clause-group names as a well-known non-enumerable
 	// property on the enriched grammar. Wire.ts reads this to register the
 	// hoisted groups in `context.syntheticInline` so they get added to the
@@ -1370,7 +1385,7 @@ function applyClauseHoist(
 			// Clause-seq: this pass hoists it. Increment counter for this position.
 			const name = clauseHoistSynthName(peeled.seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
 			if (name !== null) {
-				const symbolRef = makeClauseSymbol(rule, name);
+				const symbolRef = makeGroupLiftSymbol(rule, name);
 				if (peeled.form === 'optional') {
 					return rebuildOptional(rule, symbolRef);
 				} else {
@@ -1500,17 +1515,37 @@ function clauseHoistSynthName(
 }
 
 /**
- * @internal — build a SYMBOL reference for the synthesized clause-group,
- * case-matched to the optional/choice wrapper's type convention.
+ * @internal — build a SYMBOL reference for a synthesized enrich group-lift
+ * (clause hoist today; all `optional(seq)`/`repeat(seq)` once the hoist
+ * generalizes), case-matched to the optional/choice wrapper's type convention.
+ *
+ * Provenance markers:
+ *   - `metadata.source: 'enrich'` — the NEW canonical marker. Path-descent
+ *     (transform-path.ts) reads this to recognize an enrich-synthesized
+ *     group-lift symbol and travel THROUGH it into the hoisted body, so
+ *     authored `transform()`/`groups:` path patches that address into a
+ *     now-hoisted seq still resolve. Lives under `metadata` because the
+ *     top-level `source` tag is being retired (provenance consolidates here).
+ *   - `source: 'group-lift'` — LEGACY marker (sunset target; rule.ts:349).
+ *     Still read by the IR-path consumers (simplify / templates / suggested).
+ *     Kept dual transitionally; deleted once those readers migrate to
+ *     `metadata.source`.
  */
-function makeClauseSymbol(referenceRule: Rule, name: string): Rule {
+function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
 	const t = (referenceRule as { type?: string }).type ?? '';
 	// Upper-case wrapper (CHOICE, OPTIONAL) → SYMBOL; lower-case → symbol.
 	const isUpper = t.length > 0 && t === t.toUpperCase();
+	// Pure ref — NO inline body. Tree-sitter serializes any extra structural
+	// field on a SYMBOL into grammar.json (a `content` here leaks the seq into
+	// the parser), so the symbol stays a clean name-ref. `metadata.source` is
+	// the only added marker: path-descent reads it and LOOKS UP the referenced
+	// `_<parent>_<kind><N>` rule body by name to travel through (not by carrying
+	// the body here). `metadata` is inert to tree-sitter's parse tables.
 	return {
 		type: isUpper ? 'SYMBOL' : 'symbol',
 		name,
-		source: 'group-lift'
+		source: 'group-lift',
+		metadata: { source: 'enrich' }
 	} as unknown as Rule;
 }
 

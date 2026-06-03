@@ -136,6 +136,9 @@ function applyPath(rule, segments, patch, precStack) {
   if (isPrecWrapper(rule)) {
     return descendThroughPrecWrapper(rule, segments, patch, precStack);
   }
+  if (isEnrichGroupLiftSymbol(rule)) {
+    return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
+  }
   const [head, ...rest] = segments;
   const t = rule.type;
   switch (head.kind) {
@@ -168,6 +171,29 @@ function descendThroughPrecWrapper(rule, segments, patch, precStack) {
   const newStack = precStack ? [...precStack, rule] : [rule];
   const newContent = applyPath(contentOf(rule), segments, patch, newStack);
   return reconstructPrec(rule, newContent);
+}
+function isEnrichGroupLiftSymbol(rule) {
+  const meta = rule.metadata;
+  return meta?.source === "enrich";
+}
+var groupLiftRuleMap;
+function setGroupLiftRuleMap(map) {
+  groupLiftRuleMap = map;
+}
+function descendThroughGroupLiftSymbol(rule, segments, patch, precStack) {
+  const name = rule.name;
+  if (!name) {
+    throw new ApplyPathSkip("applyPath: enrich group-lift symbol has no name to resolve its body");
+  }
+  const body = groupLiftRuleMap?.get(name);
+  if (body === void 0) {
+    throw new ApplyPathSkip(
+      `applyPath: enrich group-lift symbol '${name}' \u2014 referenced rule not found in the group-lift rule map (enrich resolver not registered, or the name was pruned)`
+    );
+  }
+  const newBody = applyPath(body, segments, patch, precStack);
+  groupLiftRuleMap?.set(name, newBody);
+  return rule;
 }
 function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
   switch (head.kind) {
@@ -1046,6 +1072,12 @@ function enrich(baseInput) {
     enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap) : rule;
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  setGroupLiftRuleMap({
+    get: (n) => mergedRules[n],
+    set: (n, b) => {
+      mergedRules[n] = b;
+    }
+  });
   const clauseGroupNames = new Set(Object.keys(clauseGroupRules));
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
   if (clauseGroupNames.size > 0) {
@@ -1748,7 +1780,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     if (isClauseSeq(seqMembers)) {
       const name = clauseHoistSynthName(peeled.seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
       if (name !== null) {
-        const symbolRef = makeClauseSymbol(rule, name);
+        const symbolRef = makeGroupLiftSymbol(rule, name);
         if (peeled.form === "optional") {
           return rebuildOptional(rule, symbolRef);
         } else {
@@ -1833,13 +1865,14 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   clauseGroupRules[name] = seqBody;
   return name;
 }
-function makeClauseSymbol(referenceRule, name) {
+function makeGroupLiftSymbol(referenceRule, name) {
   const t = referenceRule.type ?? "";
   const isUpper = t.length > 0 && t === t.toUpperCase();
   return {
     type: isUpper ? "SYMBOL" : "symbol",
     name,
-    source: "group-lift"
+    source: "group-lift",
+    metadata: { source: "enrich" }
   };
 }
 
