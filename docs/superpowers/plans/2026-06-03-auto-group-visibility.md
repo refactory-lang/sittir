@@ -30,18 +30,31 @@
 
 | File | Responsibility | Action |
 |---|---|---|
-| `packages/codegen/src/dsl/group-classify.ts` | `isInlineSafe(seqBody)` + `ruleMatchesEmpty(rule)` — the shared predicates. Pure, no I/O. Used by enrich AND link. | **Create** |
-| `packages/codegen/src/dsl/enrich.ts` | Generalize `applyClauseHoist`: hoist inline-safe `optional(seq)`; leave inline-unsafe in place; apply `ruleMatchesEmpty` guard. | Modify (`applyClauseHoist` ~1372) |
-| `packages/codegen/src/compiler/group-synthesis.ts` | Generalize `applyGroupOverrides` from declared-only to **every inline-unsafe** `optional/repeat(seq)`: reconstruct → visible IR-only kind; declared entries rename-only (no `derefGroupLift` body rewrite). | Modify (`applyGroupOverrides` ~247) |
-| `packages/codegen/src/compiler/link.ts` | Its `applyGroupOverrides` call site (~144) now also feeds the auto-discovered inline-unsafe positions, not just `groups:` keys. | Modify |
-| `packages/codegen/src/dsl/wire/wire.ts` | Remove the `applyAutoGroups` call (~701). | Modify (Chunk 3) |
-| `packages/codegen/src/dsl/wire/auto-groups.ts` | Deleted once enrich (inline-safe) + link (inline-unsafe) subsume it. | **Delete** (Chunk 3) |
+| `packages/codegen/src/dsl/group-classify.ts` | `isInlineSafe(seqBody)` + `ruleMatchesEmpty(rule)` — the shared predicates. Pure, no I/O. | **Create** |
+| `packages/codegen/src/dsl/enrich.ts` | Generalize `applyClauseHoist`: inline-safe `optional/repeat(seq)` → hidden symbol (today's path); inline-**unsafe** → wrap content in `alias(<content>, $.<name>)` (name = `groups:` config or auto-default); `ruleMatchesEmpty` guards both. | Modify (`applyClauseHoist` ~1372) |
+| `packages/codegen/src/compiler/link.ts` | **NEW pass:** while traversing the rule tree, for each `alias(<non-symbol content>, $.<name>)` add `<name> = <content>` to the linked rules (mint the visible kind). Runs before `classifyHiddenRule`/`assemble`. Symbol aliases (`aliasedFrom`) untouched. | Modify |
+| `packages/codegen/src/compiler/group-synthesis.ts` | Declared `groups:` entries become **naming-only** for the alias (no `derefGroupLift` body rewrite). Confirm no double-handling with the existing body-pattern alias path. | Modify |
+| `packages/codegen/src/dsl/wire/wire.ts` | Disable (Task 2.0) then remove the `applyAutoGroups` call (~701). | Modify |
+| `packages/codegen/src/dsl/wire/auto-groups.ts` | Deleted once enrich (inline-safe + inline-unsafe alias) + the link pass subsume it. | **Delete** (Chunk 3) |
 
 ---
 
-## Chunk 1: Shared predicates + enrich inline-safe hoist
+## Chunk 1: Shared predicates + enrich inline-safe hoist + the content-alias form
 
-Increment 1 of the spec. Outcome: enrich hoists inline-safe `optional(seq)` (generalizing the clause path), guarded against empty-matching bodies; inline-unsafe positions are left untouched for Chunk 2. Gate must hold-or-improve (inline-unsafe cases regress until Chunk 2 — so this chunk is gated as **"no NEW hard errors, py holds; rust/ts may dip by the inline-unsafe count, recovered in Chunk 2"**; record the exact dip).
+Increment 1 of the spec. Outcome: enrich hoists inline-safe `optional(seq)` (generalizing the clause path) and wraps inline-unsafe content in a `alias(content, …)` of the form Task 1.0 settles; inline-unsafe kinds still render wrong until Chunk 2's link pass mints them. Gate: **"no NEW hard errors, py holds; rust/ts may dip by the inline-unsafe count, recovered in Chunk 2"**; record the exact dip.
+
+### Task 1.0 (SPIKE): Settle the tree-sitter form for a content-alias visible node
+
+**THE one pre-flight unknown.** `alias(<content>, $.name)` invents a *new* visible kind `name` that has **no rule** at parse time (link mints the IR rule later, but tree-sitter runs first). Determine the form that makes inline content surface as a visible CST node `name` so wrap can read it. Read `.claude/grammar-workflow.md` first.
+
+- [ ] **Step 1 — Hand-wire ONE inline-unsafe case** (rust `visibility_modifier`'s parens seq) directly in `packages/rust/overrides.ts` and `pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all`. Try the three forms in order, stopping at the first that (a) `tree-sitter generate` accepts, (b) emits a visible `name` node in `packages/rust/.sittir/src/node-types.json`, and (c) compiles the native build:
+  1. **Phantom symbol:** `alias(<content>, $.name)` where `name` is not a defined rule.
+  2. **String name:** `alias(<content>, 'name')`.
+  3. **Real trivial rule + alias:** register `name = <body>` then `alias(<content>, $.name)`. Note `blank()` matches empty → tree-sitter rejects named empty rules, so try the content itself or a minimal non-empty body; confirm no `matches the empty string` error.
+
+- [ ] **Step 2 — Record the winning form** as a docstring at the alias-creation site (`enrich.ts`) with the node-types.json evidence. This decides Chunk 1's alias emission AND whether Chunk 2's link pass keys on `alias(content, $.name)` (symbol) or `alias(content, 'name')` (string).
+
+- [ ] **Step 3 — Revert the hand-wire** (`git checkout HEAD -- packages/rust`). The spike's only output is the recorded decision.
 
 ### Task 1.1: Shared predicates
 
@@ -91,7 +104,7 @@ describe('isInlineSafe — exactly 1 non-choice field/symbol slot after dropping
 - Modify: `packages/codegen/src/dsl/enrich.ts` (`applyClauseHoist` ~1372; remove the now-dead `isClauseSeq`)
 - Test: `packages/codegen/src/dsl/__tests__/enrich-clause-hoist.test.ts` (update the two predicate-exactness assertions to the generalized behavior)
 
-- [ ] **Step 1 — Update the hoist** so the `if (peeled !== null)` branch: recurses into the seq body (post-order) → if `ruleMatchesEmpty(recursedBody)` OR `!isInlineSafe(recursedBody)` → leave the position un-hoisted (return rule / rebuilt-with-recursed-body), else hoist via `makeGroupLiftSymbol` (tagged) + `clauseHoistSynthName`. Import the shared predicates. Keep `setGroupLiftRuleMap` registration intact.
+- [ ] **Step 1 — Update the hoist** so the `if (peeled !== null)` branch recurses into the seq body (post-order), then: `ruleMatchesEmpty(recursedBody)` → leave un-hoisted; else `isInlineSafe(recursedBody)` → hoist via `makeGroupLiftSymbol` (tagged) + `clauseHoistSynthName` (today's inline+gate path); else (inline-**unsafe**) → wrap the content in `alias(<content>, $.<auto-name>)` (auto-name `_<parent>_<kind>N`, dedup via canonical-stringify). Use the native `alias()` DSL. Import the shared predicates; keep `setGroupLiftRuleMap` intact. NOTE: the alias kind isn't minted until Chunk 2's link pass — so inline-unsafe kinds still render wrong after Chunk 1 (expected dip).
 
 - [ ] **Step 2 — Update unit tests:** the two "does NOT fire on optional(seq(field,field))/(symbol,symbol)" assertions now assert the inline-safe rule — `seq(field,field)` (2 slots) stays un-hoisted; a single-field `optional(seq(STRING, field))` now hoists. Run vitest.
 
@@ -117,29 +130,30 @@ Increment 2 — the core. Generalize the existing `applyGroupOverrides` (link) f
 - [ ] **Step 2 — RELEASE gate + `diff-failures`** to enumerate what regressed: these are the cases enrich (inline-safe) + link (inline-unsafe, not yet generalized) don't cover. Expected: inline-unsafe kinds (recovered in Task 2.1) **and** any inline-safe `repeat(seq)`/`repeat1(seq)` that `applyAutoGroups` was hoisting but enrich's optional-only clause path is not.
 - [ ] **Step 3 — If inline-safe `repeat(seq)` gaps appear:** generalize enrich's hoist (Chunk 1's `applyClauseHoist`) to inline-safe `repeat(seq)`/`repeat1(seq)` as well, so retiring `applyAutoGroups` loses nothing. (Advisor flag: repeat is *new to the IR* — gate each addition separately and attribute any drop.) Commit the enrich extension + the disable together.
 
-### Task 2.1: Generalize `applyGroupOverrides` to auto-discover inline-unsafe positions
+### Task 2.1: New link pass — mint visible kinds from content-aliases
 
 **Files:**
-- Modify: `packages/codegen/src/compiler/group-synthesis.ts` (`applyGroupOverrides` ~247), `packages/codegen/src/compiler/link.ts` (call site ~144)
-- Test: `packages/codegen/src/compiler/__tests__/group-synthesis-autovisible.test.ts`
+- Modify: `packages/codegen/src/compiler/link.ts` (add the pass — after `resolveRule`, before `classifyHiddenRule`)
+- Modify: `packages/codegen/src/compiler/group-synthesis.ts` (declared `groups:` → rename the alias target to the friendly name; naming-only)
+- Test: `packages/codegen/src/compiler/__tests__/link-content-alias.test.ts`
 
-- [ ] **Step 1 — Failing test.** Given a rules map where enrich left an inline-unsafe `optional(seq("(", choice($.self,$.super), ")"))` inline in `parentA`, an inline-unsafe `repeat1(choice(field('name', …), $.enum_assignment))` inline in `parentB` (no declaration), an inline-SAFE `optional(seq("as", field('alias', …)))` symbol in `parentC`, and `groups: { parentA: { '1': 'parens' } }` — the generalized `applyGroupOverrides`:
-  - synthesizes a visible IR kind for `parentA`'s position **named `parens`** (declared);
-  - synthesizes a visible IR kind for `parentB`'s position with an **auto-derived default name** (no declaration);
-  - leaves `parentC`'s inline-safe symbol **untouched**;
-  - leaves a registered **body-pattern group** (`type_argument` / `attributed_*` shape) body **byte-unchanged** (the `derefGroupLift`-corruption regression guard).
+- [ ] **Step 1 — Failing test.** Given a linked rules map containing: `parentA = seq(field('pub',…), alias(seq("(", choice($.self,$.super), ")"), $.parens))` (content-alias, declared name), `parentB = seq("{", optional(alias(repeat1(choice(field('name',…), $.enum_assignment)), $._enum_body_group1)), "}")` (content-alias, default name), and `parentC = alias($._hidden, $.relabeled)` (SYMBOL alias) — the new link pass:
+  - adds `parens = seq("(", choice(self,super), ")")` to the linked rules;
+  - adds `_enum_body_group1 = repeat1(choice(...))` to the linked rules;
+  - **does NOT** add/alter anything for `alias($._hidden, …)` — symbol aliases keep their `aliasedFrom` handling;
+  - leaves an existing body-pattern group body (`type_argument` / `attributed_*`) **byte-unchanged**.
 
 - [ ] **Step 2 — Run, verify fail.**
 
-- [ ] **Step 3 — Implement.** Add an **auto-discovery phase to `applyGroupOverrides`, before the declared-`groups:` loop**: walk each rule body for inline-unsafe `optional/repeat(seq)` content (`isInlineSafe(body) === false && ruleMatchesEmpty(body) === false`), and lift each via the **existing `liftRule`/`replaceAtPath` machinery** (same as a declared lift — reuse, don't fork) into a synthesized visible kind. Name = the declared `groups:` entry targeting that exact position if present, else an auto-derived default (`deriveSynthesizedName`-style: parent + ordinal). A declared entry that coincides with an auto-discovered position contributes **only the name** — it is consumed here and must not be re-lifted by the declared loop. **No body dereference/rewrite** (the reverted `derefGroupLift` is the anti-pattern). Inline-safe symbols (enrich's hoists) are skipped by the `isInlineSafe` filter.
+- [ ] **Step 3 — Implement** the pass in `link.ts`: walk every rule body; for each `alias(child, $.name)` where `child` is **non-symbol content** (`child.type` is not `symbol`/`SYMBOL`), register `rules[name] = child` when `name` is absent. Place it after `resolveRule`, before `classifyHiddenRule`, so the minted kind classifies + assembles via the normal path. Keep it a small focused helper. In `group-synthesis.ts`, declared `groups:` only **rename** the alias target to the friendly name (naming-only; no body dereference/rewrite — the reverted `derefGroupLift` is the anti-pattern).
 
-- [ ] **Step 4 — Run unit test, verify pass** (incl. the sibling-body regression guard).
+- [ ] **Step 4 — Run unit test, verify pass** (incl. the symbol-alias-untouched + sibling-body guards).
 
-- [ ] **Step 5 — Regen all 3** (debug-safe); confirm no hard errors; inspect witnesses: `packages/typescript/templates/enum_body.jinja` renders the members; `packages/rust/templates/_visibility_modifier_pub*.jinja` renders the choice via its own visible-kind template (not the broken inline gate).
+- [ ] **Step 5 — Regen all 3** (debug-safe); confirm no hard errors; inspect witnesses: `packages/typescript/templates/enum_body.jinja` renders the members; the rust `parens`/`_visibility_modifier_pub*` template renders the choice via its own visible-kind template.
 
-- [ ] **Step 6 — RELEASE gate.** Acceptance: **rust ≥ 111, ts ≥ 69, py ≥ 74** (back to floor). Witnesses pass deep AST: ts `enum_body` (`enum E { A, B }`), rust `visibility_modifier` (`pub(super)`). `cargo check --workspace --features napi-bindings` independently green (do NOT trust a self-reported pass — verify cargo yourself). If the native build reports `unknown node <keyword>` → Task 2.2.
+- [ ] **Step 6 — RELEASE gate.** Acceptance: **rust ≥ 111, ts ≥ 69, py ≥ 74**. Witnesses pass deep AST: ts `enum_body` (`enum E { A, B }`), rust `visibility_modifier` (`pub(super)`). `cargo check --workspace --features napi-bindings` independently green (verify yourself). If `unknown node <keyword>` → Task 2.2.
 
-- [ ] **Step 7 — Commit** source + regenerated artifacts (NOT test-fixtures), explicit pathspec.
+- [ ] **Step 7 — Commit** source + artifacts (NOT test-fixtures), explicit pathspec.
 
 ### Task 2.2 (conditional): Rust-keyword slot escaping
 

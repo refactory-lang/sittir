@@ -32,20 +32,20 @@ enrich tags every group-lift SYMBOL `metadata.source = 'enrich'` (legacy top-lev
 ### Pipeline
 
 ```
-enrich (pre-wire)
+enrich (pre-wire) / wire
   for each optional(seq)/repeat(seq)/repeat1(seq):
     • ruleMatchesEmpty(body)?  → leave un-hoisted (tree-sitter rejects empty named rules)
     • isInlineSafe(body)?      → HOIST: hidden _<parent>_N rule + tagged group-lift symbol
-                                  + register in syntheticInline (parser inlines, flat CST) → inline+gate render
-    • else (inline-unsafe)     → leave the seq content INLINE (parser inlines it flat)
+                                  + syntheticInline (parser inlines, flat CST) → inline+gate render
+    • else (inline-unsafe)     → wrap content in  alias(<content>, $.<name>)   ← alias of CONTENT, not a
+                                  symbol → no new rule → no LR conflict; name from groups: or default
 
-link  (generalize applyGroupOverrides — IR-only, no grammar change)
-  for each inline-unsafe optional/repeat(seq) content enrich left inline:
-    • reconstruct it into a VISIBLE IR-only synthesized kind in the link rules map
-    • rewrite the parent to reference that kind; readNode/collectSlots reconstruct from flat children
-    • name = declared groups: entry for this position, else an auto-derived default
+link  (NEW rule-registration pass)
+  when traversing the rule tree, for each  alias(<non-symbol content>, $.<name>):
+    • add  <name> = <content>  to the linkedRule list  → mints the visible kind (template/type/slots)
+    • generic — no manual per-group registration, no base.grammar.rules injection, no kindId machinery
 
-retire applyAutoGroups (step 3) — its work splits: inline-safe → enrich, inline-unsafe → link.
+retire applyAutoGroups (step 3) — inline-safe → enrich; inline-unsafe alias → enrich/wire + link pass.
 ```
 
 ### The `isInlineSafe` predicate (shared, DRY — one helper, used by enrich and the wire pass)
@@ -57,16 +57,21 @@ After dropping pure literals/punctuation from the seq body, the group is **inlin
 
 `ruleMatchesEmpty(rule)` (conservative — `optional`/`repeat`/`blank` and empty-only `seq`/`choice` match empty; `symbol`/`token`/`pattern`/non-empty `string` do not) gates **both** branches: an empty-matching body is never hoisted nor aliased, because a named (or aliased) tree-sitter rule that matches the empty string is rejected at `tree-sitter generate`, even when inlined.
 
-### Visibility is an IR-side reconstruction in **link** — no grammar change, no new rule
+### Visibility = `alias(content)` in the rule tree + a new link rule-registration pass
 
-Making a group visible does **not** touch the tree-sitter grammar. The parser keeps the inline-unsafe content exactly where it parsed (flat CST); **`link` (`applyGroupOverrides` in `compiler/group-synthesis.ts`) reconstructs it into a visible IR-only synthesized kind** in the link rules map, rewrites the parent to reference that kind, and readNode/`collectSlots` reconstruct the node from the flat children. This is precisely what declared `groups:` already do (`_visibility_modifier_pub: {'1':'parens'}` → IR kind `_visibility_modifier_pub_parens`, parser-inline + reconstructed) — and why it compiled cleanly pre-1a. The change is to **generalize that pass from declared-only to every inline-unsafe position.**
+Making a group visible has two halves:
 
-Consequences (all positive vs the rejected wire/alias approach):
-- **No new rule symbol in the grammar → no LR conflict.** The visible kind is IR-only; tree-sitter never sees it.
-- **No separate TS rule entry / kindId machinery.** The synthesized kind lives in the link rules map exactly as the existing declared-group kinds do (which already work without a tree-sitter kindId). The earlier "rule-entry REQUIRED" concern was an artifact of the wire/alias framing and does not apply here.
-- **Routes through the proven pre-1a visible-render path** — the kind renders the choice via its own `AssembledGroup` template (polymorph/present-arm), sidestepping the inline disjunction-gate that named Rust keywords (`super`) as template variables.
+1. **enrich (or wire) wraps the inline-unsafe content in `alias(<content>, $.<name>)`** in the rule tree. The aliased thing is the **content itself, not a hidden symbol** — so **no new rule is introduced into the grammar → no LR conflict** (the rejected approach aliased/promoted a symbol, which adds a rule). tree-sitter emits a visible CST node for `<name>`; wrap reads it.
 
-`enrich` therefore hoists only inline-**safe** `optional(seq)` (hidden `_<parent>_N` symbol + rule, reaching parser+IR, inline+gate render); it **leaves inline-unsafe content in place** for `link` to reconstruct.
+2. **New link enhancement — `alias(non-symbol content, $.name)` → `name = content` added to the linkedRule list.** When link traverses the rule tree and finds an alias whose aliased child is **non-symbol content** (an inline seq/choice/…), it registers `<name>` as a kind (body = the aliased content) in the linked rules map. This mints the visible kind (template / type / slots) **generically** — no manual per-group rule registration, no separate `base.grammar.rules` injection, no kindId machinery. The restriction to **non-symbol** content is what scopes the enhancement to these visible groups; `alias($._symbol, $.name)` keeps its existing `aliasedFrom` handling untouched.
+
+**Declared `groups:` registration supplies the friendly `<name>`** for the alias (`_visibility_modifier_pub: {'1':'parens'}` → `alias(<the parens seq>, $.parens)`); undeclared inline-unsafe positions get an auto-derived default name.
+
+Consequences: no LR conflict (alias of content, not a symbol/rule), no TS-side kindId machinery (link mints the IR kind from the alias it finds), and the kind renders the choice via its own `AssembledGroup` template — sidestepping the inline disjunction-gate that named Rust keywords (`super`) as template variables.
+
+**The one pre-flight unknown (spike):** `alias(<content>, $.name)` invents a visible kind `name` that has **no rule at parse time** (tree-sitter runs before link mints the IR rule). The plan's Task 1.0 spikes which tree-sitter form actually emits a visible CST node for such a new name: (1) phantom symbol `alias(content, $.name)`, (2) string `alias(content, 'name')`, or (3) a real trivial rule `name = <minimal non-empty body>` + alias (NOT `blank()` — named empty rules are rejected). The winning form decides the alias emission and whether the link pass keys on a symbol-target or string-name alias.
+
+`enrich` therefore hoists only inline-**safe** `optional(seq)` (hidden `_<parent>_N` symbol + rule, reaching parser+IR, inline+gate render); inline-unsafe content is **aliased visible** (by enrich or wire) and **registered as a kind by the new link pass**.
 
 ### Declared `groups:` = alias-name supplier (only)
 
@@ -87,11 +92,12 @@ Both branches reach the IR as kinds: inline-safe hidden groups materialize as th
 
 ## Components (files)
 
-- `packages/codegen/src/dsl/group-classify.ts` (NEW) — `isInlineSafe(seqBody)` + `ruleMatchesEmpty(rule)` shared predicates. Used by enrich AND link (no duplication).
-- `packages/codegen/src/dsl/enrich.ts` — generalize `applyClauseHoist`: hoist inline-safe optional(seq) (drop the clause-only predicate), apply `ruleMatchesEmpty` + `isInlineSafe` guards; leave inline-unsafe content **inline** (un-hoisted). (`makeGroupLiftSymbol` already tags `metadata.source`.)
-- `packages/codegen/src/compiler/group-synthesis.ts` (+ its `link.ts` call site) — generalize `applyGroupOverrides` from declared-only to **every inline-unsafe** `optional/repeat(seq)` position: reconstruct it into a visible IR-only synthesized kind, naming from `groups:` config or an auto-derived default. Uses `isInlineSafe` to select positions. Declared entries are **naming-only** (no `derefGroupLift` body rewrite — that corrupted siblings).
-- `packages/codegen/src/dsl/wire/auto-groups.ts` — **deleted** (Chunk 3); its inline-safe work moves to enrich, its inline-unsafe work to link.
-- emitters/slots — verify the existing visible-`AssembledGroup` render + wrap path handles the now-generalized synthesized kinds (pre-1a it handled the hand-declared ones; confirm it generalizes).
+- `packages/codegen/src/dsl/group-classify.ts` (NEW) — `isInlineSafe(seqBody)` + `ruleMatchesEmpty(rule)` shared predicates. Used wherever inline-safe-vs-unsafe is decided (no duplication).
+- `packages/codegen/src/dsl/enrich.ts` (or a wire pass) — for each `optional/repeat(seq)`: hoist inline-safe into a hidden symbol (generalize `applyClauseHoist`); wrap inline-unsafe content in `alias(<content>, $.<name>)` (name from `groups:` config or auto-derived default). `ruleMatchesEmpty` guards both.
+- `packages/codegen/src/compiler/link.ts` (+ a small new helper) — **NEW pass:** when traversing the rule tree, for each `alias(<non-symbol content>, $.<name>)` add `<name> = <content>` to the linkedRule list (mint the visible kind). Generic; runs early enough that `classifyHiddenRule`/`assemble` see the new kind. Symbol aliases (`aliasedFrom`) are untouched.
+- `packages/codegen/src/compiler/group-synthesis.ts` — declared `groups:` entries become **naming-only** for the alias (no `derefGroupLift` body rewrite — that corrupted siblings). If the declared body-pattern groups (`attributed_*`) already cover their positions via the existing alias path, confirm no double-handling.
+- `packages/codegen/src/dsl/wire/auto-groups.ts` — **deleted** (Chunk 3); inline-safe → enrich, inline-unsafe → alias + link pass.
+- emitters/slots — verify the existing visible-`AssembledGroup` render + wrap path handles the link-minted kinds (pre-1a it handled the hand-declared ones; confirm it generalizes).
 
 ## Error handling
 
@@ -103,14 +109,14 @@ Both branches reach the IR as kinds: inline-safe hidden groups materialize as th
 
 - **Authoritative gate (RELEASE only):** `env -u SITTIR_NATIVE_DEBUG pnpm validate:native`; confirm `Finished release profile [optimized]` + read the explicit deep `read-render-parseAstMatchPass=` lines. Debug build segfaults (Node-v24/napi) are NOT regressions. Floor: rust 111 / ts 69 / py 74; target: hold-or-improve toward 125/72/76.
 - **Witness kinds (must pass deep AST match):** ts `enum_body` (`enum E { A, B }` → `{ A, B }`), rust `visibility_modifier` (`pub(super)` → `pub(super)`).
-- Unit tests: `isInlineSafe` / `ruleMatchesEmpty` truth tables; the link generalized `applyGroupOverrides` (inline-unsafe → visible IR kind; names from config/default; declared = rename-only, sibling bodies unchanged); enrich hoists only inline-safe; `applyAutoGroups`-no-op assertion before deletion (`synthRules`/`rewrites` empty).
+- Unit tests: `isInlineSafe` / `ruleMatchesEmpty` truth tables; the alias-wrap (inline-unsafe → `alias(content, $.name)`, name from config/default; inline-safe → hidden symbol untouched); the **new link pass** (`alias(non-symbol content, $.name)` → `name=content` in the linked rules; symbol aliases untouched; sibling body-pattern bodies byte-unchanged); `applyAutoGroups`-no-op assertion before deletion.
 - Never stage `rust/crates/sittir-*/test-fixtures.json` / `validation-history.jsonl`. Commit by explicit pathspec.
 
 ## Sequencing (implementation increments, each gated on RELEASE)
 
-1. Shared `isInlineSafe` + `ruleMatchesEmpty`; enrich hoists inline-safe only (gate hold-or-improve; inline-unsafe dips, recovered in step 2).
-2. Generalize link `applyGroupOverrides` to reconstruct every inline-unsafe position as a visible IR kind (auto default names); declared `groups:` supply names (rename-only). **Gate: witnesses pass, floor held.**
-3. Retire `applyAutoGroups` (assert no-op first). Gate.
+1. Shared `isInlineSafe` + `ruleMatchesEmpty`; enrich hoists inline-safe, wraps inline-unsafe content in `alias(content, $.<default-name>)` (gate hold-or-improve; the kind isn't minted yet → inline-unsafe still dips, recovered in step 2).
+2. **New link pass:** `alias(non-symbol content, $.name)` → register the kind in the linked rules. Declared `groups:` supply friendly names. **Gate: witnesses (enum_body, visibility) pass, floor held.**
+3. Disable `applyAutoGroups` (Task 2.0 ordering), then delete it. Gate.
 4. (Deferred, only if surfaced) Rust-keyword slot escaping.
 
 ## Out of scope / deferred
