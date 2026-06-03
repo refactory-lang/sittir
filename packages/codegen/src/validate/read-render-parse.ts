@@ -8,6 +8,7 @@
  * Requires web-tree-sitter + language WASM files.
  */
 
+import { writeSync } from 'node:fs';
 import { readNode } from '@sittir/common';
 import { createRenderer } from '@sittir/core';
 import type { TreeHandle } from '@sittir/common';
@@ -944,13 +945,14 @@ export async function validateReadRenderParse(
 					);
 
 					// Emit a per-kind progress breadcrumb to stderr when running as
-					// an isolation worker (SITTIR_ISOLATE_WORKER=1). Written
-					// synchronously BEFORE render() so that if the native engine
-					// SIGSEGVs the breadcrumb is already on stderr and the parent
-					// can attribute the crash to the last attempted kind.
+					// an isolation worker (SITTIR_ISOLATE_WORKER=1). MUST use
+					// fs.writeSync(2, …) — `process.stderr.write` is BUFFERED for a
+					// piped stderr (the child case), so an unflushed breadcrumb is
+					// LOST on SIGSEGV and the parent mis-attributes the crash to an
+					// earlier kind. writeSync bypasses the stream buffer so the
+					// breadcrumb is on the fd before render() can fault.
 					if (process.env['SITTIR_ISOLATE_WORKER'] === '1') {
-						const kindName = kindNameFromId ? (kindNameFromId(kind) ?? String(kind)) : String(kind);
-						process.stderr.write(`[isolate-progress] ${grammar} ${kindName}\n`);
+						writeSync(2, `[isolate-progress] ${grammar} ${String(kind)}\n`);
 					}
 					try {
 						const rendered = render(data);
