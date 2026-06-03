@@ -288,6 +288,12 @@ export async function spawnIsolatedGrammarWorker(
 			const status = isSigsegv ? 'crashed' : exitCode === 0 ? 'ok' : 'error';
 			resolve({ status, stdout, stderr, exitCode, signal });
 		});
+		// Without an `error` handler the Promise hangs if `spawn` itself fails
+		// (missing tsx binary, EACCES, …) — `close` never fires in that case.
+		// Resolve as 'error' so the parent reports it and continues.
+		child.on('error', (err: Error) => {
+			resolve({ status: 'error', stdout, stderr: `${stderr}\n[spawn error] ${err.message}`, exitCode: null, signal: null });
+		});
 	});
 }
 
@@ -349,8 +355,11 @@ export async function runCountsCli(
 	}
 	// One commit per validation invocation covering every row just appended —
 	// keeps history reliably captured without a commit per grammar. Best-effort
-	// and self-guarding (see commitHistory).
-	if (recorded.length > 0) {
+	// and self-guarding (see commitHistory). SKIP in isolate-worker children:
+	// each spawned worker would otherwise run its own `git commit`, spamming
+	// one commit per grammar and diverging from the single-commit-per-invocation
+	// contract — the parent (non-worker) invocation records history once.
+	if (recorded.length > 0 && !isolateWorker) {
 		commitHistory(`chore(validator): record validation run (${recorded.join(', ')})`);
 	}
 }
