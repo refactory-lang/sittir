@@ -194,3 +194,21 @@ Only if Task 2.1 Step 6 surfaced `unknown node <keyword>` (`super`/`crate`/`type
 - Sunset legacy top-level `source: 'group-lift'` once IR readers migrate to `metadata.source`.
 - PR-I-φ2 count recovery (match_arm residual); PR-P (terminal/enum).
 - Single-entry `sittirGrammar(base, cfg)` composition cleanup.
+
+---
+
+## Remaining sequence to PR-M close-out (2026-06-03)
+
+PR-M is multi-phase; `pr-m-phi2` (this branch) delivered the visible-group **mechanism** (Chunk 2, `78ea43eb`). Close-out order — A gates B gates C:
+
+### Phase A — Polymorph registration for visible-group seq-in-choice arms (φ2 GATE BLOCKER)
+The φ2 done-criteria gate (rust 111 / ts 69 / py 74 + `visibility` deep-AST match) is **not met**: ts **68**, `visibility_modifier` renders `pub ()`. Cause: a visible group whose content has a **sequence nested in a choice arm** needs its inner choice routed through the **existing** polymorph/variant registration so each seq-bearing arm renders. NOT a new bare-choice renderer — a choice of *symbols* is fine. Canonical: rust `visibility_modifier_group1` = `self|super|crate|in_path` where `in_path = alias(_visibility_modifier_in_path = seq('in', path))`; ts `catch_clause`/`import_clause` are the same class. Routing them converts all three to AST matches → ts to/over floor. Diagnosis-adjacent: if the polymorph hook for *minted visible-group kinds* isn't readily located, STOP → `sittir-research`, don't improvise.
+
+### Phase B — Chunk 3: physically delete `applyAutoGroups`
+Currently only **disabled** (`wire.ts:708` commented; import line 44 live). Delete `auto-groups.ts` + its import/call + dead `collectAuthoredSynthesisKinds` plumbing; migrate unique `auto-groups.test.ts` assertions. Provably no-op (gate held when disabled). Regen + RELEASE gate **≥ floor** + cargo green — which only passes **after Phase A** lands ts 69.
+
+### Phase C — `sittir-review` on the full Chunk 1..3 diff
+DRY (the #1 rule), design/spec conformance (`2026-06-03-auto-group-visibility-design.md`), gate completeness, generated-output hygiene, no stray `.js`. Then φ2 closes.
+
+### Then (separate phase, `M ≺ I` hard gate): `pr-m-rule-ir-cut`
+`AssembledPolymorph → AssembledBranch` + cut `PolymorphRule`/`VariantRule`/`ClauseRule`/GroupRule (`2026-05-31-pr-m-rule-ir-cut.md`). **Phase A is the same shape** (choice-slot arms = forms) → sequence together / reuse the `discriminatingSlot` model rather than solving polymorph-arm routing twice.
