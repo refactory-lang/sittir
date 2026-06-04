@@ -416,7 +416,11 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).toContain('pub fn render_transport_parts');
 		expect(emitted.transportRs.contents).toContain('render_transport_dispatch');
 		expect(emitted.transportRs.contents).not.toContain('renderable native transport bridge pending');
-		expect(emitted.libRs.contents).toContain('pub use dispatch::render_dispatch;');
+		// Legacy NodeData render shim (render_dispatch / render_nodedata_into) is
+		// retired (PR-E2 retired bridge.rs/dispatch.rs; the emitter shim is now
+		// deleted too). lib.rs uses the transport path only.
+		expect(emitted.libRs.contents).not.toContain('render_dispatch');
+		expect(emitted.libRs.contents).not.toContain('render_nodedata_into');
 		expect(emitted.libRs.contents).toContain(
 			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);
@@ -668,8 +672,8 @@ describe('native transport emission', () => {
 		expect(emitted).toContain('FieldIdentifier(FieldIdentifierTransport),');
 		expect(emitted).toContain('IntegerLiteral(IntegerLiteralTransport),');
 		// Bridge fn naming follows `<typeSnake>_<fieldSnake>_transport_slot_to_any` for named slots —
-		// still emitted because the NodeData bridge (`render_nodedata_into`) uses it
-		// to convert the per-slot enum back to `AnyTransport`.
+		// part of the live transport→AnyTransport per-slot-enum bridge that
+		// converts a per-slot enum back to `AnyTransport`.
 		expect(emitted).toContain(
 			'fn field_expression_field_transport_slot_to_any(t: FieldExpressionFieldTransportSlot) -> AnyTransport {'
 		);
