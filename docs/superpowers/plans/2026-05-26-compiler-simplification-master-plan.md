@@ -73,6 +73,8 @@ A combined PR-M+PR-I **φ1 spike** landed ahead of the formal M→I sequencing. 
 
 **Latent type-debt surfaced by the now-working native LSP** (fixed `typescript-lsp` `.lsp.json`): a dead `PolymorphRule` in the `AssembledBranch` constraint (fixed #59) + 6 `[6133]` unused-fn warnings (deferred dead-code pass). Argues for adding `tsgo --noEmit` to the gate so tsx-invisible type danglers are caught.
 
+**§D RESOLVED (2026-06-04) — NOT "delete the `GroupRule` classifier cleanly" (that claim was empirically false: `classifyHiddenSeqRule` is the sole producer of 96 AssembledGroups).** The cut is a **classifier *sharpening* + alias-reference model**, spec: `docs/superpowers/specs/2026-06-04-rule-ir-model-simplification.md`. Three parts: **(2a)** `AssembledGroup ≡ Branch + inline` (inline = not-a-parse-kind); delete the opaque `seq+has-fields` heuristic; the 63 `_`-NOT-inline groups → `AssembledBranch` (render-neutral), the 34 inline → stay `Group`. **(2b)** alias-coerced kinds become two nodes (hidden body + visible Branch) with back-pointers — hidden `contentAliasedTo[]: kindId[]` (fan-out OK), Branch `contentAliasedFrom: kindId` (single by invariant); emit de-dups via the reference (non-lossy, not coalesce). **(2c)** `contentAliasedFrom` fan-in >1 → error diagnostic. §D-2a lands now (closes M-φ2 §D core); 2b/2c + the §slot-naming + source-retirement threads → PR-L.
+
 ---
 
 ### §slot-naming note — kill "structural" choice naming + diagnostic-gate the merge (2026-06-04 followup; lands in/with PR-L)
