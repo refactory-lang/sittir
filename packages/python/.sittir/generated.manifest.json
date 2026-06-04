@@ -279,6 +279,6 @@
     "rust/crates/sittir-python/test-fixtures.json": "d3622e93464606108465ce07f629705720ba4440c5d66ae2c7d19d098c42204c"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "4fd6ec6b08fe1e9f46801ae5849a2c8d135be90fe526b02973c13ba7003ba943"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "cfee18aaee8f66ca6f004d691ef2e3f4bd83b6b1a78573dee55bec7132799d02"
   }
 }

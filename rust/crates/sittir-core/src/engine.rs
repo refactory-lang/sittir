@@ -24,43 +24,39 @@ pub trait EngineGrammar: Copy {
     fn template_bundle_hash(self) -> &'static str;
 }
 
-// ─── NodeCoords ────────────────────────────────────────────────────────────────────────────
+// ─── NodeCoord ────────────────────────────────────────────────────────────────────────────
 
-/// Stable coordinate path from the tree root to a node.
+/// O(1) coordinate for a node: a back-link to its parent handle plus the
+/// child index taken from that parent.
 ///
-/// Instead of caching lifetime-erased `Node<'static>` references (which
-/// requires `unsafe transmute` and is UB-adjacent in debug builds due to
-/// re-borrowing after transmute), we store the sequence of `child(i)` steps
-/// needed to reach a node starting from `tree.root_node()`. An empty path
-/// represents the root itself.
+/// This replaces the earlier `Vec<u32>` root-relative path. Storing a full
+/// path meant every `read_child` cloned the parent's O(depth) `Vec` to append
+/// one index — O(depth) alloc+copy per node-handle creation. A parent-link
+/// pair is `Copy`, so pushing a coordinate is O(1) with zero allocation; the
+/// node table itself encodes the tree spine, and resolution re-walks parent
+/// links.
 ///
-/// Re-resolution is sound because `tree_sitter::Tree` owns its internal data
-/// and `Node` values are cheap lightweight cursors over that data — no
-/// transmute or lifetime-erasure is required.
-#[derive(Clone)]
-struct NodeCoords {
-    /// Sequence of child indices from root to this node. Empty ⟹ root node.
-    path: Vec<u32>,
+/// Like the path representation it supersedes, this caches **no** live `Node`
+/// — it only records *how* to reach one. Re-resolution (via
+/// [`ParsedTree::resolve_handle`]) is sound because `tree_sitter::Tree` owns
+/// its internal data and `Node` values are cheap lightweight cursors over it;
+/// no `unsafe transmute` or lifetime-erasure is required. This preserves the
+/// b4778bb5 invariant ("re-resolve, never cache a lifetime-erased Node") while
+/// removing the per-step path clone.
+#[derive(Clone, Copy)]
+struct NodeCoord {
+    /// Handle of the parent node in `ParsedTree.nodes`, or `None` for the root.
+    parent: Option<u32>,
+    /// Child index taken from `parent` to reach this node. Unused for the root.
+    child_index: u32,
 }
 
-impl NodeCoords {
+impl NodeCoord {
     fn root() -> Self {
-        NodeCoords { path: Vec::new() }
-    }
-
-    fn child_of(parent: &NodeCoords, child_index: u32) -> Self {
-        let mut path = parent.path.clone();
-        path.push(child_index);
-        NodeCoords { path }
-    }
-
-    /// Re-resolve the live `Node` by walking from the tree root.
-    fn resolve<'tree>(&self, tree: &'tree tree_sitter::Tree) -> Option<tree_sitter::Node<'tree>> {
-        let mut node = tree.root_node();
-        for &idx in &self.path {
-            node = node.child(idx)?;
+        NodeCoord {
+            parent: None,
+            child_index: 0,
         }
-        Some(node)
     }
 }
 
@@ -75,69 +71,98 @@ impl NodeCoords {
 ///
 /// Instead of storing lifetime-erased `Node<'static>` references
 /// (which is UB-adjacent in debug builds due to transmute + re-borrow),
-/// `nodes` stores [`NodeCoords`] — stable child-index paths from root.
-/// Each access re-resolves the live `Node` from `self.tree` by walking
-/// the path. Tree-sitter `Node` values are cheap cursor structs over the
-/// tree's immutable internal representation, so re-resolution is fast
-/// and fully sound.
+/// `nodes` stores [`NodeCoord`] — an O(1) `(parent_handle, child_index)`
+/// back-link per node. Each access re-resolves the live `Node` from
+/// `self.tree` by walking parent links to the root (see
+/// [`ParsedTree::resolve_handle`]). Tree-sitter `Node` values are cheap
+/// cursor structs over the tree's immutable internal representation, so
+/// re-resolution is fast and fully sound — and pushing a coordinate no
+/// longer clones an O(depth) `Vec`.
 pub struct ParsedTree<G: EngineGrammar> {
     _grammar: PhantomData<G>,
     /// The parsed tree-sitter tree.
     tree: tree_sitter::Tree,
     source: String,
     format: Option<FormatRecord>,
-    /// Node coordinate table for drill-in navigation.
-    nodes: Vec<NodeCoords>,
+    /// Node coordinate table for drill-in navigation. Each entry back-links
+    /// to its parent handle; the root entry has `parent: None`.
+    nodes: Vec<NodeCoord>,
 }
 
 impl<G: EngineGrammar> ParsedTree<G> {
-    /// Push node coordinates into the node table, returning its handle (index).
-    fn push_coords(&mut self, coords: NodeCoords) -> u32 {
+    /// Push a node coordinate into the node table, returning its handle (index).
+    ///
+    /// `NodeCoord` is `Copy`, so this is O(1) with zero allocation — no
+    /// O(depth) path `Vec` is cloned per node.
+    fn push_coord(&mut self, coord: NodeCoord) -> u32 {
         let handle = self.nodes.len() as u32;
-        self.nodes.push(coords);
+        self.nodes.push(coord);
         handle
+    }
+
+    /// Re-resolve the live `Node` for a handle by walking parent back-links to
+    /// the root, then descending the same child indices.
+    ///
+    /// Free-function form (takes `nodes` + `tree` separately) so the returned
+    /// `Node<'tree>` borrows only `tree`, not the `nodes` slice — letting the
+    /// caller keep a resolved node alive across a `&mut self.nodes` push of a
+    /// disjoint field. Recursion depth equals tree depth; source ASTs never
+    /// approach the stack limit. No allocation, no lifetime-erasure: this
+    /// honors the b4778bb5 invariant of never caching a `Node<'static>`.
+    fn resolve_handle<'tree>(
+        nodes: &[NodeCoord],
+        tree: &'tree tree_sitter::Tree,
+        handle: u32,
+    ) -> Option<tree_sitter::Node<'tree>> {
+        let coord = *nodes.get(handle as usize)?;
+        match coord.parent {
+            None => Some(tree.root_node()),
+            Some(parent) => {
+                let parent_node = Self::resolve_handle(nodes, tree, parent)?;
+                parent_node.child(coord.child_index)
+            }
+        }
     }
 
     /// Read the root node of the parsed tree into a `NodeData`.
     pub fn read_root(&mut self) -> NodeData {
-        let handle = self.push_coords(NodeCoords::root());
+        let handle = self.push_coord(NodeCoord::root());
         read_node(&self.tree, &self.source, None, Some(handle))
     }
 
     /// Read a child node by handle + child_index.
     ///
-    /// Looks up the parent coordinates from the node table at `handle`,
-    /// re-resolves the parent `Node` from `self.tree`, calls
-    /// `parent.child(child_index)` to confirm the child exists, then stores
-    /// the child coordinates and reads the child into a `NodeData`.
+    /// Re-resolves the parent `Node` from `self.tree` (walking parent
+    /// back-links), takes `parent.child(child_index)` to confirm the child
+    /// exists, records an O(1) `(handle, child_index)` coordinate, and reads
+    /// the (already resolved) child into a `NodeData`.
     pub fn read_child(&mut self, handle: u32, child_index: u16) -> Result<String, String> {
-        // Build the child coordinate path. We validate that the parent and
-        // child exist by resolving them, but we do NOT retain any borrow of
-        // `self.tree` across the mutable `push_coords` call below.
-        let child_coords = {
-            let parent_coords = self
-                .nodes
-                .get(handle as usize)
-                .cloned()
-                .ok_or_else(|| format!("handle {handle} not found in node table"))?;
-            let parent_node = parent_coords
-                .resolve(&self.tree)
-                .ok_or_else(|| format!("handle {handle}: coordinate path could not be resolved"))?;
-            // Validate child_index is in range.
-            if parent_node.child(child_index as u32).is_none() {
-                return Err(format!(
-                    "child_index {child_index} out of bounds for handle {handle} (child_count={})",
-                    parent_node.child_count()
-                ));
+        // Resolve parent and child while only borrowing `self.nodes` + `self.tree`.
+        // The returned `child_node` borrows `self.tree` (not `self.nodes`), so it
+        // stays valid across the disjoint `&mut self.nodes` push below — no second
+        // re-resolution needed.
+        let parent_node = Self::resolve_handle(&self.nodes, &self.tree, handle).ok_or_else(|| {
+            if (handle as usize) >= self.nodes.len() {
+                format!("handle {handle} not found in node table")
+            } else {
+                format!("handle {handle}: coordinate path could not be resolved")
             }
-            NodeCoords::child_of(&parent_coords, child_index as u32)
-        };
-        // The borrow of self.tree has ended; we can now mutably push coords.
-        let new_handle = self.push_coords(child_coords.clone());
-        // Re-resolve the child node for read_node (cheap cursor walk).
-        let child_node = child_coords
-            .resolve(&self.tree)
-            .ok_or_else(|| format!("new handle {new_handle}: child coordinate re-resolution failed"))?;
+        })?;
+        let child_node = parent_node.child(child_index as u32).ok_or_else(|| {
+            format!(
+                "child_index {child_index} out of bounds for handle {handle} (child_count={})",
+                parent_node.child_count()
+            )
+        })?;
+        // O(1) push of the back-link coordinate (no path clone). Push directly
+        // to the `nodes` field rather than via `&mut self`: `child_node` borrows
+        // only `self.tree`, so mutating the disjoint `self.nodes` field while it
+        // is alive is sound — and avoids a redundant O(depth) re-resolution.
+        let new_handle = self.nodes.len() as u32;
+        self.nodes.push(NodeCoord {
+            parent: Some(handle),
+            child_index: child_index as u32,
+        });
         let data = read_node(&self.tree, &self.source, Some(child_node), Some(new_handle));
         serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }

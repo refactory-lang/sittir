@@ -471,6 +471,6 @@
     "rust/crates/sittir-typescript/test-fixtures.json": "7a2381d2ef735c32f7102104efa9a25ac68dc691e42f5d722f4ca7e07fc36923"
   },
   "host_files": {
-    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "56eb3198bf023ba93a08d9fdae67a235ca56b96710d49f9502b30205819ec395"
+    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "1abf212f765b73a42c35433e8451e3e3c6398d00dd405ffbcf29012a25f00ea6"
   }
 }
