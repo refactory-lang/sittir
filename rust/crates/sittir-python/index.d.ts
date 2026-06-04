@@ -490,6 +490,17 @@ export interface EngineOptions {
   format?: string
 }
 
+export interface ExceptClauseAsOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _alias: ExpressionTransport
+}
+
 export interface ExceptClauseAsTransport {
   '$source'?: Source
   '$named'?: boolean

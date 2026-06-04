@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 261,
+  "nodeCount": 262,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -753,6 +753,42 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_except_clause_as_optional1",
+      "modelType": "group",
+      "typeName": "ExceptClauseAsOptional1",
+      "factoryName": "_exceptClauseAsOptional1",
+      "irKey": "exceptClauseAsOptional1",
+      "hidden": false,
+      "name": "_except_clause_as_optional1",
+      "fields": [
+        {
+          "name": "alias",
+          "propertyName": "alias",
+          "paramName": "alias",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "expression",
               "parseKind": "expression",
               "unresolved": true

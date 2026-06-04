@@ -2330,13 +2330,13 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     value: aliasValue
   };
   if (factored) {
-    const optional = globalThis.optional;
-    if (typeof optional !== "function") {
+    const optional2 = globalThis.optional;
+    if (typeof optional2 !== "function") {
       throw new Error(
         "transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()"
       );
     }
-    return optional(aliasNode);
+    return optional2(aliasNode);
   }
   return aliasNode;
 }
@@ -2452,6 +2452,15 @@ var overrides_default = grammar(
       // The `as` form (`except E as e:`) overlaps with `as_pattern`
       // (`E as e`) after the shared `expression 'as'` prefix — fork.
       [$.as_pattern, $._except_clause_as]
+    ],
+    // EXPERIMENT (see `_except_clause_as` in `rules`). The real fix is enrich
+    // auto-hoisting inline-safe groups nested inside variant arms — FOLLOWUP.
+    // Inline the hoisted group into tree-sitter so the `as_pattern` LR overlap
+    // dissolves exactly as the base grammar resolves it (no extra conflict
+    // needed — the `as` is inline in `_except_clause_as` at parse time).
+    inline: ($, previous) => [
+      ...previous ?? [],
+      $._except_clause_as_optional1
     ],
     polymorphs: {
       assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
@@ -2737,7 +2746,17 @@ var overrides_default = grammar(
           ...base2.slice(0, -1),
           $.list_splat_pattern
         );
-      }
+      },
+      // EXPERIMENT (manual; real fix = enrich should auto-hoist an inline-safe
+      // group nested inside a variant arm). The `except_clause` polymorph split
+      // auto-creates `_except_clause_as` = seq(value, optional(seq('as', alias)));
+      // enrich does NOT recurse into the variant arm to hoist the inner
+      // inline-safe group, so the emitter leaks `as` ungated
+      // (`except E:` -> `except E as:`). Redefine it with the inner group
+      // explicitly hoisted to `_except_clause_as_optional1` so the emitter
+      // inline+gates the `as`.
+      _except_clause_as: ($) => seq(field("value", $.expression), optional($._except_clause_as_optional1)),
+      _except_clause_as_optional1: ($) => seq("as", field("alias", $.expression))
     }
   }, enrichedBase)
 );

@@ -305,7 +305,7 @@ const _supertype_fExpression_ids = new Set<number>([161, 200, 202]);
 const _supertype_leftHandSide_ids = new Set<number>([200]);
 const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 198, 199, 200, 202]);
-const _supertype_simplePattern_ids = new Set<number>([173, 172, 166, 167, 168, 169, 231, 230, 88, 89, 90, 249, 174, 162]);
+const _supertype_simplePattern_ids = new Set<number>([173, 172, 166, 167, 168, 169, 231, 230, 88, 89, 90, 250, 174, 162]);
 const _supertype_simpleStatement_ids = new Set<number>([114, 111, 115, 119, 121, 122, 125, 126, 127, 128, 129, 130, 150, 151, 152, 153]);
 const _supertype_statement_ids = new Set<number>([110, 131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_expression_ids = new Set<number>([195, 189, 190, 196, 229, 123, 185]);
@@ -482,6 +482,7 @@ const _kindIdByKind = new Map<string, number>([
     ["format_specifier", TSKindId.FormatSpecifier],
     ["await", TSKindId.Await],
     ["_slice_group1", TSKindId._SliceGroup1],
+    ["_except_clause_as", TSKindId.ExceptClauseAs],
     ["_assignment_eq", TSKindId.AssignmentEq],
     ["_assignment_type", TSKindId.AssignmentType],
     ["_assignment_typed", TSKindId.AssignmentTyped],
@@ -490,7 +491,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_with_clause_paren", TSKindId.WithClauseParen],
     ["_match_block_block", TSKindId.MatchBlockBlock],
     ["_simple_pattern_negative", TSKindId.SimplePatternNegative],
-    ["_except_clause_as", TSKindId.ExceptClauseAs],
     ["_except_clause_list", TSKindId.ExceptClauseList],
     ["_comparison_operator_comparator", TSKindId.ComparisonOperatorComparator],
 ]);

@@ -500,10 +500,10 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "positional_separator": 238,
   "keyword_separator": 239,
   "_slice_group1": 240,
-  "_expression_statement_tuple": 244,
-  "_with_clause_bare": 245,
-  "_with_clause_paren": 246,
-  "_simple_pattern_negative": 249,
+  "_expression_statement_tuple": 245,
+  "_with_clause_bare": 246,
+  "_with_clause_paren": 247,
+  "_simple_pattern_negative": 250,
   "_except_clause_list": 251,
 } as const satisfies Record<string, number>;
 
@@ -699,10 +699,10 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [238]: "positional_separator",
   [239]: "keyword_separator",
   [240]: "_slice_group1",
-  [244]: "_expression_statement_tuple",
-  [245]: "_with_clause_bare",
-  [246]: "_with_clause_paren",
-  [249]: "_simple_pattern_negative",
+  [245]: "_expression_statement_tuple",
+  [246]: "_with_clause_bare",
+  [247]: "_with_clause_paren",
+  [250]: "_simple_pattern_negative",
   [251]: "_except_clause_list",
 } as const;
 
@@ -898,10 +898,10 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "positional_separator", id: 238, enumName: "PositionalSeparator", cName: "sym_positional_separator" },
   { name: "keyword_separator", id: 239, enumName: "KeywordSeparator", cName: "sym_keyword_separator" },
   { name: "_slice_group1", id: 240, enumName: "SliceGroup1", cName: "sym__slice_group1" },
-  { name: "_expression_statement_tuple", id: 244, enumName: "ExpressionStatementTuple", cName: "sym__expression_statement_tuple" },
-  { name: "_with_clause_bare", id: 245, enumName: "WithClauseBare", cName: "sym__with_clause_bare" },
-  { name: "_with_clause_paren", id: 246, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
-  { name: "_simple_pattern_negative", id: 249, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
+  { name: "_expression_statement_tuple", id: 245, enumName: "ExpressionStatementTuple", cName: "sym__expression_statement_tuple" },
+  { name: "_with_clause_bare", id: 246, enumName: "WithClauseBare", cName: "sym__with_clause_bare" },
+  { name: "_with_clause_paren", id: 247, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
+  { name: "_simple_pattern_negative", id: 250, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
   { name: "_except_clause_list", id: 251, enumName: "ExceptClauseList", cName: "sym__except_clause_list" },
 ] as const;
 

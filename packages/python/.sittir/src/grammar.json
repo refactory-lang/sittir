@@ -6326,23 +6326,8 @@
       ]
     },
     "_except_clause_optional1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "as"
-        },
-        {
-          "type": "FIELD",
-          "name": "alias",
-          "content": {
-            "type": "SYMBOL",
-            "name": "expression",
-            "fieldName": "alias",
-            "nonterminal": true
-          }
-        }
-      ]
+      "type": "SYMBOL",
+      "name": "_except_clause_as_optional1"
     },
     "_function_definition_optional1": {
       "type": "SEQ",
@@ -6656,6 +6641,50 @@
         }
       ]
     },
+    "_except_clause_as": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "source": "override"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_except_clause_as_optional1"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_except_clause_as_optional1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "FIELD",
+          "name": "alias",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "source": "override"
+        }
+      ]
+    },
     "_assignment_eq": {
       "type": "SEQ",
       "members": [
@@ -6950,37 +6979,6 @@
           }
         ]
       }
-    },
-    "_except_clause_as": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "value",
-          "content": {
-            "type": "SYMBOL",
-            "name": "expression",
-            "fieldName": "value",
-            "nonterminal": true
-          }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_except_clause_optional1",
-              "source": "group-lift",
-              "metadata": {
-                "source": "enrich"
-              }
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        }
-      ]
     },
     "_except_clause_list": {
       "type": "SEQ",
@@ -7309,6 +7307,7 @@
     "_expressions",
     "_left_hand_side",
     "keyword_identifier",
+    "_except_clause_as_optional1",
     "_raise_statement_optional1",
     "_except_clause_optional1",
     "_function_definition_optional1",

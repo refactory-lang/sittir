@@ -74,6 +74,7 @@ export const enum SyntaxKind {
   ComparisonOperatorComparator = "_comparison_operator_comparator",
   ComprehensionClauses = "_comprehension_clauses",
   ExceptClauseAs = "_except_clause_as",
+  ExceptClauseAsOptional1 = "_except_clause_as_optional1",
   ExceptClauseList = "_except_clause_list",
   ExpressionStatementTuple = "_expression_statement_tuple",
   FunctionDefinitionOptional1 = "_function_definition_optional1",
@@ -508,16 +509,16 @@ export const enum TSKindId {
   PositionalSeparator = 238,
   KeywordSeparator = 239,
   _SliceGroup1 = 240,
-  AssignmentEq = 241,
-  AssignmentType = 242,
-  AssignmentTyped = 243,
-  ExpressionStatementTuple = 244,
-  WithClauseBare = 245,
-  WithClauseParen = 246,
-  MatchBlockBlock = 247,
-  DictPatternKv = 248,
-  SimplePatternNegative = 249,
-  ExceptClauseAs = 250,
+  ExceptClauseAs = 241,
+  AssignmentEq = 242,
+  AssignmentType = 243,
+  AssignmentTyped = 244,
+  ExpressionStatementTuple = 245,
+  WithClauseBare = 246,
+  WithClauseParen = 247,
+  MatchBlockBlock = 248,
+  DictPatternKv = 249,
+  SimplePatternNegative = 250,
   ExceptClauseList = 251,
   ComparisonOperatorComparator = 252,
   ModuleRepeat1 = 253,
@@ -797,16 +798,16 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [238, "positional_separator"],
   [239, "keyword_separator"],
   [240, "_slice_group1"],
-  [241, "_assignment_eq"],
-  [242, "_assignment_type"],
-  [243, "_assignment_typed"],
-  [244, "_expression_statement_tuple"],
-  [245, "_with_clause_bare"],
-  [246, "_with_clause_paren"],
-  [247, "_match_block_block"],
-  [248, "_dict_pattern_kv"],
-  [249, "_simple_pattern_negative"],
-  [250, "_except_clause_as"],
+  [241, "_except_clause_as"],
+  [242, "_assignment_eq"],
+  [243, "_assignment_type"],
+  [244, "_assignment_typed"],
+  [245, "_expression_statement_tuple"],
+  [246, "_with_clause_bare"],
+  [247, "_with_clause_paren"],
+  [248, "_match_block_block"],
+  [249, "_dict_pattern_kv"],
+  [250, "_simple_pattern_negative"],
   [251, "_except_clause_list"],
   [252, "_comparison_operator_comparator"],
   [253, "module_repeat1"],
@@ -1087,6 +1088,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "positional_separator": return TSKindId.PositionalSeparator;
     case "keyword_separator": return TSKindId.KeywordSeparator;
     case "_slice_group1": return TSKindId._SliceGroup1;
+    case "_except_clause_as": return TSKindId.ExceptClauseAs;
     case "_assignment_eq": return TSKindId.AssignmentEq;
     case "_assignment_type": return TSKindId.AssignmentType;
     case "_assignment_typed": return TSKindId.AssignmentTyped;
@@ -1096,7 +1098,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_match_block_block": return TSKindId.MatchBlockBlock;
     case "_dict_pattern_kv": return TSKindId.DictPatternKv;
     case "_simple_pattern_negative": return TSKindId.SimplePatternNegative;
-    case "_except_clause_as": return TSKindId.ExceptClauseAs;
     case "_except_clause_list": return TSKindId.ExceptClauseList;
     case "_comparison_operator_comparator": return TSKindId.ComparisonOperatorComparator;
     case "module_repeat1": return TSKindId.ModuleRepeat1;
@@ -1184,6 +1185,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "not in": return TSKindId.NotIn;
     case "is not": return TSKindId.IsNot;
     case "slice_group1": return TSKindId._SliceGroup1;
+    case "except_clause_as": return TSKindId.ExceptClauseAs;
     case "assignment_eq": return TSKindId.AssignmentEq;
     case "assignment_type": return TSKindId.AssignmentType;
     case "assignment_typed": return TSKindId.AssignmentTyped;
@@ -1193,7 +1195,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "match_block_block": return TSKindId.MatchBlockBlock;
     case "dict_pattern_kv": return TSKindId.DictPatternKv;
     case "simple_pattern_negative": return TSKindId.SimplePatternNegative;
-    case "except_clause_as": return TSKindId.ExceptClauseAs;
     case "except_clause_list": return TSKindId.ExceptClauseList;
     case "comparison_operator_comparator": return TSKindId.ComparisonOperatorComparator;
     case "as_pattern_target": return TSKindId._AsPatternTarget;
@@ -1417,6 +1418,12 @@ export interface ExceptClauseAs {
   readonly _alias?: Expression;
   value(): Expression;
   alias(): Expression | undefined;
+}
+
+export interface ExceptClauseAsOptional1 {
+  readonly $type: "_except_clause_as_optional1";
+  readonly _alias: Expression;
+  alias(): Expression;
 }
 
 export interface ExceptClauseList {
@@ -2384,6 +2391,7 @@ export interface AssignmentTypedTree extends AnyTreeNode { readonly type: "_assi
 export interface ComparisonOperatorComparatorTree extends AnyTreeNode { readonly type: "_comparison_operator_comparator"; }
 export interface ComprehensionClausesTree extends AnyTreeNode { readonly type: "_comprehension_clauses"; }
 export interface ExceptClauseAsTree extends AnyTreeNode { readonly type: "_except_clause_as"; }
+export interface ExceptClauseAsOptional1Tree extends AnyTreeNode { readonly type: "_except_clause_as_optional1"; }
 export interface ExceptClauseListTree extends AnyTreeNode { readonly type: "_except_clause_list"; }
 export interface ExpressionStatementTupleTree extends AnyTreeNode { readonly type: "_expression_statement_tuple"; }
 export interface FunctionDefinitionOptional1Tree extends AnyTreeNode { readonly type: "_function_definition_optional1"; }
@@ -2775,6 +2783,7 @@ export type PythonNode =
   | ComparisonOperatorComparator
   | ComprehensionClauses
   | ExceptClauseAs
+  | ExceptClauseAsOptional1
   | ExceptClauseList
   | ExpressionStatementTuple
   | FunctionDefinitionOptional1
@@ -2904,6 +2913,7 @@ export interface KindMap {
   '_comparison_operator_comparator': ComparisonOperatorComparator;
   '_comprehension_clauses': ComprehensionClauses;
   '_except_clause_as': ExceptClauseAs;
+  '_except_clause_as_optional1': ExceptClauseAsOptional1;
   '_except_clause_list': ExceptClauseList;
   '_expression_statement_tuple': ExpressionStatementTuple;
   '_function_definition_optional1': FunctionDefinitionOptional1;
@@ -3064,6 +3074,7 @@ export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap
 export interface ComparisonOperatorComparatorNs extends NodeNs<ComparisonOperatorComparator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ComprehensionClausesNs extends NodeNs<ComprehensionClauses, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseAsNs extends NodeNs<ExceptClauseAs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExceptClauseAsOptional1Ns extends NodeNs<ExceptClauseAsOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseListNs extends NodeNs<ExceptClauseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionStatementTupleNs extends NodeNs<ExpressionStatementTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FunctionDefinitionOptional1Ns extends NodeNs<FunctionDefinitionOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3192,6 +3203,7 @@ export interface NamespaceMap {
   '_comparison_operator_comparator': ComparisonOperatorComparatorNs;
   '_comprehension_clauses': ComprehensionClausesNs;
   '_except_clause_as': ExceptClauseAsNs;
+  '_except_clause_as_optional1': ExceptClauseAsOptional1Ns;
   '_except_clause_list': ExceptClauseListNs;
   '_expression_statement_tuple': ExpressionStatementTupleNs;
   '_function_definition_optional1': FunctionDefinitionOptional1Ns;
@@ -3368,6 +3380,13 @@ export namespace ExceptClauseAs {
   export type Loose = LooseFor<'_except_clause_as'>;
   export type Tree = TreeFor<'_except_clause_as'>;
   export type Kind = '_except_clause_as';
+}
+export namespace ExceptClauseAsOptional1 {
+  export type Config = ConfigFor<'_except_clause_as_optional1'>;
+  export type Fluent = FluentFor<'_except_clause_as_optional1'>;
+  export type Loose = LooseFor<'_except_clause_as_optional1'>;
+  export type Tree = TreeFor<'_except_clause_as_optional1'>;
+  export type Kind = '_except_clause_as_optional1';
 }
 export namespace ExceptClauseList {
   export type Config = ConfigFor<'_except_clause_list'>;

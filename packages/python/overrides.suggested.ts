@@ -99,11 +99,6 @@ export const suggestedRules = {
 // ---------------------------------------------------------------
 export const suggestedGroups = {
   // [held] 1 candidate(s)
-  _except_clause_as: {
-    '0/1': 'alias',
-  },
-
-  // [held] 1 candidate(s)
   _suite: {
     '1': 'block',
   },
