@@ -19,15 +19,19 @@
 - `10f93bf0` — **manifest stops tracking `test-fixtures.json`** (`generated-manifest.ts:collectFiles` excludes it — write + verify both via that one fn). Dissolves the recurring `project_native_fixtures_regen_gap` drift.
 - Plus doc commits (`b64f5b54`, `29b0cec5`) and a benign `chore(validator)` auto-commit.
 
-PR #61 has a comment (issuecomment-4622455312) recording all of the above and the triage-bug resolutions: JSX ✅, name-collision ✅ (dissolved with `applyAutoGroups`), `except_clause` ✅, `engine.rs` clone ✅.
+PR #61 has a comment (issuecomment-4622455312) recording all of the above and the triage-bug status: JSX ✅, name-collision ✅ (dissolved with `applyAutoGroups`), `engine.rs` clone ✅. **CORRECTION — `except_clause` is NOT resolved** (that PR comment overclaimed it): `_except_clause_as.jinja` still emits `as` ungated (`{{ value }} as{% if alias | isPresent %} {{ alias }}{% endif %}` → `except E:` renders `except E as:`, invalid Python). It is part of the **A1 family** below — not a regression (python holds floor 74; it failed before too).
 
 ## To actually merge φ2
 1. Confirm **CI green** on PR #61 (`gh pr checks 61`).
 2. Merge (user-authorized action). The final `sittir-review` already says ship; gate's at floor; nothing regresses.
 3. A1 (below) is a tracked follow-up, NOT a merge-blocker — `visibility_modifier` never AST-matched before this work either (FR-011 exception).
 
-## A1 — the one remaining φ2 witness (do this in the rule-IR-cut phase)
-`visibility_modifier` renders **`pub ()`** for `pub(crate)` / `pub(in crate::foo)`.
+## A1 family — ungated seq-arm literals in distributed/optional structural forms (do this in the rule-IR-cut phase)
+**TWO kinds, one root cause** — a literal inside a seq arm is emitted *unconditionally* instead of gated by that arm's content presence:
+- **`visibility_modifier`** → `pub ()` (the `in` from `in_path = seq('in', path)` ungated).
+- **`except_clause`** → `except E as:` (the `as` from `optional(seq('as', alias))` ungated; `_except_clause_as.jinja`).
+
+Neither is a regression (rust 111 / py 74 hold). One fix should cover both. Canonical to debug = `visibility_modifier`:
 
 **Diagnosis (high confidence — NOT polymorph registration):** the choice IS already correctly distributed into 4 slots — `visibility_modifier_group1` is a `branch` (not a polymorph) with `self/super/crate/path` slots; transport + `node-model.json5` carry all four. The bug is purely the **template walker** (`emitChoice`, `templates.ts:~1602`): the choice-root slot id is never registered (`assemble.ts:289-292` registers per-ARM ids only), so it falls to the **first-arm fallback** (`:1634-1638`) and emits only `self` → `pub ()`.
 
