@@ -2,7 +2,7 @@
 
 > **For agentic workers:** execute via `sittir-codegen`, gating on RELEASE `validate:native` after every task. Spec: `docs/superpowers/specs/2026-06-04-rule-ir-model-simplification.md` (§D). Steps use `- [ ]`.
 
-**Goal:** move group-inlining from the late `simplify.ts:893` slot-wash to a **rule-tree hoist at normalize** (after wrapper-pushdown, in a fixpoint loop) so render + slot projections both see the inlined form; keep aliased twins' body ref as `storageKind`; close M-φ2 §D. Render-neutral except a net-positive (dead-emit deletion) and one fix-then-fold.
+**Goal:** move group-inlining from the late `simplify.ts:893` slot-wash to a **rule-tree hoist at normalize** (after wrapper-pushdown, in a fixpoint loop) so render + slot projections both see the inlined form; keep `keepRef` twins' body ref as `storageKind`; close the bulk of M-φ2 §D. Render-NEUTRAL. **Scope (2026-06-04 decision):** folds 10/11 groups now; the 11th (`_import_list`) + its per-instance `trailing_sep` prerequisite are DEFERRED to the follow-up section (risky cross-language transport rework, gates only 1/11). Task 5 narrows — does not remove — the wash so `_import_list` stays correct meanwhile.
 
 **Gate:** RELEASE deep-AST `read-render-parseAstMatchPass` = **rust 111 / ts 69 / py 74** (`env -u SITTIR_NATIVE_DEBUG pnpm validate:native`). HOLD-or-IMPROVE after every task.
 
@@ -36,10 +36,8 @@ Fold set = **11 groups** (rust 2, ts 7, py 2): rust `_use_wildcard_clause`, `_vi
 - [ ] Add to `grammar-diagnostics`: `contentAliasedFrom` fan-in >1 (two bodies → one twin) → diagnostic (mirror the parseKind-collision check). `contentAliasedTo` fan-out >1 is the legitimate reuse case (no diagnostic). The maps may be empty today — the check still compiles and guards a future violation.
 - [ ] Verify: `grammar-diagnostics --grammar {rust,ts,python}` → ZERO new diagnostics today. Non-zero = triage before proceeding. Gate unchanged.
 
-## Task 3 — FIX-THEN-FOLD prerequisite: per-instance `trailing_sep` (BLOCKS `_import_list` fold)
-- [ ] (3-edit spec from `project_object_type_rewrite_and_native_list_gaps`.) `render-module.ts:930` keep `trailing_sep: bool`; `:941` replace hardcoded `false` with the per-instance value from the slot's `hasTrailing` (forwarded `:560/:831`); transport projection carries per-instance `trailing_sep` (not node-wide).
-- [ ] TDD: failing render test for a python `import_from_statement` with a trailing-comma list (RED) → 3 edits → GREEN.
-- [ ] Gate: `pnpm validate:native` — python HOLD ≥74 (fix is independent of folding; must not regress alone). rust/ts unchanged. ROLLBACK: revert; `_import_list` fold (Task 6) stays disabled.
+## Task 3 — DEFERRED (per-instance `trailing_sep`) → see "Deferred follow-up" below
+**Decision 2026-06-04 (Pradeep):** defer trailing_sep; fold 10/11 now. Task 3 is mis-pinned + is a risky cross-language rework; it only gates `_import_list` (1/11). Moved to the **Deferred follow-up** section at the end. Execution resumes at Task 4, with Task 5 NARROWING (not removing) the wash so `_import_list` stays correctly inlined until the follow-up lands.
 
 ## Task 4 — The normalize inline hoist (CST-bearing, non-aliased; EXCLUDE `_import_list`)
 - [ ] `normalize.ts:114`: replace the single `applyWrapperDeletion(rules)` with the fixpoint:
@@ -53,21 +51,31 @@ Fold set = **11 groups** (rust 2, ts 7, py 2): rust `_use_wildcard_clause`, `_vi
   const renderRules = r;                    // feeds BOTH projections
   ```
   (The loop exists because each `applyWrapperDeletion` pass can EXPOSE a fresh hidden-seq `symbol(_z)` ref that wasn't eligible before — the user's "run pushdown through a fixed point so we get inlines in there too." `keepRef` itself is invariant under folding — splices RELOCATE `symbol` refs rather than remove them, so refcounts are conserved — so recomputing it per pass yields the same set; it's recomputed only because the rule set object is rebuilt each pass. If `computeKeepRef` shows up in a profile, hoist it above the loop.)
-- [ ] New `inlineHiddenSeqRefs(rules, keepRef)`: for each parent `symbol(_x)` where `rules[_x]` is hidden+seq+group/multi-eligible (reuse `resolveGroupOrMultiInlineTarget`, `simplify.ts:992`) AND **`!keepRef.has(_x)`** (structural: refcount 1 AND no visible twin) AND `_x !== '_import_list'` (gated until Task 6): splice `resolveGroupOrMultiInlineTarget(rules[_x])` via `replaceSymbolRef` + `reapplyInlinedLeafAttrs`; tag `metadata.inlinedFrom=_x`; delete `_x` (it had refcount 1, now 0). Returns true if any splice. **Termination:** monotone-decreasing on `#hidden-seq-entries`; cap at 8 with assert-on-non-convergence (mirror `inlineSingleUseHidden:436`). NOTE: a `keepRef` body (refcount>1 / twinned) is NEVER inlined — it stays `symbol(_x)` → storageKind; this is what preserves `_call_signature`/`_module` and deletes their dead duplicate transports by the body staying a single shared kind.
-- [ ] Folds 10 of 11 (all but `_import_list`).
-- [ ] Verify: `probe-stages` ts `extends_clause` — `_extends_clause_single` absent as entry, content spliced. `dump-ast-mismatches --grammar typescript` — no new mismatches.
-- [ ] Gate: ts HOLD-or-UP (the `_call_signature`/`_module` twin folds delete dead `_CallSignatureTransport`/`render__call_signature` → ts ≥69). rust/py HOLD. ROLLBACK: revert the loop.
+- [ ] New `inlineHiddenSeqRefs(rules, keepRef)`: for each parent `symbol(_x)` where `rules[_x]` is hidden+seq+group/multi-eligible (reuse `resolveGroupOrMultiInlineTarget`, `simplify.ts:992`) AND **`!keepRef.has(_x)`** (structural: refcount 1 AND no visible twin) AND `_x !== '_import_list'` (gated until Task 6): splice `resolveGroupOrMultiInlineTarget(rules[_x])` via `replaceSymbolRef` + `reapplyInlinedLeafAttrs`; tag `metadata.inlinedFrom=_x`; delete `_x` (it had refcount 1, now 0). Returns true if any splice. **Termination:** monotone-decreasing on `#hidden-seq-entries`; cap at 8 with assert-on-non-convergence (mirror `inlineSingleUseHidden:436`). NOTE: a `keepRef` body (refcount>1 / twinned, e.g. `_call_signature`/`_module`) is NEVER inlined — it stays `symbol(_x)` → storageKind, and its kind + transport REMAIN (the corrected keepRef design keeps the twin; it does NOT delete the dead duplicate transport — that cleanup belongs to §D-2b, not here).
+- [ ] Folds 10 of 11 (all but `_import_list`): the bare/single-use seq groups including `_extends_clause_single` (inlining it removes the struct edge → ts `Box`/SCC cycle gone, no `scc.ts` surgery).
+- [ ] Verify: `probe-stages` ts `extends_clause` — `_extends_clause_single` absent as entry, content spliced. `dump-ast-mismatches --grammar typescript` — no new mismatches. (If the napi `.node` SIGSEGVs on `dump-ast-mismatches`/`probe-kind` — known DEBUG-napi crash — fall back to `probe-stages` + the RELEASE gate as the signal.)
+- [ ] Gate: **render-NEUTRAL expected — rust/ts/py HOLD at 111/69/74** (this task relocates inlining from the wash to normalize for 10 groups; it should not move the AST count). A DIP = the multi-parent-splice latent bug (Risks below) → per-kind-gate the fold set to bisect. ROLLBACK: revert the loop.
 
-## Task 5 — Supersede the late wash (prove no double-handling)
-- [ ] Remove `simplify.ts:893` (`inlineKinds.has` wash) + `:944` (`source==='group-lift'` bail).
-- [ ] Verify: `counts --backend native` slot counts for the 10 folded parents IDENTICAL to Task 4; `probe-stages` shows the inlined body once. Gate IDENTICAL to Task 4. ANY change = double-handling → ROLLBACK + reconcile.
+## Task 5 — NARROW the late wash to `_import_list`-only (prove no double-handling for the 10)
+**Revised (defer-trailing_sep decision):** do NOT remove the wash — `_import_list` is still inlined ONLY by it until the deferred Task 6 lands. Instead, narrow the wash so it handles EXACTLY `_import_list`, eliminating the double-derivation (DRY) for the 10 now-normalize-folded groups while keeping the one un-migrated kind correct.
+- [ ] `simplify.ts:893` (`inlineKinds.has` wash): gate it to `kindId === '_import_list'` only (the 10 are already inlined at normalize → for them the wash must be a no-op, not a second inliner). Keep `:944` (`source==='group-lift'` bail) only if `_import_list` still needs it; else remove.
+- [ ] Verify (DRY proof): for the 10 folded parents, the wash performs ZERO splices (assert/log count 0 — they're absent by normalize time); `counts --backend native` slot counts IDENTICAL to Task 4; `probe-stages` shows each inlined body once (not twice). `_import_list` still inlined into its parents as before.
+- [ ] Gate: IDENTICAL to Task 4 (111/69/74). ANY change for the 10 = leftover double-handling → reconcile; ANY change for `_import_list` = the narrowing dropped it → fix the predicate.
 
-## Task 6 — Enable the `_import_list` fold (AFTER Task 3 green)
-- [ ] Remove the `_x !== '_import_list'` gate. Folds into `import_from_statement`/`import_statement`/`future_import_statement`.
-- [ ] Verify: trailing-comma import list renders separator+trailing correctly per parent. Gate: python HOLD ≥74. Dip → Task 3 incomplete (per-instance flag not reaching all 3 parents) → ROLLBACK Task 6, re-open Task 3.
+## Task 6 — DEFERRED (enable `_import_list` normalize fold) → Deferred follow-up
+Tied to Task 3. Do NOT remove the `_x !== '_import_list'` gate or the narrowed wash until the deferred trailing_sep fix is green. See below.
 
-## Task 7 — Cleanup
-- [ ] Delete unreachable `inlineKinds`-wash paths; the `inlineKinds` thread into `computeSimplifiedRules` only if `diagnoseSlotGrouping` no longer needs it (findReferences). Full `validate:native` = 111/69/74-or-better; `pnpm -r typecheck`.
+## Task 7 — Cleanup (scoped to what landed)
+- [ ] Delete `inlineKinds`-wash paths that are now unreachable FOR THE 10 (the wash body survives, narrowed to `_import_list`). Keep the `inlineKinds` thread into `computeSimplifiedRules` if `diagnoseSlotGrouping` still needs it (findReferences). Full `validate:native` = 111/69/74-or-better; `pnpm -r typecheck`.
+
+---
+
+## Deferred follow-up — per-instance `trailing_sep` + `_import_list` migration (NOT in this execution)
+**Why deferred:** mis-pinned in v1 + a genuinely risky cross-language change; gates only 1/11. Re-spec required before any attempt.
+- **Real seam (corrected):** the hardcoded `false` that reaches the native gate is `render-module.ts:2274-2275` in the TRANSPORT render path (`render_transport_parts`) — NOT `:941` (`ResolvedField::from_scalar`, correctly false; the NodeData path at `:1136-1141/:1187-1193` already computes per-instance trailing right).
+- **DO NOT use the literal `slot.hasTrailing` fix** (`:831` forward) — that is the *static per-slot capability flag*; emitting it per-instance is the **−17 regression** recorded in `project_object_type_rewrite_and_native_list_gaps`. The genuine fix is a **new per-instance `trailing_sep` transport field** populated by the native CST reader: transport struct def + Rust reader that builds the transport + render emission at `:2274-2275`.
+- **Pre-existing blockers to triage first:** (1) `import_from_statement`'s `(`/`,`/`)` are mis-assigned to field `wildcard_import` (`wrapError: repeated slot "wildcard_import" requires at least one value`; bare form: `unknown kind id 9 in ImportFromStatementWildcardImportTransportSlot`) — blocks any import-list witness; (2) the DEBUG-napi SIGSEGV disables `dump-ast-mismatches`/`probe-kind` as fast RED/GREEN signals for this work.
+- **Then:** TDD a python `import_from_statement` trailing-comma render (RED → field + reader + emit → GREEN); python HOLD ≥74 standalone. Once green, do **Task 6**: remove the `_x !== '_import_list'` gate in `inlineHiddenSeqRefs` AND the `_import_list` branch of the narrowed wash (Task 5), so `_import_list` migrates to the normalize hoist and the wash can be fully deleted (completing Task 7).
 
 ## Risks / unknowns (codegen verifies empirically)
 - Author COULD NOT run the native gate (staleness guard on a drifted tree). Task 0 is mandatory.
