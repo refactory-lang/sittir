@@ -156,11 +156,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  _visibility_modifier_group1: {
-    '1/3': 'path',
-  },
-
-  // [held] 1 candidate(s)
   attribute: {
     '1/0/0': 'value',
   },
@@ -189,11 +184,6 @@ export const suggestedGroups = {
   // [held] 1 candidate(s)
   tuple_expression: {
     '2': 'elements',
-  },
-
-  // [held] 1 candidate(s)
-  visibility_modifier_group1: {
-    '1/3': 'path',
   },
 
 };

@@ -1768,7 +1768,7 @@ export function yieldExpressionFrom(input?: T.Expression | T.YieldExpression): R
   return F.yieldExpression(input as Parameters<typeof F.yieldExpression>[0]);
 }
 
-export function visibilityModifierGroup1From(input?: T.Self | T.VisibilityModifierGroup1): ReturnType<typeof F.visibilityModifierGroup1> {
+export function visibilityModifierGroup1From(input?: (T.Self | T.Super | T.Crate | T.InPath) | T.VisibilityModifierGroup1): ReturnType<typeof F.visibilityModifierGroup1> {
   return F.visibilityModifierGroup1(input as Parameters<typeof F.visibilityModifierGroup1>[0]);
 }
 

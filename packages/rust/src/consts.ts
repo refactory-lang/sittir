@@ -18,6 +18,7 @@ export const NODE_KINDS = [
   '_function_type_fn_form',
   '_function_type_trait_form',
   '_impl_item_body',
+  '_in_path',
   '_let_chain',
   '_macro_definition_brace',
   '_macro_definition_bracket',
@@ -1535,6 +1536,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_impl_item_body': [
     { name: 'declarationList', required: true, multiple: false },
   ],
+  '_in_path': [
+    { name: 'path', required: true, multiple: false },
+  ],
   '_let_chain': [
     { name: 'letChain', required: false, multiple: false },
     { name: 'letCondition', required: false, multiple: false },
@@ -1596,10 +1600,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'crate', required: true, multiple: false },
   ],
   '_visibility_modifier_group1': [
-    { name: 'self', required: false, multiple: false },
-    { name: 'super', required: false, multiple: false },
-    { name: 'crate', required: false, multiple: false },
-    { name: 'path', required: false, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'abstract_type': [
     { name: 'typeParameters', required: false, multiple: false },
@@ -2170,10 +2171,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'content', required: true, multiple: false },
   ],
   'visibility_modifier_group1': [
-    { name: 'self', required: false, multiple: false },
-    { name: 'super', required: false, multiple: false },
-    { name: 'crate', required: false, multiple: false },
-    { name: 'path', required: false, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'where_clause': [
     { name: 'wherePredicates', required: false, multiple: true },

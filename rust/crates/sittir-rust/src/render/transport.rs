@@ -65,6 +65,7 @@ pub enum AnyTransport {
     ImplItemPositiveClause(ImplItemPositiveClauseTransport),
     ImplItemSemi(ImplItemSemiTransport),
     ImplItemUnsafeMarker(ImplItemUnsafeMarkerTransport),
+    InPath(InPathTransport),
     InnerBlockDocCommentMarker(InnerBlockDocCommentMarkerTransport),
     InnerLineDocCommentMarker(InnerLineDocCommentMarkerTransport),
     KwAsyncMarker(KwAsyncMarkerTransport),
@@ -322,8 +323,8 @@ pub enum AnyTransport {
     Fn(FnTransport),
     Bang(BangTransport),
     Unsafe(UnsafeTransport),
-    Async(AsyncTransport),
     In(InTransport),
+    Async(AsyncTransport),
     Move(MoveTransport),
     Dotdot(DotdotTransport),
     Pub(PubTransport),
@@ -1431,13 +1432,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 108 => Ok(AnyTransport::Unsafe(
                     UnsafeTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: async (ASYNC)
-                85 => Ok(AnyTransport::Async(
-                    AsyncTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: in (IN)
                 122 => Ok(AnyTransport::In(
                     InTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: async (ASYNC)
+                85 => Ok(AnyTransport::Async(
+                    AsyncTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: move (MOVE)
                 143 => Ok(AnyTransport::Move(
@@ -10576,6 +10577,111 @@ impl RenderableTransport for TypeArgumentContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum _VisibilityModifierGroup1ContentTransportSlot {
+    Self_(Self_Transport),
+    Super(SuperTransport),
+    Crate(CrateTransport),
+    InPath(InPathTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for _VisibilityModifierGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                138 => Ok(Self::Self_(
+                    Self_Transport::from_napi_value(env, napi_val)?
+                )),
+                139 => Ok(Self::Super(
+                    SuperTransport::from_napi_value(env, napi_val)?
+                )),
+                140 => Ok(Self::Crate(
+                    CrateTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in _VisibilityModifierGroup1ContentTransportSlot",
+                ))),
+            };
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("_VisibilityModifierGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in _VisibilityModifierGroup1ContentTransportSlot")
+        )?;
+        match kind_id {
+                138 => Ok(Self::Self_(
+                    Self_Transport::from_napi_value(env, napi_val)?
+                )),
+                139 => Ok(Self::Super(
+                    SuperTransport::from_napi_value(env, napi_val)?
+                )),
+                140 => Ok(Self::Crate(
+                    CrateTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in _VisibilityModifierGroup1ContentTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for _VisibilityModifierGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("_VisibilityModifierGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_VisibilityModifierGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _VisibilityModifierGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_VisibilityModifierGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _VisibilityModifierGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn _visibility_modifier_group1_content_transport_slot_to_any(t: _VisibilityModifierGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        _VisibilityModifierGroup1ContentTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
+        _VisibilityModifierGroup1ContentTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        _VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
+        _VisibilityModifierGroup1ContentTransportSlot::InPath(inner) => AnyTransport::InPath(inner),
+    }
+}
+
+impl RenderableTransport for _VisibilityModifierGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            _VisibilityModifierGroup1ContentTransportSlot::Self_(inner) => render_self(inner, dest),
+            _VisibilityModifierGroup1ContentTransportSlot::Super(inner) => render_super(inner, dest),
+            _VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => render_crate(inner, dest),
+            _VisibilityModifierGroup1ContentTransportSlot::InPath(inner) => render_in_path(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum AbstractTypeTraitTransportSlot {
     Identifier(IdentifierTransport),
     ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
@@ -17781,6 +17887,111 @@ impl RenderableTransport for WherePredicateLeftTransportSlot {
     }
 }
 
+#[derive(Debug, Clone)]
+pub enum VisibilityModifierGroup1ContentTransportSlot {
+    Self_(Self_Transport),
+    Super(SuperTransport),
+    Crate(CrateTransport),
+    InPath(InPathTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                138 => Ok(Self::Self_(
+                    Self_Transport::from_napi_value(env, napi_val)?
+                )),
+                139 => Ok(Self::Super(
+                    SuperTransport::from_napi_value(env, napi_val)?
+                )),
+                140 => Ok(Self::Crate(
+                    CrateTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in VisibilityModifierGroup1ContentTransportSlot",
+                ))),
+            };
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("VisibilityModifierGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in VisibilityModifierGroup1ContentTransportSlot")
+        )?;
+        match kind_id {
+                138 => Ok(Self::Self_(
+                    Self_Transport::from_napi_value(env, napi_val)?
+                )),
+                139 => Ok(Self::Super(
+                    SuperTransport::from_napi_value(env, napi_val)?
+                )),
+                140 => Ok(Self::Crate(
+                    CrateTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in VisibilityModifierGroup1ContentTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("VisibilityModifierGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<VisibilityModifierGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        VisibilityModifierGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        VisibilityModifierGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn visibility_modifier_group1_content_transport_slot_to_any(t: VisibilityModifierGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        VisibilityModifierGroup1ContentTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
+        VisibilityModifierGroup1ContentTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
+        VisibilityModifierGroup1ContentTransportSlot::InPath(inner) => AnyTransport::InPath(inner),
+    }
+}
+
+impl RenderableTransport for VisibilityModifierGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            VisibilityModifierGroup1ContentTransportSlot::Self_(inner) => render_self(inner, dest),
+            VisibilityModifierGroup1ContentTransportSlot::Super(inner) => render_super(inner, dest),
+            VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => render_crate(inner, dest),
+            VisibilityModifierGroup1ContentTransportSlot::InPath(inner) => render_in_path(inner, dest),
+        }
+    }
+}
+
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RangeExpressionBinaryOperatorEnum {
@@ -20237,6 +20448,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ImplItemUnsafeMarkerTransport>
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ImplItemUnsafeMarkerTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct InPathTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
+    pub path: PathTransport,
+}
+
+impl RenderableTransport for InPathTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_in_path(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<InPathTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        InPathTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<InPathTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        InPathTransport::to_napi_value(env, *val)
     }
 }
 
@@ -25931,14 +26192,8 @@ pub struct _VisibilityModifierGroup1Transport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_self"))]
-    pub self_: Option<Self_Transport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_super"))]
-    pub super_: Option<SuperTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_crate"))]
-    pub crate_: Option<CrateTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
-    pub path: Option<PathTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: _VisibilityModifierGroup1ContentTransportSlot,
 }
 
 impl RenderableTransport for _VisibilityModifierGroup1Transport {
@@ -27844,11 +28099,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
             text
         } else if u16::from_napi_value(env, napi_val).is_ok() {
             "crate".to_string()
-        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
-            if !present {
-                return Err(::napi::Error::from_reason("CrateTransport received false; omit the field instead of sending false"));
-            }
-            "crate".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
             obj.get("$text")?.unwrap_or_else(|| "crate".to_string())
@@ -27871,31 +28121,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        if let Ok(text) = String::from_napi_value(env, napi_val) {
-            return Ok(Self {
-                transport_source: None,
-                transport_named: Some(true),
-                transport_span: None,
-                transport_node_handle: None,
-                transport_child_index: None,
-                transport_trivia_data: None,
-                text,
-            });
-        }
-        if let Ok(present) = bool::from_napi_value(env, napi_val) {
-            if !present {
-                return Err(::napi::Error::from_reason("CrateTransport received false; omit the field instead of sending false"));
-            }
-            return Ok(Self {
-                transport_source: None,
-                transport_named: Some(true),
-                transport_span: None,
-                transport_node_handle: None,
-                transport_child_index: None,
-                transport_trivia_data: None,
-                text: "crate".to_string(),
-            });
-        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| "crate".to_string());
         let transport_source = obj.get("$source")?;
@@ -32692,11 +32917,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
             text
         } else if u16::from_napi_value(env, napi_val).is_ok() {
             "self".to_string()
-        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
-            if !present {
-                return Err(::napi::Error::from_reason("Self_Transport received false; omit the field instead of sending false"));
-            }
-            "self".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
             obj.get("$text")?.unwrap_or_else(|| "self".to_string())
@@ -32719,31 +32939,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        if let Ok(text) = String::from_napi_value(env, napi_val) {
-            return Ok(Self {
-                transport_source: None,
-                transport_named: Some(true),
-                transport_span: None,
-                transport_node_handle: None,
-                transport_child_index: None,
-                transport_trivia_data: None,
-                text,
-            });
-        }
-        if let Ok(present) = bool::from_napi_value(env, napi_val) {
-            if !present {
-                return Err(::napi::Error::from_reason("Self_Transport received false; omit the field instead of sending false"));
-            }
-            return Ok(Self {
-                transport_source: None,
-                transport_named: Some(true),
-                transport_span: None,
-                transport_node_handle: None,
-                transport_child_index: None,
-                transport_trivia_data: None,
-                text: "self".to_string(),
-            });
-        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| "self".to_string());
         let transport_source = obj.get("$source")?;
@@ -33400,11 +33595,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
             text
         } else if u16::from_napi_value(env, napi_val).is_ok() {
             "super".to_string()
-        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
-            if !present {
-                return Err(::napi::Error::from_reason("SuperTransport received false; omit the field instead of sending false"));
-            }
-            "super".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
             obj.get("$text")?.unwrap_or_else(|| "super".to_string())
@@ -33427,31 +33617,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        if let Ok(text) = String::from_napi_value(env, napi_val) {
-            return Ok(Self {
-                transport_source: None,
-                transport_named: Some(true),
-                transport_span: None,
-                transport_node_handle: None,
-                transport_child_index: None,
-                transport_trivia_data: None,
-                text,
-            });
-        }
-        if let Ok(present) = bool::from_napi_value(env, napi_val) {
-            if !present {
-                return Err(::napi::Error::from_reason("SuperTransport received false; omit the field instead of sending false"));
-            }
-            return Ok(Self {
-                transport_source: None,
-                transport_named: Some(true),
-                transport_span: None,
-                transport_node_handle: None,
-                transport_child_index: None,
-                transport_trivia_data: None,
-                text: "super".to_string(),
-            });
-        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| "super".to_string());
         let transport_source = obj.get("$source")?;
@@ -35437,14 +35602,8 @@ pub struct VisibilityModifierGroup1Transport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_self"))]
-    pub self_: Option<Self_Transport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_super"))]
-    pub super_: Option<SuperTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_crate"))]
-    pub crate_: Option<CrateTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
-    pub path: Option<PathTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: VisibilityModifierGroup1ContentTransportSlot,
 }
 
 impl RenderableTransport for VisibilityModifierGroup1Transport {
@@ -37659,108 +37818,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnsafeTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AsyncTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for AsyncTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
-            text
-        } else if u16::from_napi_value(env, napi_val).is_ok() {
-            "async".to_string()
-        } else {
-            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_else(|| "async".to_string())
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "async".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AsyncTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AsyncTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct InTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -37859,6 +37916,108 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         InTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct AsyncTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for AsyncTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "async".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "async".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "async".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AsyncTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AsyncTransport::to_napi_value(env, *val)
     }
 }
 
@@ -44735,6 +44894,13 @@ fn render_impl_item_unsafe_marker(t: &ImplItemUnsafeMarkerTransport, dest: &mut 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_in_path(node: &InPathTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = InPathTemplate {
+        path: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.path)),
+    };
+    template.render_into(dest)
+}
+
 fn render_inner_block_doc_comment_marker(t: &InnerBlockDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -45302,18 +45468,7 @@ fn render_visibility_modifier_crate(node: &VisibilityModifierCrateTransport, des
 }
 
 fn render__visibility_modifier_group1(node: &_VisibilityModifierGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.self_ {
-        render_self(child, dest)?;
-    }
-    if let Some(child) = &node.super_ {
-        render_super(child, dest)?;
-    }
-    if let Some(child) = &node.crate_ {
-        render_crate(child, dest)?;
-    }
-    if let Some(child) = &node.path {
-        render_path(child, dest)?;
-    }
+    node.content.render_into(dest)?;
     Ok(())
 }
 
@@ -47331,16 +47486,8 @@ fn render_yield_expression(node: &YieldExpressionTransport, dest: &mut dyn ::std
 }
 
 fn render_visibility_modifier_group1(node: &VisibilityModifierGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.self_.is_none() && node.super_.is_none() && node.crate_.is_none() && node.path.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = VisibilityModifierGroup1Template {
-        self_: match &node.self_ {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
     template.render_into(dest)
 }
@@ -47434,11 +47581,11 @@ fn render_unsafe(t: &UnsafeTransport, dest: &mut dyn ::std::fmt::Write) -> Resul
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_in(t: &InTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_in(t: &InTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -48157,6 +48304,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ImplItemPositiveClause(t) => render_impl_item_positive_clause(t, dest),
             AnyTransport::ImplItemSemi(t) => t.render_into(dest),
             AnyTransport::ImplItemUnsafeMarker(t) => t.render_into(dest),
+            AnyTransport::InPath(t) => render_in_path(t, dest),
             AnyTransport::InnerBlockDocCommentMarker(t) => t.render_into(dest),
             AnyTransport::InnerLineDocCommentMarker(t) => t.render_into(dest),
             AnyTransport::KwAsyncMarker(t) => t.render_into(dest),
@@ -48414,8 +48562,8 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Fn(t) => t.render_into(dest),
             AnyTransport::Bang(t) => t.render_into(dest),
             AnyTransport::Unsafe(t) => t.render_into(dest),
-            AnyTransport::Async(t) => t.render_into(dest),
             AnyTransport::In(t) => t.render_into(dest),
+            AnyTransport::Async(t) => t.render_into(dest),
             AnyTransport::Move(t) => t.render_into(dest),
             AnyTransport::Dotdot(t) => t.render_into(dest),
             AnyTransport::Pub(t) => t.render_into(dest),
@@ -48550,6 +48698,7 @@ impl AnyTransport {
             Self::ImplItemPositiveClause(t) => t.transport_named,
             Self::ImplItemSemi(t) => t.transport_named,
             Self::ImplItemUnsafeMarker(t) => t.transport_named,
+            Self::InPath(t) => t.transport_named,
             Self::InnerBlockDocCommentMarker(t) => t.transport_named,
             Self::InnerLineDocCommentMarker(t) => t.transport_named,
             Self::KwAsyncMarker(t) => t.transport_named,
@@ -48800,8 +48949,8 @@ impl AnyTransport {
             Self::Fn(t) => t.transport_named,
             Self::Bang(t) => t.transport_named,
             Self::Unsafe(t) => t.transport_named,
-            Self::Async(t) => t.transport_named,
             Self::In(t) => t.transport_named,
+            Self::Async(t) => t.transport_named,
             Self::Move(t) => t.transport_named,
             Self::Dotdot(t) => t.transport_named,
             Self::Pub(t) => t.transport_named,
@@ -48970,6 +49119,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::ImplItemPositiveClause(data) => transport_to_node_impl_item_positive_clause(data),
         AnyTransport::ImplItemSemi(data) => transport_to_node_impl_item_semi(data),
         AnyTransport::ImplItemUnsafeMarker(data) => transport_to_node_impl_item_unsafe_marker(data),
+        AnyTransport::InPath(data) => transport_to_node_in_path(data),
         AnyTransport::InnerBlockDocCommentMarker(data) => transport_to_node_inner_block_doc_comment_marker(data),
         AnyTransport::InnerLineDocCommentMarker(data) => transport_to_node_inner_line_doc_comment_marker(data),
         AnyTransport::KwAsyncMarker(data) => transport_to_node_kw_async_marker(data),
@@ -49227,8 +49377,8 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Fn(data) => transport_to_node_fn(data),
         AnyTransport::Bang(data) => transport_to_node_bang(data),
         AnyTransport::Unsafe(data) => transport_to_node_unsafe(data),
-        AnyTransport::Async(data) => transport_to_node_async(data),
         AnyTransport::In(data) => transport_to_node_in(data),
+        AnyTransport::Async(data) => transport_to_node_async(data),
         AnyTransport::Move(data) => transport_to_node_move(data),
         AnyTransport::Dotdot(data) => transport_to_node_dotdot(data),
         AnyTransport::Pub(data) => transport_to_node_pub(data),
@@ -50307,6 +50457,32 @@ fn transport_to_node_impl_item_unsafe_marker(transport: ImplItemUnsafeMarkerTran
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_in_path(transport: InPathTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(path_transport_to_any(transport.path));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_in_path" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
         trivia_data,
     ))
 }
@@ -51854,18 +52030,7 @@ fn transport_to_node__visibility_modifier_group1(transport: _VisibilityModifierG
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.self_ {
-        children_buf.push(AnyTransport::Self_(value));
-    }
-    if let Some(value) = transport.super_ {
-        children_buf.push(AnyTransport::Super(value));
-    }
-    if let Some(value) = transport.crate_ {
-        children_buf.push(AnyTransport::Crate(value));
-    }
-    if let Some(value) = transport.path {
-        children_buf.push(path_transport_to_any(value));
-    }
+    children_buf.push(_visibility_modifier_group1_content_transport_slot_to_any(transport.content));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -55877,18 +56042,7 @@ fn transport_to_node_visibility_modifier_group1(transport: VisibilityModifierGro
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.self_ {
-        children_buf.push(AnyTransport::Self_(value));
-    }
-    if let Some(value) = transport.super_ {
-        children_buf.push(AnyTransport::Super(value));
-    }
-    if let Some(value) = transport.crate_ {
-        children_buf.push(AnyTransport::Crate(value));
-    }
-    if let Some(value) = transport.path {
-        children_buf.push(path_transport_to_any(value));
-    }
+    children_buf.push(visibility_modifier_group1_content_transport_slot_to_any(transport.content));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -56293,10 +56447,10 @@ fn transport_to_node_unsafe(transport: UnsafeTransport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(85) /* "async" */,
+        TransportKindId(122) /* "in" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -56310,10 +56464,10 @@ fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(122) /* "in" */,
+        TransportKindId(85) /* "async" */,
         transport.transport_source,
         transport.transport_named,
         true,

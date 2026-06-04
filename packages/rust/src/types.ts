@@ -43,8 +43,8 @@ export type LeafStringMap = {
   as: "as";
   fn: "fn";
   unsafe: "unsafe";
-  async: "async";
   in: "in";
+  async: "async";
   move: "move";
   pub: "pub";
   static: "static";
@@ -116,6 +116,7 @@ export const enum SyntaxKind {
   ImplItemGroup1 = "_impl_item_group1",
   ImplItemNegativeClause = "_impl_item_negative_clause",
   ImplItemPositiveClause = "_impl_item_positive_clause",
+  InPath = "_in_path",
   LetChain = "_let_chain",
   LetDeclarationOptional1 = "_let_declaration_optional1",
   LetDeclarationOptional2 = "_let_declaration_optional2",
@@ -349,8 +350,8 @@ export const enum SyntaxKind {
   As = "as",
   Fn = "fn",
   Unsafe = "unsafe",
-  Async = "async",
   In = "in",
+  Async = "async",
   Move = "move",
   Pub = "pub",
   Static = "static",
@@ -2393,6 +2394,12 @@ export interface ImplItemPositiveClause {
   trait(): Identifier | ScopedTypeIdentifier | GenericType;
 }
 
+export interface InPath {
+  readonly $type: "_in_path";
+  readonly _path: Path;
+  path(): Path;
+}
+
 export interface LetChain {
   readonly $type: TSKindId.LetChain;
   readonly _let_chain?: LetChain;
@@ -2682,19 +2689,8 @@ export interface VisibilityModifierCrate {
 
 export interface _VisibilityModifierGroup1 {
   readonly $type: TSKindId._VisibilityModifierGroup1;
-  readonly _self?: boolean;
-  readonly _super?: boolean;
-  readonly _crate?: boolean;
-  readonly _path?: Path;
-  readonly __inputHints__?: {
-    readonly self?: BooleanKeyword<"self">;
-    readonly super?: BooleanKeyword<"super">;
-    readonly crate?: BooleanKeyword<"crate">;
-  };
-  self(): boolean | undefined;
-  super(): boolean | undefined;
-  crate(): boolean | undefined;
-  path(): Path | undefined;
+  readonly _content: Self | Super | Crate | InPath;
+  content(): Self | Super | Crate | InPath;
 }
 
 export interface VisibilityModifierInPath {
@@ -3960,19 +3956,8 @@ export interface YieldExpression {
 
 export interface VisibilityModifierGroup1 {
   readonly $type: "visibility_modifier_group1";
-  readonly _self?: boolean;
-  readonly _super?: boolean;
-  readonly _crate?: boolean;
-  readonly _path?: Path;
-  readonly __inputHints__?: {
-    readonly self?: BooleanKeyword<"self">;
-    readonly super?: BooleanKeyword<"super">;
-    readonly crate?: BooleanKeyword<"crate">;
-  };
-  self(): boolean | undefined;
-  super(): boolean | undefined;
-  crate(): boolean | undefined;
-  path(): Path | undefined;
+  readonly _content: Self | Super | Crate | InPath;
+  content(): Self | Super | Crate | InPath;
 }
 
 export interface VisibilityModifierPubParens {
@@ -4054,6 +4039,7 @@ export interface ImplItemBodyTree extends AnyTreeNode { readonly type: "_impl_it
 export interface ImplItemGroup1Tree extends AnyTreeNode { readonly type: "_impl_item_group1"; }
 export interface ImplItemNegativeClauseTree extends AnyTreeNode { readonly type: "_impl_item_negative_clause"; }
 export interface ImplItemPositiveClauseTree extends AnyTreeNode { readonly type: "_impl_item_positive_clause"; }
+export interface InPathTree extends AnyTreeNode { readonly type: "_in_path"; }
 export interface LetChainTree extends AnyTreeNode { readonly type: "_let_chain"; }
 export interface LetDeclarationOptional1Tree extends AnyTreeNode { readonly type: "_let_declaration_optional1"; }
 export interface LetDeclarationOptional2Tree extends AnyTreeNode { readonly type: "_let_declaration_optional2"; }
@@ -4274,8 +4260,8 @@ export interface ForTree extends AnyTreeNode { readonly type: "for"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface FnTree extends AnyTreeNode { readonly type: "fn"; }
 export interface UnsafeTree extends AnyTreeNode { readonly type: "unsafe"; }
-export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
+export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface MoveTree extends AnyTreeNode { readonly type: "move"; }
 export interface PubTree extends AnyTreeNode { readonly type: "pub"; }
 export interface StaticTree extends AnyTreeNode { readonly type: "static"; }
@@ -4753,6 +4739,7 @@ export type RustNode =
   | ImplItemGroup1
   | ImplItemNegativeClause
   | ImplItemPositiveClause
+  | InPath
   | LetChain
   | LetDeclarationOptional1
   | LetDeclarationOptional2
@@ -4977,6 +4964,7 @@ export interface KindMap {
   '_impl_item_group1': ImplItemGroup1;
   '_impl_item_negative_clause': ImplItemNegativeClause;
   '_impl_item_positive_clause': ImplItemPositiveClause;
+  '_in_path': InPath;
   '_let_chain': LetChain;
   '_let_declaration_optional1': LetDeclarationOptional1;
   '_let_declaration_optional2': LetDeclarationOptional2;
@@ -5232,6 +5220,7 @@ export interface ImplItemBodyNs extends NodeNs<ImplItemBody, LeafScalarMap, Leaf
 export interface ImplItemGroup1Ns extends NodeNs<ImplItemGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemNegativeClauseNs extends NodeNs<ImplItemNegativeClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemPositiveClauseNs extends NodeNs<ImplItemPositiveClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface InPathNs extends NodeNs<InPath, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LetChainNs extends NodeNs<LetChain, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LetDeclarationOptional1Ns extends NodeNs<LetDeclarationOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LetDeclarationOptional2Ns extends NodeNs<LetDeclarationOptional2, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5455,6 +5444,7 @@ export interface NamespaceMap {
   '_impl_item_group1': ImplItemGroup1Ns;
   '_impl_item_negative_clause': ImplItemNegativeClauseNs;
   '_impl_item_positive_clause': ImplItemPositiveClauseNs;
+  '_in_path': InPathNs;
   '_let_chain': LetChainNs;
   '_let_declaration_optional1': LetDeclarationOptional1Ns;
   '_let_declaration_optional2': LetDeclarationOptional2Ns;
@@ -5900,6 +5890,13 @@ export namespace ImplItemPositiveClause {
   export type Loose = LooseFor<'_impl_item_positive_clause'>;
   export type Tree = TreeFor<'_impl_item_positive_clause'>;
   export type Kind = '_impl_item_positive_clause';
+}
+export namespace InPath {
+  export type Config = ConfigFor<'_in_path'>;
+  export type Fluent = FluentFor<'_in_path'>;
+  export type Loose = LooseFor<'_in_path'>;
+  export type Tree = TreeFor<'_in_path'>;
+  export type Kind = '_in_path';
 }
 export namespace LetChain {
   export type Config = ConfigFor<'_let_chain'>;

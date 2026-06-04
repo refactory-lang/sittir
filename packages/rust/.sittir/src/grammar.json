@@ -11577,6 +11577,19 @@
         }
       ]
     },
+    "_in_path": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "in"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_path"
+        }
+      ]
+    },
     "_attributed_field_declaration": {
       "type": "SEQ",
       "members": [

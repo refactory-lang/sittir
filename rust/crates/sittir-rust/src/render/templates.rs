@@ -241,6 +241,12 @@ pub struct ImplItemPositiveClauseTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_in_path.jinja", escape = "none")]
+pub struct InPathTemplate<'a> {
+    pub path: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_let_chain.jinja", escape = "none")]
 pub struct LetChainTemplate<'a> {
     pub let_chain: OptionalNonterminalView<'a>,
@@ -1401,7 +1407,7 @@ pub struct VariadicParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "visibility_modifier_group1.jinja", escape = "none")]
 pub struct VisibilityModifierGroup1Template<'a> {
-    pub self_: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

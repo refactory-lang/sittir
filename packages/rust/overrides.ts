@@ -167,6 +167,14 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 			'1': 'parens'
 		},
 
+		// visibility_modifier_group1's choice is
+		// `choice(self, super, crate, seq('in', _path))` — the bare seq arm makes
+		// it a STRUCTURAL choice, so emitChoice renders only the first arm and
+		// `pub(crate)` drops to `pub ( )`. Lift the seq arm into a named group so
+		// the choice becomes all-symbol (canonical) and every arm renders.
+		// (Followup: enrich should auto-lift structural choice arms.)
+		in_path: ($) => seq('in', $._path),
+
 		// --- body-pattern groups: tree-sitter visible-kind synthesis ---
 		// Each function-valued entry below declares a STRUCTURAL PATTERN.
 		// Codegen creates `_<key>` as the hidden rule body and rewrites every

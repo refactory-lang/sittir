@@ -29,6 +29,7 @@
     "_impl_item_body": "spread",
     "_impl_item_negative_clause": "config",
     "_impl_item_positive_clause": "config",
+    "_in_path": "spread",
     "_let_chain": "config",
     "_line_comment_content": "text",
     "_line_comment_doc": "config",
@@ -232,8 +233,8 @@
     "as": "text",
     "fn": "text",
     "unsafe": "text",
-    "async": "text",
     "in": "text",
+    "async": "text",
     "move": "text",
     "pub": "text",
     "static": "text",
@@ -300,6 +301,9 @@
     },
     "_non_special_token.content": {
       "primitive_type": "_primitive_type"
+    },
+    "_visibility_modifier_group1.content": {
+      "in_path": "_in_path"
     },
     "abstract_type.trait": {
       "type_identifier": "identifier"
@@ -520,6 +524,9 @@
     "where_predicate.left": {
       "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
+    },
+    "visibility_modifier_group1.content": {
+      "in_path": "_in_path"
     }
   },
   "factoryFields": {
@@ -603,6 +610,9 @@
     ],
     "_impl_item_positive_clause": [
       "trait"
+    ],
+    "_in_path": [
+      "path"
     ],
     "_let_chain": [
       "let_chain",
@@ -1251,7 +1261,7 @@
       "expression"
     ],
     "visibility_modifier_group1": [
-      "path"
+      "content"
     ]
   },
   "factorySlots": {
@@ -1539,6 +1549,15 @@
     },
     "_impl_item_positive_clause": {
       "trait": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_in_path": {
+      "path": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -4314,31 +4333,10 @@
       }
     },
     "visibility_modifier_group1": {
-      "self": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "super": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "crate": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "path": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }

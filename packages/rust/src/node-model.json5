@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 381,
+  "nodeCount": 382,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -2404,6 +2404,41 @@
       "isParameterless": true,
       "stampExpression": "\"unsafe\" as const",
       "text": "unsafe"
+    },
+    {
+      "kind": "_in_path",
+      "modelType": "branch",
+      "typeName": "InPath",
+      "factoryName": "inPath",
+      "irKey": "inPath",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "path",
+          "propertyName": "path",
+          "paramName": "path",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_path",
+              "parseKind": "_path",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_path"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_inner_block_doc_comment_marker",
@@ -5324,90 +5359,39 @@
       "hidden": false,
       "fields": [
         {
-          "name": "self",
-          "propertyName": "self",
-          "paramName": "self",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "self",
               "parseKind": "self",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "self"
-            ]
-          }
-        },
-        {
-          "name": "super",
-          "propertyName": "super",
-          "paramName": "super_",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "super",
               "parseKind": "super",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "super"
-            ]
-          }
-        },
-        {
-          "name": "crate",
-          "propertyName": "crate",
-          "paramName": "crate",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "crate",
               "parseKind": "crate",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "crate"
-            ]
-          }
-        },
-        {
-          "name": "path",
-          "propertyName": "path",
-          "paramName": "path",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_path",
-              "parseKind": "_path",
+              "multiplicity": "single",
+              "name": "_in_path",
+              "parseKind": "in_path",
               "unresolved": true
             }
           ],
@@ -5415,7 +5399,10 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path"
+              "self",
+              "super",
+              "crate",
+              "_in_path"
             ]
           }
         }
@@ -15702,90 +15689,39 @@
       "hidden": false,
       "fields": [
         {
-          "name": "self",
-          "propertyName": "self",
-          "paramName": "self",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "self",
               "parseKind": "self",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "self"
-            ]
-          }
-        },
-        {
-          "name": "super",
-          "propertyName": "super",
-          "paramName": "super_",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "super",
               "parseKind": "super",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "super"
-            ]
-          }
-        },
-        {
-          "name": "crate",
-          "propertyName": "crate",
-          "paramName": "crate",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "crate",
               "parseKind": "crate",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "crate"
-            ]
-          }
-        },
-        {
-          "name": "path",
-          "propertyName": "path",
-          "paramName": "path",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_path",
-              "parseKind": "_path",
+              "multiplicity": "single",
+              "name": "_in_path",
+              "parseKind": "in_path",
               "unresolved": true
             }
           ],
@@ -15793,7 +15729,10 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_path"
+              "self",
+              "super",
+              "crate",
+              "_in_path"
             ]
           }
         }

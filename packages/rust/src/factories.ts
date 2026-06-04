@@ -871,15 +871,15 @@ export function visibilityModifierCrate(_config?: T.VisibilityModifierCrate.Conf
   }, methodsEngine);
 }
 
-export function _visibilityModifierGroup1(child?: (T.Self | T.Super | T.Crate | T.Path)) {
-  const _self = child;
+export function _visibilityModifierGroup1(child: (T.Self | T.Super | T.Crate | T.InPath)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId._VisibilityModifierGroup1 as const,
     $source: 2 as const,
     $named: true as const,
-    _self,
-    self() { return _self; },
-    $with: { $child: (v: (T.Self | T.Super | T.Crate | T.Path)) => _visibilityModifierGroup1(v) },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.Self | T.Super | T.Crate | T.InPath)) => _visibilityModifierGroup1(v) },
   }, methodsEngine);
 }
 
@@ -3587,15 +3587,15 @@ export function yieldExpression(child?: T.Expression) {
   }, methodsEngine);
 }
 
-export function visibilityModifierGroup1(child?: (T.Self | T.Super | T.Crate | T.Path)) {
-  const _self = child;
+export function visibilityModifierGroup1(child: (T.Self | T.Super | T.Crate | T.InPath)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId._VisibilityModifierGroup1 as const,
     $source: 2 as const,
     $named: true as const,
-    _self,
-    self() { return _self; },
-    $with: { $child: (v: (T.Self | T.Super | T.Crate | T.Path)) => visibilityModifierGroup1(v) },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.Self | T.Super | T.Crate | T.InPath)) => visibilityModifierGroup1(v) },
   }, methodsEngine);
 }
 

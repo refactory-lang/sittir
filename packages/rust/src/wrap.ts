@@ -1065,15 +1065,9 @@ export function wrap_VisibilityModifierGroup1(data: T._VisibilityModifierGroup1,
   const _node = withMethods({
     ...data,
     $type: TSKindId._VisibilityModifierGroup1 as const,
-    _self: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._self, "self", false, data.$type, { tree, nodeType: data.$type, slotName: "self", span: (data as _NodeData).$span })),
-    _super: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._super, "super", false, data.$type, { tree, nodeType: data.$type, slotName: "super", span: (data as _NodeData).$span })),
-    _crate: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._crate, "crate", false, data.$type, { tree, nodeType: data.$type, slotName: "crate", span: (data as _NodeData).$span })),
-    _path: normalizeSingularWrapSlot((data._self ?? data._identifier ?? data._metavariable ?? data._super ?? data._crate ?? data._scoped_identifier ?? data._reserved_identifier ?? data._path), "path", false, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
+    _content: normalizeSingularWrapSlot((data._self ?? data._super ?? data._crate ?? data._in_path ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    self() { return this._self; },
-    super() { return this._super; },
-    crate() { return this._crate; },
-    path() { return drillIn<T.Path | undefined>(this._path, tree); },
+    content() { return drillAs<T.Self | T.Super | T.Crate | T.InPath>(this._content, tree, "in_path", "_in_path"); },
     $with: { $children: (...vs: readonly [never]) => wrap_VisibilityModifierGroup1({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -3495,15 +3489,9 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
 export function wrapVisibilityModifierGroup1(data: T.VisibilityModifierGroup1, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    _self: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._self, "self", false, data.$type, { tree, nodeType: data.$type, slotName: "self", span: (data as _NodeData).$span })),
-    _super: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._super, "super", false, data.$type, { tree, nodeType: data.$type, slotName: "super", span: (data as _NodeData).$span })),
-    _crate: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._crate, "crate", false, data.$type, { tree, nodeType: data.$type, slotName: "crate", span: (data as _NodeData).$span })),
-    _path: normalizeSingularWrapSlot((data._self ?? data._identifier ?? data._metavariable ?? data._super ?? data._crate ?? data._scoped_identifier ?? data._reserved_identifier ?? data._path), "path", false, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
+    _content: normalizeSingularWrapSlot((data._self ?? data._super ?? data._crate ?? data._in_path ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    self() { return this._self; },
-    super() { return this._super; },
-    crate() { return this._crate; },
-    path() { return drillIn<T.Path | undefined>(this._path, tree); },
+    content() { return drillAs<T.Self | T.Super | T.Crate | T.InPath>(this._content, tree, "in_path", "_in_path"); },
     $with: { $children: (...vs: readonly [never]) => wrapVisibilityModifierGroup1({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -3777,6 +3765,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'impl_item_body': '_impl_item_body',
   'impl_item_negative_clause': '_impl_item_negative_clause',
   'impl_item_positive_clause': '_impl_item_positive_clause',
+  'in_path': '_in_path',
   'let_chain': '_let_chain',
   'line_comment_content': '_line_comment_content',
   'line_comment_doc': '_line_comment_doc',
