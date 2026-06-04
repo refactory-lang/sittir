@@ -77,6 +77,16 @@ export interface RuleBase {
 	readonly aliasedFrom?: string;
 	readonly aliasNamed?: boolean;
 
+	/**
+	 * Inert provenance bag. NEVER drives compiler behavior beyond path-descent
+	 * lookup keying (`feedback_metadata_not_behavior`): structural facts decide
+	 * folding/slotting. `source` marks how the rule entered the tree
+	 * (`'enrich'` for the enrich-lifted SYMBOL ref; `'group-lift'` legacy);
+	 * `inlinedFrom` records the hidden kind whose body was spliced in by the
+	 * normalize inline hoist (§D-2a), for diagnostics only.
+	 */
+	readonly metadata?: { source?: RuleSource | 'enrich' | 'group-lift'; inlinedFrom?: string };
+
 	readonly separator?:
 		| string
 		| readonly Rule[]

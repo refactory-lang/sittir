@@ -121,7 +121,10 @@ export function link(
 	// (template / type / slots). The kindId itself is real — tree-sitter emits
 	// the alias as a node in parser.c; this pass only supplies the matching IR
 	// entry. SYMBOL aliases keep their `aliasedFrom` provenance (untouched).
-	mintContentAliasKinds(raw.rules, rules, supertypes, externalRoles);
+	// §D-2a DIAGNOSTIC-ONLY content-alias provenance (see LinkedGrammar docs).
+	const contentAliasedFrom = new Map<string, string>();
+	const contentAliasedTo = new Map<string, string[]>();
+	mintContentAliasKinds(raw.rules, rules, supertypes, externalRoles, contentAliasedFrom, contentAliasedTo);
 
 	stripResolvedRoleRules(rules);
 	createSyntheticExternalRules(rules, raw.externals);
@@ -245,7 +248,9 @@ export function link(
 		polymorphVariants: raw.polymorphVariants,
 		refineForms: raw.refineForms,
 		parentAliasedKinds,
-		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined
+		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
+		contentAliasedFrom: contentAliasedFrom.size > 0 ? contentAliasedFrom : undefined,
+		contentAliasedTo: contentAliasedTo.size > 0 ? contentAliasedTo : undefined
 	};
 }
 
@@ -651,7 +656,16 @@ function mintContentAliasKinds(
 	rawRules: Record<string, Rule>,
 	rules: Record<string, Rule>,
 	supertypes: Set<string>,
-	externalRoles: Map<string, ExternalRole>
+	externalRoles: Map<string, ExternalRole>,
+	/**
+	 * DIAGNOSTIC-ONLY accumulators (§D-2a). When a visible twin `<name>` is
+	 * minted from a hidden symbol body `_<name>`, record `<name> → _<name>` in
+	 * `contentAliasedFrom` and the inverse in `contentAliasedTo`. Consumed ONLY
+	 * by the §D-2c non-injective fan-in check; nothing in the fold path reads
+	 * them. Empty on every grammar today.
+	 */
+	contentAliasedFrom?: Map<string, string>,
+	contentAliasedTo?: Map<string, string[]>
 ): void {
 	function isEnrichContentAlias(rule: Rule): boolean {
 		if (rule.type !== 'alias') return false;
@@ -681,8 +695,16 @@ function mintContentAliasKinds(
 					// (legacy) resolves directly.
 					let body: Rule = content;
 					if (content.type === 'symbol') {
-						const target = rawRules[(content as SymbolRule).name];
+						const hiddenBody = (content as SymbolRule).name;
+						const target = rawRules[hiddenBody];
 						if (target) body = target;
+						// DIAGNOSTIC-ONLY provenance: visible twin → hidden body kind.
+						if (contentAliasedFrom) contentAliasedFrom.set(value, hiddenBody);
+						if (contentAliasedTo) {
+							const arr = contentAliasedTo.get(hiddenBody);
+							if (arr) arr.push(value);
+							else contentAliasedTo.set(hiddenBody, [value]);
+						}
 					}
 					rules[value] = resolveRule(body, value, rawRules, supertypes, externalRoles);
 				}

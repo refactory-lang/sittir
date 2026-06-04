@@ -398,6 +398,17 @@ export interface LinkedGrammar {
 	 * Optional so hand-constructed test fixtures can omit it.
 	 */
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	/**
+	 * §D-2a content-alias provenance — DIAGNOSTIC-ONLY (the §D-2c non-injective
+	 * fan-in check is their sole consumer). `contentAliasedFrom` maps a visible
+	 * twin minted by {@link mintContentAliasKinds} to the hidden body kind it
+	 * was minted from; `contentAliasedTo` is the inverse (hidden body → visible
+	 * twins). NOTHING in the fold path may branch on these
+	 * (`feedback_metadata_not_behavior`). Empty on every grammar today (no enrich
+	 * `alias($._name,$.name)` nodes exist) — they guard a FUTURE violation.
+	 */
+	readonly contentAliasedFrom?: ReadonlyMap<string, string>;
+	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
 }
 
 /**

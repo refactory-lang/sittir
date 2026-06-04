@@ -62,6 +62,64 @@ function dbgChoiceId(label: string, rules: Record<string, Rule>): void {
 	process.stderr.write(`[DBG_ID] ${label}: choice id=${find(r) ?? '<no-choice>'}\n`);
 }
 
+/**
+ * §D-2a — structural `keepRef` predicate for the normalize inline hoist.
+ *
+ * A hidden seq/group helper `_x` is a fold candidate (its body may be spliced
+ * into the referring parent) ONLY when it is referenced exactly once AND no
+ * VISIBLE parse-kind rule's body resolves to it. `keepRef` is the complement:
+ * the set of hidden kinds whose body ref must SURVIVE as a `symbol(_x)` (→
+ * storageKind), because either
+ *   - `refcount(_x) > 1` — the body is shared by several parents (inlining
+ *     would duplicate it and lose the single shared kind), or
+ *   - `hasVisibleTwin(_x)` — a parse-kind rule `x` (no leading `_`) is/contains
+ *     `symbol(_x)` (e.g. `call_signature` ⇒ keep `_call_signature`); the twin
+ *     is the surfaced CST kind and `_x` is its body.
+ *
+ * PURE rule traversal — derives ONLY from the rule tree
+ * (`feedback_metadata_not_behavior`). Does NOT read `contentAliasedTo` /
+ * `contentAliasedFrom` (those maps are empty on every grammar today and are
+ * diagnostic-only). Invariant under folding: splices RELOCATE `symbol` refs
+ * rather than remove them, so refcounts are conserved across passes.
+ */
+export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<string> {
+	const refcount = new Map<string, number>();
+	// Hidden kinds `_x` that have a VISIBLE NAME-TWIN: a parse-kind rule named
+	// exactly `x` (leading `_` stripped) whose body is/contains `symbol(_x)`.
+	// The twin is the surfaced CST kind; `_x` is its shared body. (A visible
+	// rule of a DIFFERENT name referencing `_x` does NOT twin it — that is the
+	// ordinary single-use fold case, e.g. `extends_clause` → `_extends_clause_single`.)
+	const twinned = new Set<string>();
+
+	const isHidden = (name: string): boolean => name.startsWith('_');
+
+	const walk = (rule: Rule, ownerTwinTarget: string | undefined): void => {
+		if (rule.type === 'symbol') {
+			const name = rule.name;
+			if (isHidden(name)) {
+				refcount.set(name, (refcount.get(name) ?? 0) + 1);
+				if (ownerTwinTarget !== undefined && name === ownerTwinTarget) twinned.add(name);
+			}
+			return;
+		}
+		const xs = rule as { members?: readonly Rule[]; content?: Rule };
+		for (const m of xs.members ?? []) walk(m, ownerTwinTarget);
+		if (xs.content) walk(xs.content, ownerTwinTarget);
+	};
+
+	for (const [name, rule] of Object.entries(rules)) {
+		// A visible rule `x` is the potential name-twin owner of hidden `_x`.
+		const ownerTwinTarget = isHidden(name) ? undefined : `_${name}`;
+		walk(rule, ownerTwinTarget);
+	}
+
+	const keep = new Set<string>();
+	for (const [name, count] of refcount) {
+		if (count > 1 || twinned.has(name)) keep.add(name);
+	}
+	return keep;
+}
+
 function applyNormalizationPasses(
 	rawRules: Record<string, Rule>,
 	preserveKinds?: ReadonlySet<string>,
