@@ -75,6 +75,18 @@ A combined PR-M+PR-I **φ1 spike** landed ahead of the formal M→I sequencing. 
 
 ---
 
+### §slot-naming note — kill "structural" choice naming + diagnostic-gate the merge (2026-06-04 followup; lands in/with PR-L)
+
+Surfaced while stopgapping two render bugs via manual overrides: `visibility_modifier` `pub(crate)` → `pub ( )` (rust `in_path` group lift) + `except_clause` `except E:` → `except E as:` (python `_except_clause_as` hoist, `c63f817b`). The opaque **"structural vs non-structural choice"** distinction in `collect-slots.ts` (`isStructuralChoice`) is the wrong abstraction — its **first-arm-name fallback** named an unnamed choice after its FIRST arm (`self`), so every other arm dropped. Replace it with one rule set:
+
+1. **Naming.** A choice has no single kind to name it after → slot = **`content`**, always (never the first arm). A *derivable* name — a kind-name, or a field-name shared by every arm (catch_clause's `parameter`) — → use it.
+2. **Collision → diagnostic, symmetric.** `content`-collision is ALREADY diagnosed (`diagnose-slot-grouping.ts §4c`, counted *before* `mergeByName` masks it). Add the mirror: a derived (kind/shared) name that collides un-mergeably → the same `propose-promotion` diagnostic. No silent rename either way.
+3. **The merge is lossy → diagnostic-gate it.** `mergeByName`/`mergeChoiceArms` (`collect-slots.ts:~192/~218`) keep only `values` + boolean `hasLeading/hasTrailing` + `sourceRuleIds` — they DISCARD the per-arm **surrounding artifacts** (the actual literals/separators each slot sat behind; e.g. `param ,` vs `param ;` collapse to one `param` with just `hasTrailing:true`). When folded arms differ in surrounding, that lost difference IS the variant signal — the merge silently turns "should be a polymorph/promotion" into one flat slot. Gate the fold on surrounding-equivalence: **equal surrounding → merge; differing → emit the diagnostic** (a masked variant). Refinements (design authority): the merge (a) is **limited to choice arms** (not within-seq duplicate-field collapse), (b) fires **only when the arms are truly single-slot after simplification**, and (c) **belongs in `simplify`, not `collect-slots`**.
+
+Net: delete the `structural` flag + first-arm fallback; one naming rule (`content` else derivable); one collision rule (un-mergeable → diagnose); the merge moves to `simplify`, narrows to single-slot choice arms, and diagnoses on surrounding-difference. Subsumes the §φ1 "slot-collision diagnostic run after folding is turned off" idea + the `foldParseKindDuplicateSingularSlots` band-aid. Sites: `collect-slots.ts` (`isStructuralChoice`, `mergeByName`, `mergeChoiceArms`), `simplify.ts` (new merge home), `diagnose-slot-grouping.ts` (named-collision mirror). The manual `in_path` lift + `_except_clause_as` hoist are the **stopgap** until enrich/this followup automate it.
+
+---
+
 ## Dependency graph + waves
 
 ```
