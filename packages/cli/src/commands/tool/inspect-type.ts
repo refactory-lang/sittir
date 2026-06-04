@@ -1,4 +1,4 @@
-import type { CommandModule } from '../../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
 import { inspectType as runInspectType, DEFAULT_NAMESPACES } from '@sittir/tools';
 
@@ -6,8 +6,7 @@ export const inspectType: CommandModule = {
 	name: 'inspect-type',
 	describe: 'Inspect Loose/Config type shapes via the TS compiler API',
 	register: (program) => {
-		withGrammar(program.command('inspect-type'))
-			.description('Inspect Loose/Config type shapes via the TS compiler API')
+		withGrammar(defineCommand(program, inspectType))
 			.option('--entry <kindNs>', 'Single namespace interface to inspect')
 			.option('--namespaces <ns,...>', 'Comma-separated list of namespaces (overrides --entry)')
 			.option('--slots', 'Print each slot type on the resolved Loose shape')

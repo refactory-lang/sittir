@@ -1,4 +1,4 @@
-import type { CommandModule } from '../../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
 import { probeValidate as runProbeValidate } from '@sittir/tools';
 
@@ -6,8 +6,7 @@ export const probeValidate: CommandModule = {
 	name: 'probe-validate',
 	describe: 'Probe a corpus entry through read → wrap → render pipeline',
 	register: (program) => {
-		withGrammar(program.command('probe-validate'))
-			.description('Probe a corpus entry through read → wrap → render pipeline')
+		withGrammar(defineCommand(program, probeValidate))
 			.option('-e, --entry <name>', 'Corpus entry name (exact match)')
 			.option('--entry-pattern <regex>', 'Corpus entry name (regex match, first hit)')
 			.option('--first-failing', 'Probe the first RT-failing entry for the grammar')

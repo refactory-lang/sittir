@@ -1,4 +1,4 @@
-import type { CommandModule } from '../../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
 import { profileFactory as runProfileFactory } from '@sittir/tools';
 
@@ -6,8 +6,7 @@ export const profileFactory: CommandModule = {
 	name: 'profile-factory',
 	describe: 'Profile factory-render-parse failures',
 	register: (program) => {
-		withGrammar(program.command('profile-factory'))
-			.description('Profile factory-render-parse failures')
+		withGrammar(defineCommand(program, profileFactory))
 			.option('--recursive', 'Use recursive deep-read instead of shallow')
 			.option('--ast', 'Include AST mismatch breakdown')
 			.action(async (opts: { grammar?: string; recursive?: boolean; ast?: boolean }) => {

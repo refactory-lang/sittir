@@ -1,4 +1,4 @@
-import type { CommandModule } from '../../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
 import { listKinds as runListKinds } from '@sittir/tools';
 
@@ -6,8 +6,7 @@ export const listKinds: CommandModule = {
 	name: 'list-kinds',
 	describe: 'List groups, unaliased, and phantom kinds',
 	register: (program) => {
-		withGrammar(program.command('list-kinds'))
-			.description('List groups, unaliased, and phantom kinds')
+		withGrammar(defineCommand(program, listKinds))
 			.option('--groups', 'List all group-modelled kinds')
 			.option('--unaliased', 'List groups with no visible non-group twin')
 			.option('--phantom', 'List phantom kinds (nodeMap without a parser symbol)')
