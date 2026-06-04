@@ -552,37 +552,6 @@ function unwrapPrec(rule) {
 function isRepeatLike(t) {
   return isRepeatType(t) || typeEq(t, "repeat1");
 }
-function slotKindKey(m) {
-  let cur = m;
-  while (cur && typeof cur === "object") {
-    const r = cur;
-    const t = typeof r.type === "string" ? r.type : "";
-    if (isPrecWrapper(r) || isFieldType(t)) {
-      cur = r.content;
-    } else {
-      return t.toLowerCase();
-    }
-  }
-  return "";
-}
-function isSeparatedList(members) {
-  const headSlots = collectSlots(members);
-  if (headSlots.length === 0) return false;
-  const headKey = slotKindKey(headSlots[0]);
-  if (!headKey) return false;
-  for (const m of members) {
-    if (!m || typeof m !== "object") continue;
-    const r = m;
-    const t = typeof r.type === "string" ? r.type : "";
-    if (!isRepeatLike(t)) continue;
-    const content = r.content;
-    if (!content || typeof content !== "object") continue;
-    const ct = content.type;
-    const inner = isSeqType(typeof ct === "string" ? ct : "") ? collectSlots(content.members) : collectSlots([content]);
-    if (inner.length >= 1 && slotKindKey(inner[inner.length - 1]) === headKey) return true;
-  }
-  return false;
-}
 function flattenSeqMembers(members) {
   const out = [];
   for (const m of members) {
@@ -617,7 +586,6 @@ function isInlineSafe(seqBody) {
   const members = r.members;
   if (!Array.isArray(members)) return false;
   if (seqHasTopLevelRepeat(members)) return true;
-  if (isSeparatedList(members)) return true;
   const slots = collectSlots(members);
   if (slots.length !== 1) return false;
   const core = unwrapPrec(slots[0]);
@@ -1567,11 +1535,6 @@ function wire(config, base2) {
     for (const name of getEnrichClauseGroups(base2)) {
       context.syntheticInline.add(name);
     }
-    const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
-      transforms,
-      polymorphs,
-      cfg.groups
-    );
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
   }
   const conflicts = wrapConflictsCallback(cfg.conflicts, context);
@@ -1588,18 +1551,6 @@ function wire(config, base2) {
     configurable: true
   });
   return wired;
-}
-function collectAuthoredSynthesisKinds(transforms, polymorphs, groups) {
-  const kinds = /* @__PURE__ */ new Set();
-  for (const k of Object.keys(transforms)) kinds.add(k);
-  for (const k of Object.keys(polymorphs)) kinds.add(k);
-  if (groups) {
-    for (const [k, v] of Object.entries(groups)) {
-      if (typeof v === "function") continue;
-      kinds.add(k);
-    }
-  }
-  return kinds;
 }
 function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
   for (const [parent, armMap] of Object.entries(polymorphs)) {

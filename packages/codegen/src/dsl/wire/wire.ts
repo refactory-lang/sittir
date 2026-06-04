@@ -41,7 +41,6 @@ import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
-import { applyAutoGroups } from './auto-groups.ts';
 import { getEnrichClauseGroups } from '../enrich.ts';
 import type { Rule } from '../../compiler/rule.ts';
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
@@ -657,66 +656,27 @@ export function wire<B extends GrammarJson = any> (
 	// own post-evaluation pass for the sittir-pipeline path.
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
 
-	// Auto-group-synthesis: SYNTHESIS-ONLY. Creates hidden helper rules
-	// for `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))`
-	// shapes and rewrites the parent's content to a SYMBOL ref. Runs AFTER
-	// `applyWirePatternReplacement` so authored body-pattern `groups:`
-	// have had their chance to reshape rule bodies; auto-synth also skips
-	// any kind the author opted into via `transforms:`, `polymorphs:`, or
-	// path-mode `groups:` (see `collectAuthoredSynthesisKinds`) so the
-	// path-based machinery sees the rule body the author wrote.
+	// Drain enrich-hoisted clause-group names into syntheticInline so they
+	// appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
+	// rules directly into base.grammar.rules before wire runs; without
+	// inlining, tree-sitter creates LR conflicts for those hidden rules.
+	// getEnrichClauseGroups reads the __enrichedClauseGroups__ non-enumerable
+	// property that enrich() attaches to the grammar result.
 	//
-	// NOTE: this pass does NOT touch `separator` / `trailing` / `leading`
-	// metadata or otherwise reshape Rule objects beyond the
-	// optional/repeat → SYMBOL replacement. Decomposition (separator-lift,
-	// attribute stamping) is a separate concern that belongs in
-	// link/evaluate where it can operate on sittir's private rule-tree
-	// copy without affecting tree-sitter's view.
+	// (Auto-group-synthesis — `applyAutoGroups` — was retired physically in
+	// auto-group-visibility Chunk 3 / PR-M φ2 Phase B. Enrich now hoists every
+	// `optional(seq)`/`repeat(seq)`/`repeat1(seq)`: inline-SAFE into a hidden
+	// `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible content-alias
+	// `alias(<content>, $._<parent>_group<N>)` that link's `mintContentAliasKinds`
+	// registers as a real IR kind. The old wire-time pass ran BEFORE link and
+	// pre-consumed the very inline-unsafe seqs link must see as inline content.)
 	if (baseArg) {
-		// Drain enrich-hoisted clause-group names into syntheticInline so they
-		// appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
-		// rules directly into base.grammar.rules before wire runs; without
-		// inlining, tree-sitter creates LR conflicts for those hidden rules.
-		// getEnrichClauseGroups reads the __enrichedClauseGroups__ non-enumerable
-		// property that enrich() attaches to the grammar result.
 		for (const name of getEnrichClauseGroups(base)) {
 			context.syntheticInline.add(name);
 		}
-		const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
-			transforms,
-			polymorphs,
-			cfg.groups
-		);
-		// DISABLED for PR0 close-out: activation introduces a downstream regression —
-		// sittir's codegen pipeline (link → node-model → factories) does not yet
-		// consult `context.syntheticInline` when emitting slots for synthesized
-		// hidden kinds. Reader expects child nodes for `_<parent>_repeat<N>` that
-		// tree-sitter inlined away → "repeated slot requires at least one value"
-		// errors + rust RT 134→103 / cov 178→164 regression.
-		//
-		// Re-enabled PR2 Task 3.B5 — the new template emitter (fb889165)
-		// consumes node.renderRule (RenderRule shape) which carries leaf
-		// attributes, so synthesized hidden helpers integrate naturally
-		// via the standard inline-handling path.
-		// DISABLED (auto-group-visibility Chunk 2): enrich now hoists every
-		// `optional(seq)`/`repeat(seq)`/`repeat1(seq)` — inline-SAFE into a hidden
-		// `_<parent>_optional<N>` symbol, inline-UNSAFE into a visible
-		// `alias(<content>, $._<parent>_group<N>)` content-alias which link's
-		// `mintContentAliasKinds` registers as a real IR kind. applyAutoGroups ran
-		// at wire (BEFORE link) and would pre-consume the very inline-unsafe seqs
-		// link must see as inline content. Retired physically in Chunk 3.
-		// applyAutoGroups(
-		// 	baseArg as Parameters<typeof applyAutoGroups>[0],
-		// 	outRules,
-		// 	context,
-		// 	authoredSynthesisKinds
-		// );
-		// Re-run body-pattern replacement AFTER applyAutoGroups: the optional/
-		// repeat helpers it synthesizes (e.g. `_parameters_optional1`) are created
-		// after the first pass (above) wrapped the original rules, so the
-		// param-element they now carry (e.g. rust `attributed_parameter` inside
-		// `_parameters_optional1`) would otherwise never be matched and aliased
-		// to its visible kind. The pass is idempotent on already-aliased bodies.
+		// Re-run body-pattern replacement so any `groups:` body-pattern can match
+		// rule bodies wrapped by the first pass above. Idempotent on already-aliased
+		// bodies.
 		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
 	}
 
@@ -740,34 +700,6 @@ export function wire<B extends GrammarJson = any> (
 // ---------------------------------------------------------------------------
 // wire() helpers
 // ---------------------------------------------------------------------------
-
-/**
- * Collect the set of rule kinds the author opted into the structured
- * authoring pipeline (`transforms:`, `polymorphs:`, or path-mode `groups:`).
- * `applyAutoGroups` skips these so the rule tree stays in the shape the
- * path-based machinery (`transform()`, polymorph splits, group lifts)
- * expects. Body-pattern `groups:` entries do NOT contribute — their keys
- * are NEW visible kind names, not existing base rules.
- */
-function collectAuthoredSynthesisKinds(
-	transforms: TransformsConfig,
-	polymorphs: PolymorphsConfig,
-	groups: GroupsConfig | undefined
-): ReadonlySet<string> {
-	const kinds = new Set<string>();
-	for (const k of Object.keys(transforms)) kinds.add(k);
-	for (const k of Object.keys(polymorphs)) kinds.add(k);
-	if (groups) {
-		for (const [k, v] of Object.entries(groups)) {
-			// Body-pattern entries (function values) introduce a NEW visible
-			// kind; they do NOT name an existing base rule that auto-groups
-			// might mutate. Only path-mode entries (object values) skip.
-			if (typeof v === 'function') continue;
-			kinds.add(k);
-		}
-	}
-	return kinds;
-}
 
 /**
  * For every polymorph parent, either wrap the author's rule fn (compose

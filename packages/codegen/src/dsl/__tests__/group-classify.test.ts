@@ -30,4 +30,8 @@ describe('isInlineSafe — exactly 1 non-choice field/symbol slot after dropping
   // inline-flat off the alias path; e.g. formal_parameters, class_body, enum_body).
   it('bare repeat1 body is inline-safe (a list is one flat slot)', () => expect(isInlineSafe({ type: 'repeat1', content: field('parameter', sym('parameter')) })).toBe(true));
   it('bare repeat body is inline-safe', () => expect(isInlineSafe({ type: 'repeat', content: sym('statement') })).toBe(true));
+  // Flat separated-list `commaSep1(E)` = `seq(E, repeat(seq(SEP, E)), optional(SEP))`
+  // is ONE logical repeated slot → inline-flat. The top-level `repeat` member is
+  // caught by seqHasTopLevelRepeat (formerly a dedicated isSeparatedList probe).
+  it('flat separated-list seq(E, repeat(seq(SEP,E)), opt(SEP)) is inline-safe', () => expect(isInlineSafe(seq(sym('expr'), { type: 'repeat', content: seq(str(','), sym('expr')) }, opt(str(','))))).toBe(true));
 });

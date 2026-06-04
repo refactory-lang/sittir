@@ -1,8 +1,8 @@
 {
   "grammar": "python",
-  "source_hash": "15ca0bd25db9fe0354b9a416ca780ff8aa5f1cb62bc6596e7979b5f69d9c9192",
+  "source_hash": "0f8bf874f4f83496170a012089435975029f6c171c216278278826c6f541d3ee",
   "files": {
-    "packages/python/.sittir/grammar.js": "fa01e3184ecdae9067d24c8512bb011d6910852115845b4a4ea170dcf297d81f",
+    "packages/python/.sittir/grammar.js": "2dd68a1cbcca86779e01fd4127edbec7d58159b5c68a489859747eb8331c27d8",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "2b93be69d8c3cda6d42df52c8b057c2aaa11e793fedc635aeb6f9d887e1a1e6e",
     "packages/python/.sittir/src/grammar.json": "fe5cbea68d3d7b198dec80f98b1c417b57a20b842f84e71ba92c341f369f03a3",
@@ -279,6 +279,6 @@
     "rust/crates/sittir-python/test-fixtures.json": "d3622e93464606108465ce07f629705720ba4440c5d66ae2c7d19d098c42204c"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "6f34b2d8f6ed938c3c2b02e683fb6f3302d2c5f0b8e1c4023515ce737f00f854"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "4fd6ec6b08fe1e9f46801ae5849a2c8d135be90fe526b02973c13ba7003ba943"
   }
 }
