@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 259,
+  "nodeCount": 261,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -1414,6 +1414,41 @@
             "typeName": "",
             "kinds": [
               "_simple_statement"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_slice_group1",
+      "modelType": "branch",
+      "typeName": "_SliceGroup1",
+      "factoryName": "_sliceGroup1",
+      "irKey": "_sliceGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
             ]
           }
         }
@@ -3568,9 +3603,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "dict_pattern_kv",
-          "propertyName": "dictPatternKvs",
-          "paramName": "dictPatternKvs",
+          "name": "key",
+          "propertyName": "keys",
+          "paramName": "keys",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -3578,8 +3613,56 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_dict_pattern_kv",
-              "parseKind": "dict_pattern_kv",
+              "name": "_simple_pattern",
+              "parseKind": "_simple_pattern",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_simple_pattern"
+            ]
+          }
+        },
+        {
+          "name": "value",
+          "propertyName": "values",
+          "paramName": "values",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "case_pattern",
+              "parseKind": "case_pattern",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
+        },
+        {
+          "name": "splat_pattern",
+          "propertyName": "splatPatterns",
+          "paramName": "splatPatterns",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "splat_pattern",
+              "parseKind": "splat_pattern",
               "unresolved": true
             }
           ],
@@ -3587,7 +3670,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_dict_pattern_kv"
+              "splat_pattern"
             ]
           }
         }
@@ -7234,12 +7317,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "slice_group1",
+              "parseKind": "slice_group1",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "slice_group1"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "slice_group1",
+      "modelType": "branch",
+      "typeName": "SliceGroup1",
+      "factoryName": "sliceGroup1",
+      "irKey": "sliceGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
               "name": "expression",
               "parseKind": "expression",
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [

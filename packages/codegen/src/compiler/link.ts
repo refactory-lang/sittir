@@ -656,10 +656,16 @@ function mintContentAliasKinds(
 	function isEnrichContentAlias(rule: Rule): boolean {
 		if (rule.type !== 'alias') return false;
 		const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+		// Only enrich-tagged aliases mint a kind. A symbol alias WITHOUT this tag
+		// is an authored relabel (`alias($._hidden, $.visible)`) and keeps its
+		// `aliasedFrom` provenance handling — never minted here.
 		if (meta?.source !== 'enrich') return false;
-		// Non-symbol content only — symbol aliases keep `aliasedFrom` handling.
+		// Accept BOTH forms of the enrich visible-group alias:
+		//   - symbol content `alias($._<name>, $.<name>)` — the current shape; the
+		//     hidden `_<name>` rule's body is resolved THROUGH the symbol below.
+		//   - non-symbol content (legacy direct content-alias), still registered.
 		const content = (rule as { content?: Rule }).content;
-		return content !== undefined && content.type !== 'symbol';
+		return content !== undefined;
 	}
 	function walk(rule: Rule, ownerName: string): void {
 		if (rule.type === 'alias') {
@@ -667,7 +673,18 @@ function mintContentAliasKinds(
 			const content = (rule as { content?: Rule }).content;
 			if (isEnrichContentAlias(rule) && typeof value === 'string' && value.length > 0 && content) {
 				if (!(value in rules)) {
-					rules[value] = resolveRule(content, value, rawRules, supertypes, externalRoles);
+					// Resolve THROUGH a symbol-form alias content: the enrich visible
+					// group is `alias($._<name>, $.<name>)` whose content is a SYMBOL
+					// ref to the hidden `_<name>` rule. Register the kind from the
+					// hidden rule's BODY (not the bare symbol ref), so the minted kind
+					// carries the group's real slots/template. Non-symbol content
+					// (legacy) resolves directly.
+					let body: Rule = content;
+					if (content.type === 'symbol') {
+						const target = rawRules[(content as SymbolRule).name];
+						if (target) body = target;
+					}
+					rules[value] = resolveRule(body, value, rawRules, supertypes, externalRoles);
 				}
 			}
 			if (content) walk(content, ownerName);
@@ -1556,9 +1573,13 @@ function resolveRule(
 				aliasMeta?.source === 'enrich' &&
 				rule.named &&
 				typeof rule.value === 'string' &&
-				rule.value.length > 0 &&
-				rule.content.type !== 'symbol'
+				rule.value.length > 0
 			) {
+				// enrich visible-group alias — its content is now a SYMBOL ref to the
+				// hidden `_<name>` rule (`alias($._<name>, $.<name>)`). The PARENT must
+				// reference the minted VISIBLE kind by a clean `symbol(<name>)` ref;
+				// `mintContentAliasKinds` registers the body. (Symbol content WITHOUT
+				// the enrich tag is an authored relabel handled below via aliasedFrom.)
 				return { type: 'symbol', name: rule.value } as Rule;
 			}
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {

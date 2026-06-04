@@ -50,6 +50,7 @@ pub enum AnyTransport {
     RaiseStatementOptional1(RaiseStatementOptional1Transport),
     SimplePatternNegative(SimplePatternNegativeTransport),
     SimpleStatements(SimpleStatementsTransport),
+    _SliceGroup1(_SliceGroup1Transport),
     SplatPatternOperator(SplatPatternOperatorEnum),
     Suite(SuiteTransport),
     _TuplePattern(_TuplePatternTransport),
@@ -176,6 +177,7 @@ pub enum AnyTransport {
     WithItem(WithItemTransport),
     WithStatement(WithStatementTransport),
     Yield(YieldTransport),
+    SliceGroup1(SliceGroup1Transport),
     Newline(NewlineTransport),
     Indent(IndentTransport),
     Dedent(DedentTransport),
@@ -301,19 +303,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     _AsPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _assignment_eq (_ASSIGNMENT_EQ)
-                240 => Ok(AnyTransport::AssignmentEq(
+                241 => Ok(AnyTransport::AssignmentEq(
                     AssignmentEqTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _assignment_type (_ASSIGNMENT_TYPE)
-                241 => Ok(AnyTransport::AssignmentType(
+                242 => Ok(AnyTransport::AssignmentType(
                     AssignmentTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _assignment_typed (_ASSIGNMENT_TYPED)
-                242 => Ok(AnyTransport::AssignmentTyped(
+                243 => Ok(AnyTransport::AssignmentTyped(
                     AssignmentTypedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _comparison_operator_comparator (_COMPARISON_OPERATOR_COMPARATOR)
-                251 => Ok(AnyTransport::ComparisonOperatorComparator(
+                252 => Ok(AnyTransport::ComparisonOperatorComparator(
                     ComparisonOperatorComparatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _comprehension_clauses (_COMPREHENSION_CLAUSES)
@@ -321,15 +323,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     ComprehensionClausesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _except_clause_as (_EXCEPT_CLAUSE_AS)
-                249 => Ok(AnyTransport::ExceptClauseAs(
+                250 => Ok(AnyTransport::ExceptClauseAs(
                     ExceptClauseAsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _except_clause_list (_EXCEPT_CLAUSE_LIST)
-                250 => Ok(AnyTransport::ExceptClauseList(
+                251 => Ok(AnyTransport::ExceptClauseList(
                     ExceptClauseListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _expression_statement_tuple (_EXPRESSION_STATEMENT_TUPLE)
-                243 => Ok(AnyTransport::ExpressionStatementTuple(
+                244 => Ok(AnyTransport::ExpressionStatementTuple(
                     ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_list (_IMPORT_LIST)
@@ -353,7 +355,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     MatchBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _match_block_block (_MATCH_BLOCK_BLOCK)
-                246 => Ok(AnyTransport::MatchBlockBlock(
+                247 => Ok(AnyTransport::MatchBlockBlock(
                     MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _not_escape_sequence (_NOT_ESCAPE_SEQUENCE)
@@ -365,23 +367,27 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     NotInTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _simple_pattern_negative (_SIMPLE_PATTERN_NEGATIVE)
-                248 => Ok(AnyTransport::SimplePatternNegative(
+                249 => Ok(AnyTransport::SimplePatternNegative(
                     SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _simple_statements (_SIMPLE_STATEMENTS)
                 110 => Ok(AnyTransport::SimpleStatements(
                     SimpleStatementsTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _slice_group1 (_SLICE_GROUP1)
+                240 => Ok(AnyTransport::_SliceGroup1(
+                    _SliceGroup1Transport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _tuple_pattern (_TUPLE_PATTERN)
                 168 => Ok(AnyTransport::_TuplePattern(
                     _TuplePatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _with_clause_bare (_WITH_CLAUSE_BARE)
-                244 => Ok(AnyTransport::WithClauseBare(
+                245 => Ok(AnyTransport::WithClauseBare(
                     WithClauseBareTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _with_clause_paren (_WITH_CLAUSE_PAREN)
-                245 => Ok(AnyTransport::WithClauseParen(
+                246 => Ok(AnyTransport::WithClauseParen(
                     WithClauseParenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: aliased_import (ALIASED_IMPORT)
@@ -1371,114 +1377,6 @@ impl RenderableTransport for CompoundStatementTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_compound_statement(self, dest)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum DictPatternKvTransport {
-    KeyValuePattern(KeyValuePatternTransport),
-    SplatPattern(SplatPatternTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for DictPatternKvTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            return match kind_id {
-                247 => {
-                    if let Ok(value) = KeyValuePatternTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::KeyValuePattern(value));
-                    }
-                    if let Ok(value) = SplatPatternTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::SplatPattern(value));
-                    }
-                    Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DictPatternKvTransport"))
-                },
-                170 => Ok(Self::KeyValuePattern(
-                    KeyValuePatternTransport::from_napi_value(env, napi_val)?
-                )),
-                172 => Ok(Self::SplatPattern(
-                    SplatPatternTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in DictPatternKvTransport",
-                ))),
-            };
-        }
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("DictPatternKvTransport: expected u16 kind_id, string, or object with $type"))?;
-        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in DictPatternKvTransport")
-        )?;
-        match kind_id {
-                247 => {
-                    if let Ok(value) = KeyValuePatternTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::KeyValuePattern(value));
-                    }
-                    if let Ok(value) = SplatPatternTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::SplatPattern(value));
-                    }
-                    Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DictPatternKvTransport"))
-                },
-                170 => Ok(Self::KeyValuePattern(
-                    KeyValuePatternTransport::from_napi_value(env, napi_val)?
-                )),
-                172 => Ok(Self::SplatPattern(
-                    SplatPatternTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in DictPatternKvTransport",
-                ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DictPatternKvTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DictPatternKvTransport is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DictPatternKvTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        DictPatternKvTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DictPatternKvTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        DictPatternKvTransport::to_napi_value(env, *val)
-    }
-}
-
-fn dict_pattern_kv_transport_to_any(t: DictPatternKvTransport) -> AnyTransport {
-    match t {
-        DictPatternKvTransport::KeyValuePattern(inner) => AnyTransport::KeyValuePattern(inner),
-        DictPatternKvTransport::SplatPattern(inner) => AnyTransport::SplatPattern(inner),
-    }
-}
-
-impl RenderableTransport for DictPatternKvTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_dict_pattern_kv(self, dest)
     }
 }
 
@@ -3085,7 +2983,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                 90 => Ok(Self::None(
                     NoneTransport::from_napi_value(env, napi_val)?
                 )),
-                248 => Ok(Self::SimplePatternNegative(
+                249 => Ok(Self::SimplePatternNegative(
                     SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                 )),
                 174 => Ok(Self::ComplexPattern(
@@ -3183,7 +3081,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                 90 => Ok(Self::None(
                     NoneTransport::from_napi_value(env, napi_val)?
                 )),
-                248 => Ok(Self::SimplePatternNegative(
+                249 => Ok(Self::SimplePatternNegative(
                     SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                 )),
                 174 => Ok(Self::ComplexPattern(
@@ -5470,13 +5368,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentContentTransportSlot {
     ) -> ::napi::Result<Self> {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             return match kind_id {
-                240 => Ok(Self::AssignmentEq(
+                241 => Ok(Self::AssignmentEq(
                     AssignmentEqTransport::from_napi_value(env, napi_val)?
                 )),
-                241 => Ok(Self::AssignmentType(
+                242 => Ok(Self::AssignmentType(
                     AssignmentTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                242 => Ok(Self::AssignmentTyped(
+                243 => Ok(Self::AssignmentTyped(
                     AssignmentTypedTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
@@ -5490,13 +5388,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentContentTransportSlot {
             ::napi::Error::from_reason("$type property missing in AssignmentContentTransportSlot")
         )?;
         match kind_id {
-                240 => Ok(Self::AssignmentEq(
+                241 => Ok(Self::AssignmentEq(
                     AssignmentEqTransport::from_napi_value(env, napi_val)?
                 )),
-                241 => Ok(Self::AssignmentType(
+                242 => Ok(Self::AssignmentType(
                     AssignmentTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                242 => Ok(Self::AssignmentTyped(
+                243 => Ok(Self::AssignmentTyped(
                     AssignmentTypedTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
@@ -5825,7 +5723,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                 90 => Ok(Self::None(
                     NoneTransport::from_napi_value(env, napi_val)?
                 )),
-                248 => Ok(Self::SimplePatternNegative(
+                249 => Ok(Self::SimplePatternNegative(
                     SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                 )),
                 174 => Ok(Self::ComplexPattern(
@@ -5884,7 +5782,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                 90 => Ok(Self::None(
                     NoneTransport::from_napi_value(env, napi_val)?
                 )),
-                248 => Ok(Self::SimplePatternNegative(
+                249 => Ok(Self::SimplePatternNegative(
                     SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                 )),
                 174 => Ok(Self::ComplexPattern(
@@ -6408,10 +6306,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseContentTransportSlot
     ) -> ::napi::Result<Self> {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             return match kind_id {
-                249 => Ok(Self::ExceptClauseAs(
+                250 => Ok(Self::ExceptClauseAs(
                     ExceptClauseAsTransport::from_napi_value(env, napi_val)?
                 )),
-                250 => Ok(Self::ExceptClauseList(
+                251 => Ok(Self::ExceptClauseList(
                     ExceptClauseListTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
@@ -6425,10 +6323,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseContentTransportSlot
             ::napi::Error::from_reason("$type property missing in ExceptClauseContentTransportSlot")
         )?;
         match kind_id {
-                249 => Ok(Self::ExceptClauseAs(
+                250 => Ok(Self::ExceptClauseAs(
                     ExceptClauseAsTransport::from_napi_value(env, napi_val)?
                 )),
-                250 => Ok(Self::ExceptClauseList(
+                251 => Ok(Self::ExceptClauseList(
                     ExceptClauseListTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
@@ -6633,7 +6531,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                 185 => Ok(Self::AsPattern(
                     AsPatternTransport::from_napi_value(env, napi_val)?
                 )),
-                243 => Ok(Self::ExpressionStatementTuple(
+                244 => Ok(Self::ExpressionStatementTuple(
                     ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                 )),
                 198 => Ok(Self::Assignment(
@@ -6755,7 +6653,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                 185 => Ok(Self::AsPattern(
                     AsPatternTransport::from_napi_value(env, napi_val)?
                 )),
-                243 => Ok(Self::ExpressionStatementTuple(
+                244 => Ok(Self::ExpressionStatementTuple(
                     ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                 )),
                 198 => Ok(Self::Assignment(
@@ -9813,10 +9711,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithClauseContentTransportSlot {
     ) -> ::napi::Result<Self> {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             return match kind_id {
-                244 => Ok(Self::WithClauseBare(
+                245 => Ok(Self::WithClauseBare(
                     WithClauseBareTransport::from_napi_value(env, napi_val)?
                 )),
-                245 => Ok(Self::WithClauseParen(
+                246 => Ok(Self::WithClauseParen(
                     WithClauseParenTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
@@ -9830,10 +9728,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithClauseContentTransportSlot {
             ::napi::Error::from_reason("$type property missing in WithClauseContentTransportSlot")
         )?;
         match kind_id {
-                244 => Ok(Self::WithClauseBare(
+                245 => Ok(Self::WithClauseBare(
                     WithClauseBareTransport::from_napi_value(env, napi_val)?
                 )),
-                245 => Ok(Self::WithClauseParen(
+                246 => Ok(Self::WithClauseParen(
                     WithClauseParenTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
@@ -11897,6 +11795,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimpleStatementsTransport> {
     }
 }
 
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct _SliceGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: Option<ExpressionTransport>,
+}
+
+impl RenderableTransport for _SliceGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__slice_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_SliceGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _SliceGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_SliceGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _SliceGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SplatPatternOperatorEnum {
     Star,
@@ -13936,8 +13884,12 @@ pub struct DictPatternTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dict_pattern_kv"))]
-    pub dict_pattern_kv: Option<Vec<DictPatternKvTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_key"))]
+    pub key: Option<Vec<SimplePatternTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    pub value: Option<Vec<CasePatternTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_splat_pattern"))]
+    pub splat_pattern: Option<Vec<SplatPatternTransport>>,
 }
 
 impl RenderableTransport for DictPatternTransport {
@@ -17927,7 +17879,7 @@ pub struct SliceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_stop"))]
     pub stop: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_step"))]
-    pub step: Option<ExpressionTransport>,
+    pub step: Option<SliceGroup1Transport>,
 }
 
 impl RenderableTransport for SliceTransport {
@@ -19348,6 +19300,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         YieldTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct SliceGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: Option<ExpressionTransport>,
+}
+
+impl RenderableTransport for SliceGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_slice_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SliceGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SliceGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SliceGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SliceGroup1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -28575,6 +28577,13 @@ fn render_simple_statements(node: &SimpleStatementsTransport, dest: &mut dyn ::s
     template.render_into(dest)
 }
 
+fn render__slice_group1(node: &_SliceGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if let Some(child) = &node.expression {
+        render_expression(child, dest)?;
+    }
+    Ok(())
+}
+
 fn render_splat_pattern_operator(t: &SplatPatternOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
@@ -28962,18 +28971,28 @@ fn render_delete_statement(node: &DeleteStatementTransport, dest: &mut dyn ::std
 }
 
 fn render_dict_pattern(node: &DictPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.dict_pattern_kv.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.key.as_deref().is_none_or(<[_]>::is_empty) && node.value.as_deref().is_none_or(<[_]>::is_empty) && node.splat_pattern.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let dict_pattern_kv_owned = node.dict_pattern_kv.as_deref().unwrap_or(&[]);
-    let dict_pattern_kv_buf: Vec<::sittir_core::filters::Renderable<'_>> = dict_pattern_kv_owned.iter()
+    let key_owned = node.key.as_deref().unwrap_or(&[]);
+    let key_buf: Vec<::sittir_core::filters::Renderable<'_>> = key_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let value_owned = node.value.as_deref().unwrap_or(&[]);
+    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = value_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DictPatternTemplate {
-        dict_pattern_kv: ListNonterminalView {
-            items: dict_pattern_kv_buf.as_slice(),
+        key: ListNonterminalView {
+            items: key_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        value: ListNonterminalView {
+            items: value_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -30014,6 +30033,21 @@ fn render_yield(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     template.render_into(dest)
 }
 
+fn render_slice_group1(node: &SliceGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let template = SliceGroup1Template {
+        expression: match &node.expression {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+    };
+    template.render_into(dest)
+}
+
 fn render_newline(t: &NewlineTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -30380,13 +30414,6 @@ fn render_compound_statement(t: &CompoundStatementTransport, dest: &mut dyn ::st
     }
 }
 
-fn render_dict_pattern_kv(t: &DictPatternKvTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    match t {
-        DictPatternKvTransport::KeyValuePattern(inner) => render_key_value_pattern(inner, dest),
-        DictPatternKvTransport::SplatPattern(inner) => render_splat_pattern(inner, dest),
-    }
-}
-
 fn render_expression_within_for_in_clause(t: &ExpressionWithinForInClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
         ExpressionWithinForInClauseTransport::Expression(inner) => render_expression(inner, dest),
@@ -30604,6 +30631,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::RaiseStatementOptional1(t) => render_raise_statement_optional1(t, dest),
             AnyTransport::SimplePatternNegative(t) => render_simple_pattern_negative(t, dest),
             AnyTransport::SimpleStatements(t) => render_simple_statements(t, dest),
+            AnyTransport::_SliceGroup1(t) => render__slice_group1(t, dest),
             AnyTransport::SplatPatternOperator(t) => t.render_into(dest),
             AnyTransport::Suite(t) => render_suite(t, dest),
             AnyTransport::_TuplePattern(t) => render__tuple_pattern(t, dest),
@@ -30730,6 +30758,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::WithItem(t) => render_with_item(t, dest),
             AnyTransport::WithStatement(t) => render_with_statement(t, dest),
             AnyTransport::Yield(t) => render_yield(t, dest),
+            AnyTransport::SliceGroup1(t) => render_slice_group1(t, dest),
             AnyTransport::Newline(t) => t.render_into(dest),
             AnyTransport::Indent(t) => t.render_into(dest),
             AnyTransport::Dedent(t) => t.render_into(dest),
@@ -30866,6 +30895,7 @@ impl AnyTransport {
             Self::RaiseStatementOptional1(t) => t.transport_named,
             Self::SimplePatternNegative(t) => t.transport_named,
             Self::SimpleStatements(t) => t.transport_named,
+            Self::_SliceGroup1(t) => t.transport_named,
             Self::Suite(t) => t.transport_named,
             Self::_TuplePattern(t) => t.transport_named,
             Self::WithClauseBare(t) => t.transport_named,
@@ -30990,6 +31020,7 @@ impl AnyTransport {
             Self::WithItem(t) => t.transport_named,
             Self::WithStatement(t) => t.transport_named,
             Self::Yield(t) => t.transport_named,
+            Self::SliceGroup1(t) => t.transport_named,
             Self::Newline(t) => t.transport_named,
             Self::Indent(t) => t.transport_named,
             Self::Dedent(t) => t.transport_named,
@@ -31168,6 +31199,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::RaiseStatementOptional1(data) => transport_to_node_raise_statement_optional1(data),
         AnyTransport::SimplePatternNegative(data) => transport_to_node_simple_pattern_negative(data),
         AnyTransport::SimpleStatements(data) => transport_to_node_simple_statements(data),
+        AnyTransport::_SliceGroup1(data) => transport_to_node__slice_group1(data),
         AnyTransport::SplatPatternOperator(data) => transport_to_node_splat_pattern_operator(data),
         AnyTransport::Suite(data) => transport_to_node_suite(data),
         AnyTransport::_TuplePattern(data) => transport_to_node__tuple_pattern(data),
@@ -31294,6 +31326,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::WithItem(data) => transport_to_node_with_item(data),
         AnyTransport::WithStatement(data) => transport_to_node_with_statement(data),
         AnyTransport::Yield(data) => transport_to_node_yield(data),
+        AnyTransport::SliceGroup1(data) => transport_to_node_slice_group1(data),
         AnyTransport::Newline(data) => transport_to_node_newline(data),
         AnyTransport::Indent(data) => transport_to_node_indent(data),
         AnyTransport::Dedent(data) => transport_to_node_dedent(data),
@@ -31434,7 +31467,7 @@ fn transport_to_node_assignment_eq(transport: AssignmentEqTransport) -> Result<T
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(240) /* "_assignment_eq" */,
+        TransportKindId(241) /* "_assignment_eq" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -31455,7 +31488,7 @@ fn transport_to_node_assignment_type(transport: AssignmentTypeTransport) -> Resu
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(241) /* "_assignment_type" */,
+        TransportKindId(242) /* "_assignment_type" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -31477,7 +31510,7 @@ fn transport_to_node_assignment_typed(transport: AssignmentTypedTransport) -> Re
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(242) /* "_assignment_typed" */,
+        TransportKindId(243) /* "_assignment_typed" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -31537,7 +31570,7 @@ fn transport_to_node_comparison_operator_comparator(transport: ComparisonOperato
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(251) /* "_comparison_operator_comparator" */,
+        TransportKindId(252) /* "_comparison_operator_comparator" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -31605,7 +31638,7 @@ fn transport_to_node_except_clause_as(transport: ExceptClauseAsTransport) -> Res
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(249) /* "_except_clause_as" */,
+        TransportKindId(250) /* "_except_clause_as" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -31626,7 +31659,7 @@ fn transport_to_node_except_clause_list(transport: ExceptClauseListTransport) ->
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(250) /* "_except_clause_list" */,
+        TransportKindId(251) /* "_except_clause_list" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -31652,7 +31685,7 @@ fn transport_to_node_expression_statement_tuple(transport: ExpressionStatementTu
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(243) /* "_expression_statement_tuple" */,
+        TransportKindId(244) /* "_expression_statement_tuple" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -31863,7 +31896,7 @@ fn transport_to_node_match_block_block(transport: MatchBlockBlockTransport) -> R
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(246) /* "_match_block_block" */,
+        TransportKindId(247) /* "_match_block_block" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -31944,7 +31977,7 @@ fn transport_to_node_simple_pattern_negative(transport: SimplePatternNegativeTra
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(248) /* "_simple_pattern_negative" */,
+        TransportKindId(249) /* "_simple_pattern_negative" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -31971,6 +32004,34 @@ fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> 
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(110) /* "_simple_statements" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node__slice_group1(transport: _SliceGroup1Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    if let Some(value) = transport.expression {
+        children_buf.push(expression_transport_to_any(value));
+    }
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(240) /* "_slice_group1" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32090,7 +32151,7 @@ fn transport_to_node_with_clause_bare(transport: WithClauseBareTransport) -> Res
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(244) /* "_with_clause_bare" */,
+        TransportKindId(245) /* "_with_clause_bare" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32116,7 +32177,7 @@ fn transport_to_node_with_clause_paren(transport: WithClauseParenTransport) -> R
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(245) /* "_with_clause_paren" */,
+        TransportKindId(246) /* "_with_clause_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32811,10 +32872,16 @@ fn transport_to_node_delete_statement(transport: DeleteStatementTransport) -> Re
 
 fn transport_to_node_dict_pattern(transport: DictPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.key {
+        fields.insert("key".to_string(), transport_field_values(value.into_iter().map(|v| simple_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    }
+    if let Some(value) = transport.value {
+        fields.insert("value".to_string(), transport_field_values(value.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>())?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.dict_pattern_kv {
-        children_buf.extend(value.into_iter().map(|v| dict_pattern_kv_transport_to_any(v)).collect::<Vec<_>>());
+    if let Some(value) = transport.splat_pattern {
+        children_buf.extend(value.into_iter().map(|v| AnyTransport::SplatPattern(v)).collect::<Vec<_>>());
     }
     let children = if children_buf.is_empty() {
         None
@@ -34391,7 +34458,7 @@ fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeDat
         fields.insert("stop".to_string(), transport_field_value(expression_transport_to_any(value))?);
     }
     if let Some(value) = transport.step {
-        fields.insert("step".to_string(), transport_field_value(expression_transport_to_any(value))?);
+        fields.insert("step".to_string(), transport_field_value(AnyTransport::SliceGroup1(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -34981,6 +35048,34 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(202) /* "yield" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_slice_group1(transport: SliceGroup1Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    if let Some(value) = transport.expression {
+        children_buf.push(expression_transport_to_any(value));
+    }
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(240) /* "slice_group1" */,
         transport.transport_source,
         transport.transport_named,
         true,

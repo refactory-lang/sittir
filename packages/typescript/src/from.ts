@@ -184,6 +184,8 @@ export const _fromMap = {
   "while_statement": whileStatementFrom,
   "with_statement": withStatementFrom,
   "yield_expression": yieldExpressionFrom,
+  "import_clause_group1": importClauseGroup1From,
+  "catch_clause_group1": catchClauseGroup1From,
   "html_comment": htmlCommentFrom,
   "||": ororFrom,
   "jsx_text": jsxTextFrom,
@@ -347,6 +349,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "type_parameters": TSKindId.TypeParameters,
   "type_query": TSKindId.TypeQuery,
   "update_expression": TSKindId.UpdateExpression,
+  "import_clause_group1": TSKindId._ImportClauseGroup1,
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -390,6 +393,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "type_parameters": return F.typeParameters(...(children as Parameters<typeof F.typeParameters>));
     case "type_query": return F.typeQuery(children[0] as Parameters<typeof F.typeQuery>[0]);
     case "update_expression": return F.updateExpression(children[0] as Parameters<typeof F.updateExpression>[0]);
+    case "import_clause_group1": return F.importClauseGroup1(children[0] as Parameters<typeof F.importClauseGroup1>[0]);
     default: return undefined;
   }
 }
@@ -703,8 +707,7 @@ export function callSignatureFrom(input: T.CallSignature.Loose): ReturnType<type
 export function catchClauseFrom(input: T.CatchClause.Loose): ReturnType<typeof F.catchClause> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.catchClause>;
   return F.catchClause({
-    parameter: _resolveOne<T.Identifier | T.DestructuringPattern>(input.parameter, _super_import_identifier, _super_destructuring_pattern),
-    type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
+    catchClauseGroup1: _resolveOneBranch<T.CatchClauseGroup1>(input.catchClauseGroup1, "catch_clause_group1"),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block") ?? F.statementBlock(),
   });
 }
@@ -1942,6 +1945,18 @@ export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<type
 export function yieldExpressionFrom(input?: T.YieldExpression.Loose): ReturnType<typeof F.yieldExpression> {
   if (input !== undefined && isNodeData(input) && (input.$type as string | number) === kindIdFromName("yield_expression")) return input as unknown as ReturnType<typeof F.yieldExpression>;
   return F.yieldExpression(_resolveOne<T.Expression>((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K6, _K12));
+}
+
+export function importClauseGroup1From(input?: (T.NamespaceImport | T.NamedImports) | T.ImportClauseGroup1): ReturnType<typeof F.importClauseGroup1> {
+  return F.importClauseGroup1(input as Parameters<typeof F.importClauseGroup1>[0]);
+}
+
+export function catchClauseGroup1From(input: T.CatchClauseGroup1.Loose): ReturnType<typeof F.catchClauseGroup1> {
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.catchClauseGroup1>;
+  return F.catchClauseGroup1({
+    parameter: _resolveOne<T.Identifier | T.DestructuringPattern>(input.parameter, _super_import_identifier, _super_destructuring_pattern),
+    type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
+  });
 }
 
 export function htmlCommentFrom(input: string | T.HtmlComment): ReturnType<typeof F.htmlComment> {

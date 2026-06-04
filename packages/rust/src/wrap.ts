@@ -1061,6 +1061,24 @@ export function wrapVisibilityModifierCrate(data: T.VisibilityModifierCrate, tre
   return _node;
 }
 
+export function wrap_VisibilityModifierGroup1(data: T._VisibilityModifierGroup1, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._VisibilityModifierGroup1 as const,
+    _self: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._self, "self", false, data.$type, { tree, nodeType: data.$type, slotName: "self", span: (data as _NodeData).$span })),
+    _super: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._super, "super", false, data.$type, { tree, nodeType: data.$type, slotName: "super", span: (data as _NodeData).$span })),
+    _crate: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._crate, "crate", false, data.$type, { tree, nodeType: data.$type, slotName: "crate", span: (data as _NodeData).$span })),
+    _path: normalizeSingularWrapSlot((data._self ?? data._identifier ?? data._metavariable ?? data._super ?? data._crate ?? data._scoped_identifier ?? data._reserved_identifier ?? data._path), "path", false, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
+
+    self() { return this._self; },
+    super() { return this._super; },
+    crate() { return this._crate; },
+    path() { return drillIn<T.Path | undefined>(this._path, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrap_VisibilityModifierGroup1({ ...data, $other: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapVisibilityModifierInPath(data: T.VisibilityModifierInPath, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
@@ -1083,13 +1101,13 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
     ...data,
     $type: TSKindId.VisibilityModifierPub as const,
     _pub: projectKindEnumStorage(normalizeSingularWrapSlot(data._pub, "pub", true, data.$type, { tree, nodeType: data.$type, slotName: "pub", span: (data as _NodeData).$span })),
-    _content: normalizeSingularWrapSlot((data._self ?? data._super ?? data._crate ?? data._visibility_modifier_in_path ?? data._content), "content", false, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+    _visibility_modifier_group1: normalizeSingularWrapSlot(data._visibility_modifier_group1, "visibility_modifier_group1", false, data.$type, { tree, nodeType: data.$type, slotName: "visibility_modifier_group1", span: (data as _NodeData).$span }),
 
     pub() { return this._pub; },
-    content() { return drillAs<T.Self | T.Super | T.Crate | T.VisibilityModifierInPath | undefined>(this._content, tree, "visibility_modifier_in_path", "_visibility_modifier_in_path"); },
+    visibilityModifierGroup1() { return drillIn<T.VisibilityModifierGroup1 | undefined>(this._visibility_modifier_group1, tree); },
     $with: {
       pub: (v: NonNullable<T.VisibilityModifierPub['_pub']>) => wrapVisibilityModifierPub({ ...data, _pub: v }, tree),
-      content: (v: NonNullable<T.VisibilityModifierPub['_content']>) => wrapVisibilityModifierPub({ ...data, _content: v }, tree),
+      visibilityModifierGroup1: (v: NonNullable<T.VisibilityModifierPub['_visibility_modifier_group1']>) => wrapVisibilityModifierPub({ ...data, _visibility_modifier_group1: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2359,14 +2377,9 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
     ...data,
     $type: TSKindId.MatchBlock as const,
     _match_arm: normalizeRepeatedWrapSlot(data._match_arm, false, "match_arm", { tree, nodeType: data.$type, slotName: "match_arm", span: (data as _NodeData).$span }),
-    _last_arm: normalizeSingularWrapSlot(data._last_arm, "last_arm", false, data.$type, { tree, nodeType: data.$type, slotName: "last_arm", span: (data as _NodeData).$span }),
 
     matchArms() { return drillInAll<T.MatchArm>(this._match_arm as readonly T.MatchArm[] | undefined, tree); },
-    lastArm() { return drillAs<T.LastMatchArm | undefined>(this._last_arm, tree, "match_arm", "last_match_arm"); },
-    $with: {
-      matchArms: (...v: NonNullable<T.MatchBlock['_match_arm']>[number][]) => wrapMatchBlock({ ...data, _match_arm: v }, tree),
-      lastArm: (v: NonNullable<T.MatchBlock['_last_arm']>) => wrapMatchBlock({ ...data, _last_arm: v }, tree),
-    },
+    $with: { $children: (...vs: readonly [never]) => wrapMatchBlock({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3479,6 +3492,23 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
   return _node;
 }
 
+export function wrapVisibilityModifierGroup1(data: T.VisibilityModifierGroup1, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    _self: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._self, "self", false, data.$type, { tree, nodeType: data.$type, slotName: "self", span: (data as _NodeData).$span })),
+    _super: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._super, "super", false, data.$type, { tree, nodeType: data.$type, slotName: "super", span: (data as _NodeData).$span })),
+    _crate: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._crate, "crate", false, data.$type, { tree, nodeType: data.$type, slotName: "crate", span: (data as _NodeData).$span })),
+    _path: normalizeSingularWrapSlot((data._self ?? data._identifier ?? data._metavariable ?? data._super ?? data._crate ?? data._scoped_identifier ?? data._reserved_identifier ?? data._path), "path", false, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
+
+    self() { return this._self; },
+    super() { return this._super; },
+    crate() { return this._crate; },
+    path() { return drillIn<T.Path | undefined>(this._path, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapVisibilityModifierGroup1({ ...data, $other: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   '_array_expression_list': (d, t) => wrapArrayExpressionList(d as unknown as T.ArrayExpressionList, t),
   '_array_expression_semi': (d, t) => wrapArrayExpressionSemi(d as unknown as T.ArrayExpressionSemi, t),
@@ -3551,6 +3581,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_use_clause': (d, t) => wrapUseClause(d as unknown as T.UseClause, t),
   '_use_wildcard_clause': (d, t) => wrapUseWildcardClause(d as unknown as T.UseWildcardClause, t),
   '_visibility_modifier_crate': (d, t) => wrapVisibilityModifierCrate(d as unknown as T.VisibilityModifierCrate, t),
+  '_visibility_modifier_group1': (d, t) => wrap_VisibilityModifierGroup1(d as unknown as T._VisibilityModifierGroup1, t),
   '_visibility_modifier_in_path': (d, t) => wrapVisibilityModifierInPath(d as unknown as T.VisibilityModifierInPath, t),
   '_visibility_modifier_pub': (d, t) => wrapVisibilityModifierPub(d as unknown as T.VisibilityModifierPub, t),
   '_wildcard_pattern': (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
@@ -3707,6 +3738,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'where_predicate': (d, t) => wrapWherePredicate(d as unknown as T.WherePredicate, t),
   'while_expression': (d, t) => wrapWhileExpression(d as unknown as T.WhileExpression, t),
   'yield_expression': (d, t) => wrapYieldExpression(d as unknown as T.YieldExpression, t),
+  'visibility_modifier_group1': (d, t) => wrapVisibilityModifierGroup1(d as unknown as T.VisibilityModifierGroup1, t),
   'string_content': (d) => ({ ...d, $type: TSKindId.StringContent as const }),
   'raw_string_literal_content': (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
   'float_literal': (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
@@ -3793,7 +3825,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'unsafe_marker': '_unsafe_marker',
   'use_clause': '_use_clause',
   'visibility_modifier_crate': '_visibility_modifier_crate',
-  'visibility_modifier_in_path': '_visibility_modifier_in_path',
   'visibility_modifier_pub': '_visibility_modifier_pub',
 };
 

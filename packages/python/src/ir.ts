@@ -302,6 +302,7 @@ export const ir = {
   withItem: _attach(FR.withItemFrom, { from: FR.withItemFrom, strict: F.withItem }),
   withStatement: _attach(FR.withStatementFrom, { from: FR.withStatementFrom, strict: F.withStatement }),
   yield: _attach(FR.yield_From, { from: FR.yield_From, strict: F.yield_ }),
+  sliceGroup1: _attach(FR.sliceGroup1From, { from: FR.sliceGroup1From, strict: F.sliceGroup1 }),
 
   // Keyword factories
   breakStatement: F.breakStatement,

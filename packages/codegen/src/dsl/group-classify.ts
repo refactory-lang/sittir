@@ -201,6 +201,43 @@ function isSeparatedList(members: unknown[]): boolean {
 }
 
 /**
+ * Recursively inline the members of nested `seq` children into one flat list,
+ * descending transparently through `prec` wrappers and nested `seq`s only. Does
+ * NOT descend into `choice`/`field`/`optional`/`repeat` content — those are
+ * opaque slots whose internals must not be flattened into the parent member list.
+ */
+function flattenSeqMembers(members: unknown[]): unknown[] {
+	const out: unknown[] = [];
+	for (const m of members) {
+		const core = unwrapPrec(m);
+		if (core && typeof core === 'object') {
+			const ct = (core as Record<string, unknown>).type;
+			const inner = (core as Record<string, unknown>).members;
+			if (typeof ct === 'string' && isSeqType(ct) && Array.isArray(inner)) {
+				out.push(...flattenSeqMembers(inner));
+				continue;
+			}
+		}
+		out.push(m);
+	}
+	return out;
+}
+
+/**
+ * True iff the seq members contain a `repeat`/`repeat1` slot once nested seqs
+ * are flattened (the hallmark of a list). `prec` wrappers are transparent.
+ */
+function seqHasTopLevelRepeat(members: unknown[]): boolean {
+	for (const m of flattenSeqMembers(members)) {
+		const core = unwrapPrec(m);
+		if (!core || typeof core !== 'object') continue;
+		const ct = (core as Record<string, unknown>).type;
+		if (typeof ct === 'string' && isRepeatLike(ct)) return true;
+	}
+	return false;
+}
+
+/**
  * Returns true iff the seq body is "inline-safe":
  *   - After dropping pure literals (`string`, `token`) and `blank` from the
  *     seq's direct members, exactly ONE slot remains.
@@ -234,10 +271,26 @@ export function isInlineSafe(seqBody: unknown): boolean {
 	const members = r.members;
 	if (!Array.isArray(members)) return false;
 
+	// A body containing a (possibly nested) top-level `repeat`/`repeat1` is a
+	// LIST → render flat, NOT a co-optional group. This generalizes the
+	// separated-list guard below: the list's repeat is frequently nested inside
+	// an inner seq — `commaSep1` desugars to
+	// `seq(seq(E, repeat(seq(SEP, E))), optional(SEP))`, so the repeat is two
+	// levels down (where_clause / formal_parameters / enum_body / list_pattern)
+	// — or sits beside a trailing element (`seq(repeat(E), field(last))`, e.g.
+	// rust `match_block`). Aliasing any of these makes tree-sitter distribute the
+	// alias across each element (array-of-siblings → "not an array" AST mismatch).
+	// Only genuine groups with NO repeat (a bare `choice`, e.g. rust
+	// `visibility_modifier`; python `slice`) take the visible-alias path.
+	// Safe by construction: declining to mint reverts the kind to inline (floor)
+	// behavior, which cannot regress below floor.
+	if (seqHasTopLevelRepeat(members)) return true;
+
 	// Separated/comma list (`E, repeat(seq(SEP, E)), optional(SEP)?`) is ONE
 	// logical repeated slot → stays inline/flat. Aliasing it would make
 	// tree-sitter distribute the alias across each element (the enum_body
-	// regression). Treat as inline-safe.
+	// regression). Treat as inline-safe. (Subsumed by the repeat check above for
+	// most shapes; retained for the flat single-level form.)
 	if (isSeparatedList(members)) return true;
 
 	const slots = collectSlots(members);

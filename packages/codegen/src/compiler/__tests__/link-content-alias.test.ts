@@ -38,13 +38,42 @@ const str = (v: string): Rule => ({ type: 'string', value: v }) as Rule;
 const field = (n: string, c: Rule): Rule => ({ type: 'field', name: n, content: c }) as Rule;
 const seq = (...m: Rule[]): Rule => ({ type: 'seq', members: m }) as Rule;
 const choice = (...m: Rule[]): Rule => ({ type: 'choice', members: m }) as Rule;
+// enrich visible-group alias: a SYMBOL ref to the hidden `_<name>` rule wrapped
+// in a metadata.source='enrich' alias (`alias($._<name>, $.<name>)`).
+const groupAlias = (hiddenName: string, name: string): Rule =>
+	({ type: 'alias', content: sym(hiddenName), named: true, value: name, metadata: { source: 'enrich' } }) as unknown as Rule;
+// Legacy direct content-alias (non-symbol content) — still registered.
 const contentAlias = (content: Rule, name: string): Rule =>
 	({ type: 'alias', content, named: true, value: name, metadata: { source: 'enrich' } }) as unknown as Rule;
+// Authored relabel alias (NO enrich tag) — keeps aliasedFrom handling, NOT minted.
 const symbolAlias = (refName: string, name: string): Rule =>
 	({ type: 'alias', content: sym(refName), named: true, value: name }) as unknown as Rule;
 
 describe('mintContentAliasKinds — link pass', () => {
-	it('registers <name> = <content> for an enrich content-alias (declared name)', () => {
+	it('registers <name> from the HIDDEN rule body for a symbol-form enrich group alias', () => {
+		// New shape: enrich emits `alias($._parens, $.parens)` + a hidden `_parens`
+		// rule. The mint pass resolves THROUGH the symbol → registers
+		// `parens = <_parens body>`.
+		const parensBody = seq(str('('), choice(sym('self'), sym('super')), str(')'));
+		const linked = link(
+			rawWith({
+				visibility_modifier: seq(str('pub'), groupAlias('_parens', 'parens')),
+				_parens: parensBody,
+				self: str('self'),
+				super: str('super')
+			})
+		);
+		// The minted VISIBLE kind exists (body is a seq, not a bare symbol).
+		expect(linked.rules.parens).toBeDefined();
+		expect((linked.rules.parens as { type: string }).type).toBe('seq');
+		// The parent reference resolved to a SYMBOL ref to the minted kind.
+		const vm = linked.rules.visibility_modifier as { type: string; members: Rule[] };
+		const ref = vm.members[1] as { type: string; name?: string };
+		expect(ref.type).toBe('symbol');
+		expect(ref.name).toBe('parens');
+	});
+
+	it('registers <name> = <content> for a legacy (non-symbol) enrich content-alias', () => {
 		const parensBody = seq(str('('), choice(sym('self'), sym('super')), str(')'));
 		const linked = link(
 			rawWith({
@@ -53,25 +82,24 @@ describe('mintContentAliasKinds — link pass', () => {
 				super: str('super')
 			})
 		);
-		// The minted kind exists.
 		expect(linked.rules.parens).toBeDefined();
-		// The parent reference resolved to a SYMBOL ref to the minted kind.
 		const vm = linked.rules.visibility_modifier as { type: string; members: Rule[] };
 		const ref = vm.members[1] as { type: string; name?: string };
 		expect(ref.type).toBe('symbol');
 		expect(ref.name).toBe('parens');
 	});
 
-	it('registers a default-named group kind from a content-alias', () => {
+	it('registers a default-named group kind from a symbol-form group alias', () => {
 		const body = seq({ type: 'repeat1', content: choice(field('name', sym('id')), sym('enum_assignment')) } as Rule);
 		const linked = link(
 			rawWith({
-				enum_body: seq(str('{'), contentAlias(body, '_enum_body_group1'), str('}')),
+				enum_body: seq(str('{'), groupAlias('_enum_body_group1', 'enum_body_group1'), str('}')),
+				_enum_body_group1: body,
 				id: { type: 'pattern', value: '[a-z]+' } as Rule,
 				enum_assignment: seq(sym('id'), str('='), sym('id'))
 			})
 		);
-		expect(linked.rules._enum_body_group1).toBeDefined();
+		expect(linked.rules.enum_body_group1).toBeDefined();
 	});
 
 	it('does NOT mint a kind for a SYMBOL alias (aliasedFrom path untouched)', () => {

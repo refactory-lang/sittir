@@ -1614,10 +1614,26 @@
             "named": true
           }
         ]
-      },
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "catch_clause_group1",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "catch_clause_group1",
+    "named": true,
+    "fields": {
       "parameter": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "array_pattern",
@@ -3682,6 +3698,21 @@
           "type": "identifier",
           "named": true
         },
+        {
+          "type": "import_clause_group1",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "import_clause_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
         {
           "type": "named_imports",
           "named": true

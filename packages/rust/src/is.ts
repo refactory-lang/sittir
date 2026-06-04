@@ -59,6 +59,7 @@ export interface IsGuards {
     TokenTreePatternParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreePatternParen };
     TypeArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArgument };
     VisibilityModifierCrate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VisibilityModifierCrate };
+    VisibilityModifierGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._VisibilityModifierGroup1 };
     abstractType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractType };
     arguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Arguments };
     arrayExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayExpression };
@@ -252,6 +253,7 @@ export interface AssertGuards {
     TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternParen };
     TypeArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgument };
     VisibilityModifierCrate(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VisibilityModifierCrate };
+    VisibilityModifierGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._VisibilityModifierGroup1 };
     abstractType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractType };
     arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
     arrayExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayExpression };
@@ -428,11 +430,11 @@ const _supertype_literal_ids = new Set<number>([311, 312, 128, 313, 125, 151]);
 const _supertype_literalPattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 310]);
 const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
 const _supertype_path_ids = new Set<number>([138, 1, 141, 139, 140, 243]);
-const _supertype_pattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 321]);
+const _supertype_pattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 322]);
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
-const _supertype_type_ids = new Set<number>([235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 417, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 418, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([138, 1, 141, 139, 140, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -634,6 +636,7 @@ const _kindIdByKind = new Map<string, number>([
     ["boolean_literal", TSKindId.BooleanLiteral],
     ["line_comment", TSKindId.LineComment],
     ["block_comment", TSKindId.BlockComment],
+    ["_visibility_modifier_group1", TSKindId._VisibilityModifierGroup1],
     ["_use_wildcard_clause", TSKindId.UseWildcardClause],
     ["_wildcard_pattern", TSKindId.WildcardPattern],
     ["_reference_expression_raw_const", TSKindId.ReferenceExpressionRawConst],
@@ -730,6 +733,7 @@ export const is = {
     TokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
     TypeArgument: _g(TSKindId.TypeArgument),
     VisibilityModifierCrate: _g(TSKindId.VisibilityModifierCrate),
+    VisibilityModifierGroup1: _g(TSKindId._VisibilityModifierGroup1),
     abstractType: _g(TSKindId.AbstractType),
     arguments: _g(TSKindId.Arguments),
     arrayExpression: _g(TSKindId.ArrayExpression),
@@ -947,6 +951,7 @@ export const assert = {
     TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
     TypeArgument: _makeAssert('TypeArgument', is.TypeArgument as _AnyGuard),
     VisibilityModifierCrate: _makeAssert('VisibilityModifierCrate', is.VisibilityModifierCrate as _AnyGuard),
+    VisibilityModifierGroup1: _makeAssert('VisibilityModifierGroup1', is.VisibilityModifierGroup1 as _AnyGuard),
     abstractType: _makeAssert('abstractType', is.abstractType as _AnyGuard),
     arguments: _makeAssert('arguments', is.arguments as _AnyGuard),
     arrayExpression: _makeAssert('arrayExpression', is.arrayExpression as _AnyGuard),

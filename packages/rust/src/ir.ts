@@ -547,6 +547,7 @@ export const ir = {
   wherePredicate: _attach(FR.wherePredicateFrom, { from: FR.wherePredicateFrom, strict: F.wherePredicate }),
   whileExpression: _attach(FR.whileExpressionFrom, { from: FR.whileExpressionFrom, strict: F.whileExpression }),
   yieldExpression: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+  visibilityModifierGroup1: _attach(FR.visibilityModifierGroup1From, { from: FR.visibilityModifierGroup1From, strict: F.visibilityModifierGroup1 }),
 
   // Keyword factories
   crate: F.crate,

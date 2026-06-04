@@ -263,6 +263,8 @@
     "while_statement": "config",
     "with_statement": "config",
     "yield_expression": "direct",
+    "import_clause_group1": "direct",
+    "catch_clause_group1": "config",
     "_template_chars": "text",
     "html_comment": "text",
     "||": "text",
@@ -685,7 +687,7 @@
     ],
     "_import_clause_default_import": [
       "import_identifier",
-      "content"
+      "import_clause_group1"
     ],
     "_import_clause_named_imports": [
       "named_imports"
@@ -838,8 +840,7 @@
       "return_type"
     ],
     "catch_clause": [
-      "parameter",
-      "type",
+      "catch_clause_group1",
       "body"
     ],
     "class": [
@@ -1419,6 +1420,13 @@
     ],
     "yield_expression": [
       "expression"
+    ],
+    "import_clause_group1": [
+      "content"
+    ],
+    "catch_clause_group1": [
+      "parameter",
+      "type"
     ]
   },
   "factorySlots": {
@@ -1855,7 +1863,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "import_clause_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2531,14 +2539,7 @@
       }
     },
     "catch_clause": {
-      "parameter": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type": {
+      "catch_clause_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -5122,6 +5123,31 @@
     },
     "yield_expression": {
       "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "import_clause_group1": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "catch_clause_group1": {
+      "parameter": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,

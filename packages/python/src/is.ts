@@ -33,6 +33,7 @@ export interface IsGuards {
     MatchBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchBlock };
     SimplePatternNegative<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePatternNegative };
     SimpleStatements<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimpleStatements };
+    SliceGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._SliceGroup1 };
     TuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TuplePattern };
     WithClauseBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseBare };
     WithClauseParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseParen };
@@ -165,6 +166,7 @@ export interface AssertGuards {
     MatchBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchBlock };
     SimplePatternNegative(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimplePatternNegative };
     SimpleStatements(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimpleStatements };
+    SliceGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._SliceGroup1 };
     TuplePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TuplePattern };
     WithClauseBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseBare };
     WithClauseParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseParen };
@@ -303,7 +305,7 @@ const _supertype_fExpression_ids = new Set<number>([161, 200, 202]);
 const _supertype_leftHandSide_ids = new Set<number>([200]);
 const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 198, 199, 200, 202]);
-const _supertype_simplePattern_ids = new Set<number>([173, 172, 166, 167, 168, 169, 231, 230, 88, 89, 90, 248, 174, 162]);
+const _supertype_simplePattern_ids = new Set<number>([173, 172, 166, 167, 168, 169, 231, 230, 88, 89, 90, 249, 174, 162]);
 const _supertype_simpleStatement_ids = new Set<number>([114, 111, 115, 119, 121, 122, 125, 126, 127, 128, 129, 130, 150, 151, 152, 153]);
 const _supertype_statement_ids = new Set<number>([110, 131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_expression_ids = new Set<number>([195, 189, 190, 196, 229, 123, 185]);
@@ -479,6 +481,7 @@ const _kindIdByKind = new Map<string, number>([
     ["interpolation", TSKindId.Interpolation],
     ["format_specifier", TSKindId.FormatSpecifier],
     ["await", TSKindId.Await],
+    ["_slice_group1", TSKindId._SliceGroup1],
     ["_assignment_eq", TSKindId.AssignmentEq],
     ["_assignment_type", TSKindId.AssignmentType],
     ["_assignment_typed", TSKindId.AssignmentTyped],
@@ -501,6 +504,7 @@ export const is = {
     MatchBlock: _g(TSKindId.MatchBlock),
     SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
     SimpleStatements: _g(TSKindId.SimpleStatements),
+    SliceGroup1: _g(TSKindId._SliceGroup1),
     TuplePattern: _g(TSKindId._TuplePattern),
     WithClauseBare: _g(TSKindId.WithClauseBare),
     WithClauseParen: _g(TSKindId.WithClauseParen),
@@ -657,6 +661,7 @@ export const assert = {
     MatchBlock: _makeAssert('MatchBlock', is.MatchBlock as _AnyGuard),
     SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
     SimpleStatements: _makeAssert('SimpleStatements', is.SimpleStatements as _AnyGuard),
+    SliceGroup1: _makeAssert('SliceGroup1', is.SliceGroup1 as _AnyGuard),
     TuplePattern: _makeAssert('TuplePattern', is.TuplePattern as _AnyGuard),
     WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
     WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),

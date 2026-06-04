@@ -370,7 +370,8 @@ pub struct DeleteStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "dict_pattern.jinja", escape = "none")]
 pub struct DictPatternTemplate<'a> {
-    pub dict_pattern_kv: ListNonterminalView<'a>,
+    pub key: ListNonterminalView<'a>,
+    pub value: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -724,6 +725,12 @@ pub struct SetComprehensionTemplate<'a> {
 #[template(path = "set.jinja", escape = "none")]
 pub struct SetTemplate<'a> {
     pub collection_elements: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "slice_group1.jinja", escape = "none")]
+pub struct SliceGroup1Template<'a> {
+    pub expression: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

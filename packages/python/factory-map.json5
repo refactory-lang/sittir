@@ -52,7 +52,7 @@
     "decorator": "direct",
     "default_parameter": "config",
     "delete_statement": "direct",
-    "dict_pattern": "spread",
+    "dict_pattern": "config",
     "dictionary": "config",
     "dictionary_comprehension": "config",
     "dictionary_splat": "direct",
@@ -139,6 +139,7 @@
     "with_item": "direct",
     "with_statement": "config",
     "yield": "config",
+    "slice_group1": "direct",
     "_newline": "text",
     "string_start": "text",
     "_string_content": "text",
@@ -216,9 +217,6 @@
     },
     "comparison_operator.comparators": {
       "comparison_operator_comparator": "_comparison_operator_comparator"
-    },
-    "dict_pattern.dict_pattern_kv": {
-      "dict_pattern_kv": "_dict_pattern_kv"
     },
     "elif_clause.consequence": {
       "block": "_newline"
@@ -428,7 +426,9 @@
       "expressions"
     ],
     "dict_pattern": [
-      "dict_pattern_kv"
+      "key",
+      "value",
+      "splat_pattern"
     ],
     "dictionary": [
       "entries"
@@ -707,6 +707,9 @@
     "yield": [
       "expression",
       "expressions"
+    ],
+    "slice_group1": [
+      "expression"
     ]
   },
   "factorySlots": {
@@ -1274,7 +1277,21 @@
       }
     },
     "dict_pattern": {
-      "dict_pattern_kv": {
+      "key": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "splat_pattern": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2356,6 +2373,15 @@
         "nonEmpty": false
       },
       "expressions": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "slice_group1": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,

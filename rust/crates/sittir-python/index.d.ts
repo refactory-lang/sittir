@@ -447,7 +447,9 @@ export interface DictPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _dict_pattern_kv?: Array<DictPatternKvTransport>
+  _key?: Array<SimplePatternTransport>
+  _value?: Array<CasePatternTransport>
+  _splat_pattern?: Array<SplatPatternTransport>
 }
 
 export interface DottedNameTransport {
@@ -1164,6 +1166,28 @@ export interface SimpleStatementsTransport {
   _simple_statement: Array<SimpleStatementTransport>
 }
 
+export interface SliceGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _expression?: ExpressionTransport
+}
+
+export interface SliceGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _expression?: ExpressionTransport
+}
+
 export interface SliceTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1174,7 +1198,7 @@ export interface SliceTransport {
   '$triviaData'?: TransportTrivia
   _start?: ExpressionTransport
   _stop?: ExpressionTransport
-  _step?: ExpressionTransport
+  _step?: SliceGroup1Transport
 }
 
 export interface SplatPatternTransport {

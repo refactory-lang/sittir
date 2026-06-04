@@ -280,7 +280,7 @@ pub struct ForHeaderVarKindTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_import_clause_default_import.jinja", escape = "none")]
 pub struct ImportClauseDefaultImportTemplate<'a> {
-    pub content: OptionalNonterminalView<'a>,
+    pub import_clause_group1: OptionalNonterminalView<'a>,
     pub import_identifier: SingleNonterminalView<'a>,
 }
 
@@ -585,11 +585,17 @@ pub struct CallSignatureTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "catch_clause_group1.jinja", escape = "none")]
+pub struct CatchClauseGroup1Template<'a> {
+    pub parameter: SingleNonterminalView<'a>,
+    pub type_: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "catch_clause.jinja", escape = "none")]
 pub struct CatchClauseTemplate<'a> {
     pub body: SingleNonterminalView<'a>,
-    pub parameter: OptionalNonterminalView<'a>,
-    pub type_: OptionalNonterminalView<'a>,
+    pub catch_clause_group1: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -741,6 +747,7 @@ pub struct EnumAssignmentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_body.jinja", escape = "none")]
 pub struct EnumBodyTemplate<'a> {
+    pub enum_body_optional1: OptionalNonterminalView<'a>,
     pub name: ListNonterminalView<'a>,
 }
 
@@ -934,6 +941,12 @@ pub struct ImportAliasTemplate<'a> {
 #[template(path = "import_attribute.jinja", escape = "none")]
 pub struct ImportAttributeTemplate<'a> {
     pub object: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "import_clause_group1.jinja", escape = "none")]
+pub struct ImportClauseGroup1Template<'a> {
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

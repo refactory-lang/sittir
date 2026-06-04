@@ -1125,6 +1125,17 @@ export interface ImplItemBodyTransport {
   _declaration_list: DeclarationListTransport
 }
 
+export interface ImplItemGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _trait: ImplItemGroup1TraitTransportSlot
+}
+
 export interface ImplItemNegativeClauseTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1206,8 +1217,8 @@ export interface LastMatchArmTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<DeclarationStatementTransport>
-  _pattern: Box<MatchPatternTransport>
-  _value: Box<ExpressionTransport>
+  _pattern: MatchPatternTransport
+  _value: ExpressionTransport
 }
 
 export interface LetChainTransport {
@@ -1465,7 +1476,6 @@ export interface MatchBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _last_arm?: Box<LastMatchArmTransport>
   _match_arm?: Array<MatchArmTransport>
 }
 
@@ -1478,7 +1488,7 @@ export interface MatchExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _value: Box<ExpressionTransport>
-  _body: Box<MatchBlockTransport>
+  _body: MatchBlockTransport
 }
 
 export interface MatchPatternOptional1Transport {
@@ -1500,8 +1510,8 @@ export interface MatchPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pattern: Box<PatternTransport>
-  _condition?: Box<ConditionTransport>
+  _pattern: PatternTransport
+  _condition?: ConditionTransport
 }
 
 export interface ModItemInlineTransport {
@@ -2283,17 +2293,6 @@ export interface TupleTypeTransport {
   _type: Array<_TypeTransport>
 }
 
-export interface TypeArgumentsRepeat1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _type_argument: TypeArgumentTransport
-}
-
 export interface TypeArgumentsTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2367,17 +2366,6 @@ export interface TypeParameterOptional1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _default_type?: _TypeTransport
-}
-
-export interface TypeParametersRepeat1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _attributed_type_parameter: AttributedTypeParameterTransport
 }
 
 export interface TypeParametersTransport {
@@ -2499,6 +2487,17 @@ export interface UseWildcardClauseTransport {
   _path: PathTransport
 }
 
+export interface UseWildcardGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _path?: PathTransport
+}
+
 export interface UseWildcardTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2544,6 +2543,34 @@ export interface VisibilityModifierCrateTransport {
   _crate: CrateTransport
 }
 
+export interface VisibilityModifierGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _self?: Self_Transport
+  _super?: SuperTransport
+  _crate?: CrateTransport
+  _path?: PathTransport
+}
+
+export interface VisibilityModifierGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _self?: Self_Transport
+  _super?: SuperTransport
+  _crate?: CrateTransport
+  _path?: PathTransport
+}
+
 export interface VisibilityModifierInPathTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2564,7 +2591,7 @@ export interface VisibilityModifierPubParensTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: VisibilityModifierPubParensContentTransportSlot
+  _visibility_modifier_group1: VisibilityModifierGroup1Transport
 }
 
 export interface VisibilityModifierPubTransport {
@@ -2576,7 +2603,7 @@ export interface VisibilityModifierPubTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _pub: Box<AnyTransport>
-  _content?: VisibilityModifierPubContentTransportSlot
+  _visibility_modifier_group1?: VisibilityModifierGroup1Transport
 }
 
 export interface VisibilityModifierTransport {

@@ -402,6 +402,8 @@ export const ir = {
   whileStatement: _attach(FR.whileStatementFrom, { from: FR.whileStatementFrom, strict: F.whileStatement }),
   withStatement: _attach(FR.withStatementFrom, { from: FR.withStatementFrom, strict: F.withStatement }),
   yieldExpression: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+  importClauseGroup1: _attach(FR.importClauseGroup1From, { from: FR.importClauseGroup1From, strict: F.importClauseGroup1 }),
+  catchClauseGroup1: _attach(FR.catchClauseGroup1From, { from: FR.catchClauseGroup1From, strict: F.catchClauseGroup1 }),
 
   // Keyword factories
   false: F.false_,

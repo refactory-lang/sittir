@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 430,
+  "nodeCount": 435,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -1189,13 +1189,13 @@
       "children": []
     },
     {
-      "kind": "_catch_clause_optional1",
+      "kind": "_catch_clause_group1",
       "modelType": "group",
-      "typeName": "CatchClauseOptional1",
-      "factoryName": "_catchClauseOptional1",
-      "irKey": "catchClauseOptional1",
+      "typeName": "_CatchClauseGroup1",
+      "factoryName": "_catchClauseGroup1",
+      "irKey": "catchClauseGroup1",
       "hidden": false,
-      "name": "_catch_clause_optional1",
+      "name": "_catch_clause_group1",
       "fields": [
         {
           "name": "parameter",
@@ -1580,6 +1580,66 @@
         "array_pattern",
         "object_pattern"
       ]
+    },
+    {
+      "kind": "_enum_body_optional1",
+      "modelType": "group",
+      "typeName": "EnumBodyOptional1",
+      "factoryName": "_enumBodyOptional1",
+      "irKey": "enumBodyOptional1",
+      "hidden": false,
+      "name": "_enum_body_optional1",
+      "fields": [
+        {
+          "name": "name",
+          "propertyName": "names",
+          "paramName": "names",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_property_name",
+              "parseKind": "_property_name",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_property_name"
+            ]
+          }
+        },
+        {
+          "name": "enum_assignment",
+          "propertyName": "enumAssignments",
+          "paramName": "enumAssignments",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "enum_assignment",
+              "parseKind": "enum_assignment",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "enum_assignment"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_export_specifier_export_kind",
@@ -2806,9 +2866,9 @@
           }
         },
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "import_clause_group1",
+          "propertyName": "importClauseGroup1",
+          "paramName": "importClauseGroup1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -2816,13 +2876,48 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "import_clause_group1",
+              "parseKind": "import_clause_group1",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "import_clause_group1"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_import_clause_group1",
+      "modelType": "branch",
+      "typeName": "_ImportClauseGroup1",
+      "factoryName": "_importClauseGroup1",
+      "irKey": "_importClauseGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "namespace_import",
               "parseKind": "namespace_import",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "named_imports",
               "parseKind": "named_imports",
               "unresolved": true
@@ -3906,6 +4001,123 @@
         "{",
         "{|"
       ]
+    },
+    {
+      "kind": "_object_type_optional1",
+      "modelType": "branch",
+      "typeName": "ObjectTypeOptional1",
+      "factoryName": "objectTypeOptional1",
+      "irKey": "objectTypeOptional1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ",",
+              "parseKind": "comma"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ";",
+              "parseKind": "semi"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "export_statement",
+              "parseKind": "export_statement",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "property_signature",
+              "parseKind": "property_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "call_signature",
+              "parseKind": "call_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "construct_signature",
+              "parseKind": "construct_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "index_signature",
+              "parseKind": "index_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "method_signature",
+              "parseKind": "method_signature",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "export_statement",
+              "property_signature",
+              "call_signature",
+              "construct_signature",
+              "index_signature",
+              "method_signature"
+            ]
+          }
+        },
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "paramName": "semicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ",",
+              "parseKind": "comma"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_semicolon",
+              "parseKind": "_semicolon",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_semicolon"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_operator",
@@ -7137,9 +7349,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "parameter",
-          "propertyName": "parameter",
-          "paramName": "parameter",
+          "name": "catch_clause_group1",
+          "propertyName": "catchClauseGroup1",
+          "paramName": "catchClauseGroup1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7147,13 +7359,72 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "catch_clause_group1",
+              "parseKind": "catch_clause_group1",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "catch_clause_group1"
+            ]
+          }
+        },
+        {
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "statement_block",
+              "parseKind": "statement_block",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "statement_block"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "catch_clause_group1",
+      "modelType": "branch",
+      "typeName": "CatchClauseGroup1",
+      "factoryName": "catchClauseGroup1",
+      "irKey": "catchClauseGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "parameter",
+          "propertyName": "parameter",
+          "paramName": "parameter",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_destructuring_pattern",
               "parseKind": "_destructuring_pattern",
               "unresolved": true
@@ -7189,30 +7460,6 @@
             "typeName": "",
             "kinds": [
               "type_annotation"
-            ]
-          }
-        },
-        {
-          "name": "body",
-          "propertyName": "body",
-          "paramName": "body",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "statement_block",
-              "parseKind": "statement_block",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "statement_block"
             ]
           }
         }
@@ -11283,6 +11530,49 @@
               "_import_clause_namespace_import",
               "_import_clause_named_imports",
               "_import_clause_default_import"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "import_clause_group1",
+      "modelType": "branch",
+      "typeName": "ImportClauseGroup1",
+      "factoryName": "importClauseGroup1",
+      "irKey": "importClauseGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "namespace_import",
+              "parseKind": "namespace_import",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "named_imports",
+              "parseKind": "named_imports",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "namespace_import",
+              "named_imports"
             ]
           }
         }

@@ -6700,6 +6700,33 @@
     }
   },
   {
+    "type": "visibility_modifier_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "crate",
+          "named": true
+        },
+        {
+          "type": "self",
+          "named": true
+        },
+        {
+          "type": "super",
+          "named": true
+        },
+        {
+          "type": "visibility_modifier_in_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "visibility_modifier_in_path",
     "named": true,
     "fields": {
@@ -6765,19 +6792,7 @@
       "required": false,
       "types": [
         {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        },
-        {
-          "type": "visibility_modifier_in_path",
+          "type": "visibility_modifier_group1",
           "named": true
         }
       ]

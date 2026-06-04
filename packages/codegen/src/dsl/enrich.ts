@@ -132,11 +132,20 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// canonicalStringify(content) → `_<parent>_group<N>` name. Identical
 	// inline-unsafe bodies in different parents reuse the same visible kind.
 	const groupDedupeMap: Record<string, string> = {};
+	// Hidden-rule names (`_<parent>_group<N>`) for VISIBLE-aliased groups. These
+	// are registered in `clauseGroupRules` (so tree-sitter sees the rule) but must
+	// be EXCLUDED from the `inline:` list: the parent references them via
+	// `alias($._<name>, $.<name>)`, and inlining the hidden rule would make
+	// tree-sitter alias the EXPANDED seq (re-distributing the alias across its
+	// members — the exact bug this restructure fixes). Inline-safe clause groups
+	// stay in `inline:`. Tagged ONCE at creation (visibleGroupSynthName) — read
+	// here, never re-derived.
+	const visibleGroupHiddenNames = new Set<string>();
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
 		enrichedRules[name] = rule
-			? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap)
+			? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames)
 			: rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
@@ -163,7 +172,12 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// grammar's `inline:` list — without inlining, tree-sitter creates LR
 	// conflicts for the new hidden rules. Non-enumerable so it is invisible
 	// to rule iteration, JSON serialization, and spread operators.
-	const clauseGroupNames = new Set(Object.keys(clauseGroupRules));
+	// Only inline-safe hidden clause groups go into `inline:` (syntheticInline).
+	// VISIBLE-aliased groups' hidden rules (`_<parent>_group<N>`) are excluded —
+	// inlining them would re-distribute the visible alias across the seq members.
+	const clauseGroupNames = new Set(
+		Object.keys(clauseGroupRules).filter((n) => !visibleGroupHiddenNames.has(n))
+	);
 	const result: unknown = hasWrapper
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
 		: { ...(base as unknown as object), rules: mergedRules };
@@ -207,7 +221,8 @@ function applyEnrichPasses(
 	rulesBag: Record<string, Rule>,
 	clauseGroupRules: Record<string, Rule>,
 	clauseDedupeMap: Record<string, string>,
-	groupDedupeMap: Record<string, string>
+	groupDedupeMap: Record<string, string>,
+	visibleGroupHiddenNames: Set<string>
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -254,7 +269,7 @@ function applyEnrichPasses(
 	// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
 	// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
 	const clauseHoistCounter = { opt: 0, grp: 0 };
-	r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter, groupDedupeMap);
+	r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter, groupDedupeMap, visibleGroupHiddenNames);
 	return r;
 }
 
@@ -1371,13 +1386,14 @@ function applyClauseHoist(
 	clauseGroupRules: Record<string, Rule>,
 	dedupeMap: Record<string, string>,
 	counter: ClauseHoistCounter,
-	groupDedupeMap: Record<string, string>
+	groupDedupeMap: Record<string, string>,
+	visibleGroupHiddenNames: Set<string>
 ): Rule {
 	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
 	const peeled = peelOptionalSeq(rule);
 	if (peeled !== null) {
 		// Post-order: recurse into the seq body FIRST, then classify.
-		const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
+		const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
 
 		if (ruleMatchesEmpty(recursedSeqBody)) {
 			// Empty-matching body: tree-sitter rejects named rules that match the
@@ -1419,17 +1435,35 @@ function applyClauseHoist(
 			return rule;
 		} else {
 			// Inline-unsafe: multi-slot or bare-choice body. Surface it as a
-			// VISIBLE CST kind by wrapping the content in a tagged content-alias
-			// `alias(<content>, $.<name>)`. tree-sitter mints a real kindId for
-			// `<name>`; link's `mintContentAliasKinds` registers the IR rule.
+			// VISIBLE CST kind via the standard tree-sitter named-group pattern:
+			//   Pass 1 — register a HIDDEN rule `_<parent>_group<N>` whose body is
+			//     the seq (visibleGroupSynthName injects it into clauseGroupRules,
+			//     exactly like the inline-safe clause-hoist path), and reference it
+			//     with a clean `symbol($._<parent>_group<N>)`.
+			//   Pass 2 — wrap that symbol ref in `alias($._<name>, $.<name>)` so
+			//     tree-sitter renames the ONE symbol-node into ONE clean visible CST
+			//     node. (Aliasing the multi-member seq DIRECTLY made tree-sitter
+			//     DISTRIBUTE the alias across the seq's members → scattered empty
+			//     leaves → reader "singular slot got array" → dropped slot.)
+			// link's `mintContentAliasKinds` resolves THROUGH the symbol to register
+			// `<name> = <hidden body>` as the IR kind.
 			// Keep `counter.opt` advancing too — the hidden-hoist name space must
 			// stay consistent with applyAutoGroups's ordinal numbering for any
 			// run where it is still active (it is disabled this chunk, but the
 			// invariant is cheap to preserve).
 			counter.opt += 1;
-			const aliasName = visibleGroupSynthName(recursedSeqBody, parentKind, groupDedupeMap, counter, rulesBag);
-			if (aliasName !== null) {
-				const aliasRule = makeContentAlias(rule, recursedSeqBody, aliasName);
+			const names = visibleGroupSynthName(recursedSeqBody, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules);
+			if (names !== null) {
+				// Pass 2 tag: this hidden rule backs a VISIBLE alias → keep it OUT of
+				// the `inline:` list (so tree-sitter aliases the symbol-node, not the
+				// expanded seq). Classify ONCE here; read in enrich() at clauseGroupNames.
+				visibleGroupHiddenNames.add(names.hiddenName);
+				// Pass 1: symbol ref to the hidden rule (mirrors makeGroupLiftSymbol).
+				const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
+				// Pass 2: wrap in a visible alias so the inline-unsafe group surfaces
+				// as a clean CST node (`<name>`). The alias carries metadata.source so
+				// transform-path travels through it and link mints the kind.
+				const aliasRule = makeVisibleGroupAlias(rule, symbolRef, names.visibleName);
 				if (peeled.form === 'optional') {
 					return rebuildOptional(rule, aliasRule);
 				} else {
@@ -1458,7 +1492,7 @@ function applyClauseHoist(
 		if (!Array.isArray(members)) return rule;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
+			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
 			if (out !== m) changed = true;
 			return out;
 		});
@@ -1472,7 +1506,7 @@ function applyClauseHoist(
 		if (!Array.isArray(members)) return rule;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
+			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
 			if (out !== m) changed = true;
 			return out;
 		});
@@ -1483,7 +1517,7 @@ function applyClauseHoist(
 	if (isRepeatType(rule.type) || isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (!content) return rule;
-		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
+		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
 	}
@@ -1492,7 +1526,7 @@ function applyClauseHoist(
 	if (isFieldType(rule.type)) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (!content) return rule;
-		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap);
+		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
 	}
@@ -1547,37 +1581,57 @@ function clauseHoistSynthName(
 }
 
 /**
- * @internal — get the synthesized visible-group name for an inline-UNSAFE seq
- * body that enrich surfaces as a content-alias. Unlike `clauseHoistSynthName`,
- * this does NOT inject a hidden rule into `clauseGroupRules` — the content-alias
- * carries the body itself, and link's `mintContentAliasKinds` registers the IR
- * rule from the alias. This helper only mints the stable `<name>` and dedupes
- * identical bodies across parents.
+ * @internal — mint the hidden-rule + visible-alias name pair for an inline-UNSAFE
+ * seq body that enrich surfaces as a VISIBLE CST kind.
  *
- * Naming: `_<parent>_group<N>` (per-parent 1-indexed `grp` counter); cross-parent
- * dedupe via `canonicalStringifyClause`. Returns `null` on a name collision with
- * an existing rule in `rulesBag` (caller leaves the body inline).
+ * Unlike the prior content-alias approach (which aliased the multi-member seq
+ * DIRECTLY — `alias(SEQ(...), $.name)`, which tree-sitter DISTRIBUTES across the
+ * seq's members, scattering empty leaves), this registers a HIDDEN rule whose
+ * body is the seq, exactly like the inline-safe clause-hoist path
+ * (`clauseHoistSynthName`). The caller then references that hidden rule via a
+ * symbol and wraps the symbol in `alias($._<name>, $.<name>)` so tree-sitter has
+ * a single symbol-node to rename into ONE clean CST node.
+ *
+ * Naming:
+ *   - hidden rule  = `_<parent>_group<N>` (registered in `clauseGroupRules`)
+ *   - visible alias = `<parent>_group<N>` (the same name without the `_`)
+ * Per-parent 1-indexed `grp` counter; cross-parent dedupe via
+ * `canonicalStringifyClause`. Returns `null` on a name collision with an existing
+ * rule in `rulesBag` (caller leaves the body inline).
+ *
+ * The visible name must NOT carry a leading `_` (tree-sitter would classify it
+ * HIDDEN → the minted kind's slot is dropped at wrap/read), so `parentKind`'s
+ * own leading `_` is stripped before composing the base name.
  */
 function visibleGroupSynthName(
 	content: Rule,
 	parentKind: string,
 	groupDedupeMap: Record<string, string>,
 	counter: ClauseHoistCounter,
-	rulesBag: Record<string, Rule>
-): string | null {
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>
+): { visibleName: string; hiddenName: string } | null {
 	const key = canonicalStringifyClause(content);
 	const existing = groupDedupeMap[key];
-	if (existing !== undefined) return existing;
+	if (existing !== undefined) {
+		const hiddenName = `_${existing}`;
+		if (!(hiddenName in clauseGroupRules)) clauseGroupRules[hiddenName] = content;
+		return { visibleName: existing, hiddenName };
+	}
 	counter.grp += 1;
-	const name = `${parentKind}_group${counter.grp}`;
-	if (name in rulesBag) {
+	const visibleName = `${parentKind.replace(/^_+/, '')}_group${counter.grp}`;
+	const hiddenName = `_${visibleName}`;
+	if (visibleName in rulesBag || hiddenName in rulesBag) {
 		process.stderr.write(
-			`enrich: visible-group skipped for '${parentKind}' — rule '${name}' already exists in base.grammar.rules\n`
+			`enrich: visible-group skipped for '${parentKind}' — rule '${visibleName}'/'${hiddenName}' already exists in base.grammar.rules\n`
 		);
 		return null;
 	}
-	groupDedupeMap[key] = name;
-	return name;
+	groupDedupeMap[key] = visibleName;
+	// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN rule
+	// (`_<parent>_group<N>`) so tree-sitter sees a single named symbol to alias.
+	clauseGroupRules[hiddenName] = content;
+	return { visibleName, hiddenName };
 }
 
 /**
@@ -1616,26 +1670,28 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
 }
 
 /**
- * @internal — wrap inline-UNSAFE content in a TAGGED content-alias so it
- * surfaces as a visible CST kind.
+ * @internal — wrap a SYMBOL ref to an inline-UNSAFE group's HIDDEN rule in a
+ * TAGGED visible alias so the group surfaces as a single clean CST kind.
  *
  * Shape (confirmed against generated grammar.json ALIAS nodes):
- *   `{ type: 'ALIAS'|'alias', content: <body>, named: true, value: '<name>',
- *      metadata: { source: 'enrich' } }`
+ *   `{ type: 'ALIAS'|'alias', content: symbol($._<name>), named: true,
+ *      value: '<name>', metadata: { source: 'enrich' } }`
  *
- * - The aliased thing is the CONTENT itself (not a hidden symbol) — so NO new
- *   rule enters the grammar → no LR conflict. tree-sitter emits a visible CST
- *   node for `<name>` (a real kindId in parser.c).
+ * - The aliased thing is a SYMBOL ref to the hidden `_<name>` rule (NOT the raw
+ *   multi-member seq). tree-sitter renames that ONE symbol-node into ONE visible
+ *   CST node for `<name>` (a real kindId in parser.c). Aliasing the raw seq
+ *   instead made tree-sitter DISTRIBUTE the alias name across the seq members.
  * - `metadata.source === 'enrich'` is REQUIRED: transform-path travels THROUGH
  *   it for authored path-patches, and link's `mintContentAliasKinds` keys on it
- *   to register `<name> = <content>` as the IR rule.
+ *   to resolve THROUGH the symbol and register `<name> = <hidden body>` as the
+ *   IR rule.
  * - Case mirrors the wrapper (`detectCase`): a CHOICE/OPTIONAL wrapper → ALIAS;
  *   lowercase → alias.
  */
-function makeContentAlias(referenceRule: Rule, content: Rule, name: string): Rule {
+function makeVisibleGroupAlias(referenceRule: Rule, symbolRef: Rule, name: string): Rule {
 	return {
 		type: detectCase(referenceRule) === 'upper' ? 'ALIAS' : 'alias',
-		content,
+		content: symbolRef,
 		named: true,
 		value: name,
 		metadata: { source: 'enrich' }

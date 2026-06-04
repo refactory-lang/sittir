@@ -422,18 +422,10 @@ pub struct VisibilityModifierCrateTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_visibility_modifier_in_path.jinja", escape = "none")]
-pub struct VisibilityModifierInPathTemplate<'a> {
-    pub in_: SingleNonterminalView<'a>,
-    pub path: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
 pub struct VisibilityModifierPubTemplate<'a> {
-    pub content: OptionalNonterminalView<'a>,
     pub pub_: SingleNonterminalView<'a>,
-    pub visibility_modifier_pub_parens: OptionalNonterminalView<'a>,
+    pub visibility_modifier_group1: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -968,7 +960,6 @@ pub struct MatchArmTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "match_block.jinja", escape = "none")]
 pub struct MatchBlockTemplate<'a> {
-    pub last_arm: OptionalNonterminalView<'a>,
     pub match_arm: ListNonterminalView<'a>,
 }
 
@@ -1405,6 +1396,12 @@ pub struct UseWildcardTemplate<'a> {
 pub struct VariadicParameterTemplate<'a> {
     pub mutable_specifier: OptionalNonterminalView<'a>,
     pub pattern: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "visibility_modifier_group1.jinja", escape = "none")]
+pub struct VisibilityModifierGroup1Template<'a> {
+    pub self_: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

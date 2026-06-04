@@ -52,6 +52,7 @@ export interface IsGuards {
     ExportStatementTypeExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementTypeExport };
     ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
     ImportClauseDefaultImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseDefaultImport };
+    ImportClauseGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseGroup1 };
     ImportClauseNamedImports<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseNamedImports };
     ImportClauseNamespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseNamespaceImport };
     ImportSpecifierName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportSpecifierName };
@@ -259,6 +260,7 @@ export interface AssertGuards {
     ExportStatementTypeExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementTypeExport };
     ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
     ImportClauseDefaultImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
+    ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseGroup1 };
     ImportClauseNamedImports(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseNamedImports };
     ImportClauseNamespaceImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseNamespaceImport };
     ImportSpecifierName(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportSpecifierName };
@@ -476,7 +478,7 @@ const _supertype_declaration_ids = new Set<number>([224, 226, 221, 184, 183, 271
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
 const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 430, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
+const _supertype_primaryType_ids = new Set<number>([334, 335, 432, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
@@ -719,6 +721,8 @@ const _kindIdByKind = new Map<string, number>([
     ["union_type", TSKindId.UnionType],
     ["intersection_type", TSKindId.IntersectionType],
     ["function_type", TSKindId.FunctionType],
+    ["_import_clause_group1", TSKindId._ImportClauseGroup1],
+    ["_catch_clause_group1", TSKindId._CatchClauseGroup1],
     ["_ambient_declaration_global", TSKindId.AmbientDeclarationGlobal],
     ["_ambient_declaration_module", TSKindId.AmbientDeclarationModule],
     ["object_type_content", TSKindId.ObjectTypeContent],
@@ -786,6 +790,7 @@ export const is = {
     ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
     ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
     ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
+    ImportClauseGroup1: _g(TSKindId._ImportClauseGroup1),
     ImportClauseNamedImports: _g(TSKindId.ImportClauseNamedImports),
     ImportClauseNamespaceImport: _g(TSKindId.ImportClauseNamespaceImport),
     ImportSpecifierName: _g(TSKindId.ImportSpecifierName),
@@ -1017,6 +1022,7 @@ export const assert = {
     ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
     ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
     ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
+    ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
     ImportClauseNamedImports: _makeAssert('ImportClauseNamedImports', is.ImportClauseNamedImports as _AnyGuard),
     ImportClauseNamespaceImport: _makeAssert('ImportClauseNamespaceImport', is.ImportClauseNamespaceImport as _AnyGuard),
     ImportSpecifierName: _makeAssert('ImportSpecifierName', is.ImportSpecifierName as _AnyGuard),

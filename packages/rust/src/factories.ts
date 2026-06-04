@@ -871,6 +871,18 @@ export function visibilityModifierCrate(_config?: T.VisibilityModifierCrate.Conf
   }, methodsEngine);
 }
 
+export function _visibilityModifierGroup1(child?: (T.Self | T.Super | T.Crate | T.Path)) {
+  const _self = child;
+  return withMethods({
+    $type: TSKindId._VisibilityModifierGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _self,
+    self() { return _self; },
+    $with: { $child: (v: (T.Self | T.Super | T.Crate | T.Path)) => _visibilityModifierGroup1(v) },
+  }, methodsEngine);
+}
+
 export function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Config) {
   const _in = coerceKindEnumStorage("in" as const, [["in", TSKindId.In] as const]);
   const _path = config.path;
@@ -890,17 +902,17 @@ export function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Con
 
 export function _visibilityModifierPub(config: Partial<T.VisibilityModifierPub.Config> = {}) {
   const _pub = coerceKindEnumStorage("pub" as const, [["pub", TSKindId.Pub] as const]);
-  const _content = config.content;
+  const _visibility_modifier_group1 = config.visibilityModifierGroup1;
   return withMethods({
     $type: TSKindId.VisibilityModifierPub as const,
     $source: 2 as const,
     $named: true as const,
     _pub,
-    _content,
+    _visibility_modifier_group1,
     pub() { return _pub; },
-    content() { return _content; },
+    visibilityModifierGroup1() { return _visibility_modifier_group1; },
     $with: {
-      content: (value?: T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) => _visibilityModifierPub({ ...config, content: value }),
+      visibilityModifierGroup1: (value?: T.VisibilityModifierGroup1) => _visibilityModifierPub({ ...config, visibilityModifierGroup1: value }),
     },
   }, methodsEngine);
 }
@@ -2322,21 +2334,15 @@ export function matchArm(config: T.MatchArm.Config) {
   }, methodsEngine);
 }
 
-export function matchBlock(config: Partial<T.MatchBlock.Config> = {}) {
-  const _match_arm = config.matchArm;
-  const _last_arm = config.lastArm;
+export function matchBlock(...children: T.MatchArm[]) {
+  const _match_arm = children;
   return withMethods({
     $type: TSKindId.MatchBlock as const,
     $source: 2 as const,
     $named: true as const,
     _match_arm,
-    _last_arm,
     matchArms() { return _match_arm; },
-    lastArm() { return _last_arm; },
-    $with: {
-      matchArms: (...values: T.MatchArm[]) => matchBlock({ ...config, matchArm: values }),
-      lastArm: (value?: T.LastMatchArm) => matchBlock({ ...config, lastArm: value }),
-    },
+    $with: { $children: (...vs: T.MatchArm[]) => matchBlock(...vs) },
   }, methodsEngine);
 }
 
@@ -3581,6 +3587,18 @@ export function yieldExpression(child?: T.Expression) {
   }, methodsEngine);
 }
 
+export function visibilityModifierGroup1(child?: (T.Self | T.Super | T.Crate | T.Path)) {
+  const _self = child;
+  return withMethods({
+    $type: TSKindId._VisibilityModifierGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _self,
+    self() { return _self; },
+    $with: { $child: (v: (T.Self | T.Super | T.Crate | T.Path)) => visibilityModifierGroup1(v) },
+  }, methodsEngine);
+}
+
 export function stringContent(text: string) {
   if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`string_content: text must be non-empty`);
   return withMethods({
@@ -3689,6 +3707,7 @@ export type FluentKindMap = {
   "_type_identifier": T.TypeIdentifier;
   "_use_wildcard_clause": T.UseWildcardClause;
   "_visibility_modifier_crate": FluentNode<"_visibility_modifier_crate", T.VisibilityModifierCrate.Config>;
+  "_visibility_modifier_group1": FluentNode<"_visibility_modifier_group1", T._VisibilityModifierGroup1.Config>;
   "_visibility_modifier_in_path": T.VisibilityModifierInPath;
   "_visibility_modifier_pub": T.VisibilityModifierPub;
   "abstract_type": FluentNode<"abstract_type", T.AbstractType.Config>;
@@ -3844,6 +3863,7 @@ export type FluentKindMap = {
   "where_predicate": FluentNode<"where_predicate", T.WherePredicate.Config>;
   "while_expression": FluentNode<"while_expression", T.WhileExpression.Config>;
   "yield_expression": FluentNode<"yield_expression", T.YieldExpression.Config>;
+  "visibility_modifier_group1": FluentNode<"visibility_modifier_group1", T.VisibilityModifierGroup1.Config>;
   "string_content": T.StringContent;
   "raw_string_literal_content": T.RawStringLiteralContent;
   "float_literal": T.FloatLiteral;
@@ -3909,6 +3929,7 @@ export const _factoryMap = {
   "_type_identifier": typeIdentifier,
   "_use_wildcard_clause": _useWildcardClause,
   "_visibility_modifier_crate": visibilityModifierCrate,
+  "_visibility_modifier_group1": _visibilityModifierGroup1,
   "_visibility_modifier_in_path": _visibilityModifierInPath,
   "_visibility_modifier_pub": _visibilityModifierPub,
   "abstract_type": abstractType,
@@ -4064,6 +4085,7 @@ export const _factoryMap = {
   "where_predicate": wherePredicate,
   "while_expression": whileExpression,
   "yield_expression": yieldExpression,
+  "visibility_modifier_group1": visibilityModifierGroup1,
   "string_content": stringContent,
   "raw_string_literal_content": rawStringLiteralContent,
   "float_literal": floatLiteral,

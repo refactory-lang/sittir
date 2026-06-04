@@ -1907,6 +1907,26 @@ describe('yield_expression', () => {
   });
 });
 
+describe('import_clause_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.importClauseGroup1();
+    expect(node.$type).toBe(TSKindId._ImportClauseGroup1);
+    expect(node.$source).toBe(2);
+  });
+});
+
+describe('catch_clause_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.catchClauseGroup1({ parameter: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$type).toBe(TSKindId._CatchClauseGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.catchClauseGroup1({ parameter: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
 describe('html_comment', () => {
   it('factory produces correct type', () => {
     const node = ir.htmlComment("test");

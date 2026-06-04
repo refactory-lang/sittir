@@ -10,6 +10,7 @@ export const NODE_KINDS = [
   '_match_block',
   '_simple_pattern_negative',
   '_simple_statements',
+  '_slice_group1',
   '_suite',
   '_tuple_pattern',
   '_with_clause_bare',
@@ -95,6 +96,7 @@ export const NODE_KINDS = [
   'set',
   'set_comprehension',
   'slice',
+  'slice_group1',
   'splat_pattern',
   'splat_type',
   'string',
@@ -497,11 +499,12 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "await": 237,
   "positional_separator": 238,
   "keyword_separator": 239,
-  "_expression_statement_tuple": 243,
-  "_with_clause_bare": 244,
-  "_with_clause_paren": 245,
-  "_simple_pattern_negative": 248,
-  "_except_clause_list": 250,
+  "_slice_group1": 240,
+  "_expression_statement_tuple": 244,
+  "_with_clause_bare": 245,
+  "_with_clause_paren": 246,
+  "_simple_pattern_negative": 249,
+  "_except_clause_list": 251,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -695,11 +698,12 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [237]: "await",
   [238]: "positional_separator",
   [239]: "keyword_separator",
-  [243]: "_expression_statement_tuple",
-  [244]: "_with_clause_bare",
-  [245]: "_with_clause_paren",
-  [248]: "_simple_pattern_negative",
-  [250]: "_except_clause_list",
+  [240]: "_slice_group1",
+  [244]: "_expression_statement_tuple",
+  [245]: "_with_clause_bare",
+  [246]: "_with_clause_paren",
+  [249]: "_simple_pattern_negative",
+  [251]: "_except_clause_list",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -893,11 +897,12 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "await", id: 237, enumName: "Await", cName: "sym_await" },
   { name: "positional_separator", id: 238, enumName: "PositionalSeparator", cName: "sym_positional_separator" },
   { name: "keyword_separator", id: 239, enumName: "KeywordSeparator", cName: "sym_keyword_separator" },
-  { name: "_expression_statement_tuple", id: 243, enumName: "ExpressionStatementTuple", cName: "sym__expression_statement_tuple" },
-  { name: "_with_clause_bare", id: 244, enumName: "WithClauseBare", cName: "sym__with_clause_bare" },
-  { name: "_with_clause_paren", id: 245, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
-  { name: "_simple_pattern_negative", id: 248, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
-  { name: "_except_clause_list", id: 250, enumName: "ExceptClauseList", cName: "sym__except_clause_list" },
+  { name: "_slice_group1", id: 240, enumName: "SliceGroup1", cName: "sym__slice_group1" },
+  { name: "_expression_statement_tuple", id: 244, enumName: "ExpressionStatementTuple", cName: "sym__expression_statement_tuple" },
+  { name: "_with_clause_bare", id: 245, enumName: "WithClauseBare", cName: "sym__with_clause_bare" },
+  { name: "_with_clause_paren", id: 246, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
+  { name: "_simple_pattern_negative", id: 249, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
+  { name: "_except_clause_list", id: 251, enumName: "ExceptClauseList", cName: "sym__except_clause_list" },
 ] as const;
 
 export const enum TSFieldId {
@@ -1171,6 +1176,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_simple_statements': [
     { name: 'simpleStatements', required: true, multiple: true },
   ],
+  '_slice_group1': [
+    { name: 'expression', required: false, multiple: false },
+  ],
   '_suite': [
     { name: 'simpleStatements', required: false, multiple: false },
     { name: 'block', required: false, multiple: false },
@@ -1289,7 +1297,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expressions', required: true, multiple: false },
   ],
   'dict_pattern': [
-    { name: 'dictPatternKvs', required: false, multiple: true },
+    { name: 'keys', required: false, multiple: true },
+    { name: 'values', required: false, multiple: true },
+    { name: 'splatPatterns', required: false, multiple: true },
   ],
   'dictionary': [
     { name: 'entries', required: false, multiple: true },
@@ -1491,6 +1501,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'start', required: false, multiple: false },
     { name: 'stop', required: false, multiple: false },
     { name: 'step', required: false, multiple: false },
+  ],
+  'slice_group1': [
+    { name: 'expression', required: false, multiple: false },
   ],
   'splat_pattern': [
     { name: 'operator', required: true, multiple: false },

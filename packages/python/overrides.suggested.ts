@@ -134,11 +134,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  slice: {
-    '3/0': 'expression',
-  },
-
-  // [held] 1 candidate(s)
   yield: {
     '1/0': 'expression',
   },

@@ -143,6 +143,9 @@ function applyPath(rule, segments, patch, precStack) {
   if (isEnrichGroupLiftSymbol(rule)) {
     return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
   }
+  if (isEnrichContentAlias(rule)) {
+    return descendThroughEnrichContentAlias(rule, segments, patch, precStack);
+  }
   const [head, ...rest] = segments;
   const t = rule.type;
   switch (head.kind) {
@@ -177,6 +180,8 @@ function descendThroughPrecWrapper(rule, segments, patch, precStack) {
   return reconstructPrec(rule, newContent);
 }
 function isEnrichGroupLiftSymbol(rule) {
+  const t = rule.type;
+  if (t !== "symbol" && t !== "SYMBOL") return false;
   const meta = rule.metadata;
   return meta?.source === "enrich";
 }
@@ -198,6 +203,20 @@ function descendThroughGroupLiftSymbol(rule, segments, patch, precStack) {
   const newBody = applyPath(body, segments, patch, precStack);
   groupLiftRuleMap?.set(name, newBody);
   return rule;
+}
+function isEnrichContentAlias(rule) {
+  const t = rule.type;
+  if (t !== "alias" && t !== "ALIAS") return false;
+  const meta = rule.metadata;
+  return meta?.source === "enrich";
+}
+function descendThroughEnrichContentAlias(rule, segments, patch, precStack) {
+  const body = rule.content;
+  if (body === void 0) {
+    throw new ApplyPathSkip("applyPath: enrich content-alias has no content to travel through");
+  }
+  const newBody = applyPath(body, segments, patch, precStack);
+  return { ...rule, content: newBody };
 }
 function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
   switch (head.kind) {
@@ -479,170 +498,6 @@ function alias(rule, value) {
   return native(rule, rule);
 }
 
-// packages/codegen/src/dsl/wire/auto-groups.ts
-function applyAutoGroups(base2, outRules, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
-  if (!base2) return;
-  const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
-  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
-  if (!rulesBag) return;
-  const dedupe = {};
-  const synthRules = {};
-  const rewrites = {};
-  for (const name of Object.keys(rulesBag)) {
-    if (authoredSynthesisKinds.has(name)) continue;
-    if (context.authoredRuleNames.has(name)) continue;
-    const rule = rulesBag[name];
-    if (!rule) continue;
-    const state = { opt: 0, rep: 0 };
-    let next = rule;
-    next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
-    next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
-    if (next !== rule) {
-      rewrites[name] = next;
-    }
-  }
-  for (const synName of Object.keys(synthRules)) {
-    if (synName in outRules || synName in rulesBag) continue;
-    outRules[synName] = makeStaticRuleFn(synthRules[synName]);
-    context.syntheticInline.add(synName);
-  }
-  for (const parentName of Object.keys(rewrites)) {
-    outRules[parentName] = makeStaticRuleFn(rewrites[parentName]);
-  }
-}
-function makeStaticRuleFn(body) {
-  return function staticAutoGroupRule() {
-    return body;
-  };
-}
-function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
-  const recursed = recurseChildren(
-    rule,
-    (r) => synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
-  );
-  if (isOptionalType(recursed.type)) {
-    const content = recursed.content;
-    if (!content || typeof content !== "object") return recursed;
-    if (!isSeqType(content.type)) return recursed;
-    const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
-    if (!(synName in synthRules)) synthRules[synName] = content;
-    const symbolRef = {
-      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-      name: synName,
-      source: "group-lift"
-    };
-    return { ...recursed, content: symbolRef };
-  }
-  if (isChoiceType(recursed.type)) {
-    const members = recursed.members;
-    if (!Array.isArray(members) || members.length !== 2) return recursed;
-    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
-    const seqIdx = members.findIndex((m) => isSeqType(m.type));
-    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
-    const seqMember = members[seqIdx];
-    const synName = synthesizeGroupName(seqMember, parentKind, "optional", state, dedupe);
-    if (!(synName in synthRules)) synthRules[synName] = seqMember;
-    const symbolRef = {
-      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-      name: synName,
-      source: "group-lift"
-    };
-    const newMembers = members.slice();
-    newMembers[seqIdx] = symbolRef;
-    return { ...recursed, members: newMembers };
-  }
-  return recursed;
-}
-function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
-  const recursed = recurseChildren(
-    rule,
-    (r) => synthesizeRepeatGroups(r, synthRules, parentKind, state, dedupe)
-  );
-  if (!isRepeatType(recursed.type)) return recursed;
-  const content = recursed.content;
-  if (!content || typeof content !== "object") return recursed;
-  const t = content.type;
-  if (!isSeqType(t)) return recursed;
-  const synName = synthesizeGroupName(content, parentKind, "repeat", state, dedupe);
-  if (!(synName in synthRules)) {
-    synthRules[synName] = content;
-  }
-  const symbolRef = {
-    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-    name: synName,
-    source: "group-lift"
-  };
-  return { ...recursed, content: symbolRef };
-}
-function detectCase(referenceRule) {
-  const t = referenceRule?.type ?? "";
-  return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
-}
-function synthesizeGroupName(content, parentKind, kind, state, dedupe) {
-  const key = canonicalStringify(content);
-  const existing = dedupe[key];
-  if (existing !== void 0) return existing;
-  const counterKey = kind === "optional" ? "opt" : "rep";
-  state[counterKey] += 1;
-  const n = state[counterKey];
-  const name = `_${parentKind}_${kind}${n}`;
-  dedupe[key] = name;
-  return name;
-}
-function canonicalStringify(value) {
-  if (value === null || typeof value !== "object") {
-    return JSON.stringify(value);
-  }
-  if (Array.isArray(value)) {
-    return "[" + value.map((v) => canonicalStringify(v)).join(",") + "]";
-  }
-  const obj = value;
-  const keys = Object.keys(obj).sort();
-  const parts = [];
-  for (const k of keys) {
-    const v = obj[k];
-    if (typeof v === "function" || typeof v === "undefined") continue;
-    parts.push(JSON.stringify(k) + ":" + canonicalStringify(v));
-  }
-  return "{" + parts.join(",") + "}";
-}
-function recurseChildren(rule, visit) {
-  if (!rule || typeof rule !== "object") return rule;
-  const t = rule.type;
-  if (!t) return rule;
-  if (isSeqType(t) || isChoiceType(t)) {
-    const members = rule.members;
-    if (!Array.isArray(members)) return rule;
-    let changed = false;
-    const newMembers = members.map((m) => {
-      const out = visit(m);
-      if (out !== m) changed = true;
-      return out;
-    });
-    return changed ? { ...rule, members: newMembers } : rule;
-  }
-  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "group" || t === "variant") {
-    const content = rule.content;
-    if (content === void 0) return rule;
-    const out = visit(content);
-    if (out === content) return rule;
-    return { ...rule, content: out };
-  }
-  if (t === "polymorph") {
-    const forms = rule.forms;
-    if (!Array.isArray(forms)) return rule;
-    let changed = false;
-    const newForms = forms.map((f) => {
-      const out = visit(f.content);
-      if (out === f.content) return f;
-      changed = true;
-      return { ...f, content: out };
-    });
-    return changed ? { ...rule, forms: newForms } : rule;
-  }
-  return rule;
-}
-
 // packages/codegen/src/dsl/group-classify.ts
 function ruleMatchesEmpty(rule) {
   if (!rule || typeof rule !== "object") return false;
@@ -694,13 +549,75 @@ function unwrapPrec(rule) {
   }
   return cur;
 }
+function isRepeatLike(t) {
+  return isRepeatType(t) || typeEq(t, "repeat1");
+}
+function slotKindKey(m) {
+  let cur = m;
+  while (cur && typeof cur === "object") {
+    const r = cur;
+    const t = typeof r.type === "string" ? r.type : "";
+    if (isPrecWrapper(r) || isFieldType(t)) {
+      cur = r.content;
+    } else {
+      return t.toLowerCase();
+    }
+  }
+  return "";
+}
+function isSeparatedList(members) {
+  const headSlots = collectSlots(members);
+  if (headSlots.length === 0) return false;
+  const headKey = slotKindKey(headSlots[0]);
+  if (!headKey) return false;
+  for (const m of members) {
+    if (!m || typeof m !== "object") continue;
+    const r = m;
+    const t = typeof r.type === "string" ? r.type : "";
+    if (!isRepeatLike(t)) continue;
+    const content = r.content;
+    if (!content || typeof content !== "object") continue;
+    const ct = content.type;
+    const inner = isSeqType(typeof ct === "string" ? ct : "") ? collectSlots(content.members) : collectSlots([content]);
+    if (inner.length >= 1 && slotKindKey(inner[inner.length - 1]) === headKey) return true;
+  }
+  return false;
+}
+function flattenSeqMembers(members) {
+  const out = [];
+  for (const m of members) {
+    const core = unwrapPrec(m);
+    if (core && typeof core === "object") {
+      const ct = core.type;
+      const inner = core.members;
+      if (typeof ct === "string" && isSeqType(ct) && Array.isArray(inner)) {
+        out.push(...flattenSeqMembers(inner));
+        continue;
+      }
+    }
+    out.push(m);
+  }
+  return out;
+}
+function seqHasTopLevelRepeat(members) {
+  for (const m of flattenSeqMembers(members)) {
+    const core = unwrapPrec(m);
+    if (!core || typeof core !== "object") continue;
+    const ct = core.type;
+    if (typeof ct === "string" && isRepeatLike(ct)) return true;
+  }
+  return false;
+}
 function isInlineSafe(seqBody) {
   if (!seqBody || typeof seqBody !== "object") return false;
   const r = seqBody;
   const t = typeof r.type === "string" ? r.type : "";
+  if (isRepeatLike(t)) return true;
   if (!isSeqType(t)) return false;
   const members = r.members;
   if (!Array.isArray(members)) return false;
+  if (seqHasTopLevelRepeat(members)) return true;
+  if (isSeparatedList(members)) return true;
   const slots = collectSlots(members);
   if (slots.length !== 1) return false;
   const core = unwrapPrec(slots[0]);
@@ -723,10 +640,12 @@ function enrich(baseInput) {
   const kwRules = {};
   const clauseGroupRules = {};
   const clauseDedupeMap = {};
+  const groupDedupeMap = {};
+  const visibleGroupHiddenNames = /* @__PURE__ */ new Set();
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap) : rule;
+    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames) : rule;
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
   setGroupLiftRuleMap({
@@ -735,7 +654,9 @@ function enrich(baseInput) {
       mergedRules[n] = b;
     }
   });
-  const clauseGroupNames = new Set(Object.keys(clauseGroupRules));
+  const clauseGroupNames = new Set(
+    Object.keys(clauseGroupRules).filter((n) => !visibleGroupHiddenNames.has(n))
+  );
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
   if (clauseGroupNames.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
@@ -754,7 +675,7 @@ function getEnrichClauseGroups(grammar2) {
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
-function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap) {
+function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames) {
   const MAX_ITERATIONS = 8;
   let r = rule;
   let converged = false;
@@ -773,8 +694,8 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
 `);
   }
-  const clauseHoistCounter = { opt: 0 };
-  r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter);
+  const clauseHoistCounter = { opt: 0, grp: 0 };
+  r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter, groupDedupeMap, visibleGroupHiddenNames);
   return r;
 }
 function extractSupertypeNames(base2, hasWrapper) {
@@ -814,14 +735,14 @@ function harvestSupertypeNames(result) {
   }
   return names;
 }
-function detectCase2(referenceRule) {
+function detectCase(referenceRule) {
   const t = referenceRule?.type ?? "";
   return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
 }
 function makeField(referenceRule, name, content) {
   propagateFieldName(content, name);
   return {
-    type: detectCase2(referenceRule) === "upper" ? "FIELD" : "field",
+    type: detectCase(referenceRule) === "upper" ? "FIELD" : "field",
     name,
     content,
     source: "enriched"
@@ -845,7 +766,7 @@ function propagateFieldName(rule, fieldName) {
 }
 function makeSymbol(referenceRule, name) {
   return {
-    type: detectCase2(referenceRule) === "upper" ? "SYMBOL" : "symbol",
+    type: detectCase(referenceRule) === "upper" ? "SYMBOL" : "symbol",
     name
   };
 }
@@ -1201,7 +1122,7 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
   return result;
 }
 function enrichFieldWrappers(rule) {
-  const recursed = recurseChildren2(rule, enrichFieldWrappers);
+  const recursed = recurseChildren(rule, enrichFieldWrappers);
   if (!isFieldType(recursed.type)) return recursed;
   const name = recursed.name;
   const content = recursed.content;
@@ -1211,7 +1132,7 @@ function enrichFieldWrappers(rule) {
   const newContent = { ...content, fieldName: name, nonterminal: true };
   return { ...recursed, content: newContent };
 }
-function recurseChildren2(rule, visit) {
+function recurseChildren(rule, visit) {
   if (!rule || typeof rule !== "object") return rule;
   const t = rule.type;
   if (!t) return rule;
@@ -1255,7 +1176,7 @@ var MULTIPLICITY_BY_TYPE = {
   REPEAT1: "nonEmptyArray"
 };
 function enrichMultiplicityWrappers(rule) {
-  const recursed = recurseChildren2(rule, enrichMultiplicityWrappers);
+  const recursed = recurseChildren(rule, enrichMultiplicityWrappers);
   const t = recursed.type;
   const multiplicity = t ? MULTIPLICITY_BY_TYPE[t] : void 0;
   if (!multiplicity) return recursed;
@@ -1419,10 +1340,10 @@ function peelOptionalSeq(rule) {
   }
   return null;
 }
-function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter) {
+function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames) {
   const peeled = peelOptionalSeq(rule);
   if (peeled !== null) {
-    const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter);
+    const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
     if (ruleMatchesEmpty(recursedSeqBody)) {
       counter.opt += 1;
       if (recursedSeqBody === peeled.seqBody) return rule;
@@ -1450,6 +1371,20 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       return rule;
     } else {
       counter.opt += 1;
+      const names = visibleGroupSynthName(recursedSeqBody, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules);
+      if (names !== null) {
+        visibleGroupHiddenNames.add(names.hiddenName);
+        const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
+        const aliasRule = makeVisibleGroupAlias(rule, symbolRef, names.visibleName);
+        if (peeled.form === "optional") {
+          return rebuildOptional(rule, aliasRule);
+        } else {
+          const members = rule.members;
+          const newMembers = members.slice();
+          newMembers[peeled.seqIdx] = aliasRule;
+          return { ...rule, members: newMembers };
+        }
+      }
       if (recursedSeqBody === peeled.seqBody) return rule;
       if (peeled.form === "optional") {
         return rebuildOptional(rule, recursedSeqBody);
@@ -1466,7 +1401,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     if (!Array.isArray(members)) return rule;
     let changed = false;
     const newMembers = members.map((m) => {
-      const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter);
+      const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
       if (out !== m) changed = true;
       return out;
     });
@@ -1477,7 +1412,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     if (!Array.isArray(members)) return rule;
     let changed = false;
     const newMembers = members.map((m) => {
-      const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter);
+      const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
       if (out !== m) changed = true;
       return out;
     });
@@ -1486,14 +1421,14 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   if (isRepeatType(rule.type) || isPrecWrapper(rule)) {
     const content = rule.content;
     if (!content) return rule;
-    const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter);
+    const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
   }
   if (isFieldType(rule.type)) {
     const content = rule.content;
     if (!content) return rule;
-    const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter);
+    const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
   }
@@ -1521,6 +1456,28 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   clauseGroupRules[name] = seqBody;
   return name;
 }
+function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules) {
+  const key = canonicalStringifyClause(content);
+  const existing = groupDedupeMap[key];
+  if (existing !== void 0) {
+    const hiddenName2 = `_${existing}`;
+    if (!(hiddenName2 in clauseGroupRules)) clauseGroupRules[hiddenName2] = content;
+    return { visibleName: existing, hiddenName: hiddenName2 };
+  }
+  counter.grp += 1;
+  const visibleName = `${parentKind.replace(/^_+/, "")}_group${counter.grp}`;
+  const hiddenName = `_${visibleName}`;
+  if (visibleName in rulesBag || hiddenName in rulesBag) {
+    process.stderr.write(
+      `enrich: visible-group skipped for '${parentKind}' \u2014 rule '${visibleName}'/'${hiddenName}' already exists in base.grammar.rules
+`
+    );
+    return null;
+  }
+  groupDedupeMap[key] = visibleName;
+  clauseGroupRules[hiddenName] = content;
+  return { visibleName, hiddenName };
+}
 function makeGroupLiftSymbol(referenceRule, name) {
   const t = referenceRule.type ?? "";
   const isUpper = t.length > 0 && t === t.toUpperCase();
@@ -1528,6 +1485,15 @@ function makeGroupLiftSymbol(referenceRule, name) {
     type: isUpper ? "SYMBOL" : "symbol",
     name,
     source: "group-lift",
+    metadata: { source: "enrich" }
+  };
+}
+function makeVisibleGroupAlias(referenceRule, symbolRef, name) {
+  return {
+    type: detectCase(referenceRule) === "upper" ? "ALIAS" : "alias",
+    content: symbolRef,
+    named: true,
+    value: name,
     metadata: { source: "enrich" }
   };
 }
@@ -1605,12 +1571,6 @@ function wire(config, base2) {
       transforms,
       polymorphs,
       cfg.groups
-    );
-    applyAutoGroups(
-      baseArg,
-      outRules,
-      context,
-      authoredSynthesisKinds
     );
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
   }

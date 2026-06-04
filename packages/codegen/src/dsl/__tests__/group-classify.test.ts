@@ -19,7 +19,12 @@ describe('isInlineSafe — exactly 1 non-choice field/symbol slot after dropping
   it('field wrapping a choice is inline-safe (field is the slot, not the choice inside)', () => expect(isInlineSafe(seq(field('sign', choice(str('-'), str('+'))), str('readonly')))).toBe(true));
   it('bare choice slot is NOT inline-safe', () => expect(isInlineSafe(seq(str('('), choice(sym('self'), sym('super')), str(')')))).toBe(false));
   it('two slots is NOT inline-safe', () => expect(isInlineSafe(seq(field('name', sym('id')), field('val', sym('expr'))))).toBe(false));
-  it('repeat1(choice(...)) body is NOT inline-safe', () => expect(isInlineSafe(seq({ type: 'repeat1', content: choice(field('name', sym('id')), sym('enum_assignment')) }))).toBe(false));
+  // A seq whose (only) slot-bearing member is a top-level repeat/repeat1 is a
+  // LIST (e.g. enum_body's `{ repeat1(choice(member, enum_assignment)) }`) → it
+  // stays inline-flat, NOT a co-optional visible group. seqHasTopLevelRepeat
+  // routes it inline-safe so tree-sitter never distributes an alias across the
+  // list elements.
+  it('seq(repeat1(choice(...))) is a LIST → inline-safe (stays flat, off alias path)', () => expect(isInlineSafe(seq({ type: 'repeat1', content: choice(field('name', sym('id')), sym('enum_assignment')) }))).toBe(true));
 
   // Bare repeat/repeat1 body = a LIST = one flat slot → inline-safe (stays
   // inline-flat off the alias path; e.g. formal_parameters, class_body, enum_body).
