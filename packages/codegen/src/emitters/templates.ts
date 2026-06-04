@@ -1579,6 +1579,18 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 		}
 		return undefined;
 	}
+	// A choice whose branches carry field names — gate on the first branch
+	// that yields a key (mirrors the seq-member loop above). Without this,
+	// a group body of `choice([field('name', …), …])` falls through to the
+	// caller's `<rule>_optional1` fallback and gates on an unpopulated
+	// inlined-group slot instead of the populated field.
+	if (content.type === 'choice') {
+		for (const m of content.members) {
+			const key = pickConditionalKey(m, ctx);
+			if (key) return key;
+		}
+		return undefined;
+	}
 	// A symbol with a slot back-pointer — gate on its kind slot name.
 	if (content.type === 'symbol') {
 		const sym = content as Extract<Rule, { type: 'symbol' }>;

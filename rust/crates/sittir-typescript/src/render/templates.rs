@@ -747,7 +747,6 @@ pub struct EnumAssignmentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_body.jinja", escape = "none")]
 pub struct EnumBodyTemplate<'a> {
-    pub enum_body_optional1: OptionalNonterminalView<'a>,
     pub name: ListNonterminalView<'a>,
 }
 

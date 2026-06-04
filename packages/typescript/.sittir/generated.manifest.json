@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "40954b09145403c7da6f51a8238420f42b64abd6b5ac44d88891b44c7314102d",
+  "source_hash": "6ee49adcb51978538728a62ba32e995fb30fc2b292e2f40571201888ed8426f8",
   "files": {
     "packages/typescript/.sittir/grammar.js": "f8d8ab9e5fc855221ca5b0d5637bcd6cfe4da78f3c1f177b1adfe14405824d9b",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
@@ -22,7 +22,7 @@
     "packages/typescript/src/factories.ts": "0ea77a942b76b04edb20da07797e9666ed47a807ed2c4f0e72969a34bb299e8f",
     "packages/typescript/src/from.ts": "0d13652ab87af2943956a6dad3d1dd932cd2ef9b416ac13ad2d4eddbf22516bc",
     "packages/typescript/src/grammar.ts": "131224f565b24e201a91e52771179464f9651e673e3063d3f3d47c4116a18418",
-    "packages/typescript/src/hash.ts": "0037ce8c7e1530486785e59bc331e2dcb1338ae8bafefbb409289e5fe9645771",
+    "packages/typescript/src/hash.ts": "91704b393f2283730bd87ea11979b09385f3b1662cf10e26bac42849bc29d9c1",
     "packages/typescript/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/typescript/src/ir.ts": "c56dc43846f60e0633d4c332ea7714b1ee813c100449e00f422151fa00b72078",
     "packages/typescript/src/is.ts": "205dd477cb9cf40ec044e3f5434c6dd620c739af42e6280009325d7a4488dd2d",
@@ -125,7 +125,7 @@
     "packages/typescript/templates/do_statement.jinja": "dd6a3ed6d0f21f10bebc734ad176c184762e5da0212c2e43e7b7a32997bbe574",
     "packages/typescript/templates/else_clause.jinja": "3d5e528fed1edce2c94cb4655e4a1a3791f1598f62096798dada151a343198f7",
     "packages/typescript/templates/enum_assignment.jinja": "ac7eb1913ad1d0f45b8983236e4e063b7d76b9ae14b0840af79dc86a7e401ccb",
-    "packages/typescript/templates/enum_body.jinja": "b9f491203a12dee02fbb5864b94498515ff6174d631b8d11be3461a7cc188505",
+    "packages/typescript/templates/enum_body.jinja": "e5c3d4897eb44d24df917f999e49aea22218c1bb62c0b8e8b90257791ac8f561",
     "packages/typescript/templates/enum_declaration.jinja": "7150549f8295d30f36e146990ecf5e649ec48bc758cf5cb2f40f0d90eb2a9bce",
     "packages/typescript/templates/export_clause.jinja": "39f5047dbcd60bc78759762b0fc515ba04357d437d027d0d71b281bcc2260cfa",
     "packages/typescript/templates/export_specifier.jinja": "cab5cb4ea73087cd97a95a8997e8ad291feb8d088c7cbc5553a3b72fc76b6cf7",
@@ -167,8 +167,8 @@
     "packages/typescript/templates/jsx_element.jinja": "5483aa5590ca3d9306928c84e8eb57800b81bc2a2d6207f0d0c357a9264b5ad5",
     "packages/typescript/templates/jsx_expression.jinja": "739e2db7759e222e7869371d850cca3ea87e7e18a6db0a5698da91e7250dc61f",
     "packages/typescript/templates/jsx_namespace_name.jinja": "02903347e480fca846d6654a8583cf436171c108c04a3c9e5f72bd6f3719ed5e",
-    "packages/typescript/templates/jsx_opening_element.jinja": "1a0552e585d47f16286f17cee6fd0d48d00d65a24821997b72c88515126cfa1f",
-    "packages/typescript/templates/jsx_self_closing_element.jinja": "316f35aba1f2d200bccd321070a7afcf8ff392372a9c23ca6054ac331cda52f5",
+    "packages/typescript/templates/jsx_opening_element.jinja": "9709b89f7ef912fe6689e0cb3f27ebce148c8fcb5ec96201040b26697e876d47",
+    "packages/typescript/templates/jsx_self_closing_element.jinja": "39de859e9d7df5d9976c4ec3e08789bd63f840d9d91b204f310c4423bcd45e42",
     "packages/typescript/templates/labeled_statement.jinja": "ba326e279a1093ba34412a47b8ceca5c38a351a40172e5ba04b758ff875fdee3",
     "packages/typescript/templates/lexical_declaration.jinja": "f5bb3cb1a5f05d37da81d56a11c17c3bf9a14942884bed28ceb4ba60abb06fd5",
     "packages/typescript/templates/literal_type.jinja": "998cfef1d80ce19f7694b0b675e98478583ae91d41d622eb9b8aa276dfc914ff",
@@ -249,11 +249,11 @@
     "rust/crates/sittir-typescript/index.d.ts": "bc51015c4b7f4750cfbf0958aa847ee16cb1fd04526d457000ff6af1c0aa41ff",
     "rust/crates/sittir-typescript/index.js": "81302159cbccdd486f6a9e17d7103b77d1d0fd14788a674a6a1f43a67b7fbbc9",
     "rust/crates/sittir-typescript/src/lib.rs": "bfcc627baecb1e709b3606f877c957184663c4cbd1e923f552a9c5f1da258af2",
-    "rust/crates/sittir-typescript/src/render/hash.rs": "9dd468bab25ac1167feff406ed05f449220f6bc710a6d2d00ae267411899f401",
+    "rust/crates/sittir-typescript/src/render/hash.rs": "75b9ce72b57dd8eb15103c96197352d2794489b428d061a206dbc85ae9c9722a",
     "rust/crates/sittir-typescript/src/render/kind_ids.rs": "6a3f7dc9aace2591a55471111b184b0345101ea9fd6dc1c0cad0b3d34b86a642",
     "rust/crates/sittir-typescript/src/render/mod.rs": "77bd8eedb01d29819f96a30003cbcd9cfb8d10e2c4625104356f81e39dc7fdf0",
-    "rust/crates/sittir-typescript/src/render/templates.rs": "8b57c28e9c5885ba2a5cd5eded86bd07544ad25599c36e9cfdca32b42e95b539",
-    "rust/crates/sittir-typescript/src/render/transport.rs": "bebfa94883f8f8be871d08f66a5b7c56ae1f8d963fd8ffecb5c720e653942abf",
+    "rust/crates/sittir-typescript/src/render/templates.rs": "09da5f29a21657fb329fd0b65a3cd509d902b932a2566d51b5db70574f221dd9",
+    "rust/crates/sittir-typescript/src/render/transport.rs": "e441da33fcb29634c2b8bd705667010ba300006329df1e7724da6d94e2591e8d",
     "rust/crates/sittir-typescript/templates/_ambient_declaration_declaration.jinja": "19e702863bc71963bb09b5cd9efbf29dea6a54006e38c4a4379c00a2a77df7e7",
     "rust/crates/sittir-typescript/templates/_ambient_declaration_global.jinja": "469f533be2215a103d19203c2b0cb9f65ea495f75f996cbe9b4bfbf3e6ac7c9c",
     "rust/crates/sittir-typescript/templates/_ambient_declaration_module.jinja": "bc36a2ba90f44c4065426a7ee51b2c93bfdd0f9a3f29c30758583ccececd4b9e",
@@ -347,7 +347,7 @@
     "rust/crates/sittir-typescript/templates/do_statement.jinja": "dd6a3ed6d0f21f10bebc734ad176c184762e5da0212c2e43e7b7a32997bbe574",
     "rust/crates/sittir-typescript/templates/else_clause.jinja": "3d5e528fed1edce2c94cb4655e4a1a3791f1598f62096798dada151a343198f7",
     "rust/crates/sittir-typescript/templates/enum_assignment.jinja": "ac7eb1913ad1d0f45b8983236e4e063b7d76b9ae14b0840af79dc86a7e401ccb",
-    "rust/crates/sittir-typescript/templates/enum_body.jinja": "b9f491203a12dee02fbb5864b94498515ff6174d631b8d11be3461a7cc188505",
+    "rust/crates/sittir-typescript/templates/enum_body.jinja": "e5c3d4897eb44d24df917f999e49aea22218c1bb62c0b8e8b90257791ac8f561",
     "rust/crates/sittir-typescript/templates/enum_declaration.jinja": "7150549f8295d30f36e146990ecf5e649ec48bc758cf5cb2f40f0d90eb2a9bce",
     "rust/crates/sittir-typescript/templates/export_clause.jinja": "39f5047dbcd60bc78759762b0fc515ba04357d437d027d0d71b281bcc2260cfa",
     "rust/crates/sittir-typescript/templates/export_specifier.jinja": "cab5cb4ea73087cd97a95a8997e8ad291feb8d088c7cbc5553a3b72fc76b6cf7",
@@ -389,8 +389,8 @@
     "rust/crates/sittir-typescript/templates/jsx_element.jinja": "5483aa5590ca3d9306928c84e8eb57800b81bc2a2d6207f0d0c357a9264b5ad5",
     "rust/crates/sittir-typescript/templates/jsx_expression.jinja": "739e2db7759e222e7869371d850cca3ea87e7e18a6db0a5698da91e7250dc61f",
     "rust/crates/sittir-typescript/templates/jsx_namespace_name.jinja": "02903347e480fca846d6654a8583cf436171c108c04a3c9e5f72bd6f3719ed5e",
-    "rust/crates/sittir-typescript/templates/jsx_opening_element.jinja": "1a0552e585d47f16286f17cee6fd0d48d00d65a24821997b72c88515126cfa1f",
-    "rust/crates/sittir-typescript/templates/jsx_self_closing_element.jinja": "316f35aba1f2d200bccd321070a7afcf8ff392372a9c23ca6054ac331cda52f5",
+    "rust/crates/sittir-typescript/templates/jsx_opening_element.jinja": "9709b89f7ef912fe6689e0cb3f27ebce148c8fcb5ec96201040b26697e876d47",
+    "rust/crates/sittir-typescript/templates/jsx_self_closing_element.jinja": "39de859e9d7df5d9976c4ec3e08789bd63f840d9d91b204f310c4423bcd45e42",
     "rust/crates/sittir-typescript/templates/labeled_statement.jinja": "ba326e279a1093ba34412a47b8ceca5c38a351a40172e5ba04b758ff875fdee3",
     "rust/crates/sittir-typescript/templates/lexical_declaration.jinja": "f5bb3cb1a5f05d37da81d56a11c17c3bf9a14942884bed28ceb4ba60abb06fd5",
     "rust/crates/sittir-typescript/templates/literal_type.jinja": "998cfef1d80ce19f7694b0b675e98478583ae91d41d622eb9b8aa276dfc914ff",
@@ -471,6 +471,6 @@
     "rust/crates/sittir-typescript/test-fixtures.json": "7a2381d2ef735c32f7102104efa9a25ac68dc691e42f5d722f4ca7e07fc36923"
   },
   "host_files": {
-    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "f20ddce51c19abf5448f1707a96f598f34080c68468ff8d5072d25652d23856c"
+    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "56eb3198bf023ba93a08d9fdae67a235ca56b96710d49f9502b30205819ec395"
   }
 }

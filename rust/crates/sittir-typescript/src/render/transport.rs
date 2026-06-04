@@ -51564,7 +51564,6 @@ fn render_enum_body(node: &EnumBodyTransport, dest: &mut dyn ::std::fmt::Write) 
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = EnumBodyTemplate {
-        enum_body_optional1: OptionalNonterminalView::Missing,
         name: ListNonterminalView {
             items: name_buf.as_slice(),
             separator: ",",
