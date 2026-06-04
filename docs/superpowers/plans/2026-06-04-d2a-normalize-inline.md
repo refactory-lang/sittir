@@ -13,7 +13,8 @@
 - **Hoist:** splice via `replaceSymbolRef` (`normalize.ts:489`) + re-stamp via `reapplyInlinedLeafAttrs` (`simplify.ts:958`).
 - **Inline-eligibility guard (bounds fold set to 11):** `resolveGroupOrMultiInlineTarget` (`simplify.ts:992`).
 - **`storageKind` already = hidden body:** `storageKindOfValue` (`node-map.ts:941`) returns the resolved node-ref kind; keeping `symbol(_x)` (not redirecting to twin) yields `_x` as storageKind, twin stays `parseKind` (`node-map.ts:969`).
-- **Alias maps:** populate `contentAliasedTo`/`contentAliasedFrom` in `mintContentAliasKinds` (`link.ts:650`), thread on `LinkedGrammar` beside `visibleAliasTargets` (`link.ts:248/596`).
+- **`keepRef` is structural, by rule traversal (NOT from any map):** behavior derives ONLY from the rule tree (`feedback_metadata_not_behavior`). `keepRef(_x) = refcount(_x) > 1 || hasVisibleTwin(_x)` where `refcount(_x)` = number of `symbol($._x)` references across all rule bodies, and `hasVisibleTwin(_x)` = a parse-kind rule exists whose body is/contains `symbol($._x)` (e.g. `call_signature` ⇒ keep `_call_signature`). The two were previously expressed (wrongly) as enrich `alias($._name,$.name)` — those nodes DO NOT exist in any grammar (0 on rust/ts/py), so the alias maps below are EMPTY and must not gate folding.
+- **Alias maps are DIAGNOSTIC-ONLY:** populate `contentAliasedTo`/`contentAliasedFrom` in `mintContentAliasKinds` (`link.ts:650`), thread on `LinkedGrammar` beside `visibleAliasTargets` (`link.ts:248/596`) — consumed ONLY by the Task 2 §D-2c non-injective check. NOTHING in the fold path reads them.
 - **Wash to remove:** `simplify.ts:893` (`inlineKinds.has`) + `:944` (`source==='group-lift'` bail).
 - **`metadata.inlinedFrom`:** add `readonly metadata?: { source?: RuleSource; inlinedFrom?: string }` to `RuleBase` (`rule.ts:~74`); replaces the `as unknown as Rule` cast (`enrich.ts:1668`) + the deprecated top-level `source:'group-lift'` (`rule.ts:349`).
 - **`_import_list` trailing-sep fix:** `render-module.ts:941` hardcodes `trailing_sep: false` (struct field `:930`, merge `:560`).
@@ -24,13 +25,15 @@ Fold set = **11 groups** (rust 2, ts 7, py 2): rust `_use_wildcard_clause`, `_vi
 - [ ] On a CLEAN tree: stash any drift, `pnpm validate:native`, record deep-AST per grammar. Confirm 111/69/74; if different, RE-BASELINE the targets below.
 - [ ] Capture `probe-stages --grammar python --kind import_from_statement` and `--kind import_statement` as the `_import_list` fold reference.
 
-## Task 1 — Typed provenance + alias maps (no behavior change)
+## Task 1 — Typed provenance + structural `keepRef` predicate + (diagnostic-only) alias maps
+**Corrected from BLOCKED v1:** the fold-exclusion is a STRUCTURAL fact computed by rule traversal — `refcount` + `hasVisibleTwin` — NOT a lookup in `contentAliasedTo` (those maps are empty: 0 enrich `alias($._name,$.name)` nodes exist on any grammar). The maps survive ONLY for the Task 2 diagnostic.
 - [ ] `rule.ts:~74` (RuleBase): add `readonly metadata?: { source?: RuleSource; inlinedFrom?: string };` (replaces the `enrich.ts:1668` cast).
-- [ ] `link.ts:~248`/`:650`: populate + thread `contentAliasedFrom: Map<visibleTwin, hiddenBody>` (single) and `contentAliasedTo: Map<hiddenBody, visibleTwin[]>` (fan-out), built where `rules[value]` mints from `alias($._name,$.name)`.
-- [ ] Verify (tsx probe): ts `contentAliasedFrom` has `call_signature→_call_signature`, `module→_module`; `contentAliasedTo[_call_signature].length ≥1`. No emit change. Gate unchanged.
+- [ ] New helper `computeKeepRef(rules): Set<hiddenKindId>` (place beside the normalize hoist it feeds, or in `link.ts`): traverse every rule body counting `symbol($._x)` refs → `refcount`; mark `hasVisibleTwin(_x)` when a parse-kind rule's body is/contains `symbol($._x)`. `keepRef(_x) = refcount(_x) > 1 || hasVisibleTwin(_x)`. PURE traversal, no map reads.
+- [ ] `link.ts:~248`/`:650`: still populate + thread `contentAliasedFrom: Map<visibleTwin,hiddenBody>` / `contentAliasedTo: Map<hiddenBody,visibleTwin[]>` for DIAGNOSTICS ONLY — built from whatever alias relationships `mintContentAliasKinds` actually sees (may be empty today; that's fine — they guard a FUTURE violation, not today's fold).
+- [ ] Verify (tsx probe): `computeKeepRef(ts)` CONTAINS `_call_signature` (refcount>1) and `_module` (twin), and does NOT contain `_extends_clause_single` (refcount 1, no twin). No emit change. Gate unchanged.
 
-## Task 2 — Non-injective `contentAliasedFrom` diagnostic
-- [ ] Add to `grammar-diagnostics`: `contentAliasedFrom` fan-in >1 (two bodies → one twin) → diagnostic (mirror the parseKind-collision check). `contentAliasedTo` fan-out >1 is the legitimate reuse case (no diagnostic).
+## Task 2 — Non-injective `contentAliasedFrom` diagnostic (the maps' ONLY consumer)
+- [ ] Add to `grammar-diagnostics`: `contentAliasedFrom` fan-in >1 (two bodies → one twin) → diagnostic (mirror the parseKind-collision check). `contentAliasedTo` fan-out >1 is the legitimate reuse case (no diagnostic). The maps may be empty today — the check still compiles and guards a future violation.
 - [ ] Verify: `grammar-diagnostics --grammar {rust,ts,python}` → ZERO new diagnostics today. Non-zero = triage before proceeding. Gate unchanged.
 
 ## Task 3 — FIX-THEN-FOLD prerequisite: per-instance `trailing_sep` (BLOCKS `_import_list` fold)
@@ -44,11 +47,13 @@ Fold set = **11 groups** (rust 2, ts 7, py 2): rust `_use_wildcard_clause`, `_vi
   let r = applyNormalizationPasses(...);   // :113 unchanged
   let changed = true, pass = 0;
   do { r = applyWrapperDeletion(r);
-       changed = inlineHiddenSeqRefs(r, { contentAliasedTo, contentAliasedFrom });
+       const keepRef = computeKeepRef(r);   // re-derived each pass (cheap; cf. note below)
+       changed = inlineHiddenSeqRefs(r, keepRef);
      } while (changed && ++pass < 8);
   const renderRules = r;                    // feeds BOTH projections
   ```
-- [ ] New `inlineHiddenSeqRefs(rules, aliasMaps)`: for each parent `symbol(_x)` where `rules[_x]` is hidden+seq+group/multi-eligible (reuse `resolveGroupOrMultiInlineTarget`, `simplify.ts:992`) AND `_x` NOT in `contentAliasedTo` (not alias-referenced) AND `_x !== '_import_list'` (gated until Task 6): splice `resolveGroupOrMultiInlineTarget(rules[_x])` via `replaceSymbolRef` + `reapplyInlinedLeafAttrs`; tag `metadata.inlinedFrom=_x`; decrement refcount; delete `_x` at refcount 0. Returns true if any splice. **Termination:** monotone-decreasing on `#hidden-seq-entries`; cap at 8 with assert-on-non-convergence (mirror `inlineSingleUseHidden:436`).
+  (The loop exists because each `applyWrapperDeletion` pass can EXPOSE a fresh hidden-seq `symbol(_z)` ref that wasn't eligible before — the user's "run pushdown through a fixed point so we get inlines in there too." `keepRef` itself is invariant under folding — splices RELOCATE `symbol` refs rather than remove them, so refcounts are conserved — so recomputing it per pass yields the same set; it's recomputed only because the rule set object is rebuilt each pass. If `computeKeepRef` shows up in a profile, hoist it above the loop.)
+- [ ] New `inlineHiddenSeqRefs(rules, keepRef)`: for each parent `symbol(_x)` where `rules[_x]` is hidden+seq+group/multi-eligible (reuse `resolveGroupOrMultiInlineTarget`, `simplify.ts:992`) AND **`!keepRef.has(_x)`** (structural: refcount 1 AND no visible twin) AND `_x !== '_import_list'` (gated until Task 6): splice `resolveGroupOrMultiInlineTarget(rules[_x])` via `replaceSymbolRef` + `reapplyInlinedLeafAttrs`; tag `metadata.inlinedFrom=_x`; delete `_x` (it had refcount 1, now 0). Returns true if any splice. **Termination:** monotone-decreasing on `#hidden-seq-entries`; cap at 8 with assert-on-non-convergence (mirror `inlineSingleUseHidden:436`). NOTE: a `keepRef` body (refcount>1 / twinned) is NEVER inlined — it stays `symbol(_x)` → storageKind; this is what preserves `_call_signature`/`_module` and deletes their dead duplicate transports by the body staying a single shared kind.
 - [ ] Folds 10 of 11 (all but `_import_list`).
 - [ ] Verify: `probe-stages` ts `extends_clause` — `_extends_clause_single` absent as entry, content spliced. `dump-ast-mismatches --grammar typescript` — no new mismatches.
 - [ ] Gate: ts HOLD-or-UP (the `_call_signature`/`_module` twin folds delete dead `_CallSignatureTransport`/`render__call_signature` → ts ≥69). rust/py HOLD. ROLLBACK: revert the loop.
