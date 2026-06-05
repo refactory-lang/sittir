@@ -323,6 +323,9 @@ export async function runCountsCli(
 			if (result.status === 'ok') {
 				// Forward the child's stdout output.
 				if (result.stdout) process.stdout.write(result.stdout);
+				// The worker appended its history row but skipped commit
+				// (isolateWorker); record it so the parent commits once below.
+				recorded.push(`${grammar}/${formatBackendLabel('native')}`);
 			} else if (result.status === 'crashed') {
 				anyCrashed = true;
 				const lastKind = parseLastIsolateProgress(result.stderr);
@@ -334,6 +337,12 @@ export async function runCountsCli(
 				console.log(msg);
 				if (result.stdout) process.stdout.write(result.stdout);
 			}
+		}
+		// Single commit in the parent covering every worker that appended a row —
+		// the isolate-worker children skip commitHistory, so without this the rows
+		// stay uncommitted and break the single-commit-per-invocation contract.
+		if (recorded.length > 0 && !isolateWorker) {
+			commitHistory(`chore(validator): record validation run (${recorded.join(', ')})`);
 		}
 		if (anyCrashed) {
 			process.exitCode = 1;

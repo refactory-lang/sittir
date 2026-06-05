@@ -33,6 +33,7 @@ vi.mock('../src/native-staleness.ts', () => ({
 }));
 
 import { parseLastIsolateProgress, formatIsolateGrammarSummary, runCountsCli } from '../src/commands.ts';
+import { commitHistory } from '../src/history.ts';
 import { spawn } from 'node:child_process';
 import { EventEmitter } from 'node:events';
 
@@ -230,6 +231,46 @@ describe('runCountsCli --isolate mode', () => {
 		expect(written).toContain('python/native:');
 		consoleSpy.mockRestore();
 		writeSpy.mockRestore();
+	});
+
+	it('commits validation history once in the parent after successful isolate workers', async () => {
+		const mockSpawn = vi.mocked(spawn);
+		mockSpawn
+			.mockReturnValueOnce(makeMockChild({ stdout: 'rust/native:\n', exitCode: 0 }) as ReturnType<typeof spawn>)
+			.mockReturnValueOnce(makeMockChild({ stdout: 'python/native:\n', exitCode: 0 }) as ReturnType<typeof spawn>);
+		const writeSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+
+		await runCountsCli(['rust', 'python'], 'native', { isolate: true });
+
+		// The worker children appended rows but skipped commit; the parent must
+		// commit exactly once, covering every grammar that succeeded.
+		expect(vi.mocked(commitHistory)).toHaveBeenCalledOnce();
+		const msg = String(vi.mocked(commitHistory).mock.calls[0]![0]);
+		expect(msg).toContain('rust/native');
+		expect(msg).toContain('python/native');
+		writeSpy.mockRestore();
+	});
+
+	it('does NOT commit history when every isolate worker crashed (nothing recorded)', async () => {
+		const mockSpawn = vi.mocked(spawn);
+		mockSpawn.mockReturnValue(makeMockChild({ stderr: '[isolate-progress] rust impl_item\n', exitCode: 139 }) as ReturnType<typeof spawn>);
+		const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+		await runCountsCli(['rust'], 'native', { isolate: true });
+
+		expect(vi.mocked(commitHistory)).not.toHaveBeenCalled();
+		consoleSpy.mockRestore();
+	});
+
+	it('does NOT commit history in an isolate worker child (isolateWorker=true)', async () => {
+		// A worker runs the in-process path; the existing !isolateWorker guard must
+		// keep it from committing so only the parent commits once.
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+		await runCountsCli(['rust'], 'native', { isolate: false, isolateWorker: true });
+
+		expect(vi.mocked(commitHistory)).not.toHaveBeenCalled();
+		logSpy.mockRestore();
 	});
 
 	it('does NOT spawn children when isolate=false (in-process path)', async () => {
