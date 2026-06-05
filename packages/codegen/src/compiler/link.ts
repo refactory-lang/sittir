@@ -25,6 +25,7 @@ import type {
 	StringRule
 } from './rule.ts';
 import { isField, isSeq, isChoice, isString, normalizeEnumMembers } from './rule.ts';
+import { liftSeparators } from './lift-separators.ts';
 import {
 	collectGeneratedKindEntries,
 	findGeneratedKindEntry,
@@ -110,6 +111,19 @@ export function link(
 	const rules: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
 		rules[name] = resolveRule(rule, name, raw.rules, supertypes, externalRoles);
+	}
+
+	// Lift separated lists into canonical separator-bearing repeat nodes:
+	// repeat(seq(sep, x)) → repeat{sep}, commaSep1 → repeat1{sep}, and
+	// trailing-separator absorb. This is the SAME lift the evaluate
+	// constructors perform; centralizing it here (post-resolve, post-wire,
+	// post-enrich-injection) makes it the single source and lets it reach the
+	// enrich-injected group rules the constructors miss. Idempotent over
+	// already-lifted shapes (see lift-separators.ts), so it is a no-op while
+	// the constructors still lift. Runs before group-lift / classification,
+	// which expect the canonical separator shape.
+	for (const name of Object.keys(rules)) {
+		rules[name] = liftSeparators(rules[name]!);
 	}
 
 	// Mint visible kinds from enrich content-aliases. enrich wraps an

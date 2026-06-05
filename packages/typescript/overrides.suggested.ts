@@ -208,16 +208,6 @@ export const suggestedGroups = {
     '1': 'jsx_attribute_value',
   },
 
-  // [held] 1 candidate(s)
-  object: {
-    '1/0': 'pair',
-  },
-
-  // [held] 1 candidate(s)
-  object_pattern: {
-    '1/0': 'pair_pattern',
-  },
-
   // [held] 2 candidate(s)
   variable_declarator: {
     '0': 'name',

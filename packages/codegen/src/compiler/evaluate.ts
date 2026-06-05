@@ -25,6 +25,7 @@ import type {
 } from './rule.ts';
 import { normalizeEnumMembers } from './rule.ts';
 import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
+import { liftCommaSep, absorbTrailingSeparator } from './lift-separators.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
@@ -104,92 +105,6 @@ export function seq(...members: Input[]): Rule {
 	return { type: SEQ, members: normalized };
 }
 
-/**
- * Look for adjacent `repeat`/`repeat1` (with separator) + `optional(sepLit)`
- * pairs inside a seq and merge the trailing-sep optional into the
- * repeat by stamping `trailing: true` on it. Returns the new member
- * array if any absorption happened, else `null`.
- */
-function absorbTrailingSeparator(members: Rule[]): Rule[] | null {
-	let changed = false;
-	const out: Rule[] = [];
-	for (let i = 0; i < members.length; i++) {
-		const cur = members[i]!;
-		const next = members[i + 1];
-		const isSepRepeat =
-			(cur.type === REPEAT || cur.type === REPEAT1) && cur.separator !== undefined && !cur.trailing;
-		const isOptionalSepLit = (r: Rule | undefined, sep: string): boolean =>
-			!!r && r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
-		if (isSepRepeat && isOptionalSepLit(next, (cur as RepeatRule | Repeat1Rule).separator!)) {
-			// Merge — stamp trailing on the repeat and skip the next member.
-			const sepRule = cur as RepeatRule | Repeat1Rule;
-			out.push({ ...sepRule, trailing: true });
-			i++;
-			changed = true;
-			continue;
-		}
-		out.push(cur);
-	}
-	return changed ? out : null;
-}
-
-/**
- * Detect the `commaSep1` family inside a normalized seq body and lift
- * it to a single `repeat1` node with `separator` plus optional
- * `leading` / `trailing` markers. Returns `null` if no lift applies.
- *
- * Relies on `repeat(seq(sep, x))` already having been normalized to
- * `repeat(x, separator=sep)` by the `repeat()` helper.
- */
-function liftCommaSep(members: Rule[]): Rule | null {
-	if (members.length < 2 || members.length > 3) return null;
-
-	const repeatIdx = findRepeatWithSeparator(members);
-	if (repeatIdx === -1) return null;
-	const repeatNode = members[repeatIdx] as RepeatRule;
-	const sep = repeatNode.separator!;
-	const elem = repeatNode.content;
-
-	const matchesElem = (r: Rule): boolean => rulesEqual(r, elem);
-	const matchesOptionalSep = (r: Rule): boolean =>
-		r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
-
-	// Case 1: [x, repeat(sep, x)]
-	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
-		return { type: REPEAT1, content: elem, separator: sep };
-	}
-
-	// Case 2: [x, repeat(sep, x), optional(sep)] — trailing allowed.
-	if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
-		return { type: REPEAT1, content: elem, separator: sep, trailing: true };
-	}
-
-	// Case 3: [sep, x, repeat(sep, x)] — leading separator.
-	if (
-		members.length === 3 &&
-		repeatIdx === 2 &&
-		members[0]!.type === STRING &&
-		members[0]!.value === sep &&
-		matchesElem(members[1]!)
-	) {
-		return { type: REPEAT1, content: elem, separator: sep, leading: true };
-	}
-
-	return null;
-}
-
-/**
- * Locate the unique repeat-with-separator member inside a seq's member list.
- *
- * @param members - Normalized rule array from the enclosing seq.
- * @returns Index of the matching repeat node, or `-1` if none or more than one found.
- * @remarks
- * The commaSep1 shape has exactly one repeat node in the group; zero or
- * more than one means this isn't a commaSep shape.
- */
-function findRepeatWithSeparator(members: Rule[]): number {
-	return members.findIndex((m) => m.type === REPEAT && m.separator !== undefined);
-}
 
 /**
  * Choice combinator — matches exactly one of the members.

@@ -908,6 +908,29 @@ function extractNonEmpty(rule) {
   return null;
 }
 
+// packages/codegen/src/dsl/list-patterns.ts
+function firstStringOfChoice(r) {
+  if (!typeEq(r.type, "choice")) return null;
+  const members = r.members ?? [];
+  const lit = members.find((m) => typeEq(m.type, "string"));
+  return lit ? lit.value : null;
+}
+function detectRepeatSeparator(resolved) {
+  if (!typeEq(resolved.type, "seq")) return null;
+  const members = resolved.members;
+  if (!members || members.length !== 2) return null;
+  const [first, second] = members;
+  const firstStr = typeEq(first.type, "string") ? first.value : null;
+  const secondStr = typeEq(second.type, "string") ? second.value : null;
+  if (firstStr !== null && secondStr === null) return { content: second, separator: firstStr };
+  if (secondStr !== null && firstStr === null) return { content: first, separator: secondStr, trailing: true };
+  const firstSepChoice = typeEq(first.type, "choice") ? firstStringOfChoice(first) : null;
+  const secondSepChoice = typeEq(second.type, "choice") ? firstStringOfChoice(second) : null;
+  if (firstSepChoice !== null && secondStr === null) return { content: second, separator: firstSepChoice };
+  if (secondSepChoice !== null && firstStr === null) return { content: first, separator: secondSepChoice, trailing: true };
+  return null;
+}
+
 // packages/codegen/src/dsl/group-classify.ts
 function ruleMatchesEmpty(rule) {
   if (!rule || typeof rule !== "object") return false;
@@ -1113,47 +1136,31 @@ function harvestSupertypeNames(result) {
   }
   return names;
 }
-function detectCase(referenceRule) {
-  const t = referenceRule?.type ?? "";
-  return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
-}
-function makeField(referenceRule, name, content) {
-  propagateFieldName(content, name);
-  return {
-    type: detectCase(referenceRule) === "upper" ? "FIELD" : "field",
-    name,
-    content,
-    source: "enriched"
-  };
-}
-function propagateFieldName(rule, fieldName) {
-  if (!rule || typeof rule !== "object") return;
-  const r = rule;
-  if (r._ref && r._ref.fieldName === void 0) {
-    r._ref.fieldName = fieldName;
+function nativeRuleFn(...names) {
+  const g = globalThis;
+  for (const name of names) {
+    if (typeof g[name] === "function") return g[name];
   }
-  const t = r.type;
-  if (t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE") {
-    if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName);
-    return;
-  }
-  if (t === "optional" || t === "OPTIONAL" || t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1" || t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC") {
-    if (r.content !== void 0) propagateFieldName(r.content, fieldName);
-    return;
-  }
+  throw new Error(
+    `enrich: no global ${names.join("()/")}() \u2014 enrich must run inside a DSL runtime (sittir evaluate.ts or tree-sitter CLI; tests inject via _test-helpers.ts)`
+  );
 }
-function makeSymbol(referenceRule, name) {
-  return {
-    type: detectCase(referenceRule) === "upper" ? "SYMBOL" : "symbol",
-    name
-  };
+function makeField(name, content) {
+  const field3 = nativeRuleFn("field");
+  const node = field3(name, content);
+  node.source = "enriched";
+  return node;
 }
-function registerKwRule(hostRule, stringLiteral, keyword, kwRules) {
+function makeSymbol(name) {
+  const symbol = nativeRuleFn("symbol", "sym");
+  return symbol(name);
+}
+function registerKwRule(stringLiteral, keyword, kwRules) {
   const hiddenName = `_kw_${keyword}`;
   if (!(hiddenName in kwRules)) {
     kwRules[hiddenName] = stringLiteral;
   }
-  return makeSymbol(hostRule, hiddenName);
+  return makeSymbol(hiddenName);
 }
 function normalizeMember(m) {
   if (typeof m === "string") return { type: "STRING", value: m };
@@ -1339,7 +1346,7 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     }
     existing.add(fieldName);
     changed = true;
-    const fieldNode = makeField(cursor, fieldName, t.symbolRule);
+    const fieldNode = makeField(fieldName, t.symbolRule);
     return t.wrap(fieldNode);
   });
   const combinedKindCounts = new Map(directKindCounts);
@@ -1422,7 +1429,7 @@ function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, ou
     }
     innerExisting.add(fieldName);
     innerChanged = true;
-    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    const fieldNode = makeField(fieldName, t.symbolRule);
     return t.wrap(fieldNode);
   });
   if (!innerChanged) return null;
@@ -1485,7 +1492,7 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
     }
     existing.add(fieldName);
     changed = true;
-    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    const fieldNode = makeField(fieldName, t.symbolRule);
     return t.wrap(fieldNode);
   });
   if (!changed) return rule;
@@ -1668,8 +1675,8 @@ function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules)
     return null;
   }
   claimed.add(fieldName);
-  const symbolRef = registerKwRule(optionalRule, inner, fieldName, kwRules);
-  const fieldNode = makeField(optionalRule, fieldName, symbolRef);
+  const symbolRef = registerKwRule(inner, fieldName, kwRules);
+  const fieldNode = makeField(fieldName, symbolRef);
   return rebuildOptional(optionalRule, fieldNode);
 }
 function rebuildOptional(optionalRule, newInner) {
@@ -1728,10 +1735,9 @@ function listSeparatorOfOptionalSeq(rule) {
     const sepAttr = m.separator;
     if (typeof sepAttr === "string") return sepAttr;
     const content = m.content;
-    if (content && isSeqType(content.type)) {
-      const cm = content.members;
-      const first = Array.isArray(cm) && cm[0] ? normalizeMember(cm[0]) : null;
-      if (first && isStringType(first.type) && typeof first.value === "string") return first.value;
+    if (content) {
+      const detected = detectRepeatSeparator(content);
+      if (detected) return detected.separator;
     }
   }
   return null;
@@ -1802,7 +1808,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       if (names !== null) {
         visibleGroupHiddenNames.add(names.hiddenName);
         const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
-        const aliasRule = makeVisibleGroupAlias(rule, symbolRef, names.visibleName);
+        const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
         if (peeled.form === "optional") {
           return rebuildOptional(rule, aliasRule);
         } else {
@@ -1917,14 +1923,12 @@ function makeGroupLiftSymbol(referenceRule, name) {
     metadata: { source: "enrich" }
   };
 }
-function makeVisibleGroupAlias(referenceRule, symbolRef, name) {
-  return {
-    type: detectCase(referenceRule) === "upper" ? "ALIAS" : "alias",
-    content: symbolRef,
-    named: true,
-    value: name,
-    metadata: { source: "enrich" }
-  };
+function makeVisibleGroupAlias(symbolRef, name) {
+  const aliasFn = nativeRuleFn("alias");
+  const symbol = nativeRuleFn("symbol", "sym");
+  const node = aliasFn(symbolRef, symbol(name));
+  node.metadata = { source: "enrich" };
+  return node;
 }
 
 // packages/codegen/src/dsl/wire/wire.ts

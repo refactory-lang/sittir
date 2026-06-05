@@ -89,6 +89,26 @@ Net: delete the `structural` flag + first-arm fallback; one naming rule (`conten
 
 ---
 
+### §separator-trailing note — `optional(sep)` → static `trailing` loses per-instance presence on render (2026-06-05 followup; size with PR-O `separator-canonical`)
+
+Surfaced relocating the separator-lift to a `link` pass (branch `pr-n-separator-lift-to-link`). The lift is a clean no-op over every constructor-lifted form, but in `link` it also reaches the **enrich-injected** `_argument_list_optional1` group — which the evaluate `seq()`/`repeat()` constructors structurally never touch (enrich injects it as a raw rule object *after* construction). Lifting it to the canonical `repeat1{ separator:",", trailing:true }` regressed python deep-AST **−2**. Confirmed via `tool probe-kind --grammar python --kind argument_list --reparse`:
+
+| source | rendered | result |
+|---|---|---|
+| `f(x, y)`  | `(x,y)`  | ✓ reparses clean |
+| `f(x, y,)` | `(x,y)`  | ✗ **trailing comma dropped** → reparse loses the `,` node → AST mismatch |
+
+**Root.** The lift folds a trailing `optional(sep)` **member** into the static **`trailing: true`** attribute. As a member, the trailing separator is renderable per-instance (the walker emits it iff the child is present). As an attribute, `trailing: true` is type-level only — "a trailing sep is *permitted*" — and carries no per-instance "did *this* node have one"; render therefore falls back to never-emit and drops every trailing separator. Lossless for the parser, lossy for render.
+
+**The model split** separator-normalization must make (lands with PR-O `separator-canonical` / `2026-05-30-separator-canonical-design.md`):
+
+1. **Mandatory trailing** (the list always ends with a separator) → static `trailing: true` is honest; render **always emits** it. (This is the "if `trailing` is static, render should always print it" contract — correct *here*.)
+2. **Optional trailing** (`optional(sep)`, may be absent per-instance — `argument_list`, ts `object_type`) → a static flag is the WRONG shape. `trailing: true` ≠ "optional trailing"; conflating them is the bug. Needs a **per-instance `trailing_sep` signal** transported read → wrap → render (the pending `render-module` hardcoded-trailing gap; see [[project_object_type_rewrite_and_native_list_gaps]]). Always-emit does NOT fix it — it would just flip the breakage onto the no-trailing instances.
+
+**Until this lands**, the `link` separator-lift must stay **gate-neutral**: leave enrich-injected groups (whose trailing is optional) **un-lifted**, so the trailing separator stays a renderable `optional(sep)` member. The relocation mechanism (`compiler/lift-separators.ts`, idempotent over constructor-lifted forms; consumes the shared `dsl/list-patterns.ts` detectors) is already in place — only the *expanded coverage* of enrich groups waits on this. Also reconcile lift LOCATION: this note + the casing/lift memory put the lift in `link` (pre-push-down); PR-O's `separator-canonical` row says `applyWrapperDeletion` (the push-down itself) — pick one before PR-O executes.
+
+---
+
 ## Dependency graph + waves
 
 ```
