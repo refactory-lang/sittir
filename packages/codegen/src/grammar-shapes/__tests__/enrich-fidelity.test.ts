@@ -17,12 +17,29 @@
  *   - break_expression : Shape 2 of supertype `_expression` LEFT UNWRAPPED (the `_`-prefix gate)
  *   - closure_expression: optional('static'/'async'/'move') NOT wrapped (no `_marker` from enrich)
  */
-import { describe, it, expect, expectTypeOf } from 'vitest';
+import { describe, it, expect, expectTypeOf, afterAll } from 'vitest';
 import { createRequire } from 'node:module';
 import { enrich } from '../../dsl/enrich.ts';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';
 import type { EnrichRule } from '../enrich-type.ts';
 import type { GrammarNode } from '../grammar-json.ts';
+import { installFakeDsl, restoreFakeDsl } from '../../dsl/__tests__/_test-helpers.ts';
+
+// enrich's builders call the runtime-injected DSL constructors
+// (globalThis.field/symbol/alias). This test feeds enrich the raw
+// tree-sitter grammar.json, which is UPPERCASE, and asserts UPPERCASE output —
+// so inject UPPERCASE constructors (the lowercase `installFakeDsl` defaults
+// would make enrich emit lowercase and mismatch the uppercase input). Must run
+// before the module-level `runEnrich` below.
+installFakeDsl({
+	field: (name: string, content: unknown) => ({ type: 'FIELD', name, content }),
+	symbol: (name: string) => ({ type: 'SYMBOL', name }),
+	alias: (rule: unknown, value: unknown) =>
+		typeof value === 'string'
+			? { type: 'ALIAS', content: rule, named: false, value }
+			: { type: 'ALIAS', content: rule, named: true, value: (value as { name: string }).name }
+});
+afterAll(() => restoreFakeDsl());
 
 const require = createRequire(import.meta.url);
 const gj = require('../../../../rust/node_modules/tree-sitter-rust/src/grammar.json') as {

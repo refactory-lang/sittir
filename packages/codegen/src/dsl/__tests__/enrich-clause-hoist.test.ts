@@ -11,9 +11,16 @@
  *   • else (inline-unsafe: bare-choice slot OR ≥2 slots) → leave inline for applyAutoGroups
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
 import type { Rule } from '../../compiler/rule.ts';
+import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+
+// enrich's builders call the runtime-injected DSL constructors
+// (globalThis.field/symbol/alias); install the fakes for these raw enrich()
+// calls so construction resolves to the sittir-lowercase shapes.
+beforeAll(() => installFakeDsl());
+afterAll(() => restoreFakeDsl());
 
 function mkGrammar(rules: Record<string, unknown>) {
 	return { grammar: { name: 'test', rules } };

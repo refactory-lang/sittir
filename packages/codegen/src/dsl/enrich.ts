@@ -343,79 +343,45 @@ function harvestSupertypeNames(result: unknown): Set<string> {
 // Direct-mutation builders
 // ---------------------------------------------------------------------------
 
-function detectCase(referenceRule: unknown): 'upper' | 'lower' {
-	const t = (referenceRule as { type?: string })?.type ?? '';
-	return t.length > 0 && t === t.toUpperCase() ? 'upper' : 'lower';
+/** Fetch a runtime-injected DSL rule constructor from `globalThis`, or throw.
+ *  enrich runs inside `grammar(enrich(base), …)`, which executes under an
+ *  injected DSL runtime — sittir's lowercase constructors during evaluate.ts,
+ *  tree-sitter's uppercase ones during CLI generation. Calling the injected fn
+ *  directly produces a rule in the active runtime's case with no hand-rolled
+ *  detection, and inherits the runtime's construction semantics (content
+ *  normalization, `_ref.fieldName` stamping). A missing global means enrich
+ *  was called outside any runtime — a unit test that forgot `installFakeDsl()`.
+ *
+ *  Accepts alternate names because the two runtimes don't agree on every
+ *  constructor's name: the symbol constructor is `symbol` under sittir but
+ *  `sym` under tree-sitter's CLI. The first name found wins. */
+function nativeRuleFn<F>(...names: string[]): F {
+	const g = globalThis as Record<string, unknown>;
+	for (const name of names) {
+		if (typeof g[name] === 'function') return g[name] as F;
+	}
+	throw new Error(
+		`enrich: no global ${names.join('()/')}() — enrich must run inside a DSL runtime ` +
+			`(sittir evaluate.ts or tree-sitter CLI; tests inject via _test-helpers.ts)`
+	);
 }
 
-function makeField(referenceRule: unknown, name: string, content: unknown): Rule {
-	// Propagate `fieldName` onto inner symbol `_ref` metadata, mirroring
-	// the runtime `field()` helper in evaluate.ts. Without this, an
-	// enrich-promoted FIELD wraps the same SYMBOL as an override-promoted
-	// FIELD but the inner symbol's `_ref.fieldName` stays unset — and
-	// downstream passes (link's symbol-reference graph, factory emit,
-	// from-validator's named-children comparison) treat the two
-	// structurally-identical FIELDs differently. Same propagation rules:
-	// skip when fieldName already set, stop at inner field/alias
-	// boundaries.
-	propagateFieldName(content, name);
-	return {
-		type: detectCase(referenceRule) === 'upper' ? 'FIELD' : 'field',
-		name,
-		content,
-		source: 'enriched'
-	} as unknown as Rule;
+/** Wrap `content` in a FIELD via the injected `field()` constructor. The
+ *  runtime fn normalizes the content and stamps `fieldName` on inner symbol
+ *  refs (subsuming the former hand-rolled `propagateFieldName`); we add
+ *  enrich's `source` marker so downstream passes recognize the promotion as
+ *  enrich-originated rather than author-written. */
+function makeField(name: string, content: unknown): Rule {
+	const field = nativeRuleFn<(n: string, c: unknown) => Rule>('field');
+	const node = field(name, content);
+	(node as { source?: string }).source = 'enriched';
+	return node;
 }
 
-/** @internal — walk symbol refs inside `content` and stamp `fieldName`
- *  on each ref whose fieldName is unset. Mirrors evaluate.ts's
- *  `walkRefs` traversal: descends through seq/choice/optional/repeat/
- *  repeat1/prec wrappers; stops at nested field/alias boundaries
- *  (those own their own field name). No-op when `_ref` is absent
- *  (e.g. enrich running before evaluate has annotated refs). */
-function propagateFieldName(rule: unknown, fieldName: string): void {
-	if (!rule || typeof rule !== 'object') return;
-	const r = rule as {
-		type?: string;
-		_ref?: { fieldName?: string };
-		content?: unknown;
-		members?: unknown[];
-	};
-	if (r._ref && r._ref.fieldName === undefined) {
-		r._ref.fieldName = fieldName;
-	}
-	const t = r.type;
-	if (t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE') {
-		if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName);
-		return;
-	}
-	if (
-		t === 'optional' ||
-		t === 'OPTIONAL' ||
-		t === 'repeat' ||
-		t === 'REPEAT' ||
-		t === 'repeat1' ||
-		t === 'REPEAT1' ||
-		t === 'prec' ||
-		t === 'PREC' ||
-		t === 'prec_left' ||
-		t === 'PREC_LEFT' ||
-		t === 'prec_right' ||
-		t === 'PREC_RIGHT' ||
-		t === 'prec_dynamic' ||
-		t === 'PREC_DYNAMIC'
-	) {
-		if (r.content !== undefined) propagateFieldName(r.content, fieldName);
-		return;
-	}
-	// field / alias / token / symbol / string / pattern / blank — stop.
-}
-
-function makeSymbol(referenceRule: unknown, name: string): Rule {
-	return {
-		type: detectCase(referenceRule) === 'upper' ? 'SYMBOL' : 'symbol',
-		name
-	} as unknown as Rule;
+function makeSymbol(name: string): Rule {
+	// `symbol` (sittir) / `sym` (tree-sitter CLI) — same constructor, different name.
+	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
+	return symbol(name);
 }
 
 /**
@@ -423,15 +389,15 @@ function makeSymbol(referenceRule: unknown, name: string): Rule {
  * `prec.left(1, stringLiteral)`. Idempotent — multiple positions that
  * promote the same keyword register the same body once.
  *
- * Returns a SYMBOL reference (matching the host rule's case) that the
- * caller embeds inside the new FIELD wrapper.
+ * Returns a SYMBOL reference (in the active runtime's case, via the injected
+ * `symbol()` constructor) that the caller embeds inside the new FIELD wrapper.
  */
-function registerKwRule(hostRule: Rule, stringLiteral: Rule, keyword: string, kwRules: Record<string, Rule>): Rule {
+function registerKwRule(stringLiteral: Rule, keyword: string, kwRules: Record<string, Rule>): Rule {
 	const hiddenName = `_kw_${keyword}`;
 	if (!(hiddenName in kwRules)) {
 		kwRules[hiddenName] = stringLiteral;
 	}
-	return makeSymbol(hostRule, hiddenName);
+	return makeSymbol(hiddenName);
 }
 
 // ---------------------------------------------------------------------------
@@ -714,7 +680,7 @@ function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: Readon
 		}
 		existing.add(fieldName);
 		changed = true;
-		const fieldNode = makeField(cursor, fieldName, t.symbolRule);
+		const fieldNode = makeField(fieldName, t.symbolRule);
 		return t.wrap(fieldNode);
 	});
 	// Second pass: descend into repeat/repeat1 members whose content is a
@@ -853,7 +819,7 @@ function tryPromoteInRepeatMember(
 		}
 		innerExisting.add(fieldName);
 		innerChanged = true;
-		const fieldNode = makeField(inner, fieldName, t.symbolRule);
+		const fieldNode = makeField(fieldName, t.symbolRule);
 		return t.wrap(fieldNode);
 	});
 
@@ -946,7 +912,7 @@ function tryPromoteInRepeatSeq(
 		}
 		existing.add(fieldName);
 		changed = true;
-		const fieldNode = makeField(inner, fieldName, t.symbolRule);
+		const fieldNode = makeField(fieldName, t.symbolRule);
 		return t.wrap(fieldNode);
 	});
 	if (!changed) return rule;
@@ -1052,8 +1018,8 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 // multiplicity ('optional' / 'array' / 'nonEmptyArray') and `nonterminal:
 // true` on the wrapper node itself AND propagate down through any
 // transparent wrappers (field/alias/token/prec) in the content path so
-// the inner leaf carries the multiplicity too. Mirrors how
-// `propagateFieldName` (used by enrich-promoted field wrappers) stamps
+// the inner leaf carries the multiplicity too. Mirrors how the injected
+// `field()` constructor (used by enrich-promoted field wrappers) stamps
 // fieldName on inner refs.
 //
 // The dual stamping (wrapper-self + inner-leaf) ensures that both
@@ -1241,8 +1207,8 @@ function tryPromoteInnerKeyword(
 		return null;
 	}
 	claimed.add(fieldName);
-	const symbolRef = registerKwRule(optionalRule, inner, fieldName, kwRules);
-	const fieldNode = makeField(optionalRule, fieldName, symbolRef);
+	const symbolRef = registerKwRule(inner, fieldName, kwRules);
+	const fieldNode = makeField(fieldName, symbolRef);
 	return rebuildOptional(optionalRule, fieldNode);
 }
 
@@ -1562,7 +1528,7 @@ function applyClauseHoist(
 				// Pass 2: wrap in a visible alias so the inline-unsafe group surfaces
 				// as a clean CST node (`<name>`). The alias carries metadata.source so
 				// transform-path travels through it and link mints the kind.
-				const aliasRule = makeVisibleGroupAlias(rule, symbolRef, names.visibleName);
+				const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
 				if (peeled.form === 'optional') {
 					return rebuildOptional(rule, aliasRule);
 				} else {
@@ -1789,16 +1755,19 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
  *   it for authored path-patches, and link's `mintContentAliasKinds` keys on it
  *   to resolve THROUGH the symbol and register `<name> = <hidden body>` as the
  *   IR rule.
- * - Case mirrors the wrapper (`detectCase`): a CHOICE/OPTIONAL wrapper → ALIAS;
- *   lowercase → alias.
+ * - Case is the active runtime's: built via the injected `alias()`/`symbol()`
+ *   constructors, so sittir evaluate yields lowercase, tree-sitter CLI uppercase.
  */
-function makeVisibleGroupAlias(referenceRule: Rule, symbolRef: Rule, name: string): Rule {
-	return {
-		type: detectCase(referenceRule) === 'upper' ? 'ALIAS' : 'alias',
-		content: symbolRef,
-		named: true,
-		value: name,
-		metadata: { source: 'enrich' }
-	} as unknown as Rule;
+function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
+	const aliasFn = nativeRuleFn<(r: unknown, v: unknown) => Rule>('alias');
+	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
+	// Pass a SYMBOL value so the runtime constructor sets named:true, value=name
+	// (a bare-string value would yield named:false). `metadata.source: 'enrich'`
+	// is REQUIRED — transform-path travels through it and link's
+	// `mintContentAliasKinds` keys on it — and the runtime alias() doesn't add
+	// it, so stamp it on the cased result.
+	const node = aliasFn(symbolRef, symbol(name));
+	(node as { metadata?: { source?: string } }).metadata = { source: 'enrich' };
+	return node;
 }
 
