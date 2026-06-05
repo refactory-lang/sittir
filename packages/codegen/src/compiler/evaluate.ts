@@ -24,8 +24,6 @@ import type {
 	SymbolRef
 } from './rule.ts';
 import { normalizeEnumMembers } from './rule.ts';
-import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
-import { liftCommaSep, absorbTrailingSeparator } from './lift-separators.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
@@ -81,26 +79,16 @@ export function normalize(input: Input): Rule {
  * for positional hints.
  *
  * @remarks
- * commaSep1 patterns — `seq(x, repeat(seq(sep, x)))` and variants — are
- * lifted to a single `repeat1` node with a clean `separator` marker so
- * downstream passes see a canonical shape instead of five to six nested rules.
- *
- * @remarks
- * After liftCommaSep runs, trailing-sep optionals of the form
- * `seq('(', repeat1(x, sep), optional(sep), ')')` are absorbed into the
- * repeat1's `trailing: true` flag so no phantom `optional(',')` survives
- * into simplifyRule.
+ * The separated-list LIFT — commaSep1 (`seq(x, repeat(seq(sep, x)))`) →
+ * `repeat1{separator}` and trailing-separator absorption — is NOT performed
+ * here. It runs once in the `link` pass (compiler/lift-separators.ts), after
+ * wire and enrich-injection, so author callbacks see the un-lifted shape and
+ * every separated list — authored or synthesized — is lifted from one place.
  */
 export function seq(...members: Input[]): Rule {
 	const normalized = members.map(normalize);
 
 	if (normalized.length === 1) return normalized[0]!;
-
-	const lifted = liftCommaSep(normalized);
-	if (lifted) return lifted;
-
-	const absorbed = absorbTrailingSeparator(normalized);
-	if (absorbed) return { type: SEQ, members: absorbed };
 
 	return { type: SEQ, members: normalized };
 }
@@ -273,26 +261,10 @@ export function repeat(content: Input): Rule {
 		walkRefs(inner, (ref) => {
 			ref.repeated = true;
 		});
-		const sep = detectRepeatSeparator(inner);
-		if (sep) {
-			return {
-				type: REPEAT,
-				content: sep.content,
-				separator: sep.separator,
-				trailing: sep.trailing
-			};
-		}
 		return { type: REPEAT, content: inner };
 	}
-	const sep = detectRepeatSeparator(resolved);
-	if (sep) {
-		return {
-			type: REPEAT,
-			content: sep.content,
-			separator: sep.separator,
-			trailing: sep.trailing
-		};
-	}
+	// The separator LIFT (repeat(seq(sep, x)) → repeat{separator}) runs in the
+	// link pass, not here — see seq() and compiler/lift-separators.ts.
 	return { type: REPEAT, content: resolved };
 }
 
@@ -316,15 +288,8 @@ export function repeat1(content: Input): Rule {
 		ref.repeated = true;
 	});
 	if (resolved.type === REPEAT1 && !resolved.separator) return resolved;
-	const sep = detectRepeatSeparator(resolved);
-	if (sep) {
-		return {
-			type: REPEAT1,
-			content: sep.content,
-			separator: sep.separator,
-			trailing: sep.trailing
-		};
-	}
+	// The separator LIFT runs in the link pass — see seq() and
+	// compiler/lift-separators.ts.
 	return { type: REPEAT1, content: resolved };
 }
 

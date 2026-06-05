@@ -16,7 +16,7 @@
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
 // Rule promotions:   72  (72 applied, 0 held)
-// Repeated shapes:   9  (advisory — suggested supertypes/groups)
+// Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
 // suggestedTransforms — drop entries into your overrides.ts
@@ -119,9 +119,6 @@ export const suggestedRules = {
 
   // parents: _for_header_lhs, assignment_expression
   _expression: $ => choice($._lhs_expression, $.parenthesized_expression),
-
-  // parents: array_pattern, pair_pattern
-  _pattern: $ => choice($.assignment_pattern, $.pattern),
 
   // parents: _type_query_call_expression, _type_query_instantiation_expression
   _shared_4: $ => choice($.identifier, $.import, $.member_expression, $.subscript_expression),
@@ -327,8 +324,6 @@ export const repeatedShapes: readonly RepeatedShape[] = [
   { suggestedName: "_shared_2", kinds: ["identifier","member_expression"], parents: ["__jsx_start_opening_element_optional1","decorator_call_expression","decorator_member_expression","nested_identifier"], shape: "supertype" },
   { suggestedName: "_property_identifier", kinds: ["private_property_identifier","property_identifier"], parents: ["_type_query_member_expression","_type_query_member_expression_in_type_annotation","member_expression"], shape: "supertype" },
   { suggestedName: "_expression", kinds: ["_lhs_expression","parenthesized_expression"], parents: ["_for_header_lhs","assignment_expression"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["expression","spread_element"], parents: ["arguments","array"], shape: "supertype" },
-  { suggestedName: "_pattern", kinds: ["assignment_pattern","pattern"], parents: ["array_pattern","pair_pattern"], shape: "supertype" },
   { suggestedName: "_identifier", kinds: ["identifier","nested_identifier"], parents: ["import_alias","nested_type_identifier"], shape: "supertype" },
   { suggestedName: "_shared_4", kinds: ["identifier","import","member_expression","subscript_expression"], parents: ["_type_query_call_expression","_type_query_instantiation_expression"], shape: "supertype" },
   { suggestedName: "_shared_5", kinds: ["call_expression","identifier","member_expression","subscript_expression","this"], parents: ["_type_query_member_expression","_type_query_subscript_expression"], shape: "supertype" },

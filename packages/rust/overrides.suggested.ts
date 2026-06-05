@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  3  (0 applied, 3 held)
+// Field inferences:  5  (0 applied, 5 held)
 // Rule promotions:   71  (71 applied, 0 held)
 // Repeated shapes:   6  (advisory — suggested supertypes/groups)
 
@@ -25,17 +25,23 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
+  // _closure_parameters_optional1: 1 inferred field(s)
+  // [held] _closure_parameters_optional1 field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // _slice_pattern_optional1: 1 inferred field(s)
+  // [held] _slice_pattern_optional1 field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // _tuple_pattern_optional1: 1 inferred field(s)
+  // [held] _tuple_pattern_optional1 field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // _tuple_struct_pattern_optional1: 1 inferred field(s)
+  // [held] _tuple_struct_pattern_optional1 field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
   // _type_argument: 1 inferred field(s)
   _type_argument: {
       // [held] 100% agreement, 5 parents
       1: field("bounds"),  // $.trait_bounds
   },
-
-  // slice_pattern: 1 inferred field(s)
-  // [held] slice_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // tuple_struct_pattern: 1 inferred field(s)
-  // [held] tuple_struct_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
 };
 
@@ -280,8 +286,10 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "_closure_parameters_optional1", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "_slice_pattern_optional1", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "_tuple_pattern_optional1", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
+  { kind: "_tuple_struct_pattern_optional1", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "_type_argument", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
 ];
 
