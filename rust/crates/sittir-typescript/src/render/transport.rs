@@ -1471,7 +1471,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     CloseParenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: comma (COMMA2)
-                6 => Ok(AnyTransport::Comma2(
+                14 => Ok(AnyTransport::Comma2(
                     Comma2Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: const (CONST)
@@ -1503,11 +1503,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     NamespaceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: var (VAR)
-                14 => Ok(AnyTransport::Var(
+                13 => Ok(AnyTransport::Var(
                     VarTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: from (FROM)
-                11 => Ok(AnyTransport::From(
+                10 => Ok(AnyTransport::From(
                     FromTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: readonly (READONLY)
@@ -1679,7 +1679,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: } (CLOSE_BRACE)
-                7 => Ok(AnyTransport::CloseBrace(
+                6 => Ok(AnyTransport::CloseBrace(
                     CloseBraceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: new (NEW)
@@ -1803,11 +1803,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     IsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: typeof (TYPEOF)
-                9 => Ok(AnyTransport::Typeof(
+                8 => Ok(AnyTransport::Typeof(
                     TypeofTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: with (WITH)
-                12 => Ok(AnyTransport::With(
+                11 => Ok(AnyTransport::With(
                     WithTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: yield (YIELD)
@@ -15337,10 +15337,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportAttributeObjectTransportSl
     ) -> ::napi::Result<Self> {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             return match kind_id {
-                12 => Ok(Self::ImportAttributeObject(
+                11 => Ok(Self::ImportAttributeObject(
                     ImportAttributeObjectEnum::from_napi_value(env, napi_val)?
                 )),
-                13 => Ok(Self::ImportAttributeObject(
+                12 => Ok(Self::ImportAttributeObject(
                     ImportAttributeObjectEnum::from_napi_value(env, napi_val)?
                 )),
                 213 => Ok(Self::Object(
@@ -15357,10 +15357,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportAttributeObjectTransportSl
             ::napi::Error::from_reason("$type property missing in ImportAttributeObjectTransportSlot")
         )?;
         match kind_id {
-                12 => Ok(Self::ImportAttributeObject(
+                11 => Ok(Self::ImportAttributeObject(
                     ImportAttributeObjectEnum::from_napi_value(env, napi_val)?
                 )),
-                13 => Ok(Self::ImportAttributeObject(
+                12 => Ok(Self::ImportAttributeObject(
                     ImportAttributeObjectEnum::from_napi_value(env, napi_val)?
                 )),
                 213 => Ok(Self::Object(
@@ -21990,7 +21990,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportSpecifierExportKindEnum {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             match kind_id {
                 307 => return Ok(Self::TypeKw), // "type"
-                9 => return Ok(Self::TypeofKw), // "typeof"
+                8 => return Ok(Self::TypeofKw), // "typeof"
                 _ => {}
             }
         }
@@ -22005,7 +22005,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportSpecifierExportKindEnum {
         if let Some(kind_id) = obj.get::<u16>("$type")? {
             match kind_id {
                 307 => return Ok(Self::TypeKw), // "type"
-                9 => return Ok(Self::TypeofKw), // "typeof"
+                8 => return Ok(Self::TypeofKw), // "typeof"
                 _ => {}
             }
         }
@@ -23003,8 +23003,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportAttributeObjectEnum {
     ) -> ::napi::Result<Self> {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             match kind_id {
-                12 => return Ok(Self::WithKw), // "with"
-                13 => return Ok(Self::Assert), // "assert"
+                11 => return Ok(Self::WithKw), // "with"
+                12 => return Ok(Self::Assert), // "assert"
                 _ => {}
             }
         }
@@ -23018,8 +23018,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportAttributeObjectEnum {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         if let Some(kind_id) = obj.get::<u16>("$type")? {
             match kind_id {
-                12 => return Ok(Self::WithKw), // "with"
-                13 => return Ok(Self::Assert), // "assert"
+                11 => return Ok(Self::WithKw), // "with"
+                12 => return Ok(Self::Assert), // "assert"
                 _ => {}
             }
         }
@@ -25247,7 +25247,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeClosingEnum {
     ) -> ::napi::Result<Self> {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             match kind_id {
-                7 => return Ok(Self::RBrace), // "}"
+                6 => return Ok(Self::RBrace), // "}"
                 153 => return Ok(Self::V7c_7d), // "|}"
                 _ => {}
             }
@@ -25262,7 +25262,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeClosingEnum {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         if let Some(kind_id) = obj.get::<u16>("$type")? {
             match kind_id {
-                7 => return Ok(Self::RBrace), // "}"
+                6 => return Ok(Self::RBrace), // "}"
                 153 => return Ok(Self::V7c_7d), // "|}"
                 _ => {}
             }
@@ -27444,7 +27444,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnaryExpressionOperatorEnum {
                 91 => return Ok(Self::Tilde), // "~"
                 77 => return Ok(Self::Minus), // "-"
                 76 => return Ok(Self::Plus), // "+"
-                9 => return Ok(Self::TypeofKw), // "typeof"
+                8 => return Ok(Self::TypeofKw), // "typeof"
                 92 => return Ok(Self::VoidKw), // "void"
                 93 => return Ok(Self::DeleteKw), // "delete"
                 _ => {}
@@ -27469,7 +27469,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnaryExpressionOperatorEnum {
                 91 => return Ok(Self::Tilde), // "~"
                 77 => return Ok(Self::Minus), // "-"
                 76 => return Ok(Self::Plus), // "+"
-                9 => return Ok(Self::TypeofKw), // "typeof"
+                8 => return Ok(Self::TypeofKw), // "typeof"
                 92 => return Ok(Self::VoidKw), // "void"
                 93 => return Ok(Self::DeleteKw), // "delete"
                 _ => {}
@@ -62834,7 +62834,7 @@ fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<Trans
 fn transport_to_node_comma2(transport: Comma2Transport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(6) /* "comma" */,
+        TransportKindId(14) /* "comma" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -62851,7 +62851,7 @@ fn transport_to_node_comma2(transport: Comma2Transport) -> Result<TransportNodeD
 fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(6) /* "," */,
+        TransportKindId(14) /* "," */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -62987,7 +62987,7 @@ fn transport_to_node_namespace(transport: NamespaceTransport) -> Result<Transpor
 fn transport_to_node_var(transport: VarTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(14) /* "var" */,
+        TransportKindId(13) /* "var" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -63004,7 +63004,7 @@ fn transport_to_node_var(transport: VarTransport) -> Result<TransportNodeData, :
 fn transport_to_node_from(transport: FromTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(11) /* "from" */,
+        TransportKindId(10) /* "from" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -63786,7 +63786,7 @@ fn transport_to_node_semi(transport: SemiTransport) -> Result<TransportNodeData,
 fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(7) /* "}" */,
+        TransportKindId(6) /* "}" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -64398,7 +64398,7 @@ fn transport_to_node_is(transport: IsTransport) -> Result<TransportNodeData, ::a
 fn transport_to_node_typeof(transport: TypeofTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(9) /* "typeof" */,
+        TransportKindId(8) /* "typeof" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -64432,7 +64432,7 @@ fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData,
 fn transport_to_node_with(transport: WithTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(12) /* "with" */,
+        TransportKindId(11) /* "with" */,
         transport.transport_source,
         transport.transport_named,
         true,

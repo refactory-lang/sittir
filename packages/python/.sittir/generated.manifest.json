@@ -1,13 +1,13 @@
 {
   "grammar": "python",
-  "source_hash": "730213a6b2a62fc3a738f8edbda31d5f5887415f566c5b56f36f782c2e84f37b",
+  "source_hash": "1bf730f7949ef3fc8a4b2bffc8f113c64f7667e12e8ae327d7c126f377bb7959",
   "files": {
-    "packages/python/.sittir/grammar.js": "98effb8b09ed81ad08c3c6c7861b833b46af54c45c0aefa76bb477c9810a68c2",
+    "packages/python/.sittir/grammar.js": "11096f4512d77dc5760601024cbbf5a09b413bda323186ee13ea9547ef0a9a55",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
-    "packages/python/.sittir/parser.wasm": "5aa4eb7d73b931f357a370a424f0f7e7d7981e3a87cdb6889f19ac696436af2c",
-    "packages/python/.sittir/src/grammar.json": "169a782f9cbb60600a66dc3687a4cad28edd02c236aecf55c3ded7465f1b1f62",
+    "packages/python/.sittir/parser.wasm": "d9d9cca8a811a769943bf8bea7ff1cd1196d8c145f580841359052861228742e",
+    "packages/python/.sittir/src/grammar.json": "b5dfffd54bf494f6af989f6f853e694ccdd69a54417a9c56751407cf3364dc2c",
     "packages/python/.sittir/src/node-types.json": "121c3b6df07c259bf2ccc0b0959a9064d5f9e063ea97711d239cde175cac0a9d",
-    "packages/python/.sittir/src/parser.c": "b21e5293d03b76a8411dcbe7c1cff8797aa9912a6cff82cca11b8e6a48e8c8cf",
+    "packages/python/.sittir/src/parser.c": "7500ae66d387a9958e69c5c028a637519add1218af6bf2093132ac8ff97e9d7e",
     "packages/python/.sittir/src/scanner.c": "6db82134ac2d4c90a1a1475487a625cface02662ebda9b7478cad9c7147e9afe",
     "packages/python/.sittir/src/tree_sitter/alloc.h": "b29c1c9fb7cc82f58c84b376df1297d6e2737a1d655fd356db0859e3c29c2fea",
     "packages/python/.sittir/src/tree_sitter/array.h": "31e60a1bff6f715afacce03b5b70efe42b58371b4f9595dd4af52a577ff9608c",
@@ -278,6 +278,6 @@
     "rust/crates/sittir-python/templates/yield.jinja": "864c1b6eaf2e8558413c893cc1fb8e4cef6dc75000675a62d374a4c454685de4"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "0dab3f26f60cd318c43c1a179882bf89c643d73072902909fb69cc7037d9ed5a"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "67d0ed72120542bf241203cb9938cae96d55f986c1d77be28178294383e68f45"
   }
 }

@@ -1364,6 +1364,105 @@ function peelOptionalSeq(rule: Rule): {
 }
 
 /**
+ * @internal — extract the list separator string from an `optional(seq(...))`
+ * (or `CHOICE[seq,BLANK]`) whose seq body carries a separated-list repeat.
+ * Returns the separator literal (e.g. `","`) or null when the member is not an
+ * optional-seq containing a repeat.
+ *
+ * Handles both the raw tree-sitter form `repeat(seq(STRING sep, x))` (separator
+ * not yet lifted — enrich runs pre-evaluate) and an already-lifted
+ * `repeat(x, separator)`.
+ */
+function listSeparatorOfOptionalSeq(rule: Rule): string | null {
+	const peeled = peelOptionalSeq(rule);
+	if (peeled === null) return null;
+	const seqMembers = (peeled.seqBody as unknown as { members?: Rule[] }).members;
+	if (!Array.isArray(seqMembers)) return null;
+	for (const m of seqMembers) {
+		if (!isRepeatType((m as { type?: string }).type)) continue;
+		// Already-lifted separator attribute.
+		const sepAttr = (m as { separator?: unknown }).separator;
+		if (typeof sepAttr === 'string') return sepAttr;
+		// Raw form: repeat(seq(STRING sep, x)) — separator is the leading string.
+		const content = (m as { content?: Rule }).content;
+		if (content && isSeqType((content as { type?: string }).type)) {
+			const cm = (content as unknown as { members?: Rule[] }).members;
+			const first = Array.isArray(cm) && cm[0] ? normalizeMember(cm[0]) : null;
+			if (first && isStringType(first.type) && typeof first.value === 'string') return first.value;
+		}
+	}
+	return null;
+}
+
+/**
+ * @internal — if `rule` is `optional(STRING)` / `CHOICE[STRING,BLANK]`, return
+ * the string literal; else null. Recognizes a stranded trailing separator
+ * member. Returns null for `optional(seq(...))` (inner is not a bare string),
+ * so it never matches the list member itself.
+ */
+function optionalStringLiteral(rule: Rule): string | null {
+	const peeled = peelOptional(rule);
+	if (!peeled.isOptional) return null;
+	const innerN = normalizeMember(peeled.inner);
+	if (isStringType(innerN.type) && typeof innerN.value === 'string') return innerN.value;
+	return null;
+}
+
+/**
+ * @internal — fold a stranded trailing `optional(sep)` into the preceding
+ * `optional(seq(...))`'s body. Appends `trailingOptional` as the last seq
+ * member and rebuilds the optional wrapper (both `optional` and
+ * `CHOICE[seq,BLANK]` forms, via rebuildOptional).
+ */
+function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: Rule): Rule {
+	const peeled = peelOptionalSeq(optSeqRule)!;
+	const seqBody = peeled.seqBody;
+	const seqMembers = (seqBody as unknown as { members: Rule[] }).members;
+	const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] } as Rule;
+	return rebuildOptional(optSeqRule, newSeqBody);
+}
+
+/**
+ * @internal — pre-fold a seq's member list, pulling each separated-list's
+ * stranded trailing `optional(sep)` INTO the preceding `optional(seq(...
+ * repeat(sep) ...))`. Returns the rewritten member array, or null when nothing
+ * folds (reference-preserving when no fold applies).
+ *
+ * Trigger: adjacent `[ optional(seq containing repeat(sep S)) , optional(S) ]`
+ * where the trailing literal `S` equals the list's own separator. The
+ * separator-match guard prevents swallowing an unrelated trailing optional
+ * (e.g. `optional(';')` after a comma-separated list).
+ *
+ * Why here: tree-sitter authors write the canonical separated-list-with-trailing
+ * either as `optional(seq(list, optional(sep)))` (already one unit — handled) or
+ * as `seq(optional(list), optional(sep))` (python `argument_list`). This pass
+ * canonicalizes the second form into the first BEFORE the group-lift below, so
+ * the whole list (head + repeat + trailing) is captured as one group. Without
+ * it the trailing separator strands as a standalone member → wrapper-deletion
+ * makes it a phantom `nonterminal:true` slot, and for visible (inline-unsafe)
+ * groups it is permanently split from its list across the AssembledGroup
+ * boundary. evaluate's `liftCommaSep` then absorbs the folded `optional(sep)`
+ * into the group's `repeat1` as `trailing: true`.
+ */
+function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
+	let changed = false;
+	const out: Rule[] = [];
+	for (let i = 0; i < members.length; i++) {
+		const cur = members[i]!;
+		const next = members[i + 1];
+		const sep = next ? listSeparatorOfOptionalSeq(cur) : null;
+		if (sep !== null && optionalStringLiteral(next!) === sep) {
+			out.push(appendTrailingMemberToOptionalSeq(cur, next!));
+			i++; // consume the stranded trailing separator
+			changed = true;
+			continue;
+		}
+		out.push(cur);
+	}
+	return changed ? out : null;
+}
+
+/**
  * @internal — walk `rule` and hoist any `optional(seq(STRING,FIELD…))` /
  * `CHOICE[seq(STRING,FIELD…),BLANK]` positions into hidden group rules.
  * Returns a (possibly rewritten) rule; never mutates the input.
@@ -1488,9 +1587,14 @@ function applyClauseHoist(
 
 	// Descend into seq members.
 	if (isSeqType(rule.type)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
-		if (!Array.isArray(members)) return rule;
-		let changed = false;
+		const rawMembers = (rule as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(rawMembers)) return rule;
+		// Pre-fold: pull a separated-list's stranded trailing `optional(sep)` INTO
+		// the preceding `optional(seq(... repeat(sep) ...))` so the per-member hoist
+		// below captures the whole list (head + repeat + trailing) as one group.
+		const absorbed = absorbTrailingListSeparators(rawMembers);
+		const members = absorbed ?? rawMembers;
+		let changed = absorbed !== null;
 		const newMembers = members.map((m) => {
 			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
 			if (out !== m) changed = true;

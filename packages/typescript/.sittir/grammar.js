@@ -1274,6 +1274,55 @@ function peelOptionalSeq(rule) {
   }
   return null;
 }
+function listSeparatorOfOptionalSeq(rule) {
+  const peeled = peelOptionalSeq(rule);
+  if (peeled === null) return null;
+  const seqMembers = peeled.seqBody.members;
+  if (!Array.isArray(seqMembers)) return null;
+  for (const m of seqMembers) {
+    if (!isRepeatType(m.type)) continue;
+    const sepAttr = m.separator;
+    if (typeof sepAttr === "string") return sepAttr;
+    const content = m.content;
+    if (content && isSeqType(content.type)) {
+      const cm = content.members;
+      const first = Array.isArray(cm) && cm[0] ? normalizeMember(cm[0]) : null;
+      if (first && isStringType(first.type) && typeof first.value === "string") return first.value;
+    }
+  }
+  return null;
+}
+function optionalStringLiteral(rule) {
+  const peeled = peelOptional(rule);
+  if (!peeled.isOptional) return null;
+  const innerN = normalizeMember(peeled.inner);
+  if (isStringType(innerN.type) && typeof innerN.value === "string") return innerN.value;
+  return null;
+}
+function appendTrailingMemberToOptionalSeq(optSeqRule, trailingOptional) {
+  const peeled = peelOptionalSeq(optSeqRule);
+  const seqBody = peeled.seqBody;
+  const seqMembers = seqBody.members;
+  const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] };
+  return rebuildOptional(optSeqRule, newSeqBody);
+}
+function absorbTrailingListSeparators(members) {
+  let changed = false;
+  const out = [];
+  for (let i = 0; i < members.length; i++) {
+    const cur = members[i];
+    const next = members[i + 1];
+    const sep = next ? listSeparatorOfOptionalSeq(cur) : null;
+    if (sep !== null && optionalStringLiteral(next) === sep) {
+      out.push(appendTrailingMemberToOptionalSeq(cur, next));
+      i++;
+      changed = true;
+      continue;
+    }
+    out.push(cur);
+  }
+  return changed ? out : null;
+}
 function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames) {
   const peeled = peelOptionalSeq(rule);
   if (peeled !== null) {
@@ -1331,9 +1380,11 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     }
   }
   if (isSeqType(rule.type)) {
-    const members = rule.members;
-    if (!Array.isArray(members)) return rule;
-    let changed = false;
+    const rawMembers = rule.members;
+    if (!Array.isArray(rawMembers)) return rule;
+    const absorbed = absorbTrailingListSeparators(rawMembers);
+    const members = absorbed ?? rawMembers;
+    let changed = absorbed !== null;
     const newMembers = members.map((m) => {
       const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
       if (out !== m) changed = true;

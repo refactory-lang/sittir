@@ -454,15 +454,15 @@ export const enum TSKindId {
   Star2 = 3,
   As = 4,
   Lbrace = 5,
-  Comma2 = 6,
-  Rbrace = 7,
-  AnonType = 8,
-  Typeof = 9,
-  AnonImport = 10,
-  From = 11,
-  With = 12,
-  Assert = 13,
-  Var = 14,
+  Rbrace = 6,
+  AnonType = 7,
+  Typeof = 8,
+  AnonImport = 9,
+  From = 10,
+  With = 11,
+  Assert = 12,
+  Var = 13,
+  Comma2 = 14,
   Let = 15,
   Const = 16,
   Bang = 17,
@@ -889,15 +889,15 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [3, "star"],
   [4, "as"],
   [5, "lbrace"],
-  [6, "comma"],
-  [7, "rbrace"],
-  [8, "anon_type"],
-  [9, "typeof"],
-  [10, "anon_import"],
-  [11, "from"],
-  [12, "with"],
-  [13, "assert"],
-  [14, "var"],
+  [6, "rbrace"],
+  [7, "anon_type"],
+  [8, "typeof"],
+  [9, "anon_import"],
+  [10, "from"],
+  [11, "with"],
+  [12, "assert"],
+  [13, "var"],
+  [14, "comma"],
   [15, "let"],
   [16, "const"],
   [17, "bang"],
@@ -1325,7 +1325,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "star": return TSKindId.Star2;
     case "as": return TSKindId.As;
     case "lbrace": return TSKindId.Lbrace;
-    case "comma": return TSKindId.Comma2;
     case "rbrace": return TSKindId.Rbrace;
     case "anon_type": return TSKindId.AnonType;
     case "typeof": return TSKindId.Typeof;
@@ -1334,6 +1333,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "with": return TSKindId.With;
     case "assert": return TSKindId.Assert;
     case "var": return TSKindId.Var;
+    case "comma": return TSKindId.Comma2;
     case "let": return TSKindId.Let;
     case "const": return TSKindId.Const;
     case "bang": return TSKindId.Bang;
@@ -1754,8 +1754,8 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_type_identifier": return TSKindId.TypeIdentifier;
     case "*": return TSKindId.Star2;
     case "{": return TSKindId.Lbrace;
-    case ",": return TSKindId.Comma2;
     case "}": return TSKindId.Rbrace;
+    case ",": return TSKindId.Comma2;
     case "!": return TSKindId.Bang;
     case "(": return TSKindId.Lparen;
     case ";": return TSKindId.Semi;
