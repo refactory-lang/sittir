@@ -13,6 +13,7 @@
  * CLI behind a `--validate-node-types` flag.
  */
 
+import { CHOICE, SUPERTYPE } from '../compiler/rule-types.ts'; // @rule-type-consts
 import type { LinkedGrammar } from '../compiler/types.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import type { RawNodeEntry } from './node-types-loader.ts';
@@ -91,7 +92,7 @@ export function validateAgainstNodeTypes(grammar: string, linked: LinkedGrammar)
 		// choice of the same subtype set.
 		if (entry.subtypes) {
 			const expected = new Set(entry.subtypes.filter((s) => s.named).map((s) => s.type));
-			if (rule.type === 'supertype') {
+			if (rule.type === SUPERTYPE) {
 				const actual = new Set(rule.subtypes);
 				if (!setsEqual(expected, actual)) {
 					discrepancies.push({
@@ -103,7 +104,7 @@ export function validateAgainstNodeTypes(grammar: string, linked: LinkedGrammar)
 				} else {
 					matched++;
 				}
-			} else if (rule.type === 'choice') {
+			} else if (rule.type === CHOICE) {
 				// Hidden choice that Link kept as raw — accept if
 				// members cover the expected set.
 				const actual = new Set<string>();

@@ -1,3 +1,4 @@
+import { ALIAS, CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { link, enrichPositions, computeParentSets, applyOverridePolymorphs } from '../compiler/link.ts';
 import type { DerivationLog } from '../compiler/types.ts';
@@ -25,14 +26,14 @@ describe('Link — reference resolution', () => {
 	it('resolves symbol references to their content', () => {
 		const raw = makeRaw({
 			source_file: {
-				type: 'repeat',
-				content: { type: 'symbol', name: 'statement' }
+				type: REPEAT,
+				content: { type: SYMBOL, name: 'statement' }
 			},
 			statement: {
-				type: 'seq',
+				type: SEQ,
 				members: [
-					{ type: 'string', value: 'x' },
-					{ type: 'string', value: ';' }
+					{ type: STRING, value: 'x' },
+					{ type: STRING, value: ';' }
 				]
 			}
 		});
@@ -47,14 +48,14 @@ describe('Link — reference resolution', () => {
 	it('produces a LinkedGrammar with no alias or token nodes', () => {
 		const raw = makeRaw({
 			root: {
-				type: 'seq',
+				type: SEQ,
 				members: [
 					{
-						type: 'token',
-						content: { type: 'string', value: '//' },
+						type: TOKEN,
+						content: { type: STRING, value: '//' },
 						immediate: false
 					},
-					{ type: 'repeat1', content: { type: 'string', value: 'x' } }
+					{ type: REPEAT1, content: { type: STRING, value: 'x' } }
 				]
 			}
 		});
@@ -82,21 +83,21 @@ describe('Link — reference resolution', () => {
 
 	it('preserves repeat1 through Link for non-empty signal', () => {
 		const raw = makeRaw({
-			items: { type: 'repeat1', content: { type: 'string', value: 'x' } }
+			items: { type: REPEAT1, content: { type: STRING, value: 'x' } }
 		});
 		const linked = link(raw);
 		// `items` is a pure-terminal subtree (only string literals) so Link
 		// wraps it as TerminalRule; unwrap to verify the repeat1 survived.
 		const rule = linked.rules['items'];
-		const inner = rule!.type === 'terminal' ? (rule as any).content : rule;
+		const inner = rule!.type === TERMINAL ? (rule as any).content : rule;
 		expect(inner.type).toBe('repeat1');
 	});
 
 	it('flattens token to its content', () => {
 		const raw = makeRaw({
 			comment: {
-				type: 'token',
-				content: { type: 'string', value: '//' },
+				type: TOKEN,
+				content: { type: STRING, value: '//' },
 				immediate: false
 			}
 		});
@@ -110,14 +111,14 @@ describe('Link — hidden rule classification', () => {
 		const raw = makeRaw(
 			{
 				_expression: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'symbol', name: 'binary_expression' },
-						{ type: 'symbol', name: 'identifier' }
+						{ type: SYMBOL, name: 'binary_expression' },
+						{ type: SYMBOL, name: 'identifier' }
 					]
 				},
-				binary_expression: { type: 'string', value: 'binexpr' },
-				identifier: { type: 'pattern', value: '[a-z]+' }
+				binary_expression: { type: STRING, value: 'binexpr' },
+				identifier: { type: PATTERN, value: '[a-z]+' }
 			},
 			{ supertypes: ['_expression'] }
 		);
@@ -133,10 +134,10 @@ describe('Link — hidden rule classification', () => {
 	it('classifies hidden choice-of-strings as enum', () => {
 		const raw = makeRaw({
 			_visibility: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
-					{ type: 'string', value: 'pub' },
-					{ type: 'string', value: 'crate' }
+					{ type: STRING, value: 'pub' },
+					{ type: STRING, value: 'crate' }
 				]
 			}
 		});
@@ -151,17 +152,17 @@ describe('Link — field provenance', () => {
 	it('preserves field source from override', () => {
 		const raw = makeRaw({
 			item: {
-				type: 'seq',
+				type: SEQ,
 				members: [
 					{
-						type: 'field',
+						type: FIELD,
 						name: 'body',
 						content: { type: 'symbol', name: 'block' },
 						source: 'override'
 					}
 				]
 			},
-			block: { type: 'string', value: '{}' }
+			block: { type: STRING, value: '{}' }
 		});
 		const linked = link(raw);
 		const item = linked.rules['item'] as any;
@@ -174,10 +175,10 @@ describe('Link — output contract', () => {
 		const raw = makeRaw(
 			{
 				_expression: {
-					type: 'choice',
-					members: [{ type: 'symbol', name: 'id' }]
+					type: CHOICE,
+					members: [{ type: SYMBOL, name: 'id' }]
 				},
-				id: { type: 'pattern', value: '[a-z]+' }
+				id: { type: PATTERN, value: '[a-z]+' }
 			},
 			{ supertypes: ['_expression'] }
 		);
@@ -187,7 +188,7 @@ describe('Link — output contract', () => {
 	});
 
 	it('returns word from raw grammar', () => {
-		const raw = makeRaw({ id: { type: 'pattern', value: '[a-z]+' } }, { word: 'id' });
+		const raw = makeRaw({ id: { type: PATTERN, value: '[a-z]+' } }, { word: 'id' });
 		const linked = link(raw);
 		expect(linked.word).toBe('id');
 	});
@@ -197,12 +198,12 @@ describe('Link — top-level alias bodies', () => {
 	it('captures the dereferenced body for hidden alias sources', () => {
 		const raw = makeRaw({
 			_type_identifier: {
-				type: 'alias',
+				type: ALIAS,
 				named: true,
 				value: 'type_identifier',
-				content: { type: 'symbol', name: 'identifier' }
+				content: { type: SYMBOL, name: 'identifier' }
 			},
-			identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' }
+			identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' }
 		});
 		const linked = link(raw);
 		expect(linked.topLevelAliasBodies?.get('_type_identifier')).toEqual({
@@ -215,25 +216,25 @@ describe('Link — top-level alias bodies', () => {
 		const raw = makeRaw(
 			{
 				_expression: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'symbol', name: 'identifier' },
-						{ type: 'symbol', name: 'call_expression' }
+						{ type: SYMBOL, name: 'identifier' },
+						{ type: SYMBOL, name: 'call_expression' }
 					]
 				},
 				_as_pattern_target: {
-					type: 'alias',
+					type: ALIAS,
 					named: true,
 					value: 'as_pattern_target',
-					content: { type: 'symbol', name: '_expression' }
+					content: { type: SYMBOL, name: '_expression' }
 				},
-				identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' },
+				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				call_expression: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'field', name: 'callee', content: { type: 'symbol', name: 'identifier' } },
-						{ type: 'string', value: '(' },
-						{ type: 'string', value: ')' }
+						{ type: FIELD, name: 'callee', content: { type: SYMBOL, name: 'identifier' } },
+						{ type: STRING, value: '(' },
+						{ type: STRING, value: ')' }
 					]
 				}
 			},
@@ -251,11 +252,11 @@ describe('Link — reference graph enrichment', () => {
 	it('enrichPositions assigns position to refs by walking seq members', () => {
 		const rules: Record<string, Rule> = {
 			item: {
-				type: 'seq',
+				type: SEQ,
 				members: [
-					{ type: 'string', value: 'fn' },
-					{ type: 'symbol', name: 'name' },
-					{ type: 'symbol', name: 'body' }
+					{ type: STRING, value: 'fn' },
+					{ type: SYMBOL, name: 'name' },
+					{ type: SYMBOL, name: 'body' }
 				]
 			}
 		};
@@ -284,10 +285,10 @@ describe('Link — T019a cycle detection', () => {
 	it('detects self-referential hidden rule without crashing', () => {
 		const raw = makeRaw({
 			_recursive: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
-					{ type: 'symbol', name: '_recursive' },
-					{ type: 'string', value: 'base' }
+					{ type: SYMBOL, name: '_recursive' },
+					{ type: STRING, value: 'base' }
 				]
 			}
 		});
@@ -307,17 +308,17 @@ describe('Link — T016a hidden choice classification', () => {
 		const raw = makeRaw(
 			{
 				_helper: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'symbol', name: 'x' },
-						{ type: 'symbol', name: 'y' }
+						{ type: SYMBOL, name: 'x' },
+						{ type: SYMBOL, name: 'y' }
 					]
 				},
-				a: { type: 'symbol', name: '_helper' },
-				b: { type: 'symbol', name: '_helper' },
-				c: { type: 'symbol', name: '_helper' },
-				x: { type: 'pattern', value: 'x' },
-				y: { type: 'pattern', value: 'y' }
+				a: { type: SYMBOL, name: '_helper' },
+				b: { type: SYMBOL, name: '_helper' },
+				c: { type: SYMBOL, name: '_helper' },
+				x: { type: PATTERN, value: 'x' },
+				y: { type: PATTERN, value: 'y' }
 			},
 			{ references: refs }
 		);
@@ -340,25 +341,25 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// via `applyOverridePolymorphs` on user-declared variants only.
 		const raw = makeRaw({
 			statement: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
 					{
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'string', value: 'if' },
-							{ type: 'symbol', name: 'expr' }
+							{ type: STRING, value: 'if' },
+							{ type: SYMBOL, name: 'expr' }
 						]
 					},
 					{
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'string', value: 'while' },
-							{ type: 'symbol', name: 'expr' }
+							{ type: STRING, value: 'while' },
+							{ type: SYMBOL, name: 'expr' }
 						]
 					}
 				]
 			},
-			expr: { type: 'pattern', value: '.*' }
+			expr: { type: PATTERN, value: '.*' }
 		});
 		const linked = link(raw);
 		const stmt = linked.rules['statement'] as any;
@@ -369,33 +370,33 @@ describe('Link — variant tagging + polymorph promotion', () => {
 	it('promotePolymorph detects heterogeneous-field choices (suggestion-only, no mutation)', () => {
 		const raw = makeRaw({
 			assignment: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
 					{
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'string', value: '=' },
+							{ type: STRING, value: '=' },
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'left',
-								content: { type: 'symbol', name: 'expr' }
+								content: { type: SYMBOL, name: 'expr' }
 							}
 						]
 					},
 					{
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'string', value: ':' },
+							{ type: STRING, value: ':' },
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'right',
-								content: { type: 'symbol', name: 'expr' }
+								content: { type: SYMBOL, name: 'expr' }
 							}
 						]
 					}
 				]
 			},
-			expr: { type: 'pattern', value: '.*' }
+			expr: { type: PATTERN, value: '.*' }
 		});
 		const linked = link(raw);
 		const assignment = linked.rules['assignment'] as any;
@@ -424,54 +425,54 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// would otherwise restructure this fixture.
 		const rules: Record<string, Rule> = {
 			visibility_modifier: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
 					{
-						type: 'variant',
+						type: VARIANT,
 						name: 'crate',
-						content: { type: 'symbol', name: 'crate' }
+						content: { type: SYMBOL, name: 'crate' }
 					},
 					{
-						type: 'variant',
+						type: VARIANT,
 						name: 'form1',
 						content: {
-							type: 'seq',
+							type: SEQ,
 							members: [
 								{
-									type: 'field',
+									type: FIELD,
 									name: 'pub',
-									content: { type: 'symbol', name: '_kw_pub' }
+									content: { type: SYMBOL, name: '_kw_pub' }
 								},
 								{
-									type: 'optional',
+									type: OPTIONAL,
 									content: {
-										type: 'seq',
+										type: SEQ,
 										members: [
-											{ type: 'string', value: '(' },
+											{ type: STRING, value: '(' },
 											{
-												type: 'choice',
+												type: CHOICE,
 												members: [
 													{
-														type: 'alias',
+														type: ALIAS,
 														named: true,
 														value: 'visibility_modifier_pub_self',
 														content: {
-															type: 'symbol',
+															type: SYMBOL,
 															name: '_visibility_modifier_pub_self'
 														}
 													},
 													{
-														type: 'alias',
+														type: ALIAS,
 														named: true,
 														value: 'visibility_modifier_pub_super',
 														content: {
-															type: 'symbol',
+															type: SYMBOL,
 															name: '_visibility_modifier_pub_super'
 														}
 													}
 												]
 											},
-											{ type: 'string', value: ')' }
+											{ type: STRING, value: ')' }
 										]
 									}
 								}
@@ -480,8 +481,8 @@ describe('Link — variant tagging + polymorph promotion', () => {
 					}
 				]
 			},
-			_visibility_modifier_pub_self: { type: 'symbol', name: 'self' },
-			_visibility_modifier_pub_super: { type: 'symbol', name: 'super' }
+			_visibility_modifier_pub_self: { type: SYMBOL, name: 'self' },
+			_visibility_modifier_pub_super: { type: SYMBOL, name: 'super' }
 		};
 		const derivations: DerivationLog = {
 			inferredFields: [],
@@ -502,7 +503,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// ambient `(` / `)` literals that used to flank the inner choice.
 		const selfBody = rules['_visibility_modifier_pub_self']!;
 		expect(selfBody.type).toBe('seq');
-		if (selfBody.type !== 'seq') throw new Error('unreachable');
+		if (selfBody.type !== SEQ) throw new Error('unreachable');
 		expect(selfBody.members.map((m) => (m.type === 'string' ? m.value : m.type))).toEqual(['(', 'symbol', ')']);
 		const superBody = rules['_visibility_modifier_pub_super']!;
 		expect(superBody.type).toBe('seq');
@@ -522,45 +523,45 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		const raw = makeRaw(
 			{
 				assignment: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'symbol', name: 'assignment_eq' },
-						{ type: 'symbol', name: 'assignment_type' }
+						{ type: SYMBOL, name: 'assignment_eq' },
+						{ type: SYMBOL, name: 'assignment_type' }
 					]
 				},
 				assignment_eq: {
-					type: 'seq',
+					type: SEQ,
 					members: [
 						{
-							type: 'field',
+							type: FIELD,
 							name: 'left',
-							content: { type: 'symbol', name: 'expr' }
+							content: { type: SYMBOL, name: 'expr' }
 						},
-						{ type: 'string', value: '=' },
+						{ type: STRING, value: '=' },
 						{
-							type: 'field',
+							type: FIELD,
 							name: 'right',
-							content: { type: 'symbol', name: 'expr' }
+							content: { type: SYMBOL, name: 'expr' }
 						}
 					]
 				},
 				assignment_type: {
-					type: 'seq',
+					type: SEQ,
 					members: [
 						{
-							type: 'field',
+							type: FIELD,
 							name: 'left',
-							content: { type: 'symbol', name: 'expr' }
+							content: { type: SYMBOL, name: 'expr' }
 						},
-						{ type: 'string', value: ':' },
+						{ type: STRING, value: ':' },
 						{
-							type: 'field',
+							type: FIELD,
 							name: 'typ',
-							content: { type: 'symbol', name: 'expr' }
+							content: { type: SYMBOL, name: 'expr' }
 						}
 					]
 				},
-				expr: { type: 'pattern', value: '.*' }
+				expr: { type: PATTERN, value: '.*' }
 			},
 			{
 				polymorphVariants: [
@@ -588,33 +589,33 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// flat seq with per-position unioned contents.
 		const raw = makeRaw({
 			literal: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
 					{
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'string', value: 'int' },
+							{ type: STRING, value: 'int' },
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'value',
-								content: { type: 'symbol', name: 'num' }
+								content: { type: SYMBOL, name: 'num' }
 							}
 						]
 					},
 					{
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'string', value: 'float' },
+							{ type: STRING, value: 'float' },
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'value',
-								content: { type: 'symbol', name: 'num' }
+								content: { type: SYMBOL, name: 'num' }
 							}
 						]
 					}
 				]
 			},
-			num: { type: 'pattern', value: '[0-9]+' }
+			num: { type: PATTERN, value: '[0-9]+' }
 		});
 		const linked = link(raw);
 		const literal = linked.rules['literal'] as any;

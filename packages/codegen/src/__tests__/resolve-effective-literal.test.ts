@@ -1,3 +1,4 @@
+import { PATTERN, STRING } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { resolveEffectiveLiteral, isAutoStampField } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -60,11 +61,11 @@ function multiValueField(values: readonly NodeOrTerminal[]): AssembledNontermina
 }
 
 function makeKeyword(kind: string, text: string): AssembledKeyword {
-	return new AssembledKeyword(kind, { type: 'string', value: text });
+	return new AssembledKeyword(kind, { type: STRING, value: text });
 }
 
 function makeLeaf(kind: string): AssembledPattern {
-	return new AssembledPattern(kind, { type: 'pattern', value: '' });
+	return new AssembledPattern(kind, { type: PATTERN, value: '' });
 }
 
 // ---------------------------------------------------------------------------

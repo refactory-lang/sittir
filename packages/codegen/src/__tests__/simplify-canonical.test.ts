@@ -8,28 +8,29 @@
  * pattern.
  */
 
+import { CHOICE, FIELD, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../compiler/rule.ts';
 import { simplifyRule, hoistInnerFieldOutOfFieldWrapper } from '../compiler/simplify.ts';
 
-const str = (value: string): Rule => ({ type: 'string', value });
-const sym = (name: string): Rule => ({ type: 'symbol', name });
-const sup = (name: string): Rule => ({ type: 'supertype', name, subtypes: [] });
+const str = (value: string): Rule => ({ type: STRING, value });
+const sym = (name: string): Rule => ({ type: SYMBOL, name });
+const sup = (name: string): Rule => ({ type: SUPERTYPE, name, subtypes: [] });
 const field = (name: string, content: Rule): Rule => ({
-	type: 'field',
+	type: FIELD,
 	name,
 	content
 });
-const seq = (...members: Rule[]): Rule => ({ type: 'seq', members });
-const choice = (...members: Rule[]): Rule => ({ type: 'choice', members });
+const seq = (...members: Rule[]): Rule => ({ type: SEQ, members });
+const choice = (...members: Rule[]): Rule => ({ type: CHOICE, members });
 const variant = (name: string, content: Rule): Rule => ({
-	type: 'variant',
+	type: VARIANT,
 	name,
 	content
 });
-const optional = (content: Rule): Rule => ({ type: 'optional', content });
+const optional = (content: Rule): Rule => ({ type: OPTIONAL, content });
 const repeat1 = (content: Rule, separator?: string): Rule =>
-	separator !== undefined ? { type: 'repeat1', content, separator } : { type: 'repeat1', content };
+	separator !== undefined ? { type: REPEAT1, content, separator } : { type: REPEAT1, content };
 
 describe('simplifyRule — mergeChoiceBranches', () => {
 	it("merges same-shape branches that differ only in one field's literal", () => {

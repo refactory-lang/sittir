@@ -1,3 +1,4 @@
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,19 +23,19 @@ const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(
 
 function makeMinimalNodeMap(): NodeMap {
 	const nameRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'field',
+				type: FIELD,
 				name: 'name',
-				content: { type: 'symbol', name: '_identifier' }
+				content: { type: SYMBOL, name: '_identifier' }
 			}
 		]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern | AssembledKeyword>([
 		['function_item', new AssembledBranch('function_item', nameRule, nameRule)],
-		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })],
-		['kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' })]
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
+		['kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' })]
 	]);
 	return {
 		grammar: 'rust',
@@ -48,12 +49,12 @@ function makeMinimalNodeMap(): NodeMap {
 
 function makeRequiredChildrenNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'symbol', name: 'identifier' }]
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
 		['required_child_parent', new AssembledBranch('required_child_parent', parentRule, parentRule)],
-		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
 		grammar: 'rust',
@@ -67,17 +68,17 @@ function makeRequiredChildrenNodeMap(): NodeMap {
 
 function makeOptionalChildrenNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'optional',
-				content: { type: 'symbol', name: 'identifier' }
+				type: OPTIONAL,
+				content: { type: SYMBOL, name: 'identifier' }
 			}
 		]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
 		['optional_child_parent', new AssembledBranch('optional_child_parent', parentRule, parentRule)],
-		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
 		grammar: 'rust',
@@ -91,17 +92,17 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 
 function makeRepeatedChildrenNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'repeat1',
-				content: { type: 'symbol', name: 'identifier' }
+				type: REPEAT1,
+				content: { type: SYMBOL, name: 'identifier' }
 			}
 		]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
 		['repeated_child_parent', new AssembledBranch('repeated_child_parent', parentRule, parentRule)],
-		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
 		grammar: 'rust',
@@ -115,17 +116,17 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 
 function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'repeat',
-				content: { type: 'symbol', name: 'identifier' }
+				type: REPEAT,
+				content: { type: SYMBOL, name: 'identifier' }
 			}
 		]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
 		['optional_repeated_child_parent', new AssembledBranch('optional_repeated_child_parent', parentRule, parentRule)],
-		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
 		grammar: 'rust',
@@ -139,12 +140,12 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 
 function makeTokenOnlyChildrenNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'symbol', name: 'kw_j' }]
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'kw_j' }]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledKeyword>([
 		['token_child_parent', new AssembledBranch('token_child_parent', parentRule, parentRule)],
-		['kw_j', new AssembledKeyword('kw_j', { type: 'string', value: 'jjjj' })]
+		['kw_j', new AssembledKeyword('kw_j', { type: STRING, value: 'jjjj' })]
 	]);
 	return {
 		grammar: 'rust',
@@ -158,18 +159,18 @@ function makeTokenOnlyChildrenNodeMap(): NodeMap {
 
 function makePolymorphSingularChildrenNodeMap(): NodeMap {
 	const identifierRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'symbol', name: 'identifier' }]
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const integerRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'symbol', name: 'integer' }]
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'integer' }]
 	};
 	const parentRule: ChoiceRule = {
-		type: 'choice',
+		type: CHOICE,
 		members: [
-			{ type: 'symbol', name: 'expression__form_identifier' },
-			{ type: 'symbol', name: 'expression__form_integer' }
+			{ type: SYMBOL, name: 'expression__form_identifier' },
+			{ type: SYMBOL, name: 'expression__form_integer' }
 		]
 	};
 	const identifierForm = new AssembledGroup('expression__form_identifier', identifierRule, identifierRule, {
@@ -182,8 +183,8 @@ function makePolymorphSingularChildrenNodeMap(): NodeMap {
 	});
 	const nodes = new Map<string, AssembledPolymorph | AssembledPattern>([
 		['expression', new AssembledPolymorph('expression', parentRule, [identifierForm, integerForm])],
-		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })],
-		['integer', new AssembledPattern('integer', { type: 'pattern', value: '[0-9]+' })]
+		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
+		['integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' })]
 	]);
 	return makeNodeMapWith(nodes, new Set(['expression__form_identifier', 'expression__form_integer']));
 }

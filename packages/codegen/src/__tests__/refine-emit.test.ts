@@ -11,6 +11,7 @@
  * it through the pipeline, and inspects emitted source text.
  */
 
+import { CHOICE, ENUM, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../compiler/rule.ts';
 import type { RawGrammar, RefineForm } from '../compiler/types.ts';
@@ -31,27 +32,27 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 
 function makeRefineRaw(forms: RefineForm[]): RawGrammar {
 	const ifaceBodyRule: Rule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'field',
+				type: FIELD,
 				name: 'opening',
 				content: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'string', value: '{' },
-						{ type: 'string', value: '{|' }
+						{ type: STRING, value: '{' },
+						{ type: STRING, value: '{|' }
 					]
 				}
 			},
 			{
-				type: 'field',
+				type: FIELD,
 				name: 'closing',
 				content: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'string', value: '}' },
-						{ type: 'string', value: '|}' }
+						{ type: STRING, value: '}' },
+						{ type: STRING, value: '|}' }
 					]
 				}
 			}
@@ -76,50 +77,50 @@ function makeRefineRaw(forms: RefineForm[]): RawGrammar {
 
 function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 	const stringRule: Rule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'field',
+				type: FIELD,
 				name: 'opening',
 				content: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'string', value: '"' },
-						{ type: 'string', value: "'" }
+						{ type: STRING, value: '"' },
+						{ type: STRING, value: "'" }
 					]
 				}
 			},
 			{
-				type: 'field',
+				type: FIELD,
 				name: 'contents',
 				content: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
 						{
-							type: 'repeat',
+							type: REPEAT,
 							content: {
-								type: 'choice',
-								members: [{ type: 'symbol', name: 'string_fragment' }, { type: 'symbol', name: 'escape_sequence' }]
+								type: CHOICE,
+								members: [{ type: SYMBOL, name: 'string_fragment' }, { type: SYMBOL, name: 'escape_sequence' }]
 							}
 						},
 						{
-							type: 'repeat',
+							type: REPEAT,
 							content: {
-								type: 'choice',
-								members: [{ type: 'symbol', name: 'string_fragment' }, { type: 'symbol', name: 'escape_sequence' }]
+								type: CHOICE,
+								members: [{ type: SYMBOL, name: 'string_fragment' }, { type: SYMBOL, name: 'escape_sequence' }]
 							}
 						}
 					]
 				}
 			},
 			{
-				type: 'field',
+				type: FIELD,
 				name: 'closing',
 				content: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'string', value: '"' },
-						{ type: 'string', value: "'" }
+						{ type: STRING, value: '"' },
+						{ type: STRING, value: "'" }
 					]
 				}
 			}
@@ -129,8 +130,8 @@ function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 		name: 'synth',
 		rules: {
 			string: stringRule,
-			string_fragment: { type: 'pattern', value: '[^"\'\\\\]+' },
-			escape_sequence: { type: 'pattern', value: '\\\\.' }
+			string_fragment: { type: PATTERN, value: '[^"\'\\\\]+' },
+			escape_sequence: { type: PATTERN, value: '\\\\.' }
 		},
 		ruleCatalog: createEmptyRuleCatalog(),
 		extras: [],
@@ -147,38 +148,38 @@ function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 function makeRefineSymbolRaw(forms: RefineForm[], wrapOptional = false): RawGrammar {
 	const enumRef = (name: string): Rule =>
 		wrapOptional
-			? { type: 'optional', content: { type: 'symbol', name } }
-			: { type: 'symbol', name };
+			? { type: OPTIONAL, content: { type: SYMBOL, name } }
+			: { type: SYMBOL, name };
 	return {
 		name: 'synth',
 		rules: {
 			iface_body: {
-				type: 'seq',
+				type: SEQ,
 				members: [
 					{
-						type: 'field',
+						type: FIELD,
 						name: 'opening',
 						content: enumRef('_iface_body_opening')
 					},
 					{
-						type: 'field',
+						type: FIELD,
 						name: 'closing',
 						content: enumRef('_iface_body_closing')
 					}
 				]
 			},
 			_iface_body_opening: {
-				type: 'enum',
+				type: ENUM,
 				members: [
-					{ type: 'string', value: '{' },
-					{ type: 'string', value: '{|' }
+					{ type: STRING, value: '{' },
+					{ type: STRING, value: '{|' }
 				]
 			},
 			_iface_body_closing: {
-				type: 'enum',
+				type: ENUM,
 				members: [
-					{ type: 'string', value: '}' },
-					{ type: 'string', value: '|}' }
+					{ type: STRING, value: '}' },
+					{ type: STRING, value: '|}' }
 				]
 			}
 		},

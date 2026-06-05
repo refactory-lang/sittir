@@ -5,6 +5,7 @@
  * detectToken, modelType) derived from the rule tree — not carried on Rule nodes.
  */
 
+import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,
@@ -306,7 +307,7 @@ export function assemble(
 			for (const slot of allSlotsOf(node)) slotsByName.set(slot.name, slot);
 			// Walk the raw rule tree collecting FieldRule ids by name.
 			const walkForFieldIds = (r: Rule): void => {
-				if (r.type === 'field' && r.id) {
+				if (r.type === FIELD && r.id) {
 					const slot = slotsByName.get(r.name);
 					if (slot && !slotByRuleId.has(r.id)) slotByRuleId.set(r.id, slot);
 				}
@@ -369,21 +370,21 @@ export function assemble(
 function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<string> {
 	const out = new Set<string>();
 	const isBlank = (r: Rule): boolean =>
-		(r.type === 'choice' && r.members.length === 0) ||
-		(r.type === 'seq' && r.members.length === 0);
+		(r.type === CHOICE && r.members.length === 0) ||
+		(r.type === SEQ && r.members.length === 0);
 	const unwrap = (r: Rule): Rule => {
-		if (r.type === 'alias' || r.type === 'token' || r.type === 'terminal') {
+		if (r.type === ALIAS || r.type === TOKEN || r.type === TERMINAL) {
 			return unwrap((r as { content: Rule }).content);
 		}
 		return r;
 	};
 	for (const [kind, rule] of Object.entries(rules)) {
 		const body = unwrap(rule);
-		if (body.type === 'optional') {
+		if (body.type === OPTIONAL) {
 			out.add(kind);
 			continue;
 		}
-		if (body.type === 'choice' && body.members.some(isBlank)) {
+		if (body.type === CHOICE && body.members.some(isBlank)) {
 			out.add(kind);
 		}
 	}
@@ -412,9 +413,9 @@ function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<stri
  */
 function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): string[] {
 	let subtypes: string[];
-	if (rule.type === 'supertype') {
+	if (rule.type === SUPERTYPE) {
 		subtypes = rule.subtypes;
-	} else if (rule.type === 'choice') {
+	} else if (rule.type === CHOICE) {
 		subtypes = rule.members
 			.map((m) => (m.type === 'variant' ? m.content : m))
 			.filter((m): m is SymbolRule => m.type === 'symbol')
@@ -427,7 +428,7 @@ function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): stri
 		optimized.rules,
 		optimized.aliasedHiddenKinds ?? new Map(),
 		optimized.topLevelAliasBodies ?? new Map(),
-		rule.type === 'supertype' ? rule.name : undefined
+		rule.type === SUPERTYPE ? rule.name : undefined
 	);
 }
 
@@ -456,14 +457,14 @@ function unwrapGroupRuleAndSimplified(
 	simplifiedRule: Rule,
 	renderRule: RenderRule
 ): { groupRule: Rule; groupSimplified: Rule; groupRenderRule: RenderRule } {
-	const groupRule = rule.type === 'group' ? rule.content : rule;
+	const groupRule = rule.type === GROUP ? rule.content : rule;
 	// applyWrapperDeletion preserves group structure: renderRule.type === 'group'
 	// when the source rule was a group, with renderRule.content being the
 	// wrapper-deleted inner content. Same for simplifiedRule (simplifyRule recurses
 	// through group wrappers preserving the outer group node).
-	const groupSimplified = rule.type === 'group' ? (simplifiedRule as GroupRule).content : simplifiedRule;
+	const groupSimplified = rule.type === GROUP ? (simplifiedRule as GroupRule).content : simplifiedRule;
 	const groupRenderRule: RenderRule =
-		rule.type === 'group' ? ((renderRule as GroupRule).content as RenderRule) : renderRule;
+		rule.type === GROUP ? ((renderRule as GroupRule).content as RenderRule) : renderRule;
 	return { groupRule, groupSimplified, groupRenderRule };
 }
 
@@ -543,7 +544,7 @@ function resolveHiddenSubtypes(
 			return;
 		}
 		const body = topLevelAliasBodies.get(name) ?? rule;
-		if (rule.type === 'supertype' || topLevelAliasBodies.has(name)) out.push(name);
+		if (rule.type === SUPERTYPE || topLevelAliasBodies.has(name)) out.push(name);
 		const resolved = resolveHiddenRuleContent(body, rules, new Set([name]));
 		if (resolved.length === 0) {
 			if (!out.includes(name)) out.push(name);
@@ -628,7 +629,7 @@ function isCompatibleSubtypeMember(
 
 function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen: Set<string>): string[] {
 	switch (rule.type) {
-		case 'alias':
+		case ALIAS:
 			// Resolve to the SOURCE kind (what's in the rules map).
 			// Evaluate's `synthesizeInlineAliasSources` pass ensures
 			// every named alias has a bare-symbol source that's a
@@ -638,7 +639,7 @@ function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen:
 				return [rule.content.name];
 			}
 			return [rule.value];
-		case 'symbol': {
+		case SYMBOL: {
 			// Post-synthesis-removal: resolve visible-via-alias symbols
 			// (`aliasedFrom` set) to their SOURCE kind name, which is
 			// what's in the rules map and nodeMap.
@@ -649,7 +650,7 @@ function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen:
 			const target = rules[refName];
 			return target ? resolveHiddenRuleContent(target, rules, seen) : [refName];
 		}
-		case 'supertype':
+		case SUPERTYPE:
 			return rule.subtypes.flatMap((s) => {
 				if (seen.has(s)) return [];
 				seen.add(s);
@@ -657,14 +658,14 @@ function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen:
 				const target = rules[s];
 				return target ? resolveHiddenRuleContent(target, rules, seen) : [s];
 			});
-		case 'choice':
+		case CHOICE:
 			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, rules, seen));
-		case 'string':
+		case STRING:
 			return /^[A-Za-z_][A-Za-z0-9_]*$/.test(rule.value) ? [] : [rule.value];
-		case 'variant':
-		case 'group':
-		case 'token':
-		case 'terminal':
+		case VARIANT:
+		case GROUP:
+		case TOKEN:
+		case TERMINAL:
 			return resolveHiddenRuleContent((rule as { content: Rule }).content, rules, seen);
 		default:
 			return [];
@@ -1120,7 +1121,7 @@ function collectAnonymousNodes(
 		if (literalText === '' || /^\s+$/.test(literalText)) continue; // Skip whitespace/empty
 
 		const isWordShape = detectKeywordShape(literalText, wordMatcher);
-		const syntheticStringRule: StringRule = { type: 'string', value: literalText };
+		const syntheticStringRule: StringRule = { type: STRING, value: literalText };
 
 		if (isWordShape) {
 			// Keyword token (e.g., "if", "class", "pub")
@@ -1150,36 +1151,36 @@ function collectAnonymousNodes(
  */
 function walkForStrings(rule: Rule, out: Map<string, string>): void {
 	switch (rule.type) {
-		case 'string':
+		case STRING:
 			out.set(rule.value, rule.value);
 			break;
-		case 'symbol':
+		case SYMBOL:
 			if (isLinkSymbol(rule) && rule.literal !== undefined) {
 				out.set(rule.name, rule.literal);
 			}
 			break;
-		case 'enum':
+		case ENUM:
 			// Enum values are text content — do NOT descend (see JSDoc).
 			break;
-		case 'seq':
+		case SEQ:
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		case 'choice':
+		case CHOICE:
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		case 'optional':
+		case OPTIONAL:
 			walkForStrings(rule.content, out);
 			break;
-		case 'repeat':
+		case REPEAT:
 			walkForStrings(rule.content, out);
 			break;
-		case 'field':
+		case FIELD:
 			walkForStrings(rule.content, out);
 			break;
-		case 'variant':
+		case VARIANT:
 			walkForStrings(rule.content, out);
 			break;
-		case 'group':
+		case GROUP:
 			walkForStrings(rule.content, out);
 			break;
 	}
@@ -1218,17 +1219,17 @@ export function classifyNode(
 	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string> }
 ): ModelType {
 	switch (rule.type) {
-		case 'enum':
+		case ENUM:
 			return 'enum';
-		case 'supertype':
+		case SUPERTYPE:
 			return 'supertype';
-		case 'group':
+		case GROUP:
 			return 'group';
-		case 'terminal':
+		case TERMINAL:
 			return 'pattern';
-		case 'pattern':
+		case PATTERN:
 			return 'pattern';
-		case 'string':
+		case STRING:
 			return /^\w+$/.test(rule.value) ? 'keyword' : 'token';
 	}
 
@@ -1312,7 +1313,7 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  */
 function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
 	if (isAllTextShape(rule)) return 'pattern';
-	if (rule.type === 'choice' && rule.members.every((m) => m.type === 'string')) return 'enum';
+	if (rule.type === CHOICE && rule.members.every((m) => m.type === STRING)) return 'enum';
 	throw new Error(
 		`classifyNode: '${kind}' has no fields, no children, and no rule-type ` +
 			`classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`
@@ -1327,20 +1328,20 @@ function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
  */
 function isAllTextShape(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'string':
-		case 'pattern':
+		case STRING:
+		case PATTERN:
 			return true;
-		case 'symbol':
-		case 'field':
+		case SYMBOL:
+		case FIELD:
 			return false;
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return rule.members.length > 0 && rule.members.every(isAllTextShape);
-		case 'optional':
-		case 'repeat':
-		case 'token':
-		case 'variant':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case TOKEN:
+		case VARIANT:
+		case GROUP:
 			return isAllTextShape(rule.content);
 		default:
 			return false;

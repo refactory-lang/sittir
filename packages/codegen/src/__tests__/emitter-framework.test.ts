@@ -1,3 +1,4 @@
+import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { NodeMap } from '../compiler/types.ts';
 import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
@@ -26,20 +27,20 @@ function makeNodeMap(): NodeMap {
 
 function makeBranch(kind: string, label: string): AssembledBranch {
 	const rule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'string', value: label }]
+		type: SEQ,
+		members: [{ type: STRING, value: label }]
 	};
 	return new AssembledBranch(kind, rule, rule);
 }
 
 function makeHiddenHelperNodeMap(): NodeMap {
 	const helperRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'field', name: 'right', content: { type: 'symbol', name: 'identifier' } }]
+		type: SEQ,
+		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, helperRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return {
 		...makeNodeMap(),
 		nodes
@@ -48,10 +49,10 @@ function makeHiddenHelperNodeMap(): NodeMap {
 
 function makeHiddenSupertypeNodeMap(): NodeMap {
 	const supertypeRule: ChoiceRule = {
-		type: 'choice',
+		type: CHOICE,
 		members: [
-			{ type: 'symbol', name: '_export_statement_default_from_arm' },
-			{ type: 'symbol', name: '_export_statement_default_decl_arm' }
+			{ type: SYMBOL, name: '_export_statement_default_from_arm' },
+			{ type: SYMBOL, name: '_export_statement_default_decl_arm' }
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
@@ -64,11 +65,11 @@ function makeHiddenSupertypeNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'_export_statement_default_from_arm',
-		new AssembledPattern('_export_statement_default_from_arm', { type: 'pattern', value: 'from' })
+		new AssembledPattern('_export_statement_default_from_arm', { type: PATTERN, value: 'from' })
 	);
 	nodes.set(
 		'_export_statement_default_decl_arm',
-		new AssembledPattern('_export_statement_default_decl_arm', { type: 'pattern', value: 'decl' })
+		new AssembledPattern('_export_statement_default_decl_arm', { type: PATTERN, value: 'decl' })
 	);
 	return {
 		...makeNodeMap(),

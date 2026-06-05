@@ -16,6 +16,7 @@
  * See refine() DSL primitive for the full design.
  */
 
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TERMINAL, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, ChoiceRule, FieldRule, EnumRule, SymbolRule } from './rule.ts';
 import { isChoice, isEnum, isField, isString, isSeq, isOptional, isRepeat, isRepeat1, isSymbol } from './rule.ts';
 import type { RefineForm } from './types.ts';
@@ -275,7 +276,7 @@ function validateSelection(
  */
 function unwrapToStringValue(rule: Rule): string | undefined {
 	if (isString(rule)) return rule.value;
-	if (rule.type === 'variant') {
+	if (rule.type === VARIANT) {
 		const inner = (rule as { content: Rule }).content;
 		if (isString(inner)) return inner.value;
 	}
@@ -332,19 +333,19 @@ export function resolveSelectionLiteral(choice: ChoiceRule | EnumRule, selection
 // ---------------------------------------------------------------------------
 
 function membersOf(rule: Rule): Rule[] | undefined {
-	if (rule.type === 'seq' || rule.type === 'choice') return rule.members;
+	if (rule.type === SEQ || rule.type === CHOICE) return rule.members;
 	return undefined;
 }
 
 function singleContentOf(rule: Rule): Rule | undefined {
 	switch (rule.type) {
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'field':
-		case 'variant':
-		case 'group':
-		case 'terminal':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
+		case TERMINAL:
 			return rule.content;
 		default:
 			return undefined;

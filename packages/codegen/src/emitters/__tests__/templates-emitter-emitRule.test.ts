@@ -9,6 +9,7 @@
  * field emissions. Other cases keep an empty map.
  */
 
+import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type {
 	AliasRule,
@@ -78,19 +79,19 @@ function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNontermina
 
 describe('emitRule — string', () => {
 	it('returns string rule values verbatim', () => {
-		const rule: StringRule = { type: 'string', value: 'fn' };
+		const rule: StringRule = { type: STRING, value: 'fn' };
 		expect(emitRule(rule, makeCtx())).toBe('fn');
 	});
 
 	it('escapes brace pairs that collide with Jinja syntax', () => {
-		const rule: StringRule = { type: 'string', value: '{}' };
+		const rule: StringRule = { type: STRING, value: '{}' };
 		expect(emitRule(rule, makeCtx())).toBe('{ }');
 	});
 });
 
 describe('emitRule — pattern', () => {
 	it('emits nothing for raw patterns', () => {
-		const rule: PatternRule = { type: 'pattern', value: '[a-z]+' };
+		const rule: PatternRule = { type: PATTERN, value: '[a-z]+' };
 		expect(emitRule(rule, makeCtx())).toBe('');
 	});
 });
@@ -98,17 +99,17 @@ describe('emitRule — pattern', () => {
 describe('emitRule — enum', () => {
 	it('emits the first member as a literal', () => {
 		const rule: EnumRule = {
-			type: 'enum',
+			type: ENUM,
 			members: [
-				{ type: 'string', value: 'pub' },
-				{ type: 'string', value: 'priv' }
+				{ type: STRING, value: 'pub' },
+				{ type: STRING, value: 'priv' }
 			]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('pub');
 	});
 
 	it('emits empty when the enum has no members', () => {
-		const rule: EnumRule = { type: 'enum', members: [] };
+		const rule: EnumRule = { type: ENUM, members: [] };
 		expect(emitRule(rule, makeCtx())).toBe('');
 	});
 });
@@ -116,11 +117,11 @@ describe('emitRule — enum', () => {
 describe('emitRule — seq', () => {
 	it('concatenates members', () => {
 		const rule: SeqRule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: 'fn' },
-				{ type: 'string', value: ' ' },
-				{ type: 'string', value: 'main' }
+				{ type: STRING, value: 'fn' },
+				{ type: STRING, value: ' ' },
+				{ type: STRING, value: 'main' }
 			]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('fn main');
@@ -128,17 +129,17 @@ describe('emitRule — seq', () => {
 
 	it('recurses into nested seqs', () => {
 		const rule: SeqRule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: '(' },
+				{ type: STRING, value: '(' },
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'b' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'b' }
 					]
 				},
-				{ type: 'string', value: ')' }
+				{ type: STRING, value: ')' }
 			]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('(ab)');
@@ -147,32 +148,32 @@ describe('emitRule — seq', () => {
 
 describe('emitRule — transparent wrappers', () => {
 	it('recurses into token content', () => {
-		const inner: StringRule = { type: 'string', value: 'foo' };
-		const rule: TokenRule = { type: 'token', content: inner, immediate: false };
+		const inner: StringRule = { type: STRING, value: 'foo' };
+		const rule: TokenRule = { type: TOKEN, content: inner, immediate: false };
 		expect(emitRule(rule, makeCtx())).toBe('foo');
 	});
 
 	it('recurses into terminal content', () => {
-		const inner: StringRule = { type: 'string', value: 'bar' };
-		const rule: TerminalRule = { type: 'terminal', content: inner };
+		const inner: StringRule = { type: STRING, value: 'bar' };
+		const rule: TerminalRule = { type: TERMINAL, content: inner };
 		expect(emitRule(rule, makeCtx())).toBe('bar');
 	});
 
 	it('recurses into unnamed alias content', () => {
-		const inner: StringRule = { type: 'string', value: 'baz' };
-		const rule: AliasRule = { type: 'alias', content: inner, named: false, value: 'baz' };
+		const inner: StringRule = { type: STRING, value: 'baz' };
+		const rule: AliasRule = { type: ALIAS, content: inner, named: false, value: 'baz' };
 		expect(emitRule(rule, makeCtx())).toBe('baz');
 	});
 
 	it('recurses into variant content', () => {
-		const inner: StringRule = { type: 'string', value: 'qux' };
-		const rule: VariantRule = { type: 'variant', name: 'q', content: inner };
+		const inner: StringRule = { type: STRING, value: 'qux' };
+		const rule: VariantRule = { type: VARIANT, name: 'q', content: inner };
 		expect(emitRule(rule, makeCtx())).toBe('qux');
 	});
 
 	it('recurses into group content', () => {
-		const inner: StringRule = { type: 'string', value: 'grp' };
-		const rule: GroupRule = { type: 'group', name: 'g', content: inner };
+		const inner: StringRule = { type: STRING, value: 'grp' };
+		const rule: GroupRule = { type: GROUP, name: 'g', content: inner };
 		expect(emitRule(rule, makeCtx())).toBe('grp');
 	});
 });
@@ -184,33 +185,33 @@ describe('emitRule — transparent wrappers', () => {
 describe('emitRule — wrapper types throw (PR2 Task 3.B3)', () => {
 	it('throws when given a field rule (wrapper removed in RenderRule)', () => {
 		const rule: FieldRule = {
-			type: 'field',
+			type: FIELD,
 			name: 'name',
-			content: { type: 'symbol', name: 'identifier' }
+			content: { type: SYMBOL, name: 'identifier' }
 		};
 		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'field'");
 	});
 
 	it('throws when given an optional rule (wrapper removed in RenderRule)', () => {
 		const rule: OptionalRule = {
-			type: 'optional',
-			content: { type: 'string', value: ';' }
+			type: OPTIONAL,
+			content: { type: STRING, value: ';' }
 		};
 		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'optional'");
 	});
 
 	it('throws when given a repeat rule (wrapper removed in RenderRule)', () => {
 		const rule: RepeatRule = {
-			type: 'repeat',
-			content: { type: 'symbol', name: 'item' }
+			type: REPEAT,
+			content: { type: SYMBOL, name: 'item' }
 		};
 		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'repeat'");
 	});
 
 	it('throws when given a repeat1 rule (wrapper removed in RenderRule)', () => {
 		const rule: Repeat1Rule = {
-			type: 'repeat1',
-			content: { type: 'symbol', name: 'item' }
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'item' }
 		};
 		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'repeat1'");
 	});
@@ -221,7 +222,7 @@ describe('emitRule — wrapper types throw (PR2 Task 3.B3)', () => {
 describe('emitRule — symbol with fieldName attribute (RenderRule field path)', () => {
 	it('emits a scalar slot when fieldName is set and no multiplicity', () => {
 		const rule: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'identifier',
 			id: 'r1',
 			fieldName: 'name'
@@ -239,7 +240,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 
 	it('emits a list slot when fieldName is set and multiplicity is array', () => {
 		const rule: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'expression',
 			id: 'r2',
 			fieldName: 'args',
@@ -258,7 +259,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 
 	it('uses the separator attribute when emitting a list slot', () => {
 		const rule: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'expression',
 			id: 'r3',
 			fieldName: 'args',
@@ -278,7 +279,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 
 	it('emits a conditional slot when multiplicity is optional', () => {
 		const rule: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'expression',
 			id: 'r4',
 			fieldName: 'value',
@@ -298,7 +299,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 	it('uses fieldName directly (no slot) when slot is absent', () => {
 		// When no slot back-pointer: fieldName drives the slot name directly.
 		const rule: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'identifier',
 			fieldName: 'field_name'
 		};
@@ -308,7 +309,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 
 describe('emitRule — symbol', () => {
 	it('emits a slot when a slot back-pointer exists', () => {
-		const rule: SymbolRule = { type: 'symbol', name: 'expression', id: 's1' };
+		const rule: SymbolRule = { type: SYMBOL, name: 'expression', id: 's1' };
 		const slot = makeSlot({
 			name: 'expression',
 			propertyName: 'expression',
@@ -326,7 +327,7 @@ describe('emitRule — symbol', () => {
 
 	it('emits the literal for a link-synthesized symbol', () => {
 		const rule: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: '_kw_async',
 			source: 'link',
 			literal: 'async'
@@ -335,19 +336,19 @@ describe('emitRule — symbol', () => {
 	});
 
 	it('emits nothing for a link symbol without a literal', () => {
-		const rule: SymbolRule = { type: 'symbol', name: '_kw_void', source: 'link' };
+		const rule: SymbolRule = { type: SYMBOL, name: '_kw_void', source: 'link' };
 		expect(emitRule(rule, makeCtx())).toBe('');
 	});
 
 	it('inlines a hidden helper rule when present in ctx.rules', () => {
-		const helperBody: StringRule = { type: 'string', value: 'pub(crate)' };
-		const rule: SymbolRule = { type: 'symbol', name: '_visibility' };
+		const helperBody: StringRule = { type: STRING, value: 'pub(crate)' };
+		const rule: SymbolRule = { type: SYMBOL, name: '_visibility' };
 		const ctx = makeCtx({ rules: { _visibility: helperBody } });
 		expect(emitRule(rule, ctx)).toBe('pub(crate)');
 	});
 
 	it('falls back to the kind-named slot when no slot back-pointer or helper exists', () => {
-		const rule: SymbolRule = { type: 'symbol', name: 'identifier' };
+		const rule: SymbolRule = { type: SYMBOL, name: 'identifier' };
 		expect(emitRule(rule, makeCtx())).toBe('{{ identifier }}');
 	});
 });
@@ -369,7 +370,7 @@ describe('emitRule — symbol', () => {
 describe('emitRule — symbol with multiplicity array (RenderRule repeat path)', () => {
 	it('emits a list slot with default separator when multiplicity is array', () => {
 		const rule: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'item',
 			id: 'r10',
 			multiplicity: 'array'
@@ -388,7 +389,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 
 	it('honours the separator attribute when emitting a list slot', () => {
 		const rule: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'item',
 			id: 'r11',
 			multiplicity: 'array',
@@ -407,7 +408,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 
 	it('uses joinWithTrailing when trailing separator flag is set via structured separator', () => {
 		const rule: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'item',
 			id: 'r12',
 			multiplicity: 'array',
@@ -428,10 +429,10 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 describe('emitRule — choice', () => {
 	it('emits the first branch text for a homogeneous choice', () => {
 		const rule: ChoiceRule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
-				{ type: 'string', value: '+' },
-				{ type: 'string', value: '-' }
+				{ type: STRING, value: '+' },
+				{ type: STRING, value: '-' }
 			]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('+');
@@ -439,10 +440,10 @@ describe('emitRule — choice', () => {
 
 	it('skips empty branches and emits the first non-empty one', () => {
 		const rule: ChoiceRule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
-				{ type: 'pattern', value: '' },
-				{ type: 'string', value: '*' }
+				{ type: PATTERN, value: '' },
+				{ type: STRING, value: '*' }
 			]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('*');
@@ -450,10 +451,10 @@ describe('emitRule — choice', () => {
 
 	it('returns empty when no branch produces output', () => {
 		const rule: ChoiceRule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
-				{ type: 'pattern', value: '' },
-				{ type: 'pattern', value: '' }
+				{ type: PATTERN, value: '' },
+				{ type: PATTERN, value: '' }
 			]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('');
@@ -462,17 +463,17 @@ describe('emitRule — choice', () => {
 
 describe('emitRule — structural whitespace', () => {
 	it('emits an indent', () => {
-		const rule: IndentRule = { type: 'indent' };
+		const rule: IndentRule = { type: INDENT };
 		expect(emitRule(rule, makeCtx())).toBe('\n  ');
 	});
 
 	it('emits a dedent', () => {
-		const rule: DedentRule = { type: 'dedent' };
+		const rule: DedentRule = { type: DEDENT };
 		expect(emitRule(rule, makeCtx())).toBe('\n');
 	});
 
 	it('emits a newline', () => {
-		const rule: NewlineRule = { type: 'newline' };
+		const rule: NewlineRule = { type: NEWLINE };
 		expect(emitRule(rule, makeCtx())).toBe('\n');
 	});
 });
@@ -480,7 +481,7 @@ describe('emitRule — structural whitespace', () => {
 describe('emitRule — exhaustive default', () => {
 	it('returns empty for supertype rules (handled by per-modelType emit instead)', () => {
 		const rule: Rule = {
-			type: 'supertype',
+			type: SUPERTYPE,
 			name: '_expression',
 			subtypes: ['binary_expression']
 		};

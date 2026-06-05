@@ -1,3 +1,4 @@
+import { FIELD, PATTERN, SEQ, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { AssembledBranch, AssembledNonterminal, AssembledPattern, type AssembledNode } from '../compiler/node-map.ts';
 import type { SeqRule } from '../compiler/rule.ts';
@@ -7,8 +8,8 @@ import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 describe('node-model emitter', () => {
 	it('serializes per-value parseKind without slot-level aliasSources', () => {
 		const rule: SeqRule = {
-			type: 'seq',
-			members: [{ type: 'field', name: 'value', content: { type: 'symbol', name: 'identifier' } }]
+			type: SEQ,
+			members: [{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'identifier' } }]
 		};
 		const nodes = new Map<string, AssembledNode>();
 		nodes.set(
@@ -33,7 +34,7 @@ describe('node-model emitter', () => {
 				})
 			})
 		);
-		nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+		nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 		const nodeMap = makeNodeMapWith(nodes);
 
 		const model = buildNodeModel(nodeMap);

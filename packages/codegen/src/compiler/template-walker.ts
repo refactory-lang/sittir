@@ -15,6 +15,7 @@
  *   per-field trailing/leading flag derivation.
  */
 
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule } from './rule.ts';
 
 /**
@@ -25,21 +26,21 @@ import type { Rule } from './rule.ts';
  */
 export function findRepeatSeparator(rule: Rule): string | undefined {
 	switch (rule.type) {
-		case 'repeat':
-		case 'repeat1':
+		case REPEAT:
+		case REPEAT1:
 			if (rule.separator) return rule.separator;
 			return findRepeatSeparator(rule.content);
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			for (const m of rule.members) {
 				const sep = findRepeatSeparator(m);
 				if (sep) return sep;
 			}
 			return undefined;
-		case 'optional':
-		case 'variant':
-		case 'group':
-		case 'field':
+		case OPTIONAL:
+		case VARIANT:
+		case GROUP:
+		case FIELD:
 			return findRepeatSeparator(rule.content);
 		default:
 			return undefined;
@@ -72,17 +73,17 @@ export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolea
 	}
 
 	switch (rule.type) {
-		case 'repeat':
-		case 'repeat1':
+		case REPEAT:
+		case REPEAT1:
 			if (rule[flag]) return true;
 			return findRepeatFlag(rule.content, flag);
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return rule.members.some((m) => findRepeatFlag(m, flag));
-		case 'optional':
-		case 'variant':
-		case 'group':
-		case 'field':
+		case OPTIONAL:
+		case VARIANT:
+		case GROUP:
+		case FIELD:
 			return findRepeatFlag(rule.content, flag);
 		default:
 			return false;
@@ -107,18 +108,18 @@ export function findFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading
 
 function collectFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading', acc: Set<string>): void {
 	switch (rule.type) {
-		case 'field':
+		case FIELD:
 			if (findRepeatFlag(rule.content, flag)) acc.add(rule.name);
 			return;
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			for (const m of rule.members) collectFieldsWithRepeatFlag(m, flag, acc);
 			return;
-		case 'repeat':
-		case 'repeat1':
-		case 'optional':
-		case 'variant':
-		case 'group':
+		case REPEAT:
+		case REPEAT1:
+		case OPTIONAL:
+		case VARIANT:
+		case GROUP:
 			collectFieldsWithRepeatFlag(rule.content, flag, acc);
 			return;
 		default:

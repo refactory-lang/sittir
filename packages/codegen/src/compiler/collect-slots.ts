@@ -31,6 +31,7 @@
  * own final naming.
  */
 
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, Multiplicity, RuleSource } from './rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
@@ -61,17 +62,17 @@ function findNestedSeparator(rule: Rule): Rule['separator'] {
 	const sep = rule.separator;
 	if (sep !== undefined) return sep;
 	switch (rule.type) {
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			for (const m of rule.members) {
 				const found = findNestedSeparator(m);
 				if (found !== undefined) return found;
 			}
 			return undefined;
-		case 'optional':
-		case 'variant':
-		case 'group':
-		case 'field':
+		case OPTIONAL:
+		case VARIANT:
+		case GROUP:
+		case FIELD:
 			return findNestedSeparator(rule.content);
 		default:
 			return undefined;
@@ -157,17 +158,17 @@ function strongestArmMultiplicity(rule: Rule): Multiplicity | undefined {
 function carriesNamedField(rule: Rule): boolean {
 	if ((rule as { fieldName?: string }).fieldName !== undefined) return true;
 	switch (rule.type) {
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return rule.members.some(carriesNamedField);
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'field':
-		case 'variant':
-		case 'group':
-		case 'token':
-		case 'alias':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
+		case TOKEN:
+		case ALIAS:
 			return carriesNamedField((rule as { content: Rule }).content);
 		default:
 			return false;
@@ -308,7 +309,7 @@ function buildSlot(
 	// `SingleNonterminalView` while the template joins → build error). Lift the
 	// strongest arm multiplicity onto the choice before deriving values.
 	const armLifted =
-		(rule.type === 'choice' || rule.type === 'polymorph') && rule.multiplicity === undefined
+		(rule.type === CHOICE || rule.type === 'polymorph') && rule.multiplicity === undefined
 			? strongestArmMultiplicity(rule)
 			: undefined;
 	const mult = armLifted ?? slotMultiplicity(rule, inherited);
@@ -319,7 +320,7 @@ function buildSlot(
 
 	if (baseName === undefined) {
 		switch (rule.type) {
-			case 'symbol': {
+			case SYMBOL: {
 				// Drop the hidden-rule leading underscore (`_expression` → `expression`).
 				baseName = rule.name.replace(/^_+/, '') || rule.name;
 				// A positional (no-fieldName) symbol slot is ALWAYS `inferred` —
@@ -333,12 +334,12 @@ function buildSlot(
 				source = 'inferred';
 				break;
 			}
-			case 'supertype': {
+			case SUPERTYPE: {
 				baseName = rule.name.replace(/^_+/, '') || rule.name;
 				source = 'inferred';
 				break;
 			}
-			case 'choice':
+			case CHOICE:
 			case 'polymorph': {
 				// A field-wrapped choice loses its OWN `fieldName` to simplify
 				// (which strips it from operator choices) while the field is
@@ -359,7 +360,7 @@ function buildSlot(
 				// Unnamed choice → `content` (Task C2). Warn unless this is a
 				// registered polymorph (polymorph metadata drives the TYPE
 				// surface only; render just renders `content`).
-				if (rule.type === 'choice') {
+				if (rule.type === CHOICE) {
 					// Prefer rule.id (encodes owning-kind + rule-tree path provenance)
 					// as the warning key; fall back to kindForName for callers (e.g.
 					// unit tests) that create bare rules without an id.
@@ -458,7 +459,7 @@ export function collectSlots(
 	inheritedSeparator: Rule['separator'] = undefined
 ): AssembledNonterminal[] {
 	switch (rule.type) {
-		case 'seq': {
+		case SEQ: {
 			// Distribute: the seq is not a slot; its members are.
 			// Each member now carries its own multiplicity intrinsically (pushed
 			// down by wrapper-deletion's seq case via combineMultiplicity), so
@@ -468,8 +469,8 @@ export function collectSlots(
 			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, inherited, seqSep));
 		}
 
-		case 'variant':
-		case 'group':
+		case VARIANT:
+		case GROUP:
 			// Transparent recursive wrappers — not slots themselves. Recurse
 			// to surface their slot-bearing content.
 			return collectSlots(
@@ -480,7 +481,7 @@ export function collectSlots(
 				rule.separator ?? inheritedSeparator
 			);
 
-		case 'choice': {
+		case CHOICE: {
 			// A choice whose arms are STRUCTURAL (multi-member seqs and/or carry
 			// distinct named fields) is NOT a single union slot — each arm
 			// contributes its own named fields, and the same field name across

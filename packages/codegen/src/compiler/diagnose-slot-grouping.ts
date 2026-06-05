@@ -36,6 +36,7 @@
  * and console during regen so the author can act.
  */
 
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, SimplifiedRule } from './rule.ts';
 import { countSlots, countContentSlots } from './slot-count.ts';
 import type { Diagnostic } from './diagnostics.ts';
@@ -157,7 +158,7 @@ export function diagnoseSlotGrouping(
  */
 function walkRule(rule: Rule, ownerKind: string, records: SlotGroupingDiagnostic[], inSlotPosition: boolean): void {
 	switch (rule.type) {
-		case 'seq':
+		case SEQ:
 			// Only check if in a slot-creating position — a top-level rule body
 			// seq is the rule itself, not a nested seq inside a slot.
 			if (inSlotPosition) {
@@ -171,14 +172,14 @@ function walkRule(rule: Rule, ownerKind: string, records: SlotGroupingDiagnostic
 			}
 			break;
 
-		case 'repeat':
-		case 'repeat1':
+		case REPEAT:
+		case REPEAT1:
 			// Content of a repeat is in slot position.
 			checkRepeat(rule, ownerKind, records);
 			walkRule(rule.content, ownerKind, records, /* inSlotPosition= */ true);
 			break;
 
-		case 'choice':
+		case CHOICE:
 			// Each choice arm is in slot position — a multi-slot seq arm is a
 			// slot-position violation.
 			for (const m of rule.members) {
@@ -186,15 +187,15 @@ function walkRule(rule: Rule, ownerKind: string, records: SlotGroupingDiagnostic
 			}
 			break;
 
-		case 'optional':
-		case 'field':
+		case OPTIONAL:
+		case FIELD:
 			// Simplified rules normally have wrappers deleted, but handle
 			// defensively. Content is in slot position.
 			walkRule((rule as unknown as { content: Rule }).content, ownerKind, records, /* inSlotPosition= */ true);
 			break;
 
-		case 'variant':
-		case 'group':
+		case VARIANT:
+		case GROUP:
 			// Transparent structural wrappers — propagate current slot position.
 			walkRule((rule as { content: Rule }).content, ownerKind, records, inSlotPosition);
 			break;
@@ -272,9 +273,9 @@ function checkRepeatOfSymbol(
 	records: SlotGroupingDiagnostic[]
 ): void {
 	// Only symbol or supertype, or a choice of symbols/supertypes (all union, no literals).
-	const isSymbolLike = content.type === 'symbol' || content.type === 'supertype';
+	const isSymbolLike = content.type === SYMBOL || content.type === SUPERTYPE;
 	const isChoiceOfSymbols =
-		content.type === 'choice' &&
+		content.type === CHOICE &&
 		content.members.length > 0 &&
 		content.members.every((m) => m.type === 'symbol' || m.type === 'supertype');
 
@@ -285,7 +286,7 @@ function checkRepeatOfSymbol(
 	if (fieldName !== undefined) return;
 
 	const symName =
-		content.type === 'symbol' || content.type === 'supertype'
+		content.type === SYMBOL || content.type === SUPERTYPE
 			? content.name
 			: content.members.map((m) => (m as { name: string }).name).join('|');
 

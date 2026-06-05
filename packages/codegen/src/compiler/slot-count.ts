@@ -24,6 +24,7 @@
  * structural wrappers; their content's slot count IS this node's slot count.
  */
 
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule } from './rule.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 
@@ -36,12 +37,12 @@ import { isNonterminalRuleType } from './rule-catalog.ts';
  */
 export function countSlots(rule: Rule): number {
 	switch (rule.type) {
-		case 'seq':
+		case SEQ:
 			// Distribute: the seq itself emits no slot; sum its members.
 			return rule.members.reduce((sum, m) => sum + countSlots(m), 0);
 
-		case 'variant':
-		case 'group':
+		case VARIANT:
+		case GROUP:
 			// Transparent wrappers — their content's count is this node's count.
 			return countSlots(rule.content);
 
@@ -73,14 +74,14 @@ export function countSlots(rule: Rule): number {
  */
 export function countContentSlots(rule: Rule): number {
 	switch (rule.type) {
-		case 'seq':
+		case SEQ:
 			// A field-named seq is a single named slot — do not distribute. Only an
 			// UNNAMED seq distributes (sums its members' content slots).
 			return (rule as { fieldName?: string }).fieldName !== undefined
 				? 0
 				: rule.members.reduce((sum, m) => sum + countContentSlots(m), 0);
-		case 'variant':
-		case 'group':
+		case VARIANT:
+		case GROUP:
 			return countContentSlots(rule.content);
 		default:
 			return isContentSlot(rule) ? 1 : 0;
@@ -104,10 +105,10 @@ function isContentSlot(rule: Rule): boolean {
  */
 function slotKindProfile(rule: Rule): { named: Set<string>; hasUnnamed: boolean } {
 	switch (rule.type) {
-		case 'symbol':
-		case 'supertype':
+		case SYMBOL:
+		case SUPERTYPE:
 			return { named: new Set([(rule as { name: string }).name]), hasUnnamed: false };
-		case 'choice': {
+		case CHOICE: {
 			const named = new Set<string>();
 			let hasUnnamed = false;
 			for (const m of (rule as { members: Rule[] }).members) {
@@ -117,10 +118,10 @@ function slotKindProfile(rule: Rule): { named: Set<string>; hasUnnamed: boolean 
 			}
 			return { named, hasUnnamed };
 		}
-		case 'repeat':
-		case 'repeat1':
-		case 'optional':
-		case 'field':
+		case REPEAT:
+		case REPEAT1:
+		case OPTIONAL:
+		case FIELD:
 			return slotKindProfile((rule as { content: Rule }).content);
 		default:
 			// string / pattern / enum / indent / dedent / newline / terminal / token

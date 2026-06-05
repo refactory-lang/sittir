@@ -25,6 +25,7 @@
  * `cli.ts` from this source of truth; never edit those copies by hand.
  */
 
+import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
@@ -144,9 +145,9 @@ export function escapeJinjaString(value: string): string {
 
 export function stringifyRule(rule: Rule): string {
 	switch (rule.type) {
-		case 'string':
+		case STRING:
 			return rule.value;
-		case 'seq':
+		case SEQ:
 			return rule.members.map(stringifyRule).join('');
 		default:
 			return '';
@@ -300,20 +301,20 @@ export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
 	// Look through transparent wrappers to find the field or symbol name.
 	let unwrapped = inner;
 	while (
-		unwrapped.type === 'variant' ||
-		unwrapped.type === 'group' ||
-		unwrapped.type === 'token' ||
-		unwrapped.type === 'terminal' ||
-		(unwrapped.type === 'alias' && !unwrapped.named)
+		unwrapped.type === VARIANT ||
+		unwrapped.type === GROUP ||
+		unwrapped.type === TOKEN ||
+		unwrapped.type === TERMINAL ||
+		(unwrapped.type === ALIAS && !unwrapped.named)
 	) {
 		unwrapped = (unwrapped as Extract<typeof unwrapped, { content: Rule }>).content;
 	}
 	// Field inner: use the field name.
-	if (unwrapped.type === 'field') {
+	if (unwrapped.type === FIELD) {
 		return emitListSlot(unwrapped.name.toLowerCase(), repeat);
 	}
 	// Symbol inner: use the symbol kind name.
-	if (unwrapped.type === 'symbol') {
+	if (unwrapped.type === SYMBOL) {
 		const slotName = (unwrapped.name.replace(/^_+/, '') || 'children').toLowerCase();
 		return emitListSlot(slotName, repeat);
 	}
@@ -440,20 +441,20 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
 	// (`for await (`, not `for await(`) — so report it as slot-like (word-like)
 	// rather than walking into its first/last literal. (Strategic render-time
 	// spacing supersedes this — see the deferred follow-up in the plan.)
-	if (rule.type === 'seq' && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
+	if (rule.type === SEQ && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
 	switch (rule.type) {
-		case 'string':
+		case STRING:
 			// Named field-wrapped string — it becomes a slot, not a literal.
 			if (rule.fieldName !== undefined) return SLOT_END;
 			return literalEnd(rule.value);
-		case 'seq': {
+		case SEQ: {
 			for (let i = rule.members.length - 1; i >= 0; i--) {
 				const end = rightmostBoundary(rule.members[i]!);
 				if (end.kind !== 'unknown') return end;
 			}
 			return UNKNOWN_END;
 		}
-		case 'choice': {
+		case CHOICE: {
 			// All arms must agree; conservative on disagreement.
 			let acc: BoundaryEnd | undefined;
 			for (const m of rule.members) {
@@ -480,29 +481,29 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
 			}
 			return acc ?? UNKNOWN_END;
 		}
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'group':
-		case 'field':
-		case 'alias':
-		case 'token':
-		case 'terminal':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
+		case FIELD:
+		case ALIAS:
+		case TOKEN:
+		case TERMINAL:
 			if ('content' in rule) return rightmostBoundary((rule as { content: Rule }).content);
 			return UNKNOWN_END;
-		case 'enum':
+		case ENUM:
 			// EnumRule: rightmost member's value is the boundary.
 			if (rule.members.length > 0) return literalEnd(rule.members[rule.members.length - 1]!.value);
 			return UNKNOWN_END;
-		case 'symbol':
+		case SYMBOL:
 			// Symbol refs become slot emissions in the template — word-like at boundary.
 			return SLOT_END;
-		case 'pattern':
-		case 'supertype':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
+		case PATTERN:
+		case SUPERTYPE:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 		default:
 			return UNKNOWN_END;
 	}
@@ -515,19 +516,19 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
 function leftmostBoundary(rule: Rule): BoundaryEnd {
 	// §D-2a spacing stopgap (symmetric to rightmostBoundary): an inlined-from seq
 	// keeps opaque-symbol spacing at its outer boundaries.
-	if (rule.type === 'seq' && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
+	if (rule.type === SEQ && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
 	switch (rule.type) {
-		case 'string':
+		case STRING:
 			if (rule.fieldName !== undefined) return SLOT_END;
 			return literalEnd(rule.value);
-		case 'seq': {
+		case SEQ: {
 			for (let i = 0; i < rule.members.length; i++) {
 				const end = leftmostBoundary(rule.members[i]!);
 				if (end.kind !== 'unknown') return end;
 			}
 			return UNKNOWN_END;
 		}
-		case 'choice': {
+		case CHOICE: {
 			let acc: BoundaryEnd | undefined;
 			for (const m of rule.members) {
 				const end = leftmostBoundary(m);
@@ -553,27 +554,27 @@ function leftmostBoundary(rule: Rule): BoundaryEnd {
 			}
 			return acc ?? UNKNOWN_END;
 		}
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'group':
-		case 'field':
-		case 'alias':
-		case 'token':
-		case 'terminal':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
+		case FIELD:
+		case ALIAS:
+		case TOKEN:
+		case TERMINAL:
 			if ('content' in rule) return leftmostBoundary((rule as { content: Rule }).content);
 			return UNKNOWN_END;
-		case 'enum':
+		case ENUM:
 			if (rule.members.length > 0) return literalEnd(rule.members[0]!.value);
 			return UNKNOWN_END;
-		case 'symbol':
+		case SYMBOL:
 			return SLOT_END;
-		case 'pattern':
-		case 'supertype':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
+		case PATTERN:
+		case SUPERTYPE:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 		default:
 			return UNKNOWN_END;
 	}
@@ -586,9 +587,9 @@ function leftmostBoundary(rule: Rule): BoundaryEnd {
  */
 function isLeftmostTerminalImmediate(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'token':
+		case TOKEN:
 			return (rule as { immediate: boolean }).immediate === true;
-		case 'seq': {
+		case SEQ: {
 			for (const m of rule.members) {
 				// Only recurse into the first non-empty member.
 				const result = isLeftmostTerminalImmediate(m);
@@ -598,18 +599,18 @@ function isLeftmostTerminalImmediate(rule: Rule): boolean {
 			}
 			return false;
 		}
-		case 'choice': {
+		case CHOICE: {
 			// Immediate only if ALL arms are immediate.
 			return rule.members.length > 0 && rule.members.every((m) => isLeftmostTerminalImmediate(m));
 		}
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'group':
-		case 'field':
-		case 'alias':
-		case 'terminal':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
+		case FIELD:
+		case ALIAS:
+		case TERMINAL:
 			if ('content' in rule) return isLeftmostTerminalImmediate((rule as { content: Rule }).content);
 			return false;
 		default:
@@ -926,7 +927,7 @@ function _insertBeforeTopLevelEndifTags(str: string, insert: string): string {
 
 export function emitRule(rule: Rule, ctx: EmitCtx): string {
 	switch (rule.type) {
-		case 'string':
+		case STRING:
 			// Bug 3 fix: if a string literal carries `fieldName` (stamped by
 			// deleteWrapper when peeling a field() wrapper), emit it as a slot
 			// reference rather than the literal value. This makes
@@ -953,8 +954,8 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			}
 			return escapeLiteral(rule.value);
 
-		case 'pattern':
-		case 'enum': {
+		case PATTERN:
+		case ENUM: {
 			// Patterns and enums are NONTERMINAL slots (classifyByType), so they
 			// emit a slot REFERENCE — not inline text. Previously pattern→'' and
 			// enum→first-literal dropped the slot; once collectSlots makes them real
@@ -967,7 +968,7 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			return emitScalarSlot('content');
 		}
 
-		case 'seq': {
+		case SEQ: {
 			// Bug 6 fix (replaces Bug 1): insert spaces between consecutive seq
 			// members that would merge into a single lexeme at render time. Uses
 			// rule-tree literal walks + grammar wordMatcher to detect word
@@ -1090,13 +1091,13 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 		// Transparent wrappers — recurse into content. Variant / group /
 		// terminal / token / unnamed-alias have no template-level surface
 		// of their own; the inner rule's emission is what the renderer sees.
-		case 'token':
-		case 'terminal':
-		case 'variant':
-		case 'group':
+		case TOKEN:
+		case TERMINAL:
+		case VARIANT:
+		case GROUP:
 			return emitRule(rule.content, ctx);
 
-		case 'alias':
+		case ALIAS:
 			// Named aliases (`alias($._x, $.visible)`) create a visible
 			// parse-tree kind; they're a slot reference like a symbol.
 			// Unnamed aliases just relabel content; recurse.
@@ -1110,28 +1111,28 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 		// pushed down to leaf attributes. Throw defensively; should never
 		// fire in production. PR3 narrows the emitRule signature to
 		// RenderRule, making these unreachable at the type level.
-		case 'field':
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
+		case FIELD:
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
 			throw new Error(
 				`emitRule: unexpected wrapper '${rule.type}' — RenderRule input should have no wrappers`
 			);
 
-		case 'symbol':
+		case SYMBOL:
 			return emitSymbol(rule, ctx);
 
-		case 'choice':
+		case CHOICE:
 			return emitChoice(rule, ctx);
 
-		case 'indent':
+		case INDENT:
 			return '\n  ';
-		case 'dedent':
+		case DEDENT:
 			return '\n';
-		case 'newline':
+		case NEWLINE:
 			return '\n';
 
-		case 'supertype':
+		case SUPERTYPE:
 		case 'polymorph':
 			// Supertype + polymorph rules are dispatched at the modelType
 			// boundary (`emitPolymorphTemplate` / supertype short-circuit
@@ -1196,7 +1197,7 @@ function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined 
 		// map it. Only fires for symbols without fieldName (fieldName symbols are
 		// handled by Fallback A). Uses the EXACT name (no leading-_ stripping) to
 		// avoid false positives where `_hidden_rule` would match slot `hidden_rule`.
-		if (recovered === undefined && rule.type === 'symbol' && rule.fieldName === undefined && !rule.name.startsWith('_')) {
+		if (recovered === undefined && rule.type === SYMBOL && rule.fieldName === undefined && !rule.name.startsWith('_')) {
 			const exactName = rule.name.toLowerCase();
 			const byExactName = ctx.ownerSlots[exactName];
 			if (byExactName) {
@@ -1606,23 +1607,23 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 		return content.fieldName.toLowerCase();
 	}
 	// Legacy path for RawRule still-in-flight: direct field wrapper.
-	if (content.type === 'field') {
+	if (content.type === FIELD) {
 		return content.name.toLowerCase();
 	}
 	// Transparent wrappers — recurse.
 	if (
-		content.type === 'variant' ||
-		content.type === 'group' ||
-		content.type === 'token' ||
-		content.type === 'terminal'
+		content.type === VARIANT ||
+		content.type === GROUP ||
+		content.type === TOKEN ||
+		content.type === TERMINAL
 	) {
 		return pickConditionalKey(content.content, ctx);
 	}
-	if (content.type === 'alias' && !content.named) {
+	if (content.type === ALIAS && !content.named) {
 		return pickConditionalKey(content.content, ctx);
 	}
 	// A seq with a member that has a field name — use that field.
-	if (content.type === 'seq') {
+	if (content.type === SEQ) {
 		for (const m of content.members) {
 			const key = pickConditionalKey(m, ctx);
 			if (key) return key;
@@ -1634,7 +1635,7 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 	// a group body of `choice([field('name', …), …])` falls through to the
 	// caller's `<rule>_optional1` fallback and gates on an unpopulated
 	// inlined-group slot instead of the populated field.
-	if (content.type === 'choice') {
+	if (content.type === CHOICE) {
 		for (const m of content.members) {
 			const key = pickConditionalKey(m, ctx);
 			if (key) return key;
@@ -1642,7 +1643,7 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 		return undefined;
 	}
 	// A symbol with a slot back-pointer — gate on its kind slot name.
-	if (content.type === 'symbol') {
+	if (content.type === SYMBOL) {
 		const sym = content as Extract<Rule, { type: 'symbol' }>;
 		return (sym.name.replace(/^_+/, '') || 'children').toLowerCase();
 	}

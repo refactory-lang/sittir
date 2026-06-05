@@ -1,13 +1,14 @@
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule } from './rule.ts';
 import { isLinkSymbol } from './rule.ts';
 
 function unwrapStructuralPassthroughs(content: Rule): Rule {
 	switch (content.type) {
-		case 'optional':
-		case 'group':
-		case 'variant':
-		case 'token':
-		case 'terminal':
+		case OPTIONAL:
+		case GROUP:
+		case VARIANT:
+		case TOKEN:
+		case TERMINAL:
 			return unwrapStructuralPassthroughs(content.content);
 		default:
 			return content;
@@ -20,33 +21,33 @@ function unwrapStructuralPassthroughs(content: Rule): Rule {
  */
 export function fieldContentIsMultiSibling(content: Rule): boolean {
 	const core = unwrapStructuralPassthroughs(content);
-	if (core.type === 'choice') {
+	if (core.type === CHOICE) {
 		return core.members.some((member) => fieldContentIsMultiSibling(member));
 	}
-	if (core.type !== 'seq') return false;
+	if (core.type !== SEQ) return false;
 	let count = 0;
 	for (const member of core.members) {
 		let unwrapped: Rule = member;
 		while (
-			unwrapped.type === 'optional' ||
-			unwrapped.type === 'variant' ||
-			unwrapped.type === 'group' ||
-			unwrapped.type === 'token' ||
-			unwrapped.type === 'terminal'
+			unwrapped.type === OPTIONAL ||
+			unwrapped.type === VARIANT ||
+			unwrapped.type === GROUP ||
+			unwrapped.type === TOKEN ||
+			unwrapped.type === TERMINAL
 		) {
 			unwrapped = (unwrapped as { content: Rule }).content;
 		}
 		switch (unwrapped.type) {
-			case 'symbol':
+			case SYMBOL:
 				if (isLinkSymbol(unwrapped)) break;
 				count++;
 				if (count >= 2) return true;
 				break;
-			case 'supertype':
-			case 'alias':
-			case 'field':
-			case 'repeat':
-			case 'repeat1':
+			case SUPERTYPE:
+			case ALIAS:
+			case FIELD:
+			case REPEAT:
+			case REPEAT1:
 				count++;
 				if (count >= 2) return true;
 				break;

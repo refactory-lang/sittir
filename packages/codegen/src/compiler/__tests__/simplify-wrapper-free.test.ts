@@ -9,6 +9,7 @@
  * FieldRule / OptionalRule / RepeatRule / Repeat1Rule nodes anywhere in the tree.
  */
 
+import { CHOICE, ENUM, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { computeSimplifiedRules, simplifyRules } from '../simplify.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
@@ -27,7 +28,7 @@ function findWrappers(rule: Rule, path: string = ''): string[] {
 	}
 	// Recurse into all children regardless of whether this node is a wrapper,
 	// so we catch wrappers nested inside non-wrapper structural nodes too.
-	if (rule.type === 'seq' || rule.type === 'choice' || rule.type === 'enum') {
+	if (rule.type === SEQ || rule.type === CHOICE || rule.type === ENUM) {
 		for (let i = 0; i < rule.members.length; i++) {
 			out.push(...findWrappers(rule.members[i]!, `${path}.members[${i}]`));
 		}
@@ -70,10 +71,10 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 		// but that optional must be pushed to leaf attribute (multiplicity: optional)
 		const input: Record<string, Rule> = {
 			r1: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
-					{ type: 'pattern', value: '' },
-					{ type: 'symbol', name: 'a' },
+					{ type: PATTERN, value: '' },
+					{ type: SYMBOL, name: 'a' },
 				],
 			},
 		};
@@ -93,15 +94,15 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 		// computeSimplifiedRules must preserve these leaf-level attributes, not re-wrap.
 		const input: Record<string, Rule> = {
 			r1: {
-				type: 'seq',
+				type: SEQ,
 				members: [
-					{ type: 'string', value: 'fn' },
+					{ type: STRING, value: 'fn' },
 					{
-						type: 'repeat',
+						type: REPEAT,
 						content: {
-							type: 'field',
+							type: FIELD,
 							name: 'items',
-							content: { type: 'symbol', name: 'item' },
+							content: { type: SYMBOL, name: 'item' },
 						},
 					},
 				],
@@ -122,14 +123,14 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 		// optional must be pushed to leaf attrs, not left as a wrapper node.
 		const input: Record<string, Rule> = {
 			r1: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
-					{ type: 'field', name: 'a', content: { type: 'symbol', name: 'X' } },
+					{ type: FIELD, name: 'a', content: { type: SYMBOL, name: 'X' } },
 					{
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'field', name: 'b', content: { type: 'symbol', name: 'Y' } },
-							{ type: 'field', name: 'a', content: { type: 'symbol', name: 'X' } },
+							{ type: FIELD, name: 'b', content: { type: SYMBOL, name: 'Y' } },
+							{ type: FIELD, name: 'a', content: { type: SYMBOL, name: 'X' } },
 						],
 					},
 				],
@@ -156,68 +157,68 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 		const inputRules: Record<string, Rule> = {
 			// seq with a field-wrapped symbol
 			function_decl: {
-				type: 'seq',
+				type: SEQ,
 				members: [
-					{ type: 'string', value: 'fn' },
-					{ type: 'field', name: 'name', content: { type: 'symbol', name: 'identifier' } },
+					{ type: STRING, value: 'fn' },
+					{ type: FIELD, name: 'name', content: { type: SYMBOL, name: 'identifier' } },
 					{
-						type: 'optional',
+						type: OPTIONAL,
 						content: {
-							type: 'field',
+							type: FIELD,
 							name: 'type_params',
-							content: { type: 'symbol', name: 'type_parameters' },
+							content: { type: SYMBOL, name: 'type_parameters' },
 						},
 					},
-					{ type: 'field', name: 'body', content: { type: 'symbol', name: 'block' } },
+					{ type: FIELD, name: 'body', content: { type: SYMBOL, name: 'block' } },
 				],
 			},
 			// choice with empty-match branch (becomes optional)
 			visibility: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
-					{ type: 'pattern', value: '' },
-					{ type: 'string', value: 'pub' },
-					{ type: 'string', value: 'priv' },
+					{ type: PATTERN, value: '' },
+					{ type: STRING, value: 'pub' },
+					{ type: STRING, value: 'priv' },
 				],
 			},
 			// repeat of a field (exercices hoistFieldOutOfSingleContentWrapper)
 			parameter_list: {
-				type: 'repeat',
+				type: REPEAT,
 				content: {
-					type: 'field',
+					type: FIELD,
 					name: 'parameter',
-					content: { type: 'symbol', name: 'parameter' },
+					content: { type: SYMBOL, name: 'parameter' },
 				},
 			},
 			// choice where all branches share a field (exercices extractFieldAcrossBranches)
 			binary_expr: {
-				type: 'choice',
+				type: CHOICE,
 				members: [
 					{
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'field', name: 'left', content: { type: 'symbol', name: 'expr' } },
-							{ type: 'field', name: 'op', content: { type: 'string', value: '+' } },
-							{ type: 'field', name: 'right', content: { type: 'symbol', name: 'expr' } },
+							{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'expr' } },
+							{ type: FIELD, name: 'op', content: { type: STRING, value: '+' } },
+							{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'expr' } },
 						],
 					},
 					{
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'field', name: 'left', content: { type: 'symbol', name: 'expr' } },
-							{ type: 'field', name: 'op', content: { type: 'string', value: '-' } },
-							{ type: 'field', name: 'right', content: { type: 'symbol', name: 'expr' } },
+							{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'expr' } },
+							{ type: FIELD, name: 'op', content: { type: STRING, value: '-' } },
+							{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'expr' } },
 						],
 					},
 				],
 			},
 			// leaf rules
-			identifier: { type: 'pattern', value: '[a-zA-Z_][a-zA-Z0-9_]*' },
-			block: { type: 'symbol', name: 'block_inner' },
-			block_inner: { type: 'seq', members: [{ type: 'string', value: '{' }, { type: 'string', value: '}' }] },
-			type_parameters: { type: 'symbol', name: 'identifier' },
-			parameter: { type: 'symbol', name: 'identifier' },
-			expr: { type: 'symbol', name: 'identifier' },
+			identifier: { type: PATTERN, value: '[a-zA-Z_][a-zA-Z0-9_]*' },
+			block: { type: SYMBOL, name: 'block_inner' },
+			block_inner: { type: SEQ, members: [{ type: STRING, value: '{' }, { type: STRING, value: '}' }] },
+			type_parameters: { type: SYMBOL, name: 'identifier' },
+			parameter: { type: SYMBOL, name: 'identifier' },
+			expr: { type: SYMBOL, name: 'identifier' },
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);

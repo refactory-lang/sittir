@@ -1,3 +1,4 @@
+import { FIELD, PATTERN, SEQ, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
@@ -39,12 +40,12 @@ async function loadFreshWrapWitnessModule(): Promise<{
 	wrapListSplat: (node: unknown, tree: TreeHandle) => unknown;
 }> {
 	const rule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'field', name: 'value', content: { type: 'symbol', name: 'identifier' } }]
+		type: SEQ,
+		members: [{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('list_splat', new AssembledBranch('list_splat', rule, rule, rule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
 		'const readNodeJs = () => { throw new Error("unused"); };',
@@ -70,8 +71,8 @@ async function loadAliasRoutingWrapWitnessModule(): Promise<{
 	};
 }> {
 	const rule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'symbol', name: 'identifier' }]
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
@@ -95,7 +96,7 @@ async function loadAliasRoutingWrapWitnessModule(): Promise<{
 			})
 		}) as AssembledNode
 	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
 		'const readNodeJs = () => { throw new Error("unused"); };',

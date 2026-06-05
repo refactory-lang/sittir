@@ -1,3 +1,4 @@
+import { PATTERN } from '../rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { choice, field, seq } from '../evaluate.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
@@ -28,7 +29,7 @@ describe('NodeMap back-pointer maps', () => {
 				field('function', { type: 'symbol', name: 'identifier' }),
 				field('args', { type: 'symbol', name: 'identifier' })
 			),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' }
+			identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 		});
 		const raw: RawGrammar = {
 			name: 'synth',
@@ -117,8 +118,8 @@ describe('NodeMap back-pointer maps', () => {
 				field('parameter', { type: 'symbol', name: 'identifier' }),
 				field('parameter', { type: 'symbol', name: 'number' })
 			),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
-			number: { type: 'pattern', value: '[0-9]+' }
+			identifier: { type: PATTERN, value: '[a-z_]\\w*' },
+			number: { type: PATTERN, value: '[0-9]+' }
 		});
 
 		const slot = nodeMap.nodes.get('test')?.slots.parameter;
@@ -143,8 +144,8 @@ describe('NodeMap back-pointer maps', () => {
 					seq({ type: 'string', value: '-' }, field('rhs', { type: 'symbol', name: 'number' }))
 				)
 			),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
-			number: { type: 'pattern', value: '[0-9]+' }
+			identifier: { type: PATTERN, value: '[a-z_]\\w*' },
+			number: { type: PATTERN, value: '[0-9]+' }
 		});
 
 		const slot = nodeMap.nodes.get('test')?.slots.rhs;

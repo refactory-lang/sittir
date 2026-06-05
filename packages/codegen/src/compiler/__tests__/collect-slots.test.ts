@@ -13,13 +13,14 @@
  * `collectSlots` wrapper-free input).
  */
 
+import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, afterEach } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
 import { deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule } from '../rule.ts';
 
-const sym = (name: string): Rule => ({ type: 'symbol', name });
-const str = (value: string): Rule => ({ type: 'string', value });
+const sym = (name: string): Rule => ({ type: SYMBOL, name });
+const str = (value: string): Rule => ({ type: STRING, value });
 
 function slots(rule: Rule) {
 	return collectSlots(deleteWrapper(rule) as Rule);
@@ -32,7 +33,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	});
 
 	it('field(body, symbol) → one body slot', () => {
-		const out = slots({ type: 'field', name: 'body', content: sym('_suite') });
+		const out = slots({ type: FIELD, name: 'body', content: sym('_suite') });
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('body');
 		expect(out[0]!.storageName).toBe('body');
@@ -44,24 +45,24 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		// A repeat(terminal) becomes an array slot only when nameable — here
 		// via the field wrapper. The bare unnamed `repeat(',')` has no name
 		// source and elides (it is pure syntactic separation).
-		const out = slots({ type: 'field', name: 'modifiers', content: { type: 'repeat', content: str('kw') } });
+		const out = slots({ type: FIELD, name: 'modifiers', content: { type: REPEAT, content: str('kw') } });
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('modifiers');
 		expect(out[0]!.values.every((v) => v.multiplicity === 'array')).toBe(true);
 	});
 
 	it('bare unnamed repeat(string) → [] (no name source, syntactic only)', () => {
-		const out = slots({ type: 'repeat', content: str(',') });
+		const out = slots({ type: REPEAT, content: str(',') });
 		expect(out).toHaveLength(0);
 	});
 
 	it('optional(string) → [] (no slot)', () => {
-		const out = slots({ type: 'optional', content: str(',') });
+		const out = slots({ type: OPTIONAL, content: str(',') });
 		expect(out).toHaveLength(0);
 	});
 
 	it('optional(symbol) → one optional slot', () => {
-		const out = slots({ type: 'optional', content: sym('y') });
+		const out = slots({ type: OPTIONAL, content: sym('y') });
 		expect(out).toHaveLength(1);
 		expect(out[0]!.values[0]!.multiplicity).toBe('optional');
 	});
@@ -75,15 +76,15 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		// seq{f:comparators, m:nonEmpty}( choice{f:operators}, symbol(primary_expression) )
 		// → operators slot (choice) + a symbol slot; operators NOT folded in.
 		const inner: Rule = {
-			type: 'repeat1',
+			type: REPEAT1,
 			content: {
-				type: 'seq',
+				type: SEQ,
 				members: [
 					{
-						type: 'field',
+						type: FIELD,
 						name: 'operators',
 						content: {
-							type: 'choice',
+							type: CHOICE,
 							members: [str('<'), str('<='), str('=='), str('>')],
 						},
 					},
@@ -106,7 +107,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	it('unnamed top-level choice → content slot + warning', () => {
 		const warned: (string | undefined)[] = [];
 		setUnnamedChoiceWarner((k) => warned.push(k));
-		const rule: Rule = { type: 'choice', members: [sym('a'), sym('b')] };
+		const rule: Rule = { type: CHOICE, members: [sym('a'), sym('b')] };
 		const out = collectSlots(deleteWrapper(rule) as Rule, 'my_kind');
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('content');
@@ -116,7 +117,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	it('field-named choice → fieldName slot, no warning', () => {
 		const warned: (string | undefined)[] = [];
 		setUnnamedChoiceWarner((k) => warned.push(k));
-		const rule: Rule = { type: 'field', name: 'value', content: { type: 'choice', members: [sym('a'), sym('b')] } };
+		const rule: Rule = { type: FIELD, name: 'value', content: { type: CHOICE, members: [sym('a'), sym('b')] } };
 		const out = collectSlots(deleteWrapper(rule) as Rule, 'my_kind');
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('value');
@@ -142,8 +143,8 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 
 	it('seq distributes — two symbol members → two slots', () => {
 		const rule: Rule = {
-			type: 'seq',
-			members: [{ type: 'field', name: 'left', content: sym('a') }, { type: 'field', name: 'right', content: sym('b') }],
+			type: SEQ,
+			members: [{ type: FIELD, name: 'left', content: sym('a') }, { type: FIELD, name: 'right', content: sym('b') }],
 		};
 		const out = collectSlots(deleteWrapper(rule) as Rule);
 		expect(out.map((s) => s.name)).toEqual(['left', 'right']);

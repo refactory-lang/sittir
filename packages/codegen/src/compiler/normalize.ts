@@ -12,6 +12,7 @@
  * re-collapse.
  */
 
+import { CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, SeqRule } from './rule.ts';
 import { isChoice } from './rule.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
@@ -50,7 +51,7 @@ function dbgChoiceId(label: string, rules: Record<string, Rule>): void {
 	const r = rules[target];
 	if (!r) return;
 	const find = (x: Rule): string | undefined => {
-		if (x.type === 'choice') return (x as { id?: string }).id ?? '<NONE>';
+		if (x.type === CHOICE) return (x as { id?: string }).id ?? '<NONE>';
 		const xs = x as { members?: readonly Rule[]; content?: Rule };
 		for (const m of xs.members ?? []) {
 			const g = find(m);
@@ -99,7 +100,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<strin
 	const isHidden = (name: string): boolean => name.startsWith('_');
 
 	const walk = (rule: Rule, ownerTwinTarget: string | undefined): void => {
-		if (rule.type === 'symbol') {
+		if (rule.type === SYMBOL) {
 			const name = rule.name;
 			if (isHidden(name)) {
 				refcount.set(name, (refcount.get(name) ?? 0) + 1);
@@ -107,7 +108,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<strin
 			}
 			return;
 		}
-		if (rule.type === 'supertype') {
+		if (rule.type === SUPERTYPE) {
 			for (const sub of rule.subtypes) {
 				if (isHidden(sub)) supertypeNamed.add(sub);
 			}
@@ -205,7 +206,7 @@ function spliceFoldableRefs(
 	rules: Readonly<Record<string, Rule>>
 ): Rule {
 	switch (rule.type) {
-		case 'symbol': {
+		case SYMBOL: {
 			if (!foldable.has(rule.name)) return rule;
 			// Only fold OPTIONAL / REQUIRED seq-unit refs. ARRAY / nonEmptyArray
 			// refs are `repeat(seq)` boundaries: the whole sequence repeats with a
@@ -232,7 +233,7 @@ function spliceFoldableRefs(
 			if (!body) return rule;
 			return materializeInlinedBody(rule, body, rule.name);
 		}
-		case 'seq': {
+		case SEQ: {
 			let touched = false;
 			const members = rule.members.map((m) => {
 				const r = spliceFoldableRefs(m, foldable, rules);
@@ -241,7 +242,7 @@ function spliceFoldableRefs(
 			});
 			return touched ? { ...rule, members } : rule;
 		}
-		case 'choice': {
+		case CHOICE: {
 			let touched = false;
 			const members = rule.members.map((m) => {
 				const r = spliceFoldableRefs(m, foldable, rules);
@@ -250,13 +251,13 @@ function spliceFoldableRefs(
 			});
 			return touched ? { ...rule, members } : rule;
 		}
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'token':
-		case 'field':
-		case 'variant':
-		case 'group': {
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case TOKEN:
+		case FIELD:
+		case VARIANT:
+		case GROUP: {
 			const inner = spliceFoldableRefs((rule as { content: Rule }).content, foldable, rules);
 			return inner === (rule as { content: Rule }).content
 				? rule
@@ -300,7 +301,7 @@ function materializeInlinedBody(
 	// multiplicity rides the sequence (gated at emit on its single internal
 	// slot). A non-seq body (single member group) is wrapped in a 1-member seq
 	// so it carries the same seq-unit gating uniformly.
-	if (body.type === 'seq') {
+	if (body.type === SEQ) {
 		return { ...body, ...carry, metadata: meta } as Rule;
 	}
 	return {
@@ -442,7 +443,7 @@ export function normalizeGrammar(
  */
 export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
 	switch (rule.type) {
-		case 'seq': {
+		case SEQ: {
 			const members = rule.members.map((m) => fanOutSeqChoices(m));
 			const choiceIdx = members.findIndex(isChoice);
 			if (choiceIdx < 0) return { ...rule, members };
@@ -455,12 +456,12 @@ export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
 			const before = members.slice(0, choiceIdx);
 			const after = members.slice(choiceIdx + 1);
 			const branches: Rule[] = choice.members.map((branch) => {
-				const inner = branch.type === 'variant' ? branch.content : branch;
+				const inner = branch.type === VARIANT ? branch.content : branch;
 				const seqMembers = [...before, inner, ...after];
 				if (seqMembers.length === 1) return seqMembers[0]!;
 				// Preserve variant labels by re-wrapping.
-				const flat: Rule = { type: 'seq', members: seqMembers };
-				return branch.type === 'variant' ? { type: 'variant', name: branch.name, content: flat } : flat;
+				const flat: Rule = { type: SEQ, members: seqMembers };
+				return branch.type === VARIANT ? { type: VARIANT, name: branch.name, content: flat } : flat;
 			});
 			// The fanned choice replaces this seq 1:1 — carry the inner choice's
 			// separator/multiplicity/etc. attrs (so comma-separated lists keep
@@ -469,18 +470,18 @@ export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
 			// `{ type: 'choice', ... }` here drops both the id and the separator
 			// (the source of the UNRESOLVED slotByRuleId misses AND the
 			// space-join regression on type_arguments / future_import_statement).
-			return { ...choice, type: 'choice', members: branches, ...(rule.id !== undefined ? { id: rule.id } : {}) };
+			return { ...choice, type: CHOICE, members: branches, ...(rule.id !== undefined ? { id: rule.id } : {}) };
 		}
-		case 'choice': {
+		case CHOICE: {
 			const members = rule.members.map((m) => fanOutSeqChoices(m));
 			return { ...rule, members };
 		}
-		case 'optional':
-		case 'repeat':
-		case 'token':
-		case 'field':
-		case 'variant':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case TOKEN:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
 			return { ...rule, content: fanOutSeqChoices(rule.content) };
 		default:
 			return rule;
@@ -513,11 +514,11 @@ export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
  */
 function isAtomForFactoring(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'symbol':
-		case 'string':
-		case 'pattern':
-		case 'field':
-		case 'token':
+		case SYMBOL:
+		case STRING:
+		case PATTERN:
+		case FIELD:
+		case TOKEN:
 			return true;
 		default:
 			return false;
@@ -557,7 +558,7 @@ function extractFactoredChoiceBody(
 			continue;
 		}
 		const bodyRule: Rule = body.length === 1 ? body[0]! : { type: 'seq', members: body };
-		nonEmpty.push(m.type === 'variant' ? { type: 'variant', name: m.name, content: bodyRule } : bodyRule);
+		nonEmpty.push(m.type === VARIANT ? { type: VARIANT, name: m.name, content: bodyRule } : bodyRule);
 	}
 	return { prefix, suffix, nonEmpty, hasEmpty };
 }
@@ -574,7 +575,7 @@ function extractFactoredChoiceBody(
  */
 export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
 	switch (rule.type) {
-		case 'choice': {
+		case CHOICE: {
 			const members = rule.members.map((m) => factorChoiceBranches(m));
 			const unwrapped = members.map((m) => (m.type === 'variant' ? m.content : m));
 			// Bare atoms normalized to single-member seqs for uniform factoring.
@@ -598,18 +599,18 @@ export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
 					: { ...rule, type: 'choice', members: nonEmpty };
 			const inner: Rule = hasEmpty ? { type: 'optional', content: core } : core;
 			const outerMembers: Rule[] = [...prefix, inner, ...suffix];
-			return outerMembers.length === 1 ? outerMembers[0]! : { type: 'seq', members: outerMembers };
+			return outerMembers.length === 1 ? outerMembers[0]! : { type: SEQ, members: outerMembers };
 		}
-		case 'seq': {
+		case SEQ: {
 			const members = rule.members.map((m) => factorChoiceBranches(m));
 			return { ...rule, members };
 		}
-		case 'optional':
-		case 'repeat':
-		case 'token':
-		case 'field':
-		case 'variant':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case TOKEN:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
 			return { ...rule, content: factorChoiceBranches(rule.content) };
 		default:
 			return rule;
@@ -631,7 +632,7 @@ export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
  */
 export function dedupeSeqMembers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 	switch (rule.type) {
-		case 'seq': {
+		case SEQ: {
 			const members = rule.members.map((m) => dedupeSeqMembers(m));
 			const deduped: Rule[] = [];
 			for (const m of members) {
@@ -641,14 +642,14 @@ export function dedupeSeqMembers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 			}
 			return { ...rule, members: deduped };
 		}
-		case 'choice':
+		case CHOICE:
 			return { ...rule, members: rule.members.map((m) => dedupeSeqMembers(m)) };
-		case 'optional':
-		case 'repeat':
-		case 'token':
-		case 'field':
-		case 'variant':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case TOKEN:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
 			return { ...rule, content: dedupeSeqMembers(rule.content) };
 		default:
 			return rule;
@@ -731,10 +732,10 @@ function iterateInliningToFixedPoint(work: Record<string, Rule>, preserveKinds?:
  */
 function isStructurallyMeaningfulHiddenRule(rule: Rule): boolean {
 	return (
-		rule.type === 'supertype' ||
-		rule.type === 'enum' ||
-		rule.type === 'terminal' ||
-		rule.type === 'group'
+		rule.type === SUPERTYPE ||
+		rule.type === ENUM ||
+		rule.type === TERMINAL ||
+		rule.type === GROUP
 	);
 }
 
@@ -779,24 +780,24 @@ function countReferences(rules: Record<string, Rule>): Map<string, number> {
 
 function walkSymbols(rule: Rule, visit: (name: string) => void): void {
 	switch (rule.type) {
-		case 'symbol':
+		case SYMBOL:
 			visit(rule.name);
 			return;
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			for (const m of rule.members) walkSymbols(m, visit);
 			return;
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'token':
-		case 'field':
-		case 'variant':
-		case 'group':
-		case 'terminal':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case TOKEN:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
+		case TERMINAL:
 			walkSymbols(rule.content, visit);
 			return;
-		case 'supertype':
+		case SUPERTYPE:
 			for (const sub of rule.subtypes) visit(sub);
 			return;
 	}
@@ -809,10 +810,10 @@ function walkSymbols(rule: Rule, visit: (name: string) => void): void {
  */
 function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rule {
 	switch (rule.type) {
-		case 'symbol':
+		case SYMBOL:
 			if (rule.name === targetName) return targetRule;
 			return rule;
-		case 'seq': {
+		case SEQ: {
 			let changed = false;
 			const members = rule.members.map((m) => {
 				const r = replaceSymbolRef(m, targetName, targetRule);
@@ -821,7 +822,7 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
 			});
 			return changed ? { ...rule, members } : rule;
 		}
-		case 'choice': {
+		case CHOICE: {
 			let changed = false;
 			const members = rule.members.map((m) => {
 				const r = replaceSymbolRef(m, targetName, targetRule);
@@ -830,12 +831,12 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
 			});
 			return changed ? { ...rule, members } : rule;
 		}
-		case 'optional':
-		case 'repeat':
-		case 'token':
-		case 'field':
-		case 'variant':
-		case 'group': {
+		case OPTIONAL:
+		case REPEAT:
+		case TOKEN:
+		case FIELD:
+		case VARIANT:
+		case GROUP: {
 			const inner = replaceSymbolRef(rule.content, targetName, targetRule);
 			return inner === rule.content ? rule : { ...rule, content: inner };
 		}
@@ -852,24 +853,24 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
  */
 export function collapseWrappers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 	switch (rule.type) {
-		case 'optional': {
+		case OPTIONAL: {
 			const inner = collapseWrappers(rule.content);
 			// optional(optional(x)) → optional(x)
-			if (inner.type === 'optional') return inner;
+			if (inner.type === OPTIONAL) return inner;
 			// optional(repeat(x)) → repeat(x) — repeat already matches zero
-			if (inner.type === 'repeat') return inner;
+			if (inner.type === REPEAT) return inner;
 			return { ...rule, content: inner };
 		}
-		case 'repeat': {
+		case REPEAT: {
 			const inner = collapseWrappers(rule.content);
 			// repeat(repeat(x)) → repeat(x)
-			if (inner.type === 'repeat' && !rule.separator && !inner.separator) return inner;
+			if (inner.type === REPEAT && !rule.separator && !inner.separator) return inner;
 			// repeat(optional(x)) → repeat(x) — the outer repeat already
 			// handles zero occurrences.
-			if (inner.type === 'optional') return { ...rule, content: inner.content };
+			if (inner.type === OPTIONAL) return { ...rule, content: inner.content };
 			return { ...rule, content: inner };
 		}
-		case 'seq': {
+		case SEQ: {
 			const members = rule.members.map((m) => collapseWrappers(m));
 			if (members.length === 1) {
 				const survivor = members[0]!;
@@ -890,15 +891,15 @@ export function collapseWrappers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 			}
 			return { ...rule, members };
 		}
-		case 'choice': {
+		case CHOICE: {
 			const members = rule.members.map((m) => collapseWrappers(m));
 			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
 			return { ...rule, members };
 		}
-		case 'field':
-		case 'variant':
-		case 'group':
-		case 'token':
+		case FIELD:
+		case VARIANT:
+		case GROUP:
+		case TOKEN:
 			return { ...rule, content: collapseWrappers(rule.content) };
 		default:
 			return rule;
@@ -914,7 +915,7 @@ function outerFromParts(prefix: Rule[], suffix: Rule[]): Rule {
 		throw new Error('outerFromParts: no prefix or suffix to wrap');
 	}
 	if (members.length === 1) return members[0]!;
-	return { type: 'seq', members };
+	return { type: SEQ, members };
 }
 
 // ---------------------------------------------------------------------------
@@ -925,11 +926,11 @@ export function rulesEqual(a: Rule, b: Rule): boolean {
 	if (a.type !== b.type) return false;
 
 	switch (a.type) {
-		case 'string':
+		case STRING:
 			return a.value === (b as typeof a).value;
-		case 'pattern':
+		case PATTERN:
 			return a.value === (b as typeof a).value;
-		case 'symbol':
+		case SYMBOL:
 			// Include aliasedFrom: two symbols with the same `.name` but
 			// different alias provenance point at the same kind but carry
 			// different drillAs metadata. Treating them as equal lets
@@ -937,33 +938,33 @@ export function rulesEqual(a: Rule, b: Rule): boolean {
 			// aliasSources entry from the other (see
 			// node-model.json5 diff for `_index_signature_colon.name`).
 			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
-		case 'seq':
+		case SEQ:
 			return (
 				a.members.length === (b as typeof a).members.length &&
 				a.members.every((m, i) => rulesEqual(m, (b as typeof a).members[i]!))
 			);
-		case 'choice':
+		case CHOICE:
 			return (
 				a.members.length === (b as typeof a).members.length &&
 				a.members.every((m, i) => rulesEqual(m, (b as typeof a).members[i]!))
 			);
-		case 'optional':
+		case OPTIONAL:
 			return rulesEqual(a.content, (b as typeof a).content);
-		case 'repeat':
+		case REPEAT:
 			return rulesEqual(a.content, (b as typeof a).content) && a.separator === (b as typeof a).separator;
-		case 'field':
+		case FIELD:
 			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
-		case 'variant':
+		case VARIANT:
 			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
-		case 'enum': {
+		case ENUM: {
 			const bm = (b as typeof a).members;
 			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
 		}
-		case 'supertype':
+		case SUPERTYPE:
 			return a.name === (b as typeof a).name;
-		case 'indent':
-		case 'dedent':
-		case 'newline':
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 			return true;
 		default:
 			return JSON.stringify(a) === JSON.stringify(b);
@@ -976,7 +977,7 @@ export function rulesEqual(a: Rule, b: Rule): boolean {
 
 export function factorSeqChoice(branches: Rule[]): Rule[] {
 	// Check if all branches are seqs
-	const seqs = branches.map((b) => (b.type === 'seq' ? b.members : [b]));
+	const seqs = branches.map((b) => (b.type === SEQ ? b.members : [b]));
 
 	const prefixLen = findCommonPrefix(seqs);
 	if (prefixLen === 0) return branches;
@@ -985,9 +986,9 @@ export function factorSeqChoice(branches: Rule[]): Rule[] {
 
 	// Extract factored branches (the parts that differ)
 	return branches.map((b): Rule => {
-		if (b.type === 'seq') {
+		if (b.type === SEQ) {
 			const members = b.members.slice(prefixLen, b.members.length - suffixLen);
-			return members.length === 1 ? members[0]! : { type: 'seq' as const, members };
+			return members.length === 1 ? members[0]! : { type: SEQ, members };
 		}
 		return b;
 	});

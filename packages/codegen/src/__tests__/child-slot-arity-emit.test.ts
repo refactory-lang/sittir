@@ -1,3 +1,4 @@
+import { CHOICE, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
@@ -21,59 +22,59 @@ function nodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {
 
 function makeRequiredSingleChildNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'symbol', name: 'identifier' }]
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('single_parent', new AssembledBranch('single_parent', parentRule, parentRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeOptionalSingleChildNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'optional', content: { type: 'symbol', name: 'identifier' } }]
+		type: SEQ,
+		members: [{ type: OPTIONAL, content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('optional_parent', new AssembledBranch('optional_parent', parentRule, parentRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeMultiSingularChildNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
-			{ type: 'symbol', name: 'identifier' },
-			{ type: 'symbol', name: 'number_literal' }
+			{ type: SYMBOL, name: 'identifier' },
+			{ type: SYMBOL, name: 'number_literal' }
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('multi_parent', new AssembledBranch('multi_parent', parentRule, parentRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
-	nodes.set('number_literal', new AssembledPattern('number_literal', { type: 'pattern', value: '[0-9]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('number_literal', new AssembledPattern('number_literal', { type: PATTERN, value: '[0-9]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeOptionalKeywordChildNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
-			{ type: 'string', value: 'yield' },
+			{ type: STRING, value: 'yield' },
 			{
-				type: 'optional',
+				type: OPTIONAL,
 				content: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
 						{
-							type: 'seq',
+							type: SEQ,
 							members: [
-								{ type: 'string', value: 'from' },
-								{ type: 'symbol', name: 'expression' }
+								{ type: STRING, value: 'from' },
+								{ type: SYMBOL, name: 'expression' }
 							]
 						},
-						{ type: 'symbol', name: 'expression_list' }
+						{ type: SYMBOL, name: 'expression_list' }
 					]
 				}
 			}
@@ -81,8 +82,8 @@ function makeOptionalKeywordChildNodeMap(): NodeMap {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('yield', new AssembledBranch('yield', parentRule, parentRule));
-	nodes.set('expression', new AssembledPattern('expression', { type: 'pattern', value: '.+' }));
-	nodes.set('expression_list', new AssembledPattern('expression_list', { type: 'pattern', value: '.+' }));
+	nodes.set('expression', new AssembledPattern('expression', { type: PATTERN, value: '.+' }));
+	nodes.set('expression_list', new AssembledPattern('expression_list', { type: PATTERN, value: '.+' }));
 	return nodeMapWith(nodes);
 }
 

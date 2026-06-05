@@ -1,3 +1,4 @@
+import { CHOICE, FIELD, PATTERN, SEQ, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { emitWrap } from '../emitters/wrap.ts';
@@ -24,12 +25,12 @@ function extractFunctionBody(source: string, functionName: string): string {
 
 function makeHiddenGroupNodeMap() {
 	const helperRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'field', name: 'right', content: { type: 'symbol', name: 'identifier' } }]
+		type: SEQ,
+		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, helperRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -43,21 +44,21 @@ function makeNoFactoryHiddenGroupNodeMap() {
 
 function makeTransparentHiddenGroupNodeMap() {
 	const helperRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'symbol', name: 'identifier' }]
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('_export_statement_default', new AssembledGroup('_export_statement_default', helperRule, helperRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
 
 function makeTransparentHiddenSupertypeNodeMap() {
 	const supertypeRule: ChoiceRule = {
-		type: 'choice',
+		type: CHOICE,
 		members: [
-			{ type: 'symbol', name: '_export_statement_default_from_arm' },
-			{ type: 'symbol', name: '_export_statement_default_decl_arm' }
+			{ type: SYMBOL, name: '_export_statement_default_from_arm' },
+			{ type: SYMBOL, name: '_export_statement_default_decl_arm' }
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
@@ -70,11 +71,11 @@ function makeTransparentHiddenSupertypeNodeMap() {
 	);
 	nodes.set(
 		'_export_statement_default_from_arm',
-		new AssembledPattern('_export_statement_default_from_arm', { type: 'pattern', value: 'from' })
+		new AssembledPattern('_export_statement_default_from_arm', { type: PATTERN, value: 'from' })
 	);
 	nodes.set(
 		'_export_statement_default_decl_arm',
-		new AssembledPattern('_export_statement_default_decl_arm', { type: 'pattern', value: 'decl' })
+		new AssembledPattern('_export_statement_default_decl_arm', { type: PATTERN, value: 'decl' })
 	);
 	return makeNodeMapWith(nodes);
 }

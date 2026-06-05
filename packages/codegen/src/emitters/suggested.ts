@@ -16,6 +16,7 @@
  * curator can import either, or pull specific entries out by hand.
  */
 
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry } from '../compiler/types.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type { PolymorphCandidateLocation } from '../compiler/link.ts';
@@ -41,9 +42,9 @@ import type { PolymorphCandidateLocation } from '../compiler/link.ts';
  *   Both paths now share this base-name function.
  */
 function deriveArmNameFromRule(node: Rule, index: number): string {
-	if (node.type === 'variant') return node.name;
-	if (node.type === 'symbol' || node.type === 'supertype') return node.name;
-	if (node.type === 'seq' && node.members.length > 0) {
+	if (node.type === VARIANT) return node.name;
+	if (node.type === SYMBOL || node.type === SUPERTYPE) return node.name;
+	if (node.type === SEQ && node.members.length > 0) {
 		// Lead with the first named member (symbol/supertype) or a
 		// leading identifier-shaped string literal ('(' → 'paren', etc.
 		// the caller can rename).
@@ -109,11 +110,11 @@ function _armNamesFor(cand: PolymorphCandidateLocation): string[] {
  */
 function _locateTopLevelChoice(rule: Rule): { choicePath: string; arms: string[] } | null {
 	function walk(node: Rule, path: string): { choicePath: string; arms: string[] } | null {
-		if (node.type === 'choice') {
+		if (node.type === CHOICE) {
 			const arms = deduplicateArmNames(node.members, deriveArmNameFromRule);
 			return { choicePath: path, arms };
 		}
-		if (node.type === 'seq') {
+		if (node.type === SEQ) {
 			for (let i = 0; i < node.members.length; i++) {
 				const m = node.members[i]!;
 				const sub = walk(m, path === '' ? `${i}` : `${path}/${i}`);
@@ -121,7 +122,7 @@ function _locateTopLevelChoice(rule: Rule): { choicePath: string; arms: string[]
 			}
 			return null;
 		}
-		if (node.type === 'field') {
+		if (node.type === FIELD) {
 			// Field wrappers around choices — the common pattern the
 			// promotePolymorph pass used to miss (e.g. python's
 			// `field('wildcard_import', choice(...))`). Descend; the
@@ -129,7 +130,7 @@ function _locateTopLevelChoice(rule: Rule): { choicePath: string; arms: string[]
 			// and the author can optionally drop the outer field wrapper.
 			return walk(node.content, path === '' ? '0' : `${path}/0`);
 		}
-		if (node.type === 'optional' || node.type === 'variant' || node.type === 'group') {
+		if (node.type === OPTIONAL || node.type === VARIANT || node.type === GROUP) {
 			return walk(node.content, path === '' ? '0' : `${path}/0`);
 		}
 		return null;
@@ -145,12 +146,12 @@ function _locateTopLevelChoice(rule: Rule): { choicePath: string; arms: string[]
  * top level or the target can't be located as a direct member.
  */
 function findSymbolPosition(rule: Rule, targetSymbol: string, fieldName: string): number | null {
-	if (rule.type !== 'seq') return null;
+	if (rule.type !== SEQ) return null;
 	const unwrap = (r: Rule): Rule => {
 		switch (r.type) {
-			case 'optional':
-			case 'variant':
-			case 'group':
+			case OPTIONAL:
+			case VARIANT:
+			case GROUP:
 				return unwrap(r.content);
 			default:
 				return r;
@@ -158,11 +159,11 @@ function findSymbolPosition(rule: Rule, targetSymbol: string, fieldName: string)
 	};
 	for (let i = 0; i < rule.members.length; i++) {
 		const m = unwrap(rule.members[i]!);
-		if (m.type === 'symbol' && m.name === targetSymbol) return i;
+		if (m.type === SYMBOL && m.name === targetSymbol) return i;
 		if (
-			m.type === 'field' &&
+			m.type === FIELD &&
 			m.name === fieldName &&
-			unwrap(m.content).type === 'symbol' &&
+			unwrap(m.content).type === SYMBOL &&
 			(unwrap(m.content) as { name: string }).name === targetSymbol
 		) {
 			return i;
@@ -705,18 +706,18 @@ function walkBodyForGroups(
 	out: GroupCandidate[]
 ): void {
 	// Skip already-lifted symbol refs.
-	if (rule.type === 'symbol' && (rule as { source?: string }).source === 'group-lift') return;
+	if (rule.type === SYMBOL && (rule as { source?: string }).source === 'group-lift') return;
 
 	// Case 1: A cardinality wrapper (optional/repeat/repeat1) whose content is a
 	// structural seq — suggest the wrapper's path. This way the user's groups
 	// entry points to the optional/repeat, and applyGroupOverrides's liftRule
 	// preserves the wrapper (lifts only the inner seq body) as designed.
 	if (
-		(rule.type === 'optional' || rule.type === 'repeat' || rule.type === 'repeat1') &&
+		(rule.type === OPTIONAL || rule.type === REPEAT || rule.type === REPEAT1) &&
 		!ctx.isTopLevel
 	) {
 		const inner = (rule as { content: Rule }).content;
-		if (inner.type === 'seq' && hasGroupableStructure(inner)) {
+		if (inner.type === SEQ && hasGroupableStructure(inner)) {
 			out.push({
 				kind: ctx.kind,
 				path: path.join('/'),
@@ -730,7 +731,7 @@ function walkBodyForGroups(
 	// Case 2: A non-top-level seq with structural members directly nested
 	// inside a choice, seq, or field (no cardinality wrapper) — suggest the
 	// seq's path directly.
-	if (rule.type === 'seq' && !ctx.isTopLevel && hasGroupableStructure(rule)) {
+	if (rule.type === SEQ && !ctx.isTopLevel && hasGroupableStructure(rule)) {
 		out.push({
 			kind: ctx.kind,
 			path: path.join('/'),
@@ -743,23 +744,23 @@ function walkBodyForGroups(
 
 	const childCtx = { ...ctx, isTopLevel: false };
 	switch (rule.type) {
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			for (let i = 0; i < rule.members.length; i++) {
 				walkBodyForGroups(rule.members[i]!, [...path, i], childCtx, out);
 			}
 			break;
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'field':
-		case 'token':
-		case 'alias':
-		case 'variant':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case TOKEN:
+		case ALIAS:
+		case VARIANT:
 			// For non-cardinality-with-structural-seq cases, descend normally.
 			walkBodyForGroups((rule as { content: Rule }).content, [...path, 0], childCtx, out);
 			break;
-		case 'group':
+		case GROUP:
 			// A top-level `group` rule wraps the rule body transparently — treat
 			// the group's content as still top-level so the body seq isn't
 			// incorrectly flagged as a nested-seq candidate. At non-top-level a
@@ -777,20 +778,20 @@ function walkBodyForGroups(
 
 function hasGroupableStructure(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'field':
-		case 'symbol':
-		case 'supertype':
+		case FIELD:
+		case SYMBOL:
+		case SUPERTYPE:
 			return true;
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return rule.members.some(hasGroupableStructure);
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'token':
-		case 'alias':
-		case 'variant':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case TOKEN:
+		case ALIAS:
+		case VARIANT:
+		case GROUP:
 			return hasGroupableStructure((rule as { content: Rule }).content);
 		default:
 			return false;
@@ -802,25 +803,25 @@ const IDENTIFIER_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 function guessGroupDiscriminator(rule: Rule, path: readonly number[]): string {
 	const peel = (r: Rule): string | null => {
 		switch (r.type) {
-			case 'symbol':
-			case 'supertype':
+			case SYMBOL:
+			case SUPERTYPE:
 				return r.name.replace(/^_+/, '').replace(/^\$\./, '');
-			case 'field':
+			case FIELD:
 				return r.name;
-			case 'seq':
-			case 'choice':
+			case SEQ:
+			case CHOICE:
 				for (const m of r.members) {
 					const n = peel(m);
 					if (n) return n;
 				}
 				return null;
-			case 'optional':
-			case 'repeat':
-			case 'repeat1':
-			case 'token':
-			case 'alias':
-			case 'variant':
-			case 'group':
+			case OPTIONAL:
+			case REPEAT:
+			case REPEAT1:
+			case TOKEN:
+			case ALIAS:
+			case VARIANT:
+			case GROUP:
 				return peel((r as { content: Rule }).content);
 			default:
 				return null;

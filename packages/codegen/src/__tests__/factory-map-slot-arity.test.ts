@@ -1,3 +1,4 @@
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../compiler/node-map.ts';
 import type { SeqRule } from '../compiler/rule.ts';
@@ -7,56 +8,56 @@ import type { FactorySlotMeta } from '../emitters/factory-map.ts';
 
 function makeSlotArityNodeMap() {
 	const singleChildRule: SeqRule = {
-		type: 'seq',
-		members: [{ type: 'symbol', name: 'identifier' }]
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const multiSingularChildRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
-			{ type: 'symbol', name: 'identifier' },
-			{ type: 'symbol', name: 'number_literal' }
+			{ type: SYMBOL, name: 'identifier' },
+			{ type: SYMBOL, name: 'number_literal' }
 		]
 	};
 	const repeatFieldRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'field',
+				type: FIELD,
 				name: 'items',
 				content: {
-					type: 'repeat1',
-					content: { type: 'symbol', name: 'identifier' }
+					type: REPEAT1,
+					content: { type: SYMBOL, name: 'identifier' }
 				}
 			}
 		]
 	};
 	const optionalThenRequiredChildRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'optional',
-				content: { type: 'symbol', name: 'identifier' }
+				type: OPTIONAL,
+				content: { type: SYMBOL, name: 'identifier' }
 			},
-			{ type: 'symbol', name: 'number_literal' }
+			{ type: SYMBOL, name: 'number_literal' }
 		]
 	};
 	const multiSiblingFieldRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'field',
+				type: FIELD,
 				name: 'declaration',
 				content: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'symbol', name: 'identifier' },
+						{ type: SYMBOL, name: 'identifier' },
 						{
-							type: 'seq',
+							type: SEQ,
 							members: [
-								{ type: 'string', value: 'module' },
-								{ type: 'symbol', name: 'property_identifier' },
-								{ type: 'string', value: ':' },
-								{ type: 'symbol', name: 'object_type' }
+								{ type: STRING, value: 'module' },
+								{ type: SYMBOL, name: 'property_identifier' },
+								{ type: STRING, value: ':' },
+								{ type: SYMBOL, name: 'object_type' }
 							]
 						}
 					]
@@ -73,10 +74,10 @@ function makeSlotArityNodeMap() {
 		new AssembledBranch('optional_then_required_parent', optionalThenRequiredChildRule, optionalThenRequiredChildRule)
 	);
 	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', multiSiblingFieldRule, multiSiblingFieldRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
-	nodes.set('number_literal', new AssembledPattern('number_literal', { type: 'pattern', value: '[0-9]+' }));
-	nodes.set('property_identifier', new AssembledPattern('property_identifier', { type: 'pattern', value: '[a-z]+' }));
-	nodes.set('object_type', new AssembledPattern('object_type', { type: 'pattern', value: '\\{\\}' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('number_literal', new AssembledPattern('number_literal', { type: PATTERN, value: '[0-9]+' }));
+	nodes.set('property_identifier', new AssembledPattern('property_identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('object_type', new AssembledPattern('object_type', { type: PATTERN, value: '\\{\\}' }));
 	return makeNodeMapWith(nodes);
 }
 

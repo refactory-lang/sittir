@@ -8,6 +8,7 @@
  * use the SAME implementation, and future collapse sites can't drift apart.
  */
 
+import { CHOICE } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, Multiplicity } from './rule.ts';
 
 /**
@@ -115,7 +116,7 @@ const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1
 
 /** The arms of a choice (`members`) or polymorph (form `content`s); `[]` otherwise. */
 function armsOf(rule: Rule): readonly Rule[] {
-	if (rule.type === 'choice') return rule.members;
+	if (rule.type === CHOICE) return rule.members;
 	if (rule.type === 'polymorph') return rule.forms.map((f) => f.content);
 	return [];
 }

@@ -9,6 +9,7 @@
  * warns via console.warn.
  */
 
+import { SEQ } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, vi } from 'vitest';
 import type { Rule, SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -39,7 +40,7 @@ function mkField(name: string, content: Rule): Rule {
 }
 
 function mkSeq(members: Rule[]): SeqRule {
-	return { type: 'seq', members };
+	return { type: SEQ, members };
 }
 
 /** Inner rule: two fields `left` + `right`. */

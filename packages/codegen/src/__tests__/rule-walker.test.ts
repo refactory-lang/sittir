@@ -5,6 +5,7 @@
  * functions remain in that module.
  */
 
+import { CHOICE, FIELD, OPTIONAL, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../compiler/rule.ts';
 import { findRepeatFlag } from '../compiler/template-walker.ts';
@@ -13,16 +14,16 @@ import { findRepeatFlag } from '../compiler/template-walker.ts';
 // Tiny Rule-tree builders — keep tests readable.
 // ---------------------------------------------------------------------------
 
-const str = (value: string): Rule => ({ type: 'string', value });
-const sym = (name: string): Rule => ({ type: 'symbol', name });
+const str = (value: string): Rule => ({ type: STRING, value });
+const sym = (name: string): Rule => ({ type: SYMBOL, name });
 const field = (name: string, content: Rule): Rule => ({
-	type: 'field',
+	type: FIELD,
 	name,
 	content
 });
-const seq = (...members: Rule[]): Rule => ({ type: 'seq', members });
-const choice = (...members: Rule[]): Rule => ({ type: 'choice', members });
-const optional = (content: Rule): Rule => ({ type: 'optional', content });
+const seq = (...members: Rule[]): Rule => ({ type: SEQ, members });
+const choice = (...members: Rule[]): Rule => ({ type: CHOICE, members });
+const optional = (content: Rule): Rule => ({ type: OPTIONAL, content });
 
 describe('findRepeatFlag', () => {
 	// Direct unit coverage for the metadata walker that feeds the
