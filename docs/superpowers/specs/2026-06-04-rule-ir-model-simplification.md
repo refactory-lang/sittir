@@ -38,6 +38,15 @@ Every alias-coerced kind is **two entities** (hidden body + visible Branch), lin
 - `contentAliasedFrom` is **single by invariant**. If the alias map would give a visible Branch **>1** content source → **error diagnostic** (post-link, propose-promotion). (`contentAliasedTo[].length > 1` is **allowed** — fan-out body reuse — no diagnostic.)
 - Checked during/post `mintContentAliasKinds`.
 
+### 2d. Group inline = seq-unit multiplicity (render-correct) — *design-settled 2026-06-04*
+Relocating group-inlining from the late `simplify` wash to a normalize rule-tree hoist (plan `2026-06-04-d2a-normalize-inline.md`, Task 4) must obey: **multiplicity is a property of the sequence as a UNIT, not its members.**
+- **The trap:** `pushAttrsToLeaves` (`simplify.ts`) distributes `optional`/`repeat` onto each leaf because the *derivation* view flattens seqs (`canonicalizeSeqOfLeaves`) and strips literals — harmless there. On the **render** path the seq is the conditional boundary and literals matter; leaf-stamped literals get DROPPED by the walker. (Empirically: 64 templates lost syntax tokens, masked by the count gate.)
+- **Rule:** inline preserves the group as a **seq-unit-multiplicity** node (`optional(seq…)`/`repeat(seq…)`) — the same shape the kept group-ref already renders through. Render gates the seq's literals on its **single internal slot** via the EXISTING optional-group emit (`template-walker.ts` + `emitters/templates.ts` `| isPresent`); literals ride with the slot.
+- **Diagnostic, not a pre-check (DRY):** the **emit-time gating-slot resolver** is the single source of slot-count truth. When it seeks the slot to gate an `optional`/`repeat` group on and finds **>1**, it emits a warning — *"multi-slot multiplicity group → should have been a visible group."* The inline hoist does NOT replicate a slot count.
+- **Derivation** reads the same seq-unit multiplicity (single slot → parent optional/array slot); the lossy leaf-distribution retires (`feedback_no_lossy_distillation`).
+- **`keepRef`** (never-inline) = refcount>1 OR visible name-twin OR named in a `supertype.subtypes` array.
+- Supersedes the earlier "optional-single-slot must stay visible" finding (`project_hoisted_group_slot_visibility_rule`): the missing piece was gating on the internal slot under seq-unit multiplicity — single-slot optional now inlines correctly.
+
 ---
 
 ## 3. Source-retirement
