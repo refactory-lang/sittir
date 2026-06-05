@@ -23641,7 +23641,7 @@ pub struct JsxStartOpeningElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxElementNameTransport>,
+    pub name: JsxElementNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -33091,7 +33091,7 @@ pub struct JsxOpeningElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxElementNameTransport>,
+    pub name: JsxElementNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -33145,7 +33145,7 @@ pub struct JsxSelfClosingElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxElementNameTransport>,
+    pub name: JsxElementNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -50690,9 +50690,7 @@ fn render_initializer(node: &InitializerTransport, dest: &mut dyn ::std::fmt::Wr
 }
 
 fn render_jsx_start_opening_element(node: &JsxStartOpeningElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.name {
-        render_jsx_element_name(child, dest)?;
-    }
+    render_jsx_element_name(&node.name, dest)?;
     if let Some(child) = &node.type_arguments {
         render_type_arguments(child, dest)?;
     }
@@ -52201,11 +52199,6 @@ fn render_jsx_namespace_name(node: &JsxNamespaceNameTransport, dest: &mut dyn ::
 }
 
 fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.name.is_none() && node.type_arguments.is_none() && node.attribute.as_deref().is_none_or(<[_]>::is_empty) {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
     let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -52217,10 +52210,7 @@ fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn 
             leading: false,
             trailing: false,
         },
-        name: match &node.name {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_arguments: match &node.type_arguments {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -52230,11 +52220,6 @@ fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn 
 }
 
 fn render_jsx_self_closing_element(node: &JsxSelfClosingElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.name.is_none() && node.type_arguments.is_none() && node.attribute.as_deref().is_none_or(<[_]>::is_empty) {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
     let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -52246,10 +52231,7 @@ fn render_jsx_self_closing_element(node: &JsxSelfClosingElementTransport, dest: 
             leading: false,
             trailing: false,
         },
-        name: match &node.name {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_arguments: match &node.type_arguments {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -56869,9 +56851,7 @@ fn transport_to_node_initializer(transport: InitializerTransport) -> Result<Tran
 
 fn transport_to_node_jsx_start_opening_element(transport: JsxStartOpeningElementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.name {
-        fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(value))?);
-    }
+    fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.type_arguments {
         fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
     }
@@ -60253,9 +60233,7 @@ fn transport_to_node_jsx_namespace_name(transport: JsxNamespaceNameTransport) ->
 
 fn transport_to_node_jsx_opening_element(transport: JsxOpeningElementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.name {
-        fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(value))?);
-    }
+    fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.type_arguments {
         fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
     }
@@ -60282,9 +60260,7 @@ fn transport_to_node_jsx_opening_element(transport: JsxOpeningElementTransport) 
 
 fn transport_to_node_jsx_self_closing_element(transport: JsxSelfClosingElementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.name {
-        fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(value))?);
-    }
+    fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.type_arguments {
         fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
     }

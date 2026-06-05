@@ -1629,7 +1629,7 @@ export interface JsxOpeningElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: JsxElementNameTransport
+  _name: JsxElementNameTransport
   _type_arguments?: TypeArgumentsTransport
   _attribute?: Array<_JsxAttributeTransport>
 }
@@ -1642,7 +1642,7 @@ export interface JsxSelfClosingElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: JsxElementNameTransport
+  _name: JsxElementNameTransport
   _type_arguments?: TypeArgumentsTransport
   _attribute?: Array<_JsxAttributeTransport>
 }
@@ -1668,7 +1668,7 @@ export interface JsxStartOpeningElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: JsxElementNameTransport
+  _name: JsxElementNameTransport
   _type_arguments?: TypeArgumentsTransport
   _attribute?: Array<_JsxAttributeTransport>
 }

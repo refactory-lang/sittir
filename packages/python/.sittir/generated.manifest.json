@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "768a18b38c85e49fb47b5c3f62ac747b7c085689ceb6e6c7de15a8b8c9dab948",
+  "source_hash": "730213a6b2a62fc3a738f8edbda31d5f5887415f566c5b56f36f782c2e84f37b",
   "files": {
     "packages/python/.sittir/grammar.js": "98effb8b09ed81ad08c3c6c7861b833b46af54c45c0aefa76bb477c9810a68c2",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -22,7 +22,7 @@
     "packages/python/src/factories.ts": "ab7099ba5580a9afb56d050a590eeb6cacc705620f5f8bd743cdc6aa1463efa5",
     "packages/python/src/from.ts": "f780ae5095b815139de2ca6834d46c43796eda0cd45d343d200c4407d58142e1",
     "packages/python/src/grammar.ts": "b2df57c7e9a7c7318514dbf36268ee3bb9543f972793b33d98f2ae3541595dcc",
-    "packages/python/src/hash.ts": "6d95eae08366e358bf3493c8abe54a206eea295576d058ba46f82eab45267129",
+    "packages/python/src/hash.ts": "6f753f8f74ef9899b37b7d7404e4aad52ce2e05581e2c5362dd8394987e0ab89",
     "packages/python/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/python/src/ir.ts": "ff3ab1f767d35d3720a0dd957598dbd9169f41a3c01ca8b840f6329176e12fec",
     "packages/python/src/is.ts": "689df04caa647b1269eff2bcc384b08a55a46ac094728b8c14554bedf33274e6",
@@ -82,7 +82,7 @@
     "packages/python/templates/elif_clause.jinja": "6124377e5d81811bfdfe64d36f9e9bd8a39a9802457f3f73e2c47a9137e9c214",
     "packages/python/templates/else_clause.jinja": "596f4d3b2280e2fbbfb285ebfad5ef32af7b196f8be40ba40c6663b8b9916f60",
     "packages/python/templates/except_clause.jinja": "21b50c1266be48bfa901d3c93cafc40be01ed87691f6ba0d02381158dcb447ef",
-    "packages/python/templates/exec_statement.jinja": "ec3e802824270c9d3ef2a6a82b4b9a0d4ca0ce29089ddaeb10123a1250d613bf",
+    "packages/python/templates/exec_statement.jinja": "2409c38e1f34304677bcf538d588017f667fe53d9a57608ef4b8d100268bffe0",
     "packages/python/templates/expression_list.jinja": "80b14017f0a8b2e6d4467464a1eb4870d5c3d5362a2d32bc9efa8ea44ce4da86",
     "packages/python/templates/expression_statement.jinja": "998cfef1d80ce19f7694b0b675e98478583ae91d41d622eb9b8aa276dfc914ff",
     "packages/python/templates/finally_clause.jinja": "c6c99237f9fa196a5c901f65b7c02faa30c780752d53907731d8770763aca0f9",
@@ -128,7 +128,7 @@
     "packages/python/templates/set.jinja": "ce47ddac604855a5239d8f27f330bfa92ecbde1df71be898923edbe6a5377274",
     "packages/python/templates/set_comprehension.jinja": "57f00fab2f29df3c06b9ce3b7d1b9c769efc9e404d54a28586f752cb00d9f079",
     "packages/python/templates/slice.jinja": "23b8cc06e79b3ce6bebcdceb559c7160e0ebb3ea9229873e55202eee297be64e",
-    "packages/python/templates/slice_group1.jinja": "0a1159db1a57d5b486aedc01b59a5290ebe8fc3cab039844dbcb34e607e6180d",
+    "packages/python/templates/slice_group1.jinja": "23b2fbaa3165fe2bb1fa7bae9025c34a06df65502c72468b86245239df28587c",
     "packages/python/templates/splat_pattern.jinja": "a4d7cc66351729cedfba96b3544bfce5321cf411b421d4b2d03657132d3350cb",
     "packages/python/templates/splat_type.jinja": "131924dec14b8b4d9e026d58764ad3b51b6b489ddefad07a1d75edfbaa81f605",
     "packages/python/templates/string.jinja": "1a73205cf0c89e717f6956e463722d5cfff4ac4aacdee6b01585776b7181bbd1",
@@ -153,7 +153,7 @@
     "rust/crates/sittir-python/index.d.ts": "743c44a8dbc67d8357060eac143a7f5d4ff02fe5670bcf68a3bb208a5d1b2616",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",
     "rust/crates/sittir-python/src/lib.rs": "4d9f9fe64271cf24bdc7c8a4dac80b270d59004712717ecd113d7055dc28f989",
-    "rust/crates/sittir-python/src/render/hash.rs": "af9f77df5b948d4cbf1d5fc6823afe1f1770022e444cf639a79c3b88d16a045b",
+    "rust/crates/sittir-python/src/render/hash.rs": "899cd11edb37cc0094d96410028f33c9c91f89b0432dfb54a8800562a6d886aa",
     "rust/crates/sittir-python/src/render/kind_ids.rs": "cc3af6bec479510b38ee9b00242b21f79c68b72d0e01a13124f8c2ee7914023c",
     "rust/crates/sittir-python/src/render/mod.rs": "ae306ef4595346a06131771a32233e23461ceec670da64ba5a1d9ed5dc42f88b",
     "rust/crates/sittir-python/src/render/templates.rs": "0c1d2271745a13cff9aefa3af438c11e65a8b1f45d8aa28535db76cf19500127",
@@ -208,7 +208,7 @@
     "rust/crates/sittir-python/templates/elif_clause.jinja": "6124377e5d81811bfdfe64d36f9e9bd8a39a9802457f3f73e2c47a9137e9c214",
     "rust/crates/sittir-python/templates/else_clause.jinja": "596f4d3b2280e2fbbfb285ebfad5ef32af7b196f8be40ba40c6663b8b9916f60",
     "rust/crates/sittir-python/templates/except_clause.jinja": "21b50c1266be48bfa901d3c93cafc40be01ed87691f6ba0d02381158dcb447ef",
-    "rust/crates/sittir-python/templates/exec_statement.jinja": "ec3e802824270c9d3ef2a6a82b4b9a0d4ca0ce29089ddaeb10123a1250d613bf",
+    "rust/crates/sittir-python/templates/exec_statement.jinja": "2409c38e1f34304677bcf538d588017f667fe53d9a57608ef4b8d100268bffe0",
     "rust/crates/sittir-python/templates/expression_list.jinja": "80b14017f0a8b2e6d4467464a1eb4870d5c3d5362a2d32bc9efa8ea44ce4da86",
     "rust/crates/sittir-python/templates/expression_statement.jinja": "998cfef1d80ce19f7694b0b675e98478583ae91d41d622eb9b8aa276dfc914ff",
     "rust/crates/sittir-python/templates/finally_clause.jinja": "c6c99237f9fa196a5c901f65b7c02faa30c780752d53907731d8770763aca0f9",
@@ -254,7 +254,7 @@
     "rust/crates/sittir-python/templates/set.jinja": "ce47ddac604855a5239d8f27f330bfa92ecbde1df71be898923edbe6a5377274",
     "rust/crates/sittir-python/templates/set_comprehension.jinja": "57f00fab2f29df3c06b9ce3b7d1b9c769efc9e404d54a28586f752cb00d9f079",
     "rust/crates/sittir-python/templates/slice.jinja": "23b8cc06e79b3ce6bebcdceb559c7160e0ebb3ea9229873e55202eee297be64e",
-    "rust/crates/sittir-python/templates/slice_group1.jinja": "0a1159db1a57d5b486aedc01b59a5290ebe8fc3cab039844dbcb34e607e6180d",
+    "rust/crates/sittir-python/templates/slice_group1.jinja": "23b2fbaa3165fe2bb1fa7bae9025c34a06df65502c72468b86245239df28587c",
     "rust/crates/sittir-python/templates/splat_pattern.jinja": "a4d7cc66351729cedfba96b3544bfce5321cf411b421d4b2d03657132d3350cb",
     "rust/crates/sittir-python/templates/splat_type.jinja": "131924dec14b8b4d9e026d58764ad3b51b6b489ddefad07a1d75edfbaa81f605",
     "rust/crates/sittir-python/templates/string.jinja": "1a73205cf0c89e717f6956e463722d5cfff4ac4aacdee6b01585776b7181bbd1",
@@ -278,6 +278,6 @@
     "rust/crates/sittir-python/templates/yield.jinja": "864c1b6eaf2e8558413c893cc1fb8e4cef6dc75000675a62d374a4c454685de4"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "f98e3df79f7726b3709f50238f61fb410682be70c281708027c11942e53ad0af"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "0dab3f26f60cd318c43c1a179882bf89c643d73072902909fb69cc7037d9ed5a"
   }
 }

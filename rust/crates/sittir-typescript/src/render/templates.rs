@@ -1066,7 +1066,7 @@ pub struct JsxNamespaceNameTemplate<'a> {
 #[template(path = "jsx_opening_element.jinja", escape = "none")]
 pub struct JsxOpeningElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
-    pub name: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
     pub type_arguments: OptionalNonterminalView<'a>,
 }
 
@@ -1074,7 +1074,7 @@ pub struct JsxOpeningElementTemplate<'a> {
 #[template(path = "jsx_self_closing_element.jinja", escape = "none")]
 pub struct JsxSelfClosingElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
-    pub name: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
     pub type_arguments: OptionalNonterminalView<'a>,
 }
 

@@ -434,6 +434,13 @@ function literalEnd(text: string): BoundaryEnd {
  * require cross-rule resolution and cycle handling).
  */
 function rightmostBoundary(rule: Rule): BoundaryEnd {
+	// §D-2a spacing stopgap: a `seq` tagged `metadata.inlinedFrom` was an opaque
+	// `symbol(_x)` ref before the normalize inline hoist spliced it in. At its
+	// OUTER boundaries it must keep spacing like the opaque unit it replaced
+	// (`for await (`, not `for await(`) — so report it as slot-like (word-like)
+	// rather than walking into its first/last literal. (Strategic render-time
+	// spacing supersedes this — see the deferred follow-up in the plan.)
+	if (rule.type === 'seq' && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
 	switch (rule.type) {
 		case 'string':
 			// Named field-wrapped string — it becomes a slot, not a literal.
@@ -506,6 +513,9 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
  * Symmetric to {@link rightmostBoundary}.
  */
 function leftmostBoundary(rule: Rule): BoundaryEnd {
+	// §D-2a spacing stopgap (symmetric to rightmostBoundary): an inlined-from seq
+	// keeps opaque-symbol spacing at its outer boundaries.
+	if (rule.type === 'seq' && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
 	switch (rule.type) {
 		case 'string':
 			if (rule.fieldName !== undefined) return SLOT_END;
@@ -1057,7 +1067,24 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 					out.push(currText);
 				}
 			}
-			return out.join('');
+			const seqBody = out.join('');
+			// §D-2a seq-unit multiplicity (normalize inline hoist): a `seq` that
+			// carries its OWN `multiplicity` is an inlined group body whose
+			// optionality belongs to the sequence as a UNIT — its literals (`=`,
+			// `->`, `extends`, …) must ride with, and be gated on, the seq's single
+			// internal slot rather than being individually leaf-stamped (the BLOCKED
+			// v2 regression). Gate the whole body on the seq's gating slot, reusing
+			// the EXISTING optional-group machinery (`pickConditionalKey`).
+			if (rule.multiplicity === 'optional' && seqBody !== '') {
+				// DRY: the gating-slot resolver is the single source of slot-count
+				// truth (the inline hoist does NOT pre-count). A seq-unit multiplicity
+				// group with >1 internal slot cannot be gated on one slot — it should
+				// have stayed a VISIBLE group; warn (§2d).
+				warnMultiSlotMultiplicityGroup(rule, ctx);
+				const condKey = pickConditionalKey(rule, ctx);
+				if (condKey) return `{% if ${condKey} | isPresent %}${seqBody}{% endif %}`;
+			}
+			return seqBody;
 		}
 
 		// Transparent wrappers — recurse into content. Variant / group /
@@ -1540,6 +1567,29 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// Fallback: bare kind-named scalar slot.
 	const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 	return emitScalarSlot(slotName);
+}
+
+// §D-2a/§2d — one-time warning when a seq-unit multiplicity group (the inlined
+// form produced by `inlineHiddenSeqRefs`) carries MORE THAN ONE distinct
+// internal slot. Such a group cannot be soundly gated on a single
+// `| isPresent` slot — it should have stayed a VISIBLE group. The emit-time
+// gating-slot resolver is the SINGLE source of slot-count truth (DRY); the
+// inline hoist deliberately does not pre-count. Diagnostic only — never throws.
+const warnedMultiSlotGroups = new Set<string>();
+function warnMultiSlotMultiplicityGroup(rule: Extract<Rule, { type: 'seq' }>, ctx: EmitCtx): void {
+	const keys = new Set<string>();
+	for (const m of rule.members) {
+		const k = pickConditionalKey(m, ctx);
+		if (k) keys.add(k);
+	}
+	if (keys.size <= 1) return;
+	const from = rule.metadata?.inlinedFrom ?? '<seq>';
+	const tag = `${ctx.currentKind ?? '?'}:${from}`;
+	if (warnedMultiSlotGroups.has(tag)) return;
+	warnedMultiSlotGroups.add(tag);
+	console.warn(
+		`templates: multi-slot multiplicity group (kind '${ctx.currentKind ?? '?'}', inlinedFrom '${from}', slots ${[...keys].join(', ')}) — should have been a visible group`
+	);
 }
 
 /**

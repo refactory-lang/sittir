@@ -2490,10 +2490,10 @@ export interface Initializer {
 
 export interface JsxStartOpeningElement {
   readonly $type: "_jsx_start_opening_element";
-  readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
+  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
 }
@@ -3510,20 +3510,20 @@ export interface JsxNamespaceName {
 
 export interface JsxOpeningElement {
   readonly $type: "jsx_opening_element";
-  readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
+  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface JsxSelfClosingElement {
   readonly $type: "jsx_self_closing_element";
-  readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
+  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
 }

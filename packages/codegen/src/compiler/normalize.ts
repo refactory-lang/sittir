@@ -15,7 +15,7 @@
 import type { Rule, SeqRule } from './rule.ts';
 import { isChoice } from './rule.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
-import { computeSimplifiedRules, resetSlotGroupingDiagnostics } from './simplify.ts';
+import { computeSimplifiedRules, resetSlotGroupingDiagnostics, resolveGroupOrMultiInlineTarget } from './simplify.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
@@ -90,6 +90,11 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<strin
 	// rule of a DIFFERENT name referencing `_x` does NOT twin it — that is the
 	// ordinary single-use fold case, e.g. `extends_clause` → `_extends_clause_single`.)
 	const twinned = new Set<string>();
+	// Hidden kinds named in a `supertype.subtypes` array (referenced by NAME,
+	// not a `symbol()` body ref — e.g. py `_key_value_pattern` ∈
+	// `_dict_pattern_kv.subtypes`). Folding such a kind dangles the supertype,
+	// which references it by name. Structural fact, not metadata (§D-2a).
+	const supertypeNamed = new Set<string>();
 
 	const isHidden = (name: string): boolean => name.startsWith('_');
 
@@ -99,6 +104,12 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<strin
 			if (isHidden(name)) {
 				refcount.set(name, (refcount.get(name) ?? 0) + 1);
 				if (ownerTwinTarget !== undefined && name === ownerTwinTarget) twinned.add(name);
+			}
+			return;
+		}
+		if (rule.type === 'supertype') {
+			for (const sub of rule.subtypes) {
+				if (isHidden(sub)) supertypeNamed.add(sub);
 			}
 			return;
 		}
@@ -113,11 +124,191 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<strin
 		walk(rule, ownerTwinTarget);
 	}
 
-	const keep = new Set<string>();
+	const keep = new Set<string>(supertypeNamed);
 	for (const [name, count] of refcount) {
 		if (count > 1 || twinned.has(name)) keep.add(name);
 	}
 	return keep;
+}
+
+// ---------------------------------------------------------------------------
+// inlineHiddenSeqRefs — §D-2a normalize inline hoist (v3: seq-unit multiplicity)
+// ---------------------------------------------------------------------------
+
+/**
+ * §D-2a Task 4 — relocate group-inlining from the late `simplify` slot-wash to
+ * a normalize-time rule-tree hoist so render AND slot projections derive the
+ * inlined form from ONE source.
+ *
+ * Operates on the WRAPPER-DELETED rule map (multiplicity already pushed onto the
+ * leaf `symbol(_x)` ref as a `multiplicity` / `separator` attribute). For each
+ * parent reference `symbol(_x)` where `_x` is a fold-eligible hidden GROUP /
+ * MULTI helper (`resolveGroupOrMultiInlineTarget` ≠ null) AND `!keepRef.has(_x)`
+ * AND `_x !== '_import_list'` (gated until the deferred Task 6), the symbol is
+ * replaced by the group's body **as a unit**, carrying the referring symbol's
+ * multiplicity / separator onto the spliced SEQ node (NOT distributed onto its
+ * leaves). When `_x` has no remaining reference, its entry is deleted.
+ *
+ * v3 correctness invariant (vs the BLOCKED v2): multiplicity is a property of
+ * the SEQUENCE as a unit, not its members. We must NOT call
+ * `reapplyInlinedLeafAttrs` / `pushAttrsToLeaves` — those distribute `optional`
+ * onto every leaf incl. bare literals, and the render walker DROPS
+ * optional-stamped literals (64 templates silently lost syntax tokens). Render
+ * gates the seq's literals on its single internal slot via the EXISTING
+ * optional-group emit (`emitters/templates.ts` `case 'seq'` + `pickConditionalKey`).
+ *
+ * Returns `true` when any splice happened (drives the normalize fixpoint loop).
+ */
+export function inlineHiddenSeqRefs(
+	rules: Record<string, Rule>,
+	keepRef: ReadonlySet<string>
+): boolean {
+	// Which hidden kinds are fold-eligible THIS pass.
+	const foldable = new Set<string>();
+	for (const [name, rule] of Object.entries(rules)) {
+		if (!name.startsWith('_')) continue;
+		if (keepRef.has(name)) continue;
+		if (name === '_import_list') continue; // deferred (Task 6)
+		if (resolveGroupOrMultiInlineTarget(rule) !== null) foldable.add(name);
+	}
+	if (foldable.size === 0) return false;
+
+	let changed = false;
+	for (const [parentName, parentRule] of Object.entries(rules)) {
+		// A foldable kind never inlines INTO itself (a group body referencing the
+		// same hidden kind would recurse) — skip the entry itself.
+		const spliced = spliceFoldableRefs(parentRule, foldable, rules);
+		if (spliced !== parentRule) {
+			rules[parentName] = spliced;
+			changed = true;
+		}
+	}
+	// NOTE: we deliberately do NOT delete the folded `_x` entry from the map.
+	// `assemble` iterates the RAW `optimized.rules` keys and looks up the matching
+	// `renderRules[kind]` / `simplifiedRules[kind]` for EACH — deleting `_x` from
+	// renderRules only would desync the maps and crash assemble. The folded `_x`
+	// survives as a standalone entry (its parents simply no longer reference it);
+	// emitters already skip it via `inlineKinds`. Dead-duplicate cleanup of the
+	// orphaned `_x` kind + its transport is a separate concern (§D-2b), not here.
+	return changed;
+}
+
+/**
+ * Replace every fold-eligible `symbol(_x)` inside `rule` with the body of
+ * `rules[_x]` (the group's `content`), carrying the symbol's seq-unit
+ * multiplicity / separator / fieldName onto the spliced node and tagging
+ * `metadata.inlinedFrom = _x`. Returns the same reference when nothing changed.
+ */
+function spliceFoldableRefs(
+	rule: Rule,
+	foldable: ReadonlySet<string>,
+	rules: Readonly<Record<string, Rule>>
+): Rule {
+	switch (rule.type) {
+		case 'symbol': {
+			if (!foldable.has(rule.name)) return rule;
+			// Only fold OPTIONAL / REQUIRED seq-unit refs. ARRAY / nonEmptyArray
+			// refs are `repeat(seq)` boundaries: the whole sequence repeats with a
+			// separator, and the baseline renders each internal slot with `|
+			// join(sep)` (leaf-level array multiplicity). A seq-unit array form is
+			// not gated/joined by the existing emit path, so folding it here would
+			// DROP the joins (extends_clause regression). Leave the `symbol(_x)` ref
+			// intact — it renders correctly via the existing emit machinery — and
+			// let the deliberate AssembledGroup boundary stand (plan §D-2a: "respect
+			// resolveGroupOrMultiInlineTarget eligibility").
+			const mult = (rule as { multiplicity?: LeafMultiplicity }).multiplicity;
+			if (mult === 'array' || mult === 'nonEmptyArray') return rule;
+			// A ref carrying a `fieldName` is a NAMED single slot whose body is
+			// opaque content (e.g. `infer_type` → `field('constraint',
+			// _infer_type_optional1)`); the baseline renders it as ONE `{{ constraint
+			// }}` slot, hiding the group's internal literals/fields. Inlining it
+			// would surface those internals (`extends {{ type }}`) and rename the
+			// slot — a render + slot regression. Only STRUCTURAL (un-fielded) group
+			// refs fold; field-wrapped groups stay as their single slot.
+			if (rule.fieldName !== undefined) return rule;
+			const target = rules[rule.name];
+			if (!target) return rule;
+			const body = resolveGroupOrMultiInlineTarget(target);
+			if (!body) return rule;
+			return materializeInlinedBody(rule, body, rule.name);
+		}
+		case 'seq': {
+			let touched = false;
+			const members = rule.members.map((m) => {
+				const r = spliceFoldableRefs(m, foldable, rules);
+				if (r !== m) touched = true;
+				return r;
+			});
+			return touched ? { ...rule, members } : rule;
+		}
+		case 'choice': {
+			let touched = false;
+			const members = rule.members.map((m) => {
+				const r = spliceFoldableRefs(m, foldable, rules);
+				if (r !== m) touched = true;
+				return r;
+			});
+			return touched ? { ...rule, members } : rule;
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'token':
+		case 'field':
+		case 'variant':
+		case 'group': {
+			const inner = spliceFoldableRefs((rule as { content: Rule }).content, foldable, rules);
+			return inner === (rule as { content: Rule }).content
+				? rule
+				: ({ ...rule, content: inner } as Rule);
+		}
+		default:
+			return rule;
+	}
+}
+
+/**
+ * Build the spliced node for an inlined group body, preserving SEQ-UNIT
+ * multiplicity. The referring symbol `ref` carries the multiplicity / separator
+ * / fieldName pushed down by wrapper-deletion (e.g. `optional(_initializer)` →
+ * `symbol(_initializer){multiplicity:'optional'}`). We re-home those attributes
+ * onto the group's body — onto the SEQ node itself, not its leaves — so the
+ * render emitter gates the whole sequence on its single internal slot.
+ */
+function materializeInlinedBody(
+	ref: Extract<Rule, { type: 'symbol' }>,
+	body: Rule,
+	inlinedFrom: string
+): Rule {
+	const r = ref as {
+		multiplicity?: LeafMultiplicity;
+		separator?: Rule['separator'];
+		fieldName?: string;
+	};
+	const carry: {
+		multiplicity?: LeafMultiplicity;
+		separator?: Rule['separator'];
+		fieldName?: string;
+	} = {};
+	if (r.multiplicity !== undefined) carry.multiplicity = r.multiplicity;
+	if (r.separator !== undefined) carry.separator = r.separator;
+	if (r.fieldName !== undefined) carry.fieldName = r.fieldName;
+
+	const meta = { ...(body.metadata ?? {}), inlinedFrom };
+
+	// The group body is normally a `seq`; tag it directly so the seq-unit
+	// multiplicity rides the sequence (gated at emit on its single internal
+	// slot). A non-seq body (single member group) is wrapped in a 1-member seq
+	// so it carries the same seq-unit gating uniformly.
+	if (body.type === 'seq') {
+		return { ...body, ...carry, metadata: meta } as Rule;
+	}
+	return {
+		type: 'seq',
+		members: [body],
+		...carry,
+		metadata: meta
+	} as Rule;
 }
 
 function applyNormalizationPasses(
@@ -169,7 +360,23 @@ export function normalizeGrammar(
 	// they behave identically to the old code that threaded the same cached set.
 	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
 	const rules = applyNormalizationPasses(linked.rules, preserveKinds.size > 0 ? preserveKinds : undefined, ctx);
+	// §D-2a normalize inline hoist: wrapper-delete ONCE (multiplicity → leaf
+	// attributes), then run the rule-tree group inline to a fixed point. Inlining
+	// RELOCATES already-wrapper-deleted `symbol(_x)` refs (it splices the
+	// already-deleted body of `_x` and re-homes the ref's seq-unit multiplicity
+	// onto the spliced SEQ node) — it never introduces fresh modifier WRAPPERS, so
+	// re-running wrapper-deletion is both unnecessary AND harmful: `case 'seq'`
+	// would re-distribute the seq-unit multiplicity onto the leaves (the BLOCKED
+	// v2 leaf-stamp regression). The loop exists because one inline pass can
+	// EXPOSE a fresh hidden-seq ref (a hidden parent inlines, surfacing its own
+	// group ref); `keepRef` is re-derived each pass (cheap; invariant under
+	// folding — splices conserve refcounts).
 	const renderRules = applyWrapperDeletion(rules);
+	for (let pass = 0; pass < 8; pass++) {
+		const keepRef = computeKeepRef(renderRules);
+		const changed = inlineHiddenSeqRefs(renderRules, keepRef);
+		if (!changed) break;
+	}
 
 	// Build a base variant skip-set from polymorphVariants metadata.
 	// `polymorphVariants` records every `variant('x')` override as

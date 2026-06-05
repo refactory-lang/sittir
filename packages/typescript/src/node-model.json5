@@ -3454,34 +3454,34 @@
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_jsx_identifier",
               "parseKind": "_jsx_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "jsx_namespace_name",
               "parseKind": "jsx_namespace_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "nested_identifier",
               "parseKind": "member_expression",
               "unresolved": true
@@ -12761,34 +12761,34 @@
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_jsx_identifier",
               "parseKind": "_jsx_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "jsx_namespace_name",
               "parseKind": "jsx_namespace_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "nested_identifier",
               "parseKind": "member_expression",
               "unresolved": true
@@ -12868,34 +12868,34 @@
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_jsx_identifier",
               "parseKind": "_jsx_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "jsx_namespace_name",
               "parseKind": "jsx_namespace_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "nested_identifier",
               "parseKind": "member_expression",
               "unresolved": true
