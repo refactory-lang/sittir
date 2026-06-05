@@ -78,7 +78,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 			},
 		};
 		const renderRules = applyWrapperDeletion(input);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
 		expect(
 			wrappers,
@@ -108,7 +108,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 			},
 		};
 		const renderRules = applyWrapperDeletion(input);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
 		expect(
 			wrappers,
@@ -136,7 +136,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 			},
 		};
 		const renderRules = applyWrapperDeletion(input);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
 		expect(
 			wrappers,
@@ -221,7 +221,7 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
 
 		expect(

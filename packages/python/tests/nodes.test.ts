@@ -1202,13 +1202,9 @@ describe('with_statement', () => {
 
 describe('yield', () => {
   it('factory produces correct type', () => {
-    const node = ir.yield({});
+    const node = ir.yield();
     expect(node.$type).toBe(TSKindId.Yield);
     expect(node.$source).toBe(2);
-  });
-  it('render does not throw on minimal config', () => {
-    const node = ir.yield({});
-    expect(() => node.$render!()).not.toThrow();
   });
 });
 

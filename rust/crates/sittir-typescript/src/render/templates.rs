@@ -353,7 +353,7 @@ pub struct PublicFieldDefinitionAbstractFirstTemplate<'a> {
 #[template(path = "_public_field_definition_access_first.jinja", escape = "none")]
 pub struct PublicFieldDefinitionAccessFirstTemplate<'a> {
     pub accessibility_modifier: SingleNonterminalView<'a>,
-    pub declare_marker: SingleNonterminalView<'a>,
+    pub declare_marker: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -531,7 +531,7 @@ pub struct AssertsTemplate<'a> {
 pub struct AssignmentExpressionTemplate<'a> {
     pub left: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
-    pub using_marker: SingleNonterminalView<'a>,
+    pub using_marker: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -822,7 +822,7 @@ pub struct FlowMaybeTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "for_in_statement.jinja", escape = "none")]
 pub struct ForInStatementTemplate<'a> {
-    pub await_marker: SingleNonterminalView<'a>,
+    pub await_marker: OptionalNonterminalView<'a>,
     pub body: SingleNonterminalView<'a>,
     pub content: SingleNonterminalView<'a>,
     pub operator: SingleNonterminalView<'a>,

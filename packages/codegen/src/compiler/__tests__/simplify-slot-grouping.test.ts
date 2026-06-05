@@ -37,7 +37,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 			} as any,
 		};
 		const inlineKinds = new Set(['_parent_repeat1']);
-		computeSimplifiedRules(renderRules, null, inlineKinds);
+		computeSimplifiedRules(renderRules, inlineKinds);
 		const diagnostics = drainSlotGroupingDiagnostics();
 		const multiSlot = diagnostics.filter((d) => d.code === 'multi-slot-nested-seq');
 		expect(multiSlot.length).toBeGreaterThanOrEqual(1);
@@ -58,7 +58,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				],
 			} as any,
 		};
-		computeSimplifiedRules(renderRules, null);
+		computeSimplifiedRules(renderRules);
 		const diagnostics = drainSlotGroupingDiagnostics();
 		expect(diagnostics.filter((d) => d.code === 'multi-slot-nested-seq')).toHaveLength(0);
 	});
@@ -73,7 +73,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				],
 			} as any,
 		};
-		computeSimplifiedRules(renderRules, null);
+		computeSimplifiedRules(renderRules);
 		const diagnostics = drainSlotGroupingDiagnostics();
 		expect(diagnostics).toHaveLength(0);
 	});

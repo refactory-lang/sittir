@@ -1478,8 +1478,8 @@ export interface MatchBlockBlock {
 
 export interface RaiseStatementOptional1 {
   readonly $type: "_raise_statement_optional1";
-  readonly _cause: Expression;
-  cause(): Expression;
+  readonly _cause?: Expression;
+  cause(): Expression | undefined;
 }
 
 export interface SimplePatternNegative {
@@ -1683,12 +1683,15 @@ export interface ComparisonOperator {
 
 export interface ComplexPattern {
   readonly $type: TSKindId.ComplexPattern;
+  readonly _real?: boolean;
   readonly _imaginary: Integer | Float;
   readonly _operator: number;
   readonly _content: Integer | Float;
   readonly __inputHints__?: {
+    readonly real?: BooleanKeyword<"-">;
     readonly operator: KindEnum<"+" | "-", TSKindId.Plus | TSKindId.Dash>;
   };
+  real(): boolean | undefined;
   imaginary(): Integer | Float;
   operator(): number;
   content(): Integer | Float;
@@ -1817,9 +1820,9 @@ export interface ExceptClause {
 export interface ExecStatement {
   readonly $type: TSKindId.ExecStatement;
   readonly _code: String | Identifier;
-  readonly _expression?: readonly (Expression)[];
+  readonly _in_clause?: readonly (Expression)[];
   code(): String | Identifier;
-  expressions(): readonly (Expression)[];
+  inClauses(): readonly (Expression)[];
 }
 
 export interface ExpressionList {
@@ -2337,10 +2340,8 @@ export interface WithStatement {
 
 export interface Yield {
   readonly $type: TSKindId.Yield;
-  readonly _expression?: Expression;
-  readonly _expressions?: Expressions;
-  expression(): Expression | undefined;
-  expressions(): Expressions | undefined;
+  readonly _content?: Expression | Expressions;
+  content(): Expression | Expressions | undefined;
 }
 
 export interface SliceGroup1 {

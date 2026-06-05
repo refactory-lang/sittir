@@ -296,6 +296,7 @@ export interface ComplexPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _real?: Box<AnyTransport>
   _imaginary: PrimaryExpressionTransport
   _operator: ComplexPatternOperatorEnum
   _content: PrimaryExpressionTransport
@@ -547,7 +548,7 @@ export interface ExecStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _code: PrimaryExpressionTransport
-  _expression?: Array<ExpressionTransport>
+  _in_clause?: Array<ExpressionTransport>
 }
 
 export interface ExpressionListTransport {
@@ -1094,7 +1095,7 @@ export interface RaiseStatementOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _cause: ExpressionTransport
+  _cause?: ExpressionTransport
 }
 
 export interface RaiseStatementTransport {
@@ -1504,6 +1505,5 @@ export interface YieldTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression?: Box<ExpressionTransport>
-  _expressions?: Box<ExpressionsTransport>
+  _content?: Box<ExpressionsTransport>
 }

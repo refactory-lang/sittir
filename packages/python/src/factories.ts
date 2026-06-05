@@ -666,6 +666,7 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
 }
 
 export function complexPattern(config: T.ComplexPattern.Config) {
+  const _real = coerceBooleanKeywordStorage(config.real);
   const _imaginary = config.imaginary;
   const _operator = coerceKindEnumStorage(config.operator, [["+", TSKindId.Plus] as const, ["-", TSKindId.Dash] as const]);
   const _content = config.content;
@@ -673,13 +674,16 @@ export function complexPattern(config: T.ComplexPattern.Config) {
     $type: TSKindId.ComplexPattern as const,
     $source: 2 as const,
     $named: true as const,
+    _real,
     _imaginary,
     _operator,
     _content,
+    real() { return _real; },
     imaginary() { return _imaginary; },
     operator() { return _operator; },
     content() { return _content; },
     $with: {
+      real: (value?: NonNullable<Parameters<typeof complexPattern>[0]>['real']) => complexPattern({ ...config, real: value }),
       imaginary: (value: T.Integer | T.Float) => complexPattern({ ...config, imaginary: value }),
       operator: (value: NonNullable<Parameters<typeof complexPattern>[0]>['operator']) => complexPattern({ ...config, operator: value }),
       content: (value: T.Integer | T.Float) => complexPattern({ ...config, content: value }),
@@ -974,18 +978,18 @@ export function exceptClause(config: Partial<T.ExceptClause.Config> = {}) {
 
 export function execStatement(config: T.ExecStatement.Config) {
   const _code = config.code;
-  const _expression = config.expression;
+  const _in_clause = config.inClause;
   return withMethods({
     $type: TSKindId.ExecStatement as const,
     $source: 2 as const,
     $named: true as const,
     _code,
-    _expression,
+    _in_clause,
     code() { return _code; },
-    expressions() { return _expression; },
+    inClauses() { return _in_clause; },
     $with: {
       code: (value: T.String | T.Identifier) => execStatement({ ...config, code: value }),
-      expressions: (...values: T.Expression[]) => execStatement({ ...config, expression: values }),
+      inClauses: (...values: T.Expression[]) => execStatement({ ...config, inClause: values }),
     },
   }, methodsEngine);
 }
@@ -2145,21 +2149,15 @@ export function withStatement(config: T.WithStatement.Config) {
   }, methodsEngine);
 }
 
-export function yield_(config: Partial<T.Yield.Config> = {}) {
-  const _expression = config.expression;
-  const _expressions = config.expressions;
+export function yield_(child?: (T.Expression | T.Expressions)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.Yield as const,
     $source: 2 as const,
     $named: true as const,
-    _expression,
-    _expressions,
-    expression() { return _expression; },
-    expressions() { return _expressions; },
-    $with: {
-      expression: (value?: T.Expression) => yield_({ ...config, expression: value }),
-      expressions: (value?: T.Expressions) => yield_({ ...config, expressions: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.Expression | T.Expressions)) => yield_(v) },
   }, methodsEngine);
 }
 

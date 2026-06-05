@@ -296,6 +296,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "type_parameter": TSKindId.TypeParameter,
   "union_pattern": TSKindId.UnionPattern,
   "with_clause": TSKindId.WithClause,
+  "yield": TSKindId.Yield,
   "slice_group1": TSKindId._SliceGroup1,
 };
 
@@ -338,6 +339,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "type_parameter": return F.typeParameter(...(children as Parameters<typeof F.typeParameter>));
     case "union_pattern": return F.unionPattern(...(children as Parameters<typeof F.unionPattern>));
     case "with_clause": return F.withClause(children[0] as Parameters<typeof F.withClause>[0]);
+    case "yield": return F.yield_(children[0] as Parameters<typeof F.yield_>[0]);
     case "slice_group1": return F.sliceGroup1(children[0] as Parameters<typeof F.sliceGroup1>[0]);
     default: return undefined;
   }
@@ -629,6 +631,7 @@ export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose): Retur
 export function complexPatternFrom(input: T.ComplexPattern.Loose): ReturnType<typeof F.complexPattern> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.complexPattern>;
   return F.complexPattern({
+    real: _resolveBooleanKeyword(input.real),
     imaginary: _resolveOne<T.Integer | T.Float>(input.imaginary, _K12, _K5),
     operator: coerceKindEnumStorage(_resolveOneLeaf<T.ComplexPatternOperator>(input.operator, "_complex_pattern_operator"), [["+", kindIdFromName("+")] as const, ["-", kindIdFromName("-")] as const]),
     content: _resolveOne<T.Integer | T.Float>(input.content, _K12, _K5),
@@ -779,7 +782,7 @@ export function execStatementFrom(input: T.ExecStatement.Loose): ReturnType<type
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.execStatement>;
   return F.execStatement({
     code: _resolveOne<T.String | T.Identifier>(input.code, _K3, _K19),
-    expression: _resolveMany<T.Expression>(input.expression, _K0, _K2),
+    inClause: _resolveMany<T.Expression>(input.inClause, _K0, _K2),
   });
 }
 
@@ -1387,12 +1390,13 @@ export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<type
   });
 }
 
-export function yield_From(input?: T.Yield.Loose): ReturnType<typeof F.yield_> {
-  if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.yield_>;
-  return F.yield_({
-    expression: _resolveOne<T.Expression>(input?.expression, _K0, _K2),
-    expressions: _resolveOne<T.Expressions>(input?.expressions, _K0, _K21),
-  });
+export function yield_From(input?: (T.Expression | T.Expressions) | T.Yield): ReturnType<typeof F.yield_> {
+  if (isNodeData(input) && input.$type === TSKindId.Yield) {
+    const data = input;
+    const child = (data as unknown as { _content?: unknown })._content;
+    return F.yield_(child as Parameters<typeof F.yield_>[0]);
+  }
+  return F.yield_(input as Parameters<typeof F.yield_>[0]);
 }
 
 export function sliceGroup1From(input?: T.Expression | T.SliceGroup1): ReturnType<typeof F.sliceGroup1> {

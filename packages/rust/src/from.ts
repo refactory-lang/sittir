@@ -1018,6 +1018,7 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.L
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.genericTypeWithTurbofish>;
   return F.genericTypeWithTurbofish({
     type: _resolveOne<T.Identifier | T.ScopedIdentifier>(input.type, _K0, _K7),
+    turbofish: coerceKindEnumStorage(_resolveOne<"::">("::", _K8, _K8), [["::", kindIdFromName("::")] as const]),
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments") ?? F.typeArguments(),
   });
 }
@@ -1388,6 +1389,7 @@ export function selfFrom(input?: T.Self): ReturnType<typeof F.self> {
 export function selfParameterFrom(input?: T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.selfParameter>;
   return F.selfParameter({
+    reference: _resolveBooleanKeyword(input?.reference),
     lifetime: _resolveOneBranch<T.Lifetime>(input?.lifetime, "lifetime"),
     mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier),
     self: coerceKindEnumStorage(_resolveOne<"self">("self", _K8, _K8), [["self", kindIdFromName("self")] as const]),

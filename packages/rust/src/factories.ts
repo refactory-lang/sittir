@@ -1970,14 +1970,17 @@ export function genericType(config: T.GenericType.Config) {
 
 export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config) {
   const _type = config.type;
+  const _turbofish = coerceKindEnumStorage("::" as const, [["::", TSKindId.ColonColon] as const]);
   const _type_arguments = config.typeArguments;
   return withMethods({
     $type: TSKindId.GenericTypeWithTurbofish as const,
     $source: 2 as const,
     $named: true as const,
     _type,
+    _turbofish,
     _type_arguments,
     type() { return _type; },
+    turbofish() { return _turbofish; },
     typeArguments() { return _type_arguments; },
     $with: {
       type: (value: T.Identifier | T.ScopedIdentifier) => genericTypeWithTurbofish({ ...config, type: value }),
@@ -2792,6 +2795,7 @@ export function self() {
 }
 
 export function selfParameter(config: Partial<T.SelfParameter.Config> = {}) {
+  const _reference = coerceBooleanKeywordStorage(config.reference);
   const _lifetime = config.lifetime;
   const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
   const _self = coerceKindEnumStorage("self" as const, [["self", TSKindId.Self] as const]);
@@ -2799,13 +2803,16 @@ export function selfParameter(config: Partial<T.SelfParameter.Config> = {}) {
     $type: TSKindId.SelfParameter as const,
     $source: 2 as const,
     $named: true as const,
+    _reference,
     _lifetime,
     _mutable_specifier,
     _self,
+    reference() { return _reference; },
     lifetime() { return _lifetime; },
     mutableSpecifier() { return _mutable_specifier; },
     self() { return _self; },
     $with: {
+      reference: (value?: NonNullable<Parameters<typeof selfParameter>[0]>['reference']) => selfParameter({ ...config, reference: value }),
       lifetime: (value?: T.Lifetime) => selfParameter({ ...config, lifetime: value }),
       mutableSpecifier: (value?: NonNullable<Parameters<typeof selfParameter>[0]>['mutableSpecifier']) => selfParameter({ ...config, mutableSpecifier: value }),
     },

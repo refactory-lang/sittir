@@ -138,7 +138,7 @@
     "with_clause": "direct",
     "with_item": "direct",
     "with_statement": "config",
-    "yield": "config",
+    "yield": "direct",
     "slice_group1": "direct",
     "_newline": "text",
     "string_start": "text",
@@ -461,7 +461,7 @@
     ],
     "exec_statement": [
       "code",
-      "expression"
+      "in_clause"
     ],
     "expression_list": [
       "expression"
@@ -705,8 +705,7 @@
       "body"
     ],
     "yield": [
-      "expression",
-      "expressions"
+      "content"
     ],
     "slice_group1": [
       "expression"
@@ -1156,6 +1155,13 @@
       }
     },
     "complex_pattern": {
+      "real": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "imaginary": {
         "unnamed": false,
         "slotCount": 1,
@@ -1414,7 +1420,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "expression": {
+      "in_clause": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2365,14 +2371,7 @@
       }
     },
     "yield": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "expressions": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,

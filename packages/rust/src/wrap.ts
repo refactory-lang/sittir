@@ -2049,12 +2049,15 @@ export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, t
     ...data,
     $type: TSKindId.GenericTypeWithTurbofish as const,
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
+    _turbofish: projectKindEnumStorage(normalizeSingularWrapSlot(data._turbofish, "turbofish", true, data.$type, { tree, nodeType: data.$type, slotName: "turbofish", span: (data as _NodeData).$span })),
     _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", true, data.$type, { tree, nodeType: data.$type, slotName: "type_arguments", span: (data as _NodeData).$span }),
 
     type() { return drillAs<T.Identifier | T.ScopedIdentifier>(this._type, tree, "type_identifier", "identifier"); },
+    turbofish() { return this._turbofish; },
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
     $with: {
       type: (v: NonNullable<T.GenericTypeWithTurbofish['_type']>) => wrapGenericTypeWithTurbofish({ ...data, _type: v }, tree),
+      turbofish: (v: NonNullable<T.GenericTypeWithTurbofish['_turbofish']>) => wrapGenericTypeWithTurbofish({ ...data, _turbofish: v }, tree),
       typeArguments: (v: NonNullable<T.GenericTypeWithTurbofish['_type_arguments']>) => wrapGenericTypeWithTurbofish({ ...data, _type_arguments: v }, tree),
     },
   }, methodsEngine);
@@ -2781,14 +2784,17 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SelfParameter as const,
+    _reference: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._reference, "reference", false, data.$type, { tree, nodeType: data.$type, slotName: "reference", span: (data as _NodeData).$span })),
     _lifetime: normalizeSingularWrapSlot(data._lifetime, "lifetime", false, data.$type, { tree, nodeType: data.$type, slotName: "lifetime", span: (data as _NodeData).$span }),
     _mutable_specifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._mutable_specifier, "mutable_specifier", false, data.$type, { tree, nodeType: data.$type, slotName: "mutable_specifier", span: (data as _NodeData).$span })),
     _self: projectKindEnumStorage(normalizeSingularWrapSlot(data._self, "self", true, data.$type, { tree, nodeType: data.$type, slotName: "self", span: (data as _NodeData).$span })),
 
+    reference() { return this._reference; },
     lifetime() { return drillIn<T.Lifetime | undefined>(this._lifetime, tree); },
     mutableSpecifier() { return this._mutable_specifier; },
     self() { return this._self; },
     $with: {
+      reference: (v: NonNullable<T.SelfParameter['_reference']>) => wrapSelfParameter({ ...data, _reference: v }, tree),
       lifetime: (v: NonNullable<T.SelfParameter['_lifetime']>) => wrapSelfParameter({ ...data, _lifetime: v }, tree),
       mutableSpecifier: (v: NonNullable<T.SelfParameter['_mutable_specifier']>) => wrapSelfParameter({ ...data, _mutable_specifier: v }, tree),
       self: (v: NonNullable<T.SelfParameter['_self']>) => wrapSelfParameter({ ...data, _self: v }, tree),

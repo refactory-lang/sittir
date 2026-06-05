@@ -116,7 +116,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 
 		const constItemSimplified = simplified['const_item']!;
 
@@ -167,7 +167,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 
 		const typeArgsSimplified = simplified['type_arguments']!;
 
@@ -209,7 +209,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 
 		const parentSimplified = simplified['parent_rule']!;
 
@@ -263,7 +263,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		const renderRules = applyWrapperDeletion(inputRules);
 		// Pass _let_declaration_optional1 in inlineKinds (as in the real pipeline).
 		const inlineKinds = new Set(['_let_declaration_optional1']);
-		const simplified = computeSimplifiedRules(renderRules, null, inlineKinds);
+		const simplified = computeSimplifiedRules(renderRules, inlineKinds);
 
 		const letDeclSimplified = simplified['let_declaration']!;
 

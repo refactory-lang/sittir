@@ -642,6 +642,7 @@ export function assertsAnnotationFrom(input: T.AssertsAnnotation.Loose): ReturnT
 export function assignmentExpressionFrom(input: T.AssignmentExpression.Loose): ReturnType<typeof F.assignmentExpression> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.assignmentExpression>;
   return F.assignmentExpression({
+    usingMarker: _resolveBooleanKeyword(input.usingMarker),
     left: _resolveOne<T.ParenthesizedExpression | T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression>(input.left, _K13, _K14),
     right: _resolveOne<T.Expression>(input.right, _K6, _K12),
   });
@@ -976,6 +977,7 @@ export function flowMaybeTypeFrom(input: T.FlowMaybeType.Loose): ReturnType<type
 export function forInStatementFrom(input: T.ForInStatement.Loose): ReturnType<typeof F.forInStatement> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.forInStatement>;
   return F.forInStatement({
+    awaitMarker: _resolveBooleanKeyword(input.awaitMarker),
     content: _resolveOne<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(input.content, _K2, _K23),
     operator: coerceKindEnumStorage(_resolveOneLeaf<T.ForHeaderOperator>(input.operator, "__for_header_operator"), [["in", kindIdFromName("in")] as const, ["of", kindIdFromName("of")] as const]),
     right: _resolveOne<T.Expressions>(input.right, _K6, _K21),

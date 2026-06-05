@@ -11714,7 +11714,7 @@ pub struct RaiseStatementOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cause"))]
-    pub cause: ExpressionTransport,
+    pub cause: Option<ExpressionTransport>,
 }
 
 impl RenderableTransport for RaiseStatementOptional1Transport {
@@ -13419,6 +13419,8 @@ pub struct ComplexPatternTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_real"))]
+    pub real: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
     pub imaginary: PrimaryExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
@@ -14603,8 +14605,8 @@ pub struct ExecStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_code"))]
     pub code: PrimaryExpressionTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Option<Vec<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause"))]
+    pub in_clause: Option<Vec<ExpressionTransport>>,
 }
 
 impl RenderableTransport for ExecStatementTransport {
@@ -19319,10 +19321,8 @@ pub struct YieldTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Option<Box<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
-    pub expressions: Option<Box<ExpressionsTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Box<ExpressionsTransport>>,
 }
 
 impl RenderableTransport for YieldTransport {
@@ -28602,7 +28602,9 @@ fn render_not_in(t: &NotInTransport, dest: &mut dyn ::std::fmt::Write) -> Result
 }
 
 fn render_raise_statement_optional1(node: &RaiseStatementOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_expression(&node.cause, dest)?;
+    if let Some(child) = &node.cause {
+        render_expression(child, dest)?;
+    }
     Ok(())
 }
 
@@ -28942,7 +28944,10 @@ fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        real: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        real: match &node.real {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -29160,14 +29165,14 @@ fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let expression_owned = node.expression.as_deref().unwrap_or(&[]);
-    let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = expression_owned.iter()
+    let in_clause_owned = node.in_clause.as_deref().unwrap_or(&[]);
+    let in_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = in_clause_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExecStatementTemplate {
         code: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.code)),
-        expression: ListNonterminalView {
-            items: expression_buf.as_slice(),
+        in_clause: ListNonterminalView {
+            items: in_clause_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -30075,13 +30080,13 @@ fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_yield(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.expression.is_none() && node.expressions.is_none() {
+    if node.content.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
     let template = YieldTemplate {
-        expression: match &node.expression {
+        content: match &node.content {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -32026,7 +32031,9 @@ fn transport_to_node_not_in(transport: NotInTransport) -> Result<TransportNodeDa
 
 fn transport_to_node_raise_statement_optional1(transport: RaiseStatementOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("cause".to_string(), transport_field_value(expression_transport_to_any(transport.cause))?);
+    if let Some(value) = transport.cause {
+        fields.insert("cause".to_string(), transport_field_value(expression_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -32740,6 +32747,9 @@ fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport)
 
 fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.real {
+        fields.insert("real".to_string(), transport_field_value(*value)?);
+    }
     fields.insert("imaginary".to_string(), transport_field_value(primary_expression_transport_to_any(transport.imaginary))?);
     fields.insert("operator".to_string(), transport_field_value(AnyTransport::ComplexPatternOperator(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -33224,16 +33234,11 @@ fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<T
 fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("code".to_string(), transport_field_value(primary_expression_transport_to_any(transport.code))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.expression {
-        children_buf.extend(value.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>());
+    if let Some(value) = transport.in_clause {
+        fields.insert("in_clause".to_string(), transport_field_values(value.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(152) /* "exec_statement" */,
@@ -35114,10 +35119,7 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.expression {
-        children_buf.push(expression_transport_to_any(*value));
-    }
-    if let Some(value) = transport.expressions {
+    if let Some(value) = transport.content {
         children_buf.push(expressions_transport_to_any(*value));
     }
     let children = if children_buf.is_empty() {

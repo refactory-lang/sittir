@@ -18097,7 +18097,7 @@ pub struct AbstractTypeOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: TypeParametersTransport,
+    pub type_parameters: Option<TypeParametersTransport>,
 }
 
 impl RenderableTransport for AbstractTypeOptional1Transport {
@@ -19361,7 +19361,7 @@ pub struct ExternCrateDeclarationOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: IdentifierTransport,
+    pub alias: Option<IdentifierTransport>,
 }
 
 impl RenderableTransport for ExternCrateDeclarationOptional1Transport {
@@ -20115,7 +20115,7 @@ pub struct ImplItemGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trait"))]
-    pub trait_: ImplItemGroup1TraitTransportSlot,
+    pub trait_: Option<ImplItemGroup1TraitTransportSlot>,
 }
 
 impl RenderableTransport for ImplItemGroup1Transport {
@@ -21753,7 +21753,7 @@ pub struct LetDeclarationOptional3Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
-    pub alternative: BlockTransport,
+    pub alternative: Option<BlockTransport>,
 }
 
 impl RenderableTransport for LetDeclarationOptional3Transport {
@@ -22357,7 +22357,7 @@ pub struct MatchPatternOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
-    pub condition: ConditionTransport,
+    pub condition: Option<ConditionTransport>,
 }
 
 impl RenderableTransport for MatchPatternOptional1Transport {
@@ -30012,6 +30012,8 @@ pub struct GenericTypeWithTurbofishTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Box<PathTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_turbofish"))]
+    pub turbofish: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: TypeArgumentsTransport,
 }
@@ -33006,6 +33008,8 @@ pub struct SelfParameterTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_reference"))]
+    pub reference: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime"))]
     pub lifetime: Option<LifetimeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
@@ -44481,7 +44485,9 @@ fn render_range_expression_binary_operator(t: &RangeExpressionBinaryOperatorEnum
 }
 
 fn render_abstract_type_optional1(node: &AbstractTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_type_parameters(&node.type_parameters, dest)?;
+    if let Some(child) = &node.type_parameters {
+        render_type_parameters(child, dest)?;
+    }
     Ok(())
 }
 
@@ -44776,7 +44782,9 @@ fn render_expression_statement_with_semi(node: &ExpressionStatementWithSemiTrans
 }
 
 fn render_extern_crate_declaration_optional1(node: &ExternCrateDeclarationOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_identifier(&node.alias, dest)?;
+    if let Some(child) = &node.alias {
+        render_identifier(child, dest)?;
+    }
     Ok(())
 }
 
@@ -44868,7 +44876,9 @@ fn render_impl_item_body(node: &ImplItemBodyTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_impl_item_group1(node: &ImplItemGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    node.trait_.render_into(dest)?;
+    if let Some(child) = &node.trait_ {
+        child.render_into(dest)?;
+    }
     Ok(())
 }
 
@@ -44975,7 +44985,9 @@ fn render_let_declaration_optional2(node: &LetDeclarationOptional2Transport, des
 }
 
 fn render_let_declaration_optional3(node: &LetDeclarationOptional3Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_block(&node.alternative, dest)?;
+    if let Some(child) = &node.alternative {
+        render_block(child, dest)?;
+    }
     Ok(())
 }
 
@@ -45087,7 +45099,9 @@ fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, dest: &mut dyn
 }
 
 fn render_match_pattern_optional1(node: &MatchPatternOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_condition(&node.condition, dest)?;
+    if let Some(child) = &node.condition {
+        render_condition(child, dest)?;
+    }
     Ok(())
 }
 
@@ -46279,7 +46293,7 @@ fn render_generic_type(node: &GenericTypeTransport, dest: &mut dyn ::std::fmt::W
 
 fn render_generic_type_with_turbofish(node: &GenericTypeWithTurbofishTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = GenericTypeWithTurbofishTemplate {
-        turbofish: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        turbofish: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.turbofish.as_ref())),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
         type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments)),
     };
@@ -46811,7 +46825,10 @@ fn render_self_parameter(node: &SelfParameterTransport, dest: &mut dyn ::std::fm
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        reference: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        reference: match &node.reference {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
+        },
         self_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.self_.as_ref())),
     };
     template.render_into(dest)
@@ -49486,7 +49503,9 @@ fn transport_to_node_range_expression_binary_operator(transport: RangeExpression
 
 fn transport_to_node_abstract_type_optional1(transport: AbstractTypeOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("type_parameters".to_string(), transport_field_value(AnyTransport::TypeParameters(transport.type_parameters))?);
+    if let Some(value) = transport.type_parameters {
+        fields.insert("type_parameters".to_string(), transport_field_value(AnyTransport::TypeParameters(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -50080,7 +50099,9 @@ fn transport_to_node_expression_statement_with_semi(transport: ExpressionStateme
 
 fn transport_to_node_extern_crate_declaration_optional1(transport: ExternCrateDeclarationOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("alias".to_string(), transport_field_value(AnyTransport::Identifier(transport.alias))?);
+    if let Some(value) = transport.alias {
+        fields.insert("alias".to_string(), transport_field_value(AnyTransport::Identifier(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -50366,7 +50387,9 @@ fn transport_to_node_impl_item_body(transport: ImplItemBodyTransport) -> Result<
 
 fn transport_to_node_impl_item_group1(transport: ImplItemGroup1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("trait".to_string(), transport_field_value(impl_item_group1_trait_transport_slot_to_any(transport.trait_))?);
+    if let Some(value) = transport.trait_ {
+        fields.insert("trait".to_string(), transport_field_value(impl_item_group1_trait_transport_slot_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -50739,7 +50762,9 @@ fn transport_to_node_let_declaration_optional2(transport: LetDeclarationOptional
 
 fn transport_to_node_let_declaration_optional3(transport: LetDeclarationOptional3Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("alternative".to_string(), transport_field_value(AnyTransport::Block(transport.alternative))?);
+    if let Some(value) = transport.alternative {
+        fields.insert("alternative".to_string(), transport_field_value(AnyTransport::Block(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -50970,7 +50995,9 @@ fn transport_to_node_match_arm_with_comma(transport: MatchArmWithCommaTransport)
 
 fn transport_to_node_match_pattern_optional1(transport: MatchPatternOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(transport.condition))?);
+    if let Some(value) = transport.condition {
+        fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -53671,6 +53698,7 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
 fn transport_to_node_generic_type_with_turbofish(transport: GenericTypeWithTurbofishTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("type".to_string(), transport_field_value(path_transport_to_any(*transport.type_))?);
+    fields.insert("turbofish".to_string(), transport_field_value(*transport.turbofish)?);
     fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(transport.type_arguments))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -54883,6 +54911,9 @@ fn transport_to_node_self(transport: Self_Transport) -> Result<TransportNodeData
 
 fn transport_to_node_self_parameter(transport: SelfParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.reference {
+        fields.insert("reference".to_string(), transport_field_value(*value)?);
+    }
     if let Some(value) = transport.lifetime {
         fields.insert("lifetime".to_string(), transport_field_value(AnyTransport::Lifetime(value))?);
     }

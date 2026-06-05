@@ -49,7 +49,7 @@ export interface AbstractTypeOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type_parameters: TypeParametersTransport
+  _type_parameters?: TypeParametersTransport
 }
 
 export interface AbstractTypeTransport {
@@ -728,7 +728,7 @@ export interface ExternCrateDeclarationOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _alias: IdentifierTransport
+  _alias?: IdentifierTransport
 }
 
 export interface ExternCrateDeclarationTransport {
@@ -1086,6 +1086,7 @@ export interface GenericTypeWithTurbofishTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Box<PathTransport>
+  _turbofish: Box<AnyTransport>
   _type_arguments: TypeArgumentsTransport
 }
 
@@ -1133,7 +1134,7 @@ export interface ImplItemGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _trait: ImplItemGroup1TraitTransportSlot
+  _trait?: ImplItemGroup1TraitTransportSlot
 }
 
 export interface ImplItemNegativeClauseTransport {
@@ -1287,7 +1288,7 @@ export interface LetDeclarationOptional3Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _alternative: BlockTransport
+  _alternative?: BlockTransport
 }
 
 export interface LetDeclarationTransport {
@@ -1510,7 +1511,7 @@ export interface MatchPatternOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _condition: ConditionTransport
+  _condition?: ConditionTransport
 }
 
 export interface MatchPatternTransport {
@@ -1943,6 +1944,7 @@ export interface SelfParameterTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _reference?: Box<AnyTransport>
   _lifetime?: LifetimeTransport
   _mutable_specifier?: _MutableSpecifierTransport
   _self: Box<AnyTransport>

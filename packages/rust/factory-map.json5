@@ -2936,6 +2936,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "turbofish": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type_arguments": {
         "unnamed": false,
         "slotCount": 1,
@@ -3626,6 +3633,13 @@
       }
     },
     "self_parameter": {
+      "reference": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "lifetime": {
         "unnamed": false,
         "slotCount": 1,

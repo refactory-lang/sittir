@@ -1666,13 +1666,13 @@
           "name": "alias",
           "propertyName": "alias",
           "paramName": "alias",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_module_export_name",
               "parseKind": "_module_export_name",
               "unresolved": true
@@ -2704,6 +2704,27 @@
       "hidden": false,
       "name": "_for_header_var_kind",
       "fields": [
+        {
+          "name": "kind",
+          "propertyName": "kind",
+          "paramName": "kind",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "var",
+              "parseKind": "var"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
         {
           "name": "left",
           "propertyName": "left",
@@ -3808,13 +3829,13 @@
           "name": "alias",
           "propertyName": "alias",
           "paramName": "alias",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "type",
               "parseKind": "type",
               "unresolved": true
@@ -4516,6 +4537,27 @@
             "kinds": [
               "accessibility_modifier"
             ]
+          }
+        },
+        {
+          "name": "declare_marker",
+          "propertyName": "declareMarker",
+          "paramName": "declareMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "declare",
+              "parseKind": "declare"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
           }
         }
       ],
@@ -6503,6 +6545,27 @@
       "irKey": "assignmentExpression",
       "hidden": false,
       "fields": [
+        {
+          "name": "using_marker",
+          "propertyName": "usingMarker",
+          "paramName": "usingMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "using",
+              "parseKind": "using"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
         {
           "name": "left",
           "propertyName": "left",
@@ -9790,6 +9853,27 @@
       "irKey": "forInStatement",
       "hidden": false,
       "fields": [
+        {
+          "name": "await_marker",
+          "propertyName": "awaitMarker",
+          "paramName": "awaitMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "await",
+              "parseKind": "await"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
         {
           "name": "content",
           "propertyName": "content",

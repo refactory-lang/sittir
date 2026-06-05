@@ -1840,6 +1840,13 @@
       }
     },
     "_for_header_var_kind": {
+      "kind": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "left": {
         "unnamed": false,
         "slotCount": 1,
@@ -2001,6 +2008,13 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "declare_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2404,6 +2418,13 @@
       }
     },
     "assignment_expression": {
+      "using_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "left": {
         "unnamed": false,
         "slotCount": 1,
@@ -3079,6 +3100,13 @@
       }
     },
     "for_in_statement": {
+      "await_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "content": {
         "unnamed": false,
         "slotCount": 1,

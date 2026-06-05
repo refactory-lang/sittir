@@ -400,13 +400,13 @@
           "name": "type_parameters",
           "propertyName": "typeParameters",
           "paramName": "typeParameters",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "type_parameters",
               "parseKind": "type_parameters",
               "unresolved": true
@@ -1799,13 +1799,13 @@
           "name": "alias",
           "propertyName": "alias",
           "paramName": "alias",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
@@ -2241,27 +2241,27 @@
           "name": "trait",
           "propertyName": "trait",
           "paramName": "trait",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "identifier",
               "parseKind": "type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "scoped_type_identifier",
               "parseKind": "scoped_type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "generic_type",
               "parseKind": "generic_type",
               "unresolved": true
@@ -2714,13 +2714,13 @@
           "name": "alternative",
           "propertyName": "alternative",
           "paramName": "alternative",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "block",
               "parseKind": "block",
               "unresolved": true
@@ -3123,13 +3123,13 @@
           "name": "condition",
           "propertyName": "condition",
           "paramName": "condition",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_condition",
               "parseKind": "_condition",
               "unresolved": true
@@ -9981,6 +9981,27 @@
           }
         },
         {
+          "name": "turbofish",
+          "propertyName": "turbofish",
+          "paramName": "turbofish",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "::",
+              "parseKind": "colon_colon"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "type_arguments",
           "propertyName": "typeArguments",
           "paramName": "typeArguments",
@@ -13008,6 +13029,27 @@
       "isParameterless": true,
       "stampExpression": "selfParameter()",
       "fields": [
+        {
+          "name": "reference",
+          "propertyName": "reference",
+          "paramName": "reference",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "&",
+              "parseKind": "amp"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
         {
           "name": "lifetime",
           "propertyName": "lifetime",

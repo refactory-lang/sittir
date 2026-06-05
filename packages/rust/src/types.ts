@@ -2156,8 +2156,8 @@ export const enum UseClauseKind {
 // Node types — concrete interfaces
 export interface AbstractTypeOptional1 {
   readonly $type: "_abstract_type_optional1";
-  readonly _type_parameters: TypeParameters;
-  typeParameters(): TypeParameters;
+  readonly _type_parameters?: TypeParameters;
+  typeParameters(): TypeParameters | undefined;
 }
 
 export interface ArrayExpressionList {
@@ -2310,8 +2310,8 @@ export interface ExpressionStatementWithSemi {
 
 export interface ExternCrateDeclarationOptional1 {
   readonly $type: "_extern_crate_declaration_optional1";
-  readonly _alias: Identifier;
-  alias(): Identifier;
+  readonly _alias?: Identifier;
+  alias(): Identifier | undefined;
 }
 
 export interface FieldPatternNamed {
@@ -2378,8 +2378,8 @@ export interface ImplItemBody {
 
 export interface ImplItemGroup1 {
   readonly $type: "_impl_item_group1";
-  readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
-  trait(): Identifier | ScopedTypeIdentifier | GenericType;
+  readonly _trait?: Identifier | ScopedTypeIdentifier | GenericType;
+  trait(): Identifier | ScopedTypeIdentifier | GenericType | undefined;
 }
 
 export interface ImplItemNegativeClause {
@@ -2424,8 +2424,8 @@ export interface LetDeclarationOptional2 {
 
 export interface LetDeclarationOptional3 {
   readonly $type: "_let_declaration_optional3";
-  readonly _alternative: Block;
-  alternative(): Block;
+  readonly _alternative?: Block;
+  alternative(): Block | undefined;
 }
 
 export interface LineCommentDoc {
@@ -2480,8 +2480,8 @@ export interface MatchArmWithComma {
 
 export interface MatchPatternOptional1 {
   readonly $type: "_match_pattern_optional1";
-  readonly _condition: Condition;
-  condition(): Condition;
+  readonly _condition?: Condition;
+  condition(): Condition | undefined;
 }
 
 export interface ModItemInline {
@@ -3222,8 +3222,13 @@ export interface GenericType {
 export interface GenericTypeWithTurbofish {
   readonly $type: TSKindId.GenericTypeWithTurbofish;
   readonly _type: Identifier | ScopedIdentifier;
+  readonly _turbofish: number;
   readonly _type_arguments: TypeArguments;
+  readonly __inputHints__?: {
+    readonly turbofish: KindEnum<"::", TSKindId.ColonColon>;
+  };
   type(): Identifier | ScopedIdentifier;
+  turbofish(): number;
   typeArguments(): TypeArguments;
 }
 
@@ -3586,13 +3591,16 @@ export interface ScopedUseList {
 
 export interface SelfParameter {
   readonly $type: TSKindId.SelfParameter;
+  readonly _reference?: boolean;
   readonly _lifetime?: Lifetime;
   readonly _mutable_specifier?: boolean;
   readonly _self: number;
   readonly __inputHints__?: {
+    readonly reference?: BooleanKeyword<"&">;
     readonly mutable_specifier?: BooleanKeyword<"mut">;
     readonly self: KindEnum<"self", TSKindId.Self>;
   };
+  reference(): boolean | undefined;
   lifetime(): Lifetime | undefined;
   mutableSpecifier(): boolean | undefined;
   self(): number;

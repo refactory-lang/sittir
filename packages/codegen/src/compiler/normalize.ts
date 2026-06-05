@@ -181,7 +181,7 @@ export function normalizeGrammar(
 		variantSkip.add(pv.child);
 	}
 
-	const simplifiedRules = computeSimplifiedRules(renderRules, linked.word, inlineKinds, variantSkip, ctx);
+	const simplifiedRules = computeSimplifiedRules(renderRules, inlineKinds, variantSkip, ctx);
 
 	// Alias-body kinds: thread the alias-target bodies through the same pipeline
 	// so renderRules / simplifiedRules cover them too. Eliminates the
@@ -190,7 +190,7 @@ export function normalizeGrammar(
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(linked.topLevelAliasBodies);
 		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, preserveKinds.size > 0 ? preserveKinds : undefined, ctx);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
-		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, linked.word, inlineKinds, variantSkip, ctx);
+		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, inlineKinds, variantSkip, ctx);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			renderRules[kind] = rule;
 		}

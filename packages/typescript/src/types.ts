@@ -2264,8 +2264,8 @@ export interface EnumBodyOptional1 {
 
 export interface ExportSpecifierOptional1 {
   readonly $type: "_export_specifier_optional1";
-  readonly _alias: ModuleExportName;
-  alias(): ModuleExportName;
+  readonly _alias?: ModuleExportName;
+  alias(): ModuleExportName | undefined;
 }
 
 export interface ExportStatementDefault {
@@ -2396,8 +2396,13 @@ export interface ForHeaderLhs {
 
 export interface ForHeaderVarKind {
   readonly $type: TSKindId.ForHeaderVarKind;
+  readonly _kind: number;
   readonly _left: Identifier | DestructuringPattern;
   readonly _value?: Expression;
+  readonly __inputHints__?: {
+    readonly kind: KindEnum<"var", TSKindId.Var>;
+  };
+  kind(): number;
   left(): Identifier | DestructuringPattern;
   value(): Expression | undefined;
 }
@@ -2507,8 +2512,8 @@ export interface LhsExpression {
 
 export interface MappedTypeClauseOptional1 {
   readonly $type: "_mapped_type_clause_optional1";
-  readonly _alias: Type;
-  alias(): Type;
+  readonly _alias?: Type;
+  alias(): Type | undefined;
 }
 
 export interface _Module {
@@ -2586,10 +2591,13 @@ export interface PublicFieldDefinitionAbstractFirst {
 export interface PublicFieldDefinitionAccessFirst {
   readonly $type: TSKindId.PublicFieldDefinitionAccessFirst;
   readonly _accessibility_modifier: number;
+  readonly _declare_marker?: boolean;
   readonly __inputHints__?: {
     readonly accessibility_modifier: KindEnum<"public" | "private" | "protected", TSKindId.Public | TSKindId.Private | TSKindId.Protected>;
+    readonly declare_marker?: BooleanKeyword<"declare">;
   };
   accessibilityModifier(): number;
+  declareMarker(): boolean | undefined;
 }
 
 export interface PublicFieldDefinitionAccessorOpt {
@@ -2823,8 +2831,13 @@ export interface AssertsAnnotation {
 
 export interface AssignmentExpression {
   readonly $type: TSKindId.AssignmentExpression;
+  readonly _using_marker?: boolean;
   readonly _left: ParenthesizedExpression | MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
   readonly _right: Expression;
+  readonly __inputHints__?: {
+    readonly using_marker?: BooleanKeyword<"using">;
+  };
+  usingMarker(): boolean | undefined;
   left(): ParenthesizedExpression | MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
   right(): Expression;
 }
@@ -3177,13 +3190,16 @@ export interface FlowMaybeType {
 
 export interface ForInStatement {
   readonly $type: TSKindId.ForInStatement;
+  readonly _await_marker?: boolean;
   readonly _content: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
   readonly _operator: number;
   readonly _right: Expressions;
   readonly _body: Statement;
   readonly __inputHints__?: {
+    readonly await_marker?: BooleanKeyword<"await">;
     readonly operator: KindEnum<"in" | "of", TSKindId.In | TSKindId.Of>;
   };
+  awaitMarker(): boolean | undefined;
   content(): ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
   operator(): number;
   right(): Expressions;

@@ -1142,7 +1142,7 @@ pub struct ScopedUseListTemplate<'a> {
 pub struct SelfParameterTemplate<'a> {
     pub lifetime: OptionalNonterminalView<'a>,
     pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub reference: SingleNonterminalView<'a>,
+    pub reference: OptionalNonterminalView<'a>,
     pub self_: SingleNonterminalView<'a>,
 }
 

@@ -1389,6 +1389,7 @@ export const enum TSFieldId {
   FieldTypeIdentifier = 75,
   FieldTypeParameters = 76,
   FieldTypePredicate = 77,
+  FieldUsingMarker = 78,
   FieldValue = 79,
 }
 
@@ -1469,6 +1470,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "type_identifier": TSFieldId.FieldTypeIdentifier,
   "type_parameters": TSFieldId.FieldTypeParameters,
   "type_predicate": TSFieldId.FieldTypePredicate,
+  "using_marker": TSFieldId.FieldUsingMarker,
   "value": TSFieldId.FieldValue,
 } as const satisfies Record<string, TSFieldId>;
 
@@ -1549,6 +1551,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldTypeIdentifier]: "type_identifier",
   [TSFieldId.FieldTypeParameters]: "type_parameters",
   [TSFieldId.FieldTypePredicate]: "type_predicate",
+  [TSFieldId.FieldUsingMarker]: "using_marker",
   [TSFieldId.FieldValue]: "value",
 } as const;
 
@@ -1629,6 +1632,7 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "type_identifier", id: 75, enumName: "FieldTypeIdentifier", cName: "field_type_identifier" },
   { name: "type_parameters", id: 76, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
   { name: "type_predicate", id: 77, enumName: "FieldTypePredicate", cName: "field_type_predicate" },
+  { name: "using_marker", id: 78, enumName: "FieldUsingMarker", cName: "field_using_marker" },
   { name: "value", id: 79, enumName: "FieldValue", cName: "field_value" },
 ] as const;
 
@@ -1787,6 +1791,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'asserts', required: true, multiple: false },
   ],
   'assignment_expression': [
+    { name: 'usingMarker', required: false, multiple: false },
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
   ],
@@ -1956,6 +1961,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'primaryType', required: true, multiple: false },
   ],
   'for_in_statement': [
+    { name: 'awaitMarker', required: false, multiple: false },
     { name: 'content', required: true, multiple: false },
     { name: 'operator', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },

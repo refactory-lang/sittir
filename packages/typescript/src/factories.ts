@@ -566,14 +566,17 @@ export function forHeaderLhs(config: T.ForHeaderLhs.Config) {
 }
 
 export function _forHeaderVarKind(config: T.ForHeaderVarKind.Config) {
+  const _kind = coerceKindEnumStorage("var" as const, [["var", TSKindId.Var] as const]);
   const _left = config.left;
   const _value = config.value;
   return withMethods({
     $type: TSKindId.ForHeaderVarKind as const,
     $source: 2 as const,
     $named: true as const,
+    _kind,
     _left,
     _value,
+    kind() { return _kind; },
     left() { return _left; },
     value() { return _value; },
     $with: {
@@ -842,14 +845,18 @@ export function _publicFieldDefinitionAbstractFirst(config: Partial<T.PublicFiel
 
 export function _publicFieldDefinitionAccessFirst(config: T.PublicFieldDefinitionAccessFirst.Config) {
   const _accessibility_modifier = coerceKindEnumStorage(config.accessibilityModifier, [["public", TSKindId.Public] as const, ["private", TSKindId.Private] as const, ["protected", TSKindId.Protected] as const]);
+  const _declare_marker = coerceBooleanKeywordStorage(config.declareMarker);
   return withMethods({
     $type: TSKindId.PublicFieldDefinitionAccessFirst as const,
     $source: 2 as const,
     $named: true as const,
     _accessibility_modifier,
+    _declare_marker,
     accessibilityModifier() { return _accessibility_modifier; },
+    declareMarker() { return _declare_marker; },
     $with: {
       accessibilityModifier: (value: NonNullable<Parameters<typeof _publicFieldDefinitionAccessFirst>[0]>['accessibilityModifier']) => _publicFieldDefinitionAccessFirst({ ...config, accessibilityModifier: value }),
+      declareMarker: (value?: NonNullable<Parameters<typeof _publicFieldDefinitionAccessFirst>[0]>['declareMarker']) => _publicFieldDefinitionAccessFirst({ ...config, declareMarker: value }),
     },
   }, methodsEngine);
 }
@@ -1305,17 +1312,21 @@ export function assertsAnnotation(asserts: T.AssertsAnnotation.Config['asserts']
 }
 
 export function assignmentExpression(config: T.AssignmentExpression.Config) {
+  const _using_marker = coerceBooleanKeywordStorage(config.usingMarker);
   const _left = config.left;
   const _right = config.right;
   return withMethods({
     $type: TSKindId.AssignmentExpression as const,
     $source: 2 as const,
     $named: true as const,
+    _using_marker,
     _left,
     _right,
+    usingMarker() { return _using_marker; },
     left() { return _left; },
     right() { return _right; },
     $with: {
+      usingMarker: (value?: NonNullable<Parameters<typeof assignmentExpression>[0]>['usingMarker']) => assignmentExpression({ ...config, usingMarker: value }),
       left: (value: T.ParenthesizedExpression | T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression) => assignmentExpression({ ...config, left: value }),
       right: (value: T.Expression) => assignmentExpression({ ...config, right: value }),
     },
@@ -2034,6 +2045,7 @@ export function flowMaybeType(primaryType: T.FlowMaybeType.Config['primaryType']
 }
 
 export function forInStatement(config: T.ForInStatement.Config) {
+  const _await_marker = coerceBooleanKeywordStorage(config.awaitMarker);
   const _content = config.content;
   const _operator = coerceKindEnumStorage(config.operator, [["in", TSKindId.In] as const, ["of", TSKindId.Of] as const]);
   const _right = config.right;
@@ -2042,15 +2054,18 @@ export function forInStatement(config: T.ForInStatement.Config) {
     $type: TSKindId.ForInStatement as const,
     $source: 2 as const,
     $named: true as const,
+    _await_marker,
     _content,
     _operator,
     _right,
     _body,
+    awaitMarker() { return _await_marker; },
     content() { return _content; },
     operator() { return _operator; },
     right() { return _right; },
     body() { return _body; },
     $with: {
+      awaitMarker: (value?: NonNullable<Parameters<typeof forInStatement>[0]>['awaitMarker']) => forInStatement({ ...config, awaitMarker: value }),
       content: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) => forInStatement({ ...config, content: value }),
       operator: (value: NonNullable<Parameters<typeof forInStatement>[0]>['operator']) => forInStatement({ ...config, operator: value }),
       right: (value: T.Expressions) => forInStatement({ ...config, right: value }),

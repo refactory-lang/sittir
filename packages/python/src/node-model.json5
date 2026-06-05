@@ -1292,13 +1292,13 @@
           "name": "cause",
           "propertyName": "cause",
           "paramName": "cause",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "expression",
               "parseKind": "expression",
               "unresolved": true
@@ -3108,6 +3108,27 @@
       "hidden": false,
       "fields": [
         {
+          "name": "real",
+          "propertyName": "real",
+          "paramName": "real",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "imaginary",
           "propertyName": "imaginary",
           "paramName": "imaginary",
@@ -4292,9 +4313,9 @@
           }
         },
         {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "in_clause",
+          "propertyName": "inClauses",
+          "paramName": "inClauses",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -4307,7 +4328,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8804,9 +8825,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8817,24 +8838,7 @@
               "name": "expression",
               "parseKind": "expression",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        },
-        {
-          "name": "expressions",
-          "propertyName": "expressions",
-          "paramName": "expressions",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -8847,6 +8851,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "expression",
               "_expressions"
             ]
           }

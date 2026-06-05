@@ -18,13 +18,13 @@ function deriveFields(rule: Rule) {
 
 function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
 	const renderRules = applyWrapperDeletion(rules);
-	const simplifiedRules = computeSimplifiedRules(renderRules, null);
+	const simplifiedRules = computeSimplifiedRules(renderRules);
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(overrides.topLevelAliasBodies);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
-		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, null);
+		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			renderRules[kind] = rule;
 		}

@@ -254,6 +254,7 @@ export interface AssignmentExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _using_marker?: Box<AnyTransport>
   _left: Box<AssignmentExpressionLeftTransportSlot>
   _right: Box<ExpressionTransport>
 }
@@ -796,7 +797,7 @@ export interface ExportSpecifierOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _alias: ModuleExportNameTransport
+  _alias?: ModuleExportNameTransport
 }
 
 export interface ExportSpecifierTransport {
@@ -1083,6 +1084,7 @@ export interface ForHeaderVarKindTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _kind: Box<AnyTransport>
   _left: ForHeaderVarKindLeftTransportSlot
   _value?: ExpressionTransport
 }
@@ -1095,6 +1097,7 @@ export interface ForInStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _await_marker?: Box<AnyTransport>
   _operator: ForHeaderOperatorEnum
   _right: ExpressionsTransport
   _body: Box<StatementTransport>
@@ -1748,7 +1751,7 @@ export interface MappedTypeClauseOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _alias: TypeTransport
+  _alias?: TypeTransport
 }
 
 export interface MappedTypeClauseTransport {
@@ -2224,6 +2227,7 @@ export interface PublicFieldDefinitionAccessFirstTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _declare_marker?: Box<AnyTransport>
   _accessibility_modifier: AccessibilityModifierEnum
 }
 

@@ -22071,7 +22071,7 @@ pub struct ExportSpecifierOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: ModuleExportNameTransport,
+    pub alias: Option<ModuleExportNameTransport>,
 }
 
 impl RenderableTransport for ExportSpecifierOptional1Transport {
@@ -22902,6 +22902,8 @@ pub struct ForHeaderVarKindTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind"))]
+    pub kind: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ForHeaderVarKindLeftTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
@@ -25095,7 +25097,7 @@ pub struct MappedTypeClauseOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: TypeTransport,
+    pub alias: Option<TypeTransport>,
 }
 
 impl RenderableTransport for MappedTypeClauseOptional1Transport {
@@ -26142,6 +26144,8 @@ pub struct PublicFieldDefinitionAccessFirstTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declare_marker"))]
+    pub declare_marker: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: AccessibilityModifierEnum,
 }
@@ -28370,6 +28374,8 @@ pub struct AssignmentExpressionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_using_marker"))]
+    pub using_marker: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: Box<AssignmentExpressionLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -30970,6 +30976,8 @@ pub struct ForInStatementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_marker"))]
+    pub await_marker: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ForHeaderOperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -50416,7 +50424,9 @@ fn render_export_specifier_export_kind(t: &ExportSpecifierExportKindEnum, dest: 
 }
 
 fn render_export_specifier_optional1(node: &ExportSpecifierOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_module_export_name(&node.alias, dest)?;
+    if let Some(child) = &node.alias {
+        render_module_export_name(child, dest)?;
+    }
     Ok(())
 }
 
@@ -50581,7 +50591,7 @@ fn render_for_header_lhs(node: &ForHeaderLhsTransport, dest: &mut dyn ::std::fmt
 
 fn render_for_header_var_kind(node: &ForHeaderVarKindTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForHeaderVarKindTemplate {
-        kind: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        kind: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.kind.as_ref())),
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         value: match &node.value {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -50761,7 +50771,9 @@ fn render_lhs_expression(node: &LhsExpressionTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_mapped_type_clause_optional1(node: &MappedTypeClauseOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_type(&node.alias, dest)?;
+    if let Some(child) = &node.alias {
+        render_type(child, dest)?;
+    }
     Ok(())
 }
 
@@ -50868,7 +50880,10 @@ fn render_public_field_definition_abstract_first(node: &PublicFieldDefinitionAbs
 fn render_public_field_definition_access_first(node: &PublicFieldDefinitionAccessFirstTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = PublicFieldDefinitionAccessFirstTemplate {
         accessibility_modifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.accessibility_modifier)),
-        declare_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        declare_marker: match &node.declare_marker {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -51202,7 +51217,10 @@ fn render_assignment_expression(node: &AssignmentExpressionTransport, dest: &mut
     let template = AssignmentExpressionTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-        using_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        using_marker: match &node.using_marker {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -51743,7 +51761,10 @@ fn render_flow_maybe_type(node: &FlowMaybeTypeTransport, dest: &mut dyn ::std::f
 
 fn render_for_in_statement(node: &ForInStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForInStatementTemplate {
-        await_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        await_marker: match &node.await_marker {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
+        },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
@@ -56089,7 +56110,9 @@ fn transport_to_node_export_specifier_export_kind(transport: ExportSpecifierExpo
 
 fn transport_to_node_export_specifier_optional1(transport: ExportSpecifierOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("alias".to_string(), transport_field_value(module_export_name_transport_to_any(transport.alias))?);
+    if let Some(value) = transport.alias {
+        fields.insert("alias".to_string(), transport_field_value(module_export_name_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -56519,6 +56542,7 @@ fn transport_to_node_for_header_lhs(transport: ForHeaderLhsTransport) -> Result<
 
 fn transport_to_node_for_header_var_kind(transport: ForHeaderVarKindTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("kind".to_string(), transport_field_value(*transport.kind)?);
     fields.insert("left".to_string(), transport_field_value(for_header_var_kind_left_transport_slot_to_any(transport.left))?);
     if let Some(value) = transport.value {
         fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
@@ -57148,7 +57172,9 @@ fn transport_to_node_lhs_expression(transport: LhsExpressionTransport) -> Result
 
 fn transport_to_node_mapped_type_clause_optional1(transport: MappedTypeClauseOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("alias".to_string(), transport_field_value(type_transport_to_any(transport.alias))?);
+    if let Some(value) = transport.alias {
+        fields.insert("alias".to_string(), transport_field_value(type_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -57462,6 +57488,9 @@ fn transport_to_node_public_field_definition_abstract_first(transport: PublicFie
 
 fn transport_to_node_public_field_definition_access_first(transport: PublicFieldDefinitionAccessFirstTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.declare_marker {
+        fields.insert("declare_marker".to_string(), transport_field_value(*value)?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     children_buf.push(AnyTransport::AccessibilityModifier(transport.accessibility_modifier));
@@ -58231,6 +58260,9 @@ fn transport_to_node_asserts_annotation(transport: AssertsAnnotationTransport) -
 
 fn transport_to_node_assignment_expression(transport: AssignmentExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.using_marker {
+        fields.insert("using_marker".to_string(), transport_field_value(*value)?);
+    }
     fields.insert("left".to_string(), transport_field_value(assignment_expression_left_transport_slot_to_any(*transport.left))?);
     fields.insert("right".to_string(), transport_field_value(expression_transport_to_any(*transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -59324,6 +59356,9 @@ fn transport_to_node_flow_maybe_type(transport: FlowMaybeTypeTransport) -> Resul
 
 fn transport_to_node_for_in_statement(transport: ForInStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.await_marker {
+        fields.insert("await_marker".to_string(), transport_field_value(*value)?);
+    }
     fields.insert("operator".to_string(), transport_field_value(AnyTransport::ForHeaderOperator(transport.operator))?);
     fields.insert("right".to_string(), transport_field_value(expressions_transport_to_any(transport.right))?);
     fields.insert("body".to_string(), transport_field_value(statement_transport_to_any(*transport.body))?);

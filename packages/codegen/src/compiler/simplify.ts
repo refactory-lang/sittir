@@ -33,7 +33,6 @@
 
 import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
-import { compileWordMatcher } from './common.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from './rule-attrs.ts';
@@ -89,7 +88,6 @@ export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
 	return out;
 }
 
-/** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
  * Test whether a choice member matches the empty string — the canonical
  * signal for "this branch contributes nothing" so the enclosing choice
@@ -110,14 +108,32 @@ function isEmptyMatchMember(rule: Rule): boolean {
 	return false;
 }
 
-function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean {
-	if (wordMatcher) return wordMatcher.test(value);
-	return /^\w+$/.test(value);
+/**
+ * Has a literal been promoted to a slot by an enclosing field / optional /
+ * repeat wrapper? Such a literal carries slottiness — `nonterminal` (stamped by
+ * wrapper-deletion, Table 2) or, after `inlineRefs` re-applies a slot-bearing
+ * ref's pushed-down attrs, a `fieldName` / `multiplicity`. It is slot DATA (e.g.
+ * the `static` / `crate` / `ref` keyword markers) and must survive simplify,
+ * unlike a bare positional delimiter (`else` / `->` / `,`), which is render-only
+ * and is stripped. (Supersedes the old `isKeywordShape` guard, which conflated
+ * slot-valued keywords with bare syntax keywords.)
+ */
+function isSlotPromotedLiteral(rule: Rule): boolean {
+	// A literal is slot DATA iff it has a field NAME — a genuine named slot
+	// (`field('static_marker', 'static')` → the inlined leaf carries
+	// `fieldName:'static_marker'`). We deliberately do NOT key on `nonterminal`
+	// or `multiplicity` alone: enrich auto-promotes optional *delimiters* like a
+	// trailing `optional(',')` to `nonterminal:true` WITHOUT a meaningful field
+	// name (`project_enrich_auto_promotion_async`), and those are still
+	// render-only — keeping them flips a kind's slot multiplicity between
+	// transport + render (e.g. python `argument_list.content`). The field NAME is
+	// what separates a value-marker (`static`/`crate`/`ref`) from a bare
+	// delimiter. (Supersedes `isKeywordShape`, which conflated slot-valued
+	// keywords with bare syntax keywords.)
+	return (rule as { fieldName?: string }).fieldName !== undefined;
 }
 
-
 export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = false): Rule {
-	const wordMatcher = ctx?.compiledWord;
 	switch (rule.type) {
 		case 'seq':
 			return collapseSeq(rule, ctx, inField);
@@ -157,7 +173,7 @@ export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = f
 			if (inner.type === 'seq' && inner.members.length === 0) {
 				return { type: 'seq', members: [] };
 			}
-			if (!inField && inner.type === 'string' && !isKeywordShape(inner.value, wordMatcher)) {
+			if (!inField && inner.type === 'string' && !isSlotPromotedLiteral(inner)) {
 				return { type: 'seq', members: [] };
 			}
 			return hoistFieldOutOfSingleContentWrapper({
@@ -217,13 +233,12 @@ export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = f
  */
 export function simplifyRules(
 	rules: Record<string, Rule>,
-	wordMatcher?: RegExp,
 	inlineKinds: ReadonlySet<string> = new Set(),
 	ctx?: SimplifyCtx
 ): Record<string, Rule> {
 	const out: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		out[name] = normalizeToFixpoint(rule, wordMatcher, rules, inlineKinds, ctx);
+		out[name] = normalizeToFixpoint(rule, rules, inlineKinds, ctx);
 	}
 	return out;
 }
@@ -236,24 +251,15 @@ export function simplifyRules(
  * optimize.ts produces a wrapper-less map, and simplify operates on that.
  *
  * @param renderRules - Wrapper-less rule map (output of applyWrapperDeletion).
- * @param word - The grammar's word rule name (or null), for keyword-shape detection.
  * @returns A new map containing the simplified form of each rule.
  */
 export function computeSimplifiedRules(
 	renderRules: Record<string, RenderRule>,
-	word: string | null,
 	inlineKinds: ReadonlySet<string> = new Set(),
 	polymorphSkipExtra: ReadonlySet<string> = new Set(),
 	ctx?: SimplifyCtx
 ): Record<string, SimplifiedRule> {
-	const wordMatcher = compileWordMatcher(word, renderRules as Record<string, Rule>);
-	// Build a SimplifyCtx carrying the compiled word matcher if a ctx base was
-	// provided but compiledWord wasn't already set, so simplifyRule / collapseSeq
-	// pick up the grammar-specific keyword pattern.
-	const simplifyCtx: SimplifyCtx | undefined = ctx
-		? { ...ctx, compiledWord: ctx.compiledWord ?? wordMatcher }
-		: undefined;
-	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher, inlineKinds, simplifyCtx);
+	const simplified = simplifyRules(renderRules as Record<string, Rule>, inlineKinds, ctx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
 		// simplifyRules can re-introduce wrapper nodes (optional / field /
@@ -335,7 +341,6 @@ export function computeSimplifiedRules(
  */
 function normalizeToFixpoint(
 	rule: Rule,
-	wordMatcher: RegExp | undefined,
 	rules: Readonly<Record<string, Rule>>,
 	inlineKinds: ReadonlySet<string> = new Set(),
 	ctx?: SimplifyCtx
@@ -989,7 +994,7 @@ export function inlineRefs(
  * All other hidden rules stay as-is — they are distinct structural
  * nodes or dispatch points.
  */
-function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
+export function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
 	const isGroup = target.type === 'group';
 	const isMulti = extractRepeatShape(target) !== null;
 	if (!isGroup && !isMulti) return null;
@@ -1046,12 +1051,17 @@ function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
  * narrower own.
  */
 function collapseSeq(rule: SeqRule, ctx?: SimplifyCtx, inField: boolean = false): Rule {
-	const wordMatcher = ctx?.compiledWord;
 	const members = rule.members
 		.map((m) => simplifyRule(m, ctx, inField))
 		.filter((m) => {
-			// Strip non-keyword strings + empty-seq sentinels.
-			if (m.type === 'string' && !isKeywordShape(m.value, wordMatcher)) return false;
+			// Strip BARE string terminals + empty-seq sentinels. A literal that a
+			// field/optional/repeat wrapper promoted to a slot carries slottiness —
+			// `nonterminal`, or (after inlineRefs re-applies the ref's pushed-down
+			// attrs) a `fieldName`/`multiplicity`. That literal is slot DATA (e.g.
+			// the `static`/`crate`/`ref` keyword markers), not a bare delimiter, so
+			// it must SURVIVE simplify. Only literals with NO slottiness (bare
+			// `else`/`->`/`,`) are render-only → stripped.
+			if (m.type === 'string' && !isSlotPromotedLiteral(m)) return false;
 			if (m.type === 'seq' && m.members.length === 0) return false;
 			return true;
 		})
