@@ -24,6 +24,7 @@ import type {
 	SymbolRef
 } from './rule.ts';
 import { normalizeEnumMembers } from './rule.ts';
+import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
@@ -191,49 +192,6 @@ function findRepeatWithSeparator(members: Rule[]): number {
 }
 
 /**
- * Structural equality for rule trees — used by the commaSep1 lift to
- * verify the seq's standalone element matches the repeat's content.
- * Intentionally limited to the subset of rule shapes evaluate can
- * produce at DSL-call time (no polymorph/supertype/terminal — those
- * appear only after Link).
- */
-function rulesEqual(a: Rule, b: Rule): boolean {
-	if (a.type !== b.type) return false;
-	switch (a.type) {
-		case STRING:
-			return a.value === (b as StringRule).value;
-		case PATTERN:
-			return a.value === (b as PatternRule).value;
-		case SYMBOL:
-			return a.name === (b as SymbolRule).name;
-		case ENUM: {
-			const bm = (b as EnumRule).members;
-			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
-		}
-		case SEQ:
-			return (
-				a.members.length === (b as SeqRule).members.length &&
-				a.members.every((m, i) => rulesEqual(m, (b as SeqRule).members[i]!))
-			);
-		case CHOICE:
-			return (
-				a.members.length === (b as ChoiceRule).members.length &&
-				a.members.every((m, i) => rulesEqual(m, (b as ChoiceRule).members[i]!))
-			);
-		case OPTIONAL:
-			return rulesEqual(a.content, (b as OptionalRule).content);
-		case REPEAT:
-			return a.separator === (b as RepeatRule).separator && rulesEqual(a.content, (b as RepeatRule).content);
-		case REPEAT1:
-			return a.separator === (b as Repeat1Rule).separator && rulesEqual(a.content, (b as Repeat1Rule).content);
-		case FIELD:
-			return a.name === (b as FieldRule).name && rulesEqual(a.content, (b as FieldRule).content);
-		default:
-			return false;
-	}
-}
-
-/**
  * Choice combinator — matches exactly one of the members.
  *
  * @remarks
@@ -379,59 +337,6 @@ export function optional(content: Input): Rule {
 }
 
 /**
- * Detect the `seq(STRING, x)` / `seq(x, STRING)` pattern inside a
- * repeat/repeat1 wrapper and lift the string into a `separator` (and
- * `trailing`) field on the repeat rule. Shared between `repeat` and
- * `repeat1` so both wrappers hoist separators uniformly.
- *
- * Returns `null` if no separator shape is present.
- */
-function extractRepeatSeparator(resolved: Rule): { content: Rule; separator: string; trailing?: boolean } | null {
-	if (resolved.type !== SEQ || resolved.members.length !== 2) return null;
-	const [first, second] = resolved.members as [Rule, Rule];
-	// Canonical case: `repeat(seq(SEP, X))` or `repeat(seq(X, SEP))` with
-	// SEP a string literal.
-	if (first.type === STRING && second.type !== STRING) {
-		return { content: second, separator: first.value };
-	}
-	if (second.type === STRING && first.type !== STRING) {
-		return { content: first, separator: second.value, trailing: true };
-	}
-	const firstSepChoice = first.type === CHOICE ? extractFirstStringFromChoice(first) : null;
-	const secondSepChoice = second.type === CHOICE ? extractFirstStringFromChoice(second) : null;
-	if (firstSepChoice !== null && second.type !== STRING) {
-		return { content: second, separator: firstSepChoice };
-	}
-	if (secondSepChoice !== null && first.type !== STRING) {
-		return { content: first, separator: secondSepChoice, trailing: true };
-	}
-	return null;
-}
-
-/**
- * Extract the first string literal from a choice rule, if any.
- *
- * @param r - A choice rule whose members may include string literals.
- * @returns The string value of the first string member, or `null` if none.
- * @remarks
- * Handles the choice-of-separators pattern used in tree-sitter-typescript's
- * `sepBy1(choice(',', $._semicolon), X)`, which expands to a `repeat` whose
- * separator position is a `choice` of literals and an external symbol
- * (`_semicolon` = automatic semicolon insertion). The first string member
- * is the canonical render-side separator; parse still accepts either form.
- *
- * The separator-choice check mirrors the single-literal branches in
- * `extractRepeatSeparator`: a choice acts as the separator position when
- * its sibling is non-string (e.g. typescript's object_type
- * `sepBy1(choice(',', _semicolon), choice(property_signature, …))`).
- */
-function extractFirstStringFromChoice(r: Rule): string | null {
-	if (r.type !== CHOICE) return null;
-	const lit = r.members.find((m): m is StringRule => m.type === 'string');
-	return lit ? lit.value : null;
-}
-
-/**
  * Zero-or-more repetition combinator.
  *
  * @remarks
@@ -453,7 +358,7 @@ export function repeat(content: Input): Rule {
 		walkRefs(inner, (ref) => {
 			ref.repeated = true;
 		});
-		const sep = extractRepeatSeparator(inner);
+		const sep = detectRepeatSeparator(inner);
 		if (sep) {
 			return {
 				type: REPEAT,
@@ -464,7 +369,7 @@ export function repeat(content: Input): Rule {
 		}
 		return { type: REPEAT, content: inner };
 	}
-	const sep = extractRepeatSeparator(resolved);
+	const sep = detectRepeatSeparator(resolved);
 	if (sep) {
 		return {
 			type: REPEAT,
@@ -496,7 +401,7 @@ export function repeat1(content: Input): Rule {
 		ref.repeated = true;
 	});
 	if (resolved.type === REPEAT1 && !resolved.separator) return resolved;
-	const sep = extractRepeatSeparator(resolved);
+	const sep = detectRepeatSeparator(resolved);
 	if (sep) {
 		return {
 			type: REPEAT1,

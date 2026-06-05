@@ -74,6 +74,7 @@ import {
 	isPrecWrapper
 } from './runtime-shapes.ts';
 import type { RuntimeRule } from './runtime-shapes.ts';
+import { detectRepeatSeparator } from './list-patterns.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { ruleMatchesEmpty, isInlineSafe } from './group-classify.ts';
 
@@ -1349,12 +1350,12 @@ function listSeparatorOfOptionalSeq(rule: Rule): string | null {
 		// Already-lifted separator attribute.
 		const sepAttr = (m as { separator?: unknown }).separator;
 		if (typeof sepAttr === 'string') return sepAttr;
-		// Raw form: repeat(seq(STRING sep, x)) — separator is the leading string.
-		const content = (m as { content?: Rule }).content;
-		if (content && isSeqType((content as { type?: string }).type)) {
-			const cm = (content as unknown as { members?: Rule[] }).members;
-			const first = Array.isArray(cm) && cm[0] ? normalizeMember(cm[0]) : null;
-			if (first && isStringType(first.type) && typeof first.value === 'string') return first.value;
+		// Raw form: repeat(seq(SEP, x)) — detect the separator from the content
+		// via the shared list-pattern detector (same logic evaluate's lift uses).
+		const content = (m as { content?: RuntimeRule }).content;
+		if (content) {
+			const detected = detectRepeatSeparator(content);
+			if (detected) return detected.separator;
 		}
 	}
 	return null;
