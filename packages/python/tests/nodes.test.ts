@@ -324,9 +324,13 @@ describe('delete_statement', () => {
 
 describe('dict_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictPattern();
+    const node = ir.dictPattern({});
     expect(node.$type).toBe(TSKindId.DictPattern);
     expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.dictPattern({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 
@@ -1198,13 +1202,17 @@ describe('with_statement', () => {
 
 describe('yield', () => {
   it('factory produces correct type', () => {
-    const node = ir.yield({});
+    const node = ir.yield();
     expect(node.$type).toBe(TSKindId.Yield);
     expect(node.$source).toBe(2);
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.yield({});
-    expect(() => node.$render!()).not.toThrow();
+});
+
+describe('slice_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.sliceGroup1();
+    expect(node.$type).toBe(TSKindId._SliceGroup1);
+    expect(node.$source).toBe(2);
   });
 });
 

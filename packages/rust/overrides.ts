@@ -167,6 +167,14 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 			'1': 'parens'
 		},
 
+		// visibility_modifier_group1's choice is
+		// `choice(self, super, crate, seq('in', _path))` — the bare seq arm makes
+		// it a STRUCTURAL choice, so emitChoice renders only the first arm and
+		// `pub(crate)` drops to `pub ( )`. Lift the seq arm into a named group so
+		// the choice becomes all-symbol (canonical) and every arm renders.
+		// (Followup: enrich should auto-lift structural choice arms.)
+		in_path: ($) => seq('in', $._path),
+
 		// --- body-pattern groups: tree-sitter visible-kind synthesis ---
 		// Each function-valued entry below declares a STRUCTURAL PATTERN.
 		// Codegen creates `_<key>` as the hidden rule body and rewrites every
@@ -243,9 +251,6 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 			seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds))
 	},
 	transforms: {
-		// abstract_type: 1 field(s)
-		abstract_type: {},
-
 		// token_repetition: `$( _tokens* ) <sep>? <op>` —
 		//   seq('$'[0], '('[1], repeat(_tokens)[2], ')'[3],
 		//       optional(pattern '[^+*?]+')[4], enum('+'|'*'|'?')[5]).
@@ -688,10 +693,10 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 			1: field('operand') // $._expression
 		},
 
-		// use_wildcard: 1 field(s)
-		use_wildcard: {
-			'0/0/0': field('path') // optional($._path) inside the optional `path ::` prefix; excludes the `::` token
-		},
+		// use_wildcard — manually re-authored in `rules:` below as a VISIBLE
+		// (non-inlined) clause group `_use_wildcard_clause`, so it has a real
+		// presence slot to gate the co-mandatory `::` (the enrich auto-hoist
+		// inlined it, losing presence → `::*`). See rules: use_wildcard.
 
 		// variadic_parameter: 1 field(s)
 		variadic_parameter: {},
@@ -772,6 +777,17 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 		// branch.
 	},
 	rules: {
+		// use_wildcard — re-authored as a VISIBLE clause group. Base was the
+		// double-optional `seq(optional(seq(optional($._path), '::')), '*')`, which
+		// (once detectClause is gone) the enrich auto-hoist inlines into a presence-
+		// less group → renders `::*`. Here the `path ::` prefix is a hidden but
+		// NON-inlined group `_use_wildcard_clause` with a single mandatory `path`
+		// field: as a real node it carries a populated presence slot, so the parent
+		// gates the whole prefix (incl. `::`) by the clause's presence → `path::*`
+		// or `*`. (Drops the ~invalid bare-path `use ::*` form, which was never valid.)
+		use_wildcard: ($) => seq(optional($._use_wildcard_clause), '*'),
+		_use_wildcard_clause: ($) => seq(field('path', $._path), '::'),
+
 		// Hidden `_kw_*` rules that previously sat here
 		// (`_kw_async` / `_kw_default` / `_kw_const` / `_kw_unsafe` /
 		// `_kw_pub` / `_kw_in`) have been deleted. They're now

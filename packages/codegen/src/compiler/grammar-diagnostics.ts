@@ -6,6 +6,7 @@ import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
 import type { AssembleWarning } from './node-map.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
 import type { SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
+import { diagnoseContentAliasInjectivity } from './diagnose-content-alias-injectivity.ts';
 import type { RawGrammar } from './types.ts';
 import type { GrammarDiagnostic } from './diagnostics.ts';
 
@@ -127,18 +128,28 @@ export function collectGrammarDiagnostics(input: {
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
 }): { nodeMap: AssembledNodeMap; diagnostics: readonly GrammarDiagnostic[] } {
-	const nodeMap = assemble(normalizeGrammar(link(input.rawGrammar)));
+	const linked = link(input.rawGrammar);
+	const nodeMap = assemble(normalizeGrammar(linked));
 	// drain slot-grouping diagnostics populated during the optimize() pass
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
+	// §D-2c content-alias injectivity — sole consumer of the diagnostic-only
+	// contentAliasedTo map (empty today; guards a future violation).
+	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
+		grammar: input.rawGrammar.name,
+		contentAliasedTo: linked.contentAliasedTo
+	});
 	return {
 		nodeMap,
-		diagnostics: collectGrammarDiagnostics({
-			grammar: input.rawGrammar.name,
-			parseKindCollisions: nodeMap.parseKindCollisions,
-			deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics,
-			assembleWarnings: nodeMap.assembleWarnings,
-			slotGroupingDiagnostics
-		}).diagnostics
+		diagnostics: [
+			...collectGrammarDiagnostics({
+				grammar: input.rawGrammar.name,
+				parseKindCollisions: nodeMap.parseKindCollisions,
+				deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics,
+				assembleWarnings: nodeMap.assembleWarnings,
+				slotGroupingDiagnostics
+			}).diagnostics,
+			...contentAliasDiagnostics
+		]
 	};
 }
 

@@ -1,3 +1,4 @@
+import { PATTERN, STRING } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { field, seq } from '../compiler/evaluate.ts';
 import { buildRuleCatalog } from '../compiler/rule-catalog.ts';
@@ -13,7 +14,7 @@ describe('generated metadata', () => {
 	it('attaches generated kind and field IDs as late metadata', () => {
 		const { ruleCatalog } = buildRuleCatalog({
 			source_file: seq(field('item', { type: 'symbol', name: 'identifier' })),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' }
+			identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 		});
 
 		const metadata = deriveGeneratedMetadata(ruleCatalog, {
@@ -39,7 +40,7 @@ describe('generated metadata', () => {
 		// in the catalog with `presence: TSGrammar` only.
 		const { ruleCatalog } = buildRuleCatalog({
 			source_file: seq({ type: 'symbol', name: '_inlined_helper' }),
-			_inlined_helper: { type: 'string', value: 'x' }
+			_inlined_helper: { type: STRING, value: 'x' }
 		});
 		const metadata = deriveGeneratedMetadata(ruleCatalog, {
 			kindIds: { source_file: 1 },

@@ -280,7 +280,7 @@ pub struct ForHeaderVarKindTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_import_clause_default_import.jinja", escape = "none")]
 pub struct ImportClauseDefaultImportTemplate<'a> {
-    pub content: OptionalNonterminalView<'a>,
+    pub import_clause_group1: OptionalNonterminalView<'a>,
     pub import_identifier: SingleNonterminalView<'a>,
 }
 
@@ -353,7 +353,7 @@ pub struct PublicFieldDefinitionAbstractFirstTemplate<'a> {
 #[template(path = "_public_field_definition_access_first.jinja", escape = "none")]
 pub struct PublicFieldDefinitionAccessFirstTemplate<'a> {
     pub accessibility_modifier: SingleNonterminalView<'a>,
-    pub declare_marker: SingleNonterminalView<'a>,
+    pub declare_marker: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -531,7 +531,7 @@ pub struct AssertsTemplate<'a> {
 pub struct AssignmentExpressionTemplate<'a> {
     pub left: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
-    pub using_marker: SingleNonterminalView<'a>,
+    pub using_marker: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -585,11 +585,17 @@ pub struct CallSignatureTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "catch_clause_group1.jinja", escape = "none")]
+pub struct CatchClauseGroup1Template<'a> {
+    pub parameter: SingleNonterminalView<'a>,
+    pub type_: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "catch_clause.jinja", escape = "none")]
 pub struct CatchClauseTemplate<'a> {
     pub body: SingleNonterminalView<'a>,
-    pub parameter: OptionalNonterminalView<'a>,
-    pub type_: OptionalNonterminalView<'a>,
+    pub catch_clause_group1: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -816,7 +822,7 @@ pub struct FlowMaybeTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "for_in_statement.jinja", escape = "none")]
 pub struct ForInStatementTemplate<'a> {
-    pub await_marker: SingleNonterminalView<'a>,
+    pub await_marker: OptionalNonterminalView<'a>,
     pub body: SingleNonterminalView<'a>,
     pub content: SingleNonterminalView<'a>,
     pub operator: SingleNonterminalView<'a>,
@@ -937,6 +943,12 @@ pub struct ImportAttributeTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "import_clause_group1.jinja", escape = "none")]
+pub struct ImportClauseGroup1Template<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "import_clause.jinja", escape = "none")]
 pub struct ImportClauseTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
@@ -982,6 +994,7 @@ pub struct IndexTypeQueryTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "infer_type.jinja", escape = "none")]
 pub struct InferTypeTemplate<'a> {
+    pub constraint: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
     pub type_identifier: SingleNonterminalView<'a>,
 }
@@ -1053,7 +1066,7 @@ pub struct JsxNamespaceNameTemplate<'a> {
 #[template(path = "jsx_opening_element.jinja", escape = "none")]
 pub struct JsxOpeningElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
-    pub name: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
     pub type_arguments: OptionalNonterminalView<'a>,
 }
 
@@ -1061,7 +1074,7 @@ pub struct JsxOpeningElementTemplate<'a> {
 #[template(path = "jsx_self_closing_element.jinja", escape = "none")]
 pub struct JsxSelfClosingElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
-    pub name: OptionalNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
     pub type_arguments: OptionalNonterminalView<'a>,
 }
 

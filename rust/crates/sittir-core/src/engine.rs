@@ -8,10 +8,9 @@
 //! ## ADR-0017 split
 //!
 //! `Engine<G>` is stateless (parser + grammar config). Parsing returns a
-//! `ParsedTree<G>` that owns the tree, source, format, and (in Task 2) a
-//! node vec for O(1) child-index navigation. The split enables the node
-//! vec to coexist with the owned tree using the ast-grep `PinnedNodeData`
-//! pattern for lifetime safety.
+//! `ParsedTree<G>` that owns the tree, source, format, and a node coordinate
+//! table for drill-in navigation. Coordinates are stable child-index paths
+//! from the root, re-resolved on each access — no lifetime-erasure needed.
 
 use std::marker::PhantomData;
 use crate::format::{apply_format, extract_format};
@@ -25,94 +24,145 @@ pub trait EngineGrammar: Copy {
     fn template_bundle_hash(self) -> &'static str;
 }
 
-// ─── StoredNode ──────────────────────────────────────────────────────────────
+// ─── NodeCoord ────────────────────────────────────────────────────────────────────────────
 
-/// Node handle — generic over the tree-sitter backend.
+/// O(1) coordinate for a node: a back-link to its parent handle plus the
+/// child index taken from that parent.
 ///
-/// Each entry holds a lifetime-erased tree-sitter `Node`. The safety
-/// invariant is that `StoredNode` values only exist inside a
-/// `ParsedTree` whose `tree` field outlives the `nodes` vec (Rust
-/// struct field drop order: last declared → first dropped).
-pub enum StoredNode {
-    Ts(tree_sitter::Node<'static>),
-    // Sg(ast_grep_core::Node<'static>),  // future
+/// This replaces the earlier `Vec<u32>` root-relative path. Storing a full
+/// path meant every `read_child` cloned the parent's O(depth) `Vec` to append
+/// one index — O(depth) alloc+copy per node-handle creation. A parent-link
+/// pair is `Copy`, so pushing a coordinate is O(1) with zero allocation; the
+/// node table itself encodes the tree spine, and resolution re-walks parent
+/// links.
+///
+/// Like the path representation it supersedes, this caches **no** live `Node`
+/// — it only records *how* to reach one. Re-resolution (via
+/// [`ParsedTree::resolve_handle`]) is sound because `tree_sitter::Tree` owns
+/// its internal data and `Node` values are cheap lightweight cursors over it;
+/// no `unsafe transmute` or lifetime-erasure is required. This preserves the
+/// b4778bb5 invariant ("re-resolve, never cache a lifetime-erased Node") while
+/// removing the per-step path clone.
+#[derive(Clone, Copy)]
+struct NodeCoord {
+    /// Handle of the parent node in `ParsedTree.nodes`, or `None` for the root.
+    parent: Option<u32>,
+    /// Child index taken from `parent` to reach this node. Unused for the root.
+    child_index: u32,
 }
 
-// ─── ParsedTree ──────────────────────────────────────────────────────────────
+impl NodeCoord {
+    fn root() -> Self {
+        NodeCoord {
+            parent: None,
+            child_index: 0,
+        }
+    }
+}
 
-/// Owned parse result — tree + source + format + node vec.
+// ─── ParsedTree ────────────────────────────────────────────────────────────────────────────
+
+/// Owned parse result — tree + source + format + node coordinate table.
 ///
 /// Created by [`Engine::parse`]. Contains all tree-dependent state.
 /// Grammar crate napi wrappers own the `ParsedTree` directly.
 ///
-/// # Field ordering invariant
+/// # Design
 ///
-/// `nodes` is declared AFTER `tree`. Rust drops struct fields in
-/// declaration order, so `nodes` (which holds lifetime-erased borrows
-/// from `tree`) is dropped first. This is the same safety pattern used
-/// by ast-grep's `PinnedNodeData`.
+/// Instead of storing lifetime-erased `Node<'static>` references
+/// (which is UB-adjacent in debug builds due to transmute + re-borrow),
+/// `nodes` stores [`NodeCoord`] — an O(1) `(parent_handle, child_index)`
+/// back-link per node. Each access re-resolves the live `Node` from
+/// `self.tree` by walking parent links to the root (see
+/// [`ParsedTree::resolve_handle`]). Tree-sitter `Node` values are cheap
+/// cursor structs over the tree's immutable internal representation, so
+/// re-resolution is fast and fully sound — and pushing a coordinate no
+/// longer clones an O(depth) `Vec`.
 pub struct ParsedTree<G: EngineGrammar> {
     _grammar: PhantomData<G>,
-    /// The parsed tree-sitter tree. Must outlive `nodes`.
+    /// The parsed tree-sitter tree.
     tree: tree_sitter::Tree,
     source: String,
     format: Option<FormatRecord>,
-    /// Node table for O(1) drill-in. Lazily populated (Task 2).
-    nodes: Vec<StoredNode>,
+    /// Node coordinate table for drill-in navigation. Each entry back-links
+    /// to its parent handle; the root entry has `parent: None`.
+    nodes: Vec<NodeCoord>,
 }
 
 impl<G: EngineGrammar> ParsedTree<G> {
-    /// Push a tree-sitter node into the node table, returning its handle
-    /// (index). The node must borrow from `self.tree`.
+    /// Push a node coordinate into the node table, returning its handle (index).
     ///
-    /// # Safety
-    ///
-    /// The transmute erases the borrow lifetime. This is safe because:
-    /// - The node borrows from `self.tree`.
-    /// - `self.nodes` is dropped before `self.tree` (field declaration order).
-    /// - Same pattern as ast-grep's `PinnedNodeData`.
-    fn push_node(&mut self, node: tree_sitter::Node<'_>) -> u32 {
+    /// `NodeCoord` is `Copy`, so this is O(1) with zero allocation — no
+    /// O(depth) path `Vec` is cloned per node.
+    fn push_coord(&mut self, coord: NodeCoord) -> u32 {
         let handle = self.nodes.len() as u32;
-        // SAFETY: node borrows from self.tree which outlives self.nodes
-        // (nodes declared after tree → dropped first per Rust field order).
-        // Same pattern as ast-grep's PinnedNodeData.
-        let static_node: tree_sitter::Node<'static> = unsafe { std::mem::transmute(node) };
-        self.nodes.push(StoredNode::Ts(static_node));
+        self.nodes.push(coord);
         handle
     }
 
+    /// Re-resolve the live `Node` for a handle by walking parent back-links to
+    /// the root, then descending the same child indices.
+    ///
+    /// Free-function form (takes `nodes` + `tree` separately) so the returned
+    /// `Node<'tree>` borrows only `tree`, not the `nodes` slice — letting the
+    /// caller keep a resolved node alive across a `&mut self.nodes` push of a
+    /// disjoint field. Recursion depth equals tree depth; source ASTs never
+    /// approach the stack limit. No allocation, no lifetime-erasure: this
+    /// honors the b4778bb5 invariant of never caching a `Node<'static>`.
+    fn resolve_handle<'tree>(
+        nodes: &[NodeCoord],
+        tree: &'tree tree_sitter::Tree,
+        handle: u32,
+    ) -> Option<tree_sitter::Node<'tree>> {
+        let coord = *nodes.get(handle as usize)?;
+        match coord.parent {
+            None => Some(tree.root_node()),
+            Some(parent) => {
+                let parent_node = Self::resolve_handle(nodes, tree, parent)?;
+                parent_node.child(coord.child_index)
+            }
+        }
+    }
+
     /// Read the root node of the parsed tree into a `NodeData`.
-    /// Reserves the root handle first so the returned payload and its
-    /// child stubs share the same parent-handle contract as the JS
-    /// reader, then stores the root node for subsequent child reads.
     pub fn read_root(&mut self) -> NodeData {
-        let handle = self.nodes.len() as u32;
-        // SAFETY: root_node borrows from self.tree which outlives
-        // self.nodes (nodes declared after tree → dropped first).
-        let root: tree_sitter::Node<'static> =
-            unsafe { std::mem::transmute(self.tree.root_node()) };
-        self.nodes.push(StoredNode::Ts(root));
+        let handle = self.push_coord(NodeCoord::root());
         read_node(&self.tree, &self.source, None, Some(handle))
     }
 
     /// Read a child node by handle + child_index.
     ///
-    /// Looks up the parent node from the node table at `handle`, then
-    /// calls `parent.child(child_index)` to get the target node, reads
-    /// it into a `NodeData`, pushes the result into the node table, and
-    /// stamps `node_handle`.
+    /// Re-resolves the parent `Node` from `self.tree` (walking parent
+    /// back-links), takes `parent.child(child_index)` to confirm the child
+    /// exists, records an O(1) `(handle, child_index)` coordinate, and reads
+    /// the (already resolved) child into a `NodeData`.
     pub fn read_child(&mut self, handle: u32, child_index: u16) -> Result<String, String> {
-        let parent_node = match self.nodes.get(handle as usize) {
-            Some(StoredNode::Ts(n)) => *n,
-            None => return Err(format!("handle {handle} not found in node table")),
-        };
+        // Resolve parent and child while only borrowing `self.nodes` + `self.tree`.
+        // The returned `child_node` borrows `self.tree` (not `self.nodes`), so it
+        // stays valid across the disjoint `&mut self.nodes` push below — no second
+        // re-resolution needed.
+        let parent_node = Self::resolve_handle(&self.nodes, &self.tree, handle).ok_or_else(|| {
+            if (handle as usize) >= self.nodes.len() {
+                format!("handle {handle} not found in node table")
+            } else {
+                format!("handle {handle}: coordinate path could not be resolved")
+            }
+        })?;
         let child_node = parent_node.child(child_index as u32).ok_or_else(|| {
             format!(
                 "child_index {child_index} out of bounds for handle {handle} (child_count={})",
                 parent_node.child_count()
             )
         })?;
-        let new_handle = self.push_node(child_node);
+        // O(1) push of the back-link coordinate (no path clone). Push directly
+        // to the `nodes` field rather than via `&mut self`: `child_node` borrows
+        // only `self.tree`, so mutating the disjoint `self.nodes` field while it
+        // is alive is sound — and avoids a redundant O(depth) re-resolution.
+        let new_handle = self.nodes.len() as u32;
+        self.nodes.push(NodeCoord {
+            parent: Some(handle),
+            child_index: child_index as u32,
+        });
         let data = read_node(&self.tree, &self.source, Some(child_node), Some(new_handle));
         serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }

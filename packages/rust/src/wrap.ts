@@ -1033,6 +1033,20 @@ export function wrapUseClause(data: T.UseClause, tree: TreeHandle) {
   return drillIn<T.UseClause>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["_path","path","self","identifier","metavariable","super","crate","scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
+export function wrapUseWildcardClause(data: T.UseWildcardClause, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.UseWildcardClause as const,
+    _path: normalizeSingularWrapSlot(data._path, "path", true, data.$type, { tree, nodeType: data.$type, slotName: "path", span: (data as _NodeData).$span }),
+
+    path() { return drillIn<T.Path>(this._path, tree); },
+    $with: {
+      path: (v: NonNullable<T.UseWildcardClause['_path']>) => wrapUseWildcardClause({ ...data, _path: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapVisibilityModifierCrate(data: T.VisibilityModifierCrate, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
@@ -1043,6 +1057,18 @@ export function wrapVisibilityModifierCrate(data: T.VisibilityModifierCrate, tre
     $with: {
       crate: (v: NonNullable<T.VisibilityModifierCrate['_crate']>) => wrapVisibilityModifierCrate({ ...data, _crate: v }, tree),
     },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrap_VisibilityModifierGroup1(data: T._VisibilityModifierGroup1, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._VisibilityModifierGroup1 as const,
+    _content: normalizeSingularWrapSlot((data._self ?? data._super ?? data._crate ?? data._in_path ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+
+    content() { return drillAs<T.Self | T.Super | T.Crate | T.InPath>(this._content, tree, "in_path", "_in_path"); },
+    $with: { $children: (...vs: readonly [never]) => wrap_VisibilityModifierGroup1({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1069,13 +1095,13 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
     ...data,
     $type: TSKindId.VisibilityModifierPub as const,
     _pub: projectKindEnumStorage(normalizeSingularWrapSlot(data._pub, "pub", true, data.$type, { tree, nodeType: data.$type, slotName: "pub", span: (data as _NodeData).$span })),
-    _content: normalizeSingularWrapSlot((data._self ?? data._super ?? data._crate ?? data._visibility_modifier_in_path ?? data._content), "content", false, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+    _visibility_modifier_group1: normalizeSingularWrapSlot(data._visibility_modifier_group1, "visibility_modifier_group1", false, data.$type, { tree, nodeType: data.$type, slotName: "visibility_modifier_group1", span: (data as _NodeData).$span }),
 
     pub() { return this._pub; },
-    content() { return drillAs<T.Self | T.Super | T.Crate | T.VisibilityModifierInPath | undefined>(this._content, tree, "visibility_modifier_in_path", "_visibility_modifier_in_path"); },
+    visibilityModifierGroup1() { return drillIn<T.VisibilityModifierGroup1 | undefined>(this._visibility_modifier_group1, tree); },
     $with: {
       pub: (v: NonNullable<T.VisibilityModifierPub['_pub']>) => wrapVisibilityModifierPub({ ...data, _pub: v }, tree),
-      content: (v: NonNullable<T.VisibilityModifierPub['_content']>) => wrapVisibilityModifierPub({ ...data, _content: v }, tree),
+      visibilityModifierGroup1: (v: NonNullable<T.VisibilityModifierPub['_visibility_modifier_group1']>) => wrapVisibilityModifierPub({ ...data, _visibility_modifier_group1: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2023,12 +2049,15 @@ export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, t
     ...data,
     $type: TSKindId.GenericTypeWithTurbofish as const,
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
+    _turbofish: projectKindEnumStorage(normalizeSingularWrapSlot(data._turbofish, "turbofish", true, data.$type, { tree, nodeType: data.$type, slotName: "turbofish", span: (data as _NodeData).$span })),
     _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", true, data.$type, { tree, nodeType: data.$type, slotName: "type_arguments", span: (data as _NodeData).$span }),
 
     type() { return drillAs<T.Identifier | T.ScopedIdentifier>(this._type, tree, "type_identifier", "identifier"); },
+    turbofish() { return this._turbofish; },
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
     $with: {
       type: (v: NonNullable<T.GenericTypeWithTurbofish['_type']>) => wrapGenericTypeWithTurbofish({ ...data, _type: v }, tree),
+      turbofish: (v: NonNullable<T.GenericTypeWithTurbofish['_turbofish']>) => wrapGenericTypeWithTurbofish({ ...data, _turbofish: v }, tree),
       typeArguments: (v: NonNullable<T.GenericTypeWithTurbofish['_type_arguments']>) => wrapGenericTypeWithTurbofish({ ...data, _type_arguments: v }, tree),
     },
   }, methodsEngine);
@@ -2345,14 +2374,9 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
     ...data,
     $type: TSKindId.MatchBlock as const,
     _match_arm: normalizeRepeatedWrapSlot(data._match_arm, false, "match_arm", { tree, nodeType: data.$type, slotName: "match_arm", span: (data as _NodeData).$span }),
-    _last_arm: normalizeSingularWrapSlot(data._last_arm, "last_arm", false, data.$type, { tree, nodeType: data.$type, slotName: "last_arm", span: (data as _NodeData).$span }),
 
     matchArms() { return drillInAll<T.MatchArm>(this._match_arm as readonly T.MatchArm[] | undefined, tree); },
-    lastArm() { return drillAs<T.LastMatchArm | undefined>(this._last_arm, tree, "match_arm", "last_match_arm"); },
-    $with: {
-      matchArms: (...v: NonNullable<T.MatchBlock['_match_arm']>[number][]) => wrapMatchBlock({ ...data, _match_arm: v }, tree),
-      lastArm: (v: NonNullable<T.MatchBlock['_last_arm']>) => wrapMatchBlock({ ...data, _last_arm: v }, tree),
-    },
+    $with: { $children: (...vs: readonly [never]) => wrapMatchBlock({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2760,14 +2784,17 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SelfParameter as const,
+    _reference: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._reference, "reference", false, data.$type, { tree, nodeType: data.$type, slotName: "reference", span: (data as _NodeData).$span })),
     _lifetime: normalizeSingularWrapSlot(data._lifetime, "lifetime", false, data.$type, { tree, nodeType: data.$type, slotName: "lifetime", span: (data as _NodeData).$span }),
     _mutable_specifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._mutable_specifier, "mutable_specifier", false, data.$type, { tree, nodeType: data.$type, slotName: "mutable_specifier", span: (data as _NodeData).$span })),
     _self: projectKindEnumStorage(normalizeSingularWrapSlot(data._self, "self", true, data.$type, { tree, nodeType: data.$type, slotName: "self", span: (data as _NodeData).$span })),
 
+    reference() { return this._reference; },
     lifetime() { return drillIn<T.Lifetime | undefined>(this._lifetime, tree); },
     mutableSpecifier() { return this._mutable_specifier; },
     self() { return this._self; },
     $with: {
+      reference: (v: NonNullable<T.SelfParameter['_reference']>) => wrapSelfParameter({ ...data, _reference: v }, tree),
       lifetime: (v: NonNullable<T.SelfParameter['_lifetime']>) => wrapSelfParameter({ ...data, _lifetime: v }, tree),
       mutableSpecifier: (v: NonNullable<T.SelfParameter['_mutable_specifier']>) => wrapSelfParameter({ ...data, _mutable_specifier: v }, tree),
       self: (v: NonNullable<T.SelfParameter['_self']>) => wrapSelfParameter({ ...data, _self: v }, tree),
@@ -3465,6 +3492,17 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
   return _node;
 }
 
+export function wrapVisibilityModifierGroup1(data: T.VisibilityModifierGroup1, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    _content: normalizeSingularWrapSlot((data._self ?? data._super ?? data._crate ?? data._in_path ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+
+    content() { return drillAs<T.Self | T.Super | T.Crate | T.InPath>(this._content, tree, "in_path", "_in_path"); },
+    $with: { $children: (...vs: readonly [never]) => wrapVisibilityModifierGroup1({ ...data, $other: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   '_array_expression_list': (d, t) => wrapArrayExpressionList(d as unknown as T.ArrayExpressionList, t),
   '_array_expression_semi': (d, t) => wrapArrayExpressionSemi(d as unknown as T.ArrayExpressionSemi, t),
@@ -3535,7 +3573,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_type_argument': (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
   '_type_identifier': (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
   '_use_clause': (d, t) => wrapUseClause(d as unknown as T.UseClause, t),
+  '_use_wildcard_clause': (d, t) => wrapUseWildcardClause(d as unknown as T.UseWildcardClause, t),
   '_visibility_modifier_crate': (d, t) => wrapVisibilityModifierCrate(d as unknown as T.VisibilityModifierCrate, t),
+  '_visibility_modifier_group1': (d, t) => wrap_VisibilityModifierGroup1(d as unknown as T._VisibilityModifierGroup1, t),
   '_visibility_modifier_in_path': (d, t) => wrapVisibilityModifierInPath(d as unknown as T.VisibilityModifierInPath, t),
   '_visibility_modifier_pub': (d, t) => wrapVisibilityModifierPub(d as unknown as T.VisibilityModifierPub, t),
   '_wildcard_pattern': (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
@@ -3692,6 +3732,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'where_predicate': (d, t) => wrapWherePredicate(d as unknown as T.WherePredicate, t),
   'while_expression': (d, t) => wrapWhileExpression(d as unknown as T.WhileExpression, t),
   'yield_expression': (d, t) => wrapYieldExpression(d as unknown as T.YieldExpression, t),
+  'visibility_modifier_group1': (d, t) => wrapVisibilityModifierGroup1(d as unknown as T.VisibilityModifierGroup1, t),
   'string_content': (d) => ({ ...d, $type: TSKindId.StringContent as const }),
   'raw_string_literal_content': (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
   'float_literal': (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
@@ -3730,6 +3771,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'impl_item_body': '_impl_item_body',
   'impl_item_negative_clause': '_impl_item_negative_clause',
   'impl_item_positive_clause': '_impl_item_positive_clause',
+  'in_path': '_in_path',
   'let_chain': '_let_chain',
   'line_comment_content': '_line_comment_content',
   'line_comment_doc': '_line_comment_doc',
@@ -3778,7 +3820,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'unsafe_marker': '_unsafe_marker',
   'use_clause': '_use_clause',
   'visibility_modifier_crate': '_visibility_modifier_crate',
-  'visibility_modifier_in_path': '_visibility_modifier_in_path',
   'visibility_modifier_pub': '_visibility_modifier_pub',
 };
 

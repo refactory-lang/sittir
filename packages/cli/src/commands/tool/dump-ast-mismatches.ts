@@ -1,4 +1,4 @@
-import type { CommandModule } from '../../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
 import { dumpAstMismatches as runDumpAstMismatches } from '@sittir/tools';
 
@@ -6,8 +6,7 @@ export const dumpAstMismatches: CommandModule = {
 	name: 'dump-ast-mismatches',
 	describe: 'Diagnostic for read-render-parse AST gaps',
 	register: (program) => {
-		withGrammar(program.command('dump-ast-mismatches'))
-			.description('Diagnostic for read-render-parse AST gaps')
+		withGrammar(defineCommand(program, dumpAstMismatches))
 			.option('--all-grammars', 'Run all three grammars')
 			.option('-m, --mode <mode>', 'Mode: deep | shallow | diff', 'deep')
 			.option('-f, --filter <substr>', 'Restrict to entries whose name contains substr')

@@ -1,3 +1,4 @@
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { AssembledBranch, AssembledPattern } from '../compiler/node-map.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
@@ -8,15 +9,15 @@ import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 
 function makeRepeatedUnnamedChoiceNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'repeat1',
+				type: REPEAT1,
 				content: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'symbol', name: 'identifier' },
-						{ type: 'symbol', name: 'integer' },
+						{ type: SYMBOL, name: 'identifier' },
+						{ type: SYMBOL, name: 'integer' },
 					],
 				},
 			},
@@ -24,37 +25,37 @@ function makeRepeatedUnnamedChoiceNodeMap(): NodeMap {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('mixed_parent', new AssembledBranch('mixed_parent', parentRule, parentRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
-	nodes.set('integer', new AssembledPattern('integer', { type: 'pattern', value: '[0-9]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
 }
 
 function makeOptionalUnnamedHelperNodeMap(): NodeMap {
 	const helperRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'field',
+				type: FIELD,
 				name: 'value',
-				content: { type: 'symbol', name: 'identifier' },
+				content: { type: SYMBOL, name: 'identifier' },
 			},
-			{ type: 'symbol', name: 'integer' },
+			{ type: SYMBOL, name: 'integer' },
 		],
 	};
 	const parentRule: SeqRule = {
-		type: 'seq',
+		type: SEQ,
 		members: [
 			{
-				type: 'optional',
-				content: { type: 'symbol', name: '_helper' },
+				type: OPTIONAL,
+				content: { type: SYMBOL, name: '_helper' },
 			},
 		],
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('parent_helper', new AssembledBranch('parent_helper', parentRule, parentRule));
 	nodes.set('_helper', new AssembledBranch('_helper', helperRule, helperRule));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
-	nodes.set('integer', new AssembledPattern('integer', { type: 'pattern', value: '[0-9]+' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
 }
 

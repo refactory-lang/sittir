@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 257,
+  "nodeCount": 262,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -770,6 +770,42 @@
       "children": []
     },
     {
+      "kind": "_except_clause_as_optional1",
+      "modelType": "group",
+      "typeName": "ExceptClauseAsOptional1",
+      "factoryName": "_exceptClauseAsOptional1",
+      "irKey": "exceptClauseAsOptional1",
+      "hidden": false,
+      "name": "_except_clause_as_optional1",
+      "fields": [
+        {
+          "name": "alias",
+          "propertyName": "alias",
+          "paramName": "alias",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
       "kind": "_except_clause_list",
       "modelType": "branch",
       "typeName": "ExceptClauseList",
@@ -873,6 +909,42 @@
         "pattern_list",
         "yield"
       ]
+    },
+    {
+      "kind": "_function_definition_optional1",
+      "modelType": "group",
+      "typeName": "FunctionDefinitionOptional1",
+      "factoryName": "_functionDefinitionOptional1",
+      "irKey": "functionDefinitionOptional1",
+      "hidden": false,
+      "name": "_function_definition_optional1",
+      "fields": [
+        {
+          "name": "return_type",
+          "propertyName": "returnType",
+          "paramName": "returnType",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type",
+              "parseKind": "type",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_import_list",
@@ -1208,6 +1280,42 @@
       ]
     },
     {
+      "kind": "_raise_statement_optional1",
+      "modelType": "group",
+      "typeName": "RaiseStatementOptional1",
+      "factoryName": "_raiseStatementOptional1",
+      "irKey": "raiseStatementOptional1",
+      "hidden": false,
+      "name": "_raise_statement_optional1",
+      "fields": [
+        {
+          "name": "cause",
+          "propertyName": "cause",
+          "paramName": "cause",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
       "kind": "_right_hand_side",
       "modelType": "supertype",
       "typeName": "RightHandSide",
@@ -1342,6 +1450,41 @@
             "typeName": "",
             "kinds": [
               "_simple_statement"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_slice_group1",
+      "modelType": "branch",
+      "typeName": "_SliceGroup1",
+      "factoryName": "_sliceGroup1",
+      "irKey": "_sliceGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
             ]
           }
         }
@@ -2965,6 +3108,27 @@
       "hidden": false,
       "fields": [
         {
+          "name": "real",
+          "propertyName": "real",
+          "paramName": "real",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "imaginary",
           "propertyName": "imaginary",
           "paramName": "imaginary",
@@ -3496,9 +3660,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "dict_pattern_kv",
-          "propertyName": "dictPatternKvs",
-          "paramName": "dictPatternKvs",
+          "name": "key",
+          "propertyName": "keys",
+          "paramName": "keys",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -3506,8 +3670,56 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_dict_pattern_kv",
-              "parseKind": "dict_pattern_kv",
+              "name": "_simple_pattern",
+              "parseKind": "_simple_pattern",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_simple_pattern"
+            ]
+          }
+        },
+        {
+          "name": "value",
+          "propertyName": "values",
+          "paramName": "values",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "case_pattern",
+              "parseKind": "case_pattern",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
+        },
+        {
+          "name": "splat_pattern",
+          "propertyName": "splatPatterns",
+          "paramName": "splatPatterns",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "splat_pattern",
+              "parseKind": "splat_pattern",
               "unresolved": true
             }
           ],
@@ -3515,7 +3727,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_dict_pattern_kv"
+              "splat_pattern"
             ]
           }
         }
@@ -4101,9 +4313,9 @@
           }
         },
         {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "in_clause",
+          "propertyName": "inClauses",
+          "paramName": "inClauses",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -4116,7 +4328,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7162,12 +7374,47 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "slice_group1",
+              "parseKind": "slice_group1",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "slice_group1"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "slice_group1",
+      "modelType": "branch",
+      "typeName": "SliceGroup1",
+      "factoryName": "sliceGroup1",
+      "irKey": "sliceGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
               "name": "expression",
               "parseKind": "expression",
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8578,9 +8825,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8591,24 +8838,7 @@
               "name": "expression",
               "parseKind": "expression",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        },
-        {
-          "name": "expressions",
-          "propertyName": "expressions",
-          "paramName": "expressions",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -8621,6 +8851,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "expression",
               "_expressions"
             ]
           }

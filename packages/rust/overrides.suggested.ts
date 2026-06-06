@@ -99,14 +99,14 @@ export const suggestedRules = {
   // parents: _range_pattern_left_with_right, _range_pattern_prefix, range_pattern
   _shared_2: $ => choice($._literal_pattern, $._path),
 
+  // parents: _impl_item_group1, _impl_item_negative_clause, _impl_item_positive_clause
+  _shared_3: $ => choice($._type_identifier, $.generic_type, $.scoped_type_identifier),
+
   // parents: _function_type_trait_form, struct_pattern
   _type_identifier: $ => choice($._type_identifier, $.scoped_type_identifier),
 
   // parents: last_match_arm, match_arm
   _attribute_item: $ => choice($.attribute_item, $.inner_attribute_item),
-
-  // parents: _impl_item_negative_clause, _impl_item_positive_clause
-  _shared_3: $ => choice($._type_identifier, $.generic_type, $.scoped_type_identifier),
 
 };
 
@@ -129,11 +129,6 @@ export const suggestedGroups = {
   // [held] 1 candidate(s)
   _array_expression_semi: {
     '0/2': 'expression',
-  },
-
-  // [held] 1 candidate(s)
-  _closure_expression_block: {
-    '0/0/0': 'return_type',
   },
 
   // [held] 5 candidate(s)
@@ -161,18 +156,8 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  abstract_type: {
-    '1/0': 'type_parameters',
-  },
-
-  // [held] 1 candidate(s)
   attribute: {
     '1/0/0': 'value',
-  },
-
-  // [held] 1 candidate(s)
-  block: {
-    '0/0': 'label',
   },
 
   // [held] 1 candidate(s)
@@ -180,11 +165,10 @@ export const suggestedGroups = {
     '1/0/0': 'outer',
   },
 
-  // [held] 3 candidate(s)
+  // [held] 2 candidate(s)
   function_type: {
     '1/0': 'function_type_trait_form',
     '1/1': 'function_type_fn_form',
-    '2/0': 'return_type',
   },
 
   // [held] 1 candidate(s)
@@ -198,23 +182,8 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  static_item: {
-    '7/0': 'value',
-  },
-
-  // [held] 1 candidate(s)
   tuple_expression: {
     '2': 'elements',
-  },
-
-  // [held] 1 candidate(s)
-  use_wildcard: {
-    '0/0': 'path',
-  },
-
-  // [held] 1 candidate(s)
-  variadic_parameter: {
-    '1/0': 'pattern',
   },
 
 };
@@ -324,9 +293,9 @@ export interface RepeatedShape {
 }
 export const repeatedShapes: readonly RepeatedShape[] = [
   { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left_with_right","_range_pattern_prefix","range_pattern"], shape: "supertype" },
+  { suggestedName: "_shared_3", kinds: ["_type_identifier","generic_type","scoped_type_identifier"], parents: ["_impl_item_group1","_impl_item_negative_clause","_impl_item_positive_clause"], shape: "supertype" },
   { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["_function_type_trait_form","struct_pattern"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["identifier","metavariable"], parents: ["function_item","function_signature_item"], shape: "supertype" },
   { suggestedName: "_attribute_item", kinds: ["attribute_item","inner_attribute_item"], parents: ["last_match_arm","match_arm"], shape: "supertype" },
-  { suggestedName: "_shared_3", kinds: ["_type_identifier","generic_type","scoped_type_identifier"], parents: ["_impl_item_negative_clause","_impl_item_positive_clause"], shape: "supertype" },
 ];

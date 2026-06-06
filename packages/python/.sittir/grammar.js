@@ -140,6 +140,12 @@ function applyPath(rule, segments, patch, precStack) {
   if (isPrecWrapper(rule)) {
     return descendThroughPrecWrapper(rule, segments, patch, precStack);
   }
+  if (isEnrichGroupLiftSymbol(rule)) {
+    return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
+  }
+  if (isEnrichContentAlias(rule)) {
+    return descendThroughEnrichContentAlias(rule, segments, patch, precStack);
+  }
   const [head, ...rest] = segments;
   const t = rule.type;
   switch (head.kind) {
@@ -172,6 +178,45 @@ function descendThroughPrecWrapper(rule, segments, patch, precStack) {
   const newStack = precStack ? [...precStack, rule] : [rule];
   const newContent = applyPath(contentOf(rule), segments, patch, newStack);
   return reconstructPrec(rule, newContent);
+}
+function isEnrichGroupLiftSymbol(rule) {
+  const t = rule.type;
+  if (t !== "symbol" && t !== "SYMBOL") return false;
+  const meta = rule.metadata;
+  return meta?.source === "enrich";
+}
+var groupLiftRuleMap;
+function setGroupLiftRuleMap(map) {
+  groupLiftRuleMap = map;
+}
+function descendThroughGroupLiftSymbol(rule, segments, patch, precStack) {
+  const name = rule.name;
+  if (!name) {
+    throw new ApplyPathSkip("applyPath: enrich group-lift symbol has no name to resolve its body");
+  }
+  const body = groupLiftRuleMap?.get(name);
+  if (body === void 0) {
+    throw new ApplyPathSkip(
+      `applyPath: enrich group-lift symbol '${name}' \u2014 referenced rule not found in the group-lift rule map (enrich resolver not registered, or the name was pruned)`
+    );
+  }
+  const newBody = applyPath(body, segments, patch, precStack);
+  groupLiftRuleMap?.set(name, newBody);
+  return rule;
+}
+function isEnrichContentAlias(rule) {
+  const t = rule.type;
+  if (t !== "alias" && t !== "ALIAS") return false;
+  const meta = rule.metadata;
+  return meta?.source === "enrich";
+}
+function descendThroughEnrichContentAlias(rule, segments, patch, precStack) {
+  const body = rule.content;
+  if (body === void 0) {
+    throw new ApplyPathSkip("applyPath: enrich content-alias has no content to travel through");
+  }
+  const newBody = applyPath(body, segments, patch, precStack);
+  return { ...rule, content: newBody };
 }
 function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
   switch (head.kind) {
@@ -453,132 +498,607 @@ function alias(rule, value) {
   return native(rule, rule);
 }
 
-// packages/codegen/src/dsl/wire/auto-groups.ts
-function applyAutoGroups(base2, outRules, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
-  if (!base2) return;
-  const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
-  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
-  if (!rulesBag) return;
-  const dedupe = {};
-  const synthRules = {};
-  const rewrites = {};
-  for (const name of Object.keys(rulesBag)) {
-    if (authoredSynthesisKinds.has(name)) continue;
-    if (context.authoredRuleNames.has(name)) continue;
-    const rule = rulesBag[name];
-    if (!rule) continue;
-    const state = { opt: 0, rep: 0 };
-    let next = rule;
-    next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
-    next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
-    if (next !== rule) {
-      rewrites[name] = next;
+// packages/codegen/src/dsl/group-classify.ts
+function ruleMatchesEmpty(rule) {
+  if (!rule || typeof rule !== "object") return false;
+  const r = rule;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (isOptionalType(t) || isPlainRepeatType2(t) || isBlankType(t)) return true;
+  if (typeEq(t, "repeat1")) {
+    return ruleMatchesEmpty(r.content);
+  }
+  if (isSeqType(t)) {
+    const members = r.members;
+    if (!Array.isArray(members) || members.length === 0) return true;
+    return members.every((m) => ruleMatchesEmpty(m));
+  }
+  if (typeEq(t, "choice")) {
+    const members = r.members;
+    if (!Array.isArray(members)) return false;
+    return members.some((m) => ruleMatchesEmpty(m));
+  }
+  if (isFieldType(t) || isPrecWrapper(r)) {
+    return ruleMatchesEmpty(r.content);
+  }
+  if (isStringType(t) || isSymbolType(t) || typeEq(t, "token") || typeEq(t, "pattern")) return false;
+  return false;
+}
+function isPlainRepeatType2(t) {
+  return t === "repeat" || t === "REPEAT";
+}
+function collectSlots(members) {
+  const slots = [];
+  for (const m of members) {
+    if (!m || typeof m !== "object") continue;
+    const r = m;
+    const t = typeof r.type === "string" ? r.type : "";
+    if (isStringType(t) || typeEq(t, "token") || isBlankType(t)) continue;
+    slots.push(m);
+  }
+  return slots;
+}
+function unwrapPrec(rule) {
+  let cur = rule;
+  while (cur && typeof cur === "object") {
+    const r = cur;
+    if (isPrecWrapper(r)) {
+      cur = r.content;
+    } else {
+      break;
     }
   }
-  for (const synName of Object.keys(synthRules)) {
-    if (synName in outRules || synName in rulesBag) continue;
-    outRules[synName] = makeStaticRuleFn(synthRules[synName]);
-    context.syntheticInline.add(synName);
-  }
-  for (const parentName of Object.keys(rewrites)) {
-    outRules[parentName] = makeStaticRuleFn(rewrites[parentName]);
-  }
+  return cur;
 }
-function makeStaticRuleFn(body) {
-  return function staticAutoGroupRule() {
-    return body;
-  };
+function isRepeatLike(t) {
+  return isRepeatType(t) || typeEq(t, "repeat1");
 }
-function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
-  const recursed = recurseChildren(
-    rule,
-    (r) => synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
+function flattenSeqMembers(members) {
+  const out = [];
+  for (const m of members) {
+    const core = unwrapPrec(m);
+    if (core && typeof core === "object") {
+      const ct = core.type;
+      const inner = core.members;
+      if (typeof ct === "string" && isSeqType(ct) && Array.isArray(inner)) {
+        out.push(...flattenSeqMembers(inner));
+        continue;
+      }
+    }
+    out.push(m);
+  }
+  return out;
+}
+function seqHasTopLevelRepeat(members) {
+  for (const m of flattenSeqMembers(members)) {
+    const core = unwrapPrec(m);
+    if (!core || typeof core !== "object") continue;
+    const ct = core.type;
+    if (typeof ct === "string" && isRepeatLike(ct)) return true;
+  }
+  return false;
+}
+function isInlineSafe(seqBody) {
+  if (!seqBody || typeof seqBody !== "object") return false;
+  const r = seqBody;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (isRepeatLike(t)) return true;
+  if (!isSeqType(t)) return false;
+  const members = r.members;
+  if (!Array.isArray(members)) return false;
+  if (seqHasTopLevelRepeat(members)) return true;
+  const slots = collectSlots(members);
+  if (slots.length !== 1) return false;
+  const core = unwrapPrec(slots[0]);
+  if (!core || typeof core !== "object") return false;
+  const coreType = core.type;
+  if (typeof coreType !== "string") return false;
+  return isFieldType(coreType) || isSymbolType(coreType);
+}
+
+// packages/codegen/src/dsl/enrich.ts
+function enrich(baseInput) {
+  const base2 = baseInput;
+  if (!base2 || typeof base2 !== "object") {
+    throw new Error("enrich(): expected a grammar object, got " + typeof base2);
+  }
+  const hasWrapper = "grammar" in base2;
+  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
+  if (!rulesBag) return base2;
+  const supertypeNames = extractSupertypeNames(base2, hasWrapper);
+  const kwRules = {};
+  const clauseGroupRules = {};
+  const clauseDedupeMap = {};
+  const groupDedupeMap = {};
+  const visibleGroupHiddenNames = /* @__PURE__ */ new Set();
+  const enrichedRules = {};
+  for (const name of Object.keys(rulesBag)) {
+    const rule = rulesBag[name];
+    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames) : rule;
+  }
+  const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  setGroupLiftRuleMap({
+    get: (n) => mergedRules[n],
+    set: (n, b) => {
+      mergedRules[n] = b;
+    }
+  });
+  const clauseGroupNames = new Set(
+    Object.keys(clauseGroupRules).filter((n) => !visibleGroupHiddenNames.has(n))
   );
-  if (isOptionalType(recursed.type)) {
-    const content = recursed.content;
-    if (!content || typeof content !== "object") return recursed;
-    if (!isSeqType(content.type)) return recursed;
-    const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
-    if (!(synName in synthRules)) synthRules[synName] = content;
-    const symbolRef = {
-      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-      name: synName,
-      source: "group-lift"
-    };
-    return { ...recursed, content: symbolRef };
+  const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
+  if (clauseGroupNames.size > 0) {
+    Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
+      value: clauseGroupNames,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
   }
-  if (isChoiceType(recursed.type)) {
-    const members = recursed.members;
-    if (!Array.isArray(members) || members.length !== 2) return recursed;
-    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
-    const seqIdx = members.findIndex((m) => isSeqType(m.type));
-    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
-    const seqMember = members[seqIdx];
-    const synName = synthesizeGroupName(seqMember, parentKind, "optional", state, dedupe);
-    if (!(synName in synthRules)) synthRules[synName] = seqMember;
-    const symbolRef = {
-      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-      name: synName,
-      source: "group-lift"
-    };
-    const newMembers = members.slice();
-    newMembers[seqIdx] = symbolRef;
-    return { ...recursed, members: newMembers };
-  }
-  return recursed;
+  return result;
 }
-function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
-  const recursed = recurseChildren(
-    rule,
-    (r) => synthesizeRepeatGroups(r, synthRules, parentKind, state, dedupe)
-  );
-  if (!isRepeatType(recursed.type)) return recursed;
-  const content = recursed.content;
-  if (!content || typeof content !== "object") return recursed;
-  const t = content.type;
-  if (!isSeqType(t)) return recursed;
-  const synName = synthesizeGroupName(content, parentKind, "repeat", state, dedupe);
-  if (!(synName in synthRules)) {
-    synthRules[synName] = content;
+var ENRICH_CLAUSE_GROUPS_KEY = "__enrichedClauseGroups__";
+function getEnrichClauseGroups(grammar2) {
+  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
+  const names = grammar2[ENRICH_CLAUSE_GROUPS_KEY];
+  if (names instanceof Set) return names;
+  return /* @__PURE__ */ new Set();
+}
+function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames) {
+  const MAX_ITERATIONS = 8;
+  let r = rule;
+  let converged = false;
+  for (let i = 0; i < MAX_ITERATIONS; i++) {
+    const before = r;
+    r = applySymbolToField(ruleName, r, supertypeNames);
+    r = applyOptionalKeyword(ruleName, r, kwRules);
+    r = enrichFieldWrappers(r);
+    r = enrichMultiplicityWrappers(r);
+    if (r === before) {
+      converged = true;
+      break;
+    }
   }
-  const symbolRef = {
-    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-    name: synName,
-    source: "group-lift"
-  };
-  return { ...recursed, content: symbolRef };
+  if (!converged && !process.env.SITTIR_QUIET) {
+    process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
+`);
+  }
+  const clauseHoistCounter = { opt: 0, grp: 0 };
+  r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter, groupDedupeMap, visibleGroupHiddenNames);
+  return r;
+}
+function extractSupertypeNames(base2, hasWrapper) {
+  const root = hasWrapper ? base2.grammar : base2;
+  const supertypes = root?.supertypes;
+  if (typeof supertypes === "function") {
+    const dollar = new Proxy(
+      {},
+      {
+        get(_t, prop) {
+          if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+          return void 0;
+        }
+      }
+    );
+    let result;
+    try {
+      result = supertypes(dollar);
+    } catch {
+      return /* @__PURE__ */ new Set();
+    }
+    return harvestSupertypeNames(result);
+  }
+  if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
+  return /* @__PURE__ */ new Set();
+}
+function harvestSupertypeNames(result) {
+  const names = /* @__PURE__ */ new Set();
+  if (!Array.isArray(result)) return names;
+  for (const r of result) {
+    if (typeof r === "string") {
+      names.add(r);
+      continue;
+    }
+    const n = r?.name;
+    if (typeof n === "string") names.add(n);
+  }
+  return names;
 }
 function detectCase(referenceRule) {
   const t = referenceRule?.type ?? "";
   return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
 }
-function synthesizeGroupName(content, parentKind, kind, state, dedupe) {
-  const key = canonicalStringify(content);
-  const existing = dedupe[key];
-  if (existing !== void 0) return existing;
-  const counterKey = kind === "optional" ? "opt" : "rep";
-  state[counterKey] += 1;
-  const n = state[counterKey];
-  const name = `_${parentKind}_${kind}${n}`;
-  dedupe[key] = name;
-  return name;
+function makeField(referenceRule, name, content) {
+  propagateFieldName(content, name);
+  return {
+    type: detectCase(referenceRule) === "upper" ? "FIELD" : "field",
+    name,
+    content,
+    source: "enriched"
+  };
 }
-function canonicalStringify(value) {
-  if (value === null || typeof value !== "object") {
-    return JSON.stringify(value);
+function propagateFieldName(rule, fieldName) {
+  if (!rule || typeof rule !== "object") return;
+  const r = rule;
+  if (r._ref && r._ref.fieldName === void 0) {
+    r._ref.fieldName = fieldName;
   }
-  if (Array.isArray(value)) {
-    return "[" + value.map((v) => canonicalStringify(v)).join(",") + "]";
+  const t = r.type;
+  if (t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE") {
+    if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName);
+    return;
   }
-  const obj = value;
-  const keys = Object.keys(obj).sort();
-  const parts = [];
-  for (const k of keys) {
-    const v = obj[k];
-    if (typeof v === "function" || typeof v === "undefined") continue;
-    parts.push(JSON.stringify(k) + ":" + canonicalStringify(v));
+  if (t === "optional" || t === "OPTIONAL" || t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1" || t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC") {
+    if (r.content !== void 0) propagateFieldName(r.content, fieldName);
+    return;
   }
-  return "{" + parts.join(",") + "}";
+}
+function makeSymbol(referenceRule, name) {
+  return {
+    type: detectCase(referenceRule) === "upper" ? "SYMBOL" : "symbol",
+    name
+  };
+}
+function registerKwRule(hostRule, stringLiteral, keyword, kwRules) {
+  const hiddenName = `_kw_${keyword}`;
+  if (!(hiddenName in kwRules)) {
+    kwRules[hiddenName] = stringLiteral;
+  }
+  return makeSymbol(hostRule, hiddenName);
+}
+function normalizeMember(m) {
+  if (typeof m === "string") return { type: "STRING", value: m };
+  if (m instanceof RegExp) return { type: "PATTERN", value: m.source };
+  return m ?? { type: "UNKNOWN" };
+}
+function collectFieldNamesRuntime(rule) {
+  const names = /* @__PURE__ */ new Set();
+  if (!isSeqType(rule.type)) return names;
+  const members = rule.members;
+  for (const raw of members) {
+    const m = normalizeMember(raw);
+    if (isFieldType(m.type) && typeof m.name === "string") {
+      names.add(m.name);
+      continue;
+    }
+    const peeled = peelOptional(m);
+    if (peeled.isOptional) {
+      const innerN = normalizeMember(peeled.inner);
+      if (isFieldType(innerN.type) && typeof innerN.name === "string") {
+        names.add(innerN.name);
+      }
+    }
+  }
+  return names;
+}
+function peelOptional(rule) {
+  if (isOptionalType(rule.type)) {
+    return {
+      inner: rule.content,
+      isOptional: true
+    };
+  }
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    if (members.length === 2) {
+      const blankIdx = members.findIndex((m) => m.type === "BLANK" || m.type === "blank");
+      if (blankIdx !== -1) {
+        const inner = members[1 - blankIdx];
+        return { inner, isOptional: true };
+      }
+    }
+  }
+  return { inner: rule, isOptional: false };
+}
+function isIdentifierShaped(value) {
+  return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
+}
+function reportSkip(pass, ruleName, reason) {
+  if (process.env.SITTIR_QUIET) return;
+  process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
+`);
+}
+function isBareShapeTarget(member, target) {
+  return target.symbolRule === member;
+}
+function detectSymbolTarget(member) {
+  if (isSymbolType(member.type) && typeof member.name === "string") {
+    const name = member.name;
+    return {
+      name,
+      symbolRule: member,
+      wrap: (fieldNode) => fieldNode
+    };
+  }
+  const peeled = peelOptional(member);
+  if (!peeled.isOptional) return null;
+  const innerN = normalizeMember(peeled.inner);
+  if (isSymbolType(innerN.type) && typeof innerN.name === "string") {
+    return {
+      name: innerN.name,
+      symbolRule: peeled.inner,
+      wrap: (fieldNode) => rebuildOptional(member, fieldNode)
+    };
+  }
+  if (!isSeqType(innerN.type)) return null;
+  const seqMembers = peeled.inner.members;
+  let symIdx = -1;
+  for (let i = 0; i < seqMembers.length; i++) {
+    const sn2 = normalizeMember(seqMembers[i]);
+    if (isSymbolType(sn2.type) && typeof sn2.name === "string") {
+      if (symIdx !== -1) return null;
+      symIdx = i;
+    } else if (!isStringType(sn2.type) && sn2.type !== "PATTERN" && sn2.type !== "pattern") {
+      return null;
+    }
+  }
+  if (symIdx === -1) return null;
+  const symMember = seqMembers[symIdx];
+  const sn = normalizeMember(symMember);
+  if (!isSymbolType(sn.type) || typeof sn.name !== "string") return null;
+  const seqRule = peeled.inner;
+  return {
+    name: sn.name,
+    symbolRule: symMember,
+    wrap: (fieldNode) => {
+      const newSeqMembers = seqMembers.map((mm, i) => i === symIdx ? fieldNode : mm);
+      const newSeq = { ...seqRule, members: newSeqMembers };
+      return rebuildOptional(member, newSeq);
+    }
+  };
+}
+function countSymbolsInRepeat(node, kindCounts, inRepeat = false) {
+  if (!node) return;
+  const t = node.type;
+  if (!t) return;
+  if (isFieldType(t)) return;
+  if (t === "ALIAS" || t === "alias") return;
+  if (isSymbolType(t)) {
+    if (!inRepeat) return;
+    const name = node.name;
+    if (typeof name === "string") {
+      kindCounts.set(name, (kindCounts.get(name) ?? 0) + 1);
+    }
+    return;
+  }
+  if (isRepeatType(t)) {
+    const content = node.content;
+    countSymbolsInRepeat(content, kindCounts, true);
+    return;
+  }
+  if (isSeqType(t) || isChoiceType(t)) {
+    const members = node.members;
+    if (Array.isArray(members)) {
+      for (const m of members) countSymbolsInRepeat(m, kindCounts, inRepeat);
+    }
+    return;
+  }
+  if (isOptionalType(t) || isPrecWrapper(node)) {
+    const content = node.content;
+    countSymbolsInRepeat(content, kindCounts, inRepeat);
+    return;
+  }
+}
+function applySymbolToField(ruleName, rule, supertypeNames) {
+  if (ruleName.startsWith("_")) return rule;
+  const precStack = [];
+  let cursor = rule;
+  while (isPrecWrapper(cursor)) {
+    precStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isSeqType(cursor.type)) {
+    return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames);
+  }
+  const members = cursor.members;
+  const directKindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map((m) => {
+    const t = detectSymbolTarget(m);
+    if (!t) return null;
+    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
+    return t;
+  });
+  for (const t of targetByIdx) {
+    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
+  }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
+  for (const m of members) {
+    countSymbolsInRepeat(m, nestedRepeatCounts);
+  }
+  const existing = collectFieldNamesRuntime(cursor);
+  const sequenceCounters = /* @__PURE__ */ new Map();
+  let changed = false;
+  const newMembers = members.map((m, i) => {
+    const t = targetByIdx[i];
+    if (!t) return m;
+    let baseFieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return m;
+      baseFieldName = t.name.slice(1);
+    }
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
+    const directCount = directKindCounts.get(t.name) ?? 0;
+    let fieldName = baseFieldName;
+    if (directCount > 1) {
+      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+      sequenceCounters.set(t.name, seqIdx);
+      fieldName = `${baseFieldName}${seqIdx}`;
+    }
+    if (existing.has(fieldName)) {
+      reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
+      return m;
+    }
+    existing.add(fieldName);
+    changed = true;
+    const fieldNode = makeField(cursor, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
+  });
+  const combinedKindCounts = new Map(directKindCounts);
+  for (const [k, v] of nestedRepeatCounts) {
+    combinedKindCounts.set(k, (combinedKindCounts.get(k) ?? 0) + v);
+  }
+  const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, combinedKindCounts);
+  if (finalMembers === newMembers && !changed) return rule;
+  let result = { ...cursor, members: finalMembers };
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = { ...precStack[i], content: result };
+  }
+  return result;
+}
+function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing, outerKindCounts) {
+  let anyRepeatChanged = false;
+  const result = members.map((m) => {
+    const rebuilt = tryPromoteInRepeatMember(ruleName, m, supertypeNames, existing, outerKindCounts);
+    if (rebuilt === null) return m;
+    anyRepeatChanged = true;
+    return rebuilt;
+  });
+  if (!anyRepeatChanged) return members;
+  return result;
+}
+function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, outerKindCounts) {
+  let cursor = member;
+  const memberPrecStack = [];
+  while (isPrecWrapper(cursor)) {
+    memberPrecStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isRepeatType(cursor.type)) return null;
+  let inner = cursor.content;
+  const innerPrecStack = [];
+  while (isPrecWrapper(inner)) {
+    innerPrecStack.push(inner);
+    inner = inner.content;
+  }
+  if (!isSeqType(inner.type)) return null;
+  const innerMembers = inner.members;
+  const innerTargets = innerMembers.map((m) => {
+    const t = detectSymbolTarget(m);
+    if (!t) return null;
+    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
+    return t;
+  });
+  const directKindCounts = /* @__PURE__ */ new Map();
+  for (const t of innerTargets) {
+    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
+  }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
+  for (const im of innerMembers) {
+    countSymbolsInRepeat(im, nestedRepeatCounts);
+  }
+  const innerExisting = collectFieldNamesRuntime(inner);
+  const sequenceCounters = /* @__PURE__ */ new Map();
+  let innerChanged = false;
+  const newInnerMembers = innerMembers.map((im, i) => {
+    const t = innerTargets[i];
+    if (!t) return im;
+    let baseFieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return im;
+      baseFieldName = t.name.slice(1);
+    }
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
+    if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
+    const directCount = directKindCounts.get(t.name) ?? 0;
+    let fieldName = baseFieldName;
+    if (directCount > 1) {
+      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+      sequenceCounters.set(t.name, seqIdx);
+      fieldName = `${baseFieldName}${seqIdx}`;
+    }
+    if (innerExisting.has(fieldName)) return im;
+    if (existing.has(fieldName)) {
+      reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists (outer seq)`);
+      return im;
+    }
+    innerExisting.add(fieldName);
+    innerChanged = true;
+    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
+  });
+  if (!innerChanged) return null;
+  let rebuilt = { ...inner, members: newInnerMembers };
+  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+    rebuilt = { ...innerPrecStack[i], content: rebuilt };
+  }
+  rebuilt = { ...cursor, content: rebuilt };
+  for (let i = memberPrecStack.length - 1; i >= 0; i--) {
+    rebuilt = { ...memberPrecStack[i], content: rebuilt };
+  }
+  return rebuilt;
+}
+function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames) {
+  if (!isRepeatType(cursor.type)) return rule;
+  let inner = cursor.content;
+  const innerPrecStack = [];
+  while (isPrecWrapper(inner)) {
+    innerPrecStack.push(inner);
+    inner = inner.content;
+  }
+  if (!isSeqType(inner.type)) return rule;
+  const members = inner.members;
+  const directKindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map((m) => {
+    const t = detectSymbolTarget(m);
+    if (!t) return null;
+    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
+    return t;
+  });
+  for (const t of targetByIdx) {
+    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
+  }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
+  for (const m of members) {
+    countSymbolsInRepeat(m, nestedRepeatCounts);
+  }
+  const existing = collectFieldNamesRuntime(inner);
+  const sequenceCounters = /* @__PURE__ */ new Map();
+  let changed = false;
+  const newMembers = members.map((m, i) => {
+    const t = targetByIdx[i];
+    if (!t) return m;
+    let baseFieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return m;
+      baseFieldName = t.name.slice(1);
+    }
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
+    const directCount = directKindCounts.get(t.name) ?? 0;
+    let fieldName = baseFieldName;
+    if (directCount > 1) {
+      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+      sequenceCounters.set(t.name, seqIdx);
+      fieldName = `${baseFieldName}${seqIdx}`;
+    }
+    if (existing.has(fieldName)) {
+      reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
+      return m;
+    }
+    existing.add(fieldName);
+    changed = true;
+    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
+  });
+  if (!changed) return rule;
+  let result = { ...inner, members: newMembers };
+  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+    result = { ...innerPrecStack[i], content: result };
+  }
+  result = { ...cursor, content: result };
+  for (let i = outerPrecStack.length - 1; i >= 0; i--) {
+    result = { ...outerPrecStack[i], content: result };
+  }
+  return result;
+}
+function enrichFieldWrappers(rule) {
+  const recursed = recurseChildren(rule, enrichFieldWrappers);
+  if (!isFieldType(recursed.type)) return recursed;
+  const name = recursed.name;
+  const content = recursed.content;
+  if (typeof name !== "string" || !content || typeof content !== "object") return recursed;
+  const existing = content;
+  if (existing.fieldName === name && existing.nonterminal === true) return recursed;
+  const newContent = { ...content, fieldName: name, nonterminal: true };
+  return { ...recursed, content: newContent };
 }
 function recurseChildren(rule, visit) {
   if (!rule || typeof rule !== "object") return rule;
@@ -595,7 +1115,7 @@ function recurseChildren(rule, visit) {
     });
     return changed ? { ...rule, members: newMembers } : rule;
   }
-  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant" || t === "clause") {
+  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant") {
     const content = rule.content;
     if (content === void 0) return rule;
     const out = visit(content);
@@ -608,13 +1128,393 @@ function recurseChildren(rule, visit) {
     let changed = false;
     const newForms = forms.map((f) => {
       const out = visit(f.content);
-      if (out === f.content) return f;
-      changed = true;
-      return { ...f, content: out };
+      if (out !== f.content) changed = true;
+      return changed ? { ...f, content: out } : f;
     });
     return changed ? { ...rule, forms: newForms } : rule;
   }
   return rule;
+}
+var MULTIPLICITY_BY_TYPE = {
+  optional: "optional",
+  OPTIONAL: "optional",
+  repeat: "array",
+  REPEAT: "array",
+  repeat1: "nonEmptyArray",
+  REPEAT1: "nonEmptyArray"
+};
+function enrichMultiplicityWrappers(rule) {
+  const recursed = recurseChildren(rule, enrichMultiplicityWrappers);
+  const t = recursed.type;
+  const multiplicity = t ? MULTIPLICITY_BY_TYPE[t] : void 0;
+  if (!multiplicity) return recursed;
+  const self = recursed;
+  const selfNeedsStamp = self.multiplicity !== multiplicity || self.nonterminal !== true;
+  const content = recursed.content;
+  const stampedContent = content && typeof content === "object" ? stampMultiplicityThroughWrappers(content, multiplicity) : content;
+  if (!selfNeedsStamp && stampedContent === content) return recursed;
+  const next = { ...recursed };
+  if (selfNeedsStamp) {
+    next.multiplicity = multiplicity;
+    next.nonterminal = true;
+  }
+  if (stampedContent !== content) {
+    next.content = stampedContent;
+  }
+  return next;
+}
+function stampMultiplicityThroughWrappers(node, multiplicity) {
+  const existing = node;
+  const selfNeedsStamp = existing.multiplicity !== multiplicity || existing.nonterminal !== true;
+  const t = node.type;
+  const isTransparent = !!t && (isFieldType(t) || isPrecWrapper(node) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN");
+  let newContent;
+  let contentChanged = false;
+  if (isTransparent) {
+    const content = node.content;
+    if (content && typeof content === "object") {
+      newContent = stampMultiplicityThroughWrappers(content, multiplicity);
+      contentChanged = newContent !== content;
+    }
+  }
+  if (!selfNeedsStamp && !contentChanged) return node;
+  const next = { ...node };
+  if (selfNeedsStamp) {
+    next.multiplicity = multiplicity;
+    next.nonterminal = true;
+  }
+  if (contentChanged) {
+    next.content = newContent;
+  }
+  return next;
+}
+function applyOptionalKeyword(ruleName, rule, kwRules) {
+  const inner = peelPrec(rule);
+  const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : /* @__PURE__ */ new Set();
+  return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule;
+}
+function peelPrec(rule) {
+  let cursor = rule;
+  while (isPrecWrapper(cursor)) {
+    cursor = cursor.content;
+  }
+  return cursor;
+}
+function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
+  if (isSeqType(rule.type)) {
+    const members = rule.members;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+      if (out === null) return m;
+      changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : null;
+  }
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+      if (out === null) return m;
+      changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : null;
+  }
+  const peeled = peelOptional(rule);
+  if (peeled.isOptional) {
+    const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules);
+    if (replacement !== null) return replacement;
+    const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
+    if (innerRewritten !== null) {
+      return rebuildOptional(rule, innerRewritten);
+    }
+    return null;
+  }
+  if (isRepeatType(rule.type) || isFieldType(rule.type)) {
+    const content = rule.content;
+    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+    if (out === null) return null;
+    return { ...rule, content: out };
+  }
+  if (isPrecWrapper(rule)) {
+    const content = rule.content;
+    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+    if (out === null) return null;
+    return { ...rule, content: out };
+  }
+  return null;
+}
+function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules) {
+  const innerNorm = normalizeMember(inner);
+  if (!isStringType(innerNorm.type)) return null;
+  const kw = innerNorm.value;
+  if (typeof kw !== "string" || !isIdentifierShaped(kw)) return null;
+  const fieldName = `${kw}_marker`;
+  if (claimed.has(fieldName)) {
+    reportSkip("optional-keyword-prefix", ruleName, `field '${fieldName}' already exists`);
+    return null;
+  }
+  claimed.add(fieldName);
+  const symbolRef = registerKwRule(optionalRule, inner, fieldName, kwRules);
+  const fieldNode = makeField(optionalRule, fieldName, symbolRef);
+  return rebuildOptional(optionalRule, fieldNode);
+}
+function rebuildOptional(optionalRule, newInner) {
+  if (isOptionalType(optionalRule.type)) {
+    return { ...optionalRule, content: newInner };
+  }
+  const members = optionalRule.members;
+  const newMembers = members.map((m) => {
+    const t = m.type;
+    return t === "BLANK" || t === "blank" ? m : newInner;
+  });
+  return { ...optionalRule, members: newMembers };
+}
+function canonicalStringifyClause(value) {
+  if (value === null || typeof value !== "object") {
+    return JSON.stringify(value);
+  }
+  if (Array.isArray(value)) {
+    return "[" + value.map((v) => canonicalStringifyClause(v)).join(",") + "]";
+  }
+  const obj = value;
+  const keys = Object.keys(obj).sort();
+  const parts = [];
+  for (const k of keys) {
+    const v = obj[k];
+    if (typeof v === "function" || typeof v === "undefined") continue;
+    parts.push(JSON.stringify(k) + ":" + canonicalStringifyClause(v));
+  }
+  return "{" + parts.join(",") + "}";
+}
+function peelOptionalSeq(rule) {
+  if (isOptionalType(rule.type)) {
+    const content = rule.content;
+    if (content && isSeqType(content.type)) {
+      return { seqBody: content, form: "optional", seqIdx: -1 };
+    }
+    return null;
+  }
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    if (!Array.isArray(members) || members.length !== 2) return null;
+    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
+    const seqIdx = members.findIndex((m) => isSeqType(m.type));
+    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return null;
+    return { seqBody: members[seqIdx], form: "choice", seqIdx };
+  }
+  return null;
+}
+function listSeparatorOfOptionalSeq(rule) {
+  const peeled = peelOptionalSeq(rule);
+  if (peeled === null) return null;
+  const seqMembers = peeled.seqBody.members;
+  if (!Array.isArray(seqMembers)) return null;
+  for (const m of seqMembers) {
+    if (!isRepeatType(m.type)) continue;
+    const sepAttr = m.separator;
+    if (typeof sepAttr === "string") return sepAttr;
+    const content = m.content;
+    if (content && isSeqType(content.type)) {
+      const cm = content.members;
+      const first = Array.isArray(cm) && cm[0] ? normalizeMember(cm[0]) : null;
+      if (first && isStringType(first.type) && typeof first.value === "string") return first.value;
+    }
+  }
+  return null;
+}
+function optionalStringLiteral(rule) {
+  const peeled = peelOptional(rule);
+  if (!peeled.isOptional) return null;
+  const innerN = normalizeMember(peeled.inner);
+  if (isStringType(innerN.type) && typeof innerN.value === "string") return innerN.value;
+  return null;
+}
+function appendTrailingMemberToOptionalSeq(optSeqRule, trailingOptional) {
+  const peeled = peelOptionalSeq(optSeqRule);
+  const seqBody = peeled.seqBody;
+  const seqMembers = seqBody.members;
+  const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] };
+  return rebuildOptional(optSeqRule, newSeqBody);
+}
+function absorbTrailingListSeparators(members) {
+  let changed = false;
+  const out = [];
+  for (let i = 0; i < members.length; i++) {
+    const cur = members[i];
+    const next = members[i + 1];
+    const sep = next ? listSeparatorOfOptionalSeq(cur) : null;
+    if (sep !== null && optionalStringLiteral(next) === sep) {
+      out.push(appendTrailingMemberToOptionalSeq(cur, next));
+      i++;
+      changed = true;
+      continue;
+    }
+    out.push(cur);
+  }
+  return changed ? out : null;
+}
+function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames) {
+  const peeled = peelOptionalSeq(rule);
+  if (peeled !== null) {
+    const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+    if (ruleMatchesEmpty(recursedSeqBody)) {
+      counter.opt += 1;
+      if (recursedSeqBody === peeled.seqBody) return rule;
+      if (peeled.form === "optional") {
+        return rebuildOptional(rule, recursedSeqBody);
+      } else {
+        const members = rule.members;
+        const newMembers = members.slice();
+        newMembers[peeled.seqIdx] = recursedSeqBody;
+        return { ...rule, members: newMembers };
+      }
+    } else if (isInlineSafe(recursedSeqBody)) {
+      const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
+      if (name !== null) {
+        const symbolRef = makeGroupLiftSymbol(rule, name);
+        if (peeled.form === "optional") {
+          return rebuildOptional(rule, symbolRef);
+        } else {
+          const members = rule.members;
+          const newMembers = members.slice();
+          newMembers[peeled.seqIdx] = symbolRef;
+          return { ...rule, members: newMembers };
+        }
+      }
+      return rule;
+    } else {
+      counter.opt += 1;
+      const names = visibleGroupSynthName(recursedSeqBody, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules);
+      if (names !== null) {
+        visibleGroupHiddenNames.add(names.hiddenName);
+        const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
+        const aliasRule = makeVisibleGroupAlias(rule, symbolRef, names.visibleName);
+        if (peeled.form === "optional") {
+          return rebuildOptional(rule, aliasRule);
+        } else {
+          const members = rule.members;
+          const newMembers = members.slice();
+          newMembers[peeled.seqIdx] = aliasRule;
+          return { ...rule, members: newMembers };
+        }
+      }
+      if (recursedSeqBody === peeled.seqBody) return rule;
+      if (peeled.form === "optional") {
+        return rebuildOptional(rule, recursedSeqBody);
+      } else {
+        const members = rule.members;
+        const newMembers = members.slice();
+        newMembers[peeled.seqIdx] = recursedSeqBody;
+        return { ...rule, members: newMembers };
+      }
+    }
+  }
+  if (isSeqType(rule.type)) {
+    const rawMembers = rule.members;
+    if (!Array.isArray(rawMembers)) return rule;
+    const absorbed = absorbTrailingListSeparators(rawMembers);
+    const members = absorbed ?? rawMembers;
+    let changed = absorbed !== null;
+    const newMembers = members.map((m) => {
+      const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+      if (out !== m) changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : rule;
+  }
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+      if (out !== m) changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : rule;
+  }
+  if (isRepeatType(rule.type) || isPrecWrapper(rule)) {
+    const content = rule.content;
+    if (!content) return rule;
+    const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+    if (newContent === content) return rule;
+    return { ...rule, content: newContent };
+  }
+  if (isFieldType(rule.type)) {
+    const content = rule.content;
+    if (!content) return rule;
+    const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+    if (newContent === content) return rule;
+    return { ...rule, content: newContent };
+  }
+  return rule;
+}
+function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules) {
+  const key = canonicalStringifyClause(seqBody);
+  const existing = dedupeMap[key];
+  if (existing !== void 0) {
+    if (!(existing in clauseGroupRules)) {
+      clauseGroupRules[existing] = seqBody;
+    }
+    return existing;
+  }
+  counter.opt += 1;
+  const name = `_${parentKind}_optional${counter.opt}`;
+  if (name in rulesBag) {
+    process.stderr.write(
+      `enrich: clause-hoist skipped for '${parentKind}' \u2014 rule '${name}' already exists in base.grammar.rules
+`
+    );
+    return null;
+  }
+  dedupeMap[key] = name;
+  clauseGroupRules[name] = seqBody;
+  return name;
+}
+function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules) {
+  const key = canonicalStringifyClause(content);
+  const existing = groupDedupeMap[key];
+  if (existing !== void 0) {
+    const hiddenName2 = `_${existing}`;
+    if (!(hiddenName2 in clauseGroupRules)) clauseGroupRules[hiddenName2] = content;
+    return { visibleName: existing, hiddenName: hiddenName2 };
+  }
+  counter.grp += 1;
+  const visibleName = `${parentKind.replace(/^_+/, "")}_group${counter.grp}`;
+  const hiddenName = `_${visibleName}`;
+  if (visibleName in rulesBag || hiddenName in rulesBag) {
+    process.stderr.write(
+      `enrich: visible-group skipped for '${parentKind}' \u2014 rule '${visibleName}'/'${hiddenName}' already exists in base.grammar.rules
+`
+    );
+    return null;
+  }
+  groupDedupeMap[key] = visibleName;
+  clauseGroupRules[hiddenName] = content;
+  return { visibleName, hiddenName };
+}
+function makeGroupLiftSymbol(referenceRule, name) {
+  const t = referenceRule.type ?? "";
+  const isUpper = t.length > 0 && t === t.toUpperCase();
+  return {
+    type: isUpper ? "SYMBOL" : "symbol",
+    name,
+    source: "group-lift",
+    metadata: { source: "enrich" }
+  };
+}
+function makeVisibleGroupAlias(referenceRule, symbolRef, name) {
+  return {
+    type: detectCase(referenceRule) === "upper" ? "ALIAS" : "alias",
+    content: symbolRef,
+    named: true,
+    value: name,
+    metadata: { source: "enrich" }
+  };
 }
 
 // packages/codegen/src/dsl/wire/wire.ts
@@ -683,17 +1583,9 @@ function wire(config, base2) {
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
   if (baseArg) {
-    const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
-      transforms,
-      polymorphs,
-      cfg.groups
-    );
-    applyAutoGroups(
-      baseArg,
-      outRules,
-      context,
-      authoredSynthesisKinds
-    );
+    for (const name of getEnrichClauseGroups(base2)) {
+      context.syntheticInline.add(name);
+    }
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
   }
   const conflicts = wrapConflictsCallback(cfg.conflicts, context);
@@ -710,18 +1602,6 @@ function wire(config, base2) {
     configurable: true
   });
   return wired;
-}
-function collectAuthoredSynthesisKinds(transforms, polymorphs, groups) {
-  const kinds = /* @__PURE__ */ new Set();
-  for (const k of Object.keys(transforms)) kinds.add(k);
-  for (const k of Object.keys(polymorphs)) kinds.add(k);
-  if (groups) {
-    for (const [k, v] of Object.entries(groups)) {
-      if (typeof v === "function") continue;
-      kinds.add(k);
-    }
-  }
-  return kinds;
 }
 function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
   for (const [parent, armMap] of Object.entries(polymorphs)) {
@@ -1501,13 +2381,13 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     value: aliasValue
   };
   if (factored) {
-    const optional = globalThis.optional;
-    if (typeof optional !== "function") {
+    const optional2 = globalThis.optional;
+    if (typeof optional2 !== "function") {
       throw new Error(
         "transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()"
       );
     }
-    return optional(aliasNode);
+    return optional2(aliasNode);
   }
   return aliasNode;
 }
@@ -1585,659 +2465,10 @@ function role(symbol, roleName) {
   return symbol;
 }
 
-// packages/codegen/src/dsl/enrich.ts
-function enrich(baseInput) {
-  const base2 = baseInput;
-  if (!base2 || typeof base2 !== "object") {
-    throw new Error("enrich(): expected a grammar object, got " + typeof base2);
-  }
-  const hasWrapper = "grammar" in base2;
-  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
-  if (!rulesBag) return base2;
-  const supertypeNames = extractSupertypeNames(base2, hasWrapper);
-  const kwRules = {};
-  const enrichedRules = {};
-  for (const name of Object.keys(rulesBag)) {
-    const rule = rulesBag[name];
-    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames) : rule;
-  }
-  const mergedRules = { ...enrichedRules, ...kwRules };
-  if (hasWrapper) {
-    return { ...base2, grammar: { ...base2.grammar, rules: mergedRules } };
-  }
-  return {
-    ...base2,
-    rules: mergedRules
-  };
-}
-function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames) {
-  const MAX_ITERATIONS = 8;
-  let r = rule;
-  for (let i = 0; i < MAX_ITERATIONS; i++) {
-    const before = r;
-    r = applySymbolToField(ruleName, r, supertypeNames);
-    r = applyOptionalKeyword(ruleName, r, kwRules);
-    r = enrichFieldWrappers(r);
-    r = enrichMultiplicityWrappers(r);
-    if (r === before) return r;
-  }
-  if (!process.env.SITTIR_QUIET) {
-    process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
-`);
-  }
-  return r;
-}
-function extractSupertypeNames(base2, hasWrapper) {
-  const root = hasWrapper ? base2.grammar : base2;
-  const supertypes = root?.supertypes;
-  if (typeof supertypes === "function") {
-    const dollar = new Proxy(
-      {},
-      {
-        get(_t, prop) {
-          if (typeof prop === "string") return { type: "SYMBOL", name: prop };
-          return void 0;
-        }
-      }
-    );
-    let result;
-    try {
-      result = supertypes(dollar);
-    } catch {
-      return /* @__PURE__ */ new Set();
-    }
-    return harvestSupertypeNames(result);
-  }
-  if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
-  return /* @__PURE__ */ new Set();
-}
-function harvestSupertypeNames(result) {
-  const names = /* @__PURE__ */ new Set();
-  if (!Array.isArray(result)) return names;
-  for (const r of result) {
-    if (typeof r === "string") {
-      names.add(r);
-      continue;
-    }
-    const n = r?.name;
-    if (typeof n === "string") names.add(n);
-  }
-  return names;
-}
-function detectCase2(referenceRule) {
-  const t = referenceRule?.type ?? "";
-  return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
-}
-function makeField(referenceRule, name, content) {
-  propagateFieldName(content, name);
-  return {
-    type: detectCase2(referenceRule) === "upper" ? "FIELD" : "field",
-    name,
-    content,
-    source: "enriched"
-  };
-}
-function propagateFieldName(rule, fieldName) {
-  if (!rule || typeof rule !== "object") return;
-  const r = rule;
-  if (r._ref && r._ref.fieldName === void 0) {
-    r._ref.fieldName = fieldName;
-  }
-  const t = r.type;
-  if (t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE") {
-    if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName);
-    return;
-  }
-  if (t === "optional" || t === "OPTIONAL" || t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1" || t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC") {
-    if (r.content !== void 0) propagateFieldName(r.content, fieldName);
-    return;
-  }
-}
-function makeSymbol(referenceRule, name) {
-  return {
-    type: detectCase2(referenceRule) === "upper" ? "SYMBOL" : "symbol",
-    name
-  };
-}
-function registerKwRule(hostRule, stringLiteral, keyword, kwRules) {
-  const hiddenName = `_kw_${keyword}`;
-  if (!(hiddenName in kwRules)) {
-    kwRules[hiddenName] = stringLiteral;
-  }
-  return makeSymbol(hostRule, hiddenName);
-}
-function normalizeMember(m) {
-  if (typeof m === "string") return { type: "STRING", value: m };
-  if (m instanceof RegExp) return { type: "PATTERN", value: m.source };
-  return m ?? { type: "UNKNOWN" };
-}
-function collectFieldNamesRuntime(rule) {
-  const names = /* @__PURE__ */ new Set();
-  if (!isSeqType(rule.type)) return names;
-  const members = rule.members;
-  for (const raw of members) {
-    const m = normalizeMember(raw);
-    if (isFieldType(m.type) && typeof m.name === "string") {
-      names.add(m.name);
-      continue;
-    }
-    const peeled = peelOptional(m);
-    if (peeled.isOptional) {
-      const innerN = normalizeMember(peeled.inner);
-      if (isFieldType(innerN.type) && typeof innerN.name === "string") {
-        names.add(innerN.name);
-      }
-    }
-  }
-  return names;
-}
-function peelOptional(rule) {
-  if (isOptionalType(rule.type)) {
-    return {
-      inner: rule.content,
-      isOptional: true
-    };
-  }
-  if (isChoiceType(rule.type)) {
-    const members = rule.members;
-    if (members.length === 2) {
-      const blankIdx = members.findIndex((m) => m.type === "BLANK" || m.type === "blank");
-      if (blankIdx !== -1) {
-        const inner = members[1 - blankIdx];
-        return { inner, isOptional: true };
-      }
-    }
-  }
-  return { inner: rule, isOptional: false };
-}
-function isIdentifierShaped(value) {
-  return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
-}
-function reportSkip(pass, ruleName, reason) {
-  if (process.env.SITTIR_QUIET) return;
-  process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
-`);
-}
-function isBareShapeTarget(member, target) {
-  return target.symbolRule === member;
-}
-function detectSymbolTarget(member) {
-  if (isSymbolType(member.type) && typeof member.name === "string") {
-    const name = member.name;
-    return {
-      name,
-      symbolRule: member,
-      wrap: (fieldNode) => fieldNode
-    };
-  }
-  const peeled = peelOptional(member);
-  if (!peeled.isOptional) return null;
-  const innerN = normalizeMember(peeled.inner);
-  if (isSymbolType(innerN.type) && typeof innerN.name === "string") {
-    return {
-      name: innerN.name,
-      symbolRule: peeled.inner,
-      wrap: (fieldNode) => rebuildOptional(member, fieldNode)
-    };
-  }
-  if (!isSeqType(innerN.type)) return null;
-  const seqMembers = peeled.inner.members;
-  let symIdx = -1;
-  for (let i = 0; i < seqMembers.length; i++) {
-    const sn2 = normalizeMember(seqMembers[i]);
-    if (isSymbolType(sn2.type) && typeof sn2.name === "string") {
-      if (symIdx !== -1) return null;
-      symIdx = i;
-    } else if (!isStringType(sn2.type) && sn2.type !== "PATTERN" && sn2.type !== "pattern") {
-      return null;
-    }
-  }
-  if (symIdx === -1) return null;
-  const symMember = seqMembers[symIdx];
-  const sn = normalizeMember(symMember);
-  if (!isSymbolType(sn.type) || typeof sn.name !== "string") return null;
-  const seqRule = peeled.inner;
-  return {
-    name: sn.name,
-    symbolRule: symMember,
-    wrap: (fieldNode) => {
-      const newSeqMembers = seqMembers.map((mm, i) => i === symIdx ? fieldNode : mm);
-      const newSeq = { ...seqRule, members: newSeqMembers };
-      return rebuildOptional(member, newSeq);
-    }
-  };
-}
-function countSymbolsInRepeat(node, kindCounts, inRepeat = false) {
-  if (!node) return;
-  const t = node.type;
-  if (!t) return;
-  if (isFieldType(t)) return;
-  if (t === "ALIAS" || t === "alias") return;
-  if (isSymbolType(t)) {
-    if (!inRepeat) return;
-    const name = node.name;
-    if (typeof name === "string") {
-      kindCounts.set(name, (kindCounts.get(name) ?? 0) + 1);
-    }
-    return;
-  }
-  if (isRepeatType(t)) {
-    const content = node.content;
-    countSymbolsInRepeat(content, kindCounts, true);
-    return;
-  }
-  if (isSeqType(t) || isChoiceType(t)) {
-    const members = node.members;
-    if (Array.isArray(members)) {
-      for (const m of members) countSymbolsInRepeat(m, kindCounts, inRepeat);
-    }
-    return;
-  }
-  if (isOptionalType(t) || isPrecWrapper(node)) {
-    const content = node.content;
-    countSymbolsInRepeat(content, kindCounts, inRepeat);
-    return;
-  }
-}
-function applySymbolToField(ruleName, rule, supertypeNames) {
-  if (ruleName.startsWith("_")) return rule;
-  const precStack = [];
-  let cursor = rule;
-  while (isPrecWrapper(cursor)) {
-    precStack.push(cursor);
-    cursor = cursor.content;
-  }
-  if (!isSeqType(cursor.type)) {
-    return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames);
-  }
-  const members = cursor.members;
-  const directKindCounts = /* @__PURE__ */ new Map();
-  const targetByIdx = members.map((m) => {
-    const t = detectSymbolTarget(m);
-    if (!t) return null;
-    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
-    return t;
-  });
-  for (const t of targetByIdx) {
-    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
-  }
-  const nestedRepeatCounts = /* @__PURE__ */ new Map();
-  for (const m of members) {
-    countSymbolsInRepeat(m, nestedRepeatCounts);
-  }
-  const existing = collectFieldNamesRuntime(cursor);
-  const sequenceCounters = /* @__PURE__ */ new Map();
-  let changed = false;
-  const newMembers = members.map((m, i) => {
-    const t = targetByIdx[i];
-    if (!t) return m;
-    let baseFieldName = t.name;
-    if (t.name.startsWith("_")) {
-      if (!supertypeNames.has(t.name)) return m;
-      baseFieldName = t.name.slice(1);
-    }
-    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
-    const directCount = directKindCounts.get(t.name) ?? 0;
-    let fieldName = baseFieldName;
-    if (directCount > 1) {
-      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
-      sequenceCounters.set(t.name, seqIdx);
-      fieldName = `${baseFieldName}${seqIdx}`;
-    }
-    if (existing.has(fieldName)) {
-      reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
-      return m;
-    }
-    existing.add(fieldName);
-    changed = true;
-    const fieldNode = makeField(cursor, fieldName, t.symbolRule);
-    return t.wrap(fieldNode);
-  });
-  const combinedKindCounts = new Map(directKindCounts);
-  for (const [k, v] of nestedRepeatCounts) {
-    combinedKindCounts.set(k, (combinedKindCounts.get(k) ?? 0) + v);
-  }
-  const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, combinedKindCounts);
-  if (finalMembers === newMembers && !changed) return rule;
-  let result = { ...cursor, members: finalMembers };
-  for (let i = precStack.length - 1; i >= 0; i--) {
-    result = { ...precStack[i], content: result };
-  }
-  return result;
-}
-function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing, outerKindCounts) {
-  let anyRepeatChanged = false;
-  const result = members.map((m) => {
-    const rebuilt = tryPromoteInRepeatMember(ruleName, m, supertypeNames, existing, outerKindCounts);
-    if (rebuilt === null) return m;
-    anyRepeatChanged = true;
-    return rebuilt;
-  });
-  if (!anyRepeatChanged) return members;
-  return result;
-}
-function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, outerKindCounts) {
-  let cursor = member;
-  const memberPrecStack = [];
-  while (isPrecWrapper(cursor)) {
-    memberPrecStack.push(cursor);
-    cursor = cursor.content;
-  }
-  if (!isRepeatType(cursor.type)) return null;
-  let inner = cursor.content;
-  const innerPrecStack = [];
-  while (isPrecWrapper(inner)) {
-    innerPrecStack.push(inner);
-    inner = inner.content;
-  }
-  if (!isSeqType(inner.type)) return null;
-  const innerMembers = inner.members;
-  const innerTargets = innerMembers.map((m) => {
-    const t = detectSymbolTarget(m);
-    if (!t) return null;
-    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
-    return t;
-  });
-  const directKindCounts = /* @__PURE__ */ new Map();
-  for (const t of innerTargets) {
-    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
-  }
-  const nestedRepeatCounts = /* @__PURE__ */ new Map();
-  for (const im of innerMembers) {
-    countSymbolsInRepeat(im, nestedRepeatCounts);
-  }
-  const innerExisting = collectFieldNamesRuntime(inner);
-  const sequenceCounters = /* @__PURE__ */ new Map();
-  let innerChanged = false;
-  const newInnerMembers = innerMembers.map((im, i) => {
-    const t = innerTargets[i];
-    if (!t) return im;
-    let baseFieldName = t.name;
-    if (t.name.startsWith("_")) {
-      if (!supertypeNames.has(t.name)) return im;
-      baseFieldName = t.name.slice(1);
-    }
-    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
-    if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
-    const directCount = directKindCounts.get(t.name) ?? 0;
-    let fieldName = baseFieldName;
-    if (directCount > 1) {
-      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
-      sequenceCounters.set(t.name, seqIdx);
-      fieldName = `${baseFieldName}${seqIdx}`;
-    }
-    if (innerExisting.has(fieldName)) return im;
-    if (existing.has(fieldName)) {
-      reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists (outer seq)`);
-      return im;
-    }
-    innerExisting.add(fieldName);
-    innerChanged = true;
-    const fieldNode = makeField(inner, fieldName, t.symbolRule);
-    return t.wrap(fieldNode);
-  });
-  if (!innerChanged) return null;
-  let rebuilt = { ...inner, members: newInnerMembers };
-  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
-    rebuilt = { ...innerPrecStack[i], content: rebuilt };
-  }
-  rebuilt = { ...cursor, content: rebuilt };
-  for (let i = memberPrecStack.length - 1; i >= 0; i--) {
-    rebuilt = { ...memberPrecStack[i], content: rebuilt };
-  }
-  return rebuilt;
-}
-function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames) {
-  if (!isRepeatType(cursor.type)) return rule;
-  let inner = cursor.content;
-  const innerPrecStack = [];
-  while (isPrecWrapper(inner)) {
-    innerPrecStack.push(inner);
-    inner = inner.content;
-  }
-  if (!isSeqType(inner.type)) return rule;
-  const members = inner.members;
-  const directKindCounts = /* @__PURE__ */ new Map();
-  const targetByIdx = members.map((m) => {
-    const t = detectSymbolTarget(m);
-    if (!t) return null;
-    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
-    return t;
-  });
-  for (const t of targetByIdx) {
-    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
-  }
-  const nestedRepeatCounts = /* @__PURE__ */ new Map();
-  for (const m of members) {
-    countSymbolsInRepeat(m, nestedRepeatCounts);
-  }
-  const existing = collectFieldNamesRuntime(inner);
-  const sequenceCounters = /* @__PURE__ */ new Map();
-  let changed = false;
-  const newMembers = members.map((m, i) => {
-    const t = targetByIdx[i];
-    if (!t) return m;
-    let baseFieldName = t.name;
-    if (t.name.startsWith("_")) {
-      if (!supertypeNames.has(t.name)) return m;
-      baseFieldName = t.name.slice(1);
-    }
-    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
-    const directCount = directKindCounts.get(t.name) ?? 0;
-    let fieldName = baseFieldName;
-    if (directCount > 1) {
-      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
-      sequenceCounters.set(t.name, seqIdx);
-      fieldName = `${baseFieldName}${seqIdx}`;
-    }
-    if (existing.has(fieldName)) {
-      reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
-      return m;
-    }
-    existing.add(fieldName);
-    changed = true;
-    const fieldNode = makeField(inner, fieldName, t.symbolRule);
-    return t.wrap(fieldNode);
-  });
-  if (!changed) return rule;
-  let result = { ...inner, members: newMembers };
-  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
-    result = { ...innerPrecStack[i], content: result };
-  }
-  result = { ...cursor, content: result };
-  for (let i = outerPrecStack.length - 1; i >= 0; i--) {
-    result = { ...outerPrecStack[i], content: result };
-  }
-  return result;
-}
-function enrichFieldWrappers(rule) {
-  const recursed = recurseChildren2(rule, enrichFieldWrappers);
-  if (!isFieldType(recursed.type)) return recursed;
-  const name = recursed.name;
-  const content = recursed.content;
-  if (typeof name !== "string" || !content || typeof content !== "object") return recursed;
-  const existing = content;
-  if (existing.fieldName === name && existing.nonterminal === true) return recursed;
-  const newContent = { ...content, fieldName: name, nonterminal: true };
-  return { ...recursed, content: newContent };
-}
-function recurseChildren2(rule, visit) {
-  if (!rule || typeof rule !== "object") return rule;
-  const t = rule.type;
-  if (!t) return rule;
-  if (isSeqType(t) || isChoiceType(t)) {
-    const members = rule.members;
-    if (!Array.isArray(members)) return rule;
-    let changed = false;
-    const newMembers = members.map((m) => {
-      const out = visit(m);
-      if (out !== m) changed = true;
-      return out;
-    });
-    return changed ? { ...rule, members: newMembers } : rule;
-  }
-  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant" || t === "clause") {
-    const content = rule.content;
-    if (content === void 0) return rule;
-    const out = visit(content);
-    if (out === content) return rule;
-    return { ...rule, content: out };
-  }
-  if (t === "polymorph") {
-    const forms = rule.forms;
-    if (!Array.isArray(forms)) return rule;
-    let changed = false;
-    const newForms = forms.map((f) => {
-      const out = visit(f.content);
-      if (out !== f.content) changed = true;
-      return changed ? { ...f, content: out } : f;
-    });
-    return changed ? { ...rule, forms: newForms } : rule;
-  }
-  return rule;
-}
-var MULTIPLICITY_BY_TYPE = {
-  optional: "optional",
-  OPTIONAL: "optional",
-  repeat: "array",
-  REPEAT: "array",
-  repeat1: "nonEmptyArray",
-  REPEAT1: "nonEmptyArray"
-};
-function enrichMultiplicityWrappers(rule) {
-  const recursed = recurseChildren2(rule, enrichMultiplicityWrappers);
-  const t = recursed.type;
-  const multiplicity = t ? MULTIPLICITY_BY_TYPE[t] : void 0;
-  if (!multiplicity) return recursed;
-  const self = recursed;
-  const selfNeedsStamp = self.multiplicity !== multiplicity || self.nonterminal !== true;
-  const content = recursed.content;
-  const stampedContent = content && typeof content === "object" ? stampMultiplicityThroughWrappers(content, multiplicity) : content;
-  if (!selfNeedsStamp && stampedContent === content) return recursed;
-  const next = { ...recursed };
-  if (selfNeedsStamp) {
-    next.multiplicity = multiplicity;
-    next.nonterminal = true;
-  }
-  if (stampedContent !== content) {
-    next.content = stampedContent;
-  }
-  return next;
-}
-function stampMultiplicityThroughWrappers(node, multiplicity) {
-  const existing = node;
-  const selfNeedsStamp = existing.multiplicity !== multiplicity || existing.nonterminal !== true;
-  const t = node.type;
-  const isTransparent = !!t && (isFieldType(t) || isPrecWrapper(node) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN");
-  let newContent;
-  let contentChanged = false;
-  if (isTransparent) {
-    const content = node.content;
-    if (content && typeof content === "object") {
-      newContent = stampMultiplicityThroughWrappers(content, multiplicity);
-      contentChanged = newContent !== content;
-    }
-  }
-  if (!selfNeedsStamp && !contentChanged) return node;
-  const next = { ...node };
-  if (selfNeedsStamp) {
-    next.multiplicity = multiplicity;
-    next.nonterminal = true;
-  }
-  if (contentChanged) {
-    next.content = newContent;
-  }
-  return next;
-}
-function applyOptionalKeyword(ruleName, rule, kwRules) {
-  const inner = peelPrec(rule);
-  const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : /* @__PURE__ */ new Set();
-  return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule;
-}
-function peelPrec(rule) {
-  let cursor = rule;
-  while (isPrecWrapper(cursor)) {
-    cursor = cursor.content;
-  }
-  return cursor;
-}
-function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
-  if (isSeqType(rule.type)) {
-    const members = rule.members;
-    let changed = false;
-    const newMembers = members.map((m) => {
-      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
-      if (out === null) return m;
-      changed = true;
-      return out;
-    });
-    return changed ? { ...rule, members: newMembers } : null;
-  }
-  if (isChoiceType(rule.type)) {
-    const members = rule.members;
-    let changed = false;
-    const newMembers = members.map((m) => {
-      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
-      if (out === null) return m;
-      changed = true;
-      return out;
-    });
-    return changed ? { ...rule, members: newMembers } : null;
-  }
-  const peeled = peelOptional(rule);
-  if (peeled.isOptional) {
-    const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules);
-    if (replacement !== null) return replacement;
-    const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
-    if (innerRewritten !== null) {
-      return rebuildOptional(rule, innerRewritten);
-    }
-    return null;
-  }
-  if (isRepeatType(rule.type) || isFieldType(rule.type)) {
-    const content = rule.content;
-    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
-    if (out === null) return null;
-    return { ...rule, content: out };
-  }
-  if (isPrecWrapper(rule)) {
-    const content = rule.content;
-    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
-    if (out === null) return null;
-    return { ...rule, content: out };
-  }
-  return null;
-}
-function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules) {
-  const innerNorm = normalizeMember(inner);
-  if (!isStringType(innerNorm.type)) return null;
-  const kw = innerNorm.value;
-  if (typeof kw !== "string" || !isIdentifierShaped(kw)) return null;
-  const fieldName = `${kw}_marker`;
-  if (claimed.has(fieldName)) {
-    reportSkip("optional-keyword-prefix", ruleName, `field '${fieldName}' already exists`);
-    return null;
-  }
-  claimed.add(fieldName);
-  const symbolRef = registerKwRule(optionalRule, inner, fieldName, kwRules);
-  const fieldNode = makeField(optionalRule, fieldName, symbolRef);
-  return rebuildOptional(optionalRule, fieldNode);
-}
-function rebuildOptional(optionalRule, newInner) {
-  if (isOptionalType(optionalRule.type)) {
-    return { ...optionalRule, content: newInner };
-  }
-  const members = optionalRule.members;
-  const newMembers = members.map((m) => {
-    const t = m.type;
-    return t === "BLANK" || t === "blank" ? m : newInner;
-  });
-  return { ...optionalRule, members: newMembers };
-}
-
 // packages/python/overrides.ts
+var enrichedBase = enrich(import_grammar.default);
 var overrides_default = grammar(
-  enrich(import_grammar.default),
+  enrichedBase,
   wire({
     name: "python",
     // Structural-whitespace role bindings — declared inline in the
@@ -2272,6 +2503,15 @@ var overrides_default = grammar(
       // The `as` form (`except E as e:`) overlaps with `as_pattern`
       // (`E as e`) after the shared `expression 'as'` prefix — fork.
       [$.as_pattern, $._except_clause_as]
+    ],
+    // EXPERIMENT (see `_except_clause_as` in `rules`). The real fix is enrich
+    // auto-hoisting inline-safe groups nested inside variant arms — FOLLOWUP.
+    // Inline the hoisted group into tree-sitter so the `as_pattern` LR overlap
+    // dissolves exactly as the base grammar resolves it (no extra conflict
+    // needed — the `as` is inline in `_except_clause_as` at parse time).
+    inline: ($, previous) => [
+      ...previous ?? [],
+      $._except_clause_as_optional1
     ],
     polymorphs: {
       assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
@@ -2557,8 +2797,18 @@ var overrides_default = grammar(
           ...base2.slice(0, -1),
           $.list_splat_pattern
         );
-      }
+      },
+      // EXPERIMENT (manual; real fix = enrich should auto-hoist an inline-safe
+      // group nested inside a variant arm). The `except_clause` polymorph split
+      // auto-creates `_except_clause_as` = seq(value, optional(seq('as', alias)));
+      // enrich does NOT recurse into the variant arm to hoist the inner
+      // inline-safe group, so the emitter leaks `as` ungated
+      // (`except E:` -> `except E as:`). Redefine it with the inner group
+      // explicitly hoisted to `_except_clause_as_optional1` so the emitter
+      // inline+gates the `as`.
+      _except_clause_as: ($) => seq(field("value", $.expression), optional($._except_clause_as_optional1)),
+      _except_clause_as_optional1: ($) => seq("as", field("alias", $.expression))
     }
-  })
+  }, enrichedBase)
 );
 if (module.exports && module.exports.default) module.exports = module.exports.default;

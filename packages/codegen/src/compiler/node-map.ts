@@ -27,6 +27,7 @@
  * file. New code should import from `./node-map.ts` directly.
  */
 
+import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,
@@ -532,17 +533,16 @@ export function safeParamName(name: string): string {
  */
 export function hasAnyField(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'field':
+		case FIELD:
 			return true;
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return rule.members.some(hasAnyField);
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
 			return hasAnyField(rule.content);
 		default:
 			return false;
@@ -556,18 +556,17 @@ export function hasAnyField(rule: Rule): boolean {
  */
 export function hasAnyChild(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'symbol':
-		case 'supertype':
+		case SYMBOL:
+		case SUPERTYPE:
 			return true;
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return rule.members.some(hasAnyChild);
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
 			return hasAnyChild(rule.content);
 		default:
 			return false;
@@ -674,7 +673,7 @@ function classifyTopLevelShape(rule: Rule): string {
 	//     (AssembledPolymorph). Reaching derivation means classification
 	//     missed it.
 	switch (rule.type) {
-		case 'seq': {
+		case SEQ: {
 			for (const m of rule.members) {
 				if (m.type === 'seq') {
 					// A nested seq that carries its OWN cardinality
@@ -694,27 +693,18 @@ function classifyTopLevelShape(rule: Rule): string {
 			}
 			return 'canonical';
 		}
-		case 'field':
-		case 'symbol':
-		case 'string':
-		case 'pattern':
-		case 'terminal':
-		case 'enum':
-		case 'supertype':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
+		case FIELD:
+		case SYMBOL:
+		case STRING:
+		case PATTERN:
+		case TERMINAL:
+		case ENUM:
+		case SUPERTYPE:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 			return 'canonical';
-		case 'clause': {
-			// A `clause` wrapper is sittir's "this seq position owns
-			// a structural token" marker (e.g. field-semicolon, body-
-			// brace). The walker descends through it the same as any
-			// other single-content wrapper; treat its content the
-			// same way the top-level classifier does.
-			const inner = classifyTopLevelShape(rule.content);
-			return inner === 'canonical' ? 'canonical' : `clause-wrapping-${inner}`;
-		}
-		case 'variant': {
+		case VARIANT: {
 			// `variant` wrappers below the top level — usually a
 			// polymorph discriminator that simplify couldn't hoist
 			// (e.g. buried under an optional). The walker unwraps
@@ -723,16 +713,16 @@ function classifyTopLevelShape(rule: Rule): string {
 			const inner = classifyTopLevelShape(rule.content);
 			return inner === 'canonical' ? 'canonical' : `variant-wrapping-${inner}`;
 		}
-		case 'token': {
+		case TOKEN: {
 			const inner = classifyTopLevelShape(rule.content);
 			return inner === 'canonical' ? 'canonical' : `token-wrapping-${inner}`;
 		}
-		case 'repeat':
-		case 'repeat1': {
+		case REPEAT:
+		case REPEAT1: {
 			const inner = classifyTopLevelShape(rule.content);
 			return inner === 'canonical' ? 'canonical' : `${rule.type}-wrapping-${inner}`;
 		}
-		case 'choice': {
+		case CHOICE: {
 			// Every choice in the traversal must be a simple union — no
 			// structural branches with fields. Flag heterogeneous
 			// choices here instead of leaving the walker to merge them:
@@ -763,12 +753,12 @@ function classifyTopLevelShape(rule: Rule): string {
 			if (rule.members.every((m) => m.type === 'variant')) return 'canonical';
 			return 'choice-needs-variant-or-merge';
 		}
-		case 'optional': {
+		case OPTIONAL: {
 			const innerShape = classifyTopLevelShape(rule.content);
 			return innerShape === 'canonical' ? 'canonical' : `optional-wrapping-${innerShape}`;
 		}
-		case 'group':
-		case 'alias':
+		case GROUP:
+		case ALIAS:
 			return `wrapper-${rule.type}`;
 		default:
 			return `other-${(rule as Rule).type}`;
@@ -793,44 +783,44 @@ function classifyTopLevelShape(rule: Rule): string {
  */
 function isTokenLikeChoiceMember(m: Rule): boolean {
 	const peel = (r: Rule): Rule =>
-		r.type === 'alias'
+		r.type === ALIAS
 			? peel(r.content)
-			: r.type === 'token'
+			: r.type === TOKEN
 				? peel(r.content)
-				: r.type === 'variant'
+				: r.type === VARIANT
 					? peel(r.content)
 					: r;
 	const core = peel(m);
-	if (core.type === 'symbol' || core.type === 'supertype' || core.type === 'enum') return true;
+	if (core.type === SYMBOL || core.type === SUPERTYPE || core.type === ENUM) return true;
 	// Bare `string` / `pattern` members — token-literal alternatives.
 	// `_non_special_token` has a choice containing dozens of bare
 	// keyword strings alongside symbol refs; each contributes a
 	// single-token alternative to the union, not a structural branch.
-	if (core.type === 'string' || core.type === 'pattern') return true;
+	if (core.type === STRING || core.type === PATTERN) return true;
 	// Structural-whitespace tokens (python-style indent/dedent/newline).
 	// These behave as anonymous token separators — they don't surface
 	// as addressable children, so they never contribute structural
 	// branching to a choice arm.
-	if (core.type === 'indent' || core.type === 'dedent' || core.type === 'newline') return true;
-	if (core.type === 'terminal') return true;
+	if (core.type === INDENT || core.type === DEDENT || core.type === NEWLINE) return true;
+	if (core.type === TERMINAL) return true;
 	// `optional(token-like)` preserves the union shape — the branch
 	// contributes either the wrapped token or nothing. Rust's
 	// `reference_expression` has `choice(choice-of-syms, optional(sym))`
 	// for the raw-pointer-modifier spot; both arms are union-safe even
 	// though one is an optional. Recurse to classify the inner.
-	if (core.type === 'optional') return isTokenLikeChoiceMember(core.content);
+	if (core.type === OPTIONAL) return isTokenLikeChoiceMember(core.content);
 	// Nested choice of token-like members — simplify should have
 	// flattened this, but when flattening is blocked (e.g. by a
 	// variant wrapper on the inner choice), the nested shape is still
 	// structurally a union of tokens. `_lhs_expression` hits this
 	// with a nested `choice(choice(sym, sym, ...), sym, ...)`.
-	if (core.type === 'choice' && core.members.every(isTokenLikeChoiceMember)) return true;
-	if (core.type === 'repeat1' || core.type === 'repeat') {
+	if (core.type === CHOICE && core.members.every(isTokenLikeChoiceMember)) return true;
+	if (core.type === REPEAT1 || core.type === REPEAT) {
 		const inner = peel(core.content);
-		if (inner.type === 'enum') return true;
-		if (inner.type === 'string' || inner.type === 'pattern') return true;
-		if (inner.type === 'symbol' || inner.type === 'supertype') return true;
-		if (inner.type === 'choice' && inner.members.every(isTokenLikeChoiceMember)) return true;
+		if (inner.type === ENUM) return true;
+		if (inner.type === STRING || inner.type === PATTERN) return true;
+		if (inner.type === SYMBOL || inner.type === SUPERTYPE) return true;
+		if (inner.type === CHOICE && inner.members.every(isTokenLikeChoiceMember)) return true;
 	}
 	return false;
 }
@@ -851,7 +841,7 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
  * choice `(seq(X, '&&', Y), bareY)` still qualifies.
  */
 function isFlatSymbolSeqOrTokenLike(m: Rule): boolean {
-	if (m.type === 'seq') {
+	if (m.type === SEQ) {
 		return m.members.every(isTokenLikeChoiceMember);
 	}
 	return isTokenLikeChoiceMember(m);
@@ -1134,7 +1124,7 @@ export function deriveSlots(rule: Rule, kindEntries?: readonly GeneratedKindEntr
  * that tree-sitter populates at parse time.
  */
 export function isSyntheticFieldWrapper(content: Rule): boolean {
-	if (content.type === 'repeat' || content.type === 'repeat1') {
+	if (content.type === REPEAT || content.type === REPEAT1) {
 		return isSyntheticFieldWrapper(content.content);
 	}
 	if (!isSeq(content)) return false;
@@ -1164,7 +1154,7 @@ export function deriveValuesForRule(
 	kindEntries?: readonly GeneratedKindEntry[]
 ): NodeOrTerminal[] {
 	switch (rule.type) {
-		case 'symbol': {
+		case SYMBOL: {
 			// Link-synthesized operator literal (Chunk D1): `canonicalizeRuleLiterals`
 			// rewrites a field-wrapped operator literal (`'<'`) into
 			// `symbol{ name: 'lt', source: 'link', literal: '<' }`. The `name` is
@@ -1202,7 +1192,7 @@ export function deriveValuesForRule(
 				}
 			];
 		}
-		case 'supertype':
+		case SUPERTYPE:
 			// Supertype refs expand to their subtype list — each subtype is a
 			// valid concrete kind the slot can hold.
 			return rule.subtypes.map((name) => ({
@@ -1211,13 +1201,13 @@ export function deriveValuesForRule(
 				parseKind: { kind: 'unresolved-ref' as const, name },
 				multiplicity: relaxForOptionalBody(name, multiplicity)
 			}));
-		case 'string':
+		case STRING:
 		// A `pattern` is a NONTERMINAL slot (classifyByType), but its VALUE is the
 		// anonymous-token text it matches — a terminal value, like a `string` or an
 		// `enum` member. Without this case it fell to `default: return []`, so a
 		// pattern slot had no values and was elided (e.g. token_repetition's
 		// separator pattern never became a slot).
-		case 'pattern': {
+		case PATTERN: {
 			const rk = findGeneratedKindEntry(kindEntries ?? [], rule.value)?.kind;
 			return [
 				{
@@ -1229,7 +1219,7 @@ export function deriveValuesForRule(
 				}
 			];
 		}
-		case 'enum':
+		case ENUM:
 			// Enum: each enum member is a TerminalValue
 			return rule.members.map((m) => {
 				const rk = findGeneratedKindEntry(kindEntries ?? [], m.value)?.kind;
@@ -1241,15 +1231,15 @@ export function deriveValuesForRule(
 					multiplicity
 				};
 			});
-		case 'choice': {
+		case CHOICE: {
 			// `choice(X, blank)` is functionally `optional(X)` — the blank arm
 			// makes the entire choice optional. Downgrade nonEmptyArray → array
 			// and single → optional when recursing into the non-blank arms.
 			// Mirrors the fieldContentMultiplicity choice handling and the
 			// rule-body lookthrough in assemble.ts.
 			const isBlank = (r: Rule): boolean =>
-				(r.type === 'choice' && r.members.length === 0) ||
-				(r.type === 'seq' && r.members.length === 0);
+				(r.type === CHOICE && r.members.length === 0) ||
+				(r.type === SEQ && r.members.length === 0);
 			const nonBlank = rule.members.filter((m) => !isBlank(m));
 			const hasBlank = nonBlank.length < rule.members.length;
 			const armMult: Multiplicity =
@@ -1264,7 +1254,7 @@ export function deriveValuesForRule(
 			// their own multiplicity if they wrap repeat/optional differently.
 			return nonBlank.flatMap((m) => deriveValuesForRule(m, armMult, kindEntries));
 		}
-		case 'optional': {
+		case OPTIONAL: {
 			// `optional(repeat1(X, sep))` survives evaluate when the
 			// optional wraps the canonical commaSep1 lift (e.g. python's
 			// `parameters: seq('(', optional(_parameters), ')')`).
@@ -1288,18 +1278,17 @@ export function deriveValuesForRule(
 				v.multiplicity === 'nonEmptyArray' ? { ...v, multiplicity: 'array' as const } : v
 			);
 		}
-		case 'repeat':
+		case REPEAT:
 			return deriveValuesForRule(rule.content, 'array', kindEntries);
-		case 'repeat1':
+		case REPEAT1:
 			return deriveValuesForRule(rule.content, 'nonEmptyArray', kindEntries);
-		case 'field':
+		case FIELD:
 			// Nested field inside a choice — recurse into its content
 			return deriveValuesForRule(rule.content, multiplicity, kindEntries);
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case VARIANT:
+		case GROUP:
 			return deriveValuesForRule(rule.content, multiplicity, kindEntries);
-		case 'token':
+		case TOKEN:
 			// `token(...)` / `token.immediate(...)` wrappers carry adjacency
 			// metadata the inner rule alone doesn't express. Recurse, then
 			// tag each produced terminal so render templates can decide
@@ -1307,7 +1296,7 @@ export function deriveValuesForRule(
 			return deriveValuesForRule(rule.content, multiplicity, kindEntries).map((v) =>
 				v.kind === 'terminal' ? { ...v, immediate: rule.immediate, tokenized: true } : v
 			);
-		case 'seq':
+		case SEQ:
 			// Seq inside a choice arm — flatten all members (rare, but
 			// handles seq-of-symbols within choice arms).
 			return rule.members.flatMap((m) => deriveValuesForRule(m, multiplicity, kindEntries));
@@ -1996,37 +1985,36 @@ export interface JinjaTranslateMeta {
  */
 function childrenMayBeEmpty(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'repeat':
-		case 'optional':
+		case REPEAT:
+		case OPTIONAL:
 			return true;
-		case 'repeat1':
+		case REPEAT1:
 			return false;
-		case 'choice':
+		case CHOICE:
 			// `blank()` is encoded as `choice([])` (empty members). An
 			// empty-members choice means "blank" — definitely zero children.
 			if (rule.members.length === 0) return true;
 			// Any member that may-be-empty makes the whole choice potentially empty.
 			return rule.members.some((m) => childrenMayBeEmpty(m));
-		case 'seq':
+		case SEQ:
 			// A seq is empty only if every member may be empty.
 			return rule.members.every((m) => childrenMayBeEmpty(m));
 		// Terminal / leaf cases — always contribute at least one token.
-		case 'symbol':
-		case 'string':
-		case 'pattern':
-		case 'token':
-		case 'supertype':
-		case 'enum':
-		case 'terminal':
-		case 'alias':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
+		case SYMBOL:
+		case STRING:
+		case PATTERN:
+		case TOKEN:
+		case SUPERTYPE:
+		case ENUM:
+		case TERMINAL:
+		case ALIAS:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 			return false;
-		case 'field':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case FIELD:
+		case VARIANT:
+		case GROUP:
 			return childrenMayBeEmpty(rule.content);
 		default:
 			return assertNever(rule);
@@ -2523,7 +2511,7 @@ function expandSlotWithVisibleAliasSources(
 		// This prevents spuriously injecting all of `last_match_arm`'s fields
 		// (attributes, pattern, body) into `match_arm.content`.
 		const unwrappedSource = unwrapStructuralPassthroughs(sourceRule);
-		if (unwrappedSource.type !== 'choice') continue;
+		if (unwrappedSource.type !== CHOICE) continue;
 		// Derive values from the source kind's simplified rule.
 		const derived = deriveValuesForRule(sourceRule, dominantMult, kindEntries);
 		for (const d of derived) {
@@ -2883,7 +2871,7 @@ export class AssembledBranch<
 	 */
 	get members(): readonly Rule[] {
 		const r = this.rule;
-		return r.type === 'seq' || r.type === 'choice' ? r.members : [];
+		return r.type === SEQ || r.type === CHOICE ? r.members : [];
 	}
 
 	/**
@@ -2894,7 +2882,7 @@ export class AssembledBranch<
 	 */
 	get separator(): string | undefined {
 		const r = this.simplifiedRule;
-		if (r.type === 'repeat' || r.type === 'repeat1') {
+		if (r.type === REPEAT || r.type === REPEAT1) {
 			return r.separator;
 		}
 		return undefined;
@@ -3021,7 +3009,7 @@ export class AssembledBranch<
  * string-literal, repeat/repeat1 of a hidden symbol, string-literal.
  */
 function isVerbatimTokenStream(rule: Rule): boolean {
-	if (rule.type !== 'choice') return false;
+	if (rule.type !== CHOICE) return false;
 	if (rule.members.length === 0) return false;
 	return rule.members.every((m) => {
 		const core = m.type === 'variant' ? m.content : m;
@@ -3050,7 +3038,7 @@ function isVerbatimTokenStream(rule: Rule): boolean {
  * by the field-conditional path and don't reach `isTextTemplate`.
  */
 function hasOptionalPunctPrefix(rule: Rule): boolean {
-	if (rule.type !== 'seq' || rule.members.length < 2) return false;
+	if (rule.type !== SEQ || rule.members.length < 2) return false;
 	const first = rule.members[0]!;
 	if (first.type !== 'optional') return false;
 	// The optional's content must be purely punctuation (no symbols/fields).
@@ -3062,26 +3050,25 @@ function hasOptionalPunctPrefix(rule: Rule): boolean {
  *  in `template-walker.ts` (kept local to avoid a cross-file import). */
 function isAllPunct(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'string':
-		case 'pattern':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 			return true;
-		case 'field':
-		case 'symbol':
-		case 'supertype':
-		case 'enum':
+		case FIELD:
+		case SYMBOL:
+		case SUPERTYPE:
+		case ENUM:
 			return false;
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return (rule as { members: Rule[] }).members.every(isAllPunct);
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
 			return isAllPunct((rule as { content: Rule }).content);
 		default:
 			return false;
@@ -3117,28 +3104,27 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 	let r: Rule = rule;
 	for (;;) {
 		switch (r.type) {
-			case 'optional':
-			case 'variant':
-			case 'clause':
-			case 'group':
-			case 'alias':
-			case 'token':
-			case 'terminal':
+			case OPTIONAL:
+			case VARIANT:
+			case GROUP:
+			case ALIAS:
+			case TOKEN:
+			case TERMINAL:
 				r = r.content;
 				continue;
-			case 'seq':
-			case 'choice':
-			case 'repeat':
-			case 'repeat1':
-			case 'field':
-			case 'enum':
-			case 'supertype':
-			case 'string':
-			case 'pattern':
-			case 'indent':
-			case 'dedent':
-			case 'newline':
-			case 'symbol':
+			case SEQ:
+			case CHOICE:
+			case REPEAT:
+			case REPEAT1:
+			case FIELD:
+			case ENUM:
+			case SUPERTYPE:
+			case STRING:
+			case PATTERN:
+			case INDENT:
+			case DEDENT:
+			case NEWLINE:
+			case SYMBOL:
 				return r;
 			default:
 				return assertNever(r);
@@ -3176,26 +3162,26 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
  */
 function isExternalTerminalMember(rule: Rule, externals: ReadonlySet<string>): boolean {
 	const core = unwrapStructuralPassthroughs(rule);
-	if (core.type === 'field') {
+	if (core.type === FIELD) {
 		const inner = unwrapStructuralPassthroughs(core.content);
-		if (inner.type === 'pattern' && inner.value === '' && (externals.has(core.name) || externals.has('_' + core.name)))
+		if (inner.type === PATTERN && inner.value === '' && (externals.has(core.name) || externals.has('_' + core.name)))
 			return true;
 		return isExternalTerminalMember(core.content, externals);
 	}
-	return core.type === 'symbol' && externals.has(core.name);
+	return core.type === SYMBOL && externals.has(core.name);
 }
 
 function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
 	// Unwrap transparent wrappers to find the structural core.
 	const core = unwrapStructuralPassthroughs(rule);
-	if (core.type !== 'seq') return false;
+	if (core.type !== SEQ) return false;
 	// Also ignore pure-boundary optionals (e.g. the trailing
 	// `optional($._automatic_semicolon)` in javascript's
 	// `statement_block`) so they don't disqualify the rule from
 	// slot-by-slot rendering but also don't count toward the
 	// "all external" tally.
 	const isIgnorableBoundaryExternal = (r: Rule): boolean => {
-		if (r.type !== 'optional') return false;
+		if (r.type !== OPTIONAL) return false;
 		const inner = r.content;
 		return inner.type === 'symbol' && externals.has((inner as { name: string }).name);
 	};
@@ -3228,7 +3214,7 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
 		nonIgnorable.length > 0 &&
 		nonIgnorable.every((m) => {
 			const fw = unwrapStructuralPassthroughs(m);
-			if (fw.type !== 'field') return false;
+			if (fw.type !== FIELD) return false;
 			const inner = unwrapStructuralPassthroughs(fw.content);
 			// After assembly, external scanner tokens are replaced with
 			// pattern("") stubs. Every member that reaches this point has
@@ -3239,7 +3225,7 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
 			// name is underscore-prefixed. This is the case the relaxation
 			// block was designed for (e.g. raw_string_literal: all three
 			// fields wrap external stubs and CAN be rendered by field name).
-			if (inner.type === 'pattern' && inner.value === '') {
+			if (inner.type === PATTERN && inner.value === '') {
 				return true;
 			}
 			// Pre-assembly path: symbol reference with underscore prefix.
@@ -3249,7 +3235,7 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
 			// pattern) ARE accepted because the field provides a slot name
 			// even though the inner external is anonymous in tree-sitter's
 			// output.
-			if (inner.type !== 'symbol') return true;
+			if (inner.type !== SYMBOL) return true;
 			if (!inner.name.startsWith('_')) return true;
 			return externals.has(inner.name);
 		})
@@ -3265,7 +3251,7 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
  * where scanner tokens delimit but the interior is author-content.
  */
 function hasExternalBoundaries(seqRule: Rule, externals: ReadonlySet<string>): boolean {
-	if (seqRule.type !== 'seq') return false;
+	if (seqRule.type !== SEQ) return false;
 	if (seqRule.members.length < 2) return false;
 	const first = seqRule.members[0];
 	const last = seqRule.members[seqRule.members.length - 1];
@@ -3366,7 +3352,7 @@ export class AssembledPattern extends AssembledLeaf<PatternRule | TerminalRule> 
 
 	/** The leaf's regex pattern value when the rule is a PatternRule; undefined for TerminalRule. */
 	get pattern(): string | undefined {
-		return this.rule.type === 'pattern' ? this.rule.value || undefined : undefined;
+		return this.rule.type === PATTERN ? this.rule.value || undefined : undefined;
 	}
 
 	/**
@@ -3383,7 +3369,7 @@ export class AssembledPattern extends AssembledLeaf<PatternRule | TerminalRule> 
 	 * generated `FromNapiValue` impls.
 	 */
 	get fixedLiteralText(): string | undefined {
-		if (this.rule.type === 'pattern') return undefined; // regex — always content-bearing
+		if (this.rule.type === PATTERN) return undefined; // regex — always content-bearing
 		// TerminalRule: walk the content tree collecting all non-blank string leaves.
 		return collectFixedLiteral(this.rule.content);
 	}
@@ -3400,12 +3386,12 @@ export class AssembledPattern extends AssembledLeaf<PatternRule | TerminalRule> 
  */
 function collectFixedLiteral(rule: Rule): string | undefined {
 	switch (rule.type) {
-		case 'string':
+		case STRING:
 			return rule.value || undefined;
-		case 'optional':
+		case OPTIONAL:
 			// optional(X): the blank arm contributes nothing; X may yield a fixed literal
 			return collectFixedLiteral(rule.content);
-		case 'choice': {
+		case CHOICE: {
 			if (rule.members.length === 0) return undefined; // blank sentinel
 			let found: string | undefined;
 			for (const m of rule.members) {
@@ -3420,7 +3406,7 @@ function collectFixedLiteral(rule: Rule): string | undefined {
 			}
 			return found;
 		}
-		case 'seq': {
+		case SEQ: {
 			if (rule.members.length === 0) return undefined; // blank sentinel
 			// A seq of a single non-blank member is safe; multi-member seqs are not
 			// fixed single literals (they'd produce concatenated output).
@@ -3434,10 +3420,10 @@ function collectFixedLiteral(rule: Rule): string | undefined {
 			if (!only) return undefined;
 			return collectFixedLiteral(only);
 		}
-		case 'token':
+		case TOKEN:
 			// token(X) wrapper — recurse into content
 			return collectFixedLiteral((rule as { content: Rule }).content);
-		case 'terminal':
+		case TERMINAL:
 			// nested terminal — recurse
 			return collectFixedLiteral((rule as TerminalRule).content);
 		default:
@@ -3500,7 +3486,7 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	constructor(kind: string, rule: StringRule | TokenRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
 		super(kind, rule, { hidden: true });
 		this.resolvedKind =
-			rule.type === 'string' ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
+			rule.type === STRING ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
 	}
 	// No emitFactory — tokens are always hidden, no factoryName.
 
@@ -3511,7 +3497,7 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	 * non-parameterless.
 	 */
 	override get parameterless(): boolean {
-		return this.rule.type === 'string';
+		return this.rule.type === STRING;
 	}
 
 	/**
@@ -3519,7 +3505,7 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	 * Only defined when the rule is a string (parameterless case).
 	 */
 	override get stampExpression(): string | undefined {
-		if (this.rule.type !== 'string') return undefined;
+		if (this.rule.type !== STRING) return undefined;
 		return `${JSON.stringify(this.rule.value)} as const`;
 	}
 
@@ -3537,7 +3523,7 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	 * content — those don't have a single user-visible string.
 	 */
 	get text(): string | undefined {
-		if (this.rule.type === 'string') return this.rule.value;
+		if (this.rule.type === STRING) return this.rule.value;
 		return undefined;
 	}
 
@@ -3553,7 +3539,7 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	 * the wrapper status, not the model classification.
 	 */
 	get immediate(): boolean {
-		return this.rule.type === 'token' && this.rule.immediate;
+		return this.rule.type === TOKEN && this.rule.immediate;
 	}
 
 	/**
@@ -3564,7 +3550,7 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	 * adjacency-specific flag.
 	 */
 	get tokenized(): boolean {
-		return this.rule.type === 'token';
+		return this.rule.type === TOKEN;
 	}
 
 	/**
@@ -3574,7 +3560,7 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	 * entry in `node-types.json`).
 	 */
 	override get stampChildExpression(): string | undefined {
-		if (this.rule.type !== 'string') return undefined;
+		if (this.rule.type !== STRING) return undefined;
 		const kind = JSON.stringify(this.kind);
 		const text = JSON.stringify(this.rule.value);
 		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
@@ -3678,7 +3664,7 @@ export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> 
 	 * `false` for plain `repeat` (zero-or-more). Referrers thread this
 	 * into AssembledNonterminal.nonEmpty. */
 	get nonEmpty(): boolean {
-		return this.rule.type === 'repeat1';
+		return this.rule.type === REPEAT1;
 	}
 
 	/** Separator string from the repeat rule, if any. */

@@ -1,13 +1,12 @@
 import { resolve } from 'node:path';
-import type { CommandModule } from '../../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { compareOverrides as runCompareOverrides } from '@sittir/tools';
 
 export const compareOverrides: CommandModule = {
 	name: 'compare-overrides',
 	describe: 'Compare override key sets between backup and current overrides.suggested.ts',
 	register: (program) => {
-		program.command('compare-overrides')
-			.description('Compare override key sets between backup and current overrides.suggested.ts')
+		defineCommand(program, compareOverrides)
 			.option('-g, --grammar <name>', 'Grammar(s) to compare: rust|python|typescript|all', 'all')
 			.option('--backup-dir <dir>', 'Directory containing <grammar>-overrides.ts backup files')
 			.option('--backup-rust <file>', 'Path to Rust overrides backup file')

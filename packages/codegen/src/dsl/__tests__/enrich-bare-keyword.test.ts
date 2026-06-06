@@ -1,3 +1,4 @@
+import { SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
 import type { Rule, SeqRule } from '../../compiler/rule.ts';
@@ -37,10 +38,10 @@ describe('enrich — leading string literals (bare-keyword pass removed)', () =>
 		const g = runEnrich(
 			mkGrammar({
 				async_fn: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'async' },
-						{ type: 'symbol', name: 'body' }
+						{ type: STRING, value: 'async' },
+						{ type: SYMBOL, name: 'body' }
 					]
 				}
 			})
@@ -53,11 +54,11 @@ describe('enrich — leading string literals (bare-keyword pass removed)', () =>
 		const g = runEnrich(
 			mkGrammar({
 				for_loop: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'symbol', name: 'label' },
-						{ type: 'string', value: 'for' },
-						{ type: 'symbol', name: 'pattern' }
+						{ type: SYMBOL, name: 'label' },
+						{ type: STRING, value: 'for' },
+						{ type: SYMBOL, name: 'pattern' }
 					]
 				}
 			})
@@ -72,11 +73,11 @@ describe('enrich — leading string literals (bare-keyword pass removed)', () =>
 		const g = runEnrich(
 			mkGrammar({
 				paren: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: '(' },
-						{ type: 'symbol', name: 'expr' },
-						{ type: 'string', value: ')' }
+						{ type: STRING, value: '(' },
+						{ type: SYMBOL, name: 'expr' },
+						{ type: STRING, value: ')' }
 					]
 				}
 			})

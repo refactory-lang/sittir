@@ -317,7 +317,7 @@ pub struct ComplexPatternTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
     pub imaginary: SingleNonterminalView<'a>,
     pub operator: SingleNonterminalView<'a>,
-    pub real: SingleNonterminalView<'a>,
+    pub real: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -370,7 +370,8 @@ pub struct DeleteStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "dict_pattern.jinja", escape = "none")]
 pub struct DictPatternTemplate<'a> {
-    pub dict_pattern_kv: ListNonterminalView<'a>,
+    pub key: ListNonterminalView<'a>,
+    pub value: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -428,7 +429,7 @@ pub struct ExceptClauseTemplate<'a> {
 #[template(path = "exec_statement.jinja", escape = "none")]
 pub struct ExecStatementTemplate<'a> {
     pub code: SingleNonterminalView<'a>,
-    pub expression: ListNonterminalView<'a>,
+    pub in_clause: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -727,6 +728,12 @@ pub struct SetTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "slice_group1.jinja", escape = "none")]
+pub struct SliceGroup1Template<'a> {
+    pub expression: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "slice.jinja", escape = "none")]
 pub struct SliceTemplate<'a> {
     pub start: OptionalNonterminalView<'a>,
@@ -875,6 +882,6 @@ pub struct WithStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "yield.jinja", escape = "none")]
 pub struct YieldTemplate<'a> {
-    pub expression: OptionalNonterminalView<'a>,
+    pub content: OptionalNonterminalView<'a>,
 }
 

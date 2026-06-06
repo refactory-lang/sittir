@@ -1,3 +1,4 @@
+import { CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts';
 import { computeSimplifiedRules } from '../compiler/simplify.ts';
@@ -18,13 +19,13 @@ function deriveFields(rule: Rule) {
 
 function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
 	const renderRules = applyWrapperDeletion(rules);
-	const simplifiedRules = computeSimplifiedRules(renderRules, null);
+	const simplifiedRules = computeSimplifiedRules(renderRules);
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(overrides.topLevelAliasBodies);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
-		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, null);
+		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			renderRules[kind] = rule;
 		}
@@ -47,15 +48,15 @@ function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<Optimize
 describe('Assemble — simplifyRule', () => {
 	it('strips non-alphanumeric string nodes and collapses single-member seq', () => {
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: '{' },
+				{ type: STRING, value: '{' },
 				{
-					type: 'field',
+					type: FIELD,
 					name: 'body',
-					content: { type: 'symbol', name: 'block' }
+					content: { type: SYMBOL, name: 'block' }
 				},
-				{ type: 'string', value: '}' }
+				{ type: STRING, value: '}' }
 			]
 		};
 		const simplified = simplifyRule(rule);
@@ -66,15 +67,15 @@ describe('Assemble — simplifyRule', () => {
 
 	it('collapses single-member seq to its content', () => {
 		const rule: Rule = {
-			type: 'seq',
-			members: [{ type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } }]
+			type: SEQ,
+			members: [{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'y' } }]
 		};
 		const simplified = simplifyRule(rule);
 		expect(simplified.type).toBe('field');
 	});
 
 	it('keeps alphanumeric strings', () => {
-		const rule: Rule = { type: 'string', value: 'pub' };
+		const rule: Rule = { type: STRING, value: 'pub' };
 		const simplified = simplifyRule(rule);
 		expect(simplified).toEqual({ type: 'string', value: 'pub' });
 	});
@@ -83,20 +84,20 @@ describe('Assemble — simplifyRule', () => {
 describe('Assemble — classifyNode', () => {
 	it('classifies visible seq with fields as branch', () => {
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: 'fn' },
+				{ type: STRING, value: 'fn' },
 				{
-					type: 'field',
+					type: FIELD,
 					name: 'name',
-					content: { type: 'symbol', name: 'identifier' }
+					content: { type: SYMBOL, name: 'identifier' }
 				},
-				{ type: 'string', value: '(' },
-				{ type: 'string', value: ')' },
+				{ type: STRING, value: '(' },
+				{ type: STRING, value: ')' },
 				{
-					type: 'field',
+					type: FIELD,
 					name: 'body',
-					content: { type: 'symbol', name: 'block' }
+					content: { type: SYMBOL, name: 'block' }
 				}
 			]
 		};
@@ -109,52 +110,52 @@ describe('Assemble — classifyNode', () => {
 		// the rule) are still `AssembledBranch` instances; the per-emitter
 		// discriminator is now `AssembledBranch.isContainerShape`.
 		const rule: Rule = {
-			type: 'repeat',
-			content: { type: 'symbol', name: 'item' }
+			type: REPEAT,
+			content: { type: SYMBOL, name: 'item' }
 		};
 		expect(classifyNode('items', rule)).toBe('branch');
 	});
 
 	it('classifies visible choice with same field set as branch', () => {
 		const rule: Rule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
 				{
-					type: 'variant',
+					type: VARIANT,
 					name: 'plus',
 					content: {
-						type: 'seq',
+						type: SEQ,
 						members: [
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'left',
-								content: { type: 'symbol', name: 'expr' }
+								content: { type: SYMBOL, name: 'expr' }
 							},
-							{ type: 'string', value: '+' },
+							{ type: STRING, value: '+' },
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'right',
-								content: { type: 'symbol', name: 'expr' }
+								content: { type: SYMBOL, name: 'expr' }
 							}
 						]
 					}
 				},
 				{
-					type: 'variant',
+					type: VARIANT,
 					name: 'minus',
 					content: {
-						type: 'seq',
+						type: SEQ,
 						members: [
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'left',
-								content: { type: 'symbol', name: 'expr' }
+								content: { type: SYMBOL, name: 'expr' }
 							},
-							{ type: 'string', value: '-' },
+							{ type: STRING, value: '-' },
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'right',
-								content: { type: 'symbol', name: 'expr' }
+								content: { type: SYMBOL, name: 'expr' }
 							}
 						]
 					}
@@ -165,26 +166,26 @@ describe('Assemble — classifyNode', () => {
 	});
 
 	it('classifies visible pattern as pattern', () => {
-		const rule: Rule = { type: 'pattern', value: '[a-z]+' };
+		const rule: Rule = { type: PATTERN, value: '[a-z]+' };
 		expect(classifyNode('identifier', rule)).toBe('pattern');
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
-		const rule: Rule = { type: 'string', value: 'true' };
+		const rule: Rule = { type: STRING, value: 'true' };
 		expect(classifyNode('true', rule)).toBe('keyword');
 	});
 
 	it('classifies visible non-alphanumeric string as token (T027b)', () => {
-		const rule: Rule = { type: 'string', value: '->' };
+		const rule: Rule = { type: STRING, value: '->' };
 		expect(classifyNode('arrow', rule)).toBe('token');
 	});
 
 	it('classifies enum as enum', () => {
 		const rule: Rule = {
-			type: 'enum',
+			type: ENUM,
 			members: [
-				{ type: 'string', value: 'pub' },
-				{ type: 'string', value: 'crate' }
+				{ type: STRING, value: 'pub' },
+				{ type: STRING, value: 'crate' }
 			]
 		};
 		expect(classifyNode('visibility', rule)).toBe('enum');
@@ -192,7 +193,7 @@ describe('Assemble — classifyNode', () => {
 
 	it('classifies hidden choice as supertype when already SupertypeRule', () => {
 		const rule: Rule = {
-			type: 'supertype',
+			type: SUPERTYPE,
 			name: '_expression',
 			subtypes: ['binary_expression', 'identifier'],
 			source: 'grammar'
@@ -204,7 +205,7 @@ describe('Assemble — classifyNode', () => {
 		// Link classifies hidden choice-of-symbols as SupertypeRule
 		// Assemble just passes it through — no name check needed
 		const rule: Rule = {
-			type: 'supertype',
+			type: SUPERTYPE,
 			name: 'expression',
 			subtypes: ['binary_expression', 'identifier'],
 			source: 'grammar'
@@ -216,15 +217,15 @@ describe('Assemble — classifyNode', () => {
 
 	it('classifies hidden seq with fields as group', () => {
 		const rule: Rule = {
-			type: 'group',
+			type: GROUP,
 			name: '_sig',
 			content: {
-				type: 'seq',
+				type: SEQ,
 				members: [
 					{
-						type: 'field',
+						type: FIELD,
 						name: 'params',
-						content: { type: 'symbol', name: 'parameters' }
+						content: { type: SYMBOL, name: 'parameters' }
 					}
 				]
 			}
@@ -235,16 +236,16 @@ describe('Assemble — classifyNode', () => {
 	it('assembles hidden alias sources from their captured leaf body', () => {
 		const optimized = makeOptimized(
 			{
-				identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' },
+				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				_type_identifier: {
-					type: 'symbol',
+					type: SYMBOL,
 					name: 'type_identifier',
 					aliasedFrom: 'identifier'
 				}
 			},
 			{
 				topLevelAliasBodies: new Map([
-					['_type_identifier', { type: 'pattern', value: '[A-Za-z_]\\w*' } satisfies Rule]
+					['_type_identifier', { type: PATTERN, value: '[A-Za-z_]\\w*' } satisfies Rule]
 				])
 			}
 		);
@@ -255,9 +256,9 @@ describe('Assemble — classifyNode', () => {
 	it('assembles hidden alias sources from their captured structural body', () => {
 		const optimized = makeOptimized(
 			{
-				expr: { type: 'pattern', value: '[A-Za-z_]\\w*' },
+				expr: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				_pair_alias: {
-					type: 'symbol',
+					type: SYMBOL,
 					name: 'pair',
 					aliasedFrom: '_pair_source'
 				}
@@ -267,18 +268,18 @@ describe('Assemble — classifyNode', () => {
 					[
 						'_pair_alias',
 						{
-							type: 'seq',
+							type: SEQ,
 							members: [
 								{
-									type: 'field',
+									type: FIELD,
 									name: 'left',
-									content: { type: 'symbol', name: 'expr' }
+									content: { type: SYMBOL, name: 'expr' }
 								},
-								{ type: 'string', value: ',' },
+								{ type: STRING, value: ',' },
 								{
-									type: 'field',
+									type: FIELD,
 									name: 'right',
-									content: { type: 'symbol', name: 'expr' }
+									content: { type: SYMBOL, name: 'expr' }
 								}
 							]
 						} satisfies Rule
@@ -295,25 +296,25 @@ describe('Assemble — classifyNode', () => {
 		const optimized = makeOptimized(
 			{
 				_property_name: {
-					type: 'supertype',
+					type: SUPERTYPE,
 					name: '_property_name',
 					subtypes: ['identifier', 'string'],
 					source: 'grammar'
 				},
 				_property_identifier: {
-					type: 'supertype',
+					type: SUPERTYPE,
 					name: '_property_identifier',
 					subtypes: ['identifier'],
 					source: 'grammar'
 				},
-				identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' },
-				string: { type: 'pattern', value: '".*"' }
+				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
+				string: { type: PATTERN, value: '".*"' }
 			},
 			{
 				topLevelAliasBodies: new Map([
 					[
 						'_property_identifier',
-						{ type: 'symbol', name: 'identifier' } satisfies Rule
+						{ type: SYMBOL, name: 'identifier' } satisfies Rule
 					]
 				])
 			}
@@ -327,43 +328,43 @@ describe('Assemble — classifyNode', () => {
 		const optimized = makeOptimized(
 			{
 				_property_name: {
-					type: 'supertype',
+					type: SUPERTYPE,
 					name: '_property_name',
 					subtypes: ['identifier', 'string'],
 					source: 'grammar'
 				},
 				_type_identifier: {
-					type: 'supertype',
+					type: SUPERTYPE,
 					name: '_type_identifier',
 					subtypes: ['identifier'],
 					source: 'grammar'
 				},
 				_reserved_identifier: {
-					type: 'supertype',
+					type: SUPERTYPE,
 					name: '_reserved_identifier',
 					subtypes: ['identifier'],
 					source: 'grammar'
 				},
 				_property_identifier: {
-					type: 'supertype',
+					type: SUPERTYPE,
 					name: '_property_identifier',
 					subtypes: ['_type_identifier', '_reserved_identifier', 'identifier'],
 					source: 'grammar'
 				},
-				identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' },
-				string: { type: 'pattern', value: '\".*\"' }
+				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
+				string: { type: PATTERN, value: '\".*\"' }
 			},
 			{
 				topLevelAliasBodies: new Map([
-					['_type_identifier', { type: 'symbol', name: 'identifier' } satisfies Rule],
+					['_type_identifier', { type: SYMBOL, name: 'identifier' } satisfies Rule],
 					[
 						'_property_identifier',
 						{
-							type: 'choice',
+							type: CHOICE,
 							members: [
-								{ type: 'symbol', name: '_type_identifier' },
-								{ type: 'symbol', name: '_reserved_identifier' },
-								{ type: 'symbol', name: 'identifier' }
+								{ type: SYMBOL, name: '_type_identifier' },
+								{ type: SYMBOL, name: '_reserved_identifier' },
+								{ type: SYMBOL, name: 'identifier' }
 							]
 						} satisfies Rule
 					]
@@ -386,12 +387,12 @@ describe('Assemble — T027a empty seq after stripping', () => {
 		// Post-Link, a pure-terminal subtree is wrapped as TerminalRule;
 		// classifyNode then dispatches it to 'pattern' by rule.type alone.
 		const rule: Rule = {
-			type: 'terminal',
+			type: TERMINAL,
 			content: {
-				type: 'seq',
+				type: SEQ,
 				members: [
-					{ type: 'string', value: '{' },
-					{ type: 'string', value: '}' }
+					{ type: STRING, value: '{' },
+					{ type: STRING, value: '}' }
 				]
 			}
 		};
@@ -403,18 +404,18 @@ describe('Assemble — T027a empty seq after stripping', () => {
 describe('Rule — deriveFields', () => {
 	it('extracts fields from a seq rule', () => {
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: 'fn' },
+				{ type: STRING, value: 'fn' },
 				{
-					type: 'field',
+					type: FIELD,
 					name: 'name',
-					content: { type: 'symbol', name: 'identifier' }
+					content: { type: SYMBOL, name: 'identifier' }
 				},
 				{
-					type: 'field',
+					type: FIELD,
 					name: 'body',
-					content: { type: 'symbol', name: 'block' }
+					content: { type: SYMBOL, name: 'block' }
 				}
 			]
 		};
@@ -426,8 +427,8 @@ describe('Rule — deriveFields', () => {
 
 	it('derives required=true for non-optional fields', () => {
 		const rule: Rule = {
-			type: 'seq',
-			members: [{ type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } }]
+			type: SEQ,
+			members: [{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'y' } }]
 		};
 		const fields = deriveFields(rule);
 		expect(isRequired(fields[0]!)).toBe(true);
@@ -435,11 +436,11 @@ describe('Rule — deriveFields', () => {
 
 	it('derives required=false for optional fields', () => {
 		const rule: Rule = {
-			type: 'optional',
+			type: OPTIONAL,
 			content: {
-				type: 'field',
+				type: FIELD,
 				name: 'x',
-				content: { type: 'symbol', name: 'y' }
+				content: { type: SYMBOL, name: 'y' }
 			}
 		};
 		const fields = deriveFields(rule);
@@ -448,11 +449,11 @@ describe('Rule — deriveFields', () => {
 
 	it('derives multiple=true for repeated fields', () => {
 		const rule: Rule = {
-			type: 'repeat',
+			type: REPEAT,
 			content: {
-				type: 'field',
+				type: FIELD,
 				name: 'items',
-				content: { type: 'symbol', name: 'item' }
+				content: { type: SYMBOL, name: 'item' }
 			}
 		};
 		const fields = deriveFields(rule);
@@ -469,18 +470,18 @@ describe('Rule — deriveFields', () => {
 		// `value` fields instead of collapsing to a single `content`. A choice of
 		// BARE kinds / literals (no fields, no seqs) is still ONE union slot.
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: 'default' },
+				{ type: STRING, value: 'default' },
 				{
-					type: 'choice',
+					type: CHOICE,
 					members: [
 						{
-							type: 'field',
+							type: FIELD,
 							name: 'declaration',
-							content: { type: 'symbol', name: 'declaration' }
+							content: { type: SYMBOL, name: 'declaration' }
 						},
-						{ type: 'symbol', name: '_export_statement_default_decl_arm_default_kw_value' }
+						{ type: SYMBOL, name: '_export_statement_default_decl_arm_default_kw_value' }
 					]
 				}
 			]
@@ -525,17 +526,17 @@ describe('Assemble — assemble()', () => {
 	it('produces a NodeMap with classified nodes', () => {
 		const optimized = makeOptimized({
 			function_item: {
-				type: 'seq',
+				type: SEQ,
 				members: [
-					{ type: 'string', value: 'fn' },
+					{ type: STRING, value: 'fn' },
 					{
-						type: 'field',
+						type: FIELD,
 						name: 'name',
-						content: { type: 'symbol', name: 'identifier' }
+						content: { type: SYMBOL, name: 'identifier' }
 					}
 				]
 			},
-			identifier: { type: 'pattern', value: '[a-z]+' }
+			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
 		const nodeMap = assemble(optimized);
 		expect(nodeMap.name).toBe('test');
@@ -546,16 +547,16 @@ describe('Assemble — assemble()', () => {
 	it('assigns typeName and factoryName to nodes', () => {
 		const optimized = makeOptimized({
 			function_item: {
-				type: 'seq',
+				type: SEQ,
 				members: [
 					{
-						type: 'field',
+						type: FIELD,
 						name: 'name',
-						content: { type: 'symbol', name: 'id' }
+						content: { type: SYMBOL, name: 'id' }
 					}
 				]
 			},
-			id: { type: 'pattern', value: '[a-z]+' }
+			id: { type: PATTERN, value: '[a-z]+' }
 		});
 		const nodeMap = assemble(optimized);
 		const fnNode = nodeMap.nodes.get('function_item')!;

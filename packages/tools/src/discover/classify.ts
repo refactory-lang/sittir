@@ -72,7 +72,7 @@ return {
 // to the local interface here so downstream code stays fully typed.
 evaluate: evalMod.evaluate as CodegenModules['evaluate'],
 link: linkMod.link as CodegenModules['link'],
-optimize: optMod.optimize as CodegenModules['optimize'],
+optimize: optMod.normalizeGrammar as CodegenModules['optimize'],
 assemble: assembleMod.assemble as CodegenModules['assemble'],
 resolveGrammarJsPath: resolveMod.resolveGrammarJsPath as CodegenModules['resolveGrammarJsPath'],
 resolveOverridesPath: resolveMod.resolveOverridesPath as CodegenModules['resolveOverridesPath'],

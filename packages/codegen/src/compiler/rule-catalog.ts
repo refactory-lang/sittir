@@ -7,6 +7,7 @@
  * but they should not reconstruct identity from local walks.
  */
 
+import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import { assertNever } from '../polymorph-variant.ts';
 import type { Rule, RuleId, SymbolRef } from './rule.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
@@ -122,21 +123,20 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 		});
 
 	switch (params.rule.type) {
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return params.rule.members.map((member, index) => childParams(member, { edge: 'members', index }));
-		case 'enum':
+		case ENUM:
 			return params.rule.members.map((member, index) => childParams(member, { edge: 'members', index }));
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
-		case 'terminal':
-		case 'token':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
+		case TERMINAL:
+		case TOKEN:
 			return [childParams(params.rule.content, { edge: 'content' })];
-		case 'field':
+		case FIELD:
 			return [
 				childParams(
 					params.rule.content,
@@ -147,7 +147,7 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 					}
 				)
 			];
-		case 'alias':
+		case ALIAS:
 			return [
 				childParams(
 					params.rule.content,
@@ -160,13 +160,13 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 			];
 		case 'polymorph':
 			return params.rule.forms.map((form, index) => childParams(form.content, { edge: 'forms', index }));
-		case 'supertype':
-		case 'string':
-		case 'pattern':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
-		case 'symbol':
+		case SUPERTYPE:
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+		case SYMBOL:
 			return [];
 		default:
 			return assertNever(params.rule);
@@ -175,12 +175,12 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 
 function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly BuildResult[]): Rule {
 	switch (rule.type) {
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return { ...rule, id, members: children.map((child) => child.rule) };
-		case 'enum': {
+		case ENUM: {
 			const members = children.map((child) => {
-				if (child.rule.type !== 'string') {
+				if (child.rule.type !== STRING) {
 					throw new Error(`enum child ${child.id} is not a string rule`);
 				}
 				return child.rule;
@@ -191,16 +191,15 @@ function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly Build
 				members
 			};
 		}
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
-		case 'terminal':
-		case 'field':
-		case 'alias':
-		case 'token':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
+		case TERMINAL:
+		case FIELD:
+		case ALIAS:
+		case TOKEN:
 			return { ...rule, id, content: children[0]!.rule };
 		case 'polymorph':
 			return {
@@ -211,13 +210,13 @@ function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly Build
 					content: children[index]!.rule
 				}))
 			};
-		case 'supertype':
-		case 'string':
-		case 'pattern':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
-		case 'symbol':
+		case SUPERTYPE:
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+		case SYMBOL:
 			return { ...rule, id };
 		default:
 			return assertNever(rule);
@@ -252,32 +251,31 @@ function classifyRule(
  */
 function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): RuleClassification['kind'] {
 	switch (ruleType) {
-		case 'symbol':
-		case 'supertype':
-		case 'pattern':
-		case 'enum':
+		case SYMBOL:
+		case SUPERTYPE:
+		case PATTERN:
+		case ENUM:
 			return 'nonterminal';
-		case 'choice':
-		case 'repeat':
-		case 'repeat1':
+		case CHOICE:
+		case REPEAT:
+		case REPEAT1:
 			// Unconditionally nonterminal: a choice is a single union slot
 			// (literal-only = enum); a repeat captures a variable-length
 			// sequence (array slot) even when its content is terminal.
 			return 'nonterminal';
-		case 'string':
-		case 'terminal':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
+		case STRING:
+		case TERMINAL:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 			return 'terminal';
-		case 'token':
-		case 'field':
-		case 'alias':
-		case 'seq':
-		case 'optional':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case TOKEN:
+		case FIELD:
+		case ALIAS:
+		case SEQ:
+		case OPTIONAL:
+		case VARIANT:
+		case GROUP:
 		case 'polymorph':
 			// Recursive: nonterminal iff any child is.
 			return anyChildNonterminal ? 'nonterminal' : 'terminal';
@@ -308,16 +306,15 @@ export function isNonterminalRuleType(rule: Rule): boolean {
 
 function ruleChildren(rule: Rule): readonly Rule[] {
 	switch (rule.type) {
-		case 'token':
-		case 'field':
-		case 'alias':
-		case 'optional':
-		case 'variant':
-		case 'clause':
-		case 'group':
-		case 'terminal':
+		case TOKEN:
+		case FIELD:
+		case ALIAS:
+		case OPTIONAL:
+		case VARIANT:
+		case GROUP:
+		case TERMINAL:
 			return [rule.content];
-		case 'seq':
+		case SEQ:
 			return rule.members;
 		case 'polymorph':
 			return rule.forms.map((form) => form.content);

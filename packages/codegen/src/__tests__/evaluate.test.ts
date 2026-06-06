@@ -1,3 +1,4 @@
+import { CHOICE, REPEAT1, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -685,7 +686,7 @@ describe('Evaluate — evaluate()', () => {
 		const container = raw.rules['container']!;
 		const symbolIds: string[] = [];
 		walkRule(container, (rule) => {
-			if (rule.type === 'symbol' && rule.name === 'identifier') {
+			if (rule.type === SYMBOL && rule.name === 'identifier') {
 				symbolIds.push(rule.id!);
 			}
 		});
@@ -797,8 +798,8 @@ module.exports = grammar(base, {
 	it('aggregates wrapper classification from descendants', async () => {
 		const raw = await evaluate(fixture('rule-identity-grammar.js'));
 		const entries = [...raw.ruleCatalog.byId.values()];
-		const choiceEntries = entries.filter((entry) => entry.ruleType === 'choice');
-		const repeatEntry = entries.find((entry) => entry.ruleType === 'repeat1')!;
+		const choiceEntries = entries.filter((entry) => entry.ruleType === CHOICE);
+		const repeatEntry = entries.find((entry) => entry.ruleType === REPEAT1)!;
 
 		expect(
 			choiceEntries.some((entry) => raw.ruleCatalog.classificationById.get(entry.id)!.kind === 'nonterminal')

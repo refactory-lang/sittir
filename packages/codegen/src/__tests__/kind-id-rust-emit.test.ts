@@ -1,3 +1,4 @@
+import { PATTERN } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { field, seq } from '../compiler/evaluate.ts';
 import { buildRuleCatalog } from '../compiler/rule-catalog.ts';
@@ -15,7 +16,7 @@ function makeMinimalFixture(): {
 } {
 	const { rules, ruleCatalog } = buildRuleCatalog({
 		call_expression: seq(field('function', { type: 'symbol', name: 'identifier' })),
-		identifier: { type: 'pattern', value: '[a-z_]\\w*' }
+		identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 	});
 
 	return {
@@ -139,7 +140,7 @@ describe('emitKindIdRust', () => {
 		// constant-name mapping path for a kind whose `rawKind` starts with `_`.
 		const { rules, ruleCatalog } = buildRuleCatalog({
 			call_expression: seq(field('function', { type: 'symbol', name: 'identifier' })),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' }
+			identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 		});
 
 		const raw: RawGrammar = {

@@ -203,6 +203,32 @@ export function applyPath(
 		return descendThroughPrecWrapper(rule, segments, patch, precStack);
 	}
 
+	// Enrich group-lift symbols are transparent to path addressing, like prec
+	// wrappers. enrich hoists `optional(seq)` / `repeat(seq)` into a SYMBOL ref
+	// tagged `metadata.source === 'enrich'` that carries the hoisted seq body on
+	// `content`. An authored patch whose path was written against the pre-hoist
+	// seq must travel THROUGH the symbol into that body. We descend without
+	// consuming a segment (transparent) and rebuild the symbol around the patched
+	// body. Works in both runtimes (sittir evaluate + tree-sitter generate)
+	// because the tag + body ride the symbol object itself — no rule-map resolver.
+	if (isEnrichGroupLiftSymbol(rule)) {
+		return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
+	}
+
+	// Enrich content-aliases are ALSO transparent to path addressing. enrich
+	// wraps an inline-unsafe `optional(seq)` / bare `choice` in
+	// `alias(<content>, $.<name>)` (the visible-kind form) tagged
+	// `metadata.source === 'enrich'`. enrich runs BEFORE the authored
+	// transform()/variant()/groups path-patches, so a patch whose path was
+	// written against the pre-alias content must travel THROUGH the alias into
+	// that content. Without this, `descendThroughAlias` (single-content, index 0
+	// only) rejects any index ≥1 a real patch uses (e.g. rust visibility_modifier
+	// `1/1/0/1/3`). We descend into `content` WITHOUT consuming a segment
+	// (transparent, like prec / the group-lift symbol) and rebuild the alias.
+	if (isEnrichContentAlias(rule)) {
+		return descendThroughEnrichContentAlias(rule, segments, patch, precStack);
+	}
+
 	const [head, ...rest] = segments;
 	const t = rule.type;
 
@@ -264,6 +290,120 @@ function descendThroughPrecWrapper(
 	const newStack = precStack ? [...precStack, rule] : [rule];
 	const newContent = applyPath(contentOf(rule), segments, patch, newStack);
 	return reconstructPrec(rule, newContent);
+}
+
+/**
+ * True when `rule` is an enrich-synthesized group-lift symbol — a SYMBOL ref
+ * tagged `metadata.source === 'enrich'`. enrich hoists `optional(seq)` /
+ * `repeat(seq)` into such a symbol and carries the original seq body inline on
+ * `content` so path-descent can travel THROUGH it (see
+ * `descendThroughGroupLiftSymbol`). The tag is the new canonical provenance
+ * marker (the legacy top-level `source: 'group-lift'` field is being retired).
+ */
+function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
+	// MUST be a SYMBOL — an enrich content-alias (`alias(<content>, $.<name>)`)
+	// also carries `metadata.source === 'enrich'` but is handled separately by
+	// `isEnrichContentAlias` / `descendThroughEnrichContentAlias`. Without the
+	// type guard, an alias would match here and `descendThroughGroupLiftSymbol`
+	// would throw "group-lift symbol has no name" (an alias has no `.name`).
+	const t = (rule as { type?: string }).type;
+	if (t !== 'symbol' && t !== 'SYMBOL') return false;
+	const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+	return meta?.source === 'enrich';
+}
+
+/**
+ * Look up the body of an enrich group-lift's referenced hidden rule by name.
+ * The body is NOT carried on the symbol (that leaks the seq into grammar.json);
+ * enrich registers its merged rule-map here so path-descent can resolve and
+ * patch the referenced `_<parent>_<kind><N>` rule. Both runtimes work: enrich
+ * runs first (registering), rule fns run later (consuming), within one grammar's
+ * processing. `set` writes a patched body back so the materialized group kind
+ * AND the parser seed reflect the patch.
+ */
+export interface GroupLiftRuleMap {
+	get(name: string): RuntimeRule | undefined;
+	set(name: string, body: RuntimeRule): void;
+}
+
+let groupLiftRuleMap: GroupLiftRuleMap | undefined;
+
+/**
+ * Register (or clear) the rule-map path-descent uses to resolve enrich
+ * group-lift symbol bodies. Called by `enrich()` with its merged rules map
+ * after synthesis; passing `undefined` clears it.
+ */
+export function setGroupLiftRuleMap(map: GroupLiftRuleMap | undefined): void {
+	groupLiftRuleMap = map;
+}
+
+/**
+ * Travel through an enrich group-lift symbol by LOOKING UP its referenced rule
+ * body (not by descending into carried content). Descends into the resolved
+ * body without consuming a path segment, patches it, and writes the patched
+ * body back into the rule-map so the hidden group rule — and thus its
+ * materialized kind + the parser's seed — reflect the patch. The symbol ref
+ * itself is returned unchanged (it still points at the same name).
+ *
+ * @throws {ApplyPathSkip} If no rule-map is registered or the referenced rule is
+ *   absent — surfaces loudly rather than silently dropping the patch.
+ */
+function descendThroughGroupLiftSymbol(
+	rule: RuntimeRule,
+	segments: readonly PathSegment[],
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+	precStack: readonly RuntimeRule[] | undefined
+): RuntimeRule {
+	const name = (rule as unknown as { name?: string }).name;
+	if (!name) {
+		throw new ApplyPathSkip('applyPath: enrich group-lift symbol has no name to resolve its body');
+	}
+	const body = groupLiftRuleMap?.get(name);
+	if (body === undefined) {
+		throw new ApplyPathSkip(
+			`applyPath: enrich group-lift symbol '${name}' — referenced rule not found in the group-lift rule map ` +
+				`(enrich resolver not registered, or the name was pruned)`
+		);
+	}
+	const newBody = applyPath(body, segments, patch, precStack);
+	groupLiftRuleMap?.set(name, newBody);
+	return rule;
+}
+
+/**
+ * True when `rule` is an enrich-synthesized content-alias — an `alias`/`ALIAS`
+ * node tagged `metadata.source === 'enrich'`. enrich wraps an inline-unsafe
+ * `optional(seq)` / bare `choice` in `alias(<content>, $.<name>)` to surface it
+ * as a visible CST kind; path-descent travels THROUGH it (see
+ * `descendThroughEnrichContentAlias`), unlike a normal aliased symbol (which
+ * keeps `descendThroughAlias`'s single-content / index-0 behaviour).
+ */
+function isEnrichContentAlias(rule: RuntimeRule): boolean {
+	const t = (rule as { type?: string }).type;
+	if (t !== 'alias' && t !== 'ALIAS') return false;
+	const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+	return meta?.source === 'enrich';
+}
+
+/**
+ * Travel through an enrich content-alias transparently: descend into its
+ * `content` with the SAME segments (the alias is invisible to addressing,
+ * because the authored path was written against the pre-alias content), then
+ * rebuild the alias around the patched content. Mirrors
+ * `descendThroughGroupLiftSymbol` for the ALIAS form.
+ */
+function descendThroughEnrichContentAlias(
+	rule: RuntimeRule,
+	segments: readonly PathSegment[],
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+	precStack: readonly RuntimeRule[] | undefined
+): RuntimeRule {
+	const body = (rule as unknown as { content?: RuntimeRule }).content;
+	if (body === undefined) {
+		throw new ApplyPathSkip('applyPath: enrich content-alias has no content to travel through');
+	}
+	const newBody = applyPath(body, segments, patch, precStack);
+	return { ...(rule as unknown as Record<string, unknown>), content: newBody } as unknown as RuntimeRule;
 }
 
 /**

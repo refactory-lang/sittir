@@ -1,3 +1,4 @@
+import { CHOICE, FIELD, OPTIONAL, REPEAT, SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, vi, afterEach, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
 import type { Rule } from '../../compiler/rule.ts';
@@ -31,12 +32,12 @@ describe('enrich()', () => {
 		it('does not mutate the input grammar', () => {
 			const input = mkGrammar({
 				call: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'symbol', name: 'function' },
-						{ type: 'string', value: '(' },
-						{ type: 'symbol', name: 'arguments' },
-						{ type: 'string', value: ')' }
+						{ type: SYMBOL, name: 'function' },
+						{ type: STRING, value: '(' },
+						{ type: SYMBOL, name: 'arguments' },
+						{ type: STRING, value: ')' }
 					]
 				}
 			});
@@ -48,12 +49,12 @@ describe('enrich()', () => {
 		it('is idempotent — enrich(enrich(g)) ≡ enrich(g)', () => {
 			const input = mkGrammar({
 				call: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'symbol', name: 'function' },
-						{ type: 'string', value: '(' },
-						{ type: 'symbol', name: 'arguments' },
-						{ type: 'string', value: ')' }
+						{ type: SYMBOL, name: 'function' },
+						{ type: STRING, value: '(' },
+						{ type: SYMBOL, name: 'arguments' },
+						{ type: STRING, value: ')' }
 					]
 				}
 			});
@@ -67,12 +68,12 @@ describe('enrich()', () => {
 		it('wraps unambiguous symbol references as named fields', () => {
 			const input = mkGrammar({
 				call: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'symbol', name: 'function' },
-						{ type: 'string', value: '(' },
-						{ type: 'symbol', name: 'arguments' },
-						{ type: 'string', value: ')' }
+						{ type: SYMBOL, name: 'function' },
+						{ type: STRING, value: '(' },
+						{ type: SYMBOL, name: 'arguments' },
+						{ type: STRING, value: ')' }
 					]
 				}
 			});
@@ -102,14 +103,14 @@ describe('enrich()', () => {
 				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					foo: {
-						type: 'seq',
+						type: SEQ,
 						members: [
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'expression',
-								content: { type: 'string', value: '(' }
+								content: { type: STRING, value: '(' }
 							},
-							{ type: 'symbol', name: 'expression' }
+							{ type: SYMBOL, name: 'expression' }
 						]
 					}
 				});
@@ -137,11 +138,11 @@ describe('enrich()', () => {
 			// (`<name>1`, `<name>2`, …) preserve it.
 			const input = mkGrammar({
 				binary_expr: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'symbol', name: 'expression' },
-						{ type: 'string', value: '+' },
-						{ type: 'symbol', name: 'expression' }
+						{ type: SYMBOL, name: 'expression' },
+						{ type: STRING, value: '+' },
+						{ type: SYMBOL, name: 'expression' }
 					]
 				}
 			});
@@ -177,16 +178,16 @@ describe('enrich()', () => {
 			// reconstruct (no leading-field slot).
 			const input = mkGrammar({
 				dotted_name: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'symbol', name: 'identifier' },
+						{ type: SYMBOL, name: 'identifier' },
 						{
-							type: 'repeat',
+							type: REPEAT,
 							content: {
-								type: 'seq',
+								type: SEQ,
 								members: [
-									{ type: 'string', value: '.' },
-									{ type: 'symbol', name: 'identifier' }
+									{ type: STRING, value: '.' },
+									{ type: SYMBOL, name: 'identifier' }
 								]
 							}
 						}
@@ -208,10 +209,10 @@ describe('enrich()', () => {
 		it('skips hidden-kind references (leading underscore)', () => {
 			const input = mkGrammar({
 				foo: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'symbol', name: '_statement' },
-						{ type: 'string', value: ';' }
+						{ type: SYMBOL, name: '_statement' },
+						{ type: STRING, value: ';' }
 					]
 				}
 			});
@@ -227,15 +228,15 @@ describe('enrich()', () => {
 		it('leaves existing field wrappers in place', () => {
 			const input = mkGrammar({
 				assign: {
-					type: 'seq',
+					type: SEQ,
 					members: [
 						{
-							type: 'field',
+							type: FIELD,
 							name: 'left',
-							content: { type: 'symbol', name: 'expression' }
+							content: { type: SYMBOL, name: 'expression' }
 						},
-						{ type: 'string', value: '=' },
-						{ type: 'symbol', name: 'rhs' }
+						{ type: STRING, value: '=' },
+						{ type: SYMBOL, name: 'rhs' }
 					]
 				}
 			});
@@ -256,11 +257,11 @@ describe('enrich()', () => {
 		it('promotes optional(identifier-shaped string) to optional(field)', () => {
 			const input = mkGrammar({
 				function_definition: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'optional', content: { type: 'string', value: 'async' } },
-						{ type: 'string', value: 'def' },
-						{ type: 'symbol', name: 'name' }
+						{ type: OPTIONAL, content: { type: STRING, value: 'async' } },
+						{ type: STRING, value: 'def' },
+						{ type: SYMBOL, name: 'name' }
 					]
 				}
 			});
@@ -291,10 +292,10 @@ describe('enrich()', () => {
 		it('does not promote non-identifier-shaped literals', () => {
 			const input = mkGrammar({
 				conditional: {
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'optional', content: { type: 'string', value: '::' } },
-						{ type: 'symbol', name: 'path' }
+						{ type: OPTIONAL, content: { type: STRING, value: '::' } },
+						{ type: SYMBOL, name: 'path' }
 					]
 				}
 			});
@@ -317,14 +318,14 @@ describe('enrich()', () => {
 				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					decorated_fn: {
-						type: 'seq',
+						type: SEQ,
 						members: [
 							{
-								type: 'field',
+								type: FIELD,
 								name: 'async_marker',
-								content: { type: 'string', value: 'async' }
+								content: { type: STRING, value: 'async' }
 							},
-							{ type: 'optional', content: { type: 'string', value: 'async' } }
+							{ type: OPTIONAL, content: { type: STRING, value: 'async' } }
 						]
 					}
 				});
@@ -349,23 +350,23 @@ describe('enrich()', () => {
 		it('recurses into choice members', () => {
 			const input = mkGrammar({
 				stmt: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
 						{
-							type: 'seq',
+							type: SEQ,
 							members: [
-								{ type: 'optional', content: { type: 'string', value: 'let' } },
-								{ type: 'symbol', name: 'binding' }
+								{ type: OPTIONAL, content: { type: STRING, value: 'let' } },
+								{ type: SYMBOL, name: 'binding' }
 							]
 						},
 						{
-							type: 'seq',
+							type: SEQ,
 							members: [
 								{
-									type: 'optional',
-									content: { type: 'string', value: 'const' }
+									type: OPTIONAL,
+									content: { type: STRING, value: 'const' }
 								},
-								{ type: 'symbol', name: 'binding' }
+								{ type: SYMBOL, name: 'binding' }
 							]
 						}
 					]
@@ -393,12 +394,12 @@ describe('enrich()', () => {
 		it('recurses into nested wrappers (optional/repeat)', () => {
 			const input = mkGrammar({
 				block: {
-					type: 'repeat',
+					type: REPEAT,
 					content: {
-						type: 'seq',
+						type: SEQ,
 						members: [
-							{ type: 'optional', content: { type: 'string', value: 'pub' } },
-							{ type: 'symbol', name: 'item' }
+							{ type: OPTIONAL, content: { type: STRING, value: 'pub' } },
+							{ type: SYMBOL, name: 'item' }
 						]
 					}
 				}
@@ -624,10 +625,10 @@ describe('enrich()', () => {
 		it('passes through choice rules unchanged', () => {
 			const input = mkGrammar({
 				expr: {
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'symbol', name: 'a' },
-						{ type: 'symbol', name: 'b' }
+						{ type: SYMBOL, name: 'a' },
+						{ type: SYMBOL, name: 'b' }
 					]
 				}
 			});
@@ -637,7 +638,7 @@ describe('enrich()', () => {
 
 		it('passes through bare symbol rules unchanged', () => {
 			const input = mkGrammar({
-				alias_rule: { type: 'symbol', name: 'target' }
+				alias_rule: { type: SYMBOL, name: 'target' }
 			});
 			const out = runEnrich(input);
 			expect(out.grammar.rules.alias_rule).toEqual(input.grammar.rules.alias_rule);

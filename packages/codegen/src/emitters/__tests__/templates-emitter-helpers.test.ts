@@ -1,3 +1,4 @@
+import { CHOICE, SEQ, STRING } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { Rule } from '../../compiler/rule.ts';
 import { escapeJinjaString, escapeLiteral, snakeToCamel, stringifyRule } from '../templates.ts';
@@ -50,20 +51,20 @@ describe('escapeJinjaString', () => {
 
 describe('stringifyRule', () => {
 	it('returns string rule values', () => {
-		const rule: Rule = { type: 'string', value: 'fn' };
+		const rule: Rule = { type: STRING, value: 'fn' };
 		expect(stringifyRule(rule)).toBe('fn');
 	});
 
 	it('recursively joins seq members', () => {
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: 'fn' },
+				{ type: STRING, value: 'fn' },
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: ' ' },
-						{ type: 'string', value: 'main' }
+						{ type: STRING, value: ' ' },
+						{ type: STRING, value: 'main' }
 					]
 				}
 			]
@@ -72,7 +73,7 @@ describe('stringifyRule', () => {
 	});
 
 	it('returns an empty string for unsupported rule types', () => {
-		const rule: Rule = { type: 'choice', members: [{ type: 'string', value: 'a' }] };
+		const rule: Rule = { type: CHOICE, members: [{ type: STRING, value: 'a' }] };
 		expect(stringifyRule(rule)).toBe('');
 	});
 });

@@ -296,6 +296,7 @@ export interface ComplexPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _real?: Box<AnyTransport>
   _imaginary: PrimaryExpressionTransport
   _operator: ComplexPatternOperatorEnum
   _content: PrimaryExpressionTransport
@@ -447,7 +448,9 @@ export interface DictPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _dict_pattern_kv?: Array<DictPatternKvTransport>
+  _key?: Array<SimplePatternTransport>
+  _value?: Array<CasePatternTransport>
+  _splat_pattern?: Array<SplatPatternTransport>
 }
 
 export interface DottedNameTransport {
@@ -486,6 +489,17 @@ export interface ElseClauseTransport {
 
 export interface EngineOptions {
   format?: string
+}
+
+export interface ExceptClauseAsOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _alias: ExpressionTransport
 }
 
 export interface ExceptClauseAsTransport {
@@ -534,7 +548,7 @@ export interface ExecStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _code: PrimaryExpressionTransport
-  _expression?: Array<ExpressionTransport>
+  _in_clause?: Array<ExpressionTransport>
 }
 
 export interface ExpressionListTransport {
@@ -618,6 +632,17 @@ export interface ForStatementTransport {
   _right: ExpressionsTransport
   _body: ForStatementBodyTransportSlot
   _alternative?: ElseClauseTransport
+}
+
+export interface FunctionDefinitionOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _return_type?: TypeTransport
 }
 
 export interface FunctionDefinitionTransport {
@@ -1062,6 +1087,17 @@ export interface PrintStatementTransport {
   _chevron?: ChevronTransport
 }
 
+export interface RaiseStatementOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _cause?: ExpressionTransport
+}
+
 export interface RaiseStatementTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1142,6 +1178,28 @@ export interface SimpleStatementsTransport {
   _simple_statement: Array<SimpleStatementTransport>
 }
 
+export interface SliceGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _expression?: ExpressionTransport
+}
+
+export interface SliceGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _expression?: ExpressionTransport
+}
+
 export interface SliceTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1152,7 +1210,7 @@ export interface SliceTransport {
   '$triviaData'?: TransportTrivia
   _start?: ExpressionTransport
   _stop?: ExpressionTransport
-  _step?: ExpressionTransport
+  _step?: SliceGroup1Transport
 }
 
 export interface SplatPatternTransport {
@@ -1447,6 +1505,5 @@ export interface YieldTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression?: Box<ExpressionTransport>
-  _expressions?: Box<ExpressionsTransport>
+  _content?: Box<ExpressionsTransport>
 }

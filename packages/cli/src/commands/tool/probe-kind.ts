@@ -1,4 +1,4 @@
-import type { CommandModule } from '../../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
 import { probeKind as runProbeKind } from '@sittir/tools';
 
@@ -6,8 +6,7 @@ export const probeKind: CommandModule = {
 	name: 'probe-kind',
 	describe: 'Structured diagnostics for parse → readNode → render cycle',
 	register: (program) => {
-		withGrammar(program.command('probe-kind'))
-			.description('Structured diagnostics for parse → readNode → render cycle')
+		withGrammar(defineCommand(program, probeKind))
 			.option('-s, --source <text>', 'Source text to probe')
 			.option('--stdin', 'Read source from stdin')
 			.option('-k, --kind <kind>', 'Find first node of this kind and probe it')

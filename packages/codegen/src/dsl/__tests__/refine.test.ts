@@ -2,6 +2,7 @@
  * refine.test.ts — unit coverage for the refine() DSL primitive.
  */
 
+import { SEQ } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { refine } from '../primitives/refine.ts';
 import { withWireContext } from '../wire/wire.ts';
@@ -12,7 +13,7 @@ beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 
 describe('refine()', () => {
-	const rule: Rule = { type: 'seq', members: [] };
+	const rule: Rule = { type: SEQ, members: [] };
 
 	it('registers form metadata on the active wire context', () => {
 		const { ctx, result } = withWireContext('interface_body', () => {

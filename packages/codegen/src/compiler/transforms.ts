@@ -26,14 +26,8 @@ export interface NormalizeCtx extends TransformCtx {
 }
 
 /**
- * Simplify carries the same phase-shared state. `inField` is NOT here — it is
- * recursion-LOCAL traversal state, kept an explicit recursion param (CW6).
- * `compiledWord` carries the pre-compiled RegExp from the grammar's `word` rule
- * (produced by `compileWordMatcher`) used by `isKeywordShape` checks inside
- * simplifyRule / collapseSeq.  It is distinct from TransformCtx.wordMatcher
- * (which is a `(s: string) => boolean` function used by other callers).
+ * Simplify carries the same phase-shared state as TransformCtx. (`inField` is
+ * NOT here — it is recursion-LOCAL traversal state, kept an explicit recursion
+ * param, CW6.)
  */
-export interface SimplifyCtx extends TransformCtx {
-  /** Pre-compiled word-pattern RegExp (from compileWordMatcher). Optional. */
-  readonly compiledWord?: RegExp;
-}
+export type SimplifyCtx = TransformCtx;

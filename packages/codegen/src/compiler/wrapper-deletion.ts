@@ -22,6 +22,7 @@
  *   spread onto them.
  */
 
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, RenderRule } from './rule.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
@@ -53,7 +54,7 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 	switch (rule.type) {
 		// ----- Wrapper cases — peel and accumulate -----
 
-		case 'optional': {
+		case OPTIONAL: {
 			// Only stamp multiplicity if not already set by an outer wrapper.
 			// Special case: optional(repeat(...)) and optional(repeat1(...)) are both
 			// array (zero-or-more) — the outer optional makes the empty case valid,
@@ -73,7 +74,7 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 			return deleteWrapperWith(rule.content, next);
 		}
 
-		case 'field': {
+		case FIELD: {
 			// Only stamp fieldName if not already set by an outer wrapper
 			const next: WrapperAttrs = {
 				...attrs,
@@ -84,7 +85,7 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 			return deleteWrapperWith(rule.content, next);
 		}
 
-		case 'repeat': {
+		case REPEAT: {
 			// Combine outer (pushed-down) multiplicity with repeat's native 'array'.
 			// combineMultiplicity('optional','array')='array'; ('nonEmptyArray','array')='array'.
 			// repeat's zero-or-more semantics always dominate an enclosing optional/nonEmptyArray.
@@ -107,7 +108,7 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 			return deleteWrapperWith(rule.content, next);
 		}
 
-		case 'repeat1': {
+		case REPEAT1: {
 			// Same as repeat but nonEmptyArray as native.
 			// combineMultiplicity('optional','nonEmptyArray')='array' — outer optional
 			// makes the empty case valid (same as the optional case's innerIsRepeatVariant check).
@@ -131,7 +132,7 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 
 		// ----- Structural cases — recurse into members/content, stamp attrs onto this node -----
 
-		case 'seq': {
+		case SEQ: {
 			// Push the wrapper's multiplicity intrinsically onto each SLOT-BEARING
 			// member so collect-slots can read it directly (no seq-level inheritance
 			// needed). optional(seq(field('x',…), field('y',…))): each field gets
@@ -163,8 +164,7 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 					m.type === 'choice' ||
 					m.type === 'seq' ||
 					m.type === 'group' ||
-					m.type === 'variant' ||
-					m.type === 'clause';
+					m.type === 'variant';
 				const memberAttrs: WrapperAttrs =
 					multToPush !== undefined && isSlotBearingShape ? { multiplicity: multToPush } : {};
 				return deleteWrapperWith(m, memberAttrs);
@@ -181,38 +181,33 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 			return stampAttrs({ ...rule, members }, seqAttrs);
 		}
 
-		case 'choice': {
+		case CHOICE: {
 			const members = rule.members.map((m) => deleteWrapperWith(m, {}));
 			return stampAttrs({ ...rule, members }, attrs);
 		}
 
-		case 'variant': {
+		case VARIANT: {
 			const content = deleteWrapperWith(rule.content, {});
 			return stampAttrs({ ...rule, content }, attrs);
 		}
 
-		case 'clause': {
+		case GROUP: {
 			const content = deleteWrapperWith(rule.content, {});
 			return stampAttrs({ ...rule, content }, attrs);
 		}
 
-		case 'group': {
+		case TERMINAL: {
 			const content = deleteWrapperWith(rule.content, {});
 			return stampAttrs({ ...rule, content }, attrs);
 		}
 
-		case 'terminal': {
-			const content = deleteWrapperWith(rule.content, {});
-			return stampAttrs({ ...rule, content }, attrs);
-		}
-
-		case 'token': {
+		case TOKEN: {
 			// token.content is structural but not a wrapper — recurse
 			const content = deleteWrapperWith(rule.content, {});
 			return stampAttrs({ ...rule, content }, attrs);
 		}
 
-		case 'alias': {
+		case ALIAS: {
 			// Push the alias down to the leaf, exactly like field/optional/
 			// repeat: `alias(content, value)` stamps `aliasedFrom = value`
 			// (the target name tree-sitter emits) + `aliasNamed` onto the

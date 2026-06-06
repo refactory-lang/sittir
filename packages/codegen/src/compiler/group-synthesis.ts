@@ -5,6 +5,7 @@
  * Pure module — no I/O, no side effects on inputs.
  */
 
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule } from './rule.ts';
 import { replaceAtPath } from './rule.ts';
 
@@ -37,8 +38,8 @@ export function resolveGroupPath(rule: Rule, path: string): Rule {
 
 function stepInto(rule: Rule, idx: number, fullPath: string): Rule {
 	switch (rule.type) {
-		case 'seq':
-		case 'choice': {
+		case SEQ:
+		case CHOICE: {
 			const m = rule.members[idx];
 			if (!m) {
 				throw new Error(
@@ -47,15 +48,14 @@ function stepInto(rule: Rule, idx: number, fullPath: string): Rule {
 			}
 			return m;
 		}
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'field':
-		case 'token':
-		case 'alias':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case TOKEN:
+		case ALIAS:
+		case VARIANT:
+		case GROUP:
 			if (idx !== 0) {
 				throw new Error(
 					`group path '${fullPath}' does not resolve: index ${idx} invalid for wrapper '${rule.type}' (only 0 is content)`
@@ -201,21 +201,20 @@ function isAncestorPath(ancestor: string, descendant: string): boolean {
 
 function hasStructuralMember(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'field':
-		case 'symbol':
-		case 'supertype':
+		case FIELD:
+		case SYMBOL:
+		case SUPERTYPE:
 			return true;
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return rule.members.some(hasStructuralMember);
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'token':
-		case 'alias':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case TOKEN:
+		case ALIAS:
+		case VARIANT:
+		case GROUP:
 			return hasStructuralMember((rule as { content: Rule }).content);
 		default:
 			return false;
@@ -282,17 +281,17 @@ function liftRule(target: Rule, synName: string, _discriminator: string): { lift
 	// The discriminator participates only in the synthesized kind name component.)
 
 	switch (target.type) {
-		case 'optional':
+		case OPTIONAL:
 			return {
 				liftedBody: target.content,
 				replacement: { type: 'optional', content: synSym } as Rule
 			};
-		case 'repeat':
+		case REPEAT:
 			return {
 				liftedBody: target.content,
 				replacement: { type: 'repeat', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
 			};
-		case 'repeat1':
+		case REPEAT1:
 			return {
 				liftedBody: target.content,
 				replacement: { type: 'repeat1', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
@@ -351,7 +350,7 @@ export function stampStaticRenderAs(
 	// pointing at the now-optional-bodied wrapper rule (`_semicolon`).
 	const blankStamps = new Set<string>();
 	for (const [sym, body] of Object.entries(renderAs)) {
-		if (body.type === 'string') renderStamps[sym] = body.value;
+		if (body.type === STRING) renderStamps[sym] = body.value;
 		else if (isBlankRule(body)) blankStamps.add(sym);
 	}
 	if (Object.keys(renderStamps).length === 0 && blankStamps.size === 0) return rules;
@@ -373,7 +372,7 @@ export function stampStaticRenderAs(
 	const symToLit: Record<string, string> = { ...renderStamps };
 	for (const [sym, body] of Object.entries(rules)) {
 		if (sym in symToLit) continue; // Already included via exact match.
-		if (body.type !== 'string') continue;
+		if (body.type !== STRING) continue;
 		// Check whether any renderAs key is a suffix of this symbol name.
 		for (const [renderKey, lit] of Object.entries(renderStamps)) {
 			if (sym.endsWith(renderKey) && body.value === lit) {
@@ -404,8 +403,8 @@ export function stampStaticRenderAs(
  */
 function isBlankRule(rule: Rule): boolean {
 	return (
-		(rule.type === 'choice' && rule.members.length === 0) ||
-		(rule.type === 'seq' && rule.members.length === 0)
+		(rule.type === CHOICE && rule.members.length === 0) ||
+		(rule.type === SEQ && rule.members.length === 0)
 	);
 }
 
@@ -415,45 +414,44 @@ function rewriteRuleForStamp(
 	blankStamps: ReadonlySet<string>
 ): Rule {
 	switch (rule.type) {
-		case 'symbol': {
+		case SYMBOL: {
 			const lit = symToLit[rule.name];
-			if (lit !== undefined) return { type: 'string', value: lit };
-			if (blankStamps.has(rule.name)) return { type: 'choice', members: [] };
+			if (lit !== undefined) return { type: STRING, value: lit };
+			if (blankStamps.has(rule.name)) return { type: CHOICE, members: [] };
 			return rule;
 		}
 
-		case 'field': {
+		case FIELD: {
 			const inner = unwrapAliasForCheck(rule.content);
-			if (inner.type === 'symbol') {
+			if (inner.type === SYMBOL) {
 				const lit = symToLit[inner.name];
 				if (lit !== undefined) {
 					// Drop the field wrapper; stamp the literal inline.
-					return { type: 'string', value: lit };
+					return { type: STRING, value: lit };
 				}
 				// Blank-stamped: the field references a zero-width-equivalent
 				// external. Replace the whole field with blank so the parent
 				// seq/choice collapse handles cardinality.
-				if (blankStamps.has(inner.name)) return { type: 'choice', members: [] };
+				if (blankStamps.has(inner.name)) return { type: CHOICE, members: [] };
 			}
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
 		}
 
-		case 'alias':
+		case ALIAS:
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
 
-		case 'token':
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case TOKEN:
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule;
 
-		case 'seq':
+		case SEQ:
 			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps)) };
 
-		case 'choice': {
+		case CHOICE: {
 			// Recursively stamp members, then re-apply the blank-collapse that
 			// evaluate.ts's choice() applies at DSL time. `choice(X, blank)` →
 			// `optional(X)`. Re-applied here because stamping may have
@@ -462,9 +460,9 @@ function rewriteRuleForStamp(
 			const nonBlank = members.filter((m) => !isBlankRule(m));
 			const hadBlank = nonBlank.length < members.length;
 			if (!hadBlank) return { ...rule, members };
-			if (nonBlank.length === 0) return { type: 'choice', members: [] };
-			if (nonBlank.length === 1) return { type: 'optional', content: nonBlank[0]! };
-			return { type: 'optional', content: { type: 'choice', members: nonBlank } };
+			if (nonBlank.length === 0) return { type: CHOICE, members: [] };
+			if (nonBlank.length === 1) return { type: OPTIONAL, content: nonBlank[0]! };
+			return { type: OPTIONAL, content: { type: CHOICE, members: nonBlank } };
 		}
 
 		default:
@@ -478,6 +476,6 @@ function rewriteRuleForStamp(
  * strips alias/token transparency layers.
  */
 function unwrapAliasForCheck(rule: Rule): Rule {
-	if (rule.type === 'alias' || rule.type === 'token') return unwrapAliasForCheck(rule.content);
+	if (rule.type === ALIAS || rule.type === TOKEN) return unwrapAliasForCheck(rule.content);
 	return rule;
 }

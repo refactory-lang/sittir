@@ -17,6 +17,7 @@
  * deterministically sorted by kind so diffs are stable.
  */
 
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type {
@@ -378,23 +379,22 @@ function extractElementKinds(rule: Rule): string[] {
 	const out = new Set<string>();
 	const walk = (r: Rule): void => {
 		switch (r.type) {
-			case 'symbol':
+			case SYMBOL:
 				out.add(r.name);
 				return;
-			case 'supertype':
+			case SUPERTYPE:
 				for (const s of r.subtypes) out.add(s);
 				return;
-			case 'choice':
-			case 'seq':
+			case CHOICE:
+			case SEQ:
 				for (const m of r.members) walk(m);
 				return;
-			case 'optional':
-			case 'repeat':
-			case 'repeat1':
-			case 'variant':
-			case 'clause':
-			case 'group':
-			case 'field':
+			case OPTIONAL:
+			case REPEAT:
+			case REPEAT1:
+			case VARIANT:
+			case GROUP:
+			case FIELD:
 				walk(r.content);
 				return;
 			default:

@@ -1,3 +1,4 @@
+import { PATTERN } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 
 import { field, seq } from '../compiler/evaluate.ts';
@@ -15,7 +16,7 @@ function makeMinimalFixture(): {
 } {
 	const { rules, ruleCatalog } = buildRuleCatalog({
 		call_expression: seq(field('function', { type: 'symbol', name: 'identifier' })),
-		identifier: { type: 'pattern', value: '[a-z_]\\w*' }
+		identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 	});
 
 	return {

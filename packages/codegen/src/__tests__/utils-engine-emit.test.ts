@@ -1,3 +1,4 @@
+import { PATTERN, SEQ, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitClientUtils } from '../emitters/client-utils.ts';
 import { emitFactories } from '../emitters/factories.ts';
@@ -33,12 +34,12 @@ describe('utils engine facade emission', () => {
 
 	it('emits a deprecated no-op native transport seam', () => {
 		const wrapperRule: SeqRule = {
-			type: 'seq',
-			members: [{ type: 'symbol', name: 'identifier' }]
+			type: SEQ,
+			members: [{ type: SYMBOL, name: 'identifier' }]
 		};
 		const nodes = new Map<string, AssembledNode>();
 		nodes.set('wrapper', new AssembledBranch('wrapper', wrapperRule, wrapperRule));
-		nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+		nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 		const contents = emitClientUtils({ nodeMap: makeNodeMapWith(nodes) });
 
 		expect(contents).toContain('* @deprecated Native transport projection is a no-op.');

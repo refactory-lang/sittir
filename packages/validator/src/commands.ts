@@ -5,6 +5,8 @@
  * the run*Cli entry points without pulling in the commander-entry side-effect block.
  */
 
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import {
 	runFrom,
 	runRt,
@@ -204,14 +206,150 @@ export async function grammarProbeFactory(grammar: Grammar, backend: Backend): P
 	}
 }
 
+/**
+ * Parse the last `[isolate-progress] <grammar> <kind>` line from a stderr
+ * string captured from an isolation worker child process.
+ */
+export function parseLastIsolateProgress(stderr: string): string | null {
+	const lines = stderr.split('\n');
+	for (let i = lines.length - 1; i >= 0; i--) {
+		const line = lines[i]!.trim();
+		const m = line.match(/^\[isolate-progress\]\s+\S+\s+(.+)$/);
+		if (m) return m[1]!;
+	}
+	return null;
+}
+
+/**
+ * Summarize the isolation run outcome for one grammar into a printable string.
+ */
+export function formatIsolateGrammarSummary(
+	grammar: Grammar,
+	status: 'ok' | 'crashed' | 'error',
+	output: string,
+	lastKind: string | null,
+	exitCode: number | null,
+	signal: NodeJS.Signals | null,
+): string {
+	if (status === 'crashed') {
+		return `⚠ native engine SIGSEGV in ${grammar} — last kind attempted: '${lastKind ?? '<unknown>'}'`;
+	}
+	if (status === 'error') {
+		return `${grammar}: child process failed (exit ${exitCode ?? '?'}, signal ${signal ?? 'none'})`;
+	}
+	return output;
+}
+
+/**
+ * Resolve the tsx CLI entry point path for spawning a child process.
+ * Returns the tsx binary path + the cli.ts file path.
+ *
+ * From packages/validator/src/commands.ts:
+ *   ../../..  = repo root  (validator/src/ → validator/ → packages/ → root)
+ */
+export function resolveCliEntryArgs(): { tsxBin: string; cliPath: string } {
+	// tsx is in node_modules/.bin relative to the repo root.
+	// import.meta.url is the current file; ../../.. from commands.ts reaches root.
+	const repoRoot = fileURLToPath(new URL('../../..', import.meta.url));
+	const cliPath = `${repoRoot}/packages/cli/src/cli.ts`;
+	const tsxBin = `${repoRoot}/node_modules/.bin/tsx`;
+	return { tsxBin, cliPath };
+}
+
+/**
+ * Spawn a child process to run native validation for a single grammar.
+ * Returns the child's combined output + metadata.
+ */
+export async function spawnIsolatedGrammarWorker(
+	grammar: Grammar,
+	backendMode: CliBackend,
+): Promise<{ status: 'ok' | 'crashed' | 'error'; stdout: string; stderr: string; exitCode: number | null; signal: NodeJS.Signals | null }> {
+	const { tsxBin, cliPath } = resolveCliEntryArgs();
+	// Build child argv: validate counts --backend <mode> <grammar> --_isolate-worker
+	const childArgs = [cliPath, 'validate', 'counts', '--backend', backendMode, grammar, '--_isolate-worker'];
+
+	return new Promise((resolve) => {
+		const childEnv: NodeJS.ProcessEnv = {
+			...process.env,
+			SITTIR_ISOLATE_WORKER: '1',
+		};
+		const child = spawn(tsxBin, childArgs, {
+			env: childEnv,
+			stdio: ['ignore', 'pipe', 'pipe'],
+		});
+
+		let stdout = '';
+		let stderr = '';
+		child.stdout?.on('data', (chunk: Buffer) => { stdout += chunk.toString(); });
+		child.stderr?.on('data', (chunk: Buffer) => { stderr += chunk.toString(); });
+
+		child.on('close', (exitCode, signal) => {
+			const isSigsegv = exitCode === 139 || signal === 'SIGSEGV';
+			const status = isSigsegv ? 'crashed' : exitCode === 0 ? 'ok' : 'error';
+			resolve({ status, stdout, stderr, exitCode, signal });
+		});
+		// Without an `error` handler the Promise hangs if `spawn` itself fails
+		// (missing tsx binary, EACCES, …) — `close` never fires in that case.
+		// Resolve as 'error' so the parent reports it and continues.
+		child.on('error', (err: Error) => {
+			resolve({ status: 'error', stdout, stderr: `${stderr}\n[spawn error] ${err.message}`, exitCode: null, signal: null });
+		});
+	});
+}
+
 /** Exported entry: counts subcommand — prints raw pass/total for all four validators. */
 export async function runCountsCli(
 	args: string[],
 	backendMode: CliBackend = 'native',
-	_options: { recursive?: boolean } = {},
+	options: { recursive?: boolean; isolate?: boolean; isolateWorker?: boolean } = {},
 ): Promise<void> {
+	const { isolate = false, isolateWorker = false } = options;
+
+	// When running as an isolation worker, activate the progress breadcrumb
+	// env var so that read-render-parse.ts emits per-kind lines to stderr.
+	if (isolateWorker) {
+		process.env['SITTIR_ISOLATE_WORKER'] = '1';
+	}
+
 	const grammars = resolveGrammars(args);
 	const recorded: string[] = [];
+
+	// Isolation mode: spawn one child process per grammar (native backend only).
+	// Non-native backends are still run in-process (no segfault risk).
+	if (isolate && backendMode === 'native') {
+		let anyCrashed = false;
+		for (const grammar of grammars) {
+			const result = await spawnIsolatedGrammarWorker(grammar, backendMode);
+			if (result.status === 'ok') {
+				// Forward the child's stdout output.
+				if (result.stdout) process.stdout.write(result.stdout);
+				// The worker appended its history row but skipped commit
+				// (isolateWorker); record it so the parent commits once below.
+				recorded.push(`${grammar}/${formatBackendLabel('native')}`);
+			} else if (result.status === 'crashed') {
+				anyCrashed = true;
+				const lastKind = parseLastIsolateProgress(result.stderr);
+				const msg = formatIsolateGrammarSummary(grammar, 'crashed', '', lastKind, result.exitCode, result.signal);
+				console.log(msg);
+			} else {
+				// Non-zero, non-crash exit.
+				const msg = formatIsolateGrammarSummary(grammar, 'error', '', null, result.exitCode, result.signal);
+				console.log(msg);
+				if (result.stdout) process.stdout.write(result.stdout);
+			}
+		}
+		// Single commit in the parent covering every worker that appended a row —
+		// the isolate-worker children skip commitHistory, so without this the rows
+		// stay uncommitted and break the single-commit-per-invocation contract.
+		if (recorded.length > 0 && !isolateWorker) {
+			commitHistory(`chore(validator): record validation run (${recorded.join(', ')})`);
+		}
+		if (anyCrashed) {
+			process.exitCode = 1;
+		}
+		return;
+	}
+
 	for (const backend of resolveBackends(backendMode)) {
 		for (const grammar of grammars) {
 			try {
@@ -226,8 +364,11 @@ export async function runCountsCli(
 	}
 	// One commit per validation invocation covering every row just appended —
 	// keeps history reliably captured without a commit per grammar. Best-effort
-	// and self-guarding (see commitHistory).
-	if (recorded.length > 0) {
+	// and self-guarding (see commitHistory). SKIP in isolate-worker children:
+	// each spawned worker would otherwise run its own `git commit`, spamming
+	// one commit per grammar and diverging from the single-commit-per-invocation
+	// contract — the parent (non-worker) invocation records history once.
+	if (recorded.length > 0 && !isolateWorker) {
 		commitHistory(`chore(validator): record validation run (${recorded.join(', ')})`);
 	}
 }

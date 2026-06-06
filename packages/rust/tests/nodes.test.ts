@@ -870,13 +870,9 @@ describe('match_arm', () => {
 
 describe('match_block', () => {
   it('factory produces correct type', () => {
-    const node = ir.matchBlock({});
+    const node = ir.matchBlock();
     expect(node.$type).toBe(TSKindId.MatchBlock);
     expect(node.$source).toBe(2);
-  });
-  it('render does not throw on minimal config', () => {
-    const node = ir.matchBlock({});
-    expect(() => node.$render!()).not.toThrow();
   });
 });
 
@@ -1678,6 +1674,14 @@ describe('yield_expression', () => {
   it('factory produces correct type', () => {
     const node = ir.yieldExpression();
     expect(node.$type).toBe(TSKindId.YieldExpression);
+    expect(node.$source).toBe(2);
+  });
+});
+
+describe('visibility_modifier_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.visibilityModifierGroup1();
+    expect(node.$type).toBe(TSKindId._VisibilityModifierGroup1);
     expect(node.$source).toBe(2);
   });
 });

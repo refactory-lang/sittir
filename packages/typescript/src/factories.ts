@@ -197,6 +197,24 @@ export function _callSignature(config: T._CallSignature.Config) {
   }, methodsEngine);
 }
 
+export function _catchClauseGroup1(config: T._CatchClauseGroup1.Config) {
+  const _parameter = config.parameter;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId._CatchClauseGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _parameter,
+    _type,
+    parameter() { return _parameter; },
+    type() { return _type; },
+    $with: {
+      parameter: (value: T.Identifier | T.DestructuringPattern) => _catchClauseGroup1({ ...config, parameter: value }),
+      type: (value?: T.TypeAnnotation) => _catchClauseGroup1({ ...config, type: value }),
+    },
+  }, methodsEngine);
+}
+
 export function _classBodyMember(config: T.ClassBodyMember.Config) {
   const _content = config.content;
   const _terminator = config.terminator;
@@ -548,14 +566,17 @@ export function forHeaderLhs(config: T.ForHeaderLhs.Config) {
 }
 
 export function _forHeaderVarKind(config: T.ForHeaderVarKind.Config) {
+  const _kind = coerceKindEnumStorage("var" as const, [["var", TSKindId.Var] as const]);
   const _left = config.left;
   const _value = config.value;
   return withMethods({
     $type: TSKindId.ForHeaderVarKind as const,
     $source: 2 as const,
     $named: true as const,
+    _kind,
     _left,
     _value,
+    kind() { return _kind; },
     left() { return _left; },
     value() { return _value; },
     $with: {
@@ -581,19 +602,31 @@ export function _fromClause(config: T.FromClause.Config) {
 
 export function importClauseDefaultImport(config: T.ImportClauseDefaultImport.Config) {
   const _import_identifier = config.importIdentifier;
-  const _content = config.content;
+  const _import_clause_group1 = config.importClauseGroup1;
   return withMethods({
     $type: TSKindId.ImportClauseDefaultImport as const,
     $source: 2 as const,
     $named: true as const,
     _import_identifier,
-    _content,
+    _import_clause_group1,
     importIdentifier() { return _import_identifier; },
-    content() { return _content; },
+    importClauseGroup1() { return _import_clause_group1; },
     $with: {
       importIdentifier: (value: T.ImportIdentifier) => importClauseDefaultImport({ ...config, importIdentifier: value }),
-      content: (value?: T.NamespaceImport | T.NamedImports) => importClauseDefaultImport({ ...config, content: value }),
+      importClauseGroup1: (value?: T.ImportClauseGroup1) => importClauseDefaultImport({ ...config, importClauseGroup1: value }),
     },
+  }, methodsEngine);
+}
+
+export function _importClauseGroup1(child: (T.NamespaceImport | T.NamedImports)) {
+  const _content = child;
+  return withMethods({
+    $type: TSKindId._ImportClauseGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.NamespaceImport | T.NamedImports)) => _importClauseGroup1(v) },
   }, methodsEngine);
 }
 
@@ -812,14 +845,18 @@ export function _publicFieldDefinitionAbstractFirst(config: Partial<T.PublicFiel
 
 export function _publicFieldDefinitionAccessFirst(config: T.PublicFieldDefinitionAccessFirst.Config) {
   const _accessibility_modifier = coerceKindEnumStorage(config.accessibilityModifier, [["public", TSKindId.Public] as const, ["private", TSKindId.Private] as const, ["protected", TSKindId.Protected] as const]);
+  const _declare_marker = coerceBooleanKeywordStorage(config.declareMarker);
   return withMethods({
     $type: TSKindId.PublicFieldDefinitionAccessFirst as const,
     $source: 2 as const,
     $named: true as const,
     _accessibility_modifier,
+    _declare_marker,
     accessibilityModifier() { return _accessibility_modifier; },
+    declareMarker() { return _declare_marker; },
     $with: {
       accessibilityModifier: (value: NonNullable<Parameters<typeof _publicFieldDefinitionAccessFirst>[0]>['accessibilityModifier']) => _publicFieldDefinitionAccessFirst({ ...config, accessibilityModifier: value }),
+      declareMarker: (value?: NonNullable<Parameters<typeof _publicFieldDefinitionAccessFirst>[0]>['declareMarker']) => _publicFieldDefinitionAccessFirst({ ...config, declareMarker: value }),
     },
   }, methodsEngine);
 }
@@ -1275,17 +1312,21 @@ export function assertsAnnotation(asserts: T.AssertsAnnotation.Config['asserts']
 }
 
 export function assignmentExpression(config: T.AssignmentExpression.Config) {
+  const _using_marker = coerceBooleanKeywordStorage(config.usingMarker);
   const _left = config.left;
   const _right = config.right;
   return withMethods({
     $type: TSKindId.AssignmentExpression as const,
     $source: 2 as const,
     $named: true as const,
+    _using_marker,
     _left,
     _right,
+    usingMarker() { return _using_marker; },
     left() { return _left; },
     right() { return _right; },
     $with: {
+      usingMarker: (value?: NonNullable<Parameters<typeof assignmentExpression>[0]>['usingMarker']) => assignmentExpression({ ...config, usingMarker: value }),
       left: (value: T.ParenthesizedExpression | T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression) => assignmentExpression({ ...config, left: value }),
       right: (value: T.Expression) => assignmentExpression({ ...config, right: value }),
     },
@@ -1421,22 +1462,18 @@ export function callSignature(config: T.CallSignature.Config) {
 }
 
 export function catchClause(config: T.CatchClause.Config) {
-  const _parameter = config.parameter;
-  const _type = config.type;
+  const _catch_clause_group1 = config.catchClauseGroup1;
   const _body = config.body;
   return withMethods({
     $type: TSKindId.CatchClause as const,
     $source: 2 as const,
     $named: true as const,
-    _parameter,
-    _type,
+    _catch_clause_group1,
     _body,
-    parameter() { return _parameter; },
-    type() { return _type; },
+    catchClauseGroup1() { return _catch_clause_group1; },
     body() { return _body; },
     $with: {
-      parameter: (value?: T.Identifier | T.DestructuringPattern) => catchClause({ ...config, parameter: value }),
-      type: (value?: T.TypeAnnotation) => catchClause({ ...config, type: value }),
+      catchClauseGroup1: (value?: T.CatchClauseGroup1) => catchClause({ ...config, catchClauseGroup1: value }),
       body: (value: T.StatementBlock) => catchClause({ ...config, body: value }),
     },
   }, methodsEngine);
@@ -2008,6 +2045,7 @@ export function flowMaybeType(primaryType: T.FlowMaybeType.Config['primaryType']
 }
 
 export function forInStatement(config: T.ForInStatement.Config) {
+  const _await_marker = coerceBooleanKeywordStorage(config.awaitMarker);
   const _content = config.content;
   const _operator = coerceKindEnumStorage(config.operator, [["in", TSKindId.In] as const, ["of", TSKindId.Of] as const]);
   const _right = config.right;
@@ -2016,15 +2054,18 @@ export function forInStatement(config: T.ForInStatement.Config) {
     $type: TSKindId.ForInStatement as const,
     $source: 2 as const,
     $named: true as const,
+    _await_marker,
     _content,
     _operator,
     _right,
     _body,
+    awaitMarker() { return _await_marker; },
     content() { return _content; },
     operator() { return _operator; },
     right() { return _right; },
     body() { return _body; },
     $with: {
+      awaitMarker: (value?: NonNullable<Parameters<typeof forInStatement>[0]>['awaitMarker']) => forInStatement({ ...config, awaitMarker: value }),
       content: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) => forInStatement({ ...config, content: value }),
       operator: (value: NonNullable<Parameters<typeof forInStatement>[0]>['operator']) => forInStatement({ ...config, operator: value }),
       right: (value: T.Expressions) => forInStatement({ ...config, right: value }),
@@ -4224,6 +4265,36 @@ export function yieldExpression(expression?: T.YieldExpression.Config['expressio
   }, methodsEngine);
 }
 
+export function importClauseGroup1(child: (T.NamespaceImport | T.NamedImports)) {
+  const _content = child;
+  return withMethods({
+    $type: TSKindId._ImportClauseGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.NamespaceImport | T.NamedImports)) => importClauseGroup1(v) },
+  }, methodsEngine);
+}
+
+export function catchClauseGroup1(config: T.CatchClauseGroup1.Config) {
+  const _parameter = config.parameter;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId._CatchClauseGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _parameter,
+    _type,
+    parameter() { return _parameter; },
+    type() { return _type; },
+    $with: {
+      parameter: (value: T.Identifier | T.DestructuringPattern) => catchClauseGroup1({ ...config, parameter: value }),
+      type: (value?: T.TypeAnnotation) => catchClauseGroup1({ ...config, type: value }),
+    },
+  }, methodsEngine);
+}
+
 export function templateChars(text: string) {
   if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
   return withMethods({
@@ -4294,6 +4365,7 @@ export type FluentKindMap = {
   "_call_expression_member": T.CallExpressionMember;
   "_call_expression_template_call": T.CallExpressionTemplateCall;
   "_call_signature": T._CallSignature;
+  "_catch_clause_group1": T._CatchClauseGroup1;
   "_class_body_member": T.ClassBodyMember;
   "_class_body_method": T.ClassBodyMethod;
   "_class_body_method_sig": FluentNode<"_class_body_method_sig", T.ClassBodyMethodSig.Config>;
@@ -4317,6 +4389,7 @@ export type FluentKindMap = {
   "_for_header_var_kind": T.ForHeaderVarKind;
   "_from_clause": T.FromClause;
   "_import_clause_default_import": FluentNode<"_import_clause_default_import", T.ImportClauseDefaultImport.Config>;
+  "_import_clause_group1": FluentNode<"_import_clause_group1", T._ImportClauseGroup1.Config>;
   "_import_clause_named_imports": FluentNode<"_import_clause_named_imports", T.ImportClauseNamedImports.Config>;
   "_import_clause_namespace_import": FluentNode<"_import_clause_namespace_import", T.ImportClauseNamespaceImport.Config>;
   "_import_specifier_as": T.ImportSpecifierAs;
@@ -4518,6 +4591,8 @@ export type FluentKindMap = {
   "while_statement": FluentNode<"while_statement", T.WhileStatement.Config>;
   "with_statement": FluentNode<"with_statement", T.WithStatement.Config>;
   "yield_expression": FluentNode<"yield_expression", T.YieldExpression.Config>;
+  "import_clause_group1": FluentNode<"import_clause_group1", T.ImportClauseGroup1.Config>;
+  "catch_clause_group1": FluentNode<"catch_clause_group1", T.CatchClauseGroup1.Config>;
   "_template_chars": T.TemplateChars;
   "_ternary_qmark": T.TernaryQmark;
   "html_comment": T.HtmlComment;
@@ -4536,6 +4611,7 @@ export const _factoryMap = {
   "_call_expression_member": _callExpressionMember,
   "_call_expression_template_call": _callExpressionTemplateCall,
   "_call_signature": _callSignature,
+  "_catch_clause_group1": _catchClauseGroup1,
   "_class_body_member": _classBodyMember,
   "_class_body_method": _classBodyMethod,
   "_class_body_method_sig": classBodyMethodSig,
@@ -4559,6 +4635,7 @@ export const _factoryMap = {
   "_for_header_var_kind": _forHeaderVarKind,
   "_from_clause": _fromClause,
   "_import_clause_default_import": importClauseDefaultImport,
+  "_import_clause_group1": _importClauseGroup1,
   "_import_clause_named_imports": importClauseNamedImports,
   "_import_clause_namespace_import": importClauseNamespaceImport,
   "_import_specifier_as": _importSpecifierAs,
@@ -4760,6 +4837,8 @@ export const _factoryMap = {
   "while_statement": whileStatement,
   "with_statement": withStatement,
   "yield_expression": yieldExpression,
+  "import_clause_group1": importClauseGroup1,
+  "catch_clause_group1": catchClauseGroup1,
   "_template_chars": templateChars,
   "_ternary_qmark": ternaryQmark,
   "html_comment": htmlComment,

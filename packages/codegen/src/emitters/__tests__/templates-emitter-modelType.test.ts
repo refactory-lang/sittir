@@ -17,6 +17,7 @@
  * - Polymorph: mocks carry `forms` with `.kind` + `.name`.
  */
 
+import { FIELD, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type {
 	FieldRule,
@@ -112,16 +113,16 @@ function mockPolymorph(forms: AssembledGroup[]): AssembledPolymorph {
 describe('emitBranchTemplate', () => {
 	it('emits a single literal for a string-only rule', () => {
 		// renderRule (wrapper-free): a plain string is unchanged from RawRule.
-		const rule: StringRule = { type: 'string', value: 'fn' };
+		const rule: StringRule = { type: STRING, value: 'fn' };
 		expect(emitBranchTemplate(mockBranch(rule), makeCtx())).toBe('fn');
 	});
 
 	it('emits literal + slot for a seq with a leaf-attribute symbol (RenderRule field path)', () => {
 		// RenderRule: no FieldRule wrapper — fieldName is a leaf attribute on the symbol.
-		const sym: SymbolRule = { type: 'symbol', name: 'identifier', id: 'r1', fieldName: 'name' };
+		const sym: SymbolRule = { type: SYMBOL, name: 'identifier', id: 'r1', fieldName: 'name' };
 		const rule: SeqRule = {
-			type: 'seq',
-			members: [{ type: 'string', value: 'fn ' }, sym]
+			type: SEQ,
+			members: [{ type: STRING, value: 'fn ' }, sym]
 		};
 		const slot = makeSlot({ name: 'name', propertyName: 'name', storageName: 'name' });
 		const ctx = makeCtx({
@@ -137,20 +138,20 @@ describe('emitBranchTemplate', () => {
 	it('emits multiple slots interleaved with literals', () => {
 		// RenderRule: both left/right symbols carry fieldName attributes.
 		const left: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'expression',
 			id: 'rL',
 			fieldName: 'left'
 		};
 		const right: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'expression',
 			id: 'rR',
 			fieldName: 'right'
 		};
 		const rule: SeqRule = {
-			type: 'seq',
-			members: [left, { type: 'string', value: ' + ' }, right]
+			type: SEQ,
+			members: [left, { type: STRING, value: ' + ' }, right]
 		};
 		const slotL = makeSlot({ name: 'left', propertyName: 'left', storageName: 'left' });
 		const slotR = makeSlot({ name: 'right', propertyName: 'right', storageName: 'right' });
@@ -170,16 +171,16 @@ describe('emitBranchTemplate', () => {
 
 describe('emitGroupTemplate', () => {
 	it('emits a single literal for a string-only rule', () => {
-		const rule: StringRule = { type: 'string', value: 'pub' };
+		const rule: StringRule = { type: STRING, value: 'pub' };
 		expect(emitGroupTemplate(mockGroup(rule), makeCtx())).toBe('pub');
 	});
 
 	it('emits literal + slot for a seq with a leaf-attribute symbol (RenderRule field path)', () => {
 		// RenderRule: no FieldRule wrapper — fieldName is a leaf attribute on the symbol.
-		const sym: SymbolRule = { type: 'symbol', name: 'identifier', id: 'rg1', fieldName: 'name' };
+		const sym: SymbolRule = { type: SYMBOL, name: 'identifier', id: 'rg1', fieldName: 'name' };
 		const rule: SeqRule = {
-			type: 'seq',
-			members: [{ type: 'string', value: 'mod ' }, sym]
+			type: SEQ,
+			members: [{ type: STRING, value: 'mod ' }, sym]
 		};
 		const slot = makeSlot({ name: 'name', propertyName: 'name', storageName: 'name' });
 		const ctx = makeCtx({
@@ -195,15 +196,15 @@ describe('emitGroupTemplate', () => {
 
 describe('emitMultiTemplate', () => {
 	it('emits a list slot when the inner is a field', () => {
-		const innerSym: SymbolRule = { type: 'symbol', name: 'item', id: 'rm1' };
+		const innerSym: SymbolRule = { type: SYMBOL, name: 'item', id: 'rm1' };
 		const innerField: FieldRule = {
-			type: 'field',
+			type: FIELD,
 			name: 'items',
 			content: innerSym,
 			id: 'fm1',
 			multiplicity: 'array'
 		};
-		const rule: RepeatRule = { type: 'repeat', content: innerField };
+		const rule: RepeatRule = { type: REPEAT, content: innerField };
 		const slot = makeSlot({ name: 'items', propertyName: 'items', storageName: 'items' });
 		const ctx = makeCtx({
 			nodeMap: {
@@ -216,16 +217,16 @@ describe('emitMultiTemplate', () => {
 	});
 
 	it('honours the repeat separator for repeat1', () => {
-		const innerSym: SymbolRule = { type: 'symbol', name: 'item', id: 'rm2' };
+		const innerSym: SymbolRule = { type: SYMBOL, name: 'item', id: 'rm2' };
 		const innerField: FieldRule = {
-			type: 'field',
+			type: FIELD,
 			name: 'items',
 			content: innerSym,
 			id: 'fm2',
 			multiplicity: 'array',
 			separator: ','
 		};
-		const rule: Repeat1Rule = { type: 'repeat1', content: innerField, separator: ',' };
+		const rule: Repeat1Rule = { type: REPEAT1, content: innerField, separator: ',' };
 		const slot = makeSlot({ name: 'items', propertyName: 'items', storageName: 'items' });
 		const ctx = makeCtx({
 			nodeMap: {
@@ -240,7 +241,7 @@ describe('emitMultiTemplate', () => {
 
 describe('emitPolymorphTemplate', () => {
 	it('emits a single `variant`-guarded body for a one-form polymorph', () => {
-		const rule: StringRule = { type: 'string', value: 'A' };
+		const rule: StringRule = { type: STRING, value: 'A' };
 		const form = mockGroup(rule, 'formA');
 		expect(emitPolymorphTemplate(mockPolymorph([form]), makeCtx())).toBe(
 			'{%- if variant == "formA" -%}A{%- endif -%}'
@@ -248,8 +249,8 @@ describe('emitPolymorphTemplate', () => {
 	});
 
 	it('aggregates two forms into separate `variant` guards', () => {
-		const ruleA: StringRule = { type: 'string', value: 'A' };
-		const ruleB: StringRule = { type: 'string', value: 'B' };
+		const ruleA: StringRule = { type: STRING, value: 'A' };
+		const ruleB: StringRule = { type: STRING, value: 'B' };
 		const formA = mockGroup(ruleA, 'formA');
 		const formB = mockGroup(ruleB, 'formB');
 		const out = emitPolymorphTemplate(mockPolymorph([formA, formB]), makeCtx());
@@ -262,16 +263,16 @@ describe('emitPolymorphTemplate', () => {
 	it('emits Jinja slots inside each form body (RenderRule leaf-attribute path)', () => {
 		// RenderRule: no FieldRule wrappers — fieldName is a leaf attribute on the symbol.
 		const symA: SymbolRule = {
-			type: 'symbol',
+			type: SYMBOL,
 			name: 'expression',
 			id: 'rpa',
 			fieldName: 'left'
 		};
 		const ruleA: SeqRule = {
-			type: 'seq',
-			members: [symA, { type: 'string', value: ' + ' }, symA]
+			type: SEQ,
+			members: [symA, { type: STRING, value: ' + ' }, symA]
 		};
-		const ruleB: StringRule = { type: 'string', value: 'B' };
+		const ruleB: StringRule = { type: STRING, value: 'B' };
 		const slotL = makeSlot({ name: 'left', propertyName: 'left', storageName: 'left' });
 		const ctx = makeCtx({
 			nodeMap: {

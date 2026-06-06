@@ -1,5 +1,5 @@
 import { Option } from 'commander';
-import type { CommandModule } from '../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../framework/command-module.ts';
 import { withGrammar, withOutput } from '../framework/options.ts';
 import {
 	runCodegen,
@@ -32,8 +32,7 @@ export const gen: CommandModule = {
 	name: 'gen',
 	describe: 'Generate typed factories, templates, and native bindings from a grammar',
 	register: (program) => {
-		withOutput(withGrammar(program.command('gen')))
-			.description('Generate typed factories, templates, and native bindings from a grammar')
+		withOutput(withGrammar(defineCommand(program, gen)))
 			.option('-n, --nodes <list>', 'Comma-separated node kinds to generate')
 			.option('-a, --all', 'Generate TS + native render-module artifacts (full chain)')
 			.option('--tests-dir <dir>', 'Output directory for test files')

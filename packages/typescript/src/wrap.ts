@@ -406,6 +406,23 @@ export function wrap_CallSignature(data: T._CallSignature, tree: TreeHandle) {
   return _node;
 }
 
+export function wrap_CatchClauseGroup1(data: T._CatchClauseGroup1, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._CatchClauseGroup1 as const,
+    _parameter: normalizeSingularWrapSlot(data._parameter, "parameter", true, data.$type, { tree, nodeType: data.$type, slotName: "parameter", span: (data as _NodeData).$span }),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
+
+    parameter() { return drillIn<T.Identifier | T.DestructuringPattern>(this._parameter, tree); },
+    type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
+    $with: {
+      parameter: (v: NonNullable<T._CatchClauseGroup1['_parameter']>) => wrap_CatchClauseGroup1({ ...data, _parameter: v }, tree),
+      type: (v: NonNullable<T._CatchClauseGroup1['_type']>) => wrap_CatchClauseGroup1({ ...data, _type: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapClassBodyMember(data: T.ClassBodyMember, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
@@ -745,12 +762,15 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForHeaderVarKind as const,
+    _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type, { tree, nodeType: data.$type, slotName: "kind", span: (data as _NodeData).$span })),
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type, { tree, nodeType: data.$type, slotName: "left", span: (data as _NodeData).$span }),
     _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),
 
+    kind() { return this._kind; },
     left() { return drillIn<T.Identifier | T.DestructuringPattern>(this._left, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
+      kind: (v: NonNullable<T.ForHeaderVarKind['_kind']>) => wrapForHeaderVarKind({ ...data, _kind: v }, tree),
       left: (v: NonNullable<T.ForHeaderVarKind['_left']>) => wrapForHeaderVarKind({ ...data, _left: v }, tree),
       value: (v: NonNullable<T.ForHeaderVarKind['_value']>) => wrapForHeaderVarKind({ ...data, _value: v }, tree),
     },
@@ -781,14 +801,26 @@ export function wrapImportClauseDefaultImport(data: T.ImportClauseDefaultImport,
     ...data,
     $type: TSKindId.ImportClauseDefaultImport as const,
     _import_identifier: normalizeSingularWrapSlot((data._identifier ?? data._import_identifier), "import_identifier", true, data.$type, { tree, nodeType: data.$type, slotName: "import_identifier", span: (data as _NodeData).$span }),
-    _content: normalizeSingularWrapSlot((data._namespace_import ?? data._named_imports ?? data._content), "content", false, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+    _import_clause_group1: normalizeSingularWrapSlot(data._import_clause_group1, "import_clause_group1", false, data.$type, { tree, nodeType: data.$type, slotName: "import_clause_group1", span: (data as _NodeData).$span }),
 
     importIdentifier() { return drillIn<T.ImportIdentifier>(this._import_identifier, tree); },
-    content() { return drillIn<T.NamespaceImport | T.NamedImports | undefined>(this._content, tree); },
+    importClauseGroup1() { return drillIn<T.ImportClauseGroup1 | undefined>(this._import_clause_group1, tree); },
     $with: {
       importIdentifier: (v: NonNullable<T.ImportClauseDefaultImport['_import_identifier']>) => wrapImportClauseDefaultImport({ ...data, _import_identifier: v }, tree),
-      content: (v: NonNullable<T.ImportClauseDefaultImport['_content']>) => wrapImportClauseDefaultImport({ ...data, _content: v }, tree),
+      importClauseGroup1: (v: NonNullable<T.ImportClauseDefaultImport['_import_clause_group1']>) => wrapImportClauseDefaultImport({ ...data, _import_clause_group1: v }, tree),
     },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrap_ImportClauseGroup1(data: T._ImportClauseGroup1, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._ImportClauseGroup1 as const,
+    _content: normalizeSingularWrapSlot((data._namespace_import ?? data._named_imports ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+
+    content() { return drillIn<T.NamespaceImport | T.NamedImports>(this._content, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrap_ImportClauseGroup1({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1018,10 +1050,13 @@ export function wrapPublicFieldDefinitionAccessFirst(data: T.PublicFieldDefiniti
     ...data,
     $type: TSKindId.PublicFieldDefinitionAccessFirst as const,
     _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", true, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _declare_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._declare_marker, "declare_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "declare_marker", span: (data as _NodeData).$span })),
 
     accessibilityModifier() { return this._accessibility_modifier; },
+    declareMarker() { return this._declare_marker; },
     $with: {
       accessibilityModifier: (v: NonNullable<T.PublicFieldDefinitionAccessFirst['_accessibility_modifier']>) => wrapPublicFieldDefinitionAccessFirst({ ...data, _accessibility_modifier: v }, tree),
+      declareMarker: (v: NonNullable<T.PublicFieldDefinitionAccessFirst['_declare_marker']>) => wrapPublicFieldDefinitionAccessFirst({ ...data, _declare_marker: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1455,12 +1490,15 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssignmentExpression as const,
+    _using_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._using_marker, "using_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "using_marker", span: (data as _NodeData).$span })),
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type, { tree, nodeType: data.$type, slotName: "left", span: (data as _NodeData).$span }),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type, { tree, nodeType: data.$type, slotName: "right", span: (data as _NodeData).$span }),
 
+    usingMarker() { return this._using_marker; },
     left() { return drillAs<T.ParenthesizedExpression | T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression>(this._left, tree, "identifier", "_reserved_identifier"); },
     right() { return drillIn<T.Expression>(this._right, tree); },
     $with: {
+      usingMarker: (v: NonNullable<T.AssignmentExpression['_using_marker']>) => wrapAssignmentExpression({ ...data, _using_marker: v }, tree),
       left: (v: NonNullable<T.AssignmentExpression['_left']>) => wrapAssignmentExpression({ ...data, _left: v }, tree),
       right: (v: NonNullable<T.AssignmentExpression['_right']>) => wrapAssignmentExpression({ ...data, _right: v }, tree),
     },
@@ -1592,16 +1630,13 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CatchClause as const,
-    _parameter: normalizeSingularWrapSlot(data._parameter, "parameter", false, data.$type, { tree, nodeType: data.$type, slotName: "parameter", span: (data as _NodeData).$span }),
-    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
+    _catch_clause_group1: normalizeSingularWrapSlot(data._catch_clause_group1, "catch_clause_group1", false, data.$type, { tree, nodeType: data.$type, slotName: "catch_clause_group1", span: (data as _NodeData).$span }),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type, { tree, nodeType: data.$type, slotName: "body", span: (data as _NodeData).$span }),
 
-    parameter() { return drillIn<T.Identifier | T.DestructuringPattern | undefined>(this._parameter, tree); },
-    type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
+    catchClauseGroup1() { return drillIn<T.CatchClauseGroup1 | undefined>(this._catch_clause_group1, tree); },
     body() { return drillIn<T.StatementBlock>(this._body, tree); },
     $with: {
-      parameter: (v: NonNullable<T.CatchClause['_parameter']>) => wrapCatchClause({ ...data, _parameter: v }, tree),
-      type: (v: NonNullable<T.CatchClause['_type']>) => wrapCatchClause({ ...data, _type: v }, tree),
+      catchClauseGroup1: (v: NonNullable<T.CatchClause['_catch_clause_group1']>) => wrapCatchClause({ ...data, _catch_clause_group1: v }, tree),
       body: (v: NonNullable<T.CatchClause['_body']>) => wrapCatchClause({ ...data, _body: v }, tree),
     },
   }, methodsEngine);
@@ -2124,16 +2159,19 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForInStatement as const,
+    _await_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._await_marker, "await_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "await_marker", span: (data as _NodeData).$span })),
     _content: normalizeSingularWrapSlot((data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
     _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type, { tree, nodeType: data.$type, slotName: "right", span: (data as _NodeData).$span }),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type, { tree, nodeType: data.$type, slotName: "body", span: (data as _NodeData).$span }),
 
+    awaitMarker() { return this._await_marker; },
     content() { return drillIn<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree); },
     operator() { return this._operator; },
     right() { return drillIn<T.Expressions>(this._right, tree); },
     body() { return drillIn<T.Statement>(this._body, tree); },
     $with: {
+      awaitMarker: (v: NonNullable<T.ForInStatement['_await_marker']>) => wrapForInStatement({ ...data, _await_marker: v }, tree),
       content: (v: NonNullable<T.ForInStatement['_content']>) => wrapForInStatement({ ...data, _content: v }, tree),
       operator: (v: NonNullable<T.ForInStatement['_operator']>) => wrapForInStatement({ ...data, _operator: v }, tree),
       right: (v: NonNullable<T.ForInStatement['_right']>) => wrapForInStatement({ ...data, _right: v }, tree),
@@ -3964,6 +4002,33 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
   return _node;
 }
 
+export function wrapImportClauseGroup1(data: T.ImportClauseGroup1, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    _content: normalizeSingularWrapSlot((data._namespace_import ?? data._named_imports ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
+
+    content() { return drillIn<T.NamespaceImport | T.NamedImports>(this._content, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapImportClauseGroup1({ ...data, $other: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapCatchClauseGroup1(data: T.CatchClauseGroup1, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    _parameter: normalizeSingularWrapSlot(data._parameter, "parameter", true, data.$type, { tree, nodeType: data.$type, slotName: "parameter", span: (data as _NodeData).$span }),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
+
+    parameter() { return drillIn<T.Identifier | T.DestructuringPattern>(this._parameter, tree); },
+    type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
+    $with: {
+      parameter: (v: NonNullable<T.CatchClauseGroup1['_parameter']>) => wrapCatchClauseGroup1({ ...data, _parameter: v }, tree),
+      type: (v: NonNullable<T.CatchClauseGroup1['_type']>) => wrapCatchClauseGroup1({ ...data, _type: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   '_ambient_declaration_declaration': (d, t) => wrapAmbientDeclarationDeclaration(d as unknown as T.AmbientDeclarationDeclaration, t),
   '_ambient_declaration_global': (d, t) => wrapAmbientDeclarationGlobal(d as unknown as T.AmbientDeclarationGlobal, t),
@@ -3974,6 +4039,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_call_expression_member': (d, t) => wrapCallExpressionMember(d as unknown as T.CallExpressionMember, t),
   '_call_expression_template_call': (d, t) => wrapCallExpressionTemplateCall(d as unknown as T.CallExpressionTemplateCall, t),
   '_call_signature': (d, t) => wrap_CallSignature(d as unknown as T._CallSignature, t),
+  '_catch_clause_group1': (d, t) => wrap_CatchClauseGroup1(d as unknown as T._CatchClauseGroup1, t),
   '_class_body_member': (d, t) => wrapClassBodyMember(d as unknown as T.ClassBodyMember, t),
   '_class_body_method': (d, t) => wrapClassBodyMethod(d as unknown as T.ClassBodyMethod, t),
   '_class_body_method_sig': (d, t) => wrapClassBodyMethodSig(d as unknown as T.ClassBodyMethodSig, t),
@@ -3999,6 +4065,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_formal_parameter': (d, t) => wrapFormalParameter(d as unknown as T.FormalParameter, t),
   '_from_clause': (d, t) => wrapFromClause(d as unknown as T.FromClause, t),
   '_import_clause_default_import': (d, t) => wrapImportClauseDefaultImport(d as unknown as T.ImportClauseDefaultImport, t),
+  '_import_clause_group1': (d, t) => wrap_ImportClauseGroup1(d as unknown as T._ImportClauseGroup1, t),
   '_import_clause_named_imports': (d, t) => wrapImportClauseNamedImports(d as unknown as T.ImportClauseNamedImports, t),
   '_import_clause_namespace_import': (d, t) => wrapImportClauseNamespaceImport(d as unknown as T.ImportClauseNamespaceImport, t),
   '_import_identifier': (d, t) => wrapImportIdentifier(d as unknown as T.ImportIdentifier, t),
@@ -4215,6 +4282,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'while_statement': (d, t) => wrapWhileStatement(d as unknown as T.WhileStatement, t),
   'with_statement': (d, t) => wrapWithStatement(d as unknown as T.WithStatement, t),
   'yield_expression': (d, t) => wrapYieldExpression(d as unknown as T.YieldExpression, t),
+  'import_clause_group1': (d, t) => wrapImportClauseGroup1(d as unknown as T.ImportClauseGroup1, t),
+  'catch_clause_group1': (d, t) => wrapCatchClauseGroup1(d as unknown as T.CatchClauseGroup1, t),
   '_template_chars': (d) => ({ ...d, $type: TSKindId.TemplateChars as const }),
   '_ternary_qmark': (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
   'html_comment': (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),

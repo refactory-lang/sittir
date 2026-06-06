@@ -8,33 +8,29 @@
  * pattern.
  */
 
+import { CHOICE, FIELD, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../compiler/rule.ts';
 import { simplifyRule, hoistInnerFieldOutOfFieldWrapper } from '../compiler/simplify.ts';
 
-const str = (value: string): Rule => ({ type: 'string', value });
-const sym = (name: string): Rule => ({ type: 'symbol', name });
-const sup = (name: string): Rule => ({ type: 'supertype', name, subtypes: [] });
+const str = (value: string): Rule => ({ type: STRING, value });
+const sym = (name: string): Rule => ({ type: SYMBOL, name });
+const sup = (name: string): Rule => ({ type: SUPERTYPE, name, subtypes: [] });
 const field = (name: string, content: Rule): Rule => ({
-	type: 'field',
+	type: FIELD,
 	name,
 	content
 });
-const seq = (...members: Rule[]): Rule => ({ type: 'seq', members });
-const choice = (...members: Rule[]): Rule => ({ type: 'choice', members });
+const seq = (...members: Rule[]): Rule => ({ type: SEQ, members });
+const choice = (...members: Rule[]): Rule => ({ type: CHOICE, members });
 const variant = (name: string, content: Rule): Rule => ({
-	type: 'variant',
+	type: VARIANT,
 	name,
 	content
 });
-const optional = (content: Rule): Rule => ({ type: 'optional', content });
+const optional = (content: Rule): Rule => ({ type: OPTIONAL, content });
 const repeat1 = (content: Rule, separator?: string): Rule =>
-	separator !== undefined ? { type: 'repeat1', content, separator } : { type: 'repeat1', content };
-const clause = (name: string, content: Rule): Rule => ({
-	type: 'clause',
-	name,
-	content
-});
+	separator !== undefined ? { type: REPEAT1, content, separator } : { type: REPEAT1, content };
 
 describe('simplifyRule — mergeChoiceBranches', () => {
 	it("merges same-shape branches that differ only in one field's literal", () => {
@@ -184,21 +180,10 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 	// hoist the inner field is the top-level reference the walker sees,
 	// matching tree-sitter's parse-tree shape.
 	//
-	// Canonical case (typescript `infer_type`):
-	//   field('constraint', clause('type', seq('extends', field('type', X))))
-	//   → clause('type', seq('extends', field('type', X)))
-
 	it('hoists an inner field out of `field(outer, optional(seq(literal, field(inner))))`', () => {
 		// Pre-clause-detection shape of typescript `infer_type`.
 		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
 		const expected = optional(seq(str('extends'), field('type', sym('type'))));
-		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(expected);
-	});
-
-	it('hoists through a `clause` wrapper', () => {
-		// Post-Link-detectClause shape of typescript `infer_type`.
-		const input = field('constraint', clause('type', seq(str('extends'), field('type', sym('type')))));
-		const expected = clause('type', seq(str('extends'), field('type', sym('type'))));
 		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(expected);
 	});
 

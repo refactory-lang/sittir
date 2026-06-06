@@ -1,10 +1,31 @@
+import {
+	SEQ,
+	OPTIONAL,
+	CHOICE,
+	REPEAT,
+	REPEAT1,
+	FIELD,
+	VARIANT,
+	ENUM,
+	SUPERTYPE,
+	GROUP,
+	TERMINAL,
+	STRING,
+	PATTERN,
+	INDENT,
+	DEDENT,
+	NEWLINE,
+	SYMBOL,
+	ALIAS,
+	TOKEN,
+} from './rule-types.ts';
 /**
  * compiler/rule.ts — Shared IR
  *
  * One type throughout the pipeline. Defined once, never extended.
  * Rule type presence varies by phase:
  *   - After Evaluate: symbol, alias, token, repeat1 present
- *   - After Link: symbol, alias, token gone; clause, group, indent/dedent/newline added.
+ *   - After Link: symbol, alias, token gone; group, indent/dedent/newline added.
  *     `repeat1` is preserved so downstream field/child derivation can stamp the
  *     `nonEmpty` flag on the resulting slot for emitter tuple-type rendering.
  *   - After Optimize: variant added; structural grouping may be restructured
@@ -77,6 +98,16 @@ export interface RuleBase {
 	readonly aliasedFrom?: string;
 	readonly aliasNamed?: boolean;
 
+	/**
+	 * Inert provenance bag. NEVER drives compiler behavior beyond path-descent
+	 * lookup keying (`feedback_metadata_not_behavior`): structural facts decide
+	 * folding/slotting. `source` marks how the rule entered the tree
+	 * (`'enrich'` for the enrich-lifted SYMBOL ref; `'group-lift'` legacy);
+	 * `inlinedFrom` records the hidden kind whose body was spliced in by the
+	 * normalize inline hoist (§D-2a), for diagnostics only.
+	 */
+	readonly metadata?: { source?: RuleSource | 'enrich' | 'group-lift'; inlinedFrom?: string };
+
 	readonly separator?:
 		| string
 		| readonly Rule[]
@@ -110,7 +141,6 @@ export type Rule =
 	// Named patterns — clean wrappers, no derived metadata
 	| FieldRule
 	| VariantRule
-	| ClauseRule
 	| EnumRule
 	| SupertypeRule
 	| GroupRule
@@ -165,22 +195,22 @@ export type SimplifiedRule = RenderRule & {
 // ---------------------------------------------------------------------------
 
 export interface SeqRule extends RuleBase {
-	readonly type: 'seq';
+	readonly type: typeof SEQ;
 	readonly members: Rule[];
 }
 
 export interface OptionalRule extends RuleBase {
-	readonly type: 'optional';
+	readonly type: typeof OPTIONAL;
 	readonly content: Rule;
 }
 
 export interface ChoiceRule extends RuleBase {
-	readonly type: 'choice';
+	readonly type: typeof CHOICE;
 	readonly members: Rule[];
 }
 
 export interface RepeatRule extends RuleBase {
-	readonly type: 'repeat';
+	readonly type: typeof REPEAT;
 	readonly content: Rule;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -188,7 +218,7 @@ export interface RepeatRule extends RuleBase {
 }
 
 export interface Repeat1Rule extends RuleBase {
-	readonly type: 'repeat1';
+	readonly type: typeof REPEAT1;
 	readonly content: Rule;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -200,7 +230,7 @@ export interface Repeat1Rule extends RuleBase {
 // ---------------------------------------------------------------------------
 
 export interface FieldRule extends RuleBase {
-	readonly type: 'field';
+	readonly type: typeof FIELD;
 	readonly name: string;
 	readonly content: Rule;
 	readonly source?: 'grammar' | 'override' | 'enriched' | 'inferred';
@@ -223,16 +253,11 @@ export interface FieldRule extends RuleBase {
 }
 
 export interface VariantRule extends RuleBase {
-	readonly type: 'variant';
+	readonly type: typeof VARIANT;
 	readonly name: string;
 	readonly content: Rule;
 }
 
-export interface ClauseRule extends RuleBase {
-	readonly type: 'clause';
-	readonly name: string;
-	readonly content: Rule;
-}
 
 /**
  * Rule-level provenance vocabulary.
@@ -258,7 +283,7 @@ export type RuleSource = 'grammar' | 'promoted' | 'override';
  * string list reads `.members.map(m => m.value)`.
  */
 export interface EnumRule extends RuleBase {
-	readonly type: 'enum';
+	readonly type: typeof ENUM;
 	readonly members: readonly StringRule[];
 	readonly source?: RuleSource;
 }
@@ -277,21 +302,21 @@ export function normalizeEnumMembers(
 ): StringRule | EnumRule {
 	if (members.length === 1) return members[0]!;
 	return {
-		type: 'enum',
+		type: ENUM,
 		members,
 		source
 	} satisfies EnumRule;
 }
 
 export interface SupertypeRule extends RuleBase {
-	readonly type: 'supertype';
+	readonly type: typeof SUPERTYPE;
 	readonly name: string;
 	readonly subtypes: string[];
 	readonly source?: RuleSource;
 }
 
 export interface GroupRule extends RuleBase {
-	readonly type: 'group';
+	readonly type: typeof GROUP;
 	readonly name: string;
 	readonly content: Rule;
 }
@@ -309,7 +334,7 @@ export interface GroupRule extends RuleBase {
  * Assemble routes this to `modelType: 'pattern'` without inspecting content.
  */
 export interface TerminalRule extends RuleBase {
-	readonly type: 'terminal';
+	readonly type: typeof TERMINAL;
 	readonly content: Rule;
 	/** Always 'promoted' today — Link synthesises terminals from shape. */
 	readonly source?: RuleSource;
@@ -320,12 +345,12 @@ export interface TerminalRule extends RuleBase {
 // ---------------------------------------------------------------------------
 
 export interface StringRule extends RuleBase {
-	readonly type: 'string';
+	readonly type: typeof STRING;
 	readonly value: string;
 }
 
 export interface PatternRule extends RuleBase {
-	readonly type: 'pattern';
+	readonly type: typeof PATTERN;
 	readonly value: string;
 }
 
@@ -334,15 +359,15 @@ export interface PatternRule extends RuleBase {
 // ---------------------------------------------------------------------------
 
 export interface IndentRule extends RuleBase {
-	readonly type: 'indent';
+	readonly type: typeof INDENT;
 }
 
 export interface DedentRule extends RuleBase {
-	readonly type: 'dedent';
+	readonly type: typeof DEDENT;
 }
 
 export interface NewlineRule extends RuleBase {
-	readonly type: 'newline';
+	readonly type: typeof NEWLINE;
 }
 
 // ---------------------------------------------------------------------------
@@ -350,7 +375,7 @@ export interface NewlineRule extends RuleBase {
 // ---------------------------------------------------------------------------
 
 export interface SymbolRule extends RuleBase {
-	readonly type: 'symbol';
+	readonly type: typeof SYMBOL;
 	readonly name: string;
 	readonly source?: 'grammar' | 'link' | 'group-lift';
 	/** Original literal text when Link synthesized this ref from a string token. */
@@ -369,14 +394,14 @@ export interface SymbolRule extends RuleBase {
 }
 
 export interface AliasRule extends RuleBase {
-	readonly type: 'alias';
+	readonly type: typeof ALIAS;
 	readonly content: Rule;
 	readonly named: boolean;
 	readonly value: string;
 }
 
 export interface TokenRule extends RuleBase {
-	readonly type: 'token';
+	readonly type: typeof TOKEN;
 	readonly content: Rule;
 	readonly immediate: boolean;
 }
@@ -392,28 +417,28 @@ export interface TokenRule extends RuleBase {
 // new Rule types are added.
 // ---------------------------------------------------------------------------
 
-export const isSeq = (r: Rule): r is SeqRule => r.type === 'seq';
-export const isChoice = (r: Rule): r is ChoiceRule => r.type === 'choice';
-export const isOptional = (r: Rule): r is OptionalRule => r.type === 'optional';
-export const isRepeat = (r: Rule): r is RepeatRule => r.type === 'repeat';
-export const isRepeat1 = (r: Rule): r is Repeat1Rule => r.type === 'repeat1';
-export const isField = (r: Rule): r is FieldRule => r.type === 'field';
-export const isClause = (r: Rule): r is ClauseRule => r.type === 'clause';
-export const isEnum = (r: Rule): r is EnumRule => r.type === 'enum';
-export const isSupertype = (r: Rule): r is SupertypeRule => r.type === 'supertype';
-export const isGroup = (r: Rule): r is GroupRule => r.type === 'group';
-export const isTerminal = (r: Rule): r is TerminalRule => r.type === 'terminal';
-export const isString = (r: Rule): r is StringRule => r.type === 'string';
-export const isPattern = (r: Rule): r is PatternRule => r.type === 'pattern';
-export const isIndent = (r: Rule): r is IndentRule => r.type === 'indent';
-export const isDedent = (r: Rule): r is DedentRule => r.type === 'dedent';
-export const isNewline = (r: Rule): r is NewlineRule => r.type === 'newline';
-export const isSymbol = (r: Rule): r is SymbolRule => r.type === 'symbol';
-export const isAlias = (r: Rule): r is AliasRule => r.type === 'alias';
-export const isToken = (r: Rule): r is TokenRule => r.type === 'token';
-export const isLinkSymbol = (r: Rule): r is SymbolRule => r.type === 'symbol' && r.source === 'link';
+export const isSeq = (r: Rule): r is SeqRule => r.type === SEQ;
+export const isChoice = (r: Rule): r is ChoiceRule => r.type === CHOICE;
+export const isOptional = (r: Rule): r is OptionalRule => r.type === OPTIONAL;
+export const isRepeat = (r: Rule): r is RepeatRule => r.type === REPEAT;
+export const isRepeat1 = (r: Rule): r is Repeat1Rule => r.type === REPEAT1;
+export const isField = (r: Rule): r is FieldRule => r.type === FIELD;
+
+export const isEnum = (r: Rule): r is EnumRule => r.type === ENUM;
+export const isSupertype = (r: Rule): r is SupertypeRule => r.type === SUPERTYPE;
+export const isGroup = (r: Rule): r is GroupRule => r.type === GROUP;
+export const isTerminal = (r: Rule): r is TerminalRule => r.type === TERMINAL;
+export const isString = (r: Rule): r is StringRule => r.type === STRING;
+export const isPattern = (r: Rule): r is PatternRule => r.type === PATTERN;
+export const isIndent = (r: Rule): r is IndentRule => r.type === INDENT;
+export const isDedent = (r: Rule): r is DedentRule => r.type === DEDENT;
+export const isNewline = (r: Rule): r is NewlineRule => r.type === NEWLINE;
+export const isSymbol = (r: Rule): r is SymbolRule => r.type === SYMBOL;
+export const isAlias = (r: Rule): r is AliasRule => r.type === ALIAS;
+export const isToken = (r: Rule): r is TokenRule => r.type === TOKEN;
+export const isLinkSymbol = (r: Rule): r is SymbolRule => r.type === SYMBOL && r.source === 'link';
 export const literalTextOf = (r: Rule): string | undefined =>
-	r.type === 'string' ? r.value : isLinkSymbol(r) ? r.literal : undefined;
+	r.type === STRING ? r.value : isLinkSymbol(r) ? r.literal : undefined;
 
 // ---------------------------------------------------------------------------
 // Tree walkers — pure Rule-tree projections, no AssembledNode concepts
@@ -434,20 +459,19 @@ export function collectFieldNames(rule: Rule): Set<string> {
 
 function walkFieldNames(rule: Rule, out: Set<string>): void {
 	switch (rule.type) {
-		case 'field':
+		case FIELD:
 			out.add(rule.name);
 			walkFieldNames(rule.content, out);
 			return;
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			for (const m of rule.members) walkFieldNames(m, out);
 			return;
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
 			walkFieldNames(rule.content, out);
 			return;
 		default:
@@ -497,21 +521,20 @@ function replaceAtPathRec(rule: Rule, segments: readonly string[], depth: number
 	if (depth === segments.length) return replacement;
 	const idx = parseInt(segments[depth]!, 10);
 	switch (rule.type) {
-		case 'seq':
-		case 'choice': {
+		case SEQ:
+		case CHOICE: {
 			const members = rule.members.slice();
 			members[idx] = replaceAtPathRec(members[idx]!, segments, depth + 1, replacement);
 			return { ...rule, members };
 		}
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'field':
-		case 'token':
-		case 'alias':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case TOKEN:
+		case ALIAS:
+		case VARIANT:
+		case GROUP:
 			return { ...rule, content: replaceAtPathRec((rule as { content: Rule }).content, segments, depth + 1, replacement) } as Rule;
 		default:
 			throw new Error(`replaceAtPath: cannot descend into '${rule.type}' at segment ${depth}`);

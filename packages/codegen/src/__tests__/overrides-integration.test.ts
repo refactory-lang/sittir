@@ -1,3 +1,4 @@
+import { SEQ } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { resolveOverridesPath, resolveGrammarJsPath } from '../compiler/resolve-grammar.ts';
@@ -25,7 +26,7 @@ describe('Overrides integration', () => {
 		console.log('augmented_assignment type:', augAssign?.type);
 
 		// Check for override-injected fields
-		if (augAssign?.type === 'seq') {
+		if (augAssign?.type === SEQ) {
 			const fields = augAssign.members.filter((m: any) => m.type === 'field');
 			console.log(
 				'augmented_assignment fields:',
@@ -37,7 +38,7 @@ describe('Overrides integration', () => {
 		// the overrides.json wraps child 0 as field('block')
 		const block = raw.rules['block'];
 		console.log('block type:', block?.type);
-		if (block?.type === 'seq') {
+		if (block?.type === SEQ) {
 			const fields = block.members.filter((m: any) => m.type === 'field');
 			console.log(
 				'block fields:',

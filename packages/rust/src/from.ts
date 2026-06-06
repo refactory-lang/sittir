@@ -163,6 +163,7 @@ export const _fromMap = {
   "where_predicate": wherePredicateFrom,
   "while_expression": whileExpressionFrom,
   "yield_expression": yieldExpressionFrom,
+  "visibility_modifier_group1": visibilityModifierGroup1From,
   "string_content": stringContentFrom,
   "raw_string_literal_content": rawStringLiteralContentFrom,
   "float_literal": floatLiteralFrom,
@@ -320,6 +321,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "field_pattern": TSKindId.FieldPattern,
   "for_lifetimes": TSKindId.ForLifetimes,
   "line_comment": TSKindId.LineComment,
+  "match_block": TSKindId.MatchBlock,
   "or_pattern": TSKindId.OrPattern,
   "parameters": TSKindId.Parameters,
   "range_expression": TSKindId.RangeExpression,
@@ -334,6 +336,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "visibility_modifier": TSKindId.VisibilityModifier,
   "where_clause": TSKindId.WhereClause,
   "yield_expression": TSKindId.YieldExpression,
+  "visibility_modifier_group1": TSKindId._VisibilityModifierGroup1,
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -366,6 +369,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "field_pattern": return F.fieldPattern(children[0] as Parameters<typeof F.fieldPattern>[0]);
     case "for_lifetimes": return F.forLifetimes(...(children as Parameters<typeof F.forLifetimes>));
     case "line_comment": return F.lineComment(children[0] as Parameters<typeof F.lineComment>[0]);
+    case "match_block": return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
     case "or_pattern": return F.orPattern(children[0] as Parameters<typeof F.orPattern>[0]);
     case "parameters": return F.parameters(...(children as Parameters<typeof F.parameters>));
     case "range_expression": return F.rangeExpression(children[0] as Parameters<typeof F.rangeExpression>[0]);
@@ -380,6 +384,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "visibility_modifier": return F.visibilityModifier(children[0] as Parameters<typeof F.visibilityModifier>[0]);
     case "where_clause": return F.whereClause(...(children as Parameters<typeof F.whereClause>));
     case "yield_expression": return F.yieldExpression(children[0] as Parameters<typeof F.yieldExpression>[0]);
+    case "visibility_modifier_group1": return F.visibilityModifierGroup1(children[0] as Parameters<typeof F.visibilityModifierGroup1>[0]);
     default: return undefined;
   }
 }
@@ -1013,6 +1018,7 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.L
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.genericTypeWithTurbofish>;
   return F.genericTypeWithTurbofish({
     type: _resolveOne<T.Identifier | T.ScopedIdentifier>(input.type, _K0, _K7),
+    turbofish: coerceKindEnumStorage(_resolveOne<"::">("::", _K8, _K8), [["::", kindIdFromName("::")] as const]),
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments") ?? F.typeArguments(),
   });
 }
@@ -1165,12 +1171,14 @@ export function matchArmFrom(input: T.MatchArm.Loose): ReturnType<typeof F.match
   });
 }
 
-export function matchBlockFrom(input?: T.MatchBlock.Loose): ReturnType<typeof F.matchBlock> {
-  if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.matchBlock>;
-  return F.matchBlock({
-    matchArm: _resolveManyBranch<T.MatchArm>(input?.matchArm, "match_arm"),
-    lastArm: _resolveOneBranch<T.LastMatchArm>(input?.lastArm, "last_match_arm"),
-  });
+export function matchBlockFrom(...input: readonly (T.MatchArm | T.MatchBlock)[]): ReturnType<typeof F.matchBlock> {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.MatchBlock) {
+    const data = input[0];
+    const stored = (data as unknown as { _match_arm?: unknown })._match_arm;
+    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+    return F.matchBlock(...(children as unknown as Parameters<typeof F.matchBlock>));
+  }
+  return F.matchBlock(...(input as unknown as Parameters<typeof F.matchBlock>));
 }
 
 export function matchExpressionFrom(input: T.MatchExpression.Loose): ReturnType<typeof F.matchExpression> {
@@ -1381,6 +1389,7 @@ export function selfFrom(input?: T.Self): ReturnType<typeof F.self> {
 export function selfParameterFrom(input?: T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.selfParameter>;
   return F.selfParameter({
+    reference: _resolveBooleanKeyword(input?.reference),
     lifetime: _resolveOneBranch<T.Lifetime>(input?.lifetime, "lifetime"),
     mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier),
     self: coerceKindEnumStorage(_resolveOne<"self">("self", _K8, _K8), [["self", kindIdFromName("self")] as const]),
@@ -1759,6 +1768,10 @@ export function yieldExpressionFrom(input?: T.Expression | T.YieldExpression): R
     return F.yieldExpression(child as Parameters<typeof F.yieldExpression>[0]);
   }
   return F.yieldExpression(input as Parameters<typeof F.yieldExpression>[0]);
+}
+
+export function visibilityModifierGroup1From(input?: (T.Self | T.Super | T.Crate | T.InPath) | T.VisibilityModifierGroup1): ReturnType<typeof F.visibilityModifierGroup1> {
+  return F.visibilityModifierGroup1(input as Parameters<typeof F.visibilityModifierGroup1>[0]);
 }
 
 export function stringContentFrom(input: string | T.StringContent): ReturnType<typeof F.stringContent> {

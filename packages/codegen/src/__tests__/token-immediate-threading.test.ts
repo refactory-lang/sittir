@@ -14,6 +14,7 @@
  * implemented — see the cleanup-rules §H1 note for what's still TODO.
  */
 
+import { FIELD, STRING, TOKEN } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
 	deriveSlots,
@@ -26,12 +27,12 @@ describe('§H1 — TokenRule metadata threading', () => {
 	it('preserves immediate=true through deriveValuesForRule', () => {
 		// Grammar shape: field('x', token.immediate('foo'))
 		const rule: Rule = {
-			type: 'field',
+			type: FIELD,
 			name: 'x',
 			content: {
-				type: 'token',
+				type: TOKEN,
 				immediate: true,
-				content: { type: 'string', value: 'foo' }
+				content: { type: STRING, value: 'foo' }
 			}
 		};
 		const slots = deriveSlots(rule);
@@ -47,12 +48,12 @@ describe('§H1 — TokenRule metadata threading', () => {
 	it('preserves immediate=false on plain token() wrapper', () => {
 		// Grammar shape: field('x', token('foo')) — lexer hint, not adjacency.
 		const rule: Rule = {
-			type: 'field',
+			type: FIELD,
 			name: 'x',
 			content: {
-				type: 'token',
+				type: TOKEN,
 				immediate: false,
-				content: { type: 'string', value: 'foo' }
+				content: { type: STRING, value: 'foo' }
 			}
 		};
 		const slots = deriveSlots(rule);
@@ -66,9 +67,9 @@ describe('§H1 — TokenRule metadata threading', () => {
 	it('leaves bare string terminals untagged', () => {
 		// Grammar shape: field('x', 'foo') — no token wrapper at all.
 		const rule: Rule = {
-			type: 'field',
+			type: FIELD,
 			name: 'x',
-			content: { type: 'string', value: 'foo' }
+			content: { type: STRING, value: 'foo' }
 		};
 		const slots = deriveSlots(rule);
 		const terminal = slots
@@ -80,9 +81,9 @@ describe('§H1 — TokenRule metadata threading', () => {
 
 	it('AssembledToken exposes immediate getter when rule is TokenRule', () => {
 		const tokRule: TokenRule = {
-			type: 'token',
+			type: TOKEN,
 			immediate: true,
-			content: { type: 'string', value: '!' }
+			content: { type: STRING, value: '!' }
 		};
 		const tok = new AssembledToken('_inner_marker', tokRule);
 		expect(tok.immediate).toBe(true);
@@ -91,7 +92,7 @@ describe('§H1 — TokenRule metadata threading', () => {
 	});
 
 	it('AssembledToken returns immediate=false when rule is plain StringRule', () => {
-		const strRule: StringRule = { type: 'string', value: 'pub' };
+		const strRule: StringRule = { type: STRING, value: 'pub' };
 		const tok = new AssembledToken('_kw_pub', strRule);
 		expect(tok.immediate).toBe(false);
 		expect(tok.tokenized).toBe(false);

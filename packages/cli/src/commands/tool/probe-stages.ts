@@ -1,4 +1,4 @@
-import type { CommandModule } from '../../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
 import { probeStages as runProbeStages } from '@sittir/tools';
 
@@ -6,8 +6,7 @@ export const probeStages: CommandModule = {
 name: 'probe-stages',
 describe: 'Dump a rule shape at every compiler phase',
 register: (program) => {
-withGrammar(program.command('probe-stages'))
-.description('Dump a rule shape at every compiler phase')
+withGrammar(defineCommand(program, probeStages))
 .requiredOption('-k, --kind <kind>', 'Rule kind to probe')
 .option('--no-overrides', 'Skip overrides.ts, use base grammar.js directly')
 .option('--compact', 'Compact JSON output (no indent)')

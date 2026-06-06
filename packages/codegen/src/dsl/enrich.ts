@@ -70,8 +70,13 @@ import {
 	isOptionalType,
 	isChoiceType,
 	isRepeatType,
+	isBlankType,
 	isPrecWrapper
 } from './runtime-shapes.ts';
+import type { RuntimeRule } from './runtime-shapes.ts';
+import { detectRepeatSeparator } from './list-patterns.ts';
+import { setGroupLiftRuleMap } from './transform/transform-path.ts';
+import { ruleMatchesEmpty, isInlineSafe } from './group-classify.ts';
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
 // The outer wrapper is `{ grammar: {...} }` because tree-sitter's
@@ -115,28 +120,110 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// via `registerKwRule` below; the final rule map merges it with the
 	// enriched user rules.
 	const kwRules: Record<string, Rule> = {};
+	// Clause-hoist hidden-rule bag. The clause-hoist pass injects hoisted
+	// optional(seq(STRING,FIELD…)) groups here so tree-sitter sees them
+	// from base.grammar.rules (same path as _kw_* rules).
+	const clauseGroupRules: Record<string, Rule> = {};
+	// Cross-parent dedupe map for clause-hoist: canonicalStringify(seq) → name.
+	// Shared across all parent rules within a single enrich() call — mirrors
+	// applyAutoGroups's dedupe map so identical clause seqs in different
+	// parents reuse the same hidden rule.
+	const clauseDedupeMap: Record<string, string> = {};
+	// Cross-parent dedupe map for inline-UNSAFE visible content-aliases:
+	// canonicalStringify(content) → `_<parent>_group<N>` name. Identical
+	// inline-unsafe bodies in different parents reuse the same visible kind.
+	const groupDedupeMap: Record<string, string> = {};
+	// Hidden-rule names (`_<parent>_group<N>`) for VISIBLE-aliased groups. These
+	// are registered in `clauseGroupRules` (so tree-sitter sees the rule) but must
+	// be EXCLUDED from the `inline:` list: the parent references them via
+	// `alias($._<name>, $.<name>)`, and inlining the hidden rule would make
+	// tree-sitter alias the EXPANDED seq (re-distributing the alias across its
+	// members — the exact bug this restructure fixes). Inline-safe clause groups
+	// stay in `inline:`. Tagged ONCE at creation (visibleGroupSynthName) — read
+	// here, never re-derived.
+	const visibleGroupHiddenNames = new Set<string>();
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
-		enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames) : rule!;
+		enrichedRules[name] = rule
+			? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames)
+			: rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
 	// (they start with `_kw_`, a reserved prefix).
-	const mergedRules = { ...enrichedRules, ...kwRules };
-	if (hasWrapper) {
-		return { ...base, grammar: { ...base.grammar, rules: mergedRules } } as unknown as EnrichedGrammar<B>;
+	// Inject clause-group rules — user rules NEVER shadow them either
+	// (they start with `_<parentKind>_optional`, a synthesized prefix).
+	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+	// Register the merged rule-map so transform()/groups path-descent can resolve
+	// (and patch) enrich group-lift symbol bodies by name — the lookup that lets a
+	// path patch travel THROUGH a hoisted `_<parent>_<kind><N>` symbol into its
+	// referenced body. Write-back mutates THIS object (the grammar's `rules` point
+	// at it below), so a patched group rule reaches both the parser seed and the
+	// IR-materialized kind. Last-registration-wins is safe: codegen processes one
+	// grammar at a time and enrich runs before any transform fn executes.
+	setGroupLiftRuleMap({
+		get: (n) => mergedRules[n] as unknown as RuntimeRule | undefined,
+		set: (n, b) => {
+			mergedRules[n] = b as unknown as Rule;
+		}
+	});
+	// Attach the set of clause-group names as a well-known non-enumerable
+	// property on the enriched grammar. Wire.ts reads this to register the
+	// hoisted groups in `context.syntheticInline` so they get added to the
+	// grammar's `inline:` list — without inlining, tree-sitter creates LR
+	// conflicts for the new hidden rules. Non-enumerable so it is invisible
+	// to rule iteration, JSON serialization, and spread operators.
+	// Only inline-safe hidden clause groups go into `inline:` (syntheticInline).
+	// VISIBLE-aliased groups' hidden rules (`_<parent>_group<N>`) are excluded —
+	// inlining them would re-distribute the visible alias across the seq members.
+	const clauseGroupNames = new Set(
+		Object.keys(clauseGroupRules).filter((n) => !visibleGroupHiddenNames.has(n))
+	);
+	const result: unknown = hasWrapper
+		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
+		: { ...(base as unknown as object), rules: mergedRules };
+	if (clauseGroupNames.size > 0) {
+		Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
+			value: clauseGroupNames,
+			enumerable: false,
+			writable: false,
+			configurable: true
+		});
 	}
-	return {
-		...(base as unknown as object),
-		rules: mergedRules
-	} as unknown as EnrichedGrammar<B>;
+	return result as unknown as EnrichedGrammar<B>;
+}
+
+/**
+ * Well-known non-enumerable key attached by `enrich()` to the grammar result
+ * when clause-hoist synthesized any hidden group rules. Wire.ts reads this to
+ * register the hoisted names in `WireContext.syntheticInline` so they end up
+ * in the grammar's `inline:` list (required to prevent tree-sitter LR
+ * conflicts from the newly-injected hidden rules).
+ */
+export const ENRICH_CLAUSE_GROUPS_KEY = '__enrichedClauseGroups__' as const;
+
+/**
+ * Extract the set of enrich-hoisted clause-group names from an enriched grammar
+ * result. Returns an empty set when the grammar was not enriched or no clause
+ * groups were synthesized.
+ */
+export function getEnrichClauseGroups(grammar: unknown): ReadonlySet<string> {
+	if (!grammar || typeof grammar !== 'object') return new Set();
+	const names = (grammar as Record<string, unknown>)[ENRICH_CLAUSE_GROUPS_KEY];
+	if (names instanceof Set) return names as ReadonlySet<string>;
+	return new Set();
 }
 
 function applyEnrichPasses(
 	ruleName: string,
 	rule: Rule,
 	kwRules: Record<string, Rule>,
-	supertypeNames: ReadonlySet<string>
+	supertypeNames: ReadonlySet<string>,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>,
+	clauseDedupeMap: Record<string, string>,
+	groupDedupeMap: Record<string, string>,
+	visibleGroupHiddenNames: Set<string>
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -149,6 +236,7 @@ function applyEnrichPasses(
 	// that accidentally produces ever-changing output.
 	const MAX_ITERATIONS = 8;
 	let r = rule;
+	let converged = false;
 	for (let i = 0; i < MAX_ITERATIONS; i++) {
 		const before = r;
 		r = applySymbolToField(ruleName, r, supertypeNames);
@@ -168,17 +256,21 @@ function applyEnrichPasses(
 		// ordering-invariance test in enrich-multiplicity-wrappers.test.ts).
 		r = enrichFieldWrappers(r);
 		r = enrichMultiplicityWrappers(r);
-		// Auto-group-synthesis (hidden-group rules for `optional(seq(...))`
-		// / `repeat(seq(...))` shapes) lives in dsl/wire/auto-groups.ts.
-		// It runs at wire() time AFTER authored `groups:` synthesis so
-		// authored declared rules survive untouched — running it inside
-		// enrich() (before Link's applyGroupOverrides) caused authored
-		// rules to be clobbered.
-		if (r === before) return r;
+		if (r === before) { converged = true; break; }
 	}
-	if (!process.env.SITTIR_QUIET) {
+	if (!converged && !process.env.SITTIR_QUIET) {
 		process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations\n`);
 	}
+	// Clause-hoist runs AFTER the field-wrapping loop has converged — it must
+	// see the enrich-inferred (`source:'enriched'`) FIELDs, because its trigger
+	// is `optional(seq(…))` with `some(isString) && some(isField)`. Running it
+	// first (the original placement) missed every clause whose field is added
+	// by applySymbolToField/enrichFieldWrappers (e.g. rust `abstract_type`'s
+	// `for <type_parameters>`), leaving those for detectClause. One pass: once a
+	// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
+	// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
+	const clauseHoistCounter = { opt: 0, grp: 0 };
+	r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter, groupDedupeMap, visibleGroupHiddenNames);
 	return r;
 }
 
@@ -252,79 +344,45 @@ function harvestSupertypeNames(result: unknown): Set<string> {
 // Direct-mutation builders
 // ---------------------------------------------------------------------------
 
-function detectCase(referenceRule: unknown): 'upper' | 'lower' {
-	const t = (referenceRule as { type?: string })?.type ?? '';
-	return t.length > 0 && t === t.toUpperCase() ? 'upper' : 'lower';
+/** Fetch a runtime-injected DSL rule constructor from `globalThis`, or throw.
+ *  enrich runs inside `grammar(enrich(base), …)`, which executes under an
+ *  injected DSL runtime — sittir's lowercase constructors during evaluate.ts,
+ *  tree-sitter's uppercase ones during CLI generation. Calling the injected fn
+ *  directly produces a rule in the active runtime's case with no hand-rolled
+ *  detection, and inherits the runtime's construction semantics (content
+ *  normalization, `_ref.fieldName` stamping). A missing global means enrich
+ *  was called outside any runtime — a unit test that forgot `installFakeDsl()`.
+ *
+ *  Accepts alternate names because the two runtimes don't agree on every
+ *  constructor's name: the symbol constructor is `symbol` under sittir but
+ *  `sym` under tree-sitter's CLI. The first name found wins. */
+function nativeRuleFn<F>(...names: string[]): F {
+	const g = globalThis as Record<string, unknown>;
+	for (const name of names) {
+		if (typeof g[name] === 'function') return g[name] as F;
+	}
+	throw new Error(
+		`enrich: no global ${names.join('()/')}() — enrich must run inside a DSL runtime ` +
+			`(sittir evaluate.ts or tree-sitter CLI; tests inject via _test-helpers.ts)`
+	);
 }
 
-function makeField(referenceRule: unknown, name: string, content: unknown): Rule {
-	// Propagate `fieldName` onto inner symbol `_ref` metadata, mirroring
-	// the runtime `field()` helper in evaluate.ts. Without this, an
-	// enrich-promoted FIELD wraps the same SYMBOL as an override-promoted
-	// FIELD but the inner symbol's `_ref.fieldName` stays unset — and
-	// downstream passes (link's symbol-reference graph, factory emit,
-	// from-validator's named-children comparison) treat the two
-	// structurally-identical FIELDs differently. Same propagation rules:
-	// skip when fieldName already set, stop at inner field/alias
-	// boundaries.
-	propagateFieldName(content, name);
-	return {
-		type: detectCase(referenceRule) === 'upper' ? 'FIELD' : 'field',
-		name,
-		content,
-		source: 'enriched'
-	} as unknown as Rule;
+/** Wrap `content` in a FIELD via the injected `field()` constructor. The
+ *  runtime fn normalizes the content and stamps `fieldName` on inner symbol
+ *  refs (subsuming the former hand-rolled `propagateFieldName`); we add
+ *  enrich's `source` marker so downstream passes recognize the promotion as
+ *  enrich-originated rather than author-written. */
+function makeField(name: string, content: unknown): Rule {
+	const field = nativeRuleFn<(n: string, c: unknown) => Rule>('field');
+	const node = field(name, content);
+	(node as { source?: string }).source = 'enriched';
+	return node;
 }
 
-/** @internal — walk symbol refs inside `content` and stamp `fieldName`
- *  on each ref whose fieldName is unset. Mirrors evaluate.ts's
- *  `walkRefs` traversal: descends through seq/choice/optional/repeat/
- *  repeat1/prec wrappers; stops at nested field/alias boundaries
- *  (those own their own field name). No-op when `_ref` is absent
- *  (e.g. enrich running before evaluate has annotated refs). */
-function propagateFieldName(rule: unknown, fieldName: string): void {
-	if (!rule || typeof rule !== 'object') return;
-	const r = rule as {
-		type?: string;
-		_ref?: { fieldName?: string };
-		content?: unknown;
-		members?: unknown[];
-	};
-	if (r._ref && r._ref.fieldName === undefined) {
-		r._ref.fieldName = fieldName;
-	}
-	const t = r.type;
-	if (t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE') {
-		if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName);
-		return;
-	}
-	if (
-		t === 'optional' ||
-		t === 'OPTIONAL' ||
-		t === 'repeat' ||
-		t === 'REPEAT' ||
-		t === 'repeat1' ||
-		t === 'REPEAT1' ||
-		t === 'prec' ||
-		t === 'PREC' ||
-		t === 'prec_left' ||
-		t === 'PREC_LEFT' ||
-		t === 'prec_right' ||
-		t === 'PREC_RIGHT' ||
-		t === 'prec_dynamic' ||
-		t === 'PREC_DYNAMIC'
-	) {
-		if (r.content !== undefined) propagateFieldName(r.content, fieldName);
-		return;
-	}
-	// field / alias / token / symbol / string / pattern / blank — stop.
-}
-
-function makeSymbol(referenceRule: unknown, name: string): Rule {
-	return {
-		type: detectCase(referenceRule) === 'upper' ? 'SYMBOL' : 'symbol',
-		name
-	} as unknown as Rule;
+function makeSymbol(name: string): Rule {
+	// `symbol` (sittir) / `sym` (tree-sitter CLI) — same constructor, different name.
+	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
+	return symbol(name);
 }
 
 /**
@@ -332,15 +390,15 @@ function makeSymbol(referenceRule: unknown, name: string): Rule {
  * `prec.left(1, stringLiteral)`. Idempotent — multiple positions that
  * promote the same keyword register the same body once.
  *
- * Returns a SYMBOL reference (matching the host rule's case) that the
- * caller embeds inside the new FIELD wrapper.
+ * Returns a SYMBOL reference (in the active runtime's case, via the injected
+ * `symbol()` constructor) that the caller embeds inside the new FIELD wrapper.
  */
-function registerKwRule(hostRule: Rule, stringLiteral: Rule, keyword: string, kwRules: Record<string, Rule>): Rule {
+function registerKwRule(stringLiteral: Rule, keyword: string, kwRules: Record<string, Rule>): Rule {
 	const hiddenName = `_kw_${keyword}`;
 	if (!(hiddenName in kwRules)) {
 		kwRules[hiddenName] = stringLiteral;
 	}
-	return makeSymbol(hostRule, hiddenName);
+	return makeSymbol(hiddenName);
 }
 
 // ---------------------------------------------------------------------------
@@ -623,7 +681,7 @@ function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: Readon
 		}
 		existing.add(fieldName);
 		changed = true;
-		const fieldNode = makeField(cursor, fieldName, t.symbolRule);
+		const fieldNode = makeField(fieldName, t.symbolRule);
 		return t.wrap(fieldNode);
 	});
 	// Second pass: descend into repeat/repeat1 members whose content is a
@@ -762,7 +820,7 @@ function tryPromoteInRepeatMember(
 		}
 		innerExisting.add(fieldName);
 		innerChanged = true;
-		const fieldNode = makeField(inner, fieldName, t.symbolRule);
+		const fieldNode = makeField(fieldName, t.symbolRule);
 		return t.wrap(fieldNode);
 	});
 
@@ -855,7 +913,7 @@ function tryPromoteInRepeatSeq(
 		}
 		existing.add(fieldName);
 		changed = true;
-		const fieldNode = makeField(inner, fieldName, t.symbolRule);
+		const fieldNode = makeField(fieldName, t.symbolRule);
 		return t.wrap(fieldNode);
 	});
 	if (!changed) return rule;
@@ -932,8 +990,7 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 		t === 'immediate_token' ||
 		t === 'IMMEDIATE_TOKEN' ||
 		t === 'group' ||
-		t === 'variant' ||
-		t === 'clause'
+		t === 'variant'
 	) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (content === undefined) return rule;
@@ -962,8 +1019,8 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 // multiplicity ('optional' / 'array' / 'nonEmptyArray') and `nonterminal:
 // true` on the wrapper node itself AND propagate down through any
 // transparent wrappers (field/alias/token/prec) in the content path so
-// the inner leaf carries the multiplicity too. Mirrors how
-// `propagateFieldName` (used by enrich-promoted field wrappers) stamps
+// the inner leaf carries the multiplicity too. Mirrors how the injected
+// `field()` constructor (used by enrich-promoted field wrappers) stamps
 // fieldName on inner refs.
 //
 // The dual stamping (wrapper-self + inner-leaf) ensures that both
@@ -1151,8 +1208,8 @@ function tryPromoteInnerKeyword(
 		return null;
 	}
 	claimed.add(fieldName);
-	const symbolRef = registerKwRule(optionalRule, inner, fieldName, kwRules);
-	const fieldNode = makeField(optionalRule, fieldName, symbolRef);
+	const symbolRef = registerKwRule(inner, fieldName, kwRules);
+	const fieldNode = makeField(fieldName, symbolRef);
 	return rebuildOptional(optionalRule, fieldNode);
 }
 
@@ -1166,5 +1223,552 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
 		return t === 'BLANK' || t === 'blank' ? m : newInner;
 	});
 	return { ...optionalRule, members: newMembers } as Rule;
+}
+
+// ---------------------------------------------------------------------------
+// Pass: clause-hoist — optional(seq(STRING, FIELD…)) → optional(SYMBOL(_N))
+// ---------------------------------------------------------------------------
+// Hoists `optional(seq(...))` whose seq contains ≥1 STRING and ≥1 FIELD
+// member into a hidden rule `_<parent>_optional<N>` injected into
+// `base.grammar.rules`, so tree-sitter (kindId) AND the IR (evaluate→link)
+// both see it from one source. This matches detectClause's exact predicate
+// (link.ts:2043–2045) so the pass covers precisely the clause-shaped optionals.
+//
+// Predicate: `members.some(isString) && members.some(isField)` — no
+// restriction on seq member count; multi-member seqs (string + field1 +
+// field2) also match. Does NOT fire on:
+//   - optional(field(X))         — no inner seq
+//   - optional(seq(field, field)) — seq has no string
+//   - optional(seq(symbol, …))   — seq has no field
+//
+// Handles both the sittir-shape `optional(seq(...))` and the tree-sitter-
+// normalized `CHOICE[seq, BLANK]` form (same descent as the existing
+// peelOptional helper).
+//
+// Collision-aware: when the synthesized name is already claimed in
+// `rulesBag` (base.grammar.rules), skip with a stderr notice.
+//
+// Naming: `_<parentKind>_optional<N>` (per-parent 1-indexed counter);
+// cross-parent dedupe via canonicalStringify (same convention as
+// auto-groups.ts synthesizeGroupName).
+
+interface ClauseHoistCounter {
+	// Counts ALL optional(seq) positions in traversal order — both clause
+	// (which enrich hoists) and non-clause (which applyAutoGroups hoists).
+	// Keeping the counter global across both kinds ensures that the numbers
+	// enrich assigns to clause-seqs never collide with the numbers
+	// applyAutoGroups assigns to non-clause-seqs in the same parent.
+	//
+	// Example: index_signature has two optional(seq) positions:
+	//   pos 1 — non-clause seq(sign_field, ...)   → applyAutoGroups takes _optional1
+	//   pos 2 — clause seq('readonly', field(...)) → enrich takes _optional2
+	// If enrich started its own counter at 1, it would emit _optional1 and
+	// collide with applyAutoGroups's emission for the non-clause position.
+	opt: number;
+	// Counts inline-UNSAFE positions surfaced as visible content-aliases
+	// (`_<parent>_group<N>`). Independent of `opt` — the visible-alias name
+	// space is distinct from the hidden hoist name space, and applyAutoGroups
+	// is disabled this chunk so there is no cross-pass numbering to keep in
+	// sync for the visible groups.
+	grp: number;
+}
+
+/**
+ * @internal — canonical JSON stringify with sorted object keys. Ensures
+ * that two structurally-equal rule bodies stringify identically even
+ * when property insertion order differs between rule construction paths.
+ * Mirrors the helper in auto-groups.ts (kept in sync, not shared yet —
+ * DRY extraction is scheduled for Task 2.1).
+ */
+function canonicalStringifyClause(value: unknown): string {
+	if (value === null || typeof value !== 'object') {
+		return JSON.stringify(value);
+	}
+	if (Array.isArray(value)) {
+		return '[' + value.map((v) => canonicalStringifyClause(v)).join(',') + ']';
+	}
+	const obj = value as Record<string, unknown>;
+	const keys = Object.keys(obj).sort();
+	const parts: string[] = [];
+	for (const k of keys) {
+		const v = obj[k];
+		if (typeof v === 'function' || typeof v === 'undefined') continue;
+		parts.push(JSON.stringify(k) + ':' + canonicalStringifyClause(v));
+	}
+	return '{' + parts.join(',') + '}';
+}
+
+/**
+ * @internal — peel an optional wrapper from a rule node. Returns the inner
+ * seq content if the rule is `optional(seq)` (sittir form) or
+ * `CHOICE[seq, BLANK]` (tree-sitter normalized form). Returns null if the
+ * rule is not an optional-wrapping-a-seq pattern.
+ *
+ * Also returns the seq member and the index of the seq in the members array
+ * (for CHOICE form) so callers can rebuild the CHOICE with a different member.
+ */
+function peelOptionalSeq(rule: Rule): {
+	seqBody: Rule;
+	form: 'optional' | 'choice';
+	seqIdx: number;
+} | null {
+	if (isOptionalType(rule.type)) {
+		const content = (rule as unknown as { content?: Rule }).content;
+		if (content && isSeqType((content as { type?: string }).type)) {
+			return { seqBody: content, form: 'optional', seqIdx: -1 };
+		}
+		return null;
+	}
+	if (isChoiceType(rule.type)) {
+		const members = (rule as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(members) || members.length !== 2) return null;
+		const blankIdx = members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
+		const seqIdx = members.findIndex((m) => isSeqType((m as { type?: string }).type));
+		if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return null;
+		return { seqBody: members[seqIdx]!, form: 'choice', seqIdx };
+	}
+	return null;
+}
+
+/**
+ * @internal — extract the list separator string from an `optional(seq(...))`
+ * (or `CHOICE[seq,BLANK]`) whose seq body carries a separated-list repeat.
+ * Returns the separator literal (e.g. `","`) or null when the member is not an
+ * optional-seq containing a repeat.
+ *
+ * Handles both the raw tree-sitter form `repeat(seq(STRING sep, x))` (separator
+ * not yet lifted — enrich runs pre-evaluate) and an already-lifted
+ * `repeat(x, separator)`.
+ */
+function listSeparatorOfOptionalSeq(rule: Rule): string | null {
+	const peeled = peelOptionalSeq(rule);
+	if (peeled === null) return null;
+	const seqMembers = (peeled.seqBody as unknown as { members?: Rule[] }).members;
+	if (!Array.isArray(seqMembers)) return null;
+	for (const m of seqMembers) {
+		if (!isRepeatType((m as { type?: string }).type)) continue;
+		// Already-lifted separator attribute.
+		const sepAttr = (m as { separator?: unknown }).separator;
+		if (typeof sepAttr === 'string') return sepAttr;
+		// Raw form: repeat(seq(SEP, x)) — detect the separator from the content
+		// via the shared list-pattern detector (same logic evaluate's lift uses).
+		const content = (m as { content?: RuntimeRule }).content;
+		if (content) {
+			const detected = detectRepeatSeparator(content);
+			if (detected) return detected.separator;
+		}
+	}
+	return null;
+}
+
+/**
+ * @internal — if `rule` is `optional(STRING)` / `CHOICE[STRING,BLANK]`, return
+ * the string literal; else null. Recognizes a stranded trailing separator
+ * member. Returns null for `optional(seq(...))` (inner is not a bare string),
+ * so it never matches the list member itself.
+ */
+function optionalStringLiteral(rule: Rule): string | null {
+	const peeled = peelOptional(rule);
+	if (!peeled.isOptional) return null;
+	const innerN = normalizeMember(peeled.inner);
+	if (isStringType(innerN.type) && typeof innerN.value === 'string') return innerN.value;
+	return null;
+}
+
+/**
+ * @internal — fold a stranded trailing `optional(sep)` into the preceding
+ * `optional(seq(...))`'s body. Appends `trailingOptional` as the last seq
+ * member and rebuilds the optional wrapper (both `optional` and
+ * `CHOICE[seq,BLANK]` forms, via rebuildOptional).
+ */
+function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: Rule): Rule {
+	const peeled = peelOptionalSeq(optSeqRule)!;
+	const seqBody = peeled.seqBody;
+	const seqMembers = (seqBody as unknown as { members: Rule[] }).members;
+	const newSeqBody = { ...seqBody, members: [...seqMembers, trailingOptional] } as Rule;
+	return rebuildOptional(optSeqRule, newSeqBody);
+}
+
+/**
+ * @internal — pre-fold a seq's member list, pulling each separated-list's
+ * stranded trailing `optional(sep)` INTO the preceding `optional(seq(...
+ * repeat(sep) ...))`. Returns the rewritten member array, or null when nothing
+ * folds (reference-preserving when no fold applies).
+ *
+ * Trigger: adjacent `[ optional(seq containing repeat(sep S)) , optional(S) ]`
+ * where the trailing literal `S` equals the list's own separator. The
+ * separator-match guard prevents swallowing an unrelated trailing optional
+ * (e.g. `optional(';')` after a comma-separated list).
+ *
+ * Why here: tree-sitter authors write the canonical separated-list-with-trailing
+ * either as `optional(seq(list, optional(sep)))` (already one unit — handled) or
+ * as `seq(optional(list), optional(sep))` (python `argument_list`). This pass
+ * canonicalizes the second form into the first BEFORE the group-lift below, so
+ * the whole list (head + repeat + trailing) is captured as one group. Without
+ * it the trailing separator strands as a standalone member → wrapper-deletion
+ * makes it a phantom `nonterminal:true` slot, and for visible (inline-unsafe)
+ * groups it is permanently split from its list across the AssembledGroup
+ * boundary. evaluate's `liftCommaSep` then absorbs the folded `optional(sep)`
+ * into the group's `repeat1` as `trailing: true`.
+ */
+function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
+	let changed = false;
+	const out: Rule[] = [];
+	for (let i = 0; i < members.length; i++) {
+		const cur = members[i]!;
+		const next = members[i + 1];
+		const sep = next ? listSeparatorOfOptionalSeq(cur) : null;
+		if (sep !== null && optionalStringLiteral(next!) === sep) {
+			out.push(appendTrailingMemberToOptionalSeq(cur, next!));
+			i++; // consume the stranded trailing separator
+			changed = true;
+			continue;
+		}
+		out.push(cur);
+	}
+	return changed ? out : null;
+}
+
+/**
+ * @internal — walk `rule` and hoist any `optional(seq(STRING,FIELD…))` /
+ * `CHOICE[seq(STRING,FIELD…),BLANK]` positions into hidden group rules.
+ * Returns a (possibly rewritten) rule; never mutates the input.
+ *
+ * COUNTER DISCIPLINE: the `counter.opt` increments for EVERY `optional(seq)`
+ * shape encountered in traversal order — both clause-seqs (which this pass
+ * hoists) and non-clause-seqs (which applyAutoGroups hoists later). This
+ * keeps the numbering in sync so the two passes never assign the same number
+ * to different bodies within the same parent. applyAutoGroups resets its
+ * own counter per-parent to 0 and counts from 1; after enrich, any position
+ * where enrich hoisted is now `optional(SYMBOL)` — applyAutoGroups skips
+ * those (not a seq) so its counter only increments for the non-clause
+ * positions, which are the ones enrich skipped and left with their counter
+ * slots intact.
+ */
+function applyClauseHoist(
+	parentKind: string,
+	rule: Rule,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>,
+	dedupeMap: Record<string, string>,
+	counter: ClauseHoistCounter,
+	groupDedupeMap: Record<string, string>,
+	visibleGroupHiddenNames: Set<string>
+): Rule {
+	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
+	const peeled = peelOptionalSeq(rule);
+	if (peeled !== null) {
+		// Post-order: recurse into the seq body FIRST, then classify.
+		const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+
+		if (ruleMatchesEmpty(recursedSeqBody)) {
+			// Empty-matching body: tree-sitter rejects named rules that match the
+			// empty string — never hoist. Counter must still increment because
+			// applyAutoGroups does NOT check empty-matching and will consume this
+			// counter slot for its own numbering.
+			counter.opt += 1;
+			// Rebuild wrapper with the recursed (possibly updated) seq body, but
+			// leave this position un-hoisted.
+			if (recursedSeqBody === peeled.seqBody) return rule;
+			if (peeled.form === 'optional') {
+				return rebuildOptional(rule, recursedSeqBody);
+			} else {
+				const members = (rule as unknown as { members: Rule[] }).members;
+				const newMembers = members.slice() as Rule[];
+				newMembers[peeled.seqIdx] = recursedSeqBody;
+				return { ...rule, members: newMembers } as Rule;
+			}
+		} else if (isInlineSafe(recursedSeqBody)) {
+			// Inline-safe: exactly one field/symbol slot after dropping literals.
+			// Hoist into a hidden _<parent>_optionalN rule (today's clause path).
+			// clauseHoistSynthName increments the counter internally.
+			const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
+			if (name !== null) {
+				const symbolRef = makeGroupLiftSymbol(rule, name);
+				if (peeled.form === 'optional') {
+					return rebuildOptional(rule, symbolRef);
+				} else {
+					// CHOICE[seq, BLANK] form
+					const members = (rule as unknown as { members: Rule[] }).members;
+					const newMembers = members.slice() as Rule[];
+					newMembers[peeled.seqIdx] = symbolRef;
+					return { ...rule, members: newMembers } as Rule;
+				}
+			}
+			// name === null: collision — skip but still count the position.
+			// (Counter was already incremented inside clauseHoistSynthName
+			// before the collision was detected — see that function's comments.)
+			return rule;
+		} else {
+			// Inline-unsafe: multi-slot or bare-choice body. Surface it as a
+			// VISIBLE CST kind via the standard tree-sitter named-group pattern:
+			//   Pass 1 — register a HIDDEN rule `_<parent>_group<N>` whose body is
+			//     the seq (visibleGroupSynthName injects it into clauseGroupRules,
+			//     exactly like the inline-safe clause-hoist path), and reference it
+			//     with a clean `symbol($._<parent>_group<N>)`.
+			//   Pass 2 — wrap that symbol ref in `alias($._<name>, $.<name>)` so
+			//     tree-sitter renames the ONE symbol-node into ONE clean visible CST
+			//     node. (Aliasing the multi-member seq DIRECTLY made tree-sitter
+			//     DISTRIBUTE the alias across the seq's members → scattered empty
+			//     leaves → reader "singular slot got array" → dropped slot.)
+			// link's `mintContentAliasKinds` resolves THROUGH the symbol to register
+			// `<name> = <hidden body>` as the IR kind.
+			// Keep `counter.opt` advancing too — the hidden-hoist name space must
+			// stay consistent with applyAutoGroups's ordinal numbering for any
+			// run where it is still active (it is disabled this chunk, but the
+			// invariant is cheap to preserve).
+			counter.opt += 1;
+			const names = visibleGroupSynthName(recursedSeqBody, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules);
+			if (names !== null) {
+				// Pass 2 tag: this hidden rule backs a VISIBLE alias → keep it OUT of
+				// the `inline:` list (so tree-sitter aliases the symbol-node, not the
+				// expanded seq). Classify ONCE here; read in enrich() at clauseGroupNames.
+				visibleGroupHiddenNames.add(names.hiddenName);
+				// Pass 1: symbol ref to the hidden rule (mirrors makeGroupLiftSymbol).
+				const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
+				// Pass 2: wrap in a visible alias so the inline-unsafe group surfaces
+				// as a clean CST node (`<name>`). The alias carries metadata.source so
+				// transform-path travels through it and link mints the kind.
+				const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
+				if (peeled.form === 'optional') {
+					return rebuildOptional(rule, aliasRule);
+				} else {
+					const members = (rule as unknown as { members: Rule[] }).members;
+					const newMembers = members.slice() as Rule[];
+					newMembers[peeled.seqIdx] = aliasRule;
+					return { ...rule, members: newMembers } as Rule;
+				}
+			}
+			// aliasName === null: collision — leave inline (un-aliased).
+			if (recursedSeqBody === peeled.seqBody) return rule;
+			if (peeled.form === 'optional') {
+				return rebuildOptional(rule, recursedSeqBody);
+			} else {
+				const members = (rule as unknown as { members: Rule[] }).members;
+				const newMembers = members.slice() as Rule[];
+				newMembers[peeled.seqIdx] = recursedSeqBody;
+				return { ...rule, members: newMembers } as Rule;
+			}
+		}
+	}
+
+	// Descend into seq members.
+	if (isSeqType(rule.type)) {
+		const rawMembers = (rule as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(rawMembers)) return rule;
+		// Pre-fold: pull a separated-list's stranded trailing `optional(sep)` INTO
+		// the preceding `optional(seq(... repeat(sep) ...))` so the per-member hoist
+		// below captures the whole list (head + repeat + trailing) as one group.
+		const absorbed = absorbTrailingListSeparators(rawMembers);
+		const members = absorbed ?? rawMembers;
+		let changed = absorbed !== null;
+		const newMembers = members.map((m) => {
+			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+			if (out !== m) changed = true;
+			return out;
+		});
+		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
+	}
+
+	// Descend into choice branches that are NOT optional(seq) wrappers
+	// (those were handled above via peelOptionalSeq).
+	if (isChoiceType(rule.type)) {
+		const members = (rule as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(members)) return rule;
+		let changed = false;
+		const newMembers = members.map((m) => {
+			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+			if (out !== m) changed = true;
+			return out;
+		});
+		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
+	}
+
+	// Descend into repeat / repeat1 / prec wrappers.
+	if (isRepeatType(rule.type) || isPrecWrapper(rule as { type: string })) {
+		const content = (rule as unknown as { content?: Rule }).content;
+		if (!content) return rule;
+		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+		if (newContent === content) return rule;
+		return { ...rule, content: newContent } as Rule;
+	}
+
+	// Descend into field content (a field-wrapped optional(seq) is also a target).
+	if (isFieldType(rule.type)) {
+		const content = (rule as unknown as { content?: Rule }).content;
+		if (!content) return rule;
+		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+		if (newContent === content) return rule;
+		return { ...rule, content: newContent } as Rule;
+	}
+
+	return rule;
+}
+
+/**
+ * @internal — get or create the synthesized hidden-rule name for a given
+ * clause-seq body. Increments the per-parent counter and injects the seq
+ * into `clauseGroupRules` on first encounter; dedupes across parents via
+ * `dedupeMap`.
+ *
+ * Returns `null` when the synthesized name would collide with an existing
+ * rule in `rulesBag` (already-authored rule with the same name). A stderr
+ * notice is emitted in that case. The counter is incremented BEFORE the
+ * collision check so the ordinal-position invariant with applyAutoGroups
+ * is maintained even when a collision prevents hoisting.
+ */
+function clauseHoistSynthName(
+	seqBody: Rule,
+	parentKind: string,
+	dedupeMap: Record<string, string>,
+	counter: ClauseHoistCounter,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>
+): string | null {
+	const key = canonicalStringifyClause(seqBody);
+	const existing = dedupeMap[key];
+	if (existing !== undefined) {
+		// Dedupe hit: reuse the already-assigned name. Do NOT increment the
+		// counter again — the ordinal slot was consumed when the name was first
+		// created. Inject into clauseGroupRules if not there yet.
+		if (!(existing in clauseGroupRules)) {
+			clauseGroupRules[existing] = seqBody;
+		}
+		return existing;
+	}
+	// Increment FIRST so the slot is reserved before any collision check.
+	counter.opt += 1;
+	const name = `_${parentKind}_optional${counter.opt}`;
+	// Collision guard: if base.grammar.rules already has this name, skip.
+	if (name in rulesBag) {
+		process.stderr.write(
+			`enrich: clause-hoist skipped for '${parentKind}' — rule '${name}' already exists in base.grammar.rules\n`
+		);
+		return null;
+	}
+	dedupeMap[key] = name;
+	clauseGroupRules[name] = seqBody;
+	return name;
+}
+
+/**
+ * @internal — mint the hidden-rule + visible-alias name pair for an inline-UNSAFE
+ * seq body that enrich surfaces as a VISIBLE CST kind.
+ *
+ * Unlike the prior content-alias approach (which aliased the multi-member seq
+ * DIRECTLY — `alias(SEQ(...), $.name)`, which tree-sitter DISTRIBUTES across the
+ * seq's members, scattering empty leaves), this registers a HIDDEN rule whose
+ * body is the seq, exactly like the inline-safe clause-hoist path
+ * (`clauseHoistSynthName`). The caller then references that hidden rule via a
+ * symbol and wraps the symbol in `alias($._<name>, $.<name>)` so tree-sitter has
+ * a single symbol-node to rename into ONE clean CST node.
+ *
+ * Naming:
+ *   - hidden rule  = `_<parent>_group<N>` (registered in `clauseGroupRules`)
+ *   - visible alias = `<parent>_group<N>` (the same name without the `_`)
+ * Per-parent 1-indexed `grp` counter; cross-parent dedupe via
+ * `canonicalStringifyClause`. Returns `null` on a name collision with an existing
+ * rule in `rulesBag` (caller leaves the body inline).
+ *
+ * The visible name must NOT carry a leading `_` (tree-sitter would classify it
+ * HIDDEN → the minted kind's slot is dropped at wrap/read), so `parentKind`'s
+ * own leading `_` is stripped before composing the base name.
+ */
+function visibleGroupSynthName(
+	content: Rule,
+	parentKind: string,
+	groupDedupeMap: Record<string, string>,
+	counter: ClauseHoistCounter,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>
+): { visibleName: string; hiddenName: string } | null {
+	const key = canonicalStringifyClause(content);
+	const existing = groupDedupeMap[key];
+	if (existing !== undefined) {
+		const hiddenName = `_${existing}`;
+		if (!(hiddenName in clauseGroupRules)) clauseGroupRules[hiddenName] = content;
+		return { visibleName: existing, hiddenName };
+	}
+	counter.grp += 1;
+	const visibleName = `${parentKind.replace(/^_+/, '')}_group${counter.grp}`;
+	const hiddenName = `_${visibleName}`;
+	if (visibleName in rulesBag || hiddenName in rulesBag) {
+		process.stderr.write(
+			`enrich: visible-group skipped for '${parentKind}' — rule '${visibleName}'/'${hiddenName}' already exists in base.grammar.rules\n`
+		);
+		return null;
+	}
+	groupDedupeMap[key] = visibleName;
+	// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN rule
+	// (`_<parent>_group<N>`) so tree-sitter sees a single named symbol to alias.
+	clauseGroupRules[hiddenName] = content;
+	return { visibleName, hiddenName };
+}
+
+/**
+ * @internal — build a SYMBOL reference for a synthesized enrich group-lift
+ * (clause hoist today; all `optional(seq)`/`repeat(seq)` once the hoist
+ * generalizes), case-matched to the optional/choice wrapper's type convention.
+ *
+ * Provenance markers:
+ *   - `metadata.source: 'enrich'` — the NEW canonical marker. Path-descent
+ *     (transform-path.ts) reads this to recognize an enrich-synthesized
+ *     group-lift symbol and travel THROUGH it into the hoisted body, so
+ *     authored `transform()`/`groups:` path patches that address into a
+ *     now-hoisted seq still resolve. Lives under `metadata` because the
+ *     top-level `source` tag is being retired (provenance consolidates here).
+ *   - `source: 'group-lift'` — LEGACY marker (sunset target; rule.ts:349).
+ *     Still read by the IR-path consumers (simplify / templates / suggested).
+ *     Kept dual transitionally; deleted once those readers migrate to
+ *     `metadata.source`.
+ */
+function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
+	const t = (referenceRule as { type?: string }).type ?? '';
+	// Upper-case wrapper (CHOICE, OPTIONAL) → SYMBOL; lower-case → symbol.
+	const isUpper = t.length > 0 && t === t.toUpperCase();
+	// Pure ref — NO inline body. Tree-sitter serializes any extra structural
+	// field on a SYMBOL into grammar.json (a `content` here leaks the seq into
+	// the parser), so the symbol stays a clean name-ref. `metadata.source` is
+	// the only added marker: path-descent reads it and LOOKS UP the referenced
+	// `_<parent>_<kind><N>` rule body by name to travel through (not by carrying
+	// the body here). `metadata` is inert to tree-sitter's parse tables.
+	return {
+		type: isUpper ? 'SYMBOL' : 'symbol',
+		name,
+		source: 'group-lift',
+		metadata: { source: 'enrich' }
+	} as unknown as Rule;
+}
+
+/**
+ * @internal — wrap a SYMBOL ref to an inline-UNSAFE group's HIDDEN rule in a
+ * TAGGED visible alias so the group surfaces as a single clean CST kind.
+ *
+ * Shape (confirmed against generated grammar.json ALIAS nodes):
+ *   `{ type: 'ALIAS'|'alias', content: symbol($._<name>), named: true,
+ *      value: '<name>', metadata: { source: 'enrich' } }`
+ *
+ * - The aliased thing is a SYMBOL ref to the hidden `_<name>` rule (NOT the raw
+ *   multi-member seq). tree-sitter renames that ONE symbol-node into ONE visible
+ *   CST node for `<name>` (a real kindId in parser.c). Aliasing the raw seq
+ *   instead made tree-sitter DISTRIBUTE the alias name across the seq members.
+ * - `metadata.source === 'enrich'` is REQUIRED: transform-path travels THROUGH
+ *   it for authored path-patches, and link's `mintContentAliasKinds` keys on it
+ *   to resolve THROUGH the symbol and register `<name> = <hidden body>` as the
+ *   IR rule.
+ * - Case is the active runtime's: built via the injected `alias()`/`symbol()`
+ *   constructors, so sittir evaluate yields lowercase, tree-sitter CLI uppercase.
+ */
+function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
+	const aliasFn = nativeRuleFn<(r: unknown, v: unknown) => Rule>('alias');
+	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
+	// Pass a SYMBOL value so the runtime constructor sets named:true, value=name
+	// (a bare-string value would yield named:false). `metadata.source: 'enrich'`
+	// is REQUIRED — transform-path travels through it and link's
+	// `mintContentAliasKinds` keys on it — and the runtime alias() doesn't add
+	// it, so stamp it on the cased result.
+	const node = aliasFn(symbolRef, symbol(name));
+	(node as { metadata?: { source?: string } }).metadata = { source: 'enrich' };
+	return node;
 }
 

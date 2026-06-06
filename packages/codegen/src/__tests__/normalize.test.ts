@@ -1,3 +1,4 @@
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
 	normalizeGrammar,
@@ -31,20 +32,20 @@ function makeLinked(rules: Record<string, Rule>, overrides?: Partial<LinkedGramm
 
 describe('Optimize — rulesEqual', () => {
 	it('compares string rules', () => {
-		expect(rulesEqual({ type: 'string', value: 'a' }, { type: 'string', value: 'a' })).toBe(true);
-		expect(rulesEqual({ type: 'string', value: 'a' }, { type: 'string', value: 'b' })).toBe(false);
+		expect(rulesEqual({ type: STRING, value: 'a' }, { type: STRING, value: 'a' })).toBe(true);
+		expect(rulesEqual({ type: STRING, value: 'a' }, { type: STRING, value: 'b' })).toBe(false);
 	});
 
 	it('compares seq rules recursively', () => {
-		const a: Rule = { type: 'seq', members: [{ type: 'string', value: 'x' }] };
-		const b: Rule = { type: 'seq', members: [{ type: 'string', value: 'x' }] };
-		const c: Rule = { type: 'seq', members: [{ type: 'string', value: 'y' }] };
+		const a: Rule = { type: SEQ, members: [{ type: STRING, value: 'x' }] };
+		const b: Rule = { type: SEQ, members: [{ type: STRING, value: 'x' }] };
+		const c: Rule = { type: SEQ, members: [{ type: STRING, value: 'y' }] };
 		expect(rulesEqual(a, b)).toBe(true);
 		expect(rulesEqual(a, c)).toBe(false);
 	});
 
 	it('different types are not equal', () => {
-		expect(rulesEqual({ type: 'string', value: 'a' }, { type: 'pattern', value: 'a' })).toBe(false);
+		expect(rulesEqual({ type: STRING, value: 'a' }, { type: PATTERN, value: 'a' })).toBe(false);
 	});
 });
 
@@ -52,17 +53,17 @@ describe('Optimize — factorSeqChoice', () => {
 	it('extracts common prefix from seq branches', () => {
 		const branches: Rule[] = [
 			{
-				type: 'seq',
+				type: SEQ,
 				members: [
-					{ type: 'string', value: 'fn' },
-					{ type: 'string', value: 'a' }
+					{ type: STRING, value: 'fn' },
+					{ type: STRING, value: 'a' }
 				]
 			},
 			{
-				type: 'seq',
+				type: SEQ,
 				members: [
-					{ type: 'string', value: 'fn' },
-					{ type: 'string', value: 'b' }
+					{ type: STRING, value: 'fn' },
+					{ type: STRING, value: 'b' }
 				]
 			}
 		];
@@ -73,8 +74,8 @@ describe('Optimize — factorSeqChoice', () => {
 
 	it('returns branches unchanged when no common prefix', () => {
 		const branches: Rule[] = [
-			{ type: 'seq', members: [{ type: 'string', value: 'a' }] },
-			{ type: 'seq', members: [{ type: 'string', value: 'b' }] }
+			{ type: SEQ, members: [{ type: STRING, value: 'a' }] },
+			{ type: SEQ, members: [{ type: STRING, value: 'b' }] }
 		];
 		const result = factorSeqChoice(branches);
 		expect(result).toHaveLength(2);
@@ -84,10 +85,10 @@ describe('Optimize — factorSeqChoice', () => {
 describe('Optimize — variant construction', () => {
 	it('wrapVariants wraps choice members in variant nodes', () => {
 		const choice: Rule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
-				{ type: 'seq', members: [{ type: 'string', value: 'a' }] },
-				{ type: 'seq', members: [{ type: 'string', value: 'b' }] }
+				{ type: SEQ, members: [{ type: STRING, value: 'a' }] },
+				{ type: SEQ, members: [{ type: STRING, value: 'b' }] }
 			]
 		};
 		const result = wrapVariants(choice);
@@ -100,9 +101,9 @@ describe('Optimize — variant construction', () => {
 
 	it('deduplicateVariants removes structurally identical variants', () => {
 		const variants: Rule[] = [
-			{ type: 'variant', name: 'v1', content: { type: 'string', value: 'x' } },
-			{ type: 'variant', name: 'v2', content: { type: 'string', value: 'x' } },
-			{ type: 'variant', name: 'v3', content: { type: 'string', value: 'y' } }
+			{ type: VARIANT, name: 'v1', content: { type: STRING, value: 'x' } },
+			{ type: VARIANT, name: 'v2', content: { type: STRING, value: 'x' } },
+			{ type: VARIANT, name: 'v3', content: { type: STRING, value: 'y' } }
 		];
 		const result = deduplicateVariants(variants);
 		expect(result).toHaveLength(2);
@@ -110,10 +111,10 @@ describe('Optimize — variant construction', () => {
 
 	it('nameVariant derives name from detect token', () => {
 		const variant: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: 'pub' },
-				{ type: 'symbol', name: 'item' }
+				{ type: STRING, value: 'pub' },
+				{ type: SYMBOL, name: 'item' }
 			]
 		};
 		const name = nameVariant(variant, 0, [variant]);
@@ -155,17 +156,17 @@ describe('Optimize — optimize()', () => {
 	it('produces an OptimizedGrammar preserving named content', () => {
 		const linked = makeLinked({
 			item: {
-				type: 'seq',
+				type: SEQ,
 				members: [
-					{ type: 'string', value: 'fn' },
+					{ type: STRING, value: 'fn' },
 					{
-						type: 'field',
+						type: FIELD,
 						name: 'body',
-						content: { type: 'symbol', name: 'block' }
+						content: { type: SYMBOL, name: 'block' }
 					}
 				]
 			},
-			block: { type: 'string', value: '{}' }
+			block: { type: STRING, value: '{}' }
 		});
 		const optimized = normalizeGrammar(linked);
 		expect(optimized.name).toBe('test');
@@ -191,17 +192,17 @@ describe('Optimize — optimize()', () => {
 describe('Optimize — fanOutSeqChoices (T060)', () => {
 	it('distributes a seq over an inner choice', () => {
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: 'a' },
+				{ type: STRING, value: 'a' },
 				{
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'string', value: 'b' },
-						{ type: 'string', value: 'c' }
+						{ type: STRING, value: 'b' },
+						{ type: STRING, value: 'c' }
 					]
 				},
-				{ type: 'string', value: 'd' }
+				{ type: STRING, value: 'd' }
 			]
 		};
 		const out = fanOutSeqChoices(rule);
@@ -216,20 +217,20 @@ describe('Optimize — fanOutSeqChoices (T060)', () => {
 	it('leaves multi-choice seqs alone', () => {
 		// Two choices in one seq → combinatorial explosion. Skip.
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
 				{
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'b' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'b' }
 					]
 				},
 				{
-					type: 'choice',
+					type: CHOICE,
 					members: [
-						{ type: 'string', value: 'x' },
-						{ type: 'string', value: 'y' }
+						{ type: STRING, value: 'x' },
+						{ type: STRING, value: 'y' }
 					]
 				}
 			]
@@ -240,25 +241,25 @@ describe('Optimize — fanOutSeqChoices (T060)', () => {
 
 	it('preserves variant labels when distributing', () => {
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: '(' },
+				{ type: STRING, value: '(' },
 				{
-					type: 'choice',
+					type: CHOICE,
 					members: [
 						{
-							type: 'variant',
+							type: VARIANT,
 							name: 'plus',
-							content: { type: 'string', value: '+' }
+							content: { type: STRING, value: '+' }
 						},
 						{
-							type: 'variant',
+							type: VARIANT,
 							name: 'minus',
-							content: { type: 'string', value: '-' }
+							content: { type: STRING, value: '-' }
 						}
 					]
 				},
-				{ type: 'string', value: ')' }
+				{ type: STRING, value: ')' }
 			]
 		};
 		const out = fanOutSeqChoices(rule) as any;
@@ -276,27 +277,27 @@ describe('Optimize — fanOutSeqChoices (T060)', () => {
 describe('Optimize — factorChoiceBranches (T061)', () => {
 	it('extracts a common prefix across seq branches', () => {
 		const rule: Rule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'x' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'x' }
 					]
 				},
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'y' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'y' }
 					]
 				},
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'z' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'z' }
 					]
 				}
 			]
@@ -310,20 +311,20 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 
 	it('extracts a common suffix across seq branches', () => {
 		const rule: Rule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'x' },
-						{ type: 'string', value: ';' }
+						{ type: STRING, value: 'x' },
+						{ type: STRING, value: ';' }
 					]
 				},
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'y' },
-						{ type: 'string', value: ';' }
+						{ type: STRING, value: 'y' },
+						{ type: STRING, value: ';' }
 					]
 				}
 			]
@@ -340,14 +341,14 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 		// Matches the grammar pattern `choice(seq(KW, body), KW)` used to
 		// express "KW and optional body" with explicit precedence control.
 		const rule: Rule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
-				{ type: 'string', value: 'a' },
+				{ type: STRING, value: 'a' },
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'b' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'b' }
 					]
 				}
 			]
@@ -365,10 +366,10 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 		// common grammar pattern `choice(identifier, _reserved_identifier)`
 		// where the branches are alternative references, not prefixable seqs.
 		const rule: Rule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
-				{ type: 'symbol', name: 'identifier' },
-				{ type: 'symbol', name: '_reserved_identifier' }
+				{ type: SYMBOL, name: 'identifier' },
+				{ type: SYMBOL, name: '_reserved_identifier' }
 			]
 		};
 		const out = factorChoiceBranches(rule);
@@ -382,21 +383,21 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 		// should be `seq(a, optional(b), c)` — NOT a choice that drops the
 		// empty branch and emits `seq(a, b, c)`.
 		const rule: Rule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'b' },
-						{ type: 'string', value: 'c' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'b' },
+						{ type: STRING, value: 'c' }
 					]
 				},
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'c' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'c' }
 					]
 				}
 			]
@@ -415,29 +416,29 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 		// middle is choice(b,d) plus an empty body. Expected:
 		// seq(a, optional(choice(b, d)), c)
 		const rule: Rule = {
-			type: 'choice',
+			type: CHOICE,
 			members: [
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'b' },
-						{ type: 'string', value: 'c' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'b' },
+						{ type: STRING, value: 'c' }
 					]
 				},
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'd' },
-						{ type: 'string', value: 'c' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'd' },
+						{ type: STRING, value: 'c' }
 					]
 				},
 				{
-					type: 'seq',
+					type: SEQ,
 					members: [
-						{ type: 'string', value: 'a' },
-						{ type: 'string', value: 'c' }
+						{ type: STRING, value: 'a' },
+						{ type: STRING, value: 'c' }
 					]
 				}
 			]
@@ -457,8 +458,8 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 describe('Optimize — collapseWrappers (T062)', () => {
 	it('collapses optional(optional(x)) → optional(x)', () => {
 		const rule: Rule = {
-			type: 'optional',
-			content: { type: 'optional', content: { type: 'string', value: 'a' } }
+			type: OPTIONAL,
+			content: { type: OPTIONAL, content: { type: STRING, value: 'a' } }
 		};
 		const out = collapseWrappers(rule) as any;
 		expect(out.type).toBe('optional');
@@ -467,8 +468,8 @@ describe('Optimize — collapseWrappers (T062)', () => {
 
 	it('collapses repeat(repeat(x)) → repeat(x)', () => {
 		const rule: Rule = {
-			type: 'repeat',
-			content: { type: 'repeat', content: { type: 'string', value: 'a' } }
+			type: REPEAT,
+			content: { type: REPEAT, content: { type: STRING, value: 'a' } }
 		};
 		const out = collapseWrappers(rule) as any;
 		expect(out.type).toBe('repeat');
@@ -477,8 +478,8 @@ describe('Optimize — collapseWrappers (T062)', () => {
 
 	it('collapses optional(repeat(x)) → repeat(x)', () => {
 		const rule: Rule = {
-			type: 'optional',
-			content: { type: 'repeat', content: { type: 'string', value: 'a' } }
+			type: OPTIONAL,
+			content: { type: REPEAT, content: { type: STRING, value: 'a' } }
 		};
 		const out = collapseWrappers(rule) as any;
 		expect(out.type).toBe('repeat');
@@ -486,12 +487,12 @@ describe('Optimize — collapseWrappers (T062)', () => {
 
 	it('collapses single-member seq/choice', () => {
 		const seq: Rule = {
-			type: 'seq',
-			members: [{ type: 'string', value: 'a' }]
+			type: SEQ,
+			members: [{ type: STRING, value: 'a' }]
 		};
 		const choice: Rule = {
-			type: 'choice',
-			members: [{ type: 'string', value: 'a' }]
+			type: CHOICE,
+			members: [{ type: STRING, value: 'a' }]
 		};
 		expect(collapseWrappers(seq).type).toBe('string');
 		expect(collapseWrappers(choice).type).toBe('string');
@@ -505,11 +506,11 @@ describe('Optimize — collapseWrappers (T062)', () => {
 describe('Optimize — dedupeSeqMembers (T064)', () => {
 	it('collapses adjacent duplicates inside a seq', () => {
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: 'a' },
-				{ type: 'string', value: 'a' },
-				{ type: 'string', value: 'b' }
+				{ type: STRING, value: 'a' },
+				{ type: STRING, value: 'a' },
+				{ type: STRING, value: 'b' }
 			]
 		};
 		const out = dedupeSeqMembers(rule) as any;
@@ -518,11 +519,11 @@ describe('Optimize — dedupeSeqMembers (T064)', () => {
 
 	it('preserves non-adjacent duplicates', () => {
 		const rule: Rule = {
-			type: 'seq',
+			type: SEQ,
 			members: [
-				{ type: 'string', value: 'a' },
-				{ type: 'string', value: 'b' },
-				{ type: 'string', value: 'a' }
+				{ type: STRING, value: 'a' },
+				{ type: STRING, value: 'b' },
+				{ type: STRING, value: 'a' }
 			]
 		};
 		const out = dedupeSeqMembers(rule) as any;

@@ -29,6 +29,7 @@
     "_impl_item_body": "spread",
     "_impl_item_negative_clause": "config",
     "_impl_item_positive_clause": "config",
+    "_in_path": "spread",
     "_let_chain": "config",
     "_line_comment_content": "text",
     "_line_comment_doc": "config",
@@ -68,7 +69,6 @@
     "_unary_expression_operator": "text",
     "_unsafe_marker": "text",
     "_visibility_modifier_crate": "config",
-    "_visibility_modifier_in_path": "config",
     "_visibility_modifier_pub": "config",
     "abstract_type": "config",
     "arguments": "spread",
@@ -149,7 +149,7 @@
     "macro_invocation": "config",
     "macro_rule": "config",
     "match_arm": "config",
-    "match_block": "config",
+    "match_block": "spread",
     "match_expression": "config",
     "match_pattern": "config",
     "metavariable": "text",
@@ -224,16 +224,17 @@
     "where_predicate": "config",
     "while_expression": "config",
     "yield_expression": "direct",
+    "visibility_modifier_group1": "direct",
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
     "_line_doc_content": "text",
+    "for": "text",
     "as": "text",
     "fn": "text",
-    "for": "text",
     "unsafe": "text",
-    "async": "text",
     "in": "text",
+    "async": "text",
     "move": "text",
     "pub": "text",
     "static": "text",
@@ -280,6 +281,9 @@
     "_function_type_trait_form.trait": {
       "type_identifier": "identifier"
     },
+    "_impl_item_group1.trait": {
+      "type_identifier": "identifier"
+    },
     "_impl_item_negative_clause.trait": {
       "type_identifier": "identifier"
     },
@@ -298,14 +302,8 @@
     "_non_special_token.content": {
       "primitive_type": "_primitive_type"
     },
-    "_type_arguments_repeat1.type_argument": {
-      "type_argument": "_type_argument"
-    },
-    "_type_parameters_repeat1.attributed_type_parameter": {
-      "attributed_type_parameter": "_attributed_type_parameter"
-    },
-    "_visibility_modifier_pub.content": {
-      "visibility_modifier_in_path": "_visibility_modifier_in_path"
+    "_visibility_modifier_group1.content": {
+      "in_path": "_in_path"
     },
     "abstract_type.trait": {
       "type_identifier": "identifier"
@@ -410,9 +408,6 @@
     "match_arm.content": {
       "match_arm_with_comma": "_match_arm_with_comma",
       "match_arm_block_ending": "_match_arm_block_ending"
-    },
-    "match_block.last_arm": {
-      "match_arm": "last_match_arm"
     },
     "mod_item.content": {
       "mod_item_external": "_mod_item_external",
@@ -530,8 +525,8 @@
       "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "_visibility_modifier_pub_parens.content": {
-      "visibility_modifier_in_path": "_visibility_modifier_in_path"
+    "visibility_modifier_group1.content": {
+      "in_path": "_in_path"
     }
   },
   "factoryFields": {
@@ -616,6 +611,9 @@
     "_impl_item_positive_clause": [
       "trait"
     ],
+    "_in_path": [
+      "path"
+    ],
     "_let_chain": [
       "let_chain",
       "let_condition",
@@ -698,11 +696,8 @@
       "content",
       "trait_bounds"
     ],
-    "_visibility_modifier_in_path": [
-      "path"
-    ],
     "_visibility_modifier_pub": [
-      "content"
+      "visibility_modifier_group1"
     ],
     "abstract_type": [
       "type_parameters",
@@ -1006,8 +1001,7 @@
       "content"
     ],
     "match_block": [
-      "match_arm",
-      "last_arm"
+      "match_arm"
     ],
     "match_expression": [
       "value",
@@ -1265,6 +1259,9 @@
     ],
     "yield_expression": [
       "expression"
+    ],
+    "visibility_modifier_group1": [
+      "content"
     ]
   },
   "factorySlots": {
@@ -1552,6 +1549,15 @@
     },
     "_impl_item_positive_clause": {
       "trait": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_in_path": {
+      "path": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1909,22 +1915,6 @@
         "nonEmpty": false
       }
     },
-    "_visibility_modifier_in_path": {
-      "in": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "path": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_visibility_modifier_pub": {
       "pub": {
         "unnamed": false,
@@ -1933,7 +1923,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "visibility_modifier_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2946,6 +2936,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "turbofish": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type_arguments": {
         "unnamed": false,
         "slotCount": 1,
@@ -3274,13 +3271,6 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
-      },
-      "last_arm": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3643,6 +3633,13 @@
       }
     },
     "self_parameter": {
+      "reference": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "lifetime": {
         "unnamed": false,
         "slotCount": 1,
@@ -4345,6 +4342,15 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "visibility_modifier_group1": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }

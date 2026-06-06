@@ -1,3 +1,4 @@
+import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { expect } from 'vitest';
 import type { Rule, RuleId } from '../../compiler/rule.ts';
 import type { RuleCatalog } from '../../compiler/types.ts';
@@ -39,33 +40,32 @@ export function serializeCatalog(catalog: RuleCatalog): unknown {
 export function walkRule(rule: Rule, visit: (rule: Rule) => void): void {
 	visit(rule);
 	switch (rule.type) {
-		case 'seq':
-		case 'choice':
-		case 'enum':
+		case SEQ:
+		case CHOICE:
+		case ENUM:
 			for (const member of rule.members) walkRule(member, visit);
 			return;
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'field':
-		case 'variant':
-		case 'clause':
-		case 'group':
-		case 'terminal':
-		case 'alias':
-		case 'token':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
+		case TERMINAL:
+		case ALIAS:
+		case TOKEN:
 			walkRule(rule.content, visit);
 			return;
 		case 'polymorph':
 			for (const form of rule.forms) walkRule(form.content, visit);
 			return;
-		case 'supertype':
-		case 'string':
-		case 'pattern':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
-		case 'symbol':
+		case SUPERTYPE:
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+		case SYMBOL:
 			return;
 	}
 }

@@ -19,6 +19,7 @@
  *   - expected post-fix: the ref is replaced by the seq members carrying multiplicity:'optional'
  */
 
+import { SYMBOL } from '../rule-types.ts'; // @rule-type-consts
 import { describe, expect, it, afterEach } from 'vitest';
 import { computeSimplifiedRules, drainSlotGroupingDiagnostics } from '../simplify.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
@@ -34,7 +35,7 @@ afterEach(() => {
 
 /** Find all symbol refs with the given name anywhere in a rule tree. */
 function findSymbolRefs(rule: Rule, name: string, found: Rule[] = []): Rule[] {
-	if (rule.type === 'symbol' && rule.name === name) found.push(rule);
+	if (rule.type === SYMBOL && rule.name === name) found.push(rule);
 	if ('members' in rule && Array.isArray(rule.members)) {
 		for (const m of rule.members) findSymbolRefs(m, name, found);
 	}
@@ -49,7 +50,7 @@ function findSymbolRefs(rule: Rule, name: string, found: Rule[] = []): Rule[] {
 
 /** Walk a rule tree collecting all symbol names. */
 function collectSymbolNames(rule: Rule, out: string[] = []): string[] {
-	if (rule.type === 'symbol') out.push(rule.name);
+	if (rule.type === SYMBOL) out.push(rule.name);
 	if ('members' in rule && Array.isArray(rule.members)) {
 		for (const m of rule.members) collectSymbolNames(m, out);
 	}
@@ -116,7 +117,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 
 		const constItemSimplified = simplified['const_item']!;
 
@@ -167,7 +168,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 
 		const typeArgsSimplified = simplified['type_arguments']!;
 
@@ -209,7 +210,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(renderRules, null);
+		const simplified = computeSimplifiedRules(renderRules);
 
 		const parentSimplified = simplified['parent_rule']!;
 
@@ -263,7 +264,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		const renderRules = applyWrapperDeletion(inputRules);
 		// Pass _let_declaration_optional1 in inlineKinds (as in the real pipeline).
 		const inlineKinds = new Set(['_let_declaration_optional1']);
-		const simplified = computeSimplifiedRules(renderRules, null, inlineKinds);
+		const simplified = computeSimplifiedRules(renderRules, inlineKinds);
 
 		const letDeclSimplified = simplified['let_declaration']!;
 

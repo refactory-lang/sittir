@@ -1,4 +1,4 @@
-import type { CommandModule } from '../../framework/command-module.ts';
+import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withGrammar } from '../../framework/options.ts';
 import { exercise as runExercise } from '@sittir/tools';
 
@@ -6,8 +6,7 @@ export const exercise: CommandModule = {
 	name: 'exercise',
 	describe: 'Exercise factory round-trips with built-in or corpus cases',
 	register: (program) => {
-		withGrammar(program.command('exercise'))
-			.description('Exercise factory round-trips with built-in or corpus cases')
+		withGrammar(defineCommand(program, exercise))
 			.option('-k, --kinds <kind,...>', 'Comma-separated kind list to exercise')
 			.action(async (opts: { grammar?: string; kinds?: string }) => {
 				const kinds =

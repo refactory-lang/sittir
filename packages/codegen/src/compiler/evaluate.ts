@@ -6,6 +6,7 @@
  * extension mechanism — each rule fn receives ($, original).
  */
 
+import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	SeqRule,
@@ -23,6 +24,7 @@ import type {
 	SymbolRef
 } from './rule.ts';
 import { normalizeEnumMembers } from './rule.ts';
+import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
@@ -51,11 +53,11 @@ export function normalize(input: Input): Rule {
 	}
 
 	if (typeof input === 'string') {
-		return { type: 'string', value: input } satisfies StringRule;
+		return { type: STRING, value: input } satisfies StringRule;
 	}
 
 	if (input instanceof RegExp) {
-		return { type: 'pattern', value: input.source } satisfies PatternRule;
+		return { type: PATTERN, value: input.source } satisfies PatternRule;
 	}
 
 	if (typeof input === 'object' && 'type' in input) {
@@ -97,9 +99,9 @@ export function seq(...members: Input[]): Rule {
 	if (lifted) return lifted;
 
 	const absorbed = absorbTrailingSeparator(normalized);
-	if (absorbed) return { type: 'seq', members: absorbed };
+	if (absorbed) return { type: SEQ, members: absorbed };
 
-	return { type: 'seq', members: normalized };
+	return { type: SEQ, members: normalized };
 }
 
 /**
@@ -115,9 +117,9 @@ function absorbTrailingSeparator(members: Rule[]): Rule[] | null {
 		const cur = members[i]!;
 		const next = members[i + 1];
 		const isSepRepeat =
-			(cur.type === 'repeat' || cur.type === 'repeat1') && cur.separator !== undefined && !cur.trailing;
+			(cur.type === REPEAT || cur.type === REPEAT1) && cur.separator !== undefined && !cur.trailing;
 		const isOptionalSepLit = (r: Rule | undefined, sep: string): boolean =>
-			!!r && r.type === 'optional' && r.content.type === 'string' && r.content.value === sep;
+			!!r && r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
 		if (isSepRepeat && isOptionalSepLit(next, (cur as RepeatRule | Repeat1Rule).separator!)) {
 			// Merge — stamp trailing on the repeat and skip the next member.
 			const sepRule = cur as RepeatRule | Repeat1Rule;
@@ -150,27 +152,27 @@ function liftCommaSep(members: Rule[]): Rule | null {
 
 	const matchesElem = (r: Rule): boolean => rulesEqual(r, elem);
 	const matchesOptionalSep = (r: Rule): boolean =>
-		r.type === 'optional' && r.content.type === 'string' && r.content.value === sep;
+		r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
 
 	// Case 1: [x, repeat(sep, x)]
 	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
-		return { type: 'repeat1', content: elem, separator: sep };
+		return { type: REPEAT1, content: elem, separator: sep };
 	}
 
 	// Case 2: [x, repeat(sep, x), optional(sep)] — trailing allowed.
 	if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
-		return { type: 'repeat1', content: elem, separator: sep, trailing: true };
+		return { type: REPEAT1, content: elem, separator: sep, trailing: true };
 	}
 
 	// Case 3: [sep, x, repeat(sep, x)] — leading separator.
 	if (
 		members.length === 3 &&
 		repeatIdx === 2 &&
-		members[0]!.type === 'string' &&
+		members[0]!.type === STRING &&
 		members[0]!.value === sep &&
 		matchesElem(members[1]!)
 	) {
-		return { type: 'repeat1', content: elem, separator: sep, leading: true };
+		return { type: REPEAT1, content: elem, separator: sep, leading: true };
 	}
 
 	return null;
@@ -186,50 +188,7 @@ function liftCommaSep(members: Rule[]): Rule | null {
  * more than one means this isn't a commaSep shape.
  */
 function findRepeatWithSeparator(members: Rule[]): number {
-	return members.findIndex((m) => m.type === 'repeat' && m.separator !== undefined);
-}
-
-/**
- * Structural equality for rule trees — used by the commaSep1 lift to
- * verify the seq's standalone element matches the repeat's content.
- * Intentionally limited to the subset of rule shapes evaluate can
- * produce at DSL-call time (no polymorph/supertype/terminal — those
- * appear only after Link).
- */
-function rulesEqual(a: Rule, b: Rule): boolean {
-	if (a.type !== b.type) return false;
-	switch (a.type) {
-		case 'string':
-			return a.value === (b as StringRule).value;
-		case 'pattern':
-			return a.value === (b as PatternRule).value;
-		case 'symbol':
-			return a.name === (b as SymbolRule).name;
-		case 'enum': {
-			const bm = (b as EnumRule).members;
-			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
-		}
-		case 'seq':
-			return (
-				a.members.length === (b as SeqRule).members.length &&
-				a.members.every((m, i) => rulesEqual(m, (b as SeqRule).members[i]!))
-			);
-		case 'choice':
-			return (
-				a.members.length === (b as ChoiceRule).members.length &&
-				a.members.every((m, i) => rulesEqual(m, (b as ChoiceRule).members[i]!))
-			);
-		case 'optional':
-			return rulesEqual(a.content, (b as OptionalRule).content);
-		case 'repeat':
-			return a.separator === (b as RepeatRule).separator && rulesEqual(a.content, (b as RepeatRule).content);
-		case 'repeat1':
-			return a.separator === (b as Repeat1Rule).separator && rulesEqual(a.content, (b as Repeat1Rule).content);
-		case 'field':
-			return a.name === (b as FieldRule).name && rulesEqual(a.content, (b as FieldRule).content);
-		default:
-			return false;
-	}
+	return members.findIndex((m) => m.type === REPEAT && m.separator !== undefined);
 }
 
 /**
@@ -256,7 +215,7 @@ export function choice(...members: Input[]): Rule {
 	if (normalized.length === 1) return normalized[0]!;
 
 	const isBlank = (r: Rule): boolean =>
-		(r.type === 'seq' && r.members.length === 0) || (r.type === 'choice' && r.members.length === 0);
+		(r.type === SEQ && r.members.length === 0) || (r.type === CHOICE && r.members.length === 0);
 	const blankIdx = normalized.findIndex(isBlank);
 	if (blankIdx !== -1 && normalized.length === 2) {
 		const other = normalized[1 - blankIdx]!;
@@ -266,15 +225,15 @@ export function choice(...members: Input[]): Rule {
 	}
 
 	// Detect all-string choice → EnumRule
-	if (normalized.length > 0 && normalized.every((m) => m.type === 'string')) {
+	if (normalized.length > 0 && normalized.every((m) => m.type === STRING)) {
 		return normalizeEnumMembers(normalized as StringRule[], 'grammar');
 	}
 
-	if (normalized.length >= 2 && normalized.every((m) => m.type === 'field')) {
+	if (normalized.length >= 2 && normalized.every((m) => m.type === FIELD)) {
 		return collapseAllFieldChoiceMembers(normalized as FieldRule[]);
 	}
 
-	return { type: 'choice', members: normalized };
+	return { type: CHOICE, members: normalized };
 }
 
 /**
@@ -311,9 +270,9 @@ export function choice(...members: Input[]): Rule {
  * rust `_line_doc_comment_marker` / `_block_doc_comment_marker`).
  */
 function collapseAllFieldChoiceMembers(fieldMembers: FieldRule[]): Rule {
-	const anyAlias = fieldMembers.some((f) => f.content.type === 'alias');
+	const anyAlias = fieldMembers.some((f) => f.content.type === ALIAS);
 	if (anyAlias) {
-		return { type: 'choice', members: fieldMembers };
+		return { type: CHOICE, members: fieldMembers };
 	}
 	const names = fieldMembers.map((f) => f.name);
 	const allSameName = names.every((n) => n === names[0]);
@@ -321,7 +280,7 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule[]): Rule {
 		// Factor: choice(field(x, A), field(x, B)) → field(x, choice(A, B))
 		const inner = choice(...fieldMembers.map((f) => f.content));
 		return {
-			type: 'field',
+			type: FIELD,
 			name: names[0]!,
 			content: inner,
 			source: 'grammar'
@@ -336,7 +295,7 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule[]): Rule {
 		name: f.name,
 		content: f.content
 	}));
-	return { type: 'choice', members: retyped };
+	return { type: CHOICE, members: retyped };
 }
 
 /**
@@ -363,71 +322,18 @@ export function optional(content: Input): Rule {
 	walkRefs(resolved, (ref) => {
 		ref.optional = true;
 	});
-	if (resolved.type === 'optional') return resolved;
-	if (resolved.type === 'repeat') return resolved;
-	if (resolved.type === 'repeat1') {
+	if (resolved.type === OPTIONAL) return resolved;
+	if (resolved.type === REPEAT) return resolved;
+	if (resolved.type === REPEAT1) {
 		return {
-			type: 'repeat',
+			type: REPEAT,
 			content: resolved.content,
 			separator: resolved.separator,
 			trailing: resolved.trailing,
 			leading: resolved.leading
 		};
 	}
-	return { type: 'optional', content: resolved };
-}
-
-/**
- * Detect the `seq(STRING, x)` / `seq(x, STRING)` pattern inside a
- * repeat/repeat1 wrapper and lift the string into a `separator` (and
- * `trailing`) field on the repeat rule. Shared between `repeat` and
- * `repeat1` so both wrappers hoist separators uniformly.
- *
- * Returns `null` if no separator shape is present.
- */
-function extractRepeatSeparator(resolved: Rule): { content: Rule; separator: string; trailing?: boolean } | null {
-	if (resolved.type !== 'seq' || resolved.members.length !== 2) return null;
-	const [first, second] = resolved.members as [Rule, Rule];
-	// Canonical case: `repeat(seq(SEP, X))` or `repeat(seq(X, SEP))` with
-	// SEP a string literal.
-	if (first.type === 'string' && second.type !== 'string') {
-		return { content: second, separator: first.value };
-	}
-	if (second.type === 'string' && first.type !== 'string') {
-		return { content: first, separator: second.value, trailing: true };
-	}
-	const firstSepChoice = first.type === 'choice' ? extractFirstStringFromChoice(first) : null;
-	const secondSepChoice = second.type === 'choice' ? extractFirstStringFromChoice(second) : null;
-	if (firstSepChoice !== null && second.type !== 'string') {
-		return { content: second, separator: firstSepChoice };
-	}
-	if (secondSepChoice !== null && first.type !== 'string') {
-		return { content: first, separator: secondSepChoice, trailing: true };
-	}
-	return null;
-}
-
-/**
- * Extract the first string literal from a choice rule, if any.
- *
- * @param r - A choice rule whose members may include string literals.
- * @returns The string value of the first string member, or `null` if none.
- * @remarks
- * Handles the choice-of-separators pattern used in tree-sitter-typescript's
- * `sepBy1(choice(',', $._semicolon), X)`, which expands to a `repeat` whose
- * separator position is a `choice` of literals and an external symbol
- * (`_semicolon` = automatic semicolon insertion). The first string member
- * is the canonical render-side separator; parse still accepts either form.
- *
- * The separator-choice check mirrors the single-literal branches in
- * `extractRepeatSeparator`: a choice acts as the separator position when
- * its sibling is non-string (e.g. typescript's object_type
- * `sepBy1(choice(',', _semicolon), choice(property_signature, …))`).
- */
-function extractFirstStringFromChoice(r: Rule): string | null {
-	if (r.type !== 'choice') return null;
-	const lit = r.members.find((m): m is StringRule => m.type === 'string');
-	return lit ? lit.value : null;
+	return { type: OPTIONAL, content: resolved };
 }
 
 /**
@@ -446,33 +352,33 @@ export function repeat(content: Input): Rule {
 	walkRefs(resolved, (ref) => {
 		ref.repeated = true;
 	});
-	if (resolved.type === 'repeat' && !resolved.separator) return resolved;
-	if (resolved.type === 'optional') {
+	if (resolved.type === REPEAT && !resolved.separator) return resolved;
+	if (resolved.type === OPTIONAL) {
 		const inner = resolved.content;
 		walkRefs(inner, (ref) => {
 			ref.repeated = true;
 		});
-		const sep = extractRepeatSeparator(inner);
+		const sep = detectRepeatSeparator(inner);
 		if (sep) {
 			return {
-				type: 'repeat',
+				type: REPEAT,
 				content: sep.content,
 				separator: sep.separator,
 				trailing: sep.trailing
 			};
 		}
-		return { type: 'repeat', content: inner };
+		return { type: REPEAT, content: inner };
 	}
-	const sep = extractRepeatSeparator(resolved);
+	const sep = detectRepeatSeparator(resolved);
 	if (sep) {
 		return {
-			type: 'repeat',
+			type: REPEAT,
 			content: sep.content,
 			separator: sep.separator,
 			trailing: sep.trailing
 		};
 	}
-	return { type: 'repeat', content: resolved };
+	return { type: REPEAT, content: resolved };
 }
 
 /**
@@ -494,17 +400,17 @@ export function repeat1(content: Input): Rule {
 	walkRefs(resolved, (ref) => {
 		ref.repeated = true;
 	});
-	if (resolved.type === 'repeat1' && !resolved.separator) return resolved;
-	const sep = extractRepeatSeparator(resolved);
+	if (resolved.type === REPEAT1 && !resolved.separator) return resolved;
+	const sep = detectRepeatSeparator(resolved);
 	if (sep) {
 		return {
-			type: 'repeat1',
+			type: REPEAT1,
 			content: sep.content,
 			separator: sep.separator,
 			trailing: sep.trailing
 		};
 	}
-	return { type: 'repeat1', content: resolved };
+	return { type: REPEAT1, content: resolved };
 }
 
 /**
@@ -512,7 +418,7 @@ export function repeat1(content: Input): Rule {
  * helpers that need a real runtime symbol without fabricating the object.
  */
 export function symbol(name: string): SymbolRule {
-	return { type: 'symbol', name, hidden: name.startsWith('_') };
+	return { type: SYMBOL, name, hidden: name.startsWith('_') };
 }
 
 // ---------------------------------------------------------------------------
@@ -525,7 +431,7 @@ export function createProxy(currentRule: string, refs: SymbolRef[]): Record<stri
 			const ref: SymbolRef = { refType: 'symbol', from: currentRule, to: name };
 			refs.push(ref);
 			return {
-				type: 'symbol' as const,
+				type: SYMBOL,
 				name,
 				// `hidden` is a hint for downstream passes only — Link
 				// recomputes the authoritative visibility decision via
@@ -581,18 +487,18 @@ function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
 	const ref = getRef(rule);
 	if (ref) visit(ref);
 	switch (rule.type) {
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			for (const m of (rule as { members: Rule[] }).members) walkRefs(m, visit);
 			return;
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
 		case 'prec' as never: // prec wrappers are stripped by normalize but defensive
 			walkRefs((rule as { content: Rule }).content, visit);
 			return;
-		case 'field':
-		case 'alias':
+		case FIELD:
+		case ALIAS:
 			// Stop — inner refs belong to the inner wrapper.
 			return;
 		default:
@@ -631,9 +537,9 @@ function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
 export function field(name: string, content?: Input): FieldRule {
 	if (content === undefined) {
 		return {
-			type: 'field',
+			type: FIELD,
 			name,
-			content: { type: 'string', value: '' },
+			content: { type: STRING, value: '' },
 			_needsContent: true
 		};
 	}
@@ -642,7 +548,7 @@ export function field(name: string, content?: Input): FieldRule {
 	walkRefs(resolved, (ref) => {
 		if (ref.fieldName === undefined) ref.fieldName = name;
 	});
-	return { type: 'field', name, content: resolved };
+	return { type: FIELD, name, content: resolved };
 }
 
 /**
@@ -660,14 +566,14 @@ export function field(name: string, content?: Input): FieldRule {
  * write.
  */
 function collapseOptionalRepeatInField(resolved: Rule): Rule {
-	if (resolved.type !== 'optional') return resolved;
+	if (resolved.type !== OPTIONAL) return resolved;
 	const inner = resolved.content;
 	if (inner.type === 'repeat') {
 		return inner;
 	}
 	if (inner.type === 'repeat1') {
 		return {
-			type: 'repeat',
+			type: REPEAT,
 			content: inner.content,
 			separator: inner.separator,
 			trailing: inner.trailing,
@@ -695,11 +601,11 @@ interface TokenFn {
 
 export const token: TokenFn = Object.assign(
 	function token(content: Input): TokenRule {
-		return { type: 'token', content: normalize(content), immediate: false };
+		return { type: TOKEN, content: normalize(content), immediate: false };
 	},
 	{
 		immediate(content: Input): TokenRule {
-			return { type: 'token', content: normalize(content), immediate: true };
+			return { type: TOKEN, content: normalize(content), immediate: true };
 		}
 	}
 );
@@ -743,11 +649,11 @@ export const prec: PrecFn = Object.assign(
 export function alias(rule: Input, value: string | Rule): AliasRule {
 	const content = normalize(rule);
 	if (typeof value === 'string') {
-		return { type: 'alias', content, named: false, value };
+		return { type: ALIAS, content, named: false, value };
 	}
-	if (typeof value === 'object' && 'type' in value && value.type === 'symbol') {
+	if (typeof value === 'object' && 'type' in value && value.type === SYMBOL) {
 		return {
-			type: 'alias',
+			type: ALIAS,
 			content,
 			named: true,
 			value: (value as SymbolRule).name
@@ -758,7 +664,7 @@ export function alias(rule: Input, value: string | Rule): AliasRule {
 
 export function blank(): Rule {
 	// BLANK is represented as choice() with no members — absorbed by choice()
-	return { type: 'choice', members: [] };
+	return { type: CHOICE, members: [] };
 }
 
 /**
@@ -775,7 +681,7 @@ export function blank(): Rule {
  * `string(...)` explicitly continues to work.
  */
 export function string(value: string): StringRule {
-	return { type: 'string', value };
+	return { type: STRING, value };
 }
 
 // ---------------------------------------------------------------------------
@@ -950,8 +856,20 @@ function rewriteInlineAliases(
 ): Rule {
 	const recurse = (r: Rule): Rule => rewriteInlineAliases(r, rules, provenanceByKind, externals);
 	switch (rule.type) {
-		case 'alias':
+		case ALIAS:
 			if (rule.named && rule.value) {
+				// Enrich content-aliases own their minting in link.ts
+				// (`mintContentAliasKinds`). They must NOT be rewritten here into
+				// `_${target}` hidden symbols: doing so makes link's mint guards
+				// (`content.type !== 'symbol'`) dead, the kind lands as a `branch`
+				// under the `_`-name, and the parent slot mis-derives optional-scalar
+				// while the underlying rule is a `repeat1` (array) → wrap returns null
+				// → empty render. Leave the content as the literal seq so link mints
+				// the kind under the non-`_` parser name (`<parent>_group<N>`).
+				const aliasMeta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+				if (aliasMeta?.source === 'enrich') {
+					return { ...rule, content: recurse(rule.content) };
+				}
 				const inner = rule.content;
 				// Treat both declared rules AND external scanner tokens as
 				// "existing" sources — externals already carry parser-assigned
@@ -977,22 +895,21 @@ function rewriteInlineAliases(
 					}
 					return {
 						...rule,
-						content: { type: 'symbol', name: syntheticHiddenName } as SymbolRule
+						content: { type: SYMBOL, name: syntheticHiddenName } as SymbolRule
 					};
 				}
 			}
 			return { ...rule, content: recurse(rule.content) };
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return { ...rule, members: rule.members.map(recurse) } as Rule;
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'field':
-		case 'token':
-		case 'variant':
-		case 'clause':
-		case 'group':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case TOKEN:
+		case VARIANT:
+		case GROUP:
 			return {
 				...rule,
 				content: recurse((rule as { content: Rule }).content)
@@ -1118,7 +1035,7 @@ function purgeSupersededEnumRules(
 		// Only consider hidden enum rules — visible grammar rules and non-enum
 		// rules must never be removed here.
 		if (!name.startsWith('_')) continue;
-		if (rule.type !== 'enum') continue;
+		if (rule.type !== ENUM) continue;
 
 		const memberKey = [...(rule.members as StringRule[])]
 			.map((m) => m.value)
@@ -1170,7 +1087,7 @@ function collectFieldEnumOccurrences(rules: Record<string, Rule>): FieldEnumOccu
  */
 function walkFieldEnums(rule: Rule, parentKind: string, rules: Record<string, Rule>, out: FieldEnumOccurrence[]): void {
 	switch (rule.type) {
-		case 'field': {
+		case FIELD: {
 			// Peel one level of repeat/repeat1 wrapper so that
 			// `field(name, repeat(choice('a','b')))` is treated the same as
 			// `field(name, choice('a','b'))` for occurrence collection purposes.
@@ -1185,17 +1102,16 @@ function walkFieldEnums(rule: Rule, parentKind: string, rules: Record<string, Ru
 			walkFieldEnums(rule.content, parentKind, rules, out);
 			return;
 		}
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			for (const m of rule.members) walkFieldEnums(m, parentKind, rules, out);
 			return;
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
-		case 'token':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
+		case TOKEN:
 			walkFieldEnums((rule as { content: Rule }).content, parentKind, rules, out);
 			return;
 		default:
@@ -1472,7 +1388,7 @@ function rewriteFieldEnums(
 		);
 
 	switch (rule.type) {
-		case 'field': {
+		case FIELD: {
 			const synthesized =
 				conflictingSites.has(fieldEnumSiteKey(parentKind, rule.name))
 					? null
@@ -1486,7 +1402,7 @@ function rewriteFieldEnums(
 				// For bare enum: symbol(enumKindName).
 				// For repeat/repeat1(enum): repeat/repeat1(symbol(enumKindName)).
 				return {
-					type: 'field',
+					type: FIELD,
 					name: rule.name,
 					content: replacementContent,
 					source: rule.source,
@@ -1499,19 +1415,18 @@ function rewriteFieldEnums(
 			if (newContent === rule.content) return rule;
 			return { ...rule, content: newContent } as FieldRule;
 		}
-		case 'seq':
-		case 'choice': {
+		case SEQ:
+		case CHOICE: {
 			const newMembers = rule.members.map(recurse);
 			if (newMembers.every((m, i) => m === rule.members[i])) return rule;
 			return { ...rule, members: newMembers } as Rule;
 		}
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
-		case 'token': {
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
+		case TOKEN: {
 			const newContent = recurse((rule as { content: Rule }).content);
 			if (newContent === (rule as { content: Rule }).content) return rule;
 			return { ...rule, content: newContent } as Rule;
@@ -1563,7 +1478,7 @@ function tryExtractFieldEnum(
 	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
 	// is handled alongside `field(name, enum)`. The wrapper type is remembered
 	// so the rewrite can restore it around the synthesized symbol reference.
-	const repeatWrapperType = content.type === 'repeat' || content.type === 'repeat1' ? content.type : null;
+	const repeatWrapperType = content.type === REPEAT || content.type === REPEAT1 ? content.type : null;
 	const innerContent = repeatWrapperType !== null ? (content as RepeatRule | Repeat1Rule).content : content;
 
 	const members = resolveToEnumMembers(innerContent, rules);
@@ -1575,11 +1490,11 @@ function tryExtractFieldEnum(
 
 	const synthesizedRule = normalizeEnumMembers(members, 'grammar');
 
-	const symRule: SymbolRule = { type: 'symbol', name: enumKindName, hidden: true };
+	const symRule: SymbolRule = { type: SYMBOL, name: enumKindName, hidden: true };
 	const replacementContent: Rule =
 		repeatWrapperType === null
 			? symRule
-			: repeatWrapperType === 'repeat'
+			: repeatWrapperType === REPEAT
 				? { ...(content as RepeatRule), content: symRule }
 				: { ...(content as Repeat1Rule), content: symRule };
 
@@ -1597,7 +1512,7 @@ function tryExtractFieldEnum(
  *   otherwise `rule` itself.
  */
 function peelRepeatWrapper(rule: Rule): Rule {
-	if (rule.type === 'repeat' || rule.type === 'repeat1') return rule.content;
+	if (rule.type === REPEAT || rule.type === REPEAT1) return rule.content;
 	return rule;
 }
 
@@ -1617,13 +1532,13 @@ function peelRepeatWrapper(rule: Rule): Rule {
  */
 function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRule[] | null {
 	switch (rule.type) {
-		case 'enum':
+		case ENUM:
 			// Already a collapsed choice-of-strings.
 			return rule.members as StringRule[];
-		case 'string':
+		case STRING:
 			// Single inline literal — wrap as a 1-member enum.
 			return [rule];
-		case 'symbol': {
+		case SYMBOL: {
 			// Follow one level of symbol indirection.
 			const target = rules[rule.name];
 			if (target === undefined) return null;
@@ -1649,11 +1564,11 @@ function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRu
  */
 function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
 	switch (target.type) {
-		case 'string':
+		case STRING:
 			return [target];
-		case 'enum':
+		case ENUM:
 			return target.members as StringRule[];
-		case 'choice': {
+		case CHOICE: {
 			// Defensive: all-string choice not yet collapsed (should not occur
 			// in normal evaluate output, but handle gracefully).
 			if (target.members.length === 0) return null;
@@ -1908,7 +1823,7 @@ function prunePlaceholderOrphans(ctx: WireContext, rules: Record<string, Rule>):
  * True when `rule` is the empty-choice sentinel returned by `blank()`.
  */
 function isBlankRule(rule: Rule): boolean {
-	return rule.type === 'choice' && rule.members.length === 0;
+	return rule.type === CHOICE && rule.members.length === 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -2021,16 +1936,16 @@ function applyPatternReplacement(
  */
 export function isComplexBody(rule: Rule): boolean {
 	switch (rule.type) {
-		case 'seq':
+		case SEQ:
 			return (rule as SeqRule).members.length >= 2;
-		case 'choice':
+		case CHOICE:
 			return (rule as ChoiceRule).members.length >= 2;
-		case 'repeat':
-		case 'repeat1': {
+		case REPEAT:
+		case REPEAT1: {
 			// A REPEAT is complex only when its content is itself non-trivial
 			// (not a bare string or symbol).
 			const content = (rule as RepeatRule).content;
-			return content.type !== 'string' && content.type !== 'symbol' && content.type !== 'pattern';
+			return content.type !== STRING && content.type !== SYMBOL && content.type !== PATTERN;
 		}
 		default:
 			return false;
@@ -2063,7 +1978,7 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, Rule>): Rea
 
 	function walk(rule: Rule): void {
 		// Pre-link form: alias(symbol(_X), $visible)
-		if (rule.type === 'alias') {
+		if (rule.type === ALIAS) {
 			if (rule.named && rule.content.type === 'symbol' && rule.content.name.startsWith('_')) {
 				candidates.add(rule.content.name);
 			}
@@ -2071,7 +1986,7 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, Rule>): Rea
 			return;
 		}
 		// Post-link form: symbol(visible, aliasedFrom='_X')
-		if (rule.type === 'symbol') {
+		if (rule.type === SYMBOL) {
 			if (rule.aliasedFrom?.startsWith('_')) candidates.add(rule.aliasedFrom);
 			return;
 		}
@@ -2121,43 +2036,43 @@ function replacePatterns(rule: Rule, candidates: PatternCandidate[]): Rule {
 	// Check if this node itself matches any candidate.
 	for (const c of candidates) {
 		if (patternRulesEqual(rule, c.body)) {
-			const symRef: SymbolRule = { type: 'symbol', name: c.name, hidden: true };
+			const symRef: SymbolRule = { type: SYMBOL, name: c.name, hidden: true };
 			// Body-pattern groups path: wrap the hidden symbol in an
 			// alias() so tree-sitter emits the visible kind as a CST node.
 			if (c.aliasAs !== undefined) {
-				return { type: 'alias', content: symRef, named: true, value: c.aliasAs } satisfies AliasRule;
+				return { type: ALIAS, content: symRef, named: true, value: c.aliasAs } satisfies AliasRule;
 			}
 			return symRef;
 		}
 	}
 	// Otherwise recurse into children.
 	switch (rule.type) {
-		case 'seq': {
+		case SEQ: {
 			const r = rule as SeqRule;
 			const members = replaceInArray(r.members, candidates);
 			return members === r.members ? rule : ({ ...r, members } as Rule);
 		}
-		case 'choice': {
+		case CHOICE: {
 			const r = rule as ChoiceRule;
 			const members = replaceInArray(r.members, candidates);
 			return members === r.members ? rule : ({ ...r, members } as Rule);
 		}
-		case 'optional': {
+		case OPTIONAL: {
 			const r = rule as OptionalRule;
 			const content = replacePatterns(r.content, candidates);
 			return content === r.content ? rule : ({ ...r, content } as Rule);
 		}
-		case 'repeat': {
+		case REPEAT: {
 			const r = rule as RepeatRule;
 			const content = replacePatterns(r.content, candidates);
 			return content === r.content ? rule : ({ ...r, content } as Rule);
 		}
-		case 'repeat1': {
+		case REPEAT1: {
 			const r = rule as Repeat1Rule;
 			const content = replacePatterns(r.content, candidates);
 			return content === r.content ? rule : ({ ...r, content } as Rule);
 		}
-		case 'field': {
+		case FIELD: {
 			const r = rule as FieldRule;
 			const content = replacePatterns(r.content, candidates);
 			return content === r.content ? rule : ({ ...r, content } as Rule);
@@ -2199,41 +2114,41 @@ function replaceInArray(members: Rule[], candidates: PatternCandidate[]): Rule[]
 function patternRulesEqual(a: Rule, b: Rule): boolean {
 	if (a.type !== b.type) return false;
 	switch (a.type) {
-		case 'string':
+		case STRING:
 			return a.value === (b as StringRule).value;
-		case 'pattern':
+		case PATTERN:
 			return a.value === (b as PatternRule).value;
-		case 'symbol':
+		case SYMBOL:
 			return a.name === (b as SymbolRule).name;
-		case 'enum': {
+		case ENUM: {
 			const bm = (b as EnumRule).members;
 			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
 		}
-		case 'seq': {
+		case SEQ: {
 			const bSeq = b as SeqRule;
 			return (
 				a.members.length === bSeq.members.length &&
 				a.members.every((m, i) => patternRulesEqual(m, bSeq.members[i]!))
 			);
 		}
-		case 'choice': {
+		case CHOICE: {
 			const bCh = b as ChoiceRule;
 			return (
 				a.members.length === bCh.members.length &&
 				a.members.every((m, i) => patternRulesEqual(m, bCh.members[i]!))
 			);
 		}
-		case 'optional':
+		case OPTIONAL:
 			return patternRulesEqual(a.content, (b as OptionalRule).content);
-		case 'repeat': {
+		case REPEAT: {
 			const bRep = b as RepeatRule;
 			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
 		}
-		case 'repeat1': {
+		case REPEAT1: {
 			const bRep = b as Repeat1Rule;
 			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
 		}
-		case 'field': {
+		case FIELD: {
 			const bFld = b as FieldRule;
 			return a.name === bFld.name && patternRulesEqual(a.content, bFld.content);
 		}
@@ -2424,8 +2339,8 @@ function evaluateMetadataCallbacks(
 		if (Array.isArray(result)) {
 			for (const e of result) {
 				const n = normalize(e);
-				if (n.type === 'symbol') appendDedup(sinks.extras, n.name);
-				else if (n.type === 'pattern') appendDedup(sinks.extras, n.value);
+				if (n.type === SYMBOL) appendDedup(sinks.extras, n.name);
+				else if (n.type === PATTERN) appendDedup(sinks.extras, n.value);
 			}
 		}
 	}
@@ -2437,8 +2352,8 @@ function evaluateMetadataCallbacks(
 		if (Array.isArray(result)) {
 			for (const e of result) {
 				const n = normalize(e);
-				if (n.type === 'symbol') appendDedup(sinks.externals, n.name);
-				else if (n.type === 'string') appendDedup(sinks.externals, n.value);
+				if (n.type === SYMBOL) appendDedup(sinks.externals, n.name);
+				else if (n.type === STRING) appendDedup(sinks.externals, n.value);
 			}
 		}
 	}
@@ -2461,7 +2376,7 @@ function evaluateMetadataCallbacks(
 					continue;
 				}
 				const n = normalize(s);
-				if (n.type === 'symbol') appendDedup(sinks.supertypes, n.name);
+				if (n.type === SYMBOL) appendDedup(sinks.supertypes, n.name);
 			}
 		}
 	}
@@ -2473,7 +2388,7 @@ function evaluateMetadataCallbacks(
 		if (Array.isArray(result)) {
 			for (const i of result) {
 				const n = normalize(i);
-				if (n.type === 'symbol') appendDedup(sinks.inline, n.name);
+				if (n.type === SYMBOL) appendDedup(sinks.inline, n.name);
 			}
 		}
 	}
@@ -2489,7 +2404,7 @@ function evaluateMetadataCallbacks(
 						c
 							.map((r) => {
 								const n = normalize(r);
-								return n.type === 'symbol' ? n.name : '';
+								return n.type === SYMBOL ? n.name : '';
 							})
 							.filter(Boolean)
 					);

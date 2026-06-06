@@ -8,6 +8,7 @@
  * that file; a helper that is used everywhere lives here.
  */
 
+import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TERMINAL, TOKEN } from './rule-types.ts'; // @rule-type-consts
 import type { Rule } from './rule.ts';
 
 /**
@@ -56,14 +57,14 @@ export function compileWordMatcher(
  */
 function ruleToRegexSource(rule: Rule): string | null {
 	switch (rule.type) {
-		case 'pattern':
+		case PATTERN:
 			return rule.value;
-		case 'string':
+		case STRING:
 			return escapeRegexLiteral(rule.value);
-		case 'token':
-		case 'terminal':
+		case TOKEN:
+		case TERMINAL:
 			return ruleToRegexSource((rule as { content: Rule }).content);
-		case 'seq': {
+		case SEQ: {
 			const parts: string[] = [];
 			for (const m of rule.members) {
 				const p = ruleToRegexSource(m);
@@ -72,7 +73,7 @@ function ruleToRegexSource(rule: Rule): string | null {
 			}
 			return parts.join('');
 		}
-		case 'choice': {
+		case CHOICE: {
 			const parts: string[] = [];
 			for (const m of rule.members) {
 				const p = ruleToRegexSource(m);
@@ -81,17 +82,17 @@ function ruleToRegexSource(rule: Rule): string | null {
 			}
 			return `(?:${parts.join('|')})`;
 		}
-		case 'optional': {
+		case OPTIONAL: {
 			const p = ruleToRegexSource(rule.content);
 			if (p === null) return null;
 			return `(?:${p})?`;
 		}
-		case 'repeat': {
+		case REPEAT: {
 			const p = ruleToRegexSource(rule.content);
 			if (p === null) return null;
 			return `(?:${p})*`;
 		}
-		case 'repeat1': {
+		case REPEAT1: {
 			const p = ruleToRegexSource(rule.content);
 			if (p === null) return null;
 			return `(?:${p})+`;

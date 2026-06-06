@@ -30,6 +30,7 @@
  * In both cases the head's single occurrence is absorbed into the multi slot.
  */
 
+import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, SeqRule } from './rule.ts';
 
 type Mult = 'optional' | 'array' | 'nonEmptyArray' | undefined;
@@ -44,20 +45,20 @@ const isArrayMult = (m: Mult): boolean => m === 'array' || m === 'nonEmptyArray'
 function sameSlotShape(a: Rule, b: Rule): boolean {
 	if (a.type !== b.type) return false;
 	switch (a.type) {
-		case 'symbol':
+		case SYMBOL:
 			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
-		case 'string':
-		case 'pattern':
+		case STRING:
+		case PATTERN:
 			return a.value === (b as typeof a).value;
-		case 'choice': {
+		case CHOICE: {
 			const bm = (b as typeof a).members;
 			return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
 		}
-		case 'seq': {
+		case SEQ: {
 			const bm = (b as typeof a).members;
 			return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
 		}
-		case 'enum': {
+		case ENUM: {
 			const bm = (b as typeof a).members;
 			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
 		}
@@ -72,7 +73,7 @@ function separatorString(sep: Rule['separator']): string | undefined {
 	if (sep && typeof sep === 'object' && !Array.isArray(sep)) {
 		const rules = (sep as { rules?: readonly Rule[] }).rules;
 		const first = rules?.[0];
-		if (first && first.type === 'string') return first.value;
+		if (first && first.type === STRING) return first.value;
 	}
 	return undefined;
 }
@@ -93,7 +94,7 @@ function tryFusePair(head: Rule, next: Rule | undefined): Rule | null {
 	}
 
 	// Idiom B: [E, choice(sepString, E{array})]
-	if (next.type === 'choice' && next.members.length === 2) {
+	if (next.type === CHOICE && next.members.length === 2) {
 		const sepArm = next.members.find((m) => m.type === 'string');
 		const repArm = next.members.find(
 			(m) => isArrayMult((m as { multiplicity?: Mult }).multiplicity) && sameSlotShape(head, m)
@@ -116,18 +117,17 @@ function tryFusePair(head: Rule, next: Rule | undefined): Rule | null {
 /** Recurse `fn` into a rule's structural children. */
 function recurseChildren(rule: Rule, fn: (r: Rule) => Rule): Rule {
 	switch (rule.type) {
-		case 'seq':
-		case 'choice':
+		case SEQ:
+		case CHOICE:
 			return { ...rule, members: (rule as { members: Rule[] }).members.map(fn) } as Rule;
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'field':
-		case 'variant':
-		case 'clause':
-		case 'group':
-		case 'token':
-		case 'alias':
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
+		case TOKEN:
+		case ALIAS:
 			return { ...rule, content: fn((rule as { content: Rule }).content) } as Rule;
 		default:
 			return rule;
@@ -142,7 +142,7 @@ function recurseChildren(rule: Rule, fn: (r: Rule) => Rule): Rule {
  */
 export function fuseHeadRepeatLists(rule: Rule): Rule {
 	const recursed = recurseChildren(rule, fuseHeadRepeatLists);
-	if (recursed.type !== 'seq') return recursed;
+	if (recursed.type !== SEQ) return recursed;
 	const members = (recursed as SeqRule).members;
 	const out: Rule[] = [];
 	let changed = false;

@@ -114,7 +114,7 @@ export const suggestedRules = {
   type: $ => choice($.primary_type, $.function_type, $.readonly_type, $.constructor_type, $.infer_type, $._type_query_member_expression_in_type_annotation, $._type_query_call_expression_in_type_annotation),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
-  // parents: _for_header_let_const_kind, _for_header_var_kind, catch_clause, variable_declarator
+  // parents: _catch_clause_group1, _for_header_let_const_kind, _for_header_var_kind, catch_clause_group1, variable_declarator
   _shared_2: $ => choice($._destructuring_pattern, $.identifier),
 
   // parents: _for_header_lhs, assignment_expression
@@ -148,13 +148,8 @@ export const suggestedRules = {
 // ---------------------------------------------------------------
 export const suggestedGroups = {
   // [held] 1 candidate(s)
-  _import_clause_default_import: {
-    '1': 'namespace_import',
-  },
-
-  // [held] 1 candidate(s)
-  _jsx_start_opening_element: {
-    '0/1': 'name',
+  __jsx_start_opening_element_optional1: {
+    '0/0/1': 'name',
   },
 
   // [held] 2 candidate(s)
@@ -193,11 +188,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  catch_clause: {
-    '1/0': 'parameter',
-  },
-
-  // [held] 1 candidate(s)
   export_specifier: {
     '1': 'name',
   },
@@ -214,23 +204,8 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  index_signature: {
-    '0/0': 'sign',
-  },
-
-  // [held] 1 candidate(s)
-  infer_type: {
-    '2/0/0': 'type',
-  },
-
-  // [held] 1 candidate(s)
   jsx_attribute: {
     '1': 'jsx_attribute_value',
-  },
-
-  // [held] 1 candidate(s)
-  mapped_type_clause: {
-    '3/0': 'alias',
   },
 
   // [held] 1 candidate(s)
@@ -358,8 +333,8 @@ export interface RepeatedShape {
   readonly shape: 'supertype' | 'group';
 }
 export const repeatedShapes: readonly RepeatedShape[] = [
-  { suggestedName: "_shared_2", kinds: ["_destructuring_pattern","identifier"], parents: ["_for_header_let_const_kind","_for_header_var_kind","catch_clause","variable_declarator"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["identifier","member_expression"], parents: ["_jsx_start_opening_element","decorator_call_expression","decorator_member_expression","nested_identifier"], shape: "supertype" },
+  { suggestedName: "_shared_2", kinds: ["_destructuring_pattern","identifier"], parents: ["_catch_clause_group1","_for_header_let_const_kind","_for_header_var_kind","catch_clause_group1","variable_declarator"], shape: "supertype" },
+  { suggestedName: "_shared_2", kinds: ["identifier","member_expression"], parents: ["__jsx_start_opening_element_optional1","decorator_call_expression","decorator_member_expression","nested_identifier"], shape: "supertype" },
   { suggestedName: "_property_identifier", kinds: ["private_property_identifier","property_identifier"], parents: ["_type_query_member_expression","_type_query_member_expression_in_type_annotation","member_expression"], shape: "supertype" },
   { suggestedName: "_expression", kinds: ["_lhs_expression","parenthesized_expression"], parents: ["_for_header_lhs","assignment_expression"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["expression","spread_element"], parents: ["arguments","array"], shape: "supertype" },

@@ -32,6 +32,7 @@ export type LeafStringMap = {
   in: "in";
   is: "is";
   _: "_";
+  from: "from";
   assert: "assert";
   and: "and";
   or: "or";
@@ -48,7 +49,6 @@ export type LeafStringMap = {
   finally: "finally";
   for: "for";
   def: "def";
-  from: "from";
   __future__: "__future__";
   import: "import";
   global: "global";
@@ -74,15 +74,19 @@ export const enum SyntaxKind {
   ComparisonOperatorComparator = "_comparison_operator_comparator",
   ComprehensionClauses = "_comprehension_clauses",
   ExceptClauseAs = "_except_clause_as",
+  ExceptClauseAsOptional1 = "_except_clause_as_optional1",
   ExceptClauseList = "_except_clause_list",
   ExpressionStatementTuple = "_expression_statement_tuple",
+  FunctionDefinitionOptional1 = "_function_definition_optional1",
   ImportList = "_import_list",
   KeyValuePattern = "_key_value_pattern",
   _ListPattern = "_list_pattern",
   MatchBlock = "_match_block",
   MatchBlockBlock = "_match_block_block",
+  RaiseStatementOptional1 = "_raise_statement_optional1",
   SimplePatternNegative = "_simple_pattern_negative",
   SimpleStatements = "_simple_statements",
+  _SliceGroup1 = "_slice_group1",
   Suite = "_suite",
   _TuplePattern = "_tuple_pattern",
   WithClauseBare = "_with_clause_bare",
@@ -189,6 +193,7 @@ export const enum SyntaxKind {
   WithItem = "with_item",
   WithStatement = "with_statement",
   Yield = "yield",
+  SliceGroup1 = "slice_group1",
   AsyncMarker = "_async_marker",
   AugmentedAssignmentOperator = "_augmented_assignment_operator",
   ComplexPatternOperator = "_complex_pattern_operator",
@@ -229,6 +234,7 @@ export const enum SyntaxKind {
   In = "in",
   Is = "is",
   Anonymous = "_",
+  From = "from",
   Assert = "assert",
   And = "and",
   Or = "or",
@@ -245,7 +251,6 @@ export const enum SyntaxKind {
   Finally = "finally",
   For = "for",
   Def = "def",
-  From = "from",
   FutureU = "__future__",
   Import = "import",
   Global = "global",
@@ -301,62 +306,62 @@ export const enum TSKindId {
   Finally = 35,
   With = 36,
   Def = 37,
-  DashGt = 38,
-  StarStar = 39,
-  Global = 40,
-  Nonlocal = 41,
-  Exec = 42,
-  Eq = 43,
-  Class = 44,
-  Lbrack = 45,
-  Rbrack = 46,
-  At2 = 47,
-  Anonymous = 48,
-  Pipe2 = 49,
-  Lbrace = 50,
-  Rbrace = 51,
-  Plus = 52,
-  Dash = 53,
-  Not = 54,
-  And = 55,
-  Or = 56,
-  Slash2 = 57,
-  Percent = 58,
-  SlashSlash = 59,
-  Amp = 60,
-  Caret = 61,
-  LtLt = 62,
-  Tilde = 63,
-  Is = 64,
-  AnonLambda = 65,
-  PlusEq = 66,
-  DashEq = 67,
-  StarEq = 68,
-  SlashEq = 69,
-  AtEq = 70,
-  SlashSlashEq = 71,
-  PercentEq = 72,
-  StarStarEq = 73,
-  GtGtEq = 74,
-  LtLtEq = 75,
-  AmpEq = 76,
-  CaretEq = 77,
-  PipeEq = 78,
-  AnonYield = 79,
-  Ellipsis2 = 80,
-  AnonType = 81,
-  EscapeSequence = 82,
-  Bslash = 83,
-  FormatSpecifierToken1 = 84,
-  TypeConversion = 85,
-  Integer = 86,
-  Float = 87,
-  AnonAwait = 88,
-  True = 89,
-  False = 90,
-  None = 91,
-  Comment = 92,
-  LineContinuation = 93,
+  StarStar = 38,
+  Global = 39,
+  Nonlocal = 40,
+  Exec = 41,
+  Eq = 42,
+  Class = 43,
+  Lbrack = 44,
+  Rbrack = 45,
+  At2 = 46,
+  Anonymous = 47,
+  Pipe2 = 48,
+  Lbrace = 49,
+  Rbrace = 50,
+  Plus = 51,
+  Dash = 52,
+  Not = 53,
+  And = 54,
+  Or = 55,
+  Slash2 = 56,
+  Percent = 57,
+  SlashSlash = 58,
+  Amp = 59,
+  Caret = 60,
+  LtLt = 61,
+  Tilde = 62,
+  Is = 63,
+  AnonLambda = 64,
+  PlusEq = 65,
+  DashEq = 66,
+  StarEq = 67,
+  SlashEq = 68,
+  AtEq = 69,
+  SlashSlashEq = 70,
+  PercentEq = 71,
+  StarStarEq = 72,
+  GtGtEq = 73,
+  LtLtEq = 74,
+  AmpEq = 75,
+  CaretEq = 76,
+  PipeEq = 77,
+  AnonYield = 78,
+  Ellipsis2 = 79,
+  AnonType = 80,
+  EscapeSequence = 81,
+  Bslash = 82,
+  FormatSpecifierToken1 = 83,
+  TypeConversion = 84,
+  Integer = 85,
+  Float = 86,
+  AnonAwait = 87,
+  True = 88,
+  False = 89,
+  None = 90,
+  Comment = 91,
+  LineContinuation = 92,
+  DashGt = 93,
   Lt = 94,
   LtEq = 95,
   EqEq = 96,
@@ -503,52 +508,53 @@ export const enum TSKindId {
   Await = 237,
   PositionalSeparator = 238,
   KeywordSeparator = 239,
-  AssignmentEq = 240,
-  AssignmentType = 241,
-  AssignmentTyped = 242,
-  ExpressionStatementTuple = 243,
-  WithClauseBare = 244,
-  WithClauseParen = 245,
-  MatchBlockBlock = 246,
-  DictPatternKv = 247,
-  SimplePatternNegative = 248,
-  ExceptClauseAs = 249,
-  ExceptClauseList = 250,
-  ComparisonOperatorComparator = 251,
-  ModuleRepeat1 = 252,
-  _SimpleStatementsRepeat1 = 253,
-  ImportPrefixRepeat1 = 254,
-  _ImportListRepeat1 = 255,
-  PrintStatementRepeat1 = 256,
-  AssertStatementRepeat1 = 257,
-  IfStatementRepeat1 = 258,
-  MatchStatementRepeat1 = 259,
-  CaseClauseRepeat1 = 260,
-  TryStatementRepeat1 = 261,
-  GlobalStatementRepeat1 = 262,
-  TypeParameterRepeat1 = 263,
-  ArgumentListRepeat1 = 264,
+  _SliceGroup1 = 240,
+  ExceptClauseAs = 241,
+  AssignmentEq = 242,
+  AssignmentType = 243,
+  AssignmentTyped = 244,
+  ExpressionStatementTuple = 245,
+  WithClauseBare = 246,
+  WithClauseParen = 247,
+  MatchBlockBlock = 248,
+  DictPatternKv = 249,
+  SimplePatternNegative = 250,
+  ExceptClauseList = 251,
+  ComparisonOperatorComparator = 252,
+  ModuleRepeat1 = 253,
+  _SimpleStatementsRepeat1 = 254,
+  ImportPrefixRepeat1 = 255,
+  _ImportListRepeat1 = 256,
+  PrintStatementRepeat1 = 257,
+  AssertStatementRepeat1 = 258,
+  IfStatementRepeat1 = 259,
+  MatchStatementRepeat1 = 260,
+  CaseClauseRepeat1 = 261,
+  TryStatementRepeat1 = 262,
+  GlobalStatementRepeat1 = 263,
+  TypeParameterRepeat1 = 264,
   DecoratedDefinitionRepeat1 = 265,
   DottedNameRepeat1 = 266,
   UnionPatternRepeat1 = 267,
-  DictPatternRepeat1 = 268,
-  _ParametersRepeat1 = 269,
-  _PatternsRepeat1 = 270,
-  ComparisonOperatorRepeat1 = 271,
-  SubscriptRepeat1 = 272,
-  DictionaryRepeat1 = 273,
-  _ComprehensionClausesRepeat1 = 274,
-  _CollectionElementsRepeat1 = 275,
-  ForInClauseRepeat1 = 276,
-  ConcatenatedStringRepeat1 = 277,
-  StringRepeat1 = 278,
-  StringContentRepeat1 = 279,
-  FormatSpecifierRepeat1 = 280,
-  _WithClauseBareRepeat1 = 281,
-  _MatchBlockBlockRepeat1 = 282,
-  _ExceptClauseListRepeat1 = 283,
-  _AsPatternTarget = 284,
-  _FormatExpression = 285,
+  _ParametersRepeat1 = 268,
+  _PatternsRepeat1 = 269,
+  ComparisonOperatorRepeat1 = 270,
+  SubscriptRepeat1 = 271,
+  _ComprehensionClausesRepeat1 = 272,
+  _CollectionElementsRepeat1 = 273,
+  ForInClauseRepeat1 = 274,
+  ConcatenatedStringRepeat1 = 275,
+  StringRepeat1 = 276,
+  StringContentRepeat1 = 277,
+  FormatSpecifierRepeat1 = 278,
+  _ArgumentListOptional1Repeat1 = 279,
+  _DictPatternOptional1Repeat1 = 280,
+  _DictionaryOptional1Repeat1 = 281,
+  _WithClauseBareRepeat1 = 282,
+  _MatchBlockBlockRepeat1 = 283,
+  _ExceptClauseListRepeat1 = 284,
+  _AsPatternTarget = 285,
+  _FormatExpression = 286,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -589,62 +595,62 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [35, "finally"],
   [36, "with"],
   [37, "def"],
-  [38, "dash_gt"],
-  [39, "star_star"],
-  [40, "global"],
-  [41, "nonlocal"],
-  [42, "exec"],
-  [43, "eq"],
-  [44, "class"],
-  [45, "lbrack"],
-  [46, "rbrack"],
-  [47, "at"],
-  [48, "_"],
-  [49, "pipe"],
-  [50, "lbrace"],
-  [51, "rbrace"],
-  [52, "plus"],
-  [53, "dash"],
-  [54, "not"],
-  [55, "and"],
-  [56, "or"],
-  [57, "slash"],
-  [58, "percent"],
-  [59, "slash_slash"],
-  [60, "amp"],
-  [61, "caret"],
-  [62, "lt_lt"],
-  [63, "tilde"],
-  [64, "is"],
-  [65, "anon_lambda"],
-  [66, "plus_eq"],
-  [67, "dash_eq"],
-  [68, "star_eq"],
-  [69, "slash_eq"],
-  [70, "at_eq"],
-  [71, "slash_slash_eq"],
-  [72, "percent_eq"],
-  [73, "star_star_eq"],
-  [74, "gt_gt_eq"],
-  [75, "lt_lt_eq"],
-  [76, "amp_eq"],
-  [77, "caret_eq"],
-  [78, "pipe_eq"],
-  [79, "anon_yield"],
-  [80, "ellipsis"],
-  [81, "anon_type"],
-  [82, "escape_sequence"],
-  [83, "bslash"],
-  [84, "format_specifier_token1"],
-  [85, "type_conversion"],
-  [86, "integer"],
-  [87, "float"],
-  [88, "anon_await"],
-  [89, "true"],
-  [90, "false"],
-  [91, "none"],
-  [92, "comment"],
-  [93, "line_continuation"],
+  [38, "star_star"],
+  [39, "global"],
+  [40, "nonlocal"],
+  [41, "exec"],
+  [42, "eq"],
+  [43, "class"],
+  [44, "lbrack"],
+  [45, "rbrack"],
+  [46, "at"],
+  [47, "_"],
+  [48, "pipe"],
+  [49, "lbrace"],
+  [50, "rbrace"],
+  [51, "plus"],
+  [52, "dash"],
+  [53, "not"],
+  [54, "and"],
+  [55, "or"],
+  [56, "slash"],
+  [57, "percent"],
+  [58, "slash_slash"],
+  [59, "amp"],
+  [60, "caret"],
+  [61, "lt_lt"],
+  [62, "tilde"],
+  [63, "is"],
+  [64, "anon_lambda"],
+  [65, "plus_eq"],
+  [66, "dash_eq"],
+  [67, "star_eq"],
+  [68, "slash_eq"],
+  [69, "at_eq"],
+  [70, "slash_slash_eq"],
+  [71, "percent_eq"],
+  [72, "star_star_eq"],
+  [73, "gt_gt_eq"],
+  [74, "lt_lt_eq"],
+  [75, "amp_eq"],
+  [76, "caret_eq"],
+  [77, "pipe_eq"],
+  [78, "anon_yield"],
+  [79, "ellipsis"],
+  [80, "anon_type"],
+  [81, "escape_sequence"],
+  [82, "bslash"],
+  [83, "format_specifier_token1"],
+  [84, "type_conversion"],
+  [85, "integer"],
+  [86, "float"],
+  [87, "anon_await"],
+  [88, "true"],
+  [89, "false"],
+  [90, "none"],
+  [91, "comment"],
+  [92, "line_continuation"],
+  [93, "dash_gt"],
   [94, "lt"],
   [95, "lt_eq"],
   [96, "eq_eq"],
@@ -791,52 +797,53 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [237, "await"],
   [238, "positional_separator"],
   [239, "keyword_separator"],
-  [240, "_assignment_eq"],
-  [241, "_assignment_type"],
-  [242, "_assignment_typed"],
-  [243, "_expression_statement_tuple"],
-  [244, "_with_clause_bare"],
-  [245, "_with_clause_paren"],
-  [246, "_match_block_block"],
-  [247, "_dict_pattern_kv"],
-  [248, "_simple_pattern_negative"],
-  [249, "_except_clause_as"],
-  [250, "_except_clause_list"],
-  [251, "_comparison_operator_comparator"],
-  [252, "module_repeat1"],
-  [253, "_simple_statements_repeat1"],
-  [254, "import_prefix_repeat1"],
-  [255, "_import_list_repeat1"],
-  [256, "print_statement_repeat1"],
-  [257, "assert_statement_repeat1"],
-  [258, "if_statement_repeat1"],
-  [259, "match_statement_repeat1"],
-  [260, "case_clause_repeat1"],
-  [261, "try_statement_repeat1"],
-  [262, "global_statement_repeat1"],
-  [263, "type_parameter_repeat1"],
-  [264, "argument_list_repeat1"],
+  [240, "_slice_group1"],
+  [241, "_except_clause_as"],
+  [242, "_assignment_eq"],
+  [243, "_assignment_type"],
+  [244, "_assignment_typed"],
+  [245, "_expression_statement_tuple"],
+  [246, "_with_clause_bare"],
+  [247, "_with_clause_paren"],
+  [248, "_match_block_block"],
+  [249, "_dict_pattern_kv"],
+  [250, "_simple_pattern_negative"],
+  [251, "_except_clause_list"],
+  [252, "_comparison_operator_comparator"],
+  [253, "module_repeat1"],
+  [254, "_simple_statements_repeat1"],
+  [255, "import_prefix_repeat1"],
+  [256, "_import_list_repeat1"],
+  [257, "print_statement_repeat1"],
+  [258, "assert_statement_repeat1"],
+  [259, "if_statement_repeat1"],
+  [260, "match_statement_repeat1"],
+  [261, "case_clause_repeat1"],
+  [262, "try_statement_repeat1"],
+  [263, "global_statement_repeat1"],
+  [264, "type_parameter_repeat1"],
   [265, "decorated_definition_repeat1"],
   [266, "dotted_name_repeat1"],
   [267, "union_pattern_repeat1"],
-  [268, "dict_pattern_repeat1"],
-  [269, "_parameters_repeat1"],
-  [270, "_patterns_repeat1"],
-  [271, "comparison_operator_repeat1"],
-  [272, "subscript_repeat1"],
-  [273, "dictionary_repeat1"],
-  [274, "_comprehension_clauses_repeat1"],
-  [275, "_collection_elements_repeat1"],
-  [276, "for_in_clause_repeat1"],
-  [277, "concatenated_string_repeat1"],
-  [278, "string_repeat1"],
-  [279, "string_content_repeat1"],
-  [280, "format_specifier_repeat1"],
-  [281, "_with_clause_bare_repeat1"],
-  [282, "_match_block_block_repeat1"],
-  [283, "_except_clause_list_repeat1"],
-  [284, "_as_pattern_target"],
-  [285, "_format_expression"],
+  [268, "_parameters_repeat1"],
+  [269, "_patterns_repeat1"],
+  [270, "comparison_operator_repeat1"],
+  [271, "subscript_repeat1"],
+  [272, "_comprehension_clauses_repeat1"],
+  [273, "_collection_elements_repeat1"],
+  [274, "for_in_clause_repeat1"],
+  [275, "concatenated_string_repeat1"],
+  [276, "string_repeat1"],
+  [277, "string_content_repeat1"],
+  [278, "format_specifier_repeat1"],
+  [279, "_argument_list_optional1_repeat1"],
+  [280, "_dict_pattern_optional1_repeat1"],
+  [281, "_dictionary_optional1_repeat1"],
+  [282, "_with_clause_bare_repeat1"],
+  [283, "_match_block_block_repeat1"],
+  [284, "_except_clause_list_repeat1"],
+  [285, "_as_pattern_target"],
+  [286, "_format_expression"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -878,7 +885,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "finally": return TSKindId.Finally;
     case "with": return TSKindId.With;
     case "def": return TSKindId.Def;
-    case "dash_gt": return TSKindId.DashGt;
     case "star_star": return TSKindId.StarStar;
     case "global": return TSKindId.Global;
     case "nonlocal": return TSKindId.Nonlocal;
@@ -934,6 +940,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "none": return TSKindId.None;
     case "comment": return TSKindId.Comment;
     case "line_continuation": return TSKindId.LineContinuation;
+    case "dash_gt": return TSKindId.DashGt;
     case "lt": return TSKindId.Lt;
     case "lt_eq": return TSKindId.LtEq;
     case "eq_eq": return TSKindId.EqEq;
@@ -1080,6 +1087,8 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "await": return TSKindId.Await;
     case "positional_separator": return TSKindId.PositionalSeparator;
     case "keyword_separator": return TSKindId.KeywordSeparator;
+    case "_slice_group1": return TSKindId._SliceGroup1;
+    case "_except_clause_as": return TSKindId.ExceptClauseAs;
     case "_assignment_eq": return TSKindId.AssignmentEq;
     case "_assignment_type": return TSKindId.AssignmentType;
     case "_assignment_typed": return TSKindId.AssignmentTyped;
@@ -1089,7 +1098,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_match_block_block": return TSKindId.MatchBlockBlock;
     case "_dict_pattern_kv": return TSKindId.DictPatternKv;
     case "_simple_pattern_negative": return TSKindId.SimplePatternNegative;
-    case "_except_clause_as": return TSKindId.ExceptClauseAs;
     case "_except_clause_list": return TSKindId.ExceptClauseList;
     case "_comparison_operator_comparator": return TSKindId.ComparisonOperatorComparator;
     case "module_repeat1": return TSKindId.ModuleRepeat1;
@@ -1104,16 +1112,13 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "try_statement_repeat1": return TSKindId.TryStatementRepeat1;
     case "global_statement_repeat1": return TSKindId.GlobalStatementRepeat1;
     case "type_parameter_repeat1": return TSKindId.TypeParameterRepeat1;
-    case "argument_list_repeat1": return TSKindId.ArgumentListRepeat1;
     case "decorated_definition_repeat1": return TSKindId.DecoratedDefinitionRepeat1;
     case "dotted_name_repeat1": return TSKindId.DottedNameRepeat1;
     case "union_pattern_repeat1": return TSKindId.UnionPatternRepeat1;
-    case "dict_pattern_repeat1": return TSKindId.DictPatternRepeat1;
     case "_parameters_repeat1": return TSKindId._ParametersRepeat1;
     case "_patterns_repeat1": return TSKindId._PatternsRepeat1;
     case "comparison_operator_repeat1": return TSKindId.ComparisonOperatorRepeat1;
     case "subscript_repeat1": return TSKindId.SubscriptRepeat1;
-    case "dictionary_repeat1": return TSKindId.DictionaryRepeat1;
     case "_comprehension_clauses_repeat1": return TSKindId._ComprehensionClausesRepeat1;
     case "_collection_elements_repeat1": return TSKindId._CollectionElementsRepeat1;
     case "for_in_clause_repeat1": return TSKindId.ForInClauseRepeat1;
@@ -1121,6 +1126,9 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "string_repeat1": return TSKindId.StringRepeat1;
     case "string_content_repeat1": return TSKindId.StringContentRepeat1;
     case "format_specifier_repeat1": return TSKindId.FormatSpecifierRepeat1;
+    case "_argument_list_optional1_repeat1": return TSKindId._ArgumentListOptional1Repeat1;
+    case "_dict_pattern_optional1_repeat1": return TSKindId._DictPatternOptional1Repeat1;
+    case "_dictionary_optional1_repeat1": return TSKindId._DictionaryOptional1Repeat1;
     case "_with_clause_bare_repeat1": return TSKindId._WithClauseBareRepeat1;
     case "_match_block_block_repeat1": return TSKindId._MatchBlockBlockRepeat1;
     case "_except_clause_list_repeat1": return TSKindId._ExceptClauseListRepeat1;
@@ -1135,7 +1143,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case ">>": return TSKindId.GtGt;
     case ":=": return TSKindId.ColonEq;
     case ":": return TSKindId.Colon;
-    case "->": return TSKindId.DashGt;
     case "**": return TSKindId.StarStar;
     case "=": return TSKindId.Eq;
     case "[": return TSKindId.Lbrack;
@@ -1167,6 +1174,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "^=": return TSKindId.CaretEq;
     case "|=": return TSKindId.PipeEq;
     case "\\": return TSKindId.Bslash;
+    case "->": return TSKindId.DashGt;
     case "<": return TSKindId.Lt;
     case "<=": return TSKindId.LtEq;
     case "==": return TSKindId.EqEq;
@@ -1176,6 +1184,8 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "<>": return TSKindId.LtGt;
     case "not in": return TSKindId.NotIn;
     case "is not": return TSKindId.IsNot;
+    case "slice_group1": return TSKindId._SliceGroup1;
+    case "except_clause_as": return TSKindId.ExceptClauseAs;
     case "assignment_eq": return TSKindId.AssignmentEq;
     case "assignment_type": return TSKindId.AssignmentType;
     case "assignment_typed": return TSKindId.AssignmentTyped;
@@ -1185,7 +1195,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "match_block_block": return TSKindId.MatchBlockBlock;
     case "dict_pattern_kv": return TSKindId.DictPatternKv;
     case "simple_pattern_negative": return TSKindId.SimplePatternNegative;
-    case "except_clause_as": return TSKindId.ExceptClauseAs;
     case "except_clause_list": return TSKindId.ExceptClauseList;
     case "comparison_operator_comparator": return TSKindId.ComparisonOperatorComparator;
     case "as_pattern_target": return TSKindId._AsPatternTarget;
@@ -1411,6 +1420,12 @@ export interface ExceptClauseAs {
   alias(): Expression | undefined;
 }
 
+export interface ExceptClauseAsOptional1 {
+  readonly $type: "_except_clause_as_optional1";
+  readonly _alias: Expression;
+  alias(): Expression;
+}
+
 export interface ExceptClauseList {
   readonly $type: TSKindId.ExceptClauseList;
   readonly _value: NonEmptyArray<Expression>;
@@ -1421,6 +1436,12 @@ export interface ExpressionStatementTuple {
   readonly $type: TSKindId.ExpressionStatementTuple;
   readonly _expression: NonEmptyArray<Expression>;
   expressions(): NonEmptyArray<Expression>;
+}
+
+export interface FunctionDefinitionOptional1 {
+  readonly $type: "_function_definition_optional1";
+  readonly _return_type?: Type;
+  returnType(): Type | undefined;
 }
 
 export interface ImportList {
@@ -1455,6 +1476,12 @@ export interface MatchBlockBlock {
   alternatives(): readonly (CaseClause)[];
 }
 
+export interface RaiseStatementOptional1 {
+  readonly $type: "_raise_statement_optional1";
+  readonly _cause?: Expression;
+  cause(): Expression | undefined;
+}
+
 export interface SimplePatternNegative {
   readonly $type: TSKindId.SimplePatternNegative;
   readonly _content: Integer | Float;
@@ -1465,6 +1492,12 @@ export interface SimpleStatements {
   readonly $type: TSKindId.SimpleStatements;
   readonly _simple_statement: NonEmptyArray<SimpleStatement>;
   simpleStatements(): NonEmptyArray<SimpleStatement>;
+}
+
+export interface _SliceGroup1 {
+  readonly $type: TSKindId._SliceGroup1;
+  readonly _expression?: Expression;
+  expression(): Expression | undefined;
 }
 
 export interface Suite {
@@ -1650,12 +1683,15 @@ export interface ComparisonOperator {
 
 export interface ComplexPattern {
   readonly $type: TSKindId.ComplexPattern;
+  readonly _real?: boolean;
   readonly _imaginary: Integer | Float;
   readonly _operator: number;
   readonly _content: Integer | Float;
   readonly __inputHints__?: {
+    readonly real?: BooleanKeyword<"-">;
     readonly operator: KindEnum<"+" | "-", TSKindId.Plus | TSKindId.Dash>;
   };
+  real(): boolean | undefined;
   imaginary(): Integer | Float;
   operator(): number;
   content(): Integer | Float;
@@ -1715,8 +1751,12 @@ export interface DeleteStatement {
 
 export interface DictPattern {
   readonly $type: TSKindId.DictPattern;
-  readonly _dict_pattern_kv?: readonly (DictPatternKv)[];
-  dictPatternKvs(): readonly (DictPatternKv)[];
+  readonly _key?: readonly (SimplePattern)[];
+  readonly _value?: readonly (CasePattern)[];
+  readonly _splat_pattern?: readonly (SplatPattern)[];
+  keys(): readonly (SimplePattern)[];
+  values(): readonly (CasePattern)[];
+  splatPatterns(): readonly (SplatPattern)[];
 }
 
 export interface Dictionary {
@@ -1780,9 +1820,9 @@ export interface ExceptClause {
 export interface ExecStatement {
   readonly $type: TSKindId.ExecStatement;
   readonly _code: String | Identifier;
-  readonly _expression?: readonly (Expression)[];
+  readonly _in_clause?: readonly (Expression)[];
   code(): String | Identifier;
-  expressions(): readonly (Expression)[];
+  inClauses(): readonly (Expression)[];
 }
 
 export interface ExpressionList {
@@ -2124,10 +2164,10 @@ export interface Slice {
   readonly $type: TSKindId.Slice;
   readonly _start?: Expression;
   readonly _stop?: Expression;
-  readonly _step?: Expression;
+  readonly _step?: SliceGroup1;
   start(): Expression | undefined;
   stop(): Expression | undefined;
-  step(): Expression | undefined;
+  step(): SliceGroup1 | undefined;
 }
 
 export interface SplatPattern {
@@ -2300,10 +2340,14 @@ export interface WithStatement {
 
 export interface Yield {
   readonly $type: TSKindId.Yield;
+  readonly _content?: Expression | Expressions;
+  content(): Expression | Expressions | undefined;
+}
+
+export interface SliceGroup1 {
+  readonly $type: "slice_group1";
   readonly _expression?: Expression;
-  readonly _expressions?: Expressions;
   expression(): Expression | undefined;
-  expressions(): Expressions | undefined;
 }
 
 
@@ -2348,15 +2392,19 @@ export interface AssignmentTypedTree extends AnyTreeNode { readonly type: "_assi
 export interface ComparisonOperatorComparatorTree extends AnyTreeNode { readonly type: "_comparison_operator_comparator"; }
 export interface ComprehensionClausesTree extends AnyTreeNode { readonly type: "_comprehension_clauses"; }
 export interface ExceptClauseAsTree extends AnyTreeNode { readonly type: "_except_clause_as"; }
+export interface ExceptClauseAsOptional1Tree extends AnyTreeNode { readonly type: "_except_clause_as_optional1"; }
 export interface ExceptClauseListTree extends AnyTreeNode { readonly type: "_except_clause_list"; }
 export interface ExpressionStatementTupleTree extends AnyTreeNode { readonly type: "_expression_statement_tuple"; }
+export interface FunctionDefinitionOptional1Tree extends AnyTreeNode { readonly type: "_function_definition_optional1"; }
 export interface ImportListTree extends AnyTreeNode { readonly type: "_import_list"; }
 export interface KeyValuePatternTree extends AnyTreeNode { readonly type: "_key_value_pattern"; }
 export interface _ListPatternTree extends AnyTreeNode { readonly type: "_list_pattern"; }
 export interface MatchBlockTree extends AnyTreeNode { readonly type: "_match_block"; }
 export interface MatchBlockBlockTree extends AnyTreeNode { readonly type: "_match_block_block"; }
+export interface RaiseStatementOptional1Tree extends AnyTreeNode { readonly type: "_raise_statement_optional1"; }
 export interface SimplePatternNegativeTree extends AnyTreeNode { readonly type: "_simple_pattern_negative"; }
 export interface SimpleStatementsTree extends AnyTreeNode { readonly type: "_simple_statements"; }
+export interface _SliceGroup1Tree extends AnyTreeNode { readonly type: "_slice_group1"; }
 export interface SuiteTree extends AnyTreeNode { readonly type: "_suite"; }
 export interface _TuplePatternTree extends AnyTreeNode { readonly type: "_tuple_pattern"; }
 export interface WithClauseBareTree extends AnyTreeNode { readonly type: "_with_clause_bare"; }
@@ -2463,6 +2511,7 @@ export interface WithClauseTree extends TreeNode<'with_clause'> {}
 export interface WithItemTree extends TreeNode<'with_item'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
+export interface SliceGroup1Tree extends TreeNode<'slice_group1'> {}
 export interface AugmentedAssignmentOperatorTree extends AnyTreeNode { readonly type: "_augmented_assignment_operator"; }
 export interface ComplexPatternOperatorTree extends AnyTreeNode { readonly type: "_complex_pattern_operator"; }
 export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
@@ -2498,6 +2547,7 @@ export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface IsTree extends AnyTreeNode { readonly type: "is"; }
+export interface FromTree extends AnyTreeNode { readonly type: "from"; }
 export interface AssertTree extends AnyTreeNode { readonly type: "assert"; }
 export interface AndTree extends AnyTreeNode { readonly type: "and"; }
 export interface OrTree extends AnyTreeNode { readonly type: "or"; }
@@ -2514,7 +2564,6 @@ export interface False2Tree extends AnyTreeNode { readonly type: "False"; }
 export interface FinallyTree extends AnyTreeNode { readonly type: "finally"; }
 export interface ForTree extends AnyTreeNode { readonly type: "for"; }
 export interface DefTree extends AnyTreeNode { readonly type: "def"; }
-export interface FromTree extends AnyTreeNode { readonly type: "from"; }
 export interface ImportTree extends AnyTreeNode { readonly type: "import"; }
 export interface GlobalTree extends AnyTreeNode { readonly type: "global"; }
 export interface MatchTree extends AnyTreeNode { readonly type: "match"; }
@@ -2735,15 +2784,19 @@ export type PythonNode =
   | ComparisonOperatorComparator
   | ComprehensionClauses
   | ExceptClauseAs
+  | ExceptClauseAsOptional1
   | ExceptClauseList
   | ExpressionStatementTuple
+  | FunctionDefinitionOptional1
   | ImportList
   | KeyValuePattern
   | _ListPattern
   | MatchBlock
   | MatchBlockBlock
+  | RaiseStatementOptional1
   | SimplePatternNegative
   | SimpleStatements
+  | _SliceGroup1
   | Suite
   | _TuplePattern
   | WithClauseBare
@@ -2850,6 +2903,7 @@ export type PythonNode =
   | WithItem
   | WithStatement
   | Yield
+  | SliceGroup1
 ;
 
 export interface KindMap {
@@ -2860,15 +2914,19 @@ export interface KindMap {
   '_comparison_operator_comparator': ComparisonOperatorComparator;
   '_comprehension_clauses': ComprehensionClauses;
   '_except_clause_as': ExceptClauseAs;
+  '_except_clause_as_optional1': ExceptClauseAsOptional1;
   '_except_clause_list': ExceptClauseList;
   '_expression_statement_tuple': ExpressionStatementTuple;
+  '_function_definition_optional1': FunctionDefinitionOptional1;
   '_import_list': ImportList;
   '_key_value_pattern': KeyValuePattern;
   '_list_pattern': _ListPattern;
   '_match_block': MatchBlock;
   '_match_block_block': MatchBlockBlock;
+  '_raise_statement_optional1': RaiseStatementOptional1;
   '_simple_pattern_negative': SimplePatternNegative;
   '_simple_statements': SimpleStatements;
+  '_slice_group1': _SliceGroup1;
   '_suite': Suite;
   '_tuple_pattern': _TuplePattern;
   '_with_clause_bare': WithClauseBare;
@@ -2975,6 +3033,7 @@ export interface KindMap {
   'with_item': WithItem;
   'with_statement': WithStatement;
   'yield': Yield;
+  'slice_group1': SliceGroup1;
   '_augmented_assignment_operator': AugmentedAssignmentOperator;
   '_complex_pattern_operator': ComplexPatternOperator;
   '_is_not': IsNot;
@@ -3016,15 +3075,19 @@ export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap
 export interface ComparisonOperatorComparatorNs extends NodeNs<ComparisonOperatorComparator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ComprehensionClausesNs extends NodeNs<ComprehensionClauses, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseAsNs extends NodeNs<ExceptClauseAs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExceptClauseAsOptional1Ns extends NodeNs<ExceptClauseAsOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseListNs extends NodeNs<ExceptClauseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionStatementTupleNs extends NodeNs<ExpressionStatementTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionDefinitionOptional1Ns extends NodeNs<FunctionDefinitionOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportListNs extends NodeNs<ImportList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface KeyValuePatternNs extends NodeNs<KeyValuePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ListPatternNs extends NodeNs<_ListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchBlockNs extends NodeNs<MatchBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchBlockBlockNs extends NodeNs<MatchBlockBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface RaiseStatementOptional1Ns extends NodeNs<RaiseStatementOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SimplePatternNegativeNs extends NodeNs<SimplePatternNegative, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SimpleStatementsNs extends NodeNs<SimpleStatements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _SliceGroup1Ns extends NodeNs<_SliceGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SuiteNs extends NodeNs<Suite, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _TuplePatternNs extends NodeNs<_TuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithClauseBareNs extends NodeNs<WithClauseBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3131,6 +3194,7 @@ export interface WithClauseNs extends NodeNs<WithClause, LeafScalarMap, LeafStri
 export interface WithItemNs extends NodeNs<WithItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithStatementNs extends NodeNs<WithStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface YieldNs extends NodeNs<Yield, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SliceGroup1Ns extends NodeNs<SliceGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
   '_as_pattern': _AsPatternNs;
@@ -3140,15 +3204,19 @@ export interface NamespaceMap {
   '_comparison_operator_comparator': ComparisonOperatorComparatorNs;
   '_comprehension_clauses': ComprehensionClausesNs;
   '_except_clause_as': ExceptClauseAsNs;
+  '_except_clause_as_optional1': ExceptClauseAsOptional1Ns;
   '_except_clause_list': ExceptClauseListNs;
   '_expression_statement_tuple': ExpressionStatementTupleNs;
+  '_function_definition_optional1': FunctionDefinitionOptional1Ns;
   '_import_list': ImportListNs;
   '_key_value_pattern': KeyValuePatternNs;
   '_list_pattern': _ListPatternNs;
   '_match_block': MatchBlockNs;
   '_match_block_block': MatchBlockBlockNs;
+  '_raise_statement_optional1': RaiseStatementOptional1Ns;
   '_simple_pattern_negative': SimplePatternNegativeNs;
   '_simple_statements': SimpleStatementsNs;
+  '_slice_group1': _SliceGroup1Ns;
   '_suite': SuiteNs;
   '_tuple_pattern': _TuplePatternNs;
   '_with_clause_bare': WithClauseBareNs;
@@ -3255,6 +3323,7 @@ export interface NamespaceMap {
   'with_item': WithItemNs;
   'with_statement': WithStatementNs;
   'yield': YieldNs;
+  'slice_group1': SliceGroup1Ns;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -3313,6 +3382,13 @@ export namespace ExceptClauseAs {
   export type Tree = TreeFor<'_except_clause_as'>;
   export type Kind = '_except_clause_as';
 }
+export namespace ExceptClauseAsOptional1 {
+  export type Config = ConfigFor<'_except_clause_as_optional1'>;
+  export type Fluent = FluentFor<'_except_clause_as_optional1'>;
+  export type Loose = LooseFor<'_except_clause_as_optional1'>;
+  export type Tree = TreeFor<'_except_clause_as_optional1'>;
+  export type Kind = '_except_clause_as_optional1';
+}
 export namespace ExceptClauseList {
   export type Config = ConfigFor<'_except_clause_list'>;
   export type Fluent = FluentFor<'_except_clause_list'>;
@@ -3326,6 +3402,13 @@ export namespace ExpressionStatementTuple {
   export type Loose = LooseFor<'_expression_statement_tuple'>;
   export type Tree = TreeFor<'_expression_statement_tuple'>;
   export type Kind = '_expression_statement_tuple';
+}
+export namespace FunctionDefinitionOptional1 {
+  export type Config = ConfigFor<'_function_definition_optional1'>;
+  export type Fluent = FluentFor<'_function_definition_optional1'>;
+  export type Loose = LooseFor<'_function_definition_optional1'>;
+  export type Tree = TreeFor<'_function_definition_optional1'>;
+  export type Kind = '_function_definition_optional1';
 }
 export namespace ImportList {
   export type Config = ConfigFor<'_import_list'>;
@@ -3362,6 +3445,13 @@ export namespace MatchBlockBlock {
   export type Tree = TreeFor<'_match_block_block'>;
   export type Kind = '_match_block_block';
 }
+export namespace RaiseStatementOptional1 {
+  export type Config = ConfigFor<'_raise_statement_optional1'>;
+  export type Fluent = FluentFor<'_raise_statement_optional1'>;
+  export type Loose = LooseFor<'_raise_statement_optional1'>;
+  export type Tree = TreeFor<'_raise_statement_optional1'>;
+  export type Kind = '_raise_statement_optional1';
+}
 export namespace SimplePatternNegative {
   export type Config = ConfigFor<'_simple_pattern_negative'>;
   export type Fluent = FluentFor<'_simple_pattern_negative'>;
@@ -3375,6 +3465,13 @@ export namespace SimpleStatements {
   export type Loose = LooseFor<'_simple_statements'>;
   export type Tree = TreeFor<'_simple_statements'>;
   export type Kind = '_simple_statements';
+}
+export namespace _SliceGroup1 {
+  export type Config = ConfigFor<'_slice_group1'>;
+  export type Fluent = FluentFor<'_slice_group1'>;
+  export type Loose = LooseFor<'_slice_group1'>;
+  export type Tree = TreeFor<'_slice_group1'>;
+  export type Kind = '_slice_group1';
 }
 export namespace Suite {
   export type Config = ConfigFor<'_suite'>;
@@ -4117,4 +4214,11 @@ export namespace Yield {
   export type Loose = LooseFor<'yield'>;
   export type Tree = TreeFor<'yield'>;
   export type Kind = 'yield';
+}
+export namespace SliceGroup1 {
+  export type Config = ConfigFor<'slice_group1'>;
+  export type Fluent = FluentFor<'slice_group1'>;
+  export type Loose = LooseFor<'slice_group1'>;
+  export type Tree = TreeFor<'slice_group1'>;
+  export type Kind = 'slice_group1';
 }

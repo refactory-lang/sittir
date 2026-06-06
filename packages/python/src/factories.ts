@@ -277,6 +277,18 @@ export function simpleStatements(...children: T.SimpleStatement[]) {
   }, methodsEngine);
 }
 
+export function _sliceGroup1(child?: T.Expression) {
+  const _expression = child;
+  return withMethods({
+    $type: TSKindId._SliceGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _expression,
+    expression() { return _expression; },
+    $with: { $child: (v: T.Expression) => _sliceGroup1(v) },
+  }, methodsEngine);
+}
+
 export function _tuplePattern(...children: T.CasePattern[]) {
   const _case_pattern = children;
   return withMethods({
@@ -654,6 +666,7 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
 }
 
 export function complexPattern(config: T.ComplexPattern.Config) {
+  const _real = coerceBooleanKeywordStorage(config.real);
   const _imaginary = config.imaginary;
   const _operator = coerceKindEnumStorage(config.operator, [["+", TSKindId.Plus] as const, ["-", TSKindId.Dash] as const]);
   const _content = config.content;
@@ -661,13 +674,16 @@ export function complexPattern(config: T.ComplexPattern.Config) {
     $type: TSKindId.ComplexPattern as const,
     $source: 2 as const,
     $named: true as const,
+    _real,
     _imaginary,
     _operator,
     _content,
+    real() { return _real; },
     imaginary() { return _imaginary; },
     operator() { return _operator; },
     content() { return _content; },
     $with: {
+      real: (value?: NonNullable<Parameters<typeof complexPattern>[0]>['real']) => complexPattern({ ...config, real: value }),
       imaginary: (value: T.Integer | T.Float) => complexPattern({ ...config, imaginary: value }),
       operator: (value: NonNullable<Parameters<typeof complexPattern>[0]>['operator']) => complexPattern({ ...config, operator: value }),
       content: (value: T.Integer | T.Float) => complexPattern({ ...config, content: value }),
@@ -799,15 +815,25 @@ export function deleteStatement(child: T.Expressions) {
   }, methodsEngine);
 }
 
-export function dictPattern(...children: T.DictPatternKv[]) {
-  const _dict_pattern_kv = children;
+export function dictPattern(config: Partial<T.DictPattern.Config> = {}) {
+  const _key = config.key;
+  const _value = config.value;
+  const _splat_pattern = config.splatPattern;
   return withMethods({
     $type: TSKindId.DictPattern as const,
     $source: 2 as const,
     $named: true as const,
-    _dict_pattern_kv,
-    dictPatternKvs() { return _dict_pattern_kv; },
-    $with: { $children: (...vs: T.DictPatternKv[]) => dictPattern(...vs) },
+    _key,
+    _value,
+    _splat_pattern,
+    keys() { return _key; },
+    values() { return _value; },
+    splatPatterns() { return _splat_pattern; },
+    $with: {
+      keys: (...values: T.SimplePattern[]) => dictPattern({ ...config, key: values }),
+      values: (...values: T.CasePattern[]) => dictPattern({ ...config, value: values }),
+      splatPatterns: (...values: T.SplatPattern[]) => dictPattern({ ...config, splatPattern: values }),
+    },
   }, methodsEngine);
 }
 
@@ -952,18 +978,18 @@ export function exceptClause(config: Partial<T.ExceptClause.Config> = {}) {
 
 export function execStatement(config: T.ExecStatement.Config) {
   const _code = config.code;
-  const _expression = config.expression;
+  const _in_clause = config.inClause;
   return withMethods({
     $type: TSKindId.ExecStatement as const,
     $source: 2 as const,
     $named: true as const,
     _code,
-    _expression,
+    _in_clause,
     code() { return _code; },
-    expressions() { return _expression; },
+    inClauses() { return _in_clause; },
     $with: {
       code: (value: T.String | T.Identifier) => execStatement({ ...config, code: value }),
-      expressions: (...values: T.Expression[]) => execStatement({ ...config, expression: values }),
+      inClauses: (...values: T.Expression[]) => execStatement({ ...config, inClause: values }),
     },
   }, methodsEngine);
 }
@@ -1760,7 +1786,7 @@ export function slice(config: Partial<T.Slice.Config> = {}) {
     $with: {
       start: (value?: T.Expression) => slice({ ...config, start: value }),
       stop: (value?: T.Expression) => slice({ ...config, stop: value }),
-      step: (value?: T.Expression) => slice({ ...config, step: value }),
+      step: (value?: T.SliceGroup1) => slice({ ...config, step: value }),
     },
   }, methodsEngine);
 }
@@ -2123,21 +2149,27 @@ export function withStatement(config: T.WithStatement.Config) {
   }, methodsEngine);
 }
 
-export function yield_(config: Partial<T.Yield.Config> = {}) {
-  const _expression = config.expression;
-  const _expressions = config.expressions;
+export function yield_(child?: (T.Expression | T.Expressions)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.Yield as const,
     $source: 2 as const,
     $named: true as const,
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.Expression | T.Expressions)) => yield_(v) },
+  }, methodsEngine);
+}
+
+export function sliceGroup1(child?: T.Expression) {
+  const _expression = child;
+  return withMethods({
+    $type: TSKindId._SliceGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
     _expression,
-    _expressions,
     expression() { return _expression; },
-    expressions() { return _expressions; },
-    $with: {
-      expression: (value?: T.Expression) => yield_({ ...config, expression: value }),
-      expressions: (value?: T.Expressions) => yield_({ ...config, expressions: value }),
-    },
+    $with: { $child: (v: T.Expression) => sliceGroup1(v) },
   }, methodsEngine);
 }
 
@@ -2270,6 +2302,7 @@ export type FluentKindMap = {
   "_not_in": T.NotIn;
   "_simple_pattern_negative": FluentNode<"_simple_pattern_negative", T.SimplePatternNegative.Config>;
   "_simple_statements": FluentNode<"_simple_statements", T.SimpleStatements.Config>;
+  "_slice_group1": FluentNode<"_slice_group1", T._SliceGroup1.Config>;
   "_tuple_pattern": FluentNode<"_tuple_pattern", T._TuplePattern.Config>;
   "_with_clause_bare": FluentNode<"_with_clause_bare", T.WithClauseBare.Config>;
   "_with_clause_paren": FluentNode<"_with_clause_paren", T.WithClauseParen.Config>;
@@ -2388,6 +2421,7 @@ export type FluentKindMap = {
   "with_item": FluentNode<"with_item", T.WithItem.Config>;
   "with_statement": FluentNode<"with_statement", T.WithStatement.Config>;
   "yield": FluentNode<"yield", T.Yield.Config>;
+  "slice_group1": FluentNode<"slice_group1", T.SliceGroup1.Config>;
   "_newline": T.Newline;
   "_indent": T.Indent;
   "_dedent": T.Dedent;
@@ -2420,6 +2454,7 @@ export const _factoryMap = {
   "_not_in": notIn,
   "_simple_pattern_negative": simplePatternNegative,
   "_simple_statements": simpleStatements,
+  "_slice_group1": _sliceGroup1,
   "_tuple_pattern": _tuplePattern,
   "_with_clause_bare": withClauseBare,
   "_with_clause_paren": withClauseParen,
@@ -2538,6 +2573,7 @@ export const _factoryMap = {
   "with_item": withItem,
   "with_statement": withStatement,
   "yield": yield_,
+  "slice_group1": sliceGroup1,
   "_newline": newline,
   "_indent": indent,
   "_dedent": dedent,

@@ -1,3 +1,4 @@
+import { PATTERN, STRING } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
 	keywordPresenceKind,
@@ -50,7 +51,7 @@ const ref = (name: string, multiplicity: NodeOrTerminal['multiplicity']): NodeOr
 });
 
 function makeKeyword(kind: string, text: string): AssembledKeyword {
-	return new AssembledKeyword(kind, { type: 'string', value: text });
+	return new AssembledKeyword(kind, { type: STRING, value: text });
 }
 
 function makeEnum(kind: string, values: string[]): AssembledEnum {
@@ -61,7 +62,7 @@ function makeEnum(kind: string, values: string[]): AssembledEnum {
 }
 
 function makeLeaf(kind: string): AssembledPattern {
-	return new AssembledPattern(kind, { type: 'pattern', value: '' });
+	return new AssembledPattern(kind, { type: PATTERN, value: '' });
 }
 
 // ---------------------------------------------------------------------------
