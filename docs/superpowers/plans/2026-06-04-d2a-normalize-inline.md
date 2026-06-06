@@ -8,6 +8,25 @@
 
 ---
 
+## STATUS — 2026-06-06 (resume here)
+
+**Tasks 0, 1, 2, 4 are DONE and live on `master` (ae80a733).** Verified this session.
+- **Task 0** ✓ — RELEASE baseline re-confirmed **rust 111 / ts 69 / py 74** on master.
+- **Task 1** ✓ — commit `8577cdf6`. `RuleBase.metadata` (rule.ts:109), `computeKeepRef` (normalize.ts:86), `contentAliasedFrom/To` threaded on `LinkedGrammar` (link.ts:140-142/274-275, types.ts:402).
+- **Task 2** ✓ — `diagnose-content-alias-injectivity.ts` exists (the maps' sole consumer).
+- **Task 4** ✓ — commit `9da520aa`. `inlineHiddenSeqRefs` (normalize.ts:163) + the fixpoint loop (normalize.ts:375-380) feeding `renderRules` → both projections. Multi-slot diagnostic in templates.ts:1574. Gate holds at floor.
+
+**REMAINING: Task 5 (narrow wash) + Task 7 (cleanup).** Tasks 3/6 deferred (unchanged).
+
+**⚠️ CRITICAL Task-5 correction (derived 2026-06-06 — the plan's "the 10 are already inlined at normalize" is WRONG as stated):**
+`computeKeepRef` keeps `_x` when **refcount(`symbol(_x)`) > 1 OR name-twinned OR in a `supertype.subtypes`** (normalize.ts:128-131). So the normalize hoist (`inlineHiddenSeqRefs`) folds **only single-use, non-twin, non-supertype** helpers (e.g. `_extends_clause_single`, refcount 1). The multi-ref / twin members of the plan's "fold set" — `_initializer` (×7), `_call_signature` (×10, twin), `_module` (twin), and any other refcount>1 — are **KEPT** (their `symbol(_x)` ref survives in `renderRules`), and the simplify wash (`inlineRefs`, simplify.ts:899/953) **STILL inlines them** at simplify time.
+Therefore Task 5 must NOT narrow the wash to `_import_list`-only wholesale: that would stop inlining the kept group/multi helpers and leak their helper-name as a parent slot value (the old H2 regression). The safe narrowing is: remove ONLY the wash work that is now redundant — i.e. the single-use folds the normalize hoist already did (those `symbol(_x)` refs are gone from `renderRules`, so the wash is *already* a no-op for them; removing their code path is byte-neutral). The wash must KEEP: (a) the `grammar.inline` path (simplify.ts:899 `inlineKinds.has` — tree-sitter parse-time helpers, a separate correctness invariant), (b) inlining of kept refcount>1/twin group/multi helpers, (c) `_import_list`.
+**Implementer first step:** instrument `inlineRefs`'s GROUP/MULTI path (simplify.ts:953+) with a per-kind splice counter, run `gen` for all 3 grammars, and enumerate which kinds it actually still splices. Narrow ONLY against that empirical set — do not trust the plan's "10/11" list. Gate 111/69/74 + `pnpm -r typecheck` after.
+
+**Branch:** work is on `master`; `d2a-normalize-inline` (off ae80a733) is an empty resume branch.
+
+---
+
 ## Seam pin (all read from source, high confidence)
 - **Normalize fixpoint seam:** `normalize.ts:114` (`applyWrapperDeletion(rules)`, right after `applyNormalizationPasses:113`). Repeat-pushdown is guaranteed done here (`wrapper-deletion.ts:87/110` push array-multiplicity+separator onto leaves), so the `seq`-shape test is reliable.
 - **Hoist:** splice via `replaceSymbolRef` (`normalize.ts:489`) + re-stamp via `reapplyInlinedLeafAttrs` (`simplify.ts:958`).
