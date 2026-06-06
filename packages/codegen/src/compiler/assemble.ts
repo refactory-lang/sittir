@@ -21,7 +21,7 @@ import type {
 	EnumRule,
 	SupertypeRule
 } from './rule.ts';
-import { isLinkSymbol } from './rule.ts';
+import { isLinkSymbol, isEnumChoiceRule } from './rule.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
@@ -1159,13 +1159,16 @@ function walkForStrings(rule: Rule, out: Map<string, string>): void {
 				out.set(rule.name, rule.literal);
 			}
 			break;
-		case ENUM:
-			// Enum values are text content — do NOT descend (see JSDoc).
-			break;
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
 		case SEQ:
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
 		case CHOICE:
+			// Do NOT descend into enum-shaped choices. Two forms must be guarded:
+			// 1. Pre-link: all members are STRING nodes (isEnumChoiceRule).
+			// 2. Post-link: all members are LINK-SYMBOL nodes (canonicalizeRuleLiterals).
+			if (isEnumChoiceRule(rule)) break;
+			if (rule.members.length >= 2 && rule.members.every((m) => isLinkSymbol(m) && m.literal !== undefined)) break;
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
 		case OPTIONAL:
@@ -1218,9 +1221,10 @@ export function classifyNode(
 	rule: Rule,
 	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string> }
 ): ModelType {
+	// PR-P: enum-shaped ChoiceRules detected via isEnumChoiceRule before switch.
+	if (isEnumChoiceRule(rule)) return 'enum';
 	switch (rule.type) {
-		case ENUM:
-			return 'enum';
+		// PR-P: ENUM case removed — handled by isEnumChoiceRule above.
 		case SUPERTYPE:
 			return 'supertype';
 		case GROUP:
@@ -1312,8 +1316,10 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  *   unclassifiable after this is a real pipeline error.
  */
 function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
+	// PR-P: isEnumChoiceRule checked BEFORE isAllTextShape — an all-STRING ChoiceRule
+	// passes isAllTextShape too, but must classify as 'enum', not 'pattern'.
+	if (isEnumChoiceRule(rule)) return 'enum';
 	if (isAllTextShape(rule)) return 'pattern';
-	if (rule.type === CHOICE && rule.members.every((m) => m.type === STRING)) return 'enum';
 	throw new Error(
 		`classifyNode: '${kind}' has no fields, no children, and no rule-type ` +
 			`classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`

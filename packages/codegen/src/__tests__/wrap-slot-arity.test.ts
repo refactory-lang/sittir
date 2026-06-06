@@ -1,4 +1,4 @@
-import { CHOICE, ENUM, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
@@ -68,7 +68,7 @@ function makeHiddenSupertypeChildrenNodeMap() {
 		members: [{ type: SYMBOL, name: '_primitive_type' }]
 	};
 	const primitiveTypeRule: EnumRule = {
-		type: ENUM,
+		type: CHOICE,
 		members: [
 			{ type: STRING, value: 'u8' },
 			{ type: STRING, value: 'bool' }

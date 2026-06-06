@@ -40,6 +40,7 @@ import type {
 	TerminalValue
 } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
+import { literalTextOf, isEnumChoiceRule } from '../compiler/rule.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -492,10 +493,7 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
 		case TERMINAL:
 			if ('content' in rule) return rightmostBoundary((rule as { content: Rule }).content);
 			return UNKNOWN_END;
-		case ENUM:
-			// EnumRule: rightmost member's value is the boundary.
-			if (rule.members.length > 0) return literalEnd(rule.members[rule.members.length - 1]!.value);
-			return UNKNOWN_END;
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE/default.
 		case SYMBOL:
 			// Symbol refs become slot emissions in the template — word-like at boundary.
 			return SLOT_END;
@@ -565,9 +563,7 @@ function leftmostBoundary(rule: Rule): BoundaryEnd {
 		case TERMINAL:
 			if ('content' in rule) return leftmostBoundary((rule as { content: Rule }).content);
 			return UNKNOWN_END;
-		case ENUM:
-			if (rule.members.length > 0) return literalEnd(rule.members[0]!.value);
-			return UNKNOWN_END;
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE/default.
 		case SYMBOL:
 			return SLOT_END;
 		case PATTERN:
@@ -954,9 +950,8 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			}
 			return escapeLiteral(rule.value);
 
-		case PATTERN:
-		case ENUM: {
-			// Patterns and enums are NONTERMINAL slots (classifyByType), so they
+		case PATTERN: {
+			// Patterns are NONTERMINAL slots (classifyByType), so they
 			// emit a slot REFERENCE — not inline text. Previously pattern→'' and
 			// enum→first-literal dropped the slot; once collectSlots makes them real
 			// slots that fails slot-preservation. Prefer the registered slot (named
@@ -967,6 +962,7 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			if (rule.fieldName !== undefined) return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
 			return emitScalarSlot('content');
 		}
+		// PR-P: ENUM handled as CHOICE below via isEnumChoiceRule guard.
 
 		case SEQ: {
 			// Bug 6 fix (replaces Bug 1): insert spaces between consecutive seq

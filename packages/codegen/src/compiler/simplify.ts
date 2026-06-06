@@ -1313,7 +1313,7 @@ function isLeaf(rule: Rule): boolean {
 		case ALIAS:
 		case STRING:
 		case PATTERN:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules are not leaves.
 		case TERMINAL:
 		case TOKEN:
 		case INDENT:

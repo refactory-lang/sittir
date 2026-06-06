@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   72  (72 applied, 0 held)
+// Rule promotions:   71  (71 applied, 0 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -260,7 +260,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "identifier", classification: "terminal", applied: true },
   { kind: "meta_property", classification: "terminal", applied: true },
   { kind: "number", classification: "terminal", applied: true },
-  { kind: "predefined_type", classification: "terminal", applied: true },
   { kind: "private_property_identifier", classification: "terminal", applied: true },
   { kind: "regex_pattern", classification: "terminal", applied: true },
   { kind: "_export_statement_default_decl_arm", classification: "polymorph", applied: true },

@@ -4308,7 +4308,7 @@
               "parseKind": "dot_dot"
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -4379,7 +4379,7 @@
               "parseKind": "dot_dot"
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": []

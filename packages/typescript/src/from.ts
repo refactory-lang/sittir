@@ -210,7 +210,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "null": { values: ["null"], factory: () => F.null_() },
   "number": { factory: F.number },
   "override_modifier": { values: ["override"], factory: () => F.overrideModifier() },
-  "predefined_type": { factory: F.predefinedType },
+  "predefined_type": { values: ["any", "number", "boolean", "string", "symbol", "unique symbol", "void", "unknown", "never", "object"], factory: (text: string) => F.predefinedType(text as Parameters<typeof F.predefinedType>[0]) },
   "private_property_identifier": { factory: F.privatePropertyIdentifier },
   "regex_flags": { factory: F.regexFlags },
   "regex_pattern": { factory: F.regexPattern },

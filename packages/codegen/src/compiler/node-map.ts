@@ -45,7 +45,7 @@ import type {
 	Multiplicity,
 	RuleId
 } from './rule.ts';
-import { isSeq, isField } from './rule.ts';
+import { isSeq, isField, literalTextOf, isEnumChoiceRule } from './rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { findGeneratedKindEntry } from './generated-metadata.ts';
 import { tokenToName } from './normalize.ts';
@@ -698,7 +698,7 @@ function classifyTopLevelShape(rule: Rule): string {
 		case STRING:
 		case PATTERN:
 		case TERMINAL:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above.
 		case SUPERTYPE:
 		case INDENT:
 		case DEDENT:
@@ -791,7 +791,7 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
 					? peel(r.content)
 					: r;
 	const core = peel(m);
-	if (core.type === SYMBOL || core.type === SUPERTYPE || core.type === ENUM) return true;
+	if (core.type === SYMBOL || core.type === SUPERTYPE || isEnumChoiceRule(core)) return true;
 	// Bare `string` / `pattern` members — token-literal alternatives.
 	// `_non_special_token` has a choice containing dozens of bare
 	// keyword strings alongside symbol refs; each contributes a
@@ -817,7 +817,7 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
 	if (core.type === CHOICE && core.members.every(isTokenLikeChoiceMember)) return true;
 	if (core.type === REPEAT1 || core.type === REPEAT) {
 		const inner = peel(core.content);
-		if (inner.type === ENUM) return true;
+		if (isEnumChoiceRule(inner)) return true;
 		if (inner.type === STRING || inner.type === PATTERN) return true;
 		if (inner.type === SYMBOL || inner.type === SUPERTYPE) return true;
 		if (inner.type === CHOICE && inner.members.every(isTokenLikeChoiceMember)) return true;
@@ -1219,19 +1219,22 @@ export function deriveValuesForRule(
 				}
 			];
 		}
-		case ENUM:
-			// Enum: each enum member is a TerminalValue
-			return rule.members.map((m) => {
-				const rk = findGeneratedKindEntry(kindEntries ?? [], m.value)?.kind;
-				return {
-					kind: 'terminal' as const,
-					value: m.value,
-					resolvedKind: rk,
-					parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
-					multiplicity
-				};
-			});
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE below.
 		case CHOICE: {
+			// PR-P: handle enum-shaped ChoiceRules (all-STRING members) as enum terminal values.
+			if (isEnumChoiceRule(rule)) {
+				return rule.members.map((m) => {
+					const text = literalTextOf(m) ?? '';
+					const rk = text ? findGeneratedKindEntry(kindEntries ?? [], text)?.kind : undefined;
+					return {
+						kind: 'terminal' as const,
+						value: text,
+						resolvedKind: rk,
+						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
+						multiplicity
+					};
+				});
+			}
 			// `choice(X, blank)` is functionally `optional(X)` — the blank arm
 			// makes the entire choice optional. Downgrade nonEmptyArray → array
 			// and single → optional when recursing into the non-blank arms.
@@ -2005,7 +2008,7 @@ function childrenMayBeEmpty(rule: Rule): boolean {
 		case PATTERN:
 		case TOKEN:
 		case SUPERTYPE:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by CHOICE.
 		case TERMINAL:
 		case ALIAS:
 		case INDENT:
@@ -3059,7 +3062,7 @@ function isAllPunct(rule: Rule): boolean {
 		case FIELD:
 		case SYMBOL:
 		case SUPERTYPE:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by CHOICE.
 			return false;
 		case SEQ:
 		case CHOICE:
@@ -3117,7 +3120,7 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 			case REPEAT:
 			case REPEAT1:
 			case FIELD:
-			case ENUM:
+			// PR-P: ENUM case removed — enum-shaped ChoiceRules are CHOICE now.
 			case SUPERTYPE:
 			case STRING:
 			case PATTERN:
@@ -3567,13 +3570,13 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	}
 }
 
-export class AssembledEnum extends AssembledLeaf<EnumRule> {
+export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
 
 	constructor(
 		kind: string,
-		rule: EnumRule,
+		rule: ChoiceRule,
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
@@ -3581,8 +3584,13 @@ export class AssembledEnum extends AssembledLeaf<EnumRule> {
 		}
 	) {
 		super(kind, rule, opts);
+		// PR-P: members are StringRule (pre-link) or LINK-SYMBOL (post-link);
+		// use literalTextOf for both forms.
 		this.resolvedKinds = rule.members
-			.map((member) => findGeneratedKindEntry(opts?.kindEntries ?? [], member.value)?.kind)
+			.map((member) => {
+				const text = literalTextOf(member);
+				return text !== undefined ? findGeneratedKindEntry(opts?.kindEntries ?? [], text)?.kind : undefined;
+			})
 			.filter((member): member is string => member !== undefined);
 		if (this.values.length < 2) {
 			throw new Error(
@@ -3593,7 +3601,7 @@ export class AssembledEnum extends AssembledLeaf<EnumRule> {
 
 	/** The enum member strings (e.g. `['u8', 'u16', 'usize']`). */
 	get values(): string[] {
-		return this.rule.members.map((m) => m.value);
+		return [...new Set(this.rule.members.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
 	}
 }
 

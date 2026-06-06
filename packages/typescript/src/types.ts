@@ -47,6 +47,7 @@ export type LeafStringMap = {
   import: "import";
   null: "null";
   override_modifier: "override";
+  predefined_type: "any" | "number" | "boolean" | "string" | "symbol" | "unique symbol" | "void" | "unknown" | "never" | "object";
   super: "super";
   this: "this";
   true: "true";
@@ -4285,7 +4286,7 @@ export type MetaProperty = Terminal<TSKindId.MetaProperty, string>;
 export type Null = Terminal<TSKindId.Null, "null">;
 export type Number = Terminal<TSKindId.Number, string>;
 export type OverrideModifier = Terminal<TSKindId.OverrideModifier, "override">;
-export type PredefinedType = Terminal<TSKindId.PredefinedType, string>;
+export type PredefinedType = Terminal<TSKindId.Any | TSKindId.Number | TSKindId.Boolean | TSKindId.String | TSKindId.Symbol | TSKindId.Unique | TSKindId.Void | TSKindId.Unknown | TSKindId.Never | TSKindId.Object, "any" | "number" | "boolean" | "string" | "symbol" | "unique symbol" | "void" | "unknown" | "never" | "object">;
 export type PrivatePropertyIdentifier = Terminal<TSKindId.PrivatePropertyIdentifier, string>;
 export type RegexFlags = Terminal<TSKindId.RegexFlags, string>;
 export type RegexPattern = Terminal<TSKindId.RegexPattern, string>;

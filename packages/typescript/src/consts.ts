@@ -2570,3 +2570,18 @@ export const ACCESSIBILITY_MODIFIERS = [
   'private',
   'protected',
 ] as const;
+
+/** Valid values for `predefined_type` nodes. */
+export const PREDEFINED_TYPES = [
+  'any',
+  'number',
+  'boolean',
+  'string',
+  'symbol',
+  'unique symbol',
+  'void',
+  'unknown',
+  'never',
+  'object',
+] as const;
+export type PredefinedTypeValue = (typeof PREDEFINED_TYPES)[number];

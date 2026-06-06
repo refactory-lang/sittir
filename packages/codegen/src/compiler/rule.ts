@@ -141,7 +141,7 @@ export type Rule =
 	// Named patterns — clean wrappers, no derived metadata
 	| FieldRule
 	| VariantRule
-	| EnumRule
+	// EnumRule is now ChoiceRule (PR-P): removed from union to avoid duplicate
 	| SupertypeRule
 	| GroupRule
 	| TerminalRule
@@ -277,35 +277,42 @@ export type RuleSource = 'grammar' | 'promoted' | 'override';
 /**
  * EnumRule — a normalized choice-of-strings.
  *
- * Shape-compatible with `ChoiceRule` (both expose `members`) but narrower:
- * every member is a `StringRule`. Downstream code that walks `.members`
- * uniformly across choice/enum works for free; code that wants the raw
- * string list reads `.members.map(m => m.value)`.
+ * PR-P: EnumRule is now a type alias for ChoiceRule. The ENUM discriminant
+ * is retired; enum-ness is detected structurally via isEnumChoiceRule().
+ * Shape-compatible with ChoiceRule (both expose `members`); every member
+ * is a StringRule. The `source` provenance moves to `metadata.source`.
  */
-export interface EnumRule extends RuleBase {
-	readonly type: typeof ENUM;
-	readonly members: readonly StringRule[];
-	readonly source?: RuleSource;
+export type EnumRule = ChoiceRule;
+
+/**
+ * Predicate: rule is an enum-shaped ChoiceRule (flat, all-STRING members,
+ * at least 2 members). Matches the pre-link form; post-link use literalTextOf.
+ *
+ * This is the canonical replacement for `rule.type === ENUM`.
+ */
+export function isEnumChoiceRule(rule: Rule): rule is ChoiceRule {
+	return rule.type === CHOICE && rule.members.length >= 2 && rule.members.every((m) => m.type === STRING);
 }
 
 /**
  * Normalize a closed literal set to the canonical rule shape.
  *
  * @remarks
- * Multi-member sets remain `EnumRule`. A single literal collapses to that
- * `StringRule` so downstream phases classify it as the corresponding
- * keyword/token instead of carrying a degenerate enum shape.
+ * Multi-member sets remain a ChoiceRule (enum-shaped). A single literal
+ * collapses to that StringRule so downstream phases classify it as the
+ * corresponding keyword/token instead of carrying a degenerate enum shape.
+ * The `source` provenance is carried in `metadata.source` (not top-level).
  */
 export function normalizeEnumMembers(
 	members: readonly StringRule[],
 	source?: RuleSource
-): StringRule | EnumRule {
+): StringRule | ChoiceRule {
 	if (members.length === 1) return members[0]!;
 	return {
-		type: ENUM,
-		members,
-		source
-	} satisfies EnumRule;
+		type: CHOICE,
+		members: members as StringRule[],
+		...(source !== undefined ? { metadata: { source } } : {})
+	} satisfies ChoiceRule;
 }
 
 export interface SupertypeRule extends RuleBase {
@@ -424,7 +431,7 @@ export const isRepeat = (r: Rule): r is RepeatRule => r.type === REPEAT;
 export const isRepeat1 = (r: Rule): r is Repeat1Rule => r.type === REPEAT1;
 export const isField = (r: Rule): r is FieldRule => r.type === FIELD;
 
-export const isEnum = (r: Rule): r is EnumRule => r.type === ENUM;
+export const isEnum = (r: Rule): r is EnumRule => isEnumChoiceRule(r);
 export const isSupertype = (r: Rule): r is SupertypeRule => r.type === SUPERTYPE;
 export const isGroup = (r: Rule): r is GroupRule => r.type === GROUP;
 export const isTerminal = (r: Rule): r is TerminalRule => r.type === TERMINAL;

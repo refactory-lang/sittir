@@ -126,8 +126,7 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 		case SEQ:
 		case CHOICE:
 			return params.rule.members.map((member, index) => childParams(member, { edge: 'members', index }));
-		case ENUM:
-			return params.rule.members.map((member, index) => childParams(member, { edge: 'members', index }));
+		// PR-P: ENUM case removed — falls through to default (no children).
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
@@ -178,19 +177,7 @@ function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly Build
 		case SEQ:
 		case CHOICE:
 			return { ...rule, id, members: children.map((child) => child.rule) };
-		case ENUM: {
-			const members = children.map((child) => {
-				if (child.rule.type !== STRING) {
-					throw new Error(`enum child ${child.id} is not a string rule`);
-				}
-				return child.rule;
-			});
-			return {
-				...rule,
-				id,
-				members
-			};
-		}
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by SEQ/CHOICE above.
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
@@ -254,7 +241,7 @@ function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): R
 		case SYMBOL:
 		case SUPERTYPE:
 		case PATTERN:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules use CHOICE arm.
 			return 'nonterminal';
 		case CHOICE:
 		case REPEAT:

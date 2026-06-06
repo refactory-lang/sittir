@@ -24,7 +24,7 @@ import type {
 	SymbolRule,
 	StringRule
 } from './rule.ts';
-import { isField, isSeq, isChoice, isString, normalizeEnumMembers } from './rule.ts';
+import { isField, isSeq, isChoice, isString, normalizeEnumMembers, isEnumChoiceRule } from './rule.ts';
 import { liftSeparators } from './lift-separators.ts';
 import {
 	collectGeneratedKindEntries,
@@ -448,14 +448,17 @@ function classifyAndLogHiddenRules(
 				references,
 				hiddenChoicesWithNamedAliasMembers
 			);
+			const classifiedSource = (classified as { source?: string }).source ?? classified.metadata?.source;
+			const isPromotedEnum = isEnumChoiceRule(classified);
+			const isPromotedSupertype = classified.type === SUPERTYPE;
 			if (
 				classified !== rule &&
-				(classified.type === ENUM || classified.type === SUPERTYPE) &&
-				(classified.source === 'promoted' || classified.source === 'grammar')
+				(isPromotedEnum || isPromotedSupertype) &&
+				(classifiedSource === 'promoted' || classifiedSource === 'grammar')
 			) {
 				derivations.promotedRules.push({
 					kind: name,
-					classification: classified.type,
+					classification: isPromotedEnum ? 'enum' : 'supertype',
 					applied: applyPromotedRules
 				});
 				if (applyPromotedRules) rules[name] = classified;
@@ -1478,7 +1481,7 @@ export function tokenToName(token: string): string {
  */
 function isTerminalShape(rule: Rule): boolean {
 	switch (rule.type) {
-		case ENUM:
+		// PR-P: ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this.
 		case SUPERTYPE:
 		case GROUP:
 		case TERMINAL:
@@ -1505,6 +1508,9 @@ function isTerminalShape(rule: Rule): boolean {
 		case SEQ:
 			return rule.members.every(isTerminalShape_allowBareTerm);
 		case CHOICE:
+			// PR-P: enum-shaped choices (all-STRING members) are classified as enum,
+			// not terminal — guard here to prevent double-wrapping.
+			if (isEnumChoiceRule(rule)) return false;
 			return rule.members.every(isTerminalShape_allowBareTerm);
 		case OPTIONAL:
 		case REPEAT:
@@ -1532,8 +1538,8 @@ function isTerminalShape_allowBareTerm(rule: Rule): boolean {
 		case DEDENT:
 		case NEWLINE:
 			return true;
-		case ENUM:
-			return true; // enum is a set of string literals → still terminal
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE arm above.
+		// All-STRING ChoiceRules are terminal-like but classified as enum, not terminal.
 		case FIELD:
 			return false;
 		case SYMBOL:
@@ -1662,7 +1668,7 @@ function resolveRule(
 		// These pass through unchanged
 		case STRING:
 		case PATTERN:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped choices are CHOICE type now.
 		case SUPERTYPE:
 		case GROUP:
 		case VARIANT:
@@ -1777,7 +1783,8 @@ function classifyHiddenRule(
 	hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>
 ): Rule {
 	// Already classified (e.g., enum from Evaluate)
-	if (rule.type === ENUM || rule.type === SUPERTYPE || rule.type === GROUP) {
+	// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
+	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
 		return rule;
 	}
 
@@ -1836,7 +1843,7 @@ function classifyHiddenChoiceRule(
 	}
 
 	const supertypeCompatible = (m: Rule): boolean =>
-		m.type === SYMBOL || m.type === ENUM || m.type === STRING;
+		m.type === SYMBOL || isEnumChoiceRule(m) || m.type === STRING;
 	const allCompatible = rule.members.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
 		const subtypes = collectSubtypeNames(rule);
@@ -1921,9 +1928,7 @@ function collectSubtypeNames(rule: Rule): string[] {
 			case REPEAT1:
 				visit(current.content);
 				return;
-			case ENUM:
-				for (const member of current.members) visit(member);
-				return;
+			// PR-P: ENUM case removed — handled by CHOICE arm above.
 			default:
 				return;
 		}

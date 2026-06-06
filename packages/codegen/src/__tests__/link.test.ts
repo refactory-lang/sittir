@@ -142,9 +142,9 @@ describe('Link — hidden rule classification', () => {
 			}
 		});
 		const linked = link(raw);
-		// Hidden choice of strings → already an enum from Evaluate
-		// But if it arrives as a choice, Link should detect it
-		expect(linked.rules['_visibility']!.type).toBe('enum');
+		// PR-P: enum-shaped choices are type 'choice'; isEnumChoiceRule detects them.
+		// Hidden choice of strings → normalized to ChoiceRule (was EnumRule).
+		expect(linked.rules['_visibility']!.type).toBe('choice');
 	});
 });
 

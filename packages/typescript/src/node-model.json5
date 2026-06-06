@@ -4094,7 +4094,7 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5236,7 +5236,7 @@
               "parseKind": "qmark_dot"
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -8133,7 +8133,7 @@
               "parseKind": "colon"
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -15700,11 +15700,23 @@
     },
     {
       "kind": "predefined_type",
-      "modelType": "pattern",
+      "modelType": "enum",
       "typeName": "PredefinedType",
       "factoryName": "predefinedType",
       "irKey": "predefinedType",
-      "hidden": false
+      "hidden": false,
+      "values": [
+        "any",
+        "number",
+        "boolean",
+        "string",
+        "symbol",
+        "unique symbol",
+        "void",
+        "unknown",
+        "never",
+        "object"
+      ]
     },
     {
       "kind": "primary_expression",

@@ -1,4 +1,4 @@
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { expect } from 'vitest';
 import type { Rule, RuleId } from '../../compiler/rule.ts';
 import type { RuleCatalog } from '../../compiler/types.ts';
@@ -42,7 +42,7 @@ export function walkRule(rule: Rule, visit: (rule: Rule) => void): void {
 	switch (rule.type) {
 		case SEQ:
 		case CHOICE:
-		case ENUM:
+			// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by CHOICE arm.
 			for (const member of rule.members) walkRule(member, visit);
 			return;
 		case OPTIONAL:

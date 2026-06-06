@@ -262,7 +262,7 @@ pub enum AnyTransport {
     PairPattern(PairPatternTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     ParenthesizedType(ParenthesizedTypeTransport),
-    PredefinedType(PredefinedTypeTransport),
+    PredefinedType(PredefinedTypeEnum),
     PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
     Program(ProgramTransport),
     PropertySignature(PropertySignatureTransport),
@@ -1196,7 +1196,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 )),
                 // kind: predefined_type (PREDEFINED_TYPE)
                 335 => Ok(AnyTransport::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: private_property_identifier (PRIVATE_PROPERTY_IDENTIFIER)
                 106 => Ok(AnyTransport::PrivatePropertyIdentifier(
@@ -5241,7 +5241,7 @@ impl RenderableTransport for PrimaryExpressionTransport {
 #[derive(Debug, Clone)]
 pub enum PrimaryTypeTransport {
     ParenthesizedType(ParenthesizedTypeTransport),
-    PredefinedType(PredefinedTypeTransport),
+    PredefinedType(PredefinedTypeEnum),
     TypeIdentifier(TypeIdentifierTransport),
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
     GenericType(GenericTypeTransport),
@@ -5274,7 +5274,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                     if let Ok(value) = ParenthesizedTypeTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::ParenthesizedType(value));
                     }
-                    if let Ok(value) = PredefinedTypeTransport::from_napi_value(env, napi_val) {
+                    if let Ok(value) = PredefinedTypeEnum::from_napi_value(env, napi_val) {
                         return Ok(Self::PredefinedType(value));
                     }
                     if let Ok(value) = TypeIdentifierTransport::from_napi_value(env, napi_val) {
@@ -5334,7 +5334,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                     ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 432 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
@@ -5405,7 +5435,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                     if let Ok(value) = ParenthesizedTypeTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::ParenthesizedType(value));
                     }
-                    if let Ok(value) = PredefinedTypeTransport::from_napi_value(env, napi_val) {
+                    if let Ok(value) = PredefinedTypeEnum::from_napi_value(env, napi_val) {
                         return Ok(Self::PredefinedType(value));
                     }
                     if let Ok(value) = TypeIdentifierTransport::from_napi_value(env, napi_val) {
@@ -5465,7 +5495,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                     ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 432 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
@@ -9433,7 +9493,7 @@ impl RenderableTransport for TypeQuerySubscriptExpressionObjectTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum TypeQuerySubscriptExpressionIndexTransportSlot {
-    PredefinedType(PredefinedTypeTransport),
+    PredefinedType(PredefinedTypeEnum),
     String(StringTransport),
     Number(NumberTransport),
     Verbatim(VerbatimTransport),
@@ -9448,13 +9508,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             return match kind_id {
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
-                247 => Ok(Self::String(
-                    StringTransport::from_napi_value(env, napi_val)?
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
-                105 => Ok(Self::Number(
-                    NumberTransport::from_napi_value(env, napi_val)?
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in TypeQuerySubscriptExpressionIndexTransportSlot",
@@ -9471,13 +9555,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
         )?;
         match kind_id {
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
-                247 => Ok(Self::String(
-                    StringTransport::from_napi_value(env, napi_val)?
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
-                105 => Ok(Self::Number(
-                    NumberTransport::from_napi_value(env, napi_val)?
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in TypeQuerySubscriptExpressionIndexTransportSlot",
@@ -11279,7 +11387,7 @@ impl RenderableTransport for ArrowFunctionContentTransportSlot {
 #[derive(Debug, Clone)]
 pub enum AsExpressionTypeAnnotationTransportSlot {
     ParenthesizedType(ParenthesizedTypeTransport),
-    PredefinedType(PredefinedTypeTransport),
+    PredefinedType(PredefinedTypeEnum),
     TypeIdentifier(TypeIdentifierTransport),
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
     GenericType(GenericTypeTransport),
@@ -11318,7 +11426,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 432 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
@@ -11407,7 +11545,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 432 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
@@ -14699,7 +14867,7 @@ impl RenderableTransport for FunctionSignatureReturnTypeTransportSlot {
 #[derive(Debug, Clone)]
 pub enum FunctionTypeReturnTypeTransportSlot {
     ParenthesizedType(ParenthesizedTypeTransport),
-    PredefinedType(PredefinedTypeTransport),
+    PredefinedType(PredefinedTypeEnum),
     TypeIdentifier(TypeIdentifierTransport),
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
     GenericType(GenericTypeTransport),
@@ -14740,7 +14908,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
                     ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 432 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
@@ -14835,7 +15033,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
                     ParenthesizedTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 432 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
@@ -19350,7 +19578,7 @@ impl RenderableTransport for TemplateStringContentTransportSlot {
 pub enum TypePredicateNameTransportSlot {
     Identifier(IdentifierTransport),
     This(ThisTransport),
-    PredefinedType(PredefinedTypeTransport),
+    PredefinedType(PredefinedTypeEnum),
     Verbatim(VerbatimTransport),
 }
 
@@ -19369,7 +19597,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in TypePredicateNameTransportSlot",
@@ -19392,7 +19650,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
                 335 => Ok(Self::PredefinedType(
-                    PredefinedTypeTransport::from_napi_value(env, napi_val)?
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                127 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                129 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                131 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                149 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                92 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                150 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                151 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
+                )),
+                213 => Ok(Self::PredefinedType(
+                    PredefinedTypeEnum::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in TypePredicateNameTransportSlot",
@@ -35307,103 +35595,145 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenthesizedTypeTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct PredefinedTypeTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PredefinedTypeEnum {
+    AnyKw,
+    NumberKw,
+    BooleanKw,
+    StringKw,
+    SymbolKw,
+    V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c,
+    VoidKw,
+    UnknownKw,
+    NeverKw,
+    ObjectKw,
 }
 
-impl RenderableTransport for PredefinedTypeTransport {
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PredefinedTypeEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            match kind_id {
+                127 => return Ok(Self::AnyKw), // "any"
+                105 => return Ok(Self::NumberKw), // "number"
+                129 => return Ok(Self::BooleanKw), // "boolean"
+                247 => return Ok(Self::StringKw), // "string"
+                131 => return Ok(Self::SymbolKw), // "symbol"
+                149 => return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c), // "unique symbol"
+                92 => return Ok(Self::VoidKw), // "void"
+                150 => return Ok(Self::UnknownKw), // "unknown"
+                151 => return Ok(Self::NeverKw), // "never"
+                213 => return Ok(Self::ObjectKw), // "object"
+                _ => {}
+            }
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            match text.as_str() {
+                "any" => return Ok(Self::AnyKw),
+                "number" => return Ok(Self::NumberKw),
+                "boolean" => return Ok(Self::BooleanKw),
+                "string" => return Ok(Self::StringKw),
+                "symbol" => return Ok(Self::SymbolKw),
+                "unique symbol" => return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c),
+                "void" => return Ok(Self::VoidKw),
+                "unknown" => return Ok(Self::UnknownKw),
+                "never" => return Ok(Self::NeverKw),
+                "object" => return Ok(Self::ObjectKw),
+                _ => {}
+            }
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        if let Some(kind_id) = obj.get::<u16>("$type")? {
+            match kind_id {
+                127 => return Ok(Self::AnyKw), // "any"
+                105 => return Ok(Self::NumberKw), // "number"
+                129 => return Ok(Self::BooleanKw), // "boolean"
+                247 => return Ok(Self::StringKw), // "string"
+                131 => return Ok(Self::SymbolKw), // "symbol"
+                149 => return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c), // "unique symbol"
+                92 => return Ok(Self::VoidKw), // "void"
+                150 => return Ok(Self::UnknownKw), // "unknown"
+                151 => return Ok(Self::NeverKw), // "never"
+                213 => return Ok(Self::ObjectKw), // "object"
+                _ => {}
+            }
+        }
+        if let Some(text) = obj.get::<String>("$text")? {
+            match text.as_str() {
+                "any" => return Ok(Self::AnyKw),
+                "number" => return Ok(Self::NumberKw),
+                "boolean" => return Ok(Self::BooleanKw),
+                "string" => return Ok(Self::StringKw),
+                "symbol" => return Ok(Self::SymbolKw),
+                "unique symbol" => return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c),
+                "void" => return Ok(Self::VoidKw),
+                "unknown" => return Ok(Self::UnknownKw),
+                "never" => return Ok(Self::NeverKw),
+                "object" => return Ok(Self::ObjectKw),
+                _ => {}
+            }
+        }
+        if obj.get::<::napi::bindgen_prelude::Object>("_any")?.is_some() { return Ok(Self::AnyKw); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_number")?.is_some() { return Ok(Self::NumberKw); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_boolean")?.is_some() { return Ok(Self::BooleanKw); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_string")?.is_some() { return Ok(Self::StringKw); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_symbol")?.is_some() { return Ok(Self::SymbolKw); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_unique symbol")?.is_some() { return Ok(Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_void")?.is_some() { return Ok(Self::VoidKw); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_unknown")?.is_some() { return Ok(Self::UnknownKw); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_never")?.is_some() { return Ok(Self::NeverKw); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_object")?.is_some() { return Ok(Self::ObjectKw); }
+        Err(::napi::Error::from_reason("unknown enum payload for PredefinedTypeEnum"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PredefinedTypeEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PredefinedTypeEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for PredefinedTypeEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::AnyKw => "any",
+            Self::NumberKw => "number",
+            Self::BooleanKw => "boolean",
+            Self::StringKw => "string",
+            Self::SymbolKw => "symbol",
+            Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c => "unique symbol",
+            Self::VoidKw => "void",
+            Self::UnknownKw => "unknown",
+            Self::NeverKw => "never",
+            Self::ObjectKw => "object",
+        })
+    }
+}
+
+impl RenderableTransport for PredefinedTypeEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PredefinedTypeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
-            text
-        } else {
-            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PredefinedTypeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PredefinedTypeTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PredefinedTypeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PredefinedTypeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PredefinedTypeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PredefinedTypeTransport::to_napi_value(env, *val)
+        dest.write_str(match self {
+            Self::AnyKw => "any",
+            Self::NumberKw => "number",
+            Self::BooleanKw => "boolean",
+            Self::StringKw => "string",
+            Self::SymbolKw => "symbol",
+            Self::V75_6e_69_71_75_65_20_73_79_6d_62_6f_6c => "unique symbol",
+            Self::VoidKw => "void",
+            Self::UnknownKw => "unknown",
+            Self::NeverKw => "never",
+            Self::ObjectKw => "object",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -52703,8 +53033,8 @@ fn render_parenthesized_type(node: &ParenthesizedTypeTransport, dest: &mut dyn :
     template.render_into(dest)
 }
 
-fn render_predefined_type(t: &PredefinedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_predefined_type(t: &PredefinedTypeEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
 fn render_private_property_identifier(t: &PrivatePropertyIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -54822,7 +55152,6 @@ impl AnyTransport {
             Self::PairPattern(t) => t.transport_named,
             Self::ParenthesizedExpression(t) => t.transport_named,
             Self::ParenthesizedType(t) => t.transport_named,
-            Self::PredefinedType(t) => t.transport_named,
             Self::PrivatePropertyIdentifier(t) => t.transport_named,
             Self::Program(t) => t.transport_named,
             Self::PropertySignature(t) => t.transport_named,
@@ -61183,20 +61512,19 @@ fn transport_to_node_parenthesized_type(transport: ParenthesizedTypeTransport) -
     ))
 }
 
-fn transport_to_node_predefined_type(transport: PredefinedTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_predefined_type(transport: PredefinedTypeEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(335) /* "predefined_type" */,
-        transport.transport_source,
-        transport.transport_named,
+        None,
+        None,
         true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
+        Some(transport.to_string()),
         None,
         None,
-        trivia_data,
+        None,
+        None,
+        None,
+        None,
     ))
 }
 

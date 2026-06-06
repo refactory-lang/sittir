@@ -1,4 +1,4 @@
-import { CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts';
 import { computeSimplifiedRules } from '../compiler/simplify.ts';
@@ -182,7 +182,7 @@ describe('Assemble — classifyNode', () => {
 
 	it('classifies enum as enum', () => {
 		const rule: Rule = {
-			type: ENUM,
+			type: CHOICE,
 			members: [
 				{ type: STRING, value: 'pub' },
 				{ type: STRING, value: 'crate' }

@@ -96,15 +96,16 @@ describe('Evaluate — DSL functions', () => {
 		});
 
 		it('detects all-string choice as EnumRule', () => {
+			// PR-P: EnumRule = ChoiceRule; type is now 'choice', source moved to metadata.
 			const rule = choice('pub', 'crate', 'super');
 			expect(rule).toEqual({
-				type: 'enum',
+				type: 'choice',
 				members: [
 					{ type: 'string', value: 'pub' },
 					{ type: 'string', value: 'crate' },
 					{ type: 'string', value: 'super' }
 				],
-				source: 'grammar'
+				metadata: { source: 'grammar' }
 			});
 		});
 
@@ -549,16 +550,17 @@ describe('Evaluate — evaluate()', () => {
 			})
 		);
 		// The synthesized enum rule exists in raw.rules.
+		// PR-P: type is now 'choice', source moved to metadata.
 		expect(raw.rules['_binary_expression_operator']).toEqual(
 			expect.objectContaining({
-				type: 'enum',
+				type: 'choice',
 				members: [
 					expect.objectContaining({ type: 'string', value: '+' }),
 					expect.objectContaining({ type: 'string', value: '-' }),
 					expect.objectContaining({ type: 'string', value: '*' }),
 					expect.objectContaining({ type: 'string', value: '/' })
 				],
-				source: 'grammar'
+				metadata: { source: 'grammar' }
 			})
 		);
 	});
@@ -601,7 +603,8 @@ describe('Evaluate — evaluate()', () => {
 				if ('content' in rule) walk(rule.content);
 			};
 			walk(raw.rules['binary_expression']);
-			expect(operatorKinds.sort()).toEqual(['enum', 'string', 'string']);
+			// PR-P: enum-shaped choices are type 'choice' now.
+			expect(operatorKinds.sort()).toEqual(['choice', 'string', 'string']);
 
 			const nodeMap = assemble(normalizeGrammar(link(raw)));
 			const node = nodeMap.nodes.get('binary_expression');

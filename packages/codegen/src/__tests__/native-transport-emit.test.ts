@@ -1,4 +1,4 @@
-import { CHOICE, ENUM, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -60,7 +60,7 @@ function makeMinimalNodeMap(): NodeMap {
 	nodes.set(
 		'operator',
 		new AssembledEnum('operator', {
-			type: ENUM,
+			type: CHOICE,
 			members: [
 				{ type: STRING, value: '+' },
 				{ type: STRING, value: '-' }
