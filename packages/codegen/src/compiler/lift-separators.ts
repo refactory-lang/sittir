@@ -158,9 +158,14 @@ export function liftSeparators(rule: Rule): Rule {
 		case ALIAS:
 			return { ...rule, content: liftSeparators(rule.content) };
 		default:
-			// Leaves (symbol/string/pattern/enum) and node shapes that do not
-			// exist yet at lift time (group/variant/terminal/polymorph appear
-			// only after the later link classification passes).
+			// Leaves (symbol/string/pattern/enum). The wrapper *compiler* types
+			// group/variant/terminal do NOT exist in the tree when this runs:
+			// liftSeparators is invoked in the link resolveRule loop, whereas
+			// GROUP is synthesized later in link (link.ts:189/1864) and VARIANT
+			// later still in normalize. Their bodies are lifted AT those
+			// construction sites, so skipping them here is correct, not lossy.
+			// (The pre-link DSL-shaped uppercase 'GROUP'/'VARIANT' are a separate
+			// dsl/ vocabulary that never reaches this compiler-Rule walker.)
 			return rule;
 	}
 }

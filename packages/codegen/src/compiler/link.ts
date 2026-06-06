@@ -186,7 +186,14 @@ export function link(
 		for (const synthKind of lifted.synthesizedKinds) {
 			const body = rules[synthKind];
 			if (body && body.type !== GROUP) {
-				rules[synthKind] = { type: GROUP, name: synthKind, content: body } satisfies GroupRule;
+				// Lift separated lists in the synth group body — this runs after
+				// the main lift loop, so an un-lifted commaSep1 inside a synth
+				// group would otherwise escape #62's separator centralization.
+				rules[synthKind] = {
+					type: GROUP,
+					name: synthKind,
+					content: liftSeparators(body)
+				} satisfies GroupRule;
 			}
 		}
 	}
@@ -721,7 +728,13 @@ function mintContentAliasKinds(
 							else contentAliasedTo.set(hiddenBody, [value]);
 						}
 					}
-					rules[value] = resolveRule(body, value, rawRules, supertypes, externalRoles);
+					// Lift separated-list shapes in the minted body. This site runs
+					// AFTER the main per-rule lift loop, so a minted twin whose body
+					// is `seq(item, repeat(seq(sep, item)))` would otherwise keep the
+					// raw shape and lose the separator/trailing metadata #62 centralizes.
+					rules[value] = liftSeparators(
+						resolveRule(body, value, rawRules, supertypes, externalRoles)
+					);
 				}
 			}
 			if (content) walk(content, ownerName);
