@@ -212,7 +212,6 @@ pub enum AnyTransport {
     From(FromTransport),
     Minus(MinusTransport),
     Paren(ParenTransport),
-    Comma(CommaTransport),
     Assert(AssertTransport),
     Dot(DotTransport),
     Plus(PlusTransport),
@@ -245,6 +244,7 @@ pub enum AnyTransport {
     Ellipsis(EllipsisTransport),
     Star(StarTransport),
     Exec(ExecTransport),
+    Comma(CommaTransport),
     False2(False2Transport),
     Finally(FinallyTransport),
     For(ForTransport),
@@ -991,10 +991,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 7 => Ok(AnyTransport::Paren(
                     ParenTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: , (COMMA)
-                9 => Ok(AnyTransport::Comma(
-                    CommaTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: assert (ASSERT)
                 14 => Ok(AnyTransport::Assert(
                     AssertTransport::from_napi_value(env, napi_val)?
@@ -1098,6 +1094,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: exec (EXEC)
                 41 => Ok(AnyTransport::Exec(
                     ExecTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: , (COMMA)
+                9 => Ok(AnyTransport::Comma(
+                    CommaTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: finally (FINALLY)
                 35 => Ok(AnyTransport::Finally(
@@ -22749,108 +22749,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct CommaTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for CommaTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
-            text
-        } else if u16::from_napi_value(env, napi_val).is_ok() {
-            ",".to_string()
-        } else {
-            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_else(|| ",".to_string())
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CommaTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CommaTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CommaTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CommaTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct AssertTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -26111,6 +26009,108 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExecTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ExecTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CommaTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for CommaTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ",".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| ",".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CommaTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CommaTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        CommaTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        CommaTransport::to_napi_value(env, *val)
     }
 }
 
@@ -30241,10 +30241,6 @@ fn render_paren(t: &ParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
 fn render_assert(t: &AssertTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -30370,6 +30366,10 @@ fn render_star(t: &StarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
 }
 
 fn render_exec(t: &ExecTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -30854,7 +30854,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::From(t) => t.render_into(dest),
             AnyTransport::Minus(t) => t.render_into(dest),
             AnyTransport::Paren(t) => t.render_into(dest),
-            AnyTransport::Comma(t) => t.render_into(dest),
             AnyTransport::Assert(t) => t.render_into(dest),
             AnyTransport::Dot(t) => t.render_into(dest),
             AnyTransport::Plus(t) => t.render_into(dest),
@@ -30887,6 +30886,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Ellipsis(t) => t.render_into(dest),
             AnyTransport::Star(t) => t.render_into(dest),
             AnyTransport::Exec(t) => t.render_into(dest),
+            AnyTransport::Comma(t) => t.render_into(dest),
             AnyTransport::False2(t) => t.render_into(dest),
             AnyTransport::Finally(t) => t.render_into(dest),
             AnyTransport::For(t) => t.render_into(dest),
@@ -31117,7 +31117,6 @@ impl AnyTransport {
             Self::From(t) => t.transport_named,
             Self::Minus(t) => t.transport_named,
             Self::Paren(t) => t.transport_named,
-            Self::Comma(t) => t.transport_named,
             Self::Assert(t) => t.transport_named,
             Self::Dot(t) => t.transport_named,
             Self::Plus(t) => t.transport_named,
@@ -31150,6 +31149,7 @@ impl AnyTransport {
             Self::Ellipsis(t) => t.transport_named,
             Self::Star(t) => t.transport_named,
             Self::Exec(t) => t.transport_named,
+            Self::Comma(t) => t.transport_named,
             Self::False2(t) => t.transport_named,
             Self::Finally(t) => t.transport_named,
             Self::For(t) => t.transport_named,
@@ -31424,7 +31424,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::From(data) => transport_to_node_from(data),
         AnyTransport::Minus(data) => transport_to_node_minus(data),
         AnyTransport::Paren(data) => transport_to_node_paren(data),
-        AnyTransport::Comma(data) => transport_to_node_comma(data),
         AnyTransport::Assert(data) => transport_to_node_assert(data),
         AnyTransport::Dot(data) => transport_to_node_dot(data),
         AnyTransport::Plus(data) => transport_to_node_plus(data),
@@ -31457,6 +31456,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Ellipsis(data) => transport_to_node_ellipsis(data),
         AnyTransport::Star(data) => transport_to_node_star(data),
         AnyTransport::Exec(data) => transport_to_node_exec(data),
+        AnyTransport::Comma(data) => transport_to_node_comma(data),
         AnyTransport::False2(data) => transport_to_node_false2(data),
         AnyTransport::Finally(data) => transport_to_node_finally(data),
         AnyTransport::For(data) => transport_to_node_for(data),
@@ -35732,23 +35732,6 @@ fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(9) /* "," */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        None,
-        None,
-        trivia_data,
-    ))
-}
-
 fn transport_to_node_assert(transport: AssertTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
@@ -36280,6 +36263,23 @@ fn transport_to_node_exec(transport: ExecTransport) -> Result<TransportNodeData,
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(41) /* "exec" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(9) /* "," */,
         transport.transport_source,
         transport.transport_named,
         true,

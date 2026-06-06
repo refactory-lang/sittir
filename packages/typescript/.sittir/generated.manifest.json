@@ -1,8 +1,8 @@
 {
   "grammar": "typescript",
-  "source_hash": "3ce9a556a3e150e3da85fe3acbcbff286f585ca221ae0782437c30b7d093d651",
+  "source_hash": "17cded13d2527c5e5ab52471e3b9a656eee620b4be5a790c997cdd433bd450ff",
   "files": {
-    "packages/typescript/.sittir/grammar.js": "780a89a65407ad7a8c6cfeec72acba2708667726676b23b79ea9352dd538b502",
+    "packages/typescript/.sittir/grammar.js": "33634bd3c9d21386ccf93b21fbaf2948ffc49a4def05f71042300a9dd3bb8b9b",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.wasm": "24029766048bb104d04f2071c6d5d92d8e8ef49a558eed06a80a572161e74698",
     "packages/typescript/.sittir/src/grammar.json": "1ca41e142500848dca002ad975dcf966324c90e1c279a5ec814cf1935037dd7d",
@@ -22,7 +22,7 @@
     "packages/typescript/src/factories.ts": "1ca66353f4af09a9d98ba5930639e75602620426b506f4f1ae2f3452603f8bb8",
     "packages/typescript/src/from.ts": "fbc0d00cfd14cf4b2d4dffb42ba6717ea6107d448b3afcf9ae1d4ef5025f3860",
     "packages/typescript/src/grammar.ts": "131224f565b24e201a91e52771179464f9651e673e3063d3f3d47c4116a18418",
-    "packages/typescript/src/hash.ts": "92af39c09083ca9d5bd72154dd912266992ed24e8ef51753f77f166f15db25d9",
+    "packages/typescript/src/hash.ts": "0bd4542a422a075cc5d2b06c9c0be5826c1691956c1e2048563c7b457a2bced4",
     "packages/typescript/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/typescript/src/ir.ts": "c56dc43846f60e0633d4c332ea7714b1ee813c100449e00f422151fa00b72078",
     "packages/typescript/src/is.ts": "205dd477cb9cf40ec044e3f5434c6dd620c739af42e6280009325d7a4488dd2d",
@@ -185,9 +185,9 @@
     "packages/typescript/templates/nested_type_identifier.jinja": "f077bc6a2a118ccc5c2cafd0ce3b9ed17c525ad58411068e8ab19459f53ad7e0",
     "packages/typescript/templates/new_expression.jinja": "3155134b80a1b4f980c4dd99fe3af15a7b027acfd5334c21331995648d121174",
     "packages/typescript/templates/non_null_expression.jinja": "e1ef154a69b24753b1026584f17876a513244de40d954409996b6915a88abf0c",
-    "packages/typescript/templates/object.jinja": "a05884d3df83cbedd50349afe45f4e62e4d9ff265a9ba5cd2994a302b984abc5",
+    "packages/typescript/templates/object.jinja": "cc3b33a6f82d9f8cf5248a24a831c006c083953d723acc41eaaecb58dd5dcb67",
     "packages/typescript/templates/object_assignment_pattern.jinja": "4191834d95be19159997047d6434114009afafc7906def7c13272f225e1a1d00",
-    "packages/typescript/templates/object_pattern.jinja": "a05884d3df83cbedd50349afe45f4e62e4d9ff265a9ba5cd2994a302b984abc5",
+    "packages/typescript/templates/object_pattern.jinja": "cc3b33a6f82d9f8cf5248a24a831c006c083953d723acc41eaaecb58dd5dcb67",
     "packages/typescript/templates/object_type.jinja": "d4d35d93409ebbca9b53896609d5f7381f075584b23d243ee518ed1c2315afb9",
     "packages/typescript/templates/object_type_content.jinja": "998cfef1d80ce19f7694b0b675e98478583ae91d41d622eb9b8aa276dfc914ff",
     "packages/typescript/templates/object_type_content_comma.jinja": "17f94539b10c43bf640622e867bb2c6986d44ca806ee837888b62ceec35cb6d0",
@@ -249,7 +249,7 @@
     "rust/crates/sittir-typescript/index.d.ts": "215c291f3811710e63f12516f7b3c4ebe1116907288e925411a0262675427e57",
     "rust/crates/sittir-typescript/index.js": "81302159cbccdd486f6a9e17d7103b77d1d0fd14788a674a6a1f43a67b7fbbc9",
     "rust/crates/sittir-typescript/src/lib.rs": "bfcc627baecb1e709b3606f877c957184663c4cbd1e923f552a9c5f1da258af2",
-    "rust/crates/sittir-typescript/src/render/hash.rs": "f8c81655cab27cd4d705a978520745476d4e6d411f57abaabfc316b6fdf31ce4",
+    "rust/crates/sittir-typescript/src/render/hash.rs": "a00474636eccb790f6ae3987b22546802213a733954bc9d99ab34c99a34273e4",
     "rust/crates/sittir-typescript/src/render/kind_ids.rs": "5055241803d34ef7ac345129d686ba9c5739e5342663f5e12ef23011c2e115e2",
     "rust/crates/sittir-typescript/src/render/mod.rs": "77bd8eedb01d29819f96a30003cbcd9cfb8d10e2c4625104356f81e39dc7fdf0",
     "rust/crates/sittir-typescript/src/render/templates.rs": "005e51abbf57622fbbda7c278b08940cebbadae543e474f6fda981166ad1ac26",
@@ -407,9 +407,9 @@
     "rust/crates/sittir-typescript/templates/nested_type_identifier.jinja": "f077bc6a2a118ccc5c2cafd0ce3b9ed17c525ad58411068e8ab19459f53ad7e0",
     "rust/crates/sittir-typescript/templates/new_expression.jinja": "3155134b80a1b4f980c4dd99fe3af15a7b027acfd5334c21331995648d121174",
     "rust/crates/sittir-typescript/templates/non_null_expression.jinja": "e1ef154a69b24753b1026584f17876a513244de40d954409996b6915a88abf0c",
-    "rust/crates/sittir-typescript/templates/object.jinja": "a05884d3df83cbedd50349afe45f4e62e4d9ff265a9ba5cd2994a302b984abc5",
+    "rust/crates/sittir-typescript/templates/object.jinja": "cc3b33a6f82d9f8cf5248a24a831c006c083953d723acc41eaaecb58dd5dcb67",
     "rust/crates/sittir-typescript/templates/object_assignment_pattern.jinja": "4191834d95be19159997047d6434114009afafc7906def7c13272f225e1a1d00",
-    "rust/crates/sittir-typescript/templates/object_pattern.jinja": "a05884d3df83cbedd50349afe45f4e62e4d9ff265a9ba5cd2994a302b984abc5",
+    "rust/crates/sittir-typescript/templates/object_pattern.jinja": "cc3b33a6f82d9f8cf5248a24a831c006c083953d723acc41eaaecb58dd5dcb67",
     "rust/crates/sittir-typescript/templates/object_type.jinja": "d4d35d93409ebbca9b53896609d5f7381f075584b23d243ee518ed1c2315afb9",
     "rust/crates/sittir-typescript/templates/object_type_content.jinja": "998cfef1d80ce19f7694b0b675e98478583ae91d41d622eb9b8aa276dfc914ff",
     "rust/crates/sittir-typescript/templates/object_type_content_comma.jinja": "17f94539b10c43bf640622e867bb2c6986d44ca806ee837888b62ceec35cb6d0",
@@ -470,6 +470,6 @@
     "rust/crates/sittir-typescript/templates/yield_expression.jinja": "937585a8a8e14be405f44e7d83f7fedffc4c660ee4e6f6f0379bd4fe42e108a6"
   },
   "host_files": {
-    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "4c3e980922d5489179e9f98fdf3eb5cb598f8a730bf418b05125096ed1fb0251"
+    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "ea047df89e0a007eeefcd14363833ce69e6b6ceb61287db654a51b6c193d45de"
   }
 }

@@ -104,11 +104,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  argument_list: {
-    '1/0': 'expression',
-  },
-
-  // [held] 1 candidate(s)
   exec_statement: {
     '2/0': 'expression',
   },
