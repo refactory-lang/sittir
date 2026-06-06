@@ -1,15 +1,19 @@
 /**
- * compiler/rule-types.ts — single source of truth for Rule discriminant tags.
+ * compiler/rule-types.ts — Rule discriminant tag constants (SLATED FOR REMOVAL).
  *
- * Every rule-type literal in the codebase routes through these constants so the
- * tag vocabulary (and its casing) can be changed in ONE place. sittir's
- * canonical casing is lowercase; tree-sitter's is uppercase. The values below
- * are the canonical sittir tags.
+ * Each constant is exactly its lowercase tag value (`SEQ === 'seq'`). The `Rule`
+ * union in `rule.ts` derives its `type` fields from these via `typeof SEQ`.
  *
- * NOTE (transitional — uppercase): these are temporarily UPPERCASE while the
- * Rule union in rule.ts is flipped to uppercase, so tsgo can enumerate every
- * literal site for migration to these constants. Once all sites reference the
- * constants, both the union and these values flip back to lowercase in one step.
+ * DEPRECATED: this const-string layer violates `AGENTS.md` §"Rule type
+ * discrimination" — the `Rule` union is meant to be the single source of truth,
+ * with inline `rule.type === 'seq'` literals (type-safe via discriminated-union
+ * narrowing) and the per-variant guards (`isSeq`, ...) in `rule.ts`. This layer
+ * adds no errors over the union itself and is a second vocabulary that can drift.
+ *
+ * It is kept ONLY to avoid a ~5.8k-site / ~70-file codemod inside a feature
+ * branch (the file is shared with PR-N). Removal is tracked as a dedicated
+ * follow-up: `docs/superpowers/plans/2026-06-05-rule-type-consts-codemod.md`.
+ * Do NOT add new imports of these constants — use `rule.type` literals/guards.
  */
 
 export const SEQ = 'seq' as const;

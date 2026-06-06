@@ -14,7 +14,7 @@
  * emits), `resolvedKind = name` (the kindId read-time matching keys on).
  */
 
-import { CHOICE, STRING, SYMBOL, TERMINAL } from '../rule-types.ts'; // @rule-type-consts
+import { CHOICE, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deriveValuesForRule, isTerminalValue, isNodeRef } from '../node-map.ts';
 import type { Rule } from '../rule.ts';

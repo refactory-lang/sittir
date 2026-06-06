@@ -19,7 +19,7 @@
  *   - expected post-fix: the ref is replaced by the seq members carrying multiplicity:'optional'
  */
 
-import { GROUP, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
+import { SYMBOL } from '../rule-types.ts'; // @rule-type-consts
 import { describe, expect, it, afterEach } from 'vitest';
 import { computeSimplifiedRules, drainSlotGroupingDiagnostics } from '../simplify.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';

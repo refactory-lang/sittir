@@ -1,4 +1,4 @@
-import { PATTERN, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { PATTERN, STRING } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
 	keywordPresenceKind,

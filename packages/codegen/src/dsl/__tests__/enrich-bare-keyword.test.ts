@@ -1,4 +1,4 @@
-import { FIELD, SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
 import type { Rule, SeqRule } from '../../compiler/rule.ts';
