@@ -18,7 +18,7 @@ export default defineConfig({
 		}
 	},
 	test: {
-		exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**'],
+		exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**', '**/.claude/worktrees/**'],
 		// Compile every grammar's override parser before any test runs.
 		// `.sittir/parser.wasm` is gitignored; on a fresh checkout / in CI
 		// the file doesn't exist and validators silently fall back to the
