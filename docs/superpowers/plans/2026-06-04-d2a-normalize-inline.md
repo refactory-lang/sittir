@@ -21,9 +21,17 @@
 **⚠️ CRITICAL Task-5 correction (derived 2026-06-06 — the plan's "the 10 are already inlined at normalize" is WRONG as stated):**
 `computeKeepRef` keeps `_x` when **refcount(`symbol(_x)`) > 1 OR name-twinned OR in a `supertype.subtypes`** (normalize.ts:128-131). So the normalize hoist (`inlineHiddenSeqRefs`) folds **only single-use, non-twin, non-supertype** helpers (e.g. `_extends_clause_single`, refcount 1). The multi-ref / twin members of the plan's "fold set" — `_initializer` (×7), `_call_signature` (×10, twin), `_module` (twin), and any other refcount>1 — are **KEPT** (their `symbol(_x)` ref survives in `renderRules`), and the simplify wash (`inlineRefs`, simplify.ts:899/953) **STILL inlines them** at simplify time.
 Therefore Task 5 must NOT narrow the wash to `_import_list`-only wholesale: that would stop inlining the kept group/multi helpers and leak their helper-name as a parent slot value (the old H2 regression). The safe narrowing is: remove ONLY the wash work that is now redundant — i.e. the single-use folds the normalize hoist already did (those `symbol(_x)` refs are gone from `renderRules`, so the wash is *already* a no-op for them; removing their code path is byte-neutral). The wash must KEEP: (a) the `grammar.inline` path (simplify.ts:899 `inlineKinds.has` — tree-sitter parse-time helpers, a separate correctness invariant), (b) inlining of kept refcount>1/twin group/multi helpers, (c) `_import_list`.
-**Implementer first step:** instrument `inlineRefs`'s GROUP/MULTI path (simplify.ts:953+) with a per-kind splice counter, run `gen` for all 3 grammars, and enumerate which kinds it actually still splices. Narrow ONLY against that empirical set — do not trust the plan's "10/11" list. Gate 111/69/74 + `pnpm -r typecheck` after.
+### Task 5 EMPIRICAL OUTCOME (2026-06-06) — PREMISE REFUTED, do NOT narrow the wash
 
-**Branch:** work is on `master`; `d2a-normalize-inline` (off ae80a733) is an empty resume branch.
+Instrumented BOTH inliners (`spliceFoldableRefs` in normalize + the `inlineRefs` GROUP/MULTI path in simplify) and ran `gen` on all 3 grammars:
+
+- **The wash is LOAD-BEARING — it uniquely folds ~15 kinds the normalize hoist deliberately leaves alone.** `spliceFoldableRefs` folds ONLY un-fielded, non-array, non-keepRef single-use refs (normalize.ts:221 `array|nonEmptyArray → return`, :229 `fieldName → return`, `foldable` excludes keepRef). Everything else is handed to the wash by design: array-multiplicity groups (ts `_extends_clause_single` — folding it in normalize would drop the `| join(sep)`), keepRef twins / refcount>1 (`_call_signature`, `_module`, `_initializer`), fielded groups (`_infer_type_optional1`, `_except_clause_as_optional1`), multi-helpers (`_collection_elements`, `_parameters`, `_patterns`), and `_import_list`.
+- **Narrowing the wash to `_import_list`-only would REGRESS ~15 folds.** The plan's "the 10 are already inlined at normalize" is FALSE.
+- **Genuine double-handling = exactly 3 kinds** (rust `_use_wildcard_clause`, ts `_for_header`, py `_except_clause_as_optional1`) — folded by both, but benign (gate holds at floor; idempotent).
+
+**CONCLUSION:** normalize and the wash fold **disjoint sets by design** — no broad DRY double-derivation exists. **Task 5 (narrow wash) + Task 7 (delete wash paths) are obviated / not safely actionable as written.** §D-2a's real deliverable — the normalize hoist taking over the *safe* (un-fielded, non-array, single-use) subset — is DONE in Task 4; the wash intentionally retains the rest. Treat §D-2a as **functionally complete** (Tasks 1/2/4 landed + gate-green). Only residual: the 3-kind idempotent overlap (low-value micro-dedup, deferrable).
+
+**Branch:** work is on `master`; `d2a-normalize-inline` (off ae80a733) carries only this status note.
 
 ---
 
