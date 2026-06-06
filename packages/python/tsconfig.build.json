@@ -6,8 +6,14 @@
 		"declarationMap": true,
 		"rootDir": "./src",
 		"outDir": "./dist",
-		"tsBuildInfoFile": "./tsconfig.build.tsbuildinfo"
+		"tsBuildInfoFile": "./tsconfig.build.tsbuildinfo",
+		"paths": {}
 	},
+	"references": [
+		{ "path": "../types/tsconfig.build.json" },
+		{ "path": "../common/tsconfig.build.json" },
+		{ "path": "../core/tsconfig.build.json" }
+	],
 	"include": ["src"],
 	"exclude": ["node_modules", "dist", "tests"]
 }
