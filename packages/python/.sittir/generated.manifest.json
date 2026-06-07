@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "0045f0f84a5a89fccd80efdc36a28eecd27beb5a866948b0bdf77e3256b44072",
+  "source_hash": "9b529f1b902f94c060d06d1107e000b8d30e5eadb126568699d4c8499fde907d",
   "files": {
     "packages/python/.sittir/grammar.js": "676cc242eaa78107e30ed26ffd9812747fa4108019f1fffae2d64c6f39c0279f",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -278,6 +278,6 @@
     "rust/crates/sittir-python/templates/yield.jinja": "864c1b6eaf2e8558413c893cc1fb8e4cef6dc75000675a62d374a4c454685de4"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "15df485657ae5c2cffd58312e6770fccc915f694c7fba94521b6bc79719d4a34"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "879ab08a4328c1ad96264287cfe8abf3a8ae72c940d9f2bf87c3431c46d05601"
   }
 }
