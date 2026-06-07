@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "b75145d5c81cc7151953edb6348a9ddb37a52112107f557efdba7da394e5dd39",
+  "source_hash": "0ec4bbe5765bd560e08573ab8a9084129b112789500f09e6dc65b9b86f413c5b",
   "files": {
     "packages/typescript/.sittir/grammar.js": "33634bd3c9d21386ccf93b21fbaf2948ffc49a4def05f71042300a9dd3bb8b9b",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
@@ -470,6 +470,6 @@
     "rust/crates/sittir-typescript/templates/yield_expression.jinja": "937585a8a8e14be405f44e7d83f7fedffc4c660ee4e6f6f0379bd4fe42e108a6"
   },
   "host_files": {
-    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "176b78aeac0e07a2ba3e8b62a2a90d392b857d00285e1752512b33ae948b9007"
+    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "0f6951fb38fc65c541457e67bea20626e3f47e248c91a898c269bd6087e28ae5"
   }
 }

@@ -164,7 +164,6 @@ describe('diagnoseParseKindCollisions', () => {
 				fieldName: 'value',
 				values: [
 					{
-						kind: 'node-ref',
 						node: { kind: 'unresolved-ref', name: storageKind },
 						parseKind: { kind: 'unresolved-ref', name: 'shared' },
 						multiplicity: 'single',

@@ -38,7 +38,7 @@ function makeField(
 /** Create a single-value field with an inline terminal literal. */
 function literalField(value: string, multiplicity: NodeOrTerminal['multiplicity'] = 'single'): AssembledNonterminal {
 	return makeField({
-		values: [{ kind: 'terminal', value, multiplicity }]
+		values: [{ value, multiplicity }]
 	});
 }
 
@@ -47,7 +47,6 @@ function nodeRefField(kindName: string, multiplicity: NodeOrTerminal['multiplici
 	return makeField({
 		values: [
 			{
-				kind: 'node-ref',
 				node: { kind: 'unresolved-ref', name: kindName },
 				multiplicity
 			}
@@ -94,8 +93,8 @@ describe('resolveEffectiveLiteral', () => {
 
 		it('returns undefined for multi-literal (choice-of-strings)', () => {
 			const field = multiValueField([
-				{ kind: 'terminal', value: '{', multiplicity: 'single' },
-				{ kind: 'terminal', value: '{|', multiplicity: 'single' }
+				{ value: '{', multiplicity: 'single' },
+				{ value: '{|', multiplicity: 'single' }
 			]);
 			const nodeMap = makeNodeMap([]);
 			expect(resolveEffectiveLiteral(field, nodeMap)).toBeUndefined();
@@ -126,9 +125,8 @@ describe('resolveEffectiveLiteral', () => {
 			// The choice produces TWO values: TerminalValue('const') + NodeRef(mutable_specifier)
 			// so values.length !== 1, meaning auto-stamp never fires (correct behavior)
 			const field = multiValueField([
-				{ kind: 'terminal', value: 'const', multiplicity: 'single' },
+				{ value: 'const', multiplicity: 'single' },
 				{
-					kind: 'node-ref',
 					node: { kind: 'unresolved-ref', name: 'mutable_specifier' },
 					multiplicity: 'single'
 				}
@@ -140,12 +138,10 @@ describe('resolveEffectiveLiteral', () => {
 		it('returns undefined for multi-kind values', () => {
 			const field = multiValueField([
 				{
-					kind: 'node-ref',
 					node: { kind: 'unresolved-ref', name: '_kw_a' },
 					multiplicity: 'single'
 				},
 				{
-					kind: 'node-ref',
 					node: { kind: 'unresolved-ref', name: '_kw_b' },
 					multiplicity: 'single'
 				}

@@ -40,12 +40,10 @@ function makeField(values: readonly NodeOrTerminal[]): AssembledNonterminal {
 }
 
 const terminal = (value: string, multiplicity: NodeOrTerminal['multiplicity']): NodeOrTerminal => ({
-	kind: 'terminal',
 	value,
 	multiplicity
 });
 const ref = (name: string, multiplicity: NodeOrTerminal['multiplicity']): NodeOrTerminal => ({
-	kind: 'node-ref',
 	node: { kind: 'unresolved-ref', name },
 	multiplicity
 });
