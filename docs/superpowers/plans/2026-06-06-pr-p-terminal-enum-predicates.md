@@ -15,6 +15,12 @@
 ## ⚠️ Line-drift caveat (reconcile at execution)
 The spec's `file:line` refs predate **PR-H** (`optimize.ts`→`normalize.ts`, commit on master) and later edits. Every site below is pinned by SYMBOL; re-locate with `rg`/LSP before editing — do NOT trust the absolute line numbers. Known renames: `optimize.ts`→`normalize.ts`; the `node`→`kind` value-ref rename (Part 2) goes through **LSP/copilot** (`feedback_use_ts_lsp_for_moves`), not hand-edits.
 
+## STATUS (2026-06-07)
+- **Task 0** ✅ — baseline confirmed **rust 111 / ts 69 / py 74**, cargo GREEN.
+- **Task 1** ✅ `9b5f0621` — `EnumRule`→`ChoiceRule` collapse via `isEnumChoiceRule` predicate (assemble-time). NOTE: also reclassified ts `predefined_type` `pattern`→`enum` (the flat enum predicate now wins precedence) — gate-neutral, accepted; this is **PR-Q's entire ts deliverable** (`widening delta rust 0/ts 1/py 0`) folded in early, so PR-Q shrinks.
+- **Task 2** ✅ `3996b317` — terminal classify-by-shape; deleted `TerminalRule`/`isTerminal`/`promoteAndLogTerminalRules` + transparent `case TERMINAL` arms. BYTE-IDENTICAL (regen no-change all 3). Gate 111/69/74, cargo green. (Salvaged + re-verified after the Task-2 agent process crashed mid-task — clean regen + full gate confirmed completeness.)
+- **Task 3** ⬜ — `TerminalValue`→`NodeRef` value unification (the riskiest: behavioral `'content'` source-fix may rename slots; `node`→`kind` rename via LSP; ~8 emitters + rust). NOT started.
+
 ## Task 0 — Baseline (MUST run first)
 - [ ] Clean tree (`git status` only untracked). `env -u SITTIR_NATIVE_DEBUG pnpm validate:native`; record deep-AST per grammar from `packages/validator/validation-history.jsonl` (camelCase key `readRenderParseAstMatchPass`). Confirm **111/69/74**; if different, re-baseline the HOLD targets.
 - [ ] `cargo check --workspace --features napi-bindings` green at baseline.
