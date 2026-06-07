@@ -29,8 +29,6 @@ export type LeafStringMap = {
   true: "True";
   as: "as";
   async: "async";
-  in: "in";
-  is: "is";
   _: "_";
   from: "from";
   assert: "assert";
@@ -45,6 +43,7 @@ export type LeafStringMap = {
   del: "del";
   elif: "elif";
   exec: "exec";
+  in: "in";
   False: "False";
   finally: "finally";
   for: "for";
@@ -231,8 +230,6 @@ export const enum SyntaxKind {
   Except = "except",
   As = "as",
   Async = "async",
-  In = "in",
-  Is = "is",
   Anonymous = "_",
   From = "from",
   Assert = "assert",
@@ -247,6 +244,7 @@ export const enum SyntaxKind {
   Del = "del",
   Elif = "elif",
   Exec = "exec",
+  In = "in",
   False2 = "False",
   Finally = "finally",
   For = "for",
@@ -1400,9 +1398,12 @@ export interface AssignmentTyped {
 
 export interface ComparisonOperatorComparator {
   readonly $type: TSKindId.ComparisonOperatorComparator;
-  readonly _operators: "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not";
+  readonly _operators: number;
   readonly _primary_expression: PrimaryExpression;
-  operators(): "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not";
+  readonly __inputHints__?: {
+    readonly operators: KindEnum<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not", TSKindId.Lt | TSKindId.LtEq | TSKindId.EqEq | TSKindId.BangEq | TSKindId.GtEq | TSKindId.Gt | TSKindId.LtGt | TSKindId.In | TSKindId.NotIn | TSKindId.Is | TSKindId.IsNot>;
+  };
+  operators(): number;
   primaryExpression(): PrimaryExpression;
 }
 
@@ -2545,8 +2546,6 @@ export interface CloseBraceTree extends AnyTreeNode { readonly type: "}"; }
 export interface ExceptTree extends AnyTreeNode { readonly type: "except"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
-export interface InTree extends AnyTreeNode { readonly type: "in"; }
-export interface IsTree extends AnyTreeNode { readonly type: "is"; }
 export interface FromTree extends AnyTreeNode { readonly type: "from"; }
 export interface AssertTree extends AnyTreeNode { readonly type: "assert"; }
 export interface AndTree extends AnyTreeNode { readonly type: "and"; }
@@ -2560,6 +2559,7 @@ export interface ContinueTree extends AnyTreeNode { readonly type: "continue"; }
 export interface DelTree extends AnyTreeNode { readonly type: "del"; }
 export interface ElifTree extends AnyTreeNode { readonly type: "elif"; }
 export interface ExecTree extends AnyTreeNode { readonly type: "exec"; }
+export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface False2Tree extends AnyTreeNode { readonly type: "False"; }
 export interface FinallyTree extends AnyTreeNode { readonly type: "finally"; }
 export interface ForTree extends AnyTreeNode { readonly type: "for"; }
