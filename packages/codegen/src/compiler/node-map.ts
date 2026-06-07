@@ -1881,16 +1881,33 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// after it; a multi-storage-kind slot — e.g. `_suite`'s
 	// `{_simple_statements, block, _newline}` (all `parseKind=block`) — falls back
 	// to the generic `content` (the parseName `block` is NOT its storage name).
-	const distinctStorageKinds = [
+	// Storage kinds from node-ref values (the render-source kind via `value.node`).
+	const nodeRefStorageKinds = [
 		...new Set(
-			slot.values
-				.filter(isNodeRef)
-				.map((v) => {
-					const node = v.node;
-					return isUnresolvedRef(node) ? node.name : node.kind;
-				})
+			slot.values.filter(isNodeRef).map((v) => {
+				const node = v.node;
+				return isUnresolvedRef(node) ? node.name : node.kind;
+			})
 		)
 	];
+	// PR-P Task 3 step 3: when a slot is PURELY inline literals (no node-refs),
+	// its storage kind is the literal's resolved catalog kind — so a slot holding
+	// a single resolved literal is named after that kind instead of the generic
+	// `content` (§4c — `content` is for genuinely-anonymous multi-kind unions).
+	// A MIXED ref+literal slot keeps its ref-based naming (the literal is
+	// incidental punctuation, not the storage identity) — e.g. `splat_pattern`'s
+	// `{identifier, _}` stays `identifier`, not `content`. Unresolved literals
+	// (regex / residual, no resolvedKind) contribute nothing AND trip
+	// `hasUnnamedValue` → `content`.
+	const literalStorageKinds = [
+		...new Set(
+			slot.values
+				.filter(isTerminalValue)
+				.map((v) => v.resolvedKind)
+				.filter((k): k is string => k !== undefined)
+		)
+	];
+	const distinctStorageKinds = nodeRefStorageKinds.length > 0 ? nodeRefStorageKinds : literalStorageKinds;
 	// A value with no parseKind is a literal / anonymous token (e.g.
 	// splat_pattern's `_`). Its presence means the slot is NOT a single named
 	// kind, so storageName falls back to the generic `content` — even when
