@@ -35,7 +35,6 @@ import {
 	isMultiple,
 	isRequired,
 	kindsOf,
-	isUnresolvedRef,
 	isTerminalValue
 } from '../compiler/node-map.ts';
 import type {
