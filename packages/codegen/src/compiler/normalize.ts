@@ -12,7 +12,7 @@
  * re-collapse.
  */
 
-import { CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, SeqRule } from './rule.ts';
 import { isChoice, isEnumChoiceRule } from './rule.ts';
 import { isTerminalShape } from './link.ts';

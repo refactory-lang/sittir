@@ -10,7 +10,7 @@
  * Link does NOT process overrides — already applied by Evaluate.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	SymbolRef,
@@ -24,7 +24,7 @@ import type {
 	SymbolRule,
 	StringRule
 } from './rule.ts';
-import { isField, isSeq, isChoice, isString, normalizeEnumMembers, isEnumChoiceRule } from './rule.ts';
+import { isSeq, isChoice, normalizeEnumMembers, isEnumChoiceRule } from './rule.ts';
 import { liftSeparators } from './lift-separators.ts';
 import {
 	collectGeneratedKindEntries,

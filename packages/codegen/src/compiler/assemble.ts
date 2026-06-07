@@ -5,7 +5,7 @@
  * detectToken, modelType) derived from the rule tree — not carried on Rule nodes.
  */
 
-import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,

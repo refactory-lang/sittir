@@ -25,7 +25,7 @@
  * `cli.ts` from this source of truth; never edit those copies by hand.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
@@ -40,7 +40,6 @@ import type {
 	TerminalValue
 } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
-import { literalTextOf, isEnumChoiceRule } from '../compiler/rule.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
 import type { CodegenEmitter } from './emitter.ts';
