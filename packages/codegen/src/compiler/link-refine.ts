@@ -16,7 +16,7 @@
  * See refine() DSL primitive for the full design.
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TERMINAL, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, ChoiceRule, FieldRule, EnumRule, SymbolRule } from './rule.ts';
 import { isChoice, isEnum, isField, isString, isSeq, isOptional, isRepeat, isRepeat1, isSymbol } from './rule.ts';
 import type { RefineForm } from './types.ts';
@@ -345,7 +345,7 @@ function singleContentOf(rule: Rule): Rule | undefined {
 		case FIELD:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 			return rule.content;
 		default:
 			return undefined;

@@ -25,7 +25,7 @@
  * `cli.ts` from this source of truth; never edit those copies by hand.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
@@ -304,7 +304,6 @@ export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
 		unwrapped.type === VARIANT ||
 		unwrapped.type === GROUP ||
 		unwrapped.type === TOKEN ||
-		unwrapped.type === TERMINAL ||
 		(unwrapped.type === ALIAS && !unwrapped.named)
 	) {
 		unwrapped = (unwrapped as Extract<typeof unwrapped, { content: Rule }>).content;
@@ -489,13 +488,9 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
 		case FIELD:
 		case ALIAS:
 		case TOKEN:
-		case TERMINAL:
 			if ('content' in rule) return rightmostBoundary((rule as { content: Rule }).content);
 			return UNKNOWN_END;
-		case ENUM:
-			// EnumRule: rightmost member's value is the boundary.
-			if (rule.members.length > 0) return literalEnd(rule.members[rule.members.length - 1]!.value);
-			return UNKNOWN_END;
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE/default.
 		case SYMBOL:
 			// Symbol refs become slot emissions in the template — word-like at boundary.
 			return SLOT_END;
@@ -562,12 +557,9 @@ function leftmostBoundary(rule: Rule): BoundaryEnd {
 		case FIELD:
 		case ALIAS:
 		case TOKEN:
-		case TERMINAL:
 			if ('content' in rule) return leftmostBoundary((rule as { content: Rule }).content);
 			return UNKNOWN_END;
-		case ENUM:
-			if (rule.members.length > 0) return literalEnd(rule.members[0]!.value);
-			return UNKNOWN_END;
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE/default.
 		case SYMBOL:
 			return SLOT_END;
 		case PATTERN:
@@ -610,7 +602,6 @@ function isLeftmostTerminalImmediate(rule: Rule): boolean {
 		case GROUP:
 		case FIELD:
 		case ALIAS:
-		case TERMINAL:
 			if ('content' in rule) return isLeftmostTerminalImmediate((rule as { content: Rule }).content);
 			return false;
 		default:
@@ -954,9 +945,8 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			}
 			return escapeLiteral(rule.value);
 
-		case PATTERN:
-		case ENUM: {
-			// Patterns and enums are NONTERMINAL slots (classifyByType), so they
+		case PATTERN: {
+			// Patterns are NONTERMINAL slots (classifyByType), so they
 			// emit a slot REFERENCE — not inline text. Previously pattern→'' and
 			// enum→first-literal dropped the slot; once collectSlots makes them real
 			// slots that fails slot-preservation. Prefer the registered slot (named
@@ -967,6 +957,7 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			if (rule.fieldName !== undefined) return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
 			return emitScalarSlot('content');
 		}
+		// PR-P: ENUM handled as CHOICE below via isEnumChoiceRule guard.
 
 		case SEQ: {
 			// Bug 6 fix (replaces Bug 1): insert spaces between consecutive seq
@@ -1089,10 +1080,10 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 		}
 
 		// Transparent wrappers — recurse into content. Variant / group /
-		// terminal / token / unnamed-alias have no template-level surface
+		// token / unnamed-alias have no template-level surface
 		// of their own; the inner rule's emission is what the renderer sees.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case TOKEN:
-		case TERMINAL:
 		case VARIANT:
 		case GROUP:
 			return emitRule(rule.content, ctx);
@@ -1611,11 +1602,11 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 		return content.name.toLowerCase();
 	}
 	// Transparent wrappers — recurse.
+	// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 	if (
 		content.type === VARIANT ||
 		content.type === GROUP ||
-		content.type === TOKEN ||
-		content.type === TERMINAL
+		content.type === TOKEN
 	) {
 		return pickConditionalKey(content.content, ctx);
 	}

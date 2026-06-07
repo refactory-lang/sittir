@@ -23,7 +23,7 @@ import type {
 	EnumRule,
 	SymbolRef
 } from './rule.ts';
-import { normalizeEnumMembers } from './rule.ts';
+import { normalizeEnumMembers, isEnumChoiceRule } from './rule.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
@@ -915,7 +915,8 @@ function purgeSupersededEnumRules(
 		// Only consider hidden enum rules — visible grammar rules and non-enum
 		// rules must never be removed here.
 		if (!name.startsWith('_')) continue;
-		if (rule.type !== ENUM) continue;
+		// PR-P: ENUM type retired — detect via isEnumChoiceRule.
+		if (!isEnumChoiceRule(rule)) continue;
 
 		const memberKey = [...(rule.members as StringRule[])]
 			.map((m) => m.value)
@@ -1411,10 +1412,10 @@ function peelRepeatWrapper(rule: Rule): Rule {
  * operator fields.
  */
 function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRule[] | null {
+	// PR-P: ENUM type retired — detect via isEnumChoiceRule first.
+	if (isEnumChoiceRule(rule)) return rule.members as StringRule[];
 	switch (rule.type) {
-		case ENUM:
-			// Already a collapsed choice-of-strings.
-			return rule.members as StringRule[];
+		// PR-P: ENUM case removed — handled by isEnumChoiceRule above.
 		case STRING:
 			// Single inline literal — wrap as a 1-member enum.
 			return [rule];
@@ -1446,11 +1447,10 @@ function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
 	switch (target.type) {
 		case STRING:
 			return [target];
-		case ENUM:
-			return target.members as StringRule[];
+		// PR-P: ENUM case merged into CHOICE — isEnumChoiceRule detects both.
 		case CHOICE: {
-			// Defensive: all-string choice not yet collapsed (should not occur
-			// in normal evaluate output, but handle gracefully).
+			// After PR-P, normalizeEnumMembers emits type: CHOICE for enum sets.
+			// The ENUM case (type: 'enum') is also handled here for safety.
 			if (target.members.length === 0) return null;
 			const allStrings = target.members.every((m): m is StringRule => m.type === 'string');
 			return allStrings ? target.members : null;
@@ -2000,10 +2000,7 @@ function patternRulesEqual(a: Rule, b: Rule): boolean {
 			return a.value === (b as PatternRule).value;
 		case SYMBOL:
 			return a.name === (b as SymbolRule).name;
-		case ENUM: {
-			const bm = (b as EnumRule).members;
-			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
-		}
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
 		case SEQ: {
 			const bSeq = b as SeqRule;
 			return (

@@ -3,7 +3,7 @@
  * Non-test module — safe to import without registering test cases.
  */
 
-import { CHOICE, ENUM, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import {
 	AssembledBranch,
 	AssembledEnum,
@@ -75,7 +75,7 @@ export function makeMinimalNodeMap(): NodeMap {
 	nodes.set(
 		'operator',
 		new AssembledEnum('operator', {
-			type: ENUM,
+			type: CHOICE,
 			members: [
 				{ type: STRING, value: '+' },
 				{ type: STRING, value: '-' }

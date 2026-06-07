@@ -27,7 +27,7 @@
  * file. New code should import from `./node-map.ts` directly.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,
@@ -41,11 +41,10 @@ import type {
 	TokenRule,
 	EnumRule,
 	SupertypeRule,
-	TerminalRule,
 	Multiplicity,
 	RuleId
 } from './rule.ts';
-import { isSeq, isField } from './rule.ts';
+import { isSeq, isField, literalTextOf, isEnumChoiceRule } from './rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { findGeneratedKindEntry } from './generated-metadata.ts';
 import { tokenToName } from './normalize.ts';
@@ -697,8 +696,8 @@ function classifyTopLevelShape(rule: Rule): string {
 		case SYMBOL:
 		case STRING:
 		case PATTERN:
-		case TERMINAL:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case SUPERTYPE:
 		case INDENT:
 		case DEDENT:
@@ -791,7 +790,7 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
 					? peel(r.content)
 					: r;
 	const core = peel(m);
-	if (core.type === SYMBOL || core.type === SUPERTYPE || core.type === ENUM) return true;
+	if (core.type === SYMBOL || core.type === SUPERTYPE || isEnumChoiceRule(core)) return true;
 	// Bare `string` / `pattern` members — token-literal alternatives.
 	// `_non_special_token` has a choice containing dozens of bare
 	// keyword strings alongside symbol refs; each contributes a
@@ -802,7 +801,8 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
 	// as addressable children, so they never contribute structural
 	// branching to a choice arm.
 	if (core.type === INDENT || core.type === DEDENT || core.type === NEWLINE) return true;
-	if (core.type === TERMINAL) return true;
+	// PR-P Task 2: TERMINAL case removed — terminal-shaped rules now arrive as their original
+	// unwrapped type (SEQ/STRING/etc.) and are already covered above or by TOKEN wrapper.
 	// `optional(token-like)` preserves the union shape — the branch
 	// contributes either the wrapped token or nothing. Rust's
 	// `reference_expression` has `choice(choice-of-syms, optional(sym))`
@@ -817,7 +817,7 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
 	if (core.type === CHOICE && core.members.every(isTokenLikeChoiceMember)) return true;
 	if (core.type === REPEAT1 || core.type === REPEAT) {
 		const inner = peel(core.content);
-		if (inner.type === ENUM) return true;
+		if (isEnumChoiceRule(inner)) return true;
 		if (inner.type === STRING || inner.type === PATTERN) return true;
 		if (inner.type === SYMBOL || inner.type === SUPERTYPE) return true;
 		if (inner.type === CHOICE && inner.members.every(isTokenLikeChoiceMember)) return true;
@@ -1219,19 +1219,22 @@ export function deriveValuesForRule(
 				}
 			];
 		}
-		case ENUM:
-			// Enum: each enum member is a TerminalValue
-			return rule.members.map((m) => {
-				const rk = findGeneratedKindEntry(kindEntries ?? [], m.value)?.kind;
-				return {
-					kind: 'terminal' as const,
-					value: m.value,
-					resolvedKind: rk,
-					parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
-					multiplicity
-				};
-			});
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE below.
 		case CHOICE: {
+			// PR-P: handle enum-shaped ChoiceRules (all-STRING members) as enum terminal values.
+			if (isEnumChoiceRule(rule)) {
+				return rule.members.map((m) => {
+					const text = literalTextOf(m) ?? '';
+					const rk = text ? findGeneratedKindEntry(kindEntries ?? [], text)?.kind : undefined;
+					return {
+						kind: 'terminal' as const,
+						value: text,
+						resolvedKind: rk,
+						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
+						multiplicity
+					};
+				});
+			}
 			// `choice(X, blank)` is functionally `optional(X)` — the blank arm
 			// makes the entire choice optional. Downgrade nonEmptyArray → array
 			// and single → optional when recursing into the non-blank arms.
@@ -1485,8 +1488,8 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	irKey?: string;
 	/**
 	 * Rule-level provenance. Mirrors the `source` field on the
-	 * underlying Rule (EnumRule, SupertypeRule, TerminalRule,
-	 * PolymorphRule). Undefined for branches/containers/groups, which
+	 * underlying Rule (EnumRule, SupertypeRule, PolymorphRule).
+	 * PR-P Task 2: TerminalRule removed from the list — deleted. Undefined for branches/containers/groups, which
 	 * don't have a rule-level classification. The suggested.ts emitter
 	 * surfaces nodes whose source is `'promoted'` as rule-level
 	 * override candidates.
@@ -2005,8 +2008,8 @@ function childrenMayBeEmpty(rule: Rule): boolean {
 		case PATTERN:
 		case TOKEN:
 		case SUPERTYPE:
-		case ENUM:
-		case TERMINAL:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by CHOICE.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case ALIAS:
 		case INDENT:
 		case DEDENT:
@@ -3059,7 +3062,7 @@ function isAllPunct(rule: Rule): boolean {
 		case FIELD:
 		case SYMBOL:
 		case SUPERTYPE:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by CHOICE.
 			return false;
 		case SEQ:
 		case CHOICE:
@@ -3109,7 +3112,7 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 			case GROUP:
 			case ALIAS:
 			case TOKEN:
-			case TERMINAL:
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 				r = r.content;
 				continue;
 			case SEQ:
@@ -3117,7 +3120,7 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 			case REPEAT:
 			case REPEAT1:
 			case FIELD:
-			case ENUM:
+			// PR-P: ENUM case removed — enum-shaped ChoiceRules are CHOICE now.
 			case SUPERTYPE:
 			case STRING:
 			case PATTERN:
@@ -3334,8 +3337,13 @@ export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNode
 
 /**
  * Open-text non-branch kind whose surface form is matched by a regex
- * (PatternRule) or produced by an external scanner (TerminalRule).
- * Examples: `identifier`, `integer_literal`, `string_content`.
+ * (PatternRule) or is a pure-text structural rule (terminal-shape, no
+ * fields, no symbol refs). Examples: `identifier`, `integer_literal`,
+ * `string_content`.
+ *
+ * PR-P Task 2: widened from `PatternRule | TerminalRule` to `Rule` because
+ * TerminalRule was deleted — terminal-shape kinds now arrive with their
+ * original unwrapped rule (may be SeqRule, ChoiceRule, etc.).
  *
  * Renamed from the original `AssembledLeaf` class. The `modelType`
  * discriminant is `'pattern'` (renamed from `'leaf'` during the
@@ -3343,23 +3351,23 @@ export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNode
  * is now an abstract base (above); `AssembledPattern` is one of its
  * four concrete subclasses.
  */
-export class AssembledPattern extends AssembledLeaf<PatternRule | TerminalRule> {
+export class AssembledPattern extends AssembledLeaf<Rule> {
 	readonly modelType = 'pattern' as const;
 
-	constructor(kind: string, rule: PatternRule | TerminalRule, opts?: { factoryName?: string; irKey?: string }) {
+	constructor(kind: string, rule: Rule, opts?: { factoryName?: string; irKey?: string }) {
 		super(kind, rule, opts);
 	}
 
-	/** The leaf's regex pattern value when the rule is a PatternRule; undefined for TerminalRule. */
+	/** The leaf's regex pattern value when the rule is a PatternRule; undefined otherwise. */
 	get pattern(): string | undefined {
 		return this.rule.type === PATTERN ? this.rule.value || undefined : undefined;
 	}
 
 	/**
 	 * When this pattern's sole realisation is a single fixed anonymous literal
-	 * (e.g. `_semicolon` = `terminal(choice(_automatic_semicolon, ";"))` where
-	 * every non-blank, non-symbol leaf collapses to the same string), returns
-	 * that string so callers can treat this like a keyword/token for transport
+	 * (e.g. `_semicolon` = `choice(_automatic_semicolon, ";")` where every
+	 * non-blank, non-symbol leaf collapses to the same string), returns that
+	 * string so callers can treat this like a keyword/token for transport
 	 * deserialisation. Returns `undefined` for content-bearing patterns
 	 * (`identifier`, `number`, external scanner symbols, etc.).
 	 *
@@ -3370,8 +3378,8 @@ export class AssembledPattern extends AssembledLeaf<PatternRule | TerminalRule> 
 	 */
 	get fixedLiteralText(): string | undefined {
 		if (this.rule.type === PATTERN) return undefined; // regex — always content-bearing
-		// TerminalRule: walk the content tree collecting all non-blank string leaves.
-		return collectFixedLiteral(this.rule.content);
+		// Terminal-shape rule: walk the content tree collecting all non-blank string leaves.
+		return collectFixedLiteral(this.rule);
 	}
 }
 
@@ -3423,9 +3431,8 @@ function collectFixedLiteral(rule: Rule): string | undefined {
 		case TOKEN:
 			// token(X) wrapper — recurse into content
 			return collectFixedLiteral((rule as { content: Rule }).content);
-		case TERMINAL:
-			// nested terminal — recurse
-			return collectFixedLiteral((rule as TerminalRule).content);
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted; collectFixedLiteral
+		// called on the unwrapped rule directly now (see AssembledPattern.fixedLiteralText).
 		default:
 			// symbol, alias, pattern, field, repeat, etc. — content-bearing or structural
 			return undefined;
@@ -3567,13 +3574,13 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	}
 }
 
-export class AssembledEnum extends AssembledLeaf<EnumRule> {
+export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
 
 	constructor(
 		kind: string,
-		rule: EnumRule,
+		rule: ChoiceRule,
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
@@ -3581,8 +3588,13 @@ export class AssembledEnum extends AssembledLeaf<EnumRule> {
 		}
 	) {
 		super(kind, rule, opts);
+		// PR-P: members are StringRule (pre-link) or LINK-SYMBOL (post-link);
+		// use literalTextOf for both forms.
 		this.resolvedKinds = rule.members
-			.map((member) => findGeneratedKindEntry(opts?.kindEntries ?? [], member.value)?.kind)
+			.map((member) => {
+				const text = literalTextOf(member);
+				return text !== undefined ? findGeneratedKindEntry(opts?.kindEntries ?? [], text)?.kind : undefined;
+			})
 			.filter((member): member is string => member !== undefined);
 		if (this.values.length < 2) {
 			throw new Error(
@@ -3593,7 +3605,7 @@ export class AssembledEnum extends AssembledLeaf<EnumRule> {
 
 	/** The enum member strings (e.g. `['u8', 'u16', 'usize']`). */
 	get values(): string[] {
-		return this.rule.members.map((m) => m.value);
+		return [...new Set(this.rule.members.map((m) => literalTextOf(m) ?? '').filter(Boolean))];
 	}
 }
 

@@ -1,4 +1,5 @@
-import { CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+// PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts';
 import { computeSimplifiedRules } from '../compiler/simplify.ts';
@@ -182,7 +183,7 @@ describe('Assemble — classifyNode', () => {
 
 	it('classifies enum as enum', () => {
 		const rule: Rule = {
-			type: ENUM,
+			type: CHOICE,
 			members: [
 				{ type: STRING, value: 'pub' },
 				{ type: STRING, value: 'crate' }
@@ -384,17 +385,15 @@ describe('Assemble — classifyNode', () => {
 
 describe('Assemble — T027a empty seq after stripping', () => {
 	it('classifies a named seq of pure punctuation as a pattern', () => {
-		// Post-Link, a pure-terminal subtree is wrapped as TerminalRule;
-		// classifyNode then dispatches it to 'pattern' by rule.type alone.
+		// PR-P Task 2: Link no longer wraps pure-terminal subtrees as TerminalRule.
+		// Rules arrive as their original unwrapped type; classifyNode dispatches
+		// terminal-shaped SEQs through classifyTerminalFallback (isAllTextShape → 'pattern').
 		const rule: Rule = {
-			type: TERMINAL,
-			content: {
-				type: SEQ,
-				members: [
-					{ type: STRING, value: '{' },
-					{ type: STRING, value: '}' }
-				]
-			}
+			type: SEQ,
+			members: [
+				{ type: STRING, value: '{' },
+				{ type: STRING, value: '}' }
+			]
 		};
 		const modelType = classifyNode('braces', rule);
 		expect(modelType).toBe('pattern');

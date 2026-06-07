@@ -58,10 +58,7 @@ function sameSlotShape(a: Rule, b: Rule): boolean {
 			const bm = (b as typeof a).members;
 			return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
 		}
-		case ENUM: {
-			const bm = (b as typeof a).members;
-			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
-		}
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to default.
 		default:
 			return false;
 	}

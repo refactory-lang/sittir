@@ -7,7 +7,7 @@
  * but they should not reconstruct identity from local walks.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import { assertNever } from '../polymorph-variant.ts';
 import type { Rule, RuleId, SymbolRef } from './rule.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
@@ -126,14 +126,12 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 		case SEQ:
 		case CHOICE:
 			return params.rule.members.map((member, index) => childParams(member, { edge: 'members', index }));
-		case ENUM:
-			return params.rule.members.map((member, index) => childParams(member, { edge: 'members', index }));
+		// PR-P: ENUM case removed — falls through to default (no children).
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
 		case TOKEN:
 			return [childParams(params.rule.content, { edge: 'content' })];
 		case FIELD:
@@ -178,25 +176,12 @@ function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly Build
 		case SEQ:
 		case CHOICE:
 			return { ...rule, id, members: children.map((child) => child.rule) };
-		case ENUM: {
-			const members = children.map((child) => {
-				if (child.rule.type !== STRING) {
-					throw new Error(`enum child ${child.id} is not a string rule`);
-				}
-				return child.rule;
-			});
-			return {
-				...rule,
-				id,
-				members
-			};
-		}
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by SEQ/CHOICE above.
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
 		case FIELD:
 		case ALIAS:
 		case TOKEN:
@@ -254,7 +239,7 @@ function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): R
 		case SYMBOL:
 		case SUPERTYPE:
 		case PATTERN:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules use CHOICE arm.
 			return 'nonterminal';
 		case CHOICE:
 		case REPEAT:
@@ -264,7 +249,7 @@ function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): R
 			// sequence (array slot) even when its content is terminal.
 			return 'nonterminal';
 		case STRING:
-		case TERMINAL:
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
@@ -312,7 +297,7 @@ function ruleChildren(rule: Rule): readonly Rule[] {
 		case OPTIONAL:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 			return [rule.content];
 		case SEQ:
 			return rule.members;

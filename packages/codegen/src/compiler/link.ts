@@ -10,7 +10,7 @@
  * Link does NOT process overrides — already applied by Evaluate.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	SymbolRef,
@@ -24,7 +24,7 @@ import type {
 	SymbolRule,
 	StringRule
 } from './rule.ts';
-import { isField, isSeq, isChoice, isString, normalizeEnumMembers } from './rule.ts';
+import { isSeq, isChoice, normalizeEnumMembers, isEnumChoiceRule } from './rule.ts';
 import { liftSeparators } from './lift-separators.ts';
 import {
 	collectGeneratedKindEntries,
@@ -221,7 +221,7 @@ export function link(
 		applyPromotedRules,
 		hiddenChoicesWithNamedAliasMembers
 	);
-	promoteAndLogTerminalRules(rules, derivations, applyPromotedRules);
+	// PR-P Task 2: promoteAndLogTerminalRules removed — terminals classify by shape at Assemble
 	runFieldNameInferencePass(rules, references, derivations);
 
 	// Apply wire-produced variant alias push-down (ambient scaffolding into variant children).
@@ -374,7 +374,6 @@ function canonicalizeRuleLiterals(
 		case REPEAT1:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
 		case TOKEN:
 			return {
 				...rule,
@@ -448,56 +447,22 @@ function classifyAndLogHiddenRules(
 				references,
 				hiddenChoicesWithNamedAliasMembers
 			);
+			const classifiedSource = (classified as { source?: string }).source ?? classified.metadata?.source;
+			const isPromotedEnum = isEnumChoiceRule(classified);
+			const isPromotedSupertype = classified.type === SUPERTYPE;
 			if (
 				classified !== rule &&
-				(classified.type === ENUM || classified.type === SUPERTYPE) &&
-				(classified.source === 'promoted' || classified.source === 'grammar')
+				(isPromotedEnum || isPromotedSupertype) &&
+				(classifiedSource === 'promoted' || classifiedSource === 'grammar')
 			) {
 				derivations.promotedRules.push({
 					kind: name,
-					classification: classified.type,
+					classification: isPromotedEnum ? 'enum' : 'supertype',
 					applied: applyPromotedRules
 				});
 				if (applyPromotedRules) rules[name] = classified;
 			} else {
 				rules[name] = classified;
-			}
-		}
-	}
-}
-
-/**
- * Promote pure-terminal rules to `TerminalRule` and record each in the
- * derivation log.
- *
- * @param rules - Mutable resolved rules map; terminal entries are wrapped in
- *   place when `applyPromotedRules` is true.
- * @param derivations - Derivation log; terminal classifications are appended.
- * @param applyPromotedRules - When false, promotions are logged but the rule
- *   map is NOT mutated.
- * @remarks
- *   A pure-terminal rule has no fields and no symbol references — tree-sitter
- *   exposes such a kind as a plain text node at parse time. Always logged;
- *   applied only when `include.rules` permits `promoted`.
- */
-function promoteAndLogTerminalRules(
-	rules: Record<string, Rule>,
-	derivations: DerivationLog,
-	applyPromotedRules: boolean
-): void {
-	for (const [name, rule] of Object.entries(rules)) {
-		if (isTerminalShape(rule)) {
-			derivations.promotedRules.push({
-				kind: name,
-				classification: 'terminal',
-				applied: applyPromotedRules
-			});
-			if (applyPromotedRules) {
-				rules[name] = {
-					type: 'terminal',
-					content: rule,
-					source: 'promoted'
-				} as Rule;
 			}
 		}
 	}
@@ -550,8 +515,7 @@ function extractTopLevelAliasTarget(rule: Rule): string | undefined {
 	if (
 		rule.type === GROUP ||
 		rule.type === VARIANT ||
-		rule.type === TOKEN ||
-		rule.type === TERMINAL
+		rule.type === TOKEN
 	) {
 		return extractTopLevelAliasTarget((rule as { content: Rule }).content);
 	}
@@ -803,8 +767,7 @@ function extractTopLevelNamedAliasContent(rule: Rule): Rule | undefined {
 	if (
 		rule.type === GROUP ||
 		rule.type === VARIANT ||
-		rule.type === TOKEN ||
-		rule.type === TERMINAL
+		rule.type === TOKEN
 	) {
 		return extractTopLevelNamedAliasContent((rule as { content: Rule }).content);
 	}
@@ -866,8 +829,7 @@ function extractAliasedFromName(content: Rule, supertypes: Set<string>): string 
 	if (
 		content.type === VARIANT ||
 		content.type === GROUP ||
-		content.type === TOKEN ||
-		content.type === TERMINAL
+		content.type === TOKEN
 	) {
 		return extractAliasedFromName((content as { content: Rule }).content, supertypes);
 	}
@@ -1207,8 +1169,7 @@ function rewriteSeqWithVariantAliasChoice(
 		case VARIANT:
 		case GROUP:
 		case FIELD:
-		case TOKEN:
-		case TERMINAL: {
+		case TOKEN: {
 			const content = rewriteSeqWithVariantAliasChoice(
 				(rule as { content: Rule }).content,
 				rules,
@@ -1473,15 +1434,15 @@ export function tokenToName(token: string): string {
  * pure text node at parse time.
  *
  * Skips rules that already have a classification wrapper (enum, supertype,
- * group, terminal) — those are terminal in the "structural" sense but
- * Link has already tagged them and we don't want to double-wrap.
+ * group) — those are structural but Assemble has dedicated classifiers.
+ * PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
  */
-function isTerminalShape(rule: Rule): boolean {
+export function isTerminalShape(rule: Rule): boolean {
 	switch (rule.type) {
-		case ENUM:
+		// PR-P: ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case SUPERTYPE:
 		case GROUP:
-		case TERMINAL:
 		case 'polymorph':
 			return false; // already has a structural classification
 
@@ -1505,6 +1466,9 @@ function isTerminalShape(rule: Rule): boolean {
 		case SEQ:
 			return rule.members.every(isTerminalShape_allowBareTerm);
 		case CHOICE:
+			// PR-P: enum-shaped choices (all-STRING members) are classified as enum,
+			// not terminal — guard here to prevent double-wrapping.
+			if (isEnumChoiceRule(rule)) return false;
 			return rule.members.every(isTerminalShape_allowBareTerm);
 		case OPTIONAL:
 		case REPEAT:
@@ -1532,8 +1496,8 @@ function isTerminalShape_allowBareTerm(rule: Rule): boolean {
 		case DEDENT:
 		case NEWLINE:
 			return true;
-		case ENUM:
-			return true; // enum is a set of string literals → still terminal
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE arm above.
+		// All-STRING ChoiceRules are terminal-like but classified as enum, not terminal.
 		case FIELD:
 			return false;
 		case SYMBOL:
@@ -1541,7 +1505,6 @@ function isTerminalShape_allowBareTerm(rule: Rule): boolean {
 		case SUPERTYPE:
 			return false;
 		case GROUP:
-		case TERMINAL:
 			return false;
 		case SEQ:
 		case CHOICE:
@@ -1662,7 +1625,7 @@ function resolveRule(
 		// These pass through unchanged
 		case STRING:
 		case PATTERN:
-		case ENUM:
+		// PR-P: ENUM case removed — enum-shaped choices are CHOICE type now.
 		case SUPERTYPE:
 		case GROUP:
 		case VARIANT:
@@ -1777,7 +1740,8 @@ function classifyHiddenRule(
 	hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>
 ): Rule {
 	// Already classified (e.g., enum from Evaluate)
-	if (rule.type === ENUM || rule.type === SUPERTYPE || rule.type === GROUP) {
+	// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
+	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
 		return rule;
 	}
 
@@ -1836,7 +1800,7 @@ function classifyHiddenChoiceRule(
 	}
 
 	const supertypeCompatible = (m: Rule): boolean =>
-		m.type === SYMBOL || m.type === ENUM || m.type === STRING;
+		m.type === SYMBOL || isEnumChoiceRule(m) || m.type === STRING;
 	const allCompatible = rule.members.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
 		const subtypes = collectSubtypeNames(rule);
@@ -1915,15 +1879,12 @@ function collectSubtypeNames(rule: Rule): string[] {
 			case GROUP:
 			case VARIANT:
 			case TOKEN:
-			case TERMINAL:
 			case OPTIONAL:
 			case REPEAT:
 			case REPEAT1:
 				visit(current.content);
 				return;
-			case ENUM:
-				for (const member of current.members) visit(member);
-				return;
+			// PR-P: ENUM case removed — handled by CHOICE arm above.
 			default:
 				return;
 		}
@@ -2011,7 +1972,6 @@ function walkForIndentHoist(rule: Rule, rules: Record<string, Rule>): void {
 		case GROUP:
 		case TOKEN:
 		case ALIAS:
-		case TERMINAL:
 			walkForIndentHoist(rule.content, rules);
 			return;
 		default:
@@ -2122,7 +2082,6 @@ function containsIndent(rule: Rule): boolean {
 		case GROUP:
 		case TOKEN:
 		case ALIAS:
-		case TERMINAL:
 			return containsIndent(rule.content);
 		default:
 			return false;
@@ -2144,7 +2103,6 @@ function referencesBearer(rule: Rule, bearers: ReadonlySet<string>): boolean {
 		case GROUP:
 		case TOKEN:
 		case ALIAS:
-		case TERMINAL:
 			return referencesBearer(rule.content, bearers);
 		default:
 			return false;
@@ -2170,7 +2128,6 @@ function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
 		case GROUP:
 		case TOKEN:
 		case ALIAS:
-		case TERMINAL:
 			markBlockBearerFields(rule.content, bearers);
 			return;
 		default:

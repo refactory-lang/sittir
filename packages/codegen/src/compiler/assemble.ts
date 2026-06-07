@@ -5,7 +5,7 @@
  * detectToken, modelType) derived from the rule tree — not carried on Rule nodes.
  */
 
-import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,
@@ -16,12 +16,11 @@ import type {
 	RepeatRule,
 	Repeat1Rule,
 	PatternRule,
-	TerminalRule,
 	StringRule,
 	EnumRule,
 	SupertypeRule
 } from './rule.ts';
-import { isLinkSymbol } from './rule.ts';
+import { isLinkSymbol, isEnumChoiceRule } from './rule.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
@@ -176,7 +175,7 @@ export function assemble(
 					break;
 				}
 				case 'pattern': {
-					nodes.set(kind, new AssembledPattern(kind, assemblyRule as PatternRule | TerminalRule));
+					nodes.set(kind, new AssembledPattern(kind, assemblyRule));
 					break;
 				}
 				case 'keyword': {
@@ -373,7 +372,8 @@ function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<stri
 		(r.type === CHOICE && r.members.length === 0) ||
 		(r.type === SEQ && r.members.length === 0);
 	const unwrap = (r: Rule): Rule => {
-		if (r.type === ALIAS || r.type === TOKEN || r.type === TERMINAL) {
+		if (r.type === ALIAS || r.type === TOKEN) {
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 			return unwrap((r as { content: Rule }).content);
 		}
 		return r;
@@ -665,7 +665,6 @@ function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen:
 		case VARIANT:
 		case GROUP:
 		case TOKEN:
-		case TERMINAL:
 			return resolveHiddenRuleContent((rule as { content: Rule }).content, rules, seen);
 		default:
 			return [];
@@ -1113,6 +1112,23 @@ function collectAnonymousNodes(
 	const seen = new Map<string, string>();
 
 	for (const rule of Object.values(rules)) {
+		// PR-P Task 2: skip COMPOUND all-text rules (SEQ/CHOICE/OPTIONAL/REPEAT/REPEAT1).
+		// These arise from tree-sitter TOKEN bodies that Link flattens to bare SEQ/CHOICE/etc.
+		// The string literals inside are token-internal fragments (e.g. the "b" byte-prefix
+		// inside `char_literal`) — they are NOT distinct CST node kinds and must not be
+		// collected as anonymous nodes. Previously Link's `promoteAndLogTerminalRules` wrapped
+		// these as TerminalRule, so `walkForStrings` hit the default case and returned without
+		// collecting anything. After Task 2 removes TerminalRule, we replicate the gate via
+		// isAllTextShape on compound rule types.
+		//
+		// We deliberately EXCLUDE bare STRING/PATTERN rules from this guard: those contribute
+		// their own literal as the first `seen` entry, preserving the collection order that
+		// was established when they were top-level STRING/PATTERN rules before TOKEN-flattening.
+		if (
+			rule.type !== STRING &&
+			rule.type !== PATTERN &&
+			isAllTextShape(rule)
+		) continue;
 		walkForStrings(rule, seen);
 	}
 
@@ -1159,13 +1175,16 @@ function walkForStrings(rule: Rule, out: Map<string, string>): void {
 				out.set(rule.name, rule.literal);
 			}
 			break;
-		case ENUM:
-			// Enum values are text content — do NOT descend (see JSDoc).
-			break;
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
 		case SEQ:
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
 		case CHOICE:
+			// Do NOT descend into enum-shaped choices. Two forms must be guarded:
+			// 1. Pre-link: all members are STRING nodes (isEnumChoiceRule).
+			// 2. Post-link: all members are LINK-SYMBOL nodes (canonicalizeRuleLiterals).
+			if (isEnumChoiceRule(rule)) break;
+			if (rule.members.length >= 2 && rule.members.every((m) => isLinkSymbol(m) && m.literal !== undefined)) break;
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
 		case OPTIONAL:
@@ -1218,15 +1237,15 @@ export function classifyNode(
 	rule: Rule,
 	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string> }
 ): ModelType {
+	// PR-P: enum-shaped ChoiceRules detected via isEnumChoiceRule before switch.
+	if (isEnumChoiceRule(rule)) return 'enum';
 	switch (rule.type) {
-		case ENUM:
-			return 'enum';
+		// PR-P: ENUM case removed — handled by isEnumChoiceRule above.
 		case SUPERTYPE:
 			return 'supertype';
 		case GROUP:
 			return 'group';
-		case TERMINAL:
-			return 'pattern';
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted; shape-classify via classifyTerminalFallback
 		case PATTERN:
 			return 'pattern';
 		case STRING:
@@ -1312,8 +1331,10 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  *   unclassifiable after this is a real pipeline error.
  */
 function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
+	// PR-P: isEnumChoiceRule checked BEFORE isAllTextShape — an all-STRING ChoiceRule
+	// passes isAllTextShape too, but must classify as 'enum', not 'pattern'.
+	if (isEnumChoiceRule(rule)) return 'enum';
 	if (isAllTextShape(rule)) return 'pattern';
-	if (rule.type === CHOICE && rule.members.every((m) => m.type === STRING)) return 'enum';
 	throw new Error(
 		`classifyNode: '${kind}' has no fields, no children, and no rule-type ` +
 			`classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`
@@ -1339,6 +1360,7 @@ function isAllTextShape(rule: Rule): boolean {
 			return rule.members.length > 0 && rule.members.every(isAllTextShape);
 		case OPTIONAL:
 		case REPEAT:
+		case REPEAT1:
 		case TOKEN:
 		case VARIANT:
 		case GROUP:

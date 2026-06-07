@@ -9,7 +9,7 @@
  * FieldRule / OptionalRule / RepeatRule / Repeat1Rule nodes anywhere in the tree.
  */
 
-import { CHOICE, ENUM, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { computeSimplifiedRules, simplifyRules } from '../simplify.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
@@ -28,7 +28,8 @@ function findWrappers(rule: Rule, path: string = ''): string[] {
 	}
 	// Recurse into all children regardless of whether this node is a wrapper,
 	// so we catch wrappers nested inside non-wrapper structural nodes too.
-	if (rule.type === SEQ || rule.type === CHOICE || rule.type === ENUM) {
+	// PR-P: ENUM case removed — enum-shaped ChoiceRules have type === CHOICE.
+	if (rule.type === SEQ || rule.type === CHOICE) {
 		for (let i = 0; i < rule.members.length; i++) {
 			out.push(...findWrappers(rule.members[i]!, `${path}.members[${i}]`));
 		}

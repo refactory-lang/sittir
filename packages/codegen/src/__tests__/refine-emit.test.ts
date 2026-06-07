@@ -11,7 +11,7 @@
  * it through the pipeline, and inspects emitted source text.
  */
 
-import { CHOICE, ENUM, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../compiler/rule.ts';
 import type { RawGrammar, RefineForm } from '../compiler/types.ts';
@@ -169,14 +169,14 @@ function makeRefineSymbolRaw(forms: RefineForm[], wrapOptional = false): RawGram
 				]
 			},
 			_iface_body_opening: {
-				type: ENUM,
+				type: CHOICE,
 				members: [
 					{ type: STRING, value: '{' },
 					{ type: STRING, value: '{|' }
 				]
 			},
 			_iface_body_closing: {
-				type: ENUM,
+				type: CHOICE,
 				members: [
 					{ type: STRING, value: '}' },
 					{ type: STRING, value: '|}' }

@@ -1,4 +1,4 @@
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule } from './rule.ts';
 import { isLinkSymbol } from './rule.ts';
 
@@ -8,7 +8,7 @@ function unwrapStructuralPassthroughs(content: Rule): Rule {
 		case GROUP:
 		case VARIANT:
 		case TOKEN:
-		case TERMINAL:
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 			return unwrapStructuralPassthroughs(content.content);
 		default:
 			return content;
@@ -32,8 +32,8 @@ export function fieldContentIsMultiSibling(content: Rule): boolean {
 			unwrapped.type === OPTIONAL ||
 			unwrapped.type === VARIANT ||
 			unwrapped.type === GROUP ||
-			unwrapped.type === TOKEN ||
-			unwrapped.type === TERMINAL
+			unwrapped.type === TOKEN
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		) {
 			unwrapped = (unwrapped as { content: Rule }).content;
 		}

@@ -22,7 +22,7 @@
  *   spread onto them.
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, RenderRule } from './rule.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
@@ -192,11 +192,6 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		}
 
 		case GROUP: {
-			const content = deleteWrapperWith(rule.content, {});
-			return stampAttrs({ ...rule, content }, attrs);
-		}
-
-		case TERMINAL: {
 			const content = deleteWrapperWith(rule.content, {});
 			return stampAttrs({ ...rule, content }, attrs);
 		}

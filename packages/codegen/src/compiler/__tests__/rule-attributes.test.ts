@@ -1,4 +1,4 @@
-import { CHOICE, ENUM, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../rule-types.ts'; // @rule-type-consts
+import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { Multiplicity, Rule, SymbolRule } from '../rule.ts';
 import { isNonterminalRuleType } from '../rule-catalog.ts';
@@ -45,7 +45,8 @@ describe('isNonterminalRuleType (Table 1 refined terminality)', () => {
 	});
 
 	it('literal-only enum → nonterminal (was recursive→terminal)', () => {
-		expect(isNonterminalRuleType({ type: ENUM, members: [str('a'), str('b')] })).toBe(true);
+		// PR-P: enum-shaped ChoiceRule (all-STRING members) is unconditionally nonterminal.
+		expect(isNonterminalRuleType({ type: CHOICE, members: [str('a'), str('b')] })).toBe(true);
 	});
 
 	it("token(string('fn')) → terminal (recursive: literal content)", () => {

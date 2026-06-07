@@ -12,9 +12,10 @@
  * re-collapse.
  */
 
-import { CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, SeqRule } from './rule.ts';
-import { isChoice } from './rule.ts';
+import { isChoice, isEnumChoiceRule } from './rule.ts';
+import { isTerminalShape } from './link.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, resolveGroupOrMultiInlineTarget } from './simplify.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
@@ -731,10 +732,14 @@ function iterateInliningToFixedPoint(work: Record<string, Rule>, preserveKinds?:
  * `optional`, and `repeat` helpers get inlined.
  */
 function isStructurallyMeaningfulHiddenRule(rule: Rule): boolean {
+	// PR-P: rule.type === ENUM replaced with isEnumChoiceRule.
+	// PR-P Task 2: rule.type === TERMINAL replaced with isTerminalShape — TerminalRule deleted;
+	// terminal-shape rules now classify by shape at Assemble, but must still be preserved
+	// during normalize so they remain top-level kinds for Assemble to dispatch on.
 	return (
 		rule.type === SUPERTYPE ||
-		rule.type === ENUM ||
-		rule.type === TERMINAL ||
+		isEnumChoiceRule(rule) ||
+		isTerminalShape(rule) ||
 		rule.type === GROUP
 	);
 }
@@ -794,7 +799,6 @@ function walkSymbols(rule: Rule, visit: (name: string) => void): void {
 		case FIELD:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
 			walkSymbols(rule.content, visit);
 			return;
 		case SUPERTYPE:
@@ -956,10 +960,7 @@ export function rulesEqual(a: Rule, b: Rule): boolean {
 			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
 		case VARIANT:
 			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
-		case ENUM: {
-			const bm = (b as typeof a).members;
-			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
-		}
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to default.
 		case SUPERTYPE:
 			return a.name === (b as typeof a).name;
 		case INDENT:

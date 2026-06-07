@@ -9,7 +9,7 @@
  * field emissions. Other cases keep an empty map.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type {
 	AliasRule,
@@ -28,7 +28,6 @@ import type {
 	SeqRule,
 	StringRule,
 	SymbolRule,
-	TerminalRule,
 	TokenRule,
 	VariantRule
 } from '../../compiler/rule.ts';
@@ -98,8 +97,9 @@ describe('emitRule — pattern', () => {
 
 describe('emitRule — enum', () => {
 	it('emits the first member as a literal', () => {
+		// PR-P: EnumRule is now ChoiceRule with all-STRING members.
 		const rule: EnumRule = {
-			type: ENUM,
+			type: CHOICE,
 			members: [
 				{ type: STRING, value: 'pub' },
 				{ type: STRING, value: 'priv' }
@@ -109,7 +109,7 @@ describe('emitRule — enum', () => {
 	});
 
 	it('emits empty when the enum has no members', () => {
-		const rule: EnumRule = { type: ENUM, members: [] };
+		const rule: EnumRule = { type: CHOICE, members: [] };
 		expect(emitRule(rule, makeCtx())).toBe('');
 	});
 });
@@ -153,11 +153,9 @@ describe('emitRule — transparent wrappers', () => {
 		expect(emitRule(rule, makeCtx())).toBe('foo');
 	});
 
-	it('recurses into terminal content', () => {
-		const inner: StringRule = { type: STRING, value: 'bar' };
-		const rule: TerminalRule = { type: TERMINAL, content: inner };
-		expect(emitRule(rule, makeCtx())).toBe('bar');
-	});
+	// PR-P Task 2: TerminalRule deleted — no 'recurses into terminal content' test needed.
+	// Terminal-shape rules now classify by shape at Assemble; they have no 'terminal' wrapper
+	// in the rule tree, so emitRule never sees a TERMINAL node.
 
 	it('recurses into unnamed alias content', () => {
 		const inner: StringRule = { type: STRING, value: 'baz' };

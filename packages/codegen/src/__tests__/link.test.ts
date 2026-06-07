@@ -1,4 +1,5 @@
-import { ALIAS, CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+// PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { link, enrichPositions, computeParentSets, applyOverridePolymorphs } from '../compiler/link.ts';
 import type { DerivationLog } from '../compiler/types.ts';
@@ -86,11 +87,11 @@ describe('Link — reference resolution', () => {
 			items: { type: REPEAT1, content: { type: STRING, value: 'x' } }
 		});
 		const linked = link(raw);
-		// `items` is a pure-terminal subtree (only string literals) so Link
-		// wraps it as TerminalRule; unwrap to verify the repeat1 survived.
+		// PR-P Task 2: Link no longer wraps pure-terminal subtrees as TerminalRule.
+		// The rule arrives as its original REPEAT1 type directly; assemble's
+		// classifyTerminalFallback (via isAllTextShape) handles classification.
 		const rule = linked.rules['items'];
-		const inner = rule!.type === TERMINAL ? (rule as any).content : rule;
-		expect(inner.type).toBe('repeat1');
+		expect(rule!.type).toBe('repeat1');
 	});
 
 	it('flattens token to its content', () => {
@@ -142,9 +143,9 @@ describe('Link — hidden rule classification', () => {
 			}
 		});
 		const linked = link(raw);
-		// Hidden choice of strings → already an enum from Evaluate
-		// But if it arrives as a choice, Link should detect it
-		expect(linked.rules['_visibility']!.type).toBe('enum');
+		// PR-P: enum-shaped choices are type 'choice'; isEnumChoiceRule detects them.
+		// Hidden choice of strings → normalized to ChoiceRule (was EnumRule).
+		expect(linked.rules['_visibility']!.type).toBe('choice');
 	});
 });
 

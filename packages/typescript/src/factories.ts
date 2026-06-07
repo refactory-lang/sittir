@@ -3326,8 +3326,7 @@ export function parenthesizedType(type: T.ParenthesizedType.Config['type']) {
   }, methodsEngine);
 }
 
-export function predefinedType(text: string) {
-  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`predefined_type: text must be non-empty`);
+export function predefinedType(text: 'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object') {
   return withMethods({
     $type: TSKindId.PredefinedType as const,
     $source: 2 as const,

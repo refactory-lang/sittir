@@ -31,7 +31,7 @@
  * produces a full `simplifiedRules` map on `OptimizedGrammar`.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
@@ -458,7 +458,6 @@ function isNamedReference(rule: Rule): boolean {
 		case GROUP:
 		case VARIANT:
 		case TOKEN:
-		case TERMINAL:
 			return isNamedReference(rule.content);
 		default:
 			return false;
@@ -827,7 +826,6 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 		case GROUP:
 		case VARIANT:
 		case TOKEN:
-		case TERMINAL:
 			return {
 				...rule,
 				content: hoistInnerFieldsForTemplate((rule as { content: Rule }).content)
@@ -1236,8 +1234,7 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 		case VARIANT:
 		case GROUP:
 		case TOKEN:
-		case ALIAS:
-		case TERMINAL: {
+		case ALIAS: {
 			const content = (rule as { content: Rule }).content;
 			const out = visit(content);
 			return out === content ? rule : ({ ...rule, content: out } as Rule);
@@ -1313,8 +1310,8 @@ function isLeaf(rule: Rule): boolean {
 		case ALIAS:
 		case STRING:
 		case PATTERN:
-		case ENUM:
-		case TERMINAL:
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules are not leaves.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case TOKEN:
 		case INDENT:
 		case DEDENT:
