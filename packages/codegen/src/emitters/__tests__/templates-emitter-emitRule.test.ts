@@ -9,7 +9,7 @@
  * field emissions. Other cases keep an empty map.
  */
 
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type {
 	AliasRule,
@@ -28,7 +28,6 @@ import type {
 	SeqRule,
 	StringRule,
 	SymbolRule,
-	TerminalRule,
 	TokenRule,
 	VariantRule
 } from '../../compiler/rule.ts';
@@ -154,11 +153,9 @@ describe('emitRule — transparent wrappers', () => {
 		expect(emitRule(rule, makeCtx())).toBe('foo');
 	});
 
-	it('recurses into terminal content', () => {
-		const inner: StringRule = { type: STRING, value: 'bar' };
-		const rule: TerminalRule = { type: TERMINAL, content: inner };
-		expect(emitRule(rule, makeCtx())).toBe('bar');
-	});
+	// PR-P Task 2: TerminalRule deleted — no 'recurses into terminal content' test needed.
+	// Terminal-shape rules now classify by shape at Assemble; they have no 'terminal' wrapper
+	// in the rule tree, so emitRule never sees a TERMINAL node.
 
 	it('recurses into unnamed alias content', () => {
 		const inner: StringRule = { type: STRING, value: 'baz' };

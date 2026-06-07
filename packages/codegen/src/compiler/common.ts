@@ -8,7 +8,7 @@
  * that file; a helper that is used everywhere lives here.
  */
 
-import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TERMINAL, TOKEN } from './rule-types.ts'; // @rule-type-consts
+import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from './rule-types.ts'; // @rule-type-consts
 import type { Rule } from './rule.ts';
 
 /**
@@ -62,7 +62,7 @@ function ruleToRegexSource(rule: Rule): string | null {
 		case STRING:
 			return escapeRegexLiteral(rule.value);
 		case TOKEN:
-		case TERMINAL:
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 			return ruleToRegexSource((rule as { content: Rule }).content);
 		case SEQ: {
 			const parts: string[] = [];

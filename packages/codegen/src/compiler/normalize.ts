@@ -12,9 +12,10 @@
  * re-collapse.
  */
 
-import { CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, SeqRule } from './rule.ts';
 import { isChoice, isEnumChoiceRule } from './rule.ts';
+import { isTerminalShape } from './link.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, resolveGroupOrMultiInlineTarget } from './simplify.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
@@ -732,10 +733,13 @@ function iterateInliningToFixedPoint(work: Record<string, Rule>, preserveKinds?:
  */
 function isStructurallyMeaningfulHiddenRule(rule: Rule): boolean {
 	// PR-P: rule.type === ENUM replaced with isEnumChoiceRule.
+	// PR-P Task 2: rule.type === TERMINAL replaced with isTerminalShape — TerminalRule deleted;
+	// terminal-shape rules now classify by shape at Assemble, but must still be preserved
+	// during normalize so they remain top-level kinds for Assemble to dispatch on.
 	return (
 		rule.type === SUPERTYPE ||
 		isEnumChoiceRule(rule) ||
-		rule.type === TERMINAL ||
+		isTerminalShape(rule) ||
 		rule.type === GROUP
 	);
 }
@@ -795,7 +799,6 @@ function walkSymbols(rule: Rule, visit: (name: string) => void): void {
 		case FIELD:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
 			walkSymbols(rule.content, visit);
 			return;
 		case SUPERTYPE:

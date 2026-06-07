@@ -27,7 +27,7 @@
  * file. New code should import from `./node-map.ts` directly.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,
@@ -41,7 +41,6 @@ import type {
 	TokenRule,
 	EnumRule,
 	SupertypeRule,
-	TerminalRule,
 	Multiplicity,
 	RuleId
 } from './rule.ts';
@@ -697,8 +696,8 @@ function classifyTopLevelShape(rule: Rule): string {
 		case SYMBOL:
 		case STRING:
 		case PATTERN:
-		case TERMINAL:
 		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case SUPERTYPE:
 		case INDENT:
 		case DEDENT:
@@ -802,7 +801,8 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
 	// as addressable children, so they never contribute structural
 	// branching to a choice arm.
 	if (core.type === INDENT || core.type === DEDENT || core.type === NEWLINE) return true;
-	if (core.type === TERMINAL) return true;
+	// PR-P Task 2: TERMINAL case removed — terminal-shaped rules now arrive as their original
+	// unwrapped type (SEQ/STRING/etc.) and are already covered above or by TOKEN wrapper.
 	// `optional(token-like)` preserves the union shape — the branch
 	// contributes either the wrapped token or nothing. Rust's
 	// `reference_expression` has `choice(choice-of-syms, optional(sym))`
@@ -1488,8 +1488,8 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	irKey?: string;
 	/**
 	 * Rule-level provenance. Mirrors the `source` field on the
-	 * underlying Rule (EnumRule, SupertypeRule, TerminalRule,
-	 * PolymorphRule). Undefined for branches/containers/groups, which
+	 * underlying Rule (EnumRule, SupertypeRule, PolymorphRule).
+	 * PR-P Task 2: TerminalRule removed from the list — deleted. Undefined for branches/containers/groups, which
 	 * don't have a rule-level classification. The suggested.ts emitter
 	 * surfaces nodes whose source is `'promoted'` as rule-level
 	 * override candidates.
@@ -2009,7 +2009,7 @@ function childrenMayBeEmpty(rule: Rule): boolean {
 		case TOKEN:
 		case SUPERTYPE:
 		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by CHOICE.
-		case TERMINAL:
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case ALIAS:
 		case INDENT:
 		case DEDENT:
@@ -3112,7 +3112,7 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 			case GROUP:
 			case ALIAS:
 			case TOKEN:
-			case TERMINAL:
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 				r = r.content;
 				continue;
 			case SEQ:
@@ -3337,8 +3337,13 @@ export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNode
 
 /**
  * Open-text non-branch kind whose surface form is matched by a regex
- * (PatternRule) or produced by an external scanner (TerminalRule).
- * Examples: `identifier`, `integer_literal`, `string_content`.
+ * (PatternRule) or is a pure-text structural rule (terminal-shape, no
+ * fields, no symbol refs). Examples: `identifier`, `integer_literal`,
+ * `string_content`.
+ *
+ * PR-P Task 2: widened from `PatternRule | TerminalRule` to `Rule` because
+ * TerminalRule was deleted — terminal-shape kinds now arrive with their
+ * original unwrapped rule (may be SeqRule, ChoiceRule, etc.).
  *
  * Renamed from the original `AssembledLeaf` class. The `modelType`
  * discriminant is `'pattern'` (renamed from `'leaf'` during the
@@ -3346,23 +3351,23 @@ export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNode
  * is now an abstract base (above); `AssembledPattern` is one of its
  * four concrete subclasses.
  */
-export class AssembledPattern extends AssembledLeaf<PatternRule | TerminalRule> {
+export class AssembledPattern extends AssembledLeaf<Rule> {
 	readonly modelType = 'pattern' as const;
 
-	constructor(kind: string, rule: PatternRule | TerminalRule, opts?: { factoryName?: string; irKey?: string }) {
+	constructor(kind: string, rule: Rule, opts?: { factoryName?: string; irKey?: string }) {
 		super(kind, rule, opts);
 	}
 
-	/** The leaf's regex pattern value when the rule is a PatternRule; undefined for TerminalRule. */
+	/** The leaf's regex pattern value when the rule is a PatternRule; undefined otherwise. */
 	get pattern(): string | undefined {
 		return this.rule.type === PATTERN ? this.rule.value || undefined : undefined;
 	}
 
 	/**
 	 * When this pattern's sole realisation is a single fixed anonymous literal
-	 * (e.g. `_semicolon` = `terminal(choice(_automatic_semicolon, ";"))` where
-	 * every non-blank, non-symbol leaf collapses to the same string), returns
-	 * that string so callers can treat this like a keyword/token for transport
+	 * (e.g. `_semicolon` = `choice(_automatic_semicolon, ";")` where every
+	 * non-blank, non-symbol leaf collapses to the same string), returns that
+	 * string so callers can treat this like a keyword/token for transport
 	 * deserialisation. Returns `undefined` for content-bearing patterns
 	 * (`identifier`, `number`, external scanner symbols, etc.).
 	 *
@@ -3373,8 +3378,8 @@ export class AssembledPattern extends AssembledLeaf<PatternRule | TerminalRule> 
 	 */
 	get fixedLiteralText(): string | undefined {
 		if (this.rule.type === PATTERN) return undefined; // regex — always content-bearing
-		// TerminalRule: walk the content tree collecting all non-blank string leaves.
-		return collectFixedLiteral(this.rule.content);
+		// Terminal-shape rule: walk the content tree collecting all non-blank string leaves.
+		return collectFixedLiteral(this.rule);
 	}
 }
 
@@ -3426,9 +3431,8 @@ function collectFixedLiteral(rule: Rule): string | undefined {
 		case TOKEN:
 			// token(X) wrapper — recurse into content
 			return collectFixedLiteral((rule as { content: Rule }).content);
-		case TERMINAL:
-			// nested terminal — recurse
-			return collectFixedLiteral((rule as TerminalRule).content);
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted; collectFixedLiteral
+		// called on the unwrapped rule directly now (see AssembledPattern.fixedLiteralText).
 		default:
 			// symbol, alias, pattern, field, repeat, etc. — content-bearing or structural
 			return undefined;

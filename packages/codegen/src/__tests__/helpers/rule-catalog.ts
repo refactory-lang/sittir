@@ -1,4 +1,4 @@
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
 import { expect } from 'vitest';
 import type { Rule, RuleId } from '../../compiler/rule.ts';
 import type { RuleCatalog } from '../../compiler/types.ts';
@@ -51,7 +51,6 @@ export function walkRule(rule: Rule, visit: (rule: Rule) => void): void {
 		case FIELD:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
 		case ALIAS:
 		case TOKEN:
 			walkRule(rule.content, visit);

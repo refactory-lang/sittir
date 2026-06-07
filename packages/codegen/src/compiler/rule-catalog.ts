@@ -7,7 +7,7 @@
  * but they should not reconstruct identity from local walks.
  */
 
-import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TERMINAL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, ENUM, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import { assertNever } from '../polymorph-variant.ts';
 import type { Rule, RuleId, SymbolRef } from './rule.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
@@ -132,7 +132,6 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 		case REPEAT1:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
 		case TOKEN:
 			return [childParams(params.rule.content, { edge: 'content' })];
 		case FIELD:
@@ -183,7 +182,6 @@ function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly Build
 		case REPEAT1:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
 		case FIELD:
 		case ALIAS:
 		case TOKEN:
@@ -251,7 +249,7 @@ function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): R
 			// sequence (array slot) even when its content is terminal.
 			return 'nonterminal';
 		case STRING:
-		case TERMINAL:
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
@@ -299,7 +297,7 @@ function ruleChildren(rule: Rule): readonly Rule[] {
 		case OPTIONAL:
 		case VARIANT:
 		case GROUP:
-		case TERMINAL:
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 			return [rule.content];
 		case SEQ:
 			return rule.members;

@@ -9,7 +9,6 @@ import {
 	ENUM,
 	SUPERTYPE,
 	GROUP,
-	TERMINAL,
 	STRING,
 	PATTERN,
 	INDENT,
@@ -144,7 +143,7 @@ export type Rule =
 	// EnumRule is now ChoiceRule (PR-P): removed from union to avoid duplicate
 	| SupertypeRule
 	| GroupRule
-	| TerminalRule
+	// TerminalRule removed (PR-P Task 2): terminals classify by shape at Assemble
 
 	// Terminals
 	| StringRule
@@ -328,25 +327,6 @@ export interface GroupRule extends RuleBase {
 	readonly content: Rule;
 }
 
-/**
- * TerminalRule — composed text-only terminal.
- *
- * A rule whose subtree contains no fields and no symbol references
- * (neither visible nor hidden). Examples: `integer`, `escape_sequence`,
- * `line_comment`, `regex_pattern`, `import_prefix`. Tree-sitter exposes
- * instances of these kinds as text-only nodes, so `render()` can return
- * `node.text` directly without ever consulting templates.
- *
- * Added by Link (see `promoteTerminals`). Not present after Evaluate.
- * Assemble routes this to `modelType: 'pattern'` without inspecting content.
- */
-export interface TerminalRule extends RuleBase {
-	readonly type: typeof TERMINAL;
-	readonly content: Rule;
-	/** Always 'promoted' today — Link synthesises terminals from shape. */
-	readonly source?: RuleSource;
-}
-
 // ---------------------------------------------------------------------------
 // Terminals
 // ---------------------------------------------------------------------------
@@ -434,7 +414,7 @@ export const isField = (r: Rule): r is FieldRule => r.type === FIELD;
 export const isEnum = (r: Rule): r is EnumRule => isEnumChoiceRule(r);
 export const isSupertype = (r: Rule): r is SupertypeRule => r.type === SUPERTYPE;
 export const isGroup = (r: Rule): r is GroupRule => r.type === GROUP;
-export const isTerminal = (r: Rule): r is TerminalRule => r.type === TERMINAL;
+// isTerminal removed (PR-P Task 2): TerminalRule deleted; terminals classify by shape
 export const isString = (r: Rule): r is StringRule => r.type === STRING;
 export const isPattern = (r: Rule): r is PatternRule => r.type === PATTERN;
 export const isIndent = (r: Rule): r is IndentRule => r.type === INDENT;
