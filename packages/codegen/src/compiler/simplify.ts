@@ -32,13 +32,17 @@
  */
 
 import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
+import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from './rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
 import type { SimplifyCtx } from './transforms.ts';
+// `extractRepeatShape` and `pushAttrsToLeaves` moved to transforms.ts (PR-O M1 de-scatter).
+// Re-export extractRepeatShape for assemble.ts which imports it from this module.
+import { extractRepeatShape, pushAttrsToLeaves } from './transforms.ts';
+export { extractRepeatShape } from './transforms.ts';
 
 // ---------------------------------------------------------------------------
 // Slot-grouping diagnostic accumulator (propose-promotion only).
@@ -1091,91 +1095,6 @@ function collapseSeq(rule: SeqRule, ctx?: SimplifyCtx, inField: boolean = false)
 	return withAttrsFrom(rule, { type: SEQ, members });
 }
 
-/**
- * Stamp `multiplicity` / `separator` / `fieldName` onto the slot-bearing
- * leaves of a (wrapper-free) rule body. Structural nodes are descended;
- * leaves are stamped. An existing array / nonEmptyArray multiplicity on a
- * leaf is preserved (it is already at least as multi as the pushed value).
- * `fieldName` is only applied to a leaf that has no field name yet.
- */
-function pushAttrsToLeaves(
-	rule: Rule,
-	multiplicity: 'optional' | 'array' | 'nonEmptyArray' | undefined,
-	separator: unknown,
-	fieldName: string | undefined
-): Rule {
-	const recurse = (r: Rule): Rule => pushAttrsToLeaves(r, multiplicity, separator, fieldName);
-	switch (rule.type) {
-		case SEQ:
-			// A seq is flattened into its parent by `canonicalizeSeqOfLeaves`, so
-			// a seq-level multiplicity would be lost. Push into members instead.
-			return { ...rule, members: (rule as { members: Rule[] }).members.map(recurse) } as Rule;
-		case CHOICE: {
-			// A choice at a seq position is a SINGLE slot boundary (the field
-			// walker unions its arms into one slot). `deriveSlotsRaw`'s choice
-			// case reads multiplicity from the choice NODE (effectiveMultiplicity),
-			// then overrides each arm value with it — so stamp the node itself.
-			// The node survives flattening (only seqs flatten), so leaf-level
-			// stamping of the arms is unnecessary here.
-			const cur = (rule as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
-			const nextMult = combineMultiplicity(multiplicity, cur);
-			const patch: Record<string, unknown> = {};
-			if (nextMult !== undefined) patch['multiplicity'] = nextMult;
-			if (separator !== undefined) patch['separator'] = separator;
-			// Propagate the pushed-down fieldName onto the choice NODE too (the
-			// leaf case does this; the choice case forgot). A choice is the slot
-			// boundary, so without this an inlined `field('body', _suite)` whose
-			// `_suite` is a choice loses the `body` name → buildSlot falls back to
-			// an arbitrary arm kind (`block`). See python `function_definition.body`.
-			if (fieldName !== undefined && (rule as { fieldName?: string }).fieldName === undefined) {
-				patch['fieldName'] = fieldName;
-			}
-			return { ...rule, ...patch } as Rule;
-		}
-		case GROUP:
-		case VARIANT:
-		case TOKEN:
-		case ALIAS:
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-			return { ...rule, content: recurse((rule as { content: Rule }).content) } as Rule;
-		default: {
-			// Leaf: symbol / string / pattern / terminal / enum / supertype / etc.
-			const cur = (rule as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
-			const nextMult = combineMultiplicity(multiplicity, cur);
-			const patch: Record<string, unknown> = {};
-			if (nextMult !== undefined) patch['multiplicity'] = nextMult;
-			if (separator !== undefined) patch['separator'] = separator;
-			if (fieldName !== undefined && (rule as { fieldName?: string }).fieldName === undefined) {
-				patch['fieldName'] = fieldName;
-			}
-			return { ...rule, ...patch } as Rule;
-		}
-	}
-}
-
-/**
- * Unwrap structural wrappers around a repeat / repeat1 so the caller
- * can detect `optional(repeat(...))`, `group(repeat1(...))`, etc.
- * Returns `null` for anything that isn't ultimately a repeat shape.
- */
-export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
-	switch (rule.type) {
-		case REPEAT:
-			return { repeat: rule, nonEmpty: false };
-		case REPEAT1:
-			return { repeat: rule, nonEmpty: true };
-		case OPTIONAL:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-			return extractRepeatShape((rule as { content: Rule }).content);
-		default:
-			return null;
-	}
-}
 
 // ---------------------------------------------------------------------------
 // Universal-shape canonicalization + post-condition check (Task 1.9 / PR0)

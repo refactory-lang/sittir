@@ -17,6 +17,10 @@
 
 import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule } from './rule.ts';
+// `findRepeatFlag` moved to transforms.ts (PR-O M1 de-scatter); imported for local use +
+// re-exported for existing importers (collect-slots.ts, rule-walker.test.ts).
+import { findRepeatFlag } from './transforms.ts';
+export { findRepeatFlag } from './transforms.ts';
 
 /**
  * Walk a rule tree looking for the first repeat-with-separator. Used by
@@ -44,49 +48,6 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
 			return findRepeatSeparator(rule.content);
 		default:
 			return undefined;
-	}
-}
-
-/**
- * Does `rule` contain a repeat/repeat1 that declares the given flag?
- *
- * `trailing: true` marks `sepBy` shapes where the final separator is
- * optional (e.g. rust's `{ a, b, }`). `leading: true` marks the
- * mirror shape `sep, x, (sep x)*` (rust's or_pattern `| a | b`, if
- * written as a single repeat). Evaluate's `liftCommaSep` captures
- * both from their canonical seq patterns. Render reads each flag via
- * the `joinByTrailing` / `joinByLeading` template hints to know
- * whether to probe for a flanking anon-separator token when emitting
- * `$$$CHILDREN`.
- *
- * Walks the same transparent-wrapper set as `findRepeatSeparator`
- * (seq / choice / optional / variant / clause / group / field).
- */
-export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolean {
-	// RenderRule leaf-attribute path: applyWrapperDeletion stamps the
-	// separator info as an object `{ rules, trailing?, leading? }` onto the
-	// leaf when the repeat wrapper carries the flag. Check this FIRST so
-	// RenderRule input (no repeat/repeat1 wrappers) still returns correctly.
-	const sep = rule.separator;
-	if (typeof sep === 'object' && !Array.isArray(sep) && sep !== null) {
-		if ((sep as { trailing?: boolean; leading?: boolean })[flag] === true) return true;
-	}
-
-	switch (rule.type) {
-		case REPEAT:
-		case REPEAT1:
-			if (rule[flag]) return true;
-			return findRepeatFlag(rule.content, flag);
-		case SEQ:
-		case CHOICE:
-			return rule.members.some((m) => findRepeatFlag(m, flag));
-		case OPTIONAL:
-		case VARIANT:
-		case GROUP:
-		case FIELD:
-			return findRepeatFlag(rule.content, flag);
-		default:
-			return false;
 	}
 }
 

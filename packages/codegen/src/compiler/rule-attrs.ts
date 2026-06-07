@@ -6,10 +6,16 @@
  * survivor. Both were originally local to simplify.ts; they now live here so
  * optimize.ts's `collapseWrappers` and simplify.ts's `canonicalizeSeqOfLeaves`
  * use the SAME implementation, and future collapse sites can't drift apart.
+ *
+ * `combineMultiplicity` has moved to transforms.ts (PR-O M1 de-scatter);
+ * it is re-exported here so existing importers keep resolving.
  */
 
 import { CHOICE } from './rule-types.ts'; // @rule-type-consts
 import type { Rule, Multiplicity } from './rule.ts';
+// `combineMultiplicity` and `LeafMultiplicity` moved to transforms.ts (PR-O M1 de-scatter);
+// re-exported here so existing importers keep resolving.
+export { combineMultiplicity, type LeafMultiplicity } from './transforms.ts';
 
 /**
  * Transfer slot-identity attributes from a discarded wrapper node onto the
@@ -39,53 +45,6 @@ export function withAttrsFrom(original: Rule, result: Rule): Rule {
 	if (id !== undefined && !Object.prototype.hasOwnProperty.call(result, 'id')) patch['id'] = id;
 	if (Object.keys(patch).length === 0) return result;
 	return { ...result, ...patch };
-}
-
-// `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
-// missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
-export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
-
-/**
- * Combine an OUTER multiplicity (pushed down from an enclosing wrapper) with
- * a leaf's own INNER multiplicity into the effective slot multiplicity.
- *
- * `undefined` means "single / exactly one". The lattice:
- *   - nothing pushed (`outer === undefined`) → keep `inner`.
- *   - either side is a collection (array / nonEmptyArray) → the result is a
- *     collection. It is `nonEmptyArray` only when BOTH sides guarantee ≥1
- *     element (a side guarantees ≥1 iff it is single (`undefined`) or
- *     `nonEmptyArray`); otherwise `array` (allows empty).
- *   - neither is a collection → `optional` if either is optional, else single.
- *
- * Examples (the cases this fixes):
- *   combine('nonEmptyArray', undefined)  → 'nonEmptyArray'  (type_arguments union: ≥1)
- *   combine('nonEmptyArray', 'optional') → 'array'          (trait_bounds: 0-or-more)
- *   combine('array', 'optional')         → 'array'
- *   combine('optional', 'optional')      → 'optional'
- *
- * This replaces the prior "outer wins unless inner is already an array" rule,
- * which clobbered an inner `optional` with the outer `nonEmptyArray` and
- * produced `NonEmptyArray<T>` where the runtime slot is 0-or-more.
- */
-export function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMultiplicity): LeafMultiplicity {
-	// `'single'` is the canonical required-one value (rule.ts `Multiplicity`);
-	// a missing multiplicity defaults to it (null-coalesce). The lattice then
-	// operates in `'single'` terms: `optional` trumps single
-	// (`combine(optional, single) → optional`), and `guaranteesOne('single')`
-	// is true (`combine(nonEmptyArray, single) → nonEmptyArray`, not `array`).
-	const outer = outerIn ?? 'single';
-	const inner = innerIn ?? 'single';
-	const isCollection = (m: LeafMultiplicity): boolean => m === 'array' || m === 'nonEmptyArray';
-	const guaranteesOne = (m: LeafMultiplicity): boolean => m === 'single' || m === 'nonEmptyArray';
-	if (isCollection(outer) || isCollection(inner)) {
-		return guaranteesOne(outer) && guaranteesOne(inner) ? 'nonEmptyArray' : 'array';
-	}
-	// Neither side is a collection.
-	if (outer === 'optional' || inner === 'optional') return 'optional';
-	// Both are 'single' → required-one / default. Return `undefined` rather
-	// than the explicit string so callers that only stamp non-default values
-	// don't write a spurious `multiplicity: 'single'` onto clean nodes (codex P1).
-	return undefined;
 }
 
 /**
