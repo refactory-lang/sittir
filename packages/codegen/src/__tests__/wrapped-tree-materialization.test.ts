@@ -82,7 +82,6 @@ async function loadAliasRoutingWrapWitnessModule(): Promise<{
 				identifier: new AssembledNonterminal({
 					values: [
 						{
-							kind: 'node-ref',
 							node: { kind: 'unresolved-ref', name: 'identifier' },
 							parseKind: { kind: 'unresolved-ref', name: 'decorator' },
 							multiplicity: 'single'

@@ -20,7 +20,6 @@ describe('node-model emitter', () => {
 						fieldName: 'value',
 						values: [
 							{
-								kind: 'node-ref',
 								node: { kind: 'unresolved-ref', name: 'identifier' },
 								parseKind: { kind: 'unresolved-ref', name: 'decorator' },
 								multiplicity: 'single'

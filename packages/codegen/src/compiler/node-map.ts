@@ -266,9 +266,35 @@ export interface FieldStorageInfo {
 	readonly collapsesMultiplicity: boolean;
 }
 
+/**
+ * A single entry inside a slot's `values` array. It is EITHER a node
+ * reference (`node` set, `value` absent) OR an inline string literal (`value`
+ * set, `node` absent) — discriminated structurally by presence, via
+ * {@link isNodeRef} / {@link isTerminalValue}, NOT by a `kind` tag.
+ *
+ * PR-P Task 3 folded the former two interfaces (`NodeRef` + `TerminalValue`)
+ * into this one: a literal is now a `NodeRef` carrying `value` (and the
+ * literal-only `immediate` / `tokenized` token-wrapper flags) instead of a
+ * `node`. The value union is `NodeRef[]`.
+ *
+ * `immediate` is set when the literal's rule was wrapped in a `TokenRule` with
+ * `immediate: true` (`token.immediate(...)` / tree-sitter `IMMEDIATE_TOKEN`);
+ * render emits the literal adjacent to the preceding token (no leading
+ * whitespace). `tokenized` is set when wrapped in any `TokenRule`. Absent /
+ * false → default field-spacing rules.
+ */
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
-	readonly kind: 'node-ref';
-	readonly node: T | UnresolvedRef;
+	// Node-reference target. Present for true references; absent for inline
+	// literals (which carry `value` instead). Mutually exclusive with `value`.
+	readonly node?: T | UnresolvedRef;
+	// Inline string literal text (e.g. `'const'`, `'pub'`, an enum member /
+	// pattern-matched anonymous token). Mutually exclusive with `node`.
+	readonly value?: string;
+	// For a literal: the resolved CST kind name the literal text maps to (a
+	// catalog anon/hidden kind), when one exists. Absent for genuinely-kindless
+	// literals (regex patterns / residual). Carried for transport/typing;
+	// render still emits from `value`.
+	readonly resolvedKind?: string;
 	// Parse-as kind ref (§7.3 / §4g, PR-A front-load): the CST kind this value
 	// surfaces under — the alias TARGET when aliased (`rule.name`), else the
 	// own kind. Differs from `node` (render/source = `aliasedFrom ?? rule.name`)
@@ -278,53 +304,26 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly separator?: string;
 	readonly trailing?: boolean;
 	readonly leading?: boolean;
-}
-
-/**
- * A slot-content entry that is an inline string literal (e.g. `'const'`,
- * `'pub'`, an enum member). The `value` is the exact grammar string.
- *
- * See {@link NodeRef} for the per-value `separator` / `trailing` / `leading`
- * semantics.
- *
- * `immediate` is set when the rule that produced this value was wrapped in
- * a `TokenRule` with `immediate: true` (i.e. `token.immediate(...)` in the
- * authored grammar, or tree-sitter `IMMEDIATE_TOKEN`). Render templates
- * use this to emit the literal adjacent to the preceding token (no leading
- * whitespace separator). Absent / false → default field-spacing rules.
- *
- * `tokenized` is set when the rule was wrapped in a `TokenRule` (whether
- * or not it was the `immediate` variant). Preserved for cases where the
- * lexer-hint nature of `TOKEN(...)` matters separately from adjacency
- * (e.g. disambiguation between `<` operator and generic-open).
- */
-export interface TerminalValue {
-	readonly kind: 'terminal';
-	readonly value: string;
-	readonly resolvedKind?: string;
-	// Parse-as kind ref (§7.3 / §4g, PR-A front-load): the CST kind this literal
-	// surfaces under (= `resolvedKind` as a ref). `parseNames` projects this;
-	// PR-B renames `resolvedKind`→`parseKind` outright.
-	readonly parseKind?: UnresolvedRef;
-	readonly multiplicity: Multiplicity;
-	readonly separator?: string;
-	readonly trailing?: boolean;
-	readonly leading?: boolean;
+	// Literal-only token-wrapper flags (see interface doc).
 	readonly immediate?: boolean;
 	readonly tokenized?: boolean;
 }
 
 /**
- * Discriminated union of the two entry types inside a slot's `values` array.
+ * The slot-value type. Formerly a `NodeRef | TerminalValue` union; now a
+ * single `NodeRef` (literals fold in as `value`-bearing refs). Alias retained
+ * so the many `NodeOrTerminal[]` annotations need not all change at once.
  */
-export type NodeOrTerminal = NodeRef | TerminalValue;
+export type NodeOrTerminal = NodeRef;
 
-export function isNodeRef(v: NodeOrTerminal): v is NodeRef {
-	return v.kind === 'node-ref';
+/** True when this entry is a node reference (carries a `node`). */
+export function isNodeRef(v: NodeOrTerminal): v is NodeRef & { node: AssembledNode | UnresolvedRef } {
+	return v.node !== undefined;
 }
 
-export function isTerminalValue(v: NodeOrTerminal): v is TerminalValue {
-	return v.kind === 'terminal';
+/** True when this entry is an inline string literal (carries a `value`). */
+export function isTerminalValue(v: NodeOrTerminal): v is NodeRef & { value: string } {
+	return v.value !== undefined;
 }
 
 export function isUnresolvedRef(v: NodeRef['node']): v is UnresolvedRef {
@@ -940,7 +939,7 @@ export function buildParseKindRuleSignatures<T extends Rule>(
 }
 
 export function storageKindOfValue(value: NodeOrTerminal): string | undefined {
-	if (value.kind === 'node-ref') {
+	if (isNodeRef(value)) {
 		return isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
 	}
 	return value.resolvedKind ?? value.value;
@@ -995,10 +994,10 @@ function structuralSignatureOfValue(
 		value.separator ?? '',
 		value.trailing ? 't' : '',
 		value.leading ? 'l' : '',
-		value.kind === 'terminal' && value.immediate ? 'i' : '',
-		value.kind === 'terminal' && value.tokenized ? 'tok' : ''
+		isTerminalValue(value) && value.immediate ? 'i' : '',
+		isTerminalValue(value) && value.tokenized ? 'tok' : ''
 	].join('|');
-	if (value.kind === 'terminal') {
+	if (isTerminalValue(value)) {
 		return `terminal:${value.value}:${value.resolvedKind ?? ''}:${surface}`;
 	}
 	return `node:${structuralSignatureOfStorageKind(storageKind, context)}:${surface}`;
@@ -1168,7 +1167,6 @@ export function deriveValuesForRule(
 			if (rule.source === 'link' && rule.literal !== undefined) {
 				return [
 					{
-						kind: 'terminal',
 						value: rule.literal,
 						resolvedKind: rule.name,
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
@@ -1182,7 +1180,6 @@ export function deriveValuesForRule(
 			const refName = rule.aliasedFrom ?? rule.name;
 			return [
 				{
-					kind: 'node-ref',
 					node: { kind: 'unresolved-ref', name: refName },
 					// parse-as kind = the alias TARGET (`rule.name`); `node` is the
 					// render/source (`refName`). For `_suite`: node=_simple_statements,
@@ -1196,7 +1193,6 @@ export function deriveValuesForRule(
 			// Supertype refs expand to their subtype list — each subtype is a
 			// valid concrete kind the slot can hold.
 			return rule.subtypes.map((name) => ({
-				kind: 'node-ref' as const,
 				node: { kind: 'unresolved-ref' as const, name },
 				parseKind: { kind: 'unresolved-ref' as const, name },
 				multiplicity: relaxForOptionalBody(name, multiplicity)
@@ -1211,7 +1207,6 @@ export function deriveValuesForRule(
 			const rk = findGeneratedKindEntry(kindEntries ?? [], rule.value)?.kind;
 			return [
 				{
-					kind: 'terminal',
 					value: rule.value,
 					resolvedKind: rk,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
@@ -1227,7 +1222,6 @@ export function deriveValuesForRule(
 					const text = literalTextOf(m) ?? '';
 					const rk = text ? findGeneratedKindEntry(kindEntries ?? [], text)?.kind : undefined;
 					return {
-						kind: 'terminal' as const,
 						value: text,
 						resolvedKind: rk,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
@@ -1297,7 +1291,7 @@ export function deriveValuesForRule(
 			// tag each produced terminal so render templates can decide
 			// whether to emit adjacent or spaced.
 			return deriveValuesForRule(rule.content, multiplicity, kindEntries).map((v) =>
-				v.kind === 'terminal' ? { ...v, immediate: rule.immediate, tokenized: true } : v
+				isTerminalValue(v) ? { ...v, immediate: rule.immediate, tokenized: true } : v
 			);
 		case SEQ:
 			// Seq inside a choice arm — flatten all members (rare, but
@@ -1323,11 +1317,10 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	const result: NodeOrTerminal[] = [];
 	for (const v of values) {
 		const parseKind = v.parseKind?.name ?? '';
-		const nodeName = v.kind === 'node-ref' ? (isUnresolvedRef(v.node) ? v.node.name : v.node.kind) : undefined;
-		const key =
-			v.kind === 'node-ref'
-				? `node-ref:${nodeName ?? '?'}:${parseKind}:${v.multiplicity}`
-				: `terminal:${v.value}:${parseKind}:${v.multiplicity}`;
+		const nodeName = isNodeRef(v) ? (isUnresolvedRef(v.node) ? v.node.name : v.node.kind) : undefined;
+		const key = isNodeRef(v)
+			? `node-ref:${nodeName ?? '?'}:${parseKind}:${v.multiplicity}`
+			: `terminal:${v.value ?? ''}:${parseKind}:${v.multiplicity}`;
 		if (!seen.has(key)) {
 			seen.add(key);
 			result.push(v);
@@ -1802,7 +1795,7 @@ export function kindsOf(slot: AssembledNonterminal): readonly string[] {
 	const seen = new Set<string>();
 	const out: string[] = [];
 	for (const v of slot.values) {
-		if (v.kind !== 'node-ref') continue;
+		if (!isNodeRef(v)) continue;
 		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
 		if (!seen.has(name)) {
 			seen.add(name);
@@ -1888,16 +1881,33 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// after it; a multi-storage-kind slot — e.g. `_suite`'s
 	// `{_simple_statements, block, _newline}` (all `parseKind=block`) — falls back
 	// to the generic `content` (the parseName `block` is NOT its storage name).
-	const distinctStorageKinds = [
+	// Storage kinds from node-ref values (the render-source kind via `value.node`).
+	const nodeRefStorageKinds = [
 		...new Set(
-			slot.values
-				.filter((v) => v.kind === 'node-ref')
-				.map((v) => {
-					const node = (v as NodeRef).node;
-					return isUnresolvedRef(node) ? node.name : node.kind;
-				})
+			slot.values.filter(isNodeRef).map((v) => {
+				const node = v.node;
+				return isUnresolvedRef(node) ? node.name : node.kind;
+			})
 		)
 	];
+	// PR-P Task 3 step 3: when a slot is PURELY inline literals (no node-refs),
+	// its storage kind is the literal's resolved catalog kind — so a slot holding
+	// a single resolved literal is named after that kind instead of the generic
+	// `content` (§4c — `content` is for genuinely-anonymous multi-kind unions).
+	// A MIXED ref+literal slot keeps its ref-based naming (the literal is
+	// incidental punctuation, not the storage identity) — e.g. `splat_pattern`'s
+	// `{identifier, _}` stays `identifier`, not `content`. Unresolved literals
+	// (regex / residual, no resolvedKind) contribute nothing AND trip
+	// `hasUnnamedValue` → `content`.
+	const literalStorageKinds = [
+		...new Set(
+			slot.values
+				.filter(isTerminalValue)
+				.map((v) => v.resolvedKind)
+				.filter((k): k is string => k !== undefined)
+		)
+	];
+	const distinctStorageKinds = nodeRefStorageKinds.length > 0 ? nodeRefStorageKinds : literalStorageKinds;
 	// A value with no parseKind is a literal / anonymous token (e.g.
 	// splat_pattern's `_`). Its presence means the slot is NOT a single named
 	// kind, so storageName falls back to the generic `content` — even when
@@ -2365,7 +2375,7 @@ export function applySelfDelimitedJoinOverrides(
 ): void {
 	for (const slot of slots) {
 		if (!isMultiple(slot)) continue;
-		if (!slot.values.some((value) => value.kind === 'terminal')) continue;
+		if (!slot.values.some(isTerminalValue)) continue;
 		joinByField[slot.name] = '';
 	}
 }
@@ -2620,11 +2630,13 @@ function buildSlotsRecord(
 		if (slots.length > 1) {
 			const details = slots.map((s) => {
 				const kinds = s.values.map((v) =>
-					v.kind === 'terminal'
+					isTerminalValue(v)
 						? `"${v.value}"`
-						: isUnresolvedRef(v.node)
+						: isNodeRef(v) && isUnresolvedRef(v.node)
 							? v.node.name
-							: (v.node as AssembledNode).kind
+							: isNodeRef(v)
+								? (v.node as AssembledNode).kind
+								: '?'
 				);
 				const mult = s.values.length > 0 ? s.values[0]!.multiplicity : 'single';
 				return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;

@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "f7c4272d2e23d649588d317b704d0a66e68094a382b62618902e1815862955d8",
+  "source_hash": "0045f0f84a5a89fccd80efdc36a28eecd27beb5a866948b0bdf77e3256b44072",
   "files": {
     "packages/python/.sittir/grammar.js": "676cc242eaa78107e30ed26ffd9812747fa4108019f1fffae2d64c6f39c0279f",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -13,24 +13,24 @@
     "packages/python/.sittir/src/tree_sitter/array.h": "31e60a1bff6f715afacce03b5b70efe42b58371b4f9595dd4af52a577ff9608c",
     "packages/python/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/python/.sittir/tree-sitter.json": "3950b01c1615b2635ff9b254e6dbfca6d068240af7df192da0c0cdd396115c62",
-    "packages/python/factory-map.json5": "5e897d2e405c8db9cffa449dbaf0e7f19be28d14d39082b96e9f4e16541952d2",
+    "packages/python/factory-map.json5": "8c5bb23a4b8f91861318c1b42e3c7fedbbc5b8c51a5ea1f8bb15d1de5549c42a",
     "packages/python/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/python/src/backend.ts": "ab39be3c39cea0601de33e650b578c363d741609e7ba58a1632bd4680421895e",
     "packages/python/src/boundary.ts": "3d134bb2d602f2072fda61aa748bf51b557d915c70fb220e6faebd01522567e9",
-    "packages/python/src/consts.ts": "3e2c78a9460269846614511fb1089668a051833e53d531c25fabbe37ef76711a",
+    "packages/python/src/consts.ts": "6c242529e096f92cd3ee25a5b93ab42fabdec7e286307cbc008be48fe09f572f",
     "packages/python/src/engine.ts": "33c3032a1e1ae0697bb95aaf11e1827cdbdc152946aff9e630b30c90c5163594",
-    "packages/python/src/factories.ts": "ab7099ba5580a9afb56d050a590eeb6cacc705620f5f8bd743cdc6aa1463efa5",
+    "packages/python/src/factories.ts": "2a1ffbea0d23623911a57689080a84cb3b5abc747f0561ebc6bb8f2073e52eea",
     "packages/python/src/from.ts": "f780ae5095b815139de2ca6834d46c43796eda0cd45d343d200c4407d58142e1",
     "packages/python/src/grammar.ts": "b2df57c7e9a7c7318514dbf36268ee3bb9543f972793b33d98f2ae3541595dcc",
     "packages/python/src/hash.ts": "dcb3caa5babed9e82886e1a8607669f4c8060151ce812852bdeb953c8f5d9c94",
     "packages/python/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/python/src/ir.ts": "ff3ab1f767d35d3720a0dd957598dbd9169f41a3c01ca8b840f6329176e12fec",
-    "packages/python/src/is.ts": "689df04caa647b1269eff2bcc384b08a55a46ac094728b8c14554bedf33274e6",
-    "packages/python/src/node-model.json5": "59dcb8b101647f953ccf0801d1e773fb356b4f61ec675f0f0ef15db2383f0ea9",
+    "packages/python/src/is.ts": "3bb675d2a1bc92f15ced31755d77a9744f357b6b9df03c9b642c6f6dab5aec5b",
+    "packages/python/src/node-model.json5": "0c6572ff2182ea3ac59e74eec1f134f3e394e759c4c2a62edf791bd3bfc9d539",
     "packages/python/src/type-test.ts": "161d1501d5f521b705f586f46154cfec9ff974f6b3054a4d0075e749e0641662",
-    "packages/python/src/types.ts": "3c7f53dd683b37d7a36a39ab04e32052c014b3573529a7968947c730f3d66936",
+    "packages/python/src/types.ts": "60aebae1c53e07d5e37a3d2be97af4e750a0f70980856ee6eeae5ebb9e3c4607",
     "packages/python/src/utils.ts": "b6265835f7a8605008a7d0d0188362d6ebe5a73876c19a94c0193d52b5532c9c",
-    "packages/python/src/wrap.ts": "e36b5bde1083c609d8a2c1a4d0b7f8fb44dd795b19b071933edc090d045e0378",
+    "packages/python/src/wrap.ts": "944bd148aec3369833e444634ee920b0ce8b0f22972beac6d0aacac150110d4d",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/python/templates/_as_pattern.jinja": "06f9ddebb937586a9d2f50aa63c363c8861d14d45adae7dafdc3e053c3aca0d8",
     "packages/python/templates/_assignment_eq.jinja": "150fdea50d889b1fbef4e38bb862aee38d11abdebb18b80b93550b3bf5cd7f94",
@@ -157,7 +157,7 @@
     "rust/crates/sittir-python/src/render/kind_ids.rs": "cc3af6bec479510b38ee9b00242b21f79c68b72d0e01a13124f8c2ee7914023c",
     "rust/crates/sittir-python/src/render/mod.rs": "ae306ef4595346a06131771a32233e23461ceec670da64ba5a1d9ed5dc42f88b",
     "rust/crates/sittir-python/src/render/templates.rs": "0c1d2271745a13cff9aefa3af438c11e65a8b1f45d8aa28535db76cf19500127",
-    "rust/crates/sittir-python/src/render/transport.rs": "b28e4ae93f1dad481e24cc77792e37739dc27d942e262aa416b57f60ac3f33af",
+    "rust/crates/sittir-python/src/render/transport.rs": "9fc26646b1946f013506afbce3ea2c4909948ababbd35ef2c8abdc9e951ec203",
     "rust/crates/sittir-python/templates/_as_pattern.jinja": "06f9ddebb937586a9d2f50aa63c363c8861d14d45adae7dafdc3e053c3aca0d8",
     "rust/crates/sittir-python/templates/_assignment_eq.jinja": "150fdea50d889b1fbef4e38bb862aee38d11abdebb18b80b93550b3bf5cd7f94",
     "rust/crates/sittir-python/templates/_assignment_type.jinja": "9b64e165cdfe04a6df558cb44841bbfc31bf911bd4201f679ebf47fd010f747d",
@@ -278,6 +278,6 @@
     "rust/crates/sittir-python/templates/yield.jinja": "864c1b6eaf2e8558413c893cc1fb8e4cef6dc75000675a62d374a4c454685de4"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "83acd923c241f5b7836bb283c58ddb4175f80c72ec1f4fb24f617f5b00900be7"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "15df485657ae5c2cffd58312e6770fccc915f694c7fba94521b6bc79719d4a34"
   }
 }

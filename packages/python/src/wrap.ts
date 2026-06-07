@@ -304,10 +304,10 @@ export function wrapComparisonOperatorComparator(data: T.ComparisonOperatorCompa
   const _node = withMethods({
     ...data,
     $type: TSKindId.ComparisonOperatorComparator as const,
-    _operators: normalizeSingularWrapSlot(data._operators, "operators", true, data.$type, { tree, nodeType: data.$type, slotName: "operators", span: (data as _NodeData).$span }),
+    _operators: projectKindEnumStorage(normalizeSingularWrapSlot(data._operators, "operators", true, data.$type, { tree, nodeType: data.$type, slotName: "operators", span: (data as _NodeData).$span })),
     _primary_expression: normalizeSingularWrapSlot((data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._primary_expression), "primary_expression", true, data.$type, { tree, nodeType: data.$type, slotName: "primary_expression", span: (data as _NodeData).$span }),
 
-    operators() { return drillIn<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">(this._operators, tree); },
+    operators() { return this._operators; },
     primaryExpression() { return drillIn<T.PrimaryExpression>(this._primary_expression, tree); },
     $with: {
       operators: (v: NonNullable<T.ComparisonOperatorComparator['_operators']>) => wrapComparisonOperatorComparator({ ...data, _operators: v }, tree),

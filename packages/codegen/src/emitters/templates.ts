@@ -29,15 +29,21 @@ import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
-import { AssembledGroup, allSlotsOf, isMultiple, isRequired, kindsOf, isUnresolvedRef } from '../compiler/node-map.ts';
+import {
+	AssembledGroup,
+	allSlotsOf,
+	isMultiple,
+	isRequired,
+	kindsOf,
+	isTerminalValue
+} from '../compiler/node-map.ts';
 import type {
 	AssembledBranch,
 	AssembledMulti,
 	AssembledNode,
 	AssembledNonterminal,
 	AssembledPolymorph,
-	NodeOrTerminal,
-	TerminalValue
+	NodeOrTerminal
 } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
@@ -1314,7 +1320,7 @@ function emitListSlot(slotName: string, rule: Rule, slot?: AssembledNonterminal)
 	const allImmediate =
 		slot !== undefined &&
 		slot.values.length > 0 &&
-		slot.values.every((v) => v.kind === 'terminal' && (v as TerminalValue).immediate === true);
+		slot.values.every((v) => isTerminalValue(v) && v.immediate === true);
 	// Separator resolution: prefer the rule's own separator (directly carried),
 	// then fall back to the slot values' per-entry separator (stamped by
 	// `stampSeparatorOnValues` when the separator flowed from a repeat wrapper

@@ -17,6 +17,7 @@ import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '.
 import { describe, it, expect, afterEach } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
 import { deleteWrapper } from '../wrapper-deletion.ts';
+import { isTerminalValue } from '../node-map.ts';
 import type { Rule } from '../rule.ts';
 
 const sym = (name: string): Rule => ({ type: SYMBOL, name });
@@ -100,7 +101,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		expect(out.length).toBe(2);
 		const operators = out.find((s) => s.name === 'operators')!;
 		// operators slot holds the literal union (terminals), not folded away.
-		expect(operators.values.every((v) => v.kind === 'terminal')).toBe(true);
+		expect(operators.values.every((v) => isTerminalValue(v))).toBe(true);
 		expect(operators.values.map((v) => (v as { value: string }).value)).toEqual(['<', '<=', '==', '>']);
 	});
 

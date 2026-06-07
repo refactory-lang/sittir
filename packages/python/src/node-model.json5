@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 262,
+  "nodeCount": 252,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -570,7 +570,8 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "not in"
+              "value": "not in",
+              "parseKind": "_not_in"
             },
             {
               "kind": "terminal",
@@ -581,7 +582,8 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "is not"
+              "value": "is not",
+              "parseKind": "_is_not"
             }
           ],
           "source": "grammar",
@@ -2263,16 +2265,6 @@
         }
       ],
       "children": []
-    },
-    {
-      "kind": "bang_eq",
-      "modelType": "token",
-      "typeName": "BangEq",
-      "irKey": "bangEq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"!=\" as const",
-      "text": "!="
     },
     {
       "kind": "binary_operator",
@@ -4114,16 +4106,6 @@
       "children": []
     },
     {
-      "kind": "eq_eq",
-      "modelType": "token",
-      "typeName": "EqEq",
-      "irKey": "eqEq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"==\" as const",
-      "text": "=="
-    },
-    {
       "kind": "escape_interpolation",
       "modelType": "pattern",
       "typeName": "EscapeInterpolation",
@@ -5206,26 +5188,6 @@
       "children": []
     },
     {
-      "kind": "gt",
-      "modelType": "token",
-      "typeName": "Gt",
-      "irKey": "gt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\">\" as const",
-      "text": ">"
-    },
-    {
-      "kind": "gt_eq",
-      "modelType": "token",
-      "typeName": "GtEq",
-      "irKey": "gtEq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\">=\" as const",
-      "text": ">="
-    },
-    {
       "kind": "gt_gt",
       "modelType": "token",
       "typeName": "GtGt",
@@ -5640,26 +5602,6 @@
         }
       ],
       "children": []
-    },
-    {
-      "kind": "is",
-      "modelType": "keyword",
-      "typeName": "Is",
-      "irKey": "is",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"is\" as const",
-      "text": "is"
-    },
-    {
-      "kind": "is not",
-      "modelType": "token",
-      "typeName": "TokISSpNOT",
-      "irKey": "tokISSpNOT",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"is not\" as const",
-      "text": "is not"
     },
     {
       "kind": "keyword_argument",
@@ -6201,36 +6143,6 @@
       "children": []
     },
     {
-      "kind": "lt",
-      "modelType": "token",
-      "typeName": "Lt",
-      "irKey": "lt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"<\" as const",
-      "text": "<"
-    },
-    {
-      "kind": "lt_eq",
-      "modelType": "token",
-      "typeName": "LtEq",
-      "irKey": "ltEq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"<=\" as const",
-      "text": "<="
-    },
-    {
-      "kind": "lt_gt",
-      "modelType": "token",
-      "typeName": "LtGt",
-      "irKey": "ltGt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"<>\" as const",
-      "text": "<>"
-    },
-    {
       "kind": "lt_lt",
       "modelType": "token",
       "typeName": "LtLt",
@@ -6527,16 +6439,6 @@
       "isParameterless": true,
       "stampExpression": "\"not\" as const",
       "text": "not"
-    },
-    {
-      "kind": "not in",
-      "modelType": "token",
-      "typeName": "TokNOTSpIN",
-      "irKey": "tokNOTSpIN",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"not in\" as const",
-      "text": "not in"
     },
     {
       "kind": "not_operator",

@@ -176,7 +176,14 @@ export function findGeneratedKindEntry(
 	return (
 		entries.find((entry) => entry.kind === kind) ??
 		entries.find((entry) => entry.kind === `_${kind}`) ??
-		entries.find((entry) => entry.anon === true && entry.symbolName === kind) ??
+		// Match by parser display name (`symbolName`). This covers anonymous
+		// tokens whose display string differs from their lowercased key
+		// (`anon_sym_PLUS` → kind `plus`, symbolName `+`) AND hidden NAMED
+		// compound tokens (`sym__is_not` → kind `_is_not`, symbolName `is not`).
+		// `symbolName` is only populated when it differs from `kind`
+		// (collectGeneratedKindEntries), so this stays targeted at the literal
+		// display-string lookups and never shadows a plain named kind.
+		entries.find((entry) => entry.symbolName === kind) ??
 		undefined
 	);
 }

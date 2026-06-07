@@ -17,7 +17,6 @@ import type { AssembledNonterminal, NodeOrTerminal } from '../node-map.ts';
 // `v.parseKind.name`). node + parseKind coincide for a non-aliased ref.
 function nodeRefValue(kind: string, multiplicity: 'single' | 'array' = 'single'): NodeOrTerminal {
 	return {
-		kind: 'node-ref',
 		node: { name: kind, kind } as never,
 		parseKind: { kind: 'unresolved-ref', name: kind },
 		multiplicity,
@@ -26,7 +25,7 @@ function nodeRefValue(kind: string, multiplicity: 'single' | 'array' = 'single')
 
 // A bare literal / anonymous-token value — no parseKind (e.g. splat_pattern's `_`).
 function literalValue(value: string): NodeOrTerminal {
-	return { kind: 'terminal', value, multiplicity: 'single' } as unknown as NodeOrTerminal;
+	return { value, multiplicity: 'single' } as unknown as NodeOrTerminal;
 }
 
 // A fully-consistent slot: legacy fields agree with the projection.

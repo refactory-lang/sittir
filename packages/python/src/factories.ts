@@ -88,7 +88,7 @@ export function _assignmentTyped(config: T.AssignmentTyped.Config) {
 }
 
 export function _comparisonOperatorComparator(config: T.ComparisonOperatorComparator.Config) {
-  const _operators = config.operators;
+  const _operators = coerceKindEnumStorage(config.operators, [["<", TSKindId.Lt] as const, ["<=", TSKindId.LtEq] as const, ["==", TSKindId.EqEq] as const, ["!=", TSKindId.BangEq] as const, [">=", TSKindId.GtEq] as const, [">", TSKindId.Gt] as const, ["<>", TSKindId.LtGt] as const, ["in", TSKindId.In] as const, ["is", TSKindId.Is] as const]);
   const _primary_expression = config.primaryExpression;
   return withMethods({
     $type: TSKindId.ComparisonOperatorComparator as const,
@@ -99,7 +99,7 @@ export function _comparisonOperatorComparator(config: T.ComparisonOperatorCompar
     operators() { return _operators; },
     primaryExpression() { return _primary_expression; },
     $with: {
-      operators: (value: "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not") => _comparisonOperatorComparator({ ...config, operators: value }),
+      operators: (value: NonNullable<Parameters<typeof _comparisonOperatorComparator>[0]>['operators']) => _comparisonOperatorComparator({ ...config, operators: value }),
       primaryExpression: (value: T.PrimaryExpression) => _comparisonOperatorComparator({ ...config, primaryExpression: value }),
     },
   }, methodsEngine);

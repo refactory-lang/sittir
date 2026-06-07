@@ -56,7 +56,6 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
  * `values` arrays and the emitter wraps the slot in an `isPresent` guard.
  */
 const SINGLE_REQUIRED_VALUE: NodeOrTerminal = {
-	kind: 'terminal',
 	value: 'x',
 	multiplicity: 'single'
 };

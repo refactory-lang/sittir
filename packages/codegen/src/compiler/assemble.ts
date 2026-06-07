@@ -744,7 +744,7 @@ function hydrateSlots(
 ): void {
 	for (const slot of Object.values(slots)) {
 		for (const v of slot.values) {
-			if (v.kind !== 'node-ref') continue;
+			if (!isNodeRef(v)) continue;
 			if (!isUnresolvedRef(v.node)) continue;
 			const targetName = v.node.name;
 			const target = nodes.get(targetName);

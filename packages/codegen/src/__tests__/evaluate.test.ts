@@ -612,7 +612,7 @@ describe('Evaluate — evaluate()', () => {
 			const operatorSlot = node && 'slots' in node ? node.slots.operator : undefined;
 			const operatorValues = operatorSlot
 				? operatorSlot.values
-						.filter((value: any) => value.kind === 'terminal')
+						.filter((value: any) => value.value !== undefined)
 						.map((value: any) => value.value)
 						.sort()
 				: [];
