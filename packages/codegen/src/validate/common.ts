@@ -946,6 +946,83 @@ export async function loadReadTreeNode(
 	}
 }
 
+// ---------------------------------------------------------------------------
+// node-model.json5 — the single on-disk metadata source (PR-K)
+// ---------------------------------------------------------------------------
+
+/** Relative path from codegen/src/validate to each grammar's node-model.json5. */
+const NODE_MODEL_PATHS: Record<string, string> = {
+	rust: '../../../rust/src/node-model.json5',
+	typescript: '../../../typescript/src/node-model.json5',
+	python: '../../../python/src/node-model.json5'
+};
+
+/**
+ * The validator-facing factory metadata, formerly read from `factory-map.json5`.
+ * PR-K folds all five sections into `node-model.json5` (emitted from the single
+ * `buildFactoryMap` derivation) and the validators read them here — there is no
+ * validator-side re-derivation.
+ */
+export interface LoadedNodeModel {
+	readonly factoryShapes: Record<string, FactoryShape>;
+	readonly factoryFields: Record<string, readonly string[]>;
+	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
+	readonly fieldAliasMap: Record<string, Record<string, string>>;
+	readonly polymorphVariants: PolymorphVariantMap;
+}
+
+/** Minimal shape of the parsed node-model.json5 — only the fields the
+ * validators consume. `factoryShape`/`factoryFields` are per-node;
+ * `factorySlots`/`fieldAliasMap`/`polymorphVariants` are top-level. */
+interface ParsedNodeModel {
+	nodes?: ReadonlyArray<{ kind: string; factoryShape?: FactoryShape; factoryFields?: readonly string[] }>;
+	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
+	fieldAliasMap?: Record<string, Record<string, string>>;
+	polymorphVariants?: PolymorphVariantMap;
+}
+
+const EMPTY_NODE_MODEL: LoadedNodeModel = {
+	factoryShapes: {},
+	factoryFields: {},
+	factorySlots: {},
+	fieldAliasMap: {},
+	polymorphVariants: {}
+};
+
+/**
+ * Load a grammar's `node-model.json5` and project the validator-facing factory
+ * metadata. `factoryShapes` / `factoryFields` are reindexed from the per-node
+ * records (pure reshape of serialized facts); `factorySlots` / `fieldAliasMap` /
+ * `polymorphVariants` are read verbatim from their top-level sections. The file
+ * is plain JSON (emitter uses `JSON.stringify`), so no comment-stripping. Returns
+ * empty maps when the grammar is unknown or the file is unavailable — mirrors the
+ * legacy `loadFactoryMap` fail-soft behavior so bootstrap runs don't throw.
+ */
+export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
+	const p = NODE_MODEL_PATHS[grammar];
+	if (!p) return EMPTY_NODE_MODEL;
+	let raw: string;
+	try {
+		raw = readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
+	} catch {
+		return EMPTY_NODE_MODEL;
+	}
+	const model = JSON.parse(raw) as ParsedNodeModel;
+	const factoryShapes: Record<string, FactoryShape> = {};
+	const factoryFields: Record<string, readonly string[]> = {};
+	for (const node of model.nodes ?? []) {
+		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;
+		if (node.factoryFields !== undefined) factoryFields[node.kind] = node.factoryFields;
+	}
+	return {
+		factoryShapes,
+		factoryFields,
+		factorySlots: model.factorySlots ?? {},
+		fieldAliasMap: model.fieldAliasMap ?? {},
+		polymorphVariants: model.polymorphVariants ?? {}
+	};
+}
+
 export async function loadWrapNode(
 	grammar: string
 ): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
@@ -2091,7 +2168,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
  * but lives in `nodeToConfig` so the variant is present BEFORE the
  * factory is called, not as runtime recovery inside the dispatcher.
  *
- * @param desc - Variant descriptor from factory-map.json5.
+ * @param desc - Variant descriptor from node-model.json5's polymorphVariants.
  * @param data - Raw read NodeData (used for first-child $type lookup).
  * @param derivedConfig - Already-built config (used for field-presence).
  * @param parentKind - Parent polymorph kind, used for warn attribution.

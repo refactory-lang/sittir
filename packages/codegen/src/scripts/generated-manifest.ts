@@ -78,7 +78,6 @@ export function generatedRootsFor(grammar: Grammar): string[] {
 	return [
 		`packages/${grammar}/src`,
 		`packages/${grammar}/templates`,
-		`packages/${grammar}/factory-map.json5`,
 		`packages/${grammar}/.sittir`,
 		`rust/crates/sittir-${grammar}/src`,
 		`rust/crates/sittir-${grammar}/templates`,

@@ -454,10 +454,8 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 		}
 	}
 
-	// Write validator-only factory metadata.
-	writeFile(join(dirname(outDir), 'factory-map.json5'), result.factoryMap);
-
-	// Write node model
+	// Write node model (single on-disk metadata source — PR-K folded the
+	// former factory-map.json5 sections in here).
 	writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
 	// Write suggested overrides log (T042f) next to overrides.ts at the

@@ -32,6 +32,7 @@ import {
 	getChildFactoryArgs,
 	nodeToConfig,
 	emitValidatorMetrics,
+	loadNodeModel,
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData
@@ -187,46 +188,6 @@ const TYPES_MODULE_PATHS: Record<string, string> = {
 	python: '../../../python/src/types.ts'
 };
 
-/** Relative path from codegen/src/validate to language package factory-map.json5 */
-const FACTORY_MAP_PATHS: Record<string, string> = {
-	rust: '../../../rust/factory-map.json5',
-	typescript: '../../../typescript/factory-map.json5',
-	python: '../../../python/factory-map.json5'
-};
-
-/** Load the JSON5 factory metadata file. Emitted by emitFactoryMap;
- * pure data (no functions). Strips the leading comment block and
- * JSON.parses the rest. */
-async function loadFactoryMap(grammar: string): Promise<{
-	factoryShapes: Record<string, FactoryShape>;
-	fieldAliasMap: Record<string, Record<string, string>>;
-	factoryFields: Record<string, readonly string[]>;
-	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
-	polymorphVariants: PolymorphVariantMap;
-}> {
-	const p = FACTORY_MAP_PATHS[grammar];
-	if (!p)
-		return {
-			factoryShapes: {},
-			fieldAliasMap: {},
-			factoryFields: {},
-			factorySlots: {},
-			polymorphVariants: {}
-		};
-	const { readFileSync } = await import('node:fs');
-	const content = readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
-	// Strip `// ...` line comments so JSON.parse accepts the body.
-	const jsonOnly = content.replace(/^\s*\/\/.*$/gm, '').trim();
-	const data = JSON.parse(jsonOnly);
-	return {
-		factoryShapes: data.factoryShapes ?? {},
-		fieldAliasMap: data.fieldAliasMap ?? {},
-		factoryFields: data.factoryFields ?? {},
-		factorySlots: data.factorySlots ?? {},
-		polymorphVariants: data.polymorphVariants ?? {}
-	};
-}
-
 // ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
@@ -270,9 +231,9 @@ export interface FactoryRenderParseResult {
  * @param grammar - Grammar name (rust / typescript / python).
  * @returns Resolved factory artifacts and an `importFailure` record if loading
  *   fails, or `null` for `importFailure` on success.
- * @remarks Validator-only metadata lives in `factory-map.json5` and is loaded
- *   separately from the factory functions so the pure-data file stays
- *   tree-shakeable.
+ * @remarks Validator-only metadata lives in `node-model.json5` (PR-K) and is
+ *   loaded via `loadNodeModel`, separately from the factory functions so the
+ *   pure-data file stays tree-shakeable.
  */
 async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factoryMap: Record<string, (config?: any) => unknown>;
@@ -313,9 +274,9 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	try {
 		const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
-		// Validator-only metadata lives in factory-map.json5 — pure
+		// Validator-only metadata lives in node-model.json5 (PR-K) — pure
 		// data, loaded separately from the factory functions.
-		const mapData = await loadFactoryMap(grammar);
+		const mapData = await loadNodeModel(grammar);
 		factoryShapes = mapData.factoryShapes;
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;

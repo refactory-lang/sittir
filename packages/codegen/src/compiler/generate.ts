@@ -52,9 +52,6 @@ export interface GeneratedFiles {
 	 *  body to `packages/<grammar>/templates/<kind>.jinja`. */
 	jinjaTemplates: EmittedTemplates;
 	factories: string;
-	/** factory-map.json5 — validator-only factory metadata (shapes,
-	 * alias map, field-only-factory list). See emitters/factory-map.ts. */
-	factoryMap: string;
 	wrap: string;
 	utils: string;
 	from: string;
@@ -327,7 +324,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		types: emitted.types,
 		jinjaTemplates: emitted.jinjaTemplates,
 		factories: emitted.factories,
-		factoryMap: emitted.factoryMap,
 		wrap: emitted.wrap,
 		utils: emitted.utils,
 		from: emitted.from,

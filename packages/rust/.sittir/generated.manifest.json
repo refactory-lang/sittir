@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "e7b8326bc8f411e938a821dac895e2ef98e1d8bc8e1f825e36ceed2196a7a15c",
+  "source_hash": "feda0f7f4c598df5e0966e91ccdd645456b6ed6a09d8ac884d13d9ed35fc4e48",
   "files": {
     "packages/rust/.sittir/grammar.js": "ba2307ed89003bef23d1ff38881e36d03de71f92f16de22397b21cf71cd3c674",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
@@ -13,7 +13,6 @@
     "packages/rust/.sittir/src/tree_sitter/array.h": "31e60a1bff6f715afacce03b5b70efe42b58371b4f9595dd4af52a577ff9608c",
     "packages/rust/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/rust/.sittir/tree-sitter.json": "62549e4e88f7fc25503802bc296424d02453ede3e8f85b7c156d6a3b522719f4",
-    "packages/rust/factory-map.json5": "abca20d6108af46cbc8a9055a494474b1d17d46fd125673206c7ac0b59368f77",
     "packages/rust/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/rust/src/backend.ts": "812951b29c12d0ea8d3dbc0d6fd0a998085d5329541e66a0b1c33244b8f6d135",
     "packages/rust/src/boundary.ts": "3d134bb2d602f2072fda61aa748bf51b557d915c70fb220e6faebd01522567e9",
@@ -26,7 +25,7 @@
     "packages/rust/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/rust/src/ir.ts": "e5c25ccfecc21093ea096356c0a9bcb968abdd07edbc5cd0d13d2df96f6840da",
     "packages/rust/src/is.ts": "59481e0d2dd29176c6251fd8639ebdf9662aa10a83e5b23bbb9c490db55a86eb",
-    "packages/rust/src/node-model.json5": "1529e1826f4a58744d234c57b9fc44ae513ef435de6b22d372fd9e6b4780b55e",
+    "packages/rust/src/node-model.json5": "c2b37e84d02967492530aa9d08f0af16507e56e69d4017ea276b5631a2c35f94",
     "packages/rust/src/type-test.ts": "84a2bb3df9f44dd0c69e109b61a35010a9b776f4829cbbabc04bd2bcf9584518",
     "packages/rust/src/types.ts": "0037fd7d151d61760f9f2924b6015c347596fd5955193f1b6d1e73b230ece0e4",
     "packages/rust/src/utils.ts": "3aa4e8040f417f92d6bfa4c3638e9fb05209c73591c2bad0f03a85f5fa3d8d49",

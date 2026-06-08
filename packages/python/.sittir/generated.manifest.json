@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "ff05ba75126e938c1a188d73c753fb6a3fa15a12bd9489f5153e89e8ef190c88",
+  "source_hash": "f76b5add05c6cd720132e6f6dea277f4a77d672e0619c8a8b7db54ef1b69e97c",
   "files": {
     "packages/python/.sittir/grammar.js": "676cc242eaa78107e30ed26ffd9812747fa4108019f1fffae2d64c6f39c0279f",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -13,7 +13,6 @@
     "packages/python/.sittir/src/tree_sitter/array.h": "31e60a1bff6f715afacce03b5b70efe42b58371b4f9595dd4af52a577ff9608c",
     "packages/python/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/python/.sittir/tree-sitter.json": "3950b01c1615b2635ff9b254e6dbfca6d068240af7df192da0c0cdd396115c62",
-    "packages/python/factory-map.json5": "c1047b04658aec4fdbba51fc0bdbc1c5ef7bbc8bbd9663312b754df70b010a5c",
     "packages/python/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/python/src/backend.ts": "ab39be3c39cea0601de33e650b578c363d741609e7ba58a1632bd4680421895e",
     "packages/python/src/boundary.ts": "3d134bb2d602f2072fda61aa748bf51b557d915c70fb220e6faebd01522567e9",
@@ -26,7 +25,7 @@
     "packages/python/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/python/src/ir.ts": "ff3ab1f767d35d3720a0dd957598dbd9169f41a3c01ca8b840f6329176e12fec",
     "packages/python/src/is.ts": "3bb675d2a1bc92f15ced31755d77a9744f357b6b9df03c9b642c6f6dab5aec5b",
-    "packages/python/src/node-model.json5": "913b6c971fb831966edc3c2942747fe21caf2f07bbfb5639331ee8de48191985",
+    "packages/python/src/node-model.json5": "7670b5734bf1dee2a3ac2ab8e5796a535473bef2e344056331c72ed968509ab3",
     "packages/python/src/type-test.ts": "161d1501d5f521b705f586f46154cfec9ff974f6b3054a4d0075e749e0641662",
     "packages/python/src/types.ts": "3248513a7e4c31f7a13d0d30c11dc91fe923216a72a20c5ce8c792577bc5be40",
     "packages/python/src/utils.ts": "b6265835f7a8605008a7d0d0188362d6ebe5a73876c19a94c0193d52b5532c9c",
