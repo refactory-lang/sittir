@@ -926,7 +926,15 @@ export const WRAP_MODULE_PATHS: Record<string, string> = {
  */
 export async function loadReadTreeNode(
 	grammar: string
-): Promise<((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null> {
+): Promise<
+	| ((
+			handle: TreeHandle,
+			nodeHandle?: number,
+			childIndex?: number,
+			asType?: { from: string; to: string }
+	  ) => unknown)
+	| null
+> {
 	const p = WRAP_MODULE_PATHS[grammar];
 	if (!p) return null;
 	try {

@@ -217,6 +217,9 @@
     "comparison_operator.comparators": {
       "comparison_operator_comparator": "_comparison_operator_comparator"
     },
+    "dict_pattern.dict_pattern_kv": {
+      "dict_pattern_kv": "_dict_pattern_kv"
+    },
     "elif_clause.consequence": {
       "block": "_newline"
     },
@@ -425,6 +428,7 @@
       "expressions"
     ],
     "dict_pattern": [
+      "dict_pattern_kv",
       "key",
       "value",
       "splat_pattern"
@@ -1282,6 +1286,13 @@
       }
     },
     "dict_pattern": {
+      "dict_pattern_kv": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "key": {
         "unnamed": false,
         "slotCount": 1,

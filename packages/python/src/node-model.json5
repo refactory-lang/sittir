@@ -3652,6 +3652,30 @@
       "hidden": false,
       "fields": [
         {
+          "name": "dict_pattern_kv",
+          "propertyName": "dictPatternKv",
+          "paramName": "dictPatternKv",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_dict_pattern_kv",
+              "parseKind": "dict_pattern_kv",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_dict_pattern_kv"
+            ]
+          }
+        },
+        {
           "name": "key",
           "propertyName": "keys",
           "paramName": "keys",

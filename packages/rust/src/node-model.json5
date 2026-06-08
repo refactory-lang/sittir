@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 382,
+  "nodeCount": 383,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -3104,6 +3104,66 @@
             "typeName": "",
             "kinds": [
               "_expression"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_match_block_optional1",
+      "modelType": "group",
+      "typeName": "MatchBlockOptional1",
+      "factoryName": "_matchBlockOptional1",
+      "irKey": "matchBlockOptional1",
+      "hidden": false,
+      "name": "_match_block_optional1",
+      "fields": [
+        {
+          "name": "match_arm",
+          "propertyName": "matchArms",
+          "paramName": "matchArms",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "match_arm",
+              "parseKind": "match_arm",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "match_arm"
+            ]
+          }
+        },
+        {
+          "name": "last_arm",
+          "propertyName": "lastArm",
+          "paramName": "lastArm",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "last_match_arm",
+              "parseKind": "match_arm",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "last_match_arm"
             ]
           }
         }
@@ -11371,6 +11431,30 @@
             "typeName": "",
             "kinds": [
               "match_arm"
+            ]
+          }
+        },
+        {
+          "name": "last_arm",
+          "propertyName": "lastArm",
+          "paramName": "lastArm",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "last_match_arm",
+              "parseKind": "match_arm",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "last_match_arm"
             ]
           }
         }

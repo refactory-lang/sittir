@@ -434,6 +434,7 @@ function _childrenInput(input: _FromFieldInput): _FromFieldInput {
 }
 
 // Interned resolver kind lists (dedup)
+const _super_dict_pattern_kv: readonly string[] = ["_key_value_pattern","splat_pattern"];
 const _K0: readonly string[] = ["identifier","integer","float","true","false","none"];
 const _K1: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat_pattern","conditional_expression","named_expression","as_pattern","list_splat","dictionary_splat","parenthesized_list_splat","keyword_argument"];
 const _K2: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat_pattern","conditional_expression","named_expression","as_pattern"];
@@ -705,6 +706,7 @@ export function deleteStatementFrom(input?: T.Expressions | T.DeleteStatement): 
 export function dictPatternFrom(input?: T.DictPattern.Loose): ReturnType<typeof F.dictPattern> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.dictPattern>;
   return F.dictPattern({
+    dictPatternKv: _resolveOne<T.DictPatternKv>(input?.dictPatternKv, _K5, _super_dict_pattern_kv),
     key: _resolveMany<T.SimplePattern>(input?.key, _K15, _K16),
     value: _resolveManyBranch<T.CasePattern>(input?.value, "case_pattern"),
     splatPattern: _resolveManyBranch<T.SplatPattern>(input?.splatPattern, "splat_pattern"),

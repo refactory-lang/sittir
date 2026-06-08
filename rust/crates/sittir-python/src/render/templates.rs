@@ -370,6 +370,7 @@ pub struct DeleteStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "dict_pattern.jinja", escape = "none")]
 pub struct DictPatternTemplate<'a> {
+    pub dict_pattern_kv: OptionalNonterminalView<'a>,
     pub key: ListNonterminalView<'a>,
     pub value: ListNonterminalView<'a>,
 }

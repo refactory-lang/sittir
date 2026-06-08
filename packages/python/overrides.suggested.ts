@@ -104,6 +104,11 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
+  dict_pattern: {
+    '1': 'dict_pattern_kv',
+  },
+
+  // [held] 1 candidate(s)
   exec_statement: {
     '2/0': 'expression',
   },

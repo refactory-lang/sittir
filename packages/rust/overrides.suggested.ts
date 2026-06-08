@@ -178,11 +178,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  match_block: {
-    '1': 'match_arm',
-  },
-
-  // [held] 1 candidate(s)
   range_pattern: {
     '0': 'left',
   },

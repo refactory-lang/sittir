@@ -816,6 +816,7 @@ export function deleteStatement(child: T.Expressions) {
 }
 
 export function dictPattern(config: Partial<T.DictPattern.Config> = {}) {
+  const _dict_pattern_kv = config.dictPatternKv;
   const _key = config.key;
   const _value = config.value;
   const _splat_pattern = config.splatPattern;
@@ -823,13 +824,16 @@ export function dictPattern(config: Partial<T.DictPattern.Config> = {}) {
     $type: TSKindId.DictPattern as const,
     $source: 2 as const,
     $named: true as const,
+    _dict_pattern_kv,
     _key,
     _value,
     _splat_pattern,
+    dictPatternKv() { return _dict_pattern_kv; },
     keys() { return _key; },
     values() { return _value; },
     splatPatterns() { return _splat_pattern; },
     $with: {
+      dictPatternKv: (value?: T.DictPatternKv) => dictPattern({ ...config, dictPatternKv: value }),
       keys: (...values: T.SimplePattern[]) => dictPattern({ ...config, key: values }),
       values: (...values: T.CasePattern[]) => dictPattern({ ...config, value: values }),
       splatPatterns: (...values: T.SplatPattern[]) => dictPattern({ ...config, splatPattern: values }),

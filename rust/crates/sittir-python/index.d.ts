@@ -450,6 +450,7 @@ export interface DictPatternTransport {
   '$triviaData'?: TransportTrivia
   _key?: Array<SimplePatternTransport>
   _value?: Array<CasePatternTransport>
+  _dict_pattern_kv?: Box<DictPatternKvTransport>
   _splat_pattern?: Array<SplatPatternTransport>
 }
 
@@ -786,8 +787,8 @@ export interface KeyValuePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _key: SimplePatternTransport
-  _value: CasePatternTransport
+  _key: Box<SimplePatternTransport>
+  _value: Box<CasePatternTransport>
 }
 
 export interface KeywordArgumentTransport {
@@ -822,7 +823,7 @@ export interface KeywordPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _identifier: IdentifierTransport
-  _simple_pattern: SimplePatternTransport
+  _simple_pattern: Box<SimplePatternTransport>
 }
 
 export interface LambdaParametersTransport {

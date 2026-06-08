@@ -2337,15 +2337,21 @@ export function matchArm(config: T.MatchArm.Config) {
   }, methodsEngine);
 }
 
-export function matchBlock(...children: T.MatchArm[]) {
-  const _match_arm = children;
+export function matchBlock(config: T.MatchBlock.Config) {
+  const _match_arm = config.matchArm;
+  const _last_arm = config.lastArm;
   return withMethods({
     $type: TSKindId.MatchBlock as const,
     $source: 2 as const,
     $named: true as const,
     _match_arm,
+    _last_arm,
     matchArms() { return _match_arm; },
-    $with: { $children: (...vs: T.MatchArm[]) => matchBlock(...vs) },
+    lastArm() { return _last_arm; },
+    $with: {
+      matchArms: (...values: T.MatchArm[]) => matchBlock({ ...config, matchArm: values }),
+      lastArm: (value: T.LastMatchArm) => matchBlock({ ...config, lastArm: value }),
+    },
   }, methodsEngine);
 }
 

@@ -977,14 +977,17 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DictPattern as const,
+    _dict_pattern_kv: normalizeSingularWrapSlot(data._dict_pattern_kv, "dict_pattern_kv", false, data.$type, { tree, nodeType: data.$type, slotName: "dict_pattern_kv", span: (data as _NodeData).$span }),
     _key: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._key, ["_simple_pattern","class_pattern","splat_pattern","union_pattern","_list_pattern","_tuple_pattern","dict_pattern","string","concatenated_string","true","false","none","_simple_pattern_negative","complex_pattern","dotted_name"]), false, "key", { tree, nodeType: data.$type, slotName: "key", span: (data as _NodeData).$span }),
     _value: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._value, ["case_pattern"]), false, "value", { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),
     _splat_pattern: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._splat_pattern, ["splat_pattern"]), false, "splat_pattern", { tree, nodeType: data.$type, slotName: "splat_pattern", span: (data as _NodeData).$span }),
 
+    dictPatternKv() { return drillAs<T.DictPatternKv | undefined>(this._dict_pattern_kv, tree, "dict_pattern_kv", "_dict_pattern_kv"); },
     keys() { return drillInAll<T.SimplePattern>(this._key as readonly T.SimplePattern[] | undefined, tree); },
     values() { return drillInAll<T.CasePattern>(this._value as readonly T.CasePattern[] | undefined, tree); },
     splatPatterns() { return drillInAll<T.SplatPattern>(this._splat_pattern as readonly T.SplatPattern[] | undefined, tree); },
     $with: {
+      dictPatternKv: (v: NonNullable<T.DictPattern['_dict_pattern_kv']>) => wrapDictPattern({ ...data, _dict_pattern_kv: v }, tree),
       keys: (...v: NonNullable<T.DictPattern['_key']>[number][]) => wrapDictPattern({ ...data, _key: v }, tree),
       values: (...v: NonNullable<T.DictPattern['_value']>[number][]) => wrapDictPattern({ ...data, _value: v }, tree),
       splatPatterns: (...v: NonNullable<T.DictPattern['_splat_pattern']>[number][]) => wrapDictPattern({ ...data, _splat_pattern: v }, tree),
@@ -2347,6 +2350,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'comparison_operator_comparator': '_comparison_operator_comparator',
   'complex_pattern_operator': '_complex_pattern_operator',
   'comprehension_clauses': '_comprehension_clauses',
+  'dict_pattern_kv': '_dict_pattern_kv',
   'except_clause_as': '_except_clause_as',
   'except_clause_list': '_except_clause_list',
   'expression_statement_tuple': '_expression_statement_tuple',

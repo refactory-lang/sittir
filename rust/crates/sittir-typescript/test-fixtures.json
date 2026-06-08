@@ -33,7 +33,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "try {}\ncatch (e: unknown) {}\nfinally {}",
-    "expectedReparseTree": "(program statements: (try_statement body: (statement_block) handler: (catch_clause parameter: (identifier) type: (type_annotation type: (predefined_type)) body: (statement_block)) finalizer: (finally_clause body: (statement_block))))",
+    "expectedReparseTree": "(program statements: (try_statement body: (statement_block) handler: (catch_clause (catch_clause_group1 parameter: (identifier) type: (type_annotation type: (predefined_type))) body: (statement_block)) finalizer: (finally_clause body: (statement_block))))",
     "wrappedText": "try {}\ncatch (e: unknown) {}\nfinally {}",
     "wrappedOffset": 0
   },
@@ -107,7 +107,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "try {} catch (e: unknown) {} finally {}",
-    "expectedReparseTree": "(try_statement body: (statement_block) handler: (catch_clause parameter: (identifier) type: (type_annotation type: (predefined_type)) body: (statement_block)) finalizer: (finally_clause body: (statement_block)))",
+    "expectedReparseTree": "(try_statement body: (statement_block) handler: (catch_clause (catch_clause_group1 parameter: (identifier) type: (type_annotation type: (predefined_type))) body: (statement_block)) finalizer: (finally_clause body: (statement_block)))",
     "wrappedText": "try {} catch (e: unknown) {} finally {}",
     "wrappedOffset": 0
   },
@@ -136,7 +136,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -186,7 +186,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -236,7 +236,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -361,6 +361,68 @@
     "expectedSourceOut": "declare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n} declare class Foo {\n  bar(): number,\n  baz(): Baz,\n}",
     "expectedReparseTree": "(program statements: (ambient_declaration (ambient_declaration_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (object_type_content_comma (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))))))) statements: (ambient_declaration (ambient_declaration_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_method_sig (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_method_sig (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))))))",
     "wrappedText": "declare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n} declare class Foo {\n  bar(): number,\n  baz(): Baz,\n}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 288,
+      "$source": 0,
+      "$span": {
+        "start": 8,
+        "end": 58
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_interface": {
+        "$type": 140,
+        "$source": 0,
+        "$text": "interface",
+        "$span": {
+          "start": 8,
+          "end": 17
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_name": {
+        "$type": 432,
+        "$source": 0,
+        "$text": "IFoo",
+        "$span": {
+          "start": 18,
+          "end": 22
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_body": {
+        "$type": 420,
+        "$source": 0,
+        "$text": "{\n  bar(): number,\n  baz(): IBaz,\n}",
+        "$span": {
+          "start": 23,
+          "end": 58
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
+    "pattern": "interface_declaration",
+    "edits": [],
+    "expectedSourceOut": "interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
+    "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (object_type_content_comma (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))))",
+    "wrappedText": "interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
     "wrappedOffset": 0
   },
   {
@@ -638,7 +700,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Baz",
         "$span": {
@@ -738,7 +800,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "IBaz",
         "$span": {
@@ -826,7 +888,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "foo: string;",
         "$span": {
@@ -838,7 +900,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -919,7 +981,7 @@
     "input": {
       "$type": 166,
       "$source": 0,
-      "$children": [
+      "$other": [
         {
           "$type": 99,
           "$source": 0,
@@ -1302,7 +1364,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -1353,7 +1415,7 @@
       },
       "_properties": [
         {
-          "$type": 426,
+          "$type": 428,
           "$source": 0,
           "$text": "x",
           "$span": {
@@ -1365,7 +1427,7 @@
           "$named": true
         },
         {
-          "$type": 6,
+          "$type": 14,
           "$source": 0,
           "$text": ",",
           "$span": {
@@ -1377,7 +1439,7 @@
           "$named": false
         },
         {
-          "$type": 426,
+          "$type": 428,
           "$source": 0,
           "$text": "y",
           "$span": {
@@ -1390,7 +1452,7 @@
         }
       ],
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -1440,7 +1502,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -1478,7 +1540,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Promise",
         "$span": {
@@ -1680,7 +1742,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -1966,7 +2028,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -2290,7 +2352,7 @@
         }
       ],
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -2340,7 +2402,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -2528,7 +2590,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "IAppState",
         "$span": {
@@ -2540,7 +2602,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 420,
         "$source": 0,
         "$text": "{\n  public readonly users: ReadonlyArray<User>\n}",
         "$span": {
@@ -2628,7 +2690,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "ReadonlyArray",
         "$span": {
@@ -2701,6 +2763,92 @@
     "expectedSourceOut": "declare type IndexableType = string | number | Date | Array<string | number | Date>;",
     "expectedReparseTree": "(program statements: (ambient_declaration (ambient_declaration_declaration (type_alias_declaration name: (type_identifier) value: (union_type left: (union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier)) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier)))))))))",
     "wrappedText": "declare type IndexableType = string | number | Date | Array<string | number | Date>;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 293,
+      "$source": 0,
+      "$span": {
+        "start": 8,
+        "end": 84
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_type": {
+        "$type": 307,
+        "$source": 0,
+        "$text": "type",
+        "$span": {
+          "start": 8,
+          "end": 12
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_name": {
+        "$type": 432,
+        "$source": 0,
+        "$text": "IndexableType",
+        "$span": {
+          "start": 13,
+          "end": 26
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_=": {
+        "$type": 42,
+        "$source": 0,
+        "$text": "=",
+        "$span": {
+          "start": 27,
+          "end": 28
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": false
+      },
+      "_value": {
+        "$type": 349,
+        "$source": 0,
+        "$text": "string | number | Date | Array<string | number | Date>",
+        "$span": {
+          "start": 29,
+          "end": 83
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      },
+      "_semicolon": {
+        "$type": 23,
+        "$source": 0,
+        "$text": ";",
+        "$span": {
+          "start": 83,
+          "end": 84
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": false
+      }
+    },
+    "expectedOutput": "type IndexableType=string | number | Date | Array<string | number | Date> ;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "type IndexableType = string | number | Date | Array<string | number | Date>;",
+    "pattern": "type_alias_declaration",
+    "edits": [],
+    "expectedSourceOut": "type IndexableType=string | number | Date | Array<string | number | Date> ;",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (union_type left: (union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier)) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier))))))",
+    "wrappedText": "type IndexableType=string | number | Date | Array<string | number | Date> ;",
     "wrappedOffset": 0
   },
   {
@@ -2802,7 +2950,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Date",
         "$span": {
@@ -2926,7 +3074,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Date",
         "$span": {
@@ -3026,7 +3174,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Array",
         "$span": {
@@ -3127,7 +3275,7 @@
       },
       "_properties": [
         {
-          "$type": 426,
+          "$type": 428,
           "$source": 0,
           "$text": "name",
           "$span": {
@@ -3139,7 +3287,7 @@
           "$named": true
         },
         {
-          "$type": 6,
+          "$type": 14,
           "$source": 0,
           "$text": ",",
           "$span": {
@@ -3151,7 +3299,7 @@
           "$named": false
         },
         {
-          "$type": 426,
+          "$type": 428,
           "$source": 0,
           "$text": "description",
           "$span": {
@@ -3163,7 +3311,7 @@
           "$named": true
         },
         {
-          "$type": 6,
+          "$type": 14,
           "$source": 0,
           "$text": ",",
           "$span": {
@@ -3188,7 +3336,7 @@
         }
       ],
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -3244,7 +3392,7 @@
     "kind": "roundtrip",
     "grammar": "typescript",
     "sourceIn": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
-    "pattern": "_export_statement_default",
+    "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (object_type_content_comma (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier)) (type_parameter name: (type_identifier))) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_identifier) (type_identifier)))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier) (type_identifier))))))))))))))))",
@@ -3276,7 +3424,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Foo",
         "$span": {
@@ -3288,7 +3436,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 420,
         "$source": 0,
         "$text": "{\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
         "$span": {
@@ -3426,7 +3574,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "OrderedMap",
         "$span": {
@@ -3550,7 +3698,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Keyed",
         "$span": {
@@ -3612,6 +3760,68 @@
     "expectedReparseTree": "(program statements: (ambient_declaration (ambient_declaration_declaration (internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (predefined_type))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body name: (property_identifier) name: (property_identifier) name: (property_identifier)))))))))))",
     "wrappedText": "declare namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 284,
+      "$source": 0,
+      "$span": {
+        "start": 8,
+        "end": 197
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_namespace": {
+        "$type": 120,
+        "$source": 0,
+        "$text": "namespace",
+        "$span": {
+          "start": 8,
+          "end": 17
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "moment",
+        "$span": {
+          "start": 18,
+          "end": 24
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_body": {
+        "$type": 186,
+        "$source": 0,
+        "$text": "{\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}",
+        "$span": {
+          "start": 25,
+          "end": 197
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}",
+    "pattern": "internal_module",
+    "edits": [],
+    "expectedSourceOut": "namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n}",
+    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (type_alias_declaration name: (type_identifier) value: (function_type parameters: (formal_parameters) return_type: (predefined_type))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (variable_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (predefined_type))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) body: (class_body))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (enum_declaration name: (identifier) body: (enum_body name: (property_identifier) name: (property_identifier) name: (property_identifier))))))))",
+    "wrappedText": "let _ = namespace moment {\n  type formatFunction = () => string;\n\n  export var x: string;\n  export class foo {\n\n  }\n  export function utc(): Moment;\n  export const enum Blah { Blaz, Bloz, Bleez }\n};",
+    "wrappedOffset": 8
   },
   {
     "kind": "render",
@@ -3700,7 +3910,7 @@
         }
       ],
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -3750,7 +3960,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "formatFunction",
         "$span": {
@@ -3986,7 +4196,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_var": {
-        "$type": 14,
+        "$type": 13,
         "$source": 0,
         "$text": "var",
         "$span": {
@@ -4110,7 +4320,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Moment",
         "$span": {
@@ -4210,7 +4420,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -4351,6 +4561,68 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 284,
+      "$source": 0,
+      "$span": {
+        "start": 8,
+        "end": 54
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_namespace": {
+        "$type": 120,
+        "$source": 0,
+        "$text": "namespace",
+        "$span": {
+          "start": 8,
+          "end": 17
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "Foo",
+        "$span": {
+          "start": 18,
+          "end": 21
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_body": {
+        "$type": 186,
+        "$source": 0,
+        "$text": "{\n  export interface Bar {\n  }\n}",
+        "$span": {
+          "start": 22,
+          "end": 54
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "namespace Foo {\n  export interface Bar {\n  }\n}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "namespace Foo {\n  export interface Bar {\n  }\n}",
+    "pattern": "internal_module",
+    "edits": [],
+    "expectedSourceOut": "namespace Foo {\n  export interface Bar {\n  }\n}",
+    "expectedReparseTree": "(internal_module name: (identifier) body: (statement_block statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (interface_declaration name: (type_identifier) body: (interface_body)))))))",
+    "wrappedText": "let _ = namespace Foo {\n  export interface Bar {\n  }\n};",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 186,
       "$source": 0,
       "$span": {
@@ -4384,7 +4656,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -4434,7 +4706,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Bar",
         "$span": {
@@ -4446,7 +4718,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 420,
         "$source": 0,
         "$text": "{\n  }",
         "$span": {
@@ -4620,7 +4892,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -4682,7 +4954,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -4720,7 +4992,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_var": {
-        "$type": 14,
+        "$type": 13,
         "$source": 0,
         "$text": "var",
         "$span": {
@@ -4970,7 +5242,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -5020,7 +5292,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -5070,7 +5342,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -5120,7 +5392,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Result",
         "$span": {
@@ -5458,7 +5730,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -5708,7 +5980,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -5870,7 +6142,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -5994,7 +6266,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -6056,7 +6328,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Promise",
         "$span": {
@@ -6106,7 +6378,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Promise",
         "$span": {
@@ -6156,7 +6428,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Promise",
         "$span": {
@@ -6356,7 +6628,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -6456,7 +6728,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -6518,7 +6790,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -6580,7 +6852,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -6668,7 +6940,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -6806,7 +7078,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -6896,7 +7168,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_var": {
-        "$type": 14,
+        "$type": 13,
         "$source": 0,
         "$text": "var",
         "$span": {
@@ -6970,7 +7242,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "b",
         "$span": {
@@ -7020,7 +7292,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "b",
         "$span": {
@@ -7220,7 +7492,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -7270,7 +7542,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -7320,7 +7592,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -7370,7 +7642,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "I",
         "$span": {
@@ -7382,7 +7654,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 420,
         "$source": 0,
         "$text": "{ }",
         "$span": {
@@ -7432,7 +7704,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "I",
         "$span": {
@@ -7444,7 +7716,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 420,
         "$source": 0,
         "$text": "{ }",
         "$span": {
@@ -7546,7 +7818,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -7596,7 +7868,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -7982,7 +8254,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -8032,7 +8304,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -8082,7 +8354,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -8132,7 +8404,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -8182,7 +8454,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -8320,7 +8592,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -8572,7 +8844,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -8994,7 +9266,7 @@
         "$named": false
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -9044,7 +9316,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[t: T]: T",
         "$span": {
@@ -9056,7 +9328,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -9106,7 +9378,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[g: G]: G",
         "$span": {
@@ -9118,7 +9390,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -9168,7 +9440,7 @@
         "$named": false
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -9218,7 +9490,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[t: T]: T",
         "$span": {
@@ -9230,7 +9502,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -9280,7 +9552,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -9330,7 +9602,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "G",
         "$span": {
@@ -9380,7 +9652,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -9802,7 +10074,7 @@
         "$named": false
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -9852,7 +10124,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[t: T]: T",
         "$span": {
@@ -9864,7 +10136,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -9914,7 +10186,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[g: G]: G",
         "$span": {
@@ -9926,7 +10198,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -9976,7 +10248,7 @@
         "$named": false
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -10026,7 +10298,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[t: T]: T",
         "$span": {
@@ -10038,7 +10310,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -10088,7 +10360,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -10138,7 +10410,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "G",
         "$span": {
@@ -10188,7 +10460,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -10316,7 +10588,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_var": {
-        "$type": 14,
+        "$type": 13,
         "$source": 0,
         "$text": "var",
         "$span": {
@@ -10454,7 +10726,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_var": {
-        "$type": 14,
+        "$type": 13,
         "$source": 0,
         "$text": "var",
         "$span": {
@@ -10479,7 +10751,7 @@
           "$named": true
         },
         {
-          "$type": 6,
+          "$type": 14,
           "$source": 0,
           "$text": ",",
           "$span": {
@@ -10503,7 +10775,7 @@
           "$named": true
         },
         {
-          "$type": 6,
+          "$type": 14,
           "$source": 0,
           "$text": ",",
           "$span": {
@@ -11014,7 +11286,7 @@
         "$named": false
       },
       "_property": {
-        "$type": 419,
+        "$type": 421,
         "$source": 0,
         "$text": "length",
         "$span": {
@@ -11076,7 +11348,7 @@
         "$named": false
       },
       "_property": {
-        "$type": 419,
+        "$type": 421,
         "$source": 0,
         "$text": "length",
         "$span": {
@@ -11138,7 +11410,7 @@
         "$named": false
       },
       "_property": {
-        "$type": 419,
+        "$type": 421,
         "$source": 0,
         "$text": "length",
         "$span": {
@@ -11300,7 +11572,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -11362,7 +11634,7 @@
         "$named": false
       },
       "_property": {
-        "$type": 419,
+        "$type": 421,
         "$source": 0,
         "$text": "apply",
         "$span": {
@@ -11601,7 +11873,7 @@
           "$named": true
         },
         {
-          "$type": 6,
+          "$type": 14,
           "$source": 0,
           "$text": ",",
           "$span": {
@@ -11625,7 +11897,7 @@
           "$named": true
         },
         {
-          "$type": 6,
+          "$type": 14,
           "$source": 0,
           "$text": ",",
           "$span": {
@@ -11650,7 +11922,7 @@
         }
       ],
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -11713,7 +11985,7 @@
           "$named": true
         },
         {
-          "$type": 6,
+          "$type": 14,
           "$source": 0,
           "$text": ",",
           "$span": {
@@ -11737,7 +12009,7 @@
           "$named": true
         },
         {
-          "$type": 6,
+          "$type": 14,
           "$source": 0,
           "$text": ",",
           "$span": {
@@ -11762,7 +12034,7 @@
         }
       ],
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -13038,7 +13310,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "C",
         "$span": {
@@ -13112,7 +13384,7 @@
         "$named": false
       },
       "_property": {
-        "$type": 419,
+        "$type": 421,
         "$source": 0,
         "$text": "f",
         "$span": {
@@ -13410,7 +13682,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -13798,7 +14070,7 @@
         "$named": false
       },
       "_property": {
-        "$type": 419,
+        "$type": 421,
         "$source": 0,
         "$text": "b",
         "$span": {
@@ -14022,7 +14294,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "D",
         "$span": {
@@ -14482,7 +14754,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -14936,7 +15208,7 @@
     "kind": "roundtrip",
     "grammar": "typescript",
     "sourceIn": "export default function foo(): bar",
-    "pattern": "_export_statement_default",
+    "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export default function foo(): bar",
     "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_decl_arm_default_kw declaration: (function_signature name: (identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))))))",
@@ -15092,7 +15364,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "bar",
         "$span": {
@@ -15552,7 +15824,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -15602,7 +15874,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -15850,7 +16122,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "baz",
         "$span": {
@@ -16000,7 +16272,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "bar",
         "$span": {
@@ -16050,7 +16322,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "bar",
         "$span": {
@@ -16224,7 +16496,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[key: foo]: bar",
         "$span": {
@@ -16236,7 +16508,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -16286,7 +16558,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[key: foo]: bar",
         "$span": {
@@ -16298,7 +16570,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -16591,7 +16863,7 @@
     "input": {
       "$type": 224,
       "$source": 0,
-      "$children": [
+      "$other": [
         {
           "$type": 99,
           "$source": 0,
@@ -16698,7 +16970,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -16838,7 +17110,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_var": {
-        "$type": 14,
+        "$type": 13,
         "$source": 0,
         "$text": "var",
         "$span": {
@@ -16900,7 +17172,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_var": {
-        "$type": 14,
+        "$type": 13,
         "$source": 0,
         "$text": "var",
         "$span": {
@@ -17348,7 +17620,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "a: any",
         "$span": {
@@ -17360,7 +17632,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17934,7 +18206,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "name: string, age: number",
         "$span": {
@@ -17946,7 +18218,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17996,7 +18268,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[type: string]: string",
         "$span": {
@@ -18008,7 +18280,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -18058,7 +18330,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[K in keyof T]-?: any",
         "$span": {
@@ -18070,7 +18342,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -18120,7 +18392,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[K in keyof T]?: any",
         "$span": {
@@ -18132,7 +18404,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -18182,7 +18454,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "-readonly [K in keyof T]: any",
         "$span": {
@@ -18194,7 +18466,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -18244,7 +18516,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -18318,7 +18590,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -18392,7 +18664,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -18466,7 +18738,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -18516,7 +18788,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -18566,7 +18838,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -18916,7 +19188,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "(string): string,\n  length: number",
         "$span": {
@@ -18928,7 +19200,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -19016,7 +19288,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Foo",
         "$span": {
@@ -19090,7 +19362,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[b: string]: any;\n  readonly [c: number]: string;",
         "$span": {
@@ -19102,7 +19374,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -19440,7 +19712,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -19940,7 +20212,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Readable",
         "$span": {
@@ -20352,7 +20624,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Foo",
         "$span": {
@@ -20464,7 +20736,7 @@
         "$named": false
       },
       "_properties": {
-        "$type": 427,
+        "$type": 429,
         "$source": 0,
         "$text": "a",
         "$span": {
@@ -20476,7 +20748,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -20762,7 +21034,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "R",
         "$span": {
@@ -20974,7 +21246,7 @@
         "$named": false
       },
       "_property": {
-        "$type": 419,
+        "$type": 421,
         "$source": 0,
         "$text": "createRange",
         "$span": {
@@ -21036,7 +21308,7 @@
         "$named": false
       },
       "_property": {
-        "$type": 419,
+        "$type": 421,
         "$source": 0,
         "$text": "selection",
         "$span": {
@@ -21486,7 +21758,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "CodeEditor",
         "$span": {
@@ -21574,7 +21846,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -21700,7 +21972,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "UserType",
         "$span": {
@@ -21786,7 +22058,7 @@
         "$named": false
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -21836,7 +22108,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "UserInterface",
         "$span": {
@@ -21848,7 +22120,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 420,
         "$source": 0,
         "$text": "{}",
         "$span": {
@@ -21898,7 +22170,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "FileMergeData",
         "$span": {
@@ -21972,7 +22244,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "ConflictInfo",
         "$span": {
@@ -22046,7 +22318,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "document: Doc,\n  headDocument: Doc,\n  baseDocument: Doc,\n  conflicts: ConflictInfo[]",
         "$span": {
@@ -22058,7 +22330,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -22108,7 +22380,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "start?: LineHandle,\n  middle?: LineHandle,\n  end?: LineHandle",
         "$span": {
@@ -22120,7 +22392,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -22170,7 +22442,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Doc",
         "$span": {
@@ -22220,7 +22492,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Doc",
         "$span": {
@@ -22270,7 +22542,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Doc",
         "$span": {
@@ -22370,7 +22642,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "LineHandle",
         "$span": {
@@ -22420,7 +22692,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "LineHandle",
         "$span": {
@@ -22470,7 +22742,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "LineHandle",
         "$span": {
@@ -22508,7 +22780,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "ConflictInfo",
         "$span": {
@@ -22658,7 +22930,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -22708,7 +22980,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -22758,7 +23030,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -22808,7 +23080,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -23084,7 +23356,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Array",
         "$span": {
@@ -23184,7 +23456,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "BrowserStats$ResourceTiming",
         "$span": {
@@ -23370,7 +23642,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "BrowserStats",
         "$span": {
@@ -23444,7 +23716,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "url: string,\n  ms: number",
         "$span": {
@@ -23644,7 +23916,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "HandlerFunction",
         "$span": {
@@ -23782,7 +24054,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -23794,7 +24066,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 420,
         "$source": 0,
         "$text": "{\n  x(): Promise<Array<Foo>>;\n}",
         "$span": {
@@ -23982,7 +24254,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Map",
         "$span": {
@@ -24032,7 +24304,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Promise",
         "$span": {
@@ -24082,7 +24354,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Promise",
         "$span": {
@@ -24132,7 +24404,7 @@
       "$nodeHandle": 3,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Map",
         "$span": {
@@ -24182,7 +24454,7 @@
       "$nodeHandle": 4,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Array",
         "$span": {
@@ -24232,7 +24504,7 @@
       "$nodeHandle": 5,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Map",
         "$span": {
@@ -24282,7 +24554,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_var": {
-        "$type": 14,
+        "$type": 13,
         "$source": 0,
         "$text": "var",
         "$span": {
@@ -24950,7 +25222,7 @@
     "kind": "roundtrip",
     "grammar": "typescript",
     "sourceIn": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };",
-    "pattern": "_export_statement_default",
+    "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };",
     "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (intersection_type left: (type_identifier) right: (object_type members: (object_type_content (object_type_content_comma (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier)))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier)))))))))))))",
@@ -24982,7 +25254,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "NoInfer",
         "$span": {
@@ -25068,7 +25340,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -25142,7 +25414,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[K in keyof T]: T[K]",
         "$span": {
@@ -25154,7 +25426,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -25204,7 +25476,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -25292,7 +25564,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -25316,7 +25588,7 @@
         "$named": false
       },
       "_index_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "K",
         "$span": {
@@ -25552,7 +25824,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -25938,7 +26210,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -25988,7 +26260,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -26050,7 +26322,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -26100,7 +26372,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -26175,6 +26447,130 @@
     "expectedSourceOut": "declare const f: (x: any) => asserts x; declare const g: (x: any) => asserts x is number;",
     "expectedReparseTree": "(program statements: (ambient_declaration (ambient_declaration_declaration (lexical_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) return_type: (asserts (identifier)))))))) statements: (ambient_declaration (ambient_declaration_declaration (lexical_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type))))))))))",
     "wrappedText": "declare const f: (x: any) => asserts x; declare const g: (x: any) => asserts x is number;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 184,
+      "$source": 0,
+      "$span": {
+        "start": 8,
+        "end": 39
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_kind": {
+        "$type": 16,
+        "$source": 0,
+        "$text": "const",
+        "$span": {
+          "start": 8,
+          "end": 13
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_declarators": {
+        "$type": 185,
+        "$source": 0,
+        "$text": "f: (x: any) => asserts x",
+        "$span": {
+          "start": 14,
+          "end": 38
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_semicolon": {
+        "$type": 23,
+        "$source": 0,
+        "$text": ";",
+        "$span": {
+          "start": 38,
+          "end": 39
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "const f: (x: any) => asserts x ;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "const f: (x: any) => asserts x;",
+    "pattern": "lexical_declaration",
+    "edits": [],
+    "expectedSourceOut": "const f: (x: any) => asserts x ;",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) return_type: (asserts (identifier))))))",
+    "wrappedText": "const f: (x: any) => asserts x ;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 184,
+      "$source": 0,
+      "$span": {
+        "start": 48,
+        "end": 89
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_kind": {
+        "$type": 16,
+        "$source": 0,
+        "$text": "const",
+        "$span": {
+          "start": 48,
+          "end": 53
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_declarators": {
+        "$type": 185,
+        "$source": 0,
+        "$text": "g: (x: any) => asserts x is number",
+        "$span": {
+          "start": 54,
+          "end": 88
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_semicolon": {
+        "$type": 23,
+        "$source": 0,
+        "$text": ";",
+        "$span": {
+          "start": 88,
+          "end": 89
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "const g: (x: any) => asserts x is number ;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "const g: (x: any) => asserts x is number;",
+    "pattern": "lexical_declaration",
+    "edits": [],
+    "expectedSourceOut": "const g: (x: any) => asserts x is number ;",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) return_type: (asserts (type_predicate name: (identifier) type: (predefined_type)))))))",
+    "wrappedText": "const g: (x: any) => asserts x is number ;",
     "wrappedOffset": 0
   },
   {
@@ -26850,7 +27246,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Fish",
         "$span": {
@@ -26900,7 +27296,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Fish",
         "$span": {
@@ -26950,7 +27346,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -27000,7 +27396,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -27050,7 +27446,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -27124,7 +27520,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -27198,7 +27594,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -27272,7 +27668,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -27346,7 +27742,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -27408,7 +27804,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "a",
         "$span": {
@@ -27470,7 +27866,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "a",
         "$span": {
@@ -27594,7 +27990,7 @@
       "$nodeHandle": 3,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "a",
         "$span": {
@@ -27718,7 +28114,7 @@
       "$nodeHandle": 5,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "a",
         "$span": {
@@ -27842,7 +28238,7 @@
       "$nodeHandle": 7,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "a",
         "$span": {
@@ -28290,7 +28686,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -28364,7 +28760,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -28438,7 +28834,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -28512,7 +28908,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -28586,7 +28982,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -28660,7 +29056,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "t",
         "$span": {
@@ -28772,7 +29168,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -28796,7 +29192,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "B",
         "$span": {
@@ -28884,7 +29280,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -28946,7 +29342,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "C",
         "$span": {
@@ -29032,7 +29428,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "C",
         "$span": {
@@ -29082,7 +29478,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -29132,7 +29528,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "B",
         "$span": {
@@ -29232,7 +29628,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -29306,7 +29702,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -29380,7 +29776,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "F",
         "$span": {
@@ -29466,7 +29862,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "F",
         "$span": {
@@ -29552,7 +29948,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -29638,7 +30034,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -29736,7 +30132,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -29834,7 +30230,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -29903,7 +30299,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type T <X>=T extends { x: infer X extends number } ? X : never ;",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content (object_type_content_comma (property_signature name: (property_identifier) type: (type_annotation type: (infer_type type_identifier: (type_identifier) type: (predefined_type))))))) consequence: (type_identifier) alternative: (predefined_type)))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (conditional_type left: (type_identifier) right: (object_type members: (object_type_content (object_type_content_comma (property_signature name: (property_identifier) type: (type_annotation type: (infer_type type_identifier: (type_identifier) constraint: (predefined_type))))))) consequence: (type_identifier) alternative: (predefined_type)))",
     "wrappedText": "type T <X>=T extends { x: infer X extends number } ? X : never ;",
     "wrappedOffset": 0
   },
@@ -29920,7 +30316,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -29944,7 +30340,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -29968,7 +30364,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Z",
         "$span": {
@@ -29992,7 +30388,7 @@
         "$named": false
       },
       "_alternative": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30030,7 +30426,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30102,7 +30498,7 @@
         "$named": false
       },
       "_alternative": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30188,7 +30584,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30212,7 +30608,7 @@
         "$named": false
       },
       "_alternative": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30250,7 +30646,7 @@
       "$nodeHandle": 3,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30274,7 +30670,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30298,7 +30694,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30322,7 +30718,7 @@
         "$named": false
       },
       "_alternative": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30360,7 +30756,7 @@
       "$nodeHandle": 4,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30384,7 +30780,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30408,7 +30804,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30432,7 +30828,7 @@
         "$named": false
       },
       "_alternative": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30470,7 +30866,7 @@
       "$nodeHandle": 5,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30494,7 +30890,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30518,7 +30914,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30580,7 +30976,7 @@
       "$nodeHandle": 6,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30628,7 +31024,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30652,7 +31048,7 @@
         "$named": false
       },
       "_alternative": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30690,7 +31086,7 @@
       "$nodeHandle": 7,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30714,7 +31110,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30738,7 +31134,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30762,7 +31158,7 @@
         "$named": false
       },
       "_alternative": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30800,7 +31196,7 @@
       "$nodeHandle": 8,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -30848,7 +31244,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -30872,7 +31268,7 @@
         "$named": false
       },
       "_alternative": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30910,7 +31306,7 @@
       "$nodeHandle": 9,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -30958,7 +31354,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -31020,7 +31416,7 @@
       "$nodeHandle": 10,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -31068,7 +31464,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -31130,7 +31526,7 @@
       "$nodeHandle": 11,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -31178,7 +31574,7 @@
         "$named": false
       },
       "_consequence": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -31223,7 +31619,7 @@
     "pattern": "conditional_type",
     "edits": [],
     "expectedSourceOut": "T extends { x: infer X extends number }?X:never",
-    "expectedReparseTree": "(conditional_type left: (type_identifier) right: (object_type members: (object_type_content (object_type_content_comma (property_signature name: (property_identifier) type: (type_annotation type: (infer_type type_identifier: (type_identifier) type: (predefined_type))))))) consequence: (type_identifier) alternative: (predefined_type))",
+    "expectedReparseTree": "(conditional_type left: (type_identifier) right: (object_type members: (object_type_content (object_type_content_comma (property_signature name: (property_identifier) type: (type_annotation type: (infer_type type_identifier: (type_identifier) constraint: (predefined_type))))))) consequence: (type_identifier) alternative: (predefined_type))",
     "wrappedText": "type _X = T extends { x: infer X extends number }?X:never;",
     "wrappedOffset": 10
   },
@@ -31252,7 +31648,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -31302,7 +31698,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -31786,7 +32182,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -31836,7 +32232,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -31886,7 +32282,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -32007,7 +32403,7 @@
     "pattern": "type_annotation",
     "edits": [],
     "expectedSourceOut": ":infer X extends number",
-    "expectedReparseTree": "(type_annotation type: (infer_type type_identifier: (type_identifier) type: (predefined_type)))",
+    "expectedReparseTree": "(type_annotation type: (infer_type type_identifier: (type_identifier) constraint: (predefined_type)))",
     "wrappedText": "let _:infer X extends number;",
     "wrappedOffset": 5
   },
@@ -32036,7 +32432,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -32074,7 +32470,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -32136,7 +32532,7 @@
         "$named": false
       },
       "_type_identifier": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -32186,7 +32582,7 @@
         "$named": false
       },
       "_type_identifier": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Y",
         "$span": {
@@ -32236,7 +32632,7 @@
         "$named": false
       },
       "_type_identifier": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X",
         "$span": {
@@ -32259,80 +32655,6 @@
     "expectedSourceOut": "infer X",
     "expectedReparseTree": "(infer_type type_identifier: (type_identifier))",
     "wrappedText": "type _X = infer X;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 317,
-      "$source": 0,
-      "$span": {
-        "start": 420,
-        "end": 442
-      },
-      "$nodeHandle": 3,
-      "$named": true,
-      "_infer": {
-        "$type": 146,
-        "$source": 0,
-        "$text": "infer",
-        "$span": {
-          "start": 420,
-          "end": 425
-        },
-        "$nodeHandle": 3,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_type_identifier": {
-        "$type": 430,
-        "$source": 0,
-        "$text": "X",
-        "$span": {
-          "start": 426,
-          "end": 427
-        },
-        "$nodeHandle": 3,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_constraint": {
-        "$type": 138,
-        "$source": 0,
-        "$text": "extends",
-        "$span": {
-          "start": 428,
-          "end": 435
-        },
-        "$nodeHandle": 3,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_type": {
-        "$type": 335,
-        "$source": 0,
-        "$text": "number",
-        "$span": {
-          "start": 436,
-          "end": 442
-        },
-        "$nodeHandle": 3,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "infer X extends number"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "infer X extends number",
-    "pattern": "infer_type",
-    "edits": [],
-    "expectedSourceOut": "infer X extends number",
-    "expectedReparseTree": "(infer_type type_identifier: (type_identifier) type: (predefined_type))",
-    "wrappedText": "type _X = infer X extends number;",
     "wrappedOffset": 10
   },
   {
@@ -32422,7 +32744,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "x: infer X",
         "$span": {
@@ -32434,7 +32756,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -32484,7 +32806,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "x: infer X extends number",
         "$span": {
@@ -32496,7 +32818,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -32517,7 +32839,7 @@
     "pattern": "object_type",
     "edits": [],
     "expectedSourceOut": "{ x: infer X extends number }",
-    "expectedReparseTree": "(object_type members: (object_type_content (object_type_content_comma (property_signature name: (property_identifier) type: (type_annotation type: (infer_type type_identifier: (type_identifier) type: (predefined_type)))))))",
+    "expectedReparseTree": "(object_type members: (object_type_content (object_type_content_comma (property_signature name: (property_identifier) type: (type_annotation type: (infer_type type_identifier: (type_identifier) constraint: (predefined_type)))))))",
     "wrappedText": "type _X = { x: infer X extends number };",
     "wrappedOffset": 10
   },
@@ -32598,7 +32920,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -32696,7 +33018,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -32782,7 +33104,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[B in keyof C & string as `get${Capitalize<P>}`]: () => A[B]",
         "$span": {
@@ -32794,7 +33116,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -32844,7 +33166,7 @@
         "$named": false
       },
       "_members": {
-        "$type": 354,
+        "$type": 356,
         "$source": 0,
         "$text": "[B in keyof C & string as `${P}1` | `${P}2`]: A[B]",
         "$span": {
@@ -32856,7 +33178,7 @@
         "$named": true
       },
       "_closing": {
-        "$type": 7,
+        "$type": 6,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -33030,7 +33352,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "C",
         "$span": {
@@ -33080,7 +33402,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "C",
         "$span": {
@@ -33118,7 +33440,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Capitalize",
         "$span": {
@@ -33380,7 +33702,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -33404,7 +33726,7 @@
         "$named": false
       },
       "_index_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "B",
         "$span": {
@@ -33454,7 +33776,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -33478,7 +33800,7 @@
         "$named": false
       },
       "_index_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "B",
         "$span": {
@@ -33654,7 +33976,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Foo",
         "$span": {
@@ -33690,7 +34012,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -33752,7 +34074,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Foo",
         "$span": {
@@ -33788,7 +34110,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -34148,7 +34470,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "Foo",
         "$span": {
@@ -34282,7 +34604,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -34363,7 +34685,7 @@
     "input": {
       "$type": 166,
       "$source": 0,
-      "$children": [
+      "$other": [
         {
           "$type": 99,
           "$source": 0,
@@ -34448,7 +34770,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X1",
         "$span": {
@@ -34534,7 +34856,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "X2",
         "$span": {
@@ -34911,7 +35233,7 @@
     "input": {
       "$type": 166,
       "$source": 0,
-      "$children": [
+      "$other": [
         {
           "$type": 99,
           "$source": 0,
@@ -34994,7 +35316,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 432,
         "$source": 0,
         "$text": "T",
         "$span": {

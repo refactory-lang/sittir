@@ -128,6 +128,7 @@ export const enum SyntaxKind {
   MacroDefinitionParen = "_macro_definition_paren",
   MatchArmBlockEnding = "_match_arm_block_ending",
   MatchArmWithComma = "_match_arm_with_comma",
+  MatchBlockOptional1 = "_match_block_optional1",
   MatchPatternOptional1 = "_match_pattern_optional1",
   ModItemInline = "_mod_item_inline",
   NonSpecialToken = "_non_special_token",
@@ -2478,6 +2479,14 @@ export interface MatchArmWithComma {
   value(): Expression;
 }
 
+export interface MatchBlockOptional1 {
+  readonly $type: "_match_block_optional1";
+  readonly _match_arm?: readonly (MatchArm)[];
+  readonly _last_arm: LastMatchArm;
+  matchArms(): readonly (MatchArm)[];
+  lastArm(): LastMatchArm;
+}
+
 export interface MatchPatternOptional1 {
   readonly $type: "_match_pattern_optional1";
   readonly _condition?: Condition;
@@ -3389,7 +3398,9 @@ export interface MatchArm {
 export interface MatchBlock {
   readonly $type: TSKindId.MatchBlock;
   readonly _match_arm?: readonly (MatchArm)[];
+  readonly _last_arm: LastMatchArm;
   matchArms(): readonly (MatchArm)[];
+  lastArm(): LastMatchArm;
 }
 
 export interface MatchExpression {
@@ -4059,6 +4070,7 @@ export interface MacroDefinitionBracketTree extends AnyTreeNode { readonly type:
 export interface MacroDefinitionParenTree extends AnyTreeNode { readonly type: "_macro_definition_paren"; }
 export interface MatchArmBlockEndingTree extends AnyTreeNode { readonly type: "_match_arm_block_ending"; }
 export interface MatchArmWithCommaTree extends AnyTreeNode { readonly type: "_match_arm_with_comma"; }
+export interface MatchBlockOptional1Tree extends AnyTreeNode { readonly type: "_match_block_optional1"; }
 export interface MatchPatternOptional1Tree extends AnyTreeNode { readonly type: "_match_pattern_optional1"; }
 export interface ModItemInlineTree extends AnyTreeNode { readonly type: "_mod_item_inline"; }
 export interface NonSpecialTokenTree extends AnyTreeNode { readonly type: "_non_special_token"; }
@@ -4759,6 +4771,7 @@ export type RustNode =
   | MacroDefinitionParen
   | MatchArmBlockEnding
   | MatchArmWithComma
+  | MatchBlockOptional1
   | MatchPatternOptional1
   | ModItemInline
   | NonSpecialToken
@@ -4984,6 +4997,7 @@ export interface KindMap {
   '_macro_definition_paren': MacroDefinitionParen;
   '_match_arm_block_ending': MatchArmBlockEnding;
   '_match_arm_with_comma': MatchArmWithComma;
+  '_match_block_optional1': MatchBlockOptional1;
   '_match_pattern_optional1': MatchPatternOptional1;
   '_mod_item_inline': ModItemInline;
   '_non_special_token': NonSpecialToken;
@@ -5240,6 +5254,7 @@ export interface MacroDefinitionBracketNs extends NodeNs<MacroDefinitionBracket,
 export interface MacroDefinitionParenNs extends NodeNs<MacroDefinitionParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchArmBlockEndingNs extends NodeNs<MatchArmBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchArmWithCommaNs extends NodeNs<MatchArmWithComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchBlockOptional1Ns extends NodeNs<MatchBlockOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchPatternOptional1Ns extends NodeNs<MatchPatternOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ModItemInlineNs extends NodeNs<ModItemInline, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface NonSpecialTokenNs extends NodeNs<NonSpecialToken, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5464,6 +5479,7 @@ export interface NamespaceMap {
   '_macro_definition_paren': MacroDefinitionParenNs;
   '_match_arm_block_ending': MatchArmBlockEndingNs;
   '_match_arm_with_comma': MatchArmWithCommaNs;
+  '_match_block_optional1': MatchBlockOptional1Ns;
   '_match_pattern_optional1': MatchPatternOptional1Ns;
   '_mod_item_inline': ModItemInlineNs;
   '_non_special_token': NonSpecialTokenNs;
@@ -5982,6 +5998,13 @@ export namespace MatchArmWithComma {
   export type Loose = LooseFor<'_match_arm_with_comma'>;
   export type Tree = TreeFor<'_match_arm_with_comma'>;
   export type Kind = '_match_arm_with_comma';
+}
+export namespace MatchBlockOptional1 {
+  export type Config = ConfigFor<'_match_block_optional1'>;
+  export type Fluent = FluentFor<'_match_block_optional1'>;
+  export type Loose = LooseFor<'_match_block_optional1'>;
+  export type Tree = TreeFor<'_match_block_optional1'>;
+  export type Kind = '_match_block_optional1';
 }
 export namespace MatchPatternOptional1 {
   export type Config = ConfigFor<'_match_pattern_optional1'>;
