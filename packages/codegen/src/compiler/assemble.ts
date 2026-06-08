@@ -1346,8 +1346,12 @@ function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
  * "all text" when every leaf is a string or pattern and there are
  * no symbol references. Walked recursively through seq/choice/
  * optional/repeat/token/variant/clause/group wrappers.
+ *
+ * Exported so the slot-grouping diagnostic can reuse the SAME predicate
+ * to suppress content-collision false-positives on pattern kinds — DRY:
+ * one definition, no mirrored copy that can drift (e.g. the REPEAT1 case).
  */
-function isAllTextShape(rule: Rule): boolean {
+export function isAllTextShape(rule: Rule): boolean {
 	switch (rule.type) {
 		case STRING:
 		case PATTERN:
