@@ -47,10 +47,6 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 				templateEmitter.emitBranch?.(node);
 				renderModuleEmitter.emitBranch?.(node);
 				break;
-			case 'polymorph':
-				templateEmitter.emitPolymorph?.(node);
-				renderModuleEmitter.emitPolymorph?.(node);
-				break;
 			case 'group':
 				templateEmitter.emitGroup?.(node);
 				renderModuleEmitter.emitGroup?.(node);

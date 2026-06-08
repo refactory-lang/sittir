@@ -75,7 +75,6 @@ function classify(node: AssembledNode): RenderKindPath {
 	switch (node.modelType) {
 		case 'branch':
 		case 'group':
-		case 'polymorph':
 			return 'template';
 		case 'pattern':
 		case 'keyword':

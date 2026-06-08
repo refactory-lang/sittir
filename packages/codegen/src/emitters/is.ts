@@ -145,8 +145,7 @@ export function emitIs(config: EmitIsConfig): string {
 
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
-			case 'branch':
-			case 'polymorph': {
+			case 'branch': {
 				const numericId = kindIdByKind.get(kind);
 				// TSGrammar-only skip: when kindEntries is available and this kind
 				// has no parser symbol, do not emit a guard for it — it has no

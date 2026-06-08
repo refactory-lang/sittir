@@ -516,11 +516,12 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		expect(derivedKinds).toEqual(['visibility_modifier_pub_self', 'visibility_modifier_pub_super']);
 	});
 
-	it('applyOverridePolymorphs replaces rule when registered variant children DO match found choice', () => {
-		// Positive case mirroring python's `assignment` shape — the choice
-		// IS at the top level after `tagVariants` strips its variant wraps,
-		// and each member is `symbol(${parent}_${child})`. Expect the rule
-		// to be replaced with a PolymorphRule(source='override').
+	it('applyOverridePolymorphs leaves rule as choice when registered variant children match found choice (de-polymorph)', () => {
+		// DE-POLYMORPH (2026-06-01): applyOverridePolymorphs no longer rewrites
+		// the parent rule into a PolymorphRule. The rule stays as the
+		// wire-produced choice so it flows through as a plain BRANCH with
+		// faithful order-preserving rendering. variant() / polymorphVariants
+		// metadata is still retained for factory submethod sugar.
 		const raw = makeRaw(
 			{
 				assignment: {
@@ -572,14 +573,8 @@ describe('Link — variant tagging + polymorph promotion', () => {
 			}
 		);
 		const linked = link(raw);
-		expect(linked.rules['assignment']!.type).toBe('polymorph');
-		const poly = linked.rules['assignment'] as {
-			type: 'polymorph';
-			forms: { name: string }[];
-			source: string;
-		};
-		expect(poly.source).toBe('override');
-		expect(poly.forms.map((f) => f.name).sort()).toEqual(['eq', 'type']);
+		// Rule stays as choice (not replaced with polymorph) after de-polymorph.
+		expect(linked.rules['assignment']!.type).toBe('choice');
 	});
 
 	it('homogeneous-field choices stay as raw choice (not polymorph)', () => {

@@ -548,11 +548,8 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 }
 
 function renderSlotAuditVariantsOf(
-	node: Extract<AssembledNode, { modelType: 'branch' | 'group' | 'polymorph' }>
+	node: Extract<AssembledNode, { modelType: 'branch' | 'group' }>
 ): readonly (readonly AssembledNonterminal[])[] {
-	if (node.modelType === 'polymorph') {
-		return node.forms.map((form) => Object.values(form.slots));
-	}
 	return [Object.values(node.slots)];
 }
 
@@ -565,7 +562,7 @@ function renderSlotAuditKey(slot: AssembledNonterminal): string {
 function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 	if (
 		node === undefined ||
-		(node.modelType !== 'branch' && node.modelType !== 'group' && node.modelType !== 'polymorph')
+		(node.modelType !== 'branch' && node.modelType !== 'group')
 	) {
 		return {
 			named: [],
@@ -953,9 +950,6 @@ function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotCl
 			if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) return { tag: 'heterogeneous' };
 			return { tag: 'supertype', supertypeName: node.typeName };
 		}
-		if (node.modelType === 'polymorph') {
-			return { tag: 'concrete', kind: cls.kind, typeName: node.typeName };
-		}
 		// Concrete node: use the assembled typeName (PascalCase, leading-underscore-
 		// stripped by the assemble phase). This ensures the render fn name and
 		// struct type name match what renderTypedLeafFn / renderTypedBranchFn emit
@@ -1124,7 +1118,7 @@ function renderTypedDispatch(
 		// AssembledEnum nodes (perSlotEnum — e.g. RangeExpressionBinaryOperatorEnum) and
 		// polymorph nodes (e.g. ArrayExpressionTransport) generate Rust enums, not structs,
 		// and have no such field. Fall through to `_ => None` for those.
-		if (node instanceof AssembledEnum || node.modelType === 'polymorph') continue;
+		if (node instanceof AssembledEnum) continue;
 		const variant = rustTransportVariantName(node);
 		lines.push(`            Self::${variant}(t) => t.transport_named,`);
 	}
@@ -1156,8 +1150,7 @@ function renderTypedKindFn(
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
-		case 'group':
-		case 'polymorph': {
+		case 'group': {
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
 				// No template for this kind — fall back to joining children/text.
@@ -3146,8 +3139,7 @@ function renderTransportToNodeFns(
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
-		case 'group':
-		case 'polymorph': {
+		case 'group': {
 			const slotModel = renderSlotModelOf(node);
 			return renderTransportDataToNodeFn(
 				rustTransportToNodeFnName(node.typeName),
@@ -3613,9 +3605,6 @@ function renderTransportStruct(
 		// Enum modelType: emit a Rust enum type with FromNapiValue / Display / RenderableTransport.
 		return renderEnumType(node, hasNapi, kindEntries);
 	}
-	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		return renderPolymorphTransportDefs(node, nodeMap);
-	}
 	const slotModel = renderSlotModelOf(node);
 	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap);
 }
@@ -3649,7 +3638,6 @@ function renderTransportDataStruct(
 	switch (node.modelType) {
 		case 'branch':
 		case 'group':
-		case 'polymorph':
 			lines.push(...renderTransportMetadataFields(true));
 			// Per cleanup-rules §E1: named and unnamed slots emit symmetric per-slot
 			// transport fields. JS factories write `_<storageName>` keys for every

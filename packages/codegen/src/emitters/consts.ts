@@ -33,7 +33,6 @@ export function emitConsts(config: EmitConstsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'polymorph':
 				nodeKinds.push(kind);
 				break;
 			case 'pattern':
@@ -619,26 +618,13 @@ function pascalCaseFromCamel(s: string): string {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Yield the fields of a node — branch, polymorph (via forms), group. */
+/** Yield the fields of a node — branch or group. */
 function fieldsOfNode(node: AssembledNode): readonly AssembledNonterminal[] {
 	switch (node.modelType) {
 		case 'branch':
 			return node.fields;
 		case 'group':
 			return node.fields;
-		case 'polymorph': {
-			const seen = new Set<string>();
-			const out: AssembledNonterminal[] = [];
-			for (const form of node.forms) {
-				for (const f of form.fields) {
-					if (!seen.has(f.name)) {
-						seen.add(f.name);
-						out.push(f);
-					}
-				}
-			}
-			return out;
-		}
 		default:
 			return [];
 	}
@@ -648,20 +634,6 @@ function getFields(node: AssembledNode) {
 	switch (node.modelType) {
 		case 'branch':
 			return node.fields;
-		case 'polymorph': {
-			// Union of all form fields
-			const seen = new Set<string>();
-			const fields: AssembledNonterminal[] = [];
-			for (const form of node.forms) {
-				for (const f of form.fields) {
-					if (!seen.has(f.name)) {
-						seen.add(f.name);
-						fields.push(f);
-					}
-				}
-			}
-			return fields;
-		}
 		default:
 			return [];
 	}

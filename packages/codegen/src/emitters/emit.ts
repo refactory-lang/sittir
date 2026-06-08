@@ -194,13 +194,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
 				renderModuleEmitterInst?.emitBranch?.(node);
 				break;
-			case 'polymorph':
-				if (factoryEmission === 'emit') factoryEmitter.emitPolymorph(node);
-				if (fromEmission === 'emit') fromEmitter.emitPolymorph(node);
-				if (wrapEmission === 'emit') wrapEmitter.emitPolymorph(node);
-				if (templateEmission === 'emit') templateEmitter.emitPolymorph(node);
-				renderModuleEmitterInst?.emitPolymorph?.(node);
-				break;
 			case 'group':
 				if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
 				if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);

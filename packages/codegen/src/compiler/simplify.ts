@@ -1158,16 +1158,6 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 			const out = visit(content);
 			return out === content ? rule : ({ ...rule, content: out } as Rule);
 		}
-		case 'polymorph': {
-			const forms = rule.forms;
-			let changed = false;
-			const next = forms.map((f) => {
-				const out = visit(f.content);
-				if (out !== f.content) changed = true;
-				return out === f.content ? f : { ...f, content: out };
-			});
-			return changed ? ({ ...rule, forms: next } as Rule) : rule;
-		}
 		default:
 			return rule;
 	}

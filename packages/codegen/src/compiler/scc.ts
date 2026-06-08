@@ -192,11 +192,6 @@ function structuralSingularSlots(node: AssembledNode): readonly AssembledNonterm
 	let slots: readonly AssembledNonterminal[];
 	if (node.modelType === 'branch' || node.modelType === 'group') {
 		slots = Object.values(node.slots);
-	} else if (node.modelType === 'polymorph') {
-		// Polymorph forms each contribute their own slot inventory.
-		// Walk every form's slots (raw cross-form flatten); duplicates
-		// only add identical edges, which `Set` deduplicates anyway.
-		slots = node.forms.flatMap((form) => Object.values(form.slots));
 	} else {
 		return [];
 	}

@@ -384,14 +384,6 @@ function canonicalizeRuleLiterals(
 				...rule,
 				content: canonicalizeRuleLiterals(rule.content, kindEntries, true)
 			};
-		case 'polymorph':
-			return {
-				...rule,
-				forms: rule.forms.map((form) => ({
-					...form,
-					content: canonicalizeRuleLiterals(form.content, kindEntries, true)
-				}))
-			};
 		case STRING: {
 			if (!allowLiteralRewrite) return rule;
 			const entry = findGeneratedKindEntry(kindEntries, rule.value);
@@ -1021,7 +1013,7 @@ export function applyOverridePolymorphs(
 
 	for (const [parentKind, children] of parentToChildren) {
 		const rule = rules[parentKind];
-		if (!rule || rule.type === 'polymorph') continue;
+		if (!rule) continue;
 
 		const found = findVariantChoice(rule);
 		if (!found) continue;
@@ -1443,7 +1435,6 @@ export function isTerminalShape(rule: Rule): boolean {
 		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
 		case SUPERTYPE:
 		case GROUP:
-		case 'polymorph':
 			return false; // already has a structural classification
 
 		case FIELD:
@@ -1518,8 +1509,6 @@ function isTerminalShape_allowBareTerm(rule: Rule): boolean {
 		case ALIAS:
 		case TOKEN:
 			return isTerminalShape_allowBareTerm(rule.content);
-		case 'polymorph':
-			return false;
 	}
 	return false;
 }

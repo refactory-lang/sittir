@@ -73,10 +73,9 @@ export interface SharedArmAttrs {
 
 const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1, array: 2, nonEmptyArray: 3 };
 
-/** The arms of a choice (`members`) or polymorph (form `content`s); `[]` otherwise. */
+/** The arms of a choice (`members`); `[]` otherwise. */
 function armsOf(rule: Rule): readonly Rule[] {
 	if (rule.type === CHOICE) return rule.members;
-	if (rule.type === 'polymorph') return rule.forms.map((f) => f.content);
 	return [];
 }
 

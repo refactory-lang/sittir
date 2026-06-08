@@ -42,9 +42,6 @@ function findSymbolRefs(rule: Rule, name: string, found: Rule[] = []): Rule[] {
 	if ('content' in rule && rule.content && typeof rule.content === 'object') {
 		findSymbolRefs(rule.content as Rule, name, found);
 	}
-	if (rule.type === 'polymorph') {
-		for (const f of rule.forms) findSymbolRefs(f.content, name, found);
-	}
 	return found;
 }
 

@@ -130,74 +130,14 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 			polymorphVariants[kind] = { source: 'override', childKind };
 			continue;
 		}
-		if (node.modelType !== 'polymorph') continue;
-		if (kind.startsWith('_') && !aliasSet.has(kind) && !overrideHelperKinds.has(kind)) continue;
-		if (node.source === 'override') {
-			const childKind: Record<string, string> = {};
-			const helperKind: Record<string, string> = {};
-			const helperChildKind: Record<string, readonly string[]> = {};
-			for (const form of node.formRules) {
-				const discriminatorKinds = form.discriminatorKinds ?? [`${kind}_${form.name}`];
-				for (const runtimeKind of expandRuntimeDiscriminatorKinds(discriminatorKinds, nodeMap)) {
-					childKind[runtimeKind] = form.name;
-				}
-				const formHelperKind = `_${kind}_${form.name}`;
-				if (nodeMap.nodes.has(formHelperKind)) {
-					helperKind[form.name] = formHelperKind;
-					const surfaceKinds = collectHelperChildKinds(formHelperKind, nodeMap);
-					if (surfaceKinds.length > 0) {
-						helperChildKind[form.name] = surfaceKinds;
-					}
-				}
-			}
-			polymorphVariants[kind] = {
-				source: 'override',
-				childKind,
-				...(Object.keys(helperKind).length > 0 ? { helperKind } : {}),
-				...(Object.keys(helperChildKind).length > 0 ? { helperChildKind } : {})
-			};
-		} else {
-			const fields: Record<string, readonly string[]> = {};
-			const seenSignatures = new Map<string, string>();
-			for (const form of node.forms) {
-				const fieldNames = form.fields.map((f) => f.configKey);
-				const signature = [...fieldNames].sort().join(',');
-				const prior = seenSignatures.get(signature);
-				if (prior !== undefined) {
-					// Two forms with identical field-key sets can't be
-					// disambiguated by field-presence at runtime. We warn
-					// (not throw) because the grammar may legitimately
-					// have shape-identical variants whose semantic
-					// difference is anonymous-token positions (e.g. TS's
-					// `export_statement` / `variable_declarator`) and
-					// `.from()` callers for those go through declaration
-					// order — first-match-wins, stable-by-spec. Callers
-					// who need the second form pass `$variant` explicitly.
-					console.warn(
-						`[factory-map] polymorph '${kind}': forms '${prior}' and '${form.name}' share field signature [${signature || '(empty)'}]. ` +
-							`.from() without $variant will dispatch to '${prior}' by declaration order.`
-					);
-				}
-				seenSignatures.set(signature, form.name);
-				fields[form.name] = fieldNames;
-			}
-			polymorphVariants[kind] = { source: 'promoted', fields };
-		}
 	}
 
 	return { factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
 }
 
-function collectOverridePolymorphHelperKinds(nodeMap: NodeMap): Set<string> {
-	const out = new Set<string>();
-	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'polymorph' || node.source !== 'override') continue;
-		for (const form of node.forms) {
-			const helperKind = `_${kind}_${form.name}`;
-			if (nodeMap.nodes.has(helperKind)) out.add(helperKind);
-		}
-	}
-	return out;
+function collectOverridePolymorphHelperKinds(_nodeMap: NodeMap): Set<string> {
+	// No grammar rule produces modelType 'polymorph' at runtime (excised in #59 A1).
+	return new Set<string>();
 }
 
 function collectHelperChildKinds(kind: string, nodeMap: NodeMap): string[] {

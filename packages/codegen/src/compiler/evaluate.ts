@@ -1915,12 +1915,6 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, Rule>): Rea
 			if (rule.aliasedFrom?.startsWith('_')) candidates.add(rule.aliasedFrom);
 			return;
 		}
-		// Polymorph: `forms` is PolymorphForm[] (content-bearing), NOT Rule[] —
-		// recurse into each form's `.content`.
-		if (rule.type === 'polymorph') {
-			for (const form of rule.forms) walk(form.content);
-			return;
-		}
 		// Generic structural recursion via typed `in` narrowing (no Record cast).
 		if ('members' in rule && Array.isArray(rule.members)) {
 			for (const m of rule.members) walk(m);

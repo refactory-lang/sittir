@@ -240,8 +240,6 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 	switch (node.modelType) {
 		case 'branch':
 			return emitBranchTemplate(node, ctxK);
-		case 'polymorph':
-			return emitPolymorphTemplate(node, ctxK);
 		case 'group':
 			return emitGroupTemplate(node, ctxK);
 		case 'multi':
@@ -473,19 +471,6 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
 			}
 			return acc ?? UNKNOWN_END;
 		}
-		case 'polymorph': {
-			let acc: BoundaryEnd | undefined;
-			for (const f of rule.forms) {
-				const end = rightmostBoundary(f.content);
-				if (end.kind === 'unknown') return UNKNOWN_END;
-				if (acc === undefined) acc = end;
-				else if (acc.kind !== end.kind) return UNKNOWN_END;
-				else if (acc.kind === 'literal' && end.kind === 'literal' && acc.text !== end.text) {
-					return UNKNOWN_END;
-				}
-			}
-			return acc ?? UNKNOWN_END;
-		}
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
@@ -533,19 +518,6 @@ function leftmostBoundary(rule: Rule): BoundaryEnd {
 			let acc: BoundaryEnd | undefined;
 			for (const m of rule.members) {
 				const end = leftmostBoundary(m);
-				if (end.kind === 'unknown') return UNKNOWN_END;
-				if (acc === undefined) acc = end;
-				else if (acc.kind !== end.kind) return UNKNOWN_END;
-				else if (acc.kind === 'literal' && end.kind === 'literal' && acc.text !== end.text) {
-					return UNKNOWN_END;
-				}
-			}
-			return acc ?? UNKNOWN_END;
-		}
-		case 'polymorph': {
-			let acc: BoundaryEnd | undefined;
-			for (const f of rule.forms) {
-				const end = leftmostBoundary(f.content);
 				if (end.kind === 'unknown') return UNKNOWN_END;
 				if (acc === undefined) acc = end;
 				else if (acc.kind !== end.kind) return UNKNOWN_END;
@@ -1130,11 +1102,9 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			return '\n';
 
 		case SUPERTYPE:
-		case 'polymorph':
-			// Supertype + polymorph rules are dispatched at the modelType
-			// boundary (`emitPolymorphTemplate` / supertype short-circuit
-			// in `emitOne`), not inside nested rule walks. Reaching them
-			// here means we're emitting an inline supertype/polymorph
+			// Supertype rules are dispatched at the modelType boundary
+			// (supertype short-circuit in `emitOne`), not inside nested rule
+			// walks. Reaching here means we're emitting an inline supertype
 			// reference; defer to per-modelType emit by returning empty.
 			return '';
 
@@ -1832,9 +1802,6 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				break;
 			case 'branch':
 				te.emitBranch(node);
-				break;
-			case 'polymorph':
-				te.emitPolymorph(node);
 				break;
 			case 'group':
 				te.emitGroup(node);

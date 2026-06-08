@@ -104,10 +104,6 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 			case 'group':
 				for (const s of Object.values(node.slots)) for (const t of slotKindNames(s)) referenced.add(t);
 				break;
-			case 'polymorph':
-				for (const form of node.forms)
-					for (const s of Object.values(form.slots)) for (const t of slotKindNames(s)) referenced.add(t);
-				break;
 			case 'supertype':
 				for (const t of node.subtypes) referenced.add(t);
 				break;
@@ -971,8 +967,7 @@ export type ChildFactorySurface = 'direct' | 'spread';
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
 	if (
 		node.modelType !== 'branch' &&
-		node.modelType !== 'group' &&
-		node.modelType !== 'polymorph'
+		node.modelType !== 'group'
 	) {
 		return { tag: 'multiSlot' };
 	}
@@ -1013,8 +1008,7 @@ export function computeSlotClasses(nodeMap: NodeMap): void {
 	for (const [, node] of nodeMap.nodes) {
 		if (
 			node.modelType === 'branch' ||
-			node.modelType === 'group' ||
-			node.modelType === 'polymorph'
+			node.modelType === 'group'
 		) {
 			node.slotClass = classifyBranchSlots(node, nodeMap);
 		}
@@ -1091,8 +1085,7 @@ function hasOptionalUserContentChildren(children: readonly AssembledNonterminal[
 export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap): readonly string[] | undefined {
 	switch (node.modelType) {
 		case 'branch':
-		case 'group':
-		case 'polymorph': {
+		case 'group': {
 			const fields = configurableFactoryFields(node.fields, nodeMap);
 			if (fields.length === 0) return undefined;
 			if (hasUserFacingFactoryChildren(node.children, nodeMap)) return undefined;
@@ -1161,8 +1154,6 @@ export function classifyFactoryShape(
 		}
 		case 'group':
 			return resolveSingleFieldFactorySlot(node, nodeMap) ? 'direct' : 'config';
-		case 'polymorph':
-			return 'config';
 		default:
 			return null;
 	}

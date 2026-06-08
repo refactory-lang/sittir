@@ -202,40 +202,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	for (const node of structNodes) {
 		generatedTypes.add(node.typeName);
 
-		// Polymorph kinds always emit per-form interfaces so factories /
-		// from / dispatch code can reference `T.<FormTypeName>` without
-		// drift. Single-form polymorphs still need the form interface
-		// because the dispatcher types its `config` parameter as
-		// `ConfigOf<T.<FormTypeName>>` — gating on `forms.length > 1`
-		// produced dangling imports for grammars like python whose
-		// `expression_statement` collapses to one tuple form.
-		if (node.modelType === 'polymorph' && node.forms.length > 0) {
-			const formTypeNames: string[] = [];
-			for (const form of node.forms) {
-				const ftn = resolvePolymorphFormTypeName(form);
-				formTypeNames.push(ftn);
-				emitFormInterface(
-					lines,
-					node,
-					form,
-					ftn,
-					nodeMap,
-					lookupUnion,
-					kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries),
-					kindEntries
-				);
-			}
-			if (node.forms.length > 1) {
-				lines.push(`export type ${node.typeName} = ${formTypeNames.join(' | ')};`);
-			} else {
-				// Single-form polymorph — expose the parent kind's type name
-				// as an alias over the lone form so consumer references to
-				// `T.<ParentTypeName>` continue to resolve.
-				lines.push(`export type ${node.typeName} = ${formTypeNames[0]};`);
-			}
-			polymorphTypeNames.set(node.kind, formTypeNames);
-		} else {
-			emitInterface(
+		emitInterface(
 				lines,
 				node,
 				nodeMap,
@@ -243,7 +210,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 				kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries),
 				kindEntries
 			);
-		}
 	}
 	lines.push('');
 
@@ -312,18 +278,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('}');
 	lines.push('');
-
-	if (polymorphTypeNames.size > 0) {
-		lines.push('export interface VariantMap {');
-		for (const [kind, formNames] of polymorphTypeNames) {
-			const node = nodeMap.nodes.get(kind);
-			if (node?.modelType !== 'polymorph') continue;
-			const entries = node.forms.map((f, i) => `${f.name}: ${formNames[i]}`);
-			lines.push(`  '${kind}': { ${entries.join('; ')} };`);
-		}
-		lines.push('}');
-		lines.push('');
-	}
 
 	// ConfigMap / LooseMap dropped (spec 008 US7 landing) — consumers use
 	// `NamespaceMap[K]['Config']` / `['Loose']` or the generic accessors
@@ -489,7 +443,6 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'polymorph':
 				structNodes.push(node);
 				break;
 			case 'group':

@@ -310,31 +310,9 @@ function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
 	return out;
 }
 
-function buildWrapVariantDescriptors(nodeMap: NodeMap): Readonly<Record<string, WrapVariantDescriptor>> {
-	const out: Record<string, WrapVariantDescriptor> = {};
-	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'polymorph') continue;
-		const polymorph = node as AssembledPolymorph;
-		if (polymorph.source === 'override') {
-			const childKind: Record<string, string> = {};
-			for (const form of polymorph.formRules) {
-				const discriminatorKinds = form.discriminatorKinds ?? [`${kind}_${form.name}`];
-				for (const runtimeKind of expandRuntimeDiscriminatorKinds(discriminatorKinds, nodeMap)) {
-					childKind[runtimeKind] = form.name;
-				}
-			}
-			out[kind] = { source: 'override', childKind };
-			continue;
-		}
-		const slots: Record<string, readonly string[]> = {};
-		for (const form of polymorph.forms) {
-			const requiredSlots = form.fields.map((field) => `_${field.name}`);
-			if (form.children.length > 0) requiredSlots.push('$other');
-			slots[form.name] = requiredSlots;
-		}
-		out[kind] = { source: 'promoted', slots };
-	}
-	return out;
+function buildWrapVariantDescriptors(_nodeMap: NodeMap): Readonly<Record<string, WrapVariantDescriptor>> {
+	// No node ever has modelType 'polymorph' at runtime; table is always empty.
+	return {};
 }
 
 /**
@@ -1008,9 +986,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			case 'group':
 				this.emitGroup(node);
 				break;
-			case 'polymorph':
-				this.emitPolymorph(node);
-				break;
 			case 'supertype':
 				this.emitSupertype(node);
 				break;
@@ -1438,7 +1413,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			if (
 				node.modelType === 'branch' ||
 				node.modelType === 'group' ||
-				node.modelType === 'polymorph' ||
 				node.modelType === 'supertype'
 			) {
 				if (!this.#emittedStructuralKinds.has(kind)) continue;

@@ -37,11 +37,6 @@ function findWrappers(rule: Rule, path: string = ''): string[] {
 	if ('content' in rule && rule.content && typeof rule.content === 'object' && 'type' in rule.content) {
 		out.push(...findWrappers(rule.content as Rule, `${path}.content`));
 	}
-	if (rule.type === 'polymorph') {
-		for (let i = 0; i < rule.forms.length; i++) {
-			out.push(...findWrappers(rule.forms[i]!.content, `${path}.forms[${i}].content`));
-		}
-	}
 	return out;
 }
 

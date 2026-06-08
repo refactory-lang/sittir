@@ -310,14 +310,6 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				fields: node.fields.map(serializeField),
 				children: node.children.map(serializeChild)
 			};
-		case 'polymorph':
-			return {
-				...base,
-				modelType: 'polymorph',
-				polymorphSource: node.source,
-				variantChildKinds: [...node.variantChildKinds],
-				forms: node.forms.map(serializeForm)
-			};
 		case 'pattern':
 			return {
 				...base,

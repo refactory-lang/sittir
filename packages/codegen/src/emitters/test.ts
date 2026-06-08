@@ -120,9 +120,6 @@ export function emitTests(config: EmitTestsConfig): string {
 					emitBranchTest(lines, node, kind, key, nodeMap, kindEntries);
 				}
 				break;
-			case 'polymorph':
-				emitPolymorphTest(lines, node, kind, key, nodeMap, kindEntries);
-				break;
 			case 'pattern':
 				emitLeafTest(lines, node, kind, key, kindEntries, nodeMap);
 				break;
@@ -286,8 +283,6 @@ function emitPolymorphTest(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
-	if (node.modelType !== 'polymorph') return;
-
 	// Single-form polymorphs emit ir.<key> as a direct function (no
 	// `.formName` namespace) — the ir bundleExpr only attaches variant
 	// accessors when forms.length > 1. Generate a single direct test

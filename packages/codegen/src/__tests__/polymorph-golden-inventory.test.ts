@@ -1,130 +1,39 @@
 /**
  * polymorph-golden-inventory.test.ts — Task 0 guard
  *
- * Validates the committed partition inventory against the live grammar:
- * - All 36 polymorph kinds are source='override'
- * - 0 shared-signature (every form has a distinct named CST discriminator)
- * - 0 carve-outs
- * - Partition table matches what the nodeMap produces
+ * STATUS: RETIRED (2026-06-01). modelType:'polymorph' no longer exists at runtime.
+ * The 36 polymorph kinds that this inventory tracked are now rendered as plain
+ * branches. The inventory.json fixture is kept for historical reference.
  *
- * This test ensures the inventory.json stays in sync with the grammar as
- * overrides evolve. It does NOT test render output (that's Task 1's job).
+ * The invariant now is: 0 polymorph modelType nodes in any assembled nodeMap.
  */
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { resolve } from 'node:path';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
-import { loadRawEntries } from '../validate/node-types-loader.ts';
-import type { AssembledPolymorph, AssembledGroup } from '../compiler/node-map.ts';
-
-const FIXTURES_DIR = fileURLToPath(new URL('./fixtures/polymorph-golden', import.meta.url));
-
-interface InventoryEntry {
-	grammar: string;
-	kind: string;
-	partition: 'ROUTE-EXISTING' | 'MUST-CONSTRUCT';
-	forms: string[];
-	note?: string;
-}
-
-interface Inventory {
-	totalPolymorphKinds: number;
-	counts: { rust: number; typescript: number; python: number };
-	allSourceOverride: boolean;
-	sharedSignatureCount: number;
-	carveOutCount: number;
-	partitionTable: InventoryEntry[];
-	carveOutSet: string[];
-	baseline: { rustAstMatch: number; typescriptAstMatch: number; pythonAstMatch: number };
-}
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
-describe('polymorph golden inventory — Task 0 guard', () => {
-	let inventory: Inventory;
-
-	it('inventory.json is readable and well-formed', () => {
-		const raw = readFileSync(resolve(FIXTURES_DIR, 'inventory.json'), 'utf-8');
-		inventory = JSON.parse(raw) as Inventory;
-		expect(inventory.totalPolymorphKinds).toBe(36);
-		expect(inventory.allSourceOverride).toBe(true);
-		expect(inventory.sharedSignatureCount).toBe(0);
-		expect(inventory.carveOutCount).toBe(0);
-		expect(inventory.carveOutSet).toHaveLength(0);
-		expect(inventory.partitionTable).toHaveLength(36);
-	});
-
+describe('polymorph golden inventory — Task 0 guard (retired)', () => {
 	for (const grammar of GRAMMARS) {
-		it(`${grammar}: polymorph kinds match inventory`, async () => {
-			const rawEntries = loadRawEntries(grammar);
-			const cstKinds = new Set(rawEntries.map(e => e.type));
-
+		it(`${grammar}: 0 polymorph modelType nodes in assembled nodeMap (de-polymorph invariant)`, async () => {
 			const overridePath = resolveOverridesPath(grammar);
 			const raw = await evaluate(overridePath);
 			const linked = link(raw);
 			const optimized = normalizeGrammar(linked);
 			const nodeMap = assemble(optimized);
 
-			// Collect live polymorph kinds
-			const livePolyKinds = new Set<string>();
-			for (const [kind, node] of nodeMap.nodes) {
-				if (node.modelType !== 'polymorph') continue;
-				livePolyKinds.add(kind);
-
-				const poly = node as AssembledPolymorph;
-				// All must be source=override
-				expect(poly.source, `${grammar}/${kind} source`).toBe('override');
-			}
-
-			// Verify inventory entries for this grammar
-			const inventoryEntries = inventory.partitionTable.filter(e => e.grammar === grammar);
-			const inventoryKinds = new Set(inventoryEntries.map(e => e.kind));
-
-			// Count must match
-			expect(livePolyKinds.size, `${grammar} polymorph kind count`).toBe(inventoryEntries.length);
-
-			// All live kinds must be in inventory
-			for (const kind of livePolyKinds) {
-				expect(inventoryKinds.has(kind), `${grammar}/${kind} in inventory`).toBe(true);
-			}
-
-			// Verify partition: ROUTE-EXISTING = all form-group CST kinds in node-types.json
-			for (const entry of inventoryEntries) {
-				const poly = nodeMap.nodes.get(entry.kind) as AssembledPolymorph;
-				const formGroupCstKinds = (poly.forms as AssembledGroup[]).map(
-					f => f.kind.replace('__form_', '_')
-				);
-
-				if (entry.partition === 'ROUTE-EXISTING') {
-					// ROUTE-EXISTING: all form contents are bare symbol/alias refs.
-					// Each form content in the PolymorphRule should be a single symbol or alias.
-					const parentRule = optimized.rules[entry.kind] ?? optimized.topLevelAliasBodies?.get(entry.kind);
-					if (parentRule && parentRule.type === 'polymorph') {
-						for (const form of parentRule.forms) {
-							const isBare = form.content.type === 'symbol' || form.content.type === 'alias';
-							expect(
-								isBare,
-								`${grammar}/${entry.kind} form '${form.name}' content is bare symbol/alias (ROUTE-EXISTING)`
-							).toBe(true);
-						}
-					}
-				} else if (entry.partition === 'MUST-CONSTRUCT') {
-					// MUST-CONSTRUCT: at least one form has a seq content (fused).
-					const parentRule = optimized.rules[entry.kind] ?? optimized.topLevelAliasBodies?.get(entry.kind);
-					if (parentRule && parentRule.type === 'polymorph') {
-						const hasFused = parentRule.forms.some(f => f.content.type === 'seq');
-						expect(
-							hasFused,
-							`${grammar}/${entry.kind} has at least one fused (seq) form (MUST-CONSTRUCT)`
-						).toBe(true);
-					}
+			let polymorphCount = 0;
+			for (const [, node] of nodeMap.nodes) {
+				// AssembledNode union no longer includes modelType:'polymorph'.
+				// Cast via unknown to check the runtime value for the invariant.
+				if ((node as { modelType: string }).modelType === 'polymorph') {
+					polymorphCount++;
 				}
 			}
+			expect(polymorphCount, `${grammar}: polymorph modelType count`).toBe(0);
 		});
 	}
 });

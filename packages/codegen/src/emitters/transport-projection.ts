@@ -50,7 +50,6 @@ function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
 function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean {
 	switch (node.modelType) {
 		case 'branch':
-		case 'polymorph':
 		case 'pattern':
 		case 'keyword':
 		case 'token':
