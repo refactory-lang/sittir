@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "5c250cc8c93eb95df0af9a1a3c1b3e99c8ea399c6d3f4a4bdb7ef9aab2ba8d5e",
+  "source_hash": "ecddd752363610752f7a728227fce6967f52ce9299e38a699e7284fd2df646c5",
   "files": {
     "packages/rust/.sittir/grammar.js": "ba2307ed89003bef23d1ff38881e36d03de71f92f16de22397b21cf71cd3c674",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
@@ -30,7 +30,7 @@
     "packages/rust/src/type-test.ts": "84a2bb3df9f44dd0c69e109b61a35010a9b776f4829cbbabc04bd2bcf9584518",
     "packages/rust/src/types.ts": "0037fd7d151d61760f9f2924b6015c347596fd5955193f1b6d1e73b230ece0e4",
     "packages/rust/src/utils.ts": "3aa4e8040f417f92d6bfa4c3638e9fb05209c73591c2bad0f03a85f5fa3d8d49",
-    "packages/rust/src/wrap.ts": "4b88155e634fc528c7eea6434a3a73a680e2d9b5a1a6f2dfb8594d510837da53",
+    "packages/rust/src/wrap.ts": "bf36245aa41c099900e8e5818d750e1c97ac5541a5c08533fc407304050bd6e3",
     "packages/rust/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/rust/templates/_array_expression_list.jinja": "cb79ca044a363d6da422cded4329a04e3a518075a248890644bfc0024b61012d",
     "packages/rust/templates/_array_expression_semi.jinja": "fd256325a165b9ec9c6b24c1251cb8bb40e4481ab6f9a7327b0a2de7cc9b23a5",
@@ -430,7 +430,7 @@
     "rust/crates/sittir-rust/templates/yield_expression.jinja": "937585a8a8e14be405f44e7d83f7fedffc4c660ee4e6f6f0379bd4fe42e108a6"
   },
   "host_files": {
-    "rust/crates/sittir-rust/sittir-rust.darwin-arm64.node": "f5d025ad24a73ad62842247ebb4926f2136484b547392c8423ce1539005ab8e4",
+    "rust/crates/sittir-rust/sittir-rust.darwin-arm64.node": "73e6d8813b19d8e0beff17bf0d0a95c2ac43142e1d830572d8bde6266649fe9e",
     "rust/crates/sittir-rust/sittir-rust.node": "bf5a8f7f173c7386e01da5d74a3c4575efccc7405a4dee16f8c1ee9d20ef4fd4"
   }
 }

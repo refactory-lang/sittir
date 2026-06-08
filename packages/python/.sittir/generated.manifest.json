@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "821bb9fad9542f5bee03e35667ed39a94704d7e5954bd4c3e394c7f8fe2420fd",
+  "source_hash": "16d5d5e7e0d29d26e278c50c2e602e6a9cfea45d0f351fe3017ed5cabebad334",
   "files": {
     "packages/python/.sittir/grammar.js": "676cc242eaa78107e30ed26ffd9812747fa4108019f1fffae2d64c6f39c0279f",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -30,7 +30,7 @@
     "packages/python/src/type-test.ts": "161d1501d5f521b705f586f46154cfec9ff974f6b3054a4d0075e749e0641662",
     "packages/python/src/types.ts": "3248513a7e4c31f7a13d0d30c11dc91fe923216a72a20c5ce8c792577bc5be40",
     "packages/python/src/utils.ts": "b6265835f7a8605008a7d0d0188362d6ebe5a73876c19a94c0193d52b5532c9c",
-    "packages/python/src/wrap.ts": "c5ab59932c41d99278e2d9c8775e812291cc68eedf1d33867e7a6f7c4dc06d05",
+    "packages/python/src/wrap.ts": "c5601289db6ed69e6536390af07457d61309161812f08a8af42c67aac18e9836",
     "packages/python/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/python/templates/_as_pattern.jinja": "06f9ddebb937586a9d2f50aa63c363c8861d14d45adae7dafdc3e053c3aca0d8",
     "packages/python/templates/_assignment_eq.jinja": "150fdea50d889b1fbef4e38bb862aee38d11abdebb18b80b93550b3bf5cd7f94",
@@ -278,6 +278,6 @@
     "rust/crates/sittir-python/templates/yield.jinja": "864c1b6eaf2e8558413c893cc1fb8e4cef6dc75000675a62d374a4c454685de4"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "edadaa0516c6eb03f290ab275a2cd022a46dcb22c968cf5bf9cf7d9994bdcf35"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "3ae68ae5c25451d9c0fab5f0835062008e120d35f70234a140bf3b2a9c8478d7"
   }
 }

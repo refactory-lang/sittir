@@ -228,10 +228,16 @@ fn assign_named_slot(
     field_name: &str,
     data: NodeData,
 ) {
-    let entry = fields_acc.entry(field_name.to_string()).or_default();
-    if entry.len() == 1 && entry[0].named == false && data.named {
-        entry[0] = data;
-        return;
-    }
-    entry.push(data);
+    // Grammar-agnostic: always concatenate. The reader does not know slot
+    // arity, so it must NOT resolve a named/unnamed disparity here. Previously
+    // this overwrote a lone anonymous entry when a named value arrived on the
+    // same field, which silently dropped genuine repeated-field members like
+    // `function_modifiers.modifier` = [`unsafe`(anon), `extern_modifier`(named)].
+    // The named-over-unnamed preference for *singular* slots is resolved
+    // downstream in `normalizeSingularWrapSlot`, the per-kind layer that knows
+    // the slot is singular.
+    fields_acc
+        .entry(field_name.to_string())
+        .or_default()
+        .push(data);
 }

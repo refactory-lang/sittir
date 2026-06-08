@@ -82,7 +82,19 @@ function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotN
       if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);
       return undefined;
     }
-    if (value.length !== 1) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);
+    if (value.length !== 1) {
+      // read_node concatenates grammar-agnostically; the named/unnamed
+      // disparity for SINGULAR slots is resolved HERE (the per-kind layer
+      // that knows arity). A structural anonymous token co-occurring on the
+      // same field (e.g. splat_type `field("identifier", seq("*", $.identifier))`)
+      // surfaces as a scalarized kindId NUMBER or a $named:false object; the
+      // real value is a string (text-collapsed leaf) or a $named!==false object.
+      // Drop the structural tokens — the template re-emits them — and keep the
+      // substantive value.
+      const substantive = (value as readonly unknown[]).filter((v) => !(typeof v === "number" || (typeof v === "object" && v !== null && (v as { $named?: unknown }).$named === false)));
+      if (substantive.length === 1) return substantive[0] as T;
+      return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);
+    }
     return value[0] as T;
   }
   if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);
