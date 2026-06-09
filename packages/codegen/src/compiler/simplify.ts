@@ -35,7 +35,6 @@ import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN
 import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
-import { isHiddenKind } from './evaluate.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from './rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
@@ -932,7 +931,11 @@ export function inlineRefs(
 			// the old repeat-seq BOUNDARY behavior, which materialised a helper kind the
 			// parser never emits → field leaks + size cycles. See
 			// project_repeat_seq_group_synthesis / project_pr2b_source_irreducible.)
-			if (!isHiddenKind(rule.name)) return rule;
+			// Read the authoritative per-ref `inline` flag (hidden && !aliased &&
+			// !supertype && !self-recursive) rather than re-deriving hiddenness — the
+			// same oracle the templates emit path uses. The GROUP/MULTI shape gate
+			// below still excludes non-foldable shapes.
+			if (rule.inline !== true) return rule;
 			if (visited.has(rule.name)) return rule;
 			const target = rules[rule.name];
 			if (!target) return rule;

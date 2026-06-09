@@ -209,6 +209,13 @@ function spliceFoldableRefs(
 	switch (rule.type) {
 		case SYMBOL: {
 			if (!foldable.has(rule.name)) return rule;
+			// NOTE: deliberately NOT gated on the per-ref `inline` flag — the
+			// renderRules path reaches here with group/multi helper refs that were
+			// synthesized without the construction stamp, so reading `inline` here
+			// regressed the fold (rust 120→86). The structural `foldable` set
+			// (hidden-name + group/multi shape − keepRef) is the authoritative gate
+			// on this path. (simplify's inlineRefs DOES read `inline`; its refs carry
+			// the stamp.)
 			// Only fold OPTIONAL / REQUIRED seq-unit refs. ARRAY / nonEmptyArray
 			// refs are `repeat(seq)` boundaries: the whole sequence repeats with a
 			// separator, and the baseline renders each internal slot with `|
