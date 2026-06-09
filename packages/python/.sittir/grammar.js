@@ -1911,6 +1911,16 @@ function patternBodyEqual(aIn, bIn) {
   }
   return false;
 }
+function nativeSymbolRt(name) {
+  const g = globalThis;
+  const fn = g["symbol"] ?? g["sym"];
+  if (typeof fn !== "function") {
+    throw new Error(
+      "wire: no global symbol()/sym() \u2014 pattern replacement must run inside a DSL runtime (sittir evaluate.ts or tree-sitter CLI)"
+    );
+  }
+  return fn(name);
+}
 function replaceInBodyRt(rule, candidates) {
   if (!rule || typeof rule !== "object") return rule;
   const r = rule;
@@ -1924,12 +1934,12 @@ function replaceInBodyRt(rule, candidates) {
           value: c.aliasAs
         } : {
           type: "alias",
-          content: { type: "symbol", name: c.name, hidden: true },
+          content: nativeSymbolRt(c.name),
           named: true,
           value: c.aliasAs
         };
       }
-      return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
+      return c.uppercase ? { type: "SYMBOL", name: c.name } : nativeSymbolRt(c.name);
     }
   }
   const t = r.type.toLowerCase();

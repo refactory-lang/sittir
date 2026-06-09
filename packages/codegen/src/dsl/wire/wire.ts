@@ -1278,6 +1278,26 @@ function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
  * @param rule - The rule body to search (RuntimeRule, any shape).
  * @param candidates - The list of detected pattern candidates.
  */
+/**
+ * Resolve the active runtime's `symbol()` constructor from the installed DSL
+ * globals (sittir calls it `symbol`, tree-sitter's CLI `sym`). Mirrors
+ * `enrich.ts`'s `nativeRuleFn` so wire stays runtime-agnostic — it does NOT
+ * import evaluate. Routing the IR-side ref through the constructor stamps
+ * `hidden` + `inline = name.startsWith('_')`, matching every other ref; a raw
+ * `{ type:'symbol', name, hidden:true }` literal would drop `inline`.
+ */
+function nativeSymbolRt(name: string): unknown {
+	const g = globalThis as Record<string, unknown>;
+	const fn = (g['symbol'] ?? g['sym']) as ((n: string) => unknown) | undefined;
+	if (typeof fn !== 'function') {
+		throw new Error(
+			'wire: no global symbol()/sym() — pattern replacement must run inside a DSL runtime ' +
+				'(sittir evaluate.ts or tree-sitter CLI)'
+		);
+	}
+	return fn(name);
+}
+
 function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[]): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
@@ -1299,12 +1319,12 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 						}
 					: {
 							type: 'alias',
-							content: { type: 'symbol', name: c.name, hidden: true },
+							content: nativeSymbolRt(c.name),
 							named: true,
 							value: c.aliasAs
 						};
 			}
-			return c.uppercase ? { type: 'SYMBOL', name: c.name } : { type: 'symbol', name: c.name, hidden: true };
+			return c.uppercase ? { type: 'SYMBOL', name: c.name } : nativeSymbolRt(c.name);
 		}
 	}
 	// Recurse into children.
