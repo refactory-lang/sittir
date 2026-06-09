@@ -128,7 +128,7 @@ export const enum SyntaxKind {
   MacroDefinitionParen = "_macro_definition_paren",
   MatchArmBlockEnding = "_match_arm_block_ending",
   MatchArmWithComma = "_match_arm_with_comma",
-  MatchBlockOptional1 = "_match_block_optional1",
+  MatchBlockArms = "_match_block_arms",
   MatchPatternOptional1 = "_match_pattern_optional1",
   ModItemInline = "_mod_item_inline",
   NonSpecialToken = "_non_special_token",
@@ -771,40 +771,41 @@ export const enum TSKindId {
   AttributedArgument = 381,
   AttributedOrderedField = 382,
   TypeArgument = 383,
-  SourceFileRepeat1 = 384,
-  TokenRepetitionPatternRepeat1 = 385,
-  TokenRepetitionRepeat1 = 386,
-  _NonSpecialTokenRepeat1 = 387,
-  DeclarationListRepeat1 = 388,
-  FunctionModifiersRepeat1 = 389,
-  TraitBoundsRepeat1 = 390,
-  TypeParametersRepeat1 = 391,
-  ForLifetimesRepeat1 = 392,
-  TupleTypeRepeat1 = 393,
-  TypeArgumentsRepeat1 = 394,
-  TupleExpressionRepeat1 = 395,
-  TupleExpressionRepeat2 = 396,
-  MatchArmRepeat1 = 397,
-  StringLiteralRepeat1 = 398,
-  _EnumVariantListOptional1Repeat1 = 399,
-  _FieldDeclarationListOptional1Repeat1 = 400,
-  _OrderedFieldDeclarationListOptional1Repeat1 = 401,
-  _WhereClauseOptional1Repeat1 = 402,
-  _UseListOptional1Repeat1 = 403,
-  _ParametersOptional1Repeat1 = 404,
-  _UseBoundsOptional1Repeat1 = 405,
-  _ArgumentsOptional1Repeat1 = 406,
-  _FieldInitializerListOptional1Repeat1 = 407,
-  _MatchBlockOptional1Repeat1 = 408,
+  MatchBlockArms = 384,
+  SourceFileRepeat1 = 385,
+  TokenRepetitionPatternRepeat1 = 386,
+  TokenRepetitionRepeat1 = 387,
+  _NonSpecialTokenRepeat1 = 388,
+  DeclarationListRepeat1 = 389,
+  FunctionModifiersRepeat1 = 390,
+  TraitBoundsRepeat1 = 391,
+  TypeParametersRepeat1 = 392,
+  ForLifetimesRepeat1 = 393,
+  TupleTypeRepeat1 = 394,
+  TypeArgumentsRepeat1 = 395,
+  TupleExpressionRepeat1 = 396,
+  TupleExpressionRepeat2 = 397,
+  MatchArmRepeat1 = 398,
+  StringLiteralRepeat1 = 399,
+  _EnumVariantListOptional1Repeat1 = 400,
+  _FieldDeclarationListOptional1Repeat1 = 401,
+  _OrderedFieldDeclarationListOptional1Repeat1 = 402,
+  _WhereClauseOptional1Repeat1 = 403,
+  _UseListOptional1Repeat1 = 404,
+  _ParametersOptional1Repeat1 = 405,
+  _UseBoundsOptional1Repeat1 = 406,
+  _ArgumentsOptional1Repeat1 = 407,
+  _FieldInitializerListOptional1Repeat1 = 408,
   _ClosureParametersOptional1Repeat1 = 409,
   _TuplePatternOptional1Repeat1 = 410,
   _SlicePatternOptional1Repeat1 = 411,
   _StructPatternOptional1Repeat1 = 412,
   _MacroDefinitionParenRepeat1 = 413,
   _DelimTokenTreeParenRepeat1 = 414,
-  FieldIdentifier = 415,
-  _ShorthandFieldIdentifier = 417,
-  TypeIdentifier = 418,
+  _MatchBlockArmsRepeat1 = 415,
+  FieldIdentifier = 416,
+  _ShorthandFieldIdentifier = 418,
+  TypeIdentifier = 419,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1191,40 +1192,41 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [381, "_attributed_argument"],
   [382, "_attributed_ordered_field"],
   [383, "_type_argument"],
-  [384, "source_file_repeat1"],
-  [385, "token_repetition_pattern_repeat1"],
-  [386, "token_repetition_repeat1"],
-  [387, "_non_special_token_repeat1"],
-  [388, "declaration_list_repeat1"],
-  [389, "function_modifiers_repeat1"],
-  [390, "trait_bounds_repeat1"],
-  [391, "type_parameters_repeat1"],
-  [392, "for_lifetimes_repeat1"],
-  [393, "tuple_type_repeat1"],
-  [394, "type_arguments_repeat1"],
-  [395, "tuple_expression_repeat1"],
-  [396, "tuple_expression_repeat2"],
-  [397, "match_arm_repeat1"],
-  [398, "string_literal_repeat1"],
-  [399, "_enum_variant_list_optional1_repeat1"],
-  [400, "_field_declaration_list_optional1_repeat1"],
-  [401, "_ordered_field_declaration_list_optional1_repeat1"],
-  [402, "_where_clause_optional1_repeat1"],
-  [403, "_use_list_optional1_repeat1"],
-  [404, "_parameters_optional1_repeat1"],
-  [405, "_use_bounds_optional1_repeat1"],
-  [406, "_arguments_optional1_repeat1"],
-  [407, "_field_initializer_list_optional1_repeat1"],
-  [408, "_match_block_optional1_repeat1"],
+  [384, "_match_block_arms"],
+  [385, "source_file_repeat1"],
+  [386, "token_repetition_pattern_repeat1"],
+  [387, "token_repetition_repeat1"],
+  [388, "_non_special_token_repeat1"],
+  [389, "declaration_list_repeat1"],
+  [390, "function_modifiers_repeat1"],
+  [391, "trait_bounds_repeat1"],
+  [392, "type_parameters_repeat1"],
+  [393, "for_lifetimes_repeat1"],
+  [394, "tuple_type_repeat1"],
+  [395, "type_arguments_repeat1"],
+  [396, "tuple_expression_repeat1"],
+  [397, "tuple_expression_repeat2"],
+  [398, "match_arm_repeat1"],
+  [399, "string_literal_repeat1"],
+  [400, "_enum_variant_list_optional1_repeat1"],
+  [401, "_field_declaration_list_optional1_repeat1"],
+  [402, "_ordered_field_declaration_list_optional1_repeat1"],
+  [403, "_where_clause_optional1_repeat1"],
+  [404, "_use_list_optional1_repeat1"],
+  [405, "_parameters_optional1_repeat1"],
+  [406, "_use_bounds_optional1_repeat1"],
+  [407, "_arguments_optional1_repeat1"],
+  [408, "_field_initializer_list_optional1_repeat1"],
   [409, "_closure_parameters_optional1_repeat1"],
   [410, "_tuple_pattern_optional1_repeat1"],
   [411, "_slice_pattern_optional1_repeat1"],
   [412, "_struct_pattern_optional1_repeat1"],
   [413, "_macro_definition_paren_repeat1"],
   [414, "_delim_token_tree_paren_repeat1"],
-  [415, "_field_identifier"],
-  [417, "_shorthand_field_identifier"],
-  [418, "_type_identifier"],
+  [415, "_match_block_arms_repeat1"],
+  [416, "_field_identifier"],
+  [418, "_shorthand_field_identifier"],
+  [419, "_type_identifier"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1612,6 +1614,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_attributed_argument": return TSKindId.AttributedArgument;
     case "_attributed_ordered_field": return TSKindId.AttributedOrderedField;
     case "_type_argument": return TSKindId.TypeArgument;
+    case "_match_block_arms": return TSKindId.MatchBlockArms;
     case "source_file_repeat1": return TSKindId.SourceFileRepeat1;
     case "token_repetition_pattern_repeat1": return TSKindId.TokenRepetitionPatternRepeat1;
     case "token_repetition_repeat1": return TSKindId.TokenRepetitionRepeat1;
@@ -1636,13 +1639,13 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_use_bounds_optional1_repeat1": return TSKindId._UseBoundsOptional1Repeat1;
     case "_arguments_optional1_repeat1": return TSKindId._ArgumentsOptional1Repeat1;
     case "_field_initializer_list_optional1_repeat1": return TSKindId._FieldInitializerListOptional1Repeat1;
-    case "_match_block_optional1_repeat1": return TSKindId._MatchBlockOptional1Repeat1;
     case "_closure_parameters_optional1_repeat1": return TSKindId._ClosureParametersOptional1Repeat1;
     case "_tuple_pattern_optional1_repeat1": return TSKindId._TuplePatternOptional1Repeat1;
     case "_slice_pattern_optional1_repeat1": return TSKindId._SlicePatternOptional1Repeat1;
     case "_struct_pattern_optional1_repeat1": return TSKindId._StructPatternOptional1Repeat1;
     case "_macro_definition_paren_repeat1": return TSKindId._MacroDefinitionParenRepeat1;
     case "_delim_token_tree_paren_repeat1": return TSKindId._DelimTokenTreeParenRepeat1;
+    case "_match_block_arms_repeat1": return TSKindId._MatchBlockArmsRepeat1;
     case "_field_identifier": return TSKindId.FieldIdentifier;
     case "_shorthand_field_identifier": return TSKindId._ShorthandFieldIdentifier;
     case "_type_identifier": return TSKindId.TypeIdentifier;
@@ -1769,6 +1772,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "attributed_argument": return TSKindId.AttributedArgument;
     case "attributed_ordered_field": return TSKindId.AttributedOrderedField;
     case "type_argument": return TSKindId.TypeArgument;
+    case "match_block_arms": return TSKindId.MatchBlockArms;
     case "field_identifier": return TSKindId.FieldIdentifier;
     case "shorthand_field_identifier": return TSKindId._ShorthandFieldIdentifier;
     case "type_identifier": return TSKindId.TypeIdentifier;
@@ -2479,8 +2483,8 @@ export interface MatchArmWithComma {
   value(): Expression;
 }
 
-export interface MatchBlockOptional1 {
-  readonly $type: "_match_block_optional1";
+export interface MatchBlockArms {
+  readonly $type: TSKindId.MatchBlockArms;
   readonly _match_arm?: readonly (MatchArm)[];
   readonly _last_arm: LastMatchArm;
   matchArms(): readonly (MatchArm)[];
@@ -3397,10 +3401,8 @@ export interface MatchArm {
 
 export interface MatchBlock {
   readonly $type: TSKindId.MatchBlock;
-  readonly _match_arm?: readonly (MatchArm)[];
-  readonly _last_arm: LastMatchArm;
-  matchArms(): readonly (MatchArm)[];
-  lastArm(): LastMatchArm;
+  readonly _match_block_arms?: MatchBlockArms;
+  matchBlockArms(): MatchBlockArms | undefined;
 }
 
 export interface MatchExpression {
@@ -4070,7 +4072,7 @@ export interface MacroDefinitionBracketTree extends AnyTreeNode { readonly type:
 export interface MacroDefinitionParenTree extends AnyTreeNode { readonly type: "_macro_definition_paren"; }
 export interface MatchArmBlockEndingTree extends AnyTreeNode { readonly type: "_match_arm_block_ending"; }
 export interface MatchArmWithCommaTree extends AnyTreeNode { readonly type: "_match_arm_with_comma"; }
-export interface MatchBlockOptional1Tree extends AnyTreeNode { readonly type: "_match_block_optional1"; }
+export interface MatchBlockArmsTree extends AnyTreeNode { readonly type: "_match_block_arms"; }
 export interface MatchPatternOptional1Tree extends AnyTreeNode { readonly type: "_match_pattern_optional1"; }
 export interface ModItemInlineTree extends AnyTreeNode { readonly type: "_mod_item_inline"; }
 export interface NonSpecialTokenTree extends AnyTreeNode { readonly type: "_non_special_token"; }
@@ -4771,7 +4773,7 @@ export type RustNode =
   | MacroDefinitionParen
   | MatchArmBlockEnding
   | MatchArmWithComma
-  | MatchBlockOptional1
+  | MatchBlockArms
   | MatchPatternOptional1
   | ModItemInline
   | NonSpecialToken
@@ -4997,7 +4999,7 @@ export interface KindMap {
   '_macro_definition_paren': MacroDefinitionParen;
   '_match_arm_block_ending': MatchArmBlockEnding;
   '_match_arm_with_comma': MatchArmWithComma;
-  '_match_block_optional1': MatchBlockOptional1;
+  '_match_block_arms': MatchBlockArms;
   '_match_pattern_optional1': MatchPatternOptional1;
   '_mod_item_inline': ModItemInline;
   '_non_special_token': NonSpecialToken;
@@ -5254,7 +5256,7 @@ export interface MacroDefinitionBracketNs extends NodeNs<MacroDefinitionBracket,
 export interface MacroDefinitionParenNs extends NodeNs<MacroDefinitionParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchArmBlockEndingNs extends NodeNs<MatchArmBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchArmWithCommaNs extends NodeNs<MatchArmWithComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchBlockOptional1Ns extends NodeNs<MatchBlockOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchBlockArmsNs extends NodeNs<MatchBlockArms, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchPatternOptional1Ns extends NodeNs<MatchPatternOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ModItemInlineNs extends NodeNs<ModItemInline, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface NonSpecialTokenNs extends NodeNs<NonSpecialToken, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5479,7 +5481,7 @@ export interface NamespaceMap {
   '_macro_definition_paren': MacroDefinitionParenNs;
   '_match_arm_block_ending': MatchArmBlockEndingNs;
   '_match_arm_with_comma': MatchArmWithCommaNs;
-  '_match_block_optional1': MatchBlockOptional1Ns;
+  '_match_block_arms': MatchBlockArmsNs;
   '_match_pattern_optional1': MatchPatternOptional1Ns;
   '_mod_item_inline': ModItemInlineNs;
   '_non_special_token': NonSpecialTokenNs;
@@ -5999,12 +6001,12 @@ export namespace MatchArmWithComma {
   export type Tree = TreeFor<'_match_arm_with_comma'>;
   export type Kind = '_match_arm_with_comma';
 }
-export namespace MatchBlockOptional1 {
-  export type Config = ConfigFor<'_match_block_optional1'>;
-  export type Fluent = FluentFor<'_match_block_optional1'>;
-  export type Loose = LooseFor<'_match_block_optional1'>;
-  export type Tree = TreeFor<'_match_block_optional1'>;
-  export type Kind = '_match_block_optional1';
+export namespace MatchBlockArms {
+  export type Config = ConfigFor<'_match_block_arms'>;
+  export type Fluent = FluentFor<'_match_block_arms'>;
+  export type Loose = LooseFor<'_match_block_arms'>;
+  export type Tree = TreeFor<'_match_block_arms'>;
+  export type Kind = '_match_block_arms';
 }
 export namespace MatchPatternOptional1 {
   export type Config = ConfigFor<'_match_pattern_optional1'>;

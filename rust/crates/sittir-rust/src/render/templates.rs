@@ -292,6 +292,13 @@ pub struct MatchArmWithCommaTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_match_block_arms.jinja", escape = "none")]
+pub struct MatchBlockArmsTemplate<'a> {
+    pub last_arm: SingleNonterminalView<'a>,
+    pub match_arm: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_mod_item_inline.jinja", escape = "none")]
 pub struct ModItemInlineTemplate<'a> {
     pub body: SingleNonterminalView<'a>,
@@ -966,8 +973,7 @@ pub struct MatchArmTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "match_block.jinja", escape = "none")]
 pub struct MatchBlockTemplate<'a> {
-    pub last_arm: SingleNonterminalView<'a>,
-    pub match_arm: ListNonterminalView<'a>,
+    pub match_block_arms: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

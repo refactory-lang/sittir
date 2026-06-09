@@ -870,13 +870,9 @@ describe('match_arm', () => {
 
 describe('match_block', () => {
   it('factory produces correct type', () => {
-    const node = ir.matchBlock({ lastArm: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.matchBlock();
     expect(node.$type).toBe(TSKindId.MatchBlock);
     expect(node.$source).toBe(2);
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.matchBlock({ lastArm: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

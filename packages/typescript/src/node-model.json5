@@ -155,9 +155,6 @@
     }
   },
   "fieldAliasMap": {
-    "__jsx_start_opening_element_optional1.name": {
-      "member_expression": "nested_identifier"
-    },
     "_ambient_declaration_module.name": {
       "property_identifier": "identifier"
     },
@@ -190,8 +187,11 @@
     "_index_signature_colon.name": {
       "identifier": "_reserved_identifier"
     },
-    "_jsx_start_opening_element.name": {
+    "_jsx_opening_element_content.name": {
       "member_expression": "nested_identifier"
+    },
+    "_jsx_start_opening_element.jsx_opening_element_content": {
+      "jsx_opening_element_content": "_jsx_opening_element_content"
     },
     "_jsx_string.content": {
       "string_fragment": "unescaped_single_jsx_string_fragment"
@@ -331,11 +331,11 @@
     "interface_declaration.body": {
       "interface_body": "object_type"
     },
-    "jsx_opening_element.name": {
-      "member_expression": "nested_identifier"
+    "jsx_opening_element.jsx_opening_element_content": {
+      "jsx_opening_element_content": "_jsx_opening_element_content"
     },
-    "jsx_self_closing_element.name": {
-      "member_expression": "nested_identifier"
+    "jsx_self_closing_element.jsx_opening_element_content": {
+      "jsx_opening_element_content": "_jsx_opening_element_content"
     },
     "labeled_statement.label": {
       "statement_identifier": "_statement_identifier"
@@ -927,6 +927,29 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_jsx_opening_element_content": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type_arguments": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "attribute": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -2746,48 +2769,20 @@
       }
     },
     "jsx_opening_element": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type_arguments": {
+      "jsx_opening_element_content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
-      },
-      "attribute": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
         "nonEmpty": false
       }
     },
     "jsx_self_closing_element": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type_arguments": {
+      "jsx_opening_element_content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
-      },
-      "attribute": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -4469,114 +4464,6 @@
         "of"
       ],
       "factoryShape": "text"
-    },
-    {
-      "kind": "__jsx_start_opening_element_optional1",
-      "modelType": "group",
-      "typeName": "JsxStartOpeningElementOptional1",
-      "factoryName": "_jsxStartOpeningElementOptional1",
-      "irKey": "jsxStartOpeningElementOptional1",
-      "hidden": false,
-      "name": "__jsx_start_opening_element_optional1",
-      "fields": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_jsx_identifier",
-              "parseKind": "_jsx_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "jsx_namespace_name",
-              "parseKind": "jsx_namespace_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "nested_identifier",
-              "parseKind": "member_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_identifier",
-              "jsx_namespace_name",
-              "identifier",
-              "nested_identifier"
-            ]
-          }
-        },
-        {
-          "name": "type_arguments",
-          "propertyName": "typeArguments",
-          "paramName": "typeArguments",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_arguments",
-              "parseKind": "type_arguments",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type_arguments"
-            ]
-          }
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attributes",
-          "paramName": "attributes",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_jsx_attribute",
-              "parseKind": "_jsx_attribute",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_attribute"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "__number_operator",
@@ -7743,12 +7630,13 @@
       ]
     },
     {
-      "kind": "_jsx_start_opening_element",
-      "modelType": "branch",
-      "typeName": "JsxStartOpeningElement",
-      "factoryName": "jsxStartOpeningElement",
-      "irKey": "jsxStartOpeningElement",
+      "kind": "_jsx_opening_element_content",
+      "modelType": "group",
+      "typeName": "JsxOpeningElementContent",
+      "factoryName": "_jsxOpeningElementContent",
+      "irKey": "jsxOpeningElementContent",
       "hidden": false,
+      "name": "_jsx_opening_element_content",
       "fields": [
         {
           "name": "name",
@@ -7843,6 +7731,47 @@
             "typeName": "",
             "kinds": [
               "_jsx_attribute"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "name",
+        "type_arguments",
+        "attribute"
+      ]
+    },
+    {
+      "kind": "_jsx_start_opening_element",
+      "modelType": "branch",
+      "typeName": "JsxStartOpeningElement",
+      "factoryName": "jsxStartOpeningElement",
+      "irKey": "jsxStartOpeningElement",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "jsx_opening_element_content",
+          "propertyName": "jsxOpeningElementContent",
+          "paramName": "jsxOpeningElementContent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_jsx_opening_element_content",
+              "parseKind": "jsx_opening_element_content",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_jsx_opening_element_content"
             ]
           }
         }
@@ -17617,57 +17546,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_jsx_identifier",
-              "parseKind": "_jsx_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "jsx_namespace_name",
-              "parseKind": "jsx_namespace_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "nested_identifier",
-              "parseKind": "member_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_identifier",
-              "jsx_namespace_name",
-              "identifier",
-              "nested_identifier"
-            ]
-          }
-        },
-        {
-          "name": "type_arguments",
-          "propertyName": "typeArguments",
-          "paramName": "typeArguments",
+          "name": "jsx_opening_element_content",
+          "propertyName": "jsxOpeningElementContent",
+          "paramName": "jsxOpeningElementContent",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17675,50 +17556,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "type_arguments",
-              "parseKind": "type_arguments",
+              "name": "_jsx_opening_element_content",
+              "parseKind": "jsx_opening_element_content",
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
-              "type_arguments"
-            ]
-          }
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attributes",
-          "paramName": "attributes",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_jsx_attribute",
-              "parseKind": "_jsx_attribute",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_attribute"
+              "_jsx_opening_element_content"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "name",
-        "type_arguments",
-        "attribute"
+        "jsx_opening_element_content"
       ]
     },
     {
@@ -17730,57 +17585,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_jsx_identifier",
-              "parseKind": "_jsx_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "jsx_namespace_name",
-              "parseKind": "jsx_namespace_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "nested_identifier",
-              "parseKind": "member_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_identifier",
-              "jsx_namespace_name",
-              "identifier",
-              "nested_identifier"
-            ]
-          }
-        },
-        {
-          "name": "type_arguments",
-          "propertyName": "typeArguments",
-          "paramName": "typeArguments",
+          "name": "jsx_opening_element_content",
+          "propertyName": "jsxOpeningElementContent",
+          "paramName": "jsxOpeningElementContent",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17788,50 +17595,24 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "type_arguments",
-              "parseKind": "type_arguments",
+              "name": "_jsx_opening_element_content",
+              "parseKind": "jsx_opening_element_content",
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
-              "type_arguments"
-            ]
-          }
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attributes",
-          "paramName": "attributes",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_jsx_attribute",
-              "parseKind": "_jsx_attribute",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_attribute"
+              "_jsx_opening_element_content"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "name",
-        "type_arguments",
-        "attribute"
+        "jsx_opening_element_content"
       ]
     },
     {

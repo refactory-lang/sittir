@@ -434,7 +434,7 @@ const _supertype_pattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 31
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
-const _supertype_type_ids = new Set<number>([235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 418, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 419, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([138, 1, 141, 139, 140, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -695,6 +695,7 @@ const _kindIdByKind = new Map<string, number>([
     ["_attributed_argument", TSKindId.AttributedArgument],
     ["_attributed_ordered_field", TSKindId.AttributedOrderedField],
     ["_type_argument", TSKindId.TypeArgument],
+    ["_match_block_arms", TSKindId.MatchBlockArms],
     ["_field_identifier", TSKindId.FieldIdentifier],
     ["_type_identifier", TSKindId.TypeIdentifier],
 ]);

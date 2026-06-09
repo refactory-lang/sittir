@@ -24,7 +24,6 @@ use super::templates::*;
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
     ForHeaderOperator(ForHeaderOperatorEnum),
-    JsxStartOpeningElementOptional1(JsxStartOpeningElementOptional1Transport),
     NumberOperator(NumberOperatorEnum),
     AbstractMarker(AbstractMarkerTransport),
     _AccessibilityModifier(_AccessibilityModifierEnum),
@@ -80,6 +79,7 @@ pub enum AnyTransport {
     IndexSignatureOptional1(IndexSignatureOptional1Transport),
     InferTypeOptional1(InferTypeOptional1Transport),
     Initializer(InitializerTransport),
+    JsxOpeningElementContent(JsxOpeningElementContentTransport),
     JsxStartOpeningElement(JsxStartOpeningElementTransport),
     JsxString(JsxStringTransport),
     Kind(KindEnum),
@@ -20445,60 +20445,6 @@ impl RenderableTransport for ForHeaderOperatorEnum {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct JsxStartOpeningElementOptional1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: JsxElementNameTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
-    pub attribute: Option<Vec<_JsxAttributeTransport>>,
-}
-
-impl RenderableTransport for JsxStartOpeningElementOptional1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_jsx_start_opening_element_optional1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStartOpeningElementOptional1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        JsxStartOpeningElementOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStartOpeningElementOptional1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxStartOpeningElementOptional1Transport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NumberOperatorEnum {
     Minus,
@@ -23913,7 +23859,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InitializerTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct JsxStartOpeningElementTransport {
+pub struct JsxOpeningElementContentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -23930,6 +23876,62 @@ pub struct JsxStartOpeningElementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: JsxElementNameTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    pub type_arguments: Option<TypeArgumentsTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
+    pub attribute: Option<Vec<_JsxAttributeTransport>>,
+}
+
+impl RenderableTransport for JsxOpeningElementContentTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_jsx_opening_element_content(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxOpeningElementContentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        JsxOpeningElementContentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxOpeningElementContentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        JsxOpeningElementContentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct JsxStartOpeningElementTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_opening_element_content"))]
+    pub jsx_opening_element_content: Option<JsxOpeningElementContentTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: Option<JsxElementNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -33378,8 +33380,10 @@ pub struct JsxOpeningElementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_opening_element_content"))]
+    pub jsx_opening_element_content: Option<JsxOpeningElementContentTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: JsxElementNameTransport,
+    pub name: Option<JsxElementNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -33432,8 +33436,10 @@ pub struct JsxSelfClosingElementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_opening_element_content"))]
+    pub jsx_opening_element_content: Option<JsxOpeningElementContentTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: JsxElementNameTransport,
+    pub name: Option<JsxElementNameTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -50534,19 +50540,6 @@ fn render_for_header_operator(t: &ForHeaderOperatorEnum, dest: &mut dyn ::std::f
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
-fn render_jsx_start_opening_element_optional1(node: &JsxStartOpeningElementOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_jsx_element_name(&node.name, dest)?;
-    if let Some(child) = &node.type_arguments {
-        render_type_arguments(child, dest)?;
-    }
-    if let Some(items) = &node.attribute {
-        for child in items.iter() {
-        render__jsx_attribute(child, dest)?;
-        }
-    }
-    Ok(())
-}
-
 fn render_number_operator(t: &NumberOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
@@ -50995,15 +50988,30 @@ fn render_initializer(node: &InitializerTransport, dest: &mut dyn ::std::fmt::Wr
     Ok(())
 }
 
+fn render_jsx_opening_element_content(node: &JsxOpeningElementContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
+    let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = JsxOpeningElementContentTemplate {
+        attribute: ListNonterminalView {
+            items: attribute_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        type_arguments: match &node.type_arguments {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+    };
+    template.render_into(dest)
+}
+
 fn render_jsx_start_opening_element(node: &JsxStartOpeningElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_jsx_element_name(&node.name, dest)?;
-    if let Some(child) = &node.type_arguments {
-        render_type_arguments(child, dest)?;
-    }
-    if let Some(items) = &node.attribute {
-        for child in items.iter() {
-        render__jsx_attribute(child, dest)?;
-        }
+    if let Some(child) = &node.jsx_opening_element_content {
+        render_jsx_opening_element_content(child, dest)?;
     }
     Ok(())
 }
@@ -52501,19 +52509,13 @@ fn render_jsx_namespace_name(node: &JsxNamespaceNameTransport, dest: &mut dyn ::
 }
 
 fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
-    let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
+    if node.jsx_opening_element_content.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let template = JsxOpeningElementTemplate {
-        attribute: ListNonterminalView {
-            items: attribute_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_arguments: match &node.type_arguments {
+        jsx_opening_element_content: match &node.jsx_opening_element_content {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -52522,19 +52524,13 @@ fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn 
 }
 
 fn render_jsx_self_closing_element(node: &JsxSelfClosingElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
-    let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
+    if node.jsx_opening_element_content.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let template = JsxSelfClosingElementTemplate {
-        attribute: ListNonterminalView {
-            items: attribute_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        type_arguments: match &node.type_arguments {
+        jsx_opening_element_content: match &node.jsx_opening_element_content {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -54467,7 +54463,6 @@ impl RenderableTransport for AnyTransport {
     ) -> Result<(), ::askama::Error> {
         match self {
             AnyTransport::ForHeaderOperator(t) => t.render_into(dest),
-            AnyTransport::JsxStartOpeningElementOptional1(t) => render_jsx_start_opening_element_optional1(t, dest),
             AnyTransport::NumberOperator(t) => t.render_into(dest),
             AnyTransport::AbstractMarker(t) => t.render_into(dest),
             AnyTransport::_AccessibilityModifier(t) => t.render_into(dest),
@@ -54523,6 +54518,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::IndexSignatureOptional1(t) => render_index_signature_optional1(t, dest),
             AnyTransport::InferTypeOptional1(t) => render_infer_type_optional1(t, dest),
             AnyTransport::Initializer(t) => render_initializer(t, dest),
+            AnyTransport::JsxOpeningElementContent(t) => render_jsx_opening_element_content(t, dest),
             AnyTransport::JsxStartOpeningElement(t) => render_jsx_start_opening_element(t, dest),
             AnyTransport::JsxString(t) => render_jsx_string(t, dest),
             AnyTransport::Kind(t) => t.render_into(dest),
@@ -54900,7 +54896,6 @@ impl AnyTransport {
     #[inline]
     pub fn transport_named(&self) -> Option<bool> {
         match self {
-            Self::JsxStartOpeningElementOptional1(t) => t.transport_named,
             Self::AbstractMarker(t) => t.transport_named,
             Self::AmbientDeclarationDeclaration(t) => t.transport_named,
             Self::AmbientDeclarationGlobal(t) => t.transport_named,
@@ -54950,6 +54945,7 @@ impl AnyTransport {
             Self::IndexSignatureOptional1(t) => t.transport_named,
             Self::InferTypeOptional1(t) => t.transport_named,
             Self::Initializer(t) => t.transport_named,
+            Self::JsxOpeningElementContent(t) => t.transport_named,
             Self::JsxStartOpeningElement(t) => t.transport_named,
             Self::JsxString(t) => t.transport_named,
             Self::KwAbstractMarker(t) => t.transport_named,
@@ -55356,7 +55352,6 @@ fn transport_children(values: Vec<AnyTransport>) -> Result<Vec<TransportNodeData
 fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {
     match transport {
         AnyTransport::ForHeaderOperator(data) => transport_to_node_for_header_operator(data),
-        AnyTransport::JsxStartOpeningElementOptional1(data) => transport_to_node_jsx_start_opening_element_optional1(data),
         AnyTransport::NumberOperator(data) => transport_to_node_number_operator(data),
         AnyTransport::AbstractMarker(data) => transport_to_node_abstract_marker(data),
         AnyTransport::_AccessibilityModifier(data) => transport_to_node__accessibility_modifier(data),
@@ -55412,6 +55407,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::IndexSignatureOptional1(data) => transport_to_node_index_signature_optional1(data),
         AnyTransport::InferTypeOptional1(data) => transport_to_node_infer_type_optional1(data),
         AnyTransport::Initializer(data) => transport_to_node_initializer(data),
+        AnyTransport::JsxOpeningElementContent(data) => transport_to_node_jsx_opening_element_content(data),
         AnyTransport::JsxStartOpeningElement(data) => transport_to_node_jsx_start_opening_element(data),
         AnyTransport::JsxString(data) => transport_to_node_jsx_string(data),
         AnyTransport::Kind(data) => transport_to_node_kind(data),
@@ -55797,33 +55793,6 @@ fn transport_to_node_for_header_operator(transport: ForHeaderOperatorEnum) -> Re
         None,
         None,
         None,
-    ))
-}
-
-fn transport_to_node_jsx_start_opening_element_optional1(transport: JsxStartOpeningElementOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
-    if let Some(value) = transport.type_arguments {
-        fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
-    }
-    if let Some(value) = transport.attribute {
-        fields.insert("attribute".to_string(), transport_field_values(value.into_iter().map(|v| _jsx_attribute_transport_to_any(v)).collect::<Vec<_>>())?);
-    }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(0) /* "__jsx_start_opening_element_optional1" — no parser symbol */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        transport.transport_text,
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        fields,
-        children,
-        trivia_data,
     ))
 }
 
@@ -57150,7 +57119,7 @@ fn transport_to_node_initializer(transport: InitializerTransport) -> Result<Tran
     ))
 }
 
-fn transport_to_node_jsx_start_opening_element(transport: JsxStartOpeningElementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_jsx_opening_element_content(transport: JsxOpeningElementContentTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.type_arguments {
@@ -57161,6 +57130,34 @@ fn transport_to_node_jsx_start_opening_element(transport: JsxStartOpeningElement
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_jsx_opening_element_content" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_jsx_start_opening_element(transport: JsxStartOpeningElementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    if let Some(value) = transport.jsx_opening_element_content {
+        children_buf.push(AnyTransport::JsxOpeningElementContent(value));
+    }
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(0) /* "_jsx_start_opening_element" — no parser symbol */,
@@ -60534,15 +60531,16 @@ fn transport_to_node_jsx_namespace_name(transport: JsxNamespaceNameTransport) ->
 
 fn transport_to_node_jsx_opening_element(transport: JsxOpeningElementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
-    if let Some(value) = transport.type_arguments {
-        fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
-    }
-    if let Some(value) = transport.attribute {
-        fields.insert("attribute".to_string(), transport_field_values(value.into_iter().map(|v| _jsx_attribute_transport_to_any(v)).collect::<Vec<_>>())?);
-    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    if let Some(value) = transport.jsx_opening_element_content {
+        children_buf.push(AnyTransport::JsxOpeningElementContent(value));
+    }
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(0) /* "jsx_opening_element" — no parser symbol */,
@@ -60561,15 +60559,16 @@ fn transport_to_node_jsx_opening_element(transport: JsxOpeningElementTransport) 
 
 fn transport_to_node_jsx_self_closing_element(transport: JsxSelfClosingElementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
-    if let Some(value) = transport.type_arguments {
-        fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
-    }
-    if let Some(value) = transport.attribute {
-        fields.insert("attribute".to_string(), transport_field_values(value.into_iter().map(|v| _jsx_attribute_transport_to_any(v)).collect::<Vec<_>>())?);
-    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    if let Some(value) = transport.jsx_opening_element_content {
+        children_buf.push(AnyTransport::JsxOpeningElementContent(value));
+    }
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(0) /* "jsx_self_closing_element" — no parser symbol */,

@@ -89,7 +89,7 @@ pub enum AnyTransport {
     MacroDefinitionParen(MacroDefinitionParenTransport),
     MatchArmBlockEnding(MatchArmBlockEndingTransport),
     MatchArmWithComma(MatchArmWithCommaTransport),
-    MatchBlockOptional1(MatchBlockOptional1Transport),
+    MatchBlockArms(MatchBlockArmsTransport),
     MatchPatternOptional1(MatchPatternOptional1Transport),
     ModItemExternal(ModItemExternalTransport),
     ModItemInline(ModItemInlineTransport),
@@ -490,7 +490,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_identifier (_FIELD_IDENTIFIER)
-                415 => Ok(AnyTransport::FieldIdentifier(
+                416 => Ok(AnyTransport::FieldIdentifier(
                     FieldIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_pattern_named (_FIELD_PATTERN_NAMED)
@@ -580,6 +580,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _match_arm_with_comma (_MATCH_ARM_WITH_COMMA)
                 364 => Ok(AnyTransport::MatchArmWithComma(
                     MatchArmWithCommaTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _match_block_arms (_MATCH_BLOCK_ARMS)
+                384 => Ok(AnyTransport::MatchBlockArms(
+                    MatchBlockArmsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _mod_item_external (_MOD_ITEM_EXTERNAL)
                 341 => Ok(AnyTransport::ModItemExternal(
@@ -698,7 +702,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     TypeArgumentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_identifier (_TYPE_IDENTIFIER)
-                418 => Ok(AnyTransport::TypeIdentifier(
+                419 => Ok(AnyTransport::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _use_wildcard_clause (_USE_WILDCARD_CLAUSE)
@@ -7161,7 +7165,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -7328,7 +7332,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -7772,7 +7776,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -7894,7 +7898,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -10223,7 +10227,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -10369,7 +10373,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -10984,7 +10988,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11103,7 +11107,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11332,7 +11336,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11451,7 +11455,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11676,7 +11680,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11792,7 +11796,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -16696,7 +16700,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -16815,7 +16819,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                418 => Ok(Self::TypeIdentifier(
+                419 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -22342,7 +22346,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchArmWithCommaTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct MatchBlockOptional1Transport {
+pub struct MatchBlockArmsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -22358,37 +22362,37 @@ pub struct MatchBlockOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_last_arm"))]
-    pub last_arm: LastMatchArmTransport,
+    pub last_arm: Box<LastMatchArmTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_arm"))]
     pub match_arm: Option<Vec<MatchArmTransport>>,
 }
 
-impl RenderableTransport for MatchBlockOptional1Transport {
+impl RenderableTransport for MatchBlockArmsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_match_block_optional1(self, dest))
+        render_with_trivia!(self, dest, render_match_block_arms(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<MatchBlockOptional1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MatchBlockArmsTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        MatchBlockOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+        MatchBlockArmsTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockOptional1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockArmsTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        MatchBlockOptional1Transport::to_napi_value(env, *val)
+        MatchBlockArmsTransport::to_napi_value(env, *val)
     }
 }
 
@@ -31213,10 +31217,10 @@ pub struct MatchBlockTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_block_arms"))]
+    pub match_block_arms: Option<Box<MatchBlockArmsTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_last_arm"))]
-    pub last_arm: Box<LastMatchArmTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_arm"))]
-    pub match_arm: Option<Vec<MatchArmTransport>>,
+    pub last_arm: Option<Box<LastMatchArmTransport>>,
 }
 
 impl RenderableTransport for MatchBlockTransport {
@@ -45153,14 +45157,21 @@ fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, dest: &mut dyn
     template.render_into(dest)
 }
 
-fn render_match_block_optional1(node: &MatchBlockOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_last_match_arm(&node.last_arm, dest)?;
-    if let Some(items) = &node.match_arm {
-        for child in items.iter() {
-        render_match_arm(child, dest)?;
-        }
-    }
-    Ok(())
+fn render_match_block_arms(node: &MatchBlockArmsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let match_arm_owned = node.match_arm.as_deref().unwrap_or(&[]);
+    let match_arm_buf: Vec<::sittir_core::filters::Renderable<'_>> = match_arm_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = MatchBlockArmsTemplate {
+        last_arm: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.last_arm)),
+        match_arm: ListNonterminalView {
+            items: match_arm_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render_into(dest)
 }
 
 fn render_match_pattern_optional1(node: &MatchPatternOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -46567,17 +46578,15 @@ fn render_match_arm(node: &MatchArmTransport, dest: &mut dyn ::std::fmt::Write) 
 }
 
 fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let match_arm_owned = node.match_arm.as_deref().unwrap_or(&[]);
-    let match_arm_buf: Vec<::sittir_core::filters::Renderable<'_>> = match_arm_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
+    if node.match_block_arms.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let template = MatchBlockTemplate {
-        last_arm: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.last_arm)),
-        match_arm: ListNonterminalView {
-            items: match_arm_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
+        match_block_arms: match &node.match_block_arms {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -48406,7 +48415,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::MacroDefinitionParen(t) => render_macro_definition_paren(t, dest),
             AnyTransport::MatchArmBlockEnding(t) => render_match_arm_block_ending(t, dest),
             AnyTransport::MatchArmWithComma(t) => render_match_arm_with_comma(t, dest),
-            AnyTransport::MatchBlockOptional1(t) => render_match_block_optional1(t, dest),
+            AnyTransport::MatchBlockArms(t) => render_match_block_arms(t, dest),
             AnyTransport::MatchPatternOptional1(t) => render_match_pattern_optional1(t, dest),
             AnyTransport::ModItemExternal(t) => t.render_into(dest),
             AnyTransport::ModItemInline(t) => render_mod_item_inline(t, dest),
@@ -48801,7 +48810,7 @@ impl AnyTransport {
             Self::MacroDefinitionParen(t) => t.transport_named,
             Self::MatchArmBlockEnding(t) => t.transport_named,
             Self::MatchArmWithComma(t) => t.transport_named,
-            Self::MatchBlockOptional1(t) => t.transport_named,
+            Self::MatchBlockArms(t) => t.transport_named,
             Self::MatchPatternOptional1(t) => t.transport_named,
             Self::ModItemExternal(t) => t.transport_named,
             Self::ModItemInline(t) => t.transport_named,
@@ -49223,7 +49232,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::MacroDefinitionParen(data) => transport_to_node_macro_definition_paren(data),
         AnyTransport::MatchArmBlockEnding(data) => transport_to_node_match_arm_block_ending(data),
         AnyTransport::MatchArmWithComma(data) => transport_to_node_match_arm_with_comma(data),
-        AnyTransport::MatchBlockOptional1(data) => transport_to_node_match_block_optional1(data),
+        AnyTransport::MatchBlockArms(data) => transport_to_node_match_block_arms(data),
         AnyTransport::MatchPatternOptional1(data) => transport_to_node_match_pattern_optional1(data),
         AnyTransport::ModItemExternal(data) => transport_to_node_mod_item_external(data),
         AnyTransport::ModItemInline(data) => transport_to_node_mod_item_inline(data),
@@ -50187,7 +50196,7 @@ fn transport_to_node_extern_crate_declaration_optional1(transport: ExternCrateDe
 fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(415) /* "_field_identifier" */,
+        TransportKindId(416) /* "_field_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -51057,9 +51066,9 @@ fn transport_to_node_match_arm_with_comma(transport: MatchArmWithCommaTransport)
     ))
 }
 
-fn transport_to_node_match_block_optional1(transport: MatchBlockOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_match_block_arms(transport: MatchBlockArmsTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("last_arm".to_string(), transport_field_value(AnyTransport::LastMatchArm(transport.last_arm))?);
+    fields.insert("last_arm".to_string(), transport_field_value(AnyTransport::LastMatchArm(*transport.last_arm))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.match_arm {
@@ -51072,7 +51081,7 @@ fn transport_to_node_match_block_optional1(transport: MatchBlockOptional1Transpo
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_match_block_optional1" — no parser symbol */,
+        TransportKindId(384) /* "_match_block_arms" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -51978,7 +51987,7 @@ fn transport_to_node_type_argument(transport: TypeArgumentTransport) -> Result<T
 fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(418) /* "_type_identifier" */,
+        TransportKindId(419) /* "_type_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -54273,11 +54282,10 @@ fn transport_to_node_match_arm(transport: MatchArmTransport) -> Result<Transport
 
 fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("last_arm".to_string(), transport_field_value(AnyTransport::LastMatchArm(*transport.last_arm))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.match_arm {
-        children_buf.extend(value.into_iter().map(|v| AnyTransport::MatchArm(v)).collect::<Vec<_>>());
+    if let Some(value) = transport.match_block_arms {
+        children_buf.push(AnyTransport::MatchBlockArms(*value));
     }
     let children = if children_buf.is_empty() {
         None

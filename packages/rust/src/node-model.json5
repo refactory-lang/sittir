@@ -209,7 +209,7 @@
     "_line_comment_doc.doc": {
       "doc_comment": "_line_doc_content"
     },
-    "_match_block_optional1.last_arm": {
+    "_match_block_arms.last_arm": {
       "match_arm": "last_match_arm"
     },
     "_non_special_token.content": {
@@ -322,8 +322,8 @@
       "match_arm_with_comma": "_match_arm_with_comma",
       "match_arm_block_ending": "_match_arm_block_ending"
     },
-    "match_block.last_arm": {
-      "match_arm": "last_match_arm"
+    "match_block.match_block_arms": {
+      "match_block_arms": "_match_block_arms"
     },
     "mod_item.content": {
       "mod_item_external": "_mod_item_external",
@@ -830,6 +830,22 @@
     },
     "_match_arm_with_comma": {
       "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_match_block_arms": {
+      "match_arm": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "last_arm": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2447,17 +2463,10 @@
       }
     },
     "match_block": {
-      "match_arm": {
+      "match_block_arms": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "last_arm": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -6765,13 +6774,13 @@
       ]
     },
     {
-      "kind": "_match_block_optional1",
+      "kind": "_match_block_arms",
       "modelType": "group",
-      "typeName": "MatchBlockOptional1",
-      "factoryName": "_matchBlockOptional1",
-      "irKey": "matchBlockOptional1",
+      "typeName": "MatchBlockArms",
+      "factoryName": "_matchBlockArms",
+      "irKey": "matchBlockArms",
       "hidden": false,
-      "name": "_match_block_optional1",
+      "name": "_match_block_arms",
       "fields": [
         {
           "name": "match_arm",
@@ -6822,7 +6831,12 @@
           }
         }
       ],
-      "children": []
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "match_arm",
+        "last_arm"
+      ]
     },
     {
       "kind": "_match_pattern_optional1",
@@ -15559,18 +15573,18 @@
       "hidden": false,
       "fields": [
         {
-          "name": "match_arm",
-          "propertyName": "matchArms",
-          "paramName": "matchArms",
+          "name": "match_block_arms",
+          "propertyName": "matchBlockArms",
+          "paramName": "matchBlockArms",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "match_arm",
-              "parseKind": "match_arm",
+              "multiplicity": "optional",
+              "name": "_match_block_arms",
+              "parseKind": "match_block_arms",
               "unresolved": true
             }
           ],
@@ -15578,40 +15592,15 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "match_arm"
-            ]
-          }
-        },
-        {
-          "name": "last_arm",
-          "propertyName": "lastArm",
-          "paramName": "lastArm",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "last_match_arm",
-              "parseKind": "match_arm",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "last_match_arm"
+              "_match_block_arms"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "match_arm",
-        "last_arm"
+        "match_block_arms"
       ]
     },
     {

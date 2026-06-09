@@ -521,6 +521,24 @@ export function _matchArmWithComma(config: T.MatchArmWithComma.Config) {
   }, methodsEngine);
 }
 
+export function _matchBlockArms(config: T.MatchBlockArms.Config) {
+  const _match_arm = config.matchArm;
+  const _last_arm = config.lastArm;
+  return withMethods({
+    $type: TSKindId.MatchBlockArms as const,
+    $source: 2 as const,
+    $named: true as const,
+    _match_arm,
+    _last_arm,
+    matchArms() { return _match_arm; },
+    lastArm() { return _last_arm; },
+    $with: {
+      matchArms: (...values: T.MatchArm[]) => _matchBlockArms({ ...config, matchArm: values }),
+      lastArm: (value: T.LastMatchArm) => _matchBlockArms({ ...config, lastArm: value }),
+    },
+  }, methodsEngine);
+}
+
 export function modItemInline(config: T.ModItemInline.Config) {
   const _body = config.body;
   return withMethods({
@@ -2337,21 +2355,15 @@ export function matchArm(config: T.MatchArm.Config) {
   }, methodsEngine);
 }
 
-export function matchBlock(config: T.MatchBlock.Config) {
-  const _match_arm = config.matchArm;
-  const _last_arm = config.lastArm;
+export function matchBlock(child?: T.MatchBlockArms) {
+  const _match_block_arms = child;
   return withMethods({
     $type: TSKindId.MatchBlock as const,
     $source: 2 as const,
     $named: true as const,
-    _match_arm,
-    _last_arm,
-    matchArms() { return _match_arm; },
-    lastArm() { return _last_arm; },
-    $with: {
-      matchArms: (...values: T.MatchArm[]) => matchBlock({ ...config, matchArm: values }),
-      lastArm: (value: T.LastMatchArm) => matchBlock({ ...config, lastArm: value }),
-    },
+    _match_block_arms,
+    matchBlockArms() { return _match_block_arms; },
+    $with: { $child: (v: T.MatchBlockArms) => matchBlock(v) },
   }, methodsEngine);
 }
 
@@ -3696,6 +3708,7 @@ export type FluentKindMap = {
   "_macro_definition_paren": FluentNode<"_macro_definition_paren", T.MacroDefinitionParen.Config>;
   "_match_arm_block_ending": FluentNode<"_match_arm_block_ending", T.MatchArmBlockEnding.Config>;
   "_match_arm_with_comma": T.MatchArmWithComma;
+  "_match_block_arms": T.MatchBlockArms;
   "_mod_item_inline": FluentNode<"_mod_item_inline", T.ModItemInline.Config>;
   "_or_pattern_binary": T.OrPatternBinary;
   "_or_pattern_prefix": T.OrPatternPrefix;
@@ -3918,6 +3931,7 @@ export const _factoryMap = {
   "_macro_definition_paren": macroDefinitionParen,
   "_match_arm_block_ending": matchArmBlockEnding,
   "_match_arm_with_comma": _matchArmWithComma,
+  "_match_block_arms": _matchBlockArms,
   "_mod_item_inline": modItemInline,
   "_or_pattern_binary": _orPatternBinary,
   "_or_pattern_prefix": _orPatternPrefix,

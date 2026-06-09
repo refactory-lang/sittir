@@ -317,6 +317,14 @@ pub struct IndexSignatureMappedTypeClauseTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_jsx_opening_element_content.jinja", escape = "none")]
+pub struct JsxOpeningElementContentTemplate<'a> {
+    pub attribute: ListNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub type_arguments: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_number.jinja", escape = "none")]
 pub struct _NumberTemplate<'a> {
     pub argument: SingleNonterminalView<'a>,
@@ -1058,17 +1066,13 @@ pub struct JsxNamespaceNameTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "jsx_opening_element.jinja", escape = "none")]
 pub struct JsxOpeningElementTemplate<'a> {
-    pub attribute: ListNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub type_arguments: OptionalNonterminalView<'a>,
+    pub jsx_opening_element_content: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "jsx_self_closing_element.jinja", escape = "none")]
 pub struct JsxSelfClosingElementTemplate<'a> {
-    pub attribute: ListNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
-    pub type_arguments: OptionalNonterminalView<'a>,
+    pub jsx_opening_element_content: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

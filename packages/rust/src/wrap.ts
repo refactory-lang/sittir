@@ -741,6 +741,23 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
   return _node;
 }
 
+export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.MatchBlockArms as const,
+    _match_arm: normalizeRepeatedWrapSlot(data._match_arm, false, "match_arm", { tree, nodeType: data.$type, slotName: "match_arm", span: (data as _NodeData).$span }),
+    _last_arm: normalizeSingularWrapSlot(data._last_arm, "last_arm", true, data.$type, { tree, nodeType: data.$type, slotName: "last_arm", span: (data as _NodeData).$span }),
+
+    matchArms() { return drillInAll<T.MatchArm>(this._match_arm as readonly T.MatchArm[] | undefined, tree); },
+    lastArm() { return drillAs<T.LastMatchArm>(this._last_arm, tree, "match_arm", "last_match_arm"); },
+    $with: {
+      matchArms: (...v: NonNullable<T.MatchBlockArms['_match_arm']>[number][]) => wrapMatchBlockArms({ ...data, _match_arm: v }, tree),
+      lastArm: (v: NonNullable<T.MatchBlockArms['_last_arm']>) => wrapMatchBlockArms({ ...data, _last_arm: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapModItemInline(data: T.ModItemInline, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
@@ -2403,15 +2420,10 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MatchBlock as const,
-    _match_arm: normalizeRepeatedWrapSlot(data._match_arm, false, "match_arm", { tree, nodeType: data.$type, slotName: "match_arm", span: (data as _NodeData).$span }),
-    _last_arm: normalizeSingularWrapSlot(data._last_arm, "last_arm", true, data.$type, { tree, nodeType: data.$type, slotName: "last_arm", span: (data as _NodeData).$span }),
+    _match_block_arms: normalizeSingularWrapSlot(data._match_block_arms, "match_block_arms", false, data.$type, { tree, nodeType: data.$type, slotName: "match_block_arms", span: (data as _NodeData).$span }),
 
-    matchArms() { return drillInAll<T.MatchArm>(this._match_arm as readonly T.MatchArm[] | undefined, tree); },
-    lastArm() { return drillAs<T.LastMatchArm>(this._last_arm, tree, "match_arm", "last_match_arm"); },
-    $with: {
-      matchArms: (...v: NonNullable<T.MatchBlock['_match_arm']>[number][]) => wrapMatchBlock({ ...data, _match_arm: v }, tree),
-      lastArm: (v: NonNullable<T.MatchBlock['_last_arm']>) => wrapMatchBlock({ ...data, _last_arm: v }, tree),
-    },
+    matchBlockArms() { return drillAs<T.MatchBlockArms | undefined>(this._match_block_arms, tree, "match_block_arms", "_match_block_arms"); },
+    $with: { $children: (...vs: readonly [never]) => wrapMatchBlock({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3579,6 +3591,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_macro_definition_paren': (d, t) => wrapMacroDefinitionParen(d as unknown as T.MacroDefinitionParen, t),
   '_match_arm_block_ending': (d, t) => wrapMatchArmBlockEnding(d as unknown as T.MatchArmBlockEnding, t),
   '_match_arm_with_comma': (d, t) => wrapMatchArmWithComma(d as unknown as T.MatchArmWithComma, t),
+  '_match_block_arms': (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
   '_mod_item_inline': (d, t) => wrapModItemInline(d as unknown as T.ModItemInline, t),
   '_non_delim_token': (d, t) => wrapNonDelimToken(d as unknown as T.NonDelimToken, t),
   '_or_pattern_binary': (d, t) => wrapOrPatternBinary(d as unknown as T.OrPatternBinary, t),
@@ -3819,6 +3832,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'macro_definition_paren': '_macro_definition_paren',
   'match_arm_block_ending': '_match_arm_block_ending',
   'match_arm_with_comma': '_match_arm_with_comma',
+  'match_block_arms': '_match_block_arms',
   'mod_item_inline': '_mod_item_inline',
   'move_marker': '_move_marker',
   'operator': '_operator',

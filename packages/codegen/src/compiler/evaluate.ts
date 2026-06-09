@@ -532,7 +532,15 @@ export function alias(rule: Input, value: string | Rule): AliasRule {
 	if (typeof value === 'string') {
 		return { type: ALIAS, content, named: false, value };
 	}
-	if (typeof value === 'object' && 'type' in value && value.type === SYMBOL) {
+	// Accept both sittir-lowercase ('symbol') and tree-sitter-uppercase ('SYMBOL')
+	// so this works whether the $ proxy comes from evaluate's own runtime or
+	// wire's makeSimpleDollarProxy (which returns uppercase types).
+	if (
+		typeof value === 'object' &&
+		'type' in value &&
+		typeof (value as { type: unknown }).type === 'string' &&
+		(value as { type: string }).type.toLowerCase() === SYMBOL
+	) {
 		return {
 			type: ALIAS,
 			content,
@@ -619,8 +627,10 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	let word: string | null = null;
 
 	const { roles: collectedRoles } = withRoleScope(() => {
-		evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules, provenanceByKind, baseGrammar !== null);
-		adoptFinalBaseRules(baseGrammar, baseRules, rules);
+		evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules, provenanceByKind, baseGrammar !== null, baseGrammar);
+		// adoptFinalBaseRules is now called inside evaluateRulesAndInjectSynthetics,
+		// before applyPatternReplacement, so body-patterns can match FIELD-wrapped
+		// bodies that were written back via group-lift during rule evaluation.
 		evaluateMetadataCallbacksInScope(
 			opts,
 			baseGrammar,
@@ -1654,12 +1664,42 @@ function evaluateRulesAndInjectSynthetics(
 	refs: SymbolRef[],
 	rules: Record<string, Rule>,
 	provenanceByKind: Map<string, RuleProvenance>,
-	isExtension: boolean
+	isExtension: boolean,
+	baseGrammar?: unknown
 ): void {
 	evaluateRuleFunctions(opts, baseRules, refs, rules, provenanceByKind, isExtension);
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (wireCtx) {
 		injectSyntheticRules(wireCtx.deposits, rules, provenanceByKind);
+		// Apply group-lift write-backs BEFORE body-pattern injection and
+		// applyPatternReplacement so that transforms (e.g. `field('last_arm')` added
+		// via groupLiftRuleMap write-back during match_block's rule-fn evaluation)
+		// are visible when patterns are matched. Without this, body-patterns that
+		// include FIELD wrappers would fail to match because the FIELD is written
+		// back to baseGrammar.rules DURING evaluateRuleFunctions, but the sittir
+		// fork (rules) doesn't see it until adoptFinalBaseRules runs.
+		adoptFinalBaseRules(baseGrammar, baseRules, rules);
+		// Evaluate body-pattern group fns and inject hidden rule bodies into
+		// `rules` so that `applyPatternReplacement` Path B can find them. The wire
+		// path registers these via `applyWirePatternReplacement`, but the sittir
+		// compiler (evaluate.ts) path runs independently and needs the same bodies.
+		if (wireCtx.groups) {
+			for (const [key, value] of Object.entries(wireCtx.groups)) {
+				if (typeof value !== 'function') continue;
+				const hiddenName = `_${key}`;
+				if (hiddenName in rules) continue; // already present via deposit or override
+				const $ = createProxy(hiddenName, refs);
+				try {
+					const result = (value as (($: unknown, previous: unknown) => unknown)).call($, $, undefined);
+					if (result && typeof result === 'object' && typeof (result as { type?: unknown }).type === 'string') {
+						rules[hiddenName] = normalize(result as Input);
+						provenanceByKind.set(hiddenName, 'evaluate-synthesized');
+					}
+				} catch {
+					// body fn failed to evaluate in sittir context — skip; wire path handles it
+				}
+			}
+		}
 		applyPatternReplacement(wireCtx.authoredRuleNames, baseRules, rules, provenanceByKind, wireCtx);
 		prunePlaceholderOrphans(wireCtx, rules);
 	}
@@ -2068,6 +2108,10 @@ function patternRulesEqual(a: Rule, b: Rule): boolean {
 		case FIELD: {
 			const bFld = b as FieldRule;
 			return a.name === bFld.name && patternRulesEqual(a.content, bFld.content);
+		}
+		case ALIAS: {
+			const bAl = b as AliasRule;
+			return a.named === bAl.named && a.value === bAl.value && patternRulesEqual(a.content, bAl.content);
 		}
 		default:
 			return false;

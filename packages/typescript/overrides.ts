@@ -14,7 +14,7 @@
 // non-JSX corpus but a latent mismatch: anything JSX-shaped would
 // reparse-fail. Pick one grammar and stick with it end-to-end.
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
-import { transform, enrich, field, wire, refine, variant } from '../codegen/src/dsl/index.ts';
+import { transform, enrich, field, alias, wire, refine, variant } from '../codegen/src/dsl/index.ts';
 
 // Unified composition (matches rust): bind `enrich(base)` once and pass the
 // SAME enriched grammar to both grammar() and wire(). wire needs the enriched
@@ -305,6 +305,26 @@ export default grammar(
 				'2/2': 'readonly_first',
 				'2/3': 'accessor_opt'
 			}
+		},
+		groups: {
+			// __jsx_start_opening_element_optional1 is the inline two-slot helper for
+			// JSX element head content: choice(name / name+type_args) + repeat(attribute).
+			// The two-slot seq causes the template to flatten both slots, losing the
+			// name–attribute distinction. Registering as a visible group collapses the
+			// parent's optional to a single `jsx_opening_element_content` slot so each
+			// field renders from its own slot. Also fixes _jsx_start_opening_element's
+			// multi-slot-nested-seq diagnostic (it inlines __jsx_start_opening_element_optional1).
+			jsx_opening_element_content: ($) =>
+				seq(
+					choice(
+						field('name', choice($._jsx_identifier, $.jsx_namespace_name)),
+						seq(
+							field('name', choice($.identifier, alias($.nested_identifier, $.member_expression))),
+							field('type_arguments', optional($.type_arguments))
+						)
+					),
+					repeat(field('attribute', $._jsx_attribute))
+				),
 		},
 		transforms: {
 			// Naked-choice field names (was unresolvable `content` slots).

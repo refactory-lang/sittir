@@ -4373,6 +4373,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'jsx_attribute_value': '_jsx_attribute_value',
   'jsx_child': '_jsx_child',
   'jsx_element_name': '_jsx_element_name',
+  'jsx_opening_element_content': '_jsx_opening_element_content',
   'kind': '_kind',
   'module_export_name': '_module_export_name',
   'number_operator': '__number_operator',

@@ -463,6 +463,24 @@ function variant(name) {
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
+function alias(rule, value) {
+  if (typeof rule === "string" && value === void 0) {
+    return {
+      __sittirPlaceholder: "alias",
+      name: rule
+    };
+  }
+  const native = globalThis.alias;
+  if (typeof native !== "function") {
+    throw new Error(
+      "alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)"
+    );
+  }
+  if (value !== void 0) {
+    return native(rule, value);
+  }
+  return native(rule, rule);
+}
 
 // packages/codegen/src/compiler/rule-types.ts
 var STRING = "string";
@@ -2788,6 +2806,25 @@ var overrides_default = grammar(
         "2/2": "readonly_first",
         "2/3": "accessor_opt"
       }
+    },
+    groups: {
+      // __jsx_start_opening_element_optional1 is the inline two-slot helper for
+      // JSX element head content: choice(name / name+type_args) + repeat(attribute).
+      // The two-slot seq causes the template to flatten both slots, losing the
+      // name–attribute distinction. Registering as a visible group collapses the
+      // parent's optional to a single `jsx_opening_element_content` slot so each
+      // field renders from its own slot. Also fixes _jsx_start_opening_element's
+      // multi-slot-nested-seq diagnostic (it inlines __jsx_start_opening_element_optional1).
+      jsx_opening_element_content: ($) => seq(
+        choice(
+          field("name", choice($._jsx_identifier, $.jsx_namespace_name)),
+          seq(
+            field("name", choice($.identifier, alias($.nested_identifier, $.member_expression))),
+            field("type_arguments", optional($.type_arguments))
+          )
+        ),
+        repeat(field("attribute", $._jsx_attribute))
+      )
     },
     transforms: {
       // Naked-choice field names (was unresolvable `content` slots).

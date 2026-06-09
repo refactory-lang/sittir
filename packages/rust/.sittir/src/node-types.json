@@ -3861,10 +3861,25 @@
   {
     "type": "match_block",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "match_block_arms",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "match_block_arms",
+    "named": true,
     "fields": {
       "last_arm": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "match_arm",

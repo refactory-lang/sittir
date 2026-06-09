@@ -1,2 +1,2 @@
-export declare const TEMPLATE_BUNDLE_HASH = "4f378b2f186dd4e3133148cd0c40048a64be4e54aae297062cc5f9490795e1a6";
+export declare const TEMPLATE_BUNDLE_HASH = "f5daa38527f9bbd4da9bd854784b70404df66eeea0aadf2eee51c86ab9a55b84";
 //# sourceMappingURL=hash.d.ts.map
