@@ -385,14 +385,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec2 = nativeRequired("prec");
+  const prec4 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec2[variant2];
+    const fn = prec4[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec2(value, newContent);
+  return prec4(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -463,6 +463,62 @@ function variant(name) {
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
+
+// packages/codegen/src/compiler/rule-types.ts
+var STRING = "string";
+var PATTERN = "pattern";
+var SYMBOL = "symbol";
+var TOKEN = "token";
+
+// packages/codegen/src/compiler/evaluate.ts
+function normalize(input) {
+  if (input === void 0 || input === null) {
+    throw new Error("Undefined symbol");
+  }
+  if (typeof input === "string") {
+    return { type: STRING, value: input };
+  }
+  if (input instanceof RegExp) {
+    return { type: PATTERN, value: input.source };
+  }
+  if (typeof input === "object" && "type" in input) {
+    return input;
+  }
+  throw new TypeError(`Invalid rule: ${input}`);
+}
+function symbol(name) {
+  return { type: SYMBOL, name, hidden: name.startsWith("_"), inline: name.startsWith("_") };
+}
+var token = Object.assign(
+  function token2(content) {
+    return { type: TOKEN, content: normalize(content), immediate: false };
+  },
+  {
+    immediate(content) {
+      return { type: TOKEN, content: normalize(content), immediate: true };
+    }
+  }
+);
+var prec2 = Object.assign(
+  function prec3(precedenceOrContent, content) {
+    if (content === void 0) return normalize(precedenceOrContent);
+    return normalize(content);
+  },
+  {
+    left(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    },
+    right(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    },
+    dynamic(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    }
+  }
+);
 
 // packages/codegen/src/dsl/list-patterns.ts
 function firstStringOfChoice(r) {
@@ -708,8 +764,8 @@ function makeField(name, content) {
   return node;
 }
 function makeSymbol(name) {
-  const symbol = nativeRuleFn("symbol", "sym");
-  return symbol(name);
+  const symbol2 = nativeRuleFn("symbol", "sym");
+  return symbol2(name);
 }
 function registerKwRule(stringLiteral, keyword, kwRules) {
   const hiddenName = `_kw_${keyword}`;
@@ -1472,17 +1528,17 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
 function makeGroupLiftSymbol(referenceRule, name) {
   const t = referenceRule.type ?? "";
   const isUpper = t.length > 0 && t === t.toUpperCase();
+  const base2 = isUpper ? { type: "SYMBOL", name } : symbol(name);
   return {
-    type: isUpper ? "SYMBOL" : "symbol",
-    name,
+    ...base2,
     source: "group-lift",
     metadata: { source: "enrich" }
   };
 }
 function makeVisibleGroupAlias(symbolRef, name) {
   const aliasFn = nativeRuleFn("alias");
-  const symbol = nativeRuleFn("symbol", "sym");
-  const node = aliasFn(symbolRef, symbol(name));
+  const symbol2 = nativeRuleFn("symbol", "sym");
+  const node = aliasFn(symbolRef, symbol2(name));
   node.metadata = { source: "enrich" };
   return node;
 }
@@ -1721,9 +1777,9 @@ function collectInlineNames(entries) {
   const names = /* @__PURE__ */ new Set();
   for (const entry of entries) {
     if (!entry || typeof entry !== "object") continue;
-    const symbol = entry;
-    if ((symbol.type === "symbol" || symbol.type === "SYMBOL") && typeof symbol.name === "string") {
-      names.add(symbol.name);
+    const symbol2 = entry;
+    if ((symbol2.type === "symbol" || symbol2.type === "SYMBOL") && typeof symbol2.name === "string") {
+      names.add(symbol2.name);
     }
   }
   return names;

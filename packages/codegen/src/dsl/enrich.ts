@@ -60,6 +60,7 @@
  */
 
 import type { Rule } from '../compiler/rule.ts';
+import { symbol } from '../compiler/evaluate.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
 import {
@@ -1732,9 +1733,16 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
 	// the only added marker: path-descent reads it and LOOKS UP the referenced
 	// `_<parent>_<kind><N>` rule body by name to travel through (not by carrying
 	// the body here). `metadata` is inert to tree-sitter's parse tables.
+	// Route the lower-case (IR/render-side) ref through evaluate's `symbol()`
+	// so it carries the SAME construction stamps (`hidden`, `inline =
+	// name.startsWith('_')`) as every other ref — these `_<parent>_<kind>N`
+	// helpers are `_`-prefixed → inline=true. Keeping one constructor (revised at
+	// push-down / link) makes `inline` authoritative on the renderRules path, so
+	// normalize's fold can read it. The upper-case branch is the tree-sitter raw
+	// SYMBOL form (parser-side, never reaches the IR inline gate).
+	const base = isUpper ? { type: 'SYMBOL' as const, name } : symbol(name);
 	return {
-		type: isUpper ? 'SYMBOL' : 'symbol',
-		name,
+		...base,
 		source: 'group-lift',
 		metadata: { source: 'enrich' }
 	} as unknown as Rule;

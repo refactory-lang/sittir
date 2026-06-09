@@ -209,13 +209,12 @@ function spliceFoldableRefs(
 	switch (rule.type) {
 		case SYMBOL: {
 			if (!foldable.has(rule.name)) return rule;
-			// NOTE: deliberately NOT gated on the per-ref `inline` flag. Even with
-			// group-synthesis minting via `symbol()`, the foldable population on this
-			// render path also includes helpers from OTHER synthesis sites
-			// (lift-separators `_x_repeat1`, enrich/wire injections) that don't carry
-			// the stamp, so gating here regressed the fold (rust 120→87). The
-			// structural `foldable` set (hidden-name + group/multi shape − keepRef) is
-			// authoritative on this path. (simplify's inlineRefs DOES read `inline`.)
+			// A ref the inline flag marks non-inline (aliased / supertype /
+			// self-recursive) must NOT splice — it materializes as its own kind. The
+			// flag is authoritative on this render path now that every ref-minting
+			// site routes through `symbol()` (enrich `makeGroupLiftSymbol`,
+			// group-synthesis), so the construction stamp reaches here.
+			if ((rule as { inline?: boolean }).inline !== true) return rule;
 			// Only fold OPTIONAL / REQUIRED seq-unit refs. ARRAY / nonEmptyArray
 			// refs are `repeat(seq)` boundaries: the whole sequence repeats with a
 			// separator, and the baseline renders each internal slot with `|
