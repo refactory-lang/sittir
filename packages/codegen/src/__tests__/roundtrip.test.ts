@@ -86,20 +86,15 @@ describe('NodeMap structure', () => {
 		// exist in the map (e.g. `assignment_eq` / `assignment_type` /
 		// `assignment_typed`). The previous `>= 0` assertion was a no-op.
 		let groupCount = 0;
-		let polymorphCount = 0;
 		const assignmentVariantKinds = new Set<string>();
 		for (const [kind, node] of result.nodeMap.nodes) {
 			if (node.modelType === 'group') {
 				groupCount++;
 				if (kind.startsWith('_assignment_')) assignmentVariantKinds.add(kind);
 			}
-			if (node.modelType === 'polymorph') polymorphCount++;
 		}
 		expect(groupCount).toBeGreaterThan(0);
 		expect(assignmentVariantKinds.size).toBeGreaterThanOrEqual(2);
-		// Polymorph count may be 0 after nested-alias conversion — don't
-		// assert on it, but record it in the map for future regression work.
-		expect(polymorphCount).toBeGreaterThanOrEqual(0);
 	}, 30000);
 
 	it('every branch node has a rule attached', async () => {

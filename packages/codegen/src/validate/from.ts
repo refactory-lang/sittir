@@ -25,6 +25,7 @@ import {
 	emitValidatorMetrics,
 	getChildFactoryArgs,
 	nodeToConfig,
+	loadNodeModel,
 	type TSTree
 } from './common.ts';
 
@@ -228,21 +229,13 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
-		// factorySlots, polymorphVariants) lives in factory-map.json5.
-		try {
-			const mapPath = `../../../${grammar}/factory-map.json5`;
-			const { readFileSync } = await import('node:fs');
-			const content = readFileSync(new URL(mapPath, import.meta.url).pathname, 'utf-8');
-			const jsonOnly = content.replace(/^\s*\/\/.*$/gm, '').trim();
-			const mapData = JSON.parse(jsonOnly);
-			factoryShapes = mapData.factoryShapes ?? {};
-			factoryFields = mapData.factoryFields ?? {};
-			factorySlots = mapData.factorySlots ?? {};
-			fieldAliasMap = mapData.fieldAliasMap ?? {};
-			polymorphVariants = mapData.polymorphVariants ?? {};
-		} catch {
-			/* factory-map.json5 unavailable */
-		}
+		// factorySlots, polymorphVariants) lives in node-model.json5 (PR-K).
+		const model = await loadNodeModel(grammar);
+		factoryShapes = model.factoryShapes;
+		factoryFields = model.factoryFields;
+		factorySlots = model.factorySlots;
+		fieldAliasMap = model.fieldAliasMap;
+		polymorphVariants = model.polymorphVariants;
 	} catch {
 		/* factory module unavailable */
 	}

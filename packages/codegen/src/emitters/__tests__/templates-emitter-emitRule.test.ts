@@ -485,11 +485,4 @@ describe('emitRule — exhaustive default', () => {
 		expect(emitRule(rule, makeCtx())).toBe('');
 	});
 
-	it('returns empty for polymorph rules (handled by per-modelType emit instead)', () => {
-		const rule: Rule = {
-			type: 'polymorph',
-			forms: [{ name: 'a', content: { type: 'string', value: 'A' } }]
-		};
-		expect(emitRule(rule, makeCtx())).toBe('');
-	});
 });

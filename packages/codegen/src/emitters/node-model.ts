@@ -28,6 +28,9 @@ import type {
 	UnresolvedRef
 } from '../compiler/node-map.ts';
 import { isNodeRef, isUnresolvedRef, isRequired, isMultiple, isNonEmpty, kindsOf } from '../compiler/node-map.ts';
+import { buildFactoryMap } from './factory-map.ts';
+import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
+import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
 export interface EmitNodeModelConfig {
 	grammar: string;
@@ -84,6 +87,17 @@ interface SerializedNodeBase {
 	source?: string;
 	isParameterless?: boolean;
 	stampExpression?: string;
+	/**
+	 * PR-K: factory calling convention (`text`/`config`/`direct`/`spread`),
+	 * folded from `factory-map.json5`'s `factoryShapes`. Present only for
+	 * factory-emitting kinds (`classifyFactoryShape` non-null).
+	 */
+	factoryShape?: FactoryShape;
+	/**
+	 * PR-K: the factory-declared field names, folded from `factory-map.json5`'s
+	 * `factoryFields`. Present only for factory-emitting kinds.
+	 */
+	factoryFields?: string[];
 }
 
 interface SerializedBranch extends SerializedNodeBase {
@@ -175,6 +189,34 @@ interface SerializedNodeModel {
 	supertypes: string[];
 	externals: string[];
 	polymorphFormKinds: string[];
+	/**
+	 * PR-K: polymorph variant dispatch tables, folded from
+	 * `factory-map.json5`'s `polymorphVariants` (top-level, keyed by parent
+	 * kind). Built via the shared `buildFactoryMap` so the dispatch logic stays
+	 * single-sourced. Consumed by the validators' `nodeToConfig` /
+	 * `inferPolymorphVariant` / variant-adopted-kind scan.
+	 */
+	polymorphVariants: PolymorphVariantMap;
+	/**
+	 * PR-K: per-field alias-source map, folded from `factory-map.json5`'s
+	 * `fieldAliasMap` (top-level, keyed `"parentKind.fieldName"` →
+	 * `{ aliasTarget: sourceKind }`). The per-field `values[].parseKind`/`name`
+	 * carry the same facts, but the alias-source PAIRING + the
+	 * factory-emitting-kind FILTER (`collectAliasSourceKinds` /
+	 * `collectOverridePolymorphHelperKinds`) live only in `buildFactoryMap`.
+	 * Serializing the finished map keeps that filtering single-sourced — a
+	 * validator-side rebuild would have to re-derive it. Consumed by
+	 * `resolveAliasedKind`.
+	 */
+	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
+	/**
+	 * PR-K: per-kind slot metadata, folded from `factory-map.json5`'s
+	 * `factorySlots` (top-level, keyed by kind). Same single-source rationale
+	 * as `fieldAliasMap` — the emitting-kind filter is `buildFactoryMap`'s, not
+	 * reconstructable from per-field data without duplicating it. Consumed by
+	 * `nodeToConfig`'s config-surface normalization.
+	 */
+	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
 	nodes: SerializedNode[];
 }
 
@@ -185,12 +227,27 @@ export function emitNodeModel(config: EmitNodeModelConfig): string {
 }
 
 export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
+	// PR-K: fold ALL of factory-map's sections in via the SINGLE shared builder
+	// (one derivation; validators just READ). `factoryShapes` / `factoryFields`
+	// attach per-node; `polymorphVariants` / `factorySlots` / `fieldAliasMap` go
+	// top-level. The per-field data carries the raw facts (required/multiple/
+	// nonEmpty + values[].parseKind), but the alias-source pairing and the
+	// factory-emitting-kind FILTER live only in `buildFactoryMap` — serializing
+	// its finished output keeps that logic single-sourced and the validator maps
+	// byte-identical to the legacy factory-map (gate: counts stay stable).
+	const factoryData = buildFactoryMap(nodeMap);
+
 	const nodes: SerializedNode[] = [];
 	const kinds = Array.from(nodeMap.nodes.keys()).sort();
 	for (const kind of kinds) {
 		const node = nodeMap.nodes.get(kind);
 		if (!node) continue;
-		nodes.push(serializeNode(node));
+		const serialized = serializeNode(node);
+		const factoryShape = factoryData.factoryShapes[kind];
+		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
+		const factoryFields = factoryData.factoryFields[kind];
+		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
+		nodes.push(serialized);
 	}
 
 	const supertypes: string[] = [];
@@ -206,6 +263,9 @@ export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
 		supertypes,
 		externals: nodeMap.externals ? Array.from(nodeMap.externals).sort() : [],
 		polymorphFormKinds: Array.from(nodeMap.polymorphFormKinds).sort(),
+		polymorphVariants: factoryData.polymorphVariants,
+		fieldAliasMap: factoryData.fieldAliasMap,
+		factorySlots: factoryData.factorySlots,
 		nodes
 	};
 }
@@ -249,14 +309,6 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				parentKind: node.parentKind,
 				fields: node.fields.map(serializeField),
 				children: node.children.map(serializeChild)
-			};
-		case 'polymorph':
-			return {
-				...base,
-				modelType: 'polymorph',
-				polymorphSource: node.source,
-				variantChildKinds: [...node.variantChildKinds],
-				forms: node.forms.map(serializeForm)
 			};
 		case 'pattern':
 			return {

@@ -82,7 +82,19 @@ function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotN
       if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);
       return undefined;
     }
-    if (value.length !== 1) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);
+    if (value.length !== 1) {
+      // read_node concatenates grammar-agnostically; the named/unnamed
+      // disparity for SINGULAR slots is resolved HERE (the per-kind layer
+      // that knows arity). A structural anonymous token co-occurring on the
+      // same field (e.g. splat_type `field("identifier", seq("*", $.identifier))`)
+      // surfaces as a scalarized kindId NUMBER or a $named:false object; the
+      // real value is a string (text-collapsed leaf) or a $named!==false object.
+      // Drop the structural tokens — the template re-emits them — and keep the
+      // substantive value.
+      const substantive = (value as readonly unknown[]).filter((v) => !(typeof v === "number" || (typeof v === "object" && v !== null && (v as { $named?: unknown }).$named === false)));
+      if (substantive.length === 1) return substantive[0] as T;
+      return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);
+    }
     return value[0] as T;
   }
   if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);
@@ -173,6 +185,24 @@ function projectKindEnumStorage<T>(value: T): T {
   if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;
   const entry = value as unknown as _NodeData;
   return typeof entry.$type === "number" ? (entry.$type as T) : value;
+}
+// readTerminalFromOther — reclaim a model-designated terminal (operator /
+// keyword discriminant) that read_node forwarded to `$other` because it is
+// an anonymous, unfielded token. The model knows the slot accepts these
+// kinds; match an `$other` entry by kind-name and return it for the slot
+// storage. Non-mutating (idempotent): the entry stays in `$other`, but the
+// per-kind template renders the discriminant from its slot, not via $other,
+// so there is no double-render. A final `?? readTerminalFromOther(...)` only
+// fires when the nominal storage keys are all empty (the unfielded case);
+// when the token IS field-tagged the chain short-circuits before reaching it.
+function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[]): _NodeData | number | undefined {
+  const other = (data as { $other?: readonly unknown[] }).$other;
+  if (!Array.isArray(other)) return undefined;
+  for (const e of other) {
+    const id = typeof e === "number" ? e : (typeof e === "object" && e !== null ? (e as { $type?: unknown }).$type : undefined);
+    if (typeof id === "number" && allowedKindIds.includes(id)) return e as _NodeData | number;
+  }
+  return undefined;
 }
 const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
   "_destructuring_pattern": new Set(["object_pattern","array_pattern"]),
@@ -712,7 +742,7 @@ export function wrapForHeader(data: T.ForHeader, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ForHeader as const,
     _content: normalizeSingularWrapSlot((data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
-    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot((data._operator ?? readTerminalFromOther(data, [TSKindId.In, TSKindId.Of])), "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type, { tree, nodeType: data.$type, slotName: "right", span: (data as _NodeData).$span }),
 
     content() { return drillIn<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree); },
@@ -731,7 +761,7 @@ export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: T
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForHeaderLetConstKind as const,
-    _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type, { tree, nodeType: data.$type, slotName: "kind", span: (data as _NodeData).$span })),
+    _kind: projectKindEnumStorage(normalizeSingularWrapSlot((data._kind ?? readTerminalFromOther(data, [TSKindId.Let, TSKindId.Const])), "kind", true, data.$type, { tree, nodeType: data.$type, slotName: "kind", span: (data as _NodeData).$span })),
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type, { tree, nodeType: data.$type, slotName: "left", span: (data as _NodeData).$span }),
 
     kind() { return this._kind; },
@@ -762,7 +792,7 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForHeaderVarKind as const,
-    _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type, { tree, nodeType: data.$type, slotName: "kind", span: (data as _NodeData).$span })),
+    _kind: projectKindEnumStorage(normalizeSingularWrapSlot((data._kind ?? readTerminalFromOther(data, [TSKindId.Var])), "kind", true, data.$type, { tree, nodeType: data.$type, slotName: "kind", span: (data as _NodeData).$span })),
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type, { tree, nodeType: data.$type, slotName: "left", span: (data as _NodeData).$span }),
     _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),
 
@@ -952,7 +982,7 @@ export function wrap_Number(data: T._Number, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._Number as const,
-    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot((data._operator ?? readTerminalFromOther(data, [TSKindId.Dash, TSKindId.Plus])), "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _argument: normalizeSingularWrapSlot(data._argument, "argument", true, data.$type, { tree, nodeType: data.$type, slotName: "argument", span: (data as _NodeData).$span }),
 
     operator() { return this._operator; },
@@ -970,7 +1000,7 @@ export function wrapParameterName(data: T.ParameterName, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ParameterName as const,
     _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator", { tree, nodeType: data.$type, slotName: "decorator", span: (data as _NodeData).$span }),
-    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessibility_modifier ?? readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected])), "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
     _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "override_modifier", span: (data as _NodeData).$span })),
     _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
     _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type, { tree, nodeType: data.$type, slotName: "pattern", span: (data as _NodeData).$span }),
@@ -1032,7 +1062,7 @@ export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefini
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionAbstractFirst as const,
-    _abstract_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._abstract_marker, "abstract_marker", true, data.$type, { tree, nodeType: data.$type, slotName: "abstract_marker", span: (data as _NodeData).$span })),
+    _abstract_marker: projectKindEnumStorage(normalizeSingularWrapSlot((data._abstract_marker ?? readTerminalFromOther(data, [TSKindId.Abstract])), "abstract_marker", true, data.$type, { tree, nodeType: data.$type, slotName: "abstract_marker", span: (data as _NodeData).$span })),
     _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
 
     abstractMarker() { return this._abstract_marker; },
@@ -1049,7 +1079,7 @@ export function wrapPublicFieldDefinitionAccessFirst(data: T.PublicFieldDefiniti
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionAccessFirst as const,
-    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", true, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessibility_modifier ?? readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected])), "accessibility_modifier", true, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
     _declare_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._declare_marker, "declare_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "declare_marker", span: (data as _NodeData).$span })),
 
     accessibilityModifier() { return this._accessibility_modifier; },
@@ -1066,7 +1096,7 @@ export function wrapPublicFieldDefinitionAccessorOpt(data: T.PublicFieldDefiniti
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionAccessorOpt as const,
-    _accessor_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessor_marker, "accessor_marker", true, data.$type, { tree, nodeType: data.$type, slotName: "accessor_marker", span: (data as _NodeData).$span })),
+    _accessor_marker: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessor_marker ?? readTerminalFromOther(data, [TSKindId.Accessor])), "accessor_marker", true, data.$type, { tree, nodeType: data.$type, slotName: "accessor_marker", span: (data as _NodeData).$span })),
 
     accessorMarker() { return this._accessor_marker; },
     $with: {
@@ -1080,7 +1110,7 @@ export function wrapPublicFieldDefinitionDeclareFirst(data: T.PublicFieldDefinit
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionDeclareFirst as const,
-    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessibility_modifier ?? readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected])), "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
 
     accessibilityModifier() { return this._accessibility_modifier; },
     $with: { $children: (...vs: readonly [never]) => wrapPublicFieldDefinitionDeclareFirst({ ...data, $other: vs }, tree) },
@@ -1092,7 +1122,7 @@ export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefini
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionReadonlyFirst as const,
-    _readonly_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", true, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
+    _readonly_marker: projectKindEnumStorage(normalizeSingularWrapSlot((data._readonly_marker ?? readTerminalFromOther(data, [TSKindId.Readonly])), "readonly_marker", true, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
     _abstract_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._abstract_marker, "abstract_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "abstract_marker", span: (data as _NodeData).$span })),
 
     readonlyMarker() { return this._readonly_marker; },
@@ -1109,7 +1139,7 @@ export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitio
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionStaticMods as const,
-    _static_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._static_marker, "static_marker", true, data.$type, { tree, nodeType: data.$type, slotName: "static_marker", span: (data as _NodeData).$span })),
+    _static_marker: projectKindEnumStorage(normalizeSingularWrapSlot((data._static_marker ?? readTerminalFromOther(data, [TSKindId.Static])), "static_marker", true, data.$type, { tree, nodeType: data.$type, slotName: "static_marker", span: (data as _NodeData).$span })),
     _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "override_modifier", span: (data as _NodeData).$span })),
     _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
 
@@ -1197,7 +1227,7 @@ export function wrapTypeQueryMemberExpression(data: T.TypeQueryMemberExpression,
     ...data,
     $type: TSKindId.TypeQueryMemberExpression as const,
     _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type, { tree, nodeType: data.$type, slotName: "object", span: (data as _NodeData).$span }),
-    _content: projectKindEnumStorage(normalizeSingularWrapSlot((data._dot ?? data._qmark_dot ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span })),
+    _content: projectKindEnumStorage(normalizeSingularWrapSlot(((data._dot ?? data._qmark_dot ?? data._content) ?? readTerminalFromOther(data, [TSKindId.Dot, TSKindId.QmarkDot])), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span })),
     _property: normalizeSingularWrapSlot(data._property, "property", true, data.$type, { tree, nodeType: data.$type, slotName: "property", span: (data as _NodeData).$span }),
 
     object() { return drillIn<T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression>(this._object, tree); },
@@ -1251,7 +1281,7 @@ export function wrapUpdateExpressionPostfix(data: T.UpdateExpressionPostfix, tre
     ...data,
     $type: TSKindId.UpdateExpressionPostfix as const,
     _argument: normalizeSingularWrapSlot(data._argument, "argument", true, data.$type, { tree, nodeType: data.$type, slotName: "argument", span: (data as _NodeData).$span }),
-    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot((data._operator ?? readTerminalFromOther(data, [TSKindId.PlusPlus, TSKindId.DashDash])), "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
 
     argument() { return drillIn<T.Expression>(this._argument, tree); },
     operator() { return this._operator; },
@@ -1267,7 +1297,7 @@ export function wrapUpdateExpressionPrefix(data: T.UpdateExpressionPrefix, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.UpdateExpressionPrefix as const,
-    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot((data._operator ?? readTerminalFromOther(data, [TSKindId.PlusPlus, TSKindId.DashDash])), "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _argument: normalizeSingularWrapSlot(data._argument, "argument", true, data.$type, { tree, nodeType: data.$type, slotName: "argument", span: (data as _NodeData).$span }),
 
     operator() { return this._operator; },
@@ -1310,9 +1340,9 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.AbstractMethodSignature as const,
-    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessibility_modifier ?? readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected])), "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
     _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "override_modifier", span: (data as _NodeData).$span })),
-    _accessor_kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessor_kind, "accessor_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "accessor_kind", span: (data as _NodeData).$span })),
+    _accessor_kind: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star2])), "accessor_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "accessor_kind", span: (data as _NodeData).$span })),
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
     _optional_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._optional_marker, "optional_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "optional_marker", span: (data as _NodeData).$span })),
     _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type, { tree, nodeType: data.$type, slotName: "type_parameters", span: (data as _NodeData).$span }),
@@ -1528,7 +1558,7 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
     ...data,
     $type: TSKindId.AugmentedAssignmentExpression as const,
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type, { tree, nodeType: data.$type, slotName: "left", span: (data as _NodeData).$span }),
-    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot((data._operator ?? readTerminalFromOther(data, [TSKindId.PlusEq, TSKindId.DashEq, TSKindId.StarEq, TSKindId.SlashEq, TSKindId.PercentEq, TSKindId.CaretEq, TSKindId.AmpEq, TSKindId.PipeEq, TSKindId.GtGtEq, TSKindId.GtGtGtEq, TSKindId.LtLtEq, TSKindId.StarStarEq, TSKindId.AmpAmpEq, TSKindId.PipePipeEq, TSKindId.QmarkQmarkEq])), "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type, { tree, nodeType: data.$type, slotName: "right", span: (data as _NodeData).$span }),
 
     left() { return drillAs<T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression>(this._left, tree, "identifier", "_reserved_identifier"); },
@@ -1562,7 +1592,7 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
     ...data,
     $type: TSKindId.BinaryExpression as const,
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type, { tree, nodeType: data.$type, slotName: "left", span: (data as _NodeData).$span }),
-    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot((data._operator ?? readTerminalFromOther(data, [TSKindId.AmpAmp, TSKindId.PipePipe, TSKindId.GtGt, TSKindId.GtGtGt, TSKindId.LtLt, TSKindId.Amp2, TSKindId.Caret, TSKindId.Pipe2, TSKindId.Plus, TSKindId.Dash, TSKindId.Star2, TSKindId.Slash2, TSKindId.Percent, TSKindId.StarStar, TSKindId.Lt2, TSKindId.LtEq, TSKindId.EqEq, TSKindId.EqEqEq, TSKindId.BangEq, TSKindId.BangEqEq, TSKindId.GtEq, TSKindId.Gt2, TSKindId.QmarkQmark, TSKindId.Instanceof, TSKindId.In])), "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type, { tree, nodeType: data.$type, slotName: "right", span: (data as _NodeData).$span }),
 
     left() { return drillIn<T.Expression | T.PrivatePropertyIdentifier>(this._left, tree); },
@@ -1774,7 +1804,7 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Constraint as const,
-    _content: projectKindEnumStorage(normalizeSingularWrapSlot((data._extends ?? data._colon ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span })),
+    _content: projectKindEnumStorage(normalizeSingularWrapSlot(((data._extends ?? data._colon ?? data._content) ?? readTerminalFromOther(data, [TSKindId.Extends, TSKindId.Colon])), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span })),
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
 
     content() { return this._content; },
@@ -2047,7 +2077,7 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportSpecifier as const,
-    _export_kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._export_kind, "export_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "export_kind", span: (data as _NodeData).$span })),
+    _export_kind: projectKindEnumStorage(normalizeSingularWrapSlot((data._export_kind ?? readTerminalFromOther(data, [TSKindId.Type, TSKindId.Typeof])), "export_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "export_kind", span: (data as _NodeData).$span })),
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
     _alias: normalizeSingularWrapSlot(data._alias, "alias", false, data.$type, { tree, nodeType: data.$type, slotName: "alias", span: (data as _NodeData).$span }),
 
@@ -2161,7 +2191,7 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle) {
     $type: TSKindId.ForInStatement as const,
     _await_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._await_marker, "await_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "await_marker", span: (data as _NodeData).$span })),
     _content: normalizeSingularWrapSlot((data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
-    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot((data._operator ?? readTerminalFromOther(data, [TSKindId.In, TSKindId.Of])), "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type, { tree, nodeType: data.$type, slotName: "right", span: (data as _NodeData).$span }),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type, { tree, nodeType: data.$type, slotName: "body", span: (data as _NodeData).$span }),
 
@@ -2497,7 +2527,7 @@ export function wrapImportSpecifier(data: T.ImportSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportSpecifier as const,
-    _import_kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._import_kind, "import_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "import_kind", span: (data as _NodeData).$span })),
+    _import_kind: projectKindEnumStorage(normalizeSingularWrapSlot((data._import_kind ?? readTerminalFromOther(data, [TSKindId.Type, TSKindId.Typeof])), "import_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "import_kind", span: (data as _NodeData).$span })),
     _content: normalizeSingularWrapSlot((data._import_specifier_name ?? data._import_specifier_as ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
     importKind() { return this._import_kind; },
@@ -2514,7 +2544,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportStatement as const,
-    _import_clause: projectKindEnumStorage(normalizeSingularWrapSlot(data._import_clause, "import_clause", false, data.$type, { tree, nodeType: data.$type, slotName: "import_clause", span: (data as _NodeData).$span })),
+    _import_clause: projectKindEnumStorage(normalizeSingularWrapSlot((data._import_clause ?? readTerminalFromOther(data, [TSKindId.Type, TSKindId.Typeof])), "import_clause", false, data.$type, { tree, nodeType: data.$type, slotName: "import_clause", span: (data as _NodeData).$span })),
     _from_clause: normalizeSingularWrapSlot(data._from_clause, "from_clause", true, data.$type, { tree, nodeType: data.$type, slotName: "from_clause", span: (data as _NodeData).$span }),
     _import_attribute: normalizeSingularWrapSlot(data._import_attribute, "import_attribute", false, data.$type, { tree, nodeType: data.$type, slotName: "import_attribute", span: (data as _NodeData).$span }),
     _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type, { tree, nodeType: data.$type, slotName: "semicolon", span: (data as _NodeData).$span }),
@@ -2537,7 +2567,7 @@ export function wrapIndexSignature(data: T.IndexSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IndexSignature as const,
-    _sign: projectKindEnumStorage(normalizeSingularWrapSlot(data._sign, "sign", false, data.$type, { tree, nodeType: data.$type, slotName: "sign", span: (data as _NodeData).$span })),
+    _sign: projectKindEnumStorage(normalizeSingularWrapSlot((data._sign ?? readTerminalFromOther(data, [TSKindId.Dash, TSKindId.Plus])), "sign", false, data.$type, { tree, nodeType: data.$type, slotName: "sign", span: (data as _NodeData).$span })),
     _content: normalizeSingularWrapSlot((data._index_signature_colon ?? data._index_signature_mapped_type_clause ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
 
@@ -2679,7 +2709,7 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.LexicalDeclaration as const,
-    _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type, { tree, nodeType: data.$type, slotName: "kind", span: (data as _NodeData).$span })),
+    _kind: projectKindEnumStorage(normalizeSingularWrapSlot((data._kind ?? readTerminalFromOther(data, [TSKindId.Let, TSKindId.Const])), "kind", true, data.$type, { tree, nodeType: data.$type, slotName: "kind", span: (data as _NodeData).$span })),
     _declarators: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._declarators, ["variable_declarator"]), true, "declarators", { tree, nodeType: data.$type, slotName: "declarators", span: (data as _NodeData).$span }),
     _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type, { tree, nodeType: data.$type, slotName: "semicolon", span: (data as _NodeData).$span }),
 
@@ -2768,12 +2798,12 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.MethodDefinition as const,
-    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessibility_modifier ?? readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected])), "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
     _static_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._static_marker, "static_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "static_marker", span: (data as _NodeData).$span })),
     _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "override_modifier", span: (data as _NodeData).$span })),
     _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
     _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "async_marker", span: (data as _NodeData).$span })),
-    _accessor_kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessor_kind, "accessor_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "accessor_kind", span: (data as _NodeData).$span })),
+    _accessor_kind: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star2])), "accessor_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "accessor_kind", span: (data as _NodeData).$span })),
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
     _optional_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._optional_marker, "optional_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "optional_marker", span: (data as _NodeData).$span })),
     _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type, { tree, nodeType: data.$type, slotName: "type_parameters", span: (data as _NodeData).$span }),
@@ -2815,12 +2845,12 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MethodSignature as const,
-    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessibility_modifier ?? readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected])), "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
     _static_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._static_marker, "static_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "static_marker", span: (data as _NodeData).$span })),
     _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "override_modifier", span: (data as _NodeData).$span })),
     _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
     _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "async_marker", span: (data as _NodeData).$span })),
-    _accessor_kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessor_kind, "accessor_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "accessor_kind", span: (data as _NodeData).$span })),
+    _accessor_kind: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star2])), "accessor_kind", false, data.$type, { tree, nodeType: data.$type, slotName: "accessor_kind", span: (data as _NodeData).$span })),
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
     _optional_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._optional_marker, "optional_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "optional_marker", span: (data as _NodeData).$span })),
     _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type, { tree, nodeType: data.$type, slotName: "type_parameters", span: (data as _NodeData).$span }),
@@ -3027,9 +3057,9 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ObjectType as const,
-    _opening: projectKindEnumStorage(normalizeSingularWrapSlot(data._opening, "opening", true, data.$type, { tree, nodeType: data.$type, slotName: "opening", span: (data as _NodeData).$span })),
+    _opening: projectKindEnumStorage(normalizeSingularWrapSlot((data._opening ?? readTerminalFromOther(data, [TSKindId.Lbrace, TSKindId.LbracePipe])), "opening", true, data.$type, { tree, nodeType: data.$type, slotName: "opening", span: (data as _NodeData).$span })),
     _members: normalizeSingularWrapSlot(data._members, "members", false, data.$type, { tree, nodeType: data.$type, slotName: "members", span: (data as _NodeData).$span }),
-    _closing: projectKindEnumStorage(normalizeSingularWrapSlot(data._closing, "closing", true, data.$type, { tree, nodeType: data.$type, slotName: "closing", span: (data as _NodeData).$span })),
+    _closing: projectKindEnumStorage(normalizeSingularWrapSlot((data._closing ?? readTerminalFromOther(data, [TSKindId.Rbrace, TSKindId.PipeRbrace])), "closing", true, data.$type, { tree, nodeType: data.$type, slotName: "closing", span: (data as _NodeData).$span })),
 
     opening() { return this._opening; },
     members() { return drillIn<T.ObjectTypeContent | undefined>(this._members, tree); },
@@ -3112,7 +3142,7 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
     ...data,
     $type: TSKindId.OptionalParameter as const,
     _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator", { tree, nodeType: data.$type, slotName: "decorator", span: (data as _NodeData).$span }),
-    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessibility_modifier ?? readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected])), "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
     _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "override_modifier", span: (data as _NodeData).$span })),
     _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
     _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type, { tree, nodeType: data.$type, slotName: "pattern", span: (data as _NodeData).$span }),
@@ -3263,7 +3293,7 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.PropertySignature as const,
-    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessibility_modifier ?? readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected])), "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
     _static_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._static_marker, "static_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "static_marker", span: (data as _NodeData).$span })),
     _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "override_modifier", span: (data as _NodeData).$span })),
     _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
@@ -3298,7 +3328,7 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
     _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator", { tree, nodeType: data.$type, slotName: "decorator", span: (data as _NodeData).$span }),
     _content: normalizeSingularWrapSlot((data._public_field_definition_declare_first ?? data._public_field_definition_access_first ?? data._public_field_definition_static_mods ?? data._public_field_definition_abstract_first ?? data._public_field_definition_readonly_first ?? data._public_field_definition_accessor_opt ?? data._content), "content", false, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
-    _optionality_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._optionality_marker, "optionality_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "optionality_marker", span: (data as _NodeData).$span })),
+    _optionality_marker: projectKindEnumStorage(normalizeSingularWrapSlot((data._optionality_marker ?? readTerminalFromOther(data, [TSKindId.Qmark, TSKindId.Bang])), "optionality_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "optionality_marker", span: (data as _NodeData).$span })),
     _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
     _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),
 
@@ -3356,7 +3386,7 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
     ...data,
     $type: TSKindId.RequiredParameter as const,
     _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator", { tree, nodeType: data.$type, slotName: "decorator", span: (data as _NodeData).$span }),
-    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot((data._accessibility_modifier ?? readTerminalFromOther(data, [TSKindId.Public, TSKindId.Private, TSKindId.Protected])), "accessibility_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "accessibility_modifier", span: (data as _NodeData).$span })),
     _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type, { tree, nodeType: data.$type, slotName: "override_modifier", span: (data as _NodeData).$span })),
     _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type, { tree, nodeType: data.$type, slotName: "readonly_marker", span: (data as _NodeData).$span })),
     _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type, { tree, nodeType: data.$type, slotName: "pattern", span: (data as _NodeData).$span }),
@@ -3875,7 +3905,7 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UnaryExpression as const,
-    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot((data._operator ?? readTerminalFromOther(data, [TSKindId.Bang, TSKindId.Tilde, TSKindId.Dash, TSKindId.Plus, TSKindId.Typeof, TSKindId.Void, TSKindId.Delete])), "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _argument: normalizeSingularWrapSlot(data._argument, "argument", true, data.$type, { tree, nodeType: data.$type, slotName: "argument", span: (data as _NodeData).$span }),
 
     operator() { return this._operator; },

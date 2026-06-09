@@ -1534,7 +1534,6 @@ function classifyKindsForResolver(
 				break;
 			case 'supertype':
 			case 'branch':
-			case 'polymorph':
 			case 'group':
 				branchKinds.push(t);
 				break;
@@ -2236,9 +2235,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 		switch (node.modelType) {
 			case 'branch':
 				this.emitBranch(node);
-				break;
-			case 'polymorph':
-				this.emitPolymorph(node);
 				break;
 			case 'pattern':
 			case 'enum':

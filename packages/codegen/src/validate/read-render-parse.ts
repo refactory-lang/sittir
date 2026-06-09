@@ -35,6 +35,7 @@ import {
 	stripStructuralNodeText,
 	emitValidatorMetrics,
 	walkNativeForKind,
+	loadNodeModel,
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData
@@ -119,9 +120,28 @@ function readValidatorNodeData(
 	handle: TreeHandle,
 	node: TSNode,
 	nativeCoords: ReturnType<typeof findNativeNodeId>,
-	readTreeNodeFn: ((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null,
+	readTreeNodeFn:
+		| ((
+				handle: TreeHandle,
+				nodeHandle?: number,
+				childIndex?: number,
+				asType?: { from: string; to: string }
+		  ) => unknown)
+		| null,
 	deepReadKinds: KindMembership,
-	recursive: boolean
+	recursive: boolean,
+	/**
+	 * Alias-source override for the whole-node read, derived from the
+	 * effective-kind map (`discoverAliasSourceKinds`). When the validator
+	 * reads an aliased child STANDALONE (outside its parent slot's
+	 * `drillAs` context), the native read dispatches on the CST display
+	 * kind — e.g. rust's trailing match arm reads as `match_arm` and
+	 * wrapMatchArm fails because the node is structurally `last_match_arm`
+	 * (a `value` slot, not `content`). Passing `{ from, to }` here routes
+	 * the read through the same `asType` rewrite `drillAs` uses at the
+	 * parent slot, so `wrapNode` dispatches to the correct source wrapper.
+	 */
+	aliasOverride?: { from: string; to: string }
 ): AnyNodeData {
 	if (!recursive) {
 		return readNodeAt(handle, adaptNode(node), nativeCoords);
@@ -129,7 +149,9 @@ function readValidatorNodeData(
 	if (readTreeNodeFn) {
 		if (nativeCoords && handle.read) {
 			return stripStructuralNodeText(
-				materializeWrappedNodeData(readTreeNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex))
+				materializeWrappedNodeData(
+					readTreeNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex, aliasOverride)
+				)
 			);
 		}
 		const prev = handle.rootNode;
@@ -158,47 +180,24 @@ function readValidatorNodeData(
  * their child kinds). Other kinds stay on the shallow `$text`
  * short-circuit to preserve baseline rtPass numbers.
  *
- * Sources the set from the grammar's emitted `factory-map.json5`
- * polymorphVariants section (the codegen artifact that records which
+ * Sources the set from the grammar's emitted `node-model.json5`
+ * polymorphVariants section (PR-K; the codegen artifact that records which
  * kinds went through Link's push-down). Returns an empty set when no
  * variant adoption exists in the grammar.
  */
 async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
-	// factory-map.json5 lives at packages/<grammar>/factory-map.json5.
-	// 3x `..` resolves from .../packages/codegen/src/validate/read-render-parse.ts
-	// up to `packages/` (validate → src → codegen → packages). A
-	// previous `../../../../` overshoot landed at the repo root; with
-	// the 012-merge introducing a top-level `rust/` directory, that
-	// mis-path silently hit `rust/factory-map.json5` (non-existent) and
-	// the catch{} swallowed the ENOENT.
-	const factoryMapPath = new URL(`../../../${grammar}/factory-map.json5`, import.meta.url).pathname;
-	try {
-		const fs = await import('node:fs');
-		const content = fs.readFileSync(factoryMapPath, 'utf-8');
-		const kinds = new Set<string>();
-		// Scan the WHOLE file for parent entries — the shape
-		// `"<name>": { "source": "override", "childKind": { ... } }`
-		// is distinctive enough to appear only inside polymorphVariants
-		// (no other factory-map section nests `source` + `childKind`),
-		// so we don't need to isolate the surrounding block (nested
-		// brace matching in regex is brittle and the outer non-greedy
-		// scan stops at the first `}` inside the inner object).
-		const parentEntryRe =
-			/["'](\w+)["']\s*:\s*\{[^}]*["']source["']\s*:\s*["']override["'][^{]*["']childKind["']\s*:\s*\{([^}]*)\}/g;
-		let m: RegExpExecArray | null;
-		while ((m = parentEntryRe.exec(content)) !== null) {
-			kinds.add(m[1]!);
-			const childMap = m[2]!;
-			const childRe = /["']([^"']+)["']\s*:/g;
-			let cm: RegExpExecArray | null;
-			while ((cm = childRe.exec(childMap)) !== null) {
-				kinds.add(cm[1]!);
-			}
-		}
-		return kinds;
-	} catch {
-		return new Set<string>();
+	// PR-K: read the typed `polymorphVariants` map directly instead of
+	// regex-scanning raw JSON. Only `source: 'override'` descriptors carry a
+	// `childKind` map (the first-named-child dispatch table); each such parent
+	// and every child kind it dispatches to participates in variant() adoption.
+	const { polymorphVariants } = await loadNodeModel(grammar);
+	const kinds = new Set<string>();
+	for (const [parent, desc] of Object.entries(polymorphVariants)) {
+		if (desc.source !== 'override') continue;
+		kinds.add(parent);
+		for (const childKind of Object.keys(desc.childKind)) kinds.add(childKind);
 	}
+	return kinds;
 }
 
 /**
@@ -924,6 +923,24 @@ export async function validateReadRenderParse(
 					}
 
 					if (nativeCoords === null && handle.read) continue;
+					// Option (a): when the wrap-walk recorded a different effective
+					// kind for this exact span than tree-sitter's visible display
+					// kind, the node is an alias TARGET whose source wrapper differs
+					// (e.g. rust trailing arm: display `match_arm`, source
+					// `last_match_arm`). Standalone reads lose the parent slot's
+					// drillAs, so forward the resolution the validator already holds.
+					// Scope to NON-hidden effective kinds: canonical-hidden remaps
+					// (`type_identifier`→`_type_identifier`) are already a no-op
+					// inside wrapNode, and forcing a hidden supertype (`_literal`)
+					// would strip the node's concrete wrapper.
+					const effectiveForSpan = nodeIdToEffectiveType.get(`${nodeStartIndex}:${nodeEndIndex}`);
+					const aliasOverride =
+						effectiveForSpan !== undefined &&
+						!effectiveForSpan.startsWith('_') &&
+						tsVisibleKind !== undefined &&
+						effectiveForSpan !== tsVisibleKind
+							? { from: tsVisibleKind, to: effectiveForSpan }
+							: undefined;
 					const rawData = readValidatorNodeData(
 						handle,
 						// readValidatorNodeData uses `node` only for WASM paths; for
@@ -933,7 +950,8 @@ export async function validateReadRenderParse(
 						nativeCoords,
 						readTreeNodeFn,
 						deepReadKinds,
-						recursive === true
+						recursive === true,
+						aliasOverride
 					);
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,

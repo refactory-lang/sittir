@@ -1,8 +1,9 @@
 /**
  * Descriptor telling validators how to stamp `$variant` on a derived
  * polymorph config when the caller didn't supply it (readNode-derived
- * shapes, `.from()` Loose wrappers). Emitted in factory-map.json5;
- * consumed by `nodeToConfig` via `validate/common.ts`.
+ * shapes, `.from()` Loose wrappers). Serialized into node-model.json5's
+ * `polymorphVariants` section (PR-K); consumed by `nodeToConfig` via
+ * `validate/common.ts`.
  *
  * Lives in codegen — not `@sittir/types` — because the descriptor is
  * codegen/validator-internal. Consumers of `@sittir/types` should never

@@ -120,13 +120,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 					hasVariants: false
 				});
 				break;
-			case 'polymorph':
-				structuralKinds.push({
-					kind,
-					typeName: node.typeName,
-					hasVariants: node.forms.length > 1
-				});
-				break;
 			case 'pattern':
 			case 'keyword':
 			case 'enum':

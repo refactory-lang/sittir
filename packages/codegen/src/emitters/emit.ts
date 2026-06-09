@@ -8,7 +8,7 @@
  * Emitters that already have `collect()` namespace APIs
  * (factory, from, wrap, templates) get true per-node dispatch in the loop.
  * Emitters that use category collection or complex multi-pass patterns
- * (types, ir, is, consts, test, factoryMap, clientUtils,
+ * (types, ir, is, consts, test, clientUtils,
  * typeTests) run their existing `emitXxx()` function during finalize —
  * they keep their own internal loops for now, but the architecture is
  * set up for future migration to per-node dispatch.
@@ -30,7 +30,6 @@ import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
 import { emitTypeTests } from './type-test.ts';
 import { TemplateEmitter } from './templates.ts';
-import { emitFactoryMap } from './factory-map.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
 import { isRenderModuleGrammar, RenderModuleEmitter } from './render-module.ts';
@@ -65,7 +64,6 @@ export interface EmitAllResult {
 	tests: string;
 	typeTests: string;
 	jinjaTemplates: EmittedTemplates;
-	factoryMap: string;
 	utils: string;
 	renderModule?: RenderModuleBundle;
 }
@@ -196,13 +194,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
 				renderModuleEmitterInst?.emitBranch?.(node);
 				break;
-			case 'polymorph':
-				if (factoryEmission === 'emit') factoryEmitter.emitPolymorph(node);
-				if (fromEmission === 'emit') fromEmitter.emitPolymorph(node);
-				if (wrapEmission === 'emit') wrapEmitter.emitPolymorph(node);
-				if (templateEmission === 'emit') templateEmitter.emitPolymorph(node);
-				renderModuleEmitterInst?.emitPolymorph?.(node);
-				break;
 			case 'group':
 				if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
 				if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
@@ -240,7 +231,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables });
 	const typeTests = emitTypeTests({ nodeMap, generatedIdTables });
-	const factoryMap = emitFactoryMap({ grammar, nodeMap });
 	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
 
 	return {
@@ -254,7 +244,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		tests,
 		typeTests,
 		jinjaTemplates,
-		factoryMap,
 		utils,
 		renderModule
 	};

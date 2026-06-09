@@ -1752,9 +1752,11 @@ export interface DeleteStatement {
 
 export interface DictPattern {
   readonly $type: TSKindId.DictPattern;
+  readonly _dict_pattern_kv?: DictPatternKv;
   readonly _key?: readonly (SimplePattern)[];
   readonly _value?: readonly (CasePattern)[];
   readonly _splat_pattern?: readonly (SplatPattern)[];
+  dictPatternKv(): DictPatternKv | undefined;
   keys(): readonly (SimplePattern)[];
   values(): readonly (CasePattern)[];
   splatPatterns(): readonly (SplatPattern)[];

@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { createRenderer } from '@sittir/core';
 import type { AnyNodeData } from '@sittir/types';
 
@@ -79,6 +78,13 @@ interface CommonModule {
 		childConfig: Record<string, unknown>,
 		factorySlots?: Record<string, Record<string, FactorySlotMeta>>
 	): readonly unknown[];
+	loadNodeModel(grammar: string): Promise<{
+		factoryShapes: Record<string, FactoryShape>;
+		factoryFields: Record<string, readonly string[]>;
+		factorySlots: Record<string, Record<string, FactorySlotMeta>>;
+		fieldAliasMap: Record<string, Record<string, string>>;
+		polymorphVariants: Record<string, unknown>;
+	}>;
 }
 
 interface TreeSitterNode {
@@ -86,14 +92,6 @@ interface TreeSitterNode {
 	readonly isNamed: boolean;
 	readonly type: string;
 	readonly children: readonly TreeSitterNode[];
-}
-
-interface FactoryMapJson {
-	readonly factoryShapes?: Record<string, FactoryShape>;
-	readonly fieldAliasMap?: Record<string, Record<string, string>>;
-	readonly factoryFields?: Record<string, readonly string[]>;
-	readonly factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
-	readonly polymorphVariants?: Record<string, unknown>;
 }
 
 interface FactoryArtifacts {
@@ -115,11 +113,6 @@ const FACTORY_MODULE_PATHS: Record<GrammarName, string> = {
 	rust: '../../../rust/src/factories.ts',
 	typescript: '../../../typescript/src/factories.ts',
 	python: '../../../python/src/factories.ts'
-};
-const FACTORY_MAP_PATHS: Record<GrammarName, string> = {
-	rust: '../../../rust/factory-map.json5',
-	typescript: '../../../typescript/factory-map.json5',
-	python: '../../../python/factory-map.json5'
 };
 const TEMPLATE_DIR_PATHS: Record<GrammarName, string> = {
 	rust: '../../../rust/templates',
@@ -170,18 +163,17 @@ export async function loadFactoryArtifacts(grammar: GrammarName): Promise<Factor
 	const factoryModule: { _factoryMap?: Record<string, FactoryFn> } = await import(
 		new URL(FACTORY_MODULE_PATHS[grammar], import.meta.url).pathname
 	);
-	const factoryMapPath = new URL(FACTORY_MAP_PATHS[grammar], import.meta.url);
-	const rawJson = readFileSync(factoryMapPath, 'utf8')
-		.replace(/^\s*\/\/.*$/gm, '')
-		.trim();
-	const data = JSON.parse(rawJson) as FactoryMapJson;
+	// PR-K: validator factory metadata now lives in node-model.json5, read via
+	// the shared `loadNodeModel` loader in codegen's validate/common.ts.
+	const common = await loadCommon();
+	const model = await common.loadNodeModel(grammar);
 	return {
 		factoryMap: factoryModule._factoryMap ?? {},
-		factoryShapes: data.factoryShapes ?? {},
-		fieldAliasMap: data.fieldAliasMap ?? {},
-		factoryFields: data.factoryFields ?? {},
-		factorySlots: data.factorySlots ?? {},
-		polymorphVariants: data.polymorphVariants ?? {}
+		factoryShapes: model.factoryShapes,
+		fieldAliasMap: model.fieldAliasMap,
+		factoryFields: model.factoryFields,
+		factorySlots: model.factorySlots,
+		polymorphVariants: model.polymorphVariants
 	};
 }
 

@@ -24,7 +24,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -86,7 +86,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -98,7 +98,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -110,7 +110,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -160,7 +160,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -173,7 +173,7 @@
       },
       "_subscript": [
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "2",
           "$span": {
@@ -185,7 +185,7 @@
           "$named": true
         },
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "3",
           "$span": {
@@ -210,7 +210,7 @@
         "$named": false
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -241,7 +241,7 @@
     "input": {
       "$type": 204,
       "$source": 0,
-      "$children": [
+      "$other": [
         {
           "$type": 9,
           "$source": 0,
@@ -274,7 +274,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -287,7 +287,7 @@
       },
       "_subscript": [
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "4",
           "$span": {
@@ -299,7 +299,7 @@
           "$named": true
         },
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "5",
           "$span": {
@@ -324,7 +324,7 @@
         "$named": false
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -374,7 +374,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -398,7 +398,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -448,7 +448,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -472,7 +472,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -522,7 +522,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -547,7 +547,7 @@
           "$named": true
         },
         {
-          "$type": 80,
+          "$type": 79,
           "$source": 0,
           "$text": "...",
           "$span": {
@@ -572,7 +572,7 @@
         "$named": false
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -622,7 +622,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -646,7 +646,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -667,7 +667,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "c[::]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (slice))",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (slice step: (slice_group1)))",
     "wrappedText": "[c[::]]",
     "wrappedOffset": 1
   },
@@ -1245,7 +1245,7 @@
           "$named": false
         },
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "5",
           "$span": {
@@ -1333,7 +1333,7 @@
           "$named": false
         },
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "5",
           "$span": {
@@ -1508,7 +1508,7 @@
         "$named": true
       },
       "_comparators": {
-        "$type": 251,
+        "$type": 252,
         "$source": 0,
         "$text": "== c",
         "$span": {
@@ -1558,7 +1558,7 @@
         "$named": true
       },
       "_comparators": {
-        "$type": 251,
+        "$type": 252,
         "$source": 0,
         "$text": "in await all_regions()",
         "$span": {
@@ -1858,7 +1858,7 @@
         "$named": false
       },
       "_arguments": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -3686,7 +3686,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -3710,7 +3710,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -4446,7 +4446,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -4458,7 +4458,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -4508,7 +4508,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -4570,7 +4570,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 59,
+        "$type": 58,
         "$source": 0,
         "$text": "//",
         "$span": {
@@ -4582,7 +4582,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -4632,7 +4632,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -4694,7 +4694,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 57,
+        "$type": 56,
         "$source": 0,
         "$text": "/",
         "$span": {
@@ -4706,7 +4706,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "5",
         "$span": {
@@ -4818,7 +4818,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 39,
+        "$type": 38,
         "$source": 0,
         "$text": "**",
         "$span": {
@@ -4868,7 +4868,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -4880,7 +4880,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "5",
         "$span": {
@@ -4918,7 +4918,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -4968,7 +4968,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_operator": {
-        "$type": 63,
+        "$type": 62,
         "$source": 0,
         "$text": "~",
         "$span": {
@@ -5018,7 +5018,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".1",
         "$span": {
@@ -5030,7 +5030,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -5042,7 +5042,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".0",
         "$span": {
@@ -5080,7 +5080,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_left": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".1",
         "$span": {
@@ -5092,7 +5092,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -5104,7 +5104,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".0",
         "$span": {
@@ -5142,7 +5142,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_left": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".1",
         "$span": {
@@ -5154,7 +5154,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -5166,7 +5166,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -5204,7 +5204,7 @@
       "$nodeHandle": 3,
       "$named": true,
       "_left": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".1",
         "$span": {
@@ -5216,7 +5216,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -5228,7 +5228,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -5266,7 +5266,7 @@
       "$nodeHandle": 4,
       "$named": true,
       "_left": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -5278,7 +5278,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -5290,7 +5290,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".0",
         "$span": {
@@ -5328,7 +5328,7 @@
       "$nodeHandle": 5,
       "$named": true,
       "_left": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -5340,7 +5340,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -5352,7 +5352,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".0",
         "$span": {
@@ -5390,7 +5390,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -5402,7 +5402,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 39,
+        "$type": 38,
         "$source": 0,
         "$text": "**",
         "$span": {
@@ -5452,7 +5452,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_left": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -5464,7 +5464,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 39,
+        "$type": 38,
         "$source": 0,
         "$text": "**",
         "$span": {
@@ -5476,7 +5476,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "3",
         "$span": {
@@ -5514,7 +5514,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_left": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -5526,7 +5526,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 39,
+        "$type": 38,
         "$source": 0,
         "$text": "**",
         "$span": {
@@ -5538,7 +5538,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -5576,7 +5576,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -5638,7 +5638,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -5862,7 +5862,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -5886,7 +5886,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -6060,7 +6060,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 49,
+        "$type": 48,
         "$source": 0,
         "$text": "|",
         "$span": {
@@ -6122,7 +6122,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 62,
+        "$type": 61,
         "$source": 0,
         "$text": "<<",
         "$span": {
@@ -6184,7 +6184,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 60,
+        "$type": 59,
         "$source": 0,
         "$text": "&",
         "$span": {
@@ -6308,7 +6308,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 61,
+        "$type": 60,
         "$source": 0,
         "$text": "^",
         "$span": {
@@ -6370,7 +6370,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 56,
+        "$type": 55,
         "$source": 0,
         "$text": "or",
         "$span": {
@@ -6432,7 +6432,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 56,
+        "$type": 55,
         "$source": 0,
         "$text": "or",
         "$span": {
@@ -6494,7 +6494,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 55,
+        "$type": 54,
         "$source": 0,
         "$text": "and",
         "$span": {
@@ -6556,7 +6556,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 55,
+        "$type": 54,
         "$source": 0,
         "$text": "and",
         "$span": {
@@ -6618,7 +6618,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 55,
+        "$type": 54,
         "$source": 0,
         "$text": "and",
         "$span": {
@@ -6680,7 +6680,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 55,
+        "$type": 54,
         "$source": 0,
         "$text": "and",
         "$span": {
@@ -6730,7 +6730,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_not": {
-        "$type": 54,
+        "$type": 53,
         "$source": 0,
         "$text": "not",
         "$span": {
@@ -6780,7 +6780,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_not": {
-        "$type": 54,
+        "$type": 53,
         "$source": 0,
         "$text": "not",
         "$span": {
@@ -6830,7 +6830,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_not": {
-        "$type": 54,
+        "$type": 53,
         "$source": 0,
         "$text": "not",
         "$span": {
@@ -6893,7 +6893,7 @@
       },
       "_comparators": [
         {
-          "$type": 251,
+          "$type": 252,
           "$source": 0,
           "$text": "< b",
           "$span": {
@@ -6905,7 +6905,7 @@
           "$named": true
         },
         {
-          "$type": 251,
+          "$type": 252,
           "$source": 0,
           "$text": "<= c",
           "$span": {
@@ -6917,7 +6917,7 @@
           "$named": true
         },
         {
-          "$type": 251,
+          "$type": 252,
           "$source": 0,
           "$text": "== d",
           "$span": {
@@ -6929,7 +6929,7 @@
           "$named": true
         },
         {
-          "$type": 251,
+          "$type": 252,
           "$source": 0,
           "$text": ">= e",
           "$span": {
@@ -6941,7 +6941,7 @@
           "$named": true
         },
         {
-          "$type": 251,
+          "$type": 252,
           "$source": 0,
           "$text": "> f",
           "$span": {
@@ -6992,7 +6992,7 @@
         "$named": true
       },
       "_comparators": {
-        "$type": 251,
+        "$type": 252,
         "$source": 0,
         "$text": "not in b",
         "$span": {
@@ -7042,7 +7042,7 @@
         "$named": true
       },
       "_comparators": {
-        "$type": 251,
+        "$type": 252,
         "$source": 0,
         "$text": "is not b",
         "$span": {
@@ -7092,7 +7092,7 @@
         "$named": true
       },
       "_comparators": {
-        "$type": 251,
+        "$type": 252,
         "$source": 0,
         "$text": "<> b",
         "$span": {
@@ -7142,7 +7142,7 @@
         "$named": true
       },
       "_comparators": {
-        "$type": 251,
+        "$type": 252,
         "$source": 0,
         "$text": "== d",
         "$span": {
@@ -7192,7 +7192,7 @@
         "$named": true
       },
       "_comparators": {
-        "$type": 251,
+        "$type": 252,
         "$source": 0,
         "$text": "is b",
         "$span": {
@@ -7242,7 +7242,7 @@
         "$named": true
       },
       "_comparators": {
-        "$type": 251,
+        "$type": 252,
         "$source": 0,
         "$text": "!= d",
         "$span": {
@@ -7292,7 +7292,7 @@
         "$named": true
       },
       "_comparators": {
-        "$type": 251,
+        "$type": 252,
         "$source": 0,
         "$text": "== b",
         "$span": {
@@ -7342,7 +7342,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 56,
+        "$type": 55,
         "$source": 0,
         "$text": "or",
         "$span": {
@@ -7404,7 +7404,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 55,
+        "$type": 54,
         "$source": 0,
         "$text": "and",
         "$span": {
@@ -7454,7 +7454,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_not": {
-        "$type": 54,
+        "$type": 53,
         "$source": 0,
         "$text": "not",
         "$span": {
@@ -7516,7 +7516,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -7540,7 +7540,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -7640,7 +7640,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -7652,7 +7652,7 @@
         "$named": false
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -7702,7 +7702,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 66,
+        "$type": 65,
         "$source": 0,
         "$text": "+=",
         "$span": {
@@ -7714,7 +7714,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -7764,7 +7764,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 74,
+        "$type": 73,
         "$source": 0,
         "$text": ">>=",
         "$span": {
@@ -7776,7 +7776,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -7826,7 +7826,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 71,
+        "$type": 70,
         "$source": 0,
         "$text": "//=",
         "$span": {
@@ -7838,7 +7838,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -7888,7 +7888,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 70,
+        "$type": 69,
         "$source": 0,
         "$text": "@=",
         "$span": {
@@ -7950,7 +7950,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 67,
+        "$type": 66,
         "$source": 0,
         "$text": "-=",
         "$span": {
@@ -7962,7 +7962,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -8012,7 +8012,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 72,
+        "$type": 71,
         "$source": 0,
         "$text": "%=",
         "$span": {
@@ -8024,7 +8024,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -8074,7 +8074,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 69,
+        "$type": 68,
         "$source": 0,
         "$text": "/=",
         "$span": {
@@ -8086,7 +8086,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "5",
         "$span": {
@@ -8136,7 +8136,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 68,
+        "$type": 67,
         "$source": 0,
         "$text": "*=",
         "$span": {
@@ -8148,7 +8148,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": "2.2",
         "$span": {
@@ -8198,7 +8198,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 76,
+        "$type": 75,
         "$source": 0,
         "$text": "&=",
         "$span": {
@@ -8210,7 +8210,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -8260,7 +8260,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 77,
+        "$type": 76,
         "$source": 0,
         "$text": "^=",
         "$span": {
@@ -8272,7 +8272,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -8322,7 +8322,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 75,
+        "$type": 74,
         "$source": 0,
         "$text": "<<=",
         "$span": {
@@ -8334,7 +8334,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -8384,7 +8384,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 78,
+        "$type": 77,
         "$source": 0,
         "$text": "|=",
         "$span": {
@@ -8446,7 +8446,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 73,
+        "$type": 72,
         "$source": 0,
         "$text": "**=",
         "$span": {
@@ -8458,7 +8458,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "3",
         "$span": {
@@ -8706,7 +8706,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "3",
         "$span": {
@@ -8830,7 +8830,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "42",
         "$span": {
@@ -9016,7 +9016,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "42",
         "$span": {
@@ -9078,7 +9078,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -10049,7 +10049,7 @@
       },
       "_arguments": [
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -10073,7 +10073,7 @@
           "$named": false
         },
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "10",
           "$span": {
@@ -10222,7 +10222,7 @@
         "$named": false
       },
       "_body": {
-        "$type": 89,
+        "$type": 88,
         "$source": 0,
         "$text": "True",
         "$span": {
@@ -10532,7 +10532,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 58,
+        "$type": 57,
         "$source": 0,
         "$text": "%",
         "$span": {
@@ -11251,7 +11251,7 @@
       },
       "_arguments": [
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -11275,7 +11275,7 @@
           "$named": false
         },
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -11299,7 +11299,7 @@
           "$named": false
         },
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -11374,7 +11374,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 284,
+        "$type": 285,
         "$source": 0,
         "$text": "b",
         "$span": {
@@ -11525,7 +11525,7 @@
       },
       "_arguments": [
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -11549,7 +11549,7 @@
           "$named": false
         },
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "2",
           "$span": {
@@ -11762,7 +11762,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -11774,7 +11774,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -11812,7 +11812,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -11824,7 +11824,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1j",
         "$span": {
@@ -11862,7 +11862,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -11874,7 +11874,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".6_6",
         "$span": {
@@ -11912,7 +11912,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -11924,7 +11924,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": ".1_1",
         "$span": {
@@ -11962,7 +11962,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_operator": {
-        "$type": 53,
+        "$type": 52,
         "$source": 0,
         "$text": "-",
         "$span": {
@@ -11974,7 +11974,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 87,
+        "$type": 86,
         "$source": 0,
         "$text": "1e10",
         "$span": {
@@ -14760,7 +14760,7 @@
         "$named": false
       },
       "_condition": {
-        "$type": 89,
+        "$type": 88,
         "$source": 0,
         "$text": "True",
         "$span": {
@@ -15020,7 +15020,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -15432,7 +15432,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -16164,7 +16164,7 @@
       "$nodeHandle": 8,
       "$named": true,
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -16176,7 +16176,7 @@
         "$named": false
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -16500,7 +16500,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -16524,7 +16524,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -16674,7 +16674,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -16748,7 +16748,7 @@
         "$named": false
       },
       "_body": {
-        "$type": 89,
+        "$type": 88,
         "$source": 0,
         "$text": "True",
         "$span": {
@@ -16810,7 +16810,7 @@
         "$named": false
       },
       "_body": {
-        "$type": 90,
+        "$type": 89,
         "$source": 0,
         "$text": "False",
         "$span": {
@@ -16948,7 +16948,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -16998,7 +16998,7 @@
         }
       ],
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17036,7 +17036,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -17048,7 +17048,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17086,7 +17086,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -17110,7 +17110,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17148,7 +17148,7 @@
       "$nodeHandle": 3,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -17172,7 +17172,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17210,7 +17210,7 @@
       "$nodeHandle": 4,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -17234,7 +17234,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17272,7 +17272,7 @@
       "$nodeHandle": 5,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -17296,7 +17296,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17334,7 +17334,7 @@
       "$nodeHandle": 6,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -17358,7 +17358,7 @@
         "$named": true
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17396,7 +17396,7 @@
       "$nodeHandle": 7,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -17408,7 +17408,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17582,7 +17582,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -17606,7 +17606,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -17794,7 +17794,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -17806,7 +17806,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -17856,7 +17856,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -17880,7 +17880,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -17930,7 +17930,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -17954,7 +17954,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -18054,7 +18054,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -18078,7 +18078,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -18128,7 +18128,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -18152,7 +18152,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -18303,7 +18303,7 @@
       },
       "_arguments": [
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -18327,7 +18327,7 @@
           "$named": false
         },
         {
-          "$type": 86,
+          "$type": 85,
           "$source": 0,
           "$text": "10",
           "$span": {
@@ -22976,7 +22976,7 @@
         "$named": false
       },
       "_subject": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -23385,7 +23385,7 @@
       },
       "_subject": [
         {
-          "$type": 80,
+          "$type": 79,
           "$source": 0,
           "$text": "...",
           "$span": {
@@ -23397,7 +23397,7 @@
           "$named": true
         },
         {
-          "$type": 80,
+          "$type": 79,
           "$source": 0,
           "$text": "...",
           "$span": {
@@ -29592,7 +29592,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -29604,7 +29604,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 56,
+        "$type": 55,
         "$source": 0,
         "$text": "or",
         "$span": {
@@ -29616,7 +29616,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -29654,7 +29654,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_left": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -29666,7 +29666,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 56,
+        "$type": 55,
         "$source": 0,
         "$text": "or",
         "$span": {
@@ -29678,7 +29678,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -29716,7 +29716,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_left": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -29728,7 +29728,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 56,
+        "$type": 55,
         "$source": 0,
         "$text": "or",
         "$span": {
@@ -29740,7 +29740,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -29778,7 +29778,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_not": {
-        "$type": 54,
+        "$type": 53,
         "$source": 0,
         "$text": "not",
         "$span": {
@@ -29790,7 +29790,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 89,
+        "$type": 88,
         "$source": 0,
         "$text": "True",
         "$span": {
@@ -29964,7 +29964,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -30026,7 +30026,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -30038,7 +30038,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -30050,7 +30050,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -30100,7 +30100,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -30112,7 +30112,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -30124,7 +30124,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -30174,7 +30174,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 52,
+        "$type": 51,
         "$source": 0,
         "$text": "+",
         "$span": {
@@ -30224,7 +30224,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_not": {
-        "$type": 54,
+        "$type": 53,
         "$source": 0,
         "$text": "not",
         "$span": {
@@ -30298,7 +30298,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 284,
+        "$type": 285,
         "$source": 0,
         "$text": "e",
         "$span": {
@@ -30360,7 +30360,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 284,
+        "$type": 285,
         "$source": 0,
         "$text": "e",
         "$span": {
@@ -30422,7 +30422,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 284,
+        "$type": 285,
         "$source": 0,
         "$text": "b",
         "$span": {
@@ -30484,7 +30484,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 284,
+        "$type": 285,
         "$source": 0,
         "$text": "d",
         "$span": {
@@ -30546,7 +30546,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 284,
+        "$type": 285,
         "$source": 0,
         "$text": "e",
         "$span": {
@@ -30608,7 +30608,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 284,
+        "$type": 285,
         "$source": 0,
         "$text": "f",
         "$span": {
@@ -30670,7 +30670,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 284,
+        "$type": 285,
         "$source": 0,
         "$text": "h",
         "$span": {
@@ -32602,7 +32602,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -32626,7 +32626,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -32676,7 +32676,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -32726,7 +32726,7 @@
         "$named": false
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -33410,7 +33410,7 @@
         "$named": false
       },
       "_arguments": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -33522,7 +33522,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -33534,7 +33534,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -33546,7 +33546,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -33596,7 +33596,7 @@
         "$named": true
       },
       "_[": {
-        "$type": 45,
+        "$type": 44,
         "$source": 0,
         "$text": "[",
         "$span": {
@@ -33608,7 +33608,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 86,
+        "$type": 85,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -33620,7 +33620,7 @@
         "$named": true
       },
       "_]": {
-        "$type": 46,
+        "$type": 45,
         "$source": 0,
         "$text": "]",
         "$span": {
@@ -34688,7 +34688,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_{": {
-        "$type": 50,
+        "$type": 49,
         "$source": 0,
         "$text": "{",
         "$span": {
@@ -34700,7 +34700,7 @@
         "$named": false
       },
       "_}": {
-        "$type": 51,
+        "$type": 50,
         "$source": 0,
         "$text": "}",
         "$span": {
@@ -35267,9 +35267,9 @@
     "input": {
       "$type": 190,
       "$source": 0,
-      "$children": [
+      "$other": [
         {
-          "$type": 93,
+          "$type": 92,
           "$source": 0,
           "$text": "\\\n",
           "$span": {
@@ -35300,7 +35300,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 56,
+        "$type": 55,
         "$source": 0,
         "$text": "or",
         "$span": {

@@ -321,7 +321,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "field_pattern": TSKindId.FieldPattern,
   "for_lifetimes": TSKindId.ForLifetimes,
   "line_comment": TSKindId.LineComment,
-  "match_block": TSKindId.MatchBlock,
   "or_pattern": TSKindId.OrPattern,
   "parameters": TSKindId.Parameters,
   "range_expression": TSKindId.RangeExpression,
@@ -369,7 +368,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "field_pattern": return F.fieldPattern(children[0] as Parameters<typeof F.fieldPattern>[0]);
     case "for_lifetimes": return F.forLifetimes(...(children as Parameters<typeof F.forLifetimes>));
     case "line_comment": return F.lineComment(children[0] as Parameters<typeof F.lineComment>[0]);
-    case "match_block": return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
     case "or_pattern": return F.orPattern(children[0] as Parameters<typeof F.orPattern>[0]);
     case "parameters": return F.parameters(...(children as Parameters<typeof F.parameters>));
     case "range_expression": return F.rangeExpression(children[0] as Parameters<typeof F.rangeExpression>[0]);
@@ -1171,21 +1169,19 @@ export function matchArmFrom(input: T.MatchArm.Loose): ReturnType<typeof F.match
   });
 }
 
-export function matchBlockFrom(...input: readonly (T.MatchArm | T.MatchBlock)[]): ReturnType<typeof F.matchBlock> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.MatchBlock) {
-    const data = input[0];
-    const stored = (data as unknown as { _match_arm?: unknown })._match_arm;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.matchBlock(...(children as unknown as Parameters<typeof F.matchBlock>));
-  }
-  return F.matchBlock(...(input as unknown as Parameters<typeof F.matchBlock>));
+export function matchBlockFrom(input: T.MatchBlock.Loose): ReturnType<typeof F.matchBlock> {
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.matchBlock>;
+  return F.matchBlock({
+    matchArm: _resolveManyBranch<T.MatchArm>(input.matchArm, "match_arm"),
+    lastArm: _resolveOneBranch<T.LastMatchArm>(input.lastArm, "last_match_arm"),
+  });
 }
 
 export function matchExpressionFrom(input: T.MatchExpression.Loose): ReturnType<typeof F.matchExpression> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.matchExpression>;
   return F.matchExpression({
     value: _resolveOne<T.Expression>(input.value, _K4, _K5),
-    body: _resolveOneBranch<T.MatchBlock>(input.body, "match_block") ?? F.matchBlock(),
+    body: _resolveOneBranch<T.MatchBlock>(input.body, "match_block"),
   });
 }
 

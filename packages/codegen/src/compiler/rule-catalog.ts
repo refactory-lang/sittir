@@ -156,8 +156,6 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 					}
 				)
 			];
-		case 'polymorph':
-			return params.rule.forms.map((form, index) => childParams(form.content, { edge: 'forms', index }));
 		case SUPERTYPE:
 		case STRING:
 		case PATTERN:
@@ -186,15 +184,6 @@ function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly Build
 		case ALIAS:
 		case TOKEN:
 			return { ...rule, id, content: children[0]!.rule };
-		case 'polymorph':
-			return {
-				...rule,
-				id,
-				forms: rule.forms.map((form, index) => ({
-					...form,
-					content: children[index]!.rule
-				}))
-			};
 		case SUPERTYPE:
 		case STRING:
 		case PATTERN:
@@ -261,7 +250,6 @@ function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): R
 		case OPTIONAL:
 		case VARIANT:
 		case GROUP:
-		case 'polymorph':
 			// Recursive: nonterminal iff any child is.
 			return anyChildNonterminal ? 'nonterminal' : 'terminal';
 		default:
@@ -301,8 +289,6 @@ function ruleChildren(rule: Rule): readonly Rule[] {
 			return [rule.content];
 		case SEQ:
 			return rule.members;
-		case 'polymorph':
-			return rule.forms.map((form) => form.content);
 		default:
 			return [];
 	}

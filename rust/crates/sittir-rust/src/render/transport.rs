@@ -89,6 +89,7 @@ pub enum AnyTransport {
     MacroDefinitionParen(MacroDefinitionParenTransport),
     MatchArmBlockEnding(MatchArmBlockEndingTransport),
     MatchArmWithComma(MatchArmWithCommaTransport),
+    MatchBlockOptional1(MatchBlockOptional1Transport),
     MatchPatternOptional1(MatchPatternOptional1Transport),
     ModItemExternal(ModItemExternalTransport),
     ModItemInline(ModItemInlineTransport),
@@ -22341,6 +22342,58 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchArmWithCommaTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct MatchBlockOptional1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_last_arm"))]
+    pub last_arm: LastMatchArmTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_arm"))]
+    pub match_arm: Option<Vec<MatchArmTransport>>,
+}
+
+impl RenderableTransport for MatchBlockOptional1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_match_block_optional1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MatchBlockOptional1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MatchBlockOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockOptional1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MatchBlockOptional1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct MatchPatternOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -30585,9 +30638,9 @@ pub struct LastMatchArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
     pub attributes: Option<Vec<DeclarationStatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: MatchPatternTransport,
+    pub pattern: Box<MatchPatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for LastMatchArmTransport {
@@ -31160,6 +31213,8 @@ pub struct MatchBlockTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_last_arm"))]
+    pub last_arm: Box<LastMatchArmTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_arm"))]
     pub match_arm: Option<Vec<MatchArmTransport>>,
 }
@@ -31213,7 +31268,7 @@ pub struct MatchExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: MatchBlockTransport,
+    pub body: Box<MatchBlockTransport>,
 }
 
 impl RenderableTransport for MatchExpressionTransport {
@@ -31263,9 +31318,9 @@ pub struct MatchPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: PatternTransport,
+    pub pattern: Box<PatternTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
-    pub condition: Option<ConditionTransport>,
+    pub condition: Option<Box<ConditionTransport>>,
 }
 
 impl RenderableTransport for MatchPatternTransport {
@@ -45098,6 +45153,16 @@ fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, dest: &mut dyn
     template.render_into(dest)
 }
 
+fn render_match_block_optional1(node: &MatchBlockOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    render_last_match_arm(&node.last_arm, dest)?;
+    if let Some(items) = &node.match_arm {
+        for child in items.iter() {
+        render_match_arm(child, dest)?;
+        }
+    }
+    Ok(())
+}
+
 fn render_match_pattern_optional1(node: &MatchPatternOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     if let Some(child) = &node.condition {
         render_condition(child, dest)?;
@@ -46502,16 +46567,12 @@ fn render_match_arm(node: &MatchArmTransport, dest: &mut dyn ::std::fmt::Write) 
 }
 
 fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.match_arm.as_deref().is_none_or(<[_]>::is_empty) {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let match_arm_owned = node.match_arm.as_deref().unwrap_or(&[]);
     let match_arm_buf: Vec<::sittir_core::filters::Renderable<'_>> = match_arm_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = MatchBlockTemplate {
+        last_arm: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.last_arm)),
         match_arm: ListNonterminalView {
             items: match_arm_buf.as_slice(),
             separator: "",
@@ -48345,6 +48406,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::MacroDefinitionParen(t) => render_macro_definition_paren(t, dest),
             AnyTransport::MatchArmBlockEnding(t) => render_match_arm_block_ending(t, dest),
             AnyTransport::MatchArmWithComma(t) => render_match_arm_with_comma(t, dest),
+            AnyTransport::MatchBlockOptional1(t) => render_match_block_optional1(t, dest),
             AnyTransport::MatchPatternOptional1(t) => render_match_pattern_optional1(t, dest),
             AnyTransport::ModItemExternal(t) => t.render_into(dest),
             AnyTransport::ModItemInline(t) => render_mod_item_inline(t, dest),
@@ -48739,6 +48801,7 @@ impl AnyTransport {
             Self::MacroDefinitionParen(t) => t.transport_named,
             Self::MatchArmBlockEnding(t) => t.transport_named,
             Self::MatchArmWithComma(t) => t.transport_named,
+            Self::MatchBlockOptional1(t) => t.transport_named,
             Self::MatchPatternOptional1(t) => t.transport_named,
             Self::ModItemExternal(t) => t.transport_named,
             Self::ModItemInline(t) => t.transport_named,
@@ -49160,6 +49223,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::MacroDefinitionParen(data) => transport_to_node_macro_definition_paren(data),
         AnyTransport::MatchArmBlockEnding(data) => transport_to_node_match_arm_block_ending(data),
         AnyTransport::MatchArmWithComma(data) => transport_to_node_match_arm_with_comma(data),
+        AnyTransport::MatchBlockOptional1(data) => transport_to_node_match_block_optional1(data),
         AnyTransport::MatchPatternOptional1(data) => transport_to_node_match_pattern_optional1(data),
         AnyTransport::ModItemExternal(data) => transport_to_node_mod_item_external(data),
         AnyTransport::ModItemInline(data) => transport_to_node_mod_item_inline(data),
@@ -50980,6 +51044,35 @@ fn transport_to_node_match_arm_with_comma(transport: MatchArmWithCommaTransport)
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(364) /* "_match_arm_with_comma" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_match_block_optional1(transport: MatchBlockOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("last_arm".to_string(), transport_field_value(AnyTransport::LastMatchArm(transport.last_arm))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    if let Some(value) = transport.match_arm {
+        children_buf.extend(value.into_iter().map(|v| AnyTransport::MatchArm(v)).collect::<Vec<_>>());
+    }
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_match_block_optional1" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -53907,8 +54000,8 @@ fn transport_to_node_last_match_arm(transport: LastMatchArmTransport) -> Result<
     if let Some(value) = transport.attributes {
         fields.insert("attributes".to_string(), transport_field_values(value.into_iter().map(|v| declaration_statement_transport_to_any(v)).collect::<Vec<_>>())?);
     }
-    fields.insert("pattern".to_string(), transport_field_value(AnyTransport::MatchPattern(transport.pattern))?);
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
+    fields.insert("pattern".to_string(), transport_field_value(AnyTransport::MatchPattern(*transport.pattern))?);
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(*transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -54180,6 +54273,7 @@ fn transport_to_node_match_arm(transport: MatchArmTransport) -> Result<Transport
 
 fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("last_arm".to_string(), transport_field_value(AnyTransport::LastMatchArm(*transport.last_arm))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.match_arm {
@@ -54209,7 +54303,7 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
 fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(*transport.value))?);
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::MatchBlock(transport.body))?);
+    fields.insert("body".to_string(), transport_field_value(AnyTransport::MatchBlock(*transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -54230,9 +54324,9 @@ fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Re
 
 fn transport_to_node_match_pattern(transport: MatchPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
+    fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(*transport.pattern))?);
     if let Some(value) = transport.condition {
-        fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(value))?);
+        fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(*value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;

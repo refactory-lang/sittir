@@ -78,7 +78,6 @@ export function generatedRootsFor(grammar: Grammar): string[] {
 	return [
 		`packages/${grammar}/src`,
 		`packages/${grammar}/templates`,
-		`packages/${grammar}/factory-map.json5`,
 		`packages/${grammar}/.sittir`,
 		`rust/crates/sittir-${grammar}/src`,
 		`rust/crates/sittir-${grammar}/templates`,
@@ -233,7 +232,7 @@ export function writeManifestForGrammar(grammar: Grammar): void {
 	// darwin-arm64 dev don't wipe a linux-x64 binary previously committed
 	// by another dev.
 	const existing = readExistingManifest(grammar);
-	const host_files: Record<string, string> = { ...(existing?.host_files ?? {}) };
+	const host_files: Record<string, string> = { ...existing?.host_files };
 	for (const rel of hostFilesFor(grammar)) {
 		host_files[rel] = sha256(join(REPO_ROOT, rel));
 	}

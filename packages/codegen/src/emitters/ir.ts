@@ -107,7 +107,7 @@ export function emitIr(config: EmitIrConfig): string {
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
 			usedMemberKeys.add(memberKey);
 
-			if (sub.modelType === 'branch' || sub.modelType === 'polymorph') {
+			if (sub.modelType === 'branch') {
 				if (!sub.fromFunctionName) continue;
 				memberEntries.push(`  ${memberKey}: ${bundleExpr(sub)},`);
 			} else if (sub.modelType === 'keyword' || sub.modelType === 'pattern' || sub.modelType === 'enum') {
@@ -136,14 +136,13 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!isValidIdent(node.irKey)) continue;
 		if (
 			node.modelType !== 'branch' &&
-			node.modelType !== 'polymorph' &&
 			node.modelType !== 'keyword' &&
 			node.modelType !== 'pattern' &&
 			node.modelType !== 'enum'
 		) {
 			continue;
 		}
-		if ((node.modelType === 'branch' || node.modelType === 'polymorph') && !node.fromFunctionName) continue;
+		if (node.modelType === 'branch' && !node.fromFunctionName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		flatKeys.add(node.irKey);
 	}
@@ -159,7 +158,7 @@ export function emitIr(config: EmitIrConfig): string {
 			const alias = memberKeyFor(subKind, kind);
 			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
 			let bundle: string | undefined;
-			if (sub.modelType === 'branch' || sub.modelType === 'polymorph') {
+			if (sub.modelType === 'branch') {
 				if (!sub.fromFunctionName) continue;
 				bundle = bundleExpr(sub, refineByKind.get(subKind));
 			} else if (sub.modelType === 'keyword' || sub.modelType === 'pattern' || sub.modelType === 'enum') {
@@ -199,7 +198,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		if (usedGroupNames.has(node.irKey)) continue;
-		if (node.modelType !== 'branch' && node.modelType !== 'polymorph') continue;
+		if (node.modelType !== 'branch') continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
@@ -268,18 +267,6 @@ export function emitIr(config: EmitIrConfig): string {
  * factory as `.strict`.
  */
 function bundleExpr(node: AssembledNode, refineInfo?: RefineKindInfo): string {
-	if (node.modelType === 'polymorph' && node.forms.length > 1) {
-		const variantEntries = node.forms
-			.filter((form) => form.rawFactoryName && form.fromFunctionName)
-			.flatMap((form) => {
-				const value = `_attach(FR.${form.fromFunctionName}, { from: FR.${form.fromFunctionName}, strict: F.${form.rawFactoryName} })`;
-				const camelKey = JSON.stringify(toCamel(form.name));
-				const keys = [camelKey];
-				if (toCamel(form.name) !== form.name) keys.push(JSON.stringify(form.name));
-				return keys.map((key) => `${key}: ${value}`);
-			});
-		return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName}, strict: F.${node.rawFactoryName}, ${variantEntries.join(', ')} })`;
-	}
 	if (node.modelType === 'branch') {
 		if (!node.rawFactoryName) {
 			return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName} })`;

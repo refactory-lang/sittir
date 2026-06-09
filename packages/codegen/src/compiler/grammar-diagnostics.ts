@@ -73,10 +73,14 @@ export function fromAssembleWarning(
 	grammar: string,
 	warning: AssembleWarning
 ): GrammarDiagnostic {
+	// typename-collision is auto-resolved at assemble time (the rename already
+	// succeeded). Downgrade to 'info' so the channel stays signal-only; genuine
+	// unresolved collisions keep 'warning'.
+	const severity = warning.code === 'typename-collision' ? 'info' : 'warning';
 	return {
 		scope: 'grammar',
 		code: warning.code,
-		severity: 'warning',
+		severity,
 		grammar,
 		ownerKind: warning.ownerKind,
 		message: warning.message,

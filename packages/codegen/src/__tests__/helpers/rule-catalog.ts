@@ -55,9 +55,6 @@ export function walkRule(rule: Rule, visit: (rule: Rule) => void): void {
 		case TOKEN:
 			walkRule(rule.content, visit);
 			return;
-		case 'polymorph':
-			for (const form of rule.forms) walkRule(form.content, visit);
-			return;
 		case SUPERTYPE:
 		case STRING:
 		case PATTERN:

@@ -41,6 +41,7 @@ import {
 	collectKindEntries,
 	kindIdMemberName,
 	hasCatalogEntry,
+	kindDiscriminantExpr,
 	collectCatalogKinds,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -309,31 +310,9 @@ function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
 	return out;
 }
 
-function buildWrapVariantDescriptors(nodeMap: NodeMap): Readonly<Record<string, WrapVariantDescriptor>> {
-	const out: Record<string, WrapVariantDescriptor> = {};
-	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'polymorph') continue;
-		const polymorph = node as AssembledPolymorph;
-		if (polymorph.source === 'override') {
-			const childKind: Record<string, string> = {};
-			for (const form of polymorph.formRules) {
-				const discriminatorKinds = form.discriminatorKinds ?? [`${kind}_${form.name}`];
-				for (const runtimeKind of expandRuntimeDiscriminatorKinds(discriminatorKinds, nodeMap)) {
-					childKind[runtimeKind] = form.name;
-				}
-			}
-			out[kind] = { source: 'override', childKind };
-			continue;
-		}
-		const slots: Record<string, readonly string[]> = {};
-		for (const form of polymorph.forms) {
-			const requiredSlots = form.fields.map((field) => `_${field.name}`);
-			if (form.children.length > 0) requiredSlots.push('$other');
-			slots[form.name] = requiredSlots;
-		}
-		out[kind] = { source: 'promoted', slots };
-	}
-	return out;
+function buildWrapVariantDescriptors(_nodeMap: NodeMap): Readonly<Record<string, WrapVariantDescriptor>> {
+	// No node ever has modelType 'polymorph' at runtime; table is always empty.
+	return {};
 }
 
 /**
@@ -363,6 +342,13 @@ interface ResolveSlotDrillConfig {
 	 * `??`-coalesce chain over these keys. See `collectConcreteStorageKeys`.
 	 */
 	readonly candidateStorageKeys?: readonly string[];
+	/**
+	 * Pre-built numeric-kindId array expression (e.g. `[TSKindId.DotDotEq,
+	 * TSKindId.DotDot]`) for a kindEnum slot's member discriminants. Drives the
+	 * `$other` reclamation fallback (option B). Built by the caller, which holds
+	 * `nodeMap` + `kindEntries` for `kindDiscriminantExpr` resolution.
+	 */
+	readonly reclaimKindIdsExpr?: string;
 }
 
 function resolveSlotDrillExprs(
@@ -378,10 +364,21 @@ function resolveSlotDrillExprs(
 			? `_filterWrapChildrenByKind(${slotStoreExpr}, ${JSON.stringify(config.allowedKinds)})`
 			: slotStoreExpr;
 	const diagnosticContextExpr = `{ tree, nodeType: ${config.dataExpr}.$type, slotName: ${JSON.stringify(slot.name)}, span: (${config.dataExpr} as _NodeData).$span }`;
+	// $other reclamation (option B): a kindEnum slot's value is a terminal
+	// discriminant (operator / keyword). When that token is anonymous and
+	// unfielded, read_node forwards it to `$other`, not `_<kind>` storage, so
+	// the nominal `??`-chain comes up empty. Append a final fallback that
+	// reclaims it from `$other` by numeric kindId (`config.reclaimKindIdsExpr`,
+	// the kindEnum member discriminants). When the token IS field-tagged the
+	// chain short-circuits and the fallback is inert.
+	const reclaimedStoreExpr =
+		config.storageInfo?.kind === 'kindEnum' && config.reclaimKindIdsExpr
+			? `(${filteredStoreExpr} ?? readTerminalFromOther(${config.dataExpr}, ${config.reclaimKindIdsExpr}))`
+			: filteredStoreExpr;
 	const normalizedStoreExpr =
 		slot.arity === 'many'
-			? `normalizeRepeatedWrapSlot(${filteredStoreExpr}, ${config.nonEmpty ? 'true' : 'false'}, ${JSON.stringify(slot.name)}, ${diagnosticContextExpr})`
-			: `normalizeSingularWrapSlot(${filteredStoreExpr}, ${JSON.stringify(slot.name)}, ${config.required ? 'true' : 'false'}, ${config.dataExpr}.$type, ${diagnosticContextExpr})`;
+			? `normalizeRepeatedWrapSlot(${reclaimedStoreExpr}, ${config.nonEmpty ? 'true' : 'false'}, ${JSON.stringify(slot.name)}, ${diagnosticContextExpr})`
+			: `normalizeSingularWrapSlot(${reclaimedStoreExpr}, ${JSON.stringify(slot.name)}, ${config.required ? 'true' : 'false'}, ${config.dataExpr}.$type, ${diagnosticContextExpr})`;
 	const storageInfo = config.storageInfo;
 	if (storageInfo?.kind === 'boolean') {
 		return {
@@ -620,6 +617,43 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
  * @param nodeMap - The assembled node map (for kindIdMemberName).
  * @returns Emitted TypeScript source string for the wrap function.
  */
+/**
+ * Option-B reclamation collision guard. Across a kind's kindEnum slots, find
+ * member kinds claimed by more than one slot — a `$other` token of that kind
+ * would be ambiguous between them. Warn and return the colliding set so the
+ * caller can SUPPRESS the auto-reclaim for those members (they fall back to
+ * normal field population / explicit fielding — option C).
+ */
+function computeCollidedReclaimKinds(
+	fields: readonly AssembledNonterminal[],
+	ownerKind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): ReadonlySet<string> {
+	const claimedBy = new Map<string, string[]>();
+	for (const f of fields) {
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+		if (storageInfo.kind !== 'kindEnum') continue;
+		for (const k of storageInfo.enumKinds) {
+			if (!hasCatalogEntry(kindEntries, k)) continue;
+			const slots = claimedBy.get(k) ?? [];
+			if (!slots.includes(f.name)) slots.push(f.name);
+			claimedBy.set(k, slots);
+		}
+	}
+	const collided = new Set<string>();
+	for (const [k, slots] of claimedBy) {
+		if (slots.length < 2) continue;
+		collided.add(k);
+		console.warn(
+			`[codegen] reclaim-ambiguous: kind '${ownerKind}' has kindEnum slots ` +
+				`[${slots.join(', ')}] all reclaiming member '${k}' from $other; the token is ` +
+				`ambiguous between them — auto-reclaim suppressed. Field one operator (override) to resolve.`
+		);
+	}
+	return collided;
+}
+
 function emitFieldCarryingWrap(
 	node: WrapNode,
 	fields: readonly AssembledNonterminal[],
@@ -656,6 +690,14 @@ function emitFieldCarryingWrap(
 	// Polymorph parent types are unions of UForm interfaces — not all members
 	// declare every field, but merged fields are a superset. Cast through
 	// `(data as any)` to access fields that may not exist on all union members.
+	//
+	// Option-B reclamation guard (pre-pass): each kindEnum slot reclaims its
+	// member tokens from `$other` by kindId. If two kindEnum slots on THIS kind
+	// claim the same member kind, a `$other` token is ambiguous between them (the
+	// `??` fallback would award it to whichever slot is read first). Detect such
+	// members up front, warn, and SUPPRESS the auto-reclaim for them — those slots
+	// fall back to normal field population / explicit fielding (option C).
+	const collidedReclaimKinds = computeCollidedReclaimKinds(fields, node.kind, nodeMap, kindEntries);
 	for (const f of fields) {
 		// f IS AssembledNonterminal — read getters directly (DRY: single source for arity/storageKey).
 		const aliasRewrite = resolveSlotAliasRewrite(f);
@@ -669,6 +711,19 @@ function emitFieldCarryingWrap(
 		// kinds (possibly via a supertype), the native reader populates
 		// `_<concrete_kind>` not `_<slot.name>`. Probe each concrete key.
 		const candidateStorageKeys = collectConcreteStorageKeys(f, nodeMap);
+		// Option B: for kindEnum slots, build the numeric-kindId list for the
+		// `$other` reclamation fallback (anonymous discriminant tokens). Only
+		// catalog-resolvable members (real parser symbols) can appear in $other.
+		const reclaimKindIdsExpr =
+			storageInfo.kind === 'kindEnum'
+				? (() => {
+						const reclaimKinds = storageInfo.enumKinds.filter(
+							(k) => hasCatalogEntry(kindEntries, k) && !collidedReclaimKinds.has(k)
+						);
+						const ids = reclaimKinds.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
+						return ids.length > 0 ? `[${ids.join(', ')}]` : undefined;
+					})()
+				: undefined;
 		const { storeExpr } = resolveSlotDrillExprs(f, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
 			elemType: fieldElementType(f, nodeMap),
@@ -677,7 +732,8 @@ function emitFieldCarryingWrap(
 			alias: aliasRewrite,
 			storageInfo,
 			allowedKinds,
-			candidateStorageKeys
+			candidateStorageKeys,
+			reclaimKindIdsExpr
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
@@ -930,9 +986,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			case 'group':
 				this.emitGroup(node);
 				break;
-			case 'polymorph':
-				this.emitPolymorph(node);
-				break;
 			case 'supertype':
 				this.emitSupertype(node);
 				break;
@@ -953,6 +1006,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesDrillAs = /\bdrillAs\b/.test(bodySource);
 		const usesDrillAsAll = /\bdrillAsAll\b/.test(bodySource);
 		const usesProjectKindEnum = /\bprojectKindEnumStorage\b/.test(bodySource);
+		const usesReadTerminalFromOther = /\breadTerminalFromOther\b/.test(bodySource);
 		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
@@ -1060,7 +1114,19 @@ export class WrapEmitter implements CodegenEmitter<string> {
 									'      if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);',
 						'      return undefined;',
 						'    }',
-									'    if (value.length !== 1) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);',
+									'    if (value.length !== 1) {',
+									'      // read_node concatenates grammar-agnostically; the named/unnamed',
+									'      // disparity for SINGULAR slots is resolved HERE (the per-kind layer',
+									'      // that knows arity). A structural anonymous token co-occurring on the',
+									'      // same field (e.g. splat_type `field("identifier", seq("*", $.identifier))`)',
+									'      // surfaces as a scalarized kindId NUMBER or a $named:false object; the',
+									'      // real value is a string (text-collapsed leaf) or a $named!==false object.',
+									'      // Drop the structural tokens — the template re-emits them — and keep the',
+									'      // substantive value.',
+									'      const substantive = (value as readonly unknown[]).filter((v) => !(typeof v === "number" || (typeof v === "object" && v !== null && (v as { $named?: unknown }).$named === false)));',
+									'      if (substantive.length === 1) return substantive[0] as T;',
+									'      return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);',
+									'    }',
 						'    return value[0] as T;',
 						'  }',
 									'  if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);',
@@ -1185,6 +1251,28 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;',
 						'  const entry = value as unknown as _NodeData;',
 						'  return typeof entry.$type === "number" ? (entry.$type as T) : value;',
+						'}'
+					]
+				: []),
+			...(usesReadTerminalFromOther
+				? [
+						'// readTerminalFromOther — reclaim a model-designated terminal (operator /',
+						'// keyword discriminant) that read_node forwarded to `$other` because it is',
+						'// an anonymous, unfielded token. The model knows the slot accepts these',
+						'// kinds; match an `$other` entry by kind-name and return it for the slot',
+						'// storage. Non-mutating (idempotent): the entry stays in `$other`, but the',
+						'// per-kind template renders the discriminant from its slot, not via $other,',
+						'// so there is no double-render. A final `?? readTerminalFromOther(...)` only',
+						'// fires when the nominal storage keys are all empty (the unfielded case);',
+						'// when the token IS field-tagged the chain short-circuits before reaching it.',
+						'function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[]): _NodeData | number | undefined {',
+						'  const other = (data as { $other?: readonly unknown[] }).$other;',
+						'  if (!Array.isArray(other)) return undefined;',
+						'  for (const e of other) {',
+						'    const id = typeof e === "number" ? e : (typeof e === "object" && e !== null ? (e as { $type?: unknown }).$type : undefined);',
+						'    if (typeof id === "number" && allowedKindIds.includes(id)) return e as _NodeData | number;',
+						'  }',
+						'  return undefined;',
 						'}'
 					]
 				: []),
@@ -1325,7 +1413,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			if (
 				node.modelType === 'branch' ||
 				node.modelType === 'group' ||
-				node.modelType === 'polymorph' ||
 				node.modelType === 'supertype'
 			) {
 				if (!this.#emittedStructuralKinds.has(kind)) continue;

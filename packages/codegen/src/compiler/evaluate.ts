@@ -619,6 +619,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
 	const { roles: collectedRoles } = withRoleScope(() => {
 		evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules, provenanceByKind, baseGrammar !== null);
+		adoptFinalBaseRules(baseGrammar, baseRules, rules);
 		evaluateMetadataCallbacksInScope(
 			opts,
 			baseGrammar,
@@ -1664,6 +1665,50 @@ function evaluateRulesAndInjectSynthetics(
 }
 
 /**
+ * Make `grammarFn`'s view of the base rules identical to tree-sitter's.
+ *
+ * @remarks
+ * tree-sitter's native `grammar(base, ext)` reads the FINAL `base.grammar.rules`
+ * (`mergedRules`) — the object that all of enrich's injected hidden rules AND every
+ * `transform()` group-lift write-back mutate. An authored path-patch that descends
+ * through an enrich group-lift symbol writes the patched body via
+ * `groupLiftRuleMap.set(name, newBody)`, which mutates that same `mergedRules`; the
+ * parser therefore sees the patch (e.g. rust `match_block`'s `field('last_arm')`
+ * reaches grammar.json).
+ *
+ * `grammarFn` (this shim) instead forks `baseGrammar.rules` into a private `rules`
+ * map at entry — `baseRules = {…baseGrammar.rules}`, `rules = {…baseRules}` — BEFORE
+ * any rule fn runs, so a group-lift write-back lands in `baseGrammar.rules` but not
+ * in the fork. Left alone, the IR reads a stale, pre-patch copy of the very rule
+ * tree-sitter reads patched — a sittir-vs-tree-sitter divergence in how the SAME
+ * input is consumed.
+ *
+ * Reconcile the fork with the final base state so both consumers read the one
+ * `mergedRules`. Scoped to avoid clobbering: adopt the final body only for base
+ * rules that (a) actually diverged from the entry snapshot — the write-back signal,
+ * since nothing else mutates `baseGrammar.rules` mid-evaluation — and (b) the IR
+ * still holds as that untouched entry snapshot (an authored rule fn / synthetic
+ * injection / pattern-replacement that produced its own body replaced `rules[name]`,
+ * so this stays false for them and is never overwritten). This is not consumer
+ * branching — it makes `grammarFn`'s read of its inputs equal to tree-sitter's.
+ */
+function adoptFinalBaseRules(
+	baseGrammar: any,
+	baseRules: Record<string, Rule>,
+	rules: Record<string, Rule>
+): void {
+	if (baseGrammar === null || baseGrammar === undefined) return;
+	const finalBase = baseGrammar.rules as Record<string, Rule>;
+	for (const name of Object.keys(finalBase)) {
+		const finalRule = finalBase[name];
+		const entry = baseRules[name];
+		if (finalRule === entry) continue; // no write-back touched this base rule
+		if (rules[name] !== entry) continue; // authored / injected / pattern-replaced — keep it
+		rules[name] = normalize(finalRule as Input);
+	}
+}
+
+/**
  * Remove `_kw_*` / `_<parent>_<suffix>` placeholder rules that were
  * pre-registered by wire() at setup time but never actually
  * deposited-into at rule-evaluation time.
@@ -1868,12 +1913,6 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, Rule>): Rea
 		// Post-link form: symbol(visible, aliasedFrom='_X')
 		if (rule.type === SYMBOL) {
 			if (rule.aliasedFrom?.startsWith('_')) candidates.add(rule.aliasedFrom);
-			return;
-		}
-		// Polymorph: `forms` is PolymorphForm[] (content-bearing), NOT Rule[] —
-		// recurse into each form's `.content`.
-		if (rule.type === 'polymorph') {
-			for (const form of rule.forms) walk(form.content);
 			return;
 		}
 		// Generic structural recursion via typed `in` narrowing (no Record cast).

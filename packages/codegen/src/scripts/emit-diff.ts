@@ -63,7 +63,7 @@ function emitterFor(rel: string): Emitter {
 	}
 	if (rel.includes('/templates/')) return 'templates';
 	if (rel.includes('/.sittir/')) return 'metadata';
-	if (base === 'factory-map.json5' || base === 'node-model.json5') return 'metadata';
+	if (base === 'node-model.json5') return 'metadata';
 	switch (base) {
 		case 'factories.ts':
 			return 'factory';

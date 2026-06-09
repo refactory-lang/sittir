@@ -296,7 +296,7 @@ function materializeInlinedBody(
 	if (r.separator !== undefined) carry.separator = r.separator;
 	if (r.fieldName !== undefined) carry.fieldName = r.fieldName;
 
-	const meta = { ...(body.metadata ?? {}), inlinedFrom };
+	const meta = { ...body.metadata, inlinedFrom };
 
 	// The group body is normally a `seq`; tag it directly so the seq-unit
 	// multiplicity rides the sequence (gated at emit on its single internal

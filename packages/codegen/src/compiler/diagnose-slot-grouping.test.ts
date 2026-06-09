@@ -2,9 +2,10 @@
  * Tests for `diagnoseSlotGrouping` — three-shape violation detection.
  *
  * Shapes:
- *   1. multi-slot-nested-seq   — countSlots≥2 seq in a slot-creating position
- *      (inside repeat/optional, inside a choice arm, or top-level body of an
- *      inline-listed auto-group helper kind)
+ *   1. multi-slot-nested-seq   — countSlots≥2 seq in a genuine slot-creating position
+ *      (inside repeat/optional, or top-level body of an inline-listed auto-group
+ *      helper kind). Choice arms are SUPPRESSED (choice-distributed = handled by
+ *      collectSlots union semantics, NOT a genuine group-lift violation).
  *   2. supertype-list          — repeat/repeat1 of single non-field-named symbol/supertype
  *   3. repeat-choice-with-literal — repeat(choice(..., literal, ...))
  *
@@ -92,11 +93,15 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 		expect(records).toHaveLength(0);
 	});
 
-	it('seq inside a choice arm → fires (choice arm is slot position)', () => {
-		// choice(seq(sym a, sym b), seq(sym c, sym d)) — choice arms are slot position.
+	it('seq inside a choice arm → SILENT (choice-distributed, not genuine group-lift)', () => {
+		// choice(seq(sym a, sym b), seq(sym c, sym d)) — choice arms are slot position
+		// per collectSlots, but the WHOLE choice is a single union slot boundary.
+		// A multi-slot seq arm is NOT a genuine group-lift violation: the author does
+		// NOT need to promote it — collectSlots already treats the choice as one slot.
+		// Fix 3 (PR-P diagnostic narrowing): inChoiceArm=true suppresses checkSeq.
 		const rule = choice(seq(sym('a'), sym('b')), seq(sym('c'), sym('d')));
 		const records = diagnoseSlotGrouping({ choice_kind: rule as any });
-		expect(records.filter((r) => r.code === 'multi-slot-nested-seq').length).toBeGreaterThanOrEqual(1);
+		expect(records.filter((r) => r.code === 'multi-slot-nested-seq')).toHaveLength(0);
 	});
 });
 
@@ -181,11 +186,13 @@ describe('diagnoseSlotGrouping — polymorph skip-set', () => {
 		expect(records).toHaveLength(0);
 	});
 
-	it('non-polymorph structural choice still fires (unaffected by skip-set)', () => {
-		// A regular choice with seq arms (no polymorph) must still be detected.
+	it('non-polymorph structural choice with seq arms is SILENT (choice-distributed)', () => {
+		// A regular choice with multi-slot seq arms is also suppressed by Fix 3 —
+		// the polymorph skip-set does not affect this; the choice-arm position guard does.
+		// collectSlots already treats the whole choice as one union slot boundary.
 		const rule = choice(seq(sym('a'), sym('b')), seq(sym('c'), sym('d')));
 		const records = diagnoseSlotGrouping({ structural_kind: rule as any });
-		expect(records.filter((r) => r.code === 'multi-slot-nested-seq').length).toBeGreaterThanOrEqual(1);
+		expect(records.filter((r) => r.code === 'multi-slot-nested-seq')).toHaveLength(0);
 	});
 
 	it('repeat-helper auto-group case unchanged (rust regression guard)', () => {

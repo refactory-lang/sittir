@@ -123,9 +123,6 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
 	// non-hoisted (e.g. python, whose polymorph forms have no inner
 	// field-carrying kind with a factory), leaving `ConfigOf`
 	// unimported in the emitted factories.ts.
-	for (const n of nodeMap.nodes.values()) {
-		if (n.modelType === 'polymorph') return true;
-	}
 	return false;
 }
 
@@ -360,7 +357,7 @@ function buildFactoryMapEntries(
 		// never appear at runtime; no factory was emitted for them, so no map
 		// entry either. Lockstep with emitPerNodeFactories.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		const fluent = node.modelType === 'branch' || node.modelType === 'polymorph';
+		const fluent = node.modelType === 'branch';
 		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
 		if (!classified) continue;
 		const shape = classified === 'spread' ? 'children' : classified;
@@ -2044,9 +2041,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'branch':
 				this.emitBranch(node);
-				break;
-			case 'polymorph':
-				this.emitPolymorph(node);
 				break;
 			case 'group':
 				this.emitGroup(node);

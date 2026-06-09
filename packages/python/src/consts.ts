@@ -1271,6 +1271,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expressions', required: true, multiple: false },
   ],
   'dict_pattern': [
+    { name: 'dictPatternKv', required: false, multiple: false },
     { name: 'keys', required: false, multiple: true },
     { name: 'values', required: false, multiple: true },
     { name: 'splatPatterns', required: false, multiple: true },

@@ -353,7 +353,7 @@ describe('Assemble — classifyNode', () => {
 					source: 'grammar'
 				},
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
-				string: { type: PATTERN, value: '\".*\"' }
+				string: { type: PATTERN, value: '".*"' }
 			},
 			{
 				topLevelAliasBodies: new Map([
