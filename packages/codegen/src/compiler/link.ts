@@ -473,29 +473,40 @@ function classifyAndLogHiddenRules(
 }
 
 /**
- * Flip `inline=false` on every SYMBOL ref whose target kind is a SUPERTYPE.
+ * Flip `inline=false` on every SYMBOL ref whose target kind must MATERIALIZE
+ * rather than flatten — implementing the `!supertype && !self-recursive` terms
+ * of `inline = hidden && !aliased && !supertype && !self-recursive`.
  *
- * Implements the `!supertype` term of `inline = hidden && !aliased && !supertype`.
- * A supertype (grammar-declared OR link-promoted) is a transparent dispatch
- * choice: its CST node never materializes inline — it surfaces via its slot.
- * The construction default stamps `inline=true` for any leading-`_` name, which
- * wrongly includes hidden supertypes (`_expression`, `_path`,
- * `_expression_ending_with_block`). Without this flip the emit-time inline path
- * tries to flatten them, producing an empty body (unused-lifetime E0392).
+ * Two non-inline categories (the construction default stamps `inline=true` for
+ * any leading-`_` name, which wrongly includes both):
  *
- * Runs AFTER `classifyAndLogHiddenRules`, so `rules[name].type === SUPERTYPE`
- * reflects promoted supertypes too — keying on the classified type catches the
- * promoted set that the grammar's `supertypes` array does not list.
+ *  1. SUPERTYPE kinds (grammar-declared OR link-promoted). A supertype is a
+ *     transparent dispatch choice: its CST node never materializes inline — it
+ *     surfaces via its slot (`_expression`, `_path`,
+ *     `_expression_ending_with_block`). Inlining one yields an empty body
+ *     (unused-lifetime E0392). Keyed on the classified `type === SUPERTYPE`, so
+ *     promoted supertypes (absent from the grammar `supertypes` array) are
+ *     included — hence this runs AFTER `classifyAndLogHiddenRules`.
+ *
+ *  2. SELF-RECURSIVE kinds — a kind whose own body references itself
+ *     (`_let_chain = seq(optional($._let_chain), '&&', let_condition)`). The
+ *     emit-time inline path has only a one-level `visitingHelpers` cycle guard,
+ *     so inlining a self-ref expands one level (duplicating the tail) and drops
+ *     the wrapper's multiplicity gate. Materializing instead pushes the
+ *     `optional`/`array` down onto the inner slot via `emitSlotReference`
+ *     (`{% if let_chain | isPresent %}{{ let_chain }}{% endif %}`), matching the
+ *     box-at-back-edge transport. Direct self-reference is detected here; the
+ *     box-SCC pass handles the boxing.
  */
 function markSupertypeRefsNonInline(rules: Record<string, Rule>): void {
-	const supertypeKinds = new Set<string>();
+	const nonInlineKinds = new Set<string>();
 	for (const [name, rule] of Object.entries(rules)) {
-		if (rule.type === SUPERTYPE) supertypeKinds.add(name);
+		if (rule.type === SUPERTYPE || referencesSelf(rule, name)) nonInlineKinds.add(name);
 	}
-	if (supertypeKinds.size === 0) return;
+	if (nonInlineKinds.size === 0) return;
 	const walk = (rule: Rule): Rule => {
 		if (rule.type === SYMBOL) {
-			return supertypeKinds.has(rule.name) && rule.inline !== false
+			return nonInlineKinds.has(rule.name) && rule.inline !== false
 				? { ...rule, inline: false }
 				: rule;
 		}
@@ -505,6 +516,15 @@ function markSupertypeRefsNonInline(rules: Record<string, Rule>): void {
 		return rule;
 	};
 	for (const name of Object.keys(rules)) rules[name] = walk(rules[name]!);
+}
+
+/** True when `rule`'s tree contains a SYMBOL ref back to its own kind `self`. */
+function referencesSelf(rule: Rule, self: string): boolean {
+	if (rule.type === SYMBOL) return rule.name === self;
+	const xs = rule as { members?: readonly Rule[]; content?: Rule };
+	if (xs.members) return xs.members.some((m) => referencesSelf(m, self));
+	if (xs.content) return referencesSelf(xs.content, self);
+	return false;
 }
 
 /**
