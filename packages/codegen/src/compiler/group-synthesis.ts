@@ -8,7 +8,7 @@
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
 import type { Rule } from './rule.ts';
 import { replaceAtPath } from './rule.ts';
-import { symbol } from './evaluate.ts';
+import { sym } from './evaluate.ts';
 
 const IDENTIFIER_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -283,7 +283,7 @@ function liftRule(target: Rule, synName: string, _discriminator: string): { lift
 	// the one constructor (then revised at wrapper push-down / link supertype pass)
 	// keeps `inline` authoritative on the renderRules path, so normalize's fold
 	// can read it instead of re-deriving hiddenness structurally.
-	const synSym = { ...symbol(synName), source: 'group-lift' as const };
+	const synSym = { ...sym(synName), source: 'group-lift' as const };
 	// (_discriminator kept for future use; the current implementation does not use it.
 	// The discriminator participates only in the synthesized kind name component.)
 

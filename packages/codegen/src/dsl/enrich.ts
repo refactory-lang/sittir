@@ -60,7 +60,7 @@
  */
 
 import type { Rule } from '../compiler/rule.ts';
-import { symbol } from '../compiler/evaluate.ts';
+import { sym } from '../compiler/evaluate.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
 import {
@@ -381,9 +381,10 @@ function makeField(name: string, content: unknown): Rule {
 }
 
 function makeSymbol(name: string): Rule {
-	// `symbol` (sittir) / `sym` (tree-sitter CLI) — same constructor, different name.
-	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
-	return symbol(name);
+	// Both runtimes inject the symbol constructor under the SAME name `sym`
+	// (sittir's `saveAndInjectDslGlobals` shadows tree-sitter's baseline `sym`).
+	const symFn = nativeRuleFn<(n: string) => Rule>('sym');
+	return symFn(name);
 }
 
 /**
@@ -1740,7 +1741,7 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
 	// push-down / link) makes `inline` authoritative on the renderRules path, so
 	// normalize's fold can read it. The upper-case branch is the tree-sitter raw
 	// SYMBOL form (parser-side, never reaches the IR inline gate).
-	const base = isUpper ? { type: 'SYMBOL' as const, name } : symbol(name);
+	const base = isUpper ? { type: 'SYMBOL' as const, name } : sym(name);
 	return {
 		...base,
 		source: 'group-lift',

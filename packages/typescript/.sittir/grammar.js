@@ -486,7 +486,7 @@ function normalize(input) {
   }
   throw new TypeError(`Invalid rule: ${input}`);
 }
-function symbol(name) {
+function sym(name) {
   return { type: SYMBOL, name, hidden: name.startsWith("_"), inline: name.startsWith("_") };
 }
 var token = Object.assign(
@@ -764,8 +764,8 @@ function makeField(name, content) {
   return node;
 }
 function makeSymbol(name) {
-  const symbol2 = nativeRuleFn("symbol", "sym");
-  return symbol2(name);
+  const symFn = nativeRuleFn("sym");
+  return symFn(name);
 }
 function registerKwRule(stringLiteral, keyword, kwRules) {
   const hiddenName = `_kw_${keyword}`;
@@ -1528,7 +1528,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
 function makeGroupLiftSymbol(referenceRule, name) {
   const t = referenceRule.type ?? "";
   const isUpper = t.length > 0 && t === t.toUpperCase();
-  const base2 = isUpper ? { type: "SYMBOL", name } : symbol(name);
+  const base2 = isUpper ? { type: "SYMBOL", name } : sym(name);
   return {
     ...base2,
     source: "group-lift",
@@ -1537,8 +1537,8 @@ function makeGroupLiftSymbol(referenceRule, name) {
 }
 function makeVisibleGroupAlias(symbolRef, name) {
   const aliasFn = nativeRuleFn("alias");
-  const symbol2 = nativeRuleFn("symbol", "sym");
-  const node = aliasFn(symbolRef, symbol2(name));
+  const symbol = nativeRuleFn("symbol", "sym");
+  const node = aliasFn(symbolRef, symbol(name));
   node.metadata = { source: "enrich" };
   return node;
 }
@@ -1777,16 +1777,16 @@ function collectInlineNames(entries) {
   const names = /* @__PURE__ */ new Set();
   for (const entry of entries) {
     if (!entry || typeof entry !== "object") continue;
-    const symbol2 = entry;
-    if ((symbol2.type === "symbol" || symbol2.type === "SYMBOL") && typeof symbol2.name === "string") {
-      names.add(symbol2.name);
+    const symbol = entry;
+    if ((symbol.type === "symbol" || symbol.type === "SYMBOL") && typeof symbol.name === "string") {
+      names.add(symbol.name);
     }
   }
   return names;
 }
 function nativeInlineRef($, name) {
-  const nativeSymbol = globalThis.symbol;
-  if (typeof nativeSymbol === "function") return nativeSymbol(name);
+  const nativeSym = globalThis.sym;
+  if (typeof nativeSym === "function") return nativeSym(name);
   return $[name];
 }
 function symbolizeRef(_$, name) {
@@ -1863,12 +1863,9 @@ function patternBodyEqual(aIn, bIn) {
   return false;
 }
 function nativeSymbolRt(name) {
-  const g = globalThis;
-  const fn = g["symbol"] ?? g["sym"];
+  const fn = globalThis.sym;
   if (typeof fn !== "function") {
-    throw new Error(
-      "wire: no global symbol()/sym() \u2014 pattern replacement must run inside a DSL runtime (sittir evaluate.ts or tree-sitter CLI)"
-    );
+    throw new Error("wire: no global sym() \u2014 pattern replacement must run inside a DSL runtime");
   }
   return fn(name);
 }

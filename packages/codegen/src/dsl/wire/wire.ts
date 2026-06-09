@@ -1077,8 +1077,8 @@ function collectInlineNames(entries: readonly unknown[]): Set<string> {
  * falling back to `$[name]` keeps the callback native-shaped there too.
  */
 function nativeInlineRef($: unknown, name: string): unknown {
-	const nativeSymbol = (globalThis as { symbol?: (name: string) => unknown }).symbol;
-	if (typeof nativeSymbol === 'function') return nativeSymbol(name);
+	const nativeSym = (globalThis as { sym?: (name: string) => unknown }).sym;
+	if (typeof nativeSym === 'function') return nativeSym(name);
 	return ($ as Record<string, unknown>)[name];
 }
 
@@ -1279,21 +1279,18 @@ function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
  * @param candidates - The list of detected pattern candidates.
  */
 /**
- * Resolve the active runtime's `symbol()` constructor from the installed DSL
- * globals (sittir calls it `symbol`, tree-sitter's CLI `sym`). Mirrors
- * `enrich.ts`'s `nativeRuleFn` so wire stays runtime-agnostic — it does NOT
- * import evaluate. Routing the IR-side ref through the constructor stamps
+ * Resolve the active runtime's `sym()` symbol constructor from the injected DSL
+ * globals. Both runtimes now inject it under the SAME name `sym` (sittir's
+ * `evaluate.ts saveAndInjectDslGlobals` shadows tree-sitter's baseline `sym`),
+ * so there's no name reconciliation — wire stays runtime-agnostic without
+ * importing evaluate. Routing the IR-side ref through the constructor stamps
  * `hidden` + `inline = name.startsWith('_')`, matching every other ref; a raw
  * `{ type:'symbol', name, hidden:true }` literal would drop `inline`.
  */
 function nativeSymbolRt(name: string): unknown {
-	const g = globalThis as Record<string, unknown>;
-	const fn = (g['symbol'] ?? g['sym']) as ((n: string) => unknown) | undefined;
+	const fn = (globalThis as { sym?: (n: string) => unknown }).sym;
 	if (typeof fn !== 'function') {
-		throw new Error(
-			'wire: no global symbol()/sym() — pattern replacement must run inside a DSL runtime ' +
-				'(sittir evaluate.ts or tree-sitter CLI)'
-		);
+		throw new Error('wire: no global sym() — pattern replacement must run inside a DSL runtime');
 	}
 	return fn(name);
 }

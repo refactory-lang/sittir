@@ -21,7 +21,7 @@ import type { Rule } from '../../compiler/rule.ts';
 
 type Globals = Record<string, unknown>;
 
-const DSL_KEYS = ['seq', 'choice', 'optional', 'repeat', 'repeat1', 'field', 'alias', 'symbol', 'prec'] as const;
+const DSL_KEYS = ['seq', 'choice', 'optional', 'repeat', 'repeat1', 'field', 'alias', 'sym', 'prec'] as const;
 
 let savedGlobals: Globals | null = null;
 
@@ -57,7 +57,7 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 		}
 		throw new Error('fake alias: invalid value');
 	};
-	g.symbol = (name: string): Rule => ({ type: 'symbol', name, hidden: name.startsWith('_') }) as Rule;
+	g.sym = (name: string): Rule => ({ type: 'symbol', name, hidden: name.startsWith('_'), inline: name.startsWith('_') }) as Rule;
 	// prec/prec.left/prec.right/prec.dynamic all preserve the value
 	// on the returned rule so tests can assert precedence round-trip.
 	const makePrec =
