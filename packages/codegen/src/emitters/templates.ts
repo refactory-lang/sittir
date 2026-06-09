@@ -1455,46 +1455,41 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// Non-hidden group-lift symbols (no leading `_`) or those without a
 	// `renderRule` in the nodeMap fall through to the scalar slot path — they
 	// represent proper named groups whose output is a single rendered string.
-	if (rule.source === 'group-lift') {
-		// Only inline HIDDEN auto-synthesized helpers (name starts with `_`).
-		// Visible group-lift symbols are user-facing kinds with their own
-		// templates; emit them as scalar slots like before.
-		if (rule.name.startsWith('_')) {
-			const targetNode = ctx.nodeMap.nodes.get(rule.name);
-			if (targetNode && 'renderRule' in targetNode && targetNode.renderRule) {
-				if (ctx.visitingHelpers.has(rule.name)) {
-					// Cycle guard — emit opaque scalar to break recursion
-					const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
-					return emitScalarSlot(slotName);
-				}
-				ctx.visitingHelpers.add(rule.name);
-				try {
-					const helperRenderRule = (targetNode as { renderRule: Rule }).renderRule;
-					const helperBody = emitRule(helperRenderRule, ctx);
-					const multiplicity = rule.multiplicity;
-					// When the group-lift symbol is optional (its parent wrapped it in
-					// optional()), wrap the inlined body in a conditional keyed on the
-					// first declared field inside the helper's body. This preserves the
-					// "only render this block when the optional part is present" semantics.
-					if ((multiplicity === 'optional' || multiplicity === 'array' || multiplicity === 'nonEmptyArray') && helperBody) {
-						const condKey = pickConditionalKey(helperRenderRule, ctx)
-							?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
-						if (multiplicity === 'optional') {
-							return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
-						}
-						// Array group-lifts — emit the body directly (repeat handling
-						// is already captured in the body's join filter from the
-						// helper's renderRule).
+	// Hidden helper refs INLINE, mirroring tree-sitter's parse-time flattening of
+	// `_`-rules. Provenance-free — keyed only on the structural `_` fact, NOT on
+	// `source:'group-lift'`. The assembled `renderRule` is the inline source for
+	// EVERY hidden ref (verified: emitRule(renderRule) === emitRule(deleteWrapper(raw))
+	// for every hidden ref — the raw-rule path below is now only a fallback for the
+	// rare hidden-without-renderRule case). Cycle guard via visitingHelpers.
+	if (rule.name.startsWith('_')) {
+		const targetNode = ctx.nodeMap.nodes.get(rule.name);
+		if (targetNode && 'renderRule' in targetNode && targetNode.renderRule) {
+			if (ctx.visitingHelpers.has(rule.name)) {
+				// Cycle guard — emit opaque scalar to break recursion
+				const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+				return emitScalarSlot(slotName);
+			}
+			ctx.visitingHelpers.add(rule.name);
+			try {
+				const helperRenderRule = (targetNode as { renderRule: Rule }).renderRule;
+				const helperBody = emitRule(helperRenderRule, ctx);
+				const multiplicity = rule.multiplicity;
+				// Optional helper (parent wrapped it in optional()): gate the inlined
+				// body on the first declared field's presence. Array/nonEmptyArray emit
+				// the body directly (repeat join is captured in the renderRule body).
+				if ((multiplicity === 'optional' || multiplicity === 'array' || multiplicity === 'nonEmptyArray') && helperBody) {
+					const condKey = pickConditionalKey(helperRenderRule, ctx)
+						?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+					if (multiplicity === 'optional') {
+						return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
 					}
-					return helperBody;
-				} finally {
-					ctx.visitingHelpers.delete(rule.name);
 				}
+				return helperBody;
+			} finally {
+				ctx.visitingHelpers.delete(rule.name);
 			}
 		}
-		// Visible group-lift or hidden without renderRule → scalar slot
-		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
-		return emitScalarSlot(slotName);
+		// Hidden without a renderRule node → fall through to the raw-rule fallback below.
 	}
 	// Hidden helper rules (e.g. python's `_import_list`) are inlined by
 	// tree-sitter at parse time. Recurse into the target rule's body so
