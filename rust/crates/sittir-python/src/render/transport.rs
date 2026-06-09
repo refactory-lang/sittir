@@ -28157,7 +28157,13 @@ fn render_dictionary(node: &DictionaryTransport, dest: &mut dyn ::std::fmt::Writ
 fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = DictionaryComprehensionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
+        content: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        for_in_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -28396,7 +28402,13 @@ fn render_future_import_statement(node: &FutureImportStatementTransport, dest: &
 fn render_generator_expression(node: &GeneratorExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = GeneratorExpressionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
+        content: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        for_in_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -28557,7 +28569,7 @@ fn render_lambda(node: &LambdaTransport, dest: &mut dyn ::std::fmt::Write) -> Re
 
 fn render_lambda_parameters(node: &LambdaParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LambdaParametersTemplate {
-        parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.parameters.as_ref())),
+        parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -28584,10 +28596,7 @@ fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> Result
         }
     }
     let template = ListTemplate {
-        collection_elements: match &node.collection_elements {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
+        expression: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -28595,7 +28604,13 @@ fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> Result
 fn render_list_comprehension(node: &ListComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ListComprehensionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
+        content: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        for_in_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -28607,10 +28622,7 @@ fn render_list_pattern(node: &ListPatternTransport, dest: &mut dyn ::std::fmt::W
         }
     }
     let template = ListPatternTemplate {
-        patterns: match &node.patterns {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
+        pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -28728,10 +28740,7 @@ fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Writ
         }
     }
     let template = ParametersTemplate {
-        parameters: match &node.parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
+        parameter: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -28850,7 +28859,7 @@ fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std
 
 fn render_set(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SetTemplate {
-        collection_elements: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.collection_elements.as_ref())),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -28858,7 +28867,13 @@ fn render_set(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(
 fn render_set_comprehension(node: &SetComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SetComprehensionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
+        content: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        for_in_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -28992,10 +29007,7 @@ fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
         }
     }
     let template = TupleTemplate {
-        collection_elements: match &node.collection_elements {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
+        expression: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -29007,10 +29019,7 @@ fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt:
         }
     }
     let template = TuplePatternTemplate {
-        patterns: match &node.patterns {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
+        pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }

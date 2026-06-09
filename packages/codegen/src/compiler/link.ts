@@ -225,6 +225,16 @@ export function link(
 	);
 	// PR-P Task 2: promoteAndLogTerminalRules removed — terminals classify by shape at Assemble
 
+	// `inline = hidden && !aliased && !supertype`. A supertype ref is a DISPATCH
+	// point, not an inline helper: its CST node is a transparent choice that
+	// materializes via its slot, never flattening into the parent. The
+	// construction default stamped `inline=true` for the leading `_`; flip it off
+	// for every ref to a SUPERTYPE-classified kind (grammar-declared OR
+	// link-promoted, now that classification has run) so the emit-time inline path
+	// never renders a supertype as an empty body (empty template → unused-lifetime
+	// E0392). Runs post-classification so promoted supertypes are included.
+	markSupertypeRefsNonInline(rules);
+
 	// Apply wire-produced variant alias push-down (ambient scaffolding into variant children).
 	if (raw.polymorphVariants?.length) {
 		applyOverridePolymorphs(rules, raw.polymorphVariants, derivations);
@@ -460,6 +470,41 @@ function classifyAndLogHiddenRules(
 			}
 		}
 	}
+}
+
+/**
+ * Flip `inline=false` on every SYMBOL ref whose target kind is a SUPERTYPE.
+ *
+ * Implements the `!supertype` term of `inline = hidden && !aliased && !supertype`.
+ * A supertype (grammar-declared OR link-promoted) is a transparent dispatch
+ * choice: its CST node never materializes inline — it surfaces via its slot.
+ * The construction default stamps `inline=true` for any leading-`_` name, which
+ * wrongly includes hidden supertypes (`_expression`, `_path`,
+ * `_expression_ending_with_block`). Without this flip the emit-time inline path
+ * tries to flatten them, producing an empty body (unused-lifetime E0392).
+ *
+ * Runs AFTER `classifyAndLogHiddenRules`, so `rules[name].type === SUPERTYPE`
+ * reflects promoted supertypes too — keying on the classified type catches the
+ * promoted set that the grammar's `supertypes` array does not list.
+ */
+function markSupertypeRefsNonInline(rules: Record<string, Rule>): void {
+	const supertypeKinds = new Set<string>();
+	for (const [name, rule] of Object.entries(rules)) {
+		if (rule.type === SUPERTYPE) supertypeKinds.add(name);
+	}
+	if (supertypeKinds.size === 0) return;
+	const walk = (rule: Rule): Rule => {
+		if (rule.type === SYMBOL) {
+			return supertypeKinds.has(rule.name) && rule.inline !== false
+				? { ...rule, inline: false }
+				: rule;
+		}
+		const xs = rule as { members?: readonly Rule[]; content?: Rule };
+		if (xs.members) return { ...rule, members: xs.members.map(walk) } as Rule;
+		if (xs.content) return { ...rule, content: walk(xs.content) } as Rule;
+		return rule;
+	};
+	for (const name of Object.keys(rules)) rules[name] = walk(rules[name]!);
 }
 
 /**

@@ -50698,10 +50698,6 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, dest: &mut dyn ::st
             trailing: false,
         },
         method_definition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.method_definition)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
     };
     template.render_into(dest)
 }
@@ -50809,10 +50805,6 @@ fn render_export_statement_default_decl_arm_default_kw(node: &ExportStatementDef
 
 fn render_export_statement_default_decl_arm_default_kw_value(node: &ExportStatementDefaultDeclArmDefaultKwValueTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementDefaultDeclArmDefaultKwValueTemplate {
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
@@ -50821,10 +50813,6 @@ fn render_export_statement_default_decl_arm_default_kw_value(node: &ExportStatem
 fn render_export_statement_default_from_arm(node: &ExportStatementDefaultFromArmTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementDefaultFromArmTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
     };
     template.render_into(dest)
 }
@@ -50855,10 +50843,6 @@ fn render_export_statement_default_from_arm_star_from(node: &ExportStatementDefa
 fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementEqualsExportTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
     };
     template.render_into(dest)
 }
@@ -50866,10 +50850,6 @@ fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTrans
 fn render_export_statement_namespace_export(node: &ExportStatementNamespaceExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementNamespaceExportTemplate {
         identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
     };
     template.render_into(dest)
 }
@@ -50877,10 +50857,6 @@ fn render_export_statement_namespace_export(node: &ExportStatementNamespaceExpor
 fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementTypeExportTemplate {
         export_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_clause)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
         source: match &node.source {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -52189,10 +52165,6 @@ fn render_function_signature(node: &FunctionSignatureTransport, dest: &mut dyn :
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
         return_type: match &node.return_type {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        semicolon: match &node.semicolon {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
