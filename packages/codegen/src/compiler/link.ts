@@ -393,7 +393,8 @@ function canonicalizeRuleLiterals(
 				type: SYMBOL,
 				name: entry.kind,
 				source: 'link',
-				literal: rule.value
+				literal: rule.value,
+				inline: isHiddenKind(entry.kind)
 			};
 		}
 		default:
@@ -1559,7 +1560,7 @@ function resolveRule(
 				// reference the minted VISIBLE kind by a clean `symbol(<name>)` ref;
 				// `mintContentAliasKinds` registers the body. (Symbol content WITHOUT
 				// the enrich tag is an authored relabel handled below via aliasedFrom.)
-				return { type: 'symbol', name: rule.value } as Rule;
+				return { type: 'symbol', name: rule.value, inline: false } as Rule;
 			}
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
 				return resolveNamedAliasWithProvenance(rule.content, rule.value, supertypes);
@@ -1652,8 +1653,8 @@ function resolveRepeat1PreservingNonEmpty(
 function resolveNamedAliasWithProvenance(content: Rule, targetName: string, supertypes: Set<string>): Rule {
 	const aliasedFrom = extractAliasedFromName(content, supertypes);
 	const sym: SymbolRule = aliasedFrom
-		? { type: 'symbol', name: targetName, aliasedFrom }
-		: { type: 'symbol', name: targetName };
+		? { type: 'symbol', name: targetName, aliasedFrom, inline: false }
+		: { type: 'symbol', name: targetName, inline: false };
 	return sym as unknown as Rule;
 }
 

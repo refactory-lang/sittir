@@ -298,7 +298,7 @@ export function repeat1(content: Input): Rule {
  * helpers that need a real runtime symbol without fabricating the object.
  */
 export function symbol(name: string): SymbolRule {
-	return { type: SYMBOL, name, hidden: name.startsWith('_') };
+	return { type: SYMBOL, name, hidden: name.startsWith('_'), inline: name.startsWith('_') };
 }
 
 // ---------------------------------------------------------------------------
@@ -318,6 +318,7 @@ export function createProxy(currentRule: string, refs: SymbolRef[]): Record<stri
 				// `isHiddenKind()`, consulting both the leading-underscore
 				// convention and tree-sitter's explicit `inline` list.
 				hidden: name.startsWith('_'),
+				inline: name.startsWith('_'),
 				_ref: ref
 			};
 		}
@@ -340,6 +341,18 @@ export function isHiddenKind(name: string, inlineList?: readonly string[]): bool
 	if (name.startsWith('_')) return true;
 	if (inlineList && inlineList.includes(name)) return true;
 	return false;
+}
+
+/**
+ * Single read-path for the per-ref inline decision. Prefers the explicit
+ * `inline` flag (stamped at construction, flipped false by alias push-down).
+ * Falls back to `isHiddenKind(name)` for link-synthesized symbols whose
+ * reconstruction bypassed the construction stamp — deriving the SAME default
+ * (`hidden`) the stamp would have set. A `false ?? …` short-circuits to
+ * `false`, so an explicit alias flip is never overridden by the fallback.
+ */
+export function isInlineRef(rule: { inline?: boolean; name: string }, inlineList?: readonly string[]): boolean {
+	return rule.inline ?? isHiddenKind(rule.name, inlineList);
 }
 
 // ---------------------------------------------------------------------------
