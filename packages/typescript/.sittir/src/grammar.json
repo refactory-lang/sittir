@@ -391,22 +391,14 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_import_clause_namespace_import"
-          },
-          "named": true,
-          "value": "import_clause_namespace_import"
+          "type": "SYMBOL",
+          "name": "namespace_import",
+          "source": "override"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_import_clause_named_imports"
-          },
-          "named": true,
-          "value": "import_clause_named_imports"
+          "type": "SYMBOL",
+          "name": "named_imports",
+          "source": "override"
         },
         {
           "type": "ALIAS",
@@ -524,13 +516,10 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_import_specifier_name"
-              },
-              "named": true,
-              "value": "import_specifier_name"
+              "type": "SYMBOL",
+              "name": "_import_identifier",
+              "nonterminal": true,
+              "source": "override"
             },
             {
               "type": "ALIAS",
@@ -1836,13 +1825,9 @@
               "value": "parenthesized_expression_typed"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_parenthesized_expression_sequence"
-              },
-              "named": true,
-              "value": "parenthesized_expression_sequence"
+              "type": "SYMBOL",
+              "name": "sequence_expression",
+              "source": "override"
             }
           ]
         },
@@ -3308,13 +3293,9 @@
           "value": "class_heritage_extends_clause"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_class_heritage_implements_clause"
-          },
-          "named": true,
-          "value": "class_heritage_implements_clause"
+          "type": "SYMBOL",
+          "name": "implements_clause",
+          "source": "override"
         }
       ]
     },
@@ -3610,13 +3591,9 @@
               "value": "arrow_function_parameter"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_arrow_function__call_signature"
-              },
-              "named": true,
-              "value": "arrow_function__call_signature"
+              "type": "SYMBOL",
+              "name": "_call_signature",
+              "source": "override"
             }
           ]
         },
@@ -8201,13 +8178,9 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_ambient_declaration_declaration"
-              },
-              "named": true,
-              "value": "ambient_declaration_declaration"
+              "type": "SYMBOL",
+              "name": "declaration",
+              "source": "override"
             },
             {
               "type": "ALIAS",
@@ -10976,13 +10949,9 @@
               "value": "index_signature_colon"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_index_signature_mapped_type_clause"
-              },
-              "named": true,
-              "value": "index_signature_mapped_type_clause"
+              "type": "SYMBOL",
+              "name": "mapped_type_clause",
+              "source": "override"
             }
           ]
         },
@@ -12300,8 +12269,7 @@
       }
     },
     "_arrow_function__call_signature": {
-      "type": "SYMBOL",
-      "name": "_call_signature"
+      "type": "BLANK"
     },
     "_class_heritage_extends_clause": {
       "type": "SEQ",
@@ -12325,16 +12293,13 @@
       ]
     },
     "_class_heritage_implements_clause": {
-      "type": "SYMBOL",
-      "name": "implements_clause"
+      "type": "BLANK"
     },
     "_import_clause_namespace_import": {
-      "type": "SYMBOL",
-      "name": "namespace_import"
+      "type": "BLANK"
     },
     "_import_clause_named_imports": {
-      "type": "SYMBOL",
-      "name": "named_imports"
+      "type": "BLANK"
     },
     "_import_clause_default_import": {
       "type": "SEQ",
@@ -12370,14 +12335,7 @@
       ]
     },
     "_import_specifier_name": {
-      "type": "FIELD",
-      "name": "name",
-      "content": {
-        "type": "SYMBOL",
-        "name": "_import_identifier",
-        "fieldName": "name",
-        "nonterminal": true
-      }
+      "type": "BLANK"
     },
     "_import_specifier_as": {
       "type": "SEQ",
@@ -12466,12 +12424,10 @@
       ]
     },
     "_index_signature_mapped_type_clause": {
-      "type": "SYMBOL",
-      "name": "mapped_type_clause"
+      "type": "BLANK"
     },
     "_ambient_declaration_declaration": {
-      "type": "SYMBOL",
-      "name": "declaration"
+      "type": "BLANK"
     },
     "_export_statement_default_from_arm_star_from": {
       "type": "SEQ",
@@ -13033,8 +12989,7 @@
       ]
     },
     "_parenthesized_expression_sequence": {
-      "type": "SYMBOL",
-      "name": "sequence_expression"
+      "type": "BLANK"
     },
     "_export_statement_type_export": {
       "type": "SEQ",

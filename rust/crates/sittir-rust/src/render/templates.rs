@@ -180,12 +180,6 @@ pub struct DelimTokenTreeParenTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_expression_statement_block_ending.jinja", escape = "none")]
-pub struct ExpressionStatementBlockEndingTemplate<'a> {
-    pub expression_ending_with_block: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_expression_statement_with_semi.jinja", escape = "none")]
 pub struct ExpressionStatementWithSemiTemplate<'a> {
     pub expression: SingleNonterminalView<'a>,
@@ -196,18 +190,6 @@ pub struct ExpressionStatementWithSemiTemplate<'a> {
 pub struct FieldPatternNamedTemplate<'a> {
     pub name: SingleNonterminalView<'a>,
     pub pattern: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_field_pattern_shorthand.jinja", escape = "none")]
-pub struct FieldPatternShorthandTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_foreign_mod_item_body.jinja", escape = "none")]
-pub struct ForeignModItemBodyTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -280,12 +262,6 @@ pub struct MacroDefinitionParenTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_match_arm_block_ending.jinja", escape = "none")]
-pub struct MatchArmBlockEndingTemplate<'a> {
-    pub value: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_match_arm_with_comma.jinja", escape = "none")]
 pub struct MatchArmWithCommaTemplate<'a> {
     pub value: SingleNonterminalView<'a>,
@@ -299,12 +275,6 @@ pub struct MatchBlockArmsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_mod_item_inline.jinja", escape = "none")]
-pub struct ModItemInlineTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_or_pattern_binary.jinja", escape = "none")]
 pub struct OrPatternBinaryTemplate<'a> {
     pub left: SingleNonterminalView<'a>,
@@ -315,18 +285,6 @@ pub struct OrPatternBinaryTemplate<'a> {
 #[template(path = "_or_pattern_prefix.jinja", escape = "none")]
 pub struct OrPatternPrefixTemplate<'a> {
     pub right: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_pointer_type_mut.jinja", escape = "none")]
-pub struct PointerTypeMutTemplate<'a> {
-    pub mutable_specifier: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_range_expression_bare.jinja", escape = "none")]
-pub struct RangeExpressionBareTemplate<'a> {
-    pub operator: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -426,12 +384,6 @@ pub struct TokenTreePatternParenTemplate<'a> {
 pub struct TypeArgumentTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
     pub trait_bounds: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_visibility_modifier_crate.jinja", escape = "none")]
-pub struct VisibilityModifierCrateTemplate<'a> {
-    pub crate_: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

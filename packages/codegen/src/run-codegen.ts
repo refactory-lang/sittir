@@ -371,35 +371,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 		console.log(`    ${emit.libRs.path}`);
 		console.log(`    ${dstTemplatesDir}/ (${emittedNames.size} .jinja files)`);
 
-		// --- parity-fixture extraction (spec 012 T045 / T046) ---
-		// Run the round-trip validator in fixture-capture mode. Every
-		// successfully round-tripped kind emits a paired (render,
-		// roundtrip) fixture; the result is written to
-		// rust/crates/sittir-{grammar}/test-fixtures.json where the
-		// Rust parity harness (T047) reads it via serde_json.
-		//
-		// FR-011 required-kinds gate lives in `extractParityFixtures` —
-		// throws when the corpus doesn't cover the exception kinds for
-		// this grammar. Regen fails loudly rather than emitting an
-		// insufficient fixture set.
-		//
-		// Lazy import: parity-fixtures transitively imports validate/common.ts
-		// → @sittir/common (WASM-dependent). Dynamic import keeps the static
-		// module graph clean for test environments.
-		const { extractParityFixtures, serializeFixtures, fixturesOutputPath } =
-			await import('./emitters/parity-fixtures.ts');
-		const templatesPath = join(dirname(outDir), 'templates');
-		const extracted = await extractParityFixtures(grammarTyped, templatesPath);
-		const fxPath = fixturesOutputPath(grammarTyped);
-		writeFile(fxPath, serializeFixtures(extracted.fixtures));
-		console.log(
-			`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`
-		);
-		// Surface FR-011 coverage gap warnings as non-fatal stderr messages.
-		for (const w of extracted.warnings) {
-			process.stderr.write(`[warning] ${w}\n`);
-		}
-
 		// Rebuild the corresponding N-API binding so the native render path
 		// picks up the new templates. Askama compiles templates at the
 		// crate's build time via proc macro; without a rebuild, native
@@ -451,6 +422,50 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 				);
 				throw e;
 			}
+
+			// --- parity-fixture extraction (spec 012 T045 / T046) ---
+			// Run the round-trip validator in fixture-capture mode — a
+			// POST-BUILD pass. Every successfully round-tripped kind emits a
+			// paired (render, roundtrip) fixture; the result is written to
+			// rust/crates/sittir-{grammar}/test-fixtures.json where the Rust
+			// parity harness (T047) reads it via serde_json.
+			//
+			// Fixture extraction MUST run after the napi rebuild: the
+			// validator's wrapped-tree candidate walk requires the NATIVE
+			// engine (backend: 'native' inside extractParityFixtures), and
+			// Askama bakes the just-emitted templates into the .node at
+			// compile time — extracting before the rebuild would capture
+			// fixtures against stale templates (or a half-built engine).
+			//
+			// FR-011 required-kinds gate lives in `extractParityFixtures` —
+			// throws when the corpus doesn't cover the exception kinds for
+			// this grammar. Regen fails loudly rather than emitting an
+			// insufficient fixture set.
+			//
+			// Lazy import: parity-fixtures transitively imports validate/common.ts
+			// → @sittir/common (WASM-dependent). Dynamic import keeps the static
+			// module graph clean for test environments.
+			const { extractParityFixtures, serializeFixtures, fixturesOutputPath } =
+				await import('./emitters/parity-fixtures.ts');
+			const templatesPath = join(dirname(outDir), 'templates');
+			const extracted = await extractParityFixtures(grammarTyped, templatesPath);
+			const fxPath = fixturesOutputPath(grammarTyped);
+			writeFile(fxPath, serializeFixtures(extracted.fixtures));
+			console.log(
+				`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`
+			);
+			// Surface FR-011 coverage gap warnings as non-fatal stderr messages.
+			for (const w of extracted.warnings) {
+				process.stderr.write(`[warning] ${w}\n`);
+			}
+		} else {
+			// --no-build-native: the freshly emitted templates are NOT in the
+			// .node, so a native fixture pass would capture stale renders.
+			// Skip extraction rather than emit silently-wrong fixtures.
+			process.stderr.write(
+				`[warning] [codegen] parity-fixtures[${grammar}]: skipped — fixture extraction requires the ` +
+					`post-regen native rebuild (--no-build-native was passed). test-fixtures.json left unchanged.\n`
+			);
 		}
 	}
 

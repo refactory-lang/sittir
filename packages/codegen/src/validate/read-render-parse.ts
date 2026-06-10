@@ -201,6 +201,29 @@ async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<str
 }
 
 /**
+ * Kinds that are alias SOURCES — the `value` side of `fieldAliasMap`'s
+ * `<kind>.<slot>: { parseName: aliasSource }` entries (e.g.
+ * `last_match_arm`, the trailing-arm source for `_match_block_arms.last_arm`).
+ *
+ * @remarks
+ * Used by {@link chooseEffectiveKindForSpan} to break exact-span ties. A
+ * single-arm match nests the `match_block_arms` container and the aliased
+ * `last_match_arm` arm at the IDENTICAL span; the container is walked first,
+ * so without this the tie-break keeps the container and the `aliasOverride`
+ * never sees `last_match_arm`. A container/parse-name kind only appears as a
+ * map KEY, never as a source value, so preferring source-valued kinds routes
+ * the colliding span to the concrete arm.
+ */
+async function loadAliasSourceKinds(grammar: string): Promise<ReadonlySet<string>> {
+	const { fieldAliasMap } = await loadNodeModel(grammar);
+	const kinds = new Set<string>();
+	for (const perSlot of Object.values(fieldAliasMap)) {
+		for (const source of Object.values(perSlot)) kinds.add(source);
+	}
+	return kinds;
+}
+
+/**
  * Parser-visible named kinds that require structural materialization for the
  * native transport path.
  *
@@ -260,6 +283,33 @@ function findNodeBySpan(node: TSNode, startIndex: number, endIndex: number): TSN
 		// Prune: the target span must be contained within this child's range.
 		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
 		const hit = findNodeBySpan(c, startIndex, endIndex);
+		if (hit) return hit;
+	}
+	return null;
+}
+
+/**
+ * Find the same-span wasm node whose `type` equals `kind`, preferring it over
+ * the outermost same-span node.
+ *
+ * @remarks
+ * A wrapped source-kind candidate frequently shares its EXACT span with an
+ * enclosing wasm node (e.g. `match_pattern` wraps the inner `tuple_struct_pattern`
+ * at the identical span in no-guard arms). Anchoring the AST compare on the
+ * outermost same-span node (plain {@link findNodeBySpan}) then reports a kind-name
+ * mismatch (`match_pattern ≠ tuple_struct_pattern`) even when the render is
+ * byte-identical. Preferring the same-span node whose type matches the
+ * candidate's kind anchors the compare on the right node. Falls back to the
+ * outermost node when no same-span descendant matches (e.g. alias-source kinds
+ * whose wasm display name differs).
+ */
+function findNodeBySpanOfKind(node: TSNode, startIndex: number, endIndex: number, kind: string): TSNode | null {
+	if (node.startIndex === startIndex && node.endIndex === endIndex && node.type === kind) return node;
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c) continue;
+		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
+		const hit = findNodeBySpanOfKind(c, startIndex, endIndex, kind);
 		if (hit) return hit;
 	}
 	return null;
@@ -400,11 +450,33 @@ export interface ReadRenderParseResult {
  * @param kinds - Mutable set of kind names; alias-source kinds discovered during the walk are added here.
  * @returns A map from composite span key (`"start:end"`) to the effective (alias-rewritten) type string.
  */
-export function chooseEffectiveKindForSpan(existing: string | undefined, next: string): string {
+export function chooseEffectiveKindForSpan(
+	existing: string | undefined,
+	next: string,
+	aliasSourceKinds?: ReadonlySet<string>
+): string {
 	if (!existing) return next;
 	const existingHidden = existing.startsWith('_');
 	const nextHidden = next.startsWith('_');
 	if (nextHidden && !existingHidden) return next;
+	// Exact-span tie — e.g. a SINGLE-arm match, where the `match_block_arms`
+	// container and the aliased `last_match_arm` trailing arm cover the
+	// identical bytes (proven via the getter walk: both at span 19:25 for
+	// `match x { _ => 1 }`). Prefer the concrete VISIBLE alias-source arm
+	// kind (the one `aliasOverride` forwards to a standalone read) over the
+	// container — otherwise the container, walked first, shadows the arm, the
+	// standalone read defaults to `match_arm`, and its required `content`
+	// slot has no value → `requires one value; got undefined`. Container /
+	// parse-name kinds are only map KEYS, never source VALUES, so they are
+	// correctly never preferred. Multi-arm matches don't collide (the last
+	// arm is a strict sub-span) and non-alias-source ties (`program` vs
+	// `try_statement`) are untouched.
+	if (aliasSourceKinds) {
+		const nextIsVisibleSource = !nextHidden && aliasSourceKinds.has(next);
+		const existingIsVisibleSource = !existingHidden && aliasSourceKinds.has(existing);
+		if (nextIsVisibleSource && !existingIsVisibleSource) return next;
+		if (existingIsVisibleSource && !nextIsVisibleSource) return existing;
+	}
 	return existing;
 }
 
@@ -416,7 +488,8 @@ function discoverAliasSourceKinds(
 	source: string,
 	kindNameFromId: ((id: number) => string | undefined) | undefined,
 	backend?: 'native' | 'js',
-	kindIdFromName?: (kind: string) => number | undefined
+	kindIdFromName?: (kind: string) => number | undefined,
+	aliasSourceKinds?: ReadonlySet<string>
 ): Map<string, string> {
 	// ADR-0017: keyed by "${start}:${end}" composite span key. Using BOTH
 	// start and end byte offsets avoids the collision that arises from a
@@ -452,7 +525,7 @@ function discoverAliasSourceKinds(
 			const span = (w as { $span?: { start: number; end: number } }).$span;
 			if (span != null) {
 				const key = `${span.start}:${span.end}`;
-				nodeIdToEffectiveType.set(key, chooseEffectiveKindForSpan(nodeIdToEffectiveType.get(key), kindStr));
+				nodeIdToEffectiveType.set(key, chooseEffectiveKindForSpan(nodeIdToEffectiveType.get(key), kindStr, aliasSourceKinds));
 			}
 			kinds.add(kindStr);
 		});
@@ -756,6 +829,7 @@ export async function validateReadRenderParse(
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
+	const aliasSourceKinds = await loadAliasSourceKinds(grammar);
 	const nativeStructuredKindNames = backend === 'native' ? loadNativeStructuredKinds(rawEntries) : new Set<string>();
 	const deepReadKindNames = new Set([...adoptedVariantKindNames, ...nativeStructuredKindNames]);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
@@ -812,18 +886,33 @@ export async function validateReadRenderParse(
 				continue; // Corpus entries with parse errors (intentional error tests)
 			}
 
-			const kinds = new Set(collectKinds(tree1.rootNode));
-			const nodeIdToEffectiveType = discoverAliasSourceKinds(
-				readTreeNodeFn,
-				tree1,
-				kinds,
-				grammar,
-				entry.source,
-				kindNameFromId,
-				backend,
-				kindIdFromName
-			);
-			const testableKinds = [...kinds].filter((k) => ruleKinds.has(k));
+			// Candidate enumeration by SOURCE kind (the wrap layer's drillAs result),
+			// not the parser DISPLAY kind. Build the native read handle and walk the
+			// WRAPPED tree ONCE: every node arrives as its true source kind, so each
+			// is read/rendered directly with NO asType override. Replaces the per-kind
+			// walkNativeForKind raw-tree scans (O(kinds×nodes), display-kind only) and
+			// the alias-override machinery (discoverAliasSourceKinds / aliasOverride)
+			// that existed solely to remap display→source (e.g. match_arm→last_match_arm).
+			const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+			const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
+			if (readTreeNodeFn && handle.read) {
+				const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
+				const seen = new Set<string>();
+				walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+					if (w.$named === false) return;
+					const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
+					if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+					const span = (w as { $span?: { start: number; end: number } }).$span;
+					if (span == null) return;
+					const dedup = `${sourceKind}@${span.start}:${span.end}`;
+					if (seen.has(dedup)) return;
+					seen.add(dedup);
+					const list = candidatesByKind.get(sourceKind) ?? [];
+					list.push({ start: span.start, end: span.end, node: w });
+					candidatesByKind.set(sourceKind, list);
+				});
+			}
+			const testableKinds = [...candidatesByKind.keys()];
 
 			if (testableKinds.length === 0) {
 				skip++;
@@ -835,38 +924,6 @@ export async function validateReadRenderParse(
 			let entryAstMatch = true;
 			for (const kind of testableKinds) {
 				if (shouldStop) break;
-				// Canonical-hidden architecture (Option Y): the wrap walker
-				// now reaches every subtree node — pre-fix it missed many
-				// because the wrap-table dispatch was keyed on the hidden
-				// alias-source name while parser-emitted `$type` was the
-				// visible alias-target. With the visible→hidden remap on
-				// receipt, dispatch fires reliably and recursion propagates
-				// through every accessor. That surfaces extra test cases
-				// per entry; iterate ALL nodes of a kind and treat the
-				// entry as passing when ANY node round-trips successfully.
-				// Per-node failures still land in the kind-level error
-				// list so genuine bugs remain visible.
-				// Build the read handle once per entry/kind. For the native
-				// backend the handle is backed by the cached native engine;
-				// building it once avoids repeated parseAndRead calls.
-				const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-
-				// --- Native-only candidate iteration (no WASM bridge) ---
-				// When a native handle is available, walk the native AnyNodeData
-				// tree directly to discover all nodes of `kind`. Each candidate
-				// gets its own (handle, childIndex) coords from the walk, so
-				// multi-candidate entries (e.g. rust "Where clauses" with 6
-				// impl_item nodes) render their own correct data instead of all
-				// converging on the first DFS match.
-				//
-				// For the WASM/JS backend, fall back to the original WASM-tree
-				// walk + findNativeNodeId(null) path (findNativeNodeId returns
-				// null for non-native handles).
-				const nativeCandidates = handle.read ? walkNativeForKind(handle, kind, kindNameFromId) : [];
-				const wasmCandidates = handle.read ? [] : resolveAllNodesForKind(kind, nodeIdToEffectiveType, tree1);
-
-				const totalCandidateCount = handle.read ? nativeCandidates.length : wasmCandidates.length;
-				if (totalCandidateCount === 0) continue;
 
 				let kindOk = false;
 				let kindAstMatch = false;
@@ -874,93 +931,44 @@ export async function validateReadRenderParse(
 				const kindErrors: typeof errors = [];
 				const kindAstMismatches: typeof astMismatches = [];
 
-				// Iterate native candidates (native backend) or WASM candidates (JS backend).
-				const iterCount = handle.read ? nativeCandidates.length : wasmCandidates.length;
-				for (let ci = 0; ci < iterCount; ci++) {
+				for (const cand of candidatesByKind.get(kind)!) {
 					if (shouldStop) break;
+					const nodeStartIndex = cand.start;
+					const nodeEndIndex = cand.end;
+					const inputSource = entry.source.slice(nodeStartIndex, nodeEndIndex);
+					// WASM node at this span: the AST-compare target and the parser
+					// DISPLAY kind (targetKind) used for post-reparse node lookup.
+					// Prefer the same-span node whose type matches the candidate's
+					// kind (so the compare anchors on `tuple_struct_pattern`, not the
+					// enclosing same-span `match_pattern`); fall back to the outermost.
+					const node1ForAst =
+						findNodeBySpanOfKind(tree1.rootNode, nodeStartIndex, nodeEndIndex, kind) ??
+						findNodeBySpan(tree1.rootNode, nodeStartIndex, nodeEndIndex);
+					const tsVisibleKind = node1ForAst?.type;
 
-					// Resolve per-candidate inputs from either the native walk
-					// result or the WASM node.
-					let nativeCoords: ReturnType<typeof findNativeNodeId>;
-					let nodeStartIndex: number;
-					let nodeEndIndex: number;
-					let inputSource: string;
-					// WASM node for AST comparison (findNodeBySpan from tree1).
-					// For native backend: look up by native $span; may be null
-					// when $span is unavailable — AST comparison is skipped then.
-					let node1ForAst: TSNode | null;
-					let tsVisibleKind: string | undefined;
-
-					if (handle.read) {
-						// Native path: use native walk result.
-						const nc = nativeCandidates[ci]!;
-						nativeCoords = nc.coords;
-						const span = nc.span;
-						if (span) {
-							nodeStartIndex = span.start;
-							nodeEndIndex = span.end;
-							inputSource = entry.source.slice(span.start, span.end);
-							// Find corresponding WASM node by span for AST comparison.
-							node1ForAst = findNodeBySpan(tree1.rootNode, span.start, span.end);
-							tsVisibleKind = node1ForAst?.type;
-						} else {
-							// No span: fall back to full source and skip AST comparison.
-							nodeStartIndex = 0;
-							nodeEndIndex = entry.source.length;
-							inputSource = entry.source;
-							node1ForAst = null;
-							tsVisibleKind = undefined;
-						}
-					} else {
-						// WASM path: use WASM node.
-						const node1 = wasmCandidates[ci]!;
-						nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
-						nodeStartIndex = node1.startIndex;
-						nodeEndIndex = node1.endIndex;
-						inputSource = node1.text;
-						node1ForAst = node1;
-						tsVisibleKind = node1.type;
+					// Materialize the wrapped node directly — it already IS its source
+					// kind. renderedKind (source) drives the render template; targetKind
+					// (display) drives the post-reparse node lookup.
+					//
+					// Shallow mode (`recursive !== true`): read the node's one-level
+					// native data via its coords instead — children stay `$nodeHandle`
+					// stubs. This preserves the read-render-parse-shallow metric's
+					// meaning (render() fed stub-bearing data, the shape lazy callers
+					// send) as distinct from the deep run's full materialization.
+					// Falls back to deep materialization when the wrapped node carries
+					// no native coords.
+					let data: AnyNodeData;
+					try {
+						data =
+							recursive !== true && cand.node.$nodeHandle != null && handle.read
+								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex ?? 0) as unknown as AnyNodeData)
+								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node)) as AnyNodeData);
+					} catch (e) {
+						kindErrors.push({ name: `${entry.name} [${kind}]`, message: `read: ${(e as Error).message.slice(0, 100)}` });
+						continue;
 					}
-
-					if (nativeCoords === null && handle.read) continue;
-					// Option (a): when the wrap-walk recorded a different effective
-					// kind for this exact span than tree-sitter's visible display
-					// kind, the node is an alias TARGET whose source wrapper differs
-					// (e.g. rust trailing arm: display `match_arm`, source
-					// `last_match_arm`). Standalone reads lose the parent slot's
-					// drillAs, so forward the resolution the validator already holds.
-					// Scope to NON-hidden effective kinds: canonical-hidden remaps
-					// (`type_identifier`→`_type_identifier`) are already a no-op
-					// inside wrapNode, and forcing a hidden supertype (`_literal`)
-					// would strip the node's concrete wrapper.
-					const effectiveForSpan = nodeIdToEffectiveType.get(`${nodeStartIndex}:${nodeEndIndex}`);
-					const aliasOverride =
-						effectiveForSpan !== undefined &&
-						!effectiveForSpan.startsWith('_') &&
-						tsVisibleKind !== undefined &&
-						effectiveForSpan !== tsVisibleKind
-							? { from: tsVisibleKind, to: effectiveForSpan }
-							: undefined;
-					const rawData = readValidatorNodeData(
-						handle,
-						// readValidatorNodeData uses `node` only for WASM paths; for
-						// native (handle.read is set) nativeCoords drives the read.
-						// Provide a minimal fallback so TS is satisfied.
-						node1ForAst ?? tree1.rootNode,
-						nativeCoords,
-						readTreeNodeFn,
-						deepReadKinds,
-						recursive === true,
-						aliasOverride
-					);
-					const { data, renderedKind, targetKind } = applyAliasResolution(
-						rawData,
-						nodeStartIndex,
-						nodeEndIndex,
-						nodeIdToEffectiveType,
-						kindNameFromId,
-						tsVisibleKind
-					);
+					const renderedKind = kind;
+					const targetKind = tsVisibleKind ?? kind;
 
 					// Emit a per-kind progress breadcrumb to stderr when running as
 					// an isolation worker (SITTIR_ISOLATE_WORKER=1). MUST use

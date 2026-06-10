@@ -1810,6 +1810,7 @@ function renderTransportSupport(
 	return [
 		...anyTransportLines,
 		'',
+		...renderTransportValueTypeHelper(),
 		...renderVerbatimTransportStruct(),
 		...renderLiteralTransportStruct(projection.literals),
 		'',
@@ -2105,17 +2106,13 @@ function nodeTransportHasRequiredField(node: AssembledNode): boolean {
  * **Live status (sittir-12):** the SCC analysis IS computed end-to-end
  * and exposed via `nodeMap.scc`, but `boxedInEnum` still falls back to
  * the conservative `Box-all-non-leaf` rule. Enabling SCC-based unboxing
- * for rust deep read-render-parse triggers a V8 stack overflow inside
- * napi-rs's `String::from_napi_value` error path (it JSON.stringify's
- * the deeply-nested object for diagnostic context). The same shape
- * exists in the conservative output but doesn't crash there; the
- * stack-budget margin shrinks once variants inline larger structs.
- * Python and TypeScript validate fine — the rust corpus depth is the
- * trigger. Tracked as a follow-up; the SCC infrastructure stays in
- * place so the predicate can be flipped once the V8/napi interaction
- * is mitigated (likely by suppressing the JSON.stringify diagnostic
- * in napi-rs or by trimming the bare-string Verbatim fast-path on
- * recursive enums).
+ * for rust deep read-render-parse used to trigger a V8 stack overflow
+ * inside napi-rs's `String::from_napi_value` error path (it
+ * JSON.stringify's the deeply-nested object for diagnostic context).
+ * That error path is no longer reachable: every hand-emitted
+ * `FromNapiValue` impl now dispatches on `napi_typeof` first (see
+ * `renderTransportValueTypeHelper`), so no typed read is ever attempted
+ * on a mismatched shape. Flipping the SCC predicate can be retried.
  */
 function isLeafLikeNode(n: AssembledNode): boolean {
 	return n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
@@ -2133,6 +2130,101 @@ function boxedInEnum(variantKind: string, enumOwnerKind: string, variantNode: As
 	void variantNode;
 	void nodeMap;
 	return false;
+}
+
+/**
+ * Emit the `transport_value_type` helper — a plain `napi_typeof` probe used
+ * by every hand-emitted `FromNapiValue` impl in this module.
+ *
+ * Dispatching on the JS value's type FIRST (instead of probing typed reads
+ * `u16` → `String` → `Object` in sequence) is load-bearing: napi-rs's
+ * `String::from_napi_value` failure path JSON.stringify's Object inputs for
+ * diagnostics — a JS callback re-entered from deep native recursion that
+ * overflows the V8 stack on recursive AST shapes
+ * (block→statement→expression→block) and aborts the process
+ * (`Check failed: IsOnCentralStack()`, exit 133). `napi_typeof` is a plain
+ * C call with no JS re-entry and no diagnostic error construction, so a
+ * mismatched shape never pays that cost.
+ */
+function renderTransportValueTypeHelper(): string[] {
+	// Hand-expanded `napi::type_of!` — the macro internally invokes a bare
+	// `check_status!`, which would have to be in scope at the expansion site.
+	return [
+		'#[cfg(feature = "napi-bindings")]',
+		'unsafe fn transport_value_type(',
+		'    env: ::napi::sys::napi_env,',
+		'    napi_val: ::napi::sys::napi_value,',
+		') -> ::napi::Result<::napi::ValueType> {',
+		'    let mut value_type = 0;',
+		'    let status = unsafe { ::napi::sys::napi_typeof(env, napi_val, &mut value_type) };',
+		'    if status != ::napi::sys::Status::napi_ok {',
+		'        return Err(::napi::Error::new(',
+		'            ::napi::Status::from(status),',
+		'            "napi_typeof failed".to_owned(),',
+		'        ));',
+		'    }',
+		'    Ok(::napi::ValueType::from(value_type))',
+		'}',
+		''
+	];
+}
+
+/**
+ * Emit the `from_napi_value` body shared by supertype and per-slot transport
+ * enums: strict three-shape dispatch on `napi_typeof` (raw u16 kind_id /
+ * bare string → Verbatim / object with numeric `$type`).
+ *
+ * The typeof dispatch (see `renderTransportValueTypeHelper`) replaces the
+ * earlier sequential probing, which crashed on deep recursive inputs. It
+ * also keeps bare-string semantics exact: `Object::from_napi_value`
+ * SUCCEEDS on a JS string (property access auto-boxes primitives), so any
+ * ordering that probes Object before String would swallow bare strings
+ * into a "$type property missing" error instead of the Verbatim arm.
+ *
+ * @param enumName - Rust enum name, e.g. `PatternTransport`.
+ * @param kindIdArms - shared `match kind_id` arms (must end with a
+ *   catch-all `other =>` arm so the match is exhaustive over u16).
+ * @param admitsVerbatim - whether the enum has a `Verbatim` variant; gates
+ *   the bare-string arm (bare strings carry no kind tag).
+ */
+function emitTransportEnumFromNapiValueBody(
+	enumName: string,
+	kindIdArms: readonly string[],
+	admitsVerbatim: boolean
+): string[] {
+	const lines: string[] = [];
+	lines.push(`        match transport_value_type(env, napi_val)? {`);
+	// (a) Raw u16 input: kind_id sent directly (value-less kinds).
+	lines.push(`            ::napi::ValueType::Number => {`);
+	lines.push(`                match u16::from_napi_value(env, napi_val)? {`);
+	for (const arm of kindIdArms) lines.push(`    ${arm}`);
+	lines.push(`                }`);
+	lines.push(`            }`);
+	// (b) Bare string: wrap as Verbatim (only when this enum admits a
+	//     pattern variant; bare strings carry no kind tag).
+	if (admitsVerbatim) {
+		lines.push(`            ::napi::ValueType::String => {`);
+		lines.push(`                let text = String::from_napi_value(env, napi_val)?;`);
+		lines.push(`                Ok(Self::Verbatim(VerbatimTransport { text }))`);
+		lines.push(`            }`);
+	}
+	// (c) Object with numeric $type: strict kind_id dispatch.
+	lines.push(`            ::napi::ValueType::Object => {`);
+	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+	lines.push(`                let kind_id: u16 = obj.get("$type")?.ok_or_else(||`);
+	lines.push(`                    ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`);
+	lines.push(`                )?;`);
+	lines.push(`                match kind_id {`);
+	for (const arm of kindIdArms) lines.push(`    ${arm}`);
+	lines.push(`                }`);
+	lines.push(`            }`);
+	lines.push(
+		`            _ => Err(::napi::Error::from_reason(${JSON.stringify(
+			`${enumName}: expected u16 kind_id, string, or object with $type`
+		)})),`
+	);
+	lines.push(`        }`);
+	return lines;
 }
 
 function emitSupertypeTransportEnum(
@@ -2270,30 +2362,7 @@ function emitSupertypeTransportEnum(
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		// (a) Raw u16 input: kind_id sent directly (value-less kinds).
-		lines.push(`        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
-		lines.push(`            return match kind_id {`);
-		for (const arm of kindIdArms) lines.push(arm);
-		lines.push(`            };`);
-		lines.push(`        }`);
-		// (b) Bare string: wrap as Verbatim (only when this enum admits a
-		//     pattern variant; bare strings carry no kind tag).
-		if (admitsVerbatim) {
-			lines.push(`        if let Ok(text) = String::from_napi_value(env, napi_val) {`);
-			lines.push(`            return Ok(Self::Verbatim(VerbatimTransport { text }));`);
-			lines.push(`        }`);
-		}
-		// (c) Object with numeric $type: strict kind_id dispatch.
-		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)`);
-		lines.push(`            .map_err(|_| ::napi::Error::from_reason(${JSON.stringify(
-			`${enumName}: expected u16 kind_id, string, or object with $type`
-		)}))?;`);
-		lines.push(`        let kind_id: u16 = obj.get("$type")?.ok_or_else(||`);
-		lines.push(`            ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`);
-		lines.push(`        )?;`);
-		lines.push(`        match kind_id {`);
-		for (const arm of kindIdArms) lines.push(arm);
-		lines.push(`        }`);
+		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms, admitsVerbatim));
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -2685,33 +2754,7 @@ function emitPerSlotChildEnum(
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		// (a) Raw u16: kind_id sent directly. Value-less kinds (keywords,
-		//     value-less enums) carry no payload other than their kind tag.
-		lines.push(`        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
-		lines.push(`            return match kind_id {`);
-		for (const arm of kindIdArms) lines.push(arm);
-		lines.push(`            };`);
-		lines.push(`        }`);
-		// (b) Bare string: text-bearing input with no kind annotation. Wrap
-		//     as Verbatim — pattern-modeled variants in this enum render
-		//     text verbatim, so no specific kind is meaningful. Emitted only
-		//     when this enum admits at least one pattern variant.
-		if (admitsVerbatim) {
-			lines.push(`        if let Ok(text) = String::from_napi_value(env, napi_val) {`);
-			lines.push(`            return Ok(Self::Verbatim(VerbatimTransport { text }));`);
-			lines.push(`        }`);
-		}
-		// (c) Object with numeric $type: strict kind_id dispatch.
-		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)`);
-		lines.push(`            .map_err(|_| ::napi::Error::from_reason(${JSON.stringify(
-			`${enumName}: expected u16 kind_id, string, or object with $type`
-		)}))?;`);
-		lines.push(`        let kind_id: u16 = obj.get("$type")?.ok_or_else(||`);
-		lines.push(`            ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`);
-		lines.push(`        )?;`);
-		lines.push(`        match kind_id {`);
-		for (const arm of kindIdArms) lines.push(arm);
-		lines.push(`        }`);
+		lines.push(...emitTransportEnumFromNapiValueBody(enumName, kindIdArms, admitsVerbatim));
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -3558,6 +3601,12 @@ function renderVerbatimTransportStruct(): string[] {
 		'        env: ::napi::sys::napi_env,',
 		'        napi_val: ::napi::sys::napi_value,',
 		'    ) -> ::napi::Result<Self> {',
+		'        // typeof guard: never call String::from_napi_value on a non-string',
+		'        // (its failure path JSON.stringify\'s Object inputs — see',
+		'        // transport_value_type).',
+		'        if transport_value_type(env, napi_val)? != ::napi::ValueType::String {',
+		'            return Err(::napi::Error::from_reason("VerbatimTransport: expected bare string"));',
+		'        }',
 		'        let text = String::from_napi_value(env, napi_val)?;',
 		'        Ok(Self { text })',
 		'    }',
@@ -3791,30 +3840,34 @@ function renderLeafTransportNapiImpls(
 	lines.push(`        env: ::napi::sys::napi_env,`);
 	lines.push(`        napi_val: ::napi::sys::napi_value,`);
 	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(`        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {`);
-	lines.push(`            text`);
+	// typeof dispatch — never probe String::from_napi_value on a non-string
+	// (its failure path JSON.stringify's Object inputs; see transport_value_type).
+	lines.push(`        let text = match transport_value_type(env, napi_val)? {`);
+	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
 	if (defaultTextLiteral !== undefined) {
-		lines.push(`        } else if u16::from_napi_value(env, napi_val).is_ok() {`);
-		lines.push(`            ${JSON.stringify(defaultTextLiteral)}.to_string()`);
+		lines.push(`            // Raw kind_id: value-less leaf sent as its numeric kind tag.`);
+		lines.push(`            ::napi::ValueType::Number => ${JSON.stringify(defaultTextLiteral)}.to_string(),`);
 	}
 	if (booleanLiteral !== undefined) {
-		lines.push(`        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {`);
-		lines.push(`            if !present {`);
+		lines.push(`            ::napi::ValueType::Boolean => {`);
+		lines.push(`                if !bool::from_napi_value(env, napi_val)? {`);
 		lines.push(
-			`                return Err(::napi::Error::from_reason(${JSON.stringify(
+			`                    return Err(::napi::Error::from_reason(${JSON.stringify(
 				`${structName} received false; omit the field instead of sending false`
 			)}));`
 		);
+		lines.push(`                }`);
+		lines.push(`                ${JSON.stringify(booleanLiteral)}.to_string()`);
 		lines.push(`            }`);
-		lines.push(`            ${JSON.stringify(booleanLiteral)}.to_string()`);
 	}
-	lines.push(`        } else {`);
-	lines.push(`            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+	lines.push(`            _ => {`);
+	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
-			? `            obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string())`
-			: `            obj.get("$text")?.unwrap_or_default()`
+			? `                obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string())`
+			: `                obj.get("$text")?.unwrap_or_default()`
 	);
+	lines.push(`            }`);
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
 	for (const f of TRANSPORT_METADATA_FIELDS) {
@@ -3838,36 +3891,42 @@ function renderLeafTransportNapiImpls(
 	lines.push(`        napi_val: ::napi::sys::napi_value,`);
 	lines.push(`    ) -> ::napi::Result<Self> {`);
 	if (booleanLiteral !== undefined) {
-		lines.push(`        if let Ok(text) = String::from_napi_value(env, napi_val) {`);
-		lines.push(`            return Ok(Self {`);
+		// typeof dispatch — never probe String::from_napi_value on a non-string
+		// (its failure path JSON.stringify's Object inputs; see transport_value_type).
+		lines.push(`        match transport_value_type(env, napi_val)? {`);
+		lines.push(`            ::napi::ValueType::String => {`);
+		lines.push(`                let text = String::from_napi_value(env, napi_val)?;`);
+		lines.push(`                return Ok(Self {`);
 		for (const f of TRANSPORT_METADATA_FIELDS) {
 			if (f.rustName === 'transport_named') {
-				lines.push(`                transport_named: Some(${named}),`);
+				lines.push(`                    transport_named: Some(${named}),`);
 			} else {
-				lines.push(`                ${f.rustName}: None,`);
+				lines.push(`                    ${f.rustName}: None,`);
 			}
 		}
-		lines.push(`                text,`);
-		lines.push(`            });`);
-		lines.push(`        }`);
-		lines.push(`        if let Ok(present) = bool::from_napi_value(env, napi_val) {`);
-		lines.push(`            if !present {`);
+		lines.push(`                    text,`);
+		lines.push(`                });`);
+		lines.push(`            }`);
+		lines.push(`            ::napi::ValueType::Boolean => {`);
+		lines.push(`                if !bool::from_napi_value(env, napi_val)? {`);
 		lines.push(
-			`                return Err(::napi::Error::from_reason(${JSON.stringify(
+			`                    return Err(::napi::Error::from_reason(${JSON.stringify(
 				`${structName} received false; omit the field instead of sending false`
 			)}));`
 		);
-		lines.push(`            }`);
-		lines.push(`            return Ok(Self {`);
+		lines.push(`                }`);
+		lines.push(`                return Ok(Self {`);
 		for (const f of TRANSPORT_METADATA_FIELDS) {
 			if (f.rustName === 'transport_named') {
-				lines.push(`                transport_named: Some(${named}),`);
+				lines.push(`                    transport_named: Some(${named}),`);
 			} else {
-				lines.push(`                ${f.rustName}: None,`);
+				lines.push(`                    ${f.rustName}: None,`);
 			}
 		}
-		lines.push(`                text: ${JSON.stringify(booleanLiteral)}.to_string(),`);
-		lines.push(`            });`);
+		lines.push(`                    text: ${JSON.stringify(booleanLiteral)}.to_string(),`);
+		lines.push(`                });`);
+		lines.push(`            }`);
+		lines.push(`            _ => {}`);
 		lines.push(`        }`);
 	}
 	lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
@@ -4661,57 +4720,61 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 			// Some grammars send the resolved leaf kind in `$type` (primitive_type),
 			// while others keep the parent enum kind and expose the chosen literal
 			// under `$text` or `_<literal>` child fields (fragment_specifier).
-			lines.push(`        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
-			lines.push(`            match kind_id {`);
-			for (const v of values) {
-				const entry = findKindEntry(kindEntries, v);
-				const variant = literalToVariantName(v);
-				if (entry !== undefined) {
-					lines.push(`                ${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);
-				} else {
-					lines.push(`                // ${JSON.stringify(v)}: no parser symbol — cannot dispatch by KindId`);
+			// typeof dispatch — never probe a typed read on a mismatched shape
+			// (String::from_napi_value's failure path JSON.stringify's Object
+			// inputs; see transport_value_type).
+			const kindIdMatchArms = (indent: string): void => {
+				for (const v of values) {
+					const entry = findKindEntry(kindEntries, v);
+					const variant = literalToVariantName(v);
+					if (entry !== undefined) {
+						lines.push(`${indent}${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);
+					} else {
+						lines.push(`${indent}// ${JSON.stringify(v)}: no parser symbol — cannot dispatch by KindId`);
+					}
 				}
-			}
-			lines.push(`                _ => {}`);
-			lines.push(`            }`);
-			lines.push(`        }`);
-			lines.push(`        if let Ok(text) = String::from_napi_value(env, napi_val) {`);
-			lines.push(`            match text.as_str() {`);
-			for (const v of values) {
-				lines.push(`                ${JSON.stringify(v)} => return Ok(Self::${literalToVariantName(v)}),`);
-			}
-			lines.push(`                _ => {}`);
-			lines.push(`            }`);
-			lines.push(`        }`);
-			lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-			lines.push(`        if let Some(kind_id) = obj.get::<u16>("$type")? {`);
-			lines.push(`            match kind_id {`);
-			for (const v of values) {
-				const entry = findKindEntry(kindEntries, v);
-				const variant = literalToVariantName(v);
-				if (entry !== undefined) {
-					lines.push(`                ${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);
-				} else {
-					lines.push(`                // ${JSON.stringify(v)}: no parser symbol — cannot dispatch by KindId`);
+				lines.push(`${indent}_ => {}`);
+			};
+			const textMatchArms = (indent: string): void => {
+				for (const v of values) {
+					lines.push(`${indent}${JSON.stringify(v)} => return Ok(Self::${literalToVariantName(v)}),`);
 				}
-			}
-			lines.push(`                _ => {}`);
+				lines.push(`${indent}_ => {}`);
+			};
+			lines.push(`        match transport_value_type(env, napi_val)? {`);
+			lines.push(`            ::napi::ValueType::Number => {`);
+			lines.push(`                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
+			lines.push(`                    match kind_id {`);
+			kindIdMatchArms(`                        `);
+			lines.push(`                    }`);
+			lines.push(`                }`);
 			lines.push(`            }`);
-			lines.push(`        }`);
-			lines.push(`        if let Some(text) = obj.get::<String>("$text")? {`);
-			lines.push(`            match text.as_str() {`);
-			for (const v of values) {
-				lines.push(`                ${JSON.stringify(v)} => return Ok(Self::${literalToVariantName(v)}),`);
-			}
-			lines.push(`                _ => {}`);
+			lines.push(`            ::napi::ValueType::String => {`);
+			lines.push(`                match String::from_napi_value(env, napi_val)?.as_str() {`);
+			textMatchArms(`                    `);
+			lines.push(`                }`);
 			lines.push(`            }`);
-			lines.push(`        }`);
+			lines.push(`            ::napi::ValueType::Object => {`);
+			lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+			lines.push(`                if let Some(kind_id) = obj.get::<u16>("$type")? {`);
+			lines.push(`                    match kind_id {`);
+			kindIdMatchArms(`                        `);
+			lines.push(`                    }`);
+			lines.push(`                }`);
+			lines.push(`                if let Some(text) = obj.get::<String>("$text")? {`);
+			lines.push(`                    match text.as_str() {`);
+			textMatchArms(`                        `);
+			lines.push(`                    }`);
+			lines.push(`                }`);
 			for (const v of values) {
 				const variant = literalToVariantName(v);
 				lines.push(
-					`        if obj.get::<::napi::bindgen_prelude::Object>(${JSON.stringify(`_${v}`)})?.is_some() { return Ok(Self::${variant}); }`
+					`                if obj.get::<::napi::bindgen_prelude::Object>(${JSON.stringify(`_${v}`)})?.is_some() { return Ok(Self::${variant}); }`
 				);
 			}
+			lines.push(`            }`);
+			lines.push(`            _ => {}`);
+			lines.push(`        }`);
 			lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`unknown enum payload for ${enumName}`)}))`);
 		} else {
 			// Fallback: kindEntries unavailable (parser.c not found) — read $text string.

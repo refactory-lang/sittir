@@ -2231,6 +2231,40 @@ function registerHoistedVariantConflicts(variantNames) {
 }
 var membersOf2 = (r) => r.members;
 var contentOf2 = (r) => r.content;
+function countBodyAnchors(rule) {
+  const t = rule.type.toLowerCase();
+  if (t === "string" || t === "pattern" || t === "token") return { tokens: 1, named: 0 };
+  if (t === "symbol") return { tokens: 0, named: 1 };
+  if (t === "blank") return { tokens: 0, named: 0 };
+  if (isSeqType(rule.type) || isChoiceType(rule.type)) {
+    return membersOf2(rule).reduce(
+      (acc, m) => {
+        const c = countBodyAnchors(m);
+        return { tokens: acc.tokens + c.tokens, named: acc.named + c.named };
+      },
+      { tokens: 0, named: 0 }
+    );
+  }
+  const content = rule.content;
+  if (content && typeof content === "object") return countBodyAnchors(content);
+  return { tokens: 0, named: 0 };
+}
+function variantBranchIsUnmaterializable(rule) {
+  const { tokens, named } = countBodyAnchors(rule);
+  return tokens === 0 && named <= 1;
+}
+function deField(rule) {
+  const inner = isFieldLike(rule) ? contentOf2(rule) : rule;
+  const stripPropagated = (r) => {
+    const { fieldName: _drop, ...rest } = r;
+    const content = rest.content;
+    if (content && typeof content === "object" && !isSeqType(rest.type) && !isChoiceType(rest.type)) {
+      return { ...rest, content: stripPropagated(content) };
+    }
+    return rest;
+  };
+  return stripPropagated(inner);
+}
 function applyFlatPatches(original, patches) {
   const t = original.type;
   if (isSeqType(t)) {
@@ -2284,6 +2318,9 @@ function resolvePatch(patch, originalMember, precStack) {
     const parentKind = wireGetCurrentRuleKind();
     if (!parentKind) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
+    }
+    if (variantBranchIsUnmaterializable(originalMember)) {
+      return { ...deField(originalMember), source: "override" };
     }
     if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
       throw new Error(

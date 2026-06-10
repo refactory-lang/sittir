@@ -74,13 +74,13 @@
           "value": "expression_statement_with_semi"
         },
         {
-          "type": "ALIAS",
+          "type": "PREC",
+          "value": 1,
           "content": {
             "type": "SYMBOL",
-            "name": "_expression_statement_block_ending"
+            "name": "_expression_ending_with_block"
           },
-          "named": true,
-          "value": "expression_statement_block_ending"
+          "source": "override"
         }
       ]
     },
@@ -1189,13 +1189,10 @@
               "value": "mod_item_external"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_mod_item_inline"
-              },
-              "named": true,
-              "value": "mod_item_inline"
+              "type": "SYMBOL",
+              "name": "declaration_list",
+              "nonterminal": true,
+              "source": "override"
             }
           ]
         }
@@ -1247,13 +1244,10 @@
               "value": "foreign_mod_item_semi"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_foreign_mod_item_body"
-              },
-              "named": true,
-              "value": "foreign_mod_item_body"
+              "type": "SYMBOL",
+              "name": "declaration_list",
+              "nonterminal": true,
+              "source": "override"
             }
           ]
         }
@@ -3752,13 +3746,9 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_visibility_modifier_crate"
-          },
-          "named": true,
-          "value": "visibility_modifier_crate"
+          "type": "SYMBOL",
+          "name": "crate",
+          "source": "override"
         },
         {
           "type": "ALIAS",
@@ -4677,13 +4667,9 @@
               "value": "pointer_type_const"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_pointer_type_mut"
-              },
-              "named": true,
-              "value": "pointer_type_mut"
+              "type": "SYMBOL",
+              "name": "mutable_specifier",
+              "source": "override"
             }
           ]
         },
@@ -5417,13 +5403,9 @@
             "value": "range_expression_prefix"
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_range_expression_bare"
-            },
-            "named": true,
-            "value": "range_expression_bare"
+            "type": "SYMBOL",
+            "name": "_kw_operator",
+            "source": "override"
           }
         ]
       }
@@ -6892,13 +6874,14 @@
                 "value": "match_arm_with_comma"
               },
               {
-                "type": "ALIAS",
+                "type": "PREC",
+                "value": 1,
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_match_arm_block_ending"
+                  "name": "_expression_ending_with_block"
                 },
-                "named": true,
-                "value": "match_arm_block_ending"
+                "nonterminal": true,
+                "source": "override"
               }
             ]
           }
@@ -8074,10 +8057,12 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_field_pattern_shorthand"
+                "name": "identifier"
               },
               "named": true,
-              "value": "field_pattern_shorthand"
+              "value": "shorthand_field_identifier",
+              "nonterminal": true,
+              "source": "override"
             },
             {
               "type": "ALIAS",
@@ -10405,19 +10390,7 @@
       }
     },
     "_field_pattern_shorthand": {
-      "type": "FIELD",
-      "name": "name",
-      "content": {
-        "type": "ALIAS",
-        "content": {
-          "type": "SYMBOL",
-          "name": "identifier"
-        },
-        "named": true,
-        "value": "shorthand_field_identifier",
-        "fieldName": "name",
-        "nonterminal": true
-      }
+      "type": "BLANK"
     },
     "_field_pattern_named": {
       "type": "SEQ",
@@ -10659,14 +10632,7 @@
       "value": ";"
     },
     "_mod_item_inline": {
-      "type": "FIELD",
-      "name": "body",
-      "content": {
-        "type": "SYMBOL",
-        "name": "declaration_list",
-        "fieldName": "body",
-        "nonterminal": true
-      }
+      "type": "BLANK"
     },
     "_or_pattern_binary": {
       "type": "PREC_LEFT",
@@ -10825,17 +10791,7 @@
       }
     },
     "_range_expression_bare": {
-      "type": "PREC_LEFT",
-      "value": 1,
-      "content": {
-        "type": "FIELD",
-        "name": "operator",
-        "content": {
-          "type": "SYMBOL",
-          "name": "_kw_operator"
-        },
-        "source": "override"
-      }
+      "type": "BLANK"
     },
     "_range_pattern_prefix": {
       "type": "SEQ",
@@ -10982,8 +10938,7 @@
       "value": ";"
     },
     "_visibility_modifier_crate": {
-      "type": "SYMBOL",
-      "name": "crate"
+      "type": "BLANK"
     },
     "_visibility_modifier_pub": {
       "type": "SEQ",
@@ -11137,8 +11092,7 @@
       "value": "const"
     },
     "_pointer_type_mut": {
-      "type": "SYMBOL",
-      "name": "mutable_specifier"
+      "type": "BLANK"
     },
     "_kw_raw_string_literal_start": {
       "type": "BLANK"
@@ -11199,26 +11153,14 @@
       ]
     },
     "_expression_statement_block_ending": {
-      "type": "PREC",
-      "value": 1,
-      "content": {
-        "type": "SYMBOL",
-        "name": "_expression_ending_with_block"
-      }
+      "type": "BLANK"
     },
     "_foreign_mod_item_semi": {
       "type": "STRING",
       "value": ";"
     },
     "_foreign_mod_item_body": {
-      "type": "FIELD",
-      "name": "body",
-      "content": {
-        "type": "SYMBOL",
-        "name": "declaration_list",
-        "fieldName": "body",
-        "nonterminal": true
-      }
+      "type": "BLANK"
     },
     "_match_arm_with_comma": {
       "type": "PREC_RIGHT",
@@ -11244,22 +11186,7 @@
       }
     },
     "_match_arm_block_ending": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "FIELD",
-        "name": "value",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "SYMBOL",
-            "name": "_expression_ending_with_block"
-          },
-          "fieldName": "value",
-          "nonterminal": true
-        }
-      }
+      "type": "BLANK"
     },
     "_line_comment_regular_dslash": {
       "type": "SEQ",

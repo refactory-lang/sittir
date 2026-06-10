@@ -36,12 +36,9 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
-    AmbientDeclarationDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AmbientDeclarationDeclaration };
-    ArrowFunction_CallSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrowFunctionUCallSignature };
     ArrowFunctionParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrowFunctionParameter };
     ClassBodyMethodSig<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMethodSig };
     ClassHeritageExtendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritageExtendsClause };
-    ClassHeritageImplementsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritageImplementsClause };
     ExportStatementDefault<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefault };
     ExportStatementDefaultFromArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
     ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
@@ -53,12 +50,6 @@ export interface IsGuards {
     ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
     ImportClauseDefaultImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseDefaultImport };
     ImportClauseGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseGroup1 };
-    ImportClauseNamedImports<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseNamedImports };
-    ImportClauseNamespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseNamespaceImport };
-    ImportSpecifierName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportSpecifierName };
-    IndexSignatureMappedTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IndexSignatureMappedTypeClause };
-    ParenthesizedExpressionSequence<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParenthesizedExpressionSequence };
-    PublicFieldDefinitionAccessorOpt<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
     PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
     abstractClassDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractMethodSignature };
@@ -244,12 +235,9 @@ export interface IsGuards {
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
-    AmbientDeclarationDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AmbientDeclarationDeclaration };
-    ArrowFunction_CallSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrowFunctionUCallSignature };
     ArrowFunctionParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrowFunctionParameter };
     ClassBodyMethodSig(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMethodSig };
     ClassHeritageExtendsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassHeritageExtendsClause };
-    ClassHeritageImplementsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassHeritageImplementsClause };
     ExportStatementDefault(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefault };
     ExportStatementDefaultFromArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
     ExportStatementDefaultFromArmClauseFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
@@ -261,12 +249,6 @@ export interface AssertGuards {
     ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
     ImportClauseDefaultImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
     ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseGroup1 };
-    ImportClauseNamedImports(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseNamedImports };
-    ImportClauseNamespaceImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseNamespaceImport };
-    ImportSpecifierName(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportSpecifierName };
-    IndexSignatureMappedTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IndexSignatureMappedTypeClause };
-    ParenthesizedExpressionSequence(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParenthesizedExpressionSequence };
-    PublicFieldDefinitionAccessorOpt(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
     PublicFieldDefinitionDeclareFirst(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
     abstractClassDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractMethodSignature };
@@ -478,7 +460,7 @@ const _supertype_declaration_ids = new Set<number>([224, 226, 221, 184, 183, 271
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
 const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 432, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
+const _supertype_primaryType_ids = new Set<number>([334, 335, 424, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
@@ -733,17 +715,10 @@ const _kindIdByKind = new Map<string, number>([
     ["_export_statement_default_decl_arm", TSKindId.ExportStatementDefaultDeclArm],
     ["_export_statement_default_decl_arm_default_kw", TSKindId.ExportStatementDefaultDeclArmDefaultKw],
     ["_arrow_function_parameter", TSKindId.ArrowFunctionParameter],
-    ["_arrow_function__call_signature", TSKindId.ArrowFunctionUCallSignature],
     ["_class_heritage_extends_clause", TSKindId.ClassHeritageExtendsClause],
-    ["_class_heritage_implements_clause", TSKindId.ClassHeritageImplementsClause],
-    ["_import_clause_namespace_import", TSKindId.ImportClauseNamespaceImport],
-    ["_import_clause_named_imports", TSKindId.ImportClauseNamedImports],
     ["_import_clause_default_import", TSKindId.ImportClauseDefaultImport],
-    ["_import_specifier_name", TSKindId.ImportSpecifierName],
     ["_import_specifier_as", TSKindId.ImportSpecifierAs],
     ["_index_signature_colon", TSKindId.IndexSignatureColon],
-    ["_index_signature_mapped_type_clause", TSKindId.IndexSignatureMappedTypeClause],
-    ["_ambient_declaration_declaration", TSKindId.AmbientDeclarationDeclaration],
     ["_export_statement_default_from_arm_star_from", TSKindId.ExportStatementDefaultFromArmStarFrom],
     ["_export_statement_default_from_arm_ns_from", TSKindId.ExportStatementDefaultFromArmNsFrom],
     ["_export_statement_default_from_arm_clause_from", TSKindId.ExportStatementDefaultFromArmClauseFrom],
@@ -755,7 +730,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_for_header_var_kind", TSKindId.ForHeaderVarKind],
     ["_for_header_let_const_kind", TSKindId.ForHeaderLetConstKind],
     ["_parenthesized_expression_typed", TSKindId.ParenthesizedExpressionTyped],
-    ["_parenthesized_expression_sequence", TSKindId.ParenthesizedExpressionSequence],
     ["_export_statement_type_export", TSKindId.ExportStatementTypeExport],
     ["_export_statement_equals_export", TSKindId.ExportStatementEqualsExport],
     ["_export_statement_namespace_export", TSKindId.ExportStatementNamespaceExport],
@@ -766,7 +740,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_update_expression_prefix", TSKindId.UpdateExpressionPrefix],
     ["_public_field_definition_abstract_first", TSKindId.PublicFieldDefinitionAbstractFirst],
     ["_public_field_definition_access_first", TSKindId.PublicFieldDefinitionAccessFirst],
-    ["_public_field_definition_accessor_opt", TSKindId.PublicFieldDefinitionAccessorOpt],
     ["_public_field_definition_declare_first", TSKindId.PublicFieldDefinitionDeclareFirst],
     ["_public_field_definition_readonly_first", TSKindId.PublicFieldDefinitionReadonlyFirst],
     ["_public_field_definition_static_mods", TSKindId.PublicFieldDefinitionStaticMods],
@@ -774,12 +747,9 @@ const _kindIdByKind = new Map<string, number>([
 ]);
 
 export const is = {
-    AmbientDeclarationDeclaration: _g(TSKindId.AmbientDeclarationDeclaration),
-    ArrowFunction_CallSignature: _g(TSKindId.ArrowFunctionUCallSignature),
     ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
     ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
     ClassHeritageExtendsClause: _g(TSKindId.ClassHeritageExtendsClause),
-    ClassHeritageImplementsClause: _g(TSKindId.ClassHeritageImplementsClause),
     ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
     ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
     ExportStatementDefaultFromArmClauseFrom: _g(TSKindId.ExportStatementDefaultFromArmClauseFrom),
@@ -791,12 +761,6 @@ export const is = {
     ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
     ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
     ImportClauseGroup1: _g(TSKindId._ImportClauseGroup1),
-    ImportClauseNamedImports: _g(TSKindId.ImportClauseNamedImports),
-    ImportClauseNamespaceImport: _g(TSKindId.ImportClauseNamespaceImport),
-    ImportSpecifierName: _g(TSKindId.ImportSpecifierName),
-    IndexSignatureMappedTypeClause: _g(TSKindId.IndexSignatureMappedTypeClause),
-    ParenthesizedExpressionSequence: _g(TSKindId.ParenthesizedExpressionSequence),
-    PublicFieldDefinitionAccessorOpt: _g(TSKindId.PublicFieldDefinitionAccessorOpt),
     PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
     abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
     abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
@@ -1006,12 +970,9 @@ function _makeAssertKind(guard: _AnyGuard) {
 }
 
 export const assert = {
-    AmbientDeclarationDeclaration: _makeAssert('AmbientDeclarationDeclaration', is.AmbientDeclarationDeclaration as _AnyGuard),
-    ArrowFunction_CallSignature: _makeAssert('ArrowFunction_CallSignature', is.ArrowFunction_CallSignature as _AnyGuard),
     ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
     ClassBodyMethodSig: _makeAssert('ClassBodyMethodSig', is.ClassBodyMethodSig as _AnyGuard),
     ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
-    ClassHeritageImplementsClause: _makeAssert('ClassHeritageImplementsClause', is.ClassHeritageImplementsClause as _AnyGuard),
     ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
     ExportStatementDefaultFromArm: _makeAssert('ExportStatementDefaultFromArm', is.ExportStatementDefaultFromArm as _AnyGuard),
     ExportStatementDefaultFromArmClauseFrom: _makeAssert('ExportStatementDefaultFromArmClauseFrom', is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard),
@@ -1023,12 +984,6 @@ export const assert = {
     ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
     ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
     ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
-    ImportClauseNamedImports: _makeAssert('ImportClauseNamedImports', is.ImportClauseNamedImports as _AnyGuard),
-    ImportClauseNamespaceImport: _makeAssert('ImportClauseNamespaceImport', is.ImportClauseNamespaceImport as _AnyGuard),
-    ImportSpecifierName: _makeAssert('ImportSpecifierName', is.ImportSpecifierName as _AnyGuard),
-    IndexSignatureMappedTypeClause: _makeAssert('IndexSignatureMappedTypeClause', is.IndexSignatureMappedTypeClause as _AnyGuard),
-    ParenthesizedExpressionSequence: _makeAssert('ParenthesizedExpressionSequence', is.ParenthesizedExpressionSequence as _AnyGuard),
-    PublicFieldDefinitionAccessorOpt: _makeAssert('PublicFieldDefinitionAccessorOpt', is.PublicFieldDefinitionAccessorOpt as _AnyGuard),
     PublicFieldDefinitionDeclareFirst: _makeAssert('PublicFieldDefinitionDeclareFirst', is.PublicFieldDefinitionDeclareFirst as _AnyGuard),
     abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
     abstractMethodSignature: _makeAssert('abstractMethodSignature', is.abstractMethodSignature as _AnyGuard),

@@ -673,28 +673,13 @@
       "required": true,
       "types": [
         {
-          "type": "ambient_declaration_declaration",
-          "named": true
-        },
-        {
           "type": "ambient_declaration_global",
           "named": true
         },
         {
           "type": "ambient_declaration_module",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "ambient_declaration_declaration",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
+        },
         {
           "type": "declaration",
           "named": true
@@ -859,30 +844,10 @@
             "named": true
           }
         ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "arrow_function__call_signature",
-          "named": true
-        },
-        {
-          "type": "arrow_function_parameter",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "arrow_function__call_signature",
-    "named": true,
-    "fields": {
+      },
       "parameters": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "formal_parameters",
@@ -918,6 +883,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "arrow_function_parameter",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1896,7 +1871,7 @@
           "named": true
         },
         {
-          "type": "class_heritage_implements_clause",
+          "type": "implements_clause",
           "named": true
         }
       ]
@@ -1914,21 +1889,6 @@
           "type": "extends_clause",
           "named": true
         },
-        {
-          "type": "implements_clause",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "class_heritage_implements_clause",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
         {
           "type": "implements_clause",
           "named": true
@@ -3676,11 +3636,11 @@
           "named": true
         },
         {
-          "type": "import_clause_named_imports",
+          "type": "named_imports",
           "named": true
         },
         {
-          "type": "import_clause_namespace_import",
+          "type": "namespace_import",
           "named": true
         }
       ]
@@ -3717,36 +3677,6 @@
           "type": "named_imports",
           "named": true
         },
-        {
-          "type": "namespace_import",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "import_clause_named_imports",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "named_imports",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "import_clause_namespace_import",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
         {
           "type": "namespace_import",
           "named": true
@@ -3804,11 +3734,11 @@
       "required": true,
       "types": [
         {
-          "type": "import_specifier_as",
+          "type": "identifier",
           "named": true
         },
         {
-          "type": "import_specifier_name",
+          "type": "import_specifier_as",
           "named": true
         }
       ]
@@ -3838,22 +3768,6 @@
           },
           {
             "type": "string",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "import_specifier_name",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
             "named": true
           }
         ]
@@ -3982,7 +3896,7 @@
           "named": true
         },
         {
-          "type": "index_signature_mapped_type_clause",
+          "type": "mapped_type_clause",
           "named": true
         }
       ]
@@ -4012,21 +3926,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "index_signature_mapped_type_clause",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "mapped_type_clause",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -5457,24 +5356,9 @@
           "named": true
         },
         {
-          "type": "parenthesized_expression_sequence",
-          "named": true
-        },
-        {
           "type": "parenthesized_expression_typed",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "parenthesized_expression_sequence",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
+        },
         {
           "type": "sequence_expression",
           "named": true
