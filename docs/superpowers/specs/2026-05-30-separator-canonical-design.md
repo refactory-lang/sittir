@@ -1,6 +1,6 @@
 # Design Spec — Canonicalize the `separator` rule-shape
 
-> **Status:** spec for a strangler PR. The **behavioral sub-item of PR-O** (`pr-o-structural-dedup`), named **`separator-canonical`**, with its **own gate** (PR-O's structural half stays non-behavioral). Gated on **PR-H** (the lift moves into `applyWrapperDeletion`, in the phase PR-H renames/reshapes). Compiler-side data shape; rust render is the *gate*, not edited — render support is separately gated on the **existing** `separator`-role child-slot design (`2026-05-26-non-slot-separator-rules-design.md`).
+> **Status:** spec for a strangler PR. Its **own standalone PR — `PR-S`** (extracted 2026-06-10 from what was PR-O's behavioral sub-item; PR-O keeps its non-behavioral M1/MO2/P1 half), named **`separator-canonical`**, with its **own gate**. Gated on **PR-H ✅** (the lift moves into `applyWrapperDeletion`, in the phase PR-H renamed/reshaped — landed #54). Compiler-side data shape; rust render is the *gate*, not edited — render support is separately gated on the **existing** `separator`-role child-slot design (`2026-05-26-non-slot-separator-rules-design.md`).
 
 **Goal:** Collapse the 3-way `RuleBase.separator` union to **one canonical form** so every walker/render consumer stops branching on separator *shape* — the same shape-variance reduction class as PR-C (`origin`/`aliasSources` → `parseKind`/`isUnnamed`) and the `patternReplacementKinds` cut.
 
@@ -126,8 +126,8 @@ Pass-throughs needing only the type change: `wrapper-deletion.ts:38`, `simplify.
 3. `findRepeatSeparator` latent type bug — migration fixes + surfaces it; `dump-ast-mismatches` confirms no hidden shift.
 4. Phantom `Rule[]` removal safe (no producer; `rg` confirms none) — double-check `__tests__`.
 
-## Placement — PR-O behavioral sub-item (design authority, 2026-05-30)
-**`separator-canonical` stays inside PR-O but as its explicitly-BEHAVIORAL sub-item with its own gate** (PR-O's other half — M1/MO2/P1 structural de-dup — remains non-behavioral). Depends-on:
+## Placement — standalone PR-S (extracted from PR-O behavioral sub-item; design authority 2026-05-30, promoted to its own PR 2026-06-10)
+**`separator-canonical` is its own standalone `PR-S` with its own gate** (extracted from PR-O; PR-O's other half — M1/MO2/P1 structural de-dup — remains non-behavioral). Depends-on:
 - **PR-B ✅** + **PR-H ⬜** — the lift moves into `applyWrapperDeletion`, which lives in the phase PR-H renames (`optimize.ts`→`normalize.ts`) and reshapes (`transforms.ts`). Hard dependency, not just file-overlap.
 - **The EXISTING `separator`-role child-slot design (`2026-05-26-non-slot-separator-rules-design.md`) — REQUIRED for choice-separator RENDER only** (the delimiter is a `role: 'separator'` child slot, verbatim pass-through stored on the content slot — NOT a non-slot variable). The push-down *assignment* (single `Rule`) + the unsupported-case `warning` land in this PR-O sub-item; render is gated on that design.
 
