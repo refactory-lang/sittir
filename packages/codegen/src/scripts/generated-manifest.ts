@@ -47,6 +47,7 @@ import {
 } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 
 export const REPO_ROOT = (() => {
 	// File location: packages/codegen/src/scripts/generated-manifest.ts
@@ -164,8 +165,21 @@ interface Manifest {
 	 */
 	source_hash: string;
 	files: Record<string, string>;
+	/**
+	 * Per-platform napi binaries (`*.node`), recorded as the
+	 * {@link HOST_BINARY_SENTINEL} sentinel — NOT content-hashed. Binary
+	 * bytes vary per rebuild (and per machine), so content hashes produced
+	 * false MODIFIED positives on every locally rebuilt binary. Verification
+	 * instead checks FRESHNESS on the current host: the binary must be newer
+	 * than the crate's generated `src/**` + `templates/**` inputs (see
+	 * `native-binary-freshness.ts`). Missing-locally is still tolerated
+	 * (binaries are per-platform).
+	 */
 	host_files?: Record<string, string>;
 }
+
+/** Sentinel value for `host_files` entries — see {@link Manifest.host_files}. */
+const HOST_BINARY_SENTINEL = 'freshness-checked';
 
 function sourceInputsFor(grammar: Grammar): string[] {
 	return [
@@ -175,11 +189,19 @@ function sourceInputsFor(grammar: Grammar): string[] {
 }
 
 /**
- * Memoized hash of `packages/codegen/src/**` — the third input to every
- * generation. If codegen source changes (e.g., a bugfix in a wrap emitter),
- * the same per-grammar overrides should produce different output, so the
- * source_hash needs to reflect this. Memoized per process because it walks
- * many files and never changes within a single run.
+ * Memoized hash of the GENERATION-side `packages/codegen/src/**` — the third
+ * input to every generation. If codegen source changes (e.g., a bugfix in a
+ * wrap emitter), the same per-grammar overrides should produce different
+ * output, so the source_hash needs to reflect this. Memoized per process
+ * because it walks many files and never changes within a single run.
+ *
+ * Scoped to PRODUCER code: `validate/**` is excluded — validators CONSUME
+ * generated output and never alter the emitted bytes, so hashing them forced
+ * a full regen for every validator-only edit (the only validator-derived
+ * artifact, `test-fixtures.json`, is manifest-untracked — see
+ * `isManifestUntracked`). Everything else (compiler, emitters, run-codegen,
+ * scripts) stays in the hash: `scripts/` includes this manifest module
+ * itself, whose format changes legitimately require a re-stamp.
  */
 let cachedCodegenHash: string | null = null;
 
@@ -193,6 +215,8 @@ function codegenSourceHash(): string {
 		// Skip generated `.js`/`.d.ts` companions and test directories.
 		if (f.endsWith('.js') || f.endsWith('.d.ts')) continue;
 		if (f.includes('/__tests__/')) continue;
+		// Consumer-side validators don't affect generated output.
+		if (f.includes('/src/validate/')) continue;
 		if (!f.endsWith('.ts')) continue;
 		hash.update(`${relative(REPO_ROOT, f)}\0`);
 		hash.update(readFileSync(f));
@@ -230,11 +254,12 @@ export function writeManifestForGrammar(grammar: Grammar): void {
 	// Preserve previously-recorded host_files entries from other platforms,
 	// then overwrite/add this host's binaries. This way commits from a
 	// darwin-arm64 dev don't wipe a linux-x64 binary previously committed
-	// by another dev.
+	// by another dev. Entries carry the freshness sentinel, not a content
+	// hash — see the Manifest.host_files docs.
 	const existing = readExistingManifest(grammar);
 	const host_files: Record<string, string> = { ...existing?.host_files };
 	for (const rel of hostFilesFor(grammar)) {
-		host_files[rel] = sha256(join(REPO_ROOT, rel));
+		host_files[rel] = HOST_BINARY_SENTINEL;
 	}
 
 	const manifest: Manifest = {
@@ -266,6 +291,12 @@ export interface VerifyResult {
 	missing: string[];
 	modified: string[];
 	extra: string[];
+	/**
+	 * Host binaries (`*.node`) present on this machine but OLDER than the
+	 * crate's generated `src/**` + `templates/**` inputs — they would
+	 * validate stale code (or segfault). Fix: rebuild the binary.
+	 */
+	stale: string[];
 }
 
 export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
@@ -276,7 +307,8 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 		sourceHashMismatch: false,
 		missing: [],
 		modified: [],
-		extra: []
+		extra: [],
+		stale: []
 	};
 	const path = manifestPath(grammar);
 	if (!existsSync(path)) return result;
@@ -306,20 +338,21 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 		if (!expectedFiles.has(rel)) result.extra.push(rel);
 	}
 
-	// Platform-specific `host_files`: only enforce matches for binaries that
-	// exist on this host. Missing entries are silently tolerated (they were
-	// committed by a developer on a different platform).
-	for (const [rel, expectedHash] of Object.entries(manifest.host_files ?? {})) {
-		const full = join(REPO_ROOT, rel);
-		if (!existsSync(full)) continue;
-		if (sha256(full) !== expectedHash) result.modified.push(rel);
+	// Platform-specific `host_files`: FRESHNESS check, not content hashes
+	// (see Manifest.host_files docs). Missing binaries are silently
+	// tolerated (per-platform); present-but-stale binaries fail — they
+	// would validate stale code. Checks ALL binaries on this host, not just
+	// manifest-listed ones, so a never-committed local build is gated too.
+	for (const b of hostBinaryFreshnessFor(REPO_ROOT, grammar)) {
+		if (b.stale) result.stale.push(`${b.rel} (older than ${b.newestInputRel})`);
 	}
 
 	result.ok =
 		!result.sourceHashMismatch &&
 		result.missing.length === 0 &&
 		result.modified.length === 0 &&
-		result.extra.length === 0;
+		result.extra.length === 0 &&
+		result.stale.length === 0;
 	return result;
 }
 
@@ -371,6 +404,7 @@ export function assertGeneratedManifestsClean(grammars?: readonly Grammar[]): vo
 		for (const f of r.modified) lines.push(`    MODIFIED: ${f}`);
 		for (const f of r.missing) lines.push(`    MISSING : ${f}`);
 		for (const f of r.extra) lines.push(`    EXTRA   : ${f}`);
+		for (const f of r.stale) lines.push(`    STALE-BINARY: ${f} — rebuild the napi crate`);
 	}
 	lines.push('');
 	lines.push('To restore canonical state, regenerate the affected grammar(s):');

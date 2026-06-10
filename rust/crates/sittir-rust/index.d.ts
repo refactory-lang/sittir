@@ -31,6 +31,13 @@ export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
   get templateBundleHash(): string
   get nativeRenderTransportAbi(): number
+  /**
+   * Compile profile baked into this binary — `"debug"` or `"release"`.
+   * Validators refuse debug binaries (known segfault class) unless
+   * `SITTIR_ALLOW_DEBUG_VALIDATE=1`; the binary self-reporting makes the
+   * gate immune to stale env assumptions.
+   */
+  get buildProfile(): string
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
   readNode(handle: number, childIndex: number): string
