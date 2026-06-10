@@ -105,12 +105,12 @@ describe('array_type', () => {
 
 describe('arrow_function', () => {
   it('factory produces correct type', () => {
-    const node = ir.arrowFunction({ content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
+    const node = ir.arrowFunction({ body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ArrowFunction);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.arrowFunction({ content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
+    const node = ir.arrowFunction({ body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

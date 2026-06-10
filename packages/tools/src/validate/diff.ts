@@ -23,7 +23,7 @@ console.log(`\n=== FROM (${r.pass}/${r.total}) ===`);
 for (const e of r.errors) console.log(`  ${e.severity === 'error' ? 'E' : 'W'} ${e.kind}: ${e.message}`);
 }
 if (which === 'all' || which === 'rt') {
-const r = await validateReadRenderParse(opts.grammar, tp);
+const r = await validateReadRenderParse(opts.grammar, tp, { backend: 'native' });
 console.log(`\n=== READ_RENDER_PARSE (${r.pass}/${r.total}, ast=${r.astMatchPass}) ===`);
 for (const e of r.errors) console.log(`  E ${e.name}: ${e.message}`);
 console.log(`-- AST mismatches --`);

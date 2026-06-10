@@ -24,7 +24,6 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
-	readNodeAt,
 	adaptNode,
 	collectKinds,
 	buildKindToSupertypes,
@@ -34,145 +33,13 @@ import {
 	materializeWrappedNodeData,
 	stripStructuralNodeText,
 	emitValidatorMetrics,
-	walkNativeForKind,
 	loadNodeModel,
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData
 } from './common.ts';
 
-/**
- * Read a tree node and selectively populate `$children` / `_<name>` keys of
- * NAMED descendants whose kind appears in `deepReadKinds`. Other named
- * children stay shallow (the renderer short-circuits their render path
- * to `$text`, which matches the source verbatim).
- *
- * readNode returns one-level-deep data by design. For most kinds that
- * shallow view works because their render path is trivially the source
- * span. But kinds produced via variant() adoption render via their own
- * template that wraps `$$$CHILDREN` in ambient scaffold — those MUST
- * drill through their structure so the ambient scaffold (pushed down
- * at link time) actually composes.
- *
- * Scope: the caller (validator) passes the set of kinds that underwent
- * variant() push-down plus their registered variant parents. Deep-read
- * fires only for those kinds; all other kinds follow the baseline
- * shallow path so existing rtPass numbers don't shift.
- *
- * @param tree - TreeHandle for node lookup.
- * @param nodeId - If provided, read the node at this id; otherwise read
- *   the root.
- * @param deepReadKinds - Membership test for `$type` values that should
- *   be deep-read when encountered as named children. Only `.has(id)` is
- *   used, so the parameter is structurally typed to that single method
- *   — this lets callers pass either a real `Set<number>` or an
- *   "always-true" stub for the recursive-mode case (read every kind
- *   deeply) without the ceremony of constructing a full Set covering
- *   every numeric kind id.
- */
 type KindMembership = { has(value: number): boolean };
-
-function _deepReadNode(
-	tree: TreeHandle,
-	handle: number | undefined,
-	childIndex: number | undefined,
-	deepReadKinds: KindMembership
-): ReturnType<typeof readNode> {
-	const data = readNode(tree, handle, childIndex);
-	// NodeMemberValue = AnyNodeData | string | number.
-	// Narrow to NodeData before reading $nodeHandle / $type.
-	const isNodeData = (v: unknown): v is AnyNodeData => typeof v === 'object' && v !== null && '$type' in v;
-	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $nodeHandle: number; $childIndex: number } =>
-		isNodeData(entry) &&
-		entry.$named === true &&
-		typeof entry.$nodeHandle === 'number' &&
-		typeof entry.$childIndex === 'number' &&
-		// $type is numeric for parser.c-derived kinds; hidden kinds have string $type.
-		// deepReadKinds is Set<number> — only numeric entries can be drilled.
-		typeof entry.$type === 'number' &&
-		deepReadKinds.has(entry.$type);
-	if (data.$other) {
-		const children = Array.isArray(data.$other) ? data.$other : [data.$other];
-		const drilled = children.map((c) =>
-			shouldDrill(c) ? _deepReadNode(tree, c.$nodeHandle, c.$childIndex, deepReadKinds) : c
-		);
-		(data as { $other?: AnyNodeData['$other'] }).$other = Array.isArray(data.$other) ? drilled : drilled[0];
-	}
-	// Iterate `_<name>` top-level keys (de-hoisted storage).
-	const rec = data as unknown as Record<string, unknown>;
-	const namedSlotKeys = Object.keys(rec).filter((k) => k.startsWith('_'));
-	if (namedSlotKeys.length > 0) {
-		for (const rawKey of namedSlotKeys) {
-			const value = rec[rawKey];
-			if (Array.isArray(value)) {
-				rec[rawKey] = value.map((entry) =>
-					shouldDrill(entry) ? _deepReadNode(tree, entry.$nodeHandle, entry.$childIndex, deepReadKinds) : entry
-				);
-			} else if (shouldDrill(value)) {
-				rec[rawKey] = _deepReadNode(tree, value.$nodeHandle, value.$childIndex, deepReadKinds);
-			}
-		}
-	}
-	return data;
-}
-
-function readValidatorNodeData(
-	handle: TreeHandle,
-	node: TSNode,
-	nativeCoords: ReturnType<typeof findNativeNodeId>,
-	readTreeNodeFn:
-		| ((
-				handle: TreeHandle,
-				nodeHandle?: number,
-				childIndex?: number,
-				asType?: { from: string; to: string }
-		  ) => unknown)
-		| null,
-	deepReadKinds: KindMembership,
-	recursive: boolean,
-	/**
-	 * Alias-source override for the whole-node read, derived from the
-	 * effective-kind map (`discoverAliasSourceKinds`). When the validator
-	 * reads an aliased child STANDALONE (outside its parent slot's
-	 * `drillAs` context), the native read dispatches on the CST display
-	 * kind — e.g. rust's trailing match arm reads as `match_arm` and
-	 * wrapMatchArm fails because the node is structurally `last_match_arm`
-	 * (a `value` slot, not `content`). Passing `{ from, to }` here routes
-	 * the read through the same `asType` rewrite `drillAs` uses at the
-	 * parent slot, so `wrapNode` dispatches to the correct source wrapper.
-	 */
-	aliasOverride?: { from: string; to: string }
-): AnyNodeData {
-	if (!recursive) {
-		return readNodeAt(handle, adaptNode(node), nativeCoords);
-	}
-	if (readTreeNodeFn) {
-		if (nativeCoords && handle.read) {
-			return stripStructuralNodeText(
-				materializeWrappedNodeData(
-					readTreeNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex, aliasOverride)
-				)
-			);
-		}
-		const prev = handle.rootNode;
-		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
-		try {
-			return materializeWrappedNodeData(readTreeNodeFn(handle));
-		} finally {
-			(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
-		}
-	}
-	if (nativeCoords && handle.read) {
-		return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
-	}
-	const prev = handle.rootNode;
-	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
-	try {
-		return _deepReadNode(handle, undefined, undefined, deepReadKinds);
-	} finally {
-		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
-	}
-}
 
 /**
  * Build the set of `$type` values the validator should deep-read,
@@ -229,19 +96,6 @@ function loadNativeStructuredKinds(rawEntries: readonly ReturnType<typeof loadRa
  * inside an outer `fn_item`'s block, so plain `findFirst(tree, 'block')`
  * returns the wrapper's body rather than the rendered one.
  */
-/** Find a node anywhere in the tree by its numeric id. O(n); used when
- * the wrap-walker discovered an alias-source kind at a specific nodeId
- * and we need the matching TSNode to run reparse validation. */
-function findNodeById(node: TSNode, nodeId: number): TSNode | null {
-	if (node.id === nodeId) return node;
-	for (let i = 0; i < node.childCount; i++) {
-		const c = node.child(i);
-		if (!c) continue;
-		const hit = findNodeById(c, nodeId);
-		if (hit) return hit;
-	}
-	return null;
-}
 
 /**
  * ADR-0017: find a tree-sitter node by its exact byte span (start + end).
@@ -260,6 +114,33 @@ function findNodeBySpan(node: TSNode, startIndex: number, endIndex: number): TSN
 		// Prune: the target span must be contained within this child's range.
 		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
 		const hit = findNodeBySpan(c, startIndex, endIndex);
+		if (hit) return hit;
+	}
+	return null;
+}
+
+/**
+ * Find the same-span wasm node whose `type` equals `kind`, preferring it over
+ * the outermost same-span node.
+ *
+ * @remarks
+ * A wrapped source-kind candidate frequently shares its EXACT span with an
+ * enclosing wasm node (e.g. `match_pattern` wraps the inner `tuple_struct_pattern`
+ * at the identical span in no-guard arms). Anchoring the AST compare on the
+ * outermost same-span node (plain {@link findNodeBySpan}) then reports a kind-name
+ * mismatch (`match_pattern ≠ tuple_struct_pattern`) even when the render is
+ * byte-identical. Preferring the same-span node whose type matches the
+ * candidate's kind anchors the compare on the right node. Falls back to the
+ * outermost node when no same-span descendant matches (e.g. alias-source kinds
+ * whose wasm display name differs).
+ */
+function findNodeBySpanOfKind(node: TSNode, startIndex: number, endIndex: number, kind: string): TSNode | null {
+	if (node.startIndex === startIndex && node.endIndex === endIndex && node.type === kind) return node;
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c) continue;
+		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
+		const hit = findNodeBySpanOfKind(c, startIndex, endIndex, kind);
 		if (hit) return hit;
 	}
 	return null;
@@ -385,224 +266,6 @@ export interface ReadRenderParseResult {
 	}[];
 }
 
-/**
- * Discover alias-source kinds by walking the grammar's wrap layer over a parsed tree.
- *
- * @remarks
- * When the grammar's wrap layer (readTreeNode) is available, walk each parsed
- * tree upfront to discover nodes whose drillAs()-rewritten `$type` differs from
- * tree-sitter's raw output. We can then test these kinds against the source
- * template with a matching reparse wrapper, rather than relying on per-kind
- * render-layer workarounds in the target's template (ADR-0006).
- *
- * @param readTreeNodeFn - The grammar-specific readTreeNode function, or null if unavailable.
- * @param tree - The parsed tree-sitter tree to walk.
- * @param kinds - Mutable set of kind names; alias-source kinds discovered during the walk are added here.
- * @returns A map from composite span key (`"start:end"`) to the effective (alias-rewritten) type string.
- */
-export function chooseEffectiveKindForSpan(existing: string | undefined, next: string): string {
-	if (!existing) return next;
-	const existingHidden = existing.startsWith('_');
-	const nextHidden = next.startsWith('_');
-	if (nextHidden && !existingHidden) return next;
-	return existing;
-}
-
-function discoverAliasSourceKinds(
-	readTreeNodeFn: ((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null,
-	tree: TSTree,
-	kinds: Set<string>,
-	grammar: string,
-	source: string,
-	kindNameFromId: ((id: number) => string | undefined) | undefined,
-	backend?: 'native' | 'js',
-	kindIdFromName?: (kind: string) => number | undefined
-): Map<string, string> {
-	// ADR-0017: keyed by "${start}:${end}" composite span key. Using BOTH
-	// start and end byte offsets avoids the collision that arises from a
-	// start-only key: a parent node and its first child share the same
-	// startIndex (e.g. `parameter` at 7..12 and its child `identifier` at
-	// 7..8 both start at 7). Exact-span collisions still exist for wrapper
-	// nodes that cover the same bytes as their single named child (e.g.
-	// `program` vs `try_statement` on a one-statement file). In those cases,
-	// keep the first visible kind and only let a hidden alias-source kind
-	// replace it — direct tree scanning already resolves visible kinds.
-	const nodeIdToEffectiveType = new Map<string, string>();
-	if (readTreeNodeFn) {
-		const handle = buildReadHandle(grammar, tree, source, backend, kindIdFromName);
-		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
-		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
-			// Cluster I (016): skip anonymous tokens. The wrap layer
-			// surfaces field-promoted anonymous tokens (e.g. python's
-			// `type_alias_statement` wraps the literal `'type'` keyword
-			// as `$fields.type`) with the same `$type` string as the
-			// named supertype `type`. Recording an anonymous keyword as
-			// "effective type=type" makes `resolveNodeForKind` pick the
-			// keyword node when the round-trip validator probes the
-			// supertype kind, producing nonsense reparse comparisons
-			// (anon-token text "type" reparses as `expression_statement`).
-			// Named-only filter aligns with `collectKinds` and
-			// `findFirst`, which both restrict to named nodes for the
-			// same reason.
-			if (w.$named === false) return;
-			// Phase D: $type is numeric; resolve to string kind name.
-			const kindStr = kindNameFromId ? kindNameFromId(w.$type) : undefined;
-			if (kindStr === undefined) return; // unknown id — skip
-			// ADR-0017: use "${start}:${end}" composite span as collision-free identity key.
-			const span = (w as { $span?: { start: number; end: number } }).$span;
-			if (span != null) {
-				const key = `${span.start}:${span.end}`;
-				nodeIdToEffectiveType.set(key, chooseEffectiveKindForSpan(nodeIdToEffectiveType.get(key), kindStr));
-			}
-			kinds.add(kindStr);
-		});
-	}
-	return nodeIdToEffectiveType;
-}
-
-/**
- * Resolve the tree-sitter TSNode instance for a kind that may be an alias-source.
- *
- * @remarks
- * For alias-source kinds that tree-sitter doesn't emit directly, look up a
- * tree-sitter node whose walker-reported effective-type matches. Falls back to
- * findFirst for plain kinds.
- *
- * @param kind - The effective kind name (potentially alias-rewritten).
- * @param nodeIdToEffectiveType - Map from node id to alias-rewritten type, from the wrap-walk.
- * @param tree - The parsed tree-sitter tree to search in.
- * @returns The matching TSNode, or null if none found.
- */
-function _resolveNodeForKind(kind: string, nodeIdToEffectiveType: Map<string, string>, tree: TSTree): TSNode | null {
-	// ADR-0017: map is keyed by "${start}:${end}" composite span; parse and
-	// use findNodeBySpan to locate the exact node (avoids start-only collisions).
-	for (const [spanKey, et] of nodeIdToEffectiveType) {
-		if (et === kind) {
-			const colon = spanKey.indexOf(':');
-			const startIdx = parseInt(spanKey.slice(0, colon), 10);
-			const endIdx = parseInt(spanKey.slice(colon + 1), 10);
-			const node = findNodeBySpan(tree.rootNode, startIdx, endIdx);
-			if (node) return node;
-		}
-	}
-	return findFirst(tree.rootNode, kind);
-}
-
-/**
- * Resolve every node of `kind` in the tree. Used by the round-trip
- * loop so an entry-level pass is granted when ANY node of the kind
- * round-trips, instead of failing on the first node the walker
- * happened to visit. This matches the spec intent ("the entry
- * exercises this kind successfully somewhere"); the per-node failure
- * is still recorded in the kind-level error list when ALL nodes fail.
- *
- * Stable iteration: walker-discovered nodes (in walker visit order)
- * come first, then any tree nodes the walker missed (in tree order).
- *
- * @remarks
- * Canonical-hidden architecture (Option Y): the walker now visits
- * every node — pre-architectural-fix the walker missed many subtree
- * paths because the dispatch table was keyed on the hidden alias-
- * source name while the parser emits the visible alias-target. With
- * the wrap layer remapping visible→hidden on receipt, the dispatch
- * table is hit and recursion fires on every accessor. That exposes
- * more test cases per entry; treating any-node-passes as entry-pass
- * preserves the pre-fix entry-level pass count while still surfacing
- * the per-kind failures in the issue list.
- */
-function resolveAllNodesForKind(kind: string, nodeIdToEffectiveType: Map<string, string>, tree: TSTree): TSNode[] {
-	const nodes: TSNode[] = [];
-	const seenIds = new Set<number>();
-	// ADR-0017: map keyed by "${start}:${end}" composite span. Walker-found
-	// entries are only useful for alias-source kinds — kinds where the wrap
-	// layer rewrites $type to a canonical-hidden form (e.g. `_type_identifier`)
-	// that tree-sitter doesn't emit directly. For those kinds the direct-scan
-	// loop below finds nothing (wrong type name), so the walker path is the
-	// only way to locate them.
-	//
-	// For regular visible kinds (e.g. `binary_operator`), a parent node can
-	// share the same (start, end) span as its sole named child (e.g.
-	// `expression_statement` wrapping `binary_operator`). `findNodeBySpan`
-	// returns the outer parent in DFS order, causing the wrong node to be
-	// rendered. Since visible kinds are handled correctly by the direct-scan
-	// loop, skip walker entries where the located node's type mismatches the
-	// target kind AND the target kind is not a canonical-hidden alias-source
-	// (leading `_`).
-	for (const [spanKey, et] of nodeIdToEffectiveType) {
-		if (et !== kind) continue;
-		const colon = spanKey.indexOf(':');
-		const startIdx = parseInt(spanKey.slice(0, colon), 10);
-		const endIdx = parseInt(spanKey.slice(colon + 1), 10);
-		const node = findNodeBySpan(tree.rootNode, startIdx, endIdx);
-		if (!node || seenIds.has(node.id)) continue;
-		// Skip when the found node's type doesn't match and kind is a visible
-		// (non-alias-source) kind — the direct-scan loop handles these.
-		const isAliasSrcKind = kind.startsWith('_');
-		if (node.type !== kind && !isAliasSrcKind) continue;
-		seenIds.add(node.id);
-		nodes.push(node);
-	}
-	const queue: TSNode[] = [tree.rootNode];
-	while (queue.length > 0) {
-		const n = queue.shift()!;
-		if (n.type === kind && !seenIds.has(n.id)) {
-			seenIds.add(n.id);
-			nodes.push(n);
-		}
-		for (let i = 0; i < n.childCount; i++) {
-			const c = n.child(i);
-			if (c) queue.push(c);
-		}
-	}
-	return nodes;
-}
-
-/**
- * Apply alias resolution to raw NodeData, overriding `$type` when the wrap
- * layer reports a different effective type for the node's id.
- *
- * @remarks
- * Three distinct kind names arise after alias resolution:
- * - renderedKind: drives render-template + reparse-wrapper lookup (the source
- *   kind when rewritten).
- * - targetKind: tree-sitter's raw kind, used for post-reparse node location
- *   (reparse produces the target kind since the alias applies again).
- *
- * @param rawData - The NodeData as returned by readNode (uses tree-sitter's raw $type).
- * @param nodeStartIndex - The tree-sitter node's startIndex.
- * @param nodeEndIndex - The tree-sitter node's endIndex (combined with start for collision-free lookup).
- * @param nodeIdToEffectiveType - Map from composite span key to alias-rewritten type.
- * @returns An object with `data` (possibly $type-overridden), `renderedKind`, and `targetKind`.
- */
-function applyAliasResolution(
-	rawData: ReturnType<typeof readNode>,
-	nodeStartIndex: number,
-	nodeEndIndex: number,
-	nodeIdToEffectiveType: Map<string, string>,
-	kindNameFromId: ((id: number) => string | undefined) | undefined,
-	/** The tree-sitter visible kind name (node.type). Used as targetKind
-	 * for post-reparse node lookup, since tree-sitter strips leading
-	 * underscores and uses the pre-alias name. When absent, falls back
-	 * to resolving from rawData.$type via kindNameFromId. */
-	tsVisibleKind?: string
-): { data: typeof rawData; renderedKind: string; targetKind: string } {
-	// $type may be numeric (TSKindId) or string (hidden/synthetic kind). Resolve to
-	// a string kind name for renderedKind / template lookup.
-	const canonicalKind =
-		typeof rawData.$type === 'number' ? (kindNameFromId?.(rawData.$type) ?? String(rawData.$type)) : rawData.$type;
-	// ADR-0017: map keyed by "${start}:${end}" composite span (collision-free).
-	const effective = nodeIdToEffectiveType.get(`${nodeStartIndex}:${nodeEndIndex}`);
-	// Apply alias rewriting only when the effective kind differs from the canonical kind.
-	const data = effective && effective !== canonicalKind ? { ...rawData, $type: rawData.$type } : rawData;
-	const renderedKind = effective ?? canonicalKind;
-	// targetKind: used for post-reparse node.type lookup (tree-sitter visible form).
-	// Phase D: kindNameFromId may return canonical sittir forms that differ from
-	// tree-sitter's node.type (e.g. '_type_identifier' vs 'type_identifier',
-	// 'scoped_type_identifier_in_expression_position' vs 'scoped_type_identifier').
-	// Use the tree-sitter visible name as the ground truth when available.
-	const targetKind = tsVisibleKind ?? canonicalKind;
-	return { data, renderedKind, targetKind };
-}
 
 /**
  * Locate the reparsed target node at the exact byte offset where the rendered
@@ -773,7 +436,7 @@ export async function validateReadRenderParse(
 			}
 		: rawKindIdFromName;
 	// Phase D: $type is numeric; translate string kind names to numeric IDs for
-	// _deepReadNode's Set<number> membership check.
+	// the KindMembership Set<number> check.
 	// When `recursive: true`, deep-read ALL named kinds (not just variant-adopted).
 	const { recursive } = options;
 	const deepReadKinds: KindMembership = recursive
@@ -812,18 +475,30 @@ export async function validateReadRenderParse(
 				continue; // Corpus entries with parse errors (intentional error tests)
 			}
 
-			const kinds = new Set(collectKinds(tree1.rootNode));
-			const nodeIdToEffectiveType = discoverAliasSourceKinds(
-				readTreeNodeFn,
-				tree1,
-				kinds,
-				grammar,
-				entry.source,
-				kindNameFromId,
-				backend,
-				kindIdFromName
-			);
-			const testableKinds = [...kinds].filter((k) => ruleKinds.has(k));
+			// Candidate enumeration by SOURCE kind (the wrap layer's drillAs result),
+			// not the parser DISPLAY kind. Build the native read handle and walk the
+			// WRAPPED tree ONCE: every node arrives as its true source kind, so each
+			// is read/rendered directly with NO asType override.
+			const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+			const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
+			if (readTreeNodeFn && handle.read) {
+				const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
+				const seen = new Set<string>();
+				walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+					if (w.$named === false) return;
+					const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
+					if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+					const span = (w as { $span?: { start: number; end: number } }).$span;
+					if (span == null) return;
+					const dedup = `${sourceKind}@${span.start}:${span.end}`;
+					if (seen.has(dedup)) return;
+					seen.add(dedup);
+					const list = candidatesByKind.get(sourceKind) ?? [];
+					list.push({ start: span.start, end: span.end, node: w });
+					candidatesByKind.set(sourceKind, list);
+				});
+			}
+			const testableKinds = [...candidatesByKind.keys()];
 
 			if (testableKinds.length === 0) {
 				skip++;
@@ -835,38 +510,6 @@ export async function validateReadRenderParse(
 			let entryAstMatch = true;
 			for (const kind of testableKinds) {
 				if (shouldStop) break;
-				// Canonical-hidden architecture (Option Y): the wrap walker
-				// now reaches every subtree node — pre-fix it missed many
-				// because the wrap-table dispatch was keyed on the hidden
-				// alias-source name while parser-emitted `$type` was the
-				// visible alias-target. With the visible→hidden remap on
-				// receipt, dispatch fires reliably and recursion propagates
-				// through every accessor. That surfaces extra test cases
-				// per entry; iterate ALL nodes of a kind and treat the
-				// entry as passing when ANY node round-trips successfully.
-				// Per-node failures still land in the kind-level error
-				// list so genuine bugs remain visible.
-				// Build the read handle once per entry/kind. For the native
-				// backend the handle is backed by the cached native engine;
-				// building it once avoids repeated parseAndRead calls.
-				const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-
-				// --- Native-only candidate iteration (no WASM bridge) ---
-				// When a native handle is available, walk the native AnyNodeData
-				// tree directly to discover all nodes of `kind`. Each candidate
-				// gets its own (handle, childIndex) coords from the walk, so
-				// multi-candidate entries (e.g. rust "Where clauses" with 6
-				// impl_item nodes) render their own correct data instead of all
-				// converging on the first DFS match.
-				//
-				// For the WASM/JS backend, fall back to the original WASM-tree
-				// walk + findNativeNodeId(null) path (findNativeNodeId returns
-				// null for non-native handles).
-				const nativeCandidates = handle.read ? walkNativeForKind(handle, kind, kindNameFromId) : [];
-				const wasmCandidates = handle.read ? [] : resolveAllNodesForKind(kind, nodeIdToEffectiveType, tree1);
-
-				const totalCandidateCount = handle.read ? nativeCandidates.length : wasmCandidates.length;
-				if (totalCandidateCount === 0) continue;
 
 				let kindOk = false;
 				let kindAstMatch = false;
@@ -874,93 +517,44 @@ export async function validateReadRenderParse(
 				const kindErrors: typeof errors = [];
 				const kindAstMismatches: typeof astMismatches = [];
 
-				// Iterate native candidates (native backend) or WASM candidates (JS backend).
-				const iterCount = handle.read ? nativeCandidates.length : wasmCandidates.length;
-				for (let ci = 0; ci < iterCount; ci++) {
+				for (const cand of candidatesByKind.get(kind)!) {
 					if (shouldStop) break;
+					const nodeStartIndex = cand.start;
+					const nodeEndIndex = cand.end;
+					const inputSource = entry.source.slice(nodeStartIndex, nodeEndIndex);
+					// WASM node at this span: the AST-compare target and the parser
+					// DISPLAY kind (targetKind) used for post-reparse node lookup.
+					// Prefer the same-span node whose type matches the candidate's
+					// kind (so the compare anchors on `tuple_struct_pattern`, not the
+					// enclosing same-span `match_pattern`); fall back to the outermost.
+					const node1ForAst =
+						findNodeBySpanOfKind(tree1.rootNode, nodeStartIndex, nodeEndIndex, kind) ??
+						findNodeBySpan(tree1.rootNode, nodeStartIndex, nodeEndIndex);
+					const tsVisibleKind = node1ForAst?.type;
 
-					// Resolve per-candidate inputs from either the native walk
-					// result or the WASM node.
-					let nativeCoords: ReturnType<typeof findNativeNodeId>;
-					let nodeStartIndex: number;
-					let nodeEndIndex: number;
-					let inputSource: string;
-					// WASM node for AST comparison (findNodeBySpan from tree1).
-					// For native backend: look up by native $span; may be null
-					// when $span is unavailable — AST comparison is skipped then.
-					let node1ForAst: TSNode | null;
-					let tsVisibleKind: string | undefined;
-
-					if (handle.read) {
-						// Native path: use native walk result.
-						const nc = nativeCandidates[ci]!;
-						nativeCoords = nc.coords;
-						const span = nc.span;
-						if (span) {
-							nodeStartIndex = span.start;
-							nodeEndIndex = span.end;
-							inputSource = entry.source.slice(span.start, span.end);
-							// Find corresponding WASM node by span for AST comparison.
-							node1ForAst = findNodeBySpan(tree1.rootNode, span.start, span.end);
-							tsVisibleKind = node1ForAst?.type;
-						} else {
-							// No span: fall back to full source and skip AST comparison.
-							nodeStartIndex = 0;
-							nodeEndIndex = entry.source.length;
-							inputSource = entry.source;
-							node1ForAst = null;
-							tsVisibleKind = undefined;
-						}
-					} else {
-						// WASM path: use WASM node.
-						const node1 = wasmCandidates[ci]!;
-						nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
-						nodeStartIndex = node1.startIndex;
-						nodeEndIndex = node1.endIndex;
-						inputSource = node1.text;
-						node1ForAst = node1;
-						tsVisibleKind = node1.type;
+					// Materialize the wrapped node directly — it already IS its source
+					// kind. renderedKind (source) drives the render template; targetKind
+					// (display) drives the post-reparse node lookup.
+					//
+					// Shallow mode (`recursive !== true`): read the node's one-level
+					// native data via its coords instead — children stay `$nodeHandle`
+					// stubs. This preserves the read-render-parse-shallow metric's
+					// meaning (render() fed stub-bearing data, the shape lazy callers
+					// send) as distinct from the deep run's full materialization.
+					// Falls back to deep materialization when the wrapped node carries
+					// no native coords.
+					let data: AnyNodeData;
+					try {
+						data =
+							recursive !== true && cand.node.$nodeHandle != null && handle.read
+								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex ?? 0) as unknown as AnyNodeData)
+								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node)) as AnyNodeData);
+					} catch (e) {
+						kindErrors.push({ name: `${entry.name} [${kind}]`, message: `read: ${(e as Error).message.slice(0, 100)}` });
+						continue;
 					}
-
-					if (nativeCoords === null && handle.read) continue;
-					// Option (a): when the wrap-walk recorded a different effective
-					// kind for this exact span than tree-sitter's visible display
-					// kind, the node is an alias TARGET whose source wrapper differs
-					// (e.g. rust trailing arm: display `match_arm`, source
-					// `last_match_arm`). Standalone reads lose the parent slot's
-					// drillAs, so forward the resolution the validator already holds.
-					// Scope to NON-hidden effective kinds: canonical-hidden remaps
-					// (`type_identifier`→`_type_identifier`) are already a no-op
-					// inside wrapNode, and forcing a hidden supertype (`_literal`)
-					// would strip the node's concrete wrapper.
-					const effectiveForSpan = nodeIdToEffectiveType.get(`${nodeStartIndex}:${nodeEndIndex}`);
-					const aliasOverride =
-						effectiveForSpan !== undefined &&
-						!effectiveForSpan.startsWith('_') &&
-						tsVisibleKind !== undefined &&
-						effectiveForSpan !== tsVisibleKind
-							? { from: tsVisibleKind, to: effectiveForSpan }
-							: undefined;
-					const rawData = readValidatorNodeData(
-						handle,
-						// readValidatorNodeData uses `node` only for WASM paths; for
-						// native (handle.read is set) nativeCoords drives the read.
-						// Provide a minimal fallback so TS is satisfied.
-						node1ForAst ?? tree1.rootNode,
-						nativeCoords,
-						readTreeNodeFn,
-						deepReadKinds,
-						recursive === true,
-						aliasOverride
-					);
-					const { data, renderedKind, targetKind } = applyAliasResolution(
-						rawData,
-						nodeStartIndex,
-						nodeEndIndex,
-						nodeIdToEffectiveType,
-						kindNameFromId,
-						tsVisibleKind
-					);
+					const renderedKind = kind;
+					const targetKind = tsVisibleKind ?? kind;
 
 					// Emit a per-kind progress breadcrumb to stderr when running as
 					// an isolation worker (SITTIR_ISOLATE_WORKER=1). MUST use

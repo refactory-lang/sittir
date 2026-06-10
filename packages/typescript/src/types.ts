@@ -103,10 +103,8 @@ export type LeafStringMap = {
 };
 
 export const enum SyntaxKind {
-  AmbientDeclarationDeclaration = "_ambient_declaration_declaration",
   AmbientDeclarationGlobal = "_ambient_declaration_global",
   AmbientDeclarationModule = "_ambient_declaration_module",
-  ArrowFunctionUCallSignature = "_arrow_function__call_signature",
   ArrowFunctionParameter = "_arrow_function_parameter",
   CallExpressionCall = "_call_expression_call",
   CallExpressionMember = "_call_expression_member",
@@ -117,7 +115,6 @@ export const enum SyntaxKind {
   ClassBodyMethod = "_class_body_method",
   ClassBodyMethodSig = "_class_body_method_sig",
   ClassHeritageExtendsClause = "_class_heritage_extends_clause",
-  ClassHeritageImplementsClause = "_class_heritage_implements_clause",
   EnumBodyOptional1 = "_enum_body_optional1",
   ExportSpecifierOptional1 = "_export_specifier_optional1",
   ExportStatementDefault = "_export_statement_default",
@@ -139,12 +136,8 @@ export const enum SyntaxKind {
   FromClause = "_from_clause",
   ImportClauseDefaultImport = "_import_clause_default_import",
   _ImportClauseGroup1 = "_import_clause_group1",
-  ImportClauseNamedImports = "_import_clause_named_imports",
-  ImportClauseNamespaceImport = "_import_clause_namespace_import",
   ImportSpecifierAs = "_import_specifier_as",
-  ImportSpecifierName = "_import_specifier_name",
   IndexSignatureColon = "_index_signature_colon",
-  IndexSignatureMappedTypeClause = "_index_signature_mapped_type_clause",
   IndexSignatureOptional1 = "_index_signature_optional1",
   InferTypeOptional1 = "_infer_type_optional1",
   Initializer = "_initializer",
@@ -157,11 +150,9 @@ export const enum SyntaxKind {
   _Number = "_number",
   ObjectTypeOptional1 = "_object_type_optional1",
   ParameterName = "_parameter_name",
-  ParenthesizedExpressionSequence = "_parenthesized_expression_sequence",
   ParenthesizedExpressionTyped = "_parenthesized_expression_typed",
   PublicFieldDefinitionAbstractFirst = "_public_field_definition_abstract_first",
   PublicFieldDefinitionAccessFirst = "_public_field_definition_access_first",
-  PublicFieldDefinitionAccessorOpt = "_public_field_definition_accessor_opt",
   PublicFieldDefinitionDeclareFirst = "_public_field_definition_declare_first",
   PublicFieldDefinitionReadonlyFirst = "_public_field_definition_readonly_first",
   PublicFieldDefinitionStaticMods = "_public_field_definition_static_mods",
@@ -813,75 +804,67 @@ export const enum TSKindId {
   ExportStatementDefaultDeclArm = 361,
   ExportStatementDefaultDeclArmDefaultKw = 362,
   ArrowFunctionParameter = 363,
-  ArrowFunctionUCallSignature = 364,
-  ClassHeritageExtendsClause = 365,
-  ClassHeritageImplementsClause = 366,
-  ImportClauseNamespaceImport = 367,
-  ImportClauseNamedImports = 368,
-  ImportClauseDefaultImport = 369,
-  ImportSpecifierName = 370,
-  ImportSpecifierAs = 371,
-  IndexSignatureColon = 372,
-  IndexSignatureMappedTypeClause = 373,
-  AmbientDeclarationDeclaration = 374,
-  ExportStatementDefaultFromArmStarFrom = 375,
-  ExportStatementDefaultFromArmNsFrom = 376,
-  ExportStatementDefaultFromArmClauseFrom = 377,
-  ExportStatementDefaultDeclArmDefaultKwValue = 378,
-  ClassBodyMethod = 379,
-  ClassBodyMethodSig = 380,
-  ClassBodyMember = 381,
-  ForHeaderLhs = 382,
-  ForHeaderVarKind = 383,
-  ForHeaderLetConstKind = 384,
-  ParenthesizedExpressionTyped = 385,
-  ParenthesizedExpressionSequence = 386,
-  ExportStatementTypeExport = 387,
-  ExportStatementEqualsExport = 388,
-  ExportStatementNamespaceExport = 389,
-  CallExpressionCall = 390,
-  CallExpressionTemplateCall = 391,
-  CallExpressionMember = 392,
-  UpdateExpressionPostfix = 393,
-  UpdateExpressionPrefix = 394,
-  ProgramRepeat1 = 395,
-  VariableDeclarationRepeat1 = 396,
-  SwitchBodyRepeat1 = 397,
-  ObjectRepeat1 = 398,
-  ObjectPatternRepeat1 = 399,
-  ArrayRepeat1 = 400,
-  ArrayPatternRepeat1 = 401,
-  ClassRepeat1 = 402,
-  SequenceExpressionRepeat1 = 403,
-  StringRepeat1 = 404,
-  StringRepeat2 = 405,
-  TemplateStringRepeat1 = 406,
-  ClassBodyRepeat1 = 407,
-  ExtendsClauseRepeat1 = 408,
-  ImplementsClauseRepeat1 = 409,
-  ExtendsTypeClauseRepeat1 = 410,
-  TemplateLiteralTypeRepeat1 = 411,
-  TypeParametersRepeat1 = 412,
-  _ExportClauseOptional1Repeat1 = 413,
-  _NamedImportsOptional1Repeat1 = 414,
-  _FormalParametersOptional1Repeat1 = 415,
-  _EnumBodyOptional1Repeat1 = 416,
-  _TupleTypeOptional1Repeat1 = 417,
-  ObjectTypeContentCommaRepeat1 = 418,
-  ObjectTypeContentSemiRepeat1 = 419,
-  _InterfaceBody = 420,
-  PropertyIdentifier = 421,
-  PublicFieldDefinitionAbstractFirst = 422,
-  PublicFieldDefinitionAccessFirst = 423,
-  PublicFieldDefinitionAccessorOpt = 424,
-  PublicFieldDefinitionDeclareFirst = 425,
-  PublicFieldDefinitionReadonlyFirst = 426,
-  PublicFieldDefinitionStaticMods = 427,
-  ShorthandPropertyIdentifier = 428,
-  ShorthandPropertyIdentifierPattern = 429,
-  StatementIdentifier = 430,
-  _ThisType = 431,
-  TypeIdentifier = 432,
+  ClassHeritageExtendsClause = 364,
+  ImportClauseDefaultImport = 365,
+  ImportSpecifierAs = 366,
+  IndexSignatureColon = 367,
+  ExportStatementDefaultFromArmStarFrom = 368,
+  ExportStatementDefaultFromArmNsFrom = 369,
+  ExportStatementDefaultFromArmClauseFrom = 370,
+  ExportStatementDefaultDeclArmDefaultKwValue = 371,
+  ClassBodyMethod = 372,
+  ClassBodyMethodSig = 373,
+  ClassBodyMember = 374,
+  ForHeaderLhs = 375,
+  ForHeaderVarKind = 376,
+  ForHeaderLetConstKind = 377,
+  ParenthesizedExpressionTyped = 378,
+  ExportStatementTypeExport = 379,
+  ExportStatementEqualsExport = 380,
+  ExportStatementNamespaceExport = 381,
+  CallExpressionCall = 382,
+  CallExpressionTemplateCall = 383,
+  CallExpressionMember = 384,
+  UpdateExpressionPostfix = 385,
+  UpdateExpressionPrefix = 386,
+  ProgramRepeat1 = 387,
+  VariableDeclarationRepeat1 = 388,
+  SwitchBodyRepeat1 = 389,
+  ObjectRepeat1 = 390,
+  ObjectPatternRepeat1 = 391,
+  ArrayRepeat1 = 392,
+  ArrayPatternRepeat1 = 393,
+  ClassRepeat1 = 394,
+  SequenceExpressionRepeat1 = 395,
+  StringRepeat1 = 396,
+  StringRepeat2 = 397,
+  TemplateStringRepeat1 = 398,
+  ClassBodyRepeat1 = 399,
+  ExtendsClauseRepeat1 = 400,
+  ImplementsClauseRepeat1 = 401,
+  ExtendsTypeClauseRepeat1 = 402,
+  TemplateLiteralTypeRepeat1 = 403,
+  TypeParametersRepeat1 = 404,
+  _ExportClauseOptional1Repeat1 = 405,
+  _NamedImportsOptional1Repeat1 = 406,
+  _FormalParametersOptional1Repeat1 = 407,
+  _EnumBodyOptional1Repeat1 = 408,
+  _TupleTypeOptional1Repeat1 = 409,
+  ObjectTypeContentCommaRepeat1 = 410,
+  ObjectTypeContentSemiRepeat1 = 411,
+  _InterfaceBody = 412,
+  PropertyIdentifier = 413,
+  PublicFieldDefinitionAbstractFirst = 414,
+  PublicFieldDefinitionAccessFirst = 415,
+  _PublicFieldDefinitionAccessorOpt = 416,
+  PublicFieldDefinitionDeclareFirst = 417,
+  PublicFieldDefinitionReadonlyFirst = 418,
+  PublicFieldDefinitionStaticMods = 419,
+  ShorthandPropertyIdentifier = 420,
+  ShorthandPropertyIdentifierPattern = 421,
+  StatementIdentifier = 422,
+  _ThisType = 423,
+  TypeIdentifier = 424,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1248,75 +1231,67 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [361, "_export_statement_default_decl_arm"],
   [362, "_export_statement_default_decl_arm_default_kw"],
   [363, "_arrow_function_parameter"],
-  [364, "_arrow_function__call_signature"],
-  [365, "_class_heritage_extends_clause"],
-  [366, "_class_heritage_implements_clause"],
-  [367, "_import_clause_namespace_import"],
-  [368, "_import_clause_named_imports"],
-  [369, "_import_clause_default_import"],
-  [370, "_import_specifier_name"],
-  [371, "_import_specifier_as"],
-  [372, "_index_signature_colon"],
-  [373, "_index_signature_mapped_type_clause"],
-  [374, "_ambient_declaration_declaration"],
-  [375, "_export_statement_default_from_arm_star_from"],
-  [376, "_export_statement_default_from_arm_ns_from"],
-  [377, "_export_statement_default_from_arm_clause_from"],
-  [378, "_export_statement_default_decl_arm_default_kw_value"],
-  [379, "_class_body_method"],
-  [380, "_class_body_method_sig"],
-  [381, "_class_body_member"],
-  [382, "_for_header_lhs"],
-  [383, "_for_header_var_kind"],
-  [384, "_for_header_let_const_kind"],
-  [385, "_parenthesized_expression_typed"],
-  [386, "_parenthesized_expression_sequence"],
-  [387, "_export_statement_type_export"],
-  [388, "_export_statement_equals_export"],
-  [389, "_export_statement_namespace_export"],
-  [390, "_call_expression_call"],
-  [391, "_call_expression_template_call"],
-  [392, "_call_expression_member"],
-  [393, "_update_expression_postfix"],
-  [394, "_update_expression_prefix"],
-  [395, "program_repeat1"],
-  [396, "variable_declaration_repeat1"],
-  [397, "switch_body_repeat1"],
-  [398, "object_repeat1"],
-  [399, "object_pattern_repeat1"],
-  [400, "array_repeat1"],
-  [401, "array_pattern_repeat1"],
-  [402, "class_repeat1"],
-  [403, "sequence_expression_repeat1"],
-  [404, "string_repeat1"],
-  [405, "string_repeat2"],
-  [406, "template_string_repeat1"],
-  [407, "class_body_repeat1"],
-  [408, "extends_clause_repeat1"],
-  [409, "implements_clause_repeat1"],
-  [410, "extends_type_clause_repeat1"],
-  [411, "template_literal_type_repeat1"],
-  [412, "type_parameters_repeat1"],
-  [413, "_export_clause_optional1_repeat1"],
-  [414, "_named_imports_optional1_repeat1"],
-  [415, "_formal_parameters_optional1_repeat1"],
-  [416, "_enum_body_optional1_repeat1"],
-  [417, "_tuple_type_optional1_repeat1"],
-  [418, "object_type_content_comma_repeat1"],
-  [419, "object_type_content_semi_repeat1"],
-  [420, "_interface_body"],
-  [421, "_property_identifier"],
-  [422, "_public_field_definition_abstract_first"],
-  [423, "_public_field_definition_access_first"],
-  [424, "_public_field_definition_accessor_opt"],
-  [425, "_public_field_definition_declare_first"],
-  [426, "_public_field_definition_readonly_first"],
-  [427, "_public_field_definition_static_mods"],
-  [428, "_shorthand_property_identifier"],
-  [429, "_shorthand_property_identifier_pattern"],
-  [430, "_statement_identifier"],
-  [431, "_this_type"],
-  [432, "_type_identifier"],
+  [364, "_class_heritage_extends_clause"],
+  [365, "_import_clause_default_import"],
+  [366, "_import_specifier_as"],
+  [367, "_index_signature_colon"],
+  [368, "_export_statement_default_from_arm_star_from"],
+  [369, "_export_statement_default_from_arm_ns_from"],
+  [370, "_export_statement_default_from_arm_clause_from"],
+  [371, "_export_statement_default_decl_arm_default_kw_value"],
+  [372, "_class_body_method"],
+  [373, "_class_body_method_sig"],
+  [374, "_class_body_member"],
+  [375, "_for_header_lhs"],
+  [376, "_for_header_var_kind"],
+  [377, "_for_header_let_const_kind"],
+  [378, "_parenthesized_expression_typed"],
+  [379, "_export_statement_type_export"],
+  [380, "_export_statement_equals_export"],
+  [381, "_export_statement_namespace_export"],
+  [382, "_call_expression_call"],
+  [383, "_call_expression_template_call"],
+  [384, "_call_expression_member"],
+  [385, "_update_expression_postfix"],
+  [386, "_update_expression_prefix"],
+  [387, "program_repeat1"],
+  [388, "variable_declaration_repeat1"],
+  [389, "switch_body_repeat1"],
+  [390, "object_repeat1"],
+  [391, "object_pattern_repeat1"],
+  [392, "array_repeat1"],
+  [393, "array_pattern_repeat1"],
+  [394, "class_repeat1"],
+  [395, "sequence_expression_repeat1"],
+  [396, "string_repeat1"],
+  [397, "string_repeat2"],
+  [398, "template_string_repeat1"],
+  [399, "class_body_repeat1"],
+  [400, "extends_clause_repeat1"],
+  [401, "implements_clause_repeat1"],
+  [402, "extends_type_clause_repeat1"],
+  [403, "template_literal_type_repeat1"],
+  [404, "type_parameters_repeat1"],
+  [405, "_export_clause_optional1_repeat1"],
+  [406, "_named_imports_optional1_repeat1"],
+  [407, "_formal_parameters_optional1_repeat1"],
+  [408, "_enum_body_optional1_repeat1"],
+  [409, "_tuple_type_optional1_repeat1"],
+  [410, "object_type_content_comma_repeat1"],
+  [411, "object_type_content_semi_repeat1"],
+  [412, "_interface_body"],
+  [413, "_property_identifier"],
+  [414, "_public_field_definition_abstract_first"],
+  [415, "_public_field_definition_access_first"],
+  [416, "_public_field_definition_accessor_opt"],
+  [417, "_public_field_definition_declare_first"],
+  [418, "_public_field_definition_readonly_first"],
+  [419, "_public_field_definition_static_mods"],
+  [420, "_shorthand_property_identifier"],
+  [421, "_shorthand_property_identifier_pattern"],
+  [422, "_statement_identifier"],
+  [423, "_this_type"],
+  [424, "_type_identifier"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1684,17 +1659,10 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_export_statement_default_decl_arm": return TSKindId.ExportStatementDefaultDeclArm;
     case "_export_statement_default_decl_arm_default_kw": return TSKindId.ExportStatementDefaultDeclArmDefaultKw;
     case "_arrow_function_parameter": return TSKindId.ArrowFunctionParameter;
-    case "_arrow_function__call_signature": return TSKindId.ArrowFunctionUCallSignature;
     case "_class_heritage_extends_clause": return TSKindId.ClassHeritageExtendsClause;
-    case "_class_heritage_implements_clause": return TSKindId.ClassHeritageImplementsClause;
-    case "_import_clause_namespace_import": return TSKindId.ImportClauseNamespaceImport;
-    case "_import_clause_named_imports": return TSKindId.ImportClauseNamedImports;
     case "_import_clause_default_import": return TSKindId.ImportClauseDefaultImport;
-    case "_import_specifier_name": return TSKindId.ImportSpecifierName;
     case "_import_specifier_as": return TSKindId.ImportSpecifierAs;
     case "_index_signature_colon": return TSKindId.IndexSignatureColon;
-    case "_index_signature_mapped_type_clause": return TSKindId.IndexSignatureMappedTypeClause;
-    case "_ambient_declaration_declaration": return TSKindId.AmbientDeclarationDeclaration;
     case "_export_statement_default_from_arm_star_from": return TSKindId.ExportStatementDefaultFromArmStarFrom;
     case "_export_statement_default_from_arm_ns_from": return TSKindId.ExportStatementDefaultFromArmNsFrom;
     case "_export_statement_default_from_arm_clause_from": return TSKindId.ExportStatementDefaultFromArmClauseFrom;
@@ -1706,7 +1674,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_for_header_var_kind": return TSKindId.ForHeaderVarKind;
     case "_for_header_let_const_kind": return TSKindId.ForHeaderLetConstKind;
     case "_parenthesized_expression_typed": return TSKindId.ParenthesizedExpressionTyped;
-    case "_parenthesized_expression_sequence": return TSKindId.ParenthesizedExpressionSequence;
     case "_export_statement_type_export": return TSKindId.ExportStatementTypeExport;
     case "_export_statement_equals_export": return TSKindId.ExportStatementEqualsExport;
     case "_export_statement_namespace_export": return TSKindId.ExportStatementNamespaceExport;
@@ -1744,7 +1711,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_property_identifier": return TSKindId.PropertyIdentifier;
     case "_public_field_definition_abstract_first": return TSKindId.PublicFieldDefinitionAbstractFirst;
     case "_public_field_definition_access_first": return TSKindId.PublicFieldDefinitionAccessFirst;
-    case "_public_field_definition_accessor_opt": return TSKindId.PublicFieldDefinitionAccessorOpt;
+    case "_public_field_definition_accessor_opt": return TSKindId._PublicFieldDefinitionAccessorOpt;
     case "_public_field_definition_declare_first": return TSKindId.PublicFieldDefinitionDeclareFirst;
     case "_public_field_definition_readonly_first": return TSKindId.PublicFieldDefinitionReadonlyFirst;
     case "_public_field_definition_static_mods": return TSKindId.PublicFieldDefinitionStaticMods;
@@ -1831,17 +1798,10 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "export_statement_default_decl_arm": return TSKindId.ExportStatementDefaultDeclArm;
     case "export_statement_default_decl_arm_default_kw": return TSKindId.ExportStatementDefaultDeclArmDefaultKw;
     case "arrow_function_parameter": return TSKindId.ArrowFunctionParameter;
-    case "arrow_function__call_signature": return TSKindId.ArrowFunctionUCallSignature;
     case "class_heritage_extends_clause": return TSKindId.ClassHeritageExtendsClause;
-    case "class_heritage_implements_clause": return TSKindId.ClassHeritageImplementsClause;
-    case "import_clause_namespace_import": return TSKindId.ImportClauseNamespaceImport;
-    case "import_clause_named_imports": return TSKindId.ImportClauseNamedImports;
     case "import_clause_default_import": return TSKindId.ImportClauseDefaultImport;
-    case "import_specifier_name": return TSKindId.ImportSpecifierName;
     case "import_specifier_as": return TSKindId.ImportSpecifierAs;
     case "index_signature_colon": return TSKindId.IndexSignatureColon;
-    case "index_signature_mapped_type_clause": return TSKindId.IndexSignatureMappedTypeClause;
-    case "ambient_declaration_declaration": return TSKindId.AmbientDeclarationDeclaration;
     case "export_statement_default_from_arm_star_from": return TSKindId.ExportStatementDefaultFromArmStarFrom;
     case "export_statement_default_from_arm_ns_from": return TSKindId.ExportStatementDefaultFromArmNsFrom;
     case "export_statement_default_from_arm_clause_from": return TSKindId.ExportStatementDefaultFromArmClauseFrom;
@@ -1853,7 +1813,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "for_header_var_kind": return TSKindId.ForHeaderVarKind;
     case "for_header_let_const_kind": return TSKindId.ForHeaderLetConstKind;
     case "parenthesized_expression_typed": return TSKindId.ParenthesizedExpressionTyped;
-    case "parenthesized_expression_sequence": return TSKindId.ParenthesizedExpressionSequence;
     case "export_statement_type_export": return TSKindId.ExportStatementTypeExport;
     case "export_statement_equals_export": return TSKindId.ExportStatementEqualsExport;
     case "export_statement_namespace_export": return TSKindId.ExportStatementNamespaceExport;
@@ -1866,7 +1825,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "property_identifier": return TSKindId.PropertyIdentifier;
     case "public_field_definition_abstract_first": return TSKindId.PublicFieldDefinitionAbstractFirst;
     case "public_field_definition_access_first": return TSKindId.PublicFieldDefinitionAccessFirst;
-    case "public_field_definition_accessor_opt": return TSKindId.PublicFieldDefinitionAccessorOpt;
+    case "public_field_definition_accessor_opt": return TSKindId._PublicFieldDefinitionAccessorOpt;
     case "public_field_definition_declare_first": return TSKindId.PublicFieldDefinitionDeclareFirst;
     case "public_field_definition_readonly_first": return TSKindId.PublicFieldDefinitionReadonlyFirst;
     case "public_field_definition_static_mods": return TSKindId.PublicFieldDefinitionStaticMods;
@@ -2123,12 +2082,6 @@ export const enum TypeKind {
 }
 
 // Node types — concrete interfaces
-export interface AmbientDeclarationDeclaration {
-  readonly $type: TSKindId.AmbientDeclarationDeclaration;
-  readonly _declaration: Declaration;
-  declaration(): Declaration;
-}
-
 export interface AmbientDeclarationGlobal {
   readonly $type: TSKindId.AmbientDeclarationGlobal;
   readonly _body: StatementBlock;
@@ -2143,16 +2096,6 @@ export interface AmbientDeclarationModule {
   name(): Identifier;
   type(): Type;
   semicolon(): Semicolon | undefined;
-}
-
-export interface ArrowFunctionUCallSignature {
-  readonly $type: TSKindId.ArrowFunctionUCallSignature;
-  readonly _type_parameters?: TypeParameters;
-  readonly _parameters: FormalParameters;
-  readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
-  typeParameters(): TypeParameters | undefined;
-  parameters(): FormalParameters;
-  returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 }
 
 export interface ArrowFunctionParameter {
@@ -2237,12 +2180,6 @@ export interface ClassHeritageExtendsClause {
   readonly _implements_clause?: ImplementsClause;
   extendsClause(): ExtendsClause;
   implementsClause(): ImplementsClause | undefined;
-}
-
-export interface ClassHeritageImplementsClause {
-  readonly $type: TSKindId.ClassHeritageImplementsClause;
-  readonly _implements_clause: ImplementsClause;
-  implementsClause(): ImplementsClause;
 }
 
 export interface EnumBodyOptional1 {
@@ -2418,18 +2355,6 @@ export interface _ImportClauseGroup1 {
   content(): NamespaceImport | NamedImports;
 }
 
-export interface ImportClauseNamedImports {
-  readonly $type: TSKindId.ImportClauseNamedImports;
-  readonly _named_imports: NamedImports;
-  namedImports(): NamedImports;
-}
-
-export interface ImportClauseNamespaceImport {
-  readonly $type: TSKindId.ImportClauseNamespaceImport;
-  readonly _namespace_import: NamespaceImport;
-  namespaceImport(): NamespaceImport;
-}
-
 export interface ImportSpecifierAs {
   readonly $type: TSKindId.ImportSpecifierAs;
   readonly _name: ModuleExportName | Identifier;
@@ -2438,24 +2363,12 @@ export interface ImportSpecifierAs {
   alias(): ImportIdentifier;
 }
 
-export interface ImportSpecifierName {
-  readonly $type: TSKindId.ImportSpecifierName;
-  readonly _name: ImportIdentifier;
-  name(): ImportIdentifier;
-}
-
 export interface IndexSignatureColon {
   readonly $type: TSKindId.IndexSignatureColon;
   readonly _name: Identifier | ReservedIdentifier;
   readonly _index_type: Type;
   name(): Identifier | ReservedIdentifier;
   indexType(): Type;
-}
-
-export interface IndexSignatureMappedTypeClause {
-  readonly $type: TSKindId.IndexSignatureMappedTypeClause;
-  readonly _mapped_type_clause: MappedTypeClause;
-  mappedTypeClause(): MappedTypeClause;
 }
 
 export interface IndexSignatureOptional1 {
@@ -2559,12 +2472,6 @@ export interface ParameterName {
   pattern(): Pattern | This;
 }
 
-export interface ParenthesizedExpressionSequence {
-  readonly $type: TSKindId.ParenthesizedExpressionSequence;
-  readonly _sequence_expression: SequenceExpression;
-  sequenceExpression(): SequenceExpression;
-}
-
 export interface ParenthesizedExpressionTyped {
   readonly $type: TSKindId.ParenthesizedExpressionTyped;
   readonly _expression: Expression;
@@ -2595,15 +2502,6 @@ export interface PublicFieldDefinitionAccessFirst {
   };
   accessibilityModifier(): number;
   declareMarker(): boolean | undefined;
-}
-
-export interface PublicFieldDefinitionAccessorOpt {
-  readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt;
-  readonly _accessor_marker: number;
-  readonly __inputHints__?: {
-    readonly accessor_marker: KindEnum<"accessor", TSKindId.Accessor>;
-  };
-  accessorMarker(): number;
 }
 
 export interface PublicFieldDefinitionDeclareFirst {
@@ -2765,8 +2663,8 @@ export interface AddingTypeAnnotation {
 
 export interface AmbientDeclaration {
   readonly $type: TSKindId.AmbientDeclaration;
-  readonly _content: AmbientDeclarationDeclaration | AmbientDeclarationGlobal | AmbientDeclarationModule;
-  content(): AmbientDeclarationDeclaration | AmbientDeclarationGlobal | AmbientDeclarationModule;
+  readonly _content: Declaration | AmbientDeclarationGlobal | AmbientDeclarationModule;
+  content(): Declaration | AmbientDeclarationGlobal | AmbientDeclarationModule;
 }
 
 export interface Arguments {
@@ -2796,13 +2694,19 @@ export interface ArrayType {
 export interface ArrowFunction {
   readonly $type: TSKindId.ArrowFunction;
   readonly _async_marker?: boolean;
-  readonly _content: ArrowFunctionParameter | ArrowFunctionUCallSignature;
+  readonly _arrow_function_parameter?: ArrowFunctionParameter;
+  readonly _type_parameters?: TypeParameters;
+  readonly _parameters?: FormalParameters;
+  readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
   readonly _body: Expression | StatementBlock;
   readonly __inputHints__?: {
     readonly async_marker?: BooleanKeyword<"async">;
   };
   asyncMarker(): boolean | undefined;
-  content(): ArrowFunctionParameter | ArrowFunctionUCallSignature;
+  arrowFunctionParameter(): ArrowFunctionParameter | undefined;
+  typeParameters(): TypeParameters | undefined;
+  parameters(): FormalParameters | undefined;
+  returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
   body(): Expression | StatementBlock;
 }
 
@@ -2947,8 +2851,8 @@ export interface ClassDeclaration {
 
 export interface ClassHeritage {
   readonly $type: TSKindId.ClassHeritage;
-  readonly _content: ClassHeritageExtendsClause | ClassHeritageImplementsClause;
-  content(): ClassHeritageExtendsClause | ClassHeritageImplementsClause;
+  readonly _content: ClassHeritageExtendsClause | ImplementsClause;
+  content(): ClassHeritageExtendsClause | ImplementsClause;
 }
 
 export interface ClassStaticBlock {
@@ -3368,8 +3272,8 @@ export interface ImportAttribute {
 
 export interface ImportClause {
   readonly $type: TSKindId.ImportClause;
-  readonly _content: ImportClauseNamespaceImport | ImportClauseNamedImports | ImportClauseDefaultImport;
-  content(): ImportClauseNamespaceImport | ImportClauseNamedImports | ImportClauseDefaultImport;
+  readonly _content: NamespaceImport | NamedImports | ImportClauseDefaultImport;
+  content(): NamespaceImport | NamedImports | ImportClauseDefaultImport;
 }
 
 export interface ImportRequireClause {
@@ -3383,12 +3287,12 @@ export interface ImportRequireClause {
 export interface ImportSpecifier {
   readonly $type: TSKindId.ImportSpecifier;
   readonly _import_kind?: number;
-  readonly _content: ImportSpecifierName | ImportSpecifierAs;
+  readonly _content: ImportIdentifier | ImportSpecifierAs;
   readonly __inputHints__?: {
     readonly import_kind?: KindEnum<"type" | "typeof", TSKindId.Type | TSKindId.Typeof>;
   };
   importKind(): number | undefined;
-  content(): ImportSpecifierName | ImportSpecifierAs;
+  content(): ImportIdentifier | ImportSpecifierAs;
 }
 
 export interface ImportStatement {
@@ -3409,13 +3313,13 @@ export interface ImportStatement {
 export interface IndexSignature {
   readonly $type: TSKindId.IndexSignature;
   readonly _sign?: number;
-  readonly _content: IndexSignatureColon | IndexSignatureMappedTypeClause;
+  readonly _content: IndexSignatureColon | MappedTypeClause;
   readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
   readonly __inputHints__?: {
     readonly sign?: KindEnum<"-" | "+", TSKindId.Dash | TSKindId.Plus>;
   };
   sign(): number | undefined;
-  content(): IndexSignatureColon | IndexSignatureMappedTypeClause;
+  content(): IndexSignatureColon | MappedTypeClause;
   type(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
 }
 
@@ -3824,8 +3728,8 @@ export interface PairPattern {
 
 export interface ParenthesizedExpression {
   readonly $type: TSKindId.ParenthesizedExpression;
-  readonly _content: ParenthesizedExpressionTyped | ParenthesizedExpressionSequence | Identifier | DecoratorMemberExpression | DecoratorCallExpression;
-  content(): ParenthesizedExpressionTyped | ParenthesizedExpressionSequence | Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+  readonly _content: ParenthesizedExpressionTyped | SequenceExpression | Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+  content(): ParenthesizedExpressionTyped | SequenceExpression | Identifier | DecoratorMemberExpression | DecoratorCallExpression;
 }
 
 export interface ParenthesizedType {
@@ -3870,16 +3774,25 @@ export interface PropertySignature {
 export interface PublicFieldDefinition {
   readonly $type: TSKindId.PublicFieldDefinition;
   readonly _decorator?: readonly (Decorator)[];
-  readonly _content?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt;
+  readonly _content?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst;
+  readonly _public_field_definition_static_mods?: PublicFieldDefinitionStaticMods;
+  readonly _public_field_definition_abstract_first?: PublicFieldDefinitionAbstractFirst;
+  readonly _public_field_definition_readonly_first?: PublicFieldDefinitionReadonlyFirst;
+  readonly _accessor_marker?: boolean;
   readonly _name: PropertyName;
   readonly _optionality_marker?: number;
   readonly _type?: TypeAnnotation;
   readonly _value?: Expression;
   readonly __inputHints__?: {
+    readonly accessor_marker?: BooleanKeyword<"accessor">;
     readonly optionality_marker?: KindEnum<"?" | "!", TSKindId.Qmark | TSKindId.Bang>;
   };
   decorators(): readonly (Decorator)[];
-  content(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt | undefined;
+  content(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | undefined;
+  publicFieldDefinitionStaticMods(): PublicFieldDefinitionStaticMods | undefined;
+  publicFieldDefinitionAbstractFirst(): PublicFieldDefinitionAbstractFirst | undefined;
+  publicFieldDefinitionReadonlyFirst(): PublicFieldDefinitionReadonlyFirst | undefined;
+  accessorMarker(): boolean | undefined;
   name(): PropertyName;
   optionalityMarker(): number | undefined;
   type(): TypeAnnotation | undefined;
@@ -4294,10 +4207,8 @@ export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
 
 // Tree types
-export interface AmbientDeclarationDeclarationTree extends AnyTreeNode { readonly type: "_ambient_declaration_declaration"; }
 export interface AmbientDeclarationGlobalTree extends AnyTreeNode { readonly type: "_ambient_declaration_global"; }
 export interface AmbientDeclarationModuleTree extends AnyTreeNode { readonly type: "_ambient_declaration_module"; }
-export interface ArrowFunctionUCallSignatureTree extends AnyTreeNode { readonly type: "_arrow_function__call_signature"; }
 export interface ArrowFunctionParameterTree extends AnyTreeNode { readonly type: "_arrow_function_parameter"; }
 export interface CallExpressionCallTree extends AnyTreeNode { readonly type: "_call_expression_call"; }
 export interface CallExpressionMemberTree extends AnyTreeNode { readonly type: "_call_expression_member"; }
@@ -4308,7 +4219,6 @@ export interface ClassBodyMemberTree extends AnyTreeNode { readonly type: "_clas
 export interface ClassBodyMethodTree extends AnyTreeNode { readonly type: "_class_body_method"; }
 export interface ClassBodyMethodSigTree extends AnyTreeNode { readonly type: "_class_body_method_sig"; }
 export interface ClassHeritageExtendsClauseTree extends AnyTreeNode { readonly type: "_class_heritage_extends_clause"; }
-export interface ClassHeritageImplementsClauseTree extends AnyTreeNode { readonly type: "_class_heritage_implements_clause"; }
 export interface EnumBodyOptional1Tree extends AnyTreeNode { readonly type: "_enum_body_optional1"; }
 export interface ExportSpecifierOptional1Tree extends AnyTreeNode { readonly type: "_export_specifier_optional1"; }
 export interface ExportStatementDefaultTree extends AnyTreeNode { readonly type: "_export_statement_default"; }
@@ -4330,12 +4240,8 @@ export interface ForHeaderVarKindTree extends AnyTreeNode { readonly type: "_for
 export interface FromClauseTree extends AnyTreeNode { readonly type: "_from_clause"; }
 export interface ImportClauseDefaultImportTree extends AnyTreeNode { readonly type: "_import_clause_default_import"; }
 export interface _ImportClauseGroup1Tree extends AnyTreeNode { readonly type: "_import_clause_group1"; }
-export interface ImportClauseNamedImportsTree extends AnyTreeNode { readonly type: "_import_clause_named_imports"; }
-export interface ImportClauseNamespaceImportTree extends AnyTreeNode { readonly type: "_import_clause_namespace_import"; }
 export interface ImportSpecifierAsTree extends AnyTreeNode { readonly type: "_import_specifier_as"; }
-export interface ImportSpecifierNameTree extends AnyTreeNode { readonly type: "_import_specifier_name"; }
 export interface IndexSignatureColonTree extends AnyTreeNode { readonly type: "_index_signature_colon"; }
-export interface IndexSignatureMappedTypeClauseTree extends AnyTreeNode { readonly type: "_index_signature_mapped_type_clause"; }
 export interface IndexSignatureOptional1Tree extends AnyTreeNode { readonly type: "_index_signature_optional1"; }
 export interface InferTypeOptional1Tree extends AnyTreeNode { readonly type: "_infer_type_optional1"; }
 export interface InitializerTree extends AnyTreeNode { readonly type: "_initializer"; }
@@ -4348,11 +4254,9 @@ export interface _ModuleTree extends AnyTreeNode { readonly type: "_module"; }
 export interface _NumberTree extends AnyTreeNode { readonly type: "_number"; }
 export interface ObjectTypeOptional1Tree extends AnyTreeNode { readonly type: "_object_type_optional1"; }
 export interface ParameterNameTree extends AnyTreeNode { readonly type: "_parameter_name"; }
-export interface ParenthesizedExpressionSequenceTree extends AnyTreeNode { readonly type: "_parenthesized_expression_sequence"; }
 export interface ParenthesizedExpressionTypedTree extends AnyTreeNode { readonly type: "_parenthesized_expression_typed"; }
 export interface PublicFieldDefinitionAbstractFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_abstract_first"; }
 export interface PublicFieldDefinitionAccessFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_access_first"; }
-export interface PublicFieldDefinitionAccessorOptTree extends AnyTreeNode { readonly type: "_public_field_definition_accessor_opt"; }
 export interface PublicFieldDefinitionDeclareFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_declare_first"; }
 export interface PublicFieldDefinitionReadonlyFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_readonly_first"; }
 export interface PublicFieldDefinitionStaticModsTree extends AnyTreeNode { readonly type: "_public_field_definition_static_mods"; }
@@ -4925,10 +4829,8 @@ export type OptionalChain = Terminal<TSKindId.OptionalChain>;
 export interface OptionalChainTree extends AnyTreeNode { readonly type: "optional_chain"; }
 
 export type TypescriptNode =
-  | AmbientDeclarationDeclaration
   | AmbientDeclarationGlobal
   | AmbientDeclarationModule
-  | ArrowFunctionUCallSignature
   | ArrowFunctionParameter
   | CallExpressionCall
   | CallExpressionMember
@@ -4939,7 +4841,6 @@ export type TypescriptNode =
   | ClassBodyMethod
   | ClassBodyMethodSig
   | ClassHeritageExtendsClause
-  | ClassHeritageImplementsClause
   | EnumBodyOptional1
   | ExportSpecifierOptional1
   | ExportStatementDefault
@@ -4961,12 +4862,8 @@ export type TypescriptNode =
   | FromClause
   | ImportClauseDefaultImport
   | _ImportClauseGroup1
-  | ImportClauseNamedImports
-  | ImportClauseNamespaceImport
   | ImportSpecifierAs
-  | ImportSpecifierName
   | IndexSignatureColon
-  | IndexSignatureMappedTypeClause
   | IndexSignatureOptional1
   | InferTypeOptional1
   | Initializer
@@ -4979,11 +4876,9 @@ export type TypescriptNode =
   | _Number
   | ObjectTypeOptional1
   | ParameterName
-  | ParenthesizedExpressionSequence
   | ParenthesizedExpressionTyped
   | PublicFieldDefinitionAbstractFirst
   | PublicFieldDefinitionAccessFirst
-  | PublicFieldDefinitionAccessorOpt
   | PublicFieldDefinitionDeclareFirst
   | PublicFieldDefinitionReadonlyFirst
   | PublicFieldDefinitionStaticMods
@@ -5161,10 +5056,8 @@ export type TypescriptNode =
 ;
 
 export interface KindMap {
-  '_ambient_declaration_declaration': AmbientDeclarationDeclaration;
   '_ambient_declaration_global': AmbientDeclarationGlobal;
   '_ambient_declaration_module': AmbientDeclarationModule;
-  '_arrow_function__call_signature': ArrowFunctionUCallSignature;
   '_arrow_function_parameter': ArrowFunctionParameter;
   '_call_expression_call': CallExpressionCall;
   '_call_expression_member': CallExpressionMember;
@@ -5175,7 +5068,6 @@ export interface KindMap {
   '_class_body_method': ClassBodyMethod;
   '_class_body_method_sig': ClassBodyMethodSig;
   '_class_heritage_extends_clause': ClassHeritageExtendsClause;
-  '_class_heritage_implements_clause': ClassHeritageImplementsClause;
   '_enum_body_optional1': EnumBodyOptional1;
   '_export_specifier_optional1': ExportSpecifierOptional1;
   '_export_statement_default': ExportStatementDefault;
@@ -5197,12 +5089,8 @@ export interface KindMap {
   '_from_clause': FromClause;
   '_import_clause_default_import': ImportClauseDefaultImport;
   '_import_clause_group1': _ImportClauseGroup1;
-  '_import_clause_named_imports': ImportClauseNamedImports;
-  '_import_clause_namespace_import': ImportClauseNamespaceImport;
   '_import_specifier_as': ImportSpecifierAs;
-  '_import_specifier_name': ImportSpecifierName;
   '_index_signature_colon': IndexSignatureColon;
-  '_index_signature_mapped_type_clause': IndexSignatureMappedTypeClause;
   '_index_signature_optional1': IndexSignatureOptional1;
   '_infer_type_optional1': InferTypeOptional1;
   '_initializer': Initializer;
@@ -5215,11 +5103,9 @@ export interface KindMap {
   '_number': _Number;
   '_object_type_optional1': ObjectTypeOptional1;
   '_parameter_name': ParameterName;
-  '_parenthesized_expression_sequence': ParenthesizedExpressionSequence;
   '_parenthesized_expression_typed': ParenthesizedExpressionTyped;
   '_public_field_definition_abstract_first': PublicFieldDefinitionAbstractFirst;
   '_public_field_definition_access_first': PublicFieldDefinitionAccessFirst;
-  '_public_field_definition_accessor_opt': PublicFieldDefinitionAccessorOpt;
   '_public_field_definition_declare_first': PublicFieldDefinitionDeclareFirst;
   '_public_field_definition_readonly_first': PublicFieldDefinitionReadonlyFirst;
   '_public_field_definition_static_mods': PublicFieldDefinitionStaticMods;
@@ -5445,10 +5331,8 @@ export interface KindMap {
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
-export interface AmbientDeclarationDeclarationNs extends NodeNs<AmbientDeclarationDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AmbientDeclarationGlobalNs extends NodeNs<AmbientDeclarationGlobal, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AmbientDeclarationModuleNs extends NodeNs<AmbientDeclarationModule, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArrowFunctionUCallSignatureNs extends NodeNs<ArrowFunctionUCallSignature, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrowFunctionParameterNs extends NodeNs<ArrowFunctionParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface CallExpressionCallNs extends NodeNs<CallExpressionCall, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface CallExpressionMemberNs extends NodeNs<CallExpressionMember, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5459,7 +5343,6 @@ export interface ClassBodyMemberNs extends NodeNs<ClassBodyMember, LeafScalarMap
 export interface ClassBodyMethodNs extends NodeNs<ClassBodyMethod, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClassBodyMethodSigNs extends NodeNs<ClassBodyMethodSig, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClassHeritageExtendsClauseNs extends NodeNs<ClassHeritageExtendsClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ClassHeritageImplementsClauseNs extends NodeNs<ClassHeritageImplementsClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface EnumBodyOptional1Ns extends NodeNs<EnumBodyOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportSpecifierOptional1Ns extends NodeNs<ExportSpecifierOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportStatementDefaultNs extends NodeNs<ExportStatementDefault, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5481,12 +5364,8 @@ export interface ForHeaderVarKindNs extends NodeNs<ForHeaderVarKind, LeafScalarM
 export interface FromClauseNs extends NodeNs<FromClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportClauseDefaultImportNs extends NodeNs<ImportClauseDefaultImport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ImportClauseGroup1Ns extends NodeNs<_ImportClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ImportClauseNamedImportsNs extends NodeNs<ImportClauseNamedImports, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ImportClauseNamespaceImportNs extends NodeNs<ImportClauseNamespaceImport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportSpecifierAsNs extends NodeNs<ImportSpecifierAs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ImportSpecifierNameNs extends NodeNs<ImportSpecifierName, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface IndexSignatureColonNs extends NodeNs<IndexSignatureColon, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface IndexSignatureMappedTypeClauseNs extends NodeNs<IndexSignatureMappedTypeClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface IndexSignatureOptional1Ns extends NodeNs<IndexSignatureOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface InferTypeOptional1Ns extends NodeNs<InferTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface InitializerNs extends NodeNs<Initializer, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5499,11 +5378,9 @@ export interface _ModuleNs extends NodeNs<_Module, LeafScalarMap, LeafStringMap,
 export interface _NumberNs extends NodeNs<_Number, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ObjectTypeOptional1Ns extends NodeNs<ObjectTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParameterNameNs extends NodeNs<ParameterName, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ParenthesizedExpressionSequenceNs extends NodeNs<ParenthesizedExpressionSequence, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParenthesizedExpressionTypedNs extends NodeNs<ParenthesizedExpressionTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionAbstractFirstNs extends NodeNs<PublicFieldDefinitionAbstractFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionAccessFirstNs extends NodeNs<PublicFieldDefinitionAccessFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PublicFieldDefinitionAccessorOptNs extends NodeNs<PublicFieldDefinitionAccessorOpt, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionDeclareFirstNs extends NodeNs<PublicFieldDefinitionDeclareFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionReadonlyFirstNs extends NodeNs<PublicFieldDefinitionReadonlyFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionStaticModsNs extends NodeNs<PublicFieldDefinitionStaticMods, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5680,10 +5557,8 @@ export interface ImportClauseGroup1Ns extends NodeNs<ImportClauseGroup1, LeafSca
 export interface CatchClauseGroup1Ns extends NodeNs<CatchClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
-  '_ambient_declaration_declaration': AmbientDeclarationDeclarationNs;
   '_ambient_declaration_global': AmbientDeclarationGlobalNs;
   '_ambient_declaration_module': AmbientDeclarationModuleNs;
-  '_arrow_function__call_signature': ArrowFunctionUCallSignatureNs;
   '_arrow_function_parameter': ArrowFunctionParameterNs;
   '_call_expression_call': CallExpressionCallNs;
   '_call_expression_member': CallExpressionMemberNs;
@@ -5694,7 +5569,6 @@ export interface NamespaceMap {
   '_class_body_method': ClassBodyMethodNs;
   '_class_body_method_sig': ClassBodyMethodSigNs;
   '_class_heritage_extends_clause': ClassHeritageExtendsClauseNs;
-  '_class_heritage_implements_clause': ClassHeritageImplementsClauseNs;
   '_enum_body_optional1': EnumBodyOptional1Ns;
   '_export_specifier_optional1': ExportSpecifierOptional1Ns;
   '_export_statement_default': ExportStatementDefaultNs;
@@ -5716,12 +5590,8 @@ export interface NamespaceMap {
   '_from_clause': FromClauseNs;
   '_import_clause_default_import': ImportClauseDefaultImportNs;
   '_import_clause_group1': _ImportClauseGroup1Ns;
-  '_import_clause_named_imports': ImportClauseNamedImportsNs;
-  '_import_clause_namespace_import': ImportClauseNamespaceImportNs;
   '_import_specifier_as': ImportSpecifierAsNs;
-  '_import_specifier_name': ImportSpecifierNameNs;
   '_index_signature_colon': IndexSignatureColonNs;
-  '_index_signature_mapped_type_clause': IndexSignatureMappedTypeClauseNs;
   '_index_signature_optional1': IndexSignatureOptional1Ns;
   '_infer_type_optional1': InferTypeOptional1Ns;
   '_initializer': InitializerNs;
@@ -5734,11 +5604,9 @@ export interface NamespaceMap {
   '_number': _NumberNs;
   '_object_type_optional1': ObjectTypeOptional1Ns;
   '_parameter_name': ParameterNameNs;
-  '_parenthesized_expression_sequence': ParenthesizedExpressionSequenceNs;
   '_parenthesized_expression_typed': ParenthesizedExpressionTypedNs;
   '_public_field_definition_abstract_first': PublicFieldDefinitionAbstractFirstNs;
   '_public_field_definition_access_first': PublicFieldDefinitionAccessFirstNs;
-  '_public_field_definition_accessor_opt': PublicFieldDefinitionAccessorOptNs;
   '_public_field_definition_declare_first': PublicFieldDefinitionDeclareFirstNs;
   '_public_field_definition_readonly_first': PublicFieldDefinitionReadonlyFirstNs;
   '_public_field_definition_static_mods': PublicFieldDefinitionStaticModsNs;
@@ -5922,13 +5790,6 @@ export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Namespace sugar — merges with each data interface so consumers can write
 // <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.
-export namespace AmbientDeclarationDeclaration {
-  export type Config = ConfigFor<'_ambient_declaration_declaration'>;
-  export type Fluent = FluentFor<'_ambient_declaration_declaration'>;
-  export type Loose = LooseFor<'_ambient_declaration_declaration'>;
-  export type Tree = TreeFor<'_ambient_declaration_declaration'>;
-  export type Kind = '_ambient_declaration_declaration';
-}
 export namespace AmbientDeclarationGlobal {
   export type Config = ConfigFor<'_ambient_declaration_global'>;
   export type Fluent = FluentFor<'_ambient_declaration_global'>;
@@ -5942,13 +5803,6 @@ export namespace AmbientDeclarationModule {
   export type Loose = LooseFor<'_ambient_declaration_module'>;
   export type Tree = TreeFor<'_ambient_declaration_module'>;
   export type Kind = '_ambient_declaration_module';
-}
-export namespace ArrowFunctionUCallSignature {
-  export type Config = ConfigFor<'_arrow_function__call_signature'>;
-  export type Fluent = FluentFor<'_arrow_function__call_signature'>;
-  export type Loose = LooseFor<'_arrow_function__call_signature'>;
-  export type Tree = TreeFor<'_arrow_function__call_signature'>;
-  export type Kind = '_arrow_function__call_signature';
 }
 export namespace ArrowFunctionParameter {
   export type Config = ConfigFor<'_arrow_function_parameter'>;
@@ -6019,13 +5873,6 @@ export namespace ClassHeritageExtendsClause {
   export type Loose = LooseFor<'_class_heritage_extends_clause'>;
   export type Tree = TreeFor<'_class_heritage_extends_clause'>;
   export type Kind = '_class_heritage_extends_clause';
-}
-export namespace ClassHeritageImplementsClause {
-  export type Config = ConfigFor<'_class_heritage_implements_clause'>;
-  export type Fluent = FluentFor<'_class_heritage_implements_clause'>;
-  export type Loose = LooseFor<'_class_heritage_implements_clause'>;
-  export type Tree = TreeFor<'_class_heritage_implements_clause'>;
-  export type Kind = '_class_heritage_implements_clause';
 }
 export namespace EnumBodyOptional1 {
   export type Config = ConfigFor<'_enum_body_optional1'>;
@@ -6174,20 +6021,6 @@ export namespace _ImportClauseGroup1 {
   export type Tree = TreeFor<'_import_clause_group1'>;
   export type Kind = '_import_clause_group1';
 }
-export namespace ImportClauseNamedImports {
-  export type Config = ConfigFor<'_import_clause_named_imports'>;
-  export type Fluent = FluentFor<'_import_clause_named_imports'>;
-  export type Loose = LooseFor<'_import_clause_named_imports'>;
-  export type Tree = TreeFor<'_import_clause_named_imports'>;
-  export type Kind = '_import_clause_named_imports';
-}
-export namespace ImportClauseNamespaceImport {
-  export type Config = ConfigFor<'_import_clause_namespace_import'>;
-  export type Fluent = FluentFor<'_import_clause_namespace_import'>;
-  export type Loose = LooseFor<'_import_clause_namespace_import'>;
-  export type Tree = TreeFor<'_import_clause_namespace_import'>;
-  export type Kind = '_import_clause_namespace_import';
-}
 export namespace ImportSpecifierAs {
   export type Config = ConfigFor<'_import_specifier_as'>;
   export type Fluent = FluentFor<'_import_specifier_as'>;
@@ -6195,26 +6028,12 @@ export namespace ImportSpecifierAs {
   export type Tree = TreeFor<'_import_specifier_as'>;
   export type Kind = '_import_specifier_as';
 }
-export namespace ImportSpecifierName {
-  export type Config = ConfigFor<'_import_specifier_name'>;
-  export type Fluent = FluentFor<'_import_specifier_name'>;
-  export type Loose = LooseFor<'_import_specifier_name'>;
-  export type Tree = TreeFor<'_import_specifier_name'>;
-  export type Kind = '_import_specifier_name';
-}
 export namespace IndexSignatureColon {
   export type Config = ConfigFor<'_index_signature_colon'>;
   export type Fluent = FluentFor<'_index_signature_colon'>;
   export type Loose = LooseFor<'_index_signature_colon'>;
   export type Tree = TreeFor<'_index_signature_colon'>;
   export type Kind = '_index_signature_colon';
-}
-export namespace IndexSignatureMappedTypeClause {
-  export type Config = ConfigFor<'_index_signature_mapped_type_clause'>;
-  export type Fluent = FluentFor<'_index_signature_mapped_type_clause'>;
-  export type Loose = LooseFor<'_index_signature_mapped_type_clause'>;
-  export type Tree = TreeFor<'_index_signature_mapped_type_clause'>;
-  export type Kind = '_index_signature_mapped_type_clause';
 }
 export namespace IndexSignatureOptional1 {
   export type Config = ConfigFor<'_index_signature_optional1'>;
@@ -6300,13 +6119,6 @@ export namespace ParameterName {
   export type Tree = TreeFor<'_parameter_name'>;
   export type Kind = '_parameter_name';
 }
-export namespace ParenthesizedExpressionSequence {
-  export type Config = ConfigFor<'_parenthesized_expression_sequence'>;
-  export type Fluent = FluentFor<'_parenthesized_expression_sequence'>;
-  export type Loose = LooseFor<'_parenthesized_expression_sequence'>;
-  export type Tree = TreeFor<'_parenthesized_expression_sequence'>;
-  export type Kind = '_parenthesized_expression_sequence';
-}
 export namespace ParenthesizedExpressionTyped {
   export type Config = ConfigFor<'_parenthesized_expression_typed'>;
   export type Fluent = FluentFor<'_parenthesized_expression_typed'>;
@@ -6327,13 +6139,6 @@ export namespace PublicFieldDefinitionAccessFirst {
   export type Loose = LooseFor<'_public_field_definition_access_first'>;
   export type Tree = TreeFor<'_public_field_definition_access_first'>;
   export type Kind = '_public_field_definition_access_first';
-}
-export namespace PublicFieldDefinitionAccessorOpt {
-  export type Config = ConfigFor<'_public_field_definition_accessor_opt'>;
-  export type Fluent = FluentFor<'_public_field_definition_accessor_opt'>;
-  export type Loose = LooseFor<'_public_field_definition_accessor_opt'>;
-  export type Tree = TreeFor<'_public_field_definition_accessor_opt'>;
-  export type Kind = '_public_field_definition_accessor_opt';
 }
 export namespace PublicFieldDefinitionDeclareFirst {
   export type Config = ConfigFor<'_public_field_definition_declare_first'>;

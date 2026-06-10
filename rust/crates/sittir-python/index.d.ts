@@ -297,9 +297,9 @@ export interface ComplexPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _real?: Box<AnyTransport>
-  _imaginary: PrimaryExpressionTransport
+  _imaginary: ComplexPatternImaginaryTransportSlot
   _operator: ComplexPatternOperatorEnum
-  _content: PrimaryExpressionTransport
+  _content: ComplexPatternContentTransportSlot
 }
 
 export interface ComprehensionClausesTransport {
@@ -357,7 +357,7 @@ export interface DecoratedDefinitionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _definition: Box<CompoundStatementTransport>
+  _definition: DecoratedDefinitionDefinitionTransportSlot
   _decorator: Array<DecoratorTransport>
 }
 
@@ -380,7 +380,7 @@ export interface DefaultParameterTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: PatternTransport
+  _name: DefaultParameterNameTransportSlot
   _value: ExpressionTransport
 }
 
@@ -415,7 +415,7 @@ export interface DictionarySplatPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: PatternTransport
+  _content: DictionarySplatPatternContentTransportSlot
 }
 
 export interface DictionarySplatTransport {
@@ -548,7 +548,7 @@ export interface ExecStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _code: PrimaryExpressionTransport
+  _code: ExecStatementCodeTransportSlot
   _in_clause?: Array<ExpressionTransport>
 }
 
@@ -903,7 +903,7 @@ export interface ListSplatPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: Box<PatternTransport>
+  _content: Box<ListSplatPatternContentTransportSlot>
 }
 
 export interface ListSplatTransport {
@@ -1165,7 +1165,7 @@ export interface SimplePatternNegativeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: PrimaryExpressionTransport
+  _content: SimplePatternNegativeContentTransportSlot
 }
 
 export interface SimpleStatementsTransport {
@@ -1368,7 +1368,7 @@ export interface TypedParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: TypeTransport
-  _content: Box<ParameterTransport>
+  _content: TypedParameterContentTransportSlot
 }
 
 export interface TypeParameterTransport {
@@ -1506,5 +1506,5 @@ export interface YieldTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Box<ExpressionsTransport>
+  _content?: Box<YieldContentTransportSlot>
 }

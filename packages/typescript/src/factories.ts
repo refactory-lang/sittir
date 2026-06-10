@@ -29,18 +29,6 @@ const _leafRe_unescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
 const _leafRe_unescapedSingleJsxStringFragment = /^(?:([^'&]|&[^#A-Za-z])+)/u;
 const _leafRe_unescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
 
-export function ambientDeclarationDeclaration(child: T.Declaration) {
-  const _declaration = child;
-  return withMethods({
-    $type: TSKindId.AmbientDeclarationDeclaration as const,
-    $source: 2 as const,
-    $named: true as const,
-    _declaration,
-    declaration() { return _declaration; },
-    $with: { $child: (v: T.Declaration) => ambientDeclarationDeclaration(v) },
-  }, methodsEngine);
-}
-
 export function _ambientDeclarationGlobal(config: T.AmbientDeclarationGlobal.Config) {
   const _body = config.body;
   return withMethods({
@@ -73,28 +61,6 @@ export function _ambientDeclarationModule(config: T.AmbientDeclarationModule.Con
       name: (value: T.Identifier) => _ambientDeclarationModule({ ...config, name: value }),
       type: (value: T.Type) => _ambientDeclarationModule({ ...config, type: value }),
       semicolon: (value?: T.Semicolon) => _ambientDeclarationModule({ ...config, semicolon: value }),
-    },
-  }, methodsEngine);
-}
-
-export function arrowFunctionUCallSignature(config: T.ArrowFunctionUCallSignature.Config) {
-  const _type_parameters = config.typeParameters;
-  const _parameters = config.parameters;
-  const _return_type = config.returnType;
-  return withMethods({
-    $type: TSKindId.ArrowFunctionUCallSignature as const,
-    $source: 2 as const,
-    $named: true as const,
-    _type_parameters,
-    _parameters,
-    _return_type,
-    typeParameters() { return _type_parameters; },
-    parameters() { return _parameters; },
-    returnType() { return _return_type; },
-    $with: {
-      typeParameters: (value?: T.TypeParameters) => arrowFunctionUCallSignature({ ...config, typeParameters: value }),
-      parameters: (value: T.FormalParameters) => arrowFunctionUCallSignature({ ...config, parameters: value }),
-      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => arrowFunctionUCallSignature({ ...config, returnType: value }),
     },
   }, methodsEngine);
 }
@@ -282,18 +248,6 @@ export function classHeritageExtendsClause(config: T.ClassHeritageExtendsClause.
       extendsClause: (value: T.ExtendsClause) => classHeritageExtendsClause({ ...config, extendsClause: value }),
       implementsClause: (value?: T.ImplementsClause) => classHeritageExtendsClause({ ...config, implementsClause: value }),
     },
-  }, methodsEngine);
-}
-
-export function classHeritageImplementsClause(child: T.ImplementsClause) {
-  const _implements_clause = child;
-  return withMethods({
-    $type: TSKindId.ClassHeritageImplementsClause as const,
-    $source: 2 as const,
-    $named: true as const,
-    _implements_clause,
-    implementsClause() { return _implements_clause; },
-    $with: { $child: (v: T.ImplementsClause) => classHeritageImplementsClause(v) },
   }, methodsEngine);
 }
 
@@ -630,30 +584,6 @@ export function _importClauseGroup1(child: (T.NamespaceImport | T.NamedImports))
   }, methodsEngine);
 }
 
-export function importClauseNamedImports(child: T.NamedImports) {
-  const _named_imports = child;
-  return withMethods({
-    $type: TSKindId.ImportClauseNamedImports as const,
-    $source: 2 as const,
-    $named: true as const,
-    _named_imports,
-    namedImports() { return _named_imports; },
-    $with: { $child: (v: T.NamedImports) => importClauseNamedImports(v) },
-  }, methodsEngine);
-}
-
-export function importClauseNamespaceImport(child: T.NamespaceImport) {
-  const _namespace_import = child;
-  return withMethods({
-    $type: TSKindId.ImportClauseNamespaceImport as const,
-    $source: 2 as const,
-    $named: true as const,
-    _namespace_import,
-    namespaceImport() { return _namespace_import; },
-    $with: { $child: (v: T.NamespaceImport) => importClauseNamespaceImport(v) },
-  }, methodsEngine);
-}
-
 export function _importSpecifierAs(config: T.ImportSpecifierAs.Config) {
   const _name = config.name;
   const _alias = config.alias;
@@ -668,20 +598,6 @@ export function _importSpecifierAs(config: T.ImportSpecifierAs.Config) {
     $with: {
       name: (value: T.ModuleExportName | T.Identifier) => _importSpecifierAs({ ...config, name: value }),
       alias: (value: T.ImportIdentifier) => _importSpecifierAs({ ...config, alias: value }),
-    },
-  }, methodsEngine);
-}
-
-export function importSpecifierName(config: T.ImportSpecifierName.Config) {
-  const _name = config.name;
-  return withMethods({
-    $type: TSKindId.ImportSpecifierName as const,
-    $source: 2 as const,
-    $named: true as const,
-    _name,
-    name() { return _name; },
-    $with: {
-      name: (value: T.ImportIdentifier) => importSpecifierName({ ...config, name: value }),
     },
   }, methodsEngine);
 }
@@ -701,18 +617,6 @@ export function _indexSignatureColon(config: T.IndexSignatureColon.Config) {
       name: (value: T.Identifier | T.ReservedIdentifier) => _indexSignatureColon({ ...config, name: value }),
       indexType: (value: T.Type) => _indexSignatureColon({ ...config, indexType: value }),
     },
-  }, methodsEngine);
-}
-
-export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
-  const _mapped_type_clause = child;
-  return withMethods({
-    $type: TSKindId.IndexSignatureMappedTypeClause as const,
-    $source: 2 as const,
-    $named: true as const,
-    _mapped_type_clause,
-    mappedTypeClause() { return _mapped_type_clause; },
-    $with: { $child: (v: T.MappedTypeClause) => indexSignatureMappedTypeClause(v) },
   }, methodsEngine);
 }
 
@@ -796,18 +700,6 @@ export function _parameterName(config: T.ParameterName.Config) {
   }, methodsEngine);
 }
 
-export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
-  const _sequence_expression = child;
-  return withMethods({
-    $type: TSKindId.ParenthesizedExpressionSequence as const,
-    $source: 2 as const,
-    $named: true as const,
-    _sequence_expression,
-    sequenceExpression() { return _sequence_expression; },
-    $with: { $child: (v: T.SequenceExpression) => parenthesizedExpressionSequence(v) },
-  }, methodsEngine);
-}
-
 export function _parenthesizedExpressionTyped(config: T.ParenthesizedExpressionTyped.Config) {
   const _expression = config.expression;
   const _type = config.type;
@@ -857,19 +749,6 @@ export function _publicFieldDefinitionAccessFirst(config: T.PublicFieldDefinitio
     $with: {
       accessibilityModifier: (value: NonNullable<Parameters<typeof _publicFieldDefinitionAccessFirst>[0]>['accessibilityModifier']) => _publicFieldDefinitionAccessFirst({ ...config, accessibilityModifier: value }),
       declareMarker: (value?: NonNullable<Parameters<typeof _publicFieldDefinitionAccessFirst>[0]>['declareMarker']) => _publicFieldDefinitionAccessFirst({ ...config, declareMarker: value }),
-    },
-  }, methodsEngine);
-}
-
-export function publicFieldDefinitionAccessorOpt(_config?: T.PublicFieldDefinitionAccessorOpt.Config) {
-  const _accessor_marker = coerceKindEnumStorage("accessor" as const, [["accessor", TSKindId.Accessor] as const]);
-  return withMethods({
-    $type: TSKindId.PublicFieldDefinitionAccessorOpt as const,
-    $source: 2 as const,
-    $named: true as const,
-    _accessor_marker,
-    accessorMarker() { return _accessor_marker; },
-    $with: {
     },
   }, methodsEngine);
 }
@@ -1177,7 +1056,7 @@ export function addingTypeAnnotation(type: T.AddingTypeAnnotation.Config['type']
   }, methodsEngine);
 }
 
-export function ambientDeclaration(child: (T.AmbientDeclarationDeclaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule)) {
+export function ambientDeclaration(child: (T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.AmbientDeclaration as const,
@@ -1185,7 +1064,7 @@ export function ambientDeclaration(child: (T.AmbientDeclarationDeclaration | T.A
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.AmbientDeclarationDeclaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule)) => ambientDeclaration(v) },
+    $with: { $child: (v: (T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule)) => ambientDeclaration(v) },
   }, methodsEngine);
 }
 
@@ -1247,21 +1126,33 @@ export function arrayType(primaryType: T.ArrayType.Config['primaryType']) {
 
 export function arrowFunction(config: T.ArrowFunction.Config) {
   const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-  const _content = config.content;
+  const _arrow_function_parameter = config.arrowFunctionParameter;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
   const _body = config.body;
   return withMethods({
     $type: TSKindId.ArrowFunction as const,
     $source: 2 as const,
     $named: true as const,
     _async_marker,
-    _content,
+    _arrow_function_parameter,
+    _type_parameters,
+    _parameters,
+    _return_type,
     _body,
     asyncMarker() { return _async_marker; },
-    content() { return _content; },
+    arrowFunctionParameter() { return _arrow_function_parameter; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
     body() { return _body; },
     $with: {
       asyncMarker: (value?: NonNullable<Parameters<typeof arrowFunction>[0]>['asyncMarker']) => arrowFunction({ ...config, asyncMarker: value }),
-      content: (value: T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature) => arrowFunction({ ...config, content: value }),
+      arrowFunctionParameter: (value?: T.ArrowFunctionParameter) => arrowFunction({ ...config, arrowFunctionParameter: value }),
+      typeParameters: (value?: T.TypeParameters) => arrowFunction({ ...config, typeParameters: value }),
+      parameters: (value?: T.FormalParameters) => arrowFunction({ ...config, parameters: value }),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => arrowFunction({ ...config, returnType: value }),
       body: (value: T.Expression | T.StatementBlock) => arrowFunction({ ...config, body: value }),
     },
   }, methodsEngine);
@@ -1551,7 +1442,7 @@ export function classDeclaration(config: T.ClassDeclaration.Config) {
   }, methodsEngine);
 }
 
-export function classHeritage(child: (T.ClassHeritageExtendsClause | T.ClassHeritageImplementsClause)) {
+export function classHeritage(child: (T.ClassHeritageExtendsClause | T.ImplementsClause)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.ClassHeritage as const,
@@ -1559,7 +1450,7 @@ export function classHeritage(child: (T.ClassHeritageExtendsClause | T.ClassHeri
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.ClassHeritageExtendsClause | T.ClassHeritageImplementsClause)) => classHeritage(v) },
+    $with: { $child: (v: (T.ClassHeritageExtendsClause | T.ImplementsClause)) => classHeritage(v) },
   }, methodsEngine);
 }
 
@@ -2422,7 +2313,7 @@ export function importAttribute(object: T.ImportAttribute.Config['object']) {
   }, methodsEngine);
 }
 
-export function importClause(child: (T.ImportClauseNamespaceImport | T.ImportClauseNamedImports | T.ImportClauseDefaultImport)) {
+export function importClause(child: (T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.ImportClause as const,
@@ -2430,7 +2321,7 @@ export function importClause(child: (T.ImportClauseNamespaceImport | T.ImportCla
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.ImportClauseNamespaceImport | T.ImportClauseNamedImports | T.ImportClauseDefaultImport)) => importClause(v) },
+    $with: { $child: (v: (T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport)) => importClause(v) },
   }, methodsEngine);
 }
 
@@ -2465,7 +2356,7 @@ export function importSpecifier(config: T.ImportSpecifier.Config) {
     content() { return _content; },
     $with: {
       importKind: (value?: NonNullable<Parameters<typeof importSpecifier>[0]>['importKind']) => importSpecifier({ ...config, importKind: value }),
-      content: (value: T.ImportSpecifierName | T.ImportSpecifierAs) => importSpecifier({ ...config, content: value }),
+      content: (value: T.ImportIdentifier | T.ImportSpecifierAs) => importSpecifier({ ...config, content: value }),
     },
   }, methodsEngine);
 }
@@ -2512,7 +2403,7 @@ export function indexSignature(config: T.IndexSignature.Config) {
     type() { return _type; },
     $with: {
       sign: (value?: NonNullable<Parameters<typeof indexSignature>[0]>['sign']) => indexSignature({ ...config, sign: value }),
-      content: (value: T.IndexSignatureColon | T.IndexSignatureMappedTypeClause) => indexSignature({ ...config, content: value }),
+      content: (value: T.IndexSignatureColon | T.MappedTypeClause) => indexSignature({ ...config, content: value }),
       type: (value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => indexSignature({ ...config, type: value }),
     },
   }, methodsEngine);
@@ -3300,7 +3191,7 @@ export function pairPattern(config: T.PairPattern.Config) {
   }, methodsEngine);
 }
 
-export function parenthesizedExpression(child: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
+export function parenthesizedExpression(child: (T.ParenthesizedExpressionTyped | T.SequenceExpression | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.ParenthesizedExpression as const,
@@ -3308,7 +3199,7 @@ export function parenthesizedExpression(child: (T.ParenthesizedExpressionTyped |
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.ParenthesizedExpressionTyped | T.ParenthesizedExpressionSequence | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => parenthesizedExpression(v) },
+    $with: { $child: (v: (T.ParenthesizedExpressionTyped | T.SequenceExpression | T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => parenthesizedExpression(v) },
   }, methodsEngine);
 }
 
@@ -3404,6 +3295,10 @@ export function propertySignature(config: T.PropertySignature.Config) {
 export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   const _decorator = config.decorator;
   const _content = config.content;
+  const _public_field_definition_static_mods = config.publicFieldDefinitionStaticMods;
+  const _public_field_definition_abstract_first = config.publicFieldDefinitionAbstractFirst;
+  const _public_field_definition_readonly_first = config.publicFieldDefinitionReadonlyFirst;
+  const _accessor_marker = coerceBooleanKeywordStorage(config.accessorMarker);
   const _name = config.name;
   const _optionality_marker = coerceKindEnumStorage(config.optionalityMarker, [["?", TSKindId.Qmark] as const, ["!", TSKindId.Bang] as const]);
   const _type = config.type;
@@ -3414,19 +3309,31 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
     $named: true as const,
     _decorator,
     _content,
+    _public_field_definition_static_mods,
+    _public_field_definition_abstract_first,
+    _public_field_definition_readonly_first,
+    _accessor_marker,
     _name,
     _optionality_marker,
     _type,
     _value,
     decorators() { return _decorator; },
     content() { return _content; },
+    publicFieldDefinitionStaticMods() { return _public_field_definition_static_mods; },
+    publicFieldDefinitionAbstractFirst() { return _public_field_definition_abstract_first; },
+    publicFieldDefinitionReadonlyFirst() { return _public_field_definition_readonly_first; },
+    accessorMarker() { return _accessor_marker; },
     name() { return _name; },
     optionalityMarker() { return _optionality_marker; },
     type() { return _type; },
     value() { return _value; },
     $with: {
       decorators: (...values: T.Decorator[]) => publicFieldDefinition({ ...config, decorator: values }),
-      content: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt) => publicFieldDefinition({ ...config, content: value }),
+      content: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst) => publicFieldDefinition({ ...config, content: value }),
+      publicFieldDefinitionStaticMods: (value?: T.PublicFieldDefinitionStaticMods) => publicFieldDefinition({ ...config, publicFieldDefinitionStaticMods: value }),
+      publicFieldDefinitionAbstractFirst: (value?: T.PublicFieldDefinitionAbstractFirst) => publicFieldDefinition({ ...config, publicFieldDefinitionAbstractFirst: value }),
+      publicFieldDefinitionReadonlyFirst: (value?: T.PublicFieldDefinitionReadonlyFirst) => publicFieldDefinition({ ...config, publicFieldDefinitionReadonlyFirst: value }),
+      accessorMarker: (value?: NonNullable<Parameters<typeof publicFieldDefinition>[0]>['accessorMarker']) => publicFieldDefinition({ ...config, accessorMarker: value }),
       name: (value: T.PropertyName) => publicFieldDefinition({ ...config, name: value }),
       optionalityMarker: (value?: NonNullable<Parameters<typeof publicFieldDefinition>[0]>['optionalityMarker']) => publicFieldDefinition({ ...config, optionalityMarker: value }),
       type: (value?: T.TypeAnnotation) => publicFieldDefinition({ ...config, type: value }),
@@ -4355,10 +4262,8 @@ export function errorRecovery(text: string) {
 }
 
 export type FluentKindMap = {
-  "_ambient_declaration_declaration": FluentNode<"_ambient_declaration_declaration", T.AmbientDeclarationDeclaration.Config>;
   "_ambient_declaration_global": T.AmbientDeclarationGlobal;
   "_ambient_declaration_module": T.AmbientDeclarationModule;
-  "_arrow_function__call_signature": FluentNode<"_arrow_function__call_signature", T.ArrowFunctionUCallSignature.Config>;
   "_arrow_function_parameter": FluentNode<"_arrow_function_parameter", T.ArrowFunctionParameter.Config>;
   "_call_expression_call": T.CallExpressionCall;
   "_call_expression_member": T.CallExpressionMember;
@@ -4369,7 +4274,6 @@ export type FluentKindMap = {
   "_class_body_method": T.ClassBodyMethod;
   "_class_body_method_sig": FluentNode<"_class_body_method_sig", T.ClassBodyMethodSig.Config>;
   "_class_heritage_extends_clause": FluentNode<"_class_heritage_extends_clause", T.ClassHeritageExtendsClause.Config>;
-  "_class_heritage_implements_clause": FluentNode<"_class_heritage_implements_clause", T.ClassHeritageImplementsClause.Config>;
   "_export_statement_default": FluentNode<"_export_statement_default", T.ExportStatementDefault.Config>;
   "_export_statement_default_decl_arm": T.ExportStatementDefaultDeclArm;
   "_export_statement_default_decl_arm_default_kw": T.ExportStatementDefaultDeclArmDefaultKw;
@@ -4389,21 +4293,15 @@ export type FluentKindMap = {
   "_from_clause": T.FromClause;
   "_import_clause_default_import": FluentNode<"_import_clause_default_import", T.ImportClauseDefaultImport.Config>;
   "_import_clause_group1": FluentNode<"_import_clause_group1", T._ImportClauseGroup1.Config>;
-  "_import_clause_named_imports": FluentNode<"_import_clause_named_imports", T.ImportClauseNamedImports.Config>;
-  "_import_clause_namespace_import": FluentNode<"_import_clause_namespace_import", T.ImportClauseNamespaceImport.Config>;
   "_import_specifier_as": T.ImportSpecifierAs;
-  "_import_specifier_name": FluentNode<"_import_specifier_name", T.ImportSpecifierName.Config>;
   "_index_signature_colon": T.IndexSignatureColon;
-  "_index_signature_mapped_type_clause": FluentNode<"_index_signature_mapped_type_clause", T.IndexSignatureMappedTypeClause.Config>;
   "_initializer": T.Initializer;
   "_module": T._Module;
   "_number": T._Number;
   "_parameter_name": T.ParameterName;
-  "_parenthesized_expression_sequence": FluentNode<"_parenthesized_expression_sequence", T.ParenthesizedExpressionSequence.Config>;
   "_parenthesized_expression_typed": T.ParenthesizedExpressionTyped;
   "_public_field_definition_abstract_first": T.PublicFieldDefinitionAbstractFirst;
   "_public_field_definition_access_first": T.PublicFieldDefinitionAccessFirst;
-  "_public_field_definition_accessor_opt": FluentNode<"_public_field_definition_accessor_opt", T.PublicFieldDefinitionAccessorOpt.Config>;
   "_public_field_definition_declare_first": FluentNode<"_public_field_definition_declare_first", T.PublicFieldDefinitionDeclareFirst.Config>;
   "_public_field_definition_readonly_first": T.PublicFieldDefinitionReadonlyFirst;
   "_public_field_definition_static_mods": T.PublicFieldDefinitionStaticMods;
@@ -4601,10 +4499,8 @@ export type FluentKindMap = {
 };
 
 export const _factoryMap = {
-  "_ambient_declaration_declaration": ambientDeclarationDeclaration,
   "_ambient_declaration_global": _ambientDeclarationGlobal,
   "_ambient_declaration_module": _ambientDeclarationModule,
-  "_arrow_function__call_signature": arrowFunctionUCallSignature,
   "_arrow_function_parameter": arrowFunctionParameter,
   "_call_expression_call": _callExpressionCall,
   "_call_expression_member": _callExpressionMember,
@@ -4615,7 +4511,6 @@ export const _factoryMap = {
   "_class_body_method": _classBodyMethod,
   "_class_body_method_sig": classBodyMethodSig,
   "_class_heritage_extends_clause": classHeritageExtendsClause,
-  "_class_heritage_implements_clause": classHeritageImplementsClause,
   "_export_statement_default": exportStatementDefault,
   "_export_statement_default_decl_arm": _exportStatementDefaultDeclArm,
   "_export_statement_default_decl_arm_default_kw": _exportStatementDefaultDeclArmDefaultKw,
@@ -4635,21 +4530,15 @@ export const _factoryMap = {
   "_from_clause": _fromClause,
   "_import_clause_default_import": importClauseDefaultImport,
   "_import_clause_group1": _importClauseGroup1,
-  "_import_clause_named_imports": importClauseNamedImports,
-  "_import_clause_namespace_import": importClauseNamespaceImport,
   "_import_specifier_as": _importSpecifierAs,
-  "_import_specifier_name": importSpecifierName,
   "_index_signature_colon": _indexSignatureColon,
-  "_index_signature_mapped_type_clause": indexSignatureMappedTypeClause,
   "_initializer": _initializer,
   "_module": _module,
   "_number": _number,
   "_parameter_name": _parameterName,
-  "_parenthesized_expression_sequence": parenthesizedExpressionSequence,
   "_parenthesized_expression_typed": _parenthesizedExpressionTyped,
   "_public_field_definition_abstract_first": _publicFieldDefinitionAbstractFirst,
   "_public_field_definition_access_first": _publicFieldDefinitionAccessFirst,
-  "_public_field_definition_accessor_opt": publicFieldDefinitionAccessorOpt,
   "_public_field_definition_declare_first": publicFieldDefinitionDeclareFirst,
   "_public_field_definition_readonly_first": _publicFieldDefinitionReadonlyFirst,
   "_public_field_definition_static_mods": _publicFieldDefinitionStaticMods,

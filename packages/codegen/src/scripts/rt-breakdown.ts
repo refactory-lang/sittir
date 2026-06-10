@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 
 for (const g of ['rust', 'python', 'typescript']) {
 	const tp = resolve(new URL('../../../..', import.meta.url).pathname, `packages/${g}/templates`);
-	const r = await validateReadRenderParse(g, tp);
+	const r = await validateReadRenderParse(g, tp, { backend: 'native' });
 	console.log(
 		g,
 		'pass=',

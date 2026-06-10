@@ -59,6 +59,13 @@ export interface ExtractResult {
  * Run the RT validator in fixture-capture mode. Returns the full
  * fixture list plus kind-coverage metadata.
  *
+ * The wrapped-tree candidate walk requires a NATIVE handle, so fixture
+ * extraction runs as a POST-BUILD pass (see `runCodegen`: invoked after the
+ * grammar's napi `.node` is rebuilt, never before) and renders through the
+ * freshly built production engine via `backend: 'native'`. Calling this
+ * before the rebuild would load a stale/half-built engine (SIGSEGV) or — on
+ * the JS backend — collect zero candidates and emit an empty fixture set.
+ *
  * @throws if a grammar's FR-011 required kinds aren't covered.
  */
 export async function extractParityFixtures(grammar: string, templatesPath: string): Promise<ExtractResult> {
@@ -69,6 +76,12 @@ export async function extractParityFixtures(grammar: string, templatesPath: stri
 	let roundTripCount = 0;
 
 	await validateReadRenderParse(grammar, templatesPath, {
+		backend: 'native',
+		// Deep materialization: parity fixtures capture FULL structural
+		// renders (every slot populated), not stub-bearing shallow data whose
+		// renders collapse to the $text fast-path. Deep also covers more
+		// kinds (rust: 900 fixtures / 69 kinds vs 277 / 41 shallow).
+		recursive: true,
 		onFixture: (fx) => {
 			fixtures.push(fx);
 			if (fx.kind === 'render') renderCount++;

@@ -2174,6 +2174,21 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
  * @param parentKind - Parent polymorph kind, used for warn attribution.
  * @returns The resolved variant name, or `undefined` if no form matched.
  */
+
+/**
+ * De-dupe set for the "no variant matched" diagnostics below. Variant
+ * resolution failure is a per-KIND fact (e.g. `expression_statement`
+ * whose base form legitimately matches no specialized variant), but the
+ * resolver runs once per NODE — so an un-guarded `console.warn` floods
+ * the validator output with hundreds of identical lines. Key by
+ * `${source}:${parentKind}` and warn once per process; the first
+ * occurrence still carries the full structural detail. Authoritative
+ * diagnosis of genuinely-unresolvable polymorphs belongs at codegen
+ * (dispatch is by child kind only — no runtime structural recovery),
+ * so this stays a one-shot heads-up, not a per-instance signal.
+ */
+const seenPolymorphResolveWarnings = new Set<string>();
+
 function inferPolymorphVariant(
 	desc: PolymorphVariantDescriptor,
 	data: ReadNodeLike,
@@ -2296,13 +2311,17 @@ function inferFromChildKind(
 			)
 		)
 	];
-	console.warn(
-		`[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
-			(cstNodeKindHint && cstNodeKindHint !== kind ? `CST node '${cstNodeKindHint}'. ` : '') +
-			(distinctHints.length > 0 ? `CST named children [${distinctHints.join(', ')}]. ` : '') +
-			(firstNamedChildKindHint && firstNamedChildKindHint !== kind ? `CST hint '${firstNamedChildKindHint}'. ` : '') +
-			`Known: [${Object.keys(childKind).join(', ')}]`
-	);
+	const warnKey = `override:${parentKind}`;
+	if (!seenPolymorphResolveWarnings.has(warnKey)) {
+		seenPolymorphResolveWarnings.add(warnKey);
+		console.warn(
+			`[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
+				(cstNodeKindHint && cstNodeKindHint !== kind ? `CST node '${cstNodeKindHint}'. ` : '') +
+				(distinctHints.length > 0 ? `CST named children [${distinctHints.join(', ')}]. ` : '') +
+				(firstNamedChildKindHint && firstNamedChildKindHint !== kind ? `CST hint '${firstNamedChildKindHint}'. ` : '') +
+				`Known: [${Object.keys(childKind).join(', ')}] (further occurrences suppressed)`
+		);
+	}
 	return undefined;
 }
 
@@ -2476,10 +2495,14 @@ function inferFromFieldPresence(
 	for (const [formName, fields] of entries) {
 		if (fields.every((f) => f in derivedConfig)) return formName;
 	}
-	console.warn(
-		`[nodeToConfig] polymorph '${parentKind}' (source=promoted): no variant matched derived-config keys [${Object.keys(derivedConfig).join(', ')}]. ` +
-			`Forms: ${entries.map(([n, f]) => `${n}=[${f.join(',')}]`).join('; ')}`
-	);
+	const warnKey = `promoted:${parentKind}`;
+	if (!seenPolymorphResolveWarnings.has(warnKey)) {
+		seenPolymorphResolveWarnings.add(warnKey);
+		console.warn(
+			`[nodeToConfig] polymorph '${parentKind}' (source=promoted): no variant matched derived-config keys [${Object.keys(derivedConfig).join(', ')}]. ` +
+				`Forms: ${entries.map(([n, f]) => `${n}=[${f.join(',')}]`).join('; ')} (further occurrences suppressed)`
+		);
+	}
 	return undefined;
 }
 
