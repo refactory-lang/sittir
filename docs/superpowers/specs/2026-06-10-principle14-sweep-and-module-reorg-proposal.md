@@ -1,0 +1,148 @@
+# Principle #14 Sweep + Module Reorg — Proposal (execution rows for review)
+
+> **Status: PROPOSAL — not authorized for implementation.** Companion to the
+> compiler-simplification design (`2026-05-22-compiler-simplification-design.md`,
+> §7.7 + Principle #14) and the master plan
+> (`2026-05-26-compiler-simplification-master-plan.md`). This doc proposes the
+> follow-on wave that the design already specifies but PR-H never executed:
+> the repo-wide `<operation><ObjectType>(target, ctx)` sweep, the module
+> consolidation, and the guard that keeps both from re-deviating. It invents
+> NO new conventions — every rule referenced below already exists in §7.7 /
+> emitter-pattern-consistency / the master-plan execution rules.
+
+---
+
+## 1. The gap, verified (2026-06-10, `origin/master` @ 8c58bc8f)
+
+**(A) #14 adoption is ~2%.** PR-H (#54) landed `TransformCtx` /
+`NormalizeCtx` (+`AssembleCtx` in assemble.ts) and renamed the phase files,
+but the call-site sweep never happened:
+
+| module | fns taking a `*Ctx` / total fns | note |
+|---|---|---|
+| `compiler/node-map.ts` | **0 / 93** | the model container — highest-traffic module |
+| `compiler/evaluate.ts` | **0 / 66** | |
+| `compiler/link.ts` | **1 / 60** | |
+| `compiler/simplify.ts` | **0 / 36** | `SimplifyCtx` isn't even declared yet (§7.7 specifies it) |
+| `compiler/assemble.ts` | **1 / 31** | `AssembleCtx` declared, one consumer |
+| `compiler/normalize.ts` | **4 / 26** | the PR-H beachhead |
+| `compiler/transforms.ts` | 0 / 4 | the 4 ops de-scattered by PR-O M1 take `(rule, rules, …)` loose args |
+
+The recurring loose argument is exactly what `TransformCtx` absorbs: `rules`
+appears as a loose parameter in **31** compiler function signatures (plus
+`nodeMap` ×3, `kindEntries` ×2, `seen`/`visited`/`depth` traversal state).
+Lead's independent count: ~41 fns with 3+ loose params. Root cause of the
+drift: **PR-H's gate proved the new path compiles but never required old
+call sites to convert, and nothing fails when a new fn is added in the old
+shape.** (§3 fixes that first.)
+
+**(B) Module shape.** Whales: `emitters/render-module.ts` 4845,
+`compiler/node-map.ts` 3937, `compiler/evaluate.ts` 2474, `compiler/link.ts`
+2310, `emitters/from.ts` 2263, `emitters/factories.ts` 2070,
+`emitters/templates.ts` 1871. Scatter: compiler/ 43 files (19 under 150
+lines), emitters/ 35 files (15 under 150 lines), dsl/ 11, grammar-shapes/ 6.
+PR-O M1 de-scattered 4 of 8 shared ops into `transforms.ts` and **deferred 4
+on a real cycle hazard** (`collapseSeq`/`inlineRefs`/`canonicalizeSeqOfLeaves`/
+`deleteWrapper` are thin wrappers over private recursive helpers that would
+drag `transforms.ts → simplify.ts` imports). The sweep dissolves that hazard
+(§2, row R3): once the recursive helpers take `(target, ctx)` they no longer
+close over module-local state, so helper clusters move WITH their wrappers.
+
+**Explicit scope exclusion:** emitters do NOT take phase ctxs. The emitter
+convention is separate and already enforced by review
+(`feedback_emitter_pattern_consistency`: iterate `nodeMap.nodes`, dispatch on
+`modelType`, own ALL string generation). The #14 sweep is the COMPILER
+pipeline (normalize/simplify/evaluate/link/assemble/node-map). Emitters
+appear only in the module-reorg rows.
+
+---
+
+## 2. Proposed PR rows (master-plan format)
+
+Execution rules: identical to the master plan — branch off `origin/master`;
+gate **`pnpm validate:native` HOLD for all 3 grammars** (pure refactor —
+counts MUST hold exactly, deep `read-render-parsePass`/AST quoted); full test
+suite; renames via LSP tooling not text edits
+(`feedback_use_ts_lsp_for_moves`); rows touching `emitters/render-module.ts`
+additionally gate on **regen byte-identical** (the PR-O M1 gate) + an
+independent `cargo check --workspace --features napi-bindings`.
+
+| PR | Concern (1-liner) | Depends-on | Gate | Notes |
+|----|-------------------|-----------|------|-------|
+| **R0** | **Ratchet guard first**: `propose-14` conformance counter + committed baseline; pre-commit + CI fail on REGRESSION (count may only decrease) | — | counter self-test; zero behavior change | §3. Lands BEFORE any sweep so new code can't re-deviate while the sweep runs |
+| **R1** | **#14 sweep: `node-map.ts`** (0/93). Step 1: mechanical classification (getter / method / dead) emitted by the R0 tool; Step 2: pure node-self reads → class getters (per #14's getter-vs-method line); cross-node fns → `(target, ctx)` with `nodeMap` in ctx | R0 | validate:native HOLD + tests + ratchet ↓ | Highest traffic; many of the 93 are getter candidates, so the (target,ctx) count to convert is realistically ~40-60 |
+| **R2** | **#14 sweep: `evaluate.ts`** (0/66) + declare `EvaluateCtx` (extends the §7.7 pattern — the design's "`NormalizeCtx`, `SimplifyCtx`, `AssembleCtx`, …" ellipsis) folding the loose `rules` (31×) / `wordMatcher` args | R0 | same | evaluate is upstream of everything; converting it removes most of the loose-`rules` plumbing in one row |
+| **R3** | **#14 sweep: `simplify.ts` (0/36) + `normalize.ts` finish (4/26) + `transforms.ts` (0/4)**; declare `SimplifyCtx` per §7.7; **completes PR-O M1's deferred 4** — with helpers on `(target, ctx)` the wrapper+helper clusters move into `transforms.ts` without the import cycle | R0; absorbs PR-O M1 remainder (flag to user: M1-remainder closes here, not as its own row) | same + regen byte-identical | §7.7 CW6 is binding: `inField`-style recursion-LOCAL traversal state stays an explicit third parameter — do NOT stuff per-node traversal state into ctx |
+| **R4** | **#14 sweep: `link.ts` (1/60) + `assemble.ts` finish (1/31)**; `AssembleCtx` already declared — convert remaining call sites; fold `kindEntries` loose args | R1 (nodeMap getters land first — link/assemble consume them) | same | After R4 the ratchet baseline reaches ~0 for compiler/ |
+| **R5** | **Split `render-module.ts` (4845)** along its existing seams: transport emission (AnyTransport + supertype/per-slot enums + leaf impls + VerbatimTransport) → `render-transport-emit.ts`; typed dispatch + per-kind render fns → `render-dispatch-emit.ts`; libRs/hash/template-copy assembly stays in `render-module.ts` as the thin assembler | — (independent of R1-R4) | regen **byte-identical** ×3 grammars + cargo check + validate:native HOLD | Pure file move of emitter internals; no signature changes (emitters excluded from #14) |
+| **R6** | **Split `node-map.ts` (3937)**: the `NodeMap` container class + lookup surface stays; build/derivation passes (factory-map build, slot registration walks) → `node-map-build.ts` | R1 (sweep first so moved fns move in their FINAL shape — avoids double-touch) | validate:native HOLD + tests | Sequencing rationale: sweep-then-split moves each fn once |
+| **R7** | **De-scatter fold**: compiler/ + emitters/ files under ~150 lines with a single consumer fold into that consumer (or `transforms.ts` if shared); inventory emitted by the R0 tool as a report, fold list reviewed before execution | R3 | validate:native HOLD + tests | Evidence-based: 19+15 candidate files; expect ~half to fold (pass files like `lift-separators.ts` that ARE a phase stay) |
+
+**NOT proposed:** splitting `evaluate.ts`/`link.ts`/`from.ts`/`factories.ts`.
+evaluate/link are mid-strangler (PR-N, PR-S, PR-L still pending against
+them — splitting now creates rebase churn for in-flight rows); from/factories
+are single-emitter files that the emitter convention wants cohesive. Revisit
+after PR-L closes the strangler.
+
+**Collision notes for sequencing:** R3 absorbs the PR-O M1 remainder
+(explicitly flagged — user decides whether M1 stays a separate master-plan
+row). PR-N (enrich-widening) and PR-S (separator-canonical; its render half
+is PR-T, per #73) touch evaluate/normalize — R2/R3 should land either
+before PR-N/PR-S start or after they merge, not interleaved; suggest the
+master plan owner picks the slot when scheduling.
+
+---
+
+## 3. The guard (R0) — why the drift happened and how it becomes impossible
+
+Root cause: PR-H introduced the convention as an ADDITIVE path. Nothing
+distinguishes "not yet swept" from "newly written in the old shape", so the
+sweep debt silently grows. The fix is the repo's existing ratchet idiom
+(committed baseline + verifier that fails on increase — same shape as the
+manifest verifier wired into pre-commit):
+
+- **`packages/codegen/src/scripts/propose-14.ts`** — walks the six compiler
+  pipeline modules, classifies every exported+private function:
+  `conforming` (`(target, ctx: *Ctx)` or `(target, ctx, <recursion-local>)`
+  per CW6), `getter-candidate` (single param, pure node-self read),
+  `non-conforming` (anything else). Emits: (a) a count per module, (b) the
+  classification table (drives R1-R4's mechanical step), (c) exit non-zero
+  when any module's `non-conforming` count EXCEEDS the committed baseline
+  (`packages/codegen/.principle14-baseline.json`).
+- **Wiring:** pre-commit (next to `verify-manifests-cli.ts`) + the CI Build
+  job. Each sweep row lowers its module's baseline number in the same PR —
+  the ratchet only goes down.
+- **Name/diagnostic style:** `propose-14` mirrors the existing `propose-*`
+  diagnostic family (slot-grouping's `propose-promotion`, PR-L's
+  `propose-*` flips) — a REPORTING tool whose findings convert to hard
+  failures only via the ratchet, never a heuristic that drives behavior
+  (`feedback_metadata_not_behavior`).
+- **Out of scope for the guard:** lint-rule enforcement of the
+  `<operation><ObjectType>` NAME half. Naming needs semantic judgment
+  (operation vocabulary); the ratchet covers the signature half, review
+  covers naming, and the classification table makes naming drift visible.
+
+---
+
+## 4. Gate summary (applies to every row)
+
+1. `SITTIR_NATIVE_DEBUG=0 pnpm validate:native` — all 3 grammars; deep
+   `read-render-parsePass` + AST-match MUST equal the pre-PR baseline
+   exactly (pure refactor; any delta = stop and diagnose).
+2. Full test suite (`pnpm test`); tsgo error count must not increase over
+   the carried baseline.
+3. Rows touching `emitters/render-module.ts` (R5) or `transforms.ts` (R3):
+   regen byte-identical across all 3 grammars + independent
+   `cargo check --workspace --features napi-bindings`.
+4. R0's ratchet: every row decreases the baseline it touches; CI fails on
+   any increase, anywhere, from R0's landing onward.
+
+## 5. Verification appendix (how the §1 numbers were produced)
+
+Counts measured at `8c58bc8f` with
+`rg -c "^(export )?(async )?function …"` per module vs the same pattern
+constrained to `ctx: \w*Ctx` parameters; loose-arg recurrence via
+`rg -o "function \w+\([^)]*\b(rules|nodeMap|kindEntries|seen|visited|depth)\b"`.
+The R0 tool replaces these regex approximations with AST-level
+classification (ast-grep), which is also what makes the getter-vs-method
+split in R1 mechanical instead of judgment-per-function.
