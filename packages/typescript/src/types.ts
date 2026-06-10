@@ -103,7 +103,6 @@ export type LeafStringMap = {
 };
 
 export const enum SyntaxKind {
-  JsxStartOpeningElementOptional1 = "__jsx_start_opening_element_optional1",
   AmbientDeclarationDeclaration = "_ambient_declaration_declaration",
   AmbientDeclarationGlobal = "_ambient_declaration_global",
   AmbientDeclarationModule = "_ambient_declaration_module",
@@ -149,6 +148,7 @@ export const enum SyntaxKind {
   IndexSignatureOptional1 = "_index_signature_optional1",
   InferTypeOptional1 = "_infer_type_optional1",
   Initializer = "_initializer",
+  JsxOpeningElementContent = "_jsx_opening_element_content",
   JsxStartOpeningElement = "_jsx_start_opening_element",
   JsxString = "_jsx_string",
   LhsExpression = "_lhs_expression",
@@ -2123,16 +2123,6 @@ export const enum TypeKind {
 }
 
 // Node types — concrete interfaces
-export interface JsxStartOpeningElementOptional1 {
-  readonly $type: "__jsx_start_opening_element_optional1";
-  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
-  readonly _type_arguments?: TypeArguments;
-  readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
-  typeArguments(): TypeArguments | undefined;
-  attributes(): readonly (_JsxAttribute)[];
-}
-
 export interface AmbientDeclarationDeclaration {
   readonly $type: TSKindId.AmbientDeclarationDeclaration;
   readonly _declaration: Declaration;
@@ -2489,14 +2479,20 @@ export interface Initializer {
   value(): Expression;
 }
 
-export interface JsxStartOpeningElement {
-  readonly $type: "_jsx_start_opening_element";
+export interface JsxOpeningElementContent {
+  readonly $type: "_jsx_opening_element_content";
   readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
+}
+
+export interface JsxStartOpeningElement {
+  readonly $type: "_jsx_start_opening_element";
+  readonly _jsx_opening_element_content?: JsxOpeningElementContent;
+  jsxOpeningElementContent(): JsxOpeningElementContent | undefined;
 }
 
 export interface JsxString {
@@ -3511,22 +3507,14 @@ export interface JsxNamespaceName {
 
 export interface JsxOpeningElement {
   readonly $type: "jsx_opening_element";
-  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
-  readonly _type_arguments?: TypeArguments;
-  readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
-  typeArguments(): TypeArguments | undefined;
-  attributes(): readonly (_JsxAttribute)[];
+  readonly _jsx_opening_element_content?: JsxOpeningElementContent;
+  jsxOpeningElementContent(): JsxOpeningElementContent | undefined;
 }
 
 export interface JsxSelfClosingElement {
   readonly $type: "jsx_self_closing_element";
-  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
-  readonly _type_arguments?: TypeArguments;
-  readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
-  typeArguments(): TypeArguments | undefined;
-  attributes(): readonly (_JsxAttribute)[];
+  readonly _jsx_opening_element_content?: JsxOpeningElementContent;
+  jsxOpeningElementContent(): JsxOpeningElementContent | undefined;
 }
 
 export interface LabeledStatement {
@@ -4306,7 +4294,6 @@ export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
 
 // Tree types
-export interface JsxStartOpeningElementOptional1Tree extends AnyTreeNode { readonly type: "__jsx_start_opening_element_optional1"; }
 export interface AmbientDeclarationDeclarationTree extends AnyTreeNode { readonly type: "_ambient_declaration_declaration"; }
 export interface AmbientDeclarationGlobalTree extends AnyTreeNode { readonly type: "_ambient_declaration_global"; }
 export interface AmbientDeclarationModuleTree extends AnyTreeNode { readonly type: "_ambient_declaration_module"; }
@@ -4352,6 +4339,7 @@ export interface IndexSignatureMappedTypeClauseTree extends AnyTreeNode { readon
 export interface IndexSignatureOptional1Tree extends AnyTreeNode { readonly type: "_index_signature_optional1"; }
 export interface InferTypeOptional1Tree extends AnyTreeNode { readonly type: "_infer_type_optional1"; }
 export interface InitializerTree extends AnyTreeNode { readonly type: "_initializer"; }
+export interface JsxOpeningElementContentTree extends AnyTreeNode { readonly type: "_jsx_opening_element_content"; }
 export interface JsxStartOpeningElementTree extends AnyTreeNode { readonly type: "_jsx_start_opening_element"; }
 export interface JsxStringTree extends AnyTreeNode { readonly type: "_jsx_string"; }
 export interface LhsExpressionTree extends AnyTreeNode { readonly type: "_lhs_expression"; }
@@ -4937,7 +4925,6 @@ export type OptionalChain = Terminal<TSKindId.OptionalChain>;
 export interface OptionalChainTree extends AnyTreeNode { readonly type: "optional_chain"; }
 
 export type TypescriptNode =
-  | JsxStartOpeningElementOptional1
   | AmbientDeclarationDeclaration
   | AmbientDeclarationGlobal
   | AmbientDeclarationModule
@@ -4983,6 +4970,7 @@ export type TypescriptNode =
   | IndexSignatureOptional1
   | InferTypeOptional1
   | Initializer
+  | JsxOpeningElementContent
   | JsxStartOpeningElement
   | JsxString
   | LhsExpression
@@ -5173,7 +5161,6 @@ export type TypescriptNode =
 ;
 
 export interface KindMap {
-  '__jsx_start_opening_element_optional1': JsxStartOpeningElementOptional1;
   '_ambient_declaration_declaration': AmbientDeclarationDeclaration;
   '_ambient_declaration_global': AmbientDeclarationGlobal;
   '_ambient_declaration_module': AmbientDeclarationModule;
@@ -5219,6 +5206,7 @@ export interface KindMap {
   '_index_signature_optional1': IndexSignatureOptional1;
   '_infer_type_optional1': InferTypeOptional1;
   '_initializer': Initializer;
+  '_jsx_opening_element_content': JsxOpeningElementContent;
   '_jsx_start_opening_element': JsxStartOpeningElement;
   '_jsx_string': JsxString;
   '_lhs_expression': LhsExpression;
@@ -5457,7 +5445,6 @@ export interface KindMap {
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
-export interface JsxStartOpeningElementOptional1Ns extends NodeNs<JsxStartOpeningElementOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AmbientDeclarationDeclarationNs extends NodeNs<AmbientDeclarationDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AmbientDeclarationGlobalNs extends NodeNs<AmbientDeclarationGlobal, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AmbientDeclarationModuleNs extends NodeNs<AmbientDeclarationModule, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5503,6 +5490,7 @@ export interface IndexSignatureMappedTypeClauseNs extends NodeNs<IndexSignatureM
 export interface IndexSignatureOptional1Ns extends NodeNs<IndexSignatureOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface InferTypeOptional1Ns extends NodeNs<InferTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface InitializerNs extends NodeNs<Initializer, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface JsxOpeningElementContentNs extends NodeNs<JsxOpeningElementContent, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface JsxStartOpeningElementNs extends NodeNs<JsxStartOpeningElement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface JsxStringNs extends NodeNs<JsxString, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LhsExpressionNs extends NodeNs<LhsExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5692,7 +5680,6 @@ export interface ImportClauseGroup1Ns extends NodeNs<ImportClauseGroup1, LeafSca
 export interface CatchClauseGroup1Ns extends NodeNs<CatchClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
-  '__jsx_start_opening_element_optional1': JsxStartOpeningElementOptional1Ns;
   '_ambient_declaration_declaration': AmbientDeclarationDeclarationNs;
   '_ambient_declaration_global': AmbientDeclarationGlobalNs;
   '_ambient_declaration_module': AmbientDeclarationModuleNs;
@@ -5738,6 +5725,7 @@ export interface NamespaceMap {
   '_index_signature_optional1': IndexSignatureOptional1Ns;
   '_infer_type_optional1': InferTypeOptional1Ns;
   '_initializer': InitializerNs;
+  '_jsx_opening_element_content': JsxOpeningElementContentNs;
   '_jsx_start_opening_element': JsxStartOpeningElementNs;
   '_jsx_string': JsxStringNs;
   '_lhs_expression': LhsExpressionNs;
@@ -5934,13 +5922,6 @@ export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Namespace sugar — merges with each data interface so consumers can write
 // <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.
-export namespace JsxStartOpeningElementOptional1 {
-  export type Config = ConfigFor<'__jsx_start_opening_element_optional1'>;
-  export type Fluent = FluentFor<'__jsx_start_opening_element_optional1'>;
-  export type Loose = LooseFor<'__jsx_start_opening_element_optional1'>;
-  export type Tree = TreeFor<'__jsx_start_opening_element_optional1'>;
-  export type Kind = '__jsx_start_opening_element_optional1';
-}
 export namespace AmbientDeclarationDeclaration {
   export type Config = ConfigFor<'_ambient_declaration_declaration'>;
   export type Fluent = FluentFor<'_ambient_declaration_declaration'>;
@@ -6255,6 +6236,13 @@ export namespace Initializer {
   export type Loose = LooseFor<'_initializer'>;
   export type Tree = TreeFor<'_initializer'>;
   export type Kind = '_initializer';
+}
+export namespace JsxOpeningElementContent {
+  export type Config = ConfigFor<'_jsx_opening_element_content'>;
+  export type Fluent = FluentFor<'_jsx_opening_element_content'>;
+  export type Loose = LooseFor<'_jsx_opening_element_content'>;
+  export type Tree = TreeFor<'_jsx_opening_element_content'>;
+  export type Kind = '_jsx_opening_element_content';
 }
 export namespace JsxStartOpeningElement {
   export type Config = ConfigFor<'_jsx_start_opening_element'>;

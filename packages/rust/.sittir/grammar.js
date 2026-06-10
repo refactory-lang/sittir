@@ -397,14 +397,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec2 = nativeRequired("prec");
+  const prec4 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec2[variant2];
+    const fn = prec4[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec2(value, newContent);
+  return prec4(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -908,6 +908,62 @@ function extractNonEmpty(rule) {
   return null;
 }
 
+// packages/codegen/src/compiler/rule-types.ts
+var STRING = "string";
+var PATTERN = "pattern";
+var SYMBOL = "symbol";
+var TOKEN = "token";
+
+// packages/codegen/src/compiler/evaluate.ts
+function normalize(input) {
+  if (input === void 0 || input === null) {
+    throw new Error("Undefined symbol");
+  }
+  if (typeof input === "string") {
+    return { type: STRING, value: input };
+  }
+  if (input instanceof RegExp) {
+    return { type: PATTERN, value: input.source };
+  }
+  if (typeof input === "object" && "type" in input) {
+    return input;
+  }
+  throw new TypeError(`Invalid rule: ${input}`);
+}
+function sym(name) {
+  return { type: SYMBOL, name, hidden: name.startsWith("_"), inline: name.startsWith("_") };
+}
+var token = Object.assign(
+  function token2(content) {
+    return { type: TOKEN, content: normalize(content), immediate: false };
+  },
+  {
+    immediate(content) {
+      return { type: TOKEN, content: normalize(content), immediate: true };
+    }
+  }
+);
+var prec2 = Object.assign(
+  function prec3(precedenceOrContent, content) {
+    if (content === void 0) return normalize(precedenceOrContent);
+    return normalize(content);
+  },
+  {
+    left(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    },
+    right(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    },
+    dynamic(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    }
+  }
+);
+
 // packages/codegen/src/dsl/list-patterns.ts
 function firstStringOfChoice(r) {
   if (!typeEq(r.type, "choice")) return null;
@@ -1152,8 +1208,8 @@ function makeField(name, content) {
   return node;
 }
 function makeSymbol(name) {
-  const symbol = nativeRuleFn("symbol", "sym");
-  return symbol(name);
+  const symFn = nativeRuleFn("sym");
+  return symFn(name);
 }
 function registerKwRule(stringLiteral, keyword, kwRules) {
   const hiddenName = `_kw_${keyword}`;
@@ -1916,9 +1972,9 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
 function makeGroupLiftSymbol(referenceRule, name) {
   const t = referenceRule.type ?? "";
   const isUpper = t.length > 0 && t === t.toUpperCase();
+  const base2 = isUpper ? { type: "SYMBOL", name } : sym(name);
   return {
-    type: isUpper ? "SYMBOL" : "symbol",
-    name,
+    ...base2,
     source: "group-lift",
     metadata: { source: "enrich" }
   };
@@ -2168,8 +2224,8 @@ function collectInlineNames(entries) {
   return names;
 }
 function nativeInlineRef($, name) {
-  const nativeSymbol = globalThis.symbol;
-  if (typeof nativeSymbol === "function") return nativeSymbol(name);
+  const nativeSym = globalThis.sym;
+  if (typeof nativeSym === "function") return nativeSym(name);
   return $[name];
 }
 function symbolizeRef(_$, name) {
@@ -2245,6 +2301,13 @@ function patternBodyEqual(aIn, bIn) {
   }
   return false;
 }
+function nativeSymbolRt(name) {
+  const fn = globalThis.sym;
+  if (typeof fn !== "function") {
+    throw new Error("wire: no global sym() \u2014 pattern replacement must run inside a DSL runtime");
+  }
+  return fn(name);
+}
 function replaceInBodyRt(rule, candidates) {
   if (!rule || typeof rule !== "object") return rule;
   const r = rule;
@@ -2258,12 +2321,12 @@ function replaceInBodyRt(rule, candidates) {
           value: c.aliasAs
         } : {
           type: "alias",
-          content: { type: "symbol", name: c.name, hidden: true },
+          content: nativeSymbolRt(c.name),
           named: true,
           value: c.aliasAs
         };
       }
-      return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
+      return c.uppercase ? { type: "SYMBOL", name: c.name } : nativeSymbolRt(c.name);
     }
   }
   const t = r.type.toLowerCase();
@@ -2606,7 +2669,16 @@ var overrides_default = grammar(enrichedBase, wire({
     // Conflict: choice($._type, ...) can begin with `metavariable` (same as
     // `_attributed_type_parameter`); declare the conflict to allow tree-sitter
     // to use lookahead.
-    type_argument: ($) => seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds))
+    type_argument: ($) => seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds)),
+    // match_block: optional(seq(repeat(match_arm), alias(last_match_arm, match_arm))).
+    // _match_block_optional1 is a two-slot inline seq (match_arm[] + last_arm field).
+    // Without this group the template gates both arms on `{% if match_arm | isPresent %}`
+    // — wrong for a single-arm match (last_arm present, match_arm absent). The visible
+    // group collapses the parent optional to one slot so each slot renders independently.
+    // The `field('last_arm', ...)` must be included in the body so the pattern matches
+    // the post-transform sub-tree (the transforms: entry adds the field wrapper first).
+    // Fixes Copilot PR review comments #1–#3 (template gating + render order).
+    match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", alias2($.last_match_arm, $.match_arm)))
   },
   transforms: {
     // token_repetition: `$( _tokens* ) <sep>? <op>` —

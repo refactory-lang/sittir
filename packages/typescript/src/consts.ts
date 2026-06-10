@@ -1717,9 +1717,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'mappedTypeClause', required: true, multiple: false },
   ],
   '_jsx_start_opening_element': [
-    { name: 'name', required: true, multiple: false },
-    { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attributes', required: false, multiple: true },
+    { name: 'jsxOpeningElementContent', required: false, multiple: false },
   ],
   '_jsx_string': [
     { name: 'contents', required: false, multiple: true },
@@ -2110,14 +2108,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'jsxIdentifier', required: true, multiple: false },
   ],
   'jsx_opening_element': [
-    { name: 'name', required: true, multiple: false },
-    { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attributes', required: false, multiple: true },
+    { name: 'jsxOpeningElementContent', required: false, multiple: false },
   ],
   'jsx_self_closing_element': [
-    { name: 'name', required: true, multiple: false },
-    { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attributes', required: false, multiple: true },
+    { name: 'jsxOpeningElementContent', required: false, multiple: false },
   ],
   'labeled_statement': [
     { name: 'label', required: true, multiple: false },

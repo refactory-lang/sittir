@@ -385,14 +385,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec2 = nativeRequired("prec");
+  const prec4 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec2[variant2];
+    const fn = prec4[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec2(value, newContent);
+  return prec4(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -463,6 +463,80 @@ function variant(name) {
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
+function alias(rule, value) {
+  if (typeof rule === "string" && value === void 0) {
+    return {
+      __sittirPlaceholder: "alias",
+      name: rule
+    };
+  }
+  const native = globalThis.alias;
+  if (typeof native !== "function") {
+    throw new Error(
+      "alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)"
+    );
+  }
+  if (value !== void 0) {
+    return native(rule, value);
+  }
+  return native(rule, rule);
+}
+
+// packages/codegen/src/compiler/rule-types.ts
+var STRING = "string";
+var PATTERN = "pattern";
+var SYMBOL = "symbol";
+var TOKEN = "token";
+
+// packages/codegen/src/compiler/evaluate.ts
+function normalize(input) {
+  if (input === void 0 || input === null) {
+    throw new Error("Undefined symbol");
+  }
+  if (typeof input === "string") {
+    return { type: STRING, value: input };
+  }
+  if (input instanceof RegExp) {
+    return { type: PATTERN, value: input.source };
+  }
+  if (typeof input === "object" && "type" in input) {
+    return input;
+  }
+  throw new TypeError(`Invalid rule: ${input}`);
+}
+function sym(name) {
+  return { type: SYMBOL, name, hidden: name.startsWith("_"), inline: name.startsWith("_") };
+}
+var token = Object.assign(
+  function token2(content) {
+    return { type: TOKEN, content: normalize(content), immediate: false };
+  },
+  {
+    immediate(content) {
+      return { type: TOKEN, content: normalize(content), immediate: true };
+    }
+  }
+);
+var prec2 = Object.assign(
+  function prec3(precedenceOrContent, content) {
+    if (content === void 0) return normalize(precedenceOrContent);
+    return normalize(content);
+  },
+  {
+    left(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    },
+    right(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    },
+    dynamic(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    }
+  }
+);
 
 // packages/codegen/src/dsl/list-patterns.ts
 function firstStringOfChoice(r) {
@@ -708,8 +782,8 @@ function makeField(name, content) {
   return node;
 }
 function makeSymbol(name) {
-  const symbol = nativeRuleFn("symbol", "sym");
-  return symbol(name);
+  const symFn = nativeRuleFn("sym");
+  return symFn(name);
 }
 function registerKwRule(stringLiteral, keyword, kwRules) {
   const hiddenName = `_kw_${keyword}`;
@@ -1472,9 +1546,9 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
 function makeGroupLiftSymbol(referenceRule, name) {
   const t = referenceRule.type ?? "";
   const isUpper = t.length > 0 && t === t.toUpperCase();
+  const base2 = isUpper ? { type: "SYMBOL", name } : sym(name);
   return {
-    type: isUpper ? "SYMBOL" : "symbol",
-    name,
+    ...base2,
     source: "group-lift",
     metadata: { source: "enrich" }
   };
@@ -1729,8 +1803,8 @@ function collectInlineNames(entries) {
   return names;
 }
 function nativeInlineRef($, name) {
-  const nativeSymbol = globalThis.symbol;
-  if (typeof nativeSymbol === "function") return nativeSymbol(name);
+  const nativeSym = globalThis.sym;
+  if (typeof nativeSym === "function") return nativeSym(name);
   return $[name];
 }
 function symbolizeRef(_$, name) {
@@ -1806,6 +1880,13 @@ function patternBodyEqual(aIn, bIn) {
   }
   return false;
 }
+function nativeSymbolRt(name) {
+  const fn = globalThis.sym;
+  if (typeof fn !== "function") {
+    throw new Error("wire: no global sym() \u2014 pattern replacement must run inside a DSL runtime");
+  }
+  return fn(name);
+}
 function replaceInBodyRt(rule, candidates) {
   if (!rule || typeof rule !== "object") return rule;
   const r = rule;
@@ -1819,12 +1900,12 @@ function replaceInBodyRt(rule, candidates) {
           value: c.aliasAs
         } : {
           type: "alias",
-          content: { type: "symbol", name: c.name, hidden: true },
+          content: nativeSymbolRt(c.name),
           named: true,
           value: c.aliasAs
         };
       }
-      return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
+      return c.uppercase ? { type: "SYMBOL", name: c.name } : nativeSymbolRt(c.name);
     }
   }
   const t = r.type.toLowerCase();
@@ -2725,6 +2806,25 @@ var overrides_default = grammar(
         "2/2": "readonly_first",
         "2/3": "accessor_opt"
       }
+    },
+    groups: {
+      // __jsx_start_opening_element_optional1 is the inline two-slot helper for
+      // JSX element head content: choice(name / name+type_args) + repeat(attribute).
+      // The two-slot seq causes the template to flatten both slots, losing the
+      // name–attribute distinction. Registering as a visible group collapses the
+      // parent's optional to a single `jsx_opening_element_content` slot so each
+      // field renders from its own slot. Also fixes _jsx_start_opening_element's
+      // multi-slot-nested-seq diagnostic (it inlines __jsx_start_opening_element_optional1).
+      jsx_opening_element_content: ($) => seq(
+        choice(
+          field("name", choice($._jsx_identifier, $.jsx_namespace_name)),
+          seq(
+            field("name", choice($.identifier, alias($.nested_identifier, $.member_expression))),
+            field("type_arguments", optional($.type_arguments))
+          )
+        ),
+        repeat(field("attribute", $._jsx_attribute))
+      )
     },
     transforms: {
       // Naked-choice field names (was unresolvable `content` slots).

@@ -1621,7 +1621,7 @@ export interface JsxNamespaceNameTransport {
   _jsx_identifier: _JsxIdentifierTransport
 }
 
-export interface JsxOpeningElementTransport {
+export interface JsxOpeningElementContentTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1630,6 +1630,20 @@ export interface JsxOpeningElementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _name: JsxElementNameTransport
+  _type_arguments?: TypeArgumentsTransport
+  _attribute?: Array<_JsxAttributeTransport>
+}
+
+export interface JsxOpeningElementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _jsx_opening_element_content?: JsxOpeningElementContentTransport
+  _name?: JsxElementNameTransport
   _type_arguments?: TypeArgumentsTransport
   _attribute?: Array<_JsxAttributeTransport>
 }
@@ -1642,20 +1656,8 @@ export interface JsxSelfClosingElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: JsxElementNameTransport
-  _type_arguments?: TypeArgumentsTransport
-  _attribute?: Array<_JsxAttributeTransport>
-}
-
-export interface JsxStartOpeningElementOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _name: JsxElementNameTransport
+  _jsx_opening_element_content?: JsxOpeningElementContentTransport
+  _name?: JsxElementNameTransport
   _type_arguments?: TypeArgumentsTransport
   _attribute?: Array<_JsxAttributeTransport>
 }
@@ -1668,7 +1670,8 @@ export interface JsxStartOpeningElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: JsxElementNameTransport
+  _jsx_opening_element_content?: JsxOpeningElementContentTransport
+  _name?: JsxElementNameTransport
   _type_arguments?: TypeArgumentsTransport
   _attribute?: Array<_JsxAttributeTransport>
 }

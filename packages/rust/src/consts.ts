@@ -661,8 +661,8 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_attributed_type_parameter": 380,
   "_attributed_argument": 381,
   "_type_argument": 383,
-  "_field_identifier": 415,
-  "_type_identifier": 418,
+  "_field_identifier": 416,
+  "_type_identifier": 419,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -921,8 +921,8 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [380]: "_attributed_type_parameter",
   [381]: "_attributed_argument",
   [383]: "_type_argument",
-  [415]: "_field_identifier",
-  [418]: "_type_identifier",
+  [416]: "_field_identifier",
+  [419]: "_type_identifier",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1181,8 +1181,8 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_attributed_type_parameter", id: 380, enumName: "AttributedTypeParameter", cName: "sym__attributed_type_parameter" },
   { name: "_attributed_argument", id: 381, enumName: "AttributedArgument", cName: "sym__attributed_argument" },
   { name: "_type_argument", id: 383, enumName: "TypeArgument", cName: "sym__type_argument" },
-  { name: "_field_identifier", id: 415, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
-  { name: "_type_identifier", id: 418, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
+  { name: "_field_identifier", id: 416, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
+  { name: "_type_identifier", id: 419, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
 ] as const;
 
 export const enum TSFieldId {
@@ -1929,8 +1929,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'content', required: true, multiple: false },
   ],
   'match_block': [
-    { name: 'matchArms', required: false, multiple: true },
-    { name: 'lastArm', required: true, multiple: false },
+    { name: 'matchBlockArms', required: false, multiple: false },
   ],
   'match_expression': [
     { name: 'value', required: true, multiple: false },

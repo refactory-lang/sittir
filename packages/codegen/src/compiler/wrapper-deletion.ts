@@ -38,6 +38,7 @@ interface WrapperAttrs {
 	separator?: Rule['separator'];
 	aliasedFrom?: string;
 	aliasNamed?: boolean;
+	inline?: boolean;
 	nonterminal?: boolean;
 }
 
@@ -214,6 +215,10 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 				...attrs,
 				aliasedFrom: attrs.aliasedFrom ?? rule.value,
 				aliasNamed: attrs.aliasNamed ?? rule.named,
+				// An alias confers a real visible CST kind on its content, so the
+				// inner ref must materialize, not flatten — flip inline off. Outer
+				// alias wins (??), mirroring aliasedFrom.
+				inline: attrs.inline ?? false,
 				// A named alias forces a slot on its content (Table 2).
 				nonterminal: attrs.nonterminal ?? (rule.named || undefined),
 			};
@@ -242,6 +247,7 @@ function stampAttrs(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		attrs.separator === undefined &&
 		attrs.aliasedFrom === undefined &&
 		attrs.aliasNamed === undefined &&
+		attrs.inline === undefined &&
 		attrs.nonterminal === undefined
 	) {
 		return rule as RenderRule;
@@ -252,6 +258,7 @@ function stampAttrs(rule: Rule, attrs: WrapperAttrs): RenderRule {
 	if (attrs.separator !== undefined) patch['separator'] = attrs.separator;
 	if (attrs.aliasedFrom !== undefined) patch['aliasedFrom'] = attrs.aliasedFrom;
 	if (attrs.aliasNamed !== undefined) patch['aliasNamed'] = attrs.aliasNamed;
+	if (attrs.inline !== undefined) patch['inline'] = attrs.inline;
 	if (attrs.nonterminal !== undefined) patch['nonterminal'] = attrs.nonterminal;
 	return { ...rule, ...patch } as RenderRule;
 }

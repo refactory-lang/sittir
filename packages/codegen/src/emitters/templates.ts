@@ -1436,7 +1436,7 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// including auto-synthesized helpers. We skip it here so the group-lift
 	// inline logic handles it correctly.
 	const slot = lookupSlot(rule, ctx);
-	if (slot && !(slot.isUnnamed && rule.source === 'group-lift')) {
+	if (slot && !(slot.isUnnamed && rule.type === SYMBOL && rule.inline === true)) {
 		return emitSlotReference(rule, slot);
 	}
 	// Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
@@ -1455,46 +1455,53 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// Non-hidden group-lift symbols (no leading `_`) or those without a
 	// `renderRule` in the nodeMap fall through to the scalar slot path — they
 	// represent proper named groups whose output is a single rendered string.
-	if (rule.source === 'group-lift') {
-		// Only inline HIDDEN auto-synthesized helpers (name starts with `_`).
-		// Visible group-lift symbols are user-facing kinds with their own
-		// templates; emit them as scalar slots like before.
-		if (rule.name.startsWith('_')) {
-			const targetNode = ctx.nodeMap.nodes.get(rule.name);
-			if (targetNode && 'renderRule' in targetNode && targetNode.renderRule) {
-				if (ctx.visitingHelpers.has(rule.name)) {
-					// Cycle guard — emit opaque scalar to break recursion
-					const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
-					return emitScalarSlot(slotName);
+	// Hidden helper refs INLINE, mirroring tree-sitter's parse-time flattening of
+	// `_`-rules. Provenance-free — keyed only on the structural `_` fact, NOT on
+	// `source:'group-lift'`. The assembled `renderRule` is the inline source for
+	// EVERY hidden ref (verified: emitRule(renderRule) === emitRule(deleteWrapper(raw))
+	// for every hidden ref — the raw-rule path below is now only a fallback for the
+	// rare hidden-without-renderRule case). Cycle guard via visitingHelpers.
+	if (rule.type === SYMBOL && rule.inline === true) {
+		const targetNode = ctx.nodeMap.nodes.get(rule.name);
+		if (targetNode && 'renderRule' in targetNode && targetNode.renderRule) {
+			if (ctx.visitingHelpers.has(rule.name)) {
+				// Cycle guard — emit opaque scalar to break recursion
+				const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+				return emitScalarSlot(slotName);
+			}
+			ctx.visitingHelpers.add(rule.name);
+			try {
+				const helperRenderRule = (targetNode as { renderRule: Rule }).renderRule;
+				const helperBody = emitRule(helperRenderRule, ctx);
+				const multiplicity = rule.multiplicity;
+				// Multiplicity is applied at the inlined SEQ UNIT (never the leaves —
+				// pushing past the seq distributes optional onto bare literals which
+				// the render walker drops). The inlined body is a seq with one
+				// internal slot; apply the ref's seq-unit multiplicity to that slot:
+				//   - array/nonEmptyArray → render the single slot with a seq-level
+				//     join `{{ k | join(sep) }}`. The list's delimiter literals are
+				//     absorbed into the separator (emitListSlot), so we do NOT emit
+				//     the raw helperBody (which would inline them). Reuse the in-scope
+				//     slot so name+separator reproduce the slot-path output exactly.
+				//   - optional → gate the inlined body on the first declared field.
+				if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
+					const listName = slot
+						? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
+						: (pickConditionalKey(helperRenderRule, ctx)
+							?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
+					return emitListSlot(listName, rule, slot);
 				}
-				ctx.visitingHelpers.add(rule.name);
-				try {
-					const helperRenderRule = (targetNode as { renderRule: Rule }).renderRule;
-					const helperBody = emitRule(helperRenderRule, ctx);
-					const multiplicity = rule.multiplicity;
-					// When the group-lift symbol is optional (its parent wrapped it in
-					// optional()), wrap the inlined body in a conditional keyed on the
-					// first declared field inside the helper's body. This preserves the
-					// "only render this block when the optional part is present" semantics.
-					if ((multiplicity === 'optional' || multiplicity === 'array' || multiplicity === 'nonEmptyArray') && helperBody) {
-						const condKey = pickConditionalKey(helperRenderRule, ctx)
-							?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
-						if (multiplicity === 'optional') {
-							return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
-						}
-						// Array group-lifts — emit the body directly (repeat handling
-						// is already captured in the body's join filter from the
-						// helper's renderRule).
-					}
-					return helperBody;
-				} finally {
-					ctx.visitingHelpers.delete(rule.name);
+				if (multiplicity === 'optional' && helperBody) {
+					const condKey = pickConditionalKey(helperRenderRule, ctx)
+						?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+					return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
 				}
+				return helperBody;
+			} finally {
+				ctx.visitingHelpers.delete(rule.name);
 			}
 		}
-		// Visible group-lift or hidden without renderRule → scalar slot
-		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
-		return emitScalarSlot(slotName);
+		// Hidden without a renderRule node → fall through to the raw-rule fallback below.
 	}
 	// Hidden helper rules (e.g. python's `_import_list`) are inlined by
 	// tree-sitter at parse time. Recurse into the target rule's body so
@@ -1506,7 +1513,7 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	//
 	// ctx.rules contains RAW rules (not renderRules), so we must apply
 	// deleteWrapper before passing to emitRule which now expects RenderRule.
-	if (rule.name.startsWith('_') && ctx.rules[rule.name]) {
+	if (rule.type === SYMBOL && rule.inline === true && ctx.rules[rule.name]) {
 		if (ctx.visitingHelpers.has(rule.name)) {
 			const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 			return emitScalarSlot(slotName);
@@ -1516,6 +1523,15 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 			const target = deleteWrapper(ctx.rules[rule.name]!);
 			const helperBody = emitRule(target, ctx);
 			const multiplicity = rule.multiplicity;
+			// Seq-unit multiplicity (mirrors the renderRule path above): array →
+			// seq-level join on the single slot; optional → gate the inlined body.
+			if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
+				const listName = slot
+					? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
+					: (pickConditionalKey(target, ctx)
+						?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
+				return emitListSlot(listName, rule, slot);
+			}
 			// Bug 5 fix (hidden-helper path): when the surrounding context stamped
 			// `multiplicity: 'optional'` onto this symbol (e.g. the symbol was
 			// inside optional(_initializer)), wrap the inlined body in a conditional

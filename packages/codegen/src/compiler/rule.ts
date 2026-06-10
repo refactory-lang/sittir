@@ -98,6 +98,18 @@ export interface RuleBase {
 	readonly aliasNamed?: boolean;
 
 	/**
+	 * Per-ref inline decision: `inline = hidden && !aliased`. Default
+	 * `hidden` (`name.startsWith('_')`) stamped at construction
+	 * (`evaluate.ts symbol`/`createProxy`); flipped `false` by the `alias`
+	 * wrapper during push-down (`wrapper-deletion.ts` ALIAS case) because an
+	 * alias confers a real visible CST kind that must materialize, not
+	 * flatten. Read via `isInlineRef()` (with an `isHiddenKind` fallback for
+	 * link-synthesized symbols). Replaces the scattered re-derivations of the
+	 * inline decision (`name.startsWith('_')`, `source==='group-lift'`).
+	 */
+	readonly inline?: boolean;
+
+	/**
 	 * Inert provenance bag. NEVER drives compiler behavior beyond path-descent
 	 * lookup keying (`feedback_metadata_not_behavior`): structural facts decide
 	 * folding/slotting. `source` marks how the rule entered the tree

@@ -38,7 +38,6 @@ import type {
 	ExternalRole,
 	IncludeFilter,
 	DerivationLog,
-	InferredFieldEntry,
 	RepeatedShapeEntry
 } from './types.ts';
 import { hasAnyField, hasAnyChild } from './node-map.ts';
@@ -102,6 +101,9 @@ export function link(
 	// Derivation log — populated unconditionally; each entry records
 	// whether the mutation was also applied.
 	const derivations: DerivationLog = {
+		// inferredFields stays empty: the statistical field-name-inference pass was
+		// deleted (it was apply=false / analysis-only). suggested-overrides emission
+		// is disabled for now, so nothing reads this.
 		inferredFields: [],
 		promotedRules: [],
 		repeatedShapes: []
@@ -222,7 +224,16 @@ export function link(
 		hiddenChoicesWithNamedAliasMembers
 	);
 	// PR-P Task 2: promoteAndLogTerminalRules removed — terminals classify by shape at Assemble
-	runFieldNameInferencePass(rules, references, derivations);
+
+	// `inline = hidden && !aliased && !supertype`. A supertype ref is a DISPATCH
+	// point, not an inline helper: its CST node is a transparent choice that
+	// materializes via its slot, never flattening into the parent. The
+	// construction default stamped `inline=true` for the leading `_`; flip it off
+	// for every ref to a SUPERTYPE-classified kind (grammar-declared OR
+	// link-promoted, now that classification has run) so the emit-time inline path
+	// never renders a supertype as an empty body (empty template → unused-lifetime
+	// E0392). Runs post-classification so promoted supertypes are included.
+	markSupertypeRefsNonInline(rules);
 
 	// Apply wire-produced variant alias push-down (ambient scaffolding into variant children).
 	if (raw.polymorphVariants?.length) {
@@ -392,7 +403,8 @@ function canonicalizeRuleLiterals(
 				type: SYMBOL,
 				name: entry.kind,
 				source: 'link',
-				literal: rule.value
+				literal: rule.value,
+				inline: isHiddenKind(entry.kind)
 			};
 		}
 		default:
@@ -461,27 +473,58 @@ function classifyAndLogHiddenRules(
 }
 
 /**
- * Run field-name inference analysis and record findings in the derivation log.
+ * Flip `inline=false` on every SYMBOL ref whose target kind must MATERIALIZE
+ * rather than flatten — implementing the `!supertype && !self-recursive` terms
+ * of `inline = hidden && !aliased && !supertype && !self-recursive`.
  *
- * @param rules - Resolved rules map; not mutated (analysis only).
- * @param references - Symbol-reference list used to infer consistent field names.
- * @param derivations - Derivation log; inferred-field entries are appended.
- * @remarks
- *   Previously this phase mutated rules by wrapping bare symbol refs as
- *   `field(X, $.Y)` wrappers. Spec 007 moved field coverage to the
- *   override-compiled parser: `transform()` patches in `overrides.ts` +
- *   `enrich()` mechanical passes now carry all field labels natively.
- *   The analysis is preserved for `suggested-overrides.ts` output.
+ * Two non-inline categories (the construction default stamps `inline=true` for
+ * any leading-`_` name, which wrongly includes both):
+ *
+ *  1. SUPERTYPE kinds (grammar-declared OR link-promoted). A supertype is a
+ *     transparent dispatch choice: its CST node never materializes inline — it
+ *     surfaces via its slot (`_expression`, `_path`,
+ *     `_expression_ending_with_block`). Inlining one yields an empty body
+ *     (unused-lifetime E0392). Keyed on the classified `type === SUPERTYPE`, so
+ *     promoted supertypes (absent from the grammar `supertypes` array) are
+ *     included — hence this runs AFTER `classifyAndLogHiddenRules`.
+ *
+ *  2. SELF-RECURSIVE kinds — a kind whose own body references itself
+ *     (`_let_chain = seq(optional($._let_chain), '&&', let_condition)`). The
+ *     emit-time inline path has only a one-level `visitingHelpers` cycle guard,
+ *     so inlining a self-ref expands one level (duplicating the tail) and drops
+ *     the wrapper's multiplicity gate. Materializing instead pushes the
+ *     `optional`/`array` down onto the inner slot via `emitSlotReference`
+ *     (`{% if let_chain | isPresent %}{{ let_chain }}{% endif %}`), matching the
+ *     box-at-back-edge transport. Direct self-reference is detected here; the
+ *     box-SCC pass handles the boxing.
  */
-function runFieldNameInferencePass(
-	rules: Record<string, Rule>,
-	references: SymbolRef[],
-	derivations: DerivationLog
-): void {
-	const inferredFieldNames = inferFieldNames(references);
+function markSupertypeRefsNonInline(rules: Record<string, Rule>): void {
+	const nonInlineKinds = new Set<string>();
 	for (const [name, rule] of Object.entries(rules)) {
-		applyInferredFields(rule, name, inferredFieldNames, false, derivations.inferredFields);
+		if (rule.type === SUPERTYPE || referencesSelf(rule, name)) nonInlineKinds.add(name);
 	}
+	if (nonInlineKinds.size === 0) return;
+	const walk = (rule: Rule): Rule => {
+		if (rule.type === SYMBOL) {
+			return nonInlineKinds.has(rule.name) && rule.inline !== false
+				? { ...rule, inline: false }
+				: rule;
+		}
+		const xs = rule as { members?: readonly Rule[]; content?: Rule };
+		if (xs.members) return { ...rule, members: xs.members.map(walk) } as Rule;
+		if (xs.content) return { ...rule, content: walk(xs.content) } as Rule;
+		return rule;
+	};
+	for (const name of Object.keys(rules)) rules[name] = walk(rules[name]!);
+}
+
+/** True when `rule`'s tree contains a SYMBOL ref back to its own kind `self`. */
+function referencesSelf(rule: Rule, self: string): boolean {
+	if (rule.type === SYMBOL) return rule.name === self;
+	const xs = rule as { members?: readonly Rule[]; content?: Rule };
+	if (xs.members) return xs.members.some((m) => referencesSelf(m, self));
+	if (xs.content) return referencesSelf(xs.content, self);
+	return false;
 }
 
 /**
@@ -1582,7 +1625,7 @@ function resolveRule(
 				// reference the minted VISIBLE kind by a clean `symbol(<name>)` ref;
 				// `mintContentAliasKinds` registers the body. (Symbol content WITHOUT
 				// the enrich tag is an authored relabel handled below via aliasedFrom.)
-				return { type: 'symbol', name: rule.value } as Rule;
+				return { type: 'symbol', name: rule.value, inline: false } as Rule;
 			}
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
 				return resolveNamedAliasWithProvenance(rule.content, rule.value, supertypes);
@@ -1675,8 +1718,8 @@ function resolveRepeat1PreservingNonEmpty(
 function resolveNamedAliasWithProvenance(content: Rule, targetName: string, supertypes: Set<string>): Rule {
 	const aliasedFrom = extractAliasedFromName(content, supertypes);
 	const sym: SymbolRule = aliasedFrom
-		? { type: 'symbol', name: targetName, aliasedFrom }
-		: { type: 'symbol', name: targetName };
+		? { type: 'symbol', name: targetName, aliasedFrom, inline: false }
+		: { type: 'symbol', name: targetName, inline: false };
 	return sym as unknown as Rule;
 }
 
@@ -2122,206 +2165,6 @@ function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
 		default:
 			return;
 	}
-}
-
-// ---------------------------------------------------------------------------
-// Field name inference
-// ---------------------------------------------------------------------------
-//
-// Walks the reference graph to find "this symbol is consistently named
-// 'X' in N parents, but parent Y uses it bare" cases. When found, rewrite
-// parent Y's rule tree to wrap the bare reference in `field('X', $.Y)`
-// with source: 'inferred'. Downstream emitters treat inferred fields as
-// real fields (they appear in interfaces, factories, etc.), and the
-// suggested.ts emitter surfaces them as override candidates for the
-// grammar curator to accept / reject.
-//
-// Inference rules:
-//   - Symbol has ≥5 named references across parents
-//   - ≥80% of the named references agree on the same field name
-//   - Confidence = 'high' (≥95%), 'medium' (≥85%), 'low' (≥80%)
-//   - Only the highest-confidence inference is emitted per target symbol
-// ---------------------------------------------------------------------------
-
-interface InferredName {
-	readonly name: string;
-	readonly confidence: 'high' | 'medium' | 'low';
-	readonly agreement: number;
-	readonly sampleSize: number;
-}
-
-function inferFieldNames(references: SymbolRef[]): Map<string, InferredName> {
-	// Group references by `to` (the symbol being referenced).
-	const refsByTo = new Map<string, SymbolRef[]>();
-	for (const ref of references) {
-		const list = refsByTo.get(ref.to) ?? [];
-		list.push(ref);
-		refsByTo.set(ref.to, list);
-	}
-
-	const inferred = new Map<string, InferredName>();
-	for (const [to, refs] of refsByTo) {
-		const namedRefs = refs.filter((r) => r.fieldName !== undefined);
-		if (namedRefs.length < 5) continue;
-
-		const nameCounts = new Map<string, number>();
-		for (const r of namedRefs) {
-			nameCounts.set(r.fieldName!, (nameCounts.get(r.fieldName!) ?? 0) + 1);
-		}
-		let bestName = '';
-		let bestCount = 0;
-		for (const [name, count] of nameCounts) {
-			if (count > bestCount) {
-				bestName = name;
-				bestCount = count;
-			}
-		}
-		const agreement = bestCount / namedRefs.length;
-		if (agreement < 0.8) continue;
-		const confidence: InferredName['confidence'] = agreement >= 0.95 ? 'high' : agreement >= 0.85 ? 'medium' : 'low';
-		inferred.set(to, {
-			name: bestName,
-			confidence,
-			agreement,
-			sampleSize: namedRefs.length
-		});
-	}
-	return inferred;
-}
-
-/**
- * Walk a rule tree and, for every bare symbol reference whose target
- * has an inferred name:
- *
- *   1. Append a DerivationLog entry recording the finding.
- *   2. If `apply` is true, wrap the bare ref in `field('name', $.Y)`
- *      with source: 'inferred'. Otherwise leave the rule tree alone.
- *
- * Stops descending into existing `field()` / `alias` boundaries — those
- * already own their field name. The returned `applied` flag reflects
- * whether the walker actually mutated anything (always false when
- * `apply` is false, true only when at least one wrap happened).
- */
-function applyInferredFields(
-	rule: Rule,
-	ruleName: string,
-	inferred: Map<string, InferredName>,
-	apply: boolean,
-	log: InferredFieldEntry[],
-	_insideField = false
-): { rule: Rule; applied: boolean } {
-	switch (rule.type) {
-		case SYMBOL: {
-			if (_insideField) return { rule, applied: false };
-			const inf = inferred.get(rule.name);
-			if (!inf) return { rule, applied: false };
-			// Log unconditionally.
-			log.push({
-				kind: ruleName,
-				fieldName: inf.name,
-				targetSymbol: rule.name,
-				confidence: inf.confidence,
-				agreement: inf.agreement,
-				sampleSize: inf.sampleSize,
-				applied: apply
-			});
-			if (!apply) return { rule, applied: false };
-			return {
-				rule: {
-					type: FIELD,
-					name: inf.name,
-					content: rule,
-					source: 'inferred'
-				} satisfies FieldRule,
-				applied: true
-			};
-		}
-
-		case FIELD:
-		case ALIAS:
-			return { rule, applied: false };
-
-		case SEQ: {
-			const siblingDups = collectSeqSiblingDuplicates(rule.members);
-			const members: Rule[] = [];
-			let any = false;
-			for (const m of rule.members) {
-				const sn = unwrapSymRef(m);
-				if (sn && siblingDups.has(sn)) {
-					members.push(m);
-					continue;
-				}
-				const r = applyInferredFields(m, ruleName, inferred, apply, log, _insideField);
-				members.push(r.rule);
-				any = any || r.applied;
-			}
-			return { rule: any ? { type: 'seq', members } : rule, applied: any };
-		}
-
-		case CHOICE: {
-			const members: Rule[] = [];
-			let any = false;
-			for (const m of rule.members) {
-				const r = applyInferredFields(m, ruleName, inferred, apply, log, _insideField);
-				members.push(r.rule);
-				any = any || r.applied;
-			}
-			return { rule: any ? { type: 'choice', members } : rule, applied: any };
-		}
-
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP: {
-			const r = applyInferredFields(rule.content, ruleName, inferred, apply, log, _insideField);
-			return {
-				rule: r.applied ? ({ ...rule, content: r.rule } as Rule) : rule,
-				applied: r.applied
-			};
-		}
-
-		default:
-			return { rule, applied: false };
-	}
-}
-
-/**
- * Collect the set of symbol names that appear as direct seq siblings more than
- * once, which are ineligible for field-name inference in that seq.
- *
- * @param members - The members of a `SeqRule`.
- * @returns A set of symbol names that appear at least twice as direct siblings.
- * @remarks
- *   Wrapping duplicate-named siblings in `field` would collide on the same
- *   inferred name, losing all but the first. Patterns like rust `or_pattern`'s
- *   two `_pattern` refs separated by `|` are tree-sitter's "multi children"
- *   shape and belong in the `$$$CHILDREN` slot, not as fields.
- */
-function collectSeqSiblingDuplicates(members: Rule[]): Set<string> {
-	const symCounts = new Map<string, number>();
-	for (const m of members) {
-		const sn = unwrapSymRef(m);
-		if (sn) symCounts.set(sn, (symCounts.get(sn) ?? 0) + 1);
-	}
-	const dups = new Set<string>();
-	for (const [sn, cnt] of symCounts) if (cnt > 1) dups.add(sn);
-	return dups;
-}
-
-/**
- * Unwrap transparent rule wrappers to find the innermost symbol name.
- *
- * @param r - A rule to inspect.
- * @returns The symbol name if `r` is a symbol or wraps one through
- *   `optional`/`variant`/`group`; `null` otherwise.
- */
-function unwrapSymRef(r: Rule): string | null {
-	if (r.type === SYMBOL) return r.name;
-	if (r.type === OPTIONAL || r.type === VARIANT || r.type === GROUP) {
-		return unwrapSymRef(r.content);
-	}
-	return null;
 }
 
 // ---------------------------------------------------------------------------

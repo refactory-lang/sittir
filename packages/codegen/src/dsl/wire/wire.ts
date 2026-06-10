@@ -1077,8 +1077,8 @@ function collectInlineNames(entries: readonly unknown[]): Set<string> {
  * falling back to `$[name]` keeps the callback native-shaped there too.
  */
 function nativeInlineRef($: unknown, name: string): unknown {
-	const nativeSymbol = (globalThis as { symbol?: (name: string) => unknown }).symbol;
-	if (typeof nativeSymbol === 'function') return nativeSymbol(name);
+	const nativeSym = (globalThis as { sym?: (name: string) => unknown }).sym;
+	if (typeof nativeSym === 'function') return nativeSym(name);
 	return ($ as Record<string, unknown>)[name];
 }
 
@@ -1278,6 +1278,23 @@ function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
  * @param rule - The rule body to search (RuntimeRule, any shape).
  * @param candidates - The list of detected pattern candidates.
  */
+/**
+ * Resolve the active runtime's `sym()` symbol constructor from the injected DSL
+ * globals. Both runtimes now inject it under the SAME name `sym` (sittir's
+ * `evaluate.ts saveAndInjectDslGlobals` shadows tree-sitter's baseline `sym`),
+ * so there's no name reconciliation — wire stays runtime-agnostic without
+ * importing evaluate. Routing the IR-side ref through the constructor stamps
+ * `hidden` + `inline = name.startsWith('_')`, matching every other ref; a raw
+ * `{ type:'symbol', name, hidden:true }` literal would drop `inline`.
+ */
+function nativeSymbolRt(name: string): unknown {
+	const fn = (globalThis as { sym?: (n: string) => unknown }).sym;
+	if (typeof fn !== 'function') {
+		throw new Error('wire: no global sym() — pattern replacement must run inside a DSL runtime');
+	}
+	return fn(name);
+}
+
 function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[]): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
@@ -1299,12 +1316,12 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 						}
 					: {
 							type: 'alias',
-							content: { type: 'symbol', name: c.name, hidden: true },
+							content: nativeSymbolRt(c.name),
 							named: true,
 							value: c.aliasAs
 						};
 			}
-			return c.uppercase ? { type: 'SYMBOL', name: c.name } : { type: 'symbol', name: c.name, hidden: true };
+			return c.uppercase ? { type: 'SYMBOL', name: c.name } : nativeSymbolRt(c.name);
 		}
 	}
 	// Recurse into children.

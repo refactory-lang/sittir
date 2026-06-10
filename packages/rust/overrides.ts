@@ -248,7 +248,18 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 		// `_attributed_type_parameter`); declare the conflict to allow tree-sitter
 		// to use lookahead.
 		type_argument: ($) =>
-			seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds))
+			seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds)),
+
+		// match_block: optional(seq(repeat(match_arm), alias(last_match_arm, match_arm))).
+		// _match_block_optional1 is a two-slot inline seq (match_arm[] + last_arm field).
+		// Without this group the template gates both arms on `{% if match_arm | isPresent %}`
+		// — wrong for a single-arm match (last_arm present, match_arm absent). The visible
+		// group collapses the parent optional to one slot so each slot renders independently.
+		// The `field('last_arm', ...)` must be included in the body so the pattern matches
+		// the post-transform sub-tree (the transforms: entry adds the field wrapper first).
+		// Fixes Copilot PR review comments #1–#3 (template gating + render order).
+		match_block_arms: ($) =>
+			seq(repeat($.match_arm), field('last_arm', alias($.last_match_arm, $.match_arm)))
 	},
 	transforms: {
 		// token_repetition: `$( _tokens* ) <sep>? <op>` —

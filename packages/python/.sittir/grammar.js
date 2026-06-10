@@ -401,14 +401,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec = nativeRequired("prec");
+  const prec3 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec[variant2];
+    const fn = prec3[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec(value, newContent);
+  return prec3(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -497,6 +497,82 @@ function alias(rule, value) {
   }
   return native(rule, rule);
 }
+
+// packages/codegen/src/compiler/rule-types.ts
+var STRING = "string";
+var PATTERN = "pattern";
+var SYMBOL = "symbol";
+var TOKEN = "token";
+
+// packages/codegen/src/dsl/primitives/role.ts
+var currentRoles = null;
+var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
+function role(symbol, roleName) {
+  if (!isSymbolLike(symbol)) {
+    throw new Error(
+      `role(): first argument must be a symbol reference (e.g. $._indent), got ${JSON.stringify(symbol)}`
+    );
+  }
+  if (!VALID_ROLE_NAMES.has(roleName)) {
+    throw new Error(
+      `role(): second argument must be one of 'indent' | 'dedent' | 'newline', got ${JSON.stringify(roleName)}`
+    );
+  }
+  if (currentRoles !== null) {
+    currentRoles.set(symbol.name, { role: roleName });
+  }
+  return symbol;
+}
+
+// packages/codegen/src/compiler/evaluate.ts
+function normalize(input) {
+  if (input === void 0 || input === null) {
+    throw new Error("Undefined symbol");
+  }
+  if (typeof input === "string") {
+    return { type: STRING, value: input };
+  }
+  if (input instanceof RegExp) {
+    return { type: PATTERN, value: input.source };
+  }
+  if (typeof input === "object" && "type" in input) {
+    return input;
+  }
+  throw new TypeError(`Invalid rule: ${input}`);
+}
+function sym(name) {
+  return { type: SYMBOL, name, hidden: name.startsWith("_"), inline: name.startsWith("_") };
+}
+var token = Object.assign(
+  function token2(content) {
+    return { type: TOKEN, content: normalize(content), immediate: false };
+  },
+  {
+    immediate(content) {
+      return { type: TOKEN, content: normalize(content), immediate: true };
+    }
+  }
+);
+var prec = Object.assign(
+  function prec2(precedenceOrContent, content) {
+    if (content === void 0) return normalize(precedenceOrContent);
+    return normalize(content);
+  },
+  {
+    left(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    },
+    right(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    },
+    dynamic(precedenceOrContent, content) {
+      if (content == null) return normalize(precedenceOrContent);
+      return normalize(content);
+    }
+  }
+);
 
 // packages/codegen/src/dsl/list-patterns.ts
 function firstStringOfChoice(r) {
@@ -742,8 +818,8 @@ function makeField(name, content) {
   return node;
 }
 function makeSymbol(name) {
-  const symbol = nativeRuleFn("symbol", "sym");
-  return symbol(name);
+  const symFn = nativeRuleFn("sym");
+  return symFn(name);
 }
 function registerKwRule(stringLiteral, keyword, kwRules) {
   const hiddenName = `_kw_${keyword}`;
@@ -1506,9 +1582,9 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
 function makeGroupLiftSymbol(referenceRule, name) {
   const t = referenceRule.type ?? "";
   const isUpper = t.length > 0 && t === t.toUpperCase();
+  const base2 = isUpper ? { type: "SYMBOL", name } : sym(name);
   return {
-    type: isUpper ? "SYMBOL" : "symbol",
-    name,
+    ...base2,
     source: "group-lift",
     metadata: { source: "enrich" }
   };
@@ -1758,8 +1834,8 @@ function collectInlineNames(entries) {
   return names;
 }
 function nativeInlineRef($, name) {
-  const nativeSymbol = globalThis.symbol;
-  if (typeof nativeSymbol === "function") return nativeSymbol(name);
+  const nativeSym = globalThis.sym;
+  if (typeof nativeSym === "function") return nativeSym(name);
   return $[name];
 }
 function symbolizeRef(_$, name) {
@@ -1835,6 +1911,13 @@ function patternBodyEqual(aIn, bIn) {
   }
   return false;
 }
+function nativeSymbolRt(name) {
+  const fn = globalThis.sym;
+  if (typeof fn !== "function") {
+    throw new Error("wire: no global sym() \u2014 pattern replacement must run inside a DSL runtime");
+  }
+  return fn(name);
+}
 function replaceInBodyRt(rule, candidates) {
   if (!rule || typeof rule !== "object") return rule;
   const r = rule;
@@ -1848,12 +1931,12 @@ function replaceInBodyRt(rule, candidates) {
           value: c.aliasAs
         } : {
           type: "alias",
-          content: { type: "symbol", name: c.name, hidden: true },
+          content: nativeSymbolRt(c.name),
           named: true,
           value: c.aliasAs
         };
       }
-      return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
+      return c.uppercase ? { type: "SYMBOL", name: c.name } : nativeSymbolRt(c.name);
     }
   }
   const t = r.type.toLowerCase();
@@ -2447,26 +2530,6 @@ function extractNonEmpty(rule) {
     return null;
   }
   return null;
-}
-
-// packages/codegen/src/dsl/primitives/role.ts
-var currentRoles = null;
-var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
-function role(symbol, roleName) {
-  if (!isSymbolLike(symbol)) {
-    throw new Error(
-      `role(): first argument must be a symbol reference (e.g. $._indent), got ${JSON.stringify(symbol)}`
-    );
-  }
-  if (!VALID_ROLE_NAMES.has(roleName)) {
-    throw new Error(
-      `role(): second argument must be one of 'indent' | 'dedent' | 'newline', got ${JSON.stringify(roleName)}`
-    );
-  }
-  if (currentRoles !== null) {
-    currentRoles.set(symbol.name, { role: roleName });
-  }
-  return symbol;
 }
 
 // packages/python/overrides.ts
