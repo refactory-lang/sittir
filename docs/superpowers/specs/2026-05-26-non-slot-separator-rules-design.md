@@ -1,9 +1,6 @@
 # Non-slot separator rules — `separator`-role child slots with a `delimits` relationship
 
-> **Status:** Design (brainstormed 2026-05-26). A **separate** design — its own brainstorm→spec→plan.
-> It refines the slot model that `2026-05-22-compiler-simplification-design.md` §1/§2 also touch, but it
-> is **NOT PR-A and NOT folded into the strangler's existing PRs**. Sequence after the strangler
-> stabilizes (or independently).
+> **Status:** Design (brainstormed 2026-05-26). Now tracked as a first-class spine PR — **`PR-T`** (the render half of the separator model; **depends on PR-S** = `separator-canonical`). Still its **own** brainstorm→spec→plan — it refines the slot model that `2026-05-22-compiler-simplification-design.md` §1/§2 also touch, and is **NOT folded into another PR's scope**. Sequence **after PR-S** / after the strangler stabilizes (or independently).
 
 ## Problem
 
