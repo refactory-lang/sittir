@@ -26,6 +26,7 @@ Generate typed factories, templates, and native bindings from a grammar
 - `--skip-ts-chain` — Skip the auto transpile + tree-sitter generate chain
 - `--roundtrip` — Run validator probes after generation
 - `--no-build-native` — Skip the post-regen N-API rebuild
+- `--no-workspace-check` — Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)
 - `--no-emit-diff` — Suppress the post-regen emit diff
 - `--allow-diagnostic <code>` — Allow a blocking grammar diagnostic (repeatable) (default: ``)
 
@@ -485,6 +486,23 @@ Profile factory-render-parse failures
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool profile-factory [options]
+```
+
+### `tool propose-14`
+
+Principle #14 signature-conformance ratchet (classify pipeline fns; fail on baseline increase)
+
+**Options**
+
+- `--update` — Rewrite the committed baseline to the current counts
+- `--table` — Print the per-function classification table (drives R1-R4 + R8)
+- `--json` — Machine-readable JSON output
+- `--baseline <path>` — Baseline path (default: packages/codegen/.principle14-baseline.json)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool propose-14 [options]
 ```
 
 ### `tool walk`

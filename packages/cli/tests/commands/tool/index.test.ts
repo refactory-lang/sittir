@@ -7,11 +7,11 @@ const EXPECTED = [
 	'classify', 'compare-overrides', 'diff-failures', 'dump-ast-mismatches',
 	'exercise', 'field-provenance', 'grammar-diagnostics', 'inspect-refs',
 	'inspect-type', 'list-kinds', 'phantom-kinds', 'probe-kind', 'probe-parity',
-	'probe-stages', 'probe-validate', 'profile', 'profile-factory', 'walk'
+	'probe-stages', 'probe-validate', 'profile', 'profile-factory', 'propose-14', 'walk'
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 23 converted tools', () => {
+	it('registers exactly the 24 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 

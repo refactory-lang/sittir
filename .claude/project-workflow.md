@@ -24,6 +24,7 @@ Developer diagnostics live behind the unified `sittir` CLI (`@sittir/cli`). Pref
 - `probe-parity` — template coverage for one kind
 - `profile` — unified failure aggregation across validators
 - `check-baseline` / `check-perf` / `check-jinja` — regression gates and invariant checks
+- `propose-14` — Principle #14 signature-conformance ratchet (R0): per-module classification table (`--table`), committed-baseline regression gate (`--update` to lower the baseline in a sweep PR)
 - `list-kinds`, `classify`, `phantom-kinds`, `field-provenance` — discovery tools
 - `inspect-type`, `inspect-refs`, `compare-overrides` — inspection tools
 - `walk`, `exercise` — round-trip exercise harnesses
