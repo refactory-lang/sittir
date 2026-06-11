@@ -81,29 +81,30 @@ phase-method file INTO its owning phase module — *consolidation toward the
 phase module*, not redistribution into ad-hoc consumers. Two layers sit
 OUTSIDE this axis: **emitters** keep the emitter-pattern-consistency
 convention (R5's `render-module` split is emitter hygiene, orthogonal — not a
-phase), and **`node-map` stays the model container** (the `NodeMap` class +
-lookup surface; R6 migrates only its phase-ish *derivation* passes to the
-owning phase module, leaving genuine model-build in `node-map`).
+phase), and **`node-map` is the model layer, not a phase** — R6 moves it (the
+`NodeMap` class + lookup surface + construction) into a **`compiler/model/`**
+folder (decision 2); R6 migrates only its phase-ish *derivation* passes out to
+the owning phase module.
 
-**Genuine tensions — flagged for user decision before the affected rows
-start:**
+**Decisions (resolved 2026-06-11 with the design authority):**
 
-1. **Phase modules will re-grow.** R7's fold pushes `simplify.ts` /
-   `evaluate.ts` back toward whale size. The principle says
-   one-module-per-phase wins over line-count aversion — confirm that
-   ordering, or set a size threshold at which a phase adopts an internal
-   section convention (still one file) instead of a second file.
-2. **Construction-time passes with no named phase.** Some node-map
-   internals (e.g., the factory-map build) run at `NodeMap` construction,
-   after assemble — no existing phase module owns them. Default taken
-   above: they stay in `node-map.ts` as part of the container. Alternatives
-   if node-map stays whale-sized after R6: a dedicated `model-build.ts`
-   phase module (Model #0 construction IS arguably a phase), or `dsl/`.
-   User picks at R6 time.
-3. **Helpers shared between a phase and an emitter.** Cross-phase shared ops
-   live in `dsl/`; emitter-shared code has its own homes. A helper used by
-   BOTH axes has no clean home — propose case-by-case at fold time,
-   defaulting to `dsl/` with the emitter importing it.
+1. **Phase-module size — one file + internal sections.** One-module-per-phase
+   wins over line-count aversion; a large phase (`simplify`/`evaluate` after
+   R7's fold) organizes with an **internal section convention** (banners /
+   regions), **never a second file**. Size is managed by structure, not splitting.
+2. **Model-build home — a `compiler/model/` folder.** The construction-time
+   passes (run at `NodeMap` construction, after assemble) build **Model #0**,
+   so they live in `compiler/model/` holding the container (`node-map.ts`) +
+   construction (`model-build.ts`) + derivation passes. **NOT** `metadata/`
+   (that names the serialized OUTPUT — `node-model.json5` — a separate emitter
+   concern). ⚠ **`factory-map` is DEPRECATED** (PR-K φ2 absorbs it into
+   node-model), so its build inside `model/` is **transitional** — do not
+   enshrine factory-map as a permanent `model/` fixture; it dissolves as PR-K φ2
+   lands.
+3. **Phase+emitter shared helpers — case-by-case at fold time.** No blanket
+   rule; decide each helper's home when R7 folds it (default: extract just the
+   shared piece → `dsl/` or `codegen/src/types/`, the emitter imports it — don't
+   move a whole phase to satisfy an emitter).
 4. **`dsl/` dependency direction — RESOLVED via R11 (decided 2026-06-11).**
    `transforms.ts` imports the Rule IR from `compiler/` (`rule-types`, `rule`,
    Rule-level `diagnostics`), so a bare move would make `dsl → compiler`.
@@ -120,8 +121,8 @@ start:**
 | **R2** | **#14 sweep: `evaluate.ts`** (0/66) + declare `EvaluateCtx` (extends the §7.7 pattern — the design's "`NormalizeCtx`, `SimplifyCtx`, `AssembleCtx`, …" ellipsis) folding the loose `rules` (31×) / `wordMatcher` args | R0 | same | evaluate is upstream of everything; converting it removes most of the loose-`rules` plumbing in one row |
 | **R3** | **#14 sweep: `simplify.ts` (0/36) + `normalize.ts` finish (4/26) + `transforms.ts` (0/4)**; declare `SimplifyCtx` per §7.7; **moves `compiler/transforms.ts` → `dsl/`** (clean AFTER **R11** extracts the IR types to `codegen/src/types/` — transforms then imports `types/`, not `compiler/`; resolve the name vs the existing `dsl/transform/` override module) and **completes PR-O M1's deferred 4** — with helpers on `(target, ctx)` the wrapper+helper clusters move into `dsl/` without the import cycle | R0, **R11**; absorbs PR-O M1 remainder (flag to user: M1-remainder closes here, not as its own row) | same + regen byte-identical | §7.7 CW6 is binding: `inField`-style recursion-LOCAL traversal state stays an explicit third parameter — do NOT stuff per-node traversal state into ctx |
 | **R4** | **#14 sweep: `link.ts` (1/60) + `assemble.ts` finish (1/31)**; `AssembleCtx` already declared — convert remaining call sites; fold `kindEntries` loose args | R1 (nodeMap getters land first — link/assemble consume them) | same | After R4 the ratchet baseline reaches ~0 for compiler/ |
-| **R5** | **Split `render-module.ts` (4845)** along its existing seams: transport emission (AnyTransport + supertype/per-slot enums + leaf impls + VerbatimTransport) → `render-transport-emit.ts`; typed dispatch + per-kind render fns → `render-dispatch-emit.ts`; libRs/hash/template-copy assembly stays in `render-module.ts` as the thin assembler | — (independent of R1-R4) | regen **byte-identical** ×3 grammars + cargo check + validate:native HOLD | Pure file move of emitter internals; no signature changes (emitters excluded from #14) |
-| **R6** | **Slim `node-map.ts` (3937) to the model container** (per the module-organization target): the `NodeMap` class + lookup surface stays; phase-ish *derivation* passes (slot registration walks, etc.) move to their OWNING phase module; construction-time model-build (factory-map build) stays in `node-map.ts` by default — see tension 2 | R1 (sweep first so moved fns move in their FINAL shape — avoids double-touch); tension 2 decided | validate:native HOLD + tests | Replaces the earlier `node-map-build.ts` sibling-split idea — destinations follow the phase axis, not a second node-map file |
+| **R5** | **Split `render-module.ts` (4845)** along its seams: transport emission (AnyTransport + supertype/per-slot enums + leaf impls + VerbatimTransport) → `render-transport-emit.ts`; the libRs/hash/template-copy assembly stays as the thin assembler. **⚠ The typed-dispatch + per-kind render path is believed DEPRECATED** (same class as the sunset `bridge.rs`, PR-E2) — but **R5 MUST VERIFY this first, not assume it**: reachability check — is it emitted into the shipped engine / reached by production render, or only `@deprecated` / test-only? **If confirmed dead → DELETE it** (do NOT preserve it as a permanent `render-dispatch-emit.ts`); **if actually live → split it out** as originally planned. | — (independent of R1-R4) | regen **byte-identical** ×3 grammars + cargo check + validate:native HOLD | emitter file split, no signature changes (emitters excluded from #14); the dispatch-path verdict decides whether R5 is a 2-way split or a transport-extract + dead-path delete |
+| **R6** | **`node-map.ts` → `compiler/model/`** (decision 2): a `compiler/model/` folder holds the `NodeMap` container (`node-map.ts`) + construction (`model-build.ts`) + derivation passes. Phase-ish *derivation* passes that belong to a pipeline phase move to that phase module instead. (factory-map build is **transitional** — deprecated by PR-K φ2, dissolves into node-model.) | R1 (sweep first so moved fns move in their FINAL shape); decision 2 | validate:native HOLD + tests | Destinations: model layer → `compiler/model/`; phase-derivations → their phase module — not a second node-map sibling file |
 | **R7** | **De-scatter into phase modules** (per the module-organization target): compiler/ files under ~150 lines fold INTO their owning **phase module**; genuinely cross-phase helpers → **`dsl/`** (where `transforms.ts` moves, R3); emitter small-files fold per the emitter convention. Inventory + ownership map emitted by the R0 tool; fold list reviewed before execution | R3 | validate:native HOLD + tests | Evidence-based: 19+15 candidate files; pass files that ARE a phase (e.g. `lift-separators.ts`) stay as the phase module |
 | **R8** | **Dead-code removal** (repo-wide): R0's classifier already buckets `dead` functions — delete them, confirming **zero callers via `lsproxy textDocument references`** before each removal (the closed-subgraph method proven in #71's alias-override cleanup, −414 LOC: trace the dead subgraph → delete). R1–R4 also drop their own module's `dead` bucket inline as they sweep; R8 sweeps the remainder. **Task-#8 targets:** 16 truly-dead fns (incl. a closed family of 6 unused type guards in `rule.ts` + legacy `emitFrom`), the `emitFrom`/`emitWrap` superseded pre-class subgraph (`emitWrap` = 20 test refs, 0 production callers — tests of a dead path), ~70 dead type exports, 180 un-export candidates | R0 (classifier) | validate:native HOLD + tests + **`lsproxy textDocument references` RE-VERIFY per candidate** | byte-neutral (dead code has no callers); **CAVEAT (task #8): its zero-caller list is tokenization-based, NOT LSP-confirmed — the lsproxy daemon failed its positive control, so R8 MUST independently re-verify each deletion with the working invocation (`--no-proxy --server "typescript-language-server --stdio"`)**; TS `noUnusedLocals` misses module-level dead fns (the #71 blind spot) |
 | **R9** | **Relocate the TOOL parts of `validate/` + `scripts/` → `packages/tools`** (PARTIAL — codegen-run infrastructure STAYS): the corpus **validator logic** and the **genuine dev scripts** move; but **codegen-run infrastructure stays in codegen** — `validate/common.ts`'s parser/engine loading (`loadWebTreeSitter`, used by `generated-metadata`/`compile-parser`) and `scripts/{generated-manifest,emit-diff,native-binary-freshness}` (the manifest stamp IS part of the codegen run — moving it makes the stamp the cycle). So R9 **splits `validate/common.ts`** (loader stays, validator logic moves) and **partitions `scripts/`** (run-infra stays, dev tools move). Re-point `ci.yml`'s 5 script invocations (lines 112/116/190/194/247) + the CLI / `rt-breakdown` / `diff` imports. Moves via `lsproxy`. | after R1–R4 (validate internals settled); **R11** (so the moved validator imports `types/`, not codegen) | validate:native HOLD + full suite + `pnpm -r build` + **no new package cycle** | 7 real `codegen-core → validate\|scripts` edges inventoried (run-codegen→validate/renderable + scripts/generated-manifest + scripts/emit-diff; parity-fixtures→validate/read-render-parse; generated-metadata + compile-parser→validate/common loader; types + grammar→validate/node-types-loader) — the split + partition keeps each on its correct side. **PLUS 3 DYNAMIC `import()` edges** invisible to static-graph tools (`run-codegen→parity-fixtures`, `read-render-parse→collect-baseline`, `common→generated-manifest`) — R9 must handle these explicitly. Note `parity-fixtures.ts` has **ZERO static importers** (dynamically invoked — don't let R8 misclassify it as dead). R0's `propose-14` tool is **birthed in `packages/tools`** so R9 doesn't relocate what it just placed |
