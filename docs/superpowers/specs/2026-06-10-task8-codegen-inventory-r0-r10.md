@@ -34,7 +34,10 @@
   ALSO returned only its own declaration. One-shot sessions are returning
   same-file results only. **The dead list below therefore rests on the
   tokenization pass; the lsproxy re-verification demanded by gate item 5 is
-  still owed at R8 execution time** (with a properly indexed daemon session).
+  still owed at R8 execution time.** Known-working invocation from the #71
+  cleanup (team-lead): `lsproxy textDocument references <file> <line:col>
+  --no-proxy --server "typescript-language-server --stdio"` — use that exact
+  form for the re-verify.
 - **Importer map** — static `from '…'` imports; dynamic `await import(…)`
   found separately (3 sites, all listed in §5 — they matter for R9).
 
@@ -256,12 +259,14 @@ not hypothetical):
 | `primitives/role.ts:32-33` | type {Rule} ← rule.ts; type {ExternalRole} ← types.ts |
 | `wire/wire.ts:36,45` | type {PolymorphVariant} ← types.ts; type {Rule} ← rule.ts |
 
-Pattern: **everything except `sym` is a type-import of the Rule layer.** The
-R3 move is implementable iff `rule.ts` + `rule-types.ts` (+ a Rule-level
-diagnostics seam) relocate to dsl/ — which simultaneously erases 8 of the 9
-existing inversions and makes the proposal's "DSL defines the Rule types"
-rationale true. The `sym` value-import needs its own fix (move `sym` to the
-Rule layer or invert).
+Pattern: **everything except `sym` is a type-import of the Rule layer.**
+Per the proposal's R11, the type layer (rule-types / rule / runtime-shapes)
+extracts to `codegen/src/types/` — that erases the 8 type-inversions and
+unblocks the R3 transforms move. **R11 scope flag: the `sym` value-import is
+the ONE edge the type extraction does NOT close** — it is a runtime
+dependency on a phase module (evaluate.ts), and needs its own handling
+(move `sym` into `types/` if it is foundational, or invert the dependency).
+R11 must not claim to close an edge it doesn't.
 
 `transforms.ts` own imports: `rule-types.ts`, `rule.ts`, `diagnostics.ts` —
 nothing else. `TransformCtx` is declared in-file and moves free.
@@ -293,7 +298,7 @@ validate/read-render-parse:408 → scripts/collect-baseline
 | **R2** | evaluate: 36 non-conforming, the `rules`×55 plumbing epicenter | **M** |
 | **R4** | link 35 + assemble 21 | **M** |
 | **R1** | node-map: only 22 conversions (+7 zero-param to leave); declare the 129 getters conforming in the baseline | **S–M** (downgraded from the proposal's fear) |
-| **R3** | simplify 10 + normalize 15 + transforms 3, **gated on the type-layer decision**: move rule.ts+rule-types.ts(+diagnostics seam) to dsl/ WITH transforms (erases 8/9 existing inversions, §5a) or keep transforms compiler-side; fix the `sym` value-import either way; rule-attrs + wrapper-deletion accompany the decision | **M** + 1 user decision |
+| **R3** | simplify 10 + normalize 15 + transforms 3, **gated on R11** (type layer rule-types/rule/runtime-shapes → `codegen/src/types/`, erasing the 8 type-inversions, §5a); the `sym` value-import needs separate handling either way; rule-attrs + wrapper-deletion accompany the move | **M**, after R11 |
 | **R5** | render-module split as proposed; transport seam ≈ the VerbatimTransport/enum/leaf-impl block, dispatch seam ≈ buildTypedTemplateBody+per-kind fns | **M** |
 | **R6** | node-map 3938 → container; orbit files collect-slots/field-shape/opaque-facts per §2 | **M** |
 | **R7** | fold list (single-phase satellites): emit-gate→generate, list-fusion→simplify, lift-separators+group-synthesis+link-refine→link (link grows 2311→~3.4k: tension 1 made concrete), template-walker→collect-slots, field-shape→node-map; tension-3 cases (common.ts, wrapper-deletion, link-refine) held for the user | **M** |
