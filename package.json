@@ -24,7 +24,7 @@
     "lint": "oxlint -c oxlint.config.ts .",
     "lint:fix": "oxlint -c oxlint.config.ts --fix .",
     "test": "vitest run",
-    "regen:all": "tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src && tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src && tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src",
+    "regen:all": "tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src --no-workspace-check && tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src --no-workspace-check && tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src",
     "validate": "pnpm run regen:all && tsx packages/cli/src/cli.ts validate counts",
     "validate:native": "pnpm run regen:all && tsx packages/cli/src/cli.ts validate counts --backend native",
     "validate:js": "pnpm run regen:all && tsx packages/cli/src/cli.ts validate counts --backend js",

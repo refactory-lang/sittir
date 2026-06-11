@@ -12,7 +12,7 @@
  * The CLI caller catches and converts to `process.exit(1)`.
  */
 
-import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
 
@@ -71,6 +71,13 @@ export interface CodegenOptions {
 	 * Set to `false` to skip cargo rebuild (--no-build-native).
 	 */
 	buildNative?: boolean;
+	/**
+	 * Whether to run `cargo check --workspace` after the native rebuild
+	 * (default: true). Set to `false` (--no-workspace-check) in multi-grammar
+	 * drivers for all but the LAST grammar — the final check covers the whole
+	 * workspace, making the earlier per-grammar checks redundant.
+	 */
+	workspaceCheck?: boolean;
 	/** Suppress the post-regen emit-diff report (--no-emit-diff). */
 	noEmitDiff?: boolean;
 	/** List of diagnostic messages to allow (passed from CLI allowlist). */
@@ -83,8 +90,24 @@ export interface CodegenOptions {
 
 /**
  * Write `content` to `path`, creating parent directories as needed.
+ *
+ * Content-aware: skips the write when the file already holds identical
+ * bytes. Generated outputs are rewritten wholesale on every regen even
+ * when nothing changed, and the mtime bump alone forced cargo (release
+ * profile, `incremental = false`) to recompile entire napi crates and
+ * made every mtime-based freshness signal noisy. Skipping no-op writes
+ * keeps mtimes meaningful: unchanged crates fingerprint-match in cargo,
+ * so rebuilds and the workspace check finish in seconds on a no-change
+ * regen.
  */
 export function writeFile(path: string, content: string): void {
+	if (existsSync(path)) {
+		try {
+			if (readFileSync(path, 'utf8') === content) return;
+		} catch {
+			// Unreadable existing file — fall through and overwrite.
+		}
+	}
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, content, 'utf8');
 }
@@ -265,7 +288,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 	// not run this function and therefore do not inherit this env.
 	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
 
-	const { grammar, outputDir, all, nodes, roundtrip, testsDir, noEmitDiff, buildNative } = opts;
+	const { grammar, outputDir, all, nodes, roundtrip, testsDir, noEmitDiff, buildNative, workspaceCheck } = opts;
 
 	if (!outputDir) {
 		throw new Error('Missing required argument: --output. Use --help for usage.');
@@ -409,18 +432,25 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 			// per-grammar regen. cargo check is incremental: a no-op for the
 			// crate just rebuilt by napi, and only compiles other crates whose
 			// source changed since their last build.
-			console.log(`  → cargo check --workspace (catches cross-grammar breakage)…`);
-			try {
-				execSync('cargo check --workspace --features napi-bindings', {
-					stdio: 'inherit',
-					cwd: process.cwd()
-				});
-			} catch (e) {
-				console.error(
-					`    Workspace cargo check failed. Other grammars' generated code does not compile — ` +
-						`render-module.ts changes likely emit invalid code for them. Fix and re-run.`
-				);
-				throw e;
+			//
+			// Skippable via --no-workspace-check: a multi-grammar driver
+			// (`regen:all`) runs the check once on its LAST grammar instead of
+			// once per grammar — the final check still covers the whole
+			// workspace, the earlier ones were redundant.
+			if (workspaceCheck !== false) {
+				console.log(`  → cargo check --workspace (catches cross-grammar breakage)…`);
+				try {
+					execSync('cargo check --workspace --features napi-bindings', {
+						stdio: 'inherit',
+						cwd: process.cwd()
+					});
+				} catch (e) {
+					console.error(
+						`    Workspace cargo check failed. Other grammars' generated code does not compile — ` +
+							`render-module.ts changes likely emit invalid code for them. Fix and re-run.`
+					);
+					throw e;
+				}
 			}
 
 			// --- parity-fixture extraction (spec 012 T045 / T046) ---

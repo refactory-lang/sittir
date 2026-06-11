@@ -26,6 +26,7 @@ import type { TreeHandle } from '@sittir/common';
 import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
 import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
 import { opaqueFacts, readFacts } from '../compiler/opaque-facts.ts';
+import { assertNativeBinaryFresh, hostBinaryFreshnessFor } from '../scripts/native-binary-freshness.ts';
 
 // Validator-local slot model. validate/common.ts has no AssembledNonterminal
 // instances (it walks already-read napi NodeData), so slot descriptors are
@@ -282,36 +283,73 @@ export function nativeTreeHandle(engine: NativeEngineLike, source: string): Tree
  * invocations to amortize the (small) per-engine init. Each call
  * still parses fresh — the engine internally replaces its tree.
  */
-let _cachedNativeEngine: { grammar: string; engine: NativeEngineLike } | null = null;
+let _cachedNativeEngine: { grammar: string; engine: NativeEngineLike; binaryMtimeMs: number } | null = null;
 const nativePackages: Record<string, string> = {
 	rust: 'sittir-rust',
 	typescript: 'sittir-typescript',
 	python: 'sittir-python'
 };
 function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
+	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
+	// Freshness report doubles as the cache-key source: napi modules can
+	// never be re-dlopened in-process, so the binary's mtime at first load
+	// pins the cache.
+	const binaries = hostBinaryFreshnessFor(repoRoot, grammar);
+	const binaryMtimeMs = binaries.length > 0 ? Math.max(...binaries.map((b) => b.binaryMtimeMs)) : 0;
+
 	if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
+		// Cache keyed by (grammar, binary mtime): a binary rebuilt mid-process
+		// CANNOT be reloaded (node caches dlopen'd modules for the process
+		// lifetime), so serving the cached engine would silently validate the
+		// OLD code. Fail loudly instead.
+		if (_cachedNativeEngine.binaryMtimeMs !== binaryMtimeMs) {
+			throw new Error(
+				`Native engine for '${grammar}' was rebuilt after this process loaded it — ` +
+					`napi modules cannot be reloaded in-process. Re-run the command in a fresh process.`
+			);
+		}
 		return _cachedNativeEngine.engine;
 	}
+
+	// Staleness gate: a binary older than the crate's generated src/templates
+	// would validate stale code (Askama bakes templates at compile time).
+	// Throws loudly; absence of a binary is tolerated (module load below
+	// fails → null → caller reports "engine unavailable").
+	assertNativeBinaryFresh(repoRoot, grammar);
+
+	// Match probe-kind's loader — try the package name, then fall
+	// back to the workspace-local grammar crate directory.
+	const pkg = nativePackages[grammar];
+	if (!pkg) return null;
+	const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
+	let mod: { SittirEngine: new () => NativeEngineLike };
 	try {
-		// Match probe-kind's loader — try the package name, then fall
-		// back to the workspace-local grammar crate directory.
 		const req = createRequire(import.meta.url);
-		const pkg = nativePackages[grammar];
-		if (!pkg) return null;
-		const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
-		const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
-		let mod: { SittirEngine: new () => NativeEngineLike };
 		try {
 			mod = req(pkg) as typeof mod;
 		} catch {
 			mod = req(localCratePath) as typeof mod;
 		}
-		const engine = new mod.SittirEngine();
-		_cachedNativeEngine = { grammar, engine };
-		return engine;
 	} catch {
 		return null;
 	}
+	const engine = new mod.SittirEngine();
+
+	// Debug-profile gate: the binary self-reports its compile profile
+	// (cfg!(debug_assertions) → `buildProfile` getter). Debug binaries have
+	// a known segfault class under validation; refuse them unless explicitly
+	// allowed. Binaries predating the getter report undefined — tolerated.
+	const profile = (engine as { buildProfile?: string }).buildProfile;
+	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
+		throw new Error(
+			`Native engine for '${grammar}' is a DEBUG build — debug binaries are refused for ` +
+				`validation (known segfault class). Rebuild release (SITTIR_NATIVE_DEBUG unset or 0), ` +
+				`or set SITTIR_ALLOW_DEBUG_VALIDATE=1 to override.`
+		);
+	}
+
+	_cachedNativeEngine = { grammar, engine, binaryMtimeMs };
+	return engine;
 }
 
 export function buildReadHandle(

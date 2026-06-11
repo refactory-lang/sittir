@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "f7d21a0ed0a981476f001d5cbcc83672e0fa8b48938901c8589ad9f3a7d8b3fb",
+  "source_hash": "ccb147ad01456e110b67de5ae2e27327c8ac6700226cbd3461b41e17f782ec0f",
   "files": {
     "packages/python/.sittir/grammar.js": "76fe3c8701b391992283b87c59bacbe27824cfe046a353ed113c6b746d57145e",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -149,9 +149,9 @@
     "packages/python/templates/with_item.jinja": "6de9ebfb84be05c1bf693a55855a5f65d4b30745e7bf7e94405ab675b3bcef8f",
     "packages/python/templates/with_statement.jinja": "892f9897b8713eda534bd82a88d4687b73dbd9c834be164af7753a27a77120b3",
     "packages/python/templates/yield.jinja": "864c1b6eaf2e8558413c893cc1fb8e4cef6dc75000675a62d374a4c454685de4",
-    "rust/crates/sittir-python/index.d.ts": "773addfb94c0bb6c9f90e0d34fa9ec42a09166a1c306002a54c3cbc6d0e9cd2b",
+    "rust/crates/sittir-python/index.d.ts": "1a855bed283edfb42bfb2f6f942d0f67fe746f69cdfbeda223fca43cc6ecb71b",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",
-    "rust/crates/sittir-python/src/lib.rs": "4d9f9fe64271cf24bdc7c8a4dac80b270d59004712717ecd113d7055dc28f989",
+    "rust/crates/sittir-python/src/lib.rs": "80862cbfa8e90bce4cdd9494b383e58d1427f499b6930f00539aea2dbe3a05d2",
     "rust/crates/sittir-python/src/render/hash.rs": "08278ecdce865be772c3403e8915e85d2c89fb1e67a677e0cf78289cc5a891a8",
     "rust/crates/sittir-python/src/render/kind_ids.rs": "cc3af6bec479510b38ee9b00242b21f79c68b72d0e01a13124f8c2ee7914023c",
     "rust/crates/sittir-python/src/render/mod.rs": "ae306ef4595346a06131771a32233e23461ceec670da64ba5a1d9ed5dc42f88b",
@@ -277,6 +277,6 @@
     "rust/crates/sittir-python/templates/yield.jinja": "864c1b6eaf2e8558413c893cc1fb8e4cef6dc75000675a62d374a4c454685de4"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "657f6aef80dbdddf00ba7a1952ee4f383faf461ecc5558ce6f9640af56d405c9"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "freshness-checked"
   }
 }

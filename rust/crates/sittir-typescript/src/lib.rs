@@ -86,6 +86,19 @@ impl SittirEngine {
         NATIVE_RENDER_TRANSPORT_ABI
     }
 
+    /// Compile profile baked into this binary — `"debug"` or `"release"`.
+    /// Validators refuse debug binaries (known segfault class) unless
+    /// `SITTIR_ALLOW_DEBUG_VALIDATE=1`; the binary self-reporting makes the
+    /// gate immune to stale env assumptions.
+    #[napi(getter)]
+    pub fn build_profile(&self) -> &'static str {
+        if cfg!(debug_assertions) {
+            "debug"
+        } else {
+            "release"
+        }
+    }
+
     #[napi]
     pub fn find_and_read(&mut self, source: String, pattern: String) -> Result<String> {
         self.engine

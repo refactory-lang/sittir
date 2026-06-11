@@ -18,8 +18,9 @@ interface GenCliOptions {
 	compileParser?: boolean;
 	tsGenerate?: boolean;
 	skipTsChain?: boolean;
-	buildNative?: boolean; // commander sets false for --no-build-native
-	emitDiff?: boolean;    // commander sets false for --no-emit-diff
+	buildNative?: boolean;     // commander sets false for --no-build-native
+	workspaceCheck?: boolean;  // commander sets false for --no-workspace-check
+	emitDiff?: boolean;        // commander sets false for --no-emit-diff
 	roundtrip?: boolean;
 	allowDiagnostic?: string[];
 }
@@ -42,6 +43,12 @@ export const gen: CommandModule = {
 			.option('--skip-ts-chain', 'Skip the auto transpile + tree-sitter generate chain')
 			.option('--roundtrip', 'Run validator probes after generation')
 			.addOption(new Option('--no-build-native', 'Skip the post-regen N-API rebuild'))
+			.addOption(
+				new Option(
+					'--no-workspace-check',
+					'Skip the post-build cargo check --workspace (multi-grammar drivers run it once, on the last grammar)'
+				)
+			)
 			.addOption(new Option('--no-emit-diff', 'Suppress the post-regen emit diff'))
 			.option(
 				'--allow-diagnostic <code>',
@@ -63,6 +70,7 @@ export const gen: CommandModule = {
 					tsGenerate: opts.tsGenerate,
 					skipTsChain: opts.skipTsChain,
 					buildNative: opts.buildNative,       // false only if --no-build-native
+					workspaceCheck: opts.workspaceCheck, // false only if --no-workspace-check
 					noEmitDiff: opts.emitDiff === false, // true only if --no-emit-diff
 					allowDiagnostics: opts.allowDiagnostic,
 				};
