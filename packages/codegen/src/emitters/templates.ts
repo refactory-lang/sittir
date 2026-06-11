@@ -352,7 +352,8 @@ export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): s
 // emitRule — Rule.type dispatcher
 //
 // Walks a Rule subtree producing Jinja directly. Replaces the legacy
-// `template-walker.ts` + `translateToJinja` two-pass pipeline.
+// `template-walker.ts` + `translateToJinja` two-pass pipeline (the legacy
+// node-map.ts half was deleted in R1 once this dispatcher fully took over).
 //
 // Per PR1 design:
 // - Reads PR0-enriched attributes (`fieldName`, `multiplicity`, `nonterminal`,
@@ -1205,8 +1206,9 @@ function separatorToString(rule: Rule): string | undefined {
 
 /**
  * Pick the join-filter name based on a rule's flank metadata. Matches
- * the legacy `filterForFlanks` decision tree but reads attributes off
- * the rule directly (no `JinjaTranslateMeta` indirection).
+ * the legacy `filterForFlanks` decision tree (deleted with the
+ * `translateToJinja` path in R1) but reads attributes off the rule
+ * directly.
  *
  * When the rule itself carries no trailing/leading flags (e.g. the outer
  * choice in `fanOutSeqChoices`/`factorChoiceBranches` rebuilds), falls back
@@ -1269,7 +1271,7 @@ const DEFAULT_JOIN_SEPARATOR = ' ';
  *
  * The slot name is the RAW (snake_case, singular) field/symbol name
  * lowercased — matching the legacy walker's `$NAME` → `{{ name }}`
- * translation in `translateToJinja`. We deliberately do NOT use
+ * translation (the deleted `translateToJinja`). We deliberately do NOT use
  * `slot.propertyName` (camelCase + pluralized) because the walker's
  * template output is byte-compared against the new emitter and any
  * naming divergence breaks the diff gate.

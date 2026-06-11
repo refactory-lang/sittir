@@ -57,9 +57,10 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
  * `Set<string>` of field names — empty when no such field is found.
  *
  * Used by the template emitter to build a per-field trailing-separator
- * set so `filterForFlanks` can restrict `joinWithTrailing` to the
- * specific fields whose repeats carry the flag, rather than applying it
- * globally whenever the whole rule has any trailing repeat.
+ * set so `selectJoinFilter` (emitters/templates.ts) can restrict
+ * `joinWithTrailing` to the specific fields whose repeats carry the
+ * flag, rather than applying it globally whenever the whole rule has
+ * any trailing repeat.
  */
 export function findFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): Set<string> {
 	const out = new Set<string>();

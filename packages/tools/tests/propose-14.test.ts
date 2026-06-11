@@ -165,3 +165,19 @@ describe('propose-14 module aggregation + self-test', () => {
 		expect(counts['compiler/evaluate.ts'].nonConforming).toBeGreaterThan(10);
 	});
 });
+
+describe('propose-14 --json honors the ratchet gate (Codex P2)', () => {
+	it('returns the failure code on regression even in json mode', async () => {
+		const { mkdtempSync, writeFileSync: wf } = await import('node:fs');
+		const { tmpdir } = await import('node:os');
+		const { join } = await import('node:path');
+		const { run } = await import('../src/validate/propose-14.ts');
+		// doctored baseline: every module 0 → current counts MUST regress
+		const dir = mkdtempSync(join(tmpdir(), 'p14-'));
+		const baseline = join(dir, 'baseline.json');
+		wf(baseline, JSON.stringify({ modules: {} }), 'utf8');
+		const root = new URL('../../..', import.meta.url).pathname; // repo root
+		const code = await run({ json: true, baseline, root });
+		expect(code).toBe(1); // json changes the FORMAT, never the gate
+	});
+});

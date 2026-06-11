@@ -440,7 +440,9 @@ First time nodes appear. All metadata derived from the rule snapshots.
 model-type-specific metadata.
 
 - **`AssembledBranch`** holds `protected _slots: Record<string, AssembledNonterminal>` =
-  `slotRecord ?? buildSlotsRecord(kind, simplifiedRule, kindEntries)`. Getters:
+  `slotRecord ?? buildSlotsRecord(simplifiedRule, ctx, renderRule)` (R1: the
+  grammar-wide inputs — kind entries, collision signatures, alias targets,
+  simplified rules — travel in a `KindedDeriveCtx`). Getters:
   `slots` → `_slots`; **`fields` → `Object.values(this.slots)`** (every slot,
   field-named or kind-named — consumers must NOT branch on origin);
   **`children` → `[]`** (retired post slot-unification; kept as an
@@ -451,14 +453,14 @@ model-type-specific metadata.
   `fields` / `children` follow the same unified pattern.
 - **`AssembledGroup`** is the hidden synthesized-group shape; same getters.
 
-> **Legacy (PR3 deletes):** every Assembled class still carries a
-> `renderTemplate(rules?, wordMatcher?, externals?)` method. It is no longer
-> the authoritative template path (the `TemplateEmitter` is), but it is still
-> CALLED from `render-module.ts:2324`, the legacy `emitBodyForNode`
-> (`templates.ts:1615`), and `node-map.ts:2343/2364`. PR3 removes the method
-> and those callers along with `template-walker.ts` and the `node-map.ts`
-> translation pipeline (`inlineJinjaClauses` / `translateToJinja` / spacing
-> absorbers / `escapeJinjaBraceCollisions`).
+> **Legacy translation pipeline — DELETED (R1):** the `node-map.ts` Jinja
+> half (`translateToJinja` / `filterForFlanks` / `wrapOptionalFieldPlaceholders`
+> / `isWithinGuardedRange` / `JinjaTranslateMeta`) and the external-boundary
+> trio (`hasHiddenExternalRef` / `hasExternalBoundaries` /
+> `isExternalTerminalMember`) were zero-caller dead code (lsproxy-verified)
+> and were removed in R1. `emitRule` (emitters/templates.ts) is the
+> authoritative template path; `template-walker.ts` removal remains a PR3
+> item.
 
 ### `collectSlots(rule, kindForName?, kindEntries?, inherited?, inheritedSeparator?)` (`compiler/collect-slots.ts`) **(NEW — replaces `deriveSlotsRaw`)**
 **Pattern:** A wrapper-free (post-`deleteWrapper`) rule body.
@@ -488,9 +490,9 @@ not a shared-arm-field operator-enum), `sharedArmFieldName`,
 > ref-kind names. These run alongside the legacy `baseName`/`origin`
 > derivation and are the migration target for retiring it.
 
-### `deriveSlots(rule, kindEntries?)` / `_deriveSlotsInternal(rule, kindEntries?)` / `mergeSlotsByName(slots)` / `buildSlotsRecord(...)`
+### `deriveSlots(rule, ctx?)` / `_deriveSlotsInternal(rule, ctx?)` / `mergeSlotsByName(slots)` / `buildSlotsRecord(rule, ctx, renderRule?)`
 **Pattern:** Public slot-derivation entry point.
-**Action:** `deriveSlots` → `_deriveSlotsInternal` → `deleteWrapper(rule)` then `mergeSlotsByName(collectSlots(canonical, …))`. `mergeSlotsByName` folds same-named slots across positions (e.g. python `if_statement.alternative` from a repeat AND an optional) into one `AssembledNonterminal` whose `values` union.
+**Action:** R1 (#14 sweep): grammar-wide inputs travel in a **`DeriveCtx`** (`kindEntries` / `kindName` / `collision` signatures / `visibleAliasTargets` / `simplifiedRules` / `nodes`); per-kind builders take **`KindedDeriveCtx`** (`kindName` required). Recursion-local traversal state — `multiplicity` in `deriveValuesForRule(rule, ctx, multiplicity)` — stays an explicit parameter per CW6. `deriveSlots` → `_deriveSlotsInternal` → `deleteWrapper(rule)` then `mergeSlotsByName(collectSlots(canonical, …))`. `mergeSlotsByName` folds same-named slots across positions (e.g. python `if_statement.alternative` from a repeat AND an optional) into one `AssembledNonterminal` whose `values` union.
 **Output:** `readonly AssembledNonterminal[]`.
 
 ### Slot helpers

@@ -279,29 +279,31 @@ export async function run(opts: Propose14Options = {}): Promise<number> {
 		return 0;
 	}
 
-	if (opts.json) {
-		console.log(JSON.stringify({ counts, records }, null, 1));
-		return 0;
-	}
-
-	console.log('propose-14 — Principle #14 signature conformance (ratchet on non-conforming)');
-	console.log('module\ttotal\tconforming\tgetter-cand\tzero-param\tdead\tNON-CONFORMING');
-	for (const [module, c] of Object.entries(counts)) {
-		console.log(
-			`${module}\t${c.total}\t${c.conforming}\t${c.getterCandidate}\t${c.zeroParam}\t${c.dead}\t${c.nonConforming}`,
-		);
-	}
-	if (opts.table) {
-		console.log('');
-		console.log(formatTable(records));
-	}
-
+	// The ratchet gate runs in EVERY output mode — --json/--table change the
+	// format, never the gate behavior.
 	if (!existsSync(baselinePath)) {
 		console.error(`propose-14: no baseline at ${relative(root, baselinePath)} — run with --update to create it`);
 		return 1;
 	}
 	const baseline = JSON.parse(readFileSync(baselinePath, 'utf8')) as BaselineFile;
 	const result = compareWithBaseline(counts, baseline);
+
+	if (opts.json) {
+		console.log(JSON.stringify({ counts, records, ratchet: result }, null, 1));
+	} else {
+		console.log('propose-14 — Principle #14 signature conformance (ratchet on non-conforming)');
+		console.log('module\ttotal\tconforming\tgetter-cand\tzero-param\tdead\tNON-CONFORMING');
+		for (const [module, c] of Object.entries(counts)) {
+			console.log(
+				`${module}\t${c.total}\t${c.conforming}\t${c.getterCandidate}\t${c.zeroParam}\t${c.dead}\t${c.nonConforming}`,
+			);
+		}
+		if (opts.table) {
+			console.log('');
+			console.log(formatTable(records));
+		}
+	}
+
 	if (!result.ok) {
 		console.error('');
 		for (const r of result.regressions) {
@@ -311,6 +313,6 @@ export async function run(opts: Propose14Options = {}): Promise<number> {
 		}
 		return 1;
 	}
-	console.log('propose-14: ratchet OK (no module exceeds its baseline)');
+	if (!opts.json) console.log('propose-14: ratchet OK (no module exceeds its baseline)');
 	return 0;
 }
