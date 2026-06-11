@@ -12,6 +12,35 @@
 
 ---
 
+## 0. Goal — a compiler an agent can navigate without confusion
+
+The ultimate goal of this whole wave is **to make the compiler safe and
+predictable to work on in the future — for agents above all** (the people too).
+Every R-row serves that, and the success metric is **not line count** but: *can
+a fresh agent find the right code, trust what it reads, and change it without
+tripping a hidden dependency?*
+
+- **One module per phase** (R1–R7) → a predictable answer to "where does X
+  live" — no hunting across 27 satellite files.
+- **The glossary as the single per-function reference** (R10 + gate 6) → one
+  authoritative place to read intent, instead of scattered comments that drift
+  out of sync with the code.
+- **Dead code removed** (R8) → no dead-but-live-looking paths to mislead. Dead
+  code that *reads* as reachable is the #1 source of agent misdirection — cf.
+  #71's alias-override island (`noUnusedLocals` couldn't see it).
+- **Uniform `(target, ctx)` signatures** (R0–R4) → one mechanical shape, so an
+  agent can pattern-match every pipeline function instead of decoding bespoke
+  argument lists.
+- **A clean `dsl → types ← compiler` DAG** (R11) → no circular surprises; the
+  dependency direction is legible and enforced.
+- **The guard** (R0) → the convention can't silently re-deviate, so the
+  navigability doesn't rot the moment the sweep finishes.
+
+Keep this lens on every row: if a change makes the compiler *harder* for the
+next agent to reason about, it's wrong even if it passes the gate.
+
+---
+
 ## 1. The gap, verified (2026-06-10, `origin/master` @ 8c58bc8f)
 
 **(A) #14 adoption is ~2%.** PR-H (#54) landed `TransformCtx` /
