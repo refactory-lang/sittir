@@ -71,8 +71,10 @@ independent `cargo check --workspace --features napi-bindings`.
 **Module-organization target (design authority, 2026-06-10).** The compiler
 pipeline organizes as **one module per phase** — `evaluate` / `link` /
 `normalize` / `simplify` / `assemble`, each owning that phase's methods — with
-**methods reused across phases in a single `shared.ts`** (the role
-`transforms.ts` plays today → roll it into / rename it `shared.ts`). This is
+**methods reused across phases live in `dsl/`** — `compiler/transforms.ts`
+**moves into `dsl/`** (design authority: the shared Rule-transform ops belong
+with the DSL that defines the Rule types they operate on), NOT a new
+`compiler/shared.ts`. This is
 the axis the reorg rows realize: the de-scatter (R7) folds each scattered
 phase-method file INTO its owning phase module — *consolidation toward the
 phase module*, not redistribution into ad-hoc consumers. Two layers sit
@@ -95,24 +97,31 @@ start:**
    after assemble — no existing phase module owns them. Default taken
    above: they stay in `node-map.ts` as part of the container. Alternatives
    if node-map stays whale-sized after R6: a dedicated `model-build.ts`
-   phase module (Model #0 construction IS arguably a phase), or
-   `shared.ts`. User picks at R6 time.
-3. **Helpers shared between a phase and an emitter.** `shared.ts` is
-   compiler-side; emitter-shared code has its own homes. A helper used by
+   phase module (Model #0 construction IS arguably a phase), or `dsl/`.
+   User picks at R6 time.
+3. **Helpers shared between a phase and an emitter.** Cross-phase shared ops
+   live in `dsl/`; emitter-shared code has its own homes. A helper used by
    BOTH axes has no clean home — propose case-by-case at fold time,
-   defaulting to compiler-side `shared.ts` with the emitter importing it.
+   defaulting to `dsl/` with the emitter importing it.
+4. **`dsl/` dependency direction (transforms move, tension 4).** The
+   `transforms.ts` ops must not import from `compiler/` once they live in
+   `dsl/` (that would make `dsl → compiler`, inverting the foundational
+   direction). Extract any compiler-side dep (e.g. `rule-attrs`) the ops need
+   into `dsl/` first, or keep that dep injected — resolve before the move.
 
 | PR | Concern (1-liner) | Depends-on | Gate | Notes |
 |----|-------------------|-----------|------|-------|
 | **R0** | **Ratchet guard first**: `propose-14` conformance counter + committed baseline; pre-commit + CI fail on REGRESSION (count may only decrease) | — | counter self-test; zero behavior change | §3. Lands BEFORE any sweep so new code can't re-deviate while the sweep runs |
 | **R1** | **#14 sweep: `node-map.ts`** (0/93). Step 1: mechanical classification (getter / method / dead) emitted by the R0 tool; Step 2: pure node-self reads → class getters (per #14's getter-vs-method line); cross-node fns → `(target, ctx)` with `nodeMap` in ctx | R0 | validate:native HOLD + tests + ratchet ↓ | Highest traffic; many of the 93 are getter candidates, so the (target,ctx) count to convert is realistically ~40-60 |
 | **R2** | **#14 sweep: `evaluate.ts`** (0/66) + declare `EvaluateCtx` (extends the §7.7 pattern — the design's "`NormalizeCtx`, `SimplifyCtx`, `AssembleCtx`, …" ellipsis) folding the loose `rules` (31×) / `wordMatcher` args | R0 | same | evaluate is upstream of everything; converting it removes most of the loose-`rules` plumbing in one row |
-| **R3** | **#14 sweep: `simplify.ts` (0/36) + `normalize.ts` finish (4/26) + `transforms.ts` (0/4)**; declare `SimplifyCtx` per §7.7; **renames `transforms.ts` → `shared.ts`** (the module-organization target) and **completes PR-O M1's deferred 4** — with helpers on `(target, ctx)` the wrapper+helper clusters move into `shared.ts` without the import cycle | R0; absorbs PR-O M1 remainder (flag to user: M1-remainder closes here, not as its own row) | same + regen byte-identical | §7.7 CW6 is binding: `inField`-style recursion-LOCAL traversal state stays an explicit third parameter — do NOT stuff per-node traversal state into ctx |
+| **R3** | **#14 sweep: `simplify.ts` (0/36) + `normalize.ts` finish (4/26) + `transforms.ts` (0/4)**; declare `SimplifyCtx` per §7.7; **moves `compiler/transforms.ts` → `dsl/`** (design authority — shared Rule-transform ops live with the DSL; resolve the name vs the existing `dsl/transform/` override module, and the tension-4 `dsl → compiler` direction first) and **completes PR-O M1's deferred 4** — with helpers on `(target, ctx)` the wrapper+helper clusters move into `dsl/` without the import cycle | R0; absorbs PR-O M1 remainder (flag to user: M1-remainder closes here, not as its own row) | same + regen byte-identical | §7.7 CW6 is binding: `inField`-style recursion-LOCAL traversal state stays an explicit third parameter — do NOT stuff per-node traversal state into ctx |
 | **R4** | **#14 sweep: `link.ts` (1/60) + `assemble.ts` finish (1/31)**; `AssembleCtx` already declared — convert remaining call sites; fold `kindEntries` loose args | R1 (nodeMap getters land first — link/assemble consume them) | same | After R4 the ratchet baseline reaches ~0 for compiler/ |
 | **R5** | **Split `render-module.ts` (4845)** along its existing seams: transport emission (AnyTransport + supertype/per-slot enums + leaf impls + VerbatimTransport) → `render-transport-emit.ts`; typed dispatch + per-kind render fns → `render-dispatch-emit.ts`; libRs/hash/template-copy assembly stays in `render-module.ts` as the thin assembler | — (independent of R1-R4) | regen **byte-identical** ×3 grammars + cargo check + validate:native HOLD | Pure file move of emitter internals; no signature changes (emitters excluded from #14) |
 | **R6** | **Slim `node-map.ts` (3937) to the model container** (per the module-organization target): the `NodeMap` class + lookup surface stays; phase-ish *derivation* passes (slot registration walks, etc.) move to their OWNING phase module; construction-time model-build (factory-map build) stays in `node-map.ts` by default — see tension 2 | R1 (sweep first so moved fns move in their FINAL shape — avoids double-touch); tension 2 decided | validate:native HOLD + tests | Replaces the earlier `node-map-build.ts` sibling-split idea — destinations follow the phase axis, not a second node-map file |
-| **R7** | **De-scatter into phase modules** (per the module-organization target): compiler/ files under ~150 lines fold INTO their owning **phase module**; genuinely cross-phase helpers → **`shared.ts`** (= renamed/absorbed `transforms.ts`); emitter small-files fold per the emitter convention. Inventory + ownership map emitted by the R0 tool; fold list reviewed before execution | R3 | validate:native HOLD + tests | Evidence-based: 19+15 candidate files; pass files that ARE a phase (e.g. `lift-separators.ts`) stay as the phase module |
+| **R7** | **De-scatter into phase modules** (per the module-organization target): compiler/ files under ~150 lines fold INTO their owning **phase module**; genuinely cross-phase helpers → **`dsl/`** (where `transforms.ts` moves, R3); emitter small-files fold per the emitter convention. Inventory + ownership map emitted by the R0 tool; fold list reviewed before execution | R3 | validate:native HOLD + tests | Evidence-based: 19+15 candidate files; pass files that ARE a phase (e.g. `lift-separators.ts`) stay as the phase module |
 | **R8** | **Dead-code removal** (repo-wide): R0's classifier already buckets `dead` functions — delete them, confirming **zero callers via `lsproxy textDocument references`** before each removal (the closed-subgraph method proven in #71's alias-override cleanup, −414 LOC: trace the dead subgraph → delete). R1–R4 also drop their own module's `dead` bucket inline as they sweep; R8 sweeps the remainder (emitters / dsl / grammar-shapes / scripts) | R0 (classifier) | validate:native HOLD + tests + `rg` shows zero refs to each removed symbol | byte-neutral (dead code has no callers by definition); LSP find-references is the gate — TS `noUnusedLocals` misses module-level dead functions, the exact blind spot that hid the alias-override island in #71 |
+| **R9** | **Relocate `validate/` + `scripts/` out of codegen → `packages/tools`**: `packages/codegen/src/validate/**` (the corpus validators) and `packages/codegen/src/scripts/**` (dev/tool scripts) are developer **tooling**, not codegen — move them into `packages/tools/` (where `tools/src/validate/diff.ts` etc. already live) and re-point the CLI + `rt-breakdown`/`diff` imports. Moves via `lsproxy` (move-symbol / import-fixups). | independent of the #14 sweep; sequence **after R1–R4** so validate internals have settled (don't move churning files) | validate:native HOLD + full suite + `pnpm -r build` + **no new package import cycle** | **Dependency-direction risk to resolve IN-ROW:** `emitters/parity-fixtures.ts` calls `validateReadRenderParse` at codegen time, and `tools/src/validate/diff.ts` already imports codegen — a naive move makes `codegen → tools` on top of `tools → codegen` (a cycle). Resolve FIRST by extracting the validator core the fixture pass needs (or inverting fixture extraction so codegen doesn't call the validator), then move the rest; gate explicitly on no new cycle |
+| **R10** | **Comment cleanup → glossary** (DRY for docs): prune excessive inline code comments across the pipeline; durable per-function design rationale **migrates to `docs/compiler-phase-glossary.md`** (the canonical home, gate item 6); inline comments keep only non-obvious *local* intent. Runs WITH the sweep — R1–R4 prune each method's comments as they're already touching it (content → glossary) — plus a final repo-wide pass for untouched modules | R1–R4 (touch-as-you-sweep); R0's per-function table targets the rest | validate:native HOLD + tests (comments are non-semantic → byte-neutral on generated output); migrated rationale present in the glossary | the glossary is the single source for per-function rationale (`feedback_compiler_glossary_first`); inline comments that duplicate it are noise — DRY applied to documentation, and it keeps the glossary (not scattered comments) the thing future readers/agents consult |
 
 **NOT proposed:** splitting `evaluate.ts`/`link.ts`/`from.ts`/`factories.ts`.
 evaluate/link are mid-strangler (PR-N, PR-S, PR-L still pending against
@@ -171,8 +180,8 @@ manifest verifier wired into pre-commit):
    exactly (pure refactor; any delta = stop and diagnose).
 2. Full test suite (`pnpm test`); tsgo error count must not increase over
    the carried baseline.
-3. Rows touching `emitters/render-module.ts` (R5) or
-   `transforms.ts`/`shared.ts` (R3): regen byte-identical across all 3
+3. Rows touching `emitters/render-module.ts` (R5) or the
+   `transforms.ts` → `dsl/` move (R3): regen byte-identical across all 3
    grammars + independent
    `cargo check --workspace --features napi-bindings`.
 4. R0's ratchet: every row decreases the baseline it touches; CI fails on
@@ -181,6 +190,14 @@ manifest verifier wired into pre-commit):
    R8 deletion is preceded by an `lsproxy textDocument references` check
    returning zero callers (plus the `rg` zero-refs spot-check in the row
    gate).
+6. **Glossary sync + comment migration:** any row that moves / renames /
+   relocates a method updates `docs/compiler-phase-glossary.md` in the SAME
+   PR, AND prunes that method's excessive inline comments — durable rationale
+   migrates INTO the glossary entry, not duplicated inline (R10). The glossary
+   is the canonical per-function reference (`feedback_compiler_glossary_first`);
+   a moved/renamed function with a stale/missing glossary entry, or with
+   rationale still trapped in pruned-worthy comments, fails review. Applies to
+   R1–R10 (the whole sweep + reorg + relocation + comment cleanup).
 
 ## 5. Verification appendix (how the §1 numbers were produced)
 
