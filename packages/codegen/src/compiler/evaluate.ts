@@ -598,6 +598,44 @@ interface GrammarOptions {
  * When called with one arg: fresh grammar.
  * When called with two args: grammar extension (base + overrides).
  */
+/** Metadata accumulator sinks filled by grammar() metadata callbacks. */
+interface MetadataSinks {
+	extras: string[];
+	externals: string[];
+	supertypes: string[];
+	inline: string[];
+	conflicts: string[][];
+}
+
+/**
+ * The evaluate-phase ctx (§7.7 / Principle #14 — R2). Constructed ONCE per
+ * grammarFn invocation; every field is always available there, so all are
+ * required. Pass-LOCAL derived state (externalSet, the field-enum sweep
+ * maps, pattern candidates) stays in explicit parameters per CW6.
+ */
+export interface EvaluateCtx {
+	/** The rule record under evaluation (mutated by passes). */
+	readonly rules: Record<string, Rule>;
+	/** Per-kind provenance (mutated as synthetic rules are injected). */
+	readonly provenanceByKind: Map<string, RuleProvenance>;
+	/** Symbol-reference accumulator shared across all rule evaluations. */
+	readonly refs: SymbolRef[];
+	/** The grammar options under evaluation. */
+	readonly opts: GrammarOptions;
+	/** Base-grammar rules snapshot (empty for fresh grammars). */
+	readonly baseRules: Record<string, Rule>;
+	/** The evaluated base grammar object, or null for fresh grammars. */
+	readonly baseGrammar: unknown;
+	/** The externals metadata sink (same live array as sinks.externals). */
+	readonly externals: readonly string[];
+	/** True when extending a base grammar. */
+	readonly isExtension: boolean;
+	/** Metadata accumulator sinks. */
+	readonly sinks: MetadataSinks;
+	/** Setter for the word-rule name. */
+	readonly setWord: (w: string) => void;
+}
+
 function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: GrammarOptions): { grammar: any } {
 	let baseRules: Record<string, Rule> = {};
 	let baseGrammar: any = null;
@@ -626,25 +664,31 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const conflicts: string[][] = [];
 	let word: string | null = null;
 
+	const sinks: MetadataSinks = { extras, externals, supertypes, inline, conflicts };
+	const ctx: EvaluateCtx = {
+		rules,
+		provenanceByKind,
+		refs,
+		opts,
+		baseRules,
+		baseGrammar,
+		externals,
+		isExtension: baseGrammar !== null,
+		sinks,
+		setWord: (w) => {
+			word = w;
+		},
+	};
+
 	const { roles: collectedRoles } = withRoleScope(() => {
-		evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules, provenanceByKind, baseGrammar !== null, baseGrammar);
+		evaluateRulesAndInjectSynthetics(rules, ctx);
 		// adoptFinalBaseRules is now called inside evaluateRulesAndInjectSynthetics,
 		// before applyPatternReplacement, so body-patterns can match FIELD-wrapped
 		// bodies that were written back via group-lift during rule evaluation.
-		evaluateMetadataCallbacksInScope(
-			opts,
-			baseGrammar,
-			refs,
-			{ extras, externals, supertypes, inline, conflicts },
-			(w) => {
-				word = w;
-			}
-		);
+		evaluateMetadataCallbacksInScope(opts, ctx);
 	});
 
-	inheritBaseGrammarMetadata(opts, baseGrammar, { extras, externals, supertypes, inline, conflicts }, (w) => {
-		word = w;
-	});
+	inheritBaseGrammarMetadata(opts, ctx);
 
 	const polymorphVariants = drainPolymorphMetadata(opts);
 	const refineForms = drainRefineMetadata(opts);
@@ -655,7 +699,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	// body for the same key (keeping the sittir-side def authoritative).
 	// The DSL globals (string, etc.) are still injected at this point —
 	// evaluate()'s try block is still active.
-	const renderAs = drainRenderAsMetadata(opts, rules, refs, provenanceByKind);
+	const renderAs = drainRenderAsMetadata(opts, ctx);
 
 	// Rules map mirrors tree-sitter's view: no synthesized top-level
 	// entry for alias TARGETS. The source (`_X`) is the canonical
@@ -667,8 +711,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	// downstream to point at. Synthesize `_${target}` with the inline
 	// body so the `_X → X` invariant holds uniformly — every alias
 	// target has a named hidden source in the rules map.
-	synthesizeInlineAliasSources(rules, provenanceByKind, externals);
-	synthesizeFieldEnumRules(rules, provenanceByKind);
+	synthesizeInlineAliasSources(rules, ctx);
+	synthesizeFieldEnumRules(rules, ctx);
 	const identified = buildRuleCatalog(rules, provenanceByKind);
 	const references = attachReferenceRuleIds(refs, identified.ruleCatalog);
 
@@ -728,25 +772,17 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
  * own parser identity; the visible target `doc_comment` is the alias
  * destination, not a hidden kind.
  */
-function synthesizeInlineAliasSources(
-	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>,
-	externals: readonly string[]
-): void {
-	const externalSet = new Set(externals);
+function synthesizeInlineAliasSources(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
+	const externalSet = new Set(ctx.externals);
 	const ruleEntries = Object.entries(rules);
 	for (const [name, rule] of ruleEntries) {
-		rules[name] = rewriteInlineAliases(rule, rules, provenanceByKind, externalSet);
+		rules[name] = rewriteInlineAliases(rule, ctx, externalSet);
 	}
 }
 
-function rewriteInlineAliases(
-	rule: Rule,
-	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>,
-	externals: ReadonlySet<string>
-): Rule {
-	const recurse = (r: Rule): Rule => rewriteInlineAliases(r, rules, provenanceByKind, externals);
+function rewriteInlineAliases(rule: Rule, ctx: EvaluateCtx, externals: ReadonlySet<string>): Rule {
+	const { rules, provenanceByKind } = ctx;
+	const recurse = (r: Rule): Rule => rewriteInlineAliases(r, ctx, externals);
 	switch (rule.type) {
 		case ALIAS:
 			if (rule.named && rule.value) {
@@ -846,27 +882,21 @@ function rewriteInlineAliases(
  * @param rules - Mutable rules map; synthesized rules are added in place.
  * @param provenanceByKind - Provenance map; entries are added for each new kind.
  */
-function synthesizeFieldEnumRules(rules: Record<string, Rule>, provenanceByKind: Map<string, RuleProvenance>): void {
+function synthesizeFieldEnumRules(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
 	// First pass: collect all (parentKind, fieldName, members) triples so we
 	// can count how often each field name appears with the same member set and
 	// build the canonical-name dedup map before any rewriting happens.
-	const fieldOccurrences = collectFieldEnumOccurrences(rules);
+	const fieldOccurrences = collectFieldEnumOccurrences(rules, ctx);
 	const conflictingSites = collectConflictingFieldEnumSites(fieldOccurrences);
-	const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, rules);
+	const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, ctx);
 
 	// Second pass: rewrite rules using the pre-computed canonical names.
 	const rewrites = new Map<string, Rule>();
 	const newRules = new Map<string, Rule>();
 
+	const sweep: FieldEnumSweepState = { newRules, memberKeyToCanonicalName, conflictingSites };
 	for (const [parentKind, rule] of Object.entries(rules)) {
-		const rewritten = rewriteFieldEnums(
-			rule,
-			parentKind,
-			rules,
-			newRules,
-			memberKeyToCanonicalName,
-			conflictingSites
-		);
+		const rewritten = rewriteFieldEnums(rule, ctx, parentKind, sweep);
 		if (rewritten !== rule) rewrites.set(parentKind, rewritten);
 	}
 
@@ -879,7 +909,7 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule>, provenanceByKind:
 	for (const [kindName, enumRule] of newRules) {
 		if (!rules[kindName]) {
 			rules[kindName] = enumRule;
-			provenanceByKind.set(kindName, 'evaluate-synthesized');
+			ctx.provenanceByKind.set(kindName, 'evaluate-synthesized');
 		}
 	}
 
@@ -891,7 +921,7 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule>, provenanceByKind:
 	// the same member set. Only remove rules whose provenance is
 	// 'evaluate-synthesized' (i.e., created by a previous synthesis pass)
 	// AND whose member set now has a different canonical name.
-	purgeSupersededEnumRules(rules, provenanceByKind, memberKeyToCanonicalName);
+	purgeSupersededEnumRules(rules, ctx, memberKeyToCanonicalName);
 }
 
 /**
@@ -920,7 +950,7 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule>, provenanceByKind:
  */
 function purgeSupersededEnumRules(
 	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>,
+	ctx: EvaluateCtx,
 	memberKeyToCanonicalName: Map<string, string>
 ): void {
 	for (const [name, rule] of Object.entries(rules)) {
@@ -938,7 +968,7 @@ function purgeSupersededEnumRules(
 		if (canonicalName !== undefined && canonicalName !== name) {
 			// This rule is superseded — remove it.
 			delete rules[name];
-			provenanceByKind.delete(name);
+			ctx.provenanceByKind.delete(name);
 		}
 	}
 }
@@ -962,10 +992,10 @@ interface FieldEnumOccurrence {
  * @param rules - The full grammar rules map after evaluate-time synthesis.
  * @returns Array of occurrence records, one per qualifying field position.
  */
-function collectFieldEnumOccurrences(rules: Record<string, Rule>): FieldEnumOccurrence[] {
+function collectFieldEnumOccurrences(rules: Record<string, Rule>, ctx: EvaluateCtx): FieldEnumOccurrence[] {
 	const occurrences: FieldEnumOccurrence[] = [];
 	for (const [parentKind, rule] of Object.entries(rules)) {
-		walkFieldEnums(rule, parentKind, rules, occurrences);
+		walkFieldEnums(rule, ctx, parentKind, occurrences);
 	}
 	return occurrences;
 }
@@ -978,7 +1008,7 @@ function collectFieldEnumOccurrences(rules: Record<string, Rule>): FieldEnumOccu
  * @param rules - Full rules map for symbol resolution.
  * @param out - Accumulator for discovered occurrences.
  */
-function walkFieldEnums(rule: Rule, parentKind: string, rules: Record<string, Rule>, out: FieldEnumOccurrence[]): void {
+function walkFieldEnums(rule: Rule, ctx: EvaluateCtx, parentKind: string, out: FieldEnumOccurrence[]): void {
 	switch (rule.type) {
 		case FIELD: {
 			// Peel one level of repeat/repeat1 wrapper so that
@@ -986,18 +1016,18 @@ function walkFieldEnums(rule: Rule, parentKind: string, rules: Record<string, Ru
 			// `field(name, choice('a','b'))` for occurrence collection purposes.
 			// The repeat wrapper is preserved in the rewrite pass below.
 			const enumContent = peelRepeatWrapper(rule.content);
-			const members = resolveToEnumMembers(enumContent, rules);
+			const members = resolveToEnumMembers(enumContent, ctx);
 			if (members !== null && members.length > 0) {
 				const memberKey = buildEnumMemberKey(members);
 				out.push({ parentKind, fieldName: rule.name, memberKey, members });
 			}
 			// Always recurse into content — a field can nest other fields.
-			walkFieldEnums(rule.content, parentKind, rules, out);
+			walkFieldEnums(rule.content, ctx, parentKind, out);
 			return;
 		}
 		case SEQ:
 		case CHOICE:
-			for (const m of rule.members) walkFieldEnums(m, parentKind, rules, out);
+			for (const m of rule.members) walkFieldEnums(m, ctx, parentKind, out);
 			return;
 		case OPTIONAL:
 		case REPEAT:
@@ -1005,7 +1035,7 @@ function walkFieldEnums(rule: Rule, parentKind: string, rules: Record<string, Ru
 		case VARIANT:
 		case GROUP:
 		case TOKEN:
-			walkFieldEnums((rule as { content: Rule }).content, parentKind, rules, out);
+			walkFieldEnums((rule as { content: Rule }).content, ctx, parentKind, out);
 			return;
 		default:
 			return;
@@ -1029,7 +1059,7 @@ function walkFieldEnums(rule: Rule, parentKind: string, rules: Record<string, Ru
  * @param rules - Full grammar rules map for checking existing rule names.
  * @returns Map from `memberKey` to the chosen canonical hidden kind name.
  */
-function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Record<string, Rule>): Map<string, string> {
+function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], ctx: EvaluateCtx): Map<string, string> {
 	// Group occurrences by memberKey.
 	const byKey = new Map<string, FieldEnumOccurrence[]>();
 	for (const occ of occurrences) {
@@ -1044,7 +1074,7 @@ function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Reco
 	const result = new Map<string, string>();
 	const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
 		const first = group[0]!;
-		const candidate = deriveCandidateName(group, first, rules);
+		const candidate = deriveCandidateName(group, ctx, first);
 		return { memberKey, group, first, index, ...candidate };
 	});
 
@@ -1052,12 +1082,7 @@ function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Reco
 
 	const claimedNames = new Set<string>();
 	for (const group of groups) {
-		const chosenName = claimUniqueEnumName(
-			group.name,
-			group.memberKey,
-			claimedNames,
-			rules
-		);
+		const chosenName = claimUniqueEnumName(group.name, ctx, group.memberKey, claimedNames);
 		claimedNames.add(chosenName);
 		result.set(group.memberKey, chosenName);
 	}
@@ -1115,11 +1140,11 @@ function collectConflictingFieldEnumSites(
  */
 function claimUniqueEnumName(
 	baseName: string,
+	ctx: EvaluateCtx,
 	memberKey: string,
-	claimedNames: ReadonlySet<string>,
-	rules: Readonly<Record<string, Rule>>
+	claimedNames: ReadonlySet<string>
 ): string {
-	if (!claimedNames.has(baseName) && canReuseExistingEnumName(baseName, memberKey, rules)) {
+	if (!claimedNames.has(baseName) && canReuseExistingEnumName(baseName, ctx, memberKey)) {
 		return baseName;
 	}
 	const slug = enumMemberKeySlug(memberKey);
@@ -1127,8 +1152,8 @@ function claimUniqueEnumName(
 	let attempt = 2;
 	while (
 		claimedNames.has(candidate) ||
-		(!canReuseExistingEnumName(candidate, memberKey, rules) &&
-			Object.prototype.hasOwnProperty.call(rules, candidate))
+		(!canReuseExistingEnumName(candidate, ctx, memberKey) &&
+			Object.prototype.hasOwnProperty.call(ctx.rules, candidate))
 	) {
 		candidate = `${baseName}__${slug}_${attempt}`;
 		attempt++;
@@ -1141,12 +1166,8 @@ function claimUniqueEnumName(
  * set: either the name is currently unused, or the existing rule resolves to
  * the exact same literal members.
  */
-function canReuseExistingEnumName(
-	name: string,
-	memberKey: string,
-	rules: Readonly<Record<string, Rule>>
-): boolean {
-	const existing = rules[name];
+function canReuseExistingEnumName(name: string, ctx: EvaluateCtx, memberKey: string): boolean {
+	const existing = ctx.rules[name];
 	if (existing === undefined) return true;
 	const members = resolveToEnumMembersOneLevelDeep(existing);
 	if (members === null) return false;
@@ -1201,14 +1222,14 @@ function enumMemberKeySlug(memberKey: string): string {
  */
 function deriveCandidateName(
 	group: FieldEnumOccurrence[],
-	first: FieldEnumOccurrence,
-	rules: Record<string, Rule>
+	ctx: EvaluateCtx,
+	first: FieldEnumOccurrence
 ): { name: string; priority: number } {
 	const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
 
 	if (allSameFieldName) {
 		// Priority 1: field name matches an existing grammar rule with same members.
-		const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, first.members, rules);
+		const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, ctx, first.members);
 		if (existingMatch) {
 			return { name: `_${first.fieldName}`, priority: 1 };
 		}
@@ -1235,8 +1256,8 @@ function deriveCandidateName(
  * @param rules - Full grammar rules map.
  * @returns `true` when `rules[fieldName]` resolves to the same member set.
  */
-function fieldNameMatchesGrammarRule(fieldName: string, members: StringRule[], rules: Record<string, Rule>): boolean {
-	const rule = rules[fieldName];
+function fieldNameMatchesGrammarRule(fieldName: string, ctx: EvaluateCtx, members: StringRule[]): boolean {
+	const rule = ctx.rules[fieldName];
 	if (rule === undefined) return false;
 
 	const resolved = resolveToEnumMembersOneLevelDeep(rule);
@@ -1250,42 +1271,37 @@ function fieldNameMatchesGrammarRule(fieldName: string, members: StringRule[], r
 	return ruleKey === targetKey;
 }
 
+/** Pass-local state for one synthesizeFieldEnumRules sweep (CW6: explicit param, not ctx). */
+interface FieldEnumSweepState {
+	/** Accumulator for synthesized literal-set rule entries. */
+	readonly newRules: Map<string, Rule>;
+	/** Pre-computed dedup map from the first pass. */
+	readonly memberKeyToCanonicalName: Map<string, string>;
+	/** Field sites with conflicting member sets — left inline. */
+	readonly conflictingSites: ReadonlySet<string>;
+}
+
 /**
  * Walk a rule tree and rewrite every `field(name, inlineEnum)` to
  * `field(name, symbol(<canonicalEnumKindName>))`, collecting the synthesized
- * enum rules into `newRules`.
+ * enum rules into `sweep.newRules`.
  *
  * @param rule - The rule tree to walk and potentially rewrite.
+ * @param ctx - Evaluate ctx (rules map for symbol-reference resolution).
  * @param parentKind - The grammar kind that owns this rule (for naming).
- * @param rules - The full rules map for symbol-reference resolution.
- * @param newRules - Accumulator for synthesized literal-set rule entries.
- * @param memberKeyToCanonicalName - Pre-computed dedup map from the first pass.
+ * @param sweep - The pass-local sweep state.
  * @returns The rewritten rule (may be structurally identical if no change was needed).
  */
-function rewriteFieldEnums(
-	rule: Rule,
-	parentKind: string,
-	rules: Record<string, Rule>,
-	newRules: Map<string, Rule>,
-	memberKeyToCanonicalName: Map<string, string>,
-	conflictingSites: ReadonlySet<string>
-): Rule {
-	const recurse = (r: Rule): Rule =>
-		rewriteFieldEnums(
-			r,
-			parentKind,
-			rules,
-			newRules,
-			memberKeyToCanonicalName,
-			conflictingSites
-		);
+function rewriteFieldEnums(rule: Rule, ctx: EvaluateCtx, parentKind: string, sweep: FieldEnumSweepState): Rule {
+	const { newRules, memberKeyToCanonicalName, conflictingSites } = sweep;
+	const recurse = (r: Rule): Rule => rewriteFieldEnums(r, ctx, parentKind, sweep);
 
 	switch (rule.type) {
 		case FIELD: {
 			const synthesized =
 				conflictingSites.has(fieldEnumSiteKey(parentKind, rule.name))
 					? null
-					: tryExtractFieldEnum(rule.content, rules, memberKeyToCanonicalName);
+					: tryExtractFieldEnum(rule.content, ctx, memberKeyToCanonicalName);
 			if (synthesized !== null) {
 				const { enumKindName, synthesizedRule, replacementContent } = synthesized;
 				if (!newRules.has(enumKindName)) {
@@ -1365,7 +1381,7 @@ function rewriteFieldEnums(
  */
 function tryExtractFieldEnum(
 	content: Rule,
-	rules: Record<string, Rule>,
+	ctx: EvaluateCtx,
 	memberKeyToCanonicalName: Map<string, string>
 ): { enumKindName: string; synthesizedRule: Rule; replacementContent: Rule } | null {
 	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
@@ -1374,7 +1390,7 @@ function tryExtractFieldEnum(
 	const repeatWrapperType = content.type === REPEAT || content.type === REPEAT1 ? content.type : null;
 	const innerContent = repeatWrapperType !== null ? (content as RepeatRule | Repeat1Rule).content : content;
 
-	const members = resolveToEnumMembers(innerContent, rules);
+	const members = resolveToEnumMembers(innerContent, ctx);
 	if (members === null || members.length === 0) return null;
 
 	const memberKey = buildEnumMemberKey(members);
@@ -1423,7 +1439,7 @@ function peelRepeatWrapper(rule: Rule): Rule {
  * resolution belongs in Link, and multi-level chains are uncommon for
  * operator fields.
  */
-function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRule[] | null {
+function resolveToEnumMembers(rule: Rule, ctx: EvaluateCtx): StringRule[] | null {
 	// PR-P: ENUM type retired — detect via isEnumChoiceRule first.
 	if (isEnumChoiceRule(rule)) return rule.members as StringRule[];
 	switch (rule.type) {
@@ -1433,7 +1449,7 @@ function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRu
 			return [rule];
 		case SYMBOL: {
 			// Follow one level of symbol indirection.
-			const target = rules[rule.name];
+			const target = ctx.rules[rule.name];
 			if (target === undefined) return null;
 			return resolveToEnumMembersOneLevelDeep(target);
 		}
@@ -1557,12 +1573,8 @@ function drainPolymorphsConfigMetadata(opts: GrammarOptions): Record<string, Rec
  * @returns A Record<string, Rule> for `RawGrammar.renderAs`, or
  * `undefined` when no `renderAs:` was declared.
  */
-function drainRenderAsMetadata(
-	opts: GrammarOptions,
-	rules: Record<string, Rule>,
-	refs: SymbolRef[],
-	provenanceByKind: Map<string, RuleProvenance>
-): Record<string, Rule> | undefined {
+function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<string, Rule> | undefined {
+	const { rules, refs, provenanceByKind } = ctx;
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (!wireCtx || !wireCtx.renderAs) return undefined;
 
@@ -1658,19 +1670,12 @@ function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
  * @param refs - Mutable symbol-reference accumulator shared across rule evaluations.
  * @param rules - Mutable output map where evaluated and synthetic rules are stored.
  */
-function evaluateRulesAndInjectSynthetics(
-	opts: GrammarOptions,
-	baseRules: Record<string, Rule>,
-	refs: SymbolRef[],
-	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>,
-	isExtension: boolean,
-	baseGrammar?: unknown
-): void {
-	evaluateRuleFunctions(opts, baseRules, refs, rules, provenanceByKind, isExtension);
+function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
+	const { opts, refs, provenanceByKind } = ctx;
+	evaluateRuleFunctions(rules, ctx);
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (wireCtx) {
-		injectSyntheticRules(wireCtx.deposits, rules, provenanceByKind);
+		injectSyntheticRules(rules, ctx, wireCtx.deposits);
 		// Apply group-lift write-backs BEFORE body-pattern injection and
 		// applyPatternReplacement so that transforms (e.g. `field('last_arm')` added
 		// via groupLiftRuleMap write-back during match_block's rule-fn evaluation)
@@ -1678,7 +1683,7 @@ function evaluateRulesAndInjectSynthetics(
 		// include FIELD wrappers would fail to match because the FIELD is written
 		// back to baseGrammar.rules DURING evaluateRuleFunctions, but the sittir
 		// fork (rules) doesn't see it until adoptFinalBaseRules runs.
-		adoptFinalBaseRules(baseGrammar, baseRules, rules);
+		adoptFinalBaseRules(rules, ctx);
 		// Evaluate body-pattern group fns and inject hidden rule bodies into
 		// `rules` so that `applyPatternReplacement` Path B can find them. The wire
 		// path registers these via `applyWirePatternReplacement`, but the sittir
@@ -1700,8 +1705,8 @@ function evaluateRulesAndInjectSynthetics(
 				}
 			}
 		}
-		applyPatternReplacement(wireCtx.authoredRuleNames, baseRules, rules, provenanceByKind, wireCtx);
-		prunePlaceholderOrphans(wireCtx, rules);
+		applyPatternReplacement(rules, ctx, wireCtx);
+		prunePlaceholderOrphans(rules, wireCtx);
 	}
 }
 
@@ -1733,13 +1738,10 @@ function evaluateRulesAndInjectSynthetics(
  * so this stays false for them and is never overwritten). This is not consumer
  * branching — it makes `grammarFn`'s read of its inputs equal to tree-sitter's.
  */
-function adoptFinalBaseRules(
-	baseGrammar: any,
-	baseRules: Record<string, Rule>,
-	rules: Record<string, Rule>
-): void {
+function adoptFinalBaseRules(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
+	const { baseGrammar, baseRules } = ctx;
 	if (baseGrammar === null || baseGrammar === undefined) return;
-	const finalBase = baseGrammar.rules as Record<string, Rule>;
+	const finalBase = (baseGrammar as { rules: Record<string, Rule> }).rules;
 	for (const name of Object.keys(finalBase)) {
 		const finalRule = finalBase[name];
 		const entry = baseRules[name];
@@ -1775,10 +1777,10 @@ function adoptFinalBaseRules(
  * content). Skips rules whose body is non-blank (author-declared hidden
  * helpers are legitimate and can have any body).
  */
-function prunePlaceholderOrphans(ctx: WireContext, rules: Record<string, Rule>): void {
+function prunePlaceholderOrphans(rules: Record<string, Rule>, wireCtx: WireContext): void {
 	for (const name of Object.keys(rules)) {
 		if (!name.startsWith('_')) continue;
-		if (ctx.deposits.has(name)) continue;
+		if (wireCtx.deposits.has(name)) continue;
 		const rule = rules[name];
 		if (!rule) continue;
 		if (isBlankRule(rule)) delete rules[name];
@@ -1838,17 +1840,12 @@ interface PatternCandidate {
  * body that would have been pruned is instead preserved because it has real
  * content.
  */
-function applyPatternReplacement(
-	authoredRuleNames: ReadonlySet<string>,
-	baseRules: Record<string, Rule>,
-	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>,
-	wireCtx?: WireContext
-): void {
+function applyPatternReplacement(rules: Record<string, Rule>, ctx: EvaluateCtx, wireCtx: WireContext): void {
+	const { baseRules, provenanceByKind } = ctx;
 	// Step 1: identify pattern candidates.
 	// Path A — legacy `_`-prefix candidates declared in `rules:`.
 	const candidates: PatternCandidate[] = [];
-	for (const name of authoredRuleNames) {
+	for (const name of wireCtx.authoredRuleNames) {
 		if (!name.startsWith('_')) continue;
 		if (name in baseRules) continue; // override, not a new pattern
 		const body = rules[name];
@@ -1862,7 +1859,7 @@ function applyPatternReplacement(
 	// `alias($._<key>, $.<key>)` so tree-sitter exposes the visible kind as
 	// a CST node. The hidden body was already injected into `rules` by
 	// wire's `applyWirePatternReplacement` (so the body-pattern fn ran).
-	if (wireCtx?.groups) {
+	if (wireCtx.groups) {
 		for (const [key, value] of Object.entries(wireCtx.groups)) {
 			if (typeof value !== 'function') continue;
 			const hiddenName = `_${key}`;
@@ -2133,20 +2130,8 @@ function patternRulesEqual(a: Rule, b: Rule): boolean {
  * @param sinks - Mutable accumulators for each metadata list.
  * @param setWord - Callback to record the `word` rule name.
  */
-function evaluateMetadataCallbacksInScope(
-	opts: GrammarOptions,
-	baseGrammar: any,
-	refs: SymbolRef[],
-	sinks: {
-		extras: string[];
-		externals: string[];
-		supertypes: string[];
-		inline: string[];
-		conflicts: string[][];
-	},
-	setWord: (w: string) => void
-): void {
-	evaluateMetadataCallbacks(opts, baseGrammar, refs, sinks, setWord);
+function evaluateMetadataCallbacksInScope(opts: GrammarOptions, ctx: EvaluateCtx): void {
+	evaluateMetadataCallbacks(opts, ctx);
 }
 
 /**
@@ -2165,14 +2150,8 @@ function evaluateMetadataCallbacksInScope(
  * wire()'s wrapped rule fns own their own context management
  * (currentRuleKind) per invocation — no try/finally needed here.
  */
-function evaluateRuleFunctions(
-	opts: GrammarOptions,
-	baseRules: Record<string, Rule>,
-	refs: SymbolRef[],
-	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>,
-	isExtension: boolean
-): void {
+function evaluateRuleFunctions(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
+	const { opts, baseRules, refs, provenanceByKind, isExtension } = ctx;
 	for (const [name, ruleFn] of Object.entries(opts.rules)) {
 		const $ = createProxy(name, refs);
 		const baseRule = baseRules[name];
@@ -2202,15 +2181,11 @@ function evaluateRuleFunctions(
  * — the outer's deposit + an inner variant split). Skipping preserves
  * the transform; the raw deposit is still correct when no compose ran.
  */
-function injectSyntheticRules(
-	syntheticRules: Map<string, unknown>,
-	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>
-): void {
+function injectSyntheticRules(rules: Record<string, Rule>, ctx: EvaluateCtx, syntheticRules: Map<string, unknown>): void {
 	for (const [name, content] of syntheticRules) {
 		if (name in rules) continue;
 		rules[name] = content as Rule;
-		provenanceByKind.set(name, 'evaluate-synthesized');
+		ctx.provenanceByKind.set(name, 'evaluate-synthesized');
 	}
 }
 
@@ -2230,19 +2205,17 @@ function injectSyntheticRules(
  * function models the same behaviour so downstream phases see the full
  * declaration set instead of an empty list.
  */
-function inheritBaseGrammarMetadata(
-	opts: GrammarOptions,
-	baseGrammar: any,
-	sinks: {
-		extras: string[];
-		externals: string[];
-		supertypes: string[];
-		inline: string[];
-		conflicts: string[][];
-	},
-	setWord: (w: string) => void
-): void {
-	const inherited = baseGrammar?.grammar ?? baseGrammar;
+function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): void {
+	const { sinks, setWord } = ctx;
+	const inherited = ((ctx.baseGrammar as { grammar?: unknown } | null | undefined)?.grammar ??
+		ctx.baseGrammar) as {
+		extras?: string[];
+		externals?: string[];
+		supertypes?: string[];
+		inline?: string[];
+		conflicts?: string[][];
+		word?: string;
+	} | null;
 	if (inherited) {
 		if (!opts.externals && Array.isArray(inherited.externals)) sinks.externals.push(...inherited.externals);
 		if (!opts.extras && Array.isArray(inherited.extras)) sinks.extras.push(...inherited.extras);
@@ -2280,19 +2253,16 @@ function appendDedup(sink: string[], value: string): void {
  * where `$` is a fresh proxy and `baseValue` is the base grammar's
  * version of that property.
  */
-function evaluateMetadataCallbacks(
-	opts: GrammarOptions,
-	baseGrammar: any,
-	refs: SymbolRef[],
-	sinks: {
-		extras: string[];
-		externals: string[];
-		supertypes: string[];
-		inline: string[];
-		conflicts: string[][];
-	},
-	setWord: (w: string) => void
-): void {
+function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void {
+	const { refs, sinks, setWord } = ctx;
+	const baseGrammar = ctx.baseGrammar as {
+		extras?: string[];
+		externals?: string[];
+		supertypes?: string[];
+		inline?: string[];
+		conflicts?: string[][];
+		word?: string;
+	} | null;
 	if (opts.extras) {
 		const $ = createProxy('_extras_', refs);
 		const baseExtras = baseGrammar?.extras ?? [];
