@@ -2,7 +2,7 @@
 	"modules": {
 		"compiler/normalize.ts": 14,
 		"compiler/simplify.ts": 10,
-		"compiler/evaluate.ts": 36,
+		"compiler/evaluate.ts": 14,
 		"compiler/link.ts": 34,
 		"compiler/assemble.ts": 21,
 		"compiler/node-map.ts": 4,

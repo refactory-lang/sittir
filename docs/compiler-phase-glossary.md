@@ -219,7 +219,7 @@ Executes the grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
 
 ### `grammarFn(optionsOrBase, options?)`
 **Pattern:** Top-level `grammar()` call.
-**Action:** Evaluates all rule fns + metadata callbacks, injects synthetics, builds the rule catalog.
+**Action:** Evaluates all rule fns + metadata callbacks, injects synthetics, builds the rule catalog. R2 (#14 sweep): constructs the single **`EvaluateCtx`** (`rules` / `provenanceByKind` / `refs` / `opts` / `baseRules` / `baseGrammar` / `externals` / `isExtension` / `sinks` / `setWord`) that every evaluate-phase pass takes as its second parameter — `synthesizeInlineAliasSources(rules, ctx)`, `synthesizeFieldEnumRules(rules, ctx)`, `evaluateRulesAndInjectSynthetics(rules, ctx)`, `evaluateMetadataCallbacks(opts, ctx)`, `drainRenderAsMetadata(opts, ctx)`, etc. Pass-LOCAL derived state stays in explicit params per CW6 (`externalSet` in the inline-alias rewrite; `FieldEnumSweepState` in the enum sweep; `PatternCandidate[]` in pattern replacement). The DSL primitives (`field`, `alias`, `createProxy`, `walkRefs`, `grammarFn` itself) keep their tree-sitter-dictated signatures.
 **Output:** `{ grammar: RawGrammar }`.
 
 ### `wire(config, base?)` (`dsl/wire/wire.ts`)
