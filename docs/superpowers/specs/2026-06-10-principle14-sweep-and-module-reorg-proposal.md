@@ -82,15 +82,35 @@ phase), and **`node-map` stays the model container** (the `NodeMap` class +
 lookup surface; R6 migrates only its phase-ish *derivation* passes to the
 owning phase module, leaving genuine model-build in `node-map`).
 
+**Genuine tensions — flagged for user decision before the affected rows
+start:**
+
+1. **Phase modules will re-grow.** R7's fold pushes `simplify.ts` /
+   `evaluate.ts` back toward whale size. The principle says
+   one-module-per-phase wins over line-count aversion — confirm that
+   ordering, or set a size threshold at which a phase adopts an internal
+   section convention (still one file) instead of a second file.
+2. **Construction-time passes with no named phase.** Some node-map
+   internals (e.g., the factory-map build) run at `NodeMap` construction,
+   after assemble — no existing phase module owns them. Default taken
+   above: they stay in `node-map.ts` as part of the container. Alternatives
+   if node-map stays whale-sized after R6: a dedicated `model-build.ts`
+   phase module (Model #0 construction IS arguably a phase), or
+   `shared.ts`. User picks at R6 time.
+3. **Helpers shared between a phase and an emitter.** `shared.ts` is
+   compiler-side; emitter-shared code has its own homes. A helper used by
+   BOTH axes has no clean home — propose case-by-case at fold time,
+   defaulting to compiler-side `shared.ts` with the emitter importing it.
+
 | PR | Concern (1-liner) | Depends-on | Gate | Notes |
 |----|-------------------|-----------|------|-------|
 | **R0** | **Ratchet guard first**: `propose-14` conformance counter + committed baseline; pre-commit + CI fail on REGRESSION (count may only decrease) | — | counter self-test; zero behavior change | §3. Lands BEFORE any sweep so new code can't re-deviate while the sweep runs |
 | **R1** | **#14 sweep: `node-map.ts`** (0/93). Step 1: mechanical classification (getter / method / dead) emitted by the R0 tool; Step 2: pure node-self reads → class getters (per #14's getter-vs-method line); cross-node fns → `(target, ctx)` with `nodeMap` in ctx | R0 | validate:native HOLD + tests + ratchet ↓ | Highest traffic; many of the 93 are getter candidates, so the (target,ctx) count to convert is realistically ~40-60 |
 | **R2** | **#14 sweep: `evaluate.ts`** (0/66) + declare `EvaluateCtx` (extends the §7.7 pattern — the design's "`NormalizeCtx`, `SimplifyCtx`, `AssembleCtx`, …" ellipsis) folding the loose `rules` (31×) / `wordMatcher` args | R0 | same | evaluate is upstream of everything; converting it removes most of the loose-`rules` plumbing in one row |
-| **R3** | **#14 sweep: `simplify.ts` (0/36) + `normalize.ts` finish (4/26) + `transforms.ts` (0/4)**; declare `SimplifyCtx` per §7.7; **completes PR-O M1's deferred 4** — with helpers on `(target, ctx)` the wrapper+helper clusters move into `transforms.ts` without the import cycle | R0; absorbs PR-O M1 remainder (flag to user: M1-remainder closes here, not as its own row) | same + regen byte-identical | §7.7 CW6 is binding: `inField`-style recursion-LOCAL traversal state stays an explicit third parameter — do NOT stuff per-node traversal state into ctx |
+| **R3** | **#14 sweep: `simplify.ts` (0/36) + `normalize.ts` finish (4/26) + `transforms.ts` (0/4)**; declare `SimplifyCtx` per §7.7; **renames `transforms.ts` → `shared.ts`** (the module-organization target) and **completes PR-O M1's deferred 4** — with helpers on `(target, ctx)` the wrapper+helper clusters move into `shared.ts` without the import cycle | R0; absorbs PR-O M1 remainder (flag to user: M1-remainder closes here, not as its own row) | same + regen byte-identical | §7.7 CW6 is binding: `inField`-style recursion-LOCAL traversal state stays an explicit third parameter — do NOT stuff per-node traversal state into ctx |
 | **R4** | **#14 sweep: `link.ts` (1/60) + `assemble.ts` finish (1/31)**; `AssembleCtx` already declared — convert remaining call sites; fold `kindEntries` loose args | R1 (nodeMap getters land first — link/assemble consume them) | same | After R4 the ratchet baseline reaches ~0 for compiler/ |
 | **R5** | **Split `render-module.ts` (4845)** along its existing seams: transport emission (AnyTransport + supertype/per-slot enums + leaf impls + VerbatimTransport) → `render-transport-emit.ts`; typed dispatch + per-kind render fns → `render-dispatch-emit.ts`; libRs/hash/template-copy assembly stays in `render-module.ts` as the thin assembler | — (independent of R1-R4) | regen **byte-identical** ×3 grammars + cargo check + validate:native HOLD | Pure file move of emitter internals; no signature changes (emitters excluded from #14) |
-| **R6** | **Split `node-map.ts` (3937)**: the `NodeMap` container class + lookup surface stays; build/derivation passes (factory-map build, slot registration walks) → `node-map-build.ts` | R1 (sweep first so moved fns move in their FINAL shape — avoids double-touch) | validate:native HOLD + tests | Sequencing rationale: sweep-then-split moves each fn once |
+| **R6** | **Slim `node-map.ts` (3937) to the model container** (per the module-organization target): the `NodeMap` class + lookup surface stays; phase-ish *derivation* passes (slot registration walks, etc.) move to their OWNING phase module; construction-time model-build (factory-map build) stays in `node-map.ts` by default — see tension 2 | R1 (sweep first so moved fns move in their FINAL shape — avoids double-touch); tension 2 decided | validate:native HOLD + tests | Replaces the earlier `node-map-build.ts` sibling-split idea — destinations follow the phase axis, not a second node-map file |
 | **R7** | **De-scatter into phase modules** (per the module-organization target): compiler/ files under ~150 lines fold INTO their owning **phase module**; genuinely cross-phase helpers → **`shared.ts`** (= renamed/absorbed `transforms.ts`); emitter small-files fold per the emitter convention. Inventory + ownership map emitted by the R0 tool; fold list reviewed before execution | R3 | validate:native HOLD + tests | Evidence-based: 19+15 candidate files; pass files that ARE a phase (e.g. `lift-separators.ts`) stay as the phase module |
 | **R8** | **Dead-code removal** (repo-wide): R0's classifier already buckets `dead` functions — delete them, confirming **zero callers via `lsproxy textDocument references`** before each removal (the closed-subgraph method proven in #71's alias-override cleanup, −414 LOC: trace the dead subgraph → delete). R1–R4 also drop their own module's `dead` bucket inline as they sweep; R8 sweeps the remainder (emitters / dsl / grammar-shapes / scripts) | R0 (classifier) | validate:native HOLD + tests + `rg` shows zero refs to each removed symbol | byte-neutral (dead code has no callers by definition); LSP find-references is the gate — TS `noUnusedLocals` misses module-level dead functions, the exact blind spot that hid the alias-override island in #71 |
 
@@ -121,8 +141,12 @@ manifest verifier wired into pre-commit):
   pipeline modules, classifies every exported+private function:
   `conforming` (`(target, ctx: *Ctx)` or `(target, ctx, <recursion-local>)`
   per CW6), `getter-candidate` (single param, pure node-self read),
-  `non-conforming` (anything else). Emits: (a) a count per module, (b) the
-  classification table (drives R1-R4's mechanical step), (c) exit non-zero
+  `dead` (no in-repo references outside its own tests — feeds R8; the
+  classifier FLAGS, `lsproxy textDocument references` CONFIRMS zero callers
+  before any deletion), `non-conforming` (anything else). Emits: (a) a
+  count per module, (b) the
+  classification table (drives R1-R4's mechanical step + R8's delete
+  list), (c) exit non-zero
   when any module's `non-conforming` count EXCEEDS the committed baseline
   (`packages/codegen/.principle14-baseline.json`).
 - **Wiring:** pre-commit (next to `verify-manifests-cli.ts`) + the CI Build
@@ -147,11 +171,16 @@ manifest verifier wired into pre-commit):
    exactly (pure refactor; any delta = stop and diagnose).
 2. Full test suite (`pnpm test`); tsgo error count must not increase over
    the carried baseline.
-3. Rows touching `emitters/render-module.ts` (R5) or `transforms.ts` (R3):
-   regen byte-identical across all 3 grammars + independent
+3. Rows touching `emitters/render-module.ts` (R5) or
+   `transforms.ts`/`shared.ts` (R3): regen byte-identical across all 3
+   grammars + independent
    `cargo check --workspace --features napi-bindings`.
 4. R0's ratchet: every row decreases the baseline it touches; CI fails on
    any increase, anywhere, from R0's landing onward.
+5. Every rename/move executes via `lsproxy` (rename / move-symbol); every
+   R8 deletion is preceded by an `lsproxy textDocument references` check
+   returning zero callers (plus the `rg` zero-refs spot-check in the row
+   gate).
 
 ## 5. Verification appendix (how the §1 numbers were produced)
 
