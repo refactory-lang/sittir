@@ -20,8 +20,8 @@
  *   produce the field / child metadata the emitters consume.
  * - **Structural predicates:** {@link isSyntheticFieldWrapper} —
  *   classification hint used by template-walker.ts. `isVerbatimTokenStream`
- *   and `hasHiddenExternalRef` are file-private helpers used only by
- *   `AssembledNodeBase.isTextTemplate()` and the renderTemplate() methods.
+ *   is a file-private helper used only by `AssembledNodeBase.isTextTemplate()`
+ *   and the renderTemplate() methods.
  *
  * Backward compatibility: `rule.ts` re-exports everything from this
  * file. New code should import from `./node-map.ts` directly.
@@ -869,13 +869,13 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
  * wrapper-free from `computeSimplifiedRules` — `deleteWrapper` is idempotent
  * on wrapper-free input, so this is a no-op on the hot path.
  */
-function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEntry[], kindName?: string): AssembledNonterminal[] {
+function _deriveSlotsInternal(rule: Rule, ctx?: DeriveCtx): AssembledNonterminal[] {
 	const canonical = deleteWrapper(rule) as Rule;
 	// Set the audit kind context for the duration of this derivation so
 	// auditDerivationShape() can attribute shapes to their originating kind.
 	// Save/restore guards against cross-kind bleed if derivations nest.
 	const prevAuditKind = currentAuditKind;
-	if (kindName !== undefined) setAuditKindContext(kindName);
+	if (ctx?.kindName !== undefined) setAuditKindContext(ctx.kindName);
 	try {
 		auditDerivationShape(canonical, 'fields');
 		// Nonterminal-driven collection (2026-05-21 design): one slot per
@@ -884,7 +884,7 @@ function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEn
 		// slots that appear in multiple positions (e.g. python `if_statement`'s
 		// `alternative` in both a repeat and an optional) are still folded into one
 		// AssembledNonterminal by `mergeSlotsByName`.
-		return mergeSlotsByName(collectSlots(canonical, kindName ?? currentAuditKind, kindEntries));
+		return mergeSlotsByName(collectSlots(canonical, ctx?.kindName ?? currentAuditKind, ctx?.kindEntries));
 	} finally {
 		setAuditKindContext(prevAuditKind);
 	}
@@ -930,6 +930,34 @@ export interface ParseKindCollisionContext {
 	readonly ruleSignatures: Readonly<Record<string, string>>;
 }
 
+/**
+ * Grammar-wide inputs threaded through node-map's slot derivation
+ * (Principle #14 / §7.7 — R1). Every field is optional because the
+ * derivation entry points accept partial context (test fixtures pass
+ * none); per-kind record builders narrow with {@link KindedDeriveCtx}.
+ * Recursion-LOCAL traversal state (e.g. `multiplicity` in
+ * `deriveValuesForRule`) stays an explicit parameter per CW6 — never ctx.
+ */
+export interface DeriveCtx {
+	/** Generated kind-id table — resolves anonymous-token kinds. */
+	readonly kindEntries?: readonly GeneratedKindEntry[];
+	/** Owning kind under derivation — audit + diagnostics attribution. */
+	readonly kindName?: string;
+	/** Canonical rule signatures for parse-kind collision resolution. */
+	readonly collision?: ParseKindCollisionContext;
+	/** Visible alias target → source kinds (alias-source slot expansion). */
+	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	/** Post-simplify rules, for alias-source value derivation. */
+	readonly simplifiedRules?: Record<string, Rule>;
+	/** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
+	readonly nodes?: ReadonlyMap<string, AssembledNodeBase<Rule>>;
+}
+
+/** {@link DeriveCtx} with the owning kind bound — per-kind record builders. */
+export interface KindedDeriveCtx extends DeriveCtx {
+	readonly kindName: string;
+}
+
 export function buildParseKindRuleSignatures<T extends Rule>(
 	rules: Readonly<Record<string, T>>
 ): Readonly<Record<string, string>> {
@@ -946,18 +974,16 @@ export function storageKindOfValue(value: NodeOrTerminal): string | undefined {
 }
 
 function resolveParseKindCollisions(
-	ownerKind: string,
 	slots: readonly AssembledNonterminal[],
-	context?: ParseKindCollisionContext
+	ctx: KindedDeriveCtx
 ): AssembledNonterminal[] {
 	if (slots.length === 0) return [...slots];
-	return mergeSlotsByName(slots.map((slot) => resolveParseKindCollisionsInSlot(ownerKind, slot, context)));
+	return mergeSlotsByName(slots.map((slot) => resolveParseKindCollisionsInSlot(slot, ctx)));
 }
 
 function resolveParseKindCollisionsInSlot(
-	ownerKind: string,
 	slot: AssembledNonterminal,
-	context?: ParseKindCollisionContext
+	ctx: KindedDeriveCtx
 ): AssembledNonterminal {
 	const describedValues: ParseKindCollisionValue<NodeOrTerminal>[] = slot.values.map((value) => {
 		const storageKind = storageKindOfValue(value);
@@ -965,12 +991,12 @@ function resolveParseKindCollisionsInSlot(
 			original: value,
 			parseKind: value.parseKind?.name,
 			storageKind,
-			structuralSignature: structuralSignatureOfValue(value, storageKind, context),
+			structuralSignature: structuralSignatureOfValue(value, ctx, storageKind),
 			preferRepresentative: storageKind !== undefined && storageKind === value.parseKind?.name
 		};
 	});
 	const resolution = diagnoseParseKindCollisions({
-		ownerKind,
+		ownerKind: ctx.kindName,
 		slotName: slot.name,
 		values: describedValues
 	});
@@ -986,8 +1012,8 @@ function resolveParseKindCollisionsInSlot(
 
 function structuralSignatureOfValue(
 	value: NodeOrTerminal,
-	storageKind: string | undefined,
-	context?: ParseKindCollisionContext
+	ctx: DeriveCtx,
+	storageKind: string | undefined
 ): string {
 	const surface = [
 		value.multiplicity,
@@ -1000,15 +1026,15 @@ function structuralSignatureOfValue(
 	if (isTerminalValue(value)) {
 		return `terminal:${value.value}:${value.resolvedKind ?? ''}:${surface}`;
 	}
-	return `node:${structuralSignatureOfStorageKind(storageKind, context)}:${surface}`;
+	return `node:${structuralSignatureOfStorageKind(storageKind, ctx)}:${surface}`;
 }
 
 function structuralSignatureOfStorageKind(
 	storageKind: string | undefined,
-	context?: ParseKindCollisionContext
+	ctx: DeriveCtx
 ): string {
 	if (storageKind === undefined) return 'missing';
-	return context?.ruleSignatures[storageKind] ?? `missing:${storageKind}`;
+	return ctx.collision?.ruleSignatures[storageKind] ?? `missing:${storageKind}`;
 }
 
 function canonicalRuleSignature(value: unknown): string {
@@ -1102,10 +1128,10 @@ export function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: s
  * ordering. A future cleanup could rewrite the walk to preserve true
  * declared-order with one unified pass over the rule tree.
  */
-export function deriveSlots(rule: Rule, kindEntries?: readonly GeneratedKindEntry[], kindName?: string): readonly AssembledNonterminal[] {
+export function deriveSlots(rule: Rule, ctx?: DeriveCtx): readonly AssembledNonterminal[] {
 	// The field walker handles positional symbol/supertype/choice content
 	// too, so it produces every slot — no separate children walker needed.
-	return _deriveSlotsInternal(rule, kindEntries, kindName);
+	return _deriveSlotsInternal(rule, ctx);
 }
 
 /**
@@ -1149,8 +1175,8 @@ export function isSyntheticFieldWrapper(content: Rule): boolean {
  */
 export function deriveValuesForRule(
 	rule: Rule,
-	multiplicity: Multiplicity,
-	kindEntries?: readonly GeneratedKindEntry[]
+	ctx: DeriveCtx | undefined,
+	multiplicity: Multiplicity
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case SYMBOL: {
@@ -1204,7 +1230,7 @@ export function deriveValuesForRule(
 		// pattern slot had no values and was elided (e.g. token_repetition's
 		// separator pattern never became a slot).
 		case PATTERN: {
-			const rk = findGeneratedKindEntry(kindEntries ?? [], rule.value)?.kind;
+			const rk = findGeneratedKindEntry(ctx?.kindEntries ?? [], rule.value)?.kind;
 			return [
 				{
 					value: rule.value,
@@ -1220,7 +1246,7 @@ export function deriveValuesForRule(
 			if (isEnumChoiceRule(rule)) {
 				return rule.members.map((m) => {
 					const text = literalTextOf(m) ?? '';
-					const rk = text ? findGeneratedKindEntry(kindEntries ?? [], text)?.kind : undefined;
+					const rk = text ? findGeneratedKindEntry(ctx?.kindEntries ?? [], text)?.kind : undefined;
 					return {
 						value: text,
 						resolvedKind: rk,
@@ -1249,7 +1275,7 @@ export function deriveValuesForRule(
 					: multiplicity;
 			// Each arm is independent — union all entries. Arms may differ in
 			// their own multiplicity if they wrap repeat/optional differently.
-			return nonBlank.flatMap((m) => deriveValuesForRule(m, armMult, kindEntries));
+			return nonBlank.flatMap((m) => deriveValuesForRule(m, ctx, armMult));
 		}
 		case OPTIONAL: {
 			// `optional(repeat1(X, sep))` survives evaluate when the
@@ -1262,7 +1288,7 @@ export function deriveValuesForRule(
 			// the outer-optional semantics survive. Mirrors the
 			// `collectChildFromMember` rule for child slots.
 			if (rule.content.type === 'repeat1') {
-				return deriveValuesForRule(rule.content.content, 'array', kindEntries);
+				return deriveValuesForRule(rule.content.content, ctx, 'array');
 			}
 			// For `optional(seq(..., repeat1(...), ...))` and similar nested
 			// shapes (which is the form `choice(seq(...), blank)` folds to
@@ -1270,33 +1296,33 @@ export function deriveValuesForRule(
 			// empty-allowed. Any `nonEmptyArray` produced by an inner repeat1
 			// is therefore relaxed to `array` at the outer slot — empty inputs
 			// like `{}` (object_type with zero members) are valid.
-			const inner = deriveValuesForRule(rule.content, 'optional', kindEntries);
+			const inner = deriveValuesForRule(rule.content, ctx, 'optional');
 			return inner.map((v) =>
 				v.multiplicity === 'nonEmptyArray' ? { ...v, multiplicity: 'array' as const } : v
 			);
 		}
 		case REPEAT:
-			return deriveValuesForRule(rule.content, 'array', kindEntries);
+			return deriveValuesForRule(rule.content, ctx, 'array');
 		case REPEAT1:
-			return deriveValuesForRule(rule.content, 'nonEmptyArray', kindEntries);
+			return deriveValuesForRule(rule.content, ctx, 'nonEmptyArray');
 		case FIELD:
 			// Nested field inside a choice — recurse into its content
-			return deriveValuesForRule(rule.content, multiplicity, kindEntries);
+			return deriveValuesForRule(rule.content, ctx, multiplicity);
 		case VARIANT:
 		case GROUP:
-			return deriveValuesForRule(rule.content, multiplicity, kindEntries);
+			return deriveValuesForRule(rule.content, ctx, multiplicity);
 		case TOKEN:
 			// `token(...)` / `token.immediate(...)` wrappers carry adjacency
 			// metadata the inner rule alone doesn't express. Recurse, then
 			// tag each produced terminal so render templates can decide
 			// whether to emit adjacent or spaced.
-			return deriveValuesForRule(rule.content, multiplicity, kindEntries).map((v) =>
+			return deriveValuesForRule(rule.content, ctx, multiplicity).map((v) =>
 				isTerminalValue(v) ? { ...v, immediate: rule.immediate, tokenized: true } : v
 			);
 		case SEQ:
 			// Seq inside a choice arm — flatten all members (rare, but
 			// handles seq-of-symbols within choice arms).
-			return rule.members.flatMap((m) => deriveValuesForRule(m, multiplicity, kindEntries));
+			return rule.members.flatMap((m) => deriveValuesForRule(m, ctx, multiplicity));
 		default:
 			return [];
 	}
@@ -1930,413 +1956,6 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 // --- Concrete classes per model type ---
 
 /**
- * Final `$VAR` → `{{ var }}` translation for a template body. Consumes
- * the rule's separator metadata (`joinBy`, `joinByField`, leading /
- * trailing flank permissions) directly — output is a Jinja string the
- * emitter writes verbatim.
- *
- *   `$NAME`       → `{{ name }}`
- *   `$$$NAME`     → `{{ name | join("<sep>") }}` with walker-time sep
- *   `$$$CHILDREN` → one of `join` / `joinWithTrailing` / `joinWithLeading`
- *                   / `joinWithFlanks` based on the rule's repeat flags
- *   `$TEXT`       → `{{ text }}`
- *   `$NEWLINE`    → `\n`
- *   `$INDENT`/`$DEDENT` → empty
- *
- * Brace-escape pass prevents `{$$$CHILDREN}` becoming `{{{ children }}}`
- * (which Nunjucks misreads as a dict literal).
- */
-/** @internal — exported for direct unit testing. */
-export interface JinjaTranslateMeta {
-	joinBy?: string;
-	joinByField?: Record<string, string>;
-	joinByLeading?: boolean;
-	joinByTrailing?: boolean;
-	/**
-	 * Per-field trailing-separator set: names of named fields whose repeat
-	 * content carries `trailing: true`. Populated from `findFieldsWithRepeatFlag`.
-	 * Used by `filterForFlanks` to restrict `joinWithTrailing` to the specific
-	 * fields whose repeats carry the flag — rather than applying it globally
-	 * whenever the whole rule has any trailing repeat (`joinByTrailing` is
-	 * global and would incorrectly promote all named fields).
-	 */
-	trailingFields?: ReadonlySet<string>;
-	/** Mirror of `trailingFields` for leading-separator fields. */
-	leadingFields?: ReadonlySet<string>;
-	/**
-	 * Set of raw field names whose `isRequired` derivation is false.
-	 * Used by `translateToJinja` to wrap unguarded
-	 * `$NAME` placeholders with `{% if name | isPresent %}` conditionals
-	 * so empty optional fields contribute no whitespace to the rendered
-	 * output. Placeholders already enclosed in a walker-emitted
-	 * `{% if %}…{% endif %}` block are left untouched.
-	 */
-	optionalFields?: ReadonlySet<string>;
-	/**
-	 * True when the container's children may be empty (the rule is a
-	 * `repeat()` — zero-or-more — rather than `repeat1()`). When
-	 * set, `translateToJinja` wraps the flanking spaces around
-	 * `{{ children | ... }}` inside `{% if children | isPresent %}`
-	 * conditionals so an empty-children render produces no stray space
-	 * between the surrounding delimiters (e.g. `{}` instead of `{  }`).
-	 */
-	optionalChildren?: boolean;
-}
-
-/**
- * Detect whether a container's children slot may be empty.
- *
- * Returns `true` when the rule is a `repeat()` (zero-or-more) at any
- * level reachable without crossing a `repeat1()` boundary, or when a
- * `choice` includes a `blank`-equivalent arm, or when the whole subtree
- * is `optional`. `repeat1()` means at least one child is required —
- * children are never empty in that case.
- *
- * This is deliberately conservative: false positives (reporting
- * "may be empty" when children are actually always present) only produce
- * unnecessary `{% if %}` guards — wrong output is never emitted.
- */
-function childrenMayBeEmpty(rule: Rule): boolean {
-	switch (rule.type) {
-		case REPEAT:
-		case OPTIONAL:
-			return true;
-		case REPEAT1:
-			return false;
-		case CHOICE:
-			// `blank()` is encoded as `choice([])` (empty members). An
-			// empty-members choice means "blank" — definitely zero children.
-			if (rule.members.length === 0) return true;
-			// Any member that may-be-empty makes the whole choice potentially empty.
-			return rule.members.some((m) => childrenMayBeEmpty(m));
-		case SEQ:
-			// A seq is empty only if every member may be empty.
-			return rule.members.every((m) => childrenMayBeEmpty(m));
-		// Terminal / leaf cases — always contribute at least one token.
-		case SYMBOL:
-		case STRING:
-		case PATTERN:
-		case TOKEN:
-		case SUPERTYPE:
-		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by CHOICE.
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
-		case ALIAS:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-			return false;
-		case FIELD:
-		case VARIANT:
-		case GROUP:
-			return childrenMayBeEmpty(rule.content);
-		default:
-			return assertNever(rule);
-	}
-}
-
-/**
- * When `optionalChildren` is set, absorb the flanking spaces
- * around `{{ children | ... }}` into a whitespace-controlled
- * `{%- if children | isPresent %} ... {% endif -%}` conditional so an
- * empty-children render emits no stray whitespace between surrounding
- * delimiters.
- *
- * Transforms the pattern `<delim> {{ children | filter(...) }} <delim>`
- * by replacing the middle ` {{ children | ... }} ` with
- * `{%- if children | isPresent %} {{ children | ... }} {% endif -%}`.
- * The `escapeJinjaBraceCollisions` step that follows in `translateToJinja`
- * then inserts a space inside the `{` / `}` delimiter adjacency (producing
- * `{ {%- if ... %} ... {% endif -%} }`), which renders as:
- *   - empty children → `{}` (no spaces — both `{%-` and `-%}` suppress the
- *     adjacent spaces in the output stream when the block is absent)
- *   - non-empty children → `{ 1,2 }` (spaces preserved — the body fires
- *     and emits the leading/trailing spaces from inside the conditional)
- *
- * Cross-renderer safe: `{%-` / `-%}` whitespace-control markers work
- * identically in Nunjucks (TS) and Askama (Rust) — see memory note
- * `project_jinja_intersection_safe_primitives`. `is_present` is the
- * canonical cross-engine presence filter.
- *
- * @remarks
- * Only fires when the children expression is surrounded by literal
- * spaces on both sides (`<space>{{ children | ... }}<space>`). Templates
- * that have no surrounding spaces are left untouched.
- */
-function absorbFlankingChildrenSpaces(tmpl: string): string {
-	// The children block is `{{ children | <filter>("<sep>") }}`.
-	// Absorb the adjacent whitespace (or inject it when absent) around the
-	// block into a whitespace-controlled `{%- if children | isPresent %} …
-	// {% endif -%}` conditional, so an empty-children render produces `{}`
-	// instead of `{  }`.
-	//
-	// Two source forms (from the grammar walker):
-	//   Space-padded : walker emitted `{ $$$CHILDREN }` → translated to
-	//                  `{ {{ children | ... }} }` (spaces inside the braces).
-	//   No-space     : walker emitted `{$$$CHILDREN}` → translated to
-	//                  `{{{ children | ... }}}` (no spaces).
-	//
-	// Target form for both (before `escapeJinjaBraceCollisions`):
-	//   `{<SP>{%- if children | isPresent %} {{ children | ... }} {% endif -%}<SP>}`
-	//   → `escapeJinjaBraceCollisions` splits `{<SP>{%-` correctly and
-	//     yields `{ {%- if ... %} {{ children | ... }} {% endif -%} }`.
-	//   Empty render: `{}` (whitespace-control markers suppress the spaces).
-	//   Non-empty:    `{ item1,item2 }`.
-	//
-	// `[^)]*` captures the separator argument (e.g. `","`, `" "`) — it never
-	// contains `)`.
-
-	// Case 1: space-padded — replace ` {{ children | ... }} ` (note leading
-	// and trailing literal spaces) with the conditional form. The surrounding
-	// `{` / `}` delimiters are NOT captured; they remain in place. The
-	// `escapeJinjaBraceCollisions` step later inserts a separating space
-	// between the dict-brace `{` and the leading `{%-` tag.
-	let result = tmpl.replace(
-		/ (\{\{ children \| \w+\([^)]*\) \}\}) /g,
-		'{%- if children | isPresent %} $1 {% endif -%}'
-	);
-	// Case 2: no-space form — `{{{ children | ... }}}` — the outer `{` and `}`
-	// are the Python dict braces that immediately flank the Jinja block. Replace
-	// just the Jinja block and inject spaces so the result has the same shape as
-	// case 1 after the space-absorb step. The replacement injects ` ` before and
-	// after so the surrounding `{` / `}` produce `{ {%- if ... -%} }`.
-	result = result.replace(
-		/\{(\{\{ children \| \w+\([^)]*\) \}\})\}/g,
-		'{ {%- if children | isPresent %} $1 {% endif -%} }'
-	);
-	return result;
-}
-
-/** @internal — exported for direct unit testing. */
-export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string {
-	const guarded = wrapOptionalFieldPlaceholders(tmpl, meta.optionalFields);
-	const varPattern = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
-	const defaultSep = meta.joinBy ?? ' ';
-	const translated = guarded.replace(varPattern, (_full, pfx: string, name: string) => {
-		const key = name.toLowerCase();
-		if (key === 'newline') return '\n';
-		if (key === 'indent') return '';
-		if (key === 'dedent') return '';
-		if (pfx === '$$$') {
-			// `joinByField['children']` IS honoured — the walker pins it
-			// to `""` for separator-less repeats over visible
-			// children (template_literal_type, template_string) so adjacent
-			// substitutions concatenate without a stray space.
-			const sep = meta.joinByField?.[key] ?? defaultSep;
-			const filter = filterForFlanks(key, meta);
-			return `{{ ${key} | ${filter}(${JSON.stringify(sep)}) }}`;
-		}
-		return `{{ ${key} }}`;
-	});
-	const postProcessed = meta.optionalChildren ? absorbFlankingChildrenSpaces(translated) : translated;
-	const headSpacingNormalized = absorbHeadConditionalLeadingSpace(absorbHeadConditionalTrailingSpace(postProcessed));
-	return escapeJinjaBraceCollisions(headSpacingNormalized);
-}
-
-/**
- * Leading-list-conditional space absorption.
- *
- * After `wrapOptionalFieldPlaceholders` wraps a `$$$NAME` placeholder
- * sitting at the template head with `{% if name | isPresent %}…{% endif %}`,
- * the unconditional space between the conditional and the next required
- * token is still emitted when the list is empty. Pull that trailing
- * space INSIDE the conditional body so it disappears with the absent
- * list. Mirrors `absorbHeadLeadingSeparatorIntoConditionals`'s behaviour
- * for walker-emitted single-field conditionals — but operates on the
- * post-translation string so it can reach the conditionals that were
- * synthesized by `wrapOptionalFieldPlaceholders` (which runs on the
- * raw `$$$NAME` form before translation).
- *
- * Runs greedily: a chain of consecutive head conditionals each absorb
- * the trailing space, so all-absent renders cleanly with no leading
- * whitespace and a single conditional firing places its content
- * followed by the absorbed separator before the required-content head.
- */
-
-function absorbHeadConditionalTrailingSpace(tmpl: string): string {
-	let work = tmpl;
-	let runStart = 0;
-	// Walk past walker-injected `{#- @generated -#}` headers if present.
-	const commentMatch = work.match(/^\{#-?[^#]*-?#\}/);
-	if (commentMatch) runStart = commentMatch[0].length;
-	const condFull = /^(\{%-? if [^%]+-?%\})(.*?)(\{%-? endif -?%\}) /s;
-	while (true) {
-		const head = work.slice(runStart);
-		const m = head.match(condFull);
-		if (!m) break;
-		const ifTag = m[1]!;
-		let body = m[2]!;
-		const endTag = m[3]!;
-		if (body.includes('{% if') || body.includes('{%- if')) break;
-		if (!body.endsWith(' ')) body = `${body} `;
-		const replacement = `${ifTag}${body}${endTag}`;
-		work = work.slice(0, runStart) + replacement + work.slice(runStart + m[0].length);
-		runStart += replacement.length;
-	}
-	return work;
-}
-
-function absorbHeadConditionalLeadingSpace(tmpl: string): string {
-	let work = tmpl;
-	let runStart = 0;
-	const commentMatch = work.match(/^\{#-?[^#]*-?#\}/);
-	if (commentMatch) runStart = commentMatch[0].length;
-	const condFull = /^(\{%-? if [^%]+-?%\})(.*?)(\{%-? endif -?%\})/s;
-	const parts: Array<{ ifTag: string; body: string; endTag: string }> = [];
-	let cursor = runStart;
-	while (true) {
-		const head = work.slice(cursor);
-		const m = head.match(condFull);
-		if (!m) break;
-		const ifTag = m[1]!;
-		const body = m[2]!;
-		const endTag = m[3]!;
-		if (body.includes('{% if') || body.includes('{%- if')) break;
-		parts.push({ ifTag, body, endTag });
-		cursor += m[0].length;
-	}
-	if (parts.length === 0) return work;
-	for (let index = 0; index < parts.length; index++) {
-		const part = parts[index]!;
-		const leading = part.body.match(/^ +/)?.[0];
-		if (!leading) continue;
-		part.body = part.body.slice(leading.length);
-		if (index === 0) continue;
-		const previous = parts[index - 1]!;
-		if (!/\s$/.test(previous.body)) previous.body += leading;
-	}
-	const replacement = parts.map(({ ifTag, body, endTag }) => `${ifTag}${body}${endTag}`).join('');
-	return work.slice(0, runStart) + replacement + work.slice(cursor);
-}
-
-/**
- * Wrap each unguarded `$NAME` placeholder whose lower-cased name is in
- * `optionalFields` with `{% if name | isPresent %}…{% endif %}`. The
- * leading whitespace adjacent to the placeholder is absorbed INTO the
- * conditional body so an absent optional contributes zero output —
- * preventing the `fn f  ()` double-space gap when `type_parameters`
- * renders empty. Trailing whitespace is left outside so the next
- * required slot still has its own separator.
- *
- * Also wraps `$$$NAME` list placeholders for optional
- * list-shaped fields. The list-shape filter `isPresent` returns false
- * for empty arrays, so wrapping `$$$DECORATOR` etc. gates surrounding
- * separators on whether the list actually has elements.
- *
- * @remarks
- * Placeholders enclosed in a `{% if … %}…{% endif %}` block emitted by
- * the walker (e.g. for fields with flanking literals like `:type` or
- * `=value`) are skipped — those already carry their own conditional
- * gating, and double-wrapping would produce nested-conditional noise.
- *
- * Detection of "inside a guard" walks the template scanning for
- * `{% if %}` / `{% endif %}` markers and tracks nesting depth. Only
- * matches at depth 0 are wrapped.
- */
-function wrapOptionalFieldPlaceholders(tmpl: string, optionalFields: ReadonlySet<string> | undefined): string {
-	if (!optionalFields || optionalFields.size === 0) return tmpl;
-	// Match either `$NAME` (single dollar) or `$$$NAME` (list dollar).
-	// The capture distinguishes the two so the replacement preserves
-	// the dollar count.
-	const placeholder = /(?<lead> *)(\$\$\$|\$)([A-Z][A-Z0-9_]*)/g;
-	const guardedRanges = computeGuardedRanges(tmpl);
-	return tmpl.replace(placeholder, (full: string, lead: string, dollars: string, name: string, offset: number) => {
-		const key = name.toLowerCase();
-		if (!optionalFields.has(key)) return full;
-		// Special walker placeholders (`$NEWLINE`, `$INDENT`, `$DEDENT`,
-		// `$TEXT`) aren't real fields — `translateToJinja` converts them
-		// to literal characters or list joins. Even if a `newline` /
-		// `indent` / etc. field exists in the AssembledNonterminal list
-		// (e.g. python's decorator carries an empty-values `newline`
-		// slot from the walker's NEWLINE token wrapping), the placeholder
-		// is already structural and must not be gated.
-		//
-		if (SPECIAL_PLACEHOLDERS.has(key)) return full;
-		const dollarStart = offset + lead.length;
-		// Defensive: ensure no straggling `$` before the matched dollar
-		// run (i.e. the regex didn't truncate a `$$NAME` mid-dollars).
-		if (dollarStart > 0 && tmpl[dollarStart - 1] === '$') return full;
-		if (offset >= tmpl.length) return full;
-		// Skip placeholders enclosed in a walker-emitted Jinja
-		// conditional — the placeholder is already guarded.
-		if (isWithinGuardedRange(dollarStart, guardedRanges)) return full;
-		return `{% if ${key} | isPresent %}${lead}${dollars}${name}{% endif %}`;
-	});
-}
-
-const SPECIAL_PLACEHOLDERS: ReadonlySet<string> = new Set(['children', 'newline', 'indent', 'dedent', 'text']);
-
-/**
- * Compute the half-open `[start, end)` byte ranges in `tmpl` that lie
- * INSIDE a top-level `{% if … %}…{% endif %}` block. Nested `{% if %}`
- * tags increment a depth counter; only the OUTER pair contributes a
- * range, so inner `$NAME` placeholders are still considered "guarded"
- * for the purposes of the optional-field wrapper.
- *
- * Tracks `{%-` / `-%}` whitespace-control variants and tolerates
- * unrelated tags (`{% for %}`, `{% set %}`) by counting only `if` /
- * `endif` markers.
- */
-function computeGuardedRanges(tmpl: string): Array<readonly [number, number]> {
-	const ranges: Array<readonly [number, number]> = [];
-	const tagPattern = /\{%-?\s*(if|endif)\b[^%]*-?%\}/g;
-	let depth = 0;
-	let openOffset = -1;
-	for (let m = tagPattern.exec(tmpl); m !== null; m = tagPattern.exec(tmpl)) {
-		const tag = m[1]!;
-		if (tag === 'if') {
-			if (depth === 0) openOffset = m.index;
-			depth++;
-		} else if (tag === 'endif') {
-			depth--;
-			if (depth === 0 && openOffset !== -1) {
-				ranges.push([openOffset, m.index + m[0].length]);
-				openOffset = -1;
-			}
-		}
-	}
-	return ranges;
-}
-
-function isWithinGuardedRange(offset: number, ranges: ReadonlyArray<readonly [number, number]>): boolean {
-	for (const [s, e] of ranges) {
-		if (offset >= s && offset < e) return true;
-	}
-	return false;
-}
-
-/** `$$$CHILDREN` is the only slot that carries flank permission. */
-/** @internal — exported for direct unit testing. */
-export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
-	// Bug 2 fix (016): named-field slots also carry flank permission when
-	// the repeat for THIS SPECIFIC FIELD has `trailing: true` (tracked in
-	// `meta.trailingFields`). Previously only `children` used the trailing
-	// filter; named list fields (e.g. `elements` in `tuple_expression`) now
-	// also honour `joinWithTrailing` so trailing commas render correctly.
-	//
-	// The per-field `trailingFields` set is preferred over the global
-	// `joinByTrailing` flag to avoid promoting ALL fields on a rule where
-	// only ONE field's repeat is trailing (e.g. `tuple_expression` where
-	// `elements` has trailing but `attributes` does not).
-	if (key === 'children') {
-		if (meta.joinByLeading && meta.joinByTrailing) return 'joinWithFlanks';
-		if (meta.joinByTrailing) return 'joinWithTrailing';
-		if (meta.joinByLeading) return 'joinWithLeading';
-		return 'join';
-	}
-	// Named fields: use per-field trailing/leading sets when available.
-	// Do NOT fall back to the global `joinByTrailing` / `joinByLeading` flags
-	// here — those are whole-rule flags and would incorrectly promote fields
-	// that don't have their own trailing repeat (e.g. `attributes` on
-	// `tuple_expression` where only `elements` has `trailing: true`).
-	const hasTrailing = meta.trailingFields?.has(key) ?? false;
-	const hasLeading = meta.leadingFields?.has(key) ?? false;
-	if (hasLeading && hasTrailing) return 'joinWithFlanks';
-	if (hasTrailing) return 'joinWithTrailing';
-	if (hasLeading) return 'joinWithLeading';
-	return 'join';
-}
-
-/**
  * Collect raw field names whose `isRequired` derivation is false,
  * for the walker's optional-field detection.
  *
@@ -2487,10 +2106,7 @@ function foldParseKindDuplicateSingularSlots(slots: readonly AssembledNontermina
  */
 function expandSlotWithVisibleAliasSources(
 	slot: AssembledNonterminal,
-	owningKind: string,
-	visibleAliasTargets: ReadonlyMap<string, readonly string[]>,
-	simplifiedRules: Record<string, Rule>,
-	kindEntries?: readonly GeneratedKindEntry[]
+	ctx: KindedDeriveCtx
 ): AssembledNonterminal {
 	// Only expand unnamed (kind-routed) slots.
 	if (slot.fieldName !== undefined) return slot;
@@ -2498,7 +2114,7 @@ function expandSlotWithVisibleAliasSources(
 	// Look up the owning kind as a VISIBLE ALIAS TARGET.
 	// `token_tree → [delim_token_tree]` means `delim_token_tree` is aliased TO `token_tree`.
 	// We need to derive the concrete children of each source kind and add them as extra values.
-	const sources = visibleAliasTargets.get(owningKind);
+	const sources = ctx.visibleAliasTargets?.get(ctx.kindName);
 	if (!sources || sources.length === 0) return slot;
 
 	// Use the dominant multiplicity of this slot's values for the expansion.
@@ -2513,7 +2129,7 @@ function expandSlotWithVisibleAliasSources(
 
 	const extraValues: NodeOrTerminal[] = [];
 	for (const sourceKind of sources) {
-		const sourceRule = simplifiedRules[sourceKind];
+		const sourceRule = ctx.simplifiedRules?.[sourceKind];
 		if (!sourceRule) continue;
 		// Only expand when the source kind's rule is a top-level CHOICE or
 		// a sequence of wrappers around a choice — i.e., the source kind IS
@@ -2526,7 +2142,7 @@ function expandSlotWithVisibleAliasSources(
 		const unwrappedSource = unwrapStructuralPassthroughs(sourceRule);
 		if (unwrappedSource.type !== CHOICE) continue;
 		// Derive values from the source kind's simplified rule.
-		const derived = deriveValuesForRule(sourceRule, dominantMult, kindEntries);
+		const derived = deriveValuesForRule(sourceRule, ctx, dominantMult);
 		for (const d of derived) {
 			const dpk = d.parseKind?.name;
 			if (dpk === undefined) continue;
@@ -2555,21 +2171,19 @@ function expandSlotWithVisibleAliasSources(
  * rationale. When the grammar-override migration lands ("Owner A"), this
  * helper picks up the strict checks and the remap.
  *
- * @param kind - Owning kind name. Reserved for future error/warn messages.
  * @param rule - Simplified rule to walk for slots.
+ * @param ctx - Kinded derive context: owning kind + the grammar-wide
+ *   inputs (kind entries, collision signatures, alias targets, rules).
  */
 function buildSlotsRecord(
-	kind: string,
 	rule: Rule,
-	renderRule?: RenderRule,
-	kindEntries?: readonly GeneratedKindEntry[],
-	parseKindCollisionContext?: ParseKindCollisionContext,
-	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>,
-	simplifiedRules?: Record<string, Rule>
+	ctx: KindedDeriveCtx,
+	renderRule?: RenderRule
 ): Readonly<Record<string, AssembledNonterminal>> {
-	const slots = [...deriveSlots(rule, kindEntries, kind)];
+	const kind = ctx.kindName;
+	const slots = [...deriveSlots(rule, ctx)];
 	if (renderRule) {
-		for (const renderSlot of deriveSlots(renderRule, kindEntries, kind)) {
+		for (const renderSlot of deriveSlots(renderRule, ctx)) {
 			const existing = slots.find((slot) => slot.name === renderSlot.name);
 			if (!existing) continue;
 			const next = existing.with({
@@ -2578,7 +2192,7 @@ function buildSlotsRecord(
 			slots.splice(slots.indexOf(existing), 1, next);
 		}
 	}
-	let resolvedSlots = resolveParseKindCollisions(kind, slots, parseKindCollisionContext);
+	let resolvedSlots = resolveParseKindCollisions(slots, ctx);
 
 	// Fold singular slots whose every parseKind is already covered by a sibling
 	// array slot into that array slot. This handles the visible→visible alias case
@@ -2594,10 +2208,8 @@ function buildSlotsRecord(
 	// means the `token_tree.content` slot must also accept `delim_token_tree_paren/
 	// bracket/brace` parseKinds, which are the concrete children that the native reader
 	// delivers when a macro_invocation's `token_tree` field holds a delim_token_tree.
-	if (visibleAliasTargets && simplifiedRules) {
-		resolvedSlots = resolvedSlots.map((slot) =>
-			expandSlotWithVisibleAliasSources(slot, kind, visibleAliasTargets, simplifiedRules, kindEntries)
-		);
+	if (ctx.visibleAliasTargets && ctx.simplifiedRules) {
+		resolvedSlots = resolvedSlots.map((slot) => expandSlotWithVisibleAliasSources(slot, ctx));
 	}
 
 	const out: Record<string, AssembledNonterminal> = {};
@@ -2696,8 +2308,7 @@ function relaxSlotForCrossFormAbsence(slot: AssembledNonterminal): AssembledNont
 
 function structuralSlotRecordFromForms(
 	forms: readonly AssembledGroup[],
-	ownerKind?: string,
-	parseKindCollisionContext?: ParseKindCollisionContext
+	ctx?: DeriveCtx
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const slots = new Map<string, AssembledNonterminal>();
 	const slotPresence = new Map<string, number>();
@@ -2721,9 +2332,9 @@ function structuralSlotRecordFromForms(
 		(slotPresence.get(slot.name) ?? 0) < forms.length ? relaxSlotForCrossFormAbsence(slot) : slot
 	);
 	const resolvedSlots =
-		ownerKind === undefined
+		ctx?.kindName === undefined
 			? relaxedSlots
-			: resolveParseKindCollisions(ownerKind, relaxedSlots, parseKindCollisionContext);
+			: resolveParseKindCollisions(relaxedSlots, { ...ctx, kindName: ctx.kindName });
 	return freezeSlotRecord(resolvedSlots);
 }
 
@@ -2742,16 +2353,18 @@ function structuralSlotRecordFromForms(
  * - That value is either a TerminalValue OR a NodeRef pointing to a
  *   node whose own `parameterless` getter returns true (the cascade).
  *
- * @param nodes - The assembled node map, used to resolve UnresolvedRef by name
- *   before hydration. When provided, an unresolved ref is looked up by name and
- *   its `.parameterless` getter consulted (replicating the old fixpoint's name
- *   lookup). When absent (test fixtures), unresolved refs conservatively return
- *   false. No `_<name>` hidden-source fallback — the old fixpoint had none.
+ * @param ctx - Derive context; `ctx.nodes` is the assembled node map, used to
+ *   resolve UnresolvedRef by name before hydration. When provided, an
+ *   unresolved ref is looked up by name and its `.parameterless` getter
+ *   consulted (replicating the old fixpoint's name lookup). When absent (test
+ *   fixtures), unresolved refs conservatively return false. No `_<name>`
+ *   hidden-source fallback — the old fixpoint had none.
  */
 function _isAutoStampSlotForParameterless(
 	slot: AssembledNonterminal,
-	nodes?: ReadonlyMap<string, AssembledNodeBase<Rule>>
+	ctx?: DeriveCtx
 ): boolean {
+	const nodes = ctx?.nodes;
 	if (!isRequired(slot)) return true; // optional — does not block
 	if (isMultiple(slot)) return false; // required repeated — user must supply
 
@@ -2871,7 +2484,13 @@ export class AssembledBranch<
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
 		this._slots =
 			opts?.slotRecord ??
-			buildSlotsRecord(kind, simplifiedRule, renderRule, opts?.kindEntries, opts?.parseKindCollisionContext, opts?.visibleAliasTargets, opts?.simplifiedRules);
+			buildSlotsRecord(simplifiedRule, {
+				kindName: kind,
+				kindEntries: opts?.kindEntries,
+				collision: opts?.parseKindCollisionContext,
+				visibleAliasTargets: opts?.visibleAliasTargets,
+				simplifiedRules: opts?.simplifiedRules,
+			}, renderRule);
 	}
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
@@ -2973,7 +2592,7 @@ export class AssembledBranch<
 		const allSlots = Object.values(this._slots);
 		const requiredSlots = allSlots.filter((s) => isRequired(s));
 		if (requiredSlots.length === 0) return false; // no determined content — not parameterless
-		return allSlots.every((s) => _isAutoStampSlotForParameterless(s, this.#nodes));
+		return allSlots.every((s) => _isAutoStampSlotForParameterless(s, { nodes: this.#nodes }));
 	}
 
 	/**
@@ -3017,7 +2636,7 @@ export class AssembledBranch<
  * Emitting `$TEXT` for these rules preserves the source span verbatim
  * on readNode-derived data. Factory construction requires the kind to
  * use the text-shape factory (receives a `text: string`), same path
- * we already use for `$TEXT` kinds via `hasHiddenExternalRef`.
+ * `$TEXT` kinds already use.
  *
  * Shape criteria: rule is a `choice` (possibly wrapped in `variant`
  * markers from tagVariants). Every member has exactly three elements:
@@ -3111,9 +2730,7 @@ function isAllPunct(rule: Rule): boolean {
  * Rule variant becomes a compile error here instead of silently
  * skipping the unwrap step.
  *
- * @see hasHiddenExternalRef, hasExternalBoundaries (this file) and
- *      template-walker.ts `fieldContentIsMultiSibling` — the three
- *      original call sites this helper consolidates.
+ * @see template-walker.ts `fieldContentIsMultiSibling`.
  */
 export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 	let r: Rule = rule;
@@ -3148,133 +2765,6 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 }
 
 /**
- * Shared predicate — does `rule` reduce to an external-scanner terminal?
- * Single source of truth for the symbol-in-externals + field/pattern('')
- * stub recognition used by both `hasHiddenExternalRef` (every member
- * must match for $TEXT promotion) and `hasExternalBoundaries` (only
- * first and last seq members must match).
- *
- * Two acceptance shapes:
- *
- * 1. After peeling structural passthroughs, the result is a `symbol`
- *    whose name is in `externals`.
- *
- * 2. After peeling, the result is a `field` whose unwrapped content
- *    is the link-stub `pattern('')` AND whose name (or `_`-prefixed
- *    form) is in `externals`. Link inlines external-token rule bodies
- *    as empty-pattern stubs; enrich then wraps them in
- *    `field('<stripped_name>', pattern(''))`. Both conditions must
- *    hold — a non-external rule could coincidentally have an empty-
- *    pattern child, and a field named after an external might
- *    legitimately carry real content.
- *
- * For non-stub field content, recurses into the content so wrapper-
- * of-symbol shapes still match (the `hasHiddenExternalRef` use-case).
- *
- * Anything else returns false. String literals like `{` / `}` / `;`
- * make the rule walkable via template text and disqualify the $TEXT
- * fallback.
- */
-function isExternalTerminalMember(rule: Rule, externals: ReadonlySet<string>): boolean {
-	const core = unwrapStructuralPassthroughs(rule);
-	if (core.type === FIELD) {
-		const inner = unwrapStructuralPassthroughs(core.content);
-		if (inner.type === PATTERN && inner.value === '' && (externals.has(core.name) || externals.has('_' + core.name)))
-			return true;
-		return isExternalTerminalMember(core.content, externals);
-	}
-	return core.type === SYMBOL && externals.has(core.name);
-}
-
-function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
-	// Unwrap transparent wrappers to find the structural core.
-	const core = unwrapStructuralPassthroughs(rule);
-	if (core.type !== SEQ) return false;
-	// Also ignore pure-boundary optionals (e.g. the trailing
-	// `optional($._automatic_semicolon)` in javascript's
-	// `statement_block`) so they don't disqualify the rule from
-	// slot-by-slot rendering but also don't count toward the
-	// "all external" tally.
-	const isIgnorableBoundaryExternal = (r: Rule): boolean => {
-		if (r.type !== OPTIONAL) return false;
-		const inner = r.content;
-		return inner.type === 'symbol' && externals.has((inner as { name: string }).name);
-	};
-	let hasContent = false;
-	for (const m of core.members) {
-		if (isIgnorableBoundaryExternal(m)) continue;
-		hasContent = true;
-		if (!isExternalTerminalMember(m, externals)) {
-			// Relaxed path: rule has external-scanner BOUNDARIES (first
-			// and last non-ignorable members are external) — treat as
-			// $TEXT. Python's `string` kind has this shape:
-			// `seq(field('string_start', external), REPEAT(content),
-			// field('string_end', external))`. Start and end are
-			// external-only tokens; the REPEAT between them holds the
-			// text + interpolations. Slot-by-slot rendering can't
-			// reconstruct the start/end delimiters and breaks f-strings
-			// / template strings. $TEXT preserves the source span
-			// verbatim on readNode-derived data.
-			return hasExternalBoundaries(core, externals);
-		}
-	}
-	// All non-ignorable members are external terminals.
-	// If every one is a named field-wrapper (not a bare symbol), they can be
-	// rendered structurally by field name (e.g. raw_string_literal:
-	// field(start) + field(content) + field(end)).  Bare-symbol externals
-	// have no slot name and must fall back to $TEXT — these are excluded here
-	// so that python's `string` (boundary-only externals) is unaffected.
-	const nonIgnorable = core.members.filter((m) => !isIgnorableBoundaryExternal(m));
-	if (
-		nonIgnorable.length > 0 &&
-		nonIgnorable.every((m) => {
-			const fw = unwrapStructuralPassthroughs(m);
-			if (fw.type !== FIELD) return false;
-			const inner = unwrapStructuralPassthroughs(fw.content);
-			// After assembly, external scanner tokens are replaced with
-			// pattern("") stubs. Every member that reaches this point has
-			// already passed isExternalTerminalMember (the main loop above),
-			// so a pattern("") stub here is confirmed to be from the external
-			// scanner. The field wrapper provides a slot name that the walker
-			// can bind — accept it regardless of whether the external symbol
-			// name is underscore-prefixed. This is the case the relaxation
-			// block was designed for (e.g. raw_string_literal: all three
-			// fields wrap external stubs and CAN be rendered by field name).
-			if (inner.type === PATTERN && inner.value === '') {
-				return true;
-			}
-			// Pre-assembly path: symbol reference with underscore prefix.
-			// Reject only when the symbol is NOT in externals — those are
-			// hidden helper rules with real bodies that don't have a slot name
-			// to bind. Underscore-prefixed externals (the raw_string_literal
-			// pattern) ARE accepted because the field provides a slot name
-			// even though the inner external is anonymous in tree-sitter's
-			// output.
-			if (inner.type !== SYMBOL) return true;
-			if (!inner.name.startsWith('_')) return true;
-			return externals.has(inner.name);
-		})
-	) {
-		return false;
-	}
-	return hasContent;
-}
-
-/**
- * Rule-level boundary check — first and last non-ignorable seq members
- * are external-scanner symbols. Fires for rules like python's `string`
- * where scanner tokens delimit but the interior is author-content.
- */
-function hasExternalBoundaries(seqRule: Rule, externals: ReadonlySet<string>): boolean {
-	if (seqRule.type !== SEQ) return false;
-	if (seqRule.members.length < 2) return false;
-	const first = seqRule.members[0];
-	const last = seqRule.members[seqRule.members.length - 1];
-	if (!first || !last) return false;
-	return isExternalTerminalMember(first, externals) && isExternalTerminalMember(last, externals);
-}
-
-/**
  * AssembledPolymorph — dead-class shell retained for import-compat after PR-M-φ2.
  *
  * No grammar rule ever produces `modelType:'polymorph'` at runtime — the
@@ -3306,7 +2796,7 @@ export class AssembledPolymorph extends AssembledBranch<ChoiceRule> {
 			parseKindCollisionContext?: ParseKindCollisionContext;
 		}
 	) {
-		const slotRecord = structuralSlotRecordFromForms(forms, kind, opts?.parseKindCollisionContext);
+		const slotRecord = structuralSlotRecordFromForms(forms, { kindName: kind, collision: opts?.parseKindCollisionContext });
 		super(kind, rule, rule as Rule, rule as RenderRule, {
 			factoryName: opts?.factoryName,
 			irKey: opts?.irKey,
@@ -3778,11 +3268,9 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		this.parentKind = opts?.parentKind;
 		this.overridePassthrough = opts?.overridePassthrough;
 		this.slots = buildSlotsRecord(
-			kind,
 			simplifiedRule,
-			renderRule,
-			opts?.kindEntries,
-			opts?.parseKindCollisionContext
+			{ kindName: kind, kindEntries: opts?.kindEntries, collision: opts?.parseKindCollisionContext },
+			renderRule
 		);
 	}
 
@@ -3822,7 +3310,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		const allSlots = Object.values(this.slots);
 		const requiredSlots = allSlots.filter((s) => isRequired(s));
 		if (requiredSlots.length === 0) return false; // no determined content — not parameterless
-		return allSlots.every((s) => _isAutoStampSlotForParameterless(s, this.#nodes));
+		return allSlots.every((s) => _isAutoStampSlotForParameterless(s, { nodes: this.#nodes }));
 	}
 
 	/**

@@ -22,7 +22,7 @@ import type { Rule } from '../rule.ts';
 describe('deriveValuesForRule — link-synthesized operator symbols (D1)', () => {
 	it('a link-symbol carrying a literal emits a terminal of the SOURCE string', () => {
 		const rule: Rule = { type: SYMBOL, name: 'lt', source: 'link', literal: '<' };
-		const out = deriveValuesForRule(rule, 'single');
+		const out = deriveValuesForRule(rule, undefined, 'single');
 		expect(out).toHaveLength(1);
 		const v = out[0]!;
 		expect(isTerminalValue(v)).toBe(true);
@@ -37,14 +37,14 @@ describe('deriveValuesForRule — link-synthesized operator symbols (D1)', () =>
 
 	it('a plain grammar symbol (no literal) still emits a node-ref', () => {
 		const rule: Rule = { type: SYMBOL, name: 'primary_expression' };
-		const out = deriveValuesForRule(rule, 'single');
+		const out = deriveValuesForRule(rule, undefined, 'single');
 		expect(out).toHaveLength(1);
 		expect(isNodeRef(out[0]!)).toBe(true);
 	});
 
 	it('a link-symbol WITHOUT a literal falls back to a node-ref', () => {
 		const rule: Rule = { type: SYMBOL, name: 'lt', source: 'link' };
-		const out = deriveValuesForRule(rule, 'single');
+		const out = deriveValuesForRule(rule, undefined, 'single');
 		expect(out).toHaveLength(1);
 		expect(isNodeRef(out[0]!)).toBe(true);
 	});
@@ -59,7 +59,7 @@ describe('deriveValuesForRule — link-synthesized operator symbols (D1)', () =>
 				{ type: STRING, value: 'not in' }
 			]
 		};
-		const out = deriveValuesForRule(rule, 'nonEmptyArray');
+		const out = deriveValuesForRule(rule, undefined, 'nonEmptyArray');
 		const strings = out.filter(isTerminalValue).map((v) => v.value);
 		expect(strings).toEqual(expect.arrayContaining(['<', '<=', '==', 'not in']));
 		// No phantom kind refs leak into the union.

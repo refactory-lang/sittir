@@ -384,7 +384,7 @@ function buildSlot(
 	}
 
 	// --- Build values for the slot from the node itself ---
-	const rawValues = deriveValuesForRule(rule, mult, kindEntries);
+	const rawValues = deriveValuesForRule(rule, { kindEntries }, mult);
 	let dedupedValues = dedupeValues(rawValues);
 	if (dedupedValues.length === 0) return null;
 
