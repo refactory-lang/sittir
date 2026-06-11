@@ -68,6 +68,13 @@ export async function extractParityFixtures(grammar: string, templatesPath: stri
 	let renderCount = 0;
 	let roundTripCount = 0;
 
+	// NOTE: fixture extraction runs at CODEGEN time, before/while the native
+	// .node is (re)built, so it cannot use `backend: 'native'` (loading a
+	// half-built/stale engine here SIGSEGVs). It renders via the JS backend.
+	// The wrapped-tree candidate walk currently requires a native handle, so
+	// under the rewrite this yields zero candidates → no fixtures (FR-011 warns,
+	// does not fail). TODO(#3 follow-up): give the candidate walk a JS-handle
+	// path, or move fixture extraction to a post-build native pass.
 	await validateReadRenderParse(grammar, templatesPath, {
 		onFixture: (fx) => {
 			fixtures.push(fx);

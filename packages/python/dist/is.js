@@ -17,13 +17,13 @@ const _supertype_fExpression_ids = new Set([161, 200, 202]);
 const _supertype_leftHandSide_ids = new Set([200]);
 const _supertype_namedExpressionLhs_ids = new Set([1]);
 const _supertype_rightHandSide_ids = new Set([161, 198, 199, 200, 202]);
-const _supertype_simplePattern_ids = new Set([173, 172, 166, 167, 168, 169, 231, 230, 96, 97, 98, 248, 174, 162]);
+const _supertype_simplePattern_ids = new Set([173, 172, 166, 167, 168, 169, 231, 230, 88, 89, 90, 250, 174, 162]);
 const _supertype_simpleStatement_ids = new Set([114, 111, 115, 119, 121, 122, 125, 126, 127, 128, 129, 130, 150, 151, 152, 153]);
 const _supertype_statement_ids = new Set([110, 131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_expression_ids = new Set([195, 189, 190, 196, 229, 123, 185]);
 const _supertype_parameter_ids = new Set([1, 207, 181, 182, 183, 179, 184]);
 const _supertype_pattern_ids = new Set([1, 204, 203, 183, 179, 180]);
-const _supertype_primaryExpression_ids = new Set([237, 191, 1, 231, 230, 93, 94, 96, 97, 98, 192, 203, 204, 206, 215, 220, 218, 221, 216, 222, 217, 225, 223, 183]);
+const _supertype_primaryExpression_ids = new Set([237, 191, 1, 231, 230, 85, 86, 88, 89, 90, 192, 203, 204, 206, 215, 220, 218, 221, 216, 222, 217, 225, 223, 183]);
 const _kindIdByKind = new Map([
     ["identifier", TSKindId.Identifier],
     ["import", TSKindId.Import],
@@ -191,22 +191,32 @@ const _kindIdByKind = new Map([
     ["interpolation", TSKindId.Interpolation],
     ["format_specifier", TSKindId.FormatSpecifier],
     ["await", TSKindId.Await],
+    ["_slice_group1", TSKindId._SliceGroup1],
+    ["_except_clause_as", TSKindId.ExceptClauseAs],
     ["_assignment_eq", TSKindId.AssignmentEq],
     ["_assignment_type", TSKindId.AssignmentType],
     ["_assignment_typed", TSKindId.AssignmentTyped],
-    ["_with_clause_paren", TSKindId._WithClauseParen],
+    ["_expression_statement_tuple", TSKindId.ExpressionStatementTuple],
+    ["_with_clause_bare", TSKindId.WithClauseBare],
+    ["_with_clause_paren", TSKindId.WithClauseParen],
     ["_match_block_block", TSKindId.MatchBlockBlock],
     ["_simple_pattern_negative", TSKindId.SimplePatternNegative],
+    ["_except_clause_list", TSKindId.ExceptClauseList],
+    ["_comparison_operator_comparator", TSKindId.ComparisonOperatorComparator],
 ]);
 export const is = {
     AsPattern: _g(TSKindId._AsPattern),
     ComprehensionClauses: _g(TSKindId.ComprehensionClauses),
+    ExceptClauseList: _g(TSKindId.ExceptClauseList),
+    ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
     ListPattern: _g(TSKindId._ListPattern),
     MatchBlock: _g(TSKindId.MatchBlock),
     SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
     SimpleStatements: _g(TSKindId.SimpleStatements),
+    SliceGroup1: _g(TSKindId._SliceGroup1),
     TuplePattern: _g(TSKindId._TuplePattern),
-    WithClauseParen: _g(TSKindId._WithClauseParen),
+    WithClauseBare: _g(TSKindId.WithClauseBare),
+    WithClauseParen: _g(TSKindId.WithClauseParen),
     aliasedImport: _g(TSKindId.AliasedImport),
     argumentList: _g(TSKindId.ArgumentList),
     asPattern: _g(TSKindId.AsPattern),
@@ -350,11 +360,15 @@ function _makeAssertKind(guard) {
 export const assert = {
     AsPattern: _makeAssert('AsPattern', is.AsPattern),
     ComprehensionClauses: _makeAssert('ComprehensionClauses', is.ComprehensionClauses),
+    ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList),
+    ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple),
     ListPattern: _makeAssert('ListPattern', is.ListPattern),
     MatchBlock: _makeAssert('MatchBlock', is.MatchBlock),
     SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative),
     SimpleStatements: _makeAssert('SimpleStatements', is.SimpleStatements),
+    SliceGroup1: _makeAssert('SliceGroup1', is.SliceGroup1),
     TuplePattern: _makeAssert('TuplePattern', is.TuplePattern),
+    WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare),
     WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen),
     aliasedImport: _makeAssert('aliasedImport', is.aliasedImport),
     argumentList: _makeAssert('argumentList', is.argumentList),

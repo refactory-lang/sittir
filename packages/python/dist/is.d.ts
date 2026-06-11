@@ -12,6 +12,16 @@ export interface IsGuards {
     }>(v: T): v is T & {
         readonly $type: TSKindId.ComprehensionClauses;
     };
+    ExceptClauseList<T extends {
+        readonly $type: number;
+    }>(v: T): v is T & {
+        readonly $type: TSKindId.ExceptClauseList;
+    };
+    ExpressionStatementTuple<T extends {
+        readonly $type: number;
+    }>(v: T): v is T & {
+        readonly $type: TSKindId.ExpressionStatementTuple;
+    };
     ListPattern<T extends {
         readonly $type: number;
     }>(v: T): v is T & {
@@ -32,15 +42,25 @@ export interface IsGuards {
     }>(v: T): v is T & {
         readonly $type: TSKindId.SimpleStatements;
     };
+    SliceGroup1<T extends {
+        readonly $type: number;
+    }>(v: T): v is T & {
+        readonly $type: TSKindId._SliceGroup1;
+    };
     TuplePattern<T extends {
         readonly $type: number;
     }>(v: T): v is T & {
         readonly $type: TSKindId._TuplePattern;
     };
+    WithClauseBare<T extends {
+        readonly $type: number;
+    }>(v: T): v is T & {
+        readonly $type: TSKindId.WithClauseBare;
+    };
     WithClauseParen<T extends {
         readonly $type: number;
     }>(v: T): v is T & {
-        readonly $type: TSKindId._WithClauseParen;
+        readonly $type: TSKindId.WithClauseParen;
     };
     aliasedImport<T extends {
         readonly $type: number;
@@ -609,6 +629,16 @@ export interface AssertGuards {
     }): asserts v is {
         readonly $type: TSKindId.ComprehensionClauses;
     };
+    ExceptClauseList(v: {
+        readonly $type: number;
+    }): asserts v is {
+        readonly $type: TSKindId.ExceptClauseList;
+    };
+    ExpressionStatementTuple(v: {
+        readonly $type: number;
+    }): asserts v is {
+        readonly $type: TSKindId.ExpressionStatementTuple;
+    };
     ListPattern(v: {
         readonly $type: number;
     }): asserts v is {
@@ -629,15 +659,25 @@ export interface AssertGuards {
     }): asserts v is {
         readonly $type: TSKindId.SimpleStatements;
     };
+    SliceGroup1(v: {
+        readonly $type: number;
+    }): asserts v is {
+        readonly $type: TSKindId._SliceGroup1;
+    };
     TuplePattern(v: {
         readonly $type: number;
     }): asserts v is {
         readonly $type: TSKindId._TuplePattern;
     };
+    WithClauseBare(v: {
+        readonly $type: number;
+    }): asserts v is {
+        readonly $type: TSKindId.WithClauseBare;
+    };
     WithClauseParen(v: {
         readonly $type: number;
     }): asserts v is {
-        readonly $type: TSKindId._WithClauseParen;
+        readonly $type: TSKindId.WithClauseParen;
     };
     aliasedImport(v: {
         readonly $type: number;

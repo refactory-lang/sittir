@@ -1,6 +1,6 @@
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
-import type { ConfigOf, FluentNode } from '@sittir/types';
+import type { FluentNode } from '@sittir/types';
 export declare function _asPattern(config: T._AsPattern.Config): {
     $type: TSKindId._AsPattern;
     $source: 2;
@@ -147,14 +147,160 @@ export declare function _assignmentTyped(config: T.AssignmentTyped.Config): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
+export declare function _comparisonOperatorComparator(config: T.ComparisonOperatorComparator.Config): {
+    $type: TSKindId.ComparisonOperatorComparator;
+    $source: 2;
+    $named: true;
+    _operators: unknown;
+    _primary_expression: T.PrimaryExpression;
+    operators(): unknown;
+    primaryExpression(): T.PrimaryExpression;
+    $with: {
+        operators: (value: NonNullable<Parameters<typeof _comparisonOperatorComparator>[0]>['operators']) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+        primaryExpression: (value: T.PrimaryExpression) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+    };
+} & {
+    $render(): string;
+    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+    $replace(target: {
+        range(): import("@sittir/types").ByteRange;
+    }): import("@sittir/types").Edit;
+    $trivia(...args: (T.Comment | {
+        leading?: (T.Comment)[];
+        trailing?: (T.Comment)[];
+    })[]): import("@sittir/types").AnyNodeData;
+};
 export declare function comprehensionClauses(...children: (T.ForInClause | T.IfClause)[]): {
     $type: TSKindId.ComprehensionClauses;
     $source: 2;
     $named: true;
-    _for_in_clause: (T.ForInClause | T.IfClause)[];
-    forInClause(): (T.ForInClause | T.IfClause)[];
+    _content: (T.ForInClause | T.IfClause)[];
+    contents(): (T.ForInClause | T.IfClause)[];
     $with: {
         $children: (...vs: (T.ForInClause | T.IfClause)[]) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+    };
+} & {
+    $render(): string;
+    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+    $replace(target: {
+        range(): import("@sittir/types").ByteRange;
+    }): import("@sittir/types").Edit;
+    $trivia(...args: (T.Comment | {
+        leading?: (T.Comment)[];
+        trailing?: (T.Comment)[];
+    })[]): import("@sittir/types").AnyNodeData;
+};
+export declare function _exceptClauseAs(config: T.ExceptClauseAs.Config): {
+    $type: TSKindId.ExceptClauseAs;
+    $source: 2;
+    $named: true;
+    _value: T.Expression;
+    _alias: T.Expression | undefined;
+    value(): T.Expression;
+    alias(): T.Expression | undefined;
+    $with: {
+        value: (value: T.Expression) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+        alias: (value?: T.Expression) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+    };
+} & {
+    $render(): string;
+    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+    $replace(target: {
+        range(): import("@sittir/types").ByteRange;
+    }): import("@sittir/types").Edit;
+    $trivia(...args: (T.Comment | {
+        leading?: (T.Comment)[];
+        trailing?: (T.Comment)[];
+    })[]): import("@sittir/types").AnyNodeData;
+};
+export declare function exceptClauseList(config: T.ExceptClauseList.Config): {
+    $type: TSKindId.ExceptClauseList;
+    $source: 2;
+    $named: true;
+    _value: readonly [T.Expression, ...T.Expression[]];
+    values(): readonly [T.Expression, ...T.Expression[]];
+    $with: {
+        values: (values_0: T.Expression, ...values: T.Expression[]) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+    };
+} & {
+    $render(): string;
+    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+    $replace(target: {
+        range(): import("@sittir/types").ByteRange;
+    }): import("@sittir/types").Edit;
+    $trivia(...args: (T.Comment | {
+        leading?: (T.Comment)[];
+        trailing?: (T.Comment)[];
+    })[]): import("@sittir/types").AnyNodeData;
+};
+export declare function expressionStatementTuple(...children: T.Expression[]): {
+    $type: TSKindId.ExpressionStatementTuple;
+    $source: 2;
+    $named: true;
+    _expression: T.Expression[] & readonly [T.Expression, ...T.Expression[]];
+    expressions(): T.Expression[] & readonly [T.Expression, ...T.Expression[]];
+    $with: {
+        $children: (...vs: T.Expression[]) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -376,8 +522,8 @@ export declare function simplePatternNegative(child: (T.Integer | T.Float)): {
     $type: TSKindId.SimplePatternNegative;
     $source: 2;
     $named: true;
-    _integer: T.Float | T.Integer;
-    integer(): T.Float | T.Integer;
+    _content: T.Float | T.Integer;
+    content(): T.Float | T.Integer;
     $with: {
         $child: (v: (T.Integer | T.Float)) => /*elided*/ any & {
             $render(): string;
@@ -432,6 +578,36 @@ export declare function simpleStatements(...children: T.SimpleStatement[]): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
+export declare function _sliceGroup1(child?: T.Expression): {
+    $type: TSKindId._SliceGroup1;
+    $source: 2;
+    $named: true;
+    _expression: T.Expression | undefined;
+    expression(): T.Expression | undefined;
+    $with: {
+        $child: (v: T.Expression) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+    };
+} & {
+    $render(): string;
+    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+    $replace(target: {
+        range(): import("@sittir/types").ByteRange;
+    }): import("@sittir/types").Edit;
+    $trivia(...args: (T.Comment | {
+        leading?: (T.Comment)[];
+        trailing?: (T.Comment)[];
+    })[]): import("@sittir/types").AnyNodeData;
+};
 export declare function _tuplePattern(...children: T.CasePattern[]): {
     $type: TSKindId._TuplePattern;
     $source: 2;
@@ -462,8 +638,38 @@ export declare function _tuplePattern(...children: T.CasePattern[]): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function _withClauseParen(...children: T.WithItem[]): {
-    $type: TSKindId._WithClauseParen;
+export declare function withClauseBare(...children: T.WithItem[]): {
+    $type: TSKindId.WithClauseBare;
+    $source: 2;
+    $named: true;
+    _with_item: T.WithItem[] & readonly [T.WithItem, ...T.WithItem[]];
+    withItems(): T.WithItem[] & readonly [T.WithItem, ...T.WithItem[]];
+    $with: {
+        $children: (...vs: T.WithItem[]) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+    };
+} & {
+    $render(): string;
+    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+    $replace(target: {
+        range(): import("@sittir/types").ByteRange;
+    }): import("@sittir/types").Edit;
+    $trivia(...args: (T.Comment | {
+        leading?: (T.Comment)[];
+        trailing?: (T.Comment)[];
+    })[]): import("@sittir/types").AnyNodeData;
+};
+export declare function withClauseParen(...children: T.WithItem[]): {
+    $type: TSKindId.WithClauseParen;
     $source: 2;
     $named: true;
     _with_item: T.WithItem[] & readonly [T.WithItem, ...T.WithItem[]];
@@ -535,14 +741,14 @@ export declare function aliasedImport(config: T.AliasedImport.Config): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function argumentList(...children: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]): {
+export declare function argumentList(config?: Partial<T.ArgumentList.Config>): {
     $type: TSKindId.ArgumentList;
     $source: 2;
     $named: true;
-    _expression: (T.DictionarySplat | T.KeywordArgument | T.ListSplat | T.ParenthesizedListSplat | T.Expression)[];
-    expression(): (T.DictionarySplat | T.KeywordArgument | T.ListSplat | T.ParenthesizedListSplat | T.Expression)[];
+    _arguments: readonly (T.DictionarySplat | T.KeywordArgument | T.ListSplat | T.ParenthesizedListSplat | T.Expression)[] | undefined;
+    arguments(): readonly (T.DictionarySplat | T.KeywordArgument | T.ListSplat | T.ParenthesizedListSplat | T.Expression)[] | undefined;
     $with: {
-        $children: (...vs: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]) => /*elided*/ any & {
+        arguments: (...values: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -570,9 +776,9 @@ export declare function asPattern(config: T.AsPattern.Config): {
     $source: 2;
     $named: true;
     _expression: T.Expression;
-    _alias: T.AsPatternTarget;
+    _alias: T.Expression;
     expression(): T.Expression;
-    alias(): T.AsPatternTarget;
+    alias(): T.Expression;
     $with: {
         expression: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -585,7 +791,7 @@ export declare function asPattern(config: T.AsPattern.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        alias: (value: T.AsPatternTarget) => /*elided*/ any & {
+        alias: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -638,18 +844,14 @@ export declare function assertStatement(...children: T.Expression[]): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function assignment(config: ConfigOf<T.AssignmentUFormEq>): ReturnType<typeof assignmentUFormEq>;
-export declare function assignment(config: ConfigOf<T.AssignmentUFormType>): ReturnType<typeof assignmentUFormType>;
-export declare function assignment(config: ConfigOf<T.AssignmentUFormTyped>): ReturnType<typeof assignmentUFormTyped>;
-export declare function assignmentUFormEq(config: Omit<ConfigOf<T.AssignmentUFormEq>, '$variant'>): {
+export declare function assignment(config: T.Assignment.Config): {
     $type: TSKindId.Assignment;
     $source: 2;
     $named: true;
-    $variant: 'eq';
     _left: T.PatternList;
-    _assignment_eq: T.AssignmentEq;
+    _content: T.AssignmentEq | T.AssignmentType | T.AssignmentTyped;
     left(): T.PatternList;
-    assignmentEq(): T.AssignmentEq;
+    content(): T.AssignmentEq | T.AssignmentType | T.AssignmentTyped;
     $with: {
         left: (value: T.LeftHandSide) => /*elided*/ any & {
             $render(): string;
@@ -662,95 +864,7 @@ export declare function assignmentUFormEq(config: Omit<ConfigOf<T.AssignmentUFor
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        assignmentEq: (value: T.AssignmentEq) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function assignmentUFormType(config: Omit<ConfigOf<T.AssignmentUFormType>, '$variant'>): {
-    $type: TSKindId.Assignment;
-    $source: 2;
-    $named: true;
-    $variant: 'type';
-    _left: T.PatternList;
-    _assignment_type: T.AssignmentType;
-    left(): T.PatternList;
-    assignmentType(): T.AssignmentType;
-    $with: {
-        left: (value: T.LeftHandSide) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-        assignmentType: (value: T.AssignmentType) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function assignmentUFormTyped(config: Omit<ConfigOf<T.AssignmentUFormTyped>, '$variant'>): {
-    $type: TSKindId.Assignment;
-    $source: 2;
-    $named: true;
-    $variant: 'typed';
-    _left: T.PatternList;
-    _assignment_typed: T.AssignmentTyped;
-    left(): T.PatternList;
-    assignmentTyped(): T.AssignmentTyped;
-    $with: {
-        left: (value: T.LeftHandSide) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-        assignmentTyped: (value: T.AssignmentTyped) => /*elided*/ any & {
+        content: (value: T.AssignmentEq | T.AssignmentType | T.AssignmentTyped) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -1109,10 +1223,10 @@ export declare function caseClause(config: T.CaseClause.Config): {
     $named: true;
     _case_pattern: readonly [T.CasePattern, ...T.CasePattern[]];
     _guard: T.IfClause | undefined;
-    _consequence: T.Suite;
+    _consequence: T.Block | T.Newline | T.SimpleStatements;
     casePatterns(): readonly [T.CasePattern, ...T.CasePattern[]];
     guard(): T.IfClause | undefined;
-    consequence(): T.Suite;
+    consequence(): T.Block | T.Newline | T.SimpleStatements;
     $with: {
         casePatterns: (values_0: T.CasePattern, ...values: T.CasePattern[]) => /*elided*/ any & {
             $render(): string;
@@ -1136,7 +1250,7 @@ export declare function caseClause(config: T.CaseClause.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        consequence: (value: T.Suite) => /*elided*/ any & {
+        consequence: (value: T.SimpleStatements | T.Block | T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -1163,8 +1277,8 @@ export declare function casePattern(child: (T._AsPattern | T.KeywordPattern | T.
     $type: TSKindId.CasePattern;
     $source: 2;
     $named: true;
-    _as_pattern: T.KeywordPattern | T._AsPattern | T.SimplePattern;
-    asPattern(): T.KeywordPattern | T._AsPattern | T.SimplePattern;
+    _content: T.KeywordPattern | T._AsPattern | T.SimplePattern;
+    content(): T.KeywordPattern | T._AsPattern | T.SimplePattern;
     $with: {
         $child: (v: (T._AsPattern | T.KeywordPattern | T.SimplePattern)) => /*elided*/ any & {
             $render(): string;
@@ -1226,11 +1340,11 @@ export declare function classDefinition(config: T.ClassDefinition.Config): {
     _name: T.Identifier;
     _type_parameters: T.TypeParameter | undefined;
     _superclasses: T.ArgumentList | undefined;
-    _body: T.Suite;
+    _body: T.Block | T.Newline | T.SimpleStatements;
     name(): T.Identifier;
     typeParameters(): T.TypeParameter | undefined;
     superclasses(): T.ArgumentList | undefined;
-    body(): T.Suite;
+    body(): T.Block | T.Newline | T.SimpleStatements;
     $with: {
         name: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -1265,7 +1379,7 @@ export declare function classDefinition(config: T.ClassDefinition.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        body: (value: T.Suite) => /*elided*/ any & {
+        body: (value: T.SimpleStatements | T.Block | T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -1352,11 +1466,9 @@ export declare function comparisonOperator(config: T.ComparisonOperator.Config):
     $source: 2;
     $named: true;
     _left: T.PrimaryExpression;
-    _operators: readonly ["is not" | "not in" | T.BangEq | T.EqEq | T.Gt | T.GtEq | T.In | T.Is | T.Lt | T.LtEq | T.LtGt, ...("is not" | "not in" | T.BangEq | T.EqEq | T.Gt | T.GtEq | T.In | T.Is | T.Lt | T.LtEq | T.LtGt)[]];
-    _primary_expression: readonly [T.PrimaryExpression, ...T.PrimaryExpression[]];
+    _comparators: readonly [T.ComparisonOperatorComparator, ...T.ComparisonOperatorComparator[]];
     left(): T.PrimaryExpression;
-    operators(): readonly ["is not" | "not in" | T.BangEq | T.EqEq | T.Gt | T.GtEq | T.In | T.Is | T.Lt | T.LtEq | T.LtGt, ...("is not" | "not in" | T.BangEq | T.EqEq | T.Gt | T.GtEq | T.In | T.Is | T.Lt | T.LtEq | T.LtGt)[]];
-    primaryExpressions(): readonly [T.PrimaryExpression, ...T.PrimaryExpression[]];
+    comparators(): readonly [T.ComparisonOperatorComparator, ...T.ComparisonOperatorComparator[]];
     $with: {
         left: (value: T.PrimaryExpression) => /*elided*/ any & {
             $render(): string;
@@ -1369,18 +1481,7 @@ export declare function comparisonOperator(config: T.ComparisonOperator.Config):
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        operators: (values_0: "is not" | "not in" | T.BangEq | T.EqEq | T.Gt | T.GtEq | T.In | T.Is | T.Lt | T.LtEq | T.LtGt, ...values: ("is not" | "not in" | T.BangEq | T.EqEq | T.Gt | T.GtEq | T.In | T.Is | T.Lt | T.LtEq | T.LtGt)[]) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-        primaryExpressions: (values_0: T.PrimaryExpression, ...values: T.PrimaryExpression[]) => /*elided*/ any & {
+        comparators: (values_0: T.ComparisonOperatorComparator, ...values: T.ComparisonOperatorComparator[]) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -1409,10 +1510,12 @@ export declare function complexPattern(config: T.ComplexPattern.Config): {
     $named: true;
     _real: true | undefined;
     _imaginary: T.Float | T.Integer;
-    _integer: T.Float | T.Integer;
+    _operator: unknown;
+    _content: T.Float | T.Integer;
     real(): true | undefined;
     imaginary(): T.Float | T.Integer;
-    integer(): T.Float | T.Integer;
+    operator(): unknown;
+    content(): T.Float | T.Integer;
     $with: {
         real: (value?: NonNullable<Parameters<typeof complexPattern>[0]>['real']) => /*elided*/ any & {
             $render(): string;
@@ -1436,7 +1539,18 @@ export declare function complexPattern(config: T.ComplexPattern.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        integer: (value: T.Integer | T.Float) => /*elided*/ any & {
+        operator: (value: NonNullable<Parameters<typeof complexPattern>[0]>['operator']) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+        content: (value: T.Integer | T.Float) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -1464,7 +1578,7 @@ export declare function concatenatedString(...children: T.String[]): {
     $source: 2;
     $named: true;
     _string: T.String[] & readonly [T.String, ...T.String[]];
-    string(): T.String[] & readonly [T.String, ...T.String[]];
+    strings(): T.String[] & readonly [T.String, ...T.String[]];
     $with: {
         $children: (...vs: T.String[]) => /*elided*/ any & {
             $render(): string;
@@ -1647,27 +1761,14 @@ export declare function decoratedDefinition(config: T.DecoratedDefinition.Config
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function decorator(config: T.Decorator.Config): {
+export declare function decorator(expression: T.Decorator.Config['expression']): {
     $type: TSKindId.Decorator;
     $source: 2;
     $named: true;
     _expression: T.Expression;
-    _newline: string | undefined;
     expression(): T.Expression;
-    newline(): string | undefined;
     $with: {
-        expression: (value: T.Expression) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-        newline: (value?: string) => /*elided*/ any & {
+        expression: (value: T.Decorator.Config['expression']) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -1763,14 +1864,53 @@ export declare function deleteStatement(child: T.Expressions): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function dictPattern(...children: T.DictPatternKv[]): {
+export declare function dictPattern(config?: Partial<T.DictPattern.Config>): {
     $type: TSKindId.DictPattern;
     $source: 2;
     $named: true;
-    _dict_pattern_kv: T.DictPatternKv[];
-    dictPatternKvs(): T.DictPatternKv[];
+    _dict_pattern_kv: T.DictPatternKv | undefined;
+    _key: readonly T.SimplePattern[] | undefined;
+    _value: readonly T.CasePattern[] | undefined;
+    _splat_pattern: readonly T.SplatPattern[] | undefined;
+    dictPatternKv(): T.DictPatternKv | undefined;
+    keys(): readonly T.SimplePattern[] | undefined;
+    values(): readonly T.CasePattern[] | undefined;
+    splatPatterns(): readonly T.SplatPattern[] | undefined;
     $with: {
-        $children: (...vs: T.DictPatternKv[]) => /*elided*/ any & {
+        dictPatternKv: (value?: T.DictPatternKv) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+        keys: (...values: T.SimplePattern[]) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+        values: (...values: T.CasePattern[]) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+        splatPatterns: (...values: T.SplatPattern[]) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -1793,14 +1933,14 @@ export declare function dictPattern(...children: T.DictPatternKv[]): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function dictionary(...children: (T.Pair | T.DictionarySplat)[]): {
+export declare function dictionary(config?: Partial<T.Dictionary.Config>): {
     $type: TSKindId.Dictionary;
     $source: 2;
     $named: true;
-    _pair: (T.DictionarySplat | T.Pair)[];
-    pairs(): (T.DictionarySplat | T.Pair)[];
+    _entries: readonly (T.DictionarySplat | T.Pair)[] | undefined;
+    entries(): readonly (T.DictionarySplat | T.Pair)[] | undefined;
     $with: {
-        $children: (...vs: (T.Pair | T.DictionarySplat)[]) => /*elided*/ any & {
+        entries: (...values: (T.Pair | T.DictionarySplat)[]) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -1896,14 +2036,14 @@ export declare function dictionarySplat(expression: T.DictionarySplat.Config['ex
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function dictionarySplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)): {
+export declare function dictionarySplatPattern(child: (T.Identifier | T.Subscript | T.Attribute)): {
     $type: TSKindId.DictionarySplatPattern;
     $source: 2;
     $named: true;
-    _identifier: T.Attribute | T.Identifier | T.KeywordIdentifier | T.Subscript;
-    identifier(): T.Attribute | T.Identifier | T.KeywordIdentifier | T.Subscript;
+    _content: T.Attribute | T.Identifier | T.Subscript;
+    content(): T.Attribute | T.Identifier | T.Subscript;
     $with: {
-        $child: (v: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) => /*elided*/ any & {
+        $child: (v: (T.Identifier | T.Subscript | T.Attribute)) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -1961,9 +2101,9 @@ export declare function elifClause(config: T.ElifClause.Config): {
     $source: 2;
     $named: true;
     _condition: T.Expression;
-    _consequence: T.Suite;
+    _consequence: T.Block | T.Newline | T.SimpleStatements;
     condition(): T.Expression;
-    consequence(): T.Suite;
+    consequence(): T.Block | T.Newline | T.SimpleStatements;
     $with: {
         condition: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -1976,7 +2116,7 @@ export declare function elifClause(config: T.ElifClause.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        consequence: (value: T.Suite) => /*elided*/ any & {
+        consequence: (value: T.SimpleStatements | T.Block | T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -2003,8 +2143,8 @@ export declare function elseClause(body: T.ElseClause.Config['body']): {
     $type: TSKindId.ElseClause;
     $source: 2;
     $named: true;
-    _body: T.Suite;
-    body(): T.Suite;
+    _body: T.Block | T.Newline | T.SimpleStatements;
+    body(): T.Block | T.Newline | T.SimpleStatements;
     $with: {
         body: (value: T.ElseClause.Config['body']) => /*elided*/ any & {
             $render(): string;
@@ -2045,18 +2185,20 @@ export declare function escapeSequence(text: string): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function exceptClause(config: T.ExceptClause.Config): {
+export declare function exceptClause(config?: Partial<T.ExceptClause.Config>): {
     $type: TSKindId.ExceptClause;
     $source: 2;
     $named: true;
-    _value: readonly [T.Expression, ...T.Expression[]] | undefined;
-    _alias: T.Expression | undefined;
-    _suite: T.Suite;
-    values(): readonly [T.Expression, ...T.Expression[]] | undefined;
-    alias(): T.Expression | undefined;
-    suite(): T.Suite;
+    _content: T.ExceptClauseAs | T.ExceptClauseList | undefined;
+    _simple_statements: T.SimpleStatements | undefined;
+    _block: T.Block | undefined;
+    _newline: T.Newline | undefined;
+    content(): T.ExceptClauseAs | T.ExceptClauseList | undefined;
+    simpleStatements(): T.SimpleStatements | undefined;
+    block(): T.Block | undefined;
+    newline(): T.Newline | undefined;
     $with: {
-        values: (values_0: T.Expression, ...values: T.Expression[]) => /*elided*/ any & {
+        content: (value?: T.ExceptClauseAs | T.ExceptClauseList) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -2067,7 +2209,7 @@ export declare function exceptClause(config: T.ExceptClause.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        alias: (value?: T.Expression) => /*elided*/ any & {
+        simpleStatements: (value?: T.SimpleStatements) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -2078,7 +2220,18 @@ export declare function exceptClause(config: T.ExceptClause.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        suite: (value: T.Suite) => /*elided*/ any & {
+        block: (value?: T.Block) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+        newline: (value?: T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -2106,9 +2259,9 @@ export declare function execStatement(config: T.ExecStatement.Config): {
     $source: 2;
     $named: true;
     _code: T.Identifier | T.String;
-    _in_clause: readonly ["in" | T.Expression, ...("in" | T.Expression)[]] | undefined;
+    _in_clause: readonly T.Expression[] | undefined;
     code(): T.Identifier | T.String;
-    inClauses(): readonly ["in" | T.Expression, ...("in" | T.Expression)[]] | undefined;
+    inClauses(): readonly T.Expression[] | undefined;
     $with: {
         code: (value: T.String | T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -2121,7 +2274,7 @@ export declare function execStatement(config: T.ExecStatement.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        inClauses: (values_0: "in" | T.Expression, ...values: ("in" | T.Expression)[]) => /*elided*/ any & {
+        inClauses: (...values: T.Expression[]) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -2146,36 +2299,6 @@ export declare function execStatement(config: T.ExecStatement.Config): {
 };
 export declare function expressionList(...children: T.Expression[]): {
     $type: TSKindId.ExpressionList;
-    $source: 2;
-    $named: true;
-    _expression: T.Expression[] & readonly [T.Expression, ...T.Expression[]];
-    expression(): T.Expression[] & readonly [T.Expression, ...T.Expression[]];
-    $with: {
-        $children: (...vs: T.Expression[]) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function expressionStatementTuple(...children: T.Expression[]): {
-    $type: TSKindId._ExpressionStatementTuple;
     $source: 2;
     $named: true;
     _expression: T.Expression[] & readonly [T.Expression, ...T.Expression[]];
@@ -2204,144 +2327,14 @@ export declare function expressionStatementTuple(...children: T.Expression[]): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormExpression>): ReturnType<typeof expressionStatementUFormExpression>;
-export declare function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormTuple>): ReturnType<typeof expressionStatementUFormTuple>;
-export declare function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormAssignment>): ReturnType<typeof expressionStatementUFormAssignment>;
-export declare function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormAugmentedAssignment>): ReturnType<typeof expressionStatementUFormAugmentedAssignment>;
-export declare function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormYield>): ReturnType<typeof expressionStatementUFormYield>;
-export declare function expressionStatementUFormExpression(config: Omit<ConfigOf<T.ExpressionStatementUFormExpression>, '$variant'>): {
+export declare function expressionStatement(child: (T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield)): {
     $type: TSKindId.ExpressionStatement;
     $source: 2;
     $named: true;
-    $variant: 'expression';
-    _expression: T.Expression;
-    expression(): T.Expression;
+    _content: T.Assignment | T.AugmentedAssignment | T.ExpressionStatementTuple | T.Yield | T.Expression;
+    content(): T.Assignment | T.AugmentedAssignment | T.ExpressionStatementTuple | T.Yield | T.Expression;
     $with: {
-        expression: (value: T.Expression) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function expressionStatementUFormTuple(config: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>): {
-    $type: TSKindId.ExpressionStatement;
-    $source: 2;
-    $named: true;
-    $variant: 'tuple';
-    _expression_statement_tuple: any;
-    expressionStatementTuple(): any;
-    $with: {
-        expressionStatementTuple: (value: T._ExpressionStatementTuple) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function expressionStatementUFormAssignment(config: Omit<ConfigOf<T.ExpressionStatementUFormAssignment>, '$variant'>): {
-    $type: TSKindId.ExpressionStatement;
-    $source: 2;
-    $named: true;
-    $variant: 'assignment';
-    _assignment: T.Assignment;
-    assignment(): T.Assignment;
-    $with: {
-        assignment: (value: T.Assignment) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function expressionStatementUFormAugmentedAssignment(config: Omit<ConfigOf<T.ExpressionStatementUFormAugmentedAssignment>, '$variant'>): {
-    $type: TSKindId.ExpressionStatement;
-    $source: 2;
-    $named: true;
-    $variant: 'augmented_assignment';
-    _augmented_assignment: T.AugmentedAssignment;
-    augmentedAssignment(): T.AugmentedAssignment;
-    $with: {
-        augmentedAssignment: (value: T.AugmentedAssignment) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function expressionStatementUFormYield(config: Omit<ConfigOf<T.ExpressionStatementUFormYield>, '$variant'>): {
-    $type: TSKindId.ExpressionStatement;
-    $source: 2;
-    $named: true;
-    $variant: 'yield';
-    _yield: T.Yield;
-    yield(): T.Yield;
-    $with: {
-        yield: (value: T.Yield) => /*elided*/ any & {
+        $child: (v: (T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield)) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -2384,8 +2377,8 @@ export declare function finallyClause(block: T.FinallyClause.Config['block']): {
     $type: TSKindId.FinallyClause;
     $source: 2;
     $named: true;
-    _block: T.Suite;
-    block(): T.Suite;
+    _block: T.Block | T.Newline | T.SimpleStatements;
+    block(): T.Block | T.Newline | T.SimpleStatements;
     $with: {
         block: (value: T.FinallyClause.Config['block']) => /*elided*/ any & {
             $render(): string;
@@ -2489,12 +2482,12 @@ export declare function forStatement(config: T.ForStatement.Config): {
     _async_marker: true | undefined;
     _left: T.PatternList;
     _right: T.ExpressionList;
-    _body: T.Suite;
+    _body: T.Block | T.Newline | T.SimpleStatements;
     _alternative: T.ElseClause | undefined;
     asyncMarker(): true | undefined;
     left(): T.PatternList;
     right(): T.ExpressionList;
-    body(): T.Suite;
+    body(): T.Block | T.Newline | T.SimpleStatements;
     alternative(): T.ElseClause | undefined;
     $with: {
         asyncMarker: (value?: NonNullable<Parameters<typeof forStatement>[0]>['asyncMarker']) => /*elided*/ any & {
@@ -2530,7 +2523,7 @@ export declare function forStatement(config: T.ForStatement.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        body: (value: T.Suite) => /*elided*/ any & {
+        body: (value: T.SimpleStatements | T.Block | T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -2568,8 +2561,8 @@ export declare function formatSpecifier(...children: T.Interpolation[]): {
     $type: TSKindId.FormatSpecifier;
     $source: 2;
     $named: true;
-    _interpolation: T.Interpolation[];
-    interpolations(): T.Interpolation[];
+    _content: T.Interpolation[];
+    contents(): T.Interpolation[];
     $with: {
         $children: (...vs: T.Interpolation[]) => /*elided*/ any & {
             $render(): string;
@@ -2603,13 +2596,13 @@ export declare function functionDefinition(config: T.FunctionDefinition.Config):
     _type_parameters: T.TypeParameter | undefined;
     _parameters: T.Parameters;
     _return_type: T.Type | undefined;
-    _body: T.Suite;
+    _body: T.Block | T.Newline | T.SimpleStatements;
     asyncMarker(): true | undefined;
     name(): T.Identifier;
     typeParameters(): T.TypeParameter | undefined;
     parameters(): T.Parameters;
     returnType(): T.Type | undefined;
-    body(): T.Suite;
+    body(): T.Block | T.Newline | T.SimpleStatements;
     $with: {
         asyncMarker: (value?: NonNullable<Parameters<typeof functionDefinition>[0]>['asyncMarker']) => /*elided*/ any & {
             $render(): string;
@@ -2666,7 +2659,7 @@ export declare function functionDefinition(config: T.FunctionDefinition.Config):
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        body: (value: T.Suite) => /*elided*/ any & {
+        body: (value: T.SimpleStatements | T.Block | T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -2886,10 +2879,10 @@ export declare function ifStatement(config: T.IfStatement.Config): {
     $source: 2;
     $named: true;
     _condition: T.Expression;
-    _consequence: T.Suite;
+    _consequence: T.Block | T.Newline | T.SimpleStatements;
     _alternative: readonly (T.ElifClause | T.ElseClause)[] | undefined;
     condition(): T.Expression;
-    consequence(): T.Suite;
+    consequence(): T.Block | T.Newline | T.SimpleStatements;
     alternatives(): readonly (T.ElifClause | T.ElseClause)[] | undefined;
     $with: {
         condition: (value: T.Expression) => /*elided*/ any & {
@@ -2903,7 +2896,7 @@ export declare function ifStatement(config: T.IfStatement.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        consequence: (value: T.Suite) => /*elided*/ any & {
+        consequence: (value: T.SimpleStatements | T.Block | T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -2942,11 +2935,9 @@ export declare function importFromStatement(config: T.ImportFromStatement.Config
     $source: 2;
     $named: true;
     _module_name: T.DottedName | T.RelativeImport;
-    _wildcard_import: true | undefined;
-    _name: readonly (T.AliasedImport | T.DottedName)[] | undefined;
+    _wildcard_import: readonly [T.AliasedImport | T.DottedName | T.WildcardImport, ...(T.AliasedImport | T.DottedName | T.WildcardImport)[]];
     moduleName(): T.DottedName | T.RelativeImport;
-    wildcardImport(): true | undefined;
-    names(): readonly (T.AliasedImport | T.DottedName)[] | undefined;
+    wildcardImports(): readonly [T.AliasedImport | T.DottedName | T.WildcardImport, ...(T.AliasedImport | T.DottedName | T.WildcardImport)[]];
     $with: {
         moduleName: (value: T.RelativeImport | T.DottedName) => /*elided*/ any & {
             $render(): string;
@@ -2959,18 +2950,7 @@ export declare function importFromStatement(config: T.ImportFromStatement.Config
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        wildcardImport: (value?: NonNullable<Parameters<typeof importFromStatement>[0]>['wildcardImport']) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-        names: (...values: (T.DottedName | T.AliasedImport)[]) => /*elided*/ any & {
+        wildcardImports: (values_0: T.AliasedImport | T.DottedName | T.WildcardImport, ...values: (T.AliasedImport | T.DottedName | T.WildcardImport)[]) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -3115,12 +3095,12 @@ export declare function keywordArgument(config: T.KeywordArgument.Config): {
     $type: TSKindId.KeywordArgument;
     $source: 2;
     $named: true;
-    _name: T.Identifier | T.KeywordIdentifier;
+    _name: T.Identifier;
     _value: T.Expression;
-    name(): T.Identifier | T.KeywordIdentifier;
+    name(): T.Identifier;
     value(): T.Expression;
     $with: {
-        name: (value: T.Identifier | T.KeywordIdentifier) => /*elided*/ any & {
+        name: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -3240,14 +3220,14 @@ export declare function lambda(config: T.Lambda.Config): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function lambdaParameters(...children: T.Parameter[]): {
+export declare function lambdaParameters(child: T.Parameters): {
     $type: TSKindId.LambdaParameters;
     $source: 2;
     $named: true;
-    _parameter: T.Parameter[] & readonly [T.Parameter, ...T.Parameter[]];
-    parameters(): T.Parameter[] & readonly [T.Parameter, ...T.Parameter[]];
+    _parameters: T.Parameters;
+    parameters(): T.Parameters;
     $with: {
-        $children: (...vs: T.Parameter[]) => /*elided*/ any & {
+        $child: (v: T.Parameters) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -3329,14 +3309,14 @@ export declare function lineContinuation(text: string): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function list(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]): {
+export declare function list(child?: T.CollectionElements): {
     $type: TSKindId.List;
     $source: 2;
     $named: true;
-    _expression: (T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression)[];
-    expressions(): (T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression)[];
+    _collection_elements: any;
+    collectionElements(): any;
     $with: {
-        $children: (...vs: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) => /*elided*/ any & {
+        $child: (v: T.CollectionElements) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -3402,14 +3382,14 @@ export declare function listComprehension(config: T.ListComprehension.Config): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function listPattern(...children: T.Pattern[]): {
+export declare function listPattern(child?: T.Patterns): {
     $type: TSKindId.ListPattern;
     $source: 2;
     $named: true;
-    _pattern: T.Pattern[];
-    patterns(): T.Pattern[];
+    _patterns: any;
+    patterns(): any;
     $with: {
-        $children: (...vs: T.Pattern[]) => /*elided*/ any & {
+        $child: (v: T.Patterns) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -3462,14 +3442,14 @@ export declare function listSplat(expression: T.ListSplat.Config['expression']):
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function listSplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)): {
+export declare function listSplatPattern(child: (T.Identifier | T.Subscript | T.Attribute)): {
     $type: TSKindId.ListSplatPattern;
     $source: 2;
     $named: true;
-    _identifier: T.Attribute | T.Identifier | T.KeywordIdentifier | T.Subscript;
-    identifier(): T.Attribute | T.Identifier | T.KeywordIdentifier | T.Subscript;
+    _content: T.Attribute | T.Identifier | T.Subscript;
+    content(): T.Attribute | T.Identifier | T.Subscript;
     $with: {
-        $child: (v: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) => /*elided*/ any & {
+        $child: (v: (T.Identifier | T.Subscript | T.Attribute)) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -3770,14 +3750,14 @@ export declare function pair(config: T.Pair.Config): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function parameters(...children: T.Parameter[]): {
+export declare function parameters(child?: T.Parameters): {
     $type: TSKindId.Parameters;
     $source: 2;
     $named: true;
-    _parameter: T.Parameter[];
-    parameters(): T.Parameter[];
+    _parameters: T.Parameters | undefined;
+    parameters(): T.Parameters | undefined;
     $with: {
-        $children: (...vs: T.Parameter[]) => /*elided*/ any & {
+        $child: (v: T.Parameters) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -3800,14 +3780,14 @@ export declare function parameters(...children: T.Parameter[]): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function parenthesizedExpression(child: (T.Expression | T.Yield)): {
+export declare function parenthesizedExpression(child: (T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat)): {
     $type: TSKindId.ParenthesizedExpression;
     $source: 2;
     $named: true;
-    _expression: T.Yield | T.Expression;
-    expression(): T.Yield | T.Expression;
+    _content: T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression;
+    content(): T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression;
     $with: {
-        $child: (v: (T.Expression | T.Yield)) => /*elided*/ any & {
+        $child: (v: (T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat)) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -3834,8 +3814,8 @@ export declare function parenthesizedListSplat(child: (T.ParenthesizedListSplat 
     $type: TSKindId.ParenthesizedListSplat;
     $source: 2;
     $named: true;
-    _parenthesized_list_splat: T.ListSplat | T.ParenthesizedListSplat;
-    parenthesizedListSplat(): T.ListSplat | T.ParenthesizedListSplat;
+    _content: T.ListSplat | T.ParenthesizedListSplat;
+    content(): T.ListSplat | T.ParenthesizedListSplat;
     $with: {
         $child: (v: (T.ParenthesizedListSplat | T.ListSplat)) => /*elided*/ any & {
             $render(): string;
@@ -3881,7 +3861,7 @@ export declare function patternList(...children: T.Pattern[]): {
     $source: 2;
     $named: true;
     _pattern: T.Pattern[] & readonly [T.Pattern, ...T.Pattern[]];
-    pattern(): T.Pattern[] & readonly [T.Pattern, ...T.Pattern[]];
+    patterns(): T.Pattern[] & readonly [T.Pattern, ...T.Pattern[]];
     $with: {
         $children: (...vs: T.Pattern[]) => /*elided*/ any & {
             $render(): string;
@@ -3910,12 +3890,12 @@ export declare function printStatement(config?: Partial<T.PrintStatement.Config>
     $type: TSKindId.PrintStatement;
     $source: 2;
     $named: true;
-    _argument: readonly T.Expression[] | undefined;
     _chevron: T.Chevron | undefined;
-    arguments(): readonly T.Expression[] | undefined;
+    _argument: readonly T.Expression[] | undefined;
     chevron(): T.Chevron | undefined;
+    arguments(): readonly T.Expression[] | undefined;
     $with: {
-        arguments: (...values: T.Expression[]) => /*elided*/ any & {
+        chevron: (value?: T.Chevron) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -3926,7 +3906,7 @@ export declare function printStatement(config?: Partial<T.PrintStatement.Config>
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        chevron: (value?: T.Chevron) => /*elided*/ any & {
+        arguments: (...values: T.Expression[]) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -4065,14 +4045,14 @@ export declare function returnStatement(child?: T.Expressions): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function set(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]): {
+export declare function set(child: T.CollectionElements): {
     $type: TSKindId.Set;
     $source: 2;
     $named: true;
-    _expression: (T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression)[] & readonly [T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression, ...(T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression)[]];
-    expressions(): (T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression)[] & readonly [T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression, ...(T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression)[]];
+    _collection_elements: T.CollectionElements;
+    collectionElements(): T.CollectionElements;
     $with: {
-        $children: (...vs: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) => /*elided*/ any & {
+        $child: (v: T.CollectionElements) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -4144,10 +4124,10 @@ export declare function slice(config?: Partial<T.Slice.Config>): {
     $named: true;
     _start: T.Expression | undefined;
     _stop: T.Expression | undefined;
-    _step: T.Expression | undefined;
+    _step: T.SliceGroup1 | undefined;
     start(): T.Expression | undefined;
     stop(): T.Expression | undefined;
-    step(): T.Expression | undefined;
+    step(): T.SliceGroup1 | undefined;
     $with: {
         start: (value?: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -4171,7 +4151,7 @@ export declare function slice(config?: Partial<T.Slice.Config>): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        step: (value?: T.Expression) => /*elided*/ any & {
+        step: (value?: T.SliceGroup1) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -4194,14 +4174,27 @@ export declare function slice(config?: Partial<T.Slice.Config>): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function splatPattern(identifier: T.SplatPattern.Config['identifier']): {
+export declare function splatPattern(config: T.SplatPattern.Config): {
     $type: TSKindId.SplatPattern;
     $source: 2;
     $named: true;
-    _identifier: "_" | T.Identifier | T._Identifier;
-    identifier(): "_" | T.Identifier | T._Identifier;
+    _operator: unknown;
+    _identifier: "_" | T.Identifier;
+    operator(): unknown;
+    identifier(): "_" | T.Identifier;
     $with: {
-        identifier: (value: T.SplatPattern.Config['identifier']) => /*elided*/ any & {
+        operator: (value: NonNullable<Parameters<typeof splatPattern>[0]>['operator']) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+        identifier: (value: T.Identifier | "_") => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -4228,8 +4221,8 @@ export declare function splatType(identifier: T.SplatType.Config['identifier']):
     $type: TSKindId.SplatType;
     $source: 2;
     $named: true;
-    _identifier: T.Identifier | T._Identifier;
-    identifier(): T.Identifier | T._Identifier;
+    _identifier: T.Identifier | T.SplatPatternOperator;
+    identifier(): T.Identifier | T.SplatPatternOperator;
     $with: {
         identifier: (value: T.SplatType.Config['identifier']) => /*elided*/ any & {
             $render(): string;
@@ -4314,8 +4307,8 @@ export declare function stringContent(...children: (T.EscapeInterpolation | T.Es
     $type: TSKindId.StringContent;
     $source: 2;
     $named: true;
-    _escape_interpolation: ("\\" | T.EscapeInterpolation | T.EscapeSequence | T._StringContent)[] & readonly ["\\" | T.EscapeInterpolation | T.EscapeSequence | T._StringContent, ...("\\" | T.EscapeInterpolation | T.EscapeSequence | T._StringContent)[]];
-    escapeInterpolations(): ("\\" | T.EscapeInterpolation | T.EscapeSequence | T._StringContent)[] & readonly ["\\" | T.EscapeInterpolation | T.EscapeSequence | T._StringContent, ...("\\" | T.EscapeInterpolation | T.EscapeSequence | T._StringContent)[]];
+    _content: ("\\" | T.EscapeInterpolation | T.EscapeSequence | T._StringContent)[];
+    contents(): ("\\" | T.EscapeInterpolation | T.EscapeSequence | T._StringContent)[];
     $with: {
         $children: (...vs: (T.EscapeInterpolation | T.EscapeSequence | "\\" | T._StringContent)[]) => /*elided*/ any & {
             $render(): string;
@@ -4403,16 +4396,16 @@ export declare function tryStatement(config: T.TryStatement.Config): {
     $type: TSKindId.TryStatement;
     $source: 2;
     $named: true;
-    _body: T.Suite;
+    _body: T.Block | T.Newline | T.SimpleStatements;
     _except_clauses: readonly T.ExceptClause[] | undefined;
     _else_clause: T.ElseClause | undefined;
     _finally_clause: T.FinallyClause | undefined;
-    body(): T.Suite;
+    body(): T.Block | T.Newline | T.SimpleStatements;
     exceptClauses(): readonly T.ExceptClause[] | undefined;
     elseClause(): T.ElseClause | undefined;
     finallyClause(): T.FinallyClause | undefined;
     $with: {
-        body: (value: T.Suite) => /*elided*/ any & {
+        body: (value: T.SimpleStatements | T.Block | T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -4468,14 +4461,14 @@ export declare function tryStatement(config: T.TryStatement.Config): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]): {
+export declare function tuple(child?: T.CollectionElements): {
     $type: TSKindId.Tuple;
     $source: 2;
     $named: true;
-    _expression: (T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression)[];
-    expressions(): (T.ListSplat | T.ParenthesizedListSplat | T.Yield | T.Expression)[];
+    _collection_elements: any;
+    collectionElements(): any;
     $with: {
-        $children: (...vs: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) => /*elided*/ any & {
+        $child: (v: T.CollectionElements) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -4498,14 +4491,14 @@ export declare function tuple(...children: (T.Expression | T.Yield | T.ListSplat
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function tuplePattern(...children: T.Pattern[]): {
+export declare function tuplePattern(child?: T.Patterns): {
     $type: TSKindId.TuplePattern;
     $source: 2;
     $named: true;
-    _pattern: T.Pattern[];
-    patterns(): T.Pattern[];
+    _patterns: any;
+    patterns(): any;
     $with: {
-        $children: (...vs: T.Pattern[]) => /*elided*/ any & {
+        $child: (v: T.Patterns) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -4532,8 +4525,8 @@ export declare function type(child: (T.Expression | T.SplatType | T.GenericType 
     $type: TSKindId.Type;
     $source: 2;
     $named: true;
-    _expression: T.ConstrainedType | T.GenericType | T.MemberType | T.SplatType | T.UnionType | T.Expression;
-    expression(): T.ConstrainedType | T.GenericType | T.MemberType | T.SplatType | T.UnionType | T.Expression;
+    _content: T.ConstrainedType | T.GenericType | T.MemberType | T.SplatType | T.UnionType | T.Expression;
+    content(): T.ConstrainedType | T.GenericType | T.MemberType | T.SplatType | T.UnionType | T.Expression;
     $with: {
         $child: (v: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType)) => /*elided*/ any & {
             $render(): string;
@@ -4709,12 +4702,12 @@ export declare function typedParameter(config: T.TypedParameter.Config): {
     $type: TSKindId.TypedParameter;
     $source: 2;
     $named: true;
-    _identifier: T.DictionarySplatPattern | T.Identifier | T.ListSplatPattern;
+    _content: T.DictionarySplatPattern | T.Identifier | T.ListSplatPattern;
     _type: T.Type;
-    identifier(): T.DictionarySplatPattern | T.Identifier | T.ListSplatPattern;
+    content(): T.DictionarySplatPattern | T.Identifier | T.ListSplatPattern;
     type(): T.Type;
     $with: {
-        identifier: (value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern) => /*elided*/ any & {
+        content: (value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -4796,7 +4789,7 @@ export declare function unionPattern(...children: T.SimplePattern[]): {
     $source: 2;
     $named: true;
     _simple_pattern: T.SimplePattern[] & readonly [T.SimplePattern, ...T.SimplePattern[]];
-    simplePattern(): T.SimplePattern[] & readonly [T.SimplePattern, ...T.SimplePattern[]];
+    simplePatterns(): T.SimplePattern[] & readonly [T.SimplePattern, ...T.SimplePattern[]];
     $with: {
         $children: (...vs: T.SimplePattern[]) => /*elided*/ any & {
             $render(): string;
@@ -4869,10 +4862,10 @@ export declare function whileStatement(config: T.WhileStatement.Config): {
     $source: 2;
     $named: true;
     _condition: T.Expression;
-    _body: T.Suite;
+    _body: T.Block | T.Newline | T.SimpleStatements;
     _alternative: T.ElseClause | undefined;
     condition(): T.Expression;
-    body(): T.Suite;
+    body(): T.Block | T.Newline | T.SimpleStatements;
     alternative(): T.ElseClause | undefined;
     $with: {
         condition: (value: T.Expression) => /*elided*/ any & {
@@ -4886,7 +4879,7 @@ export declare function whileStatement(config: T.WhileStatement.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        body: (value: T.Suite) => /*elided*/ any & {
+        body: (value: T.SimpleStatements | T.Block | T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -4920,108 +4913,14 @@ export declare function whileStatement(config: T.WhileStatement.Config): {
         trailing?: (T.Comment)[];
     })[]): import("@sittir/types").AnyNodeData;
 };
-export declare function withClauseBare(...children: T.WithItem[]): {
-    $type: TSKindId._WithClauseBare;
-    $source: 2;
-    $named: true;
-    _with_item: T.WithItem[] & readonly [T.WithItem, ...T.WithItem[]];
-    withItems(): T.WithItem[] & readonly [T.WithItem, ...T.WithItem[]];
-    $with: {
-        $children: (...vs: T.WithItem[]) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function withClauseParen(...children: T.WithItem[]): {
-    $type: TSKindId._WithClauseParen;
-    $source: 2;
-    $named: true;
-    _with_item: T.WithItem[] & readonly [T.WithItem, ...T.WithItem[]];
-    withItems(): T.WithItem[] & readonly [T.WithItem, ...T.WithItem[]];
-    $with: {
-        $children: (...vs: T.WithItem[]) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function withClause(config: ConfigOf<T.WithClauseUFormBare>): ReturnType<typeof withClauseUFormBare>;
-export declare function withClause(config: ConfigOf<T.WithClauseUFormParen>): ReturnType<typeof withClauseUFormParen>;
-export declare function withClauseUFormBare(config: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>): {
+export declare function withClause(child: (T.WithClauseBare | T.WithClauseParen)): {
     $type: TSKindId.WithClause;
     $source: 2;
     $named: true;
-    $variant: 'bare';
-    _with_clause_bare: any;
-    withClauseBare(): any;
+    _content: T.WithClauseBare | T.WithClauseParen;
+    content(): T.WithClauseBare | T.WithClauseParen;
     $with: {
-        withClauseBare: (value: T._WithClauseBare) => /*elided*/ any & {
-            $render(): string;
-            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-            $replace(target: {
-                range(): import("@sittir/types").ByteRange;
-            }): import("@sittir/types").Edit;
-            $trivia(...args: (T.Comment | {
-                leading?: (T.Comment)[];
-                trailing?: (T.Comment)[];
-            })[]): import("@sittir/types").AnyNodeData;
-        };
-    };
-} & {
-    $render(): string;
-    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
-    $replace(target: {
-        range(): import("@sittir/types").ByteRange;
-    }): import("@sittir/types").Edit;
-    $trivia(...args: (T.Comment | {
-        leading?: (T.Comment)[];
-        trailing?: (T.Comment)[];
-    })[]): import("@sittir/types").AnyNodeData;
-};
-export declare function withClauseUFormParen(config: Omit<ConfigOf<T.WithClauseUFormParen>, '$variant'>): {
-    $type: TSKindId.WithClause;
-    $source: 2;
-    $named: true;
-    $variant: 'paren';
-    _with_clause_paren: T._WithClauseParen;
-    withClauseParen(): T._WithClauseParen;
-    $with: {
-        withClauseParen: (value: T._WithClauseParen) => /*elided*/ any & {
+        $child: (v: (T.WithClauseBare | T.WithClauseParen)) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -5080,10 +4979,10 @@ export declare function withStatement(config: T.WithStatement.Config): {
     $named: true;
     _async_marker: true | undefined;
     _with_clause: T.WithClause;
-    _body: T.Suite;
+    _body: T.Block | T.Newline | T.SimpleStatements;
     asyncMarker(): true | undefined;
     withClause(): T.WithClause;
-    body(): T.Suite;
+    body(): T.Block | T.Newline | T.SimpleStatements;
     $with: {
         asyncMarker: (value?: NonNullable<Parameters<typeof withStatement>[0]>['asyncMarker']) => /*elided*/ any & {
             $render(): string;
@@ -5107,7 +5006,7 @@ export declare function withStatement(config: T.WithStatement.Config): {
                 trailing?: (T.Comment)[];
             })[]): import("@sittir/types").AnyNodeData;
         };
-        body: (value: T.Suite) => /*elided*/ any & {
+        body: (value: T.SimpleStatements | T.Block | T.Newline) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -5134,10 +5033,40 @@ export declare function yield_(child?: (T.Expression | T.Expressions)): {
     $type: TSKindId.Yield;
     $source: 2;
     $named: true;
-    _expression: T.ExpressionList | T.Expression | undefined;
-    expression(): T.ExpressionList | T.Expression | undefined;
+    _content: T.ExpressionList | T.Expression | undefined;
+    content(): T.ExpressionList | T.Expression | undefined;
     $with: {
         $child: (v: (T.Expression | T.Expressions)) => /*elided*/ any & {
+            $render(): string;
+            $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+            $replace(target: {
+                range(): import("@sittir/types").ByteRange;
+            }): import("@sittir/types").Edit;
+            $trivia(...args: (T.Comment | {
+                leading?: (T.Comment)[];
+                trailing?: (T.Comment)[];
+            })[]): import("@sittir/types").AnyNodeData;
+        };
+    };
+} & {
+    $render(): string;
+    $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
+    $replace(target: {
+        range(): import("@sittir/types").ByteRange;
+    }): import("@sittir/types").Edit;
+    $trivia(...args: (T.Comment | {
+        leading?: (T.Comment)[];
+        trailing?: (T.Comment)[];
+    })[]): import("@sittir/types").AnyNodeData;
+};
+export declare function sliceGroup1(child?: T.Expression): {
+    $type: TSKindId._SliceGroup1;
+    $source: 2;
+    $named: true;
+    _expression: T.Expression | undefined;
+    expression(): T.Expression | undefined;
+    $with: {
+        $child: (v: T.Expression) => /*elided*/ any & {
             $render(): string;
             $toEdit(startOrRange: number | import("@sittir/types").ByteRange, endPos?: number): import("@sittir/types").Edit;
             $replace(target: {
@@ -5341,7 +5270,11 @@ export type FluentKindMap = {
     "_assignment_eq": T.AssignmentEq;
     "_assignment_type": T.AssignmentType;
     "_assignment_typed": T.AssignmentTyped;
+    "_comparison_operator_comparator": T.ComparisonOperatorComparator;
     "_comprehension_clauses": FluentNode<"_comprehension_clauses", T.ComprehensionClauses.Config>;
+    "_except_clause_as": T.ExceptClauseAs;
+    "_except_clause_list": FluentNode<"_except_clause_list", T.ExceptClauseList.Config>;
+    "_expression_statement_tuple": FluentNode<"_expression_statement_tuple", T.ExpressionStatementTuple.Config>;
     "_import_list": T.ImportList;
     "_is_not": T.IsNot;
     "_key_value_pattern": T.KeyValuePattern;
@@ -5351,8 +5284,10 @@ export type FluentKindMap = {
     "_not_in": T.NotIn;
     "_simple_pattern_negative": FluentNode<"_simple_pattern_negative", T.SimplePatternNegative.Config>;
     "_simple_statements": FluentNode<"_simple_statements", T.SimpleStatements.Config>;
+    "_slice_group1": FluentNode<"_slice_group1", T._SliceGroup1.Config>;
     "_tuple_pattern": FluentNode<"_tuple_pattern", T._TuplePattern.Config>;
-    "_with_clause_paren": FluentNode<"_with_clause_paren", T._WithClauseParen.Config>;
+    "_with_clause_bare": FluentNode<"_with_clause_bare", T.WithClauseBare.Config>;
+    "_with_clause_paren": FluentNode<"_with_clause_paren", T.WithClauseParen.Config>;
     "aliased_import": FluentNode<"aliased_import", T.AliasedImport.Config>;
     "argument_list": FluentNode<"argument_list", T.ArgumentList.Config>;
     "as_pattern": FluentNode<"as_pattern", T.AsPattern.Config>;
@@ -5394,7 +5329,6 @@ export type FluentKindMap = {
     "except_clause": FluentNode<"except_clause", T.ExceptClause.Config>;
     "exec_statement": FluentNode<"exec_statement", T.ExecStatement.Config>;
     "expression_list": FluentNode<"expression_list", T.ExpressionList.Config>;
-    "expression_statement_tuple": FluentNode<"expression_statement_tuple", T.ExpressionStatementTuple.Config>;
     "expression_statement": FluentNode<"expression_statement", T.ExpressionStatement.Config>;
     "false": T.False;
     "finally_clause": FluentNode<"finally_clause", T.FinallyClause.Config>;
@@ -5465,12 +5399,11 @@ export type FluentKindMap = {
     "union_pattern": FluentNode<"union_pattern", T.UnionPattern.Config>;
     "union_type": FluentNode<"union_type", T.UnionType.Config>;
     "while_statement": FluentNode<"while_statement", T.WhileStatement.Config>;
-    "with_clause_bare": FluentNode<"with_clause_bare", T.WithClauseBare.Config>;
-    "with_clause_paren": FluentNode<"with_clause_paren", T.WithClauseParen.Config>;
     "with_clause": FluentNode<"with_clause", T.WithClause.Config>;
     "with_item": FluentNode<"with_item", T.WithItem.Config>;
     "with_statement": FluentNode<"with_statement", T.WithStatement.Config>;
     "yield": FluentNode<"yield", T.Yield.Config>;
+    "slice_group1": FluentNode<"slice_group1", T.SliceGroup1.Config>;
     "_newline": T.Newline;
     "_indent": T.Indent;
     "_dedent": T.Dedent;
@@ -5488,7 +5421,11 @@ export declare const _factoryMap: {
     readonly "_assignment_eq": typeof _assignmentEq;
     readonly "_assignment_type": typeof _assignmentType;
     readonly "_assignment_typed": typeof _assignmentTyped;
+    readonly "_comparison_operator_comparator": typeof _comparisonOperatorComparator;
     readonly "_comprehension_clauses": typeof comprehensionClauses;
+    readonly "_except_clause_as": typeof _exceptClauseAs;
+    readonly "_except_clause_list": typeof exceptClauseList;
+    readonly "_expression_statement_tuple": typeof expressionStatementTuple;
     readonly "_import_list": typeof _importList;
     readonly "_is_not": typeof isNot;
     readonly "_key_value_pattern": typeof _keyValuePattern;
@@ -5498,8 +5435,10 @@ export declare const _factoryMap: {
     readonly "_not_in": typeof notIn;
     readonly "_simple_pattern_negative": typeof simplePatternNegative;
     readonly "_simple_statements": typeof simpleStatements;
+    readonly "_slice_group1": typeof _sliceGroup1;
     readonly "_tuple_pattern": typeof _tuplePattern;
-    readonly "_with_clause_paren": typeof _withClauseParen;
+    readonly "_with_clause_bare": typeof withClauseBare;
+    readonly "_with_clause_paren": typeof withClauseParen;
     readonly "aliased_import": typeof aliasedImport;
     readonly "argument_list": typeof argumentList;
     readonly "as_pattern": typeof asPattern;
@@ -5541,7 +5480,6 @@ export declare const _factoryMap: {
     readonly "except_clause": typeof exceptClause;
     readonly "exec_statement": typeof execStatement;
     readonly "expression_list": typeof expressionList;
-    readonly "expression_statement_tuple": typeof expressionStatementTuple;
     readonly "expression_statement": typeof expressionStatement;
     readonly "false": typeof false_;
     readonly "finally_clause": typeof finallyClause;
@@ -5612,12 +5550,11 @@ export declare const _factoryMap: {
     readonly "union_pattern": typeof unionPattern;
     readonly "union_type": typeof unionType;
     readonly "while_statement": typeof whileStatement;
-    readonly "with_clause_bare": typeof withClauseBare;
-    readonly "with_clause_paren": typeof withClauseParen;
     readonly "with_clause": typeof withClause;
     readonly "with_item": typeof withItem;
     readonly "with_statement": typeof withStatement;
     readonly "yield": typeof yield_;
+    readonly "slice_group1": typeof sliceGroup1;
     readonly "_newline": typeof newline;
     readonly "_indent": typeof indent;
     readonly "_dedent": typeof dedent;

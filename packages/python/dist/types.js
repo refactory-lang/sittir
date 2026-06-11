@@ -5,17 +5,26 @@ export var SyntaxKind;
     SyntaxKind["AssignmentEq"] = "_assignment_eq";
     SyntaxKind["AssignmentType"] = "_assignment_type";
     SyntaxKind["AssignmentTyped"] = "_assignment_typed";
+    SyntaxKind["ComparisonOperatorComparator"] = "_comparison_operator_comparator";
     SyntaxKind["ComprehensionClauses"] = "_comprehension_clauses";
+    SyntaxKind["ExceptClauseAs"] = "_except_clause_as";
+    SyntaxKind["ExceptClauseAsOptional1"] = "_except_clause_as_optional1";
+    SyntaxKind["ExceptClauseList"] = "_except_clause_list";
+    SyntaxKind["ExpressionStatementTuple"] = "_expression_statement_tuple";
+    SyntaxKind["FunctionDefinitionOptional1"] = "_function_definition_optional1";
     SyntaxKind["ImportList"] = "_import_list";
     SyntaxKind["KeyValuePattern"] = "_key_value_pattern";
     SyntaxKind["_ListPattern"] = "_list_pattern";
     SyntaxKind["MatchBlock"] = "_match_block";
     SyntaxKind["MatchBlockBlock"] = "_match_block_block";
+    SyntaxKind["RaiseStatementOptional1"] = "_raise_statement_optional1";
     SyntaxKind["SimplePatternNegative"] = "_simple_pattern_negative";
     SyntaxKind["SimpleStatements"] = "_simple_statements";
+    SyntaxKind["_SliceGroup1"] = "_slice_group1";
     SyntaxKind["Suite"] = "_suite";
     SyntaxKind["_TuplePattern"] = "_tuple_pattern";
-    SyntaxKind["_WithClauseParen"] = "_with_clause_paren";
+    SyntaxKind["WithClauseBare"] = "_with_clause_bare";
+    SyntaxKind["WithClauseParen"] = "_with_clause_paren";
     SyntaxKind["AliasedImport"] = "aliased_import";
     SyntaxKind["ArgumentList"] = "argument_list";
     SyntaxKind["AsPattern"] = "as_pattern";
@@ -53,7 +62,6 @@ export var SyntaxKind;
     SyntaxKind["ExceptClause"] = "except_clause";
     SyntaxKind["ExecStatement"] = "exec_statement";
     SyntaxKind["ExpressionList"] = "expression_list";
-    SyntaxKind["ExpressionStatementTuple"] = "expression_statement_tuple";
     SyntaxKind["ExpressionStatement"] = "expression_statement";
     SyntaxKind["FinallyClause"] = "finally_clause";
     SyntaxKind["ForInClause"] = "for_in_clause";
@@ -115,19 +123,20 @@ export var SyntaxKind;
     SyntaxKind["UnionPattern"] = "union_pattern";
     SyntaxKind["UnionType"] = "union_type";
     SyntaxKind["WhileStatement"] = "while_statement";
-    SyntaxKind["WithClauseBare"] = "with_clause_bare";
-    SyntaxKind["WithClauseParen"] = "with_clause_paren";
     SyntaxKind["WithClause"] = "with_clause";
     SyntaxKind["WithItem"] = "with_item";
     SyntaxKind["WithStatement"] = "with_statement";
     SyntaxKind["Yield"] = "yield";
+    SyntaxKind["SliceGroup1"] = "slice_group1";
     SyntaxKind["AsyncMarker"] = "_async_marker";
     SyntaxKind["AugmentedAssignmentOperator"] = "_augmented_assignment_operator";
-    SyntaxKind["_Identifier"] = "_identifier";
+    SyntaxKind["ComplexPatternOperator"] = "_complex_pattern_operator";
     SyntaxKind["IsNot"] = "_is_not";
     SyntaxKind["KwAsyncMarker"] = "_kw_async_marker";
+    SyntaxKind["KwIdentifier"] = "_kw_identifier";
     SyntaxKind["KwType"] = "_kw_type";
     SyntaxKind["NotIn"] = "_not_in";
+    SyntaxKind["SplatPatternOperator"] = "_splat_pattern_operator";
     SyntaxKind["UnaryOperatorOperator"] = "_unary_operator_operator";
     SyntaxKind["BreakStatement"] = "break_statement";
     SyntaxKind["Comment"] = "comment";
@@ -156,6 +165,8 @@ export var SyntaxKind;
     SyntaxKind["Except"] = "except";
     SyntaxKind["As"] = "as";
     SyntaxKind["Async"] = "async";
+    SyntaxKind["Anonymous"] = "_";
+    SyntaxKind["From"] = "from";
     SyntaxKind["Assert"] = "assert";
     SyntaxKind["And"] = "and";
     SyntaxKind["Or"] = "or";
@@ -173,7 +184,6 @@ export var SyntaxKind;
     SyntaxKind["Finally"] = "finally";
     SyntaxKind["For"] = "for";
     SyntaxKind["Def"] = "def";
-    SyntaxKind["From"] = "from";
     SyntaxKind["FutureU"] = "__future__";
     SyntaxKind["Import"] = "import";
     SyntaxKind["Global"] = "global";
@@ -185,7 +195,6 @@ export var SyntaxKind;
     SyntaxKind["Print"] = "print";
     SyntaxKind["Raise"] = "raise";
     SyntaxKind["Return"] = "return";
-    SyntaxKind["Anonymous"] = "_";
     SyntaxKind["True2"] = "True";
     SyntaxKind["Try"] = "try";
     SyntaxKind["While"] = "while";
@@ -230,69 +239,69 @@ export var TSKindId;
     TSKindId[TSKindId["Finally"] = 35] = "Finally";
     TSKindId[TSKindId["With"] = 36] = "With";
     TSKindId[TSKindId["Def"] = 37] = "Def";
-    TSKindId[TSKindId["DashGt"] = 38] = "DashGt";
-    TSKindId[TSKindId["StarStar"] = 39] = "StarStar";
-    TSKindId[TSKindId["Global"] = 40] = "Global";
-    TSKindId[TSKindId["Nonlocal"] = 41] = "Nonlocal";
-    TSKindId[TSKindId["Exec"] = 42] = "Exec";
-    TSKindId[TSKindId["Eq"] = 43] = "Eq";
-    TSKindId[TSKindId["Class"] = 44] = "Class";
-    TSKindId[TSKindId["Lbrack"] = 45] = "Lbrack";
-    TSKindId[TSKindId["Rbrack"] = 46] = "Rbrack";
-    TSKindId[TSKindId["At2"] = 47] = "At2";
-    TSKindId[TSKindId["Anonymous"] = 48] = "Anonymous";
-    TSKindId[TSKindId["Pipe2"] = 49] = "Pipe2";
-    TSKindId[TSKindId["Lbrace"] = 50] = "Lbrace";
-    TSKindId[TSKindId["Rbrace"] = 51] = "Rbrace";
-    TSKindId[TSKindId["Plus"] = 52] = "Plus";
-    TSKindId[TSKindId["Dash"] = 53] = "Dash";
-    TSKindId[TSKindId["Not"] = 54] = "Not";
-    TSKindId[TSKindId["And"] = 55] = "And";
-    TSKindId[TSKindId["Or"] = 56] = "Or";
-    TSKindId[TSKindId["Slash2"] = 57] = "Slash2";
-    TSKindId[TSKindId["Percent"] = 58] = "Percent";
-    TSKindId[TSKindId["SlashSlash"] = 59] = "SlashSlash";
-    TSKindId[TSKindId["Amp"] = 60] = "Amp";
-    TSKindId[TSKindId["Caret"] = 61] = "Caret";
-    TSKindId[TSKindId["LtLt"] = 62] = "LtLt";
-    TSKindId[TSKindId["Tilde"] = 63] = "Tilde";
-    TSKindId[TSKindId["Is"] = 64] = "Is";
-    TSKindId[TSKindId["Lt"] = 65] = "Lt";
-    TSKindId[TSKindId["LtEq"] = 66] = "LtEq";
-    TSKindId[TSKindId["EqEq"] = 67] = "EqEq";
-    TSKindId[TSKindId["BangEq"] = 68] = "BangEq";
-    TSKindId[TSKindId["GtEq"] = 69] = "GtEq";
-    TSKindId[TSKindId["Gt"] = 70] = "Gt";
-    TSKindId[TSKindId["LtGt"] = 71] = "LtGt";
-    TSKindId[TSKindId["AnonLambda"] = 72] = "AnonLambda";
-    TSKindId[TSKindId["PlusEq"] = 73] = "PlusEq";
-    TSKindId[TSKindId["DashEq"] = 74] = "DashEq";
-    TSKindId[TSKindId["StarEq"] = 75] = "StarEq";
-    TSKindId[TSKindId["SlashEq"] = 76] = "SlashEq";
-    TSKindId[TSKindId["AtEq"] = 77] = "AtEq";
-    TSKindId[TSKindId["SlashSlashEq"] = 78] = "SlashSlashEq";
-    TSKindId[TSKindId["PercentEq"] = 79] = "PercentEq";
-    TSKindId[TSKindId["StarStarEq"] = 80] = "StarStarEq";
-    TSKindId[TSKindId["GtGtEq"] = 81] = "GtGtEq";
-    TSKindId[TSKindId["LtLtEq"] = 82] = "LtLtEq";
-    TSKindId[TSKindId["AmpEq"] = 83] = "AmpEq";
-    TSKindId[TSKindId["CaretEq"] = 84] = "CaretEq";
-    TSKindId[TSKindId["PipeEq"] = 85] = "PipeEq";
-    TSKindId[TSKindId["AnonYield"] = 86] = "AnonYield";
-    TSKindId[TSKindId["Ellipsis2"] = 87] = "Ellipsis2";
-    TSKindId[TSKindId["AnonType"] = 88] = "AnonType";
-    TSKindId[TSKindId["EscapeSequence"] = 89] = "EscapeSequence";
-    TSKindId[TSKindId["Bslash"] = 90] = "Bslash";
-    TSKindId[TSKindId["FormatSpecifierToken1"] = 91] = "FormatSpecifierToken1";
-    TSKindId[TSKindId["TypeConversion"] = 92] = "TypeConversion";
-    TSKindId[TSKindId["Integer"] = 93] = "Integer";
-    TSKindId[TSKindId["Float"] = 94] = "Float";
-    TSKindId[TSKindId["AnonAwait"] = 95] = "AnonAwait";
-    TSKindId[TSKindId["True"] = 96] = "True";
-    TSKindId[TSKindId["False"] = 97] = "False";
-    TSKindId[TSKindId["None"] = 98] = "None";
-    TSKindId[TSKindId["Comment"] = 99] = "Comment";
-    TSKindId[TSKindId["LineContinuation"] = 100] = "LineContinuation";
+    TSKindId[TSKindId["StarStar"] = 38] = "StarStar";
+    TSKindId[TSKindId["Global"] = 39] = "Global";
+    TSKindId[TSKindId["Nonlocal"] = 40] = "Nonlocal";
+    TSKindId[TSKindId["Exec"] = 41] = "Exec";
+    TSKindId[TSKindId["Eq"] = 42] = "Eq";
+    TSKindId[TSKindId["Class"] = 43] = "Class";
+    TSKindId[TSKindId["Lbrack"] = 44] = "Lbrack";
+    TSKindId[TSKindId["Rbrack"] = 45] = "Rbrack";
+    TSKindId[TSKindId["At2"] = 46] = "At2";
+    TSKindId[TSKindId["Anonymous"] = 47] = "Anonymous";
+    TSKindId[TSKindId["Pipe2"] = 48] = "Pipe2";
+    TSKindId[TSKindId["Lbrace"] = 49] = "Lbrace";
+    TSKindId[TSKindId["Rbrace"] = 50] = "Rbrace";
+    TSKindId[TSKindId["Plus"] = 51] = "Plus";
+    TSKindId[TSKindId["Dash"] = 52] = "Dash";
+    TSKindId[TSKindId["Not"] = 53] = "Not";
+    TSKindId[TSKindId["And"] = 54] = "And";
+    TSKindId[TSKindId["Or"] = 55] = "Or";
+    TSKindId[TSKindId["Slash2"] = 56] = "Slash2";
+    TSKindId[TSKindId["Percent"] = 57] = "Percent";
+    TSKindId[TSKindId["SlashSlash"] = 58] = "SlashSlash";
+    TSKindId[TSKindId["Amp"] = 59] = "Amp";
+    TSKindId[TSKindId["Caret"] = 60] = "Caret";
+    TSKindId[TSKindId["LtLt"] = 61] = "LtLt";
+    TSKindId[TSKindId["Tilde"] = 62] = "Tilde";
+    TSKindId[TSKindId["Is"] = 63] = "Is";
+    TSKindId[TSKindId["AnonLambda"] = 64] = "AnonLambda";
+    TSKindId[TSKindId["PlusEq"] = 65] = "PlusEq";
+    TSKindId[TSKindId["DashEq"] = 66] = "DashEq";
+    TSKindId[TSKindId["StarEq"] = 67] = "StarEq";
+    TSKindId[TSKindId["SlashEq"] = 68] = "SlashEq";
+    TSKindId[TSKindId["AtEq"] = 69] = "AtEq";
+    TSKindId[TSKindId["SlashSlashEq"] = 70] = "SlashSlashEq";
+    TSKindId[TSKindId["PercentEq"] = 71] = "PercentEq";
+    TSKindId[TSKindId["StarStarEq"] = 72] = "StarStarEq";
+    TSKindId[TSKindId["GtGtEq"] = 73] = "GtGtEq";
+    TSKindId[TSKindId["LtLtEq"] = 74] = "LtLtEq";
+    TSKindId[TSKindId["AmpEq"] = 75] = "AmpEq";
+    TSKindId[TSKindId["CaretEq"] = 76] = "CaretEq";
+    TSKindId[TSKindId["PipeEq"] = 77] = "PipeEq";
+    TSKindId[TSKindId["AnonYield"] = 78] = "AnonYield";
+    TSKindId[TSKindId["Ellipsis2"] = 79] = "Ellipsis2";
+    TSKindId[TSKindId["AnonType"] = 80] = "AnonType";
+    TSKindId[TSKindId["EscapeSequence"] = 81] = "EscapeSequence";
+    TSKindId[TSKindId["Bslash"] = 82] = "Bslash";
+    TSKindId[TSKindId["FormatSpecifierToken1"] = 83] = "FormatSpecifierToken1";
+    TSKindId[TSKindId["TypeConversion"] = 84] = "TypeConversion";
+    TSKindId[TSKindId["Integer"] = 85] = "Integer";
+    TSKindId[TSKindId["Float"] = 86] = "Float";
+    TSKindId[TSKindId["AnonAwait"] = 87] = "AnonAwait";
+    TSKindId[TSKindId["True"] = 88] = "True";
+    TSKindId[TSKindId["False"] = 89] = "False";
+    TSKindId[TSKindId["None"] = 90] = "None";
+    TSKindId[TSKindId["Comment"] = 91] = "Comment";
+    TSKindId[TSKindId["LineContinuation"] = 92] = "LineContinuation";
+    TSKindId[TSKindId["DashGt"] = 93] = "DashGt";
+    TSKindId[TSKindId["Lt"] = 94] = "Lt";
+    TSKindId[TSKindId["LtEq"] = 95] = "LtEq";
+    TSKindId[TSKindId["EqEq"] = 96] = "EqEq";
+    TSKindId[TSKindId["BangEq"] = 97] = "BangEq";
+    TSKindId[TSKindId["GtEq"] = 98] = "GtEq";
+    TSKindId[TSKindId["Gt"] = 99] = "Gt";
+    TSKindId[TSKindId["LtGt"] = 100] = "LtGt";
     TSKindId[TSKindId["Newline"] = 101] = "Newline";
     TSKindId[TSKindId["Indent"] = 102] = "Indent";
     TSKindId[TSKindId["Dedent"] = 103] = "Dedent";
@@ -432,38 +441,38 @@ export var TSKindId;
     TSKindId[TSKindId["Await"] = 237] = "Await";
     TSKindId[TSKindId["PositionalSeparator"] = 238] = "PositionalSeparator";
     TSKindId[TSKindId["KeywordSeparator"] = 239] = "KeywordSeparator";
-    TSKindId[TSKindId["AssignmentEq"] = 240] = "AssignmentEq";
-    TSKindId[TSKindId["AssignmentType"] = 241] = "AssignmentType";
-    TSKindId[TSKindId["AssignmentTyped"] = 242] = "AssignmentTyped";
-    TSKindId[TSKindId["_ExpressionStatementTuple"] = 243] = "_ExpressionStatementTuple";
-    TSKindId[TSKindId["_WithClauseBare"] = 244] = "_WithClauseBare";
-    TSKindId[TSKindId["_WithClauseParen"] = 245] = "_WithClauseParen";
-    TSKindId[TSKindId["MatchBlockBlock"] = 246] = "MatchBlockBlock";
-    TSKindId[TSKindId["DictPatternKv"] = 247] = "DictPatternKv";
-    TSKindId[TSKindId["SimplePatternNegative"] = 248] = "SimplePatternNegative";
-    TSKindId[TSKindId["ModuleRepeat1"] = 249] = "ModuleRepeat1";
-    TSKindId[TSKindId["_SimpleStatementsRepeat1"] = 250] = "_SimpleStatementsRepeat1";
-    TSKindId[TSKindId["ImportPrefixRepeat1"] = 251] = "ImportPrefixRepeat1";
-    TSKindId[TSKindId["_ImportListRepeat1"] = 252] = "_ImportListRepeat1";
-    TSKindId[TSKindId["PrintStatementRepeat1"] = 253] = "PrintStatementRepeat1";
-    TSKindId[TSKindId["AssertStatementRepeat1"] = 254] = "AssertStatementRepeat1";
-    TSKindId[TSKindId["IfStatementRepeat1"] = 255] = "IfStatementRepeat1";
-    TSKindId[TSKindId["MatchStatementRepeat1"] = 256] = "MatchStatementRepeat1";
-    TSKindId[TSKindId["CaseClauseRepeat1"] = 257] = "CaseClauseRepeat1";
-    TSKindId[TSKindId["TryStatementRepeat1"] = 258] = "TryStatementRepeat1";
-    TSKindId[TSKindId["ExceptClauseRepeat1"] = 259] = "ExceptClauseRepeat1";
-    TSKindId[TSKindId["GlobalStatementRepeat1"] = 260] = "GlobalStatementRepeat1";
-    TSKindId[TSKindId["TypeParameterRepeat1"] = 261] = "TypeParameterRepeat1";
-    TSKindId[TSKindId["ArgumentListRepeat1"] = 262] = "ArgumentListRepeat1";
-    TSKindId[TSKindId["DecoratedDefinitionRepeat1"] = 263] = "DecoratedDefinitionRepeat1";
-    TSKindId[TSKindId["DottedNameRepeat1"] = 264] = "DottedNameRepeat1";
-    TSKindId[TSKindId["UnionPatternRepeat1"] = 265] = "UnionPatternRepeat1";
-    TSKindId[TSKindId["DictPatternRepeat1"] = 266] = "DictPatternRepeat1";
-    TSKindId[TSKindId["_ParametersRepeat1"] = 267] = "_ParametersRepeat1";
-    TSKindId[TSKindId["_PatternsRepeat1"] = 268] = "_PatternsRepeat1";
-    TSKindId[TSKindId["ComparisonOperatorRepeat1"] = 269] = "ComparisonOperatorRepeat1";
-    TSKindId[TSKindId["SubscriptRepeat1"] = 270] = "SubscriptRepeat1";
-    TSKindId[TSKindId["DictionaryRepeat1"] = 271] = "DictionaryRepeat1";
+    TSKindId[TSKindId["_SliceGroup1"] = 240] = "_SliceGroup1";
+    TSKindId[TSKindId["ExceptClauseAs"] = 241] = "ExceptClauseAs";
+    TSKindId[TSKindId["AssignmentEq"] = 242] = "AssignmentEq";
+    TSKindId[TSKindId["AssignmentType"] = 243] = "AssignmentType";
+    TSKindId[TSKindId["AssignmentTyped"] = 244] = "AssignmentTyped";
+    TSKindId[TSKindId["ExpressionStatementTuple"] = 245] = "ExpressionStatementTuple";
+    TSKindId[TSKindId["WithClauseBare"] = 246] = "WithClauseBare";
+    TSKindId[TSKindId["WithClauseParen"] = 247] = "WithClauseParen";
+    TSKindId[TSKindId["MatchBlockBlock"] = 248] = "MatchBlockBlock";
+    TSKindId[TSKindId["DictPatternKv"] = 249] = "DictPatternKv";
+    TSKindId[TSKindId["SimplePatternNegative"] = 250] = "SimplePatternNegative";
+    TSKindId[TSKindId["ExceptClauseList"] = 251] = "ExceptClauseList";
+    TSKindId[TSKindId["ComparisonOperatorComparator"] = 252] = "ComparisonOperatorComparator";
+    TSKindId[TSKindId["ModuleRepeat1"] = 253] = "ModuleRepeat1";
+    TSKindId[TSKindId["_SimpleStatementsRepeat1"] = 254] = "_SimpleStatementsRepeat1";
+    TSKindId[TSKindId["ImportPrefixRepeat1"] = 255] = "ImportPrefixRepeat1";
+    TSKindId[TSKindId["_ImportListRepeat1"] = 256] = "_ImportListRepeat1";
+    TSKindId[TSKindId["PrintStatementRepeat1"] = 257] = "PrintStatementRepeat1";
+    TSKindId[TSKindId["AssertStatementRepeat1"] = 258] = "AssertStatementRepeat1";
+    TSKindId[TSKindId["IfStatementRepeat1"] = 259] = "IfStatementRepeat1";
+    TSKindId[TSKindId["MatchStatementRepeat1"] = 260] = "MatchStatementRepeat1";
+    TSKindId[TSKindId["CaseClauseRepeat1"] = 261] = "CaseClauseRepeat1";
+    TSKindId[TSKindId["TryStatementRepeat1"] = 262] = "TryStatementRepeat1";
+    TSKindId[TSKindId["GlobalStatementRepeat1"] = 263] = "GlobalStatementRepeat1";
+    TSKindId[TSKindId["TypeParameterRepeat1"] = 264] = "TypeParameterRepeat1";
+    TSKindId[TSKindId["DecoratedDefinitionRepeat1"] = 265] = "DecoratedDefinitionRepeat1";
+    TSKindId[TSKindId["DottedNameRepeat1"] = 266] = "DottedNameRepeat1";
+    TSKindId[TSKindId["UnionPatternRepeat1"] = 267] = "UnionPatternRepeat1";
+    TSKindId[TSKindId["_ParametersRepeat1"] = 268] = "_ParametersRepeat1";
+    TSKindId[TSKindId["_PatternsRepeat1"] = 269] = "_PatternsRepeat1";
+    TSKindId[TSKindId["ComparisonOperatorRepeat1"] = 270] = "ComparisonOperatorRepeat1";
+    TSKindId[TSKindId["SubscriptRepeat1"] = 271] = "SubscriptRepeat1";
     TSKindId[TSKindId["_ComprehensionClausesRepeat1"] = 272] = "_ComprehensionClausesRepeat1";
     TSKindId[TSKindId["_CollectionElementsRepeat1"] = 273] = "_CollectionElementsRepeat1";
     TSKindId[TSKindId["ForInClauseRepeat1"] = 274] = "ForInClauseRepeat1";
@@ -471,10 +480,14 @@ export var TSKindId;
     TSKindId[TSKindId["StringRepeat1"] = 276] = "StringRepeat1";
     TSKindId[TSKindId["StringContentRepeat1"] = 277] = "StringContentRepeat1";
     TSKindId[TSKindId["FormatSpecifierRepeat1"] = 278] = "FormatSpecifierRepeat1";
-    TSKindId[TSKindId["_WithClauseBareRepeat1"] = 279] = "_WithClauseBareRepeat1";
-    TSKindId[TSKindId["_MatchBlockBlockRepeat1"] = 280] = "_MatchBlockBlockRepeat1";
-    TSKindId[TSKindId["_AsPatternTarget"] = 281] = "_AsPatternTarget";
-    TSKindId[TSKindId["_FormatExpression"] = 282] = "_FormatExpression";
+    TSKindId[TSKindId["_ArgumentListOptional1Repeat1"] = 279] = "_ArgumentListOptional1Repeat1";
+    TSKindId[TSKindId["_DictPatternOptional1Repeat1"] = 280] = "_DictPatternOptional1Repeat1";
+    TSKindId[TSKindId["_DictionaryOptional1Repeat1"] = 281] = "_DictionaryOptional1Repeat1";
+    TSKindId[TSKindId["_WithClauseBareRepeat1"] = 282] = "_WithClauseBareRepeat1";
+    TSKindId[TSKindId["_MatchBlockBlockRepeat1"] = 283] = "_MatchBlockBlockRepeat1";
+    TSKindId[TSKindId["_ExceptClauseListRepeat1"] = 284] = "_ExceptClauseListRepeat1";
+    TSKindId[TSKindId["_AsPatternTarget"] = 285] = "_AsPatternTarget";
+    TSKindId[TSKindId["_FormatExpression"] = 286] = "_FormatExpression";
 })(TSKindId || (TSKindId = {}));
 export const KIND_NAMES = new Map([
     [1, "identifier"],
@@ -514,69 +527,69 @@ export const KIND_NAMES = new Map([
     [35, "finally"],
     [36, "with"],
     [37, "def"],
-    [38, "dash_gt"],
-    [39, "star_star"],
-    [40, "global"],
-    [41, "nonlocal"],
-    [42, "exec"],
-    [43, "eq"],
-    [44, "class"],
-    [45, "lbrack"],
-    [46, "rbrack"],
-    [47, "at"],
-    [48, "_"],
-    [49, "pipe"],
-    [50, "lbrace"],
-    [51, "rbrace"],
-    [52, "plus"],
-    [53, "dash"],
-    [54, "not"],
-    [55, "and"],
-    [56, "or"],
-    [57, "slash"],
-    [58, "percent"],
-    [59, "slash_slash"],
-    [60, "amp"],
-    [61, "caret"],
-    [62, "lt_lt"],
-    [63, "tilde"],
-    [64, "is"],
-    [65, "lt"],
-    [66, "lt_eq"],
-    [67, "eq_eq"],
-    [68, "bang_eq"],
-    [69, "gt_eq"],
-    [70, "gt"],
-    [71, "lt_gt"],
-    [72, "anon_lambda"],
-    [73, "plus_eq"],
-    [74, "dash_eq"],
-    [75, "star_eq"],
-    [76, "slash_eq"],
-    [77, "at_eq"],
-    [78, "slash_slash_eq"],
-    [79, "percent_eq"],
-    [80, "star_star_eq"],
-    [81, "gt_gt_eq"],
-    [82, "lt_lt_eq"],
-    [83, "amp_eq"],
-    [84, "caret_eq"],
-    [85, "pipe_eq"],
-    [86, "anon_yield"],
-    [87, "ellipsis"],
-    [88, "anon_type"],
-    [89, "escape_sequence"],
-    [90, "bslash"],
-    [91, "format_specifier_token1"],
-    [92, "type_conversion"],
-    [93, "integer"],
-    [94, "float"],
-    [95, "anon_await"],
-    [96, "true"],
-    [97, "false"],
-    [98, "none"],
-    [99, "comment"],
-    [100, "line_continuation"],
+    [38, "star_star"],
+    [39, "global"],
+    [40, "nonlocal"],
+    [41, "exec"],
+    [42, "eq"],
+    [43, "class"],
+    [44, "lbrack"],
+    [45, "rbrack"],
+    [46, "at"],
+    [47, "_"],
+    [48, "pipe"],
+    [49, "lbrace"],
+    [50, "rbrace"],
+    [51, "plus"],
+    [52, "dash"],
+    [53, "not"],
+    [54, "and"],
+    [55, "or"],
+    [56, "slash"],
+    [57, "percent"],
+    [58, "slash_slash"],
+    [59, "amp"],
+    [60, "caret"],
+    [61, "lt_lt"],
+    [62, "tilde"],
+    [63, "is"],
+    [64, "anon_lambda"],
+    [65, "plus_eq"],
+    [66, "dash_eq"],
+    [67, "star_eq"],
+    [68, "slash_eq"],
+    [69, "at_eq"],
+    [70, "slash_slash_eq"],
+    [71, "percent_eq"],
+    [72, "star_star_eq"],
+    [73, "gt_gt_eq"],
+    [74, "lt_lt_eq"],
+    [75, "amp_eq"],
+    [76, "caret_eq"],
+    [77, "pipe_eq"],
+    [78, "anon_yield"],
+    [79, "ellipsis"],
+    [80, "anon_type"],
+    [81, "escape_sequence"],
+    [82, "bslash"],
+    [83, "format_specifier_token1"],
+    [84, "type_conversion"],
+    [85, "integer"],
+    [86, "float"],
+    [87, "anon_await"],
+    [88, "true"],
+    [89, "false"],
+    [90, "none"],
+    [91, "comment"],
+    [92, "line_continuation"],
+    [93, "dash_gt"],
+    [94, "lt"],
+    [95, "lt_eq"],
+    [96, "eq_eq"],
+    [97, "bang_eq"],
+    [98, "gt_eq"],
+    [99, "gt"],
+    [100, "lt_gt"],
     [101, "_newline"],
     [102, "_indent"],
     [103, "_dedent"],
@@ -716,38 +729,38 @@ export const KIND_NAMES = new Map([
     [237, "await"],
     [238, "positional_separator"],
     [239, "keyword_separator"],
-    [240, "_assignment_eq"],
-    [241, "_assignment_type"],
-    [242, "_assignment_typed"],
-    [243, "_expression_statement_tuple"],
-    [244, "_with_clause_bare"],
-    [245, "_with_clause_paren"],
-    [246, "_match_block_block"],
-    [247, "_dict_pattern_kv"],
-    [248, "_simple_pattern_negative"],
-    [249, "module_repeat1"],
-    [250, "_simple_statements_repeat1"],
-    [251, "import_prefix_repeat1"],
-    [252, "_import_list_repeat1"],
-    [253, "print_statement_repeat1"],
-    [254, "assert_statement_repeat1"],
-    [255, "if_statement_repeat1"],
-    [256, "match_statement_repeat1"],
-    [257, "case_clause_repeat1"],
-    [258, "try_statement_repeat1"],
-    [259, "except_clause_repeat1"],
-    [260, "global_statement_repeat1"],
-    [261, "type_parameter_repeat1"],
-    [262, "argument_list_repeat1"],
-    [263, "decorated_definition_repeat1"],
-    [264, "dotted_name_repeat1"],
-    [265, "union_pattern_repeat1"],
-    [266, "dict_pattern_repeat1"],
-    [267, "_parameters_repeat1"],
-    [268, "_patterns_repeat1"],
-    [269, "comparison_operator_repeat1"],
-    [270, "subscript_repeat1"],
-    [271, "dictionary_repeat1"],
+    [240, "_slice_group1"],
+    [241, "_except_clause_as"],
+    [242, "_assignment_eq"],
+    [243, "_assignment_type"],
+    [244, "_assignment_typed"],
+    [245, "_expression_statement_tuple"],
+    [246, "_with_clause_bare"],
+    [247, "_with_clause_paren"],
+    [248, "_match_block_block"],
+    [249, "_dict_pattern_kv"],
+    [250, "_simple_pattern_negative"],
+    [251, "_except_clause_list"],
+    [252, "_comparison_operator_comparator"],
+    [253, "module_repeat1"],
+    [254, "_simple_statements_repeat1"],
+    [255, "import_prefix_repeat1"],
+    [256, "_import_list_repeat1"],
+    [257, "print_statement_repeat1"],
+    [258, "assert_statement_repeat1"],
+    [259, "if_statement_repeat1"],
+    [260, "match_statement_repeat1"],
+    [261, "case_clause_repeat1"],
+    [262, "try_statement_repeat1"],
+    [263, "global_statement_repeat1"],
+    [264, "type_parameter_repeat1"],
+    [265, "decorated_definition_repeat1"],
+    [266, "dotted_name_repeat1"],
+    [267, "union_pattern_repeat1"],
+    [268, "_parameters_repeat1"],
+    [269, "_patterns_repeat1"],
+    [270, "comparison_operator_repeat1"],
+    [271, "subscript_repeat1"],
     [272, "_comprehension_clauses_repeat1"],
     [273, "_collection_elements_repeat1"],
     [274, "for_in_clause_repeat1"],
@@ -755,10 +768,14 @@ export const KIND_NAMES = new Map([
     [276, "string_repeat1"],
     [277, "string_content_repeat1"],
     [278, "format_specifier_repeat1"],
-    [279, "_with_clause_bare_repeat1"],
-    [280, "_match_block_block_repeat1"],
-    [281, "_as_pattern_target"],
-    [282, "_format_expression"],
+    [279, "_argument_list_optional1_repeat1"],
+    [280, "_dict_pattern_optional1_repeat1"],
+    [281, "_dictionary_optional1_repeat1"],
+    [282, "_with_clause_bare_repeat1"],
+    [283, "_match_block_block_repeat1"],
+    [284, "_except_clause_list_repeat1"],
+    [285, "_as_pattern_target"],
+    [286, "_format_expression"],
 ]);
 export function kindIdFromName(kindName) {
     switch (kindName) {
@@ -799,7 +816,6 @@ export function kindIdFromName(kindName) {
         case "finally": return TSKindId.Finally;
         case "with": return TSKindId.With;
         case "def": return TSKindId.Def;
-        case "dash_gt": return TSKindId.DashGt;
         case "star_star": return TSKindId.StarStar;
         case "global": return TSKindId.Global;
         case "nonlocal": return TSKindId.Nonlocal;
@@ -826,13 +842,6 @@ export function kindIdFromName(kindName) {
         case "lt_lt": return TSKindId.LtLt;
         case "tilde": return TSKindId.Tilde;
         case "is": return TSKindId.Is;
-        case "lt": return TSKindId.Lt;
-        case "lt_eq": return TSKindId.LtEq;
-        case "eq_eq": return TSKindId.EqEq;
-        case "bang_eq": return TSKindId.BangEq;
-        case "gt_eq": return TSKindId.GtEq;
-        case "gt": return TSKindId.Gt;
-        case "lt_gt": return TSKindId.LtGt;
         case "anon_lambda": return TSKindId.AnonLambda;
         case "plus_eq": return TSKindId.PlusEq;
         case "dash_eq": return TSKindId.DashEq;
@@ -862,6 +871,14 @@ export function kindIdFromName(kindName) {
         case "none": return TSKindId.None;
         case "comment": return TSKindId.Comment;
         case "line_continuation": return TSKindId.LineContinuation;
+        case "dash_gt": return TSKindId.DashGt;
+        case "lt": return TSKindId.Lt;
+        case "lt_eq": return TSKindId.LtEq;
+        case "eq_eq": return TSKindId.EqEq;
+        case "bang_eq": return TSKindId.BangEq;
+        case "gt_eq": return TSKindId.GtEq;
+        case "gt": return TSKindId.Gt;
+        case "lt_gt": return TSKindId.LtGt;
         case "_newline": return TSKindId.Newline;
         case "_indent": return TSKindId.Indent;
         case "_dedent": return TSKindId.Dedent;
@@ -1001,15 +1018,19 @@ export function kindIdFromName(kindName) {
         case "await": return TSKindId.Await;
         case "positional_separator": return TSKindId.PositionalSeparator;
         case "keyword_separator": return TSKindId.KeywordSeparator;
+        case "_slice_group1": return TSKindId._SliceGroup1;
+        case "_except_clause_as": return TSKindId.ExceptClauseAs;
         case "_assignment_eq": return TSKindId.AssignmentEq;
         case "_assignment_type": return TSKindId.AssignmentType;
         case "_assignment_typed": return TSKindId.AssignmentTyped;
-        case "_expression_statement_tuple": return TSKindId._ExpressionStatementTuple;
-        case "_with_clause_bare": return TSKindId._WithClauseBare;
-        case "_with_clause_paren": return TSKindId._WithClauseParen;
+        case "_expression_statement_tuple": return TSKindId.ExpressionStatementTuple;
+        case "_with_clause_bare": return TSKindId.WithClauseBare;
+        case "_with_clause_paren": return TSKindId.WithClauseParen;
         case "_match_block_block": return TSKindId.MatchBlockBlock;
         case "_dict_pattern_kv": return TSKindId.DictPatternKv;
         case "_simple_pattern_negative": return TSKindId.SimplePatternNegative;
+        case "_except_clause_list": return TSKindId.ExceptClauseList;
+        case "_comparison_operator_comparator": return TSKindId.ComparisonOperatorComparator;
         case "module_repeat1": return TSKindId.ModuleRepeat1;
         case "_simple_statements_repeat1": return TSKindId._SimpleStatementsRepeat1;
         case "import_prefix_repeat1": return TSKindId.ImportPrefixRepeat1;
@@ -1020,19 +1041,15 @@ export function kindIdFromName(kindName) {
         case "match_statement_repeat1": return TSKindId.MatchStatementRepeat1;
         case "case_clause_repeat1": return TSKindId.CaseClauseRepeat1;
         case "try_statement_repeat1": return TSKindId.TryStatementRepeat1;
-        case "except_clause_repeat1": return TSKindId.ExceptClauseRepeat1;
         case "global_statement_repeat1": return TSKindId.GlobalStatementRepeat1;
         case "type_parameter_repeat1": return TSKindId.TypeParameterRepeat1;
-        case "argument_list_repeat1": return TSKindId.ArgumentListRepeat1;
         case "decorated_definition_repeat1": return TSKindId.DecoratedDefinitionRepeat1;
         case "dotted_name_repeat1": return TSKindId.DottedNameRepeat1;
         case "union_pattern_repeat1": return TSKindId.UnionPatternRepeat1;
-        case "dict_pattern_repeat1": return TSKindId.DictPatternRepeat1;
         case "_parameters_repeat1": return TSKindId._ParametersRepeat1;
         case "_patterns_repeat1": return TSKindId._PatternsRepeat1;
         case "comparison_operator_repeat1": return TSKindId.ComparisonOperatorRepeat1;
         case "subscript_repeat1": return TSKindId.SubscriptRepeat1;
-        case "dictionary_repeat1": return TSKindId.DictionaryRepeat1;
         case "_comprehension_clauses_repeat1": return TSKindId._ComprehensionClausesRepeat1;
         case "_collection_elements_repeat1": return TSKindId._CollectionElementsRepeat1;
         case "for_in_clause_repeat1": return TSKindId.ForInClauseRepeat1;
@@ -1040,8 +1057,12 @@ export function kindIdFromName(kindName) {
         case "string_repeat1": return TSKindId.StringRepeat1;
         case "string_content_repeat1": return TSKindId.StringContentRepeat1;
         case "format_specifier_repeat1": return TSKindId.FormatSpecifierRepeat1;
+        case "_argument_list_optional1_repeat1": return TSKindId._ArgumentListOptional1Repeat1;
+        case "_dict_pattern_optional1_repeat1": return TSKindId._DictPatternOptional1Repeat1;
+        case "_dictionary_optional1_repeat1": return TSKindId._DictionaryOptional1Repeat1;
         case "_with_clause_bare_repeat1": return TSKindId._WithClauseBareRepeat1;
         case "_match_block_block_repeat1": return TSKindId._MatchBlockBlockRepeat1;
+        case "_except_clause_list_repeat1": return TSKindId._ExceptClauseListRepeat1;
         case "_as_pattern_target": return TSKindId._AsPatternTarget;
         case "_format_expression": return TSKindId._FormatExpression;
         case ";": return TSKindId.Semi;
@@ -1053,7 +1074,6 @@ export function kindIdFromName(kindName) {
         case ">>": return TSKindId.GtGt;
         case ":=": return TSKindId.ColonEq;
         case ":": return TSKindId.Colon;
-        case "->": return TSKindId.DashGt;
         case "**": return TSKindId.StarStar;
         case "=": return TSKindId.Eq;
         case "[": return TSKindId.Lbrack;
@@ -1071,13 +1091,6 @@ export function kindIdFromName(kindName) {
         case "^": return TSKindId.Caret;
         case "<<": return TSKindId.LtLt;
         case "~": return TSKindId.Tilde;
-        case "<": return TSKindId.Lt;
-        case "<=": return TSKindId.LtEq;
-        case "==": return TSKindId.EqEq;
-        case "!=": return TSKindId.BangEq;
-        case ">=": return TSKindId.GtEq;
-        case ">": return TSKindId.Gt;
-        case "<>": return TSKindId.LtGt;
         case "+=": return TSKindId.PlusEq;
         case "-=": return TSKindId.DashEq;
         case "*=": return TSKindId.StarEq;
@@ -1092,17 +1105,29 @@ export function kindIdFromName(kindName) {
         case "^=": return TSKindId.CaretEq;
         case "|=": return TSKindId.PipeEq;
         case "\\": return TSKindId.Bslash;
+        case "->": return TSKindId.DashGt;
+        case "<": return TSKindId.Lt;
+        case "<=": return TSKindId.LtEq;
+        case "==": return TSKindId.EqEq;
+        case "!=": return TSKindId.BangEq;
+        case ">=": return TSKindId.GtEq;
+        case ">": return TSKindId.Gt;
+        case "<>": return TSKindId.LtGt;
         case "not in": return TSKindId.NotIn;
         case "is not": return TSKindId.IsNot;
+        case "slice_group1": return TSKindId._SliceGroup1;
+        case "except_clause_as": return TSKindId.ExceptClauseAs;
         case "assignment_eq": return TSKindId.AssignmentEq;
         case "assignment_type": return TSKindId.AssignmentType;
         case "assignment_typed": return TSKindId.AssignmentTyped;
-        case "expression_statement_tuple": return TSKindId._ExpressionStatementTuple;
-        case "with_clause_bare": return TSKindId._WithClauseBare;
-        case "with_clause_paren": return TSKindId._WithClauseParen;
+        case "expression_statement_tuple": return TSKindId.ExpressionStatementTuple;
+        case "with_clause_bare": return TSKindId.WithClauseBare;
+        case "with_clause_paren": return TSKindId.WithClauseParen;
         case "match_block_block": return TSKindId.MatchBlockBlock;
         case "dict_pattern_kv": return TSKindId.DictPatternKv;
         case "simple_pattern_negative": return TSKindId.SimplePatternNegative;
+        case "except_clause_list": return TSKindId.ExceptClauseList;
+        case "comparison_operator_comparator": return TSKindId.ComparisonOperatorComparator;
         case "as_pattern_target": return TSKindId._AsPatternTarget;
         case "format_expression": return TSKindId._FormatExpression;
         default: throw new TypeError(`unknown kind name ${kindName}`);

@@ -44,7 +44,6 @@ export const _fromMap = {
     "except_clause": exceptClauseFrom,
     "exec_statement": execStatementFrom,
     "expression_list": expressionListFrom,
-    "expression_statement_tuple": expressionStatementTupleFrom,
     "expression_statement": expressionStatementFrom,
     "false": false_From,
     "finally_clause": finallyClauseFrom,
@@ -115,12 +114,11 @@ export const _fromMap = {
     "union_pattern": unionPatternFrom,
     "union_type": unionTypeFrom,
     "while_statement": whileStatementFrom,
-    "with_clause_bare": withClauseBareFrom,
-    "with_clause_paren": withClauseParenFrom,
     "with_clause": withClauseFrom,
     "with_item": withItemFrom,
     "with_statement": withStatementFrom,
     "yield": yield_From,
+    "slice_group1": sliceGroup1From,
     "string_start": stringStartFrom,
     "escape_interpolation": escapeInterpolationFrom,
     "string_end": stringEndFrom,
@@ -244,22 +242,21 @@ function _resolveOneLeaf(v, kind) {
 }
 const _wrapKindIds = {
     "_comprehension_clauses": TSKindId.ComprehensionClauses,
+    "_expression_statement_tuple": TSKindId.ExpressionStatementTuple,
     "_match_block": TSKindId.MatchBlock,
     "_simple_pattern_negative": TSKindId.SimplePatternNegative,
     "_simple_statements": TSKindId.SimpleStatements,
-    "_with_clause_paren": TSKindId._WithClauseParen,
-    "argument_list": TSKindId.ArgumentList,
+    "_with_clause_bare": TSKindId.WithClauseBare,
+    "_with_clause_paren": TSKindId.WithClauseParen,
     "assert_statement": TSKindId.AssertStatement,
     "block": TSKindId.Block,
     "case_pattern": TSKindId.CasePattern,
     "concatenated_string": TSKindId.ConcatenatedString,
     "delete_statement": TSKindId.DeleteStatement,
-    "dict_pattern": TSKindId.DictPattern,
-    "dictionary": TSKindId.Dictionary,
     "dictionary_splat_pattern": TSKindId.DictionarySplatPattern,
     "dotted_name": TSKindId.DottedName,
     "expression_list": TSKindId.ExpressionList,
-    "expression_statement_tuple": TSKindId._ExpressionStatementTuple,
+    "expression_statement": TSKindId.ExpressionStatement,
     "format_specifier": TSKindId.FormatSpecifier,
     "global_statement": TSKindId.GlobalStatement,
     "lambda_parameters": TSKindId.LambdaParameters,
@@ -280,52 +277,51 @@ const _wrapKindIds = {
     "type": TSKindId.Type,
     "type_parameter": TSKindId.TypeParameter,
     "union_pattern": TSKindId.UnionPattern,
-    "with_clause_bare": TSKindId._WithClauseBare,
-    "with_clause_paren": TSKindId._WithClauseParen,
+    "with_clause": TSKindId.WithClause,
     "yield": TSKindId.Yield,
+    "slice_group1": TSKindId._SliceGroup1,
 };
 function _wrapWithChildren(kind, children) {
     switch (kind) {
         case "_comprehension_clauses": return F.comprehensionClauses(...children);
+        case "_expression_statement_tuple": return F.expressionStatementTuple(...children);
         case "_match_block": return F.matchBlock(...children);
         case "_simple_pattern_negative": return F.simplePatternNegative(...children);
         case "_simple_statements": return F.simpleStatements(...children);
-        case "_with_clause_paren": return F._withClauseParen(...children);
-        case "argument_list": return F.argumentList(...children);
+        case "_with_clause_bare": return F.withClauseBare(...children);
+        case "_with_clause_paren": return F.withClauseParen(...children);
         case "assert_statement": return F.assertStatement(...children);
         case "block": return F.block(...children);
         case "case_pattern": return F.casePattern(children[0]);
         case "concatenated_string": return F.concatenatedString(...children);
         case "delete_statement": return F.deleteStatement(children[0]);
-        case "dict_pattern": return F.dictPattern(...children);
-        case "dictionary": return F.dictionary(...children);
         case "dictionary_splat_pattern": return F.dictionarySplatPattern(children[0]);
         case "dotted_name": return F.dottedName(...children);
         case "expression_list": return F.expressionList(...children);
-        case "expression_statement_tuple": return F.expressionStatementTuple(...children);
+        case "expression_statement": return F.expressionStatement(children[0]);
         case "format_specifier": return F.formatSpecifier(...children);
         case "global_statement": return F.globalStatement(...children);
-        case "lambda_parameters": return F.lambdaParameters(...children);
-        case "list": return F.list(...children);
-        case "list_pattern": return F.listPattern(...children);
+        case "lambda_parameters": return F.lambdaParameters(children[0]);
+        case "list": return F.list(children[0]);
+        case "list_pattern": return F.listPattern(children[0]);
         case "list_splat_pattern": return F.listSplatPattern(children[0]);
         case "module": return F.module(...children);
         case "nonlocal_statement": return F.nonlocalStatement(...children);
-        case "parameters": return F.parameters(...children);
+        case "parameters": return F.parameters(children[0]);
         case "parenthesized_expression": return F.parenthesizedExpression(children[0]);
         case "parenthesized_list_splat": return F.parenthesizedListSplat(children[0]);
         case "pattern_list": return F.patternList(...children);
         case "return_statement": return F.returnStatement(children[0]);
-        case "set": return F.set(...children);
+        case "set": return F.set(children[0]);
         case "string_content": return F.stringContent(...children);
-        case "tuple": return F.tuple(...children);
-        case "tuple_pattern": return F.tuplePattern(...children);
+        case "tuple": return F.tuple(children[0]);
+        case "tuple_pattern": return F.tuplePattern(children[0]);
         case "type": return F.type(children[0]);
         case "type_parameter": return F.typeParameter(...children);
         case "union_pattern": return F.unionPattern(...children);
-        case "with_clause_bare": return F.withClauseBare(...children);
-        case "with_clause_paren": return F.withClauseParen(...children);
+        case "with_clause": return F.withClause(children[0]);
         case "yield": return F.yield_(children[0]);
+        case "slice_group1": return F.sliceGroup1(children[0]);
         default: return undefined;
     }
 }
@@ -425,34 +421,38 @@ function _childrenInput(input) {
     return input;
 }
 // Interned resolver kind lists (dedup)
+const _super_dict_pattern_kv = ["_key_value_pattern", "splat_pattern"];
 const _K0 = ["identifier", "integer", "float", "true", "false", "none"];
-const _K1 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern"];
-const _K2 = ["identifier"];
-const _K3 = ["keyword_identifier", "subscript", "attribute", "list_splat_pattern", "tuple_pattern", "list_pattern", "pattern_list"];
-const _K4 = ["await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern"];
-const _K5 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "expression_list", "assignment", "augmented_assignment", "pattern_list", "yield"];
-const _K6 = [];
-const _K7 = ["and", "or"];
-const _K8 = ["generator_expression", "argument_list"];
-const _K9 = ["in"];
-const _K10 = ["lt", "lt_eq", "eq_eq", "bang_eq", "gt_eq", "gt", "lt_gt", "is"];
-const _K11 = ["integer", "float"];
-const _K12 = ["class_definition", "function_definition"];
-const _K13 = ["tuple_pattern"];
-const _K14 = ["string"];
-const _K15 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "lambda_within_for_in_clause"];
-const _K16 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "expression_list"];
-const _K17 = ["dotted_name", "aliased_import"];
-const _K18 = ["elif_clause", "else_clause"];
-const _K19 = ["relative_import", "dotted_name"];
-const _K20 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "expression_list", "pattern_list", "yield"];
-const _K21 = ["keyword_identifier"];
-const _K22 = ["true", "false", "none"];
-const _K23 = ["class_pattern", "splat_pattern", "union_pattern", "_list_pattern", "_tuple_pattern", "dict_pattern", "string", "concatenated_string", "_simple_pattern_negative", "complex_pattern", "dotted_name"];
-const _K24 = ["_identifier", "identifier"];
-const _K25 = ["interpolation", "string_content"];
-const _K26 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "slice"];
-const _K27 = ["list_splat_pattern", "dictionary_splat_pattern"];
+const _K1 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "list_splat", "dictionary_splat", "parenthesized_list_splat", "keyword_argument"];
+const _K2 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern"];
+const _K3 = ["identifier"];
+const _K4 = ["keyword_identifier", "subscript", "attribute", "list_splat_pattern", "tuple_pattern", "list_pattern", "pattern_list"];
+const _K5 = [];
+const _K6 = ["_assignment_eq", "_assignment_type", "_assignment_typed"];
+const _K7 = ["await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern"];
+const _K8 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "expression_list", "assignment", "augmented_assignment", "pattern_list", "yield"];
+const _K9 = ["generator_expression", "argument_list"];
+const _K10 = ["_newline"];
+const _K11 = ["_simple_statements", "block"];
+const _K12 = ["integer", "float"];
+const _K13 = ["class_definition", "function_definition"];
+const _K14 = ["tuple_pattern"];
+const _K15 = ["true", "false", "none"];
+const _K16 = ["class_pattern", "splat_pattern", "union_pattern", "_list_pattern", "_tuple_pattern", "dict_pattern", "string", "concatenated_string", "_simple_pattern_negative", "complex_pattern", "dotted_name"];
+const _K17 = ["pair", "dictionary_splat"];
+const _K18 = ["_except_clause_as", "_except_clause_list"];
+const _K19 = ["string"];
+const _K20 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "lambda_within_for_in_clause"];
+const _K21 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "expression_list"];
+const _K22 = ["dotted_name", "aliased_import"];
+const _K23 = ["elif_clause", "else_clause"];
+const _K24 = ["relative_import", "dotted_name"];
+const _K25 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "expression_list", "pattern_list", "yield"];
+const _K26 = ["keyword_identifier"];
+const _K27 = ["_splat_pattern_operator", "identifier"];
+const _K28 = ["interpolation", "string_content"];
+const _K29 = ["comparison_operator", "not_operator", "boolean_operator", "lambda", "await", "binary_operator", "keyword_identifier", "string", "concatenated_string", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "list_splat_pattern", "conditional_expression", "named_expression", "as_pattern", "slice"];
+const _K30 = ["list_splat_pattern", "dictionary_splat_pattern"];
 export function aliasedImportFrom(input) {
     if (isNodeData(input))
         return input;
@@ -461,21 +461,19 @@ export function aliasedImportFrom(input) {
         alias: _resolveOneLeaf(input.alias, "identifier"),
     });
 }
-export function argumentListFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ArgumentList) {
-        const data = input[0];
-        const stored = data._expression;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.argumentList(...children);
-    }
-    return F.argumentList(...input);
+export function argumentListFrom(input) {
+    if (input !== undefined && isNodeData(input))
+        return input;
+    return F.argumentList({
+        arguments: _resolveMany(input?.arguments, _K0, _K1),
+    });
 }
 export function asPatternFrom(input) {
     if (isNodeData(input))
         return input;
     return F.asPattern({
-        expression: _resolveOne(input.expression, _K0, _K1),
-        alias: _resolveOneBranch(input.alias, "as_pattern_target"),
+        expression: _resolveOne(input.expression, _K0, _K2),
+        alias: _resolveOne(input.alias, _K0, _K2),
     });
 }
 export function assertStatementFrom(...input) {
@@ -488,35 +486,18 @@ export function assertStatementFrom(...input) {
     return F.assertStatement(...input);
 }
 export function assignmentFrom(input) {
-    if (input !== undefined && isNodeData(input)) {
-        if (input.$type === kindIdFromName("assignment"))
-            return input;
-    }
-    return _applyFactory(F.assignment, input);
-}
-export function assignmentUFormEqFrom(input) {
-    return F.assignmentUFormEq({
-        left: _resolveOne(input.left, _K2, _K3),
-        assignmentEq: _resolveOneBranch(input.assignmentEq, "_assignment_eq"),
-    });
-}
-export function assignmentUFormTypeFrom(input) {
-    return F.assignmentUFormType({
-        left: _resolveOne(input.left, _K2, _K3),
-        assignmentType: _resolveOneBranch(input.assignmentType, "_assignment_type"),
-    });
-}
-export function assignmentUFormTypedFrom(input) {
-    return F.assignmentUFormTyped({
-        left: _resolveOne(input.left, _K2, _K3),
-        assignmentTyped: _resolveOneBranch(input.assignmentTyped, "_assignment_typed"),
+    if (isNodeData(input))
+        return input;
+    return F.assignment({
+        left: _resolveOne(input.left, _K3, _K4),
+        content: _resolveOne(input.content, _K5, _K6),
     });
 }
 export function attributeFrom(input) {
     if (isNodeData(input))
         return input;
     return F.attribute({
-        object: _resolveOne(input.object, _K0, _K4),
+        object: _resolveOne(input.object, _K0, _K7),
         attribute: _resolveOneLeaf(input.attribute, "identifier"),
     });
 }
@@ -524,23 +505,23 @@ export function augmentedAssignmentFrom(input) {
     if (isNodeData(input))
         return input;
     return F.augmentedAssignment({
-        left: _resolveOne(input.left, _K2, _K3),
+        left: _resolveOne(input.left, _K3, _K4),
         operator: coerceKindEnumStorage(_resolveOneLeaf(input.operator, "_augmented_assignment_operator"), [["+=", kindIdFromName("+=")], ["-=", kindIdFromName("-=")], ["*=", kindIdFromName("*=")], ["/=", kindIdFromName("/=")], ["@=", kindIdFromName("@=")], ["//=", kindIdFromName("//=")], ["%=", kindIdFromName("%=")], ["**=", kindIdFromName("**=")], [">>=", kindIdFromName(">>=")], ["<<=", kindIdFromName("<<=")], ["&=", kindIdFromName("&=")], ["^=", kindIdFromName("^=")], ["|=", kindIdFromName("|=")]]),
-        right: _resolveOne(input.right, _K0, _K5),
+        right: _resolveOne(input.right, _K0, _K8),
     });
 }
 export function await_From(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("await"))
         return input;
-    return F.await_(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "primaryExpression" in input ? input.primaryExpression : input), _K0, _K4));
+    return F.await_(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "primaryExpression" in input ? input.primaryExpression : input), _K0, _K7));
 }
 export function binaryOperatorFrom(input) {
     if (isNodeData(input))
         return input;
     return F.binaryOperator({
-        left: _resolveOne(input.left, _K0, _K4),
-        operator: coerceKindEnumStorage(_resolveOne(input.operator, _K6, _K6), []),
-        right: _resolveOne(input.right, _K0, _K4),
+        left: _resolveOne(input.left, _K0, _K7),
+        operator: coerceKindEnumStorage(_resolveOne(input.operator, _K5, _K5), [["+", kindIdFromName("+")], ["-", kindIdFromName("-")], ["*", kindIdFromName("*")], ["@", kindIdFromName("@")], ["/", kindIdFromName("/")], ["%", kindIdFromName("%")], ["//", kindIdFromName("//")], ["**", kindIdFromName("**")], ["|", kindIdFromName("|")], ["&", kindIdFromName("&")], ["^", kindIdFromName("^")], ["<<", kindIdFromName("<<")], [">>", kindIdFromName(">>")]]),
+        right: _resolveOne(input.right, _K0, _K7),
     });
 }
 export function blockFrom(...input) {
@@ -556,9 +537,9 @@ export function booleanOperatorFrom(input) {
     if (isNodeData(input))
         return input;
     return F.booleanOperator({
-        left: _resolveOne(input.left, _K0, _K1),
-        operator: coerceKindEnumStorage(_resolveOne(input.operator, _K7, _K6), []),
-        right: _resolveOne(input.right, _K0, _K1),
+        left: _resolveOne(input.left, _K0, _K2),
+        operator: coerceKindEnumStorage(_resolveOne(input.operator, _K5, _K5), [["and", kindIdFromName("and")], ["or", kindIdFromName("or")]]),
+        right: _resolveOne(input.right, _K0, _K2),
     });
 }
 export function breakStatementFrom(input) {
@@ -570,8 +551,8 @@ export function callFrom(input) {
     if (isNodeData(input))
         return input;
     return F.call({
-        function: _resolveOne(input.function, _K0, _K4),
-        arguments: _resolveOne(input.arguments, _K6, _K8),
+        function: _resolveOne(input.function, _K0, _K7),
+        arguments: _resolveOne(input.arguments, _K5, _K9),
     });
 }
 export function caseClauseFrom(input) {
@@ -582,13 +563,13 @@ export function caseClauseFrom(input) {
     return F.caseClause({
         casePattern: _ne_casePatterns,
         guard: _resolveOneBranch(input.guard, "if_clause"),
-        consequence: _resolveOneBranch(input.consequence, "_suite") ?? F.suite(),
+        consequence: _resolveOne(input.consequence, _K10, _K11),
     });
 }
 export function casePatternFrom(input) {
     if (isNodeData(input) && input.$type === TSKindId.CasePattern) {
         const data = input;
-        const child = data._as_pattern;
+        const child = data._content;
         return F.casePattern(child);
     }
     return F.casePattern(input);
@@ -596,7 +577,7 @@ export function casePatternFrom(input) {
 export function chevronFrom(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("chevron"))
         return input;
-    return F.chevron(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K0, _K1));
+    return F.chevron(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K0, _K2));
 }
 export function classDefinitionFrom(input) {
     if (isNodeData(input))
@@ -605,7 +586,7 @@ export function classDefinitionFrom(input) {
         name: _resolveOneLeaf(input.name, "identifier"),
         typeParameters: _resolveOneBranch(input.typeParameters, "type_parameter"),
         superclasses: _resolveOneBranch(input.superclasses, "argument_list"),
-        body: _resolveOneBranch(input.body, "_suite") ?? F.suite(),
+        body: _resolveOne(input.body, _K10, _K11),
     });
 }
 export function classPatternFrom(input) {
@@ -624,14 +605,11 @@ export function commentFrom(input) {
 export function comparisonOperatorFrom(input) {
     if (isNodeData(input))
         return input;
-    const _ne_operators = _resolveMany(input.operators, _K9, _K10);
-    _assertNonEmpty(_ne_operators, 'comparison_operator.operators');
-    const _ne_primaryExpressions = _resolveMany(input.primaryExpression, _K0, _K4);
-    _assertNonEmpty(_ne_primaryExpressions, 'comparison_operator.primaryExpressions');
+    const _ne_comparators = _resolveManyBranch(input.comparators, "_comparison_operator_comparator");
+    _assertNonEmpty(_ne_comparators, 'comparison_operator.comparators');
     return F.comparisonOperator({
-        left: _resolveOne(input.left, _K0, _K4),
-        operators: _ne_operators,
-        primaryExpression: _ne_primaryExpressions,
+        left: _resolveOne(input.left, _K0, _K7),
+        comparators: _ne_comparators,
     });
 }
 export function complexPatternFrom(input) {
@@ -639,8 +617,9 @@ export function complexPatternFrom(input) {
         return input;
     return F.complexPattern({
         real: _resolveBooleanKeyword(input.real),
-        imaginary: _resolveOne(input.imaginary, _K11, _K6),
-        integer: _resolveOne(input.integer, _K11, _K6),
+        imaginary: _resolveOne(input.imaginary, _K12, _K5),
+        operator: coerceKindEnumStorage(_resolveOneLeaf(input.operator, "_complex_pattern_operator"), [["+", kindIdFromName("+")], ["-", kindIdFromName("-")]]),
+        content: _resolveOne(input.content, _K12, _K5),
     });
 }
 export function concatenatedStringFrom(...input) {
@@ -656,9 +635,9 @@ export function conditionalExpressionFrom(input) {
     if (isNodeData(input))
         return input;
     return F.conditionalExpression({
-        body: _resolveOne(input.body, _K0, _K1),
-        condition: _resolveOne(input.condition, _K0, _K1),
-        alternative: _resolveOne(input.alternative, _K0, _K1),
+        body: _resolveOne(input.body, _K0, _K2),
+        condition: _resolveOne(input.condition, _K0, _K2),
+        alternative: _resolveOne(input.alternative, _K0, _K2),
     });
 }
 export function constrainedTypeFrom(input) {
@@ -681,23 +660,20 @@ export function decoratedDefinitionFrom(input) {
     _assertNonEmpty(_ne_decorators, 'decorated_definition.decorators');
     return F.decoratedDefinition({
         decorator: _ne_decorators,
-        definition: _resolveOne(input.definition, _K6, _K12),
+        definition: _resolveOne(input.definition, _K5, _K13),
     });
 }
 export function decoratorFrom(input) {
-    if (isNodeData(input))
+    if (isNodeData(input) && input.$type === kindIdFromName("decorator"))
         return input;
-    return F.decorator({
-        expression: _resolveOne(input.expression, _K0, _K1),
-        newline: _resolveOne(input.newline, _K6, _K6),
-    });
+    return F.decorator(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K0, _K2));
 }
 export function defaultParameterFrom(input) {
     if (isNodeData(input))
         return input;
     return F.defaultParameter({
-        name: _resolveOne(input.name, _K2, _K13),
-        value: _resolveOne(input.value, _K0, _K1),
+        name: _resolveOne(input.name, _K3, _K14),
+        value: _resolveOne(input.value, _K0, _K2),
     });
 }
 export function deleteStatementFrom(input) {
@@ -708,23 +684,22 @@ export function deleteStatementFrom(input) {
     }
     return F.deleteStatement(input);
 }
-export function dictPatternFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DictPattern) {
-        const data = input[0];
-        const stored = data._dict_pattern_kv;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.dictPattern(...children);
-    }
-    return F.dictPattern(...input);
+export function dictPatternFrom(input) {
+    if (input !== undefined && isNodeData(input))
+        return input;
+    return F.dictPattern({
+        dictPatternKv: _resolveOne(input?.dictPatternKv, _K5, _super_dict_pattern_kv),
+        key: _resolveMany(input?.key, _K15, _K16),
+        value: _resolveManyBranch(input?.value, "case_pattern"),
+        splatPattern: _resolveManyBranch(input?.splatPattern, "splat_pattern"),
+    });
 }
-export function dictionaryFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Dictionary) {
-        const data = input[0];
-        const stored = data._pair;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.dictionary(...children);
-    }
-    return F.dictionary(...input);
+export function dictionaryFrom(input) {
+    if (input !== undefined && isNodeData(input))
+        return input;
+    return F.dictionary({
+        entries: _resolveMany(input?.entries, _K5, _K17),
+    });
 }
 export function dictionaryComprehensionFrom(input) {
     if (isNodeData(input))
@@ -737,12 +712,12 @@ export function dictionaryComprehensionFrom(input) {
 export function dictionarySplatFrom(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("dictionary_splat"))
         return input;
-    return F.dictionarySplat(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K0, _K1));
+    return F.dictionarySplat(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K0, _K2));
 }
 export function dictionarySplatPatternFrom(input) {
     if (isNodeData(input) && input.$type === TSKindId.DictionarySplatPattern) {
         const data = input;
-        const child = data._identifier;
+        const child = data._content;
         return F.dictionarySplatPattern(child);
     }
     return F.dictionarySplatPattern(input);
@@ -760,14 +735,14 @@ export function elifClauseFrom(input) {
     if (isNodeData(input))
         return input;
     return F.elifClause({
-        condition: _resolveOne(input.condition, _K0, _K1),
-        consequence: _resolveOneBranch(input.consequence, "_suite") ?? F.suite(),
+        condition: _resolveOne(input.condition, _K0, _K2),
+        consequence: _resolveOne(input.consequence, _K10, _K11),
     });
 }
 export function elseClauseFrom(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("else_clause"))
         return input;
-    return F.elseClause(_resolveOneBranch((input !== null && typeof input === 'object' && !isNodeData(input) && "body" in input ? input.body : input), "_suite"));
+    return F.elseClause(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "body" in input ? input.body : input), _K10, _K11));
 }
 export function escapeSequenceFrom(input) {
     if (typeof input !== 'string')
@@ -775,24 +750,21 @@ export function escapeSequenceFrom(input) {
     return F.escapeSequence(input);
 }
 export function exceptClauseFrom(input) {
-    if (isNodeData(input))
+    if (input !== undefined && isNodeData(input))
         return input;
-    const _ne_values = _resolveMany(input.value, _K0, _K1);
-    _assertNonEmpty(_ne_values, 'except_clause.values');
     return F.exceptClause({
-        value: _ne_values,
-        alias: _resolveOne(input.alias, _K0, _K1),
-        suite: _resolveOneBranch(input.suite, "_suite") ?? F.suite(),
+        content: _resolveOne(input?.content, _K5, _K18),
+        simpleStatements: _resolveOneBranch(input?.simpleStatements, "_simple_statements"),
+        block: _resolveOneBranch(input?.block, "block"),
+        newline: _resolveOneLeaf(input?.newline, "_newline"),
     });
 }
 export function execStatementFrom(input) {
     if (isNodeData(input))
         return input;
-    const _ne_inClauses = _resolveMany(input.inClause, _K0, _K1);
-    _assertNonEmpty(_ne_inClauses, 'exec_statement.inClauses');
     return F.execStatement({
-        code: _resolveOne(input.code, _K2, _K14),
-        inClause: _ne_inClauses,
+        code: _resolveOne(input.code, _K3, _K19),
+        inClause: _resolveMany(input.inClause, _K0, _K2),
     });
 }
 export function expressionListFrom(...input) {
@@ -804,40 +776,13 @@ export function expressionListFrom(...input) {
     }
     return F.expressionList(...input);
 }
-export function expressionStatementTupleFrom(...input) {
-    return F.expressionStatementTuple(...input);
-}
 export function expressionStatementFrom(input) {
-    if (input !== undefined && isNodeData(input)) {
-        if (input.$type === kindIdFromName("expression_statement"))
-            return input;
+    if (isNodeData(input) && input.$type === TSKindId.ExpressionStatement) {
+        const data = input;
+        const child = data._content;
+        return F.expressionStatement(child);
     }
-    return _applyFactory(F.expressionStatement, input);
-}
-export function expressionStatementUFormExpressionFrom(input) {
-    return F.expressionStatementUFormExpression({
-        expression: _resolveOne(input.expression, _K0, _K1),
-    });
-}
-export function expressionStatementUFormTupleFrom(input) {
-    return F.expressionStatementUFormTuple({
-        expressionStatementTuple: _resolveOne(input.expressionStatementTuple, _K6, _K6),
-    });
-}
-export function expressionStatementUFormAssignmentFrom(input) {
-    return F.expressionStatementUFormAssignment({
-        assignment: _resolveOneBranch(input.assignment, "assignment"),
-    });
-}
-export function expressionStatementUFormAugmentedAssignmentFrom(input) {
-    return F.expressionStatementUFormAugmentedAssignment({
-        augmentedAssignment: _resolveOneBranch(input.augmentedAssignment, "augmented_assignment"),
-    });
-}
-export function expressionStatementUFormYieldFrom(input) {
-    return F.expressionStatementUFormYield({
-        yield: _resolveOneBranch(input.yield, "yield"),
-    });
+    return F.expressionStatement(input);
 }
 export function false_From(input) {
     if (isNodeData(input))
@@ -847,7 +792,7 @@ export function false_From(input) {
 export function finallyClauseFrom(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("finally_clause"))
         return input;
-    return F.finallyClause(_resolveOneBranch((input !== null && typeof input === 'object' && !isNodeData(input) && "block" in input ? input.block : input), "_suite"));
+    return F.finallyClause(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "block" in input ? input.block : input), _K10, _K11));
 }
 export function floatFrom(input) {
     if (typeof input !== 'string')
@@ -857,11 +802,11 @@ export function floatFrom(input) {
 export function forInClauseFrom(input) {
     if (isNodeData(input))
         return input;
-    const _ne_rights = _resolveMany(input.right, _K0, _K15);
+    const _ne_rights = _resolveMany(input.right, _K0, _K20);
     _assertNonEmpty(_ne_rights, 'for_in_clause.rights');
     return F.forInClause({
         asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-        left: _resolveOne(input.left, _K2, _K3),
+        left: _resolveOne(input.left, _K3, _K4),
         right: _ne_rights,
     });
 }
@@ -870,16 +815,16 @@ export function forStatementFrom(input) {
         return input;
     return F.forStatement({
         asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-        left: _resolveOne(input.left, _K2, _K3),
-        right: _resolveOne(input.right, _K0, _K16),
-        body: _resolveOneBranch(input.body, "_suite") ?? F.suite(),
+        left: _resolveOne(input.left, _K3, _K4),
+        right: _resolveOne(input.right, _K0, _K21),
+        body: _resolveOne(input.body, _K10, _K11),
         alternative: _resolveOneBranch(input.alternative, "else_clause"),
     });
 }
 export function formatSpecifierFrom(...input) {
     if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormatSpecifier) {
         const data = input[0];
-        const stored = data._interpolation;
+        const stored = data._content;
         const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
         return F.formatSpecifier(...children);
     }
@@ -894,13 +839,13 @@ export function functionDefinitionFrom(input) {
         typeParameters: _resolveOneBranch(input.typeParameters, "type_parameter"),
         parameters: _resolveOneBranch(input.parameters, "parameters") ?? F.parameters(),
         returnType: _resolveOneBranch(input.returnType, "type"),
-        body: _resolveOneBranch(input.body, "_suite") ?? F.suite(),
+        body: _resolveOne(input.body, _K10, _K11),
     });
 }
 export function futureImportStatementFrom(input) {
     if (isNodeData(input))
         return input;
-    const _ne_names = _resolveMany(input.name, _K6, _K17);
+    const _ne_names = _resolveMany(input.name, _K5, _K22);
     _assertNonEmpty(_ne_names, 'future_import_statement.names');
     return F.futureImportStatement({
         name: _ne_names,
@@ -910,7 +855,7 @@ export function generatorExpressionFrom(input) {
     if (isNodeData(input))
         return input;
     return F.generatorExpression({
-        body: _resolveOne(input.body, _K0, _K1),
+        body: _resolveOne(input.body, _K0, _K2),
         comprehensionClauses: _resolveOneBranch(input.comprehensionClauses, "_comprehension_clauses") ?? F.comprehensionClauses(),
     });
 }
@@ -939,24 +884,25 @@ export function identifierFrom(input) {
 export function ifClauseFrom(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("if_clause"))
         return input;
-    return F.ifClause(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K0, _K1));
+    return F.ifClause(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K0, _K2));
 }
 export function ifStatementFrom(input) {
     if (isNodeData(input))
         return input;
     return F.ifStatement({
-        condition: _resolveOne(input.condition, _K0, _K1),
-        consequence: _resolveOneBranch(input.consequence, "_suite") ?? F.suite(),
-        alternative: _resolveMany(input.alternative, _K6, _K18),
+        condition: _resolveOne(input.condition, _K0, _K2),
+        consequence: _resolveOne(input.consequence, _K10, _K11),
+        alternative: _resolveMany(input.alternative, _K5, _K23),
     });
 }
 export function importFromStatementFrom(input) {
     if (isNodeData(input))
         return input;
+    const _ne_wildcardImports = _resolveMany(input.wildcardImport, _K5, _K22);
+    _assertNonEmpty(_ne_wildcardImports, 'import_from_statement.wildcardImports');
     return F.importFromStatement({
-        moduleName: _resolveOne(input.moduleName, _K6, _K19),
-        wildcardImport: _resolveBooleanKeyword(input.wildcardImport),
-        name: _resolveMany(input.name, _K6, _K17),
+        moduleName: _resolveOne(input.moduleName, _K5, _K24),
+        wildcardImport: _ne_wildcardImports,
     });
 }
 export function importPrefixFrom(input) {
@@ -967,7 +913,7 @@ export function importPrefixFrom(input) {
 export function importStatementFrom(input) {
     if (isNodeData(input))
         return input;
-    const _ne_names = _resolveMany(input.name, _K6, _K17);
+    const _ne_names = _resolveMany(input.name, _K5, _K22);
     _assertNonEmpty(_ne_names, 'import_statement.names');
     return F.importStatement({
         name: _ne_names,
@@ -982,7 +928,7 @@ export function interpolationFrom(input) {
     if (isNodeData(input))
         return input;
     return F.interpolation({
-        expression: _resolveOne(input.expression, _K0, _K20),
+        expression: _resolveOne(input.expression, _K0, _K25),
         typeConversion: _resolveOneLeaf(input.typeConversion, "type_conversion"),
         formatSpecifier: _resolveOneBranch(input.formatSpecifier, "format_specifier"),
     });
@@ -991,8 +937,8 @@ export function keywordArgumentFrom(input) {
     if (isNodeData(input))
         return input;
     return F.keywordArgument({
-        name: _resolveOne(input.name, _K2, _K21),
-        value: _resolveOne(input.value, _K0, _K1),
+        name: _resolveOneLeaf(input.name, "identifier"),
+        value: _resolveOne(input.value, _K0, _K2),
     });
 }
 export function keywordPatternFrom(input) {
@@ -1000,7 +946,7 @@ export function keywordPatternFrom(input) {
         return input;
     return F.keywordPattern({
         identifier: _resolveOneLeaf(input.identifier, "identifier"),
-        simplePattern: _resolveOne(input.simplePattern, _K22, _K23),
+        simplePattern: _resolveOne(input.simplePattern, _K15, _K16),
     });
 }
 export function lambdaFrom(input) {
@@ -1008,24 +954,23 @@ export function lambdaFrom(input) {
         return input;
     return F.lambda({
         parameters: _resolveOneBranch(input.parameters, "lambda_parameters"),
-        body: _resolveOne(input.body, _K0, _K1),
+        body: _resolveOne(input.body, _K0, _K2),
     });
 }
-export function lambdaParametersFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.LambdaParameters) {
-        const data = input[0];
-        const stored = data._parameter;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.lambdaParameters(...children);
+export function lambdaParametersFrom(input) {
+    if (isNodeData(input) && input.$type === TSKindId.LambdaParameters) {
+        const data = input;
+        const child = data._parameters;
+        return F.lambdaParameters(child);
     }
-    return F.lambdaParameters(...input);
+    return F.lambdaParameters(input);
 }
 export function lambdaWithinForInClauseFrom(input) {
     if (isNodeData(input))
         return input;
     return F.lambdaWithinForInClause({
         parameters: _resolveOneBranch(input.parameters, "lambda_parameters"),
-        body: _resolveOne(input.body, _K0, _K15),
+        body: _resolveOne(input.body, _K0, _K20),
     });
 }
 export function lineContinuationFrom(input) {
@@ -1033,41 +978,39 @@ export function lineContinuationFrom(input) {
         return input;
     return F.lineContinuation(input);
 }
-export function listFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.List) {
-        const data = input[0];
-        const stored = data._expression;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.list(...children);
+export function listFrom(input) {
+    if (isNodeData(input) && input.$type === TSKindId.List) {
+        const data = input;
+        const child = data._collection_elements;
+        return F.list(child);
     }
-    return F.list(...input);
+    return F.list(input);
 }
 export function listComprehensionFrom(input) {
     if (isNodeData(input))
         return input;
     return F.listComprehension({
-        body: _resolveOne(input.body, _K0, _K1),
+        body: _resolveOne(input.body, _K0, _K2),
         comprehensionClauses: _resolveOneBranch(input.comprehensionClauses, "_comprehension_clauses") ?? F.comprehensionClauses(),
     });
 }
-export function listPatternFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ListPattern) {
-        const data = input[0];
-        const stored = data._pattern;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.listPattern(...children);
+export function listPatternFrom(input) {
+    if (isNodeData(input) && input.$type === TSKindId.ListPattern) {
+        const data = input;
+        const child = data._patterns;
+        return F.listPattern(child);
     }
-    return F.listPattern(...input);
+    return F.listPattern(input);
 }
 export function listSplatFrom(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("list_splat"))
         return input;
-    return F.listSplat(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K0, _K1));
+    return F.listSplat(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K0, _K2));
 }
 export function listSplatPatternFrom(input) {
     if (isNodeData(input) && input.$type === TSKindId.ListSplatPattern) {
         const data = input;
-        const child = data._identifier;
+        const child = data._content;
         return F.listSplatPattern(child);
     }
     return F.listSplatPattern(input);
@@ -1075,7 +1018,7 @@ export function listSplatPatternFrom(input) {
 export function matchStatementFrom(input) {
     if (isNodeData(input))
         return input;
-    const _ne_subjects = _resolveMany(input.subject, _K0, _K1);
+    const _ne_subjects = _resolveMany(input.subject, _K0, _K2);
     _assertNonEmpty(_ne_subjects, 'match_statement.subjects');
     return F.matchStatement({
         subject: _ne_subjects,
@@ -1103,8 +1046,8 @@ export function namedExpressionFrom(input) {
     if (isNodeData(input))
         return input;
     return F.namedExpression({
-        name: _resolveOne(input.name, _K2, _K21),
-        value: _resolveOne(input.value, _K0, _K1),
+        name: _resolveOne(input.name, _K3, _K26),
+        value: _resolveOne(input.value, _K0, _K2),
     });
 }
 export function noneFrom(input) {
@@ -1124,29 +1067,28 @@ export function nonlocalStatementFrom(...input) {
 export function notOperatorFrom(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("not_operator"))
         return input;
-    return F.notOperator(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "argument" in input ? input.argument : input), _K0, _K1));
+    return F.notOperator(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "argument" in input ? input.argument : input), _K0, _K2));
 }
 export function pairFrom(input) {
     if (isNodeData(input))
         return input;
     return F.pair({
-        key: _resolveOne(input.key, _K0, _K1),
-        value: _resolveOne(input.value, _K0, _K1),
+        key: _resolveOne(input.key, _K0, _K2),
+        value: _resolveOne(input.value, _K0, _K2),
     });
 }
-export function parametersFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Parameters) {
-        const data = input[0];
-        const stored = data._parameter;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.parameters(...children);
+export function parametersFrom(input) {
+    if (isNodeData(input) && input.$type === TSKindId.Parameters) {
+        const data = input;
+        const child = data._parameters;
+        return F.parameters(child);
     }
-    return F.parameters(...input);
+    return F.parameters(input);
 }
 export function parenthesizedExpressionFrom(input) {
     if (isNodeData(input) && input.$type === TSKindId.ParenthesizedExpression) {
         const data = input;
-        const child = data._expression;
+        const child = data._content;
         return F.parenthesizedExpression(child);
     }
     return F.parenthesizedExpression(input);
@@ -1154,7 +1096,7 @@ export function parenthesizedExpressionFrom(input) {
 export function parenthesizedListSplatFrom(input) {
     if (isNodeData(input) && input.$type === TSKindId.ParenthesizedListSplat) {
         const data = input;
-        const child = data._parenthesized_list_splat;
+        const child = data._content;
         return F.parenthesizedListSplat(child);
     }
     return F.parenthesizedListSplat(input);
@@ -1177,16 +1119,16 @@ export function printStatementFrom(input) {
     if (input !== undefined && isNodeData(input))
         return input;
     return F.printStatement({
-        argument: _resolveMany(input?.argument, _K0, _K1),
         chevron: _resolveOneBranch(input?.chevron, "chevron"),
+        argument: _resolveMany(input?.argument, _K0, _K2),
     });
 }
 export function raiseStatementFrom(input) {
     if (input !== undefined && isNodeData(input))
         return input;
     return F.raiseStatement({
-        expressions: _resolveOne(input?.expressions, _K0, _K16),
-        cause: _resolveOne(input?.cause, _K0, _K1),
+        expressions: _resolveOne(input?.expressions, _K0, _K21),
+        cause: _resolveOne(input?.cause, _K0, _K2),
     });
 }
 export function relativeImportFrom(input) {
@@ -1205,20 +1147,19 @@ export function returnStatementFrom(input) {
     }
     return F.returnStatement(input);
 }
-export function setFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Set) {
-        const data = input[0];
-        const stored = data._expression;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.set(...children);
+export function setFrom(input) {
+    if (isNodeData(input) && input.$type === TSKindId.Set) {
+        const data = input;
+        const child = data._collection_elements;
+        return F.set(child);
     }
-    return F.set(...input);
+    return F.set(input);
 }
 export function setComprehensionFrom(input) {
     if (isNodeData(input))
         return input;
     return F.setComprehension({
-        body: _resolveOne(input.body, _K0, _K1),
+        body: _resolveOne(input.body, _K0, _K2),
         comprehensionClauses: _resolveOneBranch(input.comprehensionClauses, "_comprehension_clauses") ?? F.comprehensionClauses(),
     });
 }
@@ -1226,34 +1167,37 @@ export function sliceFrom(input) {
     if (input !== undefined && isNodeData(input))
         return input;
     return F.slice({
-        start: _resolveOne(input?.start, _K0, _K1),
-        stop: _resolveOne(input?.stop, _K0, _K1),
-        step: _resolveOne(input?.step, _K0, _K1),
+        start: _resolveOne(input?.start, _K0, _K2),
+        stop: _resolveOne(input?.stop, _K0, _K2),
+        step: _resolveOneBranch(input?.step, "slice_group1"),
     });
 }
 export function splatPatternFrom(input) {
-    if (isNodeData(input) && input.$type === kindIdFromName("splat_pattern"))
+    if (isNodeData(input))
         return input;
-    return F.splatPattern(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "identifier" in input ? input.identifier : input), _K24, _K6));
+    return F.splatPattern({
+        operator: coerceKindEnumStorage(_resolveOneLeaf(input.operator, "_splat_pattern_operator"), [["*", kindIdFromName("*")], ["**", kindIdFromName("**")]]),
+        identifier: _resolveOneLeaf(input.identifier, "identifier"),
+    });
 }
 export function splatTypeFrom(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("splat_type"))
         return input;
-    return F.splatType(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "identifier" in input ? input.identifier : input), _K24, _K6));
+    return F.splatType(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "identifier" in input ? input.identifier : input), _K27, _K5));
 }
 export function stringFrom(input) {
     if (isNodeData(input))
         return input;
     return F.string({
         stringStart: _resolveOneLeaf(input.stringStart, "string_start"),
-        content: _resolveMany(input.content, _K6, _K25),
+        content: _resolveMany(input.content, _K5, _K28),
         stringEnd: _resolveOneLeaf(input.stringEnd, "string_end"),
     });
 }
 export function stringContentFrom(...input) {
     if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.StringContent) {
         const data = input[0];
-        const stored = data._escape_interpolation;
+        const stored = data._content;
         const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
         return F.stringContent(...children);
     }
@@ -1262,10 +1206,10 @@ export function stringContentFrom(...input) {
 export function subscriptFrom(input) {
     if (isNodeData(input))
         return input;
-    const _ne_subscripts = _resolveMany(input.subscript, _K0, _K26);
+    const _ne_subscripts = _resolveMany(input.subscript, _K0, _K29);
     _assertNonEmpty(_ne_subscripts, 'subscript.subscripts');
     return F.subscript({
-        value: _resolveOne(input.value, _K0, _K4),
+        value: _resolveOne(input.value, _K0, _K7),
         subscript: _ne_subscripts,
     });
 }
@@ -1278,34 +1222,32 @@ export function tryStatementFrom(input) {
     if (isNodeData(input))
         return input;
     return F.tryStatement({
-        body: _resolveOneBranch(input.body, "_suite") ?? F.suite(),
+        body: _resolveOne(input.body, _K10, _K11),
         exceptClauses: _resolveManyBranch(input.exceptClauses, "except_clause"),
         elseClause: _resolveOneBranch(input.elseClause, "else_clause"),
         finallyClause: _resolveOneBranch(input.finallyClause, "finally_clause"),
     });
 }
-export function tupleFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Tuple) {
-        const data = input[0];
-        const stored = data._expression;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.tuple(...children);
+export function tupleFrom(input) {
+    if (isNodeData(input) && input.$type === TSKindId.Tuple) {
+        const data = input;
+        const child = data._collection_elements;
+        return F.tuple(child);
     }
-    return F.tuple(...input);
+    return F.tuple(input);
 }
-export function tuplePatternFrom(...input) {
-    if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TuplePattern) {
-        const data = input[0];
-        const stored = data._pattern;
-        const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-        return F.tuplePattern(...children);
+export function tuplePatternFrom(input) {
+    if (isNodeData(input) && input.$type === TSKindId.TuplePattern) {
+        const data = input;
+        const child = data._patterns;
+        return F.tuplePattern(child);
     }
-    return F.tuplePattern(...input);
+    return F.tuplePattern(input);
 }
 export function typeFrom(input) {
     if (isNodeData(input) && input.$type === TSKindId.Type) {
         const data = input;
-        const child = data._expression;
+        const child = data._content;
         return F.type(child);
     }
     return F.type(input);
@@ -1314,7 +1256,7 @@ export function typeAliasStatementFrom(input) {
     if (isNodeData(input))
         return input;
     return F.typeAliasStatement({
-        type: coerceKindEnumStorage(_resolveOne("type", _K6, _K6), [["type", kindIdFromName("type")]]),
+        type: coerceKindEnumStorage(_resolveOne("type", _K5, _K5), [["type", kindIdFromName("type")]]),
         left: _resolveOneBranch(input.left, "type") ?? F.type(),
         right: _resolveOneBranch(input.right, "type") ?? F.type(),
     });
@@ -1339,14 +1281,14 @@ export function typedDefaultParameterFrom(input) {
     return F.typedDefaultParameter({
         name: _resolveOneLeaf(input.name, "identifier"),
         type: _resolveOneBranch(input.type, "type") ?? F.type(),
-        value: _resolveOne(input.value, _K0, _K1),
+        value: _resolveOne(input.value, _K0, _K2),
     });
 }
 export function typedParameterFrom(input) {
     if (isNodeData(input))
         return input;
     return F.typedParameter({
-        identifier: _resolveOne(input.identifier, _K2, _K27),
+        content: _resolveOne(input.content, _K3, _K30),
         type: _resolveOneBranch(input.type, "type") ?? F.type(),
     });
 }
@@ -1355,7 +1297,7 @@ export function unaryOperatorFrom(input) {
         return input;
     return F.unaryOperator({
         operator: coerceKindEnumStorage(_resolveOneLeaf(input.operator, "_unary_operator_operator"), [["+", kindIdFromName("+")], ["-", kindIdFromName("-")], ["~", kindIdFromName("~")]]),
-        argument: _resolveOne(input.argument, _K0, _K4),
+        argument: _resolveOne(input.argument, _K0, _K7),
     });
 }
 export function unionPatternFrom(...input) {
@@ -1379,55 +1321,43 @@ export function whileStatementFrom(input) {
     if (isNodeData(input))
         return input;
     return F.whileStatement({
-        condition: _resolveOne(input.condition, _K0, _K1),
-        body: _resolveOneBranch(input.body, "_suite") ?? F.suite(),
+        condition: _resolveOne(input.condition, _K0, _K2),
+        body: _resolveOne(input.body, _K10, _K11),
         alternative: _resolveOneBranch(input.alternative, "else_clause"),
     });
 }
-export function withClauseBareFrom(...input) {
-    return F.withClauseBare(...input);
-}
-export function withClauseParenFrom(...input) {
-    return F.withClauseParen(...input);
-}
 export function withClauseFrom(input) {
-    if (input !== undefined && isNodeData(input)) {
-        if (input.$type === kindIdFromName("with_clause"))
-            return input;
+    if (isNodeData(input) && input.$type === TSKindId.WithClause) {
+        const data = input;
+        const child = data._content;
+        return F.withClause(child);
     }
-    return _applyFactory(F.withClause, input);
-}
-export function withClauseUFormBareFrom(input) {
-    return F.withClauseUFormBare({
-        withClauseBare: _resolveOne(input.withClauseBare, _K6, _K6),
-    });
-}
-export function withClauseUFormParenFrom(input) {
-    return F.withClauseUFormParen({
-        withClauseParen: _resolveOneBranch(input.withClauseParen, "_with_clause_paren"),
-    });
+    return F.withClause(input);
 }
 export function withItemFrom(input) {
     if (isNodeData(input) && input.$type === kindIdFromName("with_item"))
         return input;
-    return F.withItem(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "value" in input ? input.value : input), _K0, _K1));
+    return F.withItem(_resolveOne((input !== null && typeof input === 'object' && !isNodeData(input) && "value" in input ? input.value : input), _K0, _K2));
 }
 export function withStatementFrom(input) {
     if (isNodeData(input))
         return input;
     return F.withStatement({
         asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-        withClause: _resolveOneBranch(input.withClause, "with_clause"),
-        body: _resolveOneBranch(input.body, "_suite") ?? F.suite(),
+        withClause: _resolveOneBranch(input.withClause, "with_clause") ?? F.withClause(),
+        body: _resolveOne(input.body, _K10, _K11),
     });
 }
 export function yield_From(input) {
     if (isNodeData(input) && input.$type === TSKindId.Yield) {
         const data = input;
-        const child = data._expression;
+        const child = data._content;
         return F.yield_(child);
     }
     return F.yield_(input);
+}
+export function sliceGroup1From(input) {
+    return F.sliceGroup1(input);
 }
 export function stringStartFrom(input) {
     if (typeof input !== 'string')

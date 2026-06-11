@@ -1,11 +1,11 @@
 /** All branch (non-leaf) node kind strings. */
-export declare const NODE_KINDS: readonly ['_as_pattern', '_comprehension_clauses', '_list_pattern', '_match_block', '_simple_pattern_negative', '_simple_statements', '_suite', '_tuple_pattern', '_with_clause_paren', 'aliased_import', 'argument_list', 'as_pattern', 'assert_statement', 'assignment', 'attribute', 'augmented_assignment', 'await', 'binary_operator', 'block', 'boolean_operator', 'call', 'case_clause', 'case_pattern', 'chevron', 'class_definition', 'class_pattern', 'comparison_operator', 'complex_pattern', 'concatenated_string', 'conditional_expression', 'constrained_type', 'decorated_definition', 'decorator', 'default_parameter', 'delete_statement', 'dict_pattern', 'dictionary', 'dictionary_comprehension', 'dictionary_splat', 'dictionary_splat_pattern', 'dotted_name', 'elif_clause', 'else_clause', 'except_clause', 'exec_statement', 'expression_list', 'expression_statement', 'expression_statement_tuple', 'finally_clause', 'for_in_clause', 'for_statement', 'format_specifier', 'function_definition', 'future_import_statement', 'generator_expression', 'generic_type', 'global_statement', 'if_clause', 'if_statement', 'import_from_statement', 'import_statement', 'interpolation', 'keyword_argument', 'keyword_identifier', 'keyword_pattern', 'lambda', 'lambda_parameters', 'lambda_within_for_in_clause', 'list', 'list_comprehension', 'list_pattern', 'list_splat', 'list_splat_pattern', 'match_statement', 'member_type', 'module', 'named_expression', 'nonlocal_statement', 'not_operator', 'pair', 'parameters', 'parenthesized_expression', 'parenthesized_list_splat', 'pattern_list', 'print_statement', 'raise_statement', 'relative_import', 'return_statement', 'set', 'set_comprehension', 'slice', 'splat_pattern', 'splat_type', 'string', 'string_content', 'subscript', 'try_statement', 'tuple', 'tuple_pattern', 'type', 'type_alias_statement', 'type_parameter', 'typed_default_parameter', 'typed_parameter', 'unary_operator', 'union_pattern', 'union_type', 'while_statement', 'with_clause', 'with_clause_bare', 'with_clause_paren', 'with_item', 'with_statement', 'yield'];
+export declare const NODE_KINDS: readonly ['_as_pattern', '_comprehension_clauses', '_except_clause_list', '_expression_statement_tuple', '_list_pattern', '_match_block', '_simple_pattern_negative', '_simple_statements', '_slice_group1', '_suite', '_tuple_pattern', '_with_clause_bare', '_with_clause_paren', 'aliased_import', 'argument_list', 'as_pattern', 'assert_statement', 'assignment', 'attribute', 'augmented_assignment', 'await', 'binary_operator', 'block', 'boolean_operator', 'call', 'case_clause', 'case_pattern', 'chevron', 'class_definition', 'class_pattern', 'comparison_operator', 'complex_pattern', 'concatenated_string', 'conditional_expression', 'constrained_type', 'decorated_definition', 'decorator', 'default_parameter', 'delete_statement', 'dict_pattern', 'dictionary', 'dictionary_comprehension', 'dictionary_splat', 'dictionary_splat_pattern', 'dotted_name', 'elif_clause', 'else_clause', 'except_clause', 'exec_statement', 'expression_list', 'expression_statement', 'finally_clause', 'for_in_clause', 'for_statement', 'format_specifier', 'function_definition', 'future_import_statement', 'generator_expression', 'generic_type', 'global_statement', 'if_clause', 'if_statement', 'import_from_statement', 'import_statement', 'interpolation', 'keyword_argument', 'keyword_identifier', 'keyword_pattern', 'lambda', 'lambda_parameters', 'lambda_within_for_in_clause', 'list', 'list_comprehension', 'list_pattern', 'list_splat', 'list_splat_pattern', 'match_statement', 'member_type', 'module', 'named_expression', 'nonlocal_statement', 'not_operator', 'pair', 'parameters', 'parenthesized_expression', 'parenthesized_list_splat', 'pattern_list', 'print_statement', 'raise_statement', 'relative_import', 'return_statement', 'set', 'set_comprehension', 'slice', 'slice_group1', 'splat_pattern', 'splat_type', 'string', 'string_content', 'subscript', 'try_statement', 'tuple', 'tuple_pattern', 'type', 'type_alias_statement', 'type_parameter', 'typed_default_parameter', 'typed_parameter', 'unary_operator', 'union_pattern', 'union_type', 'while_statement', 'with_clause', 'with_item', 'with_statement', 'yield'];
 /** All leaf/terminal node kind strings. */
-export declare const LEAF_KINDS: readonly [')', 'False', 'None', 'True', ']', '_', '__future__', '_async_marker', '_augmented_assignment_operator', '_dedent', '_identifier', '_indent', '_is_not', '_kw_async_marker', '_kw_type', '_newline', '_not_in', '_string_content', '_unary_operator_operator', 'and', 'as', 'assert', 'async', 'break', 'break_statement', 'case', 'class', 'comment', 'continue', 'continue_statement', 'def', 'del', 'elif', 'else', 'escape_interpolation', 'escape_sequence', 'except', 'exec', 'false', 'finally', 'float', 'for', 'from', 'global', 'identifier', 'if', 'import', 'import_prefix', 'in', 'integer', 'line_continuation', 'match', 'none', 'nonlocal', 'not', 'or', 'pass', 'pass_statement', 'print', 'raise', 'return', 'string_end', 'string_start', 'true', 'try', 'type_conversion', 'while', 'with', '}'];
+export declare const LEAF_KINDS: readonly [')', 'False', 'None', 'True', ']', '_', '__future__', '_async_marker', '_augmented_assignment_operator', '_complex_pattern_operator', '_dedent', '_indent', '_is_not', '_kw_async_marker', '_kw_identifier', '_kw_type', '_newline', '_not_in', '_splat_pattern_operator', '_string_content', '_unary_operator_operator', 'and', 'as', 'assert', 'async', 'break', 'break_statement', 'case', 'class', 'comment', 'continue', 'continue_statement', 'def', 'del', 'elif', 'else', 'escape_interpolation', 'escape_sequence', 'except', 'exec', 'false', 'finally', 'float', 'for', 'from', 'global', 'identifier', 'if', 'import', 'import_prefix', 'in', 'integer', 'line_continuation', 'match', 'none', 'nonlocal', 'not', 'or', 'pass', 'pass_statement', 'print', 'raise', 'return', 'string_end', 'string_start', 'true', 'try', 'type_conversion', 'while', 'with', '}'];
 /** All node kind strings (branch + leaf). */
-export declare const ALL_KINDS: readonly ["_as_pattern", "_comprehension_clauses", "_list_pattern", "_match_block", "_simple_pattern_negative", "_simple_statements", "_suite", "_tuple_pattern", "_with_clause_paren", "aliased_import", "argument_list", "as_pattern", "assert_statement", "assignment", "attribute", "augmented_assignment", "await", "binary_operator", "block", "boolean_operator", "call", "case_clause", "case_pattern", "chevron", "class_definition", "class_pattern", "comparison_operator", "complex_pattern", "concatenated_string", "conditional_expression", "constrained_type", "decorated_definition", "decorator", "default_parameter", "delete_statement", "dict_pattern", "dictionary", "dictionary_comprehension", "dictionary_splat", "dictionary_splat_pattern", "dotted_name", "elif_clause", "else_clause", "except_clause", "exec_statement", "expression_list", "expression_statement", "expression_statement_tuple", "finally_clause", "for_in_clause", "for_statement", "format_specifier", "function_definition", "future_import_statement", "generator_expression", "generic_type", "global_statement", "if_clause", "if_statement", "import_from_statement", "import_statement", "interpolation", "keyword_argument", "keyword_identifier", "keyword_pattern", "lambda", "lambda_parameters", "lambda_within_for_in_clause", "list", "list_comprehension", "list_pattern", "list_splat", "list_splat_pattern", "match_statement", "member_type", "module", "named_expression", "nonlocal_statement", "not_operator", "pair", "parameters", "parenthesized_expression", "parenthesized_list_splat", "pattern_list", "print_statement", "raise_statement", "relative_import", "return_statement", "set", "set_comprehension", "slice", "splat_pattern", "splat_type", "string", "string_content", "subscript", "try_statement", "tuple", "tuple_pattern", "type", "type_alias_statement", "type_parameter", "typed_default_parameter", "typed_parameter", "unary_operator", "union_pattern", "union_type", "while_statement", "with_clause", "with_clause_bare", "with_clause_paren", "with_item", "with_statement", "yield", ")", "False", "None", "True", "]", "_", "__future__", "_async_marker", "_augmented_assignment_operator", "_dedent", "_identifier", "_indent", "_is_not", "_kw_async_marker", "_kw_type", "_newline", "_not_in", "_string_content", "_unary_operator_operator", "and", "as", "assert", "async", "break", "break_statement", "case", "class", "comment", "continue", "continue_statement", "def", "del", "elif", "else", "escape_interpolation", "escape_sequence", "except", "exec", "false", "finally", "float", "for", "from", "global", "identifier", "if", "import", "import_prefix", "in", "integer", "line_continuation", "match", "none", "nonlocal", "not", "or", "pass", "pass_statement", "print", "raise", "return", "string_end", "string_start", "true", "try", "type_conversion", "while", "with", "}"];
+export declare const ALL_KINDS: readonly ["_as_pattern", "_comprehension_clauses", "_except_clause_list", "_expression_statement_tuple", "_list_pattern", "_match_block", "_simple_pattern_negative", "_simple_statements", "_slice_group1", "_suite", "_tuple_pattern", "_with_clause_bare", "_with_clause_paren", "aliased_import", "argument_list", "as_pattern", "assert_statement", "assignment", "attribute", "augmented_assignment", "await", "binary_operator", "block", "boolean_operator", "call", "case_clause", "case_pattern", "chevron", "class_definition", "class_pattern", "comparison_operator", "complex_pattern", "concatenated_string", "conditional_expression", "constrained_type", "decorated_definition", "decorator", "default_parameter", "delete_statement", "dict_pattern", "dictionary", "dictionary_comprehension", "dictionary_splat", "dictionary_splat_pattern", "dotted_name", "elif_clause", "else_clause", "except_clause", "exec_statement", "expression_list", "expression_statement", "finally_clause", "for_in_clause", "for_statement", "format_specifier", "function_definition", "future_import_statement", "generator_expression", "generic_type", "global_statement", "if_clause", "if_statement", "import_from_statement", "import_statement", "interpolation", "keyword_argument", "keyword_identifier", "keyword_pattern", "lambda", "lambda_parameters", "lambda_within_for_in_clause", "list", "list_comprehension", "list_pattern", "list_splat", "list_splat_pattern", "match_statement", "member_type", "module", "named_expression", "nonlocal_statement", "not_operator", "pair", "parameters", "parenthesized_expression", "parenthesized_list_splat", "pattern_list", "print_statement", "raise_statement", "relative_import", "return_statement", "set", "set_comprehension", "slice", "slice_group1", "splat_pattern", "splat_type", "string", "string_content", "subscript", "try_statement", "tuple", "tuple_pattern", "type", "type_alias_statement", "type_parameter", "typed_default_parameter", "typed_parameter", "unary_operator", "union_pattern", "union_type", "while_statement", "with_clause", "with_item", "with_statement", "yield", ")", "False", "None", "True", "]", "_", "__future__", "_async_marker", "_augmented_assignment_operator", "_complex_pattern_operator", "_dedent", "_indent", "_is_not", "_kw_async_marker", "_kw_identifier", "_kw_type", "_newline", "_not_in", "_splat_pattern_operator", "_string_content", "_unary_operator_operator", "and", "as", "assert", "async", "break", "break_statement", "case", "class", "comment", "continue", "continue_statement", "def", "del", "elif", "else", "escape_interpolation", "escape_sequence", "except", "exec", "false", "finally", "float", "for", "from", "global", "identifier", "if", "import", "import_prefix", "in", "integer", "line_continuation", "match", "none", "nonlocal", "not", "or", "pass", "pass_statement", "print", "raise", "return", "string_end", "string_start", "true", "try", "type_conversion", "while", "with", "}"];
 /** Language keywords (alphabetic anonymous tokens). */
-export declare const KEYWORDS: readonly ['False', 'None', 'True', '_', '__future__', '_async_marker', '_kw_async_marker', '_kw_type', '_not_escape_sequence', 'amp', 'and', 'as', 'assert', 'async', 'at', 'break', 'break_statement', 'caret', 'case', 'class', 'continue', 'continue_statement', 'dash', 'def', 'del', 'elif', 'ellipsis', 'else', 'exec', 'false', 'finally', 'for', 'from', 'global', 'gt_gt', 'if', 'import', 'in', 'keyword_separator', 'lt_lt', 'match', 'none', 'nonlocal', 'not', 'or', 'pass', 'pass_statement', 'percent', 'pipe', 'plus', 'positional_separator', 'print', 'raise', 'return', 'slash', 'slash_slash', 'star', 'star_star', 'true', 'try', 'while', 'wildcard_import', 'with'];
+export declare const KEYWORDS: readonly ['False', 'None', 'True', '_', '__future__', '_async_marker', '_kw_async_marker', '_kw_identifier', '_kw_type', '_not_escape_sequence', 'amp', 'and', 'as', 'assert', 'async', 'at', 'break', 'break_statement', 'caret', 'case', 'class', 'continue', 'continue_statement', 'dash', 'def', 'del', 'elif', 'ellipsis', 'else', 'exec', 'false', 'finally', 'for', 'from', 'global', 'gt_gt', 'if', 'import', 'in', 'keyword_separator', 'lt_lt', 'match', 'none', 'nonlocal', 'not', 'or', 'pass', 'pass_statement', 'percent', 'pipe', 'plus', 'positional_separator', 'print', 'raise', 'return', 'slash', 'slash_slash', 'star', 'star_star', 'true', 'try', 'while', 'wildcard_import', 'with'];
 /** Operator/punctuation tokens. */
 export declare const OPERATORS: readonly ["(", "*", "**", ",", "-", "->", ".", "...", "/", ":", ":=", "=", ">>", "@", "[", "\\", "{", "|"];
 export type NodeKind = (typeof NODE_KINDS)[number];
@@ -45,35 +45,35 @@ export declare const TREE_SITTER_KIND_ID_BY_KIND: {
     readonly finally: 35;
     readonly with: 36;
     readonly def: 37;
-    readonly star_star: 39;
-    readonly global: 40;
-    readonly nonlocal: 41;
-    readonly exec: 42;
-    readonly class: 44;
-    readonly at: 47;
-    readonly _: 48;
-    readonly pipe: 49;
-    readonly plus: 52;
-    readonly dash: 53;
-    readonly not: 54;
-    readonly and: 55;
-    readonly or: 56;
-    readonly slash: 57;
-    readonly percent: 58;
-    readonly slash_slash: 59;
-    readonly amp: 60;
-    readonly caret: 61;
-    readonly lt_lt: 62;
-    readonly ellipsis: 87;
-    readonly escape_sequence: 89;
-    readonly type_conversion: 92;
-    readonly integer: 93;
-    readonly float: 94;
-    readonly true: 96;
-    readonly false: 97;
-    readonly none: 98;
-    readonly comment: 99;
-    readonly line_continuation: 100;
+    readonly star_star: 38;
+    readonly global: 39;
+    readonly nonlocal: 40;
+    readonly exec: 41;
+    readonly class: 43;
+    readonly at: 46;
+    readonly _: 47;
+    readonly pipe: 48;
+    readonly plus: 51;
+    readonly dash: 52;
+    readonly not: 53;
+    readonly and: 54;
+    readonly or: 55;
+    readonly slash: 56;
+    readonly percent: 57;
+    readonly slash_slash: 58;
+    readonly amp: 59;
+    readonly caret: 60;
+    readonly lt_lt: 61;
+    readonly ellipsis: 79;
+    readonly escape_sequence: 81;
+    readonly type_conversion: 84;
+    readonly integer: 85;
+    readonly float: 86;
+    readonly true: 88;
+    readonly false: 89;
+    readonly none: 90;
+    readonly comment: 91;
+    readonly line_continuation: 92;
     readonly _newline: 101;
     readonly _indent: 102;
     readonly _dedent: 103;
@@ -198,8 +198,12 @@ export declare const TREE_SITTER_KIND_ID_BY_KIND: {
     readonly await: 237;
     readonly positional_separator: 238;
     readonly keyword_separator: 239;
-    readonly _with_clause_paren: 245;
-    readonly _simple_pattern_negative: 248;
+    readonly _slice_group1: 240;
+    readonly _expression_statement_tuple: 245;
+    readonly _with_clause_bare: 246;
+    readonly _with_clause_paren: 247;
+    readonly _simple_pattern_negative: 250;
+    readonly _except_clause_list: 251;
 };
 export declare const TREE_SITTER_KIND_BY_KIND_ID: {
     readonly [1]: "identifier";
@@ -231,35 +235,35 @@ export declare const TREE_SITTER_KIND_BY_KIND_ID: {
     readonly [35]: "finally";
     readonly [36]: "with";
     readonly [37]: "def";
-    readonly [39]: "star_star";
-    readonly [40]: "global";
-    readonly [41]: "nonlocal";
-    readonly [42]: "exec";
-    readonly [44]: "class";
-    readonly [47]: "at";
-    readonly [48]: "_";
-    readonly [49]: "pipe";
-    readonly [52]: "plus";
-    readonly [53]: "dash";
-    readonly [54]: "not";
-    readonly [55]: "and";
-    readonly [56]: "or";
-    readonly [57]: "slash";
-    readonly [58]: "percent";
-    readonly [59]: "slash_slash";
-    readonly [60]: "amp";
-    readonly [61]: "caret";
-    readonly [62]: "lt_lt";
-    readonly [87]: "ellipsis";
-    readonly [89]: "escape_sequence";
-    readonly [92]: "type_conversion";
-    readonly [93]: "integer";
-    readonly [94]: "float";
-    readonly [96]: "true";
-    readonly [97]: "false";
-    readonly [98]: "none";
-    readonly [99]: "comment";
-    readonly [100]: "line_continuation";
+    readonly [38]: "star_star";
+    readonly [39]: "global";
+    readonly [40]: "nonlocal";
+    readonly [41]: "exec";
+    readonly [43]: "class";
+    readonly [46]: "at";
+    readonly [47]: "_";
+    readonly [48]: "pipe";
+    readonly [51]: "plus";
+    readonly [52]: "dash";
+    readonly [53]: "not";
+    readonly [54]: "and";
+    readonly [55]: "or";
+    readonly [56]: "slash";
+    readonly [57]: "percent";
+    readonly [58]: "slash_slash";
+    readonly [59]: "amp";
+    readonly [60]: "caret";
+    readonly [61]: "lt_lt";
+    readonly [79]: "ellipsis";
+    readonly [81]: "escape_sequence";
+    readonly [84]: "type_conversion";
+    readonly [85]: "integer";
+    readonly [86]: "float";
+    readonly [88]: "true";
+    readonly [89]: "false";
+    readonly [90]: "none";
+    readonly [91]: "comment";
+    readonly [92]: "line_continuation";
     readonly [101]: "_newline";
     readonly [102]: "_indent";
     readonly [103]: "_dedent";
@@ -384,8 +388,12 @@ export declare const TREE_SITTER_KIND_BY_KIND_ID: {
     readonly [237]: "await";
     readonly [238]: "positional_separator";
     readonly [239]: "keyword_separator";
-    readonly [245]: "_with_clause_paren";
-    readonly [248]: "_simple_pattern_negative";
+    readonly [240]: "_slice_group1";
+    readonly [245]: "_expression_statement_tuple";
+    readonly [246]: "_with_clause_bare";
+    readonly [247]: "_with_clause_paren";
+    readonly [250]: "_simple_pattern_negative";
+    readonly [251]: "_except_clause_list";
 };
 export declare const TREE_SITTER_KIND_ID_JSON: readonly [{
     readonly name: "identifier";
@@ -534,147 +542,147 @@ export declare const TREE_SITTER_KIND_ID_JSON: readonly [{
     readonly cName: "anon_sym_def";
 }, {
     readonly name: "star_star";
-    readonly id: 39;
+    readonly id: 38;
     readonly enumName: "AnonStarStar";
     readonly cName: "anon_sym_STAR_STAR";
 }, {
     readonly name: "global";
-    readonly id: 40;
+    readonly id: 39;
     readonly enumName: "AnonGlobal";
     readonly cName: "anon_sym_global";
 }, {
     readonly name: "nonlocal";
-    readonly id: 41;
+    readonly id: 40;
     readonly enumName: "AnonNonlocal";
     readonly cName: "anon_sym_nonlocal";
 }, {
     readonly name: "exec";
-    readonly id: 42;
+    readonly id: 41;
     readonly enumName: "AnonExec";
     readonly cName: "anon_sym_exec";
 }, {
     readonly name: "class";
-    readonly id: 44;
+    readonly id: 43;
     readonly enumName: "AnonClass";
     readonly cName: "anon_sym_class";
 }, {
     readonly name: "at";
-    readonly id: 47;
+    readonly id: 46;
     readonly enumName: "AnonAt";
     readonly cName: "anon_sym_AT";
 }, {
     readonly name: "_";
-    readonly id: 48;
+    readonly id: 47;
     readonly enumName: "Anon";
     readonly cName: "anon_sym__";
 }, {
     readonly name: "pipe";
-    readonly id: 49;
+    readonly id: 48;
     readonly enumName: "AnonPipe";
     readonly cName: "anon_sym_PIPE";
 }, {
     readonly name: "plus";
-    readonly id: 52;
+    readonly id: 51;
     readonly enumName: "AnonPlus";
     readonly cName: "anon_sym_PLUS";
 }, {
     readonly name: "dash";
-    readonly id: 53;
+    readonly id: 52;
     readonly enumName: "AnonDash";
     readonly cName: "anon_sym_DASH";
 }, {
     readonly name: "not";
-    readonly id: 54;
+    readonly id: 53;
     readonly enumName: "AnonNot";
     readonly cName: "anon_sym_not";
 }, {
     readonly name: "and";
-    readonly id: 55;
+    readonly id: 54;
     readonly enumName: "AnonAnd";
     readonly cName: "anon_sym_and";
 }, {
     readonly name: "or";
-    readonly id: 56;
+    readonly id: 55;
     readonly enumName: "AnonOr";
     readonly cName: "anon_sym_or";
 }, {
     readonly name: "slash";
-    readonly id: 57;
+    readonly id: 56;
     readonly enumName: "AnonSlash";
     readonly cName: "anon_sym_SLASH";
 }, {
     readonly name: "percent";
-    readonly id: 58;
+    readonly id: 57;
     readonly enumName: "AnonPercent";
     readonly cName: "anon_sym_PERCENT";
 }, {
     readonly name: "slash_slash";
-    readonly id: 59;
+    readonly id: 58;
     readonly enumName: "AnonSlashSlash";
     readonly cName: "anon_sym_SLASH_SLASH";
 }, {
     readonly name: "amp";
-    readonly id: 60;
+    readonly id: 59;
     readonly enumName: "AnonAmp";
     readonly cName: "anon_sym_AMP";
 }, {
     readonly name: "caret";
-    readonly id: 61;
+    readonly id: 60;
     readonly enumName: "AnonCaret";
     readonly cName: "anon_sym_CARET";
 }, {
     readonly name: "lt_lt";
-    readonly id: 62;
+    readonly id: 61;
     readonly enumName: "AnonLtLt";
     readonly cName: "anon_sym_LT_LT";
 }, {
     readonly name: "ellipsis";
-    readonly id: 87;
+    readonly id: 79;
     readonly enumName: "Ellipsis";
     readonly cName: "sym_ellipsis";
 }, {
     readonly name: "escape_sequence";
-    readonly id: 89;
+    readonly id: 81;
     readonly enumName: "EscapeSequence";
     readonly cName: "sym_escape_sequence";
 }, {
     readonly name: "type_conversion";
-    readonly id: 92;
+    readonly id: 84;
     readonly enumName: "TypeConversion";
     readonly cName: "sym_type_conversion";
 }, {
     readonly name: "integer";
-    readonly id: 93;
+    readonly id: 85;
     readonly enumName: "Integer";
     readonly cName: "sym_integer";
 }, {
     readonly name: "float";
-    readonly id: 94;
+    readonly id: 86;
     readonly enumName: "Float";
     readonly cName: "sym_float";
 }, {
     readonly name: "true";
-    readonly id: 96;
+    readonly id: 88;
     readonly enumName: "True";
     readonly cName: "sym_true";
 }, {
     readonly name: "false";
-    readonly id: 97;
+    readonly id: 89;
     readonly enumName: "False";
     readonly cName: "sym_false";
 }, {
     readonly name: "none";
-    readonly id: 98;
+    readonly id: 90;
     readonly enumName: "None";
     readonly cName: "sym_none";
 }, {
     readonly name: "comment";
-    readonly id: 99;
+    readonly id: 91;
     readonly enumName: "Comment";
     readonly cName: "sym_comment";
 }, {
     readonly name: "line_continuation";
-    readonly id: 100;
+    readonly id: 92;
     readonly enumName: "LineContinuation";
     readonly cName: "sym_line_continuation";
 }, {
@@ -1298,15 +1306,35 @@ export declare const TREE_SITTER_KIND_ID_JSON: readonly [{
     readonly enumName: "KeywordSeparator";
     readonly cName: "sym_keyword_separator";
 }, {
-    readonly name: "_with_clause_paren";
+    readonly name: "_slice_group1";
+    readonly id: 240;
+    readonly enumName: "SliceGroup1";
+    readonly cName: "sym__slice_group1";
+}, {
+    readonly name: "_expression_statement_tuple";
     readonly id: 245;
+    readonly enumName: "ExpressionStatementTuple";
+    readonly cName: "sym__expression_statement_tuple";
+}, {
+    readonly name: "_with_clause_bare";
+    readonly id: 246;
+    readonly enumName: "WithClauseBare";
+    readonly cName: "sym__with_clause_bare";
+}, {
+    readonly name: "_with_clause_paren";
+    readonly id: 247;
     readonly enumName: "WithClauseParen";
     readonly cName: "sym__with_clause_paren";
 }, {
     readonly name: "_simple_pattern_negative";
-    readonly id: 248;
+    readonly id: 250;
     readonly enumName: "SimplePatternNegative";
     readonly cName: "sym__simple_pattern_negative";
+}, {
+    readonly name: "_except_clause_list";
+    readonly id: 251;
+    readonly enumName: "ExceptClauseList";
+    readonly cName: "sym__except_clause_list";
 }];
 export declare const enum TSFieldId {
     FieldAlias = 1,
@@ -1320,6 +1348,7 @@ export declare const enum TSFieldId {
     FieldBody = 9,
     FieldCause = 10,
     FieldCode = 11,
+    FieldComparators = 12,
     FieldCondition = 13,
     FieldConsequence = 14,
     FieldConstraint = 15,
@@ -1327,43 +1356,46 @@ export declare const enum TSFieldId {
     FieldDefinition = 17,
     FieldDottedName = 18,
     FieldElseClause = 19,
-    FieldExceptClauses = 20,
-    FieldExpression = 21,
-    FieldFinallyClause = 24,
-    FieldFormatSpecifier = 25,
-    FieldFunction = 26,
-    FieldGuard = 27,
-    FieldIdentifier = 28,
-    FieldImaginary = 29,
-    FieldImportPrefix = 30,
-    FieldInClause = 31,
-    FieldKey = 32,
-    FieldLeft = 33,
-    FieldModuleName = 34,
-    FieldName = 35,
-    FieldNewline = 36,
-    FieldObject = 37,
-    FieldOperator = 38,
-    FieldOperators = 39,
-    FieldParameters = 40,
-    FieldPrimaryExpression = 41,
-    FieldReal = 42,
-    FieldReturnType = 43,
-    FieldRight = 44,
-    FieldSimplePattern = 45,
+    FieldEntries = 20,
+    FieldExceptClauses = 21,
+    FieldExpression = 22,
+    FieldFinallyClause = 23,
+    FieldFormatSpecifier = 24,
+    FieldFunction = 25,
+    FieldGuard = 26,
+    FieldIdentifier = 27,
+    FieldImaginary = 28,
+    FieldImportPrefix = 29,
+    FieldInClause = 30,
+    FieldKey = 31,
+    FieldLeft = 32,
+    FieldModuleName = 33,
+    FieldName = 34,
+    FieldNewline = 35,
+    FieldObject = 36,
+    FieldOperator = 37,
+    FieldOperators = 38,
+    FieldParameters = 39,
+    FieldPrimaryExpression = 40,
+    FieldReal = 41,
+    FieldReturnType = 42,
+    FieldRight = 43,
+    FieldSimplePattern = 44,
+    FieldStart = 45,
     FieldStep = 46,
-    FieldStringEnd = 47,
-    FieldStringStart = 48,
-    FieldSubject = 49,
-    FieldSubscript = 50,
-    FieldSuperclasses = 51,
-    FieldType = 52,
-    FieldTypeConversion = 53,
-    FieldTypeParameter = 54,
-    FieldTypeParameters = 55,
-    FieldValue = 56,
-    FieldWildcardImport = 57,
-    FieldWithClause = 58
+    FieldStop = 47,
+    FieldStringEnd = 48,
+    FieldStringStart = 49,
+    FieldSubject = 50,
+    FieldSubscript = 51,
+    FieldSuperclasses = 52,
+    FieldType = 53,
+    FieldTypeConversion = 54,
+    FieldTypeParameter = 55,
+    FieldTypeParameters = 56,
+    FieldValue = 57,
+    FieldWildcardImport = 58,
+    FieldWithClause = 59
 }
 export declare const TREE_SITTER_FIELD_ID_BY_NAME: {
     readonly alias: TSFieldId.FieldAlias;
@@ -1377,6 +1409,7 @@ export declare const TREE_SITTER_FIELD_ID_BY_NAME: {
     readonly body: TSFieldId.FieldBody;
     readonly cause: TSFieldId.FieldCause;
     readonly code: TSFieldId.FieldCode;
+    readonly comparators: TSFieldId.FieldComparators;
     readonly condition: TSFieldId.FieldCondition;
     readonly consequence: TSFieldId.FieldConsequence;
     readonly constraint: TSFieldId.FieldConstraint;
@@ -1384,6 +1417,7 @@ export declare const TREE_SITTER_FIELD_ID_BY_NAME: {
     readonly definition: TSFieldId.FieldDefinition;
     readonly dotted_name: TSFieldId.FieldDottedName;
     readonly else_clause: TSFieldId.FieldElseClause;
+    readonly entries: TSFieldId.FieldEntries;
     readonly except_clauses: TSFieldId.FieldExceptClauses;
     readonly expression: TSFieldId.FieldExpression;
     readonly finally_clause: TSFieldId.FieldFinallyClause;
@@ -1408,7 +1442,9 @@ export declare const TREE_SITTER_FIELD_ID_BY_NAME: {
     readonly return_type: TSFieldId.FieldReturnType;
     readonly right: TSFieldId.FieldRight;
     readonly simple_pattern: TSFieldId.FieldSimplePattern;
+    readonly start: TSFieldId.FieldStart;
     readonly step: TSFieldId.FieldStep;
+    readonly stop: TSFieldId.FieldStop;
     readonly string_end: TSFieldId.FieldStringEnd;
     readonly string_start: TSFieldId.FieldStringStart;
     readonly subject: TSFieldId.FieldSubject;
@@ -1434,6 +1470,7 @@ export declare const TREE_SITTER_FIELD_NAME_BY_ID: {
     readonly 9: "body";
     readonly 10: "cause";
     readonly 11: "code";
+    readonly 12: "comparators";
     readonly 13: "condition";
     readonly 14: "consequence";
     readonly 15: "constraint";
@@ -1441,43 +1478,46 @@ export declare const TREE_SITTER_FIELD_NAME_BY_ID: {
     readonly 17: "definition";
     readonly 18: "dotted_name";
     readonly 19: "else_clause";
-    readonly 20: "except_clauses";
-    readonly 21: "expression";
-    readonly 24: "finally_clause";
-    readonly 25: "format_specifier";
-    readonly 26: "function";
-    readonly 27: "guard";
-    readonly 28: "identifier";
-    readonly 29: "imaginary";
-    readonly 30: "import_prefix";
-    readonly 31: "in_clause";
-    readonly 32: "key";
-    readonly 33: "left";
-    readonly 34: "module_name";
-    readonly 35: "name";
-    readonly 36: "newline";
-    readonly 37: "object";
-    readonly 38: "operator";
-    readonly 39: "operators";
-    readonly 40: "parameters";
-    readonly 41: "primary_expression";
-    readonly 42: "real";
-    readonly 43: "return_type";
-    readonly 44: "right";
-    readonly 45: "simple_pattern";
+    readonly 20: "entries";
+    readonly 21: "except_clauses";
+    readonly 22: "expression";
+    readonly 23: "finally_clause";
+    readonly 24: "format_specifier";
+    readonly 25: "function";
+    readonly 26: "guard";
+    readonly 27: "identifier";
+    readonly 28: "imaginary";
+    readonly 29: "import_prefix";
+    readonly 30: "in_clause";
+    readonly 31: "key";
+    readonly 32: "left";
+    readonly 33: "module_name";
+    readonly 34: "name";
+    readonly 35: "newline";
+    readonly 36: "object";
+    readonly 37: "operator";
+    readonly 38: "operators";
+    readonly 39: "parameters";
+    readonly 40: "primary_expression";
+    readonly 41: "real";
+    readonly 42: "return_type";
+    readonly 43: "right";
+    readonly 44: "simple_pattern";
+    readonly 45: "start";
     readonly 46: "step";
-    readonly 47: "string_end";
-    readonly 48: "string_start";
-    readonly 49: "subject";
-    readonly 50: "subscript";
-    readonly 51: "superclasses";
-    readonly 52: "type";
-    readonly 53: "type_conversion";
-    readonly 54: "type_parameter";
-    readonly 55: "type_parameters";
-    readonly 56: "value";
-    readonly 57: "wildcard_import";
-    readonly 58: "with_clause";
+    readonly 47: "stop";
+    readonly 48: "string_end";
+    readonly 49: "string_start";
+    readonly 50: "subject";
+    readonly 51: "subscript";
+    readonly 52: "superclasses";
+    readonly 53: "type";
+    readonly 54: "type_conversion";
+    readonly 55: "type_parameter";
+    readonly 56: "type_parameters";
+    readonly 57: "value";
+    readonly 58: "wildcard_import";
+    readonly 59: "with_clause";
 };
 export declare const TREE_SITTER_FIELD_ID_JSON: readonly [{
     readonly name: "alias";
@@ -1535,6 +1575,11 @@ export declare const TREE_SITTER_FIELD_ID_JSON: readonly [{
     readonly enumName: "FieldCode";
     readonly cName: "field_code";
 }, {
+    readonly name: "comparators";
+    readonly id: 12;
+    readonly enumName: "FieldComparators";
+    readonly cName: "field_comparators";
+}, {
     readonly name: "condition";
     readonly id: 13;
     readonly enumName: "FieldCondition";
@@ -1570,188 +1615,203 @@ export declare const TREE_SITTER_FIELD_ID_JSON: readonly [{
     readonly enumName: "FieldElseClause";
     readonly cName: "field_else_clause";
 }, {
-    readonly name: "except_clauses";
+    readonly name: "entries";
     readonly id: 20;
+    readonly enumName: "FieldEntries";
+    readonly cName: "field_entries";
+}, {
+    readonly name: "except_clauses";
+    readonly id: 21;
     readonly enumName: "FieldExceptClauses";
     readonly cName: "field_except_clauses";
 }, {
     readonly name: "expression";
-    readonly id: 21;
+    readonly id: 22;
     readonly enumName: "FieldExpression";
     readonly cName: "field_expression";
 }, {
     readonly name: "finally_clause";
-    readonly id: 24;
+    readonly id: 23;
     readonly enumName: "FieldFinallyClause";
     readonly cName: "field_finally_clause";
 }, {
     readonly name: "format_specifier";
-    readonly id: 25;
+    readonly id: 24;
     readonly enumName: "FieldFormatSpecifier";
     readonly cName: "field_format_specifier";
 }, {
     readonly name: "function";
-    readonly id: 26;
+    readonly id: 25;
     readonly enumName: "FieldFunction";
     readonly cName: "field_function";
 }, {
     readonly name: "guard";
-    readonly id: 27;
+    readonly id: 26;
     readonly enumName: "FieldGuard";
     readonly cName: "field_guard";
 }, {
     readonly name: "identifier";
-    readonly id: 28;
+    readonly id: 27;
     readonly enumName: "FieldIdentifier";
     readonly cName: "field_identifier";
 }, {
     readonly name: "imaginary";
-    readonly id: 29;
+    readonly id: 28;
     readonly enumName: "FieldImaginary";
     readonly cName: "field_imaginary";
 }, {
     readonly name: "import_prefix";
-    readonly id: 30;
+    readonly id: 29;
     readonly enumName: "FieldImportPrefix";
     readonly cName: "field_import_prefix";
 }, {
     readonly name: "in_clause";
-    readonly id: 31;
+    readonly id: 30;
     readonly enumName: "FieldInClause";
     readonly cName: "field_in_clause";
 }, {
     readonly name: "key";
-    readonly id: 32;
+    readonly id: 31;
     readonly enumName: "FieldKey";
     readonly cName: "field_key";
 }, {
     readonly name: "left";
-    readonly id: 33;
+    readonly id: 32;
     readonly enumName: "FieldLeft";
     readonly cName: "field_left";
 }, {
     readonly name: "module_name";
-    readonly id: 34;
+    readonly id: 33;
     readonly enumName: "FieldModuleName";
     readonly cName: "field_module_name";
 }, {
     readonly name: "name";
-    readonly id: 35;
+    readonly id: 34;
     readonly enumName: "FieldName";
     readonly cName: "field_name";
 }, {
     readonly name: "newline";
-    readonly id: 36;
+    readonly id: 35;
     readonly enumName: "FieldNewline";
     readonly cName: "field_newline";
 }, {
     readonly name: "object";
-    readonly id: 37;
+    readonly id: 36;
     readonly enumName: "FieldObject";
     readonly cName: "field_object";
 }, {
     readonly name: "operator";
-    readonly id: 38;
+    readonly id: 37;
     readonly enumName: "FieldOperator";
     readonly cName: "field_operator";
 }, {
     readonly name: "operators";
-    readonly id: 39;
+    readonly id: 38;
     readonly enumName: "FieldOperators";
     readonly cName: "field_operators";
 }, {
     readonly name: "parameters";
-    readonly id: 40;
+    readonly id: 39;
     readonly enumName: "FieldParameters";
     readonly cName: "field_parameters";
 }, {
     readonly name: "primary_expression";
-    readonly id: 41;
+    readonly id: 40;
     readonly enumName: "FieldPrimaryExpression";
     readonly cName: "field_primary_expression";
 }, {
     readonly name: "real";
-    readonly id: 42;
+    readonly id: 41;
     readonly enumName: "FieldReal";
     readonly cName: "field_real";
 }, {
     readonly name: "return_type";
-    readonly id: 43;
+    readonly id: 42;
     readonly enumName: "FieldReturnType";
     readonly cName: "field_return_type";
 }, {
     readonly name: "right";
-    readonly id: 44;
+    readonly id: 43;
     readonly enumName: "FieldRight";
     readonly cName: "field_right";
 }, {
     readonly name: "simple_pattern";
-    readonly id: 45;
+    readonly id: 44;
     readonly enumName: "FieldSimplePattern";
     readonly cName: "field_simple_pattern";
+}, {
+    readonly name: "start";
+    readonly id: 45;
+    readonly enumName: "FieldStart";
+    readonly cName: "field_start";
 }, {
     readonly name: "step";
     readonly id: 46;
     readonly enumName: "FieldStep";
     readonly cName: "field_step";
 }, {
-    readonly name: "string_end";
+    readonly name: "stop";
     readonly id: 47;
+    readonly enumName: "FieldStop";
+    readonly cName: "field_stop";
+}, {
+    readonly name: "string_end";
+    readonly id: 48;
     readonly enumName: "FieldStringEnd";
     readonly cName: "field_string_end";
 }, {
     readonly name: "string_start";
-    readonly id: 48;
+    readonly id: 49;
     readonly enumName: "FieldStringStart";
     readonly cName: "field_string_start";
 }, {
     readonly name: "subject";
-    readonly id: 49;
+    readonly id: 50;
     readonly enumName: "FieldSubject";
     readonly cName: "field_subject";
 }, {
     readonly name: "subscript";
-    readonly id: 50;
+    readonly id: 51;
     readonly enumName: "FieldSubscript";
     readonly cName: "field_subscript";
 }, {
     readonly name: "superclasses";
-    readonly id: 51;
+    readonly id: 52;
     readonly enumName: "FieldSuperclasses";
     readonly cName: "field_superclasses";
 }, {
     readonly name: "type";
-    readonly id: 52;
+    readonly id: 53;
     readonly enumName: "FieldType";
     readonly cName: "field_type";
 }, {
     readonly name: "type_conversion";
-    readonly id: 53;
+    readonly id: 54;
     readonly enumName: "FieldTypeConversion";
     readonly cName: "field_type_conversion";
 }, {
     readonly name: "type_parameter";
-    readonly id: 54;
+    readonly id: 55;
     readonly enumName: "FieldTypeParameter";
     readonly cName: "field_type_parameter";
 }, {
     readonly name: "type_parameters";
-    readonly id: 55;
+    readonly id: 56;
     readonly enumName: "FieldTypeParameters";
     readonly cName: "field_type_parameters";
 }, {
     readonly name: "value";
-    readonly id: 56;
+    readonly id: 57;
     readonly enumName: "FieldValue";
     readonly cName: "field_value";
 }, {
     readonly name: "wildcard_import";
-    readonly id: 57;
+    readonly id: 58;
     readonly enumName: "FieldWildcardImport";
     readonly cName: "field_wildcard_import";
 }, {
     readonly name: "with_clause";
-    readonly id: 58;
+    readonly id: 59;
     readonly enumName: "FieldWithClause";
     readonly cName: "field_with_clause";
 }];
@@ -1764,9 +1824,12 @@ export declare const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
 /** Valid values for `_augmented_assignment_operator` nodes. */
 export declare const _AUGMENTED_ASSIGNMENT_OPERATORS: readonly ['+=', '-=', '*=', '/=', '@=', '//=', '%=', '**=', '>>=', '<<=', '&=', '^=', '|='];
 export type AugmentedAssignmentOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_OPERATORS)[number];
-/** Valid values for `_identifier` nodes. */
-export declare const _IDENTIFIERS: readonly ['*', '**'];
-export type IdentifierValue = (typeof _IDENTIFIERS)[number];
+/** Valid values for `_complex_pattern_operator` nodes. */
+export declare const _COMPLEX_PATTERN_OPERATORS: readonly ['+', '-'];
+export type ComplexPatternOperatorValue = (typeof _COMPLEX_PATTERN_OPERATORS)[number];
+/** Valid values for `_splat_pattern_operator` nodes. */
+export declare const _SPLAT_PATTERN_OPERATORS: readonly ['*', '**'];
+export type SplatPatternOperatorValue = (typeof _SPLAT_PATTERN_OPERATORS)[number];
 /** Valid values for `_unary_operator_operator` nodes. */
 export declare const _UNARY_OPERATOR_OPERATORS: readonly ['+', '-', '~'];
 export type UnaryOperatorOperatorValue = (typeof _UNARY_OPERATOR_OPERATORS)[number];

@@ -77,15 +77,74 @@ export function _assignmentTyped(config) {
         },
     }, methodsEngine);
 }
+export function _comparisonOperatorComparator(config) {
+    const _operators = coerceKindEnumStorage(config.operators, [["<", TSKindId.Lt], ["<=", TSKindId.LtEq], ["==", TSKindId.EqEq], ["!=", TSKindId.BangEq], [">=", TSKindId.GtEq], [">", TSKindId.Gt], ["<>", TSKindId.LtGt], ["in", TSKindId.In], ["is", TSKindId.Is]]);
+    const _primary_expression = config.primaryExpression;
+    return withMethods({
+        $type: TSKindId.ComparisonOperatorComparator,
+        $source: 2,
+        $named: true,
+        _operators,
+        _primary_expression,
+        operators() { return _operators; },
+        primaryExpression() { return _primary_expression; },
+        $with: {
+            operators: (value) => _comparisonOperatorComparator({ ...config, operators: value }),
+            primaryExpression: (value) => _comparisonOperatorComparator({ ...config, primaryExpression: value }),
+        },
+    }, methodsEngine);
+}
 export function comprehensionClauses(...children) {
-    const _for_in_clause = children;
+    const _content = children;
     return withMethods({
         $type: TSKindId.ComprehensionClauses,
         $source: 2,
         $named: true,
-        _for_in_clause,
-        forInClause() { return _for_in_clause; },
+        _content,
+        contents() { return _content; },
         $with: { $children: (...vs) => comprehensionClauses(...vs) },
+    }, methodsEngine);
+}
+export function _exceptClauseAs(config) {
+    const _value = config.value;
+    const _alias = config.alias;
+    return withMethods({
+        $type: TSKindId.ExceptClauseAs,
+        $source: 2,
+        $named: true,
+        _value,
+        _alias,
+        value() { return _value; },
+        alias() { return _alias; },
+        $with: {
+            value: (value) => _exceptClauseAs({ ...config, value: value }),
+            alias: (value) => _exceptClauseAs({ ...config, alias: value }),
+        },
+    }, methodsEngine);
+}
+export function exceptClauseList(config) {
+    const _value = config.value;
+    return withMethods({
+        $type: TSKindId.ExceptClauseList,
+        $source: 2,
+        $named: true,
+        _value,
+        values() { return _value; },
+        $with: {
+            values: (...values) => exceptClauseList({ ...config, value: values }),
+        },
+    }, methodsEngine);
+}
+export function expressionStatementTuple(...children) {
+    _assertNonEmpty(children, '_expression_statement_tuple.children');
+    const _expression = children;
+    return withMethods({
+        $type: TSKindId.ExpressionStatementTuple,
+        $source: 2,
+        $named: true,
+        _expression,
+        expressions() { return _expression; },
+        $with: { $children: (...vs) => expressionStatementTuple(...vs) },
     }, methodsEngine);
 }
 export function _importList(config) {
@@ -174,13 +233,13 @@ export function notIn(text) {
     }, methodsEngine);
 }
 export function simplePatternNegative(child) {
-    const _integer = child;
+    const _content = child;
     return withMethods({
         $type: TSKindId.SimplePatternNegative,
         $source: 2,
         $named: true,
-        _integer,
-        integer() { return _integer; },
+        _content,
+        content() { return _content; },
         $with: { $child: (v) => simplePatternNegative(v) },
     }, methodsEngine);
 }
@@ -196,6 +255,17 @@ export function simpleStatements(...children) {
         $with: { $children: (...vs) => simpleStatements(...vs) },
     }, methodsEngine);
 }
+export function _sliceGroup1(child) {
+    const _expression = child;
+    return withMethods({
+        $type: TSKindId._SliceGroup1,
+        $source: 2,
+        $named: true,
+        _expression,
+        expression() { return _expression; },
+        $with: { $child: (v) => _sliceGroup1(v) },
+    }, methodsEngine);
+}
 export function _tuplePattern(...children) {
     const _case_pattern = children;
     return withMethods({
@@ -207,16 +277,28 @@ export function _tuplePattern(...children) {
         $with: { $children: (...vs) => _tuplePattern(...vs) },
     }, methodsEngine);
 }
-export function _withClauseParen(...children) {
-    _assertNonEmpty(children, '_with_clause_paren.children');
+export function withClauseBare(...children) {
+    _assertNonEmpty(children, '_with_clause_bare.children');
     const _with_item = children;
     return withMethods({
-        $type: TSKindId._WithClauseParen,
+        $type: TSKindId.WithClauseBare,
         $source: 2,
         $named: true,
         _with_item,
         withItems() { return _with_item; },
-        $with: { $children: (...vs) => _withClauseParen(...vs) },
+        $with: { $children: (...vs) => withClauseBare(...vs) },
+    }, methodsEngine);
+}
+export function withClauseParen(...children) {
+    _assertNonEmpty(children, '_with_clause_paren.children');
+    const _with_item = children;
+    return withMethods({
+        $type: TSKindId.WithClauseParen,
+        $source: 2,
+        $named: true,
+        _with_item,
+        withItems() { return _with_item; },
+        $with: { $children: (...vs) => withClauseParen(...vs) },
     }, methodsEngine);
 }
 export function aliasedImport(config) {
@@ -236,15 +318,17 @@ export function aliasedImport(config) {
         },
     }, methodsEngine);
 }
-export function argumentList(...children) {
-    const _expression = children;
+export function argumentList(config = {}) {
+    const _arguments = config.arguments;
     return withMethods({
         $type: TSKindId.ArgumentList,
         $source: 2,
         $named: true,
-        _expression,
-        expression() { return _expression; },
-        $with: { $children: (...vs) => argumentList(...vs) },
+        _arguments,
+        arguments() { return _arguments; },
+        $with: {
+            arguments: (...values) => argumentList({ ...config, arguments: values }),
+        },
     }, methodsEngine);
 }
 export function asPattern(config) {
@@ -277,64 +361,19 @@ export function assertStatement(...children) {
     }, methodsEngine);
 }
 export function assignment(config) {
-    switch (config.$variant) {
-        case 'eq': return assignmentUFormEq(config);
-        case 'type': return assignmentUFormType(config);
-        case 'typed': return assignmentUFormTyped(config);
-    }
-    throw new Error(`assignment: unknown $variant '${config.$variant}' — expected one of 'eq' | 'type' | 'typed'.`);
-}
-export function assignmentUFormEq(config) {
     const _left = config.left;
-    const _assignment_eq = config.assignmentEq;
+    const _content = config.content;
     return withMethods({
         $type: TSKindId.Assignment,
         $source: 2,
         $named: true,
-        $variant: 'eq',
         _left,
-        _assignment_eq,
+        _content,
         left() { return _left; },
-        assignmentEq() { return _assignment_eq; },
+        content() { return _content; },
         $with: {
-            left: (value) => assignmentUFormEq({ ...config, left: value }),
-            assignmentEq: (value) => assignmentUFormEq({ ...config, assignmentEq: value }),
-        },
-    }, methodsEngine);
-}
-export function assignmentUFormType(config) {
-    const _left = config.left;
-    const _assignment_type = config.assignmentType;
-    return withMethods({
-        $type: TSKindId.Assignment,
-        $source: 2,
-        $named: true,
-        $variant: 'type',
-        _left,
-        _assignment_type,
-        left() { return _left; },
-        assignmentType() { return _assignment_type; },
-        $with: {
-            left: (value) => assignmentUFormType({ ...config, left: value }),
-            assignmentType: (value) => assignmentUFormType({ ...config, assignmentType: value }),
-        },
-    }, methodsEngine);
-}
-export function assignmentUFormTyped(config) {
-    const _left = config.left;
-    const _assignment_typed = config.assignmentTyped;
-    return withMethods({
-        $type: TSKindId.Assignment,
-        $source: 2,
-        $named: true,
-        $variant: 'typed',
-        _left,
-        _assignment_typed,
-        left() { return _left; },
-        assignmentTyped() { return _assignment_typed; },
-        $with: {
-            left: (value) => assignmentUFormTyped({ ...config, left: value }),
-            assignmentTyped: (value) => assignmentUFormTyped({ ...config, assignmentTyped: value }),
+            left: (value) => assignment({ ...config, left: value }),
+            content: (value) => assignment({ ...config, content: value }),
         },
     }, methodsEngine);
 }
@@ -391,7 +430,7 @@ export function await_(primaryExpression) {
 }
 export function binaryOperator(config) {
     const _left = config.left;
-    const _operator = coerceKindEnumStorage(config.operator, []);
+    const _operator = coerceKindEnumStorage(config.operator, [["+", TSKindId.Plus], ["-", TSKindId.Dash], ["*", TSKindId.Star2], ["@", TSKindId.At2], ["/", TSKindId.Slash2], ["%", TSKindId.Percent], ["//", TSKindId.SlashSlash], ["**", TSKindId.StarStar], ["|", TSKindId.Pipe2], ["&", TSKindId.Amp], ["^", TSKindId.Caret], ["<<", TSKindId.LtLt], [">>", TSKindId.GtGt]]);
     const _right = config.right;
     return withMethods({
         $type: TSKindId.BinaryOperator,
@@ -423,7 +462,7 @@ export function block(...children) {
 }
 export function booleanOperator(config) {
     const _left = config.left;
-    const _operator = coerceKindEnumStorage(config.operator, []);
+    const _operator = coerceKindEnumStorage(config.operator, [["and", TSKindId.And], ["or", TSKindId.Or]]);
     const _right = config.right;
     return withMethods({
         $type: TSKindId.BooleanOperator,
@@ -489,13 +528,13 @@ export function caseClause(config) {
     }, methodsEngine);
 }
 export function casePattern(child) {
-    const _as_pattern = child;
+    const _content = child;
     return withMethods({
         $type: TSKindId.CasePattern,
         $source: 2,
         $named: true,
-        _as_pattern,
-        asPattern() { return _as_pattern; },
+        _content,
+        content() { return _content; },
         $with: { $child: (v) => casePattern(v) },
     }, methodsEngine);
 }
@@ -566,43 +605,43 @@ export function comment(text) {
 }
 export function comparisonOperator(config) {
     const _left = config.left;
-    const _operators = config.operators;
-    const _primary_expression = config.primaryExpression;
+    const _comparators = config.comparators;
     return withMethods({
         $type: TSKindId.ComparisonOperator,
         $source: 2,
         $named: true,
         _left,
-        _operators,
-        _primary_expression,
+        _comparators,
         left() { return _left; },
-        operators() { return _operators; },
-        primaryExpressions() { return _primary_expression; },
+        comparators() { return _comparators; },
         $with: {
             left: (value) => comparisonOperator({ ...config, left: value }),
-            operators: (...values) => comparisonOperator({ ...config, operators: values }),
-            primaryExpressions: (...values) => comparisonOperator({ ...config, primaryExpression: values }),
+            comparators: (...values) => comparisonOperator({ ...config, comparators: values }),
         },
     }, methodsEngine);
 }
 export function complexPattern(config) {
     const _real = coerceBooleanKeywordStorage(config.real);
     const _imaginary = config.imaginary;
-    const _integer = config.integer;
+    const _operator = coerceKindEnumStorage(config.operator, [["+", TSKindId.Plus], ["-", TSKindId.Dash]]);
+    const _content = config.content;
     return withMethods({
         $type: TSKindId.ComplexPattern,
         $source: 2,
         $named: true,
         _real,
         _imaginary,
-        _integer,
+        _operator,
+        _content,
         real() { return _real; },
         imaginary() { return _imaginary; },
-        integer() { return _integer; },
+        operator() { return _operator; },
+        content() { return _content; },
         $with: {
             real: (value) => complexPattern({ ...config, real: value }),
             imaginary: (value) => complexPattern({ ...config, imaginary: value }),
-            integer: (value) => complexPattern({ ...config, integer: value }),
+            operator: (value) => complexPattern({ ...config, operator: value }),
+            content: (value) => complexPattern({ ...config, content: value }),
         },
     }, methodsEngine);
 }
@@ -614,7 +653,7 @@ export function concatenatedString(...children) {
         $source: 2,
         $named: true,
         _string,
-        string() { return _string; },
+        strings() { return _string; },
         $with: { $children: (...vs) => concatenatedString(...vs) },
     }, methodsEngine);
 }
@@ -681,20 +720,16 @@ export function decoratedDefinition(config) {
         },
     }, methodsEngine);
 }
-export function decorator(config) {
-    const _expression = config.expression;
-    const _newline = config.newline;
+export function decorator(expression) {
+    const _expression = expression;
     return withMethods({
         $type: TSKindId.Decorator,
         $source: 2,
         $named: true,
         _expression,
-        _newline,
         expression() { return _expression; },
-        newline() { return _newline; },
         $with: {
-            expression: (value) => decorator({ ...config, expression: value }),
-            newline: (value) => decorator({ ...config, newline: value }),
+            expression: (value) => decorator(value),
         },
     }, methodsEngine);
 }
@@ -726,26 +761,42 @@ export function deleteStatement(child) {
         $with: { $child: (v) => deleteStatement(v) },
     }, methodsEngine);
 }
-export function dictPattern(...children) {
-    const _dict_pattern_kv = children;
+export function dictPattern(config = {}) {
+    const _dict_pattern_kv = config.dictPatternKv;
+    const _key = config.key;
+    const _value = config.value;
+    const _splat_pattern = config.splatPattern;
     return withMethods({
         $type: TSKindId.DictPattern,
         $source: 2,
         $named: true,
         _dict_pattern_kv,
-        dictPatternKvs() { return _dict_pattern_kv; },
-        $with: { $children: (...vs) => dictPattern(...vs) },
+        _key,
+        _value,
+        _splat_pattern,
+        dictPatternKv() { return _dict_pattern_kv; },
+        keys() { return _key; },
+        values() { return _value; },
+        splatPatterns() { return _splat_pattern; },
+        $with: {
+            dictPatternKv: (value) => dictPattern({ ...config, dictPatternKv: value }),
+            keys: (...values) => dictPattern({ ...config, key: values }),
+            values: (...values) => dictPattern({ ...config, value: values }),
+            splatPatterns: (...values) => dictPattern({ ...config, splatPattern: values }),
+        },
     }, methodsEngine);
 }
-export function dictionary(...children) {
-    const _pair = children;
+export function dictionary(config = {}) {
+    const _entries = config.entries;
     return withMethods({
         $type: TSKindId.Dictionary,
         $source: 2,
         $named: true,
-        _pair,
-        pairs() { return _pair; },
-        $with: { $children: (...vs) => dictionary(...vs) },
+        _entries,
+        entries() { return _entries; },
+        $with: {
+            entries: (...values) => dictionary({ ...config, entries: values }),
+        },
     }, methodsEngine);
 }
 export function dictionaryComprehension(config) {
@@ -779,13 +830,13 @@ export function dictionarySplat(expression) {
     }, methodsEngine);
 }
 export function dictionarySplatPattern(child) {
-    const _identifier = child;
+    const _content = child;
     return withMethods({
         $type: TSKindId.DictionarySplatPattern,
         $source: 2,
         $named: true,
-        _identifier,
-        identifier() { return _identifier; },
+        _content,
+        content() { return _content; },
         $with: { $child: (v) => dictionarySplatPattern(v) },
     }, methodsEngine);
 }
@@ -841,24 +892,28 @@ export function escapeSequence(text) {
         $text: text,
     }, methodsEngine);
 }
-export function exceptClause(config) {
-    const _value = config.value;
-    const _alias = config.alias;
-    const _suite = config.suite;
+export function exceptClause(config = {}) {
+    const _content = config.content;
+    const _simple_statements = config.simpleStatements;
+    const _block = config.block;
+    const _newline = config.newline;
     return withMethods({
         $type: TSKindId.ExceptClause,
         $source: 2,
         $named: true,
-        _value,
-        _alias,
-        _suite,
-        values() { return _value; },
-        alias() { return _alias; },
-        suite() { return _suite; },
+        _content,
+        _simple_statements,
+        _block,
+        _newline,
+        content() { return _content; },
+        simpleStatements() { return _simple_statements; },
+        block() { return _block; },
+        newline() { return _newline; },
         $with: {
-            values: (...values) => exceptClause({ ...config, value: values }),
-            alias: (value) => exceptClause({ ...config, alias: value }),
-            suite: (value) => exceptClause({ ...config, suite: value }),
+            content: (value) => exceptClause({ ...config, content: value }),
+            simpleStatements: (value) => exceptClause({ ...config, simpleStatements: value }),
+            block: (value) => exceptClause({ ...config, block: value }),
+            newline: (value) => exceptClause({ ...config, newline: value }),
         },
     }, methodsEngine);
 }
@@ -887,100 +942,19 @@ export function expressionList(...children) {
         $source: 2,
         $named: true,
         _expression,
-        expression() { return _expression; },
+        expressions() { return _expression; },
         $with: { $children: (...vs) => expressionList(...vs) },
     }, methodsEngine);
 }
-export function expressionStatementTuple(...children) {
-    _assertNonEmpty(children, 'expression_statement_tuple.children');
-    const _expression = children;
-    return withMethods({
-        $type: TSKindId._ExpressionStatementTuple,
-        $source: 2,
-        $named: true,
-        _expression,
-        expressions() { return _expression; },
-        $with: { $children: (...vs) => expressionStatementTuple(...vs) },
-    }, methodsEngine);
-}
-export function expressionStatement(config) {
-    switch (config.$variant) {
-        case 'expression': return expressionStatementUFormExpression(config);
-        case 'tuple': return expressionStatementUFormTuple(config);
-        case 'assignment': return expressionStatementUFormAssignment(config);
-        case 'augmented_assignment': return expressionStatementUFormAugmentedAssignment(config);
-        case 'yield': return expressionStatementUFormYield(config);
-    }
-    throw new Error(`expressionStatement: unknown $variant '${config.$variant}' — expected one of 'expression' | 'tuple' | 'assignment' | 'augmented_assignment' | 'yield'.`);
-}
-export function expressionStatementUFormExpression(config) {
-    const _expression = config.expression;
+export function expressionStatement(child) {
+    const _content = child;
     return withMethods({
         $type: TSKindId.ExpressionStatement,
         $source: 2,
         $named: true,
-        $variant: 'expression',
-        _expression,
-        expression() { return _expression; },
-        $with: {
-            expression: (value) => expressionStatementUFormExpression({ ...config, expression: value }),
-        },
-    }, methodsEngine);
-}
-export function expressionStatementUFormTuple(config) {
-    const _expression_statement_tuple = config.expressionStatementTuple;
-    return withMethods({
-        $type: TSKindId.ExpressionStatement,
-        $source: 2,
-        $named: true,
-        $variant: 'tuple',
-        _expression_statement_tuple,
-        expressionStatementTuple() { return _expression_statement_tuple; },
-        $with: {
-            expressionStatementTuple: (value) => expressionStatementUFormTuple({ ...config, expressionStatementTuple: value }),
-        },
-    }, methodsEngine);
-}
-export function expressionStatementUFormAssignment(config) {
-    const _assignment = config.assignment;
-    return withMethods({
-        $type: TSKindId.ExpressionStatement,
-        $source: 2,
-        $named: true,
-        $variant: 'assignment',
-        _assignment,
-        assignment() { return _assignment; },
-        $with: {
-            assignment: (value) => expressionStatementUFormAssignment({ ...config, assignment: value }),
-        },
-    }, methodsEngine);
-}
-export function expressionStatementUFormAugmentedAssignment(config) {
-    const _augmented_assignment = config.augmentedAssignment;
-    return withMethods({
-        $type: TSKindId.ExpressionStatement,
-        $source: 2,
-        $named: true,
-        $variant: 'augmented_assignment',
-        _augmented_assignment,
-        augmentedAssignment() { return _augmented_assignment; },
-        $with: {
-            augmentedAssignment: (value) => expressionStatementUFormAugmentedAssignment({ ...config, augmentedAssignment: value }),
-        },
-    }, methodsEngine);
-}
-export function expressionStatementUFormYield(config) {
-    const _yield = config.yield;
-    return withMethods({
-        $type: TSKindId.ExpressionStatement,
-        $source: 2,
-        $named: true,
-        $variant: 'yield',
-        _yield,
-        yield() { return _yield; },
-        $with: {
-            yield: (value) => expressionStatementUFormYield({ ...config, yield: value }),
-        },
+        _content,
+        content() { return _content; },
+        $with: { $child: (v) => expressionStatement(v) },
     }, methodsEngine);
 }
 export function false_() {
@@ -1065,13 +1039,13 @@ export function forStatement(config) {
     }, methodsEngine);
 }
 export function formatSpecifier(...children) {
-    const _interpolation = children;
+    const _content = children;
     return withMethods({
         $type: TSKindId.FormatSpecifier,
         $source: 2,
         $named: true,
-        _interpolation,
-        interpolations() { return _interpolation; },
+        _content,
+        contents() { return _content; },
         $with: { $children: (...vs) => formatSpecifier(...vs) },
     }, methodsEngine);
 }
@@ -1215,22 +1189,18 @@ export function ifStatement(config) {
 }
 export function importFromStatement(config) {
     const _module_name = config.moduleName;
-    const _wildcard_import = coerceBooleanKeywordStorage(config.wildcardImport);
-    const _name = config.name;
+    const _wildcard_import = config.wildcardImport;
     return withMethods({
         $type: TSKindId.ImportFromStatement,
         $source: 2,
         $named: true,
         _module_name,
         _wildcard_import,
-        _name,
         moduleName() { return _module_name; },
-        wildcardImport() { return _wildcard_import; },
-        names() { return _name; },
+        wildcardImports() { return _wildcard_import; },
         $with: {
             moduleName: (value) => importFromStatement({ ...config, moduleName: value }),
-            wildcardImport: (value) => importFromStatement({ ...config, wildcardImport: value }),
-            names: (...values) => importFromStatement({ ...config, name: values }),
+            wildcardImports: (...values) => importFromStatement({ ...config, wildcardImport: values }),
         },
     }, methodsEngine);
 }
@@ -1339,16 +1309,15 @@ export function lambda(config) {
         },
     }, methodsEngine);
 }
-export function lambdaParameters(...children) {
-    _assertNonEmpty(children, 'lambda_parameters.children');
-    const _parameter = children;
+export function lambdaParameters(child) {
+    const _parameters = child;
     return withMethods({
         $type: TSKindId.LambdaParameters,
         $source: 2,
         $named: true,
-        _parameter,
-        parameters() { return _parameter; },
-        $with: { $children: (...vs) => lambdaParameters(...vs) },
+        _parameters,
+        parameters() { return _parameters; },
+        $with: { $child: (v) => lambdaParameters(v) },
     }, methodsEngine);
 }
 export function lambdaWithinForInClause(config) {
@@ -1378,15 +1347,15 @@ export function lineContinuation(text) {
         $text: text,
     }, methodsEngine);
 }
-export function list(...children) {
-    const _expression = children;
+export function list(child) {
+    const _collection_elements = child;
     return withMethods({
         $type: TSKindId.List,
         $source: 2,
         $named: true,
-        _expression,
-        expressions() { return _expression; },
-        $with: { $children: (...vs) => list(...vs) },
+        _collection_elements,
+        collectionElements() { return _collection_elements; },
+        $with: { $child: (v) => list(v) },
     }, methodsEngine);
 }
 export function listComprehension(config) {
@@ -1406,15 +1375,15 @@ export function listComprehension(config) {
         },
     }, methodsEngine);
 }
-export function listPattern(...children) {
-    const _pattern = children;
+export function listPattern(child) {
+    const _patterns = child;
     return withMethods({
         $type: TSKindId.ListPattern,
         $source: 2,
         $named: true,
-        _pattern,
-        patterns() { return _pattern; },
-        $with: { $children: (...vs) => listPattern(...vs) },
+        _patterns,
+        patterns() { return _patterns; },
+        $with: { $child: (v) => listPattern(v) },
     }, methodsEngine);
 }
 export function listSplat(expression) {
@@ -1431,13 +1400,13 @@ export function listSplat(expression) {
     }, methodsEngine);
 }
 export function listSplatPattern(child) {
-    const _identifier = child;
+    const _content = child;
     return withMethods({
         $type: TSKindId.ListSplatPattern,
         $source: 2,
         $named: true,
-        _identifier,
-        identifier() { return _identifier; },
+        _content,
+        content() { return _content; },
         $with: { $child: (v) => listSplatPattern(v) },
     }, methodsEngine);
 }
@@ -1553,36 +1522,36 @@ export function pair(config) {
         },
     }, methodsEngine);
 }
-export function parameters(...children) {
-    const _parameter = children;
+export function parameters(child) {
+    const _parameters = child;
     return withMethods({
         $type: TSKindId.Parameters,
         $source: 2,
         $named: true,
-        _parameter,
-        parameters() { return _parameter; },
-        $with: { $children: (...vs) => parameters(...vs) },
+        _parameters,
+        parameters() { return _parameters; },
+        $with: { $child: (v) => parameters(v) },
     }, methodsEngine);
 }
 export function parenthesizedExpression(child) {
-    const _expression = child;
+    const _content = child;
     return withMethods({
         $type: TSKindId.ParenthesizedExpression,
         $source: 2,
         $named: true,
-        _expression,
-        expression() { return _expression; },
+        _content,
+        content() { return _content; },
         $with: { $child: (v) => parenthesizedExpression(v) },
     }, methodsEngine);
 }
 export function parenthesizedListSplat(child) {
-    const _parenthesized_list_splat = child;
+    const _content = child;
     return withMethods({
         $type: TSKindId.ParenthesizedListSplat,
         $source: 2,
         $named: true,
-        _parenthesized_list_splat,
-        parenthesizedListSplat() { return _parenthesized_list_splat; },
+        _content,
+        content() { return _content; },
         $with: { $child: (v) => parenthesizedListSplat(v) },
     }, methodsEngine);
 }
@@ -1602,24 +1571,24 @@ export function patternList(...children) {
         $source: 2,
         $named: true,
         _pattern,
-        pattern() { return _pattern; },
+        patterns() { return _pattern; },
         $with: { $children: (...vs) => patternList(...vs) },
     }, methodsEngine);
 }
 export function printStatement(config = {}) {
-    const _argument = config.argument;
     const _chevron = config.chevron;
+    const _argument = config.argument;
     return withMethods({
         $type: TSKindId.PrintStatement,
         $source: 2,
         $named: true,
-        _argument,
         _chevron,
-        arguments() { return _argument; },
+        _argument,
         chevron() { return _chevron; },
+        arguments() { return _argument; },
         $with: {
-            arguments: (...values) => printStatement({ ...config, argument: values }),
             chevron: (value) => printStatement({ ...config, chevron: value }),
+            arguments: (...values) => printStatement({ ...config, argument: values }),
         },
     }, methodsEngine);
 }
@@ -1668,16 +1637,15 @@ export function returnStatement(child) {
         $with: { $child: (v) => returnStatement(v) },
     }, methodsEngine);
 }
-export function set(...children) {
-    _assertNonEmpty(children, 'set.children');
-    const _expression = children;
+export function set(child) {
+    const _collection_elements = child;
     return withMethods({
         $type: TSKindId.Set,
         $source: 2,
         $named: true,
-        _expression,
-        expressions() { return _expression; },
-        $with: { $children: (...vs) => set(...vs) },
+        _collection_elements,
+        collectionElements() { return _collection_elements; },
+        $with: { $child: (v) => set(v) },
     }, methodsEngine);
 }
 export function setComprehension(config) {
@@ -1718,16 +1686,20 @@ export function slice(config = {}) {
         },
     }, methodsEngine);
 }
-export function splatPattern(identifier) {
-    const _identifier = identifier;
+export function splatPattern(config) {
+    const _operator = coerceKindEnumStorage(config.operator, [["*", TSKindId.Star2], ["**", TSKindId.StarStar]]);
+    const _identifier = config.identifier;
     return withMethods({
         $type: TSKindId.SplatPattern,
         $source: 2,
         $named: true,
+        _operator,
         _identifier,
+        operator() { return _operator; },
         identifier() { return _identifier; },
         $with: {
-            identifier: (value) => splatPattern(value),
+            operator: (value) => splatPattern({ ...config, operator: value }),
+            identifier: (value) => splatPattern({ ...config, identifier: value }),
         },
     }, methodsEngine);
 }
@@ -1766,14 +1738,13 @@ export function string(config) {
     }, methodsEngine);
 }
 export function stringContent(...children) {
-    _assertNonEmpty(children, 'string_content.children');
-    const _escape_interpolation = children;
+    const _content = children;
     return withMethods({
         $type: TSKindId.StringContent,
         $source: 2,
         $named: true,
-        _escape_interpolation,
-        escapeInterpolations() { return _escape_interpolation; },
+        _content,
+        contents() { return _content; },
         $with: { $children: (...vs) => stringContent(...vs) },
     }, methodsEngine);
 }
@@ -1827,36 +1798,36 @@ export function tryStatement(config) {
         },
     }, methodsEngine);
 }
-export function tuple(...children) {
-    const _expression = children;
+export function tuple(child) {
+    const _collection_elements = child;
     return withMethods({
         $type: TSKindId.Tuple,
         $source: 2,
         $named: true,
-        _expression,
-        expressions() { return _expression; },
-        $with: { $children: (...vs) => tuple(...vs) },
+        _collection_elements,
+        collectionElements() { return _collection_elements; },
+        $with: { $child: (v) => tuple(v) },
     }, methodsEngine);
 }
-export function tuplePattern(...children) {
-    const _pattern = children;
+export function tuplePattern(child) {
+    const _patterns = child;
     return withMethods({
         $type: TSKindId.TuplePattern,
         $source: 2,
         $named: true,
-        _pattern,
-        patterns() { return _pattern; },
-        $with: { $children: (...vs) => tuplePattern(...vs) },
+        _patterns,
+        patterns() { return _patterns; },
+        $with: { $child: (v) => tuplePattern(v) },
     }, methodsEngine);
 }
 export function type(child) {
-    const _expression = child;
+    const _content = child;
     return withMethods({
         $type: TSKindId.Type,
         $source: 2,
         $named: true,
-        _expression,
-        expression() { return _expression; },
+        _content,
+        content() { return _content; },
         $with: { $child: (v) => type(v) },
     }, methodsEngine);
 }
@@ -1926,18 +1897,18 @@ export function typedDefaultParameter(config) {
     }, methodsEngine);
 }
 export function typedParameter(config) {
-    const _identifier = config.identifier;
+    const _content = config.content;
     const _type = config.type;
     return withMethods({
         $type: TSKindId.TypedParameter,
         $source: 2,
         $named: true,
-        _identifier,
+        _content,
         _type,
-        identifier() { return _identifier; },
+        content() { return _content; },
         type() { return _type; },
         $with: {
-            identifier: (value) => typedParameter({ ...config, identifier: value }),
+            content: (value) => typedParameter({ ...config, content: value }),
             type: (value) => typedParameter({ ...config, type: value }),
         },
     }, methodsEngine);
@@ -1967,7 +1938,7 @@ export function unionPattern(...children) {
         $source: 2,
         $named: true,
         _simple_pattern,
-        simplePattern() { return _simple_pattern; },
+        simplePatterns() { return _simple_pattern; },
         $with: { $children: (...vs) => unionPattern(...vs) },
     }, methodsEngine);
 }
@@ -2009,63 +1980,15 @@ export function whileStatement(config) {
         },
     }, methodsEngine);
 }
-export function withClauseBare(...children) {
-    _assertNonEmpty(children, 'with_clause_bare.children');
-    const _with_item = children;
-    return withMethods({
-        $type: TSKindId._WithClauseBare,
-        $source: 2,
-        $named: true,
-        _with_item,
-        withItems() { return _with_item; },
-        $with: { $children: (...vs) => withClauseBare(...vs) },
-    }, methodsEngine);
-}
-export function withClauseParen(...children) {
-    _assertNonEmpty(children, 'with_clause_paren.children');
-    const _with_item = children;
-    return withMethods({
-        $type: TSKindId._WithClauseParen,
-        $source: 2,
-        $named: true,
-        _with_item,
-        withItems() { return _with_item; },
-        $with: { $children: (...vs) => withClauseParen(...vs) },
-    }, methodsEngine);
-}
-export function withClause(config) {
-    switch (config.$variant) {
-        case 'bare': return withClauseUFormBare(config);
-        case 'paren': return withClauseUFormParen(config);
-    }
-    throw new Error(`withClause: unknown $variant '${config.$variant}' — expected one of 'bare' | 'paren'.`);
-}
-export function withClauseUFormBare(config) {
-    const _with_clause_bare = config.withClauseBare;
+export function withClause(child) {
+    const _content = child;
     return withMethods({
         $type: TSKindId.WithClause,
         $source: 2,
         $named: true,
-        $variant: 'bare',
-        _with_clause_bare,
-        withClauseBare() { return _with_clause_bare; },
-        $with: {
-            withClauseBare: (value) => withClauseUFormBare({ ...config, withClauseBare: value }),
-        },
-    }, methodsEngine);
-}
-export function withClauseUFormParen(config) {
-    const _with_clause_paren = config.withClauseParen;
-    return withMethods({
-        $type: TSKindId.WithClause,
-        $source: 2,
-        $named: true,
-        $variant: 'paren',
-        _with_clause_paren,
-        withClauseParen() { return _with_clause_paren; },
-        $with: {
-            withClauseParen: (value) => withClauseUFormParen({ ...config, withClauseParen: value }),
-        },
+        _content,
+        content() { return _content; },
+        $with: { $child: (v) => withClause(v) },
     }, methodsEngine);
 }
 export function withItem(value) {
@@ -2103,14 +2026,25 @@ export function withStatement(config) {
     }, methodsEngine);
 }
 export function yield_(child) {
-    const _expression = child;
+    const _content = child;
     return withMethods({
         $type: TSKindId.Yield,
         $source: 2,
         $named: true,
+        _content,
+        content() { return _content; },
+        $with: { $child: (v) => yield_(v) },
+    }, methodsEngine);
+}
+export function sliceGroup1(child) {
+    const _expression = child;
+    return withMethods({
+        $type: TSKindId._SliceGroup1,
+        $source: 2,
+        $named: true,
         _expression,
         expression() { return _expression; },
-        $with: { $child: (v) => yield_(v) },
+        $with: { $child: (v) => sliceGroup1(v) },
     }, methodsEngine);
 }
 export function newline(text) {
@@ -2228,7 +2162,11 @@ export const _factoryMap = {
     "_assignment_eq": _assignmentEq,
     "_assignment_type": _assignmentType,
     "_assignment_typed": _assignmentTyped,
+    "_comparison_operator_comparator": _comparisonOperatorComparator,
     "_comprehension_clauses": comprehensionClauses,
+    "_except_clause_as": _exceptClauseAs,
+    "_except_clause_list": exceptClauseList,
+    "_expression_statement_tuple": expressionStatementTuple,
     "_import_list": _importList,
     "_is_not": isNot,
     "_key_value_pattern": _keyValuePattern,
@@ -2238,8 +2176,10 @@ export const _factoryMap = {
     "_not_in": notIn,
     "_simple_pattern_negative": simplePatternNegative,
     "_simple_statements": simpleStatements,
+    "_slice_group1": _sliceGroup1,
     "_tuple_pattern": _tuplePattern,
-    "_with_clause_paren": _withClauseParen,
+    "_with_clause_bare": withClauseBare,
+    "_with_clause_paren": withClauseParen,
     "aliased_import": aliasedImport,
     "argument_list": argumentList,
     "as_pattern": asPattern,
@@ -2281,7 +2221,6 @@ export const _factoryMap = {
     "except_clause": exceptClause,
     "exec_statement": execStatement,
     "expression_list": expressionList,
-    "expression_statement_tuple": expressionStatementTuple,
     "expression_statement": expressionStatement,
     "false": false_,
     "finally_clause": finallyClause,
@@ -2352,12 +2291,11 @@ export const _factoryMap = {
     "union_pattern": unionPattern,
     "union_type": unionType,
     "while_statement": whileStatement,
-    "with_clause_bare": withClauseBare,
-    "with_clause_paren": withClauseParen,
     "with_clause": withClause,
     "with_item": withItem,
     "with_statement": withStatement,
     "yield": yield_,
+    "slice_group1": sliceGroup1,
     "_newline": newline,
     "_indent": indent,
     "_dedent": dedent,

@@ -21,6 +21,7 @@ export const probeKind: CommandModule = {
 			.option('--trace', 'Emit full multi-lane trace (js + native, shallow + deep)')
 			.option('--log-parse', 'Log tree-sitter parse events to stderr')
 			.option('--full', 'Emit complete multi-lane trace (like --trace)')
+			.option('--walk-getters', 'Walk wrap accessor getters and print deep $type/$span tree (native engine)')
 			.action(async (opts: {
 				grammar?: string;
 				source?: string;
@@ -37,6 +38,7 @@ export const probeKind: CommandModule = {
 				trace?: boolean;
 				logParse?: boolean;
 				full?: boolean;
+				walkGetters?: boolean;
 			}) => {
 				// Commander stores `--no-render`/`--no-wrap` under the positive
 				// key (opts.render/opts.wrap === false when the flag is passed).
@@ -56,6 +58,7 @@ export const probeKind: CommandModule = {
 					trace: opts.trace ?? false,
 					logParse: opts.logParse ?? false,
 					full: opts.full ?? false,
+					walkGetters: opts.walkGetters ?? false,
 				});
 				if (code !== 0) process.exitCode = code;
 			});

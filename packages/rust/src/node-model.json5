@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 383,
+  "nodeCount": 374,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -59,22 +59,19 @@
     "expression_statement": {
       "source": "override",
       "childKind": {
-        "expression_statement_with_semi": "with_semi",
-        "expression_statement_block_ending": "block_ending"
+        "expression_statement_with_semi": "with_semi"
       }
     },
     "field_pattern": {
       "source": "override",
       "childKind": {
-        "field_pattern_shorthand": "shorthand",
         "field_pattern_named": "named"
       }
     },
     "foreign_mod_item": {
       "source": "override",
       "childKind": {
-        "foreign_mod_item_semi": "semi",
-        "foreign_mod_item_body": "body"
+        "foreign_mod_item_semi": "semi"
       }
     },
     "function_type": {
@@ -103,15 +100,13 @@
     "match_arm": {
       "source": "override",
       "childKind": {
-        "match_arm_with_comma": "with_comma",
-        "match_arm_block_ending": "block_ending"
+        "match_arm_with_comma": "with_comma"
       }
     },
     "mod_item": {
       "source": "override",
       "childKind": {
-        "mod_item_external": "external",
-        "mod_item_inline": "inline"
+        "mod_item_external": "external"
       }
     },
     "or_pattern": {
@@ -124,8 +119,7 @@
     "pointer_type": {
       "source": "override",
       "childKind": {
-        "pointer_type_const": "const",
-        "pointer_type_mut": "mut"
+        "pointer_type_const": "const"
       }
     },
     "range_expression": {
@@ -133,8 +127,7 @@
       "childKind": {
         "range_expression_binary": "binary",
         "range_expression_postfix": "postfix",
-        "range_expression_prefix": "prefix",
-        "range_expression_bare": "bare"
+        "range_expression_prefix": "prefix"
       }
     },
     "range_pattern": {
@@ -173,7 +166,6 @@
       "source": "override",
       "childKind": {
         "visibility_modifier_in_path": "in_path",
-        "visibility_modifier_crate": "crate",
         "visibility_modifier_pub": "pub"
       }
     }
@@ -184,9 +176,6 @@
     },
     "_field_pattern_named.name": {
       "field_identifier": "identifier"
-    },
-    "_field_pattern_shorthand.name": {
-      "shorthand_field_identifier": "identifier"
     },
     "_function_type_trait_form.trait": {
       "type_identifier": "identifier"
@@ -262,8 +251,7 @@
       "attributed_enum_variant": "_attributed_enum_variant"
     },
     "expression_statement.content": {
-      "expression_statement_with_semi": "_expression_statement_with_semi",
-      "expression_statement_block_ending": "_expression_statement_block_ending"
+      "expression_statement_with_semi": "_expression_statement_with_semi"
     },
     "field_declaration.name": {
       "field_identifier": "identifier"
@@ -278,12 +266,11 @@
       "field_identifier": "identifier"
     },
     "field_pattern.content": {
-      "field_pattern_shorthand": "_field_pattern_shorthand",
+      "shorthand_field_identifier": "identifier",
       "field_pattern_named": "_field_pattern_named"
     },
     "foreign_mod_item.content": {
-      "foreign_mod_item_semi": "_foreign_mod_item_semi",
-      "foreign_mod_item_body": "_foreign_mod_item_body"
+      "foreign_mod_item_semi": "_foreign_mod_item_semi"
     },
     "function_type.function_type_trait_form": {
       "function_type_trait_form": "_function_type_trait_form"
@@ -319,15 +306,13 @@
       "token_tree": "delim_token_tree"
     },
     "match_arm.content": {
-      "match_arm_with_comma": "_match_arm_with_comma",
-      "match_arm_block_ending": "_match_arm_block_ending"
+      "match_arm_with_comma": "_match_arm_with_comma"
     },
     "match_block.match_block_arms": {
       "match_block_arms": "_match_block_arms"
     },
     "mod_item.content": {
-      "mod_item_external": "_mod_item_external",
-      "mod_item_inline": "_mod_item_inline"
+      "mod_item_external": "_mod_item_external"
     },
     "or_pattern.content": {
       "or_pattern_binary": "_or_pattern_binary",
@@ -340,14 +325,12 @@
       "attributed_parameter": "_attributed_parameter"
     },
     "pointer_type.content": {
-      "pointer_type_const": "_pointer_type_const",
-      "pointer_type_mut": "_pointer_type_mut"
+      "pointer_type_const": "_pointer_type_const"
     },
     "range_expression.content": {
       "range_expression_binary": "_range_expression_binary",
       "range_expression_postfix": "_range_expression_postfix",
-      "range_expression_prefix": "_range_expression_prefix",
-      "range_expression_bare": "_range_expression_bare"
+      "range_expression_prefix": "_range_expression_prefix"
     },
     "range_pattern.content": {
       "range_pattern_left_with_right": "_range_pattern_left_with_right",
@@ -434,7 +417,6 @@
       "type_identifier": "identifier"
     },
     "visibility_modifier.content": {
-      "visibility_modifier_crate": "_visibility_modifier_crate",
       "visibility_modifier_pub": "_visibility_modifier_pub"
     },
     "where_predicate.left": {
@@ -640,15 +622,6 @@
         "nonEmpty": false
       }
     },
-    "_expression_statement_block_ending": {
-      "expression_ending_with_block": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_expression_statement_with_semi": {
       "expression": {
         "unnamed": false,
@@ -667,24 +640,6 @@
         "nonEmpty": false
       },
       "pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_field_pattern_shorthand": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_foreign_mod_item_body": {
-      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -819,15 +774,6 @@
         "nonEmpty": false
       }
     },
-    "_match_arm_block_ending": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_match_arm_with_comma": {
       "value": {
         "unnamed": false,
@@ -853,15 +799,6 @@
         "nonEmpty": false
       }
     },
-    "_mod_item_inline": {
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_or_pattern_binary": {
       "left": {
         "unnamed": false,
@@ -880,24 +817,6 @@
     },
     "_or_pattern_prefix": {
       "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_pointer_type_mut": {
-      "mutable_specifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_range_expression_bare": {
-      "operator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1099,15 +1018,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_visibility_modifier_crate": {
-      "crate": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5302,45 +5212,6 @@
       ]
     },
     {
-      "kind": "_expression_statement_block_ending",
-      "modelType": "branch",
-      "typeName": "ExpressionStatementBlockEnding",
-      "factoryName": "expressionStatementBlockEnding",
-      "irKey": "expressionStatementBlockEnding",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "expression_ending_with_block",
-          "propertyName": "expressionEndingWithBlock",
-          "paramName": "expressionEndingWithBlock",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression_ending_with_block",
-              "parseKind": "_expression_ending_with_block",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression_ending_with_block"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "spread",
-      "factoryFields": [
-        "expression_ending_with_block"
-      ]
-    },
-    {
       "kind": "_expression_statement_with_semi",
       "modelType": "branch",
       "typeName": "ExpressionStatementWithSemi",
@@ -5490,45 +5361,6 @@
       ]
     },
     {
-      "kind": "_field_pattern_shorthand",
-      "modelType": "branch",
-      "typeName": "FieldPatternShorthand",
-      "factoryName": "fieldPatternShorthand",
-      "irKey": "fieldPatternShorthand",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "shorthand_field_identifier",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "name"
-      ]
-    },
-    {
       "kind": "_for_expression_optional1",
       "modelType": "group",
       "typeName": "ForExpressionOptional1",
@@ -5563,45 +5395,6 @@
         }
       ],
       "children": []
-    },
-    {
-      "kind": "_foreign_mod_item_body",
-      "modelType": "branch",
-      "typeName": "ForeignModItemBody",
-      "factoryName": "foreignModItemBody",
-      "irKey": "foreignModItemBody",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "body",
-          "propertyName": "body",
-          "paramName": "body",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "declaration_list",
-              "parseKind": "declaration_list",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "declaration_list"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "body"
-      ]
     },
     {
       "kind": "_foreign_mod_item_semi",
@@ -6122,16 +5915,6 @@
       "isParameterless": true,
       "stampExpression": "\"move\" as const",
       "text": "move"
-    },
-    {
-      "kind": "_kw_operator",
-      "modelType": "token",
-      "typeName": "KwOperator",
-      "irKey": "kwOperator",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"..\" as const",
-      "text": ".."
     },
     {
       "kind": "_kw_pub",
@@ -6695,45 +6478,6 @@
       ]
     },
     {
-      "kind": "_match_arm_block_ending",
-      "modelType": "branch",
-      "typeName": "MatchArmBlockEnding",
-      "factoryName": "matchArmBlockEnding",
-      "irKey": "matchArmBlockEnding",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression_ending_with_block",
-              "parseKind": "_expression_ending_with_block",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression_ending_with_block"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "value"
-      ]
-    },
-    {
       "kind": "_match_arm_with_comma",
       "modelType": "group",
       "typeName": "MatchArmWithComma",
@@ -6883,45 +6627,6 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";"
-    },
-    {
-      "kind": "_mod_item_inline",
-      "modelType": "branch",
-      "typeName": "ModItemInline",
-      "factoryName": "modItemInline",
-      "irKey": "modItemInline",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "body",
-          "propertyName": "body",
-          "paramName": "body",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "declaration_list",
-              "parseKind": "declaration_list",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "declaration_list"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "body"
-      ]
     },
     {
       "kind": "_move_marker",
@@ -7703,44 +7408,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_pointer_type_mut",
-      "modelType": "branch",
-      "typeName": "PointerTypeMut",
-      "factoryName": "pointerTypeMut",
-      "irKey": "pointerTypeMut",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "pointerTypeMut()",
-      "fields": [
-        {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "mutable_specifier",
-              "parseKind": "mutable_specifier",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "mutable_specifier"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config"
-    },
-    {
       "kind": "_primitive_type",
       "modelType": "enum",
       "typeName": "PrimitiveType",
@@ -7767,44 +7434,6 @@
         "char"
       ],
       "factoryShape": "text"
-    },
-    {
-      "kind": "_range_expression_bare",
-      "modelType": "branch",
-      "typeName": "RangeExpressionBare",
-      "factoryName": "rangeExpressionBare",
-      "irKey": "rangeExpressionBare",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "rangeExpressionBare()",
-      "fields": [
-        {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_operator__x2ex2e",
-              "parseKind": "_operator__x2ex2e",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_operator__x2ex2e"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config"
     },
     {
       "kind": "_range_expression_binary",
@@ -9128,44 +8757,6 @@
         }
       ],
       "children": []
-    },
-    {
-      "kind": "_visibility_modifier_crate",
-      "modelType": "branch",
-      "typeName": "VisibilityModifierCrate",
-      "factoryName": "visibilityModifierCrate",
-      "irKey": "visibilityModifierCrate",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "visibilityModifierCrate()",
-      "fields": [
-        {
-          "name": "crate",
-          "propertyName": "crate",
-          "paramName": "crate",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "crate",
-              "parseKind": "crate",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "crate"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config"
     },
     {
       "kind": "_visibility_modifier_group1",
@@ -12202,8 +11793,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_expression_statement_block_ending",
-              "parseKind": "expression_statement_block_ending",
+              "name": "_expression_ending_with_block",
+              "parseKind": "_expression_ending_with_block",
               "unresolved": true
             }
           ],
@@ -12212,7 +11803,7 @@
             "typeName": "",
             "kinds": [
               "_expression_statement_with_semi",
-              "_expression_statement_block_ending"
+              "_expression_ending_with_block"
             ]
           }
         }
@@ -12799,8 +12390,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_pattern_shorthand",
-              "parseKind": "field_pattern_shorthand",
+              "name": "identifier",
+              "parseKind": "shorthand_field_identifier",
               "unresolved": true
             },
             {
@@ -12815,7 +12406,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_pattern_shorthand",
+              "identifier",
               "_field_pattern_named"
             ]
           }
@@ -13085,8 +12676,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_foreign_mod_item_body",
-              "parseKind": "foreign_mod_item_body",
+              "name": "declaration_list",
+              "parseKind": "declaration_list",
               "unresolved": true
             }
           ],
@@ -13095,7 +12686,7 @@
             "typeName": "",
             "kinds": [
               "_foreign_mod_item_semi",
-              "_foreign_mod_item_body"
+              "declaration_list"
             ]
           }
         }
@@ -15541,8 +15132,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_match_arm_block_ending",
-              "parseKind": "match_arm_block_ending",
+              "name": "_expression_ending_with_block",
+              "parseKind": "_expression_ending_with_block",
               "unresolved": true
             }
           ],
@@ -15551,7 +15142,7 @@
             "typeName": "",
             "kinds": [
               "_match_arm_with_comma",
-              "_match_arm_block_ending"
+              "_expression_ending_with_block"
             ]
           }
         }
@@ -15826,8 +15417,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_mod_item_inline",
-              "parseKind": "mod_item_inline",
+              "name": "declaration_list",
+              "parseKind": "declaration_list",
               "unresolved": true
             }
           ],
@@ -15836,7 +15427,7 @@
             "typeName": "",
             "kinds": [
               "_mod_item_external",
-              "_mod_item_inline"
+              "declaration_list"
             ]
           }
         }
@@ -16309,8 +15900,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_pointer_type_mut",
-              "parseKind": "pointer_type_mut",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
@@ -16319,7 +15910,7 @@
             "typeName": "",
             "kinds": [
               "_pointer_type_const",
-              "_pointer_type_mut"
+              "mutable_specifier"
             ]
           }
         },
@@ -16478,11 +16069,10 @@
               "unresolved": true
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_range_expression_bare",
-              "parseKind": "range_expression_bare",
-              "unresolved": true
+              "value": "..",
+              "parseKind": "dot_dot"
             }
           ],
           "source": "inferred",
@@ -16491,8 +16081,7 @@
             "kinds": [
               "_range_expression_binary",
               "_range_expression_postfix",
-              "_range_expression_prefix",
-              "_range_expression_bare"
+              "_range_expression_prefix"
             ]
           }
         }
@@ -20249,8 +19838,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_visibility_modifier_crate",
-              "parseKind": "visibility_modifier_crate",
+              "name": "crate",
+              "parseKind": "crate",
               "unresolved": true
             },
             {
@@ -20265,7 +19854,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_visibility_modifier_crate",
+              "crate",
               "_visibility_modifier_pub"
             ]
           }

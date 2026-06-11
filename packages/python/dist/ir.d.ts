@@ -87,18 +87,6 @@ export declare const rightHandSide: {
     readonly assignment: typeof FR.assignmentFrom & {
         from: typeof FR.assignmentFrom;
         strict: typeof F.assignment;
-        eq: typeof FR.assignmentUFormEqFrom & {
-            from: typeof FR.assignmentUFormEqFrom;
-            strict: typeof F.assignmentUFormEq;
-        };
-        type: typeof FR.assignmentUFormTypeFrom & {
-            from: typeof FR.assignmentUFormTypeFrom;
-            strict: typeof F.assignmentUFormType;
-        };
-        typed: typeof FR.assignmentUFormTypedFrom & {
-            from: typeof FR.assignmentUFormTypedFrom;
-            strict: typeof F.assignmentUFormTyped;
-        };
     };
     readonly augmented: typeof FR.augmentedAssignmentFrom & {
         from: typeof FR.augmentedAssignmentFrom;
@@ -174,30 +162,6 @@ export declare const simpleStatement: {
     readonly expression: typeof FR.expressionStatementFrom & {
         from: typeof FR.expressionStatementFrom;
         strict: typeof F.expressionStatement;
-        expression: typeof FR.expressionStatementUFormExpressionFrom & {
-            from: typeof FR.expressionStatementUFormExpressionFrom;
-            strict: typeof F.expressionStatementUFormExpression;
-        };
-        tuple: typeof FR.expressionStatementUFormTupleFrom & {
-            from: typeof FR.expressionStatementUFormTupleFrom;
-            strict: typeof F.expressionStatementUFormTuple;
-        };
-        assignment: typeof FR.expressionStatementUFormAssignmentFrom & {
-            from: typeof FR.expressionStatementUFormAssignmentFrom;
-            strict: typeof F.expressionStatementUFormAssignment;
-        };
-        augmentedAssignment: typeof FR.expressionStatementUFormAugmentedAssignmentFrom & {
-            from: typeof FR.expressionStatementUFormAugmentedAssignmentFrom;
-            strict: typeof F.expressionStatementUFormAugmentedAssignment;
-        };
-        augmented_assignment: typeof FR.expressionStatementUFormAugmentedAssignmentFrom & {
-            from: typeof FR.expressionStatementUFormAugmentedAssignmentFrom;
-            strict: typeof F.expressionStatementUFormAugmentedAssignment;
-        };
-        yield: typeof FR.expressionStatementUFormYieldFrom & {
-            from: typeof FR.expressionStatementUFormYieldFrom;
-            strict: typeof F.expressionStatementUFormYield;
-        };
     };
     readonly return: typeof FR.returnStatementFrom & {
         from: typeof FR.returnStatementFrom;
@@ -455,18 +419,6 @@ export declare const ir: {
     readonly assignment: typeof FR.assignmentFrom & {
         from: typeof FR.assignmentFrom;
         strict: typeof F.assignment;
-        eq: typeof FR.assignmentUFormEqFrom & {
-            from: typeof FR.assignmentUFormEqFrom;
-            strict: typeof F.assignmentUFormEq;
-        };
-        type: typeof FR.assignmentUFormTypeFrom & {
-            from: typeof FR.assignmentUFormTypeFrom;
-            strict: typeof F.assignmentUFormType;
-        };
-        typed: typeof FR.assignmentUFormTypedFrom & {
-            from: typeof FR.assignmentUFormTypedFrom;
-            strict: typeof F.assignmentUFormTyped;
-        };
     };
     readonly attribute: typeof FR.attributeFrom & {
         from: typeof FR.attributeFrom;
@@ -596,37 +548,9 @@ export declare const ir: {
         from: typeof FR.expressionListFrom;
         strict: typeof F.expressionList;
     };
-    readonly expressionStatementTuple: typeof FR.expressionStatementTupleFrom & {
-        from: typeof FR.expressionStatementTupleFrom;
-        strict: typeof F.expressionStatementTuple;
-    };
     readonly expressionStatement: typeof FR.expressionStatementFrom & {
         from: typeof FR.expressionStatementFrom;
         strict: typeof F.expressionStatement;
-        expression: typeof FR.expressionStatementUFormExpressionFrom & {
-            from: typeof FR.expressionStatementUFormExpressionFrom;
-            strict: typeof F.expressionStatementUFormExpression;
-        };
-        tuple: typeof FR.expressionStatementUFormTupleFrom & {
-            from: typeof FR.expressionStatementUFormTupleFrom;
-            strict: typeof F.expressionStatementUFormTuple;
-        };
-        assignment: typeof FR.expressionStatementUFormAssignmentFrom & {
-            from: typeof FR.expressionStatementUFormAssignmentFrom;
-            strict: typeof F.expressionStatementUFormAssignment;
-        };
-        augmentedAssignment: typeof FR.expressionStatementUFormAugmentedAssignmentFrom & {
-            from: typeof FR.expressionStatementUFormAugmentedAssignmentFrom;
-            strict: typeof F.expressionStatementUFormAugmentedAssignment;
-        };
-        augmented_assignment: typeof FR.expressionStatementUFormAugmentedAssignmentFrom & {
-            from: typeof FR.expressionStatementUFormAugmentedAssignmentFrom;
-            strict: typeof F.expressionStatementUFormAugmentedAssignment;
-        };
-        yield: typeof FR.expressionStatementUFormYieldFrom & {
-            from: typeof FR.expressionStatementUFormYieldFrom;
-            strict: typeof F.expressionStatementUFormYield;
-        };
     };
     readonly finallyClause: typeof FR.finallyClauseFrom & {
         from: typeof FR.finallyClauseFrom;
@@ -864,25 +788,9 @@ export declare const ir: {
         from: typeof FR.whileStatementFrom;
         strict: typeof F.whileStatement;
     };
-    readonly withClauseBare: typeof FR.withClauseBareFrom & {
-        from: typeof FR.withClauseBareFrom;
-        strict: typeof F.withClauseBare;
-    };
-    readonly withClauseParen: typeof FR.withClauseParenFrom & {
-        from: typeof FR.withClauseParenFrom;
-        strict: typeof F.withClauseParen;
-    };
     readonly withClause: typeof FR.withClauseFrom & {
         from: typeof FR.withClauseFrom;
         strict: typeof F.withClause;
-        bare: typeof FR.withClauseUFormBareFrom & {
-            from: typeof FR.withClauseUFormBareFrom;
-            strict: typeof F.withClauseUFormBare;
-        };
-        paren: typeof FR.withClauseUFormParenFrom & {
-            from: typeof FR.withClauseUFormParenFrom;
-            strict: typeof F.withClauseUFormParen;
-        };
     };
     readonly withItem: typeof FR.withItemFrom & {
         from: typeof FR.withItemFrom;
@@ -895,6 +803,10 @@ export declare const ir: {
     readonly yield: typeof FR.yield_From & {
         from: typeof FR.yield_From;
         strict: typeof F.yield_;
+    };
+    readonly sliceGroup1: typeof FR.sliceGroup1From & {
+        from: typeof FR.sliceGroup1From;
+        strict: typeof F.sliceGroup1;
     };
     readonly breakStatement: typeof F.breakStatement;
     readonly continueStatement: typeof F.continueStatement;
@@ -1172,18 +1084,6 @@ export declare const ir: {
         readonly assignment: typeof FR.assignmentFrom & {
             from: typeof FR.assignmentFrom;
             strict: typeof F.assignment;
-            eq: typeof FR.assignmentUFormEqFrom & {
-                from: typeof FR.assignmentUFormEqFrom;
-                strict: typeof F.assignmentUFormEq;
-            };
-            type: typeof FR.assignmentUFormTypeFrom & {
-                from: typeof FR.assignmentUFormTypeFrom;
-                strict: typeof F.assignmentUFormType;
-            };
-            typed: typeof FR.assignmentUFormTypedFrom & {
-                from: typeof FR.assignmentUFormTypedFrom;
-                strict: typeof F.assignmentUFormTyped;
-            };
         };
         readonly augmented: typeof FR.augmentedAssignmentFrom & {
             from: typeof FR.augmentedAssignmentFrom;
@@ -1259,30 +1159,6 @@ export declare const ir: {
         readonly expression: typeof FR.expressionStatementFrom & {
             from: typeof FR.expressionStatementFrom;
             strict: typeof F.expressionStatement;
-            expression: typeof FR.expressionStatementUFormExpressionFrom & {
-                from: typeof FR.expressionStatementUFormExpressionFrom;
-                strict: typeof F.expressionStatementUFormExpression;
-            };
-            tuple: typeof FR.expressionStatementUFormTupleFrom & {
-                from: typeof FR.expressionStatementUFormTupleFrom;
-                strict: typeof F.expressionStatementUFormTuple;
-            };
-            assignment: typeof FR.expressionStatementUFormAssignmentFrom & {
-                from: typeof FR.expressionStatementUFormAssignmentFrom;
-                strict: typeof F.expressionStatementUFormAssignment;
-            };
-            augmentedAssignment: typeof FR.expressionStatementUFormAugmentedAssignmentFrom & {
-                from: typeof FR.expressionStatementUFormAugmentedAssignmentFrom;
-                strict: typeof F.expressionStatementUFormAugmentedAssignment;
-            };
-            augmented_assignment: typeof FR.expressionStatementUFormAugmentedAssignmentFrom & {
-                from: typeof FR.expressionStatementUFormAugmentedAssignmentFrom;
-                strict: typeof F.expressionStatementUFormAugmentedAssignment;
-            };
-            yield: typeof FR.expressionStatementUFormYieldFrom & {
-                from: typeof FR.expressionStatementUFormYieldFrom;
-                strict: typeof F.expressionStatementUFormYield;
-            };
         };
         readonly return: typeof FR.returnStatementFrom & {
             from: typeof FR.returnStatementFrom;

@@ -247,18 +247,6 @@ export function delimTokenTreeParen(...children: T.DelimTokens[]) {
   }, methodsEngine);
 }
 
-export function expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
-  const _expression_ending_with_block = child;
-  return withMethods({
-    $type: TSKindId.ExpressionStatementBlockEnding as const,
-    $source: 2 as const,
-    $named: true as const,
-    _expression_ending_with_block,
-    expressionEndingWithBlock() { return _expression_ending_with_block; },
-    $with: { $child: (v: T.ExpressionEndingWithBlock) => expressionStatementBlockEnding(v) },
-  }, methodsEngine);
-}
-
 export function expressionStatementWithSemi(child: T.Expression) {
   const _expression = child;
   return withMethods({
@@ -295,34 +283,6 @@ export function _fieldPatternNamed(config: T.FieldPatternNamed.Config) {
     $with: {
       name: (value: T.Identifier) => _fieldPatternNamed({ ...config, name: value }),
       pattern: (value: T.Pattern) => _fieldPatternNamed({ ...config, pattern: value }),
-    },
-  }, methodsEngine);
-}
-
-export function fieldPatternShorthand(config: T.FieldPatternShorthand.Config) {
-  const _name = config.name;
-  return withMethods({
-    $type: TSKindId.FieldPatternShorthand as const,
-    $source: 2 as const,
-    $named: true as const,
-    _name,
-    name() { return _name; },
-    $with: {
-      name: (value: T.Identifier) => fieldPatternShorthand({ ...config, name: value }),
-    },
-  }, methodsEngine);
-}
-
-export function foreignModItemBody(config: T.ForeignModItemBody.Config) {
-  const _body = config.body;
-  return withMethods({
-    $type: TSKindId.ForeignModItemBody as const,
-    $source: 2 as const,
-    $named: true as const,
-    _body,
-    body() { return _body; },
-    $with: {
-      body: (value: T.DeclarationList) => foreignModItemBody({ ...config, body: value }),
     },
   }, methodsEngine);
 }
@@ -493,20 +453,6 @@ export function macroDefinitionParen(...children: T.MacroRule[]) {
   }, methodsEngine);
 }
 
-export function matchArmBlockEnding(config: T.MatchArmBlockEnding.Config) {
-  const _value = config.value;
-  return withMethods({
-    $type: TSKindId.MatchArmBlockEnding as const,
-    $source: 2 as const,
-    $named: true as const,
-    _value,
-    value() { return _value; },
-    $with: {
-      value: (value: T.ExpressionEndingWithBlock) => matchArmBlockEnding({ ...config, value: value }),
-    },
-  }, methodsEngine);
-}
-
 export function _matchArmWithComma(config: T.MatchArmWithComma.Config) {
   const _value = config.value;
   return withMethods({
@@ -539,20 +485,6 @@ export function _matchBlockArms(config: T.MatchBlockArms.Config) {
   }, methodsEngine);
 }
 
-export function modItemInline(config: T.ModItemInline.Config) {
-  const _body = config.body;
-  return withMethods({
-    $type: TSKindId.ModItemInline as const,
-    $source: 2 as const,
-    $named: true as const,
-    _body,
-    body() { return _body; },
-    $with: {
-      body: (value: T.DeclarationList) => modItemInline({ ...config, body: value }),
-    },
-  }, methodsEngine);
-}
-
 export function _orPatternBinary(config: T.OrPatternBinary.Config) {
   const _left = config.left;
   const _right = config.right;
@@ -581,32 +513,6 @@ export function _orPatternPrefix(config: T.OrPatternPrefix.Config) {
     right() { return _right; },
     $with: {
       right: (value: T.Pattern) => _orPatternPrefix({ ...config, right: value }),
-    },
-  }, methodsEngine);
-}
-
-export function pointerTypeMut(_config?: T.PointerTypeMut.Config) {
-  const _mutable_specifier = "mut" as const;
-  return withMethods({
-    $type: TSKindId.PointerTypeMut as const,
-    $source: 2 as const,
-    $named: true as const,
-    _mutable_specifier,
-    mutableSpecifier() { return _mutable_specifier; },
-    $with: {
-    },
-  }, methodsEngine);
-}
-
-export function rangeExpressionBare(_config?: T.RangeExpressionBare.Config) {
-  const _operator = coerceKindEnumStorage(".." as const, []);
-  return withMethods({
-    $type: TSKindId.RangeExpressionBare as const,
-    $source: 2 as const,
-    $named: true as const,
-    _operator,
-    operator() { return _operator; },
-    $with: {
     },
   }, methodsEngine);
 }
@@ -872,19 +778,6 @@ export function _useWildcardClause(config: T.UseWildcardClause.Config) {
     path() { return _path; },
     $with: {
       path: (value: T.Path) => _useWildcardClause({ ...config, path: value }),
-    },
-  }, methodsEngine);
-}
-
-export function visibilityModifierCrate(_config?: T.VisibilityModifierCrate.Config) {
-  const _crate = coerceKindEnumStorage("crate" as const, []);
-  return withMethods({
-    $type: TSKindId.VisibilityModifierCrate as const,
-    $source: 2 as const,
-    $named: true as const,
-    _crate,
-    crate() { return _crate; },
-    $with: {
     },
   }, methodsEngine);
 }
@@ -1569,7 +1462,7 @@ export function escapeSequence(text: string) {
   }, methodsEngine);
 }
 
-export function expressionStatement(child: (T.ExpressionStatementWithSemi | T.ExpressionStatementBlockEnding)) {
+export function expressionStatement(child: (T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.ExpressionStatement as const,
@@ -1577,7 +1470,7 @@ export function expressionStatement(child: (T.ExpressionStatementWithSemi | T.Ex
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.ExpressionStatementWithSemi | T.ExpressionStatementBlockEnding)) => expressionStatement(v) },
+    $with: { $child: (v: (T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock)) => expressionStatement(v) },
   }, methodsEngine);
 }
 
@@ -1708,7 +1601,7 @@ export function fieldInitializerList(config: Partial<T.FieldInitializerList.Conf
   }, methodsEngine);
 }
 
-export function fieldPattern(child?: ("mut" | T.FieldPatternShorthand | T.FieldPatternNamed)) {
+export function fieldPattern(child?: ("mut" | T.Identifier | T.FieldPatternNamed)) {
   const _ref_marker = child;
   return withMethods({
     $type: TSKindId.FieldPattern as const,
@@ -1716,7 +1609,7 @@ export function fieldPattern(child?: ("mut" | T.FieldPatternShorthand | T.FieldP
     $named: true as const,
     _ref_marker,
     refMarker() { return _ref_marker; },
-    $with: { $child: (v: ("mut" | T.FieldPatternShorthand | T.FieldPatternNamed)) => fieldPattern(v) },
+    $with: { $child: (v: ("mut" | T.Identifier | T.FieldPatternNamed)) => fieldPattern(v) },
   }, methodsEngine);
 }
 
@@ -1776,7 +1669,7 @@ export function foreignModItem(config: T.ForeignModItem.Config) {
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => foreignModItem({ ...config, visibilityModifier: value }),
       externModifier: (value: T.ExternModifier) => foreignModItem({ ...config, externModifier: value }),
-      content: (value: ";" | T.ForeignModItemBody) => foreignModItem({ ...config, content: value }),
+      content: (value: ";" | T.DeclarationList) => foreignModItem({ ...config, content: value }),
     },
   }, methodsEngine);
 }
@@ -2350,7 +2243,7 @@ export function matchArm(config: T.MatchArm.Config) {
     $with: {
       attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) => matchArm({ ...config, attributes: values }),
       pattern: (value: T.MatchPattern) => matchArm({ ...config, pattern: value }),
-      content: (value: T.MatchArmWithComma | T.MatchArmBlockEnding) => matchArm({ ...config, content: value }),
+      content: (value: T.MatchArmWithComma | T.ExpressionEndingWithBlock) => matchArm({ ...config, content: value }),
     },
   }, methodsEngine);
 }
@@ -2430,7 +2323,7 @@ export function modItem(config: T.ModItem.Config) {
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => modItem({ ...config, visibilityModifier: value }),
       name: (value: T.Identifier) => modItem({ ...config, name: value }),
-      content: (value: ";" | T.ModItemInline) => modItem({ ...config, content: value }),
+      content: (value: ";" | T.DeclarationList) => modItem({ ...config, content: value }),
     },
   }, methodsEngine);
 }
@@ -2561,7 +2454,7 @@ export function pointerType(config: T.PointerType.Config) {
     content() { return _content; },
     type() { return _type; },
     $with: {
-      content: (value: "const" | T.PointerTypeMut) => pointerType({ ...config, content: value }),
+      content: (value: "const" | T.MutableSpecifier) => pointerType({ ...config, content: value }),
       type: (value: T._Type) => pointerType({ ...config, type: value }),
     },
   }, methodsEngine);
@@ -2585,7 +2478,7 @@ export function qualifiedType(config: T.QualifiedType.Config) {
   }, methodsEngine);
 }
 
-export function rangeExpression(child: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | T.RangeExpressionBare)) {
+export function rangeExpression(child: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.RangeExpression as const,
@@ -2593,7 +2486,7 @@ export function rangeExpression(child: (T.RangeExpressionBinary | T.RangeExpress
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | T.RangeExpressionBare)) => rangeExpression(v) },
+    $with: { $child: (v: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix)) => rangeExpression(v) },
   }, methodsEngine);
 }
 
@@ -3536,7 +3429,7 @@ export function variadicParameter(config: Partial<T.VariadicParameter.Config> = 
   }, methodsEngine);
 }
 
-export function visibilityModifier(child: (T.VisibilityModifierCrate | T.VisibilityModifierPub)) {
+export function visibilityModifier(child: (T.Crate | T.VisibilityModifierPub)) {
   const _content = child;
   return withMethods({
     $type: TSKindId.VisibilityModifier as const,
@@ -3544,7 +3437,7 @@ export function visibilityModifier(child: (T.VisibilityModifierCrate | T.Visibil
     $named: true as const,
     _content,
     content() { return _content; },
-    $with: { $child: (v: (T.VisibilityModifierCrate | T.VisibilityModifierPub)) => visibilityModifier(v) },
+    $with: { $child: (v: (T.Crate | T.VisibilityModifierPub)) => visibilityModifier(v) },
   }, methodsEngine);
 }
 
@@ -3688,12 +3581,9 @@ export type FluentKindMap = {
   "_delim_token_tree_brace": FluentNode<"_delim_token_tree_brace", T.DelimTokenTreeBrace.Config>;
   "_delim_token_tree_bracket": FluentNode<"_delim_token_tree_bracket", T.DelimTokenTreeBracket.Config>;
   "_delim_token_tree_paren": FluentNode<"_delim_token_tree_paren", T.DelimTokenTreeParen.Config>;
-  "_expression_statement_block_ending": FluentNode<"_expression_statement_block_ending", T.ExpressionStatementBlockEnding.Config>;
   "_expression_statement_with_semi": FluentNode<"_expression_statement_with_semi", T.ExpressionStatementWithSemi.Config>;
   "_field_identifier": T.FieldIdentifier;
   "_field_pattern_named": T.FieldPatternNamed;
-  "_field_pattern_shorthand": FluentNode<"_field_pattern_shorthand", T.FieldPatternShorthand.Config>;
-  "_foreign_mod_item_body": FluentNode<"_foreign_mod_item_body", T.ForeignModItemBody.Config>;
   "_function_type_fn_form": FluentNode<"_function_type_fn_form", T.FunctionTypeFnForm.Config>;
   "_function_type_trait_form": FluentNode<"_function_type_trait_form", T.FunctionTypeTraitForm.Config>;
   "_impl_item_body": FluentNode<"_impl_item_body", T.ImplItemBody.Config>;
@@ -3706,14 +3596,10 @@ export type FluentKindMap = {
   "_macro_definition_brace": FluentNode<"_macro_definition_brace", T.MacroDefinitionBrace.Config>;
   "_macro_definition_bracket": FluentNode<"_macro_definition_bracket", T.MacroDefinitionBracket.Config>;
   "_macro_definition_paren": FluentNode<"_macro_definition_paren", T.MacroDefinitionParen.Config>;
-  "_match_arm_block_ending": FluentNode<"_match_arm_block_ending", T.MatchArmBlockEnding.Config>;
   "_match_arm_with_comma": T.MatchArmWithComma;
   "_match_block_arms": T.MatchBlockArms;
-  "_mod_item_inline": FluentNode<"_mod_item_inline", T.ModItemInline.Config>;
   "_or_pattern_binary": T.OrPatternBinary;
   "_or_pattern_prefix": T.OrPatternPrefix;
-  "_pointer_type_mut": FluentNode<"_pointer_type_mut", T.PointerTypeMut.Config>;
-  "_range_expression_bare": FluentNode<"_range_expression_bare", T.RangeExpressionBare.Config>;
   "_range_expression_binary": T.RangeExpressionBinary;
   "_range_expression_postfix": T.RangeExpressionPostfix;
   "_range_expression_prefix": T.RangeExpressionPrefix;
@@ -3732,7 +3618,6 @@ export type FluentKindMap = {
   "_type_argument": FluentNode<"_type_argument", T.TypeArgument.Config>;
   "_type_identifier": T.TypeIdentifier;
   "_use_wildcard_clause": T.UseWildcardClause;
-  "_visibility_modifier_crate": FluentNode<"_visibility_modifier_crate", T.VisibilityModifierCrate.Config>;
   "_visibility_modifier_group1": FluentNode<"_visibility_modifier_group1", T._VisibilityModifierGroup1.Config>;
   "_visibility_modifier_in_path": T.VisibilityModifierInPath;
   "_visibility_modifier_pub": T.VisibilityModifierPub;
@@ -3911,12 +3796,9 @@ export const _factoryMap = {
   "_delim_token_tree_brace": delimTokenTreeBrace,
   "_delim_token_tree_bracket": delimTokenTreeBracket,
   "_delim_token_tree_paren": delimTokenTreeParen,
-  "_expression_statement_block_ending": expressionStatementBlockEnding,
   "_expression_statement_with_semi": expressionStatementWithSemi,
   "_field_identifier": fieldIdentifier,
   "_field_pattern_named": _fieldPatternNamed,
-  "_field_pattern_shorthand": fieldPatternShorthand,
-  "_foreign_mod_item_body": foreignModItemBody,
   "_function_type_fn_form": functionTypeFnForm,
   "_function_type_trait_form": functionTypeTraitForm,
   "_impl_item_body": implItemBody,
@@ -3929,14 +3811,10 @@ export const _factoryMap = {
   "_macro_definition_brace": macroDefinitionBrace,
   "_macro_definition_bracket": macroDefinitionBracket,
   "_macro_definition_paren": macroDefinitionParen,
-  "_match_arm_block_ending": matchArmBlockEnding,
   "_match_arm_with_comma": _matchArmWithComma,
   "_match_block_arms": _matchBlockArms,
-  "_mod_item_inline": modItemInline,
   "_or_pattern_binary": _orPatternBinary,
   "_or_pattern_prefix": _orPatternPrefix,
-  "_pointer_type_mut": pointerTypeMut,
-  "_range_expression_bare": rangeExpressionBare,
   "_range_expression_binary": _rangeExpressionBinary,
   "_range_expression_postfix": _rangeExpressionPostfix,
   "_range_expression_prefix": _rangeExpressionPrefix,
@@ -3955,7 +3833,6 @@ export const _factoryMap = {
   "_type_argument": typeArgument,
   "_type_identifier": typeIdentifier,
   "_use_wildcard_clause": _useWildcardClause,
-  "_visibility_modifier_crate": visibilityModifierCrate,
   "_visibility_modifier_group1": _visibilityModifierGroup1,
   "_visibility_modifier_in_path": _visibilityModifierInPath,
   "_visibility_modifier_pub": _visibilityModifierPub,

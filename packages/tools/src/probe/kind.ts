@@ -104,6 +104,12 @@ export interface ProbeKindOptions {
 	trace: boolean;
 	logParse: boolean;
 	full: boolean;
+	/** Walk the wrap accessor getters of the parsed root node and print
+	 *  the deep getter tree ($type / $span).  Each getter is a zero-arg
+	 *  function on the wrapped node that drills + applies drillAs, so the
+	 *  tree reveals the TRUE effective structure (alias rewrites, etc.).
+	 *  Outputs a plain-text indented tree to stdout instead of JSON. */
+	walkGetters: boolean;
 }
 
 export async function run(opts: ProbeKindOptions): Promise<number> {
@@ -130,6 +136,16 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 	if (engineRaw === 'js') {
 		process.stderr.write('probe-kind: warning: --engine js is deprecated; native remains the default production path\n');
 	}
+	// --walk-getters: recurse the wrap accessor getters of the parsed root
+	// node and print the deep getter tree ($type / $span).  This surfaces
+	// the TRUE effective structure — each getter drills + applies drillAs,
+	// so alias-rewritten kinds (e.g. last_match_arm → $type=275) are visible.
+	// Outputs a plain-text indented tree to stdout (not JSON) and returns.
+	if (opts.walkGetters) {
+		const code = await runWalkGetters(grammar, source, opts.kind, opts.pretty);
+		return code;
+	}
+
 	const probeOpts = {
 		noRender: opts.noRender,
 		noWrap: opts.noWrap,
@@ -221,6 +237,114 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 		out.compareEngines = compareEngines;
 	}
 	process.stdout.write(JSON.stringify(out, null, indent) + '\n');
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// --walk-getters implementation
+// ---------------------------------------------------------------------------
+
+/**
+ * Recursively walk the zero-arg accessor getters of a wrapped node tree,
+ * printing an indented `$type` / `$span` tree to `out`.
+ *
+ * Each getter materialises its subtree on demand and applies drillAs
+ * rewrites, so this reveals the TRUE deep structure + effective kinds
+ * (e.g. a rust single-arm match's trailing arm surfaces as
+ * `last_match_arm` with $type=275 after the alias rewrite).
+ *
+ * @param node  - The current wrapped node (result of readTreeNode / getter call).
+ * @param path  - Human-readable accessor path from the root (e.g. "root.statements().matchBlockArms()").
+ * @param depth - Current indentation depth.
+ * @param out   - Lines accumulator.
+ * @param seen  - Cycle guard (object identity).
+ * @param kindNameFromId - Optional resolver; if present numeric $type IDs are
+ *                         annotated with their kind name.
+ */
+function walkGettersTree(
+	node: unknown,
+	path: string,
+	depth: number,
+	out: string[],
+	seen: Set<unknown>,
+	kindNameFromId?: (id: number) => string | undefined
+): void {
+	if (node == null || typeof node !== 'object' || depth > 40) return;
+	if (seen.has(node)) return;
+	seen.add(node);
+	const n = node as Record<string, unknown>;
+	const t = n.$type;
+	const sp = n.$span != null && typeof n.$span === 'object'
+		? `${(n.$span as Record<string, unknown>).start}:${(n.$span as Record<string, unknown>).end}`
+		: '?';
+	const kindLabel =
+		typeof t === 'number' && kindNameFromId
+			? `${t}(${kindNameFromId(t) ?? '?'})`
+			: String(t);
+	out.push(`${'  '.repeat(depth)}${path} $type=${kindLabel} span=${sp}`);
+	for (const key of Object.keys(n)) {
+		if (key === '$with' || key.startsWith('$')) continue;
+		const v = n[key];
+		if (typeof v === 'function' && v.length === 0) {   // zero-arg accessor getter
+			let res: unknown;
+			try {
+				res = (v as () => unknown).call(node);
+			} catch {
+				continue;
+			}
+			const items = Array.isArray(res) ? res : [res];
+			for (const it of items) {
+				if (it != null && typeof it === 'object' && '$type' in (it as Record<string, unknown>)) {
+					walkGettersTree(it, `${path}.${key}()`, depth + 1, out, seen, kindNameFromId);
+				}
+			}
+		}
+	}
+}
+
+/** Driver for `--walk-getters`: builds a native handle, calls readTreeNode on
+ *  the root, then walks the getter tree and writes a plain-text report to
+ *  stdout. Returns a process exit code. */
+async function runWalkGetters(
+	grammar: string,
+	source: string,
+	targetKind: string | undefined,
+	pretty: boolean
+): Promise<number> {
+	const nativeEngine = await loadNativeEngine(grammar);
+	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	if (!readTreeNodeFn) {
+		process.stderr.write(`probe-kind --walk-getters: no readTreeNode found for grammar '${grammar}'\n`);
+		return 2;
+	}
+	const handle = nativeTreeHandle(nativeEngine, source);
+	const root = readTreeNodeFn(handle);
+
+	// Optional kind-name resolver for annotating $type IDs.
+	const kindNameFromId = await loadKindNameFromId(grammar);
+
+	const lines: string[] = [];
+	const seen = new Set<unknown>();
+	walkGettersTree(root, 'root', 0, lines, seen, kindNameFromId ?? undefined);
+
+	// If --kind was also given, annotate matching lines so the target is easy to spot.
+	if (targetKind) {
+		const kindId = await (async () => {
+			const resolver = await loadKindIdFromName(grammar);
+			if (!resolver) return undefined;
+			try { return resolver(targetKind); } catch { return undefined; }
+		})();
+		const annotated = lines.map((line) => {
+			const matchesName = kindNameFromId
+				? line.includes(`(${targetKind})`)
+				: line.includes(`$type=${targetKind}`);
+			const matchesId = kindId !== undefined && line.includes(`$type=${kindId}`);
+			return matchesName || matchesId ? `${line}  ← ${targetKind}` : line;
+		});
+		process.stdout.write(annotated.join('\n') + '\n');
+	} else {
+		process.stdout.write(lines.join('\n') + '\n');
+	}
 	return 0;
 }
 

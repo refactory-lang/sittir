@@ -3,12 +3,16 @@
 export const NODE_KINDS = [
     '_as_pattern',
     '_comprehension_clauses',
+    '_except_clause_list',
+    '_expression_statement_tuple',
     '_list_pattern',
     '_match_block',
     '_simple_pattern_negative',
     '_simple_statements',
+    '_slice_group1',
     '_suite',
     '_tuple_pattern',
+    '_with_clause_bare',
     '_with_clause_paren',
     'aliased_import',
     'argument_list',
@@ -48,7 +52,6 @@ export const NODE_KINDS = [
     'exec_statement',
     'expression_list',
     'expression_statement',
-    'expression_statement_tuple',
     'finally_clause',
     'for_in_clause',
     'for_statement',
@@ -92,6 +95,7 @@ export const NODE_KINDS = [
     'set',
     'set_comprehension',
     'slice',
+    'slice_group1',
     'splat_pattern',
     'splat_type',
     'string',
@@ -110,8 +114,6 @@ export const NODE_KINDS = [
     'union_type',
     'while_statement',
     'with_clause',
-    'with_clause_bare',
-    'with_clause_paren',
     'with_item',
     'with_statement',
     'yield',
@@ -127,14 +129,16 @@ export const LEAF_KINDS = [
     '__future__',
     '_async_marker',
     '_augmented_assignment_operator',
+    '_complex_pattern_operator',
     '_dedent',
-    '_identifier',
     '_indent',
     '_is_not',
     '_kw_async_marker',
+    '_kw_identifier',
     '_kw_type',
     '_newline',
     '_not_in',
+    '_splat_pattern_operator',
     '_string_content',
     '_unary_operator_operator',
     'and',
@@ -199,6 +203,7 @@ export const KEYWORDS = [
     '__future__',
     '_async_marker',
     '_kw_async_marker',
+    '_kw_identifier',
     '_kw_type',
     '_not_escape_sequence',
     'amp',
@@ -309,35 +314,35 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
     "finally": 35,
     "with": 36,
     "def": 37,
-    "star_star": 39,
-    "global": 40,
-    "nonlocal": 41,
-    "exec": 42,
-    "class": 44,
-    "at": 47,
-    "_": 48,
-    "pipe": 49,
-    "plus": 52,
-    "dash": 53,
-    "not": 54,
-    "and": 55,
-    "or": 56,
-    "slash": 57,
-    "percent": 58,
-    "slash_slash": 59,
-    "amp": 60,
-    "caret": 61,
-    "lt_lt": 62,
-    "ellipsis": 87,
-    "escape_sequence": 89,
-    "type_conversion": 92,
-    "integer": 93,
-    "float": 94,
-    "true": 96,
-    "false": 97,
-    "none": 98,
-    "comment": 99,
-    "line_continuation": 100,
+    "star_star": 38,
+    "global": 39,
+    "nonlocal": 40,
+    "exec": 41,
+    "class": 43,
+    "at": 46,
+    "_": 47,
+    "pipe": 48,
+    "plus": 51,
+    "dash": 52,
+    "not": 53,
+    "and": 54,
+    "or": 55,
+    "slash": 56,
+    "percent": 57,
+    "slash_slash": 58,
+    "amp": 59,
+    "caret": 60,
+    "lt_lt": 61,
+    "ellipsis": 79,
+    "escape_sequence": 81,
+    "type_conversion": 84,
+    "integer": 85,
+    "float": 86,
+    "true": 88,
+    "false": 89,
+    "none": 90,
+    "comment": 91,
+    "line_continuation": 92,
     "_newline": 101,
     "_indent": 102,
     "_dedent": 103,
@@ -462,8 +467,12 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
     "await": 237,
     "positional_separator": 238,
     "keyword_separator": 239,
-    "_with_clause_paren": 245,
-    "_simple_pattern_negative": 248,
+    "_slice_group1": 240,
+    "_expression_statement_tuple": 245,
+    "_with_clause_bare": 246,
+    "_with_clause_paren": 247,
+    "_simple_pattern_negative": 250,
+    "_except_clause_list": 251,
 };
 export const TREE_SITTER_KIND_BY_KIND_ID = {
     [1]: "identifier",
@@ -495,35 +504,35 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
     [35]: "finally",
     [36]: "with",
     [37]: "def",
-    [39]: "star_star",
-    [40]: "global",
-    [41]: "nonlocal",
-    [42]: "exec",
-    [44]: "class",
-    [47]: "at",
-    [48]: "_",
-    [49]: "pipe",
-    [52]: "plus",
-    [53]: "dash",
-    [54]: "not",
-    [55]: "and",
-    [56]: "or",
-    [57]: "slash",
-    [58]: "percent",
-    [59]: "slash_slash",
-    [60]: "amp",
-    [61]: "caret",
-    [62]: "lt_lt",
-    [87]: "ellipsis",
-    [89]: "escape_sequence",
-    [92]: "type_conversion",
-    [93]: "integer",
-    [94]: "float",
-    [96]: "true",
-    [97]: "false",
-    [98]: "none",
-    [99]: "comment",
-    [100]: "line_continuation",
+    [38]: "star_star",
+    [39]: "global",
+    [40]: "nonlocal",
+    [41]: "exec",
+    [43]: "class",
+    [46]: "at",
+    [47]: "_",
+    [48]: "pipe",
+    [51]: "plus",
+    [52]: "dash",
+    [53]: "not",
+    [54]: "and",
+    [55]: "or",
+    [56]: "slash",
+    [57]: "percent",
+    [58]: "slash_slash",
+    [59]: "amp",
+    [60]: "caret",
+    [61]: "lt_lt",
+    [79]: "ellipsis",
+    [81]: "escape_sequence",
+    [84]: "type_conversion",
+    [85]: "integer",
+    [86]: "float",
+    [88]: "true",
+    [89]: "false",
+    [90]: "none",
+    [91]: "comment",
+    [92]: "line_continuation",
     [101]: "_newline",
     [102]: "_indent",
     [103]: "_dedent",
@@ -648,8 +657,12 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
     [237]: "await",
     [238]: "positional_separator",
     [239]: "keyword_separator",
-    [245]: "_with_clause_paren",
-    [248]: "_simple_pattern_negative",
+    [240]: "_slice_group1",
+    [245]: "_expression_statement_tuple",
+    [246]: "_with_clause_bare",
+    [247]: "_with_clause_paren",
+    [250]: "_simple_pattern_negative",
+    [251]: "_except_clause_list",
 };
 export const TREE_SITTER_KIND_ID_JSON = [
     { name: "identifier", id: 1, enumName: "Identifier", cName: "sym_identifier" },
@@ -681,35 +694,35 @@ export const TREE_SITTER_KIND_ID_JSON = [
     { name: "finally", id: 35, enumName: "AnonFinally", cName: "anon_sym_finally" },
     { name: "with", id: 36, enumName: "AnonWith", cName: "anon_sym_with" },
     { name: "def", id: 37, enumName: "AnonDef", cName: "anon_sym_def" },
-    { name: "star_star", id: 39, enumName: "AnonStarStar", cName: "anon_sym_STAR_STAR" },
-    { name: "global", id: 40, enumName: "AnonGlobal", cName: "anon_sym_global" },
-    { name: "nonlocal", id: 41, enumName: "AnonNonlocal", cName: "anon_sym_nonlocal" },
-    { name: "exec", id: 42, enumName: "AnonExec", cName: "anon_sym_exec" },
-    { name: "class", id: 44, enumName: "AnonClass", cName: "anon_sym_class" },
-    { name: "at", id: 47, enumName: "AnonAt", cName: "anon_sym_AT" },
-    { name: "_", id: 48, enumName: "Anon", cName: "anon_sym__" },
-    { name: "pipe", id: 49, enumName: "AnonPipe", cName: "anon_sym_PIPE" },
-    { name: "plus", id: 52, enumName: "AnonPlus", cName: "anon_sym_PLUS" },
-    { name: "dash", id: 53, enumName: "AnonDash", cName: "anon_sym_DASH" },
-    { name: "not", id: 54, enumName: "AnonNot", cName: "anon_sym_not" },
-    { name: "and", id: 55, enumName: "AnonAnd", cName: "anon_sym_and" },
-    { name: "or", id: 56, enumName: "AnonOr", cName: "anon_sym_or" },
-    { name: "slash", id: 57, enumName: "AnonSlash", cName: "anon_sym_SLASH" },
-    { name: "percent", id: 58, enumName: "AnonPercent", cName: "anon_sym_PERCENT" },
-    { name: "slash_slash", id: 59, enumName: "AnonSlashSlash", cName: "anon_sym_SLASH_SLASH" },
-    { name: "amp", id: 60, enumName: "AnonAmp", cName: "anon_sym_AMP" },
-    { name: "caret", id: 61, enumName: "AnonCaret", cName: "anon_sym_CARET" },
-    { name: "lt_lt", id: 62, enumName: "AnonLtLt", cName: "anon_sym_LT_LT" },
-    { name: "ellipsis", id: 87, enumName: "Ellipsis", cName: "sym_ellipsis" },
-    { name: "escape_sequence", id: 89, enumName: "EscapeSequence", cName: "sym_escape_sequence" },
-    { name: "type_conversion", id: 92, enumName: "TypeConversion", cName: "sym_type_conversion" },
-    { name: "integer", id: 93, enumName: "Integer", cName: "sym_integer" },
-    { name: "float", id: 94, enumName: "Float", cName: "sym_float" },
-    { name: "true", id: 96, enumName: "True", cName: "sym_true" },
-    { name: "false", id: 97, enumName: "False", cName: "sym_false" },
-    { name: "none", id: 98, enumName: "None", cName: "sym_none" },
-    { name: "comment", id: 99, enumName: "Comment", cName: "sym_comment" },
-    { name: "line_continuation", id: 100, enumName: "LineContinuation", cName: "sym_line_continuation" },
+    { name: "star_star", id: 38, enumName: "AnonStarStar", cName: "anon_sym_STAR_STAR" },
+    { name: "global", id: 39, enumName: "AnonGlobal", cName: "anon_sym_global" },
+    { name: "nonlocal", id: 40, enumName: "AnonNonlocal", cName: "anon_sym_nonlocal" },
+    { name: "exec", id: 41, enumName: "AnonExec", cName: "anon_sym_exec" },
+    { name: "class", id: 43, enumName: "AnonClass", cName: "anon_sym_class" },
+    { name: "at", id: 46, enumName: "AnonAt", cName: "anon_sym_AT" },
+    { name: "_", id: 47, enumName: "Anon", cName: "anon_sym__" },
+    { name: "pipe", id: 48, enumName: "AnonPipe", cName: "anon_sym_PIPE" },
+    { name: "plus", id: 51, enumName: "AnonPlus", cName: "anon_sym_PLUS" },
+    { name: "dash", id: 52, enumName: "AnonDash", cName: "anon_sym_DASH" },
+    { name: "not", id: 53, enumName: "AnonNot", cName: "anon_sym_not" },
+    { name: "and", id: 54, enumName: "AnonAnd", cName: "anon_sym_and" },
+    { name: "or", id: 55, enumName: "AnonOr", cName: "anon_sym_or" },
+    { name: "slash", id: 56, enumName: "AnonSlash", cName: "anon_sym_SLASH" },
+    { name: "percent", id: 57, enumName: "AnonPercent", cName: "anon_sym_PERCENT" },
+    { name: "slash_slash", id: 58, enumName: "AnonSlashSlash", cName: "anon_sym_SLASH_SLASH" },
+    { name: "amp", id: 59, enumName: "AnonAmp", cName: "anon_sym_AMP" },
+    { name: "caret", id: 60, enumName: "AnonCaret", cName: "anon_sym_CARET" },
+    { name: "lt_lt", id: 61, enumName: "AnonLtLt", cName: "anon_sym_LT_LT" },
+    { name: "ellipsis", id: 79, enumName: "Ellipsis", cName: "sym_ellipsis" },
+    { name: "escape_sequence", id: 81, enumName: "EscapeSequence", cName: "sym_escape_sequence" },
+    { name: "type_conversion", id: 84, enumName: "TypeConversion", cName: "sym_type_conversion" },
+    { name: "integer", id: 85, enumName: "Integer", cName: "sym_integer" },
+    { name: "float", id: 86, enumName: "Float", cName: "sym_float" },
+    { name: "true", id: 88, enumName: "True", cName: "sym_true" },
+    { name: "false", id: 89, enumName: "False", cName: "sym_false" },
+    { name: "none", id: 90, enumName: "None", cName: "sym_none" },
+    { name: "comment", id: 91, enumName: "Comment", cName: "sym_comment" },
+    { name: "line_continuation", id: 92, enumName: "LineContinuation", cName: "sym_line_continuation" },
     { name: "_newline", id: 101, enumName: "Newline", cName: "sym__newline" },
     { name: "_indent", id: 102, enumName: "Indent", cName: "sym__indent" },
     { name: "_dedent", id: 103, enumName: "Dedent", cName: "sym__dedent" },
@@ -834,8 +847,12 @@ export const TREE_SITTER_KIND_ID_JSON = [
     { name: "await", id: 237, enumName: "Await", cName: "sym_await" },
     { name: "positional_separator", id: 238, enumName: "PositionalSeparator", cName: "sym_positional_separator" },
     { name: "keyword_separator", id: 239, enumName: "KeywordSeparator", cName: "sym_keyword_separator" },
-    { name: "_with_clause_paren", id: 245, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
-    { name: "_simple_pattern_negative", id: 248, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
+    { name: "_slice_group1", id: 240, enumName: "SliceGroup1", cName: "sym__slice_group1" },
+    { name: "_expression_statement_tuple", id: 245, enumName: "ExpressionStatementTuple", cName: "sym__expression_statement_tuple" },
+    { name: "_with_clause_bare", id: 246, enumName: "WithClauseBare", cName: "sym__with_clause_bare" },
+    { name: "_with_clause_paren", id: 247, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
+    { name: "_simple_pattern_negative", id: 250, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
+    { name: "_except_clause_list", id: 251, enumName: "ExceptClauseList", cName: "sym__except_clause_list" },
 ];
 export var TSFieldId;
 (function (TSFieldId) {
@@ -850,6 +867,7 @@ export var TSFieldId;
     TSFieldId[TSFieldId["FieldBody"] = 9] = "FieldBody";
     TSFieldId[TSFieldId["FieldCause"] = 10] = "FieldCause";
     TSFieldId[TSFieldId["FieldCode"] = 11] = "FieldCode";
+    TSFieldId[TSFieldId["FieldComparators"] = 12] = "FieldComparators";
     TSFieldId[TSFieldId["FieldCondition"] = 13] = "FieldCondition";
     TSFieldId[TSFieldId["FieldConsequence"] = 14] = "FieldConsequence";
     TSFieldId[TSFieldId["FieldConstraint"] = 15] = "FieldConstraint";
@@ -857,43 +875,46 @@ export var TSFieldId;
     TSFieldId[TSFieldId["FieldDefinition"] = 17] = "FieldDefinition";
     TSFieldId[TSFieldId["FieldDottedName"] = 18] = "FieldDottedName";
     TSFieldId[TSFieldId["FieldElseClause"] = 19] = "FieldElseClause";
-    TSFieldId[TSFieldId["FieldExceptClauses"] = 20] = "FieldExceptClauses";
-    TSFieldId[TSFieldId["FieldExpression"] = 21] = "FieldExpression";
-    TSFieldId[TSFieldId["FieldFinallyClause"] = 24] = "FieldFinallyClause";
-    TSFieldId[TSFieldId["FieldFormatSpecifier"] = 25] = "FieldFormatSpecifier";
-    TSFieldId[TSFieldId["FieldFunction"] = 26] = "FieldFunction";
-    TSFieldId[TSFieldId["FieldGuard"] = 27] = "FieldGuard";
-    TSFieldId[TSFieldId["FieldIdentifier"] = 28] = "FieldIdentifier";
-    TSFieldId[TSFieldId["FieldImaginary"] = 29] = "FieldImaginary";
-    TSFieldId[TSFieldId["FieldImportPrefix"] = 30] = "FieldImportPrefix";
-    TSFieldId[TSFieldId["FieldInClause"] = 31] = "FieldInClause";
-    TSFieldId[TSFieldId["FieldKey"] = 32] = "FieldKey";
-    TSFieldId[TSFieldId["FieldLeft"] = 33] = "FieldLeft";
-    TSFieldId[TSFieldId["FieldModuleName"] = 34] = "FieldModuleName";
-    TSFieldId[TSFieldId["FieldName"] = 35] = "FieldName";
-    TSFieldId[TSFieldId["FieldNewline"] = 36] = "FieldNewline";
-    TSFieldId[TSFieldId["FieldObject"] = 37] = "FieldObject";
-    TSFieldId[TSFieldId["FieldOperator"] = 38] = "FieldOperator";
-    TSFieldId[TSFieldId["FieldOperators"] = 39] = "FieldOperators";
-    TSFieldId[TSFieldId["FieldParameters"] = 40] = "FieldParameters";
-    TSFieldId[TSFieldId["FieldPrimaryExpression"] = 41] = "FieldPrimaryExpression";
-    TSFieldId[TSFieldId["FieldReal"] = 42] = "FieldReal";
-    TSFieldId[TSFieldId["FieldReturnType"] = 43] = "FieldReturnType";
-    TSFieldId[TSFieldId["FieldRight"] = 44] = "FieldRight";
-    TSFieldId[TSFieldId["FieldSimplePattern"] = 45] = "FieldSimplePattern";
+    TSFieldId[TSFieldId["FieldEntries"] = 20] = "FieldEntries";
+    TSFieldId[TSFieldId["FieldExceptClauses"] = 21] = "FieldExceptClauses";
+    TSFieldId[TSFieldId["FieldExpression"] = 22] = "FieldExpression";
+    TSFieldId[TSFieldId["FieldFinallyClause"] = 23] = "FieldFinallyClause";
+    TSFieldId[TSFieldId["FieldFormatSpecifier"] = 24] = "FieldFormatSpecifier";
+    TSFieldId[TSFieldId["FieldFunction"] = 25] = "FieldFunction";
+    TSFieldId[TSFieldId["FieldGuard"] = 26] = "FieldGuard";
+    TSFieldId[TSFieldId["FieldIdentifier"] = 27] = "FieldIdentifier";
+    TSFieldId[TSFieldId["FieldImaginary"] = 28] = "FieldImaginary";
+    TSFieldId[TSFieldId["FieldImportPrefix"] = 29] = "FieldImportPrefix";
+    TSFieldId[TSFieldId["FieldInClause"] = 30] = "FieldInClause";
+    TSFieldId[TSFieldId["FieldKey"] = 31] = "FieldKey";
+    TSFieldId[TSFieldId["FieldLeft"] = 32] = "FieldLeft";
+    TSFieldId[TSFieldId["FieldModuleName"] = 33] = "FieldModuleName";
+    TSFieldId[TSFieldId["FieldName"] = 34] = "FieldName";
+    TSFieldId[TSFieldId["FieldNewline"] = 35] = "FieldNewline";
+    TSFieldId[TSFieldId["FieldObject"] = 36] = "FieldObject";
+    TSFieldId[TSFieldId["FieldOperator"] = 37] = "FieldOperator";
+    TSFieldId[TSFieldId["FieldOperators"] = 38] = "FieldOperators";
+    TSFieldId[TSFieldId["FieldParameters"] = 39] = "FieldParameters";
+    TSFieldId[TSFieldId["FieldPrimaryExpression"] = 40] = "FieldPrimaryExpression";
+    TSFieldId[TSFieldId["FieldReal"] = 41] = "FieldReal";
+    TSFieldId[TSFieldId["FieldReturnType"] = 42] = "FieldReturnType";
+    TSFieldId[TSFieldId["FieldRight"] = 43] = "FieldRight";
+    TSFieldId[TSFieldId["FieldSimplePattern"] = 44] = "FieldSimplePattern";
+    TSFieldId[TSFieldId["FieldStart"] = 45] = "FieldStart";
     TSFieldId[TSFieldId["FieldStep"] = 46] = "FieldStep";
-    TSFieldId[TSFieldId["FieldStringEnd"] = 47] = "FieldStringEnd";
-    TSFieldId[TSFieldId["FieldStringStart"] = 48] = "FieldStringStart";
-    TSFieldId[TSFieldId["FieldSubject"] = 49] = "FieldSubject";
-    TSFieldId[TSFieldId["FieldSubscript"] = 50] = "FieldSubscript";
-    TSFieldId[TSFieldId["FieldSuperclasses"] = 51] = "FieldSuperclasses";
-    TSFieldId[TSFieldId["FieldType"] = 52] = "FieldType";
-    TSFieldId[TSFieldId["FieldTypeConversion"] = 53] = "FieldTypeConversion";
-    TSFieldId[TSFieldId["FieldTypeParameter"] = 54] = "FieldTypeParameter";
-    TSFieldId[TSFieldId["FieldTypeParameters"] = 55] = "FieldTypeParameters";
-    TSFieldId[TSFieldId["FieldValue"] = 56] = "FieldValue";
-    TSFieldId[TSFieldId["FieldWildcardImport"] = 57] = "FieldWildcardImport";
-    TSFieldId[TSFieldId["FieldWithClause"] = 58] = "FieldWithClause";
+    TSFieldId[TSFieldId["FieldStop"] = 47] = "FieldStop";
+    TSFieldId[TSFieldId["FieldStringEnd"] = 48] = "FieldStringEnd";
+    TSFieldId[TSFieldId["FieldStringStart"] = 49] = "FieldStringStart";
+    TSFieldId[TSFieldId["FieldSubject"] = 50] = "FieldSubject";
+    TSFieldId[TSFieldId["FieldSubscript"] = 51] = "FieldSubscript";
+    TSFieldId[TSFieldId["FieldSuperclasses"] = 52] = "FieldSuperclasses";
+    TSFieldId[TSFieldId["FieldType"] = 53] = "FieldType";
+    TSFieldId[TSFieldId["FieldTypeConversion"] = 54] = "FieldTypeConversion";
+    TSFieldId[TSFieldId["FieldTypeParameter"] = 55] = "FieldTypeParameter";
+    TSFieldId[TSFieldId["FieldTypeParameters"] = 56] = "FieldTypeParameters";
+    TSFieldId[TSFieldId["FieldValue"] = 57] = "FieldValue";
+    TSFieldId[TSFieldId["FieldWildcardImport"] = 58] = "FieldWildcardImport";
+    TSFieldId[TSFieldId["FieldWithClause"] = 59] = "FieldWithClause";
 })(TSFieldId || (TSFieldId = {}));
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
     "alias": TSFieldId.FieldAlias,
@@ -907,6 +928,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
     "body": TSFieldId.FieldBody,
     "cause": TSFieldId.FieldCause,
     "code": TSFieldId.FieldCode,
+    "comparators": TSFieldId.FieldComparators,
     "condition": TSFieldId.FieldCondition,
     "consequence": TSFieldId.FieldConsequence,
     "constraint": TSFieldId.FieldConstraint,
@@ -914,6 +936,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
     "definition": TSFieldId.FieldDefinition,
     "dotted_name": TSFieldId.FieldDottedName,
     "else_clause": TSFieldId.FieldElseClause,
+    "entries": TSFieldId.FieldEntries,
     "except_clauses": TSFieldId.FieldExceptClauses,
     "expression": TSFieldId.FieldExpression,
     "finally_clause": TSFieldId.FieldFinallyClause,
@@ -938,7 +961,9 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
     "return_type": TSFieldId.FieldReturnType,
     "right": TSFieldId.FieldRight,
     "simple_pattern": TSFieldId.FieldSimplePattern,
+    "start": TSFieldId.FieldStart,
     "step": TSFieldId.FieldStep,
+    "stop": TSFieldId.FieldStop,
     "string_end": TSFieldId.FieldStringEnd,
     "string_start": TSFieldId.FieldStringStart,
     "subject": TSFieldId.FieldSubject,
@@ -964,6 +989,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
     [TSFieldId.FieldBody]: "body",
     [TSFieldId.FieldCause]: "cause",
     [TSFieldId.FieldCode]: "code",
+    [TSFieldId.FieldComparators]: "comparators",
     [TSFieldId.FieldCondition]: "condition",
     [TSFieldId.FieldConsequence]: "consequence",
     [TSFieldId.FieldConstraint]: "constraint",
@@ -971,6 +997,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
     [TSFieldId.FieldDefinition]: "definition",
     [TSFieldId.FieldDottedName]: "dotted_name",
     [TSFieldId.FieldElseClause]: "else_clause",
+    [TSFieldId.FieldEntries]: "entries",
     [TSFieldId.FieldExceptClauses]: "except_clauses",
     [TSFieldId.FieldExpression]: "expression",
     [TSFieldId.FieldFinallyClause]: "finally_clause",
@@ -995,7 +1022,9 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
     [TSFieldId.FieldReturnType]: "return_type",
     [TSFieldId.FieldRight]: "right",
     [TSFieldId.FieldSimplePattern]: "simple_pattern",
+    [TSFieldId.FieldStart]: "start",
     [TSFieldId.FieldStep]: "step",
+    [TSFieldId.FieldStop]: "stop",
     [TSFieldId.FieldStringEnd]: "string_end",
     [TSFieldId.FieldStringStart]: "string_start",
     [TSFieldId.FieldSubject]: "subject",
@@ -1021,6 +1050,7 @@ export const TREE_SITTER_FIELD_ID_JSON = [
     { name: "body", id: 9, enumName: "FieldBody", cName: "field_body" },
     { name: "cause", id: 10, enumName: "FieldCause", cName: "field_cause" },
     { name: "code", id: 11, enumName: "FieldCode", cName: "field_code" },
+    { name: "comparators", id: 12, enumName: "FieldComparators", cName: "field_comparators" },
     { name: "condition", id: 13, enumName: "FieldCondition", cName: "field_condition" },
     { name: "consequence", id: 14, enumName: "FieldConsequence", cName: "field_consequence" },
     { name: "constraint", id: 15, enumName: "FieldConstraint", cName: "field_constraint" },
@@ -1028,43 +1058,46 @@ export const TREE_SITTER_FIELD_ID_JSON = [
     { name: "definition", id: 17, enumName: "FieldDefinition", cName: "field_definition" },
     { name: "dotted_name", id: 18, enumName: "FieldDottedName", cName: "field_dotted_name" },
     { name: "else_clause", id: 19, enumName: "FieldElseClause", cName: "field_else_clause" },
-    { name: "except_clauses", id: 20, enumName: "FieldExceptClauses", cName: "field_except_clauses" },
-    { name: "expression", id: 21, enumName: "FieldExpression", cName: "field_expression" },
-    { name: "finally_clause", id: 24, enumName: "FieldFinallyClause", cName: "field_finally_clause" },
-    { name: "format_specifier", id: 25, enumName: "FieldFormatSpecifier", cName: "field_format_specifier" },
-    { name: "function", id: 26, enumName: "FieldFunction", cName: "field_function" },
-    { name: "guard", id: 27, enumName: "FieldGuard", cName: "field_guard" },
-    { name: "identifier", id: 28, enumName: "FieldIdentifier", cName: "field_identifier" },
-    { name: "imaginary", id: 29, enumName: "FieldImaginary", cName: "field_imaginary" },
-    { name: "import_prefix", id: 30, enumName: "FieldImportPrefix", cName: "field_import_prefix" },
-    { name: "in_clause", id: 31, enumName: "FieldInClause", cName: "field_in_clause" },
-    { name: "key", id: 32, enumName: "FieldKey", cName: "field_key" },
-    { name: "left", id: 33, enumName: "FieldLeft", cName: "field_left" },
-    { name: "module_name", id: 34, enumName: "FieldModuleName", cName: "field_module_name" },
-    { name: "name", id: 35, enumName: "FieldName", cName: "field_name" },
-    { name: "newline", id: 36, enumName: "FieldNewline", cName: "field_newline" },
-    { name: "object", id: 37, enumName: "FieldObject", cName: "field_object" },
-    { name: "operator", id: 38, enumName: "FieldOperator", cName: "field_operator" },
-    { name: "operators", id: 39, enumName: "FieldOperators", cName: "field_operators" },
-    { name: "parameters", id: 40, enumName: "FieldParameters", cName: "field_parameters" },
-    { name: "primary_expression", id: 41, enumName: "FieldPrimaryExpression", cName: "field_primary_expression" },
-    { name: "real", id: 42, enumName: "FieldReal", cName: "field_real" },
-    { name: "return_type", id: 43, enumName: "FieldReturnType", cName: "field_return_type" },
-    { name: "right", id: 44, enumName: "FieldRight", cName: "field_right" },
-    { name: "simple_pattern", id: 45, enumName: "FieldSimplePattern", cName: "field_simple_pattern" },
+    { name: "entries", id: 20, enumName: "FieldEntries", cName: "field_entries" },
+    { name: "except_clauses", id: 21, enumName: "FieldExceptClauses", cName: "field_except_clauses" },
+    { name: "expression", id: 22, enumName: "FieldExpression", cName: "field_expression" },
+    { name: "finally_clause", id: 23, enumName: "FieldFinallyClause", cName: "field_finally_clause" },
+    { name: "format_specifier", id: 24, enumName: "FieldFormatSpecifier", cName: "field_format_specifier" },
+    { name: "function", id: 25, enumName: "FieldFunction", cName: "field_function" },
+    { name: "guard", id: 26, enumName: "FieldGuard", cName: "field_guard" },
+    { name: "identifier", id: 27, enumName: "FieldIdentifier", cName: "field_identifier" },
+    { name: "imaginary", id: 28, enumName: "FieldImaginary", cName: "field_imaginary" },
+    { name: "import_prefix", id: 29, enumName: "FieldImportPrefix", cName: "field_import_prefix" },
+    { name: "in_clause", id: 30, enumName: "FieldInClause", cName: "field_in_clause" },
+    { name: "key", id: 31, enumName: "FieldKey", cName: "field_key" },
+    { name: "left", id: 32, enumName: "FieldLeft", cName: "field_left" },
+    { name: "module_name", id: 33, enumName: "FieldModuleName", cName: "field_module_name" },
+    { name: "name", id: 34, enumName: "FieldName", cName: "field_name" },
+    { name: "newline", id: 35, enumName: "FieldNewline", cName: "field_newline" },
+    { name: "object", id: 36, enumName: "FieldObject", cName: "field_object" },
+    { name: "operator", id: 37, enumName: "FieldOperator", cName: "field_operator" },
+    { name: "operators", id: 38, enumName: "FieldOperators", cName: "field_operators" },
+    { name: "parameters", id: 39, enumName: "FieldParameters", cName: "field_parameters" },
+    { name: "primary_expression", id: 40, enumName: "FieldPrimaryExpression", cName: "field_primary_expression" },
+    { name: "real", id: 41, enumName: "FieldReal", cName: "field_real" },
+    { name: "return_type", id: 42, enumName: "FieldReturnType", cName: "field_return_type" },
+    { name: "right", id: 43, enumName: "FieldRight", cName: "field_right" },
+    { name: "simple_pattern", id: 44, enumName: "FieldSimplePattern", cName: "field_simple_pattern" },
+    { name: "start", id: 45, enumName: "FieldStart", cName: "field_start" },
     { name: "step", id: 46, enumName: "FieldStep", cName: "field_step" },
-    { name: "string_end", id: 47, enumName: "FieldStringEnd", cName: "field_string_end" },
-    { name: "string_start", id: 48, enumName: "FieldStringStart", cName: "field_string_start" },
-    { name: "subject", id: 49, enumName: "FieldSubject", cName: "field_subject" },
-    { name: "subscript", id: 50, enumName: "FieldSubscript", cName: "field_subscript" },
-    { name: "superclasses", id: 51, enumName: "FieldSuperclasses", cName: "field_superclasses" },
-    { name: "type", id: 52, enumName: "FieldType", cName: "field_type" },
-    { name: "type_conversion", id: 53, enumName: "FieldTypeConversion", cName: "field_type_conversion" },
-    { name: "type_parameter", id: 54, enumName: "FieldTypeParameter", cName: "field_type_parameter" },
-    { name: "type_parameters", id: 55, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
-    { name: "value", id: 56, enumName: "FieldValue", cName: "field_value" },
-    { name: "wildcard_import", id: 57, enumName: "FieldWildcardImport", cName: "field_wildcard_import" },
-    { name: "with_clause", id: 58, enumName: "FieldWithClause", cName: "field_with_clause" },
+    { name: "stop", id: 47, enumName: "FieldStop", cName: "field_stop" },
+    { name: "string_end", id: 48, enumName: "FieldStringEnd", cName: "field_string_end" },
+    { name: "string_start", id: 49, enumName: "FieldStringStart", cName: "field_string_start" },
+    { name: "subject", id: 50, enumName: "FieldSubject", cName: "field_subject" },
+    { name: "subscript", id: 51, enumName: "FieldSubscript", cName: "field_subscript" },
+    { name: "superclasses", id: 52, enumName: "FieldSuperclasses", cName: "field_superclasses" },
+    { name: "type", id: 53, enumName: "FieldType", cName: "field_type" },
+    { name: "type_conversion", id: 54, enumName: "FieldTypeConversion", cName: "field_type_conversion" },
+    { name: "type_parameter", id: 55, enumName: "FieldTypeParameter", cName: "field_type_parameter" },
+    { name: "type_parameters", id: 56, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
+    { name: "value", id: 57, enumName: "FieldValue", cName: "field_value" },
+    { name: "wildcard_import", id: 58, enumName: "FieldWildcardImport", cName: "field_wildcard_import" },
+    { name: "with_clause", id: 59, enumName: "FieldWithClause", cName: "field_with_clause" },
 ];
 /** Per-node-kind field metadata. */
 export const FIELD_MAP = {
@@ -1073,7 +1106,13 @@ export const FIELD_MAP = {
         { name: 'identifier', required: true, multiple: false },
     ],
     '_comprehension_clauses': [
-        { name: 'forInClause', required: false, multiple: true },
+        { name: 'contents', required: false, multiple: true },
+    ],
+    '_except_clause_list': [
+        { name: 'values', required: true, multiple: true },
+    ],
+    '_expression_statement_tuple': [
+        { name: 'expressions', required: true, multiple: true },
     ],
     '_list_pattern': [
         { name: 'casePatterns', required: false, multiple: true },
@@ -1082,16 +1121,24 @@ export const FIELD_MAP = {
         { name: 'matchBlockBlock', required: true, multiple: false },
     ],
     '_simple_pattern_negative': [
-        { name: 'integer', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
     ],
     '_simple_statements': [
         { name: 'simpleStatements', required: true, multiple: true },
     ],
+    '_slice_group1': [
+        { name: 'expression', required: false, multiple: false },
+    ],
     '_suite': [
-        { name: 'simpleStatements', required: true, multiple: false },
+        { name: 'simpleStatements', required: false, multiple: false },
+        { name: 'block', required: false, multiple: false },
+        { name: 'newline', required: false, multiple: false },
     ],
     '_tuple_pattern': [
         { name: 'casePatterns', required: false, multiple: true },
+    ],
+    '_with_clause_bare': [
+        { name: 'withItems', required: true, multiple: true },
     ],
     '_with_clause_paren': [
         { name: 'withItems', required: true, multiple: true },
@@ -1101,7 +1148,7 @@ export const FIELD_MAP = {
         { name: 'alias', required: true, multiple: false },
     ],
     'argument_list': [
-        { name: 'expression', required: false, multiple: true },
+        { name: 'arguments', required: false, multiple: true },
     ],
     'as_pattern': [
         { name: 'expression', required: true, multiple: false },
@@ -1112,9 +1159,7 @@ export const FIELD_MAP = {
     ],
     'assignment': [
         { name: 'left', required: true, multiple: false },
-        { name: 'assignmentEq', required: true, multiple: false },
-        { name: 'assignmentType', required: true, multiple: false },
-        { name: 'assignmentTyped', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
     ],
     'attribute': [
         { name: 'object', required: true, multiple: false },
@@ -1151,7 +1196,7 @@ export const FIELD_MAP = {
         { name: 'consequence', required: true, multiple: false },
     ],
     'case_pattern': [
-        { name: 'asPattern', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
     ],
     'chevron': [
         { name: 'expression', required: true, multiple: false },
@@ -1168,16 +1213,16 @@ export const FIELD_MAP = {
     ],
     'comparison_operator': [
         { name: 'left', required: true, multiple: false },
-        { name: 'operators', required: true, multiple: true },
-        { name: 'primaryExpressions', required: true, multiple: true },
+        { name: 'comparators', required: true, multiple: true },
     ],
     'complex_pattern': [
         { name: 'real', required: false, multiple: false },
         { name: 'imaginary', required: true, multiple: false },
-        { name: 'integer', required: true, multiple: false },
+        { name: 'operator', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
     ],
     'concatenated_string': [
-        { name: 'string', required: true, multiple: true },
+        { name: 'strings', required: true, multiple: true },
     ],
     'conditional_expression': [
         { name: 'body', required: true, multiple: false },
@@ -1194,7 +1239,6 @@ export const FIELD_MAP = {
     ],
     'decorator': [
         { name: 'expression', required: true, multiple: false },
-        { name: 'newline', required: false, multiple: false },
     ],
     'default_parameter': [
         { name: 'name', required: true, multiple: false },
@@ -1204,10 +1248,13 @@ export const FIELD_MAP = {
         { name: 'expressions', required: true, multiple: false },
     ],
     'dict_pattern': [
-        { name: 'dictPatternKvs', required: false, multiple: true },
+        { name: 'dictPatternKv', required: false, multiple: false },
+        { name: 'keys', required: false, multiple: true },
+        { name: 'values', required: false, multiple: true },
+        { name: 'splatPatterns', required: false, multiple: true },
     ],
     'dictionary': [
-        { name: 'pairs', required: false, multiple: true },
+        { name: 'entries', required: false, multiple: true },
     ],
     'dictionary_comprehension': [
         { name: 'body', required: true, multiple: false },
@@ -1217,7 +1264,7 @@ export const FIELD_MAP = {
         { name: 'expression', required: true, multiple: false },
     ],
     'dictionary_splat_pattern': [
-        { name: 'identifier', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
     ],
     'dotted_name': [
         { name: 'identifiers', required: true, multiple: true },
@@ -1230,26 +1277,20 @@ export const FIELD_MAP = {
         { name: 'body', required: true, multiple: false },
     ],
     'except_clause': [
-        { name: 'values', required: false, multiple: true },
-        { name: 'alias', required: false, multiple: false },
-        { name: 'suite', required: true, multiple: false },
+        { name: 'content', required: false, multiple: false },
+        { name: 'simpleStatements', required: false, multiple: false },
+        { name: 'block', required: false, multiple: false },
+        { name: 'newline', required: false, multiple: false },
     ],
     'exec_statement': [
         { name: 'code', required: true, multiple: false },
         { name: 'inClauses', required: false, multiple: true },
     ],
     'expression_list': [
-        { name: 'expression', required: true, multiple: true },
+        { name: 'expressions', required: true, multiple: true },
     ],
     'expression_statement': [
-        { name: 'expression', required: true, multiple: false },
-        { name: 'expressionStatementTuple', required: true, multiple: false },
-        { name: 'assignment', required: true, multiple: false },
-        { name: 'augmentedAssignment', required: true, multiple: false },
-        { name: 'yield', required: true, multiple: false },
-    ],
-    'expression_statement_tuple': [
-        { name: 'expressions', required: true, multiple: true },
+        { name: 'content', required: true, multiple: false },
     ],
     'finally_clause': [
         { name: 'block', required: true, multiple: false },
@@ -1267,7 +1308,7 @@ export const FIELD_MAP = {
         { name: 'alternative', required: false, multiple: false },
     ],
     'format_specifier': [
-        { name: 'interpolations', required: false, multiple: true },
+        { name: 'contents', required: false, multiple: true },
     ],
     'function_definition': [
         { name: 'asyncMarker', required: false, multiple: false },
@@ -1301,8 +1342,7 @@ export const FIELD_MAP = {
     ],
     'import_from_statement': [
         { name: 'moduleName', required: true, multiple: false },
-        { name: 'wildcardImport', required: false, multiple: false },
-        { name: 'names', required: false, multiple: true },
+        { name: 'wildcardImports', required: true, multiple: true },
     ],
     'import_statement': [
         { name: 'names', required: true, multiple: true },
@@ -1328,27 +1368,27 @@ export const FIELD_MAP = {
         { name: 'body', required: true, multiple: false },
     ],
     'lambda_parameters': [
-        { name: 'parameters', required: true, multiple: true },
+        { name: 'parameters', required: true, multiple: false },
     ],
     'lambda_within_for_in_clause': [
         { name: 'parameters', required: false, multiple: false },
         { name: 'body', required: true, multiple: false },
     ],
     'list': [
-        { name: 'expressions', required: false, multiple: true },
+        { name: 'collectionElements', required: false, multiple: false },
     ],
     'list_comprehension': [
         { name: 'body', required: true, multiple: false },
         { name: 'comprehensionClauses', required: true, multiple: false },
     ],
     'list_pattern': [
-        { name: 'patterns', required: false, multiple: true },
+        { name: 'patterns', required: false, multiple: false },
     ],
     'list_splat': [
         { name: 'expression', required: true, multiple: false },
     ],
     'list_splat_pattern': [
-        { name: 'identifier', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
     ],
     'match_statement': [
         { name: 'subjects', required: true, multiple: true },
@@ -1376,20 +1416,20 @@ export const FIELD_MAP = {
         { name: 'value', required: true, multiple: false },
     ],
     'parameters': [
-        { name: 'parameters', required: false, multiple: true },
+        { name: 'parameters', required: false, multiple: false },
     ],
     'parenthesized_expression': [
-        { name: 'expression', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
     ],
     'parenthesized_list_splat': [
-        { name: 'parenthesizedListSplat', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
     ],
     'pattern_list': [
-        { name: 'pattern', required: true, multiple: true },
+        { name: 'patterns', required: true, multiple: true },
     ],
     'print_statement': [
-        { name: 'arguments', required: false, multiple: true },
         { name: 'chevron', required: false, multiple: false },
+        { name: 'arguments', required: false, multiple: true },
     ],
     'raise_statement': [
         { name: 'expressions', required: false, multiple: false },
@@ -1403,7 +1443,7 @@ export const FIELD_MAP = {
         { name: 'expressions', required: false, multiple: false },
     ],
     'set': [
-        { name: 'expressions', required: true, multiple: true },
+        { name: 'collectionElements', required: true, multiple: false },
     ],
     'set_comprehension': [
         { name: 'body', required: true, multiple: false },
@@ -1414,7 +1454,11 @@ export const FIELD_MAP = {
         { name: 'stop', required: false, multiple: false },
         { name: 'step', required: false, multiple: false },
     ],
+    'slice_group1': [
+        { name: 'expression', required: false, multiple: false },
+    ],
     'splat_pattern': [
+        { name: 'operator', required: true, multiple: false },
         { name: 'identifier', required: true, multiple: false },
     ],
     'splat_type': [
@@ -1426,7 +1470,7 @@ export const FIELD_MAP = {
         { name: 'stringEnd', required: true, multiple: false },
     ],
     'string_content': [
-        { name: 'escapeInterpolations', required: true, multiple: true },
+        { name: 'contents', required: false, multiple: true },
     ],
     'subscript': [
         { name: 'value', required: true, multiple: false },
@@ -1439,13 +1483,13 @@ export const FIELD_MAP = {
         { name: 'finallyClause', required: false, multiple: false },
     ],
     'tuple': [
-        { name: 'expressions', required: false, multiple: true },
+        { name: 'collectionElements', required: false, multiple: false },
     ],
     'tuple_pattern': [
-        { name: 'patterns', required: false, multiple: true },
+        { name: 'patterns', required: false, multiple: false },
     ],
     'type': [
-        { name: 'expression', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
     ],
     'type_alias_statement': [
         { name: 'type', required: true, multiple: false },
@@ -1461,7 +1505,7 @@ export const FIELD_MAP = {
         { name: 'value', required: true, multiple: false },
     ],
     'typed_parameter': [
-        { name: 'identifier', required: true, multiple: false },
+        { name: 'content', required: true, multiple: false },
         { name: 'type', required: true, multiple: false },
     ],
     'unary_operator': [
@@ -1469,7 +1513,7 @@ export const FIELD_MAP = {
         { name: 'argument', required: true, multiple: false },
     ],
     'union_pattern': [
-        { name: 'simplePattern', required: true, multiple: true },
+        { name: 'simplePatterns', required: true, multiple: true },
     ],
     'union_type': [
         { name: 'left', required: true, multiple: false },
@@ -1481,14 +1525,7 @@ export const FIELD_MAP = {
         { name: 'alternative', required: false, multiple: false },
     ],
     'with_clause': [
-        { name: 'withClauseBare', required: true, multiple: false },
-        { name: 'withClauseParen', required: true, multiple: false },
-    ],
-    'with_clause_bare': [
-        { name: 'withItems', required: true, multiple: true },
-    ],
-    'with_clause_paren': [
-        { name: 'withItems', required: true, multiple: true },
+        { name: 'content', required: true, multiple: false },
     ],
     'with_item': [
         { name: 'value', required: true, multiple: false },
@@ -1499,7 +1536,7 @@ export const FIELD_MAP = {
         { name: 'body', required: true, multiple: false },
     ],
     'yield': [
-        { name: 'expression', required: false, multiple: false },
+        { name: 'content', required: false, multiple: false },
     ],
 };
 /** Valid values for `_augmented_assignment_operator` nodes. */
@@ -1518,8 +1555,13 @@ export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
     '^=',
     '|=',
 ];
-/** Valid values for `_identifier` nodes. */
-export const _IDENTIFIERS = [
+/** Valid values for `_complex_pattern_operator` nodes. */
+export const _COMPLEX_PATTERN_OPERATORS = [
+    '+',
+    '-',
+];
+/** Valid values for `_splat_pattern_operator` nodes. */
+export const _SPLAT_PATTERN_OPERATORS = [
     '*',
     '**',
 ];

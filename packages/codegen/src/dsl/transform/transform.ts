@@ -466,6 +466,66 @@ function registerHoistedVariantConflicts(variantNames: string[]): void {
 const membersOf = (r: RuntimeRule): RuntimeRule[] => (r as unknown as { members: RuntimeRule[] }).members;
 const contentOf = (r: RuntimeRule): RuntimeRule => (r as unknown as { content: RuntimeRule }).content;
 
+/**
+ * Count a rule body's own parse anchors — anonymous tokens (STRING /
+ * PATTERN / TOKEN) and named-symbol children — WITHOUT descending into
+ * referenced symbols (a referenced rule's tokens live in that rule, not
+ * here). seq/choice sum their members; single-content wrappers
+ * (field/optional/repeat/prec/alias) descend into `content`.
+ */
+function countBodyAnchors(rule: RuntimeRule): { tokens: number; named: number } {
+	const t = rule.type.toLowerCase();
+	if (t === 'string' || t === 'pattern' || t === 'token') return { tokens: 1, named: 0 };
+	if (t === 'symbol') return { tokens: 0, named: 1 };
+	if (t === 'blank') return { tokens: 0, named: 0 };
+	if (isSeqType(rule.type) || isChoiceType(rule.type)) {
+		return membersOf(rule).reduce(
+			(acc, m) => {
+				const c = countBodyAnchors(m);
+				return { tokens: acc.tokens + c.tokens, named: acc.named + c.named };
+			},
+			{ tokens: 0, named: 0 }
+		);
+	}
+	const content = (rule as { content?: RuntimeRule }).content;
+	if (content && typeof content === 'object') return countBodyAnchors(content);
+	return { tokens: 0, named: 0 };
+}
+
+/**
+ * A variant branch is "un-materializable" when its body is a transparent
+ * unit production: a single named-symbol child reached through fields /
+ * prec wrappers, carrying NO anonymous token of its own. Tree-sitter
+ * inlines such a hidden rule away and bubbles the inner field up to the
+ * parent kind, so an `alias($._hidden, $.visible)` over it promises a CST
+ * node that never appears (e.g. `match_arm_block_ending`). Emitting the
+ * alias is a lie; leave the branch as its bare content instead.
+ */
+function variantBranchIsUnmaterializable(rule: RuntimeRule): boolean {
+	const { tokens, named } = countBodyAnchors(rule);
+	return tokens === 0 && named <= 1;
+}
+
+/**
+ * Strip field association from a rule so its position reads as an unnamed
+ * body slot. Removes a leading `field(name, X)` wrapper AND the
+ * `fieldName` annotation sittir propagates down through single-content
+ * wrappers (prec/optional/repeat) to the leaf — both must go or the slot
+ * collector re-creates the named slot from the surviving `fieldName`.
+ */
+function deField(rule: RuntimeRule): RuntimeRule {
+	const inner = isFieldLike(rule) ? contentOf(rule) : rule;
+	const stripPropagated = (r: RuntimeRule): RuntimeRule => {
+		const { fieldName: _drop, ...rest } = r as Record<string, unknown>;
+		const content = (rest as { content?: RuntimeRule }).content;
+		if (content && typeof content === 'object' && !isSeqType((rest as { type: string }).type) && !isChoiceType((rest as { type: string }).type)) {
+			return { ...rest, content: stripPropagated(content) } as unknown as RuntimeRule;
+		}
+		return rest as unknown as RuntimeRule;
+	};
+	return stripPropagated(inner);
+}
+
 function applyFlatPatches(original: RuntimeRule, patches: Record<number | string, RuntimeRule>): RuntimeRule {
 	const t = original.type;
 	if (isSeqType(t)) {
@@ -600,6 +660,20 @@ function resolvePatch(
 		const parentKind = wireGetCurrentRuleKind();
 		if (!parentKind) {
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
+		}
+		// A transparent unit-production branch (single named symbol via
+		// fields/prec, no anonymous token) cannot become a CST node:
+		// tree-sitter inlines it and bubbles the inner field up to the
+		// parent. Skip the alias + polymorph registration and leave the
+		// branch as its bare content, so we never promise a
+		// `<parent>_<name>` kind that no parse tree contains. De-field it
+		// (strip a leading `field(name, X)`): the field can't survive on
+		// the CST anyway, and stripping it lets the bare nonterminal unify
+		// with its materializable sibling into ONE unnamed body slot
+		// (rendered `content`) instead of leaking a stray `value` field
+		// the template would drop.
+		if (variantBranchIsUnmaterializable(originalMember)) {
+			return { ...(deField(originalMember) as object), source: 'override' as const } as unknown as RuntimeRule;
 		}
 		if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
 			throw new Error(

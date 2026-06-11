@@ -217,7 +217,7 @@ export type PythonGrammar = {
             "type": "list_comprehension";
             "named": true;
         }, {
-            "type": "list_splat";
+            "type": "list_splat_pattern";
             "named": true;
         }, {
             "type": "none";
@@ -273,26 +273,30 @@ export type PythonGrammar = {
     readonly "argument_list": {
         "type": "argument_list";
         "named": true;
-        "fields": {};
-        "children": {
-            "multiple": true;
-            "required": false;
-            "types": [{
-                "type": "dictionary_splat";
-                "named": true;
-            }, {
-                "type": "expression";
-                "named": true;
-            }, {
-                "type": "keyword_argument";
-                "named": true;
-            }, {
-                "type": "list_splat";
-                "named": true;
-            }, {
-                "type": "parenthesized_expression";
-                "named": true;
-            }];
+        "fields": {
+            "arguments": {
+                "multiple": true;
+                "required": false;
+                "types": [{
+                    "type": ",";
+                    "named": false;
+                }, {
+                    "type": "dictionary_splat";
+                    "named": true;
+                }, {
+                    "type": "expression";
+                    "named": true;
+                }, {
+                    "type": "keyword_argument";
+                    "named": true;
+                }, {
+                    "type": "list_splat";
+                    "named": true;
+                }, {
+                    "type": "parenthesized_expression";
+                    "named": true;
+                }];
+            };
         };
     };
     readonly "as_pattern": {
@@ -893,40 +897,7 @@ export type PythonGrammar = {
                 "multiple": true;
                 "required": true;
                 "types": [{
-                    "type": "!=";
-                    "named": false;
-                }, {
-                    "type": "<";
-                    "named": false;
-                }, {
-                    "type": "<=";
-                    "named": false;
-                }, {
-                    "type": "<>";
-                    "named": false;
-                }, {
-                    "type": "==";
-                    "named": false;
-                }, {
-                    "type": ">";
-                    "named": false;
-                }, {
-                    "type": ">=";
-                    "named": false;
-                }, {
-                    "type": "in";
-                    "named": false;
-                }, {
-                    "type": "is";
-                    "named": false;
-                }, {
-                    "type": "is not";
-                    "named": false;
-                }, {
-                    "type": "not in";
-                    "named": false;
-                }, {
-                    "type": "primary_expression";
+                    "type": "comparison_operator_comparator";
                     "named": true;
                 }];
             };
@@ -938,8 +909,14 @@ export type PythonGrammar = {
                     "named": true;
                 }];
             };
+        };
+    };
+    readonly "comparison_operator_comparator": {
+        "type": "comparison_operator_comparator";
+        "named": true;
+        "fields": {
             "operators": {
-                "multiple": true;
+                "multiple": false;
                 "required": true;
                 "types": [{
                     "type": "!=";
@@ -977,6 +954,14 @@ export type PythonGrammar = {
                 }];
             };
         };
+        "children": {
+            "multiple": false;
+            "required": true;
+            "types": [{
+                "type": "primary_expression";
+                "named": true;
+            }];
+        };
     };
     readonly "complex_pattern": {
         "type": "complex_pattern";
@@ -991,6 +976,17 @@ export type PythonGrammar = {
                 }, {
                     "type": "integer";
                     "named": true;
+                }];
+            };
+            "operator": {
+                "multiple": false;
+                "required": true;
+                "types": [{
+                    "type": "+";
+                    "named": false;
+                }, {
+                    "type": "-";
+                    "named": false;
                 }];
             };
             "real": {
@@ -1314,17 +1310,21 @@ export type PythonGrammar = {
     readonly "dictionary": {
         "type": "dictionary";
         "named": true;
-        "fields": {};
-        "children": {
-            "multiple": true;
-            "required": false;
-            "types": [{
-                "type": "dictionary_splat";
-                "named": true;
-            }, {
-                "type": "pair";
-                "named": true;
-            }];
+        "fields": {
+            "entries": {
+                "multiple": true;
+                "required": false;
+                "types": [{
+                    "type": ",";
+                    "named": false;
+                }, {
+                    "type": "dictionary_splat";
+                    "named": true;
+                }, {
+                    "type": "pair";
+                    "named": true;
+                }];
+            };
         };
     };
     readonly "dictionary_comprehension": {
@@ -1437,6 +1437,25 @@ export type PythonGrammar = {
     readonly "except_clause": {
         "type": "except_clause";
         "named": true;
+        "fields": {};
+        "children": {
+            "multiple": true;
+            "required": true;
+            "types": [{
+                "type": "block";
+                "named": true;
+            }, {
+                "type": "except_clause_as";
+                "named": true;
+            }, {
+                "type": "except_clause_list";
+                "named": true;
+            }];
+        };
+    };
+    readonly "except_clause_as": {
+        "type": "except_clause_as";
+        "named": true;
         "fields": {
             "alias": {
                 "multiple": false;
@@ -1447,21 +1466,27 @@ export type PythonGrammar = {
                 }];
             };
             "value": {
-                "multiple": true;
-                "required": false;
+                "multiple": false;
+                "required": true;
                 "types": [{
                     "type": "expression";
                     "named": true;
                 }];
             };
         };
-        "children": {
-            "multiple": false;
-            "required": true;
-            "types": [{
-                "type": "block";
-                "named": true;
-            }];
+    };
+    readonly "except_clause_list": {
+        "type": "except_clause_list";
+        "named": true;
+        "fields": {
+            "value": {
+                "multiple": true;
+                "required": true;
+                "types": [{
+                    "type": "expression";
+                    "named": true;
+                }];
+            };
         };
     };
     readonly "exec_statement": {
@@ -2174,26 +2199,12 @@ export type PythonGrammar = {
         "fields": {
             "expression": {
                 "multiple": false;
-                "required": false;
+                "required": true;
                 "types": [{
                     "type": "expression";
                     "named": true;
                 }];
             };
-        };
-        "children": {
-            "multiple": false;
-            "required": false;
-            "types": [{
-                "type": "attribute";
-                "named": true;
-            }, {
-                "type": "identifier";
-                "named": true;
-            }, {
-                "type": "subscript";
-                "named": true;
-            }];
         };
     };
     readonly "list_splat_pattern": {
@@ -2592,15 +2603,7 @@ export type PythonGrammar = {
         "type": "slice";
         "named": true;
         "fields": {
-            "expression1": {
-                "multiple": false;
-                "required": false;
-                "types": [{
-                    "type": "expression";
-                    "named": true;
-                }];
-            };
-            "expression2": {
+            "start": {
                 "multiple": false;
                 "required": false;
                 "types": [{
@@ -2609,16 +2612,34 @@ export type PythonGrammar = {
                 }];
             };
             "step": {
-                "multiple": true;
+                "multiple": false;
                 "required": false;
                 "types": [{
-                    "type": ":";
-                    "named": false;
-                }, {
+                    "type": "slice_group1";
+                    "named": true;
+                }];
+            };
+            "stop": {
+                "multiple": false;
+                "required": false;
+                "types": [{
                     "type": "expression";
                     "named": true;
                 }];
             };
+        };
+    };
+    readonly "slice_group1": {
+        "type": "slice_group1";
+        "named": true;
+        "fields": {};
+        "children": {
+            "multiple": false;
+            "required": false;
+            "types": [{
+                "type": "expression";
+                "named": true;
+            }];
         };
     };
     readonly "splat_pattern": {
@@ -2626,6 +2647,14 @@ export type PythonGrammar = {
         "named": true;
         "fields": {
             "identifier": {
+                "multiple": false;
+                "required": false;
+                "types": [{
+                    "type": "_";
+                    "named": false;
+                }];
+            };
+            "operator": {
                 "multiple": false;
                 "required": true;
                 "types": [{
