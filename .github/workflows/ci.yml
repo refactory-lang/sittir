@@ -49,6 +49,12 @@ jobs:
         # file reappears under a templates/ directory.
         run: npx tsx packages/cli/src/cli.ts tool check-jinja
 
+      - name: Principle #14 ratchet (propose-14, R0)
+        # Fails when any pipeline module's non-conforming signature count
+        # EXCEEDS packages/codegen/.principle14-baseline.json - the ratchet
+        # only goes down. Sweep rows (R1-R4) lower the baseline in-PR.
+        run: npx tsx packages/cli/src/cli.ts tool propose-14
+
       - name: Format check
         run: pnpm run format:check
         continue-on-error: true

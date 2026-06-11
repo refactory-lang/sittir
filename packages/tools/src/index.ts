@@ -10,6 +10,7 @@ export { run as benchCodemod, type BenchCodemodOptions } from './profile/codemod
 export { run as diffFailures, type DiffFailuresOptions } from './validate/diff.ts';
 export { run as dumpAstMismatches, type DumpAstMismatchesOptions } from './validate/dump-ast-mismatches.ts';
 export { run as checkBaseline, type CheckBaselineOptions } from './validate/baseline.ts';
+export { run as propose14, type Propose14Options } from './validate/propose-14.ts';
 export { run as checkPerf, type CheckPerfOptions } from './validate/perf.ts';
 export { run as checkJinja, type CheckJinjaOptions } from './validate/jinja.ts';
 export { run as classify, type ClassifyOptions } from './discover/classify.ts';
