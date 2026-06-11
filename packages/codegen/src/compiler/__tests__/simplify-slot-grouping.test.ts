@@ -12,6 +12,7 @@
  *   b. A seq that is a direct member of a `choice` arm (choice arms remain).
  */
 
+import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { describe, it, expect, afterEach } from 'vitest';
 import { computeSimplifiedRules } from '../simplify.ts';
 import { drainSlotGroupingDiagnostics } from '../simplify.ts';
@@ -37,7 +38,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 			} as any,
 		};
 		const inlineKinds = new Set(['_parent_repeat1']);
-		computeSimplifiedRules(renderRules, inlineKinds);
+		computeSimplifiedRules(renderRules, { rules: renderRules, inlineKinds, diagnostics: new DiagnosticSink() });
 		const diagnostics = drainSlotGroupingDiagnostics();
 		const multiSlot = diagnostics.filter((d) => d.code === 'multi-slot-nested-seq');
 		expect(multiSlot.length).toBeGreaterThanOrEqual(1);

@@ -19,8 +19,8 @@ import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, VARIANT } from '.
 import type { Rule } from '../types/rule.ts';
 // `findRepeatFlag` moved to transforms.ts (PR-O M1 de-scatter); imported for local use +
 // re-exported for existing importers (collect-slots.ts, rule-walker.test.ts).
-import { findRepeatFlag } from './transforms.ts';
-export { findRepeatFlag } from './transforms.ts';
+import { findRepeatFlag } from '../dsl/rule-transforms.ts';
+export { findRepeatFlag } from '../dsl/rule-transforms.ts';
 
 /**
  * Walk a rule tree looking for the first repeat-with-separator. Used by

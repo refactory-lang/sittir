@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { TransformCtx, NormalizeCtx, SimplifyCtx } from './transforms.ts';
-import { DiagnosticSink } from '../types/diagnostics.ts';
+import type { TransformCtx, NormalizeCtx, SimplifyCtx } from '../rule-transforms.ts';
+import { DiagnosticSink } from '../../types/diagnostics.ts';
 
 describe('transform ctx shapes', () => {
   it('TransformCtx carries rules, inlineKinds, optional wordMatcher, diagnostics', () => {

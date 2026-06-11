@@ -58,7 +58,8 @@ import {
 	buildParseKindRuleSignatures,
 	type AssembleWarning
 } from './node-map.ts';
-import { simplifyRule, inlineRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
+import { simplifyRule, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
+import { inlineRefs } from '../dsl/rule-transforms.ts';
 import { compileWordMatcher } from './common.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
@@ -142,7 +143,7 @@ export function assemble(
 			// …) to surface as template text. See
 			// `project_simplify_template_walker_divergence.md`.
 			const inlinedRule = hoistInnerFieldsForTemplate(
-				inlineRefs(assemblyRule, optimized.rules)
+				inlineRefs(assemblyRule, { rules: optimized.rules })
 			);
 			const modelType = classifyNode(kind, inlinedRule, {
 				variantParents,

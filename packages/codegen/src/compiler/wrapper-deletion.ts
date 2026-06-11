@@ -26,7 +26,7 @@ import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VAR
 import type { Rule, RenderRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
-import { combineMultiplicity } from './rule-attrs.ts';
+import { combineMultiplicity } from '../dsl/rule-attrs.ts';
 
 // ---------------------------------------------------------------------------
 // Accumulated modifier attributes from unwrapped wrappers
