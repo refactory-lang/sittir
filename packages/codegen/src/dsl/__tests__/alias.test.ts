@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { alias } from '../primitives/alias.ts';
-import type { Rule } from '../../compiler/rule.ts';
+import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
 const sym = (name: string): Rule => ({ type: 'symbol', name }) as Rule;

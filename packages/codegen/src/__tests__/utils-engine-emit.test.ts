@@ -1,11 +1,11 @@
-import { PATTERN, SEQ, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { PATTERN, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitClientUtils } from '../emitters/client-utils.ts';
 import { emitFactories } from '../emitters/factories.ts';
 import { emitWrap } from '../emitters/wrap.ts';
 import { AssembledBranch, AssembledPattern } from '../compiler/node-map.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
-import type { SeqRule } from '../compiler/rule.ts';
+import type { SeqRule } from '../types/rule.ts';
 import { makeMinimalNodeMap, makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 
 describe('utils engine facade emission', () => {

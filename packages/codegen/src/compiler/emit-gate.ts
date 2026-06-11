@@ -16,7 +16,7 @@
  */
 
 import type { NodeMap } from './types.ts';
-import { DiagnosticSink, EmitHaltedError } from './diagnostics.ts';
+import { DiagnosticSink, EmitHaltedError } from '../types/diagnostics.ts';
 
 /**
  * The single Assemble→Project boundary check (spec §4b/§7.5).

@@ -13,12 +13,12 @@
  * `collectSlots` wrapper-free input).
  */
 
-import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, afterEach } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
 import { deleteWrapper } from '../wrapper-deletion.ts';
 import { isTerminalValue } from '../node-map.ts';
-import type { Rule } from '../rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 const sym = (name: string): Rule => ({ type: SYMBOL, name });
 const str = (value: string): Rule => ({ type: STRING, value });

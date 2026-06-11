@@ -32,7 +32,7 @@ import type { GrammarNode, SeqNode, ChoiceNode, PrecNodeUnion, SingleContentWrap
 import type { FieldPlaceholder } from '../dsl/primitives/field.ts';
 import type { VariantPlaceholder } from '../dsl/primitives/variant.ts';
 import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
-import type { FieldLike } from '../dsl/runtime-shapes.ts';
+import type { FieldLike } from '../types/runtime-shapes.ts';
 
 // ---------------------------------------------------------------------------
 // Split a `/`-joined path into a segment tuple.

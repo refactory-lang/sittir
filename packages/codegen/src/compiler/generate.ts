@@ -27,7 +27,7 @@ import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.
 import { loadGeneratedIdTables, collectGeneratedKindEntries } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
-import { DiagnosticSink } from './diagnostics.ts';
+import { DiagnosticSink } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 import type { NormalizeCtx } from './transforms.ts';

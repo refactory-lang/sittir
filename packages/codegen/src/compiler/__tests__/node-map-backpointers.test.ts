@@ -1,4 +1,4 @@
-import { PATTERN } from '../rule-types.ts'; // @rule-type-consts
+import { PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { choice, field, seq } from '../evaluate.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
@@ -6,7 +6,7 @@ import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
-import type { ChoiceRule, FieldRule, RenderRule, Rule } from '../rule.ts';
+import type { ChoiceRule, FieldRule, RenderRule, Rule } from '../../types/rule.ts';
 
 /**
  * PR0 Task 1.3 — NodeMap back-pointer maps.

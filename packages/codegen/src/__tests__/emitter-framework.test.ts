@@ -1,7 +1,7 @@
-import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { NodeMap } from '../compiler/types.ts';
-import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
+import type { ChoiceRule, SeqRule } from '../types/rule.ts';
 import {
 	AssembledBranch,
 	AssembledGroup,

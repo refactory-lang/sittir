@@ -21,7 +21,7 @@
  * been flattened to `nonterminal`/`multiplicity`/`separator` attributes.
  */
 
-import { typeEq, type RuntimeRule } from './runtime-shapes.ts';
+import { typeEq, type RuntimeRule } from '../types/runtime-shapes.ts';
 
 /**
  * Structural equality for rule trees, across both runtime casings. Limited to

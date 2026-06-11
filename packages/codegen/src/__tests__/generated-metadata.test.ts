@@ -1,4 +1,4 @@
-import { PATTERN, STRING } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { PATTERN, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { field, seq } from '../compiler/evaluate.ts';
 import { buildRuleCatalog } from '../compiler/rule-catalog.ts';

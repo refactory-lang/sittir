@@ -15,8 +15,8 @@
  *   per-field trailing/leading flag derivation.
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule } from './rule.ts';
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule } from '../types/rule.ts';
 // `findRepeatFlag` moved to transforms.ts (PR-O M1 de-scatter); imported for local use +
 // re-exported for existing importers (collect-slots.ts, rule-walker.test.ts).
 import { findRepeatFlag } from './transforms.ts';

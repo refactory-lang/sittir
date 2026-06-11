@@ -3,7 +3,7 @@
  * Non-test module — safe to import without registering test cases.
  */
 
-import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import {
 	AssembledBranch,
 	AssembledEnum,
@@ -12,7 +12,7 @@ import {
 	AssembledSupertype,
 } from '../../compiler/node-map.ts';
 import type { AssembledNode } from '../../compiler/node-map.ts';
-import type { ChoiceRule, RenderRule, SeqRule } from '../../compiler/rule.ts';
+import type { ChoiceRule, RenderRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 

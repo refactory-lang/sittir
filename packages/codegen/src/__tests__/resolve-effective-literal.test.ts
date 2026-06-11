@@ -1,4 +1,4 @@
-import { PATTERN, STRING } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { PATTERN, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { resolveEffectiveLiteral, isAutoStampField } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';

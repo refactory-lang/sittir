@@ -17,7 +17,7 @@
  * - Polymorph: mocks carry `forms` with `.kind` + `.name`.
  */
 
-import { FIELD, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { FIELD, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type {
 	FieldRule,
@@ -27,7 +27,7 @@ import type {
 	SeqRule,
 	StringRule,
 	SymbolRule
-} from '../../compiler/rule.ts';
+} from '../../types/rule.ts';
 import type {
 	AssembledBranch,
 	AssembledGroup,

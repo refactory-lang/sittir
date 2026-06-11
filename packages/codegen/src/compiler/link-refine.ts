@@ -16,9 +16,9 @@
  * See refine() DSL primitive for the full design.
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule, ChoiceRule, FieldRule, EnumRule, SymbolRule } from './rule.ts';
-import { isChoice, isEnum, isField, isString, isSeq, isOptional, isRepeat, isRepeat1, isSymbol } from './rule.ts';
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule, ChoiceRule, FieldRule, EnumRule, SymbolRule } from '../types/rule.ts';
+import { isChoice, isEnum, isField, isString, isSeq, isOptional, isRepeat, isRepeat1, isSymbol } from '../types/rule.ts';
 import type { RefineForm } from './types.ts';
 import { parsePath } from '../dsl/transform/transform-path.ts';
 import type { PathSegment } from '../dsl/transform/transform-path.ts';

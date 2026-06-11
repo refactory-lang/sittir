@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,7 +13,7 @@ import {
 	AssembledPolymorph
 } from '../compiler/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
+import type { ChoiceRule, SeqRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { emitHashFiles, emitRenderModule } from '../emitters/render-module.ts';
 import { fixturesOutputPath } from '../emitters/parity-fixtures.ts';

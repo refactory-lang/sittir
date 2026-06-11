@@ -539,3 +539,11 @@ function replaceAtPathRec(rule: Rule, segments: readonly string[], depth: number
 			throw new Error(`replaceAtPath: cannot descend into '${rule.type}' at segment ${depth}`);
 	}
 }
+
+/**
+ * Symbol reference constructor — baseline DSL shadow used by metadata
+ * helpers that need a real runtime symbol without fabricating the object.
+ */
+export function sym(name: string): SymbolRule {
+	return { type: SYMBOL, name, hidden: name.startsWith('_'), inline: name.startsWith('_') };
+}

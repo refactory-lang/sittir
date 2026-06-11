@@ -2,7 +2,7 @@
  * compiler/node-map.ts — AssembledNode class hierarchy and derivation
  * helpers.
  *
- * Split from `compiler/rule.ts` so the Rule IR file stays focused on
+ * Split from the Rule IR file (now `types/rule.ts`, R11) so it stays focused on
  * the Rule union itself. The classes here represent what an assembled
  * grammar node looks like after the full pipeline has classified and
  * enriched the Rule — each subclass corresponds to one ModelType
@@ -27,7 +27,7 @@
  * file. New code should import from `./node-map.ts` directly.
  */
 
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,
@@ -43,8 +43,8 @@ import type {
 	SupertypeRule,
 	Multiplicity,
 	RuleId
-} from './rule.ts';
-import { isSeq, isField, literalTextOf, isEnumChoiceRule } from './rule.ts';
+} from '../types/rule.ts';
+import { isSeq, isField, literalTextOf, isEnumChoiceRule } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { findGeneratedKindEntry } from './generated-metadata.ts';
 import { tokenToName } from './normalize.ts';
@@ -176,7 +176,7 @@ export function drainAssembleWarnings(): AssembleWarning[] {
  * (rule.ts → node-map.ts is the layering direction). Re-exported here for
  * existing consumers; new code may import from either location.
  */
-export { type Multiplicity } from './rule.ts';
+export { type Multiplicity } from '../types/rule.ts';
 
 // ---------------------------------------------------------------------------
 // Optional-body lookthrough (module-level current pointer)

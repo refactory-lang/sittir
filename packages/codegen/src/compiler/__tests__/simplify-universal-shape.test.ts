@@ -18,7 +18,7 @@
  *     burn-in confirms the invariant holds across real grammars).
  */
 
-import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import {
 	canonicalizeSeqOfLeaves,
@@ -29,7 +29,7 @@ import {
 	AssembledGroup,
 	AssembledPattern,
 } from '../node-map.ts';
-import type { Rule, SeqRule } from '../rule.ts';
+import type { Rule, SeqRule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
 // canonicalizeSeqOfLeaves

@@ -5,10 +5,10 @@
  * Pure module — no I/O, no side effects on inputs.
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule } from './rule.ts';
-import { replaceAtPath } from './rule.ts';
-import { sym } from './evaluate.ts';
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule } from '../types/rule.ts';
+import { replaceAtPath } from '../types/rule.ts';
+import { sym } from '../types/rule.ts';
 
 const IDENTIFIER_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 

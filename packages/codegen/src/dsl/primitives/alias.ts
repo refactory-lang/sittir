@@ -22,7 +22,7 @@
  *     import { alias } from '@sittir/codegen/dsl'
  */
 
-import type { Rule } from '../../compiler/rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 export interface AliasPlaceholder {
 	readonly __sittirPlaceholder: 'alias';

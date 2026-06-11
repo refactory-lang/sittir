@@ -6,7 +6,8 @@
  * extension mechanism — each rule fn receives ($, original).
  */
 
-import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import { sym } from '../types/rule.ts';
 import type {
 	Rule,
 	SeqRule,
@@ -22,8 +23,8 @@ import type {
 	AliasRule,
 	EnumRule,
 	SymbolRef
-} from './rule.ts';
-import { normalizeEnumMembers, isEnumChoiceRule } from './rule.ts';
+} from '../types/rule.ts';
+import { normalizeEnumMembers, isEnumChoiceRule } from '../types/rule.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
@@ -291,14 +292,6 @@ export function repeat1(content: Input): Rule {
 	// The separator LIFT runs in the link pass — see seq() and
 	// compiler/lift-separators.ts.
 	return { type: REPEAT1, content: resolved };
-}
-
-/**
- * Symbol reference constructor — baseline DSL shadow used by metadata
- * helpers that need a real runtime symbol without fabricating the object.
- */
-export function sym(name: string): SymbolRule {
-	return { type: SYMBOL, name, hidden: name.startsWith('_'), inline: name.startsWith('_') };
 }
 
 // ---------------------------------------------------------------------------

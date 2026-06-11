@@ -7,7 +7,7 @@
  * are recursed into so all wrappers are eliminated throughout the tree.
  */
 
-import { FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
+import { FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deleteWrapper, applyWrapperDeletion } from '../wrapper-deletion.ts';
 import type {
@@ -18,7 +18,7 @@ import type {
 	FieldRule,
 	SymbolRule,
 	SeqRule,
-} from '../rule.ts';
+} from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
 // Helpers

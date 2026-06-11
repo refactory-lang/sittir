@@ -30,8 +30,8 @@
  * In both cases the head's single occurrence is absorbed into the multi slot.
  */
 
-import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule, SeqRule } from './rule.ts';
+import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule, SeqRule } from '../types/rule.ts';
 
 type Mult = 'optional' | 'array' | 'nonEmptyArray' | undefined;
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { parsePath, applyPath } from '../transform/transform-path.ts';
 import { transform } from '../transform/transform.ts';
-import type { Rule } from '../../compiler/rule.ts';
+import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
 // Helpers return `any` so tests can mix them freely with the

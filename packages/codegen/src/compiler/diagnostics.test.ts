@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { Diagnostic, GrammarDiagnostic, CompilerDiagnostic, RuntimeDiagnostic, AnyDiagnostic, Severity } from './diagnostics.ts';
-import { DiagnosticSink, EmitHaltedError } from './diagnostics.ts';
+import type { Diagnostic, GrammarDiagnostic, CompilerDiagnostic, RuntimeDiagnostic, AnyDiagnostic, Severity } from '../types/diagnostics.ts';
+import { DiagnosticSink, EmitHaltedError } from '../types/diagnostics.ts';
 
 describe('diagnostics model', () => {
 	it('discriminates by scope', () => {

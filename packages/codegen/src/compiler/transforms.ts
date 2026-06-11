@@ -4,9 +4,9 @@
  * the copilot LSP pass (PR-H Task 5); this file is born holding only the ctx
  * contract so signatures across normalize/simplify can thread it.
  */
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule, RepeatRule, Repeat1Rule } from './rule.ts';
-import type { DiagnosticSink } from './diagnostics.ts';
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule, RepeatRule, Repeat1Rule } from '../types/rule.ts';
+import type { DiagnosticSink } from '../types/diagnostics.ts';
 
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
 // missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).

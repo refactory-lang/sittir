@@ -10,7 +10,7 @@
  * Link does NOT process overrides — already applied by Evaluate.
  */
 
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	SymbolRef,
@@ -23,8 +23,8 @@ import type {
 	Repeat1Rule,
 	SymbolRule,
 	StringRule
-} from './rule.ts';
-import { isSeq, isChoice, normalizeEnumMembers, isEnumChoiceRule } from './rule.ts';
+} from '../types/rule.ts';
+import { isSeq, isChoice, normalizeEnumMembers, isEnumChoiceRule } from '../types/rule.ts';
 import { liftSeparators } from './lift-separators.ts';
 import {
 	collectGeneratedKindEntries,
@@ -41,7 +41,7 @@ import type {
 	RepeatedShapeEntry
 } from './types.ts';
 import { hasAnyField, hasAnyChild } from './node-map.ts';
-import { collectFieldNames } from './rule.ts';
+import { collectFieldNames } from '../types/rule.ts';
 import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';
 import { validateRefineForms } from './link-refine.ts';

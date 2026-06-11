@@ -1,8 +1,8 @@
-import { OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deriveSlots, isNonEmpty, isMultiple } from '../compiler/node-map.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
-import type { Rule } from '../compiler/rule.ts';
+import type { Rule } from '../types/rule.ts';
 
 // Helper — children-equivalent view over deriveSlots: kind-derived
 // positional slots (source='inferred'). This regression test predates

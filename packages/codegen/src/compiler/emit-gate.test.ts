@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { NodeMap } from './types.ts';
-import { DiagnosticSink, EmitHaltedError } from './diagnostics.ts';
+import { DiagnosticSink, EmitHaltedError } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
 
 // Minimal stub — PR-G's assertEmittable does not read nodeMap.

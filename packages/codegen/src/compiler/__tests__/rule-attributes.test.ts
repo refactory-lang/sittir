@@ -1,6 +1,6 @@
-import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../rule-types.ts'; // @rule-type-consts
+import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import type { Multiplicity, Rule, SymbolRule } from '../rule.ts';
+import type { Multiplicity, Rule, SymbolRule } from '../../types/rule.ts';
 import { isNonterminalRuleType } from '../rule-catalog.ts';
 
 const str = (value: string): Rule => ({ type: STRING, value });

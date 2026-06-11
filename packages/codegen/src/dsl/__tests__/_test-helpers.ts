@@ -17,7 +17,7 @@
  * standard `Rule` union.
  */
 
-import type { Rule } from '../../compiler/rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 type Globals = Record<string, unknown>;
 

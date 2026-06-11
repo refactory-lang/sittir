@@ -15,7 +15,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { computeSimplifiedRules } from '../simplify.ts';
 import { drainSlotGroupingDiagnostics } from '../simplify.ts';
-import type { RenderRule } from '../rule.ts';
+import type { RenderRule } from '../../types/rule.ts';
 
 afterEach(() => {
 	// Always drain to avoid leaking between tests.

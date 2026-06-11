@@ -9,9 +9,9 @@
  * warns via console.warn.
  */
 
-import { SEQ } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { SEQ } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, vi } from 'vitest';
-import type { Rule, SeqRule } from '../compiler/rule.ts';
+import type { Rule, SeqRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AssembledGroup,

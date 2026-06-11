@@ -39,7 +39,7 @@ var import_grammar = __toESM(require("tree-sitter-rust/grammar.js"), 1);
 var base = import_grammar.default;
 var base_default = base;
 
-// packages/codegen/src/dsl/runtime-shapes.ts
+// packages/codegen/src/types/runtime-shapes.ts
 function isFieldLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
@@ -397,14 +397,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec4 = nativeRequired("prec");
+  const prec2 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec4[variant2];
+    const fn = prec2[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec4(value, newContent);
+  return prec2(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -945,61 +945,13 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// packages/codegen/src/compiler/rule-types.ts
-var STRING = "string";
-var PATTERN = "pattern";
+// packages/codegen/src/types/rule-types.ts
 var SYMBOL = "symbol";
-var TOKEN = "token";
 
-// packages/codegen/src/compiler/evaluate.ts
-function normalize(input) {
-  if (input === void 0 || input === null) {
-    throw new Error("Undefined symbol");
-  }
-  if (typeof input === "string") {
-    return { type: STRING, value: input };
-  }
-  if (input instanceof RegExp) {
-    return { type: PATTERN, value: input.source };
-  }
-  if (typeof input === "object" && "type" in input) {
-    return input;
-  }
-  throw new TypeError(`Invalid rule: ${input}`);
-}
+// packages/codegen/src/types/rule.ts
 function sym(name) {
   return { type: SYMBOL, name, hidden: name.startsWith("_"), inline: name.startsWith("_") };
 }
-var token = Object.assign(
-  function token2(content) {
-    return { type: TOKEN, content: normalize(content), immediate: false };
-  },
-  {
-    immediate(content) {
-      return { type: TOKEN, content: normalize(content), immediate: true };
-    }
-  }
-);
-var prec2 = Object.assign(
-  function prec3(precedenceOrContent, content) {
-    if (content === void 0) return normalize(precedenceOrContent);
-    return normalize(content);
-  },
-  {
-    left(precedenceOrContent, content) {
-      if (content == null) return normalize(precedenceOrContent);
-      return normalize(content);
-    },
-    right(precedenceOrContent, content) {
-      if (content == null) return normalize(precedenceOrContent);
-      return normalize(content);
-    },
-    dynamic(precedenceOrContent, content) {
-      if (content == null) return normalize(precedenceOrContent);
-      return normalize(content);
-    }
-  }
-);
 
 // packages/codegen/src/dsl/list-patterns.ts
 function firstStringOfChoice(r) {

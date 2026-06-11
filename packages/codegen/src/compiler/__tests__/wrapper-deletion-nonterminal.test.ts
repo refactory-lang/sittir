@@ -8,10 +8,10 @@
  *  - named alias → nonterminal: true
  */
 
-import { ALIAS, FIELD, OPTIONAL, REPEAT, REPEAT1, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
+import { ALIAS, FIELD, OPTIONAL, REPEAT, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deleteWrapper } from '../wrapper-deletion.ts';
-import type { Rule } from '../rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 const sym = (name: string): Rule => ({ type: SYMBOL, name });
 const str = (value: string): Rule => ({ type: STRING, value });

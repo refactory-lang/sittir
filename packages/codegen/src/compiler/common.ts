@@ -8,8 +8,8 @@
  * that file; a helper that is used everywhere lives here.
  */
 
-import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from './rule-types.ts'; // @rule-type-consts
-import type { Rule } from './rule.ts';
+import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule } from '../types/rule.ts';
 
 /**
  * Compile the grammar's `word` rule into a full-match RegExp so

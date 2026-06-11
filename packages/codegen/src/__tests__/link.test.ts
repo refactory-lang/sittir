@@ -1,9 +1,9 @@
-import { ALIAS, CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { link, enrichPositions, computeParentSets, applyOverridePolymorphs } from '../compiler/link.ts';
 import type { DerivationLog } from '../compiler/types.ts';
-import type { Rule, SymbolRef } from '../compiler/rule.ts';
+import type { Rule, SymbolRef } from '../types/rule.ts';
 import type { RawGrammar } from '../compiler/types.ts';
 import { createEmptyRuleCatalog } from '../compiler/rule-catalog.ts';
 

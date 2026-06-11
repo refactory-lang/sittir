@@ -24,8 +24,8 @@
  * structural wrappers; their content's slot count IS this node's slot count.
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule } from './rule.ts';
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule } from '../types/rule.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 
 /**

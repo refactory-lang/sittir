@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { link } from '../link.ts';
 import type { RawGrammar } from '../types.ts';
-import type { Rule } from '../rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 /**
  * Chunk 2 — `mintContentAliasKinds` link pass.

@@ -29,9 +29,9 @@
  *     import { role } from '@sittir/codegen/dsl'
  */
 
-import type { Rule } from '../../compiler/rule.ts';
-import type { ExternalRole } from '../../compiler/types.ts';
-import { isSymbolLike } from '../runtime-shapes.ts';
+import type { Rule } from '../../types/rule.ts';
+import type { ExternalRole } from '../../types/ir.ts';
+import { isSymbolLike } from '../../types/runtime-shapes.ts';
 
 // Module-local accumulator. Null when no `grammar(...)` call is on
 // the stack — calling `role()` in that state is an error because we
