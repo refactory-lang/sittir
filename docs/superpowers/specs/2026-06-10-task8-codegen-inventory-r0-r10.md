@@ -4,7 +4,7 @@
 > Companion to the proposal `2026-06-10-principle14-sweep-and-module-reorg-proposal.md`
 > (PR #75 @ 391fc44c). Measured against `origin/master` (339e1709; code identical
 > to the proposal branch's base 2297d242 — the delta is docs-only). All numbers
-> are reproducible: the inventory script is quoted in §0.
+> are reproducible: the inventory script is in Appendix A.
 
 ---
 
@@ -303,3 +303,177 @@ validate/read-render-parse:408 → scripts/collect-baseline
 
 Suggested order refinement from the data: R0 → R2 (biggest plumbing win) →
 R1/R4 → R3 (decision-gated) → R5–R7 → R9 → R8 → R10 throughout.
+
+---
+
+## Appendix A — the inventory script (R0 classifier prototype)
+
+Run from the repo root: `pnpm exec tsx <script> > inventory.json`
+
+```ts
+// task8: read-only inventory of packages/codegen/src for the R0-R10 work-inventory report.
+// Emits JSON: per-function classification (#14), per-file comment metrics, exported-symbol table.
+import ts from 'typescript';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join, relative } from 'node:path';
+
+const ROOT = join(process.cwd(), 'packages/codegen/src');
+
+function listTs(dir: string): string[] {
+  const out: string[] = [];
+  for (const e of readdirSync(dir)) {
+    const p = join(dir, e);
+    const st = statSync(p);
+    if (st.isDirectory()) {
+      if (e === '__tests__' || e === 'node_modules') continue;
+      out.push(...listTs(p));
+    } else if (e.endsWith('.ts') && !e.endsWith('.d.ts')) {
+      out.push(p);
+    }
+  }
+  return out;
+}
+
+interface FnRec {
+  file: string;
+  name: string;
+  kind: 'function' | 'method' | 'getter' | 'arrow-const';
+  exported: boolean;
+  params: { name: string; type: string }[];
+  loc: number;
+  leadingCommentLines: number;
+  bodyCommentLines: number;
+  bucket: 'conforming' | 'getter-candidate' | 'zero-param' | 'non-conforming';
+}
+
+interface FileRec {
+  file: string;
+  loc: number;
+  commentLines: number;
+  fnCount: number;
+}
+
+const fns: FnRec[] = [];
+const files: FileRec[] = [];
+const exportedSymbols: { file: string; name: string }[] = [];
+
+function classify(params: { name: string; type: string }[]): FnRec['bucket'] {
+  if (params.length === 0) return 'zero-param';
+  if (params.length === 1) return 'getter-candidate';
+  if (params.length >= 2 && /Ctx$/.test(params[1].type)) return 'conforming';
+  return 'non-conforming';
+}
+
+function countCommentLines(text: string): number {
+  let n = 0;
+  let inBlock = false;
+  for (const line of text.split('\n')) {
+    const t = line.trim();
+    if (inBlock) {
+      n++;
+      if (t.includes('*/')) inBlock = false;
+    } else if (t.startsWith('//')) {
+      n++;
+    } else if (t.startsWith('/*')) {
+      n++;
+      if (!t.includes('*/')) inBlock = true;
+    }
+  }
+  return n;
+}
+
+for (const path of listTs(ROOT)) {
+  const rel = relative(ROOT, path);
+  const text = readFileSync(path, 'utf8');
+  const sf = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true);
+  const fileLoc = text.split('\n').length;
+  files.push({ file: rel, loc: fileLoc, commentLines: countCommentLines(text), fnCount: 0 });
+  const fileRec = files[files.length - 1];
+
+  const record = (
+    name: string,
+    kind: FnRec['kind'],
+    node: ts.SignatureDeclaration,
+    exported: boolean,
+  ) => {
+    const params = node.parameters.map((p) => ({
+      name: p.name.getText(sf),
+      type: p.type ? p.type.getText(sf).split('<')[0] : '',
+    }));
+    const start = sf.getLineAndCharacterOfPosition(node.getStart(sf)).line;
+    const end = sf.getLineAndCharacterOfPosition(node.getEnd()).line;
+    const ranges = ts.getLeadingCommentRanges(text, node.getFullStart()) ?? [];
+    const leading = ranges.reduce(
+      (a, r) => a + text.slice(r.pos, r.end).split('\n').length,
+      0,
+    );
+    const bodyText = node.getText(sf);
+    fns.push({
+      file: rel,
+      name,
+      kind,
+      exported,
+      params,
+      loc: end - start + 1,
+      leadingCommentLines: leading,
+      bodyCommentLines: countCommentLines(bodyText),
+      bucket: kind === 'getter' ? 'getter-candidate' : classify(params),
+    });
+    fileRec.fnCount++;
+  };
+
+  const hasExport = (node: ts.Node): boolean =>
+    !!(ts.getCombinedModifierFlags(node as ts.Declaration) & ts.ModifierFlags.Export);
+
+  const visit = (node: ts.Node) => {
+    if (ts.isFunctionDeclaration(node) && node.name && node.body) {
+      record(node.name.text, 'function', node, hasExport(node));
+    } else if (ts.isVariableStatement(node)) {
+      const exported = hasExport(node);
+      for (const d of node.declarationList.declarations) {
+        if (
+          d.initializer &&
+          (ts.isArrowFunction(d.initializer) || ts.isFunctionExpression(d.initializer)) &&
+          ts.isIdentifier(d.name)
+        ) {
+          record(d.name.text, 'arrow-const', d.initializer, exported);
+        }
+      }
+    } else if (ts.isClassDeclaration(node) && node.name) {
+      const cls = node.name.text;
+      for (const m of node.members) {
+        if (ts.isMethodDeclaration(m) && m.body && ts.isIdentifier(m.name)) {
+          record(`${cls}.${m.name.text}`, 'method', m, false);
+        } else if (ts.isGetAccessorDeclaration(m) && ts.isIdentifier(m.name)) {
+          record(`${cls}.${m.name.text}`, 'getter', m, false);
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sf);
+
+  // exported symbol table for dead-code first pass
+  const collectExports = (node: ts.Node) => {
+    if (
+      (ts.isFunctionDeclaration(node) ||
+        ts.isClassDeclaration(node) ||
+        ts.isInterfaceDeclaration(node) ||
+        ts.isTypeAliasDeclaration(node) ||
+        ts.isEnumDeclaration(node)) &&
+      node.name &&
+      hasExport(node)
+    ) {
+      exportedSymbols.push({ file: rel, name: node.name.text });
+    } else if (ts.isVariableStatement(node) && hasExport(node)) {
+      for (const d of node.declarationList.declarations) {
+        if (ts.isIdentifier(d.name)) exportedSymbols.push({ file: rel, name: d.name.text });
+      }
+    }
+    ts.forEachChild(node, collectExports);
+  };
+  collectExports(sf);
+}
+
+console.log(JSON.stringify({ fns, files, exportedSymbols }, null, 1));
+```
