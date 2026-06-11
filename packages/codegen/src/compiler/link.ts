@@ -65,6 +65,16 @@ export interface LinkCtx {
 	readonly generatedIdTables?: GeneratedIdTables;
 }
 
+/**
+ * Pass-constant state for the rule-resolution walk (R4 / #14). `currentName`
+ * stays an explicit parameter — it is per-top-level-rule attribution (CW6).
+ */
+export interface ResolveCtx {
+	readonly allRules: Record<string, Rule>;
+	readonly supertypes: Set<string>;
+	readonly externalRoles: Map<string, ExternalRole>;
+}
+
 /** True iff `v` is a `LinkCtx` (discriminated by the presence of `generatedIdTables`). */
 function isLinkCtx(v: IncludeFilter | LinkCtx): v is LinkCtx {
 	return 'generatedIdTables' in v || 'include' in v;
@@ -110,9 +120,10 @@ export function link(
 	};
 
 	// Resolve all rules
+	const resolveCtx: ResolveCtx = { allRules: raw.rules, supertypes, externalRoles };
 	const rules: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
-		rules[name] = resolveRule(rule, name, raw.rules, supertypes, externalRoles);
+		rules[name] = resolveRule(rule, resolveCtx, name);
 	}
 
 	// Lift separated lists into canonical separator-bearing repeat nodes:
@@ -141,7 +152,7 @@ export function link(
 	// §D-2a DIAGNOSTIC-ONLY content-alias provenance (see LinkedGrammar docs).
 	const contentAliasedFrom = new Map<string, string>();
 	const contentAliasedTo = new Map<string, string[]>();
-	mintContentAliasKinds(raw.rules, rules, supertypes, externalRoles, contentAliasedFrom, contentAliasedTo);
+	mintContentAliasKinds(rules, resolveCtx, contentAliasedFrom, contentAliasedTo);
 
 	stripResolvedRoleRules(rules);
 	createSyntheticExternalRules(rules, raw.externals);
@@ -245,10 +256,8 @@ export function link(
 	collectRepeatedShapes(rules, derivations.repeatedShapes);
 	const complexAliasTargetHidden = deriveComplexAliasTargetHidden(raw.rules);
 	const topLevelAliasBodies = collectTopLevelAliasBodies(
-		raw.rules,
 		rules,
-		supertypes,
-		externalRoles,
+		resolveCtx,
 		complexAliasTargetHidden.size > 0 ? complexAliasTargetHidden : undefined
 	);
 	canonicalizeCatalogLiteralRefs(rules, kindEntries);
@@ -674,10 +683,8 @@ function collectAliasedByParents(rawRules: Record<string, Rule>): {
  * @param rules - The mutable resolved rules map; minted bodies are added here.
  */
 function mintContentAliasKinds(
-	rawRules: Record<string, Rule>,
 	rules: Record<string, Rule>,
-	supertypes: Set<string>,
-	externalRoles: Map<string, ExternalRole>,
+	ctx: ResolveCtx,
 	/**
 	 * DIAGNOSTIC-ONLY accumulators (§D-2a). When a visible twin `<name>` is
 	 * minted from a hidden symbol body `_<name>`, record `<name> → _<name>` in
@@ -717,7 +724,7 @@ function mintContentAliasKinds(
 					let body: Rule = content;
 					if (content.type === SYMBOL) {
 						const hiddenBody = (content as SymbolRule).name;
-						const target = rawRules[hiddenBody];
+						const target = ctx.allRules[hiddenBody];
 						if (target) body = target;
 						// DIAGNOSTIC-ONLY provenance: visible twin → hidden body kind.
 						if (contentAliasedFrom) contentAliasedFrom.set(value, hiddenBody);
@@ -732,7 +739,7 @@ function mintContentAliasKinds(
 					// is `seq(item, repeat(seq(sep, item)))` would otherwise keep the
 					// raw shape and lose the separator/trailing metadata #62 centralizes.
 					rules[value] = liftSeparators(
-						resolveRule(body, value, rawRules, supertypes, externalRoles)
+						resolveRule(body, ctx, value)
 					);
 				}
 			}
@@ -746,16 +753,15 @@ function mintContentAliasKinds(
 			walk((rule as { content: Rule }).content, ownerName);
 		}
 	}
-	for (const [name, rule] of Object.entries(rawRules)) walk(rule, name);
+	for (const [name, rule] of Object.entries(ctx.allRules)) walk(rule, name);
 }
 
 function collectTopLevelAliasBodies(
-	rawRules: Record<string, Rule>,
 	resolvedRules: Record<string, Rule>,
-	supertypes: Set<string>,
-	externalRoles: Map<string, ExternalRole>,
+	ctx: ResolveCtx,
 	complexAliasTargetHidden?: ReadonlySet<string>
 ): Map<string, Rule> {
+	const rawRules = ctx.allRules;
 	const out = new Map<string, Rule>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
@@ -788,10 +794,10 @@ function collectTopLevelAliasBodies(
 		) {
 			continue;
 		}
-		const resolvedContent = resolveRule(content, name, rawRules, supertypes, externalRoles);
+		const resolvedContent = resolveRule(content, ctx, name);
 		out.set(
 			name,
-			dereferenceTopLevelAliasBody(resolvedContent, resolvedRules, supertypes, new Set())
+			dereferenceTopLevelAliasBody(resolvedContent, ctx, resolvedRules, new Set())
 		);
 	}
 	return out;
@@ -811,10 +817,11 @@ function extractTopLevelNamedAliasContent(rule: Rule): Rule | undefined {
 
 function dereferenceTopLevelAliasBody(
 	rule: Rule,
+	ctx: ResolveCtx,
 	resolvedRules: Record<string, Rule>,
-	supertypes: ReadonlySet<string>,
 	seen: Set<string>
 ): Rule {
+	const supertypes = ctx.supertypes;
 	if (rule.type !== SYMBOL) return rule;
 	const refName = rule.aliasedFrom ?? rule.name;
 	if (supertypes.has(refName)) return rule;
@@ -822,7 +829,7 @@ function dereferenceTopLevelAliasBody(
 	const target = resolvedRules[refName];
 	if (!target) return rule;
 	seen.add(refName);
-	return dereferenceTopLevelAliasBody(target, resolvedRules, supertypes, seen);
+	return dereferenceTopLevelAliasBody(target, ctx, resolvedRules, seen);
 }
 
 /**
@@ -1560,49 +1567,44 @@ function isTerminalShape_allowBareTerm(rule: Rule): boolean {
 // resolveRule — recursive resolution of all reference types
 // ---------------------------------------------------------------------------
 
-function resolveRule(
-	rule: Rule,
-	currentName: string,
-	allRules: Record<string, Rule>,
-	supertypes: Set<string>,
-	externalRoles: Map<string, ExternalRole>
-): Rule {
+function resolveRule(rule: Rule, ctx: ResolveCtx, currentName: string): Rule {
+	const { allRules, supertypes, externalRoles } = ctx;
 	switch (rule.type) {
 		case SEQ:
 			return {
 				...rule,
-				members: rule.members.map((m) => resolveRule(m, currentName, allRules, supertypes, externalRoles))
+				members: rule.members.map((m) => resolveRule(m, ctx, currentName))
 			};
 
 		case CHOICE:
 			return {
 				...rule,
-				members: rule.members.map((m) => resolveRule(m, currentName, allRules, supertypes, externalRoles))
+				members: rule.members.map((m) => resolveRule(m, ctx, currentName))
 			};
 
 		case OPTIONAL: {
-			const content = resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
+			const content = resolveRule(rule.content, ctx, currentName);
 			return { ...rule, content };
 		}
 
 		case REPEAT:
 			return {
 				...rule,
-				content: resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
+				content: resolveRule(rule.content, ctx, currentName)
 			};
 
 		case REPEAT1:
-			return resolveRepeat1PreservingNonEmpty(rule, currentName, allRules, supertypes, externalRoles);
+			return resolveRepeat1PreservingNonEmpty(rule, ctx, currentName);
 
 		case FIELD:
 			return {
 				...rule,
-				content: resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
+				content: resolveRule(rule.content, ctx, currentName)
 			};
 
 		case TOKEN:
 			// Flatten: extract content
-			return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
+			return resolveRule(rule.content, ctx, currentName);
 
 		case ALIAS: {
 			// enrich content-alias (`alias(<non-symbol content>, $.<name>)` tagged
@@ -1628,7 +1630,7 @@ function resolveRule(
 				return { type: 'symbol', name: rule.value, inline: false } as Rule;
 			}
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
-				return resolveNamedAliasWithProvenance(rule.content, rule.value, supertypes);
+				return resolveNamedAliasWithProvenance(rule.content, ctx, rule.value);
 			}
 			// Unnamed alias with a non-word literal value (e.g. typescript
 			// `alias(_ternary_qmark, '?')` — relabels a hidden external-
@@ -1648,11 +1650,11 @@ function resolveRule(
 			) {
 				return { type: STRING, value: rule.value };
 			}
-			return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
+			return resolveRule(rule.content, ctx, currentName);
 		}
 
 		case SYMBOL:
-			return resolveSymbolRoleOrPass(rule, allRules, externalRoles);
+			return resolveSymbolRoleOrPass(rule, ctx);
 
 		// These pass through unchanged
 		case STRING:
@@ -1687,16 +1689,10 @@ function resolveRule(
  *   `repeat1` → `repeat` here unconditionally, which erased the non-empty
  *   signal.
  */
-function resolveRepeat1PreservingNonEmpty(
-	rule: Repeat1Rule,
-	currentName: string,
-	allRules: Record<string, Rule>,
-	supertypes: Set<string>,
-	externalRoles: Map<string, ExternalRole>
-): Rule {
+function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: ResolveCtx, currentName: string): Rule {
 	return {
 		...rule,
-		content: resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
+		content: resolveRule(rule.content, ctx, currentName)
 	};
 }
 
@@ -1715,8 +1711,8 @@ function resolveRepeat1PreservingNonEmpty(
  *   Preserving alias provenance lets the wrap emitter rewrite `$type` at
  *   drill-in via `drillAs()` for alias-target rewrites.
  */
-function resolveNamedAliasWithProvenance(content: Rule, targetName: string, supertypes: Set<string>): Rule {
-	const aliasedFrom = extractAliasedFromName(content, supertypes);
+function resolveNamedAliasWithProvenance(content: Rule, ctx: ResolveCtx, targetName: string): Rule {
+	const aliasedFrom = extractAliasedFromName(content, ctx.supertypes);
 	const sym: SymbolRule = aliasedFrom
 		? { type: 'symbol', name: targetName, aliasedFrom, inline: false }
 		: { type: 'symbol', name: targetName, inline: false };
@@ -1743,11 +1739,8 @@ function resolveNamedAliasWithProvenance(content: Rule, targetName: string, supe
  *     downstream consumers.
  *   Visible symbols that don't match either path are returned unchanged.
  */
-function resolveSymbolRoleOrPass(
-	rule: SymbolRule,
-	allRules: Record<string, Rule>,
-	externalRoles: Map<string, ExternalRole>
-): Rule {
+function resolveSymbolRoleOrPass(rule: SymbolRule, ctx: ResolveCtx): Rule {
+	const { allRules, externalRoles } = ctx;
 	const preBound = externalRoles.get(rule.name);
 	if (preBound) {
 		return { type: preBound.role } as Rule;

@@ -76,6 +76,15 @@ import type { DiagnosticSink } from '../types/diagnostics.ts';
  * choice slots, unslotted-child failures) emit here rather than to module-global
  * accumulators.
  */
+/**
+ * Pass-constant state for the supertype-subtype resolution family (R4 / #14).
+ * `seen` cycle-guards and the per-call subtypeSet stay explicit (CW6).
+ */
+export interface SubtypeCtx {
+	readonly rules: Record<string, Rule>;
+	readonly topLevelAliasBodies: ReadonlyMap<string, Rule>;
+}
+
 export interface AssembleCtx {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly nodeMap: Map<string, AssembledNode>;
@@ -426,9 +435,7 @@ function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): stri
 	}
 	return resolveHiddenSubtypes(
 		subtypes,
-		optimized.rules,
-		optimized.aliasedHiddenKinds ?? new Map(),
-		optimized.topLevelAliasBodies ?? new Map(),
+		{ rules: optimized.rules, topLevelAliasBodies: optimized.topLevelAliasBodies ?? new Map() },
 		rule.type === SUPERTYPE ? rule.name : undefined
 	);
 }
@@ -517,13 +524,8 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  *
  *   Non-hidden names pass through unchanged.
  */
-function resolveHiddenSubtypes(
-	names: readonly string[],
-	rules: Record<string, Rule>,
-	_aliasedHiddenKinds: ReadonlyMap<string, string>,
-	topLevelAliasBodies: ReadonlyMap<string, Rule>,
-	ownerName?: string
-): string[] {
+function resolveHiddenSubtypes(names: readonly string[], ctx: SubtypeCtx, ownerName?: string): string[] {
+	const { rules, topLevelAliasBodies } = ctx;
 	// Post-synthesis-removal: the rules map is keyed by SOURCE kinds
 	// only (hidden `_X`). Subtype names surface as source kinds; we
 	// no longer redirect through the aliasedHiddenKinds table (which
@@ -564,15 +566,11 @@ function resolveHiddenSubtypes(
 		}
 	};
 	for (const n of names) visit(n);
-	return includeAliasMemberKinds(out, rules, topLevelAliasBodies, ownerName);
+	return includeAliasMemberKinds(out, ctx, ownerName);
 }
 
-function includeAliasMemberKinds(
-	subtypes: readonly string[],
-	rules: Record<string, Rule>,
-	topLevelAliasBodies: ReadonlyMap<string, Rule>,
-	ownerName?: string
-): string[] {
+function includeAliasMemberKinds(subtypes: readonly string[], ctx: SubtypeCtx, ownerName?: string): string[] {
+	const { rules, topLevelAliasBodies } = ctx;
 	const out = [...subtypes];
 	const subtypeSet = new Set(subtypes);
 	let changed = true;
@@ -582,7 +580,7 @@ function includeAliasMemberKinds(
 			if (!name.startsWith('_')) continue;
 			if (name === ownerName) continue;
 			if (subtypeSet.has(name)) continue;
-			if (!isAliasMemberKind(name, rule, rules, subtypeSet, topLevelAliasBodies)) continue;
+			if (!isAliasMemberKind(rule, ctx, name, subtypeSet)) continue;
 			out.push(name);
 			subtypeSet.add(name);
 			changed = true;
@@ -591,29 +589,19 @@ function includeAliasMemberKinds(
 	return out;
 }
 
-function isAliasMemberKind(
-	name: string,
-	rule: Rule,
-	rules: Record<string, Rule>,
-	subtypeSet: ReadonlySet<string>,
-	topLevelAliasBodies: ReadonlyMap<string, Rule>
-): boolean {
+function isAliasMemberKind(rule: Rule, ctx: SubtypeCtx, name: string, subtypeSet: ReadonlySet<string>): boolean {
+	const { rules, topLevelAliasBodies } = ctx;
 	if (!topLevelAliasBodies.has(name)) return false;
 	const body = topLevelAliasBodies.get(name) ?? rule;
 	const resolved = resolveHiddenRuleContent(body, rules, new Set([name]));
 	if (resolved.length === 0) return false;
 	return resolved.every((member) =>
-		isCompatibleSubtypeMember(member, rules, subtypeSet, topLevelAliasBodies, new Set())
+		isCompatibleSubtypeMember(member, ctx, subtypeSet, new Set())
 	);
 }
 
-function isCompatibleSubtypeMember(
-	name: string,
-	rules: Record<string, Rule>,
-	subtypeSet: ReadonlySet<string>,
-	topLevelAliasBodies: ReadonlyMap<string, Rule>,
-	seen: Set<string>
-): boolean {
+function isCompatibleSubtypeMember(name: string, ctx: SubtypeCtx, subtypeSet: ReadonlySet<string>, seen: Set<string>): boolean {
+	const { rules, topLevelAliasBodies } = ctx;
 	if (subtypeSet.has(name)) return true;
 	if (!name.startsWith('_')) return false;
 	if (seen.has(name)) return false;
@@ -624,7 +612,7 @@ function isCompatibleSubtypeMember(
 	const resolved = resolveHiddenRuleContent(body, rules, new Set([name]));
 	if (resolved.length === 0) return false;
 	return resolved.every((member) =>
-		isCompatibleSubtypeMember(member, rules, subtypeSet, topLevelAliasBodies, seen)
+		isCompatibleSubtypeMember(member, ctx, subtypeSet, seen)
 	);
 }
 
