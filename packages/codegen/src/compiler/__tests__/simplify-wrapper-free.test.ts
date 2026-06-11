@@ -9,11 +9,11 @@
  * FieldRule / OptionalRule / RepeatRule / Repeat1Rule nodes anywhere in the tree.
  */
 
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { computeSimplifiedRules, simplifyRules } from '../simplify.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
-import type { Rule } from '../rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
 // Recursive wrapper scanner

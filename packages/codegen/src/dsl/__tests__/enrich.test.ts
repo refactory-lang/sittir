@@ -1,7 +1,7 @@
-import { CHOICE, FIELD, OPTIONAL, REPEAT, SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, REPEAT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, vi, afterEach, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
-import type { Rule } from '../../compiler/rule.ts';
+import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
 // Minimal helper: build a tree-sitter grammar result in the shape our

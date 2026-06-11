@@ -52,8 +52,8 @@ import {
 	isBlankType,
 	isOptionalType,
 	isPlainRepeatType
-} from '../runtime-shapes.ts';
-import type { RuntimeRule, FieldLike } from '../runtime-shapes.ts';
+} from '../../types/runtime-shapes.ts';
+import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys

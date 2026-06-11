@@ -33,16 +33,16 @@
  * migrate independently.
  */
 
-import type { PolymorphVariant } from '../../compiler/types.ts';
-import type { RuntimeRule } from '../runtime-shapes.ts';
-import { typeEq, isChoiceType, isBlankType } from '../runtime-shapes.ts';
+import type { PolymorphVariant } from '../../types/ir.ts';
+import type { RuntimeRule } from '../../types/runtime-shapes.ts';
+import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { variant as variantPlaceholder } from '../primitives/variant.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
 import { getEnrichClauseGroups } from '../enrich.ts';
-import type { Rule } from '../../compiler/rule.ts';
+import type { Rule } from '../../types/rule.ts';
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
 import type { GrammarJson, GrammarNode, Sym, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';

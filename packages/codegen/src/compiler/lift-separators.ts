@@ -31,8 +31,8 @@
  * then take over once the constructor lift is removed.
  */
 
-import { SEQ, CHOICE, OPTIONAL, REPEAT, REPEAT1, FIELD, TOKEN, ALIAS, STRING } from './rule-types.ts';
-import type { Rule, RepeatRule, Repeat1Rule, SeqRule } from './rule.ts';
+import { SEQ, CHOICE, OPTIONAL, REPEAT, REPEAT1, FIELD, TOKEN, ALIAS, STRING } from '../types/rule-types.ts';
+import type { Rule, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
 import { detectRepeatSeparator, rulesEqual } from '../dsl/list-patterns.ts';
 
 /**

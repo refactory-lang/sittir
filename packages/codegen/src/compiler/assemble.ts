@@ -5,7 +5,7 @@
  * detectToken, modelType) derived from the rule tree — not carried on Rule nodes.
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,
@@ -19,12 +19,12 @@ import type {
 	StringRule,
 	EnumRule,
 	SupertypeRule
-} from './rule.ts';
-import { isLinkSymbol, isEnumChoiceRule } from './rule.ts';
+} from '../types/rule.ts';
+import { isLinkSymbol, isEnumChoiceRule } from '../types/rule.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
-import type { RuleId } from './rule.ts';
+import type { RuleId } from '../types/rule.ts';
 import {
 	collectGeneratedKindEntries,
 	type GeneratedIdTables,
@@ -62,7 +62,7 @@ import { simplifyRule, inlineRefs, extractRepeatShape, hoistInnerFieldsForTempla
 import { compileWordMatcher } from './common.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
-import type { DiagnosticSink } from './diagnostics.ts';
+import type { DiagnosticSink } from '../types/diagnostics.ts';
 
 /**
  * Phase context for the Assemble phase (spec §7.7 / CW5).

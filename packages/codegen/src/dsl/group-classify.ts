@@ -30,7 +30,7 @@ import {
 	isStringType,
 	isSymbolType,
 	typeEq,
-} from './runtime-shapes.ts';
+} from '../types/runtime-shapes.ts';
 
 // ---------------------------------------------------------------------------
 // ruleMatchesEmpty

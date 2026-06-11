@@ -35,7 +35,7 @@ __export(overrides_exports, {
 module.exports = __toCommonJS(overrides_exports);
 var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 
-// packages/codegen/src/dsl/runtime-shapes.ts
+// packages/codegen/src/types/runtime-shapes.ts
 function isSymbolLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
@@ -401,14 +401,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec3 = nativeRequired("prec");
+  const prec = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec3[variant2];
+    const fn = prec[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec3(value, newContent);
+  return prec(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -498,81 +498,13 @@ function alias(rule, value) {
   return native(rule, rule);
 }
 
-// packages/codegen/src/compiler/rule-types.ts
-var STRING = "string";
-var PATTERN = "pattern";
+// packages/codegen/src/types/rule-types.ts
 var SYMBOL = "symbol";
-var TOKEN = "token";
 
-// packages/codegen/src/dsl/primitives/role.ts
-var currentRoles = null;
-var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
-function role(symbol, roleName) {
-  if (!isSymbolLike(symbol)) {
-    throw new Error(
-      `role(): first argument must be a symbol reference (e.g. $._indent), got ${JSON.stringify(symbol)}`
-    );
-  }
-  if (!VALID_ROLE_NAMES.has(roleName)) {
-    throw new Error(
-      `role(): second argument must be one of 'indent' | 'dedent' | 'newline', got ${JSON.stringify(roleName)}`
-    );
-  }
-  if (currentRoles !== null) {
-    currentRoles.set(symbol.name, { role: roleName });
-  }
-  return symbol;
-}
-
-// packages/codegen/src/compiler/evaluate.ts
-function normalize(input) {
-  if (input === void 0 || input === null) {
-    throw new Error("Undefined symbol");
-  }
-  if (typeof input === "string") {
-    return { type: STRING, value: input };
-  }
-  if (input instanceof RegExp) {
-    return { type: PATTERN, value: input.source };
-  }
-  if (typeof input === "object" && "type" in input) {
-    return input;
-  }
-  throw new TypeError(`Invalid rule: ${input}`);
-}
+// packages/codegen/src/types/rule.ts
 function sym(name) {
   return { type: SYMBOL, name, hidden: name.startsWith("_"), inline: name.startsWith("_") };
 }
-var token = Object.assign(
-  function token2(content) {
-    return { type: TOKEN, content: normalize(content), immediate: false };
-  },
-  {
-    immediate(content) {
-      return { type: TOKEN, content: normalize(content), immediate: true };
-    }
-  }
-);
-var prec = Object.assign(
-  function prec2(precedenceOrContent, content) {
-    if (content === void 0) return normalize(precedenceOrContent);
-    return normalize(content);
-  },
-  {
-    left(precedenceOrContent, content) {
-      if (content == null) return normalize(precedenceOrContent);
-      return normalize(content);
-    },
-    right(precedenceOrContent, content) {
-      if (content == null) return normalize(precedenceOrContent);
-      return normalize(content);
-    },
-    dynamic(precedenceOrContent, content) {
-      if (content == null) return normalize(precedenceOrContent);
-      return normalize(content);
-    }
-  }
-);
 
 // packages/codegen/src/dsl/list-patterns.ts
 function firstStringOfChoice(r) {
@@ -2567,6 +2499,26 @@ function extractNonEmpty(rule) {
     return null;
   }
   return null;
+}
+
+// packages/codegen/src/dsl/primitives/role.ts
+var currentRoles = null;
+var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
+function role(symbol, roleName) {
+  if (!isSymbolLike(symbol)) {
+    throw new Error(
+      `role(): first argument must be a symbol reference (e.g. $._indent), got ${JSON.stringify(symbol)}`
+    );
+  }
+  if (!VALID_ROLE_NAMES.has(roleName)) {
+    throw new Error(
+      `role(): second argument must be one of 'indent' | 'dedent' | 'newline', got ${JSON.stringify(roleName)}`
+    );
+  }
+  if (currentRoles !== null) {
+    currentRoles.set(symbol.name, { role: roleName });
+  }
+  return symbol;
 }
 
 // packages/python/overrides.ts

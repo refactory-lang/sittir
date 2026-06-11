@@ -1,4 +1,4 @@
-import { CHOICE, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
@@ -6,7 +6,7 @@ import {
 	type AssembledNode
 } from '../compiler/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { SeqRule } from '../compiler/rule.ts';
+import type { SeqRule } from '../types/rule.ts';
 import { emitTypes } from '../emitters/types.ts';
 
 function nodeMapWith(nodes: Map<string, AssembledNode>): NodeMap {

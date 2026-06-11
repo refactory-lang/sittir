@@ -1,10 +1,10 @@
-import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts';
 import { computeSimplifiedRules } from '../compiler/simplify.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../compiler/wrapper-deletion.ts';
-import type { Rule } from '../compiler/rule.ts';
+import type { Rule } from '../types/rule.ts';
 import type { OptimizedGrammar } from '../compiler/types.ts';
 import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../compiler/node-map.ts';
 

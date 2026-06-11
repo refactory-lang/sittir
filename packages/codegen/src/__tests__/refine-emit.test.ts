@@ -11,9 +11,9 @@
  * it through the pipeline, and inspects emitted source text.
  */
 
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import type { Rule } from '../compiler/rule.ts';
+import type { Rule } from '../types/rule.ts';
 import type { RawGrammar, RefineForm } from '../compiler/types.ts';
 import { link } from '../compiler/link.ts';
 import { resolveRefinePath, narrowedFieldLiteralsForForm } from '../compiler/link-refine.ts';

@@ -1,10 +1,10 @@
-import { FIELD, PATTERN, SEQ, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { FIELD, PATTERN, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import type { TreeHandle } from '@sittir/common';
 import { AssembledBranch, AssembledNonterminal, AssembledPattern, type AssembledNode } from '../compiler/node-map.ts';
-import type { SeqRule } from '../compiler/rule.ts';
+import type { SeqRule } from '../types/rule.ts';
 import { emitWrap } from '../emitters/wrap.ts';
 import { verifyManifestForGrammar } from '../scripts/generated-manifest.ts';
 import {

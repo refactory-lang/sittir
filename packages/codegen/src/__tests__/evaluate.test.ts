@@ -1,4 +1,4 @@
-import { CHOICE, REPEAT1, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, REPEAT1, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -21,7 +21,7 @@ import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { transform, insert, replace } from '../dsl/transform/transform.ts';
-import type { SymbolRef } from '../compiler/rule.ts';
+import type { SymbolRef } from '../types/rule.ts';
 import { expectCompleteCatalog, serializeCatalog, walkRule } from './helpers/rule-catalog.ts';
 
 // Install sittir's lowercase DSL primitives as globals so transform()'s

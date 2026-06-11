@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
 	normalizeGrammar,
@@ -14,7 +14,7 @@ import {
 	factorChoiceBranches,
 	dedupeSeqMembers
 } from '../compiler/normalize.ts';
-import type { Rule } from '../compiler/rule.ts';
+import type { Rule } from '../types/rule.ts';
 import type { LinkedGrammar, ExternalRole } from '../compiler/types.ts';
 
 function makeLinked(rules: Record<string, Rule>, overrides?: Partial<LinkedGrammar>): LinkedGrammar {

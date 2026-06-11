@@ -1,9 +1,9 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { AssembledBranch, AssembledPattern } from '../compiler/node-map.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { SeqRule } from '../compiler/rule.ts';
+import type { SeqRule } from '../types/rule.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';
 import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 

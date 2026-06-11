@@ -1,6 +1,6 @@
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { expect } from 'vitest';
-import type { Rule, RuleId } from '../../compiler/rule.ts';
+import type { Rule, RuleId } from '../../types/rule.ts';
 import type { RuleCatalog } from '../../compiler/types.ts';
 
 export function collectRuleIds(rule: Rule): RuleId[] {

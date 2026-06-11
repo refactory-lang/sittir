@@ -1,7 +1,7 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../compiler/node-map.ts';
-import type { SeqRule } from '../compiler/rule.ts';
+import type { SeqRule } from '../types/rule.ts';
 import { buildFactoryMap } from '../emitters/factory-map.ts';
 import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 import type { FactorySlotMeta } from '../emitters/factory-map.ts';

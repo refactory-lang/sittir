@@ -1,4 +1,4 @@
-import type { GrammarDiagnostic } from './diagnostics.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 
 /**
  * §D-2c — content-alias injectivity check (the ONLY consumer of the

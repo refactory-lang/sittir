@@ -59,8 +59,8 @@
  * picks them up via line-315 `Object.assign({}, baseGrammar.rules)`.
  */
 
-import type { Rule } from '../compiler/rule.ts';
-import { sym } from '../compiler/evaluate.ts';
+import type { Rule } from '../types/rule.ts';
+import { sym } from '../types/rule.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
 import {
@@ -73,8 +73,8 @@ import {
 	isRepeatType,
 	isBlankType,
 	isPrecWrapper
-} from './runtime-shapes.ts';
-import type { RuntimeRule } from './runtime-shapes.ts';
+} from '../types/runtime-shapes.ts';
+import type { RuntimeRule } from '../types/runtime-shapes.ts';
 import { detectRepeatSeparator } from './list-patterns.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { ruleMatchesEmpty, isInlineSafe } from './group-classify.ts';

@@ -8,9 +8,9 @@
  * pattern.
  */
 
-import { CHOICE, FIELD, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import type { Rule } from '../compiler/rule.ts';
+import type { Rule } from '../types/rule.ts';
 import { simplifyRule, hoistInnerFieldOutOfFieldWrapper } from '../compiler/simplify.ts';
 
 const str = (value: string): Rule => ({ type: STRING, value });

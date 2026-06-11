@@ -32,10 +32,10 @@ does), and output (what changes).
 > | **SimplifiedRule** | `computeSimplifiedRules` | `node.simplifiedRule` | slot derivation (`collectSlots`), factories/wrap/from |
 >
 > **What's shipped (PR0 + PR1 + PR2):**
-> - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` / `aliasedFrom` / `aliasNamed` on every Rule via the shared `RuleBase` interface (`compiler/rule.ts`).
+> - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` / `aliasedFrom` / `aliasNamed` on every Rule via the shared `RuleBase` interface (`types/rule.ts` — R11 moved the Rule IR layer to `codegen/src/types/`).
 > - **enrich attribute passes** (PR0): `enrichFieldWrappers` + `enrichMultiplicityWrappers` ship in `dsl/enrich.ts`. The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`), and wrapper-attribute push-down lives in `applyWrapperDeletion`.
 > - **`applyWrapperDeletion`** (PR1, `compiler/wrapper-deletion.ts`): new last pass of `optimize()`; pushes modifier wrappers (optional / field / repeat / repeat1 / alias) down to leaf `RuleBase` attributes. Output: `RenderRule` (wrapper-free) snapshot.
-> - **RenderRule + SimplifiedRule branded types** (PR1/PR2, `compiler/rule.ts`).
+> - **RenderRule + SimplifiedRule branded types** (PR1/PR2, `types/rule.ts`).
 > - **`computeSimplifiedRules`** (relocated PR1 to `compiler/simplify.ts`): takes RenderRule, runs `inlineRefs` + `simplifyRules` + `canonicalizeSeqOfLeaves` + `deleteWrapper` (post-fixpoint wrapper-free guard) + `fuseHeadRepeatLists`. Output: `Record<string, SimplifiedRule>`.
 > - **Alias-body + polymorph-form snapshots** (PR2): `optimize()` threads top-level alias-bodies and polymorph-form contents through `applyWrapperDeletion` + `computeSimplifiedRules` and merges them into `renderRules` / `simplifiedRules`. `assemble.ts` reads snapshots directly; per-call `simplifyRule(...)` / `deleteWrapper(...)` fallbacks deleted.
 > - **`applyAutoGroups` re-enabled** (PR2): `dsl/wire/wire.ts` invokes it; synthesized helpers (`_<parent>_optional<N>` / `_<parent>_repeat<N>`) are registered in `grammar.inline` via `WireContext.syntheticInline`.
@@ -54,7 +54,9 @@ does), and output (what changes).
 
 ---
 
-## Rule IR (`compiler/rule.ts`)
+## Rule IR (`types/rule.ts`)
+
+> **R11 (types extraction):** `rule.ts`, `rule-types.ts`, `diagnostics.ts` (from `compiler/`), and `runtime-shapes.ts` (from `dsl/`) now live in `packages/codegen/src/types/` — plus `ir.ts` (PolymorphVariant / ExternalRole, re-exported by `compiler/types.ts` for existing importers). Both `dsl/` and `compiler/` import DOWN into this layer; the `sym` constructor moved here too, closing the last dsl→compiler value edge. The dependency shape is `dsl → types ← compiler` — acyclic, verified.
 
 One discriminated union (`Rule`) throughout the pipeline. Presence varies by
 phase: after Evaluate `symbol`/`alias`/`token`/`repeat1` are present; after
@@ -183,12 +185,12 @@ not the parse table.)
 
 ---
 
-## Phase 1: Evaluate (`compiler/evaluate.ts` + `dsl/wire/*` + `dsl/runtime-shapes.ts`)
+## Phase 1: Evaluate (`compiler/evaluate.ts` + `dsl/wire/*` + `types/runtime-shapes.ts`)
 
 Executes the grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
 `grammar()` with sittir extensions.
 
-> **Two-compiler-shape divergence (`dsl/runtime-shapes.ts`):** the DSL globals
+> **Two-compiler-shape divergence (`types/runtime-shapes.ts`):** the DSL globals
 > run in two runtimes. Sittir's evaluator keeps `optional` as a lowercase
 > `{type:'optional'}` wrapper; tree-sitter's CLI lowers `optional(x)` to
 > `CHOICE[x, BLANK]` (uppercase). `runtime-shapes.ts` exposes dual-case

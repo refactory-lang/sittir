@@ -14,10 +14,10 @@
  * emits), `resolvedKind = name` (the kindId read-time matching keys on).
  */
 
-import { CHOICE, STRING, SYMBOL } from '../rule-types.ts'; // @rule-type-consts
+import { CHOICE, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deriveValuesForRule, isTerminalValue, isNodeRef } from '../node-map.ts';
-import type { Rule } from '../rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 describe('deriveValuesForRule — link-synthesized operator symbols (D1)', () => {
 	it('a link-symbol carrying a literal emits a terminal of the SOURCE string', () => {

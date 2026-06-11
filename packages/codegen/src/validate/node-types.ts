@@ -13,7 +13,7 @@
  * CLI behind a `--validate-node-types` flag.
  */
 
-import { CHOICE, SUPERTYPE } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, SUPERTYPE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { LinkedGrammar } from '../compiler/types.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import type { RawNodeEntry } from './node-types-loader.ts';

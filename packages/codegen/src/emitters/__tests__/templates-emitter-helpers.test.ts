@@ -1,6 +1,6 @@
-import { CHOICE, SEQ, STRING } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import type { Rule } from '../../compiler/rule.ts';
+import type { Rule } from '../../types/rule.ts';
 import { escapeJinjaString, escapeLiteral, snakeToCamel, stringifyRule } from '../templates.ts';
 
 describe('escapeLiteral', () => {

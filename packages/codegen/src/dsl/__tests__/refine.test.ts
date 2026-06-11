@@ -2,12 +2,12 @@
  * refine.test.ts — unit coverage for the refine() DSL primitive.
  */
 
-import { SEQ } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { SEQ } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { refine } from '../primitives/refine.ts';
 import { withWireContext } from '../wire/wire.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
-import type { Rule } from '../../compiler/rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());

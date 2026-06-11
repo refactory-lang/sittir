@@ -31,8 +31,8 @@
  * own final naming.
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule, Multiplicity, RuleSource } from './rule.ts';
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule, Multiplicity, RuleSource } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import { sharedArmAttrs } from './rule-attrs.ts';

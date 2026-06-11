@@ -11,8 +11,8 @@
  * it is re-exported here so existing importers keep resolving.
  */
 
-import { CHOICE } from './rule-types.ts'; // @rule-type-consts
-import type { Rule, Multiplicity } from './rule.ts';
+import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule, Multiplicity } from '../types/rule.ts';
 // `combineMultiplicity` and `LeafMultiplicity` moved to transforms.ts (PR-O M1 de-scatter);
 // re-exported here so existing importers keep resolving.
 export { combineMultiplicity, type LeafMultiplicity } from './transforms.ts';

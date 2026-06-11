@@ -37,8 +37,8 @@ import {
 	isSeqType,
 	isChoiceType,
 	isFieldType
-} from '../runtime-shapes.ts';
-import type { RuntimeRule } from '../runtime-shapes.ts';
+} from '../../types/runtime-shapes.ts';
+import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 
 // ---------------------------------------------------------------------------
 // Native DSL accessors — we call the runtime-injected DSL functions

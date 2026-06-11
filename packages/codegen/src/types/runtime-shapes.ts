@@ -53,7 +53,7 @@
  * at property-access sites (e.g. `(r as SeqRule).members`).
  */
 
-import type { ChoiceRule, FieldRule, OptionalRule, Rule, SeqRule, StringRule, SymbolRule } from '../compiler/rule.ts';
+import type { ChoiceRule, FieldRule, OptionalRule, Rule, SeqRule, StringRule, SymbolRule } from './rule.ts';
 
 export type RuntimeRule = { readonly type: string };
 

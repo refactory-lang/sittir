@@ -42,11 +42,11 @@
  * and console during regen so the author can act.
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule, SimplifiedRule } from './rule.ts';
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule, SimplifiedRule } from '../types/rule.ts';
 import { isAllTextShape } from './assemble.ts';
 import { countSlots, countContentSlots } from './slot-count.ts';
-import type { Diagnostic } from './diagnostics.ts';
+import type { Diagnostic } from '../types/diagnostics.ts';
 
 // All-text shape predicate: `isAllTextShape` is imported from assemble.ts (the
 // SAME predicate that classifies modelType === 'pattern'). DRY — no mirrored copy

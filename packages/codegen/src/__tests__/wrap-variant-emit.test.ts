@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, PATTERN, SEQ, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, PATTERN, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { emitWrap } from '../emitters/wrap.ts';
@@ -8,7 +8,7 @@ import {
 	AssembledSupertype,
 	type AssembledNode
 } from '../compiler/node-map.ts';
-import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
+import type { ChoiceRule, SeqRule } from '../types/rule.ts';
 import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 
 const wrapEmitterSource = readFileSync(new URL('../emitters/wrap.ts', import.meta.url), 'utf8');

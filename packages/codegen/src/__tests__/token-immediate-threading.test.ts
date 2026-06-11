@@ -14,14 +14,14 @@
  * implemented — see the cleanup-rules §H1 note for what's still TODO.
  */
 
-import { FIELD, STRING, TOKEN } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { FIELD, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import {
 	deriveSlots,
 	isTerminalValue,
 	AssembledToken
 } from '../compiler/node-map.ts';
-import type { Rule, TokenRule, StringRule } from '../compiler/rule.ts';
+import type { Rule, TokenRule, StringRule } from '../types/rule.ts';
 
 describe('§H1 — TokenRule metadata threading', () => {
 	it('preserves immediate=true through deriveValuesForRule', () => {

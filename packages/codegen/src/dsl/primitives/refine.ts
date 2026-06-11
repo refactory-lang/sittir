@@ -39,7 +39,7 @@
  * @see packages/codegen/src/dsl/wire/wire.ts — WireContext.refineForms
  */
 
-import type { RuntimeRule } from '../runtime-shapes.ts';
+import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { wireGetCurrentRuleKind, wireRegisterRefineForms } from '../wire/wire.ts';
 import type { RefineForm } from '../wire/wire.ts';
 

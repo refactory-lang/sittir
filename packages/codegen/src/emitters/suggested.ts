@@ -16,9 +16,9 @@
  * curator can import either, or pull specific entries out by hand.
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry } from '../compiler/types.ts';
-import type { Rule } from '../compiler/rule.ts';
+import type { Rule } from '../types/rule.ts';
 import type { PolymorphCandidateLocation } from '../compiler/link.ts';
 
 /**

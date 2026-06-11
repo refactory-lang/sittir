@@ -5,9 +5,9 @@
  * functions remain in that module.
  */
 
-import { CHOICE, FIELD, OPTIONAL, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import type { Rule } from '../compiler/rule.ts';
+import type { Rule } from '../types/rule.ts';
 import { findRepeatFlag } from '../compiler/template-walker.ts';
 
 // ---------------------------------------------------------------------------

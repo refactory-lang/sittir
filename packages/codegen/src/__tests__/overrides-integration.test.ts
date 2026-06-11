@@ -1,4 +1,4 @@
-import { SEQ } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { SEQ } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { resolveOverridesPath, resolveGrammarJsPath } from '../compiler/resolve-grammar.ts';

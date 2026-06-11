@@ -1,7 +1,7 @@
-import { SEQ, STRING, SYMBOL } from '../../compiler/rule-types.ts'; // @rule-type-consts
+import { SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
-import type { Rule, SeqRule } from '../../compiler/rule.ts';
+import type { Rule, SeqRule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
 function mkGrammar(rules: Record<string, Rule>) {

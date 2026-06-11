@@ -8,7 +8,7 @@ import { drainSlotGroupingDiagnostics } from './simplify.ts';
 import type { SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
 import { diagnoseContentAliasInjectivity } from './diagnose-content-alias-injectivity.ts';
 import type { RawGrammar } from './types.ts';
-import type { GrammarDiagnostic } from './diagnostics.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 
 export type { GrammarDiagnostic };
 

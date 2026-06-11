@@ -10,7 +10,7 @@
  *
  * Noise-free when unset: the env-var lookup is O(1) and returns early.
  */
-import type { Rule } from './rule.ts';
+import type { Rule } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './node-map.ts';
 
 const FLAG = 'SITTIR_TRACE';

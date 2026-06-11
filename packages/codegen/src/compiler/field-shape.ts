@@ -1,6 +1,6 @@
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from './rule-types.ts'; // @rule-type-consts
-import type { Rule } from './rule.ts';
-import { isLinkSymbol } from './rule.ts';
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule } from '../types/rule.ts';
+import { isLinkSymbol } from '../types/rule.ts';
 
 function unwrapStructuralPassthroughs(content: Rule): Rule {
 	switch (content.type) {

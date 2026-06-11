@@ -17,9 +17,9 @@
  * deterministically sorted by kind so diffs are stable.
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
-import type { Rule } from '../compiler/rule.ts';
+import type { Rule } from '../types/rule.ts';
 import type {
 	AssembledNode,
 	AssembledNonterminal,

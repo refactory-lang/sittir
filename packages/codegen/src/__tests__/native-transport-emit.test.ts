@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../compiler/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -12,7 +12,7 @@ import {
 } from '../compiler/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
-import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
+import type { ChoiceRule, SeqRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';
 import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
