@@ -30,7 +30,7 @@ import { drainSlotGroupingDiagnostics } from './simplify.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
-import type { NormalizeCtx } from './transforms.ts';
+import type { NormalizeCtx } from '../dsl/rule-transforms.ts';
 import type { AssembleCtx } from './assemble.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';

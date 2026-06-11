@@ -19,6 +19,7 @@
  *   - expected post-fix: the ref is replaced by the seq members carrying multiplicity:'optional'
  */
 
+import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it, afterEach } from 'vitest';
 import { computeSimplifiedRules, drainSlotGroupingDiagnostics } from '../simplify.ts';
@@ -261,7 +262,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		const renderRules = applyWrapperDeletion(inputRules);
 		// Pass _let_declaration_optional1 in inlineKinds (as in the real pipeline).
 		const inlineKinds = new Set(['_let_declaration_optional1']);
-		const simplified = computeSimplifiedRules(renderRules, inlineKinds);
+		const simplified = computeSimplifiedRules(renderRules, { rules: renderRules, inlineKinds, diagnostics: new DiagnosticSink() });
 
 		const letDeclSimplified = simplified['let_declaration']!;
 

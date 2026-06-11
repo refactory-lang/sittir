@@ -17,11 +17,12 @@ import type { Rule, SeqRule } from '../types/rule.ts';
 import { isChoice, isEnumChoiceRule } from '../types/rule.ts';
 import { isTerminalShape } from './link.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
-import { computeSimplifiedRules, resetSlotGroupingDiagnostics, resolveGroupOrMultiInlineTarget } from './simplify.ts';
+import { computeSimplifiedRules, resetSlotGroupingDiagnostics } from './simplify.ts';
+import { resolveGroupOrMultiInlineTarget } from '../dsl/rule-transforms.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
-import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
+import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
-import type { NormalizeCtx } from './transforms.ts';
+import type { NormalizeCtx, SimplifyCtx } from '../dsl/rule-transforms.ts';
 
 /**
  * Run the full ordered pipeline of non-lossy normalization passes over the
@@ -163,6 +164,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<strin
  */
 export function inlineHiddenSeqRefs(
 	rules: Record<string, Rule>,
+	_ctx: NormalizeCtx | undefined,
 	keepRef: ReadonlySet<string>
 ): boolean {
 	// Which hidden kinds are fold-eligible THIS pass.
@@ -321,8 +323,8 @@ function materializeInlinedBody(
 
 function applyNormalizationPasses(
 	rawRules: Record<string, Rule>,
-	preserveKinds?: ReadonlySet<string>,
-	ctx?: NormalizeCtx
+	ctx?: NormalizeCtx,
+	preserveKinds?: ReadonlySet<string>
 ): Record<string, Rule> {
 	let rules: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rawRules)) {
@@ -367,7 +369,7 @@ export function normalizeGrammar(
 	// applyNormalizationPasses calls below share this single derived set so
 	// they behave identically to the old code that threaded the same cached set.
 	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
-	const rules = applyNormalizationPasses(linked.rules, preserveKinds.size > 0 ? preserveKinds : undefined, ctx);
+	const rules = applyNormalizationPasses(linked.rules, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
 	// §D-2a normalize inline hoist: wrapper-delete ONCE (multiplicity → leaf
 	// attributes), then run the rule-tree group inline to a fixed point. Inlining
 	// RELOCATES already-wrapper-deleted `symbol(_x)` refs (it splices the
@@ -382,7 +384,7 @@ export function normalizeGrammar(
 	const renderRules = applyWrapperDeletion(rules);
 	for (let pass = 0; pass < 8; pass++) {
 		const keepRef = computeKeepRef(renderRules);
-		const changed = inlineHiddenSeqRefs(renderRules, keepRef);
+		const changed = inlineHiddenSeqRefs(renderRules, ctx, keepRef);
 		if (!changed) break;
 	}
 
@@ -396,16 +398,16 @@ export function normalizeGrammar(
 		variantSkip.add(pv.child);
 	}
 
-	const simplifiedRules = computeSimplifiedRules(renderRules, inlineKinds, variantSkip, ctx);
+	const simplifiedRules = computeSimplifiedRules(renderRules, { ...ctx, inlineKinds, polymorphSkipExtra: variantSkip } as SimplifyCtx);
 
 	// Alias-body kinds: thread the alias-target bodies through the same pipeline
 	// so renderRules / simplifiedRules cover them too. Eliminates the
 	// assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
 	if (linked.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(linked.topLevelAliasBodies);
-		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, preserveKinds.size > 0 ? preserveKinds : undefined, ctx);
+		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
-		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, inlineKinds, variantSkip, ctx);
+		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, { ...ctx, inlineKinds, polymorphSkipExtra: variantSkip } as SimplifyCtx);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			renderRules[kind] = rule;
 		}

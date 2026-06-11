@@ -18,6 +18,14 @@ describe('propose-14 signature classification', () => {
 		expect(recs[0].bucket).toBe('conforming');
 	});
 
+	it('classifies an optional-union ctx (SimplifyCtx | undefined) as conforming', () => {
+		const recs = classifySource(
+			'compiler/simplify.ts',
+			'function fix(rule: Rule, ctx: SimplifyCtx | undefined, rules: Readonly<Record<string, Rule>>) {}',
+		);
+		expect(recs[0].bucket).toBe('conforming');
+	});
+
 	it('classifies (target, ctx, recursion-local) as conforming per CW6', () => {
 		const recs = classifySource(
 			'compiler/normalize.ts',

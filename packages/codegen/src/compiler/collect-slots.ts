@@ -35,7 +35,7 @@ import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE,
 import type { Rule, Multiplicity, RuleSource } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
-import { sharedArmAttrs } from './rule-attrs.ts';
+import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import {
 	AssembledNonterminal,
 	type NodeOrTerminal,

@@ -36,13 +36,14 @@ import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule }
 import type { AssembledNode } from './node-map.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
-import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from './rule-attrs.ts';
+import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
-import type { SimplifyCtx } from './transforms.ts';
+import type { SimplifyCtx } from '../dsl/rule-transforms.ts';
+import { inlineRefs, canonicalizeSeqOfLeaves, isLeaf, recurseChildren, type InlineRefsCtx } from '../dsl/rule-transforms.ts';
 // `extractRepeatShape` and `pushAttrsToLeaves` moved to transforms.ts (PR-O M1 de-scatter).
 // Re-export extractRepeatShape for assemble.ts which imports it from this module.
-import { extractRepeatShape, pushAttrsToLeaves } from './transforms.ts';
-export { extractRepeatShape } from './transforms.ts';
+import { extractRepeatShape, pushAttrsToLeaves } from '../dsl/rule-transforms.ts';
+export { extractRepeatShape } from '../dsl/rule-transforms.ts';
 
 // ---------------------------------------------------------------------------
 // Slot-grouping diagnostic accumulator (propose-promotion only).
@@ -236,14 +237,10 @@ export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = f
  *      derivation walked an uncanonical tree and silently dropped
  *      duplicate-named field occurrences across choice branches.
  */
-export function simplifyRules(
-	rules: Record<string, Rule>,
-	inlineKinds: ReadonlySet<string> = new Set(),
-	ctx?: SimplifyCtx
-): Record<string, Rule> {
+export function simplifyRules(rules: Record<string, Rule>, ctx?: SimplifyCtx): Record<string, Rule> {
 	const out: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		out[name] = normalizeToFixpoint(rule, rules, inlineKinds, ctx);
+		out[name] = normalizeToFixpoint(rule, ctx, rules);
 	}
 	return out;
 }
@@ -260,11 +257,11 @@ export function simplifyRules(
  */
 export function computeSimplifiedRules(
 	renderRules: Record<string, RenderRule>,
-	inlineKinds: ReadonlySet<string> = new Set(),
-	polymorphSkipExtra: ReadonlySet<string> = new Set(),
 	ctx?: SimplifyCtx
 ): Record<string, SimplifiedRule> {
-	const simplified = simplifyRules(renderRules as Record<string, Rule>, inlineKinds, ctx);
+	const inlineKinds = ctx?.inlineKinds ?? new Set<string>();
+	const polymorphSkipExtra = ctx?.polymorphSkipExtra ?? new Set<string>();
+	const simplified = simplifyRules(renderRules as Record<string, Rule>, ctx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
 		// simplifyRules can re-introduce wrapper nodes (optional / field /
@@ -308,7 +305,7 @@ export function computeSimplifiedRules(
 		// Also emit into ctx.diagnostics so the DiagnosticSink (PR-G) carries them.
 		// Only new (first-seen) records are emitted to avoid double-counting the
 		// module-level dedup's effect on the sink.
-		if (isNew && ctx) {
+		if (isNew && ctx?.diagnostics) {
 			ctx.diagnostics.info({
 				code: rec.code,
 				message: rec.message,
@@ -346,14 +343,14 @@ export function computeSimplifiedRules(
  */
 function normalizeToFixpoint(
 	rule: Rule,
-	rules: Readonly<Record<string, Rule>>,
-	inlineKinds: ReadonlySet<string> = new Set(),
-	ctx?: SimplifyCtx
+	ctx: SimplifyCtx | undefined,
+	rules: Readonly<Record<string, Rule>>
 ): Rule {
+	const ictx: InlineRefsCtx = { rules, inlineKinds: ctx?.inlineKinds };
 	const MAX_ITERS = 16;
 	let current = rule;
 	for (let i = 0; i < MAX_ITERS; i++) {
-		const next = simplifyRule(inlineRefs(current, rules, inlineKinds), ctx);
+		const next = simplifyRule(inlineRefs(current, ictx), ctx);
 		if (rulesStructurallyEqual(current, next)) return next;
 		current = next;
 	}
@@ -852,185 +849,6 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 /**
- * Inline hidden symbol references by substituting their content. Two inlining
- * paths are applied in priority order:
- *
- *  1. GROUP / MULTI path (existing): hidden group rules (seq-with-fields) and
- *     hidden multi helpers (repeat / repeat1 wrappers) are always inlined so
- *     the referrer's field walker sees the fields / multi-slot directly.
- *
- *  2. grammar.inline path (new): hidden symbol refs whose target appears in the
- *     grammar's `inline:` array are inlined unconditionally — these are
- *     helpers tree-sitter itself expands at parse time (e.g., auto-synthesized
- *     `_type_arguments_repeat1` from applyAutoGroups). Sittir's derivation
- *     view must match what tree-sitter produces: if the parser inlines a helper,
- *     the simplified rule must too. References with `source === 'group-lift'` are
- *     still inlined when `inlineKinds` contains the target — the group-lift guard
- *     only applies to the group/multi path (where the assemble-side AssembledGroup
- *     should materialise as its own node rather than being collapsed away).
- *
- * Cycle-safe via visited set.
- */
-export function inlineRefs(
-	rule: Rule,
-	rules: Readonly<Record<string, Rule>>,
-	inlineKinds: ReadonlySet<string> = new Set(),
-	visited: ReadonlySet<string> = new Set()
-): Rule {
-	const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineRefs(r, rules, inlineKinds, v);
-	switch (rule.type) {
-		case SYMBOL: {
-			// grammar.inline is the single source of truth for inlining. Any
-			// symbol ref whose target is listed in `grammar.inline` is inlined
-			// here — REGARDLESS of `source` (group-lift or not) or `hidden` —
-			// because tree-sitter inlines exactly those kinds at parse time. If
-			// sittir's derivation view doesn't match (i.e. it keeps a ref to a
-			// kind the parser expands away), `deriveSlots` mints a slot for a
-			// node that never materialises at runtime → singular-vs-multi and
-			// non-canonical-shape mismatches. Matching the parser's inlining is
-			// a correctness invariant.
-			//
-			// Resolution: group/multi targets inline their CONTENT (the seq /
-			// repeat wrapper) so the referrer's walker sees the fields / multi
-			// slot directly and no bare `group` rule leaks into simplified
-			// output; every other target inlines its body verbatim.
-			// `inlineKinds` here is the pre-filtered inline-DECISION set (built in
-			// generate.ts): grammar.inline membership minus supertype / keyword /
-			// token / pattern / enum modelTypes. So a plain membership test is the
-			// gate — supertypes and lexeme leaves were already excluded upstream.
-			if (inlineKinds.has(rule.name)) {
-				if (visited.has(rule.name)) return rule;
-				const target = rules[rule.name];
-				if (!target) return rule;
-				const next = new Set(visited);
-				next.add(rule.name);
-				const inlineTarget = resolveGroupOrMultiInlineTarget(target);
-				const inlined = inlineRefs(inlineTarget ?? target, rules, inlineKinds, next);
-				// Preserve the referring symbol's pushed-down leaf attributes
-				// (multiplicity / separator / fieldName) onto the inlined body.
-				// wrapper-deletion stamped e.g. `repeat1(SYMBOL(_x_repeat1))` down
-				// to `SYMBOL{multiplicity:nonEmptyArray, separator}`; replacing the
-				// symbol with the target body would otherwise DROP that
-				// multiplicity, collapsing a multi slot to singular. Re-wrap the
-				// inlined body in the equivalent modifier and re-run the
-				// (idempotent) deleteWrapper to re-push the attributes onto the
-				// inlined leaves.
-				return reapplyInlinedLeafAttrs(rule, inlined);
-			}
-
-			// Not inline-listed. Inline EVERY hidden helper ref, mirroring what
-			// tree-sitter does at parse time: a `_`-prefixed rule produces no CST
-			// node — its children flatten into the parent. So the derivation view
-			// must inline hidden refs regardless of multiplicity or provenance.
-			//
-			// Hiddenness is AUTHORITATIVE via isHiddenKind (the `_`-convention oracle
-			// in evaluate.ts), NOT the non-authoritative stamped `hidden` flag nor the
-			// `source:'group-lift'` provenance tag (the §15 cleanup). The inner seq of a
-			// `repeat(seq(...))` still becomes a group for slot pairing, but an INLINE
-			// group with no named CST kind — matching the flattened CST. (This replaces
-			// the old repeat-seq BOUNDARY behavior, which materialised a helper kind the
-			// parser never emits → field leaks + size cycles. See
-			// project_repeat_seq_group_synthesis / project_pr2b_source_irreducible.)
-			// Read the authoritative per-ref `inline` flag (hidden && !aliased &&
-			// !supertype && !self-recursive) rather than re-deriving hiddenness — the
-			// same oracle the templates emit path uses. The GROUP/MULTI shape gate
-			// below still excludes non-foldable shapes.
-			if (rule.inline !== true) return rule;
-			if (visited.has(rule.name)) return rule;
-			const target = rules[rule.name];
-			if (!target) return rule;
-
-			// GROUP / MULTI path: inline hidden group and multi helpers.
-			const inlineTarget = resolveGroupOrMultiInlineTarget(target);
-			if (!inlineTarget) return rule;
-			const next = new Set(visited);
-			next.add(rule.name);
-			// Combine the referring symbol's pushed-down attributes (multiplicity /
-			// separator / fieldName) with the inlined target — same as the
-			// inline-listed path above. wrapper-deletion stamps e.g.
-			// `optional(SYMBOL(_initializer))` to `SYMBOL{multiplicity:'optional'}`;
-			// without this the optional is dropped on inline and the spliced leaf
-			// (e.g. required_parameter's `value`) collapses to a required single.
-			return reapplyInlinedLeafAttrs(rule, inlineRefs(inlineTarget, rules, inlineKinds, next));
-		}
-		case SEQ:
-			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) };
-		case CHOICE:
-			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) };
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-			return {
-				...rule,
-				content: recurse((rule as { content: Rule }).content, visited)
-			} as Rule;
-		default:
-			return rule;
-	}
-}
-
-/**
- * Return the rule to inline for a hidden symbol target, or `null` if the
- * target should not be inlined. Two target shapes are inlined:
- *  - Hidden GROUP rules (`target.type === 'group'`): inline the group's
- *    `content` (the seq-with-fields) so the referrer's field walker
- *    sees the fields directly.
- *  - Hidden MULTI helpers (body unwraps to a `repeat` / `repeat1`):
- *    inline the whole target rule so the wrapper survives and the
- *    walker marks the child slot as multi-valued.
- * All other hidden rules stay as-is — they are distinct structural
- * nodes or dispatch points.
- */
-export function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
-	const isGroup = target.type === GROUP;
-	const isMulti = extractRepeatShape(target) !== null;
-	if (!isGroup && !isMulti) return null;
-	return isGroup ? (target as { content: Rule }).content : target;
-}
-
-/**
- * Re-apply a referring symbol's pushed-down leaf attributes onto the body
- * that replaced it during inlining.
- *
- * wrapper-deletion collapses modifier wrappers onto the innermost leaf
- * (e.g. `repeat1(SYMBOL(_x_repeat1))` → `SYMBOL{multiplicity:'nonEmptyArray',
- * separator}`). When `inlineRefs` substitutes that symbol with its target
- * body, the attributes on the symbol would be lost — collapsing a
- * multi-valued slot to singular and dropping the separator. We reconstruct
- * the equivalent modifier wrapper around the inlined body and re-run the
- * idempotent `deleteWrapper`, which re-pushes the attributes onto the
- * inlined body's leaves using the same "outer wins" rule wrapper-deletion
- * applied originally.
- *
- * The attributes are pushed onto the inlined body's *leaves* (symbols /
- * fields / terminals), not onto an enclosing seq node. A seq-level
- * multiplicity would be lost when `canonicalizeSeqOfLeaves` flattens the
- * inlined seq into its parent; leaf-level multiplicity survives flattening
- * and is what `deriveSlots` reads. Stamping descends through structural
- * nodes (seq / choice / group / variant / clause / token / alias) and stops
- * at leaves, where it sets the multiplicity (a leaf that is already
- * multi-valued keeps its stronger array/nonEmptyArray) and separator.
- *
- * No-op when the referring symbol carries no non-default leaf attributes.
- */
-function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
-	const r = ref as {
-		multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
-		separator?: unknown;
-		fieldName?: string;
-	};
-	if (r.multiplicity === undefined && r.separator === undefined && r.fieldName === undefined) {
-		return inlined;
-	}
-	return pushAttrsToLeaves(inlined, r.multiplicity, r.separator, r.fieldName);
-}
-
-
-/**
  * Collapse a `seq` during simplification, carrying the seq's slot attributes
  * onto the survivor when the seq NODE is discarded. `seq(x) → x` and the
  * multi-member flatten both drop the seq node, so its `multiplicity` /
@@ -1111,113 +929,6 @@ function collapseSeq(rule: SeqRule, ctx?: SimplifyCtx, inField: boolean = false)
 // assertUniversalShape(node) remains test-only. The above sequence holds
 // the invariant on real grammars, but wiring as a production fail-fast
 // gate is deferred — flagged as a follow-up post-PR2.
-
-/**
- * Generic post-order child recursion for the `Rule` IR. Mirrors
- * `dsl/enrich.ts:recurseChildren` but tightened to the canonical typed
- * Rule shape (no string-typed legacy variants like 'TOKEN' / 'ALIAS' /
- * 'IMMEDIATE_TOKEN' — those don't appear post-evaluate).
- *
- * Identity-preserving: returns the input rule unchanged when no child
- * was rewritten (`visit` returned the same reference for every child).
- */
-function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
-	switch (rule.type) {
-		case SEQ:
-		case CHOICE: {
-			const members = rule.members;
-			let changed = false;
-			const next = members.map((m) => {
-				const out = visit(m);
-				if (out !== m) changed = true;
-				return out;
-			});
-			return changed ? ({ ...rule, members: next } as Rule) : rule;
-		}
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-		case ALIAS: {
-			const content = (rule as { content: Rule }).content;
-			const out = visit(content);
-			return out === content ? rule : ({ ...rule, content: out } as Rule);
-		}
-		default:
-			return rule;
-	}
-}
-
-/**
- * Canonicalize a rule toward the universal seq-of-leaves shape:
- *   - Recursively canonicalize children.
- *   - Flatten degenerate single-member seqs (`seq([X])` → `X`).
- *
- * Does NOT perform attribute push-down — applyWrapperDeletion in optimize
- * already did that. Does NOT synthesize groups — applyAutoGroups (wire
- * phase) already did that.
- *
- * This is the final structural cleanup pass that absorbs the trivial
- * `seq([X])` → `X` shapes left behind by upstream transformations.
- * Idempotent — running it twice produces the same result as running once.
- */
-export function canonicalizeSeqOfLeaves(rule: Rule): Rule {
-	const recursed = recurseChildren(rule, canonicalizeSeqOfLeaves);
-	if (recursed.type === SEQ && recursed.members.length === 1) {
-		const survivor = recursed.members[0]!;
-		const carried = withAttrsFrom(recursed, survivor);
-		const outerMult = (recursed as { multiplicity?: LeafMultiplicity }).multiplicity;
-		// Only combine multiplicities when the seq itself carries an explicit one;
-		// otherwise withAttrsFrom already transferred it (absent-only) and we
-		// must not stamp 'single' onto nodes that had no explicit multiplicity.
-		if (outerMult !== undefined) {
-			const combined = combineMultiplicity(
-				outerMult,
-				(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
-			);
-			// Only stamp when non-default (single → undefined per combineMultiplicity).
-			if (combined !== undefined) return { ...carried, multiplicity: combined } as Rule;
-		}
-		return carried;
-	}
-	return recursed;
-}
-
-/**
- * Leaf classification: a rule that contributes a single slot value (or a
- * literal) with no further structural content underneath. Used by
- * `assertUniversalShape` to validate seq members.
- *
- * Leaves:
- *   - symbol, alias  — slot-refs (resolved post-Link)
- *   - string, pattern, enum — literal / terminal content
- *   - terminal, token  — text-only terminals
- *   - indent, dedent, newline — structural whitespace markers
- *
- * Non-leaves (must be lifted into hidden groups before the invariant
- * holds): seq, choice, optional, repeat, repeat1, field, variant, group,
- * clause, polymorph, supertype.
- */
-function isLeaf(rule: Rule): boolean {
-	switch (rule.type) {
-		case SYMBOL:
-		case ALIAS:
-		case STRING:
-		case PATTERN:
-		// PR-P: ENUM case removed — enum-shaped ChoiceRules are not leaves.
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
-		case TOKEN:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-			return true;
-		default:
-			return false;
-	}
-}
 
 /**
  * Post-condition check for the universal canonical shape: every

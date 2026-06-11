@@ -26,7 +26,7 @@ export const PIPELINE_MODULES: readonly string[] = [
 	'compiler/link.ts',
 	'compiler/assemble.ts',
 	'compiler/node-map.ts',
-	'compiler/transforms.ts',
+	'dsl/rule-transforms.ts',
 ];
 
 export type Principle14Bucket =
@@ -64,7 +64,8 @@ export interface BaselineFile {
 function bucketOf(params: FnRecord['params']): Exclude<Principle14Bucket, 'dead'> {
 	if (params.length === 0) return 'zero-param';
 	if (params.length === 1) return 'getter-candidate';
-	if (/Ctx$/.test(params[1]?.type ?? '')) return 'conforming';
+	const second = (params[1]?.type ?? '').replace(/\s*\|\s*undefined\s*$/, '').replace(/^\s*undefined\s*\|\s*/, '').trim();
+	if (/Ctx$/.test(second)) return 'conforming';
 	return 'non-conforming';
 }
 
