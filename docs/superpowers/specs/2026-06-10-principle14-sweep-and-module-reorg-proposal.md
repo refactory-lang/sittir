@@ -62,10 +62,25 @@ appear only in the module-reorg rows.
 Execution rules: identical to the master plan — branch off `origin/master`;
 gate **`pnpm validate:native` HOLD for all 3 grammars** (pure refactor —
 counts MUST hold exactly, deep `read-render-parsePass`/AST quoted); full test
-suite; renames via LSP tooling not text edits
+suite; **renames + cross-module moves go through `lsproxy`** (`textDocument
+rename` / move-symbol), not text edits, so call-sites update mechanically
 (`feedback_use_ts_lsp_for_moves`); rows touching `emitters/render-module.ts`
 additionally gate on **regen byte-identical** (the PR-O M1 gate) + an
 independent `cargo check --workspace --features napi-bindings`.
+
+**Module-organization target (design authority, 2026-06-10).** The compiler
+pipeline organizes as **one module per phase** — `evaluate` / `link` /
+`normalize` / `simplify` / `assemble`, each owning that phase's methods — with
+**methods reused across phases in a single `shared.ts`** (the role
+`transforms.ts` plays today → roll it into / rename it `shared.ts`). This is
+the axis the reorg rows realize: the de-scatter (R7) folds each scattered
+phase-method file INTO its owning phase module — *consolidation toward the
+phase module*, not redistribution into ad-hoc consumers. Two layers sit
+OUTSIDE this axis: **emitters** keep the emitter-pattern-consistency
+convention (R5's `render-module` split is emitter hygiene, orthogonal — not a
+phase), and **`node-map` stays the model container** (the `NodeMap` class +
+lookup surface; R6 migrates only its phase-ish *derivation* passes to the
+owning phase module, leaving genuine model-build in `node-map`).
 
 | PR | Concern (1-liner) | Depends-on | Gate | Notes |
 |----|-------------------|-----------|------|-------|
@@ -76,7 +91,8 @@ independent `cargo check --workspace --features napi-bindings`.
 | **R4** | **#14 sweep: `link.ts` (1/60) + `assemble.ts` finish (1/31)**; `AssembleCtx` already declared — convert remaining call sites; fold `kindEntries` loose args | R1 (nodeMap getters land first — link/assemble consume them) | same | After R4 the ratchet baseline reaches ~0 for compiler/ |
 | **R5** | **Split `render-module.ts` (4845)** along its existing seams: transport emission (AnyTransport + supertype/per-slot enums + leaf impls + VerbatimTransport) → `render-transport-emit.ts`; typed dispatch + per-kind render fns → `render-dispatch-emit.ts`; libRs/hash/template-copy assembly stays in `render-module.ts` as the thin assembler | — (independent of R1-R4) | regen **byte-identical** ×3 grammars + cargo check + validate:native HOLD | Pure file move of emitter internals; no signature changes (emitters excluded from #14) |
 | **R6** | **Split `node-map.ts` (3937)**: the `NodeMap` container class + lookup surface stays; build/derivation passes (factory-map build, slot registration walks) → `node-map-build.ts` | R1 (sweep first so moved fns move in their FINAL shape — avoids double-touch) | validate:native HOLD + tests | Sequencing rationale: sweep-then-split moves each fn once |
-| **R7** | **De-scatter fold**: compiler/ + emitters/ files under ~150 lines with a single consumer fold into that consumer (or `transforms.ts` if shared); inventory emitted by the R0 tool as a report, fold list reviewed before execution | R3 | validate:native HOLD + tests | Evidence-based: 19+15 candidate files; expect ~half to fold (pass files like `lift-separators.ts` that ARE a phase stay) |
+| **R7** | **De-scatter into phase modules** (per the module-organization target): compiler/ files under ~150 lines fold INTO their owning **phase module**; genuinely cross-phase helpers → **`shared.ts`** (= renamed/absorbed `transforms.ts`); emitter small-files fold per the emitter convention. Inventory + ownership map emitted by the R0 tool; fold list reviewed before execution | R3 | validate:native HOLD + tests | Evidence-based: 19+15 candidate files; pass files that ARE a phase (e.g. `lift-separators.ts`) stay as the phase module |
+| **R8** | **Dead-code removal** (repo-wide): R0's classifier already buckets `dead` functions — delete them, confirming **zero callers via `lsproxy textDocument references`** before each removal (the closed-subgraph method proven in #71's alias-override cleanup, −414 LOC: trace the dead subgraph → delete). R1–R4 also drop their own module's `dead` bucket inline as they sweep; R8 sweeps the remainder (emitters / dsl / grammar-shapes / scripts) | R0 (classifier) | validate:native HOLD + tests + `rg` shows zero refs to each removed symbol | byte-neutral (dead code has no callers by definition); LSP find-references is the gate — TS `noUnusedLocals` misses module-level dead functions, the exact blind spot that hid the alias-override island in #71 |
 
 **NOT proposed:** splitting `evaluate.ts`/`link.ts`/`from.ts`/`factories.ts`.
 evaluate/link are mid-strangler (PR-N, PR-S, PR-L still pending against
