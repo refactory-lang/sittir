@@ -35,7 +35,6 @@ import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN
 import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
 import type { AssembledNode } from './model/node-map.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
-import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
 import type { SimplifyCtx } from '../dsl/rule-transforms.ts';
@@ -43,6 +42,114 @@ import { inlineRefs, canonicalizeSeqOfLeaves, isLeaf, recurseChildren, type Inli
 // `extractRepeatShape` and `pushAttrsToLeaves` moved to transforms.ts (PR-O M1 de-scatter).
 // Re-export extractRepeatShape for assemble.ts which imports it from this module.
 import { extractRepeatShape, pushAttrsToLeaves } from '../dsl/rule-transforms.ts';
+// ---------------------------------------------------------------------------
+// List-fusion pass — fuse a separated-list's head + repeat occurrences into
+// a single multi-valued slot (moved from list-fusion.ts in R7 de-scatter).
+//
+// tree-sitter grammars author `sepBy1`/`commaSep1` lists in shapes that
+// `liftCommaSep` (evaluate) does not always collapse — notably when a choice
+// arm is an alias (`argument_list`) or the trailing separator lives in a
+// choice (`pattern_list`). After wrapper-deletion those survive as a HEAD
+// element (single) plus a REPEAT of the same element (array). Two idioms
+// are recognized inside a `seq` (after recursing children):
+//
+//   A. adjacent `[E, E{array|nonEmptyArray, sep?}]` where the two elements are
+//      structurally identical ignoring leaf attributes → fuse to the array E.
+//   B. `[E, choice(sepString, E{array|nonEmptyArray, sep?})]` → fuse to the
+//      array E, taking the choice's separator string as the trailing separator.
+// ---------------------------------------------------------------------------
+type Mult = 'optional' | 'array' | 'nonEmptyArray' | undefined;
+const isArrayMult = (m: Mult): boolean => m === 'array' || m === 'nonEmptyArray';
+/**
+ * Structural identity of two slot-bearing rules ignoring leaf attributes
+ * (multiplicity / separator / fieldName / aliasedFrom). Used to decide that a
+ * head element and a repeat element are "the same list element".
+ */
+function sameSlotShape(a: Rule, b: Rule): boolean {
+    if (a.type !== b.type) return false;
+    switch (a.type) {
+        case SYMBOL:
+            return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
+        case STRING:
+        case PATTERN:
+            return a.value === (b as typeof a).value;
+        case CHOICE: {
+            const bm = (b as typeof a).members;
+            return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
+        }
+        case SEQ: {
+            const bm = (b as typeof a).members;
+            return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
+        }
+        // PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to default.
+        default:
+            return false;
+    }
+}
+/**
+ * If `head` + `next` form a head+repeat list pair, return the fused multi
+ * element; otherwise `null`.
+ */
+function tryFusePair(head: Rule, next: Rule | undefined): Rule | null {
+    if (!next) return null;
+    const headMult = (head as { multiplicity?: Mult; }).multiplicity;
+    if (isArrayMult(headMult)) return null; // head is already multi — not a head+repeat pair
+
+
+    // Idiom A: [E, E{array}]
+    const nextMult = (next as { multiplicity?: Mult; }).multiplicity;
+    if (isArrayMult(nextMult) && sameSlotShape(head, next)) {
+        return next; // the array element absorbs the single head occurrence
+    }
+
+    // Idiom B: [E, choice(sepString, E{array})]
+    if (next.type === CHOICE && next.members.length === 2) {
+        const sepArm = next.members.find((m) => m.type === 'string');
+        const repArm = next.members.find(
+            (m) => isArrayMult((m as { multiplicity?: Mult; }).multiplicity) && sameSlotShape(head, m)
+        );
+        if (sepArm && repArm) {
+            const repSep = (repArm as { separator?: Rule['separator']; }).separator;
+            if (repSep !== undefined) return repArm;
+            // Fall back to the choice's separator-string arm, marking trailing.
+            const sepStr = (sepArm as { value: string; }).value;
+            return {
+                ...repArm,
+                separator: { rules: [{ type: 'string', value: sepStr }], trailing: true }
+            } as Rule;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Fuse head+repeat separated-list pairs into a single multi slot, recursively.
+ * Behaviour-preserving everywhere else — non-seq rules and seqs without the
+ * head+repeat shape pass through unchanged (reference-identical when no fusion
+ * applies).
+ */
+
+export function fuseHeadRepeatLists(rule: Rule): Rule {
+    const recursed = recurseChildren(rule, fuseHeadRepeatLists);
+    if (recursed.type !== SEQ) return recursed;
+    const members = (recursed as SeqRule).members;
+    const out: Rule[] = [];
+    let changed = false;
+    for (let i = 0; i < members.length; i++) {
+        const fused = tryFusePair(members[i]!, members[i + 1]);
+        if (fused) {
+            out.push(fused);
+            i++; // consume the repeat member too
+            changed = true;
+            continue;
+        }
+        out.push(members[i]!);
+    }
+    if (!changed) return recursed;
+    return { ...recursed, members: out } as Rule;
+}
+
 export { extractRepeatShape } from '../dsl/rule-transforms.ts';
 
 // ---------------------------------------------------------------------------
