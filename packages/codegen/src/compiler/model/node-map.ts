@@ -1,30 +1,36 @@
 /**
- * compiler/node-map.ts — AssembledNode class hierarchy and derivation
- * helpers.
+ * compiler/model/node-map.ts — the AssembledNode model: the assembled-node
+ * class hierarchy plus the slot derivation and naming projection that build it.
  *
- * Split from the Rule IR file (now `types/rule.ts`, R11) so it stays focused on
- * the Rule union itself. The classes here represent what an assembled
- * grammar node looks like after the full pipeline has classified and
- * enriched the Rule — each subclass corresponds to one ModelType
- * (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
- * `supertype`, `group`, `multi`). `container` was merged into
- * `branch` (with slot-surface distinctions derived from `slotClass`).
+ * Split from the Rule IR file (now `types/rule.ts`, R11). The classes here
+ * represent what an assembled grammar node looks like after the full pipeline
+ * has classified and enriched the Rule — each subclass corresponds to one
+ * ModelType (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
+ * `supertype`, `group`, `multi`). `container` was merged into `branch`
+ * (slot-surface distinctions derived from `slotClass`).
  *
- * Exports:
+ * Organized in place (R6 follow-up — reorg decision 1: a large module is
+ * structured with internal sections, not split into a second file). The
+ * `AssembledNonterminal` slot class and the derivation/naming it computes
+ * (`projectSlotNaming`, `nameNode`) are mutually coupled, so they stay
+ * co-located rather than forming a cyclic two-file pair. Major sections are
+ * delimited by `// ===` banners:
  *
- * - **Class hierarchy:** {@link AssembledNodeBase} (abstract) +
- *   concrete subclasses + the {@link AssembledNode} discriminated
- *   union.
- * - **Derivation helpers:** {@link deriveFields}, {@link deriveChildren},
- *   {@link hasAnyField}, {@link hasAnyChild} — walk a Rule tree to
- *   produce the field / child metadata the emitters consume.
- * - **Structural predicates:** {@link isSyntheticFieldWrapper} —
- *   classification hint used by template-walker.ts. `isVerbatimTokenStream`
- *   is a file-private helper used only by `AssembledNodeBase.isTextTemplate()`
- *   and the renderTemplate() methods.
+ *   1. Diagnostics & module state — parse-kind / derive-shape / assemble-warning
+ *      accumulators + the optional-body and audit-context module pointers.
+ *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
+ *      content types, cardinality (`deriveSlotCardinality`…), value guards,
+ *      naming utilities (`snakeToCamel`/`pluralize`), the Rule walkers
+ *      (`hasAnyField`/`hasAnyChild`), and the Rule → slots/values derivation
+ *      (`deriveSlots`, `deriveValuesForRule`, `dedupeValues`, separators, `nameNode`).
+ *   3. AssembledNonterminal & naming projection — the slot class + `kindsOf`/
+ *      `valueParseKindsOf` + the `projectSlotNaming` projection.
+ *   4. AssembledNode class hierarchy — `AssembledBranch`/`Polymorph`/`Pattern`/
+ *      `Keyword`/`Token`/`Enum`/`Supertype`/`Multi`/`Group` + the `AssembledNode` union.
+ *   5. Canonical structural-view helpers — `structuralFieldsOf`/`allSlotsOf`/….
  *
- * Backward compatibility: `rule.ts` re-exports everything from this
- * file. New code should import from `./node-map.ts` directly.
+ * `isSyntheticFieldWrapper` is a classification hint used by template-walker.ts.
+ * Backward compatibility: `rule.ts` re-exports everything from this file.
  */
 
 import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -62,9 +68,9 @@ import {
 	type DeriveShapeDiagnostic
 } from '../diagnose-derive-shapes.ts';
 
-// ---------------------------------------------------------------------------
-// NodeOrTerminal — unified slot-content type
-// ---------------------------------------------------------------------------
+// ============================================================================
+// 1. Diagnostics & module state
+// ============================================================================
 
 const _parseKindCollisionDiagnostics: ParseKindCollisionDiagnostic[] = [];
 const _parseKindCollisionSeen = new Set<string>();
@@ -218,6 +224,10 @@ function relaxForOptionalBody(refName: string, multiplicity: Multiplicity): Mult
 	if (isOptionalBodyKind(refName) || isOptionalBodyKind(cleanName)) return 'optional';
 	return multiplicity;
 }
+
+// ============================================================================
+// 2. Slot model & derivation
+// ============================================================================
 
 /**
  * Unresolved kind reference — used during derivation, before the
@@ -1700,6 +1710,10 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
  * `AssembledField` and `AssembledChild` have been removed; all consumers
  * use `AssembledNonterminal` directly.
  */
+// ============================================================================
+// 3. AssembledNonterminal & naming projection
+// ============================================================================
+
 /** Stored (non-computed) constructor inputs for {@link AssembledNonterminal}. */
 export interface AssembledNonterminalInit {
 	readonly values: readonly NodeOrTerminal[];
@@ -2386,6 +2400,10 @@ function _isAutoStampSlotForParameterless(
 
 	return false;
 }
+
+// ============================================================================
+// 4. AssembledNode class hierarchy
+// ============================================================================
 
 export class AssembledBranch<
 	R extends SeqRule | ChoiceRule | RepeatRule | Repeat1Rule =
@@ -3352,7 +3370,7 @@ export type AssembledNode =
 	| AssembledMulti;
 
 // ============================================================================
-// Canonical structural-view helpers
+// 5. Canonical structural-view helpers
 // ============================================================================
 //
 // Branch and Group expose `.fields` / `.children` directly; non-
