@@ -40,6 +40,11 @@ const MODULES = {
 	assemble: '../../codegen/src/compiler/assemble.ts',
 	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
 	grammarDiagnostics: '../../codegen/src/compiler/grammar-diagnostics.ts',
+	opaqueFacts: '../../codegen/src/compiler/opaque-facts.ts',
+	factoryMap: '../../codegen/src/emitters/factory-map.ts',
+	nodeTypesLoader: '../../codegen/src/validate/node-types-loader.ts',
+	polymorphVariant: '../../codegen/src/polymorph-variant.ts',
+	nativeBinaryFreshness: '../../codegen/src/scripts/native-binary-freshness.ts',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -53,6 +58,11 @@ export interface CodegenSurface {
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
 	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
 	grammarDiagnostics: typeof import('../../codegen/src/compiler/grammar-diagnostics.ts');
+	opaqueFacts: typeof import('../../codegen/src/compiler/opaque-facts.ts');
+	factoryMap: typeof import('../../codegen/src/emitters/factory-map.ts');
+	nodeTypesLoader: typeof import('../../codegen/src/validate/node-types-loader.ts');
+	polymorphVariant: typeof import('../../codegen/src/polymorph-variant.ts');
+	nativeBinaryFreshness: typeof import('../../codegen/src/scripts/native-binary-freshness.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -79,6 +89,18 @@ export async function invoke<
 	const mod = (await import(MODULES[module])) as Record<string, unknown>;
 	const fn = mod[method] as (...a: readonly unknown[]) => unknown;
 	return fn(...(args as readonly unknown[])) as Awaited<ReturnType<Extract<CodegenSurface[M][F], AnyFn>>>;
+}
+
+/**
+ * Load a whole codegen module, fully typed. Use when a consumer needs SEVERAL
+ * exports from one module — destructure once and call synchronously — where a
+ * per-call `invoke` would force gratuitous `await`s (e.g. `opaqueFacts`/`readFacts`
+ * called inline throughout `nodeToConfig`). `invoke` is for one-offs; `load` is
+ * for "give me this module". Same lazy dynamic import (the allowed `tools→codegen`
+ * direction), and the result is the module's REAL type — no cast at the call site.
+ */
+export async function load<M extends keyof CodegenSurface>(module: M): Promise<CodegenSurface[M]> {
+	return (await import(MODULES[module])) as CodegenSurface[M];
 }
 
 // ---------------------------------------------------------------------------
