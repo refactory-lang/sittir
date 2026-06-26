@@ -15,7 +15,7 @@ import { describe, it, expectTypeOf, assertType } from 'vitest';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';
 import { field, variant } from '../../dsl/index.ts';
 import type { EnrichRule } from '../enrich-type.ts';
-import type { PathKey, FastKeys, PreciseKeys, TransformPatchMap, TopLevelKeys, TransformPatchValue } from '../path-type.ts';
+import type { PathKey, FastKeys, TransformPatchMap, TopLevelKeys, TransformPatchValue } from '../path-type.ts';
 
 type Rules = typeof rustGrammarShape['rules'];
 
@@ -35,9 +35,6 @@ describe('FastKeys ≡ PreciseKeys (first-segment keys are enrich-invariant)', (
 		expectTypeOf<PathKey<EnrichRule<Rules['index_expression']>>>().toEqualTypeOf<PathKey<Rules['index_expression']>>();
 	});
 
-	it('FastKeys/PreciseKeys aliases agree with the bare equality', () => {
-		expectTypeOf<FastKeys<Rules['or_pattern']>>().toEqualTypeOf<PreciseKeys<Rules['or_pattern']>>();
-	});
 });
 
 describe('per-rule transform patch-map (the TransformsConfig value surface)', () => {

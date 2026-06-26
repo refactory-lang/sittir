@@ -297,18 +297,6 @@ function emitInternedKindTable(lines: string[], namedEntries: Map<string, string
 	}
 }
 
-/**
- * Standalone entry point — preserved for backwards compatibility (tests,
- * CLI callers). Delegates to the emitter protocol (init → loop → finalize).
- */
-export function emitFrom(config: EmitFromConfig): string {
-	const fromEmitter = new FromEmitter(config);
-	for (const [kind, node] of config.nodeMap.nodes) {
-		fromEmitter.dispatchNode(kind, node);
-	}
-	return fromEmitter.finalize();
-}
-
 // ---------------------------------------------------------------------------
 // Namespace — taxonomy-keyed from() dispatch API
 // ---------------------------------------------------------------------------

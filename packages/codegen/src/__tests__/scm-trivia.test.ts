@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { parseSCMQuery, parseInheritsDirective } from '../scm/parse.ts';
-import { extractTriviaRoles } from '../scm/extract-roles.ts';
 
 describe('SCM parser', () => {
 	it('parses simple node pattern with capture', () => {
@@ -120,23 +119,3 @@ describe('inherits directive', () => {
 	});
 });
 
-describe('trivia role extraction', () => {
-	it('extracts rust trivia kinds', () => {
-		const result = extractTriviaRoles('rust');
-		expect(result.grammar).toBe('rust');
-		expect(result.triviaKinds).toContain('line_comment');
-		expect(result.triviaKinds).toContain('block_comment');
-	});
-
-	it('extracts typescript trivia kinds (inherits from javascript)', () => {
-		const result = extractTriviaRoles('typescript');
-		expect(result.grammar).toBe('typescript');
-		expect(result.triviaKinds).toContain('comment');
-	});
-
-	it('extracts python trivia kinds', () => {
-		const result = extractTriviaRoles('python');
-		expect(result.grammar).toBe('python');
-		expect(result.triviaKinds).toContain('comment');
-	});
-});

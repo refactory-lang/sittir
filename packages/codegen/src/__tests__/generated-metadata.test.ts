@@ -1,74 +1,11 @@
-import { PATTERN, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { field, seq } from '../compiler/evaluate.ts';
-import { buildRuleCatalog } from '../compiler/rule-catalog.ts';
 import {
 	deriveGeneratedIdTablesFromLanguage,
 	deriveGeneratedIdTablesFromParserCSource,
-	deriveGeneratedMetadata,
 	type TreeSitterLanguageMetadata
 } from '../compiler/generated-metadata.ts';
-import { KindPresenceFlag } from '../compiler/types.ts';
 
 describe('generated metadata', () => {
-	it('attaches generated kind and field IDs as late metadata', () => {
-		const { ruleCatalog } = buildRuleCatalog({
-			source_file: seq(field('item', { type: 'symbol', name: 'identifier' })),
-			identifier: { type: PATTERN, value: '[a-z_]\\w*' }
-		});
-
-		const metadata = deriveGeneratedMetadata(ruleCatalog, {
-			kindIds: { source_file: 1, identifier: 2, missing: 99 },
-			fieldIds: { item: 7, missing: 99 },
-			sourceArtifact: 'parser.c'
-		});
-
-		const sourceFileEntry = metadata.kindByName.get('source_file');
-		expect(sourceFileEntry?.kindId).toBe(1);
-		expect(sourceFileEntry?.sourceArtifact).toBe('parser.c');
-		expect(sourceFileEntry?.presence).toBe(KindPresenceFlag.TSGrammar | KindPresenceFlag.TSInternals);
-		expect(metadata.kindByName.has('missing')).toBe(false);
-
-		const itemEntry = metadata.fieldByName.get('item');
-		expect(itemEntry?.fieldId).toBe(7);
-		expect(itemEntry?.sourceArtifact).toBe('parser.c');
-	});
-
-	it('emits TSGrammar-only catalog rows for kinds without parser symbols', () => {
-		// `_inlined_helper` exists in the grammar but no parser symbol —
-		// per the symbol catalog design (2026-04-30), it must still appear
-		// in the catalog with `presence: TSGrammar` only.
-		const { ruleCatalog } = buildRuleCatalog({
-			source_file: seq({ type: 'symbol', name: '_inlined_helper' }),
-			_inlined_helper: { type: STRING, value: 'x' }
-		});
-		const metadata = deriveGeneratedMetadata(ruleCatalog, {
-			kindIds: { source_file: 1 },
-			fieldIds: {},
-			sourceArtifact: 'parser.c'
-		});
-		const inlined = metadata.kindByName.get('_inlined_helper');
-		expect(inlined?.kindId).toBeUndefined();
-		expect(inlined?.parser).toBeUndefined();
-		expect(inlined?.presence).toBe(KindPresenceFlag.TSGrammar);
-	});
-
-	it('does not use generated metadata as foundational rule identity', () => {
-		const { ruleCatalog } = buildRuleCatalog({
-			source_file: seq(field('item', { type: 'symbol', name: 'identifier' }))
-		});
-		const beforeIds = [...ruleCatalog.byId.keys()];
-
-		deriveGeneratedMetadata(ruleCatalog, {
-			kindIds: { source_file: 42 },
-			fieldIds: { item: 3 },
-			sourceArtifact: 'parser.c'
-		});
-
-		expect([...ruleCatalog.byId.keys()]).toEqual(beforeIds);
-		expect([...ruleCatalog.classificationById.keys()]).toEqual(beforeIds);
-	});
-
 	it('derives generated kind and field IDs from the tree-sitter language API', () => {
 		const language = {
 			nodeTypeCount: 5,

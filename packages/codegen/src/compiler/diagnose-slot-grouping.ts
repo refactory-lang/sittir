@@ -58,19 +58,6 @@ import type { Diagnostic } from '../types/diagnostics.ts';
 // Polymorph skip-set construction
 // ---------------------------------------------------------------------------
 
-/**
- * Build the set of kind names that belong to the polymorph system and should
- * be skipped by shape ① detection.
- *
- * PolymorphRule was removed in PR-M-φ2; no rule ever has `type === 'polymorph'`
- * at runtime. This function now always returns an empty set.  It is retained for
- * API stability (callers still thread polymorphSkipExtra through the pipeline for
- * variant() skip-set entries added by the caller).
- */
-export function buildPolymorphSkipSetFromRules(_rules: Record<string, unknown>): ReadonlySet<string> {
-	return new Set<string>();
-}
-
 // ---------------------------------------------------------------------------
 // Public types
 // ---------------------------------------------------------------------------

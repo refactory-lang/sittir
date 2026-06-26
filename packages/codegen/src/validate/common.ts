@@ -1061,20 +1061,6 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	};
 }
 
-export async function loadWrapNode(
-	grammar: string
-): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
-	const p = WRAP_MODULE_PATHS[grammar];
-	if (!p) return null;
-	try {
-		const mod = await import(new URL(p, import.meta.url).pathname);
-		return mod.wrapNode ?? null;
-	} catch (e) {
-		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
-		return null;
-	}
-}
-
 /**
  * Walk a wrapped tree via declared getters, calling `visit` on each
  * encountered wrapped node. Enumeration uses `Object.keys` + accessor

@@ -7,7 +7,6 @@ import { assemble } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
 import type { AssembledBranch, AssembledNonterminal } from '../model/node-map.ts';
 import { classifyChildFactorySurface, classifyFactoryShape, resolveSingleFieldFactorySlot } from '../../emitters/shared.ts';
-import { hasSingularNativeChildrenTransport } from '../../emitters/render-module.ts';
 import { runTemplateEmitter } from '../../emitters/templates.ts';
 
 function buildNodeMap(rules: Record<string, unknown>) {
@@ -77,13 +76,11 @@ describe('slot structural signals', () => {
 		const slot = box.fields[0];
 		expect(slot?.isUnnamed).toBe(true);
 		expect(resolveSingleFieldFactorySlot(box, nodeMap)).toBeUndefined();
-		expect(hasSingularNativeChildrenTransport(box)).toBe(true);
 
 		setSlotSource(slot!, 'grammar');
 
 		expect(slot?.isUnnamed).toBe(true);
 		expect(resolveSingleFieldFactorySlot(box, nodeMap)).toBeUndefined();
-		expect(hasSingularNativeChildrenTransport(box)).toBe(true);
 	});
 
 	it('shared factory classifiers key unnamed-child direct surfaces off isUnnamed', () => {

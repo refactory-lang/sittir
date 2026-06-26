@@ -1038,15 +1038,3 @@ function findCommonSuffix(seqs: Rule[][], prefixLen: number): number {
 // Re-export from there if test files or callers still need them.
 export { wrapVariants, deduplicateVariants, nameVariant, tokenToName } from './link.ts';
 
-// ---------------------------------------------------------------------------
-// Spacing
-// ---------------------------------------------------------------------------
-
-const WORD_CHAR = /\w/;
-
-export function needsSpace(prev: string, next: string): boolean {
-	if (prev.length === 0 || next.length === 0) return false;
-	const lastChar = prev[prev.length - 1]!;
-	const firstChar = next[0]!;
-	return WORD_CHAR.test(lastChar) && WORD_CHAR.test(firstChar);
-}

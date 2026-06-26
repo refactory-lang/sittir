@@ -24,11 +24,6 @@ import { loadRawEntries } from './node-types-loader.ts';
 import type { RawNodeEntry } from './node-types-loader.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { buildRuleLookup } from './rule-lookup.ts';
-import { deriveRuleKinds } from './templates-path.ts';
-
-function collectRuleKindsFromPath(templatesPath: string): Set<string> {
-	return deriveRuleKinds(templatesPath);
-}
 
 // ---------------------------------------------------------------------------
 // Result shape
@@ -51,51 +46,6 @@ export interface MissingKind {
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
-
-/**
- * Validate that every named entry in node-types.json is renderable.
- *
- * @param grammar        Grammar name (rust, typescript, python).
- * @param templatesPath  Path to either a `.jinja` templates directory
- *                       (feature 011) or a legacy `templates directory` file.
- */
-export function validateRenderable(grammar: string, templatesPath: string): RenderableResult {
-	const rawEntries = loadRawEntries(grammar);
-	const ruleKinds = collectRuleKindsFromPath(templatesPath);
-
-	// Post-synthesis-removal: every CST-visible kind `X` produced via
-	// `alias($._X, $.X)` has its template emitted under the SOURCE
-	// name `_X.jinja`. At runtime the renderer only sees source-kind
-	// `$type` values (drillAs remaps CST's `X` to sittir's `_X` at
-	// read time). Validation is at the top level — node-types.json
-	// lists visible `X` — so we treat `X` as renderable when `_X` is
-	// a known rule.
-	const expandedRuleKinds = new Set<string>(ruleKinds);
-	for (const kind of ruleKinds) {
-		if (kind.startsWith('_')) expandedRuleKinds.add(kind.slice(1));
-	}
-
-	const missing: MissingKind[] = [];
-	let renderable = 0;
-	let total = 0;
-
-	for (const entry of rawEntries) {
-		if (!isNamedEntry(entry)) continue;
-		total++;
-
-		const path = classifyRenderability(entry, expandedRuleKinds);
-		if (path === null) {
-			missing.push({
-				kind: entry.type,
-				reason: reasonFor(entry, expandedRuleKinds)
-			});
-		} else {
-			renderable++;
-		}
-	}
-
-	return { grammar, total, renderable, missing };
-}
 
 /**
  * C12: NodeMap-sourced variant. Skips the templates directory round-trip
@@ -162,52 +112,9 @@ function isPureLeafEntry(entry: RawNodeEntry): boolean {
 // Entry filtering
 // ---------------------------------------------------------------------------
 
-/**
- * Determine whether a node-types.json entry should be counted for renderability.
- *
- * @param entry A raw node-types.json entry.
- * @returns `true` when the entry is a named (non-anonymous) token. Anonymous
- *   tokens are tree-sitter string literals that are never addressable by
- *   `render(node)` — they appear as text content inside their parent and have
- *   no render call of their own.
- */
 function isNamedEntry(entry: RawNodeEntry): boolean {
 	return entry.named;
 }
-
-// ---------------------------------------------------------------------------
-// Renderability decision
-// ---------------------------------------------------------------------------
-
-type Path = 'supertype' | 'leaf' | 'rule';
-
-function classifyRenderability(entry: RawNodeEntry, ruleKinds: Set<string>): Path | null {
-	// 1. Supertype — dispatched, never rendered directly.
-	if (entry.subtypes && entry.subtypes.length > 0) return 'supertype';
-
-	// 2. Pure leaf — `render()` returns node.text directly.
-	const hasFields = entry.fields && Object.keys(entry.fields).length > 0;
-	const hasChildren = entry.children !== undefined;
-	if (!hasFields && !hasChildren) return 'leaf';
-
-	// 3. Has a template rule in templates directory.
-	if (ruleKinds.has(entry.type)) return 'rule';
-
-	return null;
-}
-
-function reasonFor(entry: RawNodeEntry, _ruleKinds: Set<string>): string {
-	const hasFields = entry.fields && Object.keys(entry.fields).length > 0;
-	const hasChildren = entry.children !== undefined;
-	const parts: string[] = [];
-	if (hasFields) parts.push(`fields=[${Object.keys(entry.fields!).join(',')}]`);
-	if (hasChildren) parts.push('children');
-	return `structural node (${parts.join(', ')}) but no rule in templates directory`;
-}
-
-// ---------------------------------------------------------------------------
-// Rule-map extraction
-// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Formatting

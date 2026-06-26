@@ -1,7 +1,7 @@
 import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
-import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts';
+import { assemble, classifyNode, simplifyRule, nameNode } from '../compiler/assemble.ts';
 import { computeSimplifiedRules } from '../compiler/simplify.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import type { Rule } from '../types/rule.ts';
@@ -514,11 +514,6 @@ describe('Assemble — naming', () => {
 		expect(result.factoryName).toBe('functionItem');
 	});
 
-	it('nameField converts snake_case to camelCase', () => {
-		const result = nameField('return_type');
-		expect(result.propertyName).toBe('returnType');
-		expect(result.paramName).toBe('returnType');
-	});
 });
 
 describe('Assemble — assemble()', () => {

@@ -8,7 +8,6 @@ import {
 	deduplicateVariants,
 	nameVariant,
 	tokenToName,
-	needsSpace,
 	collapseWrappers,
 	fanOutSeqChoices,
 	factorChoiceBranches,
@@ -135,20 +134,6 @@ describe('Optimize — tokenToName', () => {
 	it('passes through alphanumeric tokens', () => {
 		expect(tokenToName('pub')).toBe('pub');
 		expect(tokenToName('fn')).toBe('fn');
-	});
-});
-
-describe('Optimize — needsSpace', () => {
-	it('returns true between two word characters', () => {
-		expect(needsSpace('fn', 'main')).toBe(true);
-	});
-
-	it('returns false between punctuation', () => {
-		expect(needsSpace('(', ')')).toBe(false);
-	});
-
-	it('returns false between word and open paren', () => {
-		expect(needsSpace('fn', '(')).toBe(false);
 	});
 });
 

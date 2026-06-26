@@ -105,53 +105,6 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	};
 }
 
-export function deriveGeneratedMetadata(ruleCatalog: RuleCatalog, tables: GeneratedIdTables): GeneratedMetadataCatalog {
-	const kindByName = new Map<string, GeneratedMetadata>();
-	const fieldByName = new Map<string, GeneratedMetadata>();
-	const kindIds = toEntries(tables.kindIds);
-	const fieldIds = toEntries(tables.fieldIds);
-	const kindIdLookup = new Map(kindIds);
-
-	// Every kind in the rule catalog gets a catalog row, even when
-	// tree-sitter inlined it (no parser symbol). This is the DRY source:
-	// one entry per codegen rule. `presence` carries the file/runtime
-	// existence flags (TSGrammar / TSNodeTypes / TSInternals); `parser`
-	// carries the parser-origin metadata when applicable. `uses` is
-	// populated by downstream NodeMap classification (Readable /
-	// Buildable / Renderable). Per KindID runtime migration design
-	// (2026-04-30).
-	for (const kind of ruleCatalog.rootsByKind.keys()) {
-		const parserEntry = kindIdLookup.get(kind);
-		const basePresence = KindPresenceFlag.TSGrammar;
-		if (parserEntry) {
-			kindByName.set(kind, {
-				kindId: parserEntry.id,
-				parser: parserEntry.parser,
-				presence: basePresence | KindPresenceFlag.TSInternals,
-				sourceArtifact: tables.sourceArtifact
-			});
-		} else {
-			kindByName.set(kind, {
-				presence: basePresence,
-				sourceArtifact: tables.sourceArtifact
-			});
-		}
-	}
-
-	const knownEdgeNames = collectEdgeNames(ruleCatalog);
-	for (const [field, entry] of fieldIds) {
-		if (!knownEdgeNames.has(field)) continue;
-		fieldByName.set(field, {
-			fieldId: entry.id,
-			parser: entry.parser,
-			presence: KindPresenceFlag.TSGrammar | KindPresenceFlag.TSInternals,
-			sourceArtifact: tables.sourceArtifact
-		});
-	}
-
-	return { kindByName, fieldByName };
-}
-
 export function collectGeneratedKindEntries(
 	tables: GeneratedIdTables | undefined
 ): readonly GeneratedKindEntry[] {

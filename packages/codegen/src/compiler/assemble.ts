@@ -1438,17 +1438,6 @@ const TS_RESERVED_WORDS = new Set([
 	'public'
 ]);
 
-export function nameField(fieldName: string): {
-	propertyName: string;
-	paramName: string;
-} {
-	let propertyName = fieldName.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-	// Avoid TS reserved keywords for param names by suffixing with '_'
-	let paramName = propertyName;
-	if (TS_RESERVED_WORDS.has(paramName)) paramName = `${paramName}_`;
-	return { propertyName, paramName };
-}
-
 // `extractRepeatShape` moved to `simplify.ts` (needed by the inlining
 // fixpoint and re-exported for the remaining assemble call sites). The
 // function's own semantics are unchanged — peels optional / variant /

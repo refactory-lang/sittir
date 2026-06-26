@@ -55,9 +55,6 @@ export type Resolve<
 		: Node
 	: Node;
 
-/** @internal — `Decr` kept exported-adjacent for future multi-hop Resolve. */
-export type _ResolveDecr<N extends readonly unknown[]> = Decr<N>;
-
 // ---------------------------------------------------------------------------
 // Recursive RuleBuilder twin — narrows `previous` to the rule's post-Enrich
 // shape for base rules; falls back to tree-sitter's loose `RuleBuilder` for

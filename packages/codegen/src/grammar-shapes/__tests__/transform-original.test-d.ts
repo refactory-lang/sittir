@@ -21,7 +21,7 @@
 import { describe, it, expectTypeOf, assertType } from 'vitest';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';
 import type { EnrichRule } from '../enrich-type.ts';
-import type { NodeAtPath, IsValidPath, TopLevelKeys } from '../path-type.ts';
+import type { NodeAtPath, TopLevelKeys } from '../path-type.ts';
 import type { RecursiveRuleBuilder } from '../grammar-twin.ts';
 
 type Shape = typeof rustGrammarShape;
@@ -32,14 +32,11 @@ describe('precise transform original (hand-off mechanism, standalone)', () => {
     // Simulating: or_pattern: ($, original) => transform(original, {...})
     type OriginalOf<K extends keyof Rules> = EnrichRule<Rules[K]>;
     type OrOriginal = OriginalOf<'or_pattern'>;
-    // original is navigable + path-checkable:
-    assertType<IsValidPath<OrOriginal, '0/0'>>(true);
+    // original is navigable:
     type N00 = NodeAtPath<OrOriginal, '0/0'>;
     expectTypeOf<(N00 & { name: string })['name']>().toEqualTypeOf<'_pattern'>();
     // and segment-1 keys autocomplete:
     expectTypeOf<TopLevelKeys<OrOriginal>>().toEqualTypeOf<'0' | '1'>();
-    // out-of-bounds path on `original` is caught at compile time:
-    assertType<IsValidPath<OrOriginal, '5/0'>>(false);
     // @ts-expect-error — NodeAtPath of an out-of-bounds path is `never`.
     const _bad: NodeAtPath<OrOriginal, '5/0'> = { type: 'SYMBOL', name: 'x' } as const;
     void _bad;

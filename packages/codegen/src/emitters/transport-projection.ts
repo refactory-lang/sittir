@@ -22,19 +22,6 @@ export function collectTransportProjection(nodeMap: NodeMap): TransportProjectio
 	return { nodes, literals, nodeKinds };
 }
 
-export function resolveTransportReferenceKind(kind: string, nodeMap: NodeMap): string {
-	const node = nodeMap.nodes.get(kind);
-	if (node && isConcreteTransportNode(node, nodeMap)) return kind;
-	if (!kind.startsWith('_')) return kind;
-
-	const visibleKind = kind.replace(/^_+/, '');
-	const visibleNode = nodeMap.nodes.get(visibleKind);
-	if (visibleNode && isConcreteTransportNode(visibleNode, nodeMap)) {
-		return visibleKind;
-	}
-	return kind;
-}
-
 function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
 	const nodes: AssembledNode[] = [];
 	const seenTypeNames = supertypeTransportTypeNames(nodeMap);

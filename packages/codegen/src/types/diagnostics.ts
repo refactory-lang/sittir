@@ -55,8 +55,6 @@ export interface RuntimeDiagnostic extends Diagnostic {
 	readonly span?: { readonly start: number; readonly end: number };
 }
 
-export type AnyDiagnostic = GrammarDiagnostic | CompilerDiagnostic | RuntimeDiagnostic;
-
 // ---------------------------------------------------------------------------
 // PR-G additions: DiagnosticSink + EmitHaltedError
 // ---------------------------------------------------------------------------
