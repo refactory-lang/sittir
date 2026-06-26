@@ -88,9 +88,3 @@ function syncExternalScanner(grammarDir: string, sittirDir: string): void {
 	}
 }
 
-export async function loadOverrideParser(grammarDir: string) {
-	const wasmPath = await compileParser(grammarDir);
-	const { Parser, Language } = await loadWebTreeSitter();
-	const lang = await Language.load(wasmPath);
-	return { Parser, Language, lang };
-}

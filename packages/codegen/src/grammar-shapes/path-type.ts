@@ -94,9 +94,6 @@ type WalkSegments<N extends GrammarNode, Segs extends readonly string[]> = Segs 
 /** The node a concrete path string resolves to within rule node `N`. */
 export type NodeAtPath<N extends GrammarNode, P extends string> = WalkSegments<N, Split<P>>;
 
-/** True iff path `P` resolves to a real node (not out-of-bounds/leaf-overrun). */
-export type IsValidPath<N extends GrammarNode, P extends string> = [NodeAtPath<N, P>] extends [never] ? false : true;
-
 // ---------------------------------------------------------------------------
 // First-segment autocomplete (shallow). The cheap, perf-safe layer: the
 // union of valid top-level index segments for a rule (after PREC peel).
@@ -187,9 +184,6 @@ export type TransformPatchValue =
 
 /** A single patch-map for one rule: path-key → patch value. */
 export type TransformPatchMap<Keys extends string> = Partial<Record<Keys, TransformPatchValue>>;
-
-/** PRECISE key strategy: segment-1 keys derived from the POST-Enrich shape. */
-export type PreciseKeys<RuleNode extends GrammarNode> = PathKey<import('./enrich-type.ts').EnrichRule<RuleNode>>;
 
 /** FAST key strategy: segment-1 keys from the RAW shape (enrich-invariant for
  *  top-level member count). */

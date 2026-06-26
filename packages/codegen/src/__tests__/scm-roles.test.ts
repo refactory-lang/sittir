@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { extractGrammarRoles, extractTriviaRoles } from '../scm/extract-roles.ts';
+import { extractGrammarRoles } from '../scm/extract-roles.ts';
 
 // Dynamic imports use computed paths to prevent TypeScript from following
 // cross-package references during type-check (codegen's tsconfig doesn't
@@ -59,12 +59,6 @@ describe('general role extraction', () => {
 		const roles = extractGrammarRoles('python');
 		const varKinds = roles.get('variable');
 		expect(varKinds).toContain('identifier');
-	});
-
-	it('extractTriviaRoles backward compat', () => {
-		const result = extractTriviaRoles('rust');
-		expect(result.triviaKinds).toContain('line_comment');
-		expect(result.triviaKinds).toContain('block_comment');
 	});
 
 	it('trivia still works after refactor', () => {

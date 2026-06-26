@@ -444,15 +444,6 @@ export function mergeSlotValues(
 	};
 }
 
-export function deriveMergedSlotCardinality(
-	slots: readonly {
-		values: readonly NodeOrTerminal[];
-	}[]
-): SlotCardinality {
-	const merged = mergeSlotValues(slots);
-	return merged ? deriveSlotCardinality(merged) : { required: false, multiple: false, nonEmpty: false };
-}
-
 export function deriveUnnamedChildrenCardinality(
 	children: readonly {
 		values: readonly NodeOrTerminal[];
@@ -2043,19 +2034,6 @@ function deriveOptionalSlotNames(slots: readonly { name: string; values: readonl
 function deriveOptionalFieldNames(fields: readonly AssembledNonterminal[]): Set<string> {
 	return deriveOptionalSlotNames(fields);
 }
-
-/** @internal — repeated slots that already carry literal members must concatenate directly. */
-export function applySelfDelimitedJoinOverrides(
-	joinByField: Record<string, string>,
-	slots: readonly AssembledNonterminal[]
-): void {
-	for (const slot of slots) {
-		if (!isMultiple(slot)) continue;
-		if (!slot.values.some(isTerminalValue)) continue;
-		joinByField[slot.name] = '';
-	}
-}
-
 
 /**
  * Prevent `{$$$CHILDREN}` → `{{{ children }}}` parse failure by

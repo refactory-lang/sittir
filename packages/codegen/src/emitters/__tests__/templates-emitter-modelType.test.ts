@@ -40,7 +40,6 @@ import {
 	emitBranchTemplate,
 	emitGroupTemplate,
 	emitMultiTemplate,
-	emitPolymorphTemplate,
 	type EmitCtx
 } from '../templates.ts';
 
@@ -238,57 +237,3 @@ describe('emitMultiTemplate', () => {
 	});
 });
 
-describe('emitPolymorphTemplate', () => {
-	it('emits a single `variant`-guarded body for a one-form polymorph', () => {
-		const rule: StringRule = { type: STRING, value: 'A' };
-		const form = mockGroup(rule, 'formA');
-		expect(emitPolymorphTemplate(mockPolymorph([form]), makeCtx())).toBe(
-			'{%- if variant == "formA" -%}A{%- endif -%}'
-		);
-	});
-
-	it('aggregates two forms into separate `variant` guards', () => {
-		const ruleA: StringRule = { type: STRING, value: 'A' };
-		const ruleB: StringRule = { type: STRING, value: 'B' };
-		const formA = mockGroup(ruleA, 'formA');
-		const formB = mockGroup(ruleB, 'formB');
-		const out = emitPolymorphTemplate(mockPolymorph([formA, formB]), makeCtx());
-		expect(out).toBe(
-			'{%- if variant == "formA" -%}A{%- endif -%}' +
-				'{%- if variant == "formB" -%}B{%- endif -%}'
-		);
-	});
-
-	it('emits Jinja slots inside each form body (RenderRule leaf-attribute path)', () => {
-		// RenderRule: no FieldRule wrappers — fieldName is a leaf attribute on the symbol.
-		const symA: SymbolRule = {
-			type: SYMBOL,
-			name: 'expression',
-			id: 'rpa',
-			fieldName: 'left'
-		};
-		const ruleA: SeqRule = {
-			type: SEQ,
-			members: [symA, { type: STRING, value: ' + ' }, symA]
-		};
-		const ruleB: StringRule = { type: STRING, value: 'B' };
-		const slotL = makeSlot({ name: 'left', propertyName: 'left', storageName: 'left' });
-		const ctx = makeCtx({
-			nodeMap: {
-				slotByRuleId: new Map([['rpa', slotL]]),
-				nodeByRuleId: new Map(),
-				nodes: new Map()
-			} as unknown as EmitCtx['nodeMap']
-		});
-		const formA = mockGroup(ruleA, 'binary');
-		const formB = mockGroup(ruleB, 'literal');
-		expect(emitPolymorphTemplate(mockPolymorph([formA, formB]), ctx)).toBe(
-			'{%- if variant == "binary" -%}{{ left }} + {{ left }}{%- endif -%}' +
-				'{%- if variant == "literal" -%}B{%- endif -%}'
-		);
-	});
-
-	it('emits empty string for a polymorph with no forms', () => {
-		expect(emitPolymorphTemplate(mockPolymorph([]), makeCtx())).toBe('');
-	});
-});

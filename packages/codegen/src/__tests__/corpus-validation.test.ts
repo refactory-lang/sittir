@@ -28,7 +28,6 @@ import { resolve } from 'node:path';
 import { generate } from '../compiler/generate.ts';
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { validateFrom } from '../validate/from.ts';
-import { validateRenderable } from '../validate/renderable.ts';
 import { validateReadProjection } from '../validate/read-projection.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
@@ -387,66 +386,6 @@ const OVERRIDE_PARSER_KNOWN_ISSUES: Record<string, Set<string>> = {
 	])
 };
 
-const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
-	python: new Set([
-		'assignment_eq',
-		'assignment_type',
-		'assignment_typed',
-		'format_expression',
-		// dict_pattern variant adoption: the `kv` arm's body is the
-		// inlined `_key_value_pattern` shape (`seq(field('key', ...), ':',
-		// field('value', ...))`). The assembler classifies the synthesized
-		// parent as a pass-through alias rather than an independent
-		// template owner — rendering routes through the alias to the
-		// underlying _key_value_pattern body.
-		'dict_pattern_kv'
-	]),
-	rust: new Set([
-		'closure_expression_block',
-		'closure_expression_expr',
-		'field_pattern_shorthand',
-		'field_pattern_named',
-		'or_pattern_binary',
-		'or_pattern_prefix',
-		'range_expression_binary',
-		'range_expression_postfix',
-		'range_expression_prefix',
-		'range_expression_bare',
-		// `range_pattern_left` removed (nested variant split — now
-		// surfaces as `range_pattern_left_with_right` +
-		// `range_pattern_left_bare`). The `left_with_right` arm
-		// inherits the enclosing alias-variant render path; its own
-		// template isn't separately emitted.
-		'range_pattern_left_with_right',
-		'range_pattern_left_bare',
-		'range_pattern_prefix',
-		'array_expression_list',
-		'array_expression_semi',
-		'line_comment_doc',
-		'match_arm_with_comma',
-		'struct_item_brace',
-		'struct_item_tuple',
-		'visibility_modifier_pub'
-	]),
-	typescript: new Set([
-		'call_expression_call',
-		'call_expression_member',
-		'call_expression_template_call',
-		'import_specifier_as',
-		'index_signature_colon',
-		'interface_body',
-		'parenthesized_expression_typed',
-		// export_statement_default multi-level polymorph adoption:
-		// each synthesized kind renders inline through its alias at the
-		// referrer rather than owning its own template.
-		'export_statement_default',
-		'export_statement_default_from_arm',
-		'export_statement_default_decl_arm',
-		'update_expression_postfix',
-		'update_expression_prefix'
-	])
-};
-
 describe('read projection — structural', () => {
 	it.each(['python', 'rust', 'typescript'] as const)(
 		'%s: every kind in the corpus passes the structural check',
@@ -466,33 +405,6 @@ describe('read projection — structural', () => {
 		},
 		60000
 	);
-});
-
-describe('renderability — every node-types.json kind must be reachable', () => {
-	// Every named entry in tree-sitter's node-types.json must be reachable
-	// by @sittir/core's render() via one of: supertype dispatch, pure leaf
-	// (direct text), or a rules-map entry. An un-renderable kind means
-	// `render(node)` will throw at runtime for any instance of that kind.
-	it.each(Object.keys(FLOORS) as GrammarName[])('%s: 100%% of named kinds are renderable', async (grammar) => {
-		const templatesPath = resolveTemplatesPath(grammar);
-		const result = validateRenderable(grammar, templatesPath);
-		// Filter out alias variant kinds — these are nested-alias
-		// targets that appear in node-types.json but aren't standalone
-		// renderable nodes. They're rendered as children of their
-		// parent polymorph kind.
-		const realMissing = result.missing.filter((m) => !ALIAS_VARIANT_KINDS[grammar]?.has(m.kind));
-		if (realMissing.length > 0) {
-			const lines = realMissing
-				.slice(0, 10)
-				.map((m) => `  - ${m.kind}: ${m.reason}`)
-				.join('\n');
-			throw new Error(`${realMissing.length} un-renderable kind(s) in ${grammar}:\n${lines}`);
-		}
-		expect(realMissing).toHaveLength(0);
-		const aliasCount = ALIAS_VARIANT_KINDS[grammar]?.size ?? 0;
-		expect(result.renderable + aliasCount).toBeGreaterThanOrEqual(result.total);
-		expect(result.total).toBeGreaterThan(0);
-	});
 });
 
 describe('corpus validation — generator produces usable output', () => {

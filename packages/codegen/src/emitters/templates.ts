@@ -325,29 +325,6 @@ export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
 	return emitRule(inner, ctx);
 }
 
-export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): string {
-	// PR2 Task 3.B3: authoritative polymorph emission.
-	// Emits one `{%- if variant == "X" -%}<body>{%- endif -%}` block per form.
-	// Each form's body comes from its `renderRule` (RenderRule, wrapper-free).
-	// Whitespace-strip markers (`{%- ... -%}`) handle surrounding whitespace at
-	// render time; blocks are concatenated without separators.
-	//
-	// Note: `variant` (no `$` prefix) is correct for both Nunjucks and Askama.
-	// `$variant` was previously used here but Askama parses it as `$v` + the
-	// unknown identifier `ariant`, causing a compile error. The runtime render
-	// struct always binds the field as `variant: &str`, not `$variant`.
-	if (node.forms.length === 0) return '';
-	const parts: string[] = [];
-	for (const form of node.forms) {
-		parts.push(`{%- if variant == "${form.name}" -%}`);
-		// Emit the form body from its renderRule (wrapper-free).
-		const formBody = emitRule(form.renderRule, ctx);
-		parts.push(formBody);
-		parts.push(`{%- endif -%}`);
-	}
-	return parts.join('');
-}
-
 // ---------------------------------------------------------------------------
 // emitRule — Rule.type dispatcher
 //

@@ -529,11 +529,6 @@ interface RenderSlotModel {
 	readonly unnamedKinds: readonly string[];
 }
 
-export function hasSingularNativeChildrenTransport(node: AssembledNode | undefined): boolean {
-	const slotModel = renderSlotModelOf(node);
-	return slotModel.unnamed.length > 0 && !slotModel.unnamedMultiple;
-}
-
 function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNonterminal | undefined {
 	const [first, ...rest] = slots;
 	if (!first) return undefined;

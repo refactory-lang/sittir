@@ -424,17 +424,11 @@ export const isRepeat1 = (r: Rule): r is Repeat1Rule => r.type === REPEAT1;
 export const isField = (r: Rule): r is FieldRule => r.type === FIELD;
 
 export const isEnum = (r: Rule): r is EnumRule => isEnumChoiceRule(r);
-export const isSupertype = (r: Rule): r is SupertypeRule => r.type === SUPERTYPE;
 export const isGroup = (r: Rule): r is GroupRule => r.type === GROUP;
 // isTerminal removed (PR-P Task 2): TerminalRule deleted; terminals classify by shape
 export const isString = (r: Rule): r is StringRule => r.type === STRING;
-export const isPattern = (r: Rule): r is PatternRule => r.type === PATTERN;
-export const isIndent = (r: Rule): r is IndentRule => r.type === INDENT;
-export const isDedent = (r: Rule): r is DedentRule => r.type === DEDENT;
-export const isNewline = (r: Rule): r is NewlineRule => r.type === NEWLINE;
 export const isSymbol = (r: Rule): r is SymbolRule => r.type === SYMBOL;
 export const isAlias = (r: Rule): r is AliasRule => r.type === ALIAS;
-export const isToken = (r: Rule): r is TokenRule => r.type === TOKEN;
 export const isLinkSymbol = (r: Rule): r is SymbolRule => r.type === SYMBOL && r.source === 'link';
 export const literalTextOf = (r: Rule): string | undefined =>
 	r.type === STRING ? r.value : isLinkSymbol(r) ? r.literal : undefined;

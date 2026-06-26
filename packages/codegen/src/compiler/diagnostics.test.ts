@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { Diagnostic, GrammarDiagnostic, CompilerDiagnostic, RuntimeDiagnostic, AnyDiagnostic, Severity } from '../types/diagnostics.ts';
+import type { Diagnostic, GrammarDiagnostic, CompilerDiagnostic, RuntimeDiagnostic, Severity } from '../types/diagnostics.ts';
 import { DiagnosticSink, EmitHaltedError } from '../types/diagnostics.ts';
 
 describe('diagnostics model', () => {
@@ -7,7 +7,7 @@ describe('diagnostics model', () => {
 		const g: GrammarDiagnostic = { scope: 'grammar', code: 'x', severity: 'error', message: 'm', canProceed: false, grammar: 'rust' };
 		const c: CompilerDiagnostic = { scope: 'compiler', code: 'y', severity: 'warning', message: 'm', canProceed: true, phase: 'assemble' };
 		const r: RuntimeDiagnostic = { scope: 'runtime', code: 'z', severity: 'info', message: 'm', canProceed: true, stage: 'render' };
-		const all: AnyDiagnostic[] = [g, c, r];
+		const all = [g, c, r];
 		expect(all.map((d) => d.scope)).toEqual(['grammar', 'compiler', 'runtime']);
 		// base fields shared:
 		const base: Diagnostic = g;
