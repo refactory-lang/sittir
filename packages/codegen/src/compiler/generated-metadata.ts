@@ -9,7 +9,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
-import { loadWebTreeSitter } from '../validate/common.ts';
+import { loadWebTreeSitter } from '../engine-loader.ts';
 import {
 	KindPresenceFlag,
 	type GeneratedMetadata,
