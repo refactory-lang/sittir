@@ -23,7 +23,6 @@ import {
 import { emitRenderModule, emitRenderModuleBundle } from '../emitters/render-module.ts';
 import { runRenderModuleEmitter } from '../emitters/render-module-runner.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
-import { isNodeRef, isUnresolvedRef } from '../compiler/model/node-map.ts';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';

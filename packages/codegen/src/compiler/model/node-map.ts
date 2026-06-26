@@ -50,7 +50,6 @@ import { findGeneratedKindEntry } from '../generated-metadata.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
-import { fieldContentIsMultiSibling } from '../field-shape.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
 import { deleteWrapper } from '../wrapper-deletion.ts';
 import {
