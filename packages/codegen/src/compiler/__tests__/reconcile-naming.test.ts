@@ -10,8 +10,8 @@
  */
 import { describe, it, expect } from 'vitest';
 import { diffSlotNames } from '../../scripts/reconcile-naming.ts';
-import { snakeToCamel, pluralize, safeParamName, projectSlotNaming } from '../node-map.ts';
-import type { AssembledNonterminal, NodeOrTerminal } from '../node-map.ts';
+import { snakeToCamel, pluralize, safeParamName, projectSlotNaming } from '../model/node-map.ts';
+import type { AssembledNonterminal, NodeOrTerminal } from '../model/node-map.ts';
 
 // A single-ref node-ref value carrying a parse-as kind (projectSlotNaming reads
 // `v.parseKind.name`). node + parseKind coincide for a non-aliased ref.

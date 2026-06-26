@@ -27,7 +27,7 @@
  * file. New code should import from `./node-map.ts` directly.
  */
 
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,
@@ -43,25 +43,24 @@ import type {
 	SupertypeRule,
 	Multiplicity,
 	RuleId
-} from '../types/rule.ts';
-import { isSeq, isField, literalTextOf, isEnumChoiceRule } from '../types/rule.ts';
-import type { GeneratedKindEntry } from './generated-metadata.ts';
-import { findGeneratedKindEntry } from './generated-metadata.ts';
-import { tokenToName } from './normalize.ts';
-import { collectSlots } from './collect-slots.ts';
-import { assertNever } from '../polymorph-variant.ts';
-import { fieldContentIsMultiSibling } from './field-shape.ts';
-import { opaqueFacts, type OpaqueFacts } from './opaque-facts.ts';
-import { deleteWrapper } from './wrapper-deletion.ts';
+} from '../../types/rule.ts';
+import { isSeq, isField, literalTextOf, isEnumChoiceRule } from '../../types/rule.ts';
+import type { GeneratedKindEntry } from '../generated-metadata.ts';
+import { findGeneratedKindEntry } from '../generated-metadata.ts';
+import { tokenToName } from '../normalize.ts';
+import { collectSlots } from '../collect-slots.ts';
+import { assertNever } from '../../polymorph-variant.ts';
+import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
+import { deleteWrapper } from '../wrapper-deletion.ts';
 import {
 	diagnoseParseKindCollisions,
 	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
-} from './diagnose-parsekind-collisions.ts';
+} from '../diagnose-parsekind-collisions.ts';
 import {
 	describeDeriveShape,
 	type DeriveShapeDiagnostic
-} from './diagnose-derive-shapes.ts';
+} from '../diagnose-derive-shapes.ts';
 
 // ---------------------------------------------------------------------------
 // NodeOrTerminal — unified slot-content type
@@ -176,7 +175,7 @@ export function drainAssembleWarnings(): AssembleWarning[] {
  * (rule.ts → node-map.ts is the layering direction). Re-exported here for
  * existing consumers; new code may import from either location.
  */
-export { type Multiplicity } from '../types/rule.ts';
+export { type Multiplicity } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
 // Optional-body lookthrough (module-level current pointer)

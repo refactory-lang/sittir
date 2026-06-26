@@ -20,7 +20,7 @@ import {
 	deriveSlots,
 	isTerminalValue,
 	AssembledToken
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import type { Rule, TokenRule, StringRule } from '../types/rule.ts';
 
 describe('§H1 — TokenRule metadata threading', () => {

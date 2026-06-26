@@ -20,7 +20,7 @@
  */
 
 import type { Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
-import type { AssembledNode, AssembledNonterminal } from './node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
 

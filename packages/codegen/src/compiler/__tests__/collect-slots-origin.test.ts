@@ -10,7 +10,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
-import { AssembledBranch } from '../node-map.ts';
+import { AssembledBranch } from '../model/node-map.ts';
 import { deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule } from '../../types/rule.ts';
 

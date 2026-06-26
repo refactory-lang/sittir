@@ -16,8 +16,8 @@ import {
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import { type AssembledNode, type AssembledNonterminal, AssembledGroup } from '../compiler/node-map.ts';
-import { isNodeRef, isTerminalValue, isUnresolvedRef, allSlotsOf } from '../compiler/node-map.ts';
+import { type AssembledNode, type AssembledNonterminal, AssembledGroup } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, isUnresolvedRef, allSlotsOf } from '../compiler/model/node-map.ts';
 import {
 	resolveEffectiveLiteral,
 	isAutoStampSlot,

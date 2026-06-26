@@ -22,9 +22,9 @@ import type {
 	AssembledNode,
 	AssembledPolymorph,
 	AssembledSupertype
-} from '../compiler/node-map.ts';
-import { aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/node-map.ts';
-import { deriveUnnamedChildrenCardinality } from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
+import { aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/model/node-map.ts';
+import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
 	isMultiple,

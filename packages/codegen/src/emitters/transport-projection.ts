@@ -1,7 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import type { AssembledNonterminal, AssembledNode, NodeOrTerminal } from '../compiler/node-map.ts';
-import { isTerminalValue, allFormFieldsOf, allFormChildrenOf } from '../compiler/node-map.ts';
+import type { AssembledNonterminal, AssembledNode, NodeOrTerminal } from '../compiler/model/node-map.ts';
+import { isTerminalValue, allFormFieldsOf, allFormChildrenOf } from '../compiler/model/node-map.ts';
 import { fieldTypeComponents, resolveHiddenKeywordLiteral } from './shared.ts';
 
 export interface TransportLiteral {

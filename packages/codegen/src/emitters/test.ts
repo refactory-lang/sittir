@@ -4,7 +4,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode, AssembledNonterminal } from '../compiler/node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,

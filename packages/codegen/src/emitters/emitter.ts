@@ -1,4 +1,4 @@
-import type { AssembledNode } from '../compiler/node-map.ts';
+import type { AssembledNode } from '../compiler/model/node-map.ts';
 
 /** Constructor-based emitter with no init() lifecycle phase. */
 export interface CodegenEmitter<TResult, TFinalizeArg = void> {

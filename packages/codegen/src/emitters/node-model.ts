@@ -26,8 +26,8 @@ import type {
 	AssembledGroup,
 	NodeOrTerminal,
 	UnresolvedRef
-} from '../compiler/node-map.ts';
-import { isNodeRef, isUnresolvedRef, isRequired, isMultiple, isNonEmpty, kindsOf } from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
+import { isNodeRef, isUnresolvedRef, isRequired, isMultiple, isNonEmpty, kindsOf } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';

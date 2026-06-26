@@ -3,7 +3,7 @@ import { link } from './link.ts';
 import { normalizeGrammar } from './normalize.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
-import type { AssembleWarning } from './node-map.ts';
+import type { AssembleWarning } from './model/node-map.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
 import type { SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
 import { diagnoseContentAliasInjectivity } from './diagnose-content-alias-injectivity.ts';

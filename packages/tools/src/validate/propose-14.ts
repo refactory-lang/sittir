@@ -25,7 +25,7 @@ export const PIPELINE_MODULES: readonly string[] = [
 	'compiler/evaluate.ts',
 	'compiler/link.ts',
 	'compiler/assemble.ts',
-	'compiler/node-map.ts',
+	'compiler/model/node-map.ts',
 	'dsl/rule-transforms.ts',
 ];
 

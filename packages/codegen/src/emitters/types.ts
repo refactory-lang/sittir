@@ -55,7 +55,7 @@ function kindDiscriminantOrLiteral(
 import type {
 	AssembledNode,
 	AssembledNonterminal
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledPolymorph,
@@ -68,7 +68,7 @@ import {
 	deriveSlotCardinality,
 	structuralFieldsOf,
 	structuralChildrenOf
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
 import {
 	isAutoStampField,

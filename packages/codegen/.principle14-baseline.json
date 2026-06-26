@@ -5,7 +5,7 @@
 		"compiler/evaluate.ts": 14,
 		"compiler/link.ts": 27,
 		"compiler/assemble.ts": 17,
-		"compiler/node-map.ts": 3,
+		"compiler/model/node-map.ts": 3,
 		"dsl/rule-transforms.ts": 6
 	}
 }

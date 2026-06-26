@@ -35,7 +35,7 @@ import type {
 	AssembledNonterminal,
 	AssembledPolymorph,
 	NodeOrTerminal
-} from '../../compiler/node-map.ts';
+} from '../../compiler/model/node-map.ts';
 import {
 	emitBranchTemplate,
 	emitGroupTemplate,

@@ -9,9 +9,9 @@ import {
 	AssembledPattern,
 	AssembledPolymorph,
 	AssembledSupertype
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { AssembledNode } from '../compiler/node-map.ts';
+import type { AssembledNode } from '../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';

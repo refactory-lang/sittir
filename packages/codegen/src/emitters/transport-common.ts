@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNonterminal, AssembledNode, AssembledSupertype, UnresolvedRef } from '../compiler/node-map.ts';
-import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
+import type { AssembledNonterminal, AssembledNode, AssembledSupertype, UnresolvedRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, isUnresolvedRef } from '../compiler/model/node-map.ts';
 
 /**
  * Classification of a transport slot by its type width.

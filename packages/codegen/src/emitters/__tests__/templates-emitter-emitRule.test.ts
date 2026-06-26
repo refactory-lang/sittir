@@ -31,7 +31,7 @@ import type {
 	TokenRule,
 	VariantRule
 } from '../../types/rule.ts';
-import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/node-map.ts';
+import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitRule, type EmitCtx } from '../templates.ts';
 
 function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {

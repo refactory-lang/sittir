@@ -7,8 +7,8 @@ import {
 	keywordPresenceIsNonEmptyRepeat
 } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNonterminal, NodeOrTerminal } from '../compiler/node-map.ts';
-import { AssembledKeyword, AssembledPattern, AssembledEnum } from '../compiler/node-map.ts';
+import type { AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
+import { AssembledKeyword, AssembledPattern, AssembledEnum } from '../compiler/model/node-map.ts';
 
 // ---------------------------------------------------------------------------
 // Test helpers (mirrors resolve-effective-literal.test.ts)

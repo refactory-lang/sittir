@@ -12,7 +12,7 @@ import {
 	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import { AssembledEnum } from '../compiler/node-map.ts';
+import { AssembledEnum } from '../compiler/model/node-map.ts';
 import { referencedKinds, resolveHiddenKeywordLiteral } from './shared.ts';
 
 export interface EmitTypeTestsConfig {

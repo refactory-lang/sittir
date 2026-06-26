@@ -15,7 +15,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode } from '../compiler/node-map.ts';
+import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
 	allSlotsOf,
 	aliasTargetToSourceMapOf,
@@ -25,7 +25,7 @@ import {
 	structuralFieldsOf,
 	isNodeRef,
 	isUnresolvedRef
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import { classifyFactoryShape, collectAliasSourceKinds, resolveFactoryFieldNames } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';

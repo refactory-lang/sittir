@@ -7,7 +7,7 @@ import {
 	AssembledPattern,
 	AssembledSupertype,
 	type AssembledNode
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../types/rule.ts';
 import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 

@@ -22,8 +22,8 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { AssembledSupertype } from '../compiler/node-map.ts';
-import { snakeToCamel } from '../compiler/node-map.ts';
+import type { AssembledSupertype } from '../compiler/model/node-map.ts';
+import { snakeToCamel } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { collectKindEntries, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from './kind-discriminant.ts';
 import { collectAllKinds } from './types.ts';
