@@ -18,7 +18,7 @@ import {
 	AssembledBranch,
 	type AssembledNonterminal,
 	type AssembledNode
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import { resolveHoistedForm } from '../emitters/shared.ts';
 
 // ---------------------------------------------------------------------------

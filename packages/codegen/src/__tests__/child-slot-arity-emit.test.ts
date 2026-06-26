@@ -4,7 +4,7 @@ import {
 	AssembledBranch,
 	AssembledPattern,
 	type AssembledNode
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { SeqRule } from '../types/rule.ts';
 import { emitTypes } from '../emitters/types.ts';

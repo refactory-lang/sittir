@@ -48,7 +48,7 @@ function createNamedSlotModel(name: string, arity: SlotArity): SlotModel {
 function createUnnamedChildrenSlotModel(arity: SlotArity): SlotModel {
 	return { name: 'children', storageKey: '$other', arity, metadata: opaqueFacts({ origin: 'kind' satisfies SlotOrigin }) };
 }
-import { pluralize, snakeToCamel } from '../compiler/node-map.ts';
+import { pluralize, snakeToCamel } from '../compiler/model/node-map.ts';
 
 // ---------------------------------------------------------------------------
 // Corpus parser — tree-sitter test corpus format

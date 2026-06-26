@@ -4,7 +4,7 @@
  */
 
 import { loadRawEntries } from '../validate/node-types-loader.ts';
-import { snakeToCamel } from '../compiler/node-map.ts';
+import { snakeToCamel } from '../compiler/model/node-map.ts';
 
 function toGrammarTypeName(grammar: string): string {
 	const camel = snakeToCamel(grammar);

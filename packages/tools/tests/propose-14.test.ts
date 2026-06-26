@@ -36,7 +36,7 @@ describe('propose-14 signature classification', () => {
 
 	it('classifies a single-param fn as getter-candidate', () => {
 		const recs = classifySource(
-			'compiler/node-map.ts',
+			'compiler/model/node-map.ts',
 			'export function storageKindOf(slot: AssembledSlot): string { return slot.kind; }',
 		);
 		expect(recs[0].bucket).toBe('getter-candidate');
@@ -66,7 +66,7 @@ describe('propose-14 signature classification', () => {
 
 	it('records class methods as Class.method and accessors as getter-candidate', () => {
 		const recs = classifySource(
-			'compiler/node-map.ts',
+			'compiler/model/node-map.ts',
 			`export class NodeMap {
 				get size(): number { return 0; }
 				lookup(kind: string, table: Map<string, number>, depth: number): number { return 0; }

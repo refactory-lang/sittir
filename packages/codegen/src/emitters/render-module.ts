@@ -22,7 +22,7 @@ import type {
 	RenderTemplateSurface,
 	AssembledNonterminal,
 	AssembledSupertype
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledEnum,
@@ -36,7 +36,7 @@ import {
 	structuralFieldsOf,
 	allFormFieldsOf,
 	allSlotsOf
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';

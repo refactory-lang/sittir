@@ -8,7 +8,7 @@ import {
 	AssembledPattern,
 	AssembledSupertype,
 	type AssembledNode
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import { emitAll } from '../emitters/emit.ts';
 import { TemplateEmitter } from '../emitters/templates.ts';
 

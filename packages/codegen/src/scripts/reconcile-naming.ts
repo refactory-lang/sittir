@@ -27,7 +27,7 @@ import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble } from '../compiler/assemble.ts';
-import { allStructuralSlotsOf, projectSlotNaming, type AssembledNonterminal } from '../compiler/node-map.ts';
+import { allStructuralSlotsOf, projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 
 const requireFromHere = createRequire(import.meta.url);
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;

@@ -693,7 +693,7 @@ Done! Generated:
 	// Spec 013: dump derive-audit counts if SITTIR_AUDIT_DERIVE=1 was set.
 	// No-op otherwise. Used to validate simplify's canonicalization before
 	// shrinking `deriveFields` / `deriveChildren` to trivial walks.
-	(await import('./compiler/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);
+	(await import('./compiler/model/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);
 }
 
 // ---------------------------------------------------------------------------

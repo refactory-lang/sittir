@@ -6,7 +6,7 @@ import { computeSimplifiedRules } from '../compiler/simplify.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import type { Rule } from '../types/rule.ts';
 import type { OptimizedGrammar } from '../compiler/types.ts';
-import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../compiler/node-map.ts';
+import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../compiler/model/node-map.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
 // from a grammar `field(name, ...)` wrapper (excludes kind-derived

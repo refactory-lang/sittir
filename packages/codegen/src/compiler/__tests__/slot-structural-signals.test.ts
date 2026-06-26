@@ -5,7 +5,7 @@ import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
-import type { AssembledBranch, AssembledNonterminal } from '../node-map.ts';
+import type { AssembledBranch, AssembledNonterminal } from '../model/node-map.ts';
 import { classifyChildFactorySurface, classifyFactoryShape, resolveSingleFieldFactorySlot } from '../../emitters/shared.ts';
 import { hasSingularNativeChildrenTransport } from '../../emitters/render-module.ts';
 import { runTemplateEmitter } from '../../emitters/templates.ts';

@@ -10,7 +10,7 @@ import type {
 	AssembledNode,
 	BranchSlotClass,
 	FieldStorageInfo
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import {
 	AssembledKeyword,
 	AssembledToken,
@@ -27,7 +27,7 @@ import {
 	deriveSlotCardinality,
 	deriveChildrenCardinality,
 	allSlotsOf
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { hasCatalogEntry } from './kind-discriminant.ts';
 
@@ -937,7 +937,7 @@ export function resolveFieldStorageInfo(
 // Branch slot classification — single source of truth
 // ---------------------------------------------------------------------------
 
-export type { BranchSlotClass } from '../compiler/node-map.ts';
+export type { BranchSlotClass } from '../compiler/model/node-map.ts';
 export type FactoryShape = 'config' | 'spread' | 'text' | 'direct';
 export type ChildFactorySurface = 'direct' | 'spread';
 

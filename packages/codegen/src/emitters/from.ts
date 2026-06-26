@@ -17,8 +17,8 @@ import {
 	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import type { AssembledNode, AssembledNonterminal } from '../compiler/node-map.ts';
-import { AssembledBranch, AssembledGroup } from '../compiler/node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { AssembledBranch, AssembledGroup } from '../compiler/model/node-map.ts';
 import type { PolymorphVariant } from '../compiler/types.ts';
 import {
 	isAutoStampField,
@@ -44,8 +44,8 @@ import {
 	classifyFromEmission
 } from './shared.ts';
 import { fieldElementType } from './factories.ts';
-import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/node-map.ts';
-import type { NodeOrTerminal } from '../compiler/node-map.ts';
+import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/model/node-map.ts';
+import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 const SAFE_IDENT_KEY = /^[A-Za-z_$][\w$]*$/;

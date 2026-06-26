@@ -40,7 +40,7 @@ import type {
 	DerivationLog,
 	RepeatedShapeEntry
 } from './types.ts';
-import { hasAnyField, hasAnyChild } from './node-map.ts';
+import { hasAnyField, hasAnyChild } from './model/node-map.ts';
 import { collectFieldNames } from '../types/rule.ts';
 import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';

@@ -58,7 +58,7 @@ import {
 	type AssembledNode,
 	type AssembledNonterminal,
 	type AssembledSupertype
-} from './node-map.ts';
+} from './model/node-map.ts';
 import { classifySlot, buildSupertypeTransportSet } from '../emitters/transport-common.ts';
 
 export interface SCCAnalysis {

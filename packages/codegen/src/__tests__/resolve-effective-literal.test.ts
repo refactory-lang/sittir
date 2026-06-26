@@ -2,9 +2,9 @@ import { PATTERN, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { resolveEffectiveLiteral, isAutoStampField } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNonterminal } from '../compiler/node-map.ts';
-import { AssembledKeyword, AssembledPattern } from '../compiler/node-map.ts';
-import type { NodeOrTerminal } from '../compiler/node-map.ts';
+import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { AssembledKeyword, AssembledPattern } from '../compiler/model/node-map.ts';
+import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 
 // ---------------------------------------------------------------------------
 // Test helpers

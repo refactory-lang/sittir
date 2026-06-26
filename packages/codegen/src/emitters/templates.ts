@@ -36,7 +36,7 @@ import {
 	isRequired,
 	kindsOf,
 	isTerminalValue
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import type {
 	AssembledBranch,
 	AssembledMulti,
@@ -44,7 +44,7 @@ import type {
 	AssembledNonterminal,
 	AssembledPolymorph,
 	NodeOrTerminal
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import { compileWordMatcher } from '../compiler/common.ts';

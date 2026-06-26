@@ -10,8 +10,8 @@ import {
 	AssembledKeyword,
 	AssembledPattern,
 	AssembledSupertype,
-} from '../../compiler/node-map.ts';
-import type { AssembledNode } from '../../compiler/node-map.ts';
+} from '../../compiler/model/node-map.ts';
+import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, RenderRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';

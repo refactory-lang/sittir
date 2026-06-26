@@ -13,7 +13,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { AssembledNode, AssembledSupertype } from '../compiler/node-map.ts';
+import type { AssembledNode, AssembledSupertype } from '../compiler/model/node-map.ts';
 import { isValidIdent } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { camelCase, collectRefineKindInfos, refineFormFactoryName } from './refine-emit.ts';

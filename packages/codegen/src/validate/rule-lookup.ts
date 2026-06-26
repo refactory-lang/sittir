@@ -11,7 +11,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode } from '../compiler/node-map.ts';
+import type { AssembledNode } from '../compiler/model/node-map.ts';
 
 /**
  * Classification of how a kind reaches a rendered output string.

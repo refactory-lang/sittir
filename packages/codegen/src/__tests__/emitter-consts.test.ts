@@ -7,7 +7,7 @@ import type {
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum
-} from '../compiler/node-map.ts';
+} from '../compiler/model/node-map.ts';
 
 function makeNodeMap(nodes: [string, any][]): NodeMap {
 	return {

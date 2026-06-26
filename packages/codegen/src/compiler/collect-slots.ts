@@ -44,7 +44,7 @@ import {
 	extractSeparatorString,
 	mergeSourceRuleIds,
 	stampSeparatorOnValues,
-} from './node-map.ts';
+} from './model/node-map.ts';
 import { findRepeatFlag } from './template-walker.ts';
 
 

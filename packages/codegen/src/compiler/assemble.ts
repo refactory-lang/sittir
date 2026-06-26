@@ -30,7 +30,7 @@ import {
 	type GeneratedIdTables,
 	type GeneratedKindEntry
 } from './generated-metadata.ts';
-import type { AssembledNode, AssembledNonterminal, UnresolvedRef } from './node-map.ts';
+import type { AssembledNode, AssembledNonterminal, UnresolvedRef } from './model/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledPattern,
@@ -57,7 +57,7 @@ import {
 	setOptionalBodyKinds,
 	buildParseKindRuleSignatures,
 	type AssembleWarning
-} from './node-map.ts';
+} from './model/node-map.ts';
 import { simplifyRule, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { inlineRefs } from '../dsl/rule-transforms.ts';
 import { compileWordMatcher } from './common.ts';
@@ -1385,7 +1385,7 @@ export { simplifyRule };
 // nameNode has moved to node-map.ts (imported above); re-exported here for
 // backwards compatibility with assemble.test.ts and any other callers that
 // import it from this module.
-export { nameNode } from './node-map.ts';
+export { nameNode } from './model/node-map.ts';
 
 // Reserved words that cannot be used as parameter/method names in TypeScript.
 const TS_RESERVED_WORDS = new Set([

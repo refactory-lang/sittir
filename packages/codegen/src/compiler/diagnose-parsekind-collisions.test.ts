@@ -5,7 +5,7 @@ import { link } from './link.ts';
 import { normalizeGrammar } from './normalize.ts';
 import { assemble } from './assemble.ts';
 import type { RawGrammar } from './types.ts';
-import { AssembledNonterminal, AssembledPolymorph } from './node-map.ts';
+import { AssembledNonterminal, AssembledPolymorph } from './model/node-map.ts';
 import { diagnoseParseKindCollisions } from './diagnose-parsekind-collisions.ts';
 
 function buildNodeMap(rules: Record<string, unknown>) {

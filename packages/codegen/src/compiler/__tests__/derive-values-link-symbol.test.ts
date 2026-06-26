@@ -16,7 +16,7 @@
 
 import { CHOICE, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { deriveValuesForRule, isTerminalValue, isNodeRef } from '../node-map.ts';
+import { deriveValuesForRule, isTerminalValue, isNodeRef } from '../model/node-map.ts';
 import type { Rule } from '../../types/rule.ts';
 
 describe('deriveValuesForRule — link-synthesized operator symbols (D1)', () => {

@@ -26,7 +26,7 @@ import {
 	AssembledBranch,
 	AssembledGroup,
 	AssembledPattern,
-} from '../node-map.ts';
+} from '../model/node-map.ts';
 import type { Rule, SeqRule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
