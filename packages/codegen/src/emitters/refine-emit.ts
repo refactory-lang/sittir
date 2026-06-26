@@ -11,7 +11,7 @@
 
 import type { NodeMap, RefineForm } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import { narrowedFieldLiteralsForForm } from '../compiler/link-refine.ts';
+import { narrowedFieldLiteralsForForm } from '../compiler/link.ts';
 
 /**
  * Per-kind refine descriptor collected once, consumed by every emitter

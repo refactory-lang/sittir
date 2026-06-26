@@ -16,7 +16,7 @@ import { describe, it, expect } from 'vitest';
 import type { Rule } from '../types/rule.ts';
 import type { RawGrammar, RefineForm } from '../compiler/types.ts';
 import { link } from '../compiler/link.ts';
-import { resolveRefinePath, narrowedFieldLiteralsForForm } from '../compiler/link-refine.ts';
+import { resolveRefinePath, narrowedFieldLiteralsForForm } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { emitTypes } from '../emitters/types.ts';

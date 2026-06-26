@@ -50,7 +50,7 @@ import type {
 	Multiplicity,
 	RuleId
 } from '../../types/rule.ts';
-import { isSeq, isField, literalTextOf, isEnumChoiceRule } from '../../types/rule.ts';
+import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '../../types/rule.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import { findGeneratedKindEntry } from '../generated-metadata.ts';
 import { tokenToName } from '../normalize.ts';
@@ -166,6 +166,50 @@ export function drainAssembleWarnings(): AssembleWarning[] {
 	const out = [..._assembleWarnings];
 	resetAssembleWarnings();
 	return out;
+}
+
+/**
+ * True when a field's content would have tree-sitter emit multiple children under
+ * the same field name at parse time. Uses `unwrapStructuralPassthroughs` defined
+ * below (moved from field-shape.ts in R7 de-scatter; uses the node-map version).
+ */
+
+export function fieldContentIsMultiSibling(content: Rule): boolean {
+    const core = unwrapStructuralPassthroughs(content);
+    if (core.type === CHOICE) {
+        return core.members.some((member) => fieldContentIsMultiSibling(member));
+    }
+    if (core.type !== SEQ) return false;
+    let count = 0;
+    for (const member of core.members) {
+        let unwrapped: Rule = member;
+        while (unwrapped.type === OPTIONAL ||
+            unwrapped.type === VARIANT ||
+            unwrapped.type === GROUP ||
+            unwrapped.type === TOKEN
+            // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+        ) {
+            unwrapped = (unwrapped as { content: Rule; }).content;
+        }
+        switch (unwrapped.type) {
+            case SYMBOL:
+                if (isLinkSymbol(unwrapped)) break;
+                count++;
+                if (count >= 2) return true;
+                break;
+            case SUPERTYPE:
+            case ALIAS:
+            case FIELD:
+            case REPEAT:
+            case REPEAT1:
+                count++;
+                if (count >= 2) return true;
+                break;
+            default:
+                break;
+        }
+    }
+    return false;
 }
 
 /**

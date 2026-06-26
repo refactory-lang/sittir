@@ -45,7 +45,7 @@ import {
 	mergeSourceRuleIds,
 	stampSeparatorOnValues,
 } from './model/node-map.ts';
-import { findRepeatFlag } from './template-walker.ts';
+import { findRepeatFlag } from '../dsl/rule-transforms.ts';
 
 
 
@@ -510,4 +510,70 @@ export function collectSlots(
 			return slot ? [slot] : [];
 		}
 	}
+}
+/**
+ * Walk a rule tree looking for the first repeat-with-separator. Used by
+ * structural nodes to propagate tree-sitter's `sepBy` / `repSeq`
+ * separator hints onto their joinBy slot so `$$$CHILDREN` renders
+ * with the right glue.
+ */
+
+export function findRepeatSeparator(rule: Rule): string | undefined {
+    switch (rule.type) {
+        case REPEAT:
+        case REPEAT1:
+            if (rule.separator) return rule.separator;
+            return findRepeatSeparator(rule.content);
+        case SEQ:
+        case CHOICE:
+            for (const m of rule.members) {
+                const sep = findRepeatSeparator(m);
+                if (sep) return sep;
+            }
+            return undefined;
+        case OPTIONAL:
+        case VARIANT:
+        case GROUP:
+        case FIELD:
+            return findRepeatSeparator(rule.content);
+        default:
+            return undefined;
+    }
+}
+/**
+ * Collect the names of named fields whose content contains a `repeat` /
+ * `repeat1` with the given flag (`trailing` or `leading`). Returns a
+ * `Set<string>` of field names — empty when no such field is found.
+ *
+ * Used by the template emitter to build a per-field trailing-separator
+ * set so `selectJoinFilter` (emitters/templates.ts) can restrict
+ * `joinWithTrailing` to the specific fields whose repeats carry the
+ * flag, rather than applying it globally whenever the whole rule has
+ * any trailing repeat.
+ */
+
+export function findFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): Set<string> {
+    const out = new Set<string>();
+    collectFieldsWithRepeatFlag(rule, flag, out);
+    return out;
+}
+function collectFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading', acc: Set<string>): void {
+    switch (rule.type) {
+        case FIELD:
+            if (findRepeatFlag(rule.content, flag)) acc.add(rule.name);
+            return;
+        case SEQ:
+        case CHOICE:
+            for (const m of rule.members) collectFieldsWithRepeatFlag(m, flag, acc);
+            return;
+        case REPEAT:
+        case REPEAT1:
+        case OPTIONAL:
+        case VARIANT:
+        case GROUP:
+            collectFieldsWithRepeatFlag(rule.content, flag, acc);
+            return;
+        default:
+            return;
+    }
 }

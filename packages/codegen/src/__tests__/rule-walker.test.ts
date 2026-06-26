@@ -8,7 +8,7 @@
 import { CHOICE, FIELD, OPTIONAL, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../types/rule.ts';
-import { findRepeatFlag } from '../compiler/template-walker.ts';
+import { findRepeatFlag } from '../dsl/rule-transforms.ts';
 
 // ---------------------------------------------------------------------------
 // Tiny Rule-tree builders — keep tests readable.
