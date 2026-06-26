@@ -6,7 +6,7 @@
  * Spec 012:
  *  - T016 (initial scaffold): hash.rs + hash.ts emission.
  *  - T027/T028/T029: per-kind `#[derive(Template)]` structs + direct
- *    `NodeData` render helpers + `render_dispatch` in
+ *    typed-transport render dispatch in
  *    `rust/crates/sittir-{lang}/src/render/templates.rs`.
  *  - T030: canonical `.jinja` copying into
  *    `rust/crates/sittir-{lang}/templates/`.
@@ -462,7 +462,7 @@ interface EmittedField {
 	 *  access expressions. Defaults to `name` when no assembled slot exists. */
 	storageName: string;
 	/** True when this slot was inferred (not declared via `field(...)`) — i.e. it
-	 *  came from `slotModel.unnamed`. The legacy NodeData render path uses this to
+	 *  came from `slotModel.unnamed`. Consumers use this to
 	 *  route lookups through `node.children` instead of `node.fields[name]`. */
 	isUnnamed: boolean;
 	hasLeading: boolean;
@@ -1010,9 +1010,8 @@ function buildSlotWriteCall(cls: SlotClass, expr: string): string {
  * concrete subtype render fn is already declared when the supertype match arm
  * references it.
  *
- * The `render_dispatch(&NodeData)` path is retained as a legacy inverse
- * bridge for internal callers that still resolve through `NodeData`
- * rather than typed transport.
+ * (R5: the legacy transport→NodeData inverse bridge was verified zero-caller
+ * and deleted — typed transport dispatch is the ONLY render path.)
  *
  * @param usedSupertypeNames - supertype typeNames actually used as slot types;
  *   only these get render helpers emitted. Passed from renderTransportSupport
@@ -1636,7 +1635,7 @@ pub mod kind_ids;
 pub mod templates;
 pub mod transport;
 
-pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};
+pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport};
 pub use hash::TEMPLATE_BUNDLE_HASH;
 pub use kind_ids::*;
 `;
@@ -1674,7 +1673,7 @@ export function emitHashFiles(
 
 /**
  * Emit the full render module for a grammar — hash files, per-kind
- * template structs, direct-render helpers, render_dispatch, lib.rs,
+ * template structs, direct-render helpers, lib.rs,
  * Cargo.toml.
  *
  * @param lang — grammar identifier.
@@ -1807,7 +1806,7 @@ function renderTransportSupport(
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey)
 	);
 
-	return [
+	return pruneUnreferencedBridges([
 		...anyTransportLines,
 		'',
 		...renderTransportValueTypeHelper(),
@@ -1825,10 +1824,44 @@ function renderTransportSupport(
 		'',
 		// Typed dispatch: render_transport_dispatch + per-kind render_<kind>_transport fns.
 		// These are emitted AFTER renderGrammarRenderable() so Renderable::Node is in scope,
-		// and BEFORE renderTransportBridge() so render_transport can call render_transport_dispatch.
+		// and BEFORE renderTransportEntry() so render_transport can call render_transport_dispatch.
 		...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames),
-		...renderTransportBridge(nodes, projection.literals, kidByKind, nodeMap)
-	].join('\n');
+		...renderTransportEntry()
+	].join('\n'));
+}
+
+/**
+ * R5 reachability gate: drop any `*_transport_to_any` bridge fn that nothing
+ * in the assembled transport.rs references. The file-top
+ * `#![allow(dead_code)]` means rustc will never flag an unreferenced bridge,
+ * so without this prune a dead bridge survives silently (exactly how the
+ * deleted transport→NodeData island hid). Reachability is computed against
+ * the FINAL assembled text — by construction, every emitted bridge has a
+ * live caller.
+ */
+function pruneUnreferencedBridges(rendered: string): string {
+	const lines = rendered.split('\n');
+	const out: string[] = [];
+	let i = 0;
+	while (i < lines.length) {
+		const m = lines[i]?.match(/^fn (\w+_transport_to_any)\(/);
+		if (m) {
+			let j = i + 1;
+			while (j < lines.length && lines[j] !== '}') j++;
+			const name = m[1]!;
+			const all = (rendered.match(new RegExp(`\\b${name}\\b`, 'g')) ?? []).length;
+			const block = lines.slice(i, j + 1).join('\n');
+			const inBlock = (block.match(new RegExp(`\\b${name}\\b`, 'g')) ?? []).length;
+			if (all - inBlock === 0) {
+				i = j + 1;
+				if (lines[i] === '') i++; // swallow the trailing blank line
+				continue;
+			}
+		}
+		out.push(lines[i]!);
+		i++;
+	}
+	return out.join('\n');
 }
 
 /**
@@ -1848,7 +1881,7 @@ function commonRustUseImports(hasNumericDispatch: boolean): string {
 	lines.push('    OptionalNonterminalView,');
 	lines.push('};');
 	lines.push('use ::sittir_core::types::{');
-	lines.push('    NodeData, FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,');
+	lines.push('    FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,');
 	lines.push('};');
 	lines.push('');
 	if (hasNumericDispatch) {
@@ -2037,7 +2070,7 @@ function renderAnyTransportWithStringTag(
  * Emit a per-supertype transport enum, its `Debug + Clone` body,
  * a custom `FromNapiValue` impl that reads `$type` as u16 and dispatches
  * to the appropriate concrete variant, a stub `ToNapiValue`, and a
- * `<supertype>_transport_to_any` bridge helper for the NodeData bridge path.
+ * `<supertype>_transport_to_any` bridge helper (per-slot enum → AnyTransport).
  *
  * Pattern mirrors `renderAnyTransportWithNapiFromValue` — variant arms come
  * from `supertypeNode.subtypes` resolved through `kindIdByKind`.
@@ -2400,7 +2433,7 @@ function emitSupertypeTransportEnum(
 	lines.push(...renderBoxedEnumNapiImpls(enumName));
 
 	// Bridge helper: converts <Supertype>Transport → AnyTransport for the
-	// NodeData bridge (transport_field_value / transport_children). Each variant
+	// per-slot→AnyTransport bridges. Each variant
 	// wraps the inner concrete transport into the matching AnyTransport variant.
 	// AnyTransport is a sized enum — no Box needed.
 	lines.push(`fn ${rustSnakeIdent(supertypeNode.typeName)}_transport_to_any(t: ${enumName}) -> AnyTransport {`);
@@ -2788,7 +2821,7 @@ function emitPerSlotChildEnum(
 	lines.push(...renderBoxedEnumNapiImpls(enumName));
 
 	// Bridge helper: converts per-slot enum → AnyTransport for the NodeData
-	// bridge (used by `render_nodedata_into` / `render_dispatch`). AnyTransport
+	// bridge (used by the typed render dispatch). AnyTransport
 	// is a sized enum — no Box needed. Both named-slot and unnamed `$children`
 	// bridge fns are load-bearing after spec 024 §E1 (named field type became the
 	// per-slot enum, so the bridge MUST convert via this fn instead of derefing
@@ -3068,92 +3101,10 @@ function renderGrammarRenderable(): string[] {
 	];
 }
 
-function renderTransportBridge(
-	nodes: readonly AssembledNode[],
-	literals: readonly TransportLiteral[],
-	kindIdByKind?: ReadonlyMap<string, number>,
-	nodeMap?: NodeMap
-): string[] {
+function renderTransportEntry(): string[] {
 	return [
-		'use ::sittir_core::types::{FieldValue as TransportFieldValue, KindId as TransportKindId, NodeData as TransportNodeData, Source as TransportSource};',
-		'use ::std::collections::HashMap as TransportHashMap;',
+		'use ::sittir_core::types::Source as TransportSource;',
 		'',
-		'fn transport_node_data(',
-		'    kind: TransportKindId,',
-		'    source: Option<Source>,',
-		'    named: Option<bool>,',
-		'    default_named: bool,',
-		'    text: Option<String>,',
-		'    span: Option<Span>,',
-		'    node_handle: Option<u32>,',
-		'    child_index: Option<u16>,',
-		'    fields: Option<TransportHashMap<String, TransportFieldValue>>,',
-		'    children: Option<Vec<TransportNodeData>>,',
-		'    trivia_data: Option<NodeTrivia>,',
-		') -> TransportNodeData {',
-		'    TransportNodeData {',
-		'        type_: kind,',
-		'        source: source.unwrap_or(TransportSource::Factory),',
-		'        named: named.unwrap_or(default_named),',
-		'        fields,',
-		'        children,',
-		'        text,',
-		'        span,',
-		'        node_handle,',
-		'        child_index,',
-		'        trivia_data,',
-		'    }',
-		'}',
-		'',
-		'fn transport_field_value(value: AnyTransport) -> Result<TransportFieldValue, ::askama::Error> {',
-		'    let node = transport_to_node(value)?;',
-		'    if !node.named {',
-		'        if let Some(text) = node.text {',
-		'            return Ok(TransportFieldValue::Text(text));',
-		'        }',
-		'    }',
-		'    Ok(TransportFieldValue::Single(Box::new(node)))',
-		'}',
-		'',
-		'fn transport_field_values(values: Vec<AnyTransport>) -> Result<TransportFieldValue, ::askama::Error> {',
-		'    let mut nodes = Vec::with_capacity(values.len());',
-		'    for value in values {',
-		'        nodes.push(transport_to_node(value)?);',
-		'    }',
-		'    Ok(TransportFieldValue::Multiple(nodes))',
-		'}',
-		'',
-		'fn transport_children(values: Vec<AnyTransport>) -> Result<Vec<TransportNodeData>, ::askama::Error> {',
-		'    let mut nodes = Vec::with_capacity(values.len());',
-		'    for value in values {',
-		'        nodes.push(transport_to_node(value)?);',
-		'    }',
-		'    Ok(nodes)',
-		'}',
-		'',
-		'fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {',
-		'    match transport {',
-		...nodes.map((node) => {
-			return `        AnyTransport::${rustTransportVariantName(node)}(data) => ${rustTransportToNodeFnName(node.typeName)}(data),`;
-		}),
-		...literals.map((literal, index) => {
-			// Unit variant — no payload. Inline the static text and default metadata.
-			const id = kindIdByKind?.get(literal.kind);
-			const safeKind = JSON.stringify(rustBlockCommentSafe(literal.kind));
-			const kindArg =
-				id !== undefined
-					? `TransportKindId(${id}) /* ${safeKind} */`
-					: `TransportKindId(0) /* ${safeKind} — no parser symbol */`;
-			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)} => Ok(transport_node_data(${kindArg}, None, None, false, Some(${JSON.stringify(literal.text)}.to_string()), None, None, None, None, None, None)),`;
-		}),
-		// Synthetic Verbatim carrier — no kind tag, text-only. Placed in the
-		// transport-node data with kind_id 0 (matches the "no parser symbol"
-		// shape literals already use).
-		'        AnyTransport::Verbatim(data) => Ok(transport_node_data(TransportKindId(0) /* Verbatim — synthetic */, None, None, false, Some(data.text), None, None, None, None, None, None)),',
-		'    }',
-		'}',
-		'',
-		...nodes.flatMap((node) => renderTransportToNodeFns(node, kindIdByKind, nodeMap)),
 		'pub fn render_transport_parts(transport: AnyTransport) -> Result<(TransportSource, String), ::askama::Error> {',
 		'    let rendered = render_transport_dispatch(&transport)?;',
 		'    let source = transport_source(&transport);',
@@ -3162,126 +3113,15 @@ function renderTransportBridge(
 		'',
 		'fn transport_source(transport: &AnyTransport) -> TransportSource {',
 		'    TransportSource::Factory',
-		'}',
-		'',
-		'pub fn from_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {',
-		'    let (_source, rendered) = render_transport_parts(transport)?;',
-		'    Ok(rendered)',
-		'}',
-		'',
-		'pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {',
-		'    render_transport_dispatch(&transport)',
 		'}'
 	];
 }
 
-function renderTransportToNodeFns(
-	node: AssembledNode,
-	kindIdByKind?: ReadonlyMap<string, number>,
-	nodeMap?: NodeMap
-): string[] {
-	switch (node.modelType) {
-		case 'branch':
-		case 'group': {
-			const slotModel = renderSlotModelOf(node);
-			return renderTransportDataToNodeFn(
-				rustTransportToNodeFnName(node.typeName),
-				rustTransportStructName(node),
-				node.kind,
-				slotModel,
-				true,
-				true,
-				kindIdByKind,
-				nodeMap,
-				node.typeName
-			);
-		}
-		case 'pattern':
-		case 'keyword':
-		case 'token':
-		case 'enum':
-			return renderTerminalTransportToNodeFn(node, kindIdByKind);
-		default:
-			return [];
-	}
-}
 
-function renderTransportDataToNodeFn(
-	fnName: string,
-	structName: string,
-	kind: string,
-	slotModel: RenderSlotModel,
-	defaultNamed: boolean,
-	hasOptionalText: boolean,
-	kindIdByKind?: ReadonlyMap<string, number>,
-	nodeMap?: NodeMap,
-	/** PascalCase typeName of the owning struct — passed to
-	 *  `renderTransportChildrenBinding` (for the per-slot child enum bridge fn
-	 *  on the unnamed `$children` slot) and to `buildBridge*` (for the per-slot
-	 *  enum bridge fn on named heterogeneous fields landed by spec 024 §E1). */
-	ownerTypeName?: string
-): string[] {
-	const kindArg = kindIdExpr(kind, kindIdByKind);
-	const lines: string[] = [];
-	lines.push(`fn ${fnName}(transport: ${structName}) -> Result<TransportNodeData, ::askama::Error> {`);
-	lines.push('    let mut fields = TransportHashMap::new();');
-	for (const field of slotModel.named) {
-		const access = `transport.${rustFieldIdent(field.name)}`;
-		// When nodeMap is available and the field is a single-concrete-kind slot,
-		// the struct field type is a concrete transport type (not AnyTransport).
-		// Wrap it into AnyTransport for the bridge helper, which expects the
-		// type-erased form. Fall back to direct access when the field is already
-		// AnyTransport (heterogeneous / polymorph / supertype / multi).
-		if (isMultiple(field)) {
-			if (isRequired(field)) {
-				const bridged = buildBridgeListRequired(field, access, nodeMap, ownerTypeName);
-				lines.push(
-					`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_values(${bridged})?);`
-				);
-			} else {
-				lines.push(`    if let Some(value) = ${access} {`);
-				const bridged = buildBridgeOptionalList(field, 'value', nodeMap, ownerTypeName);
-				lines.push(
-					`        fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_values(${bridged})?);`
-				);
-				lines.push('    }');
-			}
-		} else if (isRequired(field)) {
-			const bridged = buildBridgeSingleRequired(field, access, nodeMap, ownerTypeName, kind);
-			lines.push(`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${bridged})?);`);
-		} else {
-			lines.push(`    if let Some(value) = ${access} {`);
-			const bridged = buildBridgeOptionalSingle(field, 'value', nodeMap, ownerTypeName, kind);
-			lines.push(
-				`        fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${bridged})?);`
-			);
-			lines.push('    }');
-		}
-	}
-	lines.push('    let fields = if fields.is_empty() { None } else { Some(fields) };');
-	lines.push(...renderTransportChildrenBinding(slotModel, nodeMap, ownerTypeName, kind));
-	lines.push('    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());');
-	lines.push('    Ok(transport_node_data(');
-	lines.push(`        ${kindArg},`);
-	lines.push('        transport.transport_source,');
-	lines.push('        transport.transport_named,');
-	lines.push(`        ${defaultNamed ? 'true' : 'false'},`);
-	lines.push(hasOptionalText ? '        transport.transport_text,' : '        None,');
-	lines.push('        transport.transport_span,');
-	lines.push('        transport.transport_node_handle.map(|v| v as u32),');
-	lines.push('        transport.transport_child_index.map(|v| v as u16),');
-	lines.push('        fields,');
-	lines.push('        children,');
-	lines.push('        trivia_data,');
-	lines.push('    ))');
-	lines.push('}');
-	lines.push('');
-	return lines;
-}
 
 /**
  * Typed bridge classification for a field — returns how to convert the
- * typed transport field to `AnyTransport` for the NodeData bridge.
+ * typed transport field to `AnyTransport` for the per-slot bridges.
  *
  * Returns `{ kind: 'concrete', variant }` — wrap with `AnyTransport::Variant(…)`.
  * Returns `{ kind: 'supertype', toAnyFn }` — call `<supertype>_transport_to_any(…)`.
@@ -3296,267 +3136,14 @@ type BridgeFieldClass =
 	| { readonly kind: 'transportSlot'; readonly toAnyFn: string }
 	| undefined;
 
-function bridgeClassForField(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap | undefined,
-	ownerTypeName: string | undefined
-): BridgeFieldClass {
-	if (nodeMap === undefined) return undefined;
-	const namedKinds = kindsOf(field);
-	// Apply the same hasMixedContent check used in rustTransportSlotType: if a
-	// slot mixes named kinds with anonymous literals (e.g. function_modifiers.modifier),
-	// it is heterogeneous regardless of what classifySlotForEmit says.
-	const hasMixedContent = namedKinds.length > 0 && slotLiteralValues(field).length > 0;
-	const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(namedKinds, nodeMap);
-	if (cls.tag === 'concrete') return { kind: 'concrete', variant: rustTypeIdent(cls.typeName) };
-	if (cls.tag === 'supertype') {
-		return { kind: 'supertype', toAnyFn: `${rustSnakeIdent(cls.supertypeName)}_transport_to_any` };
-	}
-	// Heterogeneous: when the slot has at least one concrete child kind AND the
-	// owner is known, the field type is the per-slot enum
-	// `<TypeName><FieldName>TransportSlot` (spec 024 cleanup-§E1 flip — symmetry
-	// with unnamed `$children`). Bridge via the matching `_transport_slot_to_any`
-	// fn emitted alongside the enum. Empty-enum fallback (no concrete child kind)
-	// keeps the old `Box<AnyTransport>` shape — bc === undefined, deref via `*`.
-	if (ownerTypeName !== undefined && hasAnyConcreteChildKind(namedKinds, nodeMap)) {
-		const toAnyFn = `${rustSnakeIdent(ownerTypeName)}_${rustSnakeIdent(field.name)}_transport_slot_to_any`;
-		return { kind: 'transportSlot', toAnyFn };
-	}
-	return undefined; // heterogeneous + empty-enum fallback — already AnyTransport
-}
 
-/**
- * For the bridge path: build a Rust expression for a REQUIRED SINGLE field
- * that converts the typed transport value to `AnyTransport`.
- *
- * - heterogeneous (empty-enum fallback): `*access` (Box<AnyTransport> deref)
- * - concrete: `AnyTransport::Variant(access)`
- * - supertype: `<supertype>_transport_to_any(access)`
- * - per-slot enum: `<owner>_<field>_transport_slot_to_any(access)`
- *
- * @param field - the assembled field
- * @param access - Rust expression for the field (e.g. `transport.name`)
- * @param nodeMap - for classification; absent = assume heterogeneous
- * @param ownerTypeName - parent node typeName (for per-slot-enum bridge fn name)
- */
-function buildBridgeSingleRequired(
-	field: AssembledNonterminal,
-	access: string,
-	nodeMap: NodeMap | undefined,
-	ownerTypeName: string | undefined,
-	parentKind: string | undefined
-): string {
-	const bc = bridgeClassForField(field, nodeMap, ownerTypeName);
-	// Singular slot may have been Boxed by `rustTransportSlotType` to break a
-	// size cycle. Deref before passing to bridge fns / variant constructors.
-	const boxed = nodeMap !== undefined && parentKind !== undefined
-		&& slotCreatesBackEdge(field, parentKind, nodeMap);
-	const inner = boxed ? `*${access}` : access;
-	if (bc === undefined) return `*${access}`; // Box<AnyTransport> → deref to AnyTransport
-	if (bc.kind === 'concrete') return `AnyTransport::${bc.variant}(${inner})`;
-	// supertype + transportSlot both carry toAnyFn — same emission shape.
-	return `${bc.toAnyFn}(${inner})`;
-}
 
-/**
- * For the bridge path: build a Rust expression for a REQUIRED LIST field
- * that converts each element to `AnyTransport`.
- */
-function buildBridgeListRequired(
-	field: AssembledNonterminal,
-	access: string,
-	nodeMap: NodeMap | undefined,
-	ownerTypeName: string | undefined
-): string {
-	const bc = bridgeClassForField(field, nodeMap, ownerTypeName);
-	if (bc === undefined) return `${access}.into_iter().collect::<Vec<_>>()`;
-	if (bc.kind === 'concrete') {
-		return `${access}.into_iter().map(|v| AnyTransport::${bc.variant}(v)).collect::<Vec<_>>()`;
-	}
-	// supertype + transportSlot both carry toAnyFn — same emission shape.
-	return `${access}.into_iter().map(|v| ${bc.toAnyFn}(v)).collect::<Vec<_>>()`;
-}
 
-/**
- * For the bridge path: convert an OPTIONAL SINGLE field's already-unwrapped
- * value (after `if let Some(value) = access`) to `AnyTransport`.
- */
-function buildBridgeOptionalSingle(
-	field: AssembledNonterminal,
-	valueExpr: string,
-	nodeMap: NodeMap | undefined,
-	ownerTypeName: string | undefined,
-	parentKind: string | undefined
-): string {
-	const bc = bridgeClassForField(field, nodeMap, ownerTypeName);
-	// Optional singular slot may have been Boxed by `rustTransportSlotType`;
-	// when so, the unwrapped `value` is a `Box<T>` — deref to `T`.
-	const boxed = nodeMap !== undefined && parentKind !== undefined
-		&& slotCreatesBackEdge(field, parentKind, nodeMap);
-	const inner = boxed ? `*${valueExpr}` : valueExpr;
-	if (bc === undefined) return `*${valueExpr}`; // Box<AnyTransport> → deref to AnyTransport
-	if (bc.kind === 'concrete') return `AnyTransport::${bc.variant}(${inner})`;
-	// supertype + transportSlot both carry toAnyFn — same emission shape.
-	return `${bc.toAnyFn}(${inner})`;
-}
 
-/**
- * For the bridge path: convert an OPTIONAL LIST field's already-unwrapped
- * value (after `if let Some(value) = access`) to `Vec<AnyTransport>`.
- */
-function buildBridgeOptionalList(
-	field: AssembledNonterminal,
-	valueExpr: string,
-	nodeMap: NodeMap | undefined,
-	ownerTypeName: string | undefined
-): string {
-	const bc = bridgeClassForField(field, nodeMap, ownerTypeName);
-	if (bc === undefined) return `${valueExpr}.into_iter().collect::<Vec<_>>()`;
-	if (bc.kind === 'concrete') {
-		return `${valueExpr}.into_iter().map(|v| AnyTransport::${bc.variant}(v)).collect::<Vec<_>>()`;
-	}
-	// supertype + transportSlot both carry toAnyFn — same emission shape.
-	return `${valueExpr}.into_iter().map(|v| ${bc.toAnyFn}(v)).collect::<Vec<_>>()`;
-}
 
-function renderTransportChildrenBinding(
-	slotModel: RenderSlotModel,
-	nodeMap?: NodeMap,
-	/** PascalCase typeName of the owning struct — used for the per-slot
-	 *  enum bridge function name when a slot is heterogeneous. */
-	ownerTypeName?: string,
-	/** Owning struct's grammar kind — used for SCC back-edge detection so
-	 *  bridge expression builders can emit a `*` deref on Boxed singular
-	 *  slot fields. */
-	parentKind?: string
-): string[] {
-	if (slotModel.unnamed.length === 0) return ['    let children = None;'];
-	const lines: string[] = ['    let mut children_buf: Vec<AnyTransport> = Vec::new();'];
-	// Per cleanup-rules §E1: per-slot transport fields. Bridge each unnamed slot
-	// into a flat `Vec<AnyTransport>` so the legacy NodeData's `children` field
-	// receives the concatenation.
-	for (const slot of slotModel.unnamed) {
-		const slotIdent = rustFieldIdent(slot.storageName);
-		const access = `transport.${slotIdent}`;
-		if (isMultiple(slot)) {
-			if (isRequired(slot)) {
-				const bridged = buildBridgeListRequired(slot, access, nodeMap, ownerTypeName);
-				lines.push(`    children_buf.extend(${bridged});`);
-			} else {
-				lines.push(`    if let Some(value) = ${access} {`);
-				const bridged = buildBridgeOptionalList(slot, 'value', nodeMap, ownerTypeName);
-				lines.push(`        children_buf.extend(${bridged});`);
-				lines.push('    }');
-			}
-		} else if (isRequired(slot)) {
-			const bridged = buildBridgeSingleRequired(slot, access, nodeMap, ownerTypeName, parentKind);
-			lines.push(`    children_buf.push(${bridged});`);
-		} else {
-			lines.push(`    if let Some(value) = ${access} {`);
-			const bridged = buildBridgeOptionalSingle(slot, 'value', nodeMap, ownerTypeName, parentKind);
-			lines.push(`        children_buf.push(${bridged});`);
-			lines.push('    }');
-		}
-	}
-	lines.push('    let children = if children_buf.is_empty() {');
-	lines.push('        None');
-	lines.push('    } else {');
-	lines.push('        Some(transport_children(children_buf)?)');
-	lines.push('    };');
-	return lines;
-}
 
-/**
- * Sanitize a kind string for use inside a Rust block comment.
- *
- * Rust block comments do not support nesting or escape sequences, so the
- * sequence star-slash inside a comment closes it prematurely. For example,
- * the kind "star-slash" would produce a broken block comment where the
- * inner star-slash ends the comment early, leaving a dangling double-quote
- * that Rust parses as an unterminated string literal.
- *
- * Replacement: star-slash -> "* /" (insert a space between star and slash).
- *
- * @param kind - Raw grammar kind string, possibly containing star-slash.
- * @returns A version of the kind string safe for use inside Rust block comments.
- */
-function rustBlockCommentSafe(kind: string): string {
-	// Two sequences are unsafe inside Rust block comments:
-	//   */  closes the comment prematurely
-	//   /*  opens a nested comment (Rust supports nesting), so the
-	//       enclosing */ then closes the nested comment, not the outer one,
-	//       leaving the outer comment unterminated.
-	// Replace both with a space-separated form to keep comments readable.
-	// Use split/join to avoid regex literals that some bundlers misparse.
-	return kind.split('*/').join('* /').split('/*').join('/ *');
-}
 
-/**
- * Emit a `TransportKindId(n)` expression for `kind`, falling back to
- * `TransportKindId(0)` with a comment when the kind has no parser symbol.
- *
- * @param kind - Grammar kind string (e.g. `"function_item"`).
- * @param kindIdByKind - Map from kind string to numeric parser symbol id.
- *   When absent (no parser.c available), always produces the fallback.
- * @returns A Rust expression, e.g. TransportKindId(188) with a kind comment.
- */
-function kindIdExpr(kind: string, kindIdByKind?: ReadonlyMap<string, number>): string {
-	const id = kindIdByKind?.get(kind);
-	const safeKind = JSON.stringify(rustBlockCommentSafe(kind));
-	if (id !== undefined) {
-		return `TransportKindId(${id}) /* ${safeKind} */`;
-	}
-	return `TransportKindId(0) /* ${safeKind} — no parser symbol */`;
-}
 
-function renderTerminalTransportToNodeFn(node: AssembledNode, kindIdByKind?: ReadonlyMap<string, number>): string[] {
-	const kindArg = kindIdExpr(node.kind, kindIdByKind);
-	const typeName = rustTransportStructName(node);
-
-	if (node instanceof AssembledEnum) {
-		// Multi-member enum: the transport type IS the Rust enum (no wrapper struct).
-		// Metadata fields (source, named, span, node_handle, child_index) are not available on the
-		// enum — all default to None. The text is derived from the enum's Display impl.
-		return [
-			`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
-			'    Ok(transport_node_data(',
-			`        ${kindArg},`,
-			'        None,',
-			'        None,',
-			'        true,',
-			'        Some(transport.to_string()),',
-			'        None,',
-			'        None,',
-			'        None,',
-			'        None,',
-			'        None,',
-			'        None,',
-			'    ))',
-			'}',
-			''
-		];
-	}
-
-	return [
-		`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
-		'    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());',
-		'    Ok(transport_node_data(',
-		`        ${kindArg},`,
-		'        transport.transport_source,',
-		'        transport.transport_named,',
-		'        true,',
-		'        Some(transport.text),',
-		'        transport.transport_span,',
-		'        transport.transport_node_handle.map(|v| v as u32),',
-		'        transport.transport_child_index.map(|v| v as u16),',
-		'        None,',
-		'        None,',
-		'        trivia_data,',
-		'    ))',
-		'}',
-		''
-	];
-}
 
 /**
  * Previously emitted a `pub struct LiteralTransport { text: String, ... }` napi
@@ -3565,7 +3152,7 @@ function renderTerminalTransportToNodeFn(node: AssembledNode, kindIdByKind?: Rea
  * no longer needed and this function returns an empty array.
  *
  * The static text for each literal is embedded directly in the
- * `render_transport_dispatch` match arms and the `transport_to_node` arms.
+ * `render_transport_dispatch` match arms.
  */
 function renderLiteralTransportStruct(_literals: readonly TransportLiteral[]): string[] {
 	return [];
@@ -4021,7 +3608,7 @@ const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 	{ jsName: '$named', rustName: 'transport_named', rustType: 'Option<bool>' },
 	{ jsName: '$span', rustName: 'transport_span', rustType: 'Option<Span>' },
 	// ADR-0017: $nodeHandle (u32) + $childIndex (u16) replace $nodeId.
-	// napi-rs 3 passes these as f64 from JS; convert in the NodeData bridge.
+	// napi-rs 3 passes these as f64 from JS; converted at the transport boundary.
 	{
 		jsName: '$nodeHandle',
 		rustName: 'transport_node_handle',
@@ -4384,9 +3971,6 @@ function rustTransportVariantName(node: AssembledNode): string {
 	return rustTypeIdent(node.typeName);
 }
 
-function rustTransportToNodeFnName(typeName: string): string {
-	return `transport_to_node_${rustSnakeIdent(typeName)}`;
-}
 
 function rustSnakeIdent(name: string): string {
 	const snake = name

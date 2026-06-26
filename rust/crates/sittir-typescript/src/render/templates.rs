@@ -18,7 +18,7 @@ use ::sittir_core::filters::{
     OptionalNonterminalView,
 };
 use ::sittir_core::types::{
-    NodeData, FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,
+    FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,
 };
 
 #[cfg(feature = "napi-bindings")]

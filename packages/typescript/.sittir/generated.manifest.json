@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "09fbaf6300ae2f3a37c3f657b3f34061d98679592e8b9de2601d39fa5d36e4f1",
+  "source_hash": "211cc6dfca04c70fb942f38f4865e33f0b0473f9a37d2c704a36b05a05777321",
   "files": {
     "packages/typescript/.sittir/grammar.js": "e708a215ad51a330590fff4e69323d0ff6c6dcf91413b64584b21cbe890ff948",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
@@ -242,9 +242,9 @@
     "rust/crates/sittir-typescript/src/lib.rs": "19abd65c12432ee07e4550f98c06d9dd7b3d1135bf6c5322db27ff612e8b01fd",
     "rust/crates/sittir-typescript/src/render/hash.rs": "4995ff53186fb6d6bb13f4e3d81a96915bdcf94509ce696a095832ae20827a74",
     "rust/crates/sittir-typescript/src/render/kind_ids.rs": "898e3595f0718c651f714dd7ebf15c2a5100099080a82fcecde547c43dbfe59c",
-    "rust/crates/sittir-typescript/src/render/mod.rs": "77bd8eedb01d29819f96a30003cbcd9cfb8d10e2c4625104356f81e39dc7fdf0",
-    "rust/crates/sittir-typescript/src/render/templates.rs": "96c088824251c15258501fa961318dfc6b43228c4a00b9d6c4bdc13689b8a1d2",
-    "rust/crates/sittir-typescript/src/render/transport.rs": "325a682b4160c7393a5a679ce652804259f6e25985691df17602e5fbc0e9ecd4",
+    "rust/crates/sittir-typescript/src/render/mod.rs": "ee577d3e10ea18183185dec43032fdc42346bcd3346bfd97a4bdc7334373dc40",
+    "rust/crates/sittir-typescript/src/render/templates.rs": "f9b2b7f086d1fd403427983cab2bcbb1e762c2bee783a6704e57778e1a76ce59",
+    "rust/crates/sittir-typescript/src/render/transport.rs": "b4f10ef34c7f3567dddfb5da4316f7bb73bf3dcbbdccd0cc7b6bd63548f682c9",
     "rust/crates/sittir-typescript/templates/_ambient_declaration_global.jinja": "469f533be2215a103d19203c2b0cb9f65ea495f75f996cbe9b4bfbf3e6ac7c9c",
     "rust/crates/sittir-typescript/templates/_ambient_declaration_module.jinja": "bc36a2ba90f44c4065426a7ee51b2c93bfdd0f9a3f29c30758583ccececd4b9e",
     "rust/crates/sittir-typescript/templates/_arrow_function_parameter.jinja": "eb5fbafdd09a47b6780ecf201b7bdec595cfd14546980e71a194a6b317039322",
