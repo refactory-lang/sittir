@@ -27,7 +27,8 @@ import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.
 import { loadGeneratedIdTables, collectGeneratedKindEntries } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
-import { DiagnosticSink, EmitHaltedError } from '../types/diagnostics.ts';
+import { DiagnosticSink } from '../types/diagnostics.ts';
+import { assertEmittable } from './emit-gate.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 import type { NormalizeCtx } from '../dsl/rule-transforms.ts';
 import type { AssembleCtx } from './assemble.ts';
@@ -407,23 +408,4 @@ function collectEvaluateSynthesizedKinds(raw: RawGrammar): ReadonlySet<string> {
 		if (entry?.provenance === 'evaluate-synthesized') result.add(kind);
 	}
 	return result;
-}
-/**
- * The single Assemble→Project boundary check (spec §4b/§7.5). Folded in from
- * the former compiler/emit-gate.ts (R7).
- *
- * Throws EmitHaltedError if the sink contains any 'fail'-severity
- * diagnostics. Inert until PR-L: no producer currently emits 'fail'.
- *
- * Keys on severity === 'fail', NOT on canProceed: diagnose-derive-shapes.ts
- * already emits canProceed:false diagnostics, so keying on canProceed would halt
- * emission the moment PR-H routes real diagnostics into the sink. The
- * (currently unused) 'fail' severity is what keeps the gate inert until PR-L.
- * The _nodeMap param is accepted for forward-compat (PR-L's 'unslotted-child'
- * check reads it) but is intentionally unused here.
- */
-export function assertEmittable(_nodeMap: NodeMap, diagnostics: DiagnosticSink): void {
-    if (diagnostics.hasBlocking()) {
-        throw new EmitHaltedError(diagnostics.all().filter((d) => d.severity === 'fail'));
-    }
 }

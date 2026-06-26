@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { NodeMap } from './types.ts';
 import { DiagnosticSink, EmitHaltedError } from '../types/diagnostics.ts';
-import { assertEmittable } from './generate.ts';
+import { assertEmittable } from './emit-gate.ts';
 
 // Minimal stub — PR-G's assertEmittable does not read nodeMap.
 // PR-L will exercise the nodeMap-reading 'unslotted-child' path.

@@ -86,16 +86,6 @@ function sameSlotShape(a: Rule, b: Rule): boolean {
             return false;
     }
 }
-/** Extract a separator string from a `separator` leaf attribute (string or object form). */
-function separatorString(sep: Rule['separator']): string | undefined {
-    if (typeof sep === 'string') return sep;
-    if (sep && typeof sep === 'object' && !Array.isArray(sep)) {
-        const rules = (sep as { rules?: readonly Rule[]; }).rules;
-        const first = rules?.[0];
-        if (first && first.type === STRING) return first.value;
-    }
-    return undefined;
-}
 /**
  * If `head` + `next` form a head+repeat list pair, return the fused multi
  * element; otherwise `null`.
