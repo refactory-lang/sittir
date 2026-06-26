@@ -20,98 +20,10 @@
 
 import { existsSync } from 'node:fs';
 
-// ---------------------------------------------------------------------------
-// Minimal local types — mirrors the codegen compiler interfaces we need.
-// Using local definitions avoids cross-project static imports (TS6307).
-// The actual values are loaded via dynamic import at runtime.
-// ---------------------------------------------------------------------------
-
-interface SymbolRef {
-	refType: 'symbol' | 'alias' | 'token';
-	from: string;
-	to: string;
-	fieldName?: string;
-	optional?: boolean;
-	repeated?: boolean;
-}
-
-interface RawGrammar {
-	references: SymbolRef[];
-}
-
-interface InferredFieldEntry {
-	kind: string;
-	fieldName: string;
-	targetSymbol: string;
-	confidence: 'high' | 'medium' | 'low';
-	agreement: number;
-	sampleSize: number;
-	applied: boolean;
-}
-
-interface PromotedRuleEntry {
-	kind: string;
-	classification: 'enum' | 'supertype' | 'terminal' | 'polymorph';
-	applied: boolean;
-}
-
-interface RepeatedShapeEntry {
-	suggestedName: string;
-	kinds: readonly string[];
-	parents: readonly string[];
-	shape: 'supertype' | 'group';
-}
-
-interface DerivationLog {
-	inferredFields: InferredFieldEntry[];
-	promotedRules: PromotedRuleEntry[];
-	repeatedShapes: RepeatedShapeEntry[];
-}
-
-interface LinkedGrammar {
-	derivations: DerivationLog;
-}
-
-// ---------------------------------------------------------------------------
-// Dynamic codegen module loader — avoids TS6307 (cross-project .ts imports)
-//
-// TypeScript resolves literal-string import() calls statically and follows
-// transitive imports, causing TS6307 cascade. Widening the path to `string`
-// (via explicit annotation) makes import(path: string) → Promise<any>,
-// keeping the cross-boundary load transparent to the type-checker.
-// ---------------------------------------------------------------------------
-
-/** Codegen module specifiers — explicit `string` annotation prevents literal inference. */
-const CODEGEN_PATHS: Record<string, string> = {
-	evaluate: '../../../codegen/src/compiler/evaluate.ts',
-	link: '../../../codegen/src/compiler/link.ts',
-	resolve: '../../../codegen/src/compiler/resolve-grammar.ts',
-};
-
-async function loadCodegenModules(): Promise<{
-	evaluate: (entryPath: string) => Promise<RawGrammar>;
-	link: (raw: RawGrammar) => LinkedGrammar;
-	resolveGrammarJsPath: (grammar: string) => string;
-	resolveOverridesPath: (grammar: string) => string;
-}> {
-	// Dynamic imports with Record-typed strings: TypeScript sees import(string)
-	// → Promise<any> at compile time. The typed annotations are the contract.
-	const evalMod: { evaluate: (p: string) => Promise<RawGrammar> } =
-		await import(CODEGEN_PATHS['evaluate']!);
-	const linkMod: { link: (raw: RawGrammar) => LinkedGrammar } =
-		await import(CODEGEN_PATHS['link']!);
-	const resolveMod: {
-		resolveGrammarJsPath: (g: string) => string;
-		resolveOverridesPath: (g: string) => string;
-	} = await import(CODEGEN_PATHS['resolve']!);
-
-	return {
-		evaluate: evalMod.evaluate,
-		link: linkMod.link,
-		resolveGrammarJsPath: resolveMod.resolveGrammarJsPath,
-		resolveOverridesPath: resolveMod.resolveOverridesPath,
-	};
-}
+// Codegen phases/loaders + their real types come from the shared
+// codegen-surface (typed invoke + import()-type aliases); no local stub
+// types or dynamic-import loader are needed here.
+import { invoke } from '../codegen-surface.ts';
 
 // ---------------------------------------------------------------------------
 // Options
@@ -143,15 +55,14 @@ function resolveEntryPath(
 // ---------------------------------------------------------------------------
 
 async function runRefs(args: InspectRefsOptions): Promise<number> {
-	const { evaluate, resolveGrammarJsPath, resolveOverridesPath } = await loadCodegenModules();
 	const entryPath = resolveEntryPath(
-		resolveOverridesPath(args.grammar),
-		resolveGrammarJsPath(args.grammar),
+		await invoke('resolveGrammar', 'resolveOverridesPath', args.grammar),
+		await invoke('resolveGrammar', 'resolveGrammarJsPath', args.grammar),
 		args.useBase,
 	);
 	process.stdout.write(`entry: ${entryPath}\n`);
 
-	const raw = await evaluate(entryPath);
+	const raw = await invoke('evaluate', 'evaluate', entryPath);
 	const refs = raw.references.filter((r) => r.to === args.symbol);
 
 	process.stdout.write(`\n${refs.length} references to ${args.symbol}:\n`);
@@ -187,16 +98,14 @@ async function runRefs(args: InspectRefsOptions): Promise<number> {
 // ---------------------------------------------------------------------------
 
 async function runSuggestions(args: InspectRefsOptions): Promise<number> {
-	const { evaluate, link, resolveGrammarJsPath, resolveOverridesPath } =
-		await loadCodegenModules();
 	const entryPath = resolveEntryPath(
-		resolveOverridesPath(args.grammar),
-		resolveGrammarJsPath(args.grammar),
+		await invoke('resolveGrammar', 'resolveOverridesPath', args.grammar),
+		await invoke('resolveGrammar', 'resolveGrammarJsPath', args.grammar),
 		args.useBase,
 	);
 	process.stdout.write(`entry: ${entryPath}\n`);
 
-	const raw = await evaluate(entryPath);
+	const raw = await invoke('evaluate', 'evaluate', entryPath);
 	process.stdout.write(`raw.references: ${raw.references.length}\n`);
 
 	const namedRefs = raw.references.filter((r) => r.fieldName !== undefined);
@@ -205,7 +114,7 @@ async function runSuggestions(args: InspectRefsOptions): Promise<number> {
 	process.stdout.write('  first 5:\n');
 	for (const r of samples) process.stdout.write(`    ${JSON.stringify(r)}\n`);
 
-	const linked = link(raw);
+	const linked = await invoke('link', 'link', raw);
 	const { derivations } = linked;
 	const { inferredFields, promotedRules, repeatedShapes } = derivations;
 

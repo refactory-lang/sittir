@@ -39,6 +39,7 @@ const MODULES = {
 	normalize: '../../codegen/src/compiler/normalize.ts',
 	assemble: '../../codegen/src/compiler/assemble.ts',
 	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
+	grammarDiagnostics: '../../codegen/src/compiler/grammar-diagnostics.ts',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -51,6 +52,7 @@ export interface CodegenSurface {
 	normalize: typeof import('../../codegen/src/compiler/normalize.ts');
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
 	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
+	grammarDiagnostics: typeof import('../../codegen/src/compiler/grammar-diagnostics.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -90,6 +92,7 @@ export type RawGrammar = Awaited<ReturnType<CodegenSurface['evaluate']['evaluate
 export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type OptimizedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;
 export type AssembledNodeMap = ReturnType<CodegenSurface['assemble']['assemble']>;
+export type GrammarDiagnostic = import('../../codegen/src/compiler/grammar-diagnostics.ts').GrammarDiagnostic;
 
 // ---------------------------------------------------------------------------
 // Convenience: the canonical evaluate → link → normalize → assemble walk.
@@ -97,7 +100,7 @@ export type AssembledNodeMap = ReturnType<CodegenSurface['assemble']['assemble']
 // ---------------------------------------------------------------------------
 
 /** Resolve a grammar's entry path, preferring `overrides.ts` over `grammar.js`. */
-async function resolveEntryPath(grammar: string): Promise<string> {
+export async function resolveEntryPath(grammar: string): Promise<string> {
 	const overrides = await invoke('resolveGrammar', 'resolveOverridesPath', grammar);
 	const grammarJs = await invoke('resolveGrammar', 'resolveGrammarJsPath', grammar);
 	return existsSync(overrides) ? overrides : grammarJs;
