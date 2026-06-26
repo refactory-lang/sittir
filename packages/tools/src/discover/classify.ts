@@ -22,13 +22,8 @@
  *   --all        show ALL assembled kinds (can be large)
  */
 
-import {
-	loadCodegen,
-	buildNodeMap,
-	type CodegenModules,
-	type NodeMap,
-	type AssembledNode,
-} from './pipeline.ts';
+import { buildNodeMap } from '../codegen-surface.ts';
+import type { AssembledNodeMap as NodeMap, AssembledNode } from '../codegen-surface.ts';
 
 // ---------------------------------------------------------------------------
 // Default "interesting" kinds per grammar (from the original scratch script)
@@ -59,10 +54,12 @@ export interface ClassifyOptions {
 function printNode(kind: string, node: AssembledNode): void {
 // `rule` is present on structural nodes (branch, group, polymorph, multi);
 // token/keyword/pattern/enum nodes carry rule-adjacent data differently.
+// `node.rule` is now the real `Rule` type (via codegen-surface), so `.type`
+// is directly accessible — no cast needed.
 const ruleObj = node['rule'];
 const ruleType =
 ruleObj !== undefined && typeof ruleObj === 'object' && ruleObj !== null
-? (ruleObj as Record<string, unknown>)['type'] ?? '-'
+? ruleObj.type ?? '-'
 : '-';
 
 process.stdout.write(`  ${kind}: modelType=${node.modelType} rule.type=${ruleType}\n`);
@@ -85,17 +82,9 @@ process.stdout.write(`    rule:\n${indented}\n`);
 export async function run(opts: ClassifyOptions): Promise<number> {
 	const { grammar, kinds, modelTypeFilter, showAll } = opts;
 
-	let mods: CodegenModules;
-	try {
-		mods = await loadCodegen();
-	} catch (e) {
-		process.stderr.write(`classify: failed to load codegen -- ${(e as Error).message}\n`);
-		return 1;
-	}
-
 	let nm: NodeMap;
 	try {
-		nm = await buildNodeMap(grammar, mods);
+		nm = await buildNodeMap(grammar);
 	} catch (e) {
 		process.stderr.write(`${grammar}: ERROR building nodeMap -- ${(e as Error).message}\n`);
 		return 1;

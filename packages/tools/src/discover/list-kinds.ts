@@ -19,8 +19,8 @@
  * When no mode flag is given, --groups is assumed.
  */
 
-import { buildNodeMap, loadCodegen } from './pipeline.ts';
-import type { CodegenModules, NodeMap } from './pipeline.ts';
+import { buildNodeMap } from '../codegen-surface.ts';
+import type { AssembledNodeMap as NodeMap } from '../codegen-surface.ts';
 
 // ---------------------------------------------------------------------------
 // Options interface
@@ -99,15 +99,8 @@ export async function run(opts: ListKindsOptions): Promise<number> {
 
 	if (showGroups || showUnaliased) {
 		process.stdout.write(`\n=== ${grammar} ===\n`);
-		let mods: CodegenModules;
 		try {
-			mods = await loadCodegen();
-		} catch (e) {
-			process.stderr.write(`list-kinds: failed to load codegen -- ${(e as Error).message}\n`);
-			return 1;
-		}
-		try {
-			nm = await buildNodeMap(grammar, mods);
+			nm = await buildNodeMap(grammar);
 		} catch (e) {
 			process.stderr.write(`${grammar}: ERROR building nodeMap -- ${(e as Error).message}\n`);
 			return 1;
