@@ -6,9 +6,11 @@ import type * as TS from 'web-tree-sitter';
  * two common locations and throw if neither carries `Parser` + `Language`.
  *
  * This is codegen-run infrastructure: it is consumed by `compiler/generated-metadata`
- * and `transpile/compile-parser` (and, internally, by the corpus validator in
- * `validate/common.ts`). It is kept separate from the validator logic so that the
- * codegen run does not depend on the (relocatable) validator surface — see R9.
+ * (and, internally, by the corpus validator in `validate/common.ts`). It lives at
+ * the top level of `src/` — NOT under `validate/` — for two reasons (R9): the
+ * validator surface is relocatable to `packages/tools`, and `codegenSourceHash()`
+ * excludes `/src/validate/` from the manifest source hash, so a loader placed there
+ * would let edits slip past staleness verification.
  */
 export async function loadWebTreeSitter(): Promise<{
 	Parser: typeof TS.Parser;

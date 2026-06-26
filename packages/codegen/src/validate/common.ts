@@ -20,7 +20,7 @@ import { createRequire } from 'node:module';
 import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/common';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
-import { loadWebTreeSitter } from './engine-loader.ts';
+import { loadWebTreeSitter } from '../engine-loader.ts';
 
 import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';

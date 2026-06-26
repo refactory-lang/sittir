@@ -1,7 +1,6 @@
 import { existsSync, statSync, mkdirSync, copyFileSync, readFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { loadWebTreeSitter } from '../validate/engine-loader.ts';
 
 export interface CompileOptions {
 	force?: boolean;
