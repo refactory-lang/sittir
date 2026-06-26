@@ -20,6 +20,7 @@ import { createRequire } from 'node:module';
 import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/common';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
+import { loadWebTreeSitter } from './engine-loader.ts';
 
 import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
@@ -142,24 +143,10 @@ export function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	return entries;
 }
 
-/**
- * Dynamic import of web-tree-sitter. The package ships CommonJS with
- * ambiguous default-export shape depending on bundler, so we try the
- * two common locations and throw if neither carries `Parser` + `Language`.
- */
-export async function loadWebTreeSitter(): Promise<{
-	Parser: typeof TS.Parser;
-	Language: typeof TS.Language;
-}> {
-	const mod = await import('web-tree-sitter');
-	const Parser = mod.Parser ?? (mod.default && 'Parser' in mod.default ? mod.default.Parser : undefined);
-	const Language = mod.Language ?? (mod.default && 'Language' in mod.default ? mod.default.Language : undefined);
-	if (!Parser || !Language) {
-		throw new Error('web-tree-sitter: could not locate `Parser` or `Language` export');
-	}
-	await Parser.init();
-	return { Parser, Language };
-}
+// `loadWebTreeSitter` moved to ./engine-loader.ts (R9: codegen-run infrastructure
+// kept out of the relocatable validator surface). Imported for the internal
+// caller below and re-exported so this module's public surface is unchanged.
+export { loadWebTreeSitter };
 
 export function adaptNode(node: TS.Node): AnyTreeNode {
 	return {
