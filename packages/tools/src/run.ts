@@ -12,36 +12,36 @@ import { fileURLToPath } from 'node:url';
 import {
 	validateFrom,
 	formatFromReport,
-} from '../../codegen/src/validate/from.ts';
+} from './validate/from.ts';
 import {
 	validateFactoryRenderParse,
 	formatFactoryRenderParseReport,
-} from '../../codegen/src/validate/factory-render-parse.ts';
+} from './validate/factory-render-parse.ts';
 import {
 	validateReadRenderParse,
 	formatReadRenderParseReport,
-} from '../../codegen/src/validate/read-render-parse.ts';
-import type { ValidateReadRenderParseOptions } from '../../codegen/src/validate/read-render-parse.ts';
-import { validateTemplateCoverage } from '../../codegen/src/validate/template-coverage.ts';
+} from './validate/read-render-parse.ts';
+import type { ValidateReadRenderParseOptions } from './validate/read-render-parse.ts';
+import { validateTemplateCoverage } from './validate/template-coverage.ts';
 
 export type Grammar = 'rust' | 'typescript' | 'python';
 export type Backend = 'native' | 'js';
 
-// Re-export result types so callers only need @sittir/validator.
-export type { FromValidationResult, FromValidationError } from '../../codegen/src/validate/from.ts';
-export type { FactoryRenderParseResult } from '../../codegen/src/validate/factory-render-parse.ts';
-export type { ReadRenderParseResult, ValidateReadRenderParseOptions } from '../../codegen/src/validate/read-render-parse.ts';
+// Re-export result types so callers only need @sittir/tools.
+export type { FromValidationResult, FromValidationError } from './validate/from.ts';
+export type { FactoryRenderParseResult } from './validate/factory-render-parse.ts';
+export type { ReadRenderParseResult, ValidateReadRenderParseOptions } from './validate/read-render-parse.ts';
 export type {
 	TemplateCoverageResult,
 	CoverageIssue,
-} from '../../codegen/src/validate/template-coverage.ts';
+} from './validate/template-coverage.ts';
 
 // Re-export formatting helpers.
 export { formatFromReport, formatFactoryRenderParseReport, formatReadRenderParseReport };
 
 /** Resolve the on-disk templates directory for a grammar, relative to this package's location. */
 export function defaultTemplatesPath(grammar: Grammar): string {
-	// packages/validator/src/ → ../../ → packages/
+	// packages/tools/src/ → ../../ → packages/
 	const packagesDir = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 	return resolve(packagesDir, grammar, 'templates');
 }

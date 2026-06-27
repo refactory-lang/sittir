@@ -10,7 +10,7 @@
  */
 
 import type { AnyNodeData } from '@sittir/types';
-import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
+import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,

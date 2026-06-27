@@ -115,11 +115,11 @@ jobs:
       - name: Collect head ts.json
         run: |
           mkdir -p /tmp/016-head
-          SITTIR_BACKEND=typescript npx tsx packages/codegen/src/scripts/collect-baseline.ts \
+          SITTIR_BACKEND=typescript npx tsx packages/tools/src/scripts/collect-baseline.ts \
             > /tmp/016-head/ts.json
       - name: Diff ts.json against base (verdict rules)
         run: |
-          npx tsx packages/codegen/src/scripts/check-baseline-regression.ts \
+          npx tsx packages/tools/src/scripts/check-baseline-regression.ts \
             --base /tmp/016-base/ts.json \
             --head /tmp/016-head/ts.json
 
@@ -193,11 +193,11 @@ jobs:
       - name: Collect head native.json
         run: |
           mkdir -p /tmp/016-head
-          SITTIR_BACKEND=native npx tsx packages/codegen/src/scripts/collect-baseline.ts \
+          SITTIR_BACKEND=native npx tsx packages/tools/src/scripts/collect-baseline.ts \
             > /tmp/016-head/native.json
       - name: Diff native.json against base (verdict rules)
         run: |
-          npx tsx packages/codegen/src/scripts/check-baseline-regression.ts \
+          npx tsx packages/tools/src/scripts/check-baseline-regression.ts \
             --base /tmp/016-base/native.json \
             --head /tmp/016-head/native.json
 
@@ -250,7 +250,7 @@ jobs:
       - name: Collect fresh metrics (native backend)
         run: |
           SITTIR_BACKEND=native SITTIR_METRICS=1 \
-            npx tsx packages/codegen/src/scripts/collect-baseline.ts > /dev/null
+            npx tsx packages/tools/src/scripts/collect-baseline.ts > /dev/null
       - name: Check perf baseline (warn-only window)
         run: pnpm exec tsx packages/cli/src/cli.ts tool check-perf
       - name: Upload metrics artifact for inspection

@@ -7,7 +7,7 @@ target: string;
 }
 
 export async function run(opts: ProbeParityOptions): Promise<number> {
-const { validateReadRenderParse } = await import('../../../codegen/src/validate/read-render-parse.ts');
+const { validateReadRenderParse } = await import('../validate/read-render-parse.ts');
 const packagesDir = fileURLToPath(new URL('../../../', import.meta.url));
 const templatesPath = resolve(packagesDir, opts.grammar, 'templates');
 

@@ -9,10 +9,10 @@ which: string;
 }
 
 export async function run(opts: DiffFailuresOptions): Promise<number> {
-const { validateFactoryRenderParse } = await import('../../../codegen/src/validate/factory-render-parse.ts');
-const { validateFrom } = await import('../../../codegen/src/validate/from.ts');
-const { validateReadRenderParse } = await import('../../../codegen/src/validate/read-render-parse.ts');
-const { validateTemplateCoverage } = await import('../../../codegen/src/validate/template-coverage.ts');
+const { validateFactoryRenderParse } = await import('./factory-render-parse.ts');
+const { validateFrom } = await import('./from.ts');
+const { validateReadRenderParse } = await import('./read-render-parse.ts');
+const { validateTemplateCoverage } = await import('./template-coverage.ts');
 
 const which = (VALID_WHICH.includes(opts.which as Which) ? opts.which : 'all') as Which;
 const tp = resolve(new URL('../../../..', import.meta.url).pathname, `packages/${opts.grammar}/templates`);

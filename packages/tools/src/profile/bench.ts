@@ -22,7 +22,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 
 import type { AnyNodeData } from '@sittir/types';
-import type { TSTree } from '../../../codegen/src/validate/common.ts';
+import type { TSTree } from '../validate/common.ts';
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 type Grammar = (typeof GRAMMARS)[number];
@@ -45,11 +45,11 @@ process.env.NODE_ENV ??= 'production';
 type BenchmarkRuntime = {
 readNode: typeof import('@sittir/common').readNode;
 createRenderer: typeof import('@sittir/core').createRenderer;
-loadCorpusEntries: typeof import('../../../codegen/src/validate/common.ts').loadCorpusEntries;
-loadLanguageForGrammar: typeof import('../../../codegen/src/validate/common.ts').loadLanguageForGrammar;
-loadKindNames: typeof import('../../../codegen/src/validate/common.ts').loadKindNames;
-loadKindIdFromName: typeof import('../../../codegen/src/validate/common.ts').loadKindIdFromName;
-treeHandle: typeof import('../../../codegen/src/validate/common.ts').treeHandle;
+loadCorpusEntries: typeof import('../validate/common.ts').loadCorpusEntries;
+loadLanguageForGrammar: typeof import('../validate/common.ts').loadLanguageForGrammar;
+loadKindNames: typeof import('../validate/common.ts').loadKindNames;
+loadKindIdFromName: typeof import('../validate/common.ts').loadKindIdFromName;
+treeHandle: typeof import('../validate/common.ts').treeHandle;
 };
 
 let benchmarkRuntimePromise: Promise<BenchmarkRuntime> | undefined;
@@ -59,7 +59,7 @@ ensureBenchmarkNodeEnv();
 benchmarkRuntimePromise ??= Promise.all([
 import('@sittir/common'),
 import('@sittir/core'),
-import('../../../codegen/src/validate/common.ts')
+import('../validate/common.ts')
 ]).then(([common, core, validate]) => ({
 readNode: common.readNode,
 createRenderer: core.createRenderer,

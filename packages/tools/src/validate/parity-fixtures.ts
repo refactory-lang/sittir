@@ -27,8 +27,10 @@ import {
 	type ParityFixture,
 	type RenderFixture,
 	type RoundTripFixture
-} from '../validate/read-render-parse.ts';
-import { renderModuleFixturesPath } from './render-module-paths.ts';
+} from './read-render-parse.ts';
+import { load } from '../codegen-surface.ts';
+
+const { renderModuleFixturesPath } = await load('renderModulePaths');
 
 /** FR-011 exception kinds — at least one fixture of each must appear
  *  in the extracted corpus for its matching grammar. See spec 012

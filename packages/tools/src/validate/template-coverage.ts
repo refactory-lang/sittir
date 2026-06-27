@@ -29,8 +29,10 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadRawEntries } from './node-types-loader.ts';
-import type { RawNodeEntry } from './node-types-loader.ts';
+import { load } from '../codegen-surface.ts';
+import type { RawNodeEntry } from '../codegen-surface.ts';
+
+const { loadRawEntries } = await load('nodeTypesLoader');
 import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-path.ts';
 
 /**

@@ -1,6 +1,6 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withBackend, withRecursive } from '../../framework/options.ts';
-import { runTraceRtCli, resolveBackends } from '@sittir/validator';
+import { runTraceRtCli, resolveBackends } from '@sittir/tools';
 
 export const traceRt: CommandModule = {
 	name: 'trace-rt',

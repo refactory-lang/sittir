@@ -105,7 +105,7 @@ interface DiffRun {
 
 async function runSingle(grammar: Grammar, mode: Exclude<Mode, 'diff'>): Promise<SingleRun> {
 	const { validateReadRenderParse } = await import(
-		'../../../codegen/src/validate/read-render-parse.ts'
+		'./read-render-parse.ts'
 	);
 	const result = await validateReadRenderParse(grammar, defaultTemplatesPath(grammar), {
 		backend: 'native',

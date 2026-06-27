@@ -1,12 +1,12 @@
-import { FIELD, PATTERN, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { FIELD, PATTERN, SEQ, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import type { TreeHandle } from '@sittir/common';
-import { AssembledBranch, AssembledNonterminal, AssembledPattern, type AssembledNode } from '../compiler/model/node-map.ts';
-import type { SeqRule } from '../types/rule.ts';
-import { emitWrap } from '../emitters/wrap.ts';
-import { verifyManifestForGrammar } from '../scripts/generated-manifest.ts';
+import { AssembledBranch, AssembledNonterminal, AssembledPattern, type AssembledNode } from '../../../codegen/src/compiler/model/node-map.ts';
+import type { SeqRule } from '../../../codegen/src/types/rule.ts';
+import { emitWrap } from '../../../codegen/src/emitters/wrap.ts';
+import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated-manifest.ts';
 import {
 	buildReadHandle,
 	loadWebTreeSitter,
@@ -14,7 +14,7 @@ import {
 	walkWrappedTree,
 	type WrappedNodeData
 } from '../validate/common.ts';
-import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
+import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
 
 function leaf(handle: number, text: string): WrappedNodeData {
 	return {

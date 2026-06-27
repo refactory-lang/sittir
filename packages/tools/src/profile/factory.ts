@@ -53,7 +53,7 @@ interface FactoryRenderParseResult {
 // ---------------------------------------------------------------------------
 
 const VALIDATOR_PATHS: Record<string, string> = {
-	run: '@sittir/validator',
+	run: '../run.ts',
 };
 
 interface ValidatorModules {

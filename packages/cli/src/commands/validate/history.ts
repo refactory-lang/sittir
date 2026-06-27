@@ -1,5 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
-import { runHistoryCli } from '@sittir/validator';
+import { runHistoryCli } from '@sittir/tools';
 
 export const history: CommandModule = {
 	name: 'history',

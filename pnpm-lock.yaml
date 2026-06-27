@@ -86,9 +86,6 @@ importers:
       '@sittir/tools':
         specifier: workspace:*
         version: link:../tools
-      '@sittir/validator':
-        specifier: workspace:*
-        version: link:../validator
       commander:
         specifier: ^15.0.0-0
         version: 15.0.0-0
@@ -224,6 +221,9 @@ importers:
 
   packages/tools:
     dependencies:
+      '@ast-grep/wasm':
+        specifier: ^0.42.1
+        version: 0.42.1(web-tree-sitter@0.26.9)
       '@sittir/codegen':
         specifier: workspace:*
         version: link:../codegen
@@ -236,9 +236,6 @@ importers:
       '@sittir/types':
         specifier: workspace:*
         version: link:../types
-      '@sittir/validator':
-        specifier: workspace:*
-        version: link:../validator
     devDependencies:
       '@types/node':
         specifier: ^25.6.0
@@ -274,19 +271,6 @@ importers:
       type-fest:
         specifier: ^5.6.0
         version: 5.6.0
-
-  packages/validator:
-    dependencies:
-      '@sittir/codegen':
-        specifier: workspace:*
-        version: link:../codegen
-    devDependencies:
-      '@types/node':
-        specifier: ^25.6.0
-        version: 25.6.0
-      commander:
-        specifier: ^15.0.0-0
-        version: 15.0.0-0
 
   rust/crates/sittir-python:
     devDependencies:

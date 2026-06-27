@@ -20,14 +20,31 @@ import { createRequire } from 'node:module';
 import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/common';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
-import { loadWebTreeSitter } from '../engine-loader.ts';
 
 import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
-import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
-import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
-import { opaqueFacts, readFacts } from '../compiler/opaque-facts.ts';
-import { assertNativeBinaryFresh, hostBinaryFreshnessFor } from '../scripts/native-binary-freshness.ts';
+// Codegen internals reached through the shared surface: types via import-type
+// (runtime-erased), runtime values via load() at module top (destructure once,
+// call synchronously — no per-call invoke()).
+import { load } from '../codegen-surface.ts';
+import type {
+	PolymorphVariantDescriptor,
+	PolymorphVariantMap,
+	FactoryShape,
+	FactorySlotMeta,
+	OpaqueFacts,
+} from '../codegen-surface.ts';
+
+const { loadWebTreeSitter } = await load('engineLoader');
+const { opaqueFacts, readFacts } = await load('opaqueFacts');
+const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
+const { pluralize, snakeToCamel } = await load('modelNodeMap');
+
+/** Local exhaustiveness helper — generic (not polymorph-specific), so the validator
+ *  carries no runtime dependency on polymorph-variant (it uses only its types). */
+function assertNever(x: never): never {
+	throw new Error(`assertNever: unexpected variant ${JSON.stringify(x)}`);
+}
 
 // Validator-local slot model. validate/common.ts has no AssembledNonterminal
 // instances (it walks already-read napi NodeData), so slot descriptors are
@@ -41,7 +58,7 @@ interface SlotModel {
 	readonly storageKey: string; // always `_<name>` (or `$other` for the catch-all unmatched-children slot)
 	readonly arity: SlotArity;
 	/** Validator-only facts; read ONLY via `readFacts` (never branched on by the compiler). */
-	readonly metadata: import('../compiler/opaque-facts.ts').OpaqueFacts;
+	readonly metadata: OpaqueFacts;
 }
 function createNamedSlotModel(name: string, arity: SlotArity): SlotModel {
 	return { name, storageKey: `_${name}`, arity, metadata: opaqueFacts({ origin: 'field' satisfies SlotOrigin }) };
@@ -49,7 +66,6 @@ function createNamedSlotModel(name: string, arity: SlotArity): SlotModel {
 function createUnnamedChildrenSlotModel(arity: SlotArity): SlotModel {
 	return { name: 'children', storageKey: '$other', arity, metadata: opaqueFacts({ origin: 'kind' satisfies SlotOrigin }) };
 }
-import { pluralize, snakeToCamel } from '../compiler/model/node-map.ts';
 
 // ---------------------------------------------------------------------------
 // Corpus parser — tree-sitter test corpus format
@@ -131,7 +147,9 @@ export function parseCorpus(content: string, grammar?: string): CorpusEntry[] {
 // Fixtures directory + loader
 // ---------------------------------------------------------------------------
 
-const FIXTURES_DIR = fileURLToPath(new URL('../../fixtures', import.meta.url));
+// The corpus fixtures live in the codegen package; resolve them there explicitly
+// (this validator was relocated from codegen/src/validate to tools/src/validate — R9c).
+const FIXTURES_DIR = fileURLToPath(new URL('../../../codegen/fixtures', import.meta.url));
 
 export function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	const entries: CorpusEntry[] = [];
@@ -1273,7 +1291,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	// it. This is the universal choke point — every validator, every probe,
 	// every dev tool that loads a grammar funnels through here. See A5 in
 	// docs/superpowers/conventions/2026-05-15-024-cleanup-rules.md.
-	const { assertGeneratedManifestsClean } = await import('../scripts/generated-manifest.ts');
+	const { assertGeneratedManifestsClean } = await load('generatedManifest');
 	if (grammar === 'rust' || grammar === 'typescript' || grammar === 'python') {
 		assertGeneratedManifestsClean([grammar]);
 	}

@@ -1,3 +1,4 @@
+import { dirname, join } from 'node:path';
 import { Option } from 'commander';
 import { type CommandModule, defineCommand } from '../framework/command-module.ts';
 import { withGrammar, withOutput } from '../framework/options.ts';
@@ -5,8 +6,10 @@ import {
 	runCodegen,
 	runFullRegen,
 	runStandaloneSteps,
+	RUST_RENDER_GRAMMARS,
 	type CodegenOptions
 } from '@sittir/codegen/run-codegen';
+import { emitParityFixtures, runRoundtripProbes } from '@sittir/tools';
 
 interface GenCliOptions {
 	grammar?: string;
@@ -64,7 +67,6 @@ export const gen: CommandModule = {
 					nodes: opts.all ? undefined : opts.nodes?.split(','),
 					all: opts.all,
 					testsDir: opts.testsDir,
-					roundtrip: opts.roundtrip,
 					compileParser: opts.compileParser,
 					transpile: opts.transpile,
 					tsGenerate: opts.tsGenerate,
@@ -85,8 +87,43 @@ export const gen: CommandModule = {
 
 				if (!opts.output) throw new Error('Missing required option: --output');
 				if (!opts.all && !opts.nodes) throw new Error('Must provide --nodes or --all');
-				if (opts.all) await runFullRegen(codegenOpts);
-				else await runCodegen(codegenOpts);
+
+				// Generate (codegen) → returns the assembled NodeMap.
+				const nodeMap = opts.all
+					? await runFullRegen(codegenOpts)
+					: await runCodegen(codegenOpts);
+
+				// Post-generate validation (tools). Codegen now only generates +
+				// builds; the cli orchestrates the validation passes that used to run
+				// inline in run-codegen — this is what keeps codegen free of any
+				// dependency on the tools/validation layer.
+				const templatesDir = join(dirname(opts.output), 'templates');
+				const isRustRender =
+					opts.all === true &&
+					(RUST_RENDER_GRAMMARS as readonly string[]).includes(opts.grammar);
+
+				// Parity fixtures emit on every --all regen (the Rust parity harness
+				// reads test-fixtures.json). Extraction requires the post-regen native
+				// rebuild, so skip — with a warning — under --no-build-native.
+				if (isRustRender) {
+					if (opts.buildNative !== false) {
+						await emitParityFixtures(opts.grammar, templatesDir);
+					} else {
+						process.stderr.write(
+							`[warning] [codegen] parity-fixtures[${opts.grammar}]: skipped — fixture extraction requires the ` +
+								`post-regen native rebuild (--no-build-native was passed). test-fixtures.json left unchanged.\n`
+						);
+					}
+				}
+
+				// Optional round-trip validator probes (--roundtrip).
+				if (opts.roundtrip) {
+					const totalFail = await runRoundtripProbes(opts.grammar, templatesDir, nodeMap);
+					if (totalFail > 0) {
+						console.error(`\n${totalFail} render-parse / from() failure(s) — see above.`);
+						process.exitCode = 1;
+					}
+				}
 			});
 	},
 };

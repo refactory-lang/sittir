@@ -12,10 +12,11 @@
 
 import { createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
-import type { PolymorphVariantMap } from '../polymorph-variant.ts';
-import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
+import type { PolymorphVariantMap, FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
+import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './templates-path.ts';
-import { loadRawEntries } from './node-types-loader.ts';
+
+const { loadRawEntries } = await load('nodeTypesLoader');
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,

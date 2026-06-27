@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,13 +11,13 @@ import {
 	AssembledKeyword,
 	AssembledPattern,
 	AssembledPolymorph
-} from '../compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { ChoiceRule, SeqRule } from '../types/rule.ts';
-import type { NodeMap } from '../compiler/types.ts';
-import { emitHashFiles, emitRenderModule } from '../emitters/render-module.ts';
-import { fixturesOutputPath } from '../emitters/parity-fixtures.ts';
-import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
+} from '../../../codegen/src/compiler/model/node-map.ts';
+import type { GeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
+import type { ChoiceRule, SeqRule } from '../../../codegen/src/types/rule.ts';
+import type { NodeMap } from '../../../codegen/src/compiler/types.ts';
+import { emitHashFiles, emitRenderModule } from '../../../codegen/src/emitters/render-module.ts';
+import { fixturesOutputPath } from '../validate/parity-fixtures.ts';
+import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 

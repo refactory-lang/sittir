@@ -40,6 +40,14 @@ const MODULES = {
 	assemble: '../../codegen/src/compiler/assemble.ts',
 	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
 	grammarDiagnostics: '../../codegen/src/compiler/grammar-diagnostics.ts',
+	opaqueFacts: '../../codegen/src/compiler/opaque-facts.ts',
+	nodeTypesLoader: '../../codegen/src/validate/node-types-loader.ts',
+	nativeBinaryFreshness: '../../codegen/src/scripts/native-binary-freshness.ts',
+	renderModulePaths: '../../codegen/src/emitters/render-module-paths.ts',
+	engineLoader: '../../codegen/src/engine-loader.ts',
+	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
+	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
+	suggested: '../../codegen/src/emitters/suggested.ts',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -53,6 +61,14 @@ export interface CodegenSurface {
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
 	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
 	grammarDiagnostics: typeof import('../../codegen/src/compiler/grammar-diagnostics.ts');
+	opaqueFacts: typeof import('../../codegen/src/compiler/opaque-facts.ts');
+	nodeTypesLoader: typeof import('../../codegen/src/validate/node-types-loader.ts');
+	nativeBinaryFreshness: typeof import('../../codegen/src/scripts/native-binary-freshness.ts');
+	renderModulePaths: typeof import('../../codegen/src/emitters/render-module-paths.ts');
+	engineLoader: typeof import('../../codegen/src/engine-loader.ts');
+	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
+	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
+	suggested: typeof import('../../codegen/src/emitters/suggested.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -66,6 +82,17 @@ type FunctionKeys<T> = { [K in keyof T]-?: NonNullable<T[K]> extends AnyFn ? K :
  * dynamic `import()` keeps this the allowed `tools → codegen` direction with no
  * static package edge.
  */
+/**
+ * Resolve a `MODULES` path to an absolute file URL anchored at THIS module, so
+ * the variable-specifier dynamic import resolves identically under tsx
+ * (production) and vitest (tests). A bare relative specifier resolves correctly
+ * under tsx but mis-resolves under vitest's transform (it drops the package
+ * prefix → `/codegen/...`), so anchoring to `import.meta.url` is required.
+ */
+function moduleUrl(module: keyof typeof MODULES): string {
+	return new URL(MODULES[module], import.meta.url).href;
+}
+
 export async function invoke<
 	M extends keyof CodegenSurface,
 	F extends FunctionKeys<CodegenSurface[M]> & string,
@@ -76,9 +103,21 @@ export async function invoke<
 ): Promise<Awaited<ReturnType<Extract<CodegenSurface[M][F], AnyFn>>>> {
 	// Single boundary cast: a variable-specifier dynamic import is untyped, and
 	// the public signature above is what enforces correctness at every call site.
-	const mod = (await import(MODULES[module])) as Record<string, unknown>;
+	const mod = (await import(moduleUrl(module))) as Record<string, unknown>;
 	const fn = mod[method] as (...a: readonly unknown[]) => unknown;
 	return fn(...(args as readonly unknown[])) as Awaited<ReturnType<Extract<CodegenSurface[M][F], AnyFn>>>;
+}
+
+/**
+ * Load a whole codegen module, fully typed. Use when a consumer needs SEVERAL
+ * exports from one module — destructure once and call synchronously — where a
+ * per-call `invoke` would force gratuitous `await`s (e.g. `opaqueFacts`/`readFacts`
+ * called inline throughout `nodeToConfig`). `invoke` is for one-offs; `load` is
+ * for "give me this module". Same lazy dynamic import (the allowed `tools→codegen`
+ * direction), and the result is the module's REAL type — no cast at the call site.
+ */
+export async function load<M extends keyof CodegenSurface>(module: M): Promise<CodegenSurface[M]> {
+	return (await import(moduleUrl(module))) as CodegenSurface[M];
 }
 
 // ---------------------------------------------------------------------------
@@ -93,6 +132,13 @@ export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type OptimizedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;
 export type AssembledNodeMap = ReturnType<CodegenSurface['assemble']['assemble']>;
 export type GrammarDiagnostic = import('../../codegen/src/compiler/grammar-diagnostics.ts').GrammarDiagnostic;
+export type PolymorphVariantDescriptor = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantDescriptor;
+export type PolymorphVariantMap = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantMap;
+export type FactoryShape = import('../../codegen/src/emitters/factory-map.ts').FactoryShape;
+export type FactorySlotMeta = import('../../codegen/src/emitters/factory-map.ts').FactorySlotMeta;
+export type RawNodeEntry = import('../../codegen/src/validate/node-types-loader.ts').RawNodeEntry;
+export type OpaqueFacts = import('../../codegen/src/compiler/opaque-facts.ts').OpaqueFacts;
+export type RoundTripDiagnostic = import('../../codegen/src/emitters/suggested.ts').RoundTripDiagnostic;
 
 // ---------------------------------------------------------------------------
 // Convenience: the canonical evaluate → link → normalize → assemble walk.
