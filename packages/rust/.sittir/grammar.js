@@ -1129,7 +1129,6 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
     r = applyOptionalKeyword(ruleName, r, kwRules);
-    r = enrichFieldWrappers(r);
     if (r === before) {
       converged = true;
       break;
@@ -1549,52 +1548,6 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
     result = { ...outerPrecStack[i], content: result };
   }
   return result;
-}
-function enrichFieldWrappers(rule) {
-  const recursed = recurseChildren(rule, enrichFieldWrappers);
-  if (!isFieldType(recursed.type)) return recursed;
-  const name = recursed.name;
-  const content = recursed.content;
-  if (typeof name !== "string" || !content || typeof content !== "object") return recursed;
-  const existing = content;
-  if (existing.fieldName === name && existing.nonterminal === true) return recursed;
-  const newContent = { ...content, fieldName: name, nonterminal: true };
-  return { ...recursed, content: newContent };
-}
-function recurseChildren(rule, visit) {
-  if (!rule || typeof rule !== "object") return rule;
-  const t = rule.type;
-  if (!t) return rule;
-  if (isSeqType(t) || isChoiceType(t)) {
-    const members = rule.members;
-    if (!Array.isArray(members)) return rule;
-    let changed = false;
-    const newMembers = members.map((m) => {
-      const out = visit(m);
-      if (out !== m) changed = true;
-      return out;
-    });
-    return changed ? { ...rule, members: newMembers } : rule;
-  }
-  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant") {
-    const content = rule.content;
-    if (content === void 0) return rule;
-    const out = visit(content);
-    if (out === content) return rule;
-    return { ...rule, content: out };
-  }
-  if (t === "polymorph") {
-    const forms = rule.forms;
-    if (!Array.isArray(forms)) return rule;
-    let changed = false;
-    const newForms = forms.map((f) => {
-      const out = visit(f.content);
-      if (out !== f.content) changed = true;
-      return changed ? { ...f, content: out } : f;
-    });
-    return changed ? { ...rule, forms: newForms } : rule;
-  }
-  return rule;
 }
 function applyOptionalKeyword(ruleName, rule, kwRules) {
   const inner = peelPrec(rule);

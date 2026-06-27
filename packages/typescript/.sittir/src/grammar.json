@@ -15,9 +15,7 @@
               "name": "hash_bang_line",
               "content": {
                 "type": "SYMBOL",
-                "name": "hash_bang_line",
-                "fieldName": "hash_bang_line",
-                "nonterminal": true
+                "name": "hash_bang_line"
               },
               "source": "override"
             },
@@ -168,9 +166,7 @@
               "name": "name",
               "content": {
                 "type": "SYMBOL",
-                "name": "_module_export_name",
-                "fieldName": "name",
-                "nonterminal": true
+                "name": "_module_export_name"
               }
             },
             {
@@ -344,9 +340,7 @@
                 "name": "source",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "string",
-                  "fieldName": "source",
-                  "nonterminal": true
+                  "name": "string"
                 }
               }
             ]
@@ -361,9 +355,7 @@
               "name": "import_attribute",
               "content": {
                 "type": "SYMBOL",
-                "name": "import_attribute",
-                "fieldName": "import_attribute",
-                "nonterminal": true
+                "name": "import_attribute"
               },
               "source": "enriched"
             },
@@ -419,9 +411,7 @@
           "name": "source",
           "content": {
             "type": "SYMBOL",
-            "name": "string",
-            "fieldName": "source",
-            "nonterminal": true
+            "name": "string"
           }
         }
       ]
@@ -442,9 +432,7 @@
           "name": "identifier",
           "content": {
             "type": "SYMBOL",
-            "name": "identifier",
-            "fieldName": "identifier",
-            "nonterminal": true
+            "name": "identifier"
           },
           "source": "enriched"
         }
@@ -514,7 +502,6 @@
             {
               "type": "SYMBOL",
               "name": "_import_identifier",
-              "nonterminal": true,
               "source": "override"
             },
             {
@@ -556,9 +543,7 @@
           "name": "object",
           "content": {
             "type": "SYMBOL",
-            "name": "object",
-            "fieldName": "object",
-            "nonterminal": true
+            "name": "object"
           },
           "source": "enriched"
         }
@@ -732,9 +717,7 @@
                 "type": "STRING",
                 "value": "const"
               }
-            ],
-            "fieldName": "kind",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -798,9 +781,7 @@
                     "type": "SYMBOL",
                     "name": "_destructuring_pattern"
                   }
-                ],
-                "fieldName": "name",
-                "nonterminal": true
+                ]
               }
             },
             {
@@ -816,9 +797,7 @@
                   {
                     "type": "BLANK"
                   }
-                ],
-                "fieldName": "type",
-                "nonterminal": true
+                ]
               }
             },
             {
@@ -846,9 +825,7 @@
                 "name": "name",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "identifier",
-                  "fieldName": "name",
-                  "nonterminal": true
+                  "name": "identifier"
                 }
               },
               {
@@ -860,9 +837,7 @@
                 "name": "type",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "type_annotation",
-                  "fieldName": "type",
-                  "nonterminal": true
+                  "name": "type_annotation"
                 }
               }
             ]
@@ -928,9 +903,7 @@
           "name": "statement",
           "content": {
             "type": "SYMBOL",
-            "name": "statement",
-            "fieldName": "statement",
-            "nonterminal": true
+            "name": "statement"
           },
           "source": "enriched"
         }
@@ -951,9 +924,7 @@
             "name": "condition",
             "content": {
               "type": "SYMBOL",
-              "name": "parenthesized_expression",
-              "fieldName": "condition",
-              "nonterminal": true
+              "name": "parenthesized_expression"
             }
           },
           {
@@ -961,9 +932,7 @@
             "name": "consequence",
             "content": {
               "type": "SYMBOL",
-              "name": "statement",
-              "fieldName": "consequence",
-              "nonterminal": true
+              "name": "statement"
             }
           },
           {
@@ -974,9 +943,7 @@
                 "name": "alternative",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "else_clause",
-                  "fieldName": "alternative",
-                  "nonterminal": true
+                  "name": "else_clause"
                 }
               },
               {
@@ -999,9 +966,7 @@
           "name": "value",
           "content": {
             "type": "SYMBOL",
-            "name": "parenthesized_expression",
-            "fieldName": "value",
-            "nonterminal": true
+            "name": "parenthesized_expression"
           }
         },
         {
@@ -1009,9 +974,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "switch_body",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "switch_body"
           }
         }
       ]
@@ -1044,9 +1007,7 @@
                     "type": "SYMBOL",
                     "name": "variable_declaration"
                   }
-                ],
-                "fieldName": "initializer",
-                "nonterminal": true
+                ]
               }
             },
             {
@@ -1057,9 +1018,7 @@
                   "name": "initializer",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "_expressions",
-                    "fieldName": "initializer",
-                    "nonterminal": true
+                    "name": "_expressions"
                   }
                 },
                 {
@@ -1073,9 +1032,7 @@
               "name": "initializer",
               "content": {
                 "type": "SYMBOL",
-                "name": "empty_statement",
-                "fieldName": "initializer",
-                "nonterminal": true
+                "name": "empty_statement"
               }
             }
           ]
@@ -1103,9 +1060,7 @@
                 "type": "SYMBOL",
                 "name": "empty_statement"
               }
-            ],
-            "fieldName": "condition",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -1121,9 +1076,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "increment",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -1135,9 +1088,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "statement",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "statement"
           }
         }
       ]
@@ -1170,9 +1121,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "statement",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "statement"
           }
         }
       ]
@@ -1230,9 +1179,7 @@
                 "type": "STRING",
                 "value": "of"
               }
-            ],
-            "fieldName": "operator",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -1240,9 +1187,7 @@
           "name": "right",
           "content": {
             "type": "SYMBOL",
-            "name": "_expressions",
-            "fieldName": "right",
-            "nonterminal": true
+            "name": "_expressions"
           }
         },
         {
@@ -1263,9 +1208,7 @@
           "name": "condition",
           "content": {
             "type": "SYMBOL",
-            "name": "parenthesized_expression",
-            "fieldName": "condition",
-            "nonterminal": true
+            "name": "parenthesized_expression"
           }
         },
         {
@@ -1273,9 +1216,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "statement",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "statement"
           }
         }
       ]
@@ -1295,9 +1236,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "statement",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "statement"
             }
           },
           {
@@ -1309,9 +1248,7 @@
             "name": "condition",
             "content": {
               "type": "SYMBOL",
-              "name": "parenthesized_expression",
-              "fieldName": "condition",
-              "nonterminal": true
+              "name": "parenthesized_expression"
             }
           },
           {
@@ -1346,9 +1283,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "statement_block",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "statement_block"
           }
         },
         {
@@ -1359,9 +1294,7 @@
               "name": "handler",
               "content": {
                 "type": "SYMBOL",
-                "name": "catch_clause",
-                "fieldName": "handler",
-                "nonterminal": true
+                "name": "catch_clause"
               }
             },
             {
@@ -1377,9 +1310,7 @@
               "name": "finalizer",
               "content": {
                 "type": "SYMBOL",
-                "name": "finally_clause",
-                "fieldName": "finalizer",
-                "nonterminal": true
+                "name": "finally_clause"
               }
             },
             {
@@ -1401,9 +1332,7 @@
           "name": "object",
           "content": {
             "type": "SYMBOL",
-            "name": "parenthesized_expression",
-            "fieldName": "object",
-            "nonterminal": true
+            "name": "parenthesized_expression"
           }
         },
         {
@@ -1411,9 +1340,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "statement",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "statement"
           }
         }
       ]
@@ -1443,9 +1370,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "label",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -1484,9 +1409,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "label",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -1599,9 +1522,7 @@
                 ]
               },
               "named": true,
-              "value": "statement_identifier",
-              "fieldName": "label",
-              "nonterminal": true
+              "value": "statement_identifier"
             }
           },
           {
@@ -1613,9 +1534,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "statement",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "statement"
             }
           }
         ]
@@ -1667,9 +1586,7 @@
           "name": "value",
           "content": {
             "type": "SYMBOL",
-            "name": "_expressions",
-            "fieldName": "value",
-            "nonterminal": true
+            "name": "_expressions"
           }
         },
         {
@@ -1684,9 +1601,7 @@
             "content": {
               "type": "SYMBOL",
               "name": "statement"
-            },
-            "fieldName": "body",
-            "nonterminal": true
+            }
           }
         }
       ]
@@ -1710,9 +1625,7 @@
             "content": {
               "type": "SYMBOL",
               "name": "statement"
-            },
-            "fieldName": "body",
-            "nonterminal": true
+            }
           }
         }
       ]
@@ -1753,9 +1666,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "statement_block",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "statement_block"
           }
         }
       ]
@@ -1772,9 +1683,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "statement_block",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "statement_block"
           }
         }
       ]
@@ -2318,9 +2227,7 @@
           "name": "left",
           "content": {
             "type": "SYMBOL",
-            "name": "pattern",
-            "fieldName": "left",
-            "nonterminal": true
+            "name": "pattern"
           }
         },
         {
@@ -2332,9 +2239,7 @@
           "name": "right",
           "content": {
             "type": "SYMBOL",
-            "name": "expression",
-            "fieldName": "right",
-            "nonterminal": true
+            "name": "expression"
           }
         }
       ]
@@ -2370,9 +2275,7 @@
                 "type": "SYMBOL",
                 "name": "_destructuring_pattern"
               }
-            ],
-            "fieldName": "left",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -2384,9 +2287,7 @@
           "name": "right",
           "content": {
             "type": "SYMBOL",
-            "name": "expression",
-            "fieldName": "right",
-            "nonterminal": true
+            "name": "expression"
           }
         }
       ]
@@ -2582,9 +2483,7 @@
           "name": "open_tag",
           "content": {
             "type": "SYMBOL",
-            "name": "jsx_opening_element",
-            "fieldName": "open_tag",
-            "nonterminal": true
+            "name": "jsx_opening_element"
           }
         },
         {
@@ -2599,9 +2498,7 @@
           "name": "close_tag",
           "content": {
             "type": "SYMBOL",
-            "name": "jsx_closing_element",
-            "fieldName": "close_tag",
-            "nonterminal": true
+            "name": "jsx_closing_element"
           }
         }
       ]
@@ -2738,9 +2635,7 @@
                   "named": true,
                   "value": "member_expression"
                 }
-              ],
-              "fieldName": "object",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -2757,9 +2652,7 @@
                 "name": "identifier"
               },
               "named": true,
-              "value": "property_identifier",
-              "fieldName": "property",
-              "nonterminal": true
+              "value": "property_identifier"
             }
           }
         ]
@@ -2819,9 +2712,7 @@
               "name": "name",
               "content": {
                 "type": "SYMBOL",
-                "name": "_jsx_element_name",
-                "fieldName": "name",
-                "nonterminal": true
+                "name": "_jsx_element_name"
               }
             },
             {
@@ -3038,9 +2929,7 @@
               "name": "decorator",
               "content": {
                 "type": "SYMBOL",
-                "name": "decorator",
-                "fieldName": "decorator",
-                "nonterminal": true
+                "name": "decorator"
               }
             }
           },
@@ -3061,9 +2950,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "name",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -3079,9 +2966,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "type_parameters",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -3092,9 +2977,7 @@
                 "name": "class_heritage",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "class_heritage",
-                  "fieldName": "class_heritage",
-                  "nonterminal": true
+                  "name": "class_heritage"
                 },
                 "source": "enriched"
               },
@@ -3108,9 +2991,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "class_body",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "class_body"
             }
           }
         ]
@@ -3129,9 +3010,7 @@
               "name": "decorator",
               "content": {
                 "type": "SYMBOL",
-                "name": "decorator",
-                "fieldName": "decorator",
-                "nonterminal": true
+                "name": "decorator"
               }
             }
           },
@@ -3144,9 +3023,7 @@
             "name": "name",
             "content": {
               "type": "SYMBOL",
-              "name": "_type_identifier",
-              "fieldName": "name",
-              "nonterminal": true
+              "name": "_type_identifier"
             }
           },
           {
@@ -3162,9 +3039,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "type_parameters",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -3175,9 +3050,7 @@
                 "name": "class_heritage",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "class_heritage",
-                  "fieldName": "class_heritage",
-                  "nonterminal": true
+                  "name": "class_heritage"
                 },
                 "source": "enriched"
               },
@@ -3191,9 +3064,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "class_body",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "class_body"
             }
           },
           {
@@ -3275,9 +3146,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "name",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -3289,9 +3158,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "statement_block",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "statement_block"
             }
           }
         ]
@@ -3329,9 +3196,7 @@
             "name": "name",
             "content": {
               "type": "SYMBOL",
-              "name": "identifier",
-              "fieldName": "name",
-              "nonterminal": true
+              "name": "identifier"
             }
           },
           {
@@ -3343,9 +3208,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "statement_block",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "statement_block"
             }
           },
           {
@@ -3407,9 +3270,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "name",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -3421,9 +3282,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "statement_block",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "statement_block"
             }
           }
         ]
@@ -3465,9 +3324,7 @@
             "name": "name",
             "content": {
               "type": "SYMBOL",
-              "name": "identifier",
-              "fieldName": "name",
-              "nonterminal": true
+              "name": "identifier"
             }
           },
           {
@@ -3479,9 +3336,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "statement_block",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "statement_block"
             }
           },
           {
@@ -3551,9 +3406,7 @@
                 "type": "SYMBOL",
                 "name": "statement_block"
               }
-            ],
-            "fieldName": "body",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -3574,9 +3427,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type_parameters",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -3584,9 +3435,7 @@
           "name": "parameters",
           "content": {
             "type": "SYMBOL",
-            "name": "formal_parameters",
-            "fieldName": "parameters",
-            "nonterminal": true
+            "name": "formal_parameters"
           }
         },
         {
@@ -3615,9 +3464,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "return_type",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -3686,9 +3533,7 @@
             "name": "constructor",
             "content": {
               "type": "SYMBOL",
-              "name": "primary_expression",
-              "fieldName": "constructor",
-              "nonterminal": true
+              "name": "primary_expression"
             }
           },
           {
@@ -3704,9 +3549,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "type_arguments",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -3722,9 +3565,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "arguments",
-              "nonterminal": true
+              ]
             }
           }
         ]
@@ -3745,9 +3586,7 @@
             "name": "expression",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "expression",
-              "nonterminal": true
+              "name": "expression"
             },
             "source": "enriched"
           }
@@ -3778,9 +3617,7 @@
                   "type": "SYMBOL",
                   "name": "import"
                 }
-              ],
-              "fieldName": "object",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -3795,9 +3632,7 @@
                 "name": "optional_chain",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "optional_chain",
-                  "fieldName": "optional_chain",
-                  "nonterminal": true
+                  "name": "optional_chain"
                 }
               }
             ]
@@ -3821,9 +3656,7 @@
                   "named": true,
                   "value": "property_identifier"
                 }
-              ],
-              "fieldName": "property",
-              "nonterminal": true
+              ]
             }
           }
         ]
@@ -3849,9 +3682,7 @@
                   "type": "SYMBOL",
                   "name": "primary_expression"
                 }
-              ],
-              "fieldName": "object",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -3862,9 +3693,7 @@
                 "name": "optional_chain",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "optional_chain",
-                  "fieldName": "optional_chain",
-                  "nonterminal": true
+                  "name": "optional_chain"
                 }
               },
               {
@@ -3881,9 +3710,7 @@
             "name": "index",
             "content": {
               "type": "SYMBOL",
-              "name": "_expressions",
-              "fieldName": "index",
-              "nonterminal": true
+              "name": "_expressions"
             }
           },
           {
@@ -3969,9 +3796,7 @@
                   "type": "SYMBOL",
                   "name": "_lhs_expression"
                 }
-              ],
-              "fieldName": "left",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -3983,9 +3808,7 @@
             "name": "right",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "right",
-              "nonterminal": true
+              "name": "expression"
             }
           }
         ]
@@ -4041,9 +3864,7 @@
             "name": "left",
             "content": {
               "type": "SYMBOL",
-              "name": "_augmented_assignment_lhs",
-              "fieldName": "left",
-              "nonterminal": true
+              "name": "_augmented_assignment_lhs"
             }
           },
           {
@@ -4112,9 +3933,7 @@
                   "type": "STRING",
                   "value": "??="
                 }
-              ],
-              "fieldName": "operator",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -4122,9 +3941,7 @@
             "name": "right",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "right",
-              "nonterminal": true
+              "name": "expression"
             }
           }
         ]
@@ -4142,9 +3959,7 @@
           "name": "value",
           "content": {
             "type": "SYMBOL",
-            "name": "expression",
-            "fieldName": "value",
-            "nonterminal": true
+            "name": "expression"
           }
         }
       ]
@@ -4174,9 +3989,7 @@
           "name": "expression",
           "content": {
             "type": "SYMBOL",
-            "name": "expression",
-            "fieldName": "expression",
-            "nonterminal": true
+            "name": "expression"
           },
           "source": "enriched"
         }
@@ -4193,9 +4006,7 @@
             "name": "condition",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "condition",
-              "nonterminal": true
+              "name": "expression"
             }
           },
           {
@@ -4212,9 +4023,7 @@
             "name": "consequence",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "consequence",
-              "nonterminal": true
+              "name": "expression"
             }
           },
           {
@@ -4226,9 +4035,7 @@
             "name": "alternative",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "alternative",
-              "nonterminal": true
+              "name": "expression"
             }
           }
         ]
@@ -4248,9 +4055,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4258,9 +4063,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "&&",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "&&"
                 }
               },
               {
@@ -4268,9 +4071,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4287,9 +4088,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4297,9 +4096,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "||",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "||"
                 }
               },
               {
@@ -4307,9 +4104,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4326,9 +4121,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4336,9 +4129,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": ">>",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": ">>"
                 }
               },
               {
@@ -4346,9 +4137,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4365,9 +4154,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4375,9 +4162,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": ">>>",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": ">>>"
                 }
               },
               {
@@ -4385,9 +4170,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4404,9 +4187,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4414,9 +4195,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "<<",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "<<"
                 }
               },
               {
@@ -4424,9 +4203,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4443,9 +4220,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4453,9 +4228,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "&",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "&"
                 }
               },
               {
@@ -4463,9 +4236,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4482,9 +4253,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4492,9 +4261,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "^",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "^"
                 }
               },
               {
@@ -4502,9 +4269,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4521,9 +4286,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4531,9 +4294,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "|",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "|"
                 }
               },
               {
@@ -4541,9 +4302,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4560,9 +4319,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4570,9 +4327,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "+",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "+"
                 }
               },
               {
@@ -4580,9 +4335,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4599,9 +4352,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4609,9 +4360,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "-",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "-"
                 }
               },
               {
@@ -4619,9 +4368,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4638,9 +4385,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4648,9 +4393,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "*",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "*"
                 }
               },
               {
@@ -4658,9 +4401,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4677,9 +4418,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4687,9 +4426,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "/",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "/"
                 }
               },
               {
@@ -4697,9 +4434,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4716,9 +4451,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4726,9 +4459,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "%",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "%"
                 }
               },
               {
@@ -4736,9 +4467,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4755,9 +4484,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4765,9 +4492,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "**",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "**"
                 }
               },
               {
@@ -4775,9 +4500,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4794,9 +4517,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4804,9 +4525,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "<",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "<"
                 }
               },
               {
@@ -4814,9 +4533,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4833,9 +4550,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4843,9 +4558,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "<=",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "<="
                 }
               },
               {
@@ -4853,9 +4566,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4872,9 +4583,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4882,9 +4591,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "==",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "=="
                 }
               },
               {
@@ -4892,9 +4599,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4911,9 +4616,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4921,9 +4624,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "===",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "==="
                 }
               },
               {
@@ -4931,9 +4632,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4950,9 +4649,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4960,9 +4657,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "!=",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "!="
                 }
               },
               {
@@ -4970,9 +4665,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -4989,9 +4682,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -4999,9 +4690,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "!==",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "!=="
                 }
               },
               {
@@ -5009,9 +4698,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -5028,9 +4715,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -5038,9 +4723,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": ">=",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": ">="
                 }
               },
               {
@@ -5048,9 +4731,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -5067,9 +4748,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -5077,9 +4756,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": ">",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": ">"
                 }
               },
               {
@@ -5087,9 +4764,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -5106,9 +4781,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -5116,9 +4789,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "??",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "??"
                 }
               },
               {
@@ -5126,9 +4797,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -5145,9 +4814,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "left",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               },
               {
@@ -5155,9 +4822,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "instanceof",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "instanceof"
                 }
               },
               {
@@ -5165,9 +4830,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -5193,9 +4856,7 @@
                       "type": "SYMBOL",
                       "name": "private_property_identifier"
                     }
-                  ],
-                  "fieldName": "left",
-                  "nonterminal": true
+                  ]
                 }
               },
               {
@@ -5203,9 +4864,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "in",
-                  "fieldName": "operator",
-                  "nonterminal": true
+                  "value": "in"
                 }
               },
               {
@@ -5213,9 +4872,7 @@
                 "name": "right",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "expression",
-                  "fieldName": "right",
-                  "nonterminal": true
+                  "name": "expression"
                 }
               }
             ]
@@ -5263,9 +4920,7 @@
                   "type": "STRING",
                   "value": "delete"
                 }
-              ],
-              "fieldName": "operator",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -5273,9 +4928,7 @@
             "name": "argument",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "argument",
-              "nonterminal": true
+              "name": "expression"
             }
           }
         ]
@@ -5598,9 +5251,7 @@
           "name": "pattern",
           "content": {
             "type": "SYMBOL",
-            "name": "regex_pattern",
-            "fieldName": "pattern",
-            "nonterminal": true
+            "name": "regex_pattern"
           }
         },
         {
@@ -5622,9 +5273,7 @@
               "name": "flags",
               "content": {
                 "type": "SYMBOL",
-                "name": "regex_flags",
-                "fieldName": "flags",
-                "nonterminal": true
+                "name": "regex_flags"
               }
             },
             {
@@ -6468,9 +6117,7 @@
                   "named": true,
                   "value": "member_expression"
                 }
-              ],
-              "fieldName": "object",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -6487,9 +6134,7 @@
                 "name": "identifier"
               },
               "named": true,
-              "value": "property_identifier",
-              "fieldName": "property",
-              "nonterminal": true
+              "value": "property_identifier"
             }
           }
         ]
@@ -6520,9 +6165,7 @@
                   "named": true,
                   "value": "member_expression"
                 }
-              ],
-              "fieldName": "function",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -6533,9 +6176,7 @@
                 "name": "type_arguments",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "type_arguments",
-                  "fieldName": "type_arguments",
-                  "nonterminal": true
+                  "name": "type_arguments"
                 }
               },
               {
@@ -6548,9 +6189,7 @@
             "name": "arguments",
             "content": {
               "type": "SYMBOL",
-              "name": "arguments",
-              "fieldName": "arguments",
-              "nonterminal": true
+              "name": "arguments"
             }
           }
         ]
@@ -6622,9 +6261,7 @@
             "name": "decorator",
             "content": {
               "type": "SYMBOL",
-              "name": "decorator",
-              "fieldName": "decorator",
-              "nonterminal": true
+              "name": "decorator"
             }
           }
         },
@@ -6645,9 +6282,7 @@
           "name": "property",
           "content": {
             "type": "SYMBOL",
-            "name": "_property_name",
-            "fieldName": "property",
-            "nonterminal": true
+            "name": "_property_name"
           }
         },
         {
@@ -6717,9 +6352,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "statement_block",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "statement_block"
           }
         }
       ]
@@ -6772,9 +6405,7 @@
                 "name": "accessibility_modifier",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "accessibility_modifier",
-                  "fieldName": "accessibility_modifier",
-                  "nonterminal": true
+                  "name": "accessibility_modifier"
                 },
                 "source": "enriched"
               },
@@ -6808,9 +6439,7 @@
                 "name": "override_modifier",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "override_modifier",
-                  "fieldName": "override_modifier",
-                  "nonterminal": true
+                  "name": "override_modifier"
                 },
                 "source": "enriched"
               },
@@ -6888,9 +6517,7 @@
             "name": "name",
             "content": {
               "type": "SYMBOL",
-              "name": "_property_name",
-              "fieldName": "name",
-              "nonterminal": true
+              "name": "_property_name"
             }
           },
           {
@@ -6919,9 +6546,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "statement_block",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "statement_block"
             }
           }
         ]
@@ -6935,9 +6560,7 @@
           "name": "key",
           "content": {
             "type": "SYMBOL",
-            "name": "_property_name",
-            "fieldName": "key",
-            "nonterminal": true
+            "name": "_property_name"
           }
         },
         {
@@ -6949,9 +6572,7 @@
           "name": "value",
           "content": {
             "type": "SYMBOL",
-            "name": "expression",
-            "fieldName": "value",
-            "nonterminal": true
+            "name": "expression"
           }
         }
       ]
@@ -6964,9 +6585,7 @@
           "name": "key",
           "content": {
             "type": "SYMBOL",
-            "name": "_property_name",
-            "fieldName": "key",
-            "nonterminal": true
+            "name": "_property_name"
           }
         },
         {
@@ -6987,9 +6606,7 @@
                 "type": "SYMBOL",
                 "name": "assignment_pattern"
               }
-            ],
-            "fieldName": "value",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -7045,9 +6662,7 @@
           "name": "expression",
           "content": {
             "type": "SYMBOL",
-            "name": "expression",
-            "fieldName": "expression",
-            "nonterminal": true
+            "name": "expression"
           },
           "source": "enriched"
         },
@@ -7186,9 +6801,7 @@
             "name": "decorator",
             "content": {
               "type": "SYMBOL",
-              "name": "decorator",
-              "fieldName": "decorator",
-              "nonterminal": true
+              "name": "decorator"
             }
           }
         },
@@ -7301,9 +6914,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_property_name",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "_property_name"
           }
         },
         {
@@ -7345,9 +6956,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -7418,9 +7027,7 @@
             "name": "expression",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "expression",
-              "nonterminal": true
+              "name": "expression"
             },
             "source": "enriched"
           },
@@ -7442,9 +7049,7 @@
               "name": "accessibility_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "accessibility_modifier",
-                "fieldName": "accessibility_modifier",
-                "nonterminal": true
+                "name": "accessibility_modifier"
               },
               "source": "enriched"
             },
@@ -7478,9 +7083,7 @@
               "name": "override_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "override_modifier",
-                "fieldName": "override_modifier",
-                "nonterminal": true
+                "name": "override_modifier"
               },
               "source": "enriched"
             },
@@ -7548,9 +7151,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_property_name",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "_property_name"
           }
         },
         {
@@ -7587,9 +7188,7 @@
               "name": "accessibility_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "accessibility_modifier",
-                "fieldName": "accessibility_modifier",
-                "nonterminal": true
+                "name": "accessibility_modifier"
               },
               "source": "enriched"
             },
@@ -7610,9 +7209,7 @@
               "name": "override_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "override_modifier",
-                "fieldName": "override_modifier",
-                "nonterminal": true
+                "name": "override_modifier"
               },
               "source": "enriched"
             },
@@ -7656,9 +7253,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_property_name",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "_property_name"
           }
         },
         {
@@ -7708,9 +7303,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "identifier",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "identifier"
           }
         },
         {
@@ -7783,9 +7376,7 @@
             "name": "type_arguments",
             "content": {
               "type": "SYMBOL",
-              "name": "type_arguments",
-              "fieldName": "type_arguments",
-              "nonterminal": true
+              "name": "type_arguments"
             },
             "source": "enriched"
           },
@@ -7794,9 +7385,7 @@
             "name": "expression",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "expression",
-              "nonterminal": true
+              "name": "expression"
             },
             "source": "enriched"
           }
@@ -7814,9 +7403,7 @@
             "name": "expression",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "expression",
-              "nonterminal": true
+              "name": "expression"
             },
             "source": "enriched"
           },
@@ -7856,9 +7443,7 @@
             "name": "expression",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "expression",
-              "nonterminal": true
+              "name": "expression"
             },
             "source": "enriched"
           },
@@ -7871,9 +7456,7 @@
             "name": "type_annotation",
             "content": {
               "type": "SYMBOL",
-              "name": "type",
-              "fieldName": "type",
-              "nonterminal": true
+              "name": "type"
             },
             "source": "override"
           }
@@ -7891,9 +7474,7 @@
             "name": "expression",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "expression",
-              "nonterminal": true
+              "name": "expression"
             },
             "source": "enriched"
           },
@@ -7902,9 +7483,7 @@
             "name": "type_arguments",
             "content": {
               "type": "SYMBOL",
-              "name": "type_arguments",
-              "fieldName": "type_arguments",
-              "nonterminal": true
+              "name": "type_arguments"
             }
           }
         ]
@@ -7918,9 +7497,7 @@
           "name": "identifier",
           "content": {
             "type": "SYMBOL",
-            "name": "identifier",
-            "fieldName": "identifier",
-            "nonterminal": true
+            "name": "identifier"
           },
           "source": "enriched"
         },
@@ -7941,9 +7518,7 @@
           "name": "source",
           "content": {
             "type": "SYMBOL",
-            "name": "string",
-            "fieldName": "source",
-            "nonterminal": true
+            "name": "string"
           }
         },
         {
@@ -7997,9 +7572,7 @@
             "name": "value",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "value",
-              "nonterminal": true
+              "name": "expression"
             }
           },
           {
@@ -8015,9 +7588,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "type_arguments",
-              "nonterminal": true
+              ]
             }
           }
         ]
@@ -8107,9 +7678,7 @@
               "name": "decorator",
               "content": {
                 "type": "SYMBOL",
-                "name": "decorator",
-                "fieldName": "decorator",
-                "nonterminal": true
+                "name": "decorator"
               }
             }
           },
@@ -8126,9 +7695,7 @@
             "name": "name",
             "content": {
               "type": "SYMBOL",
-              "name": "_type_identifier",
-              "fieldName": "name",
-              "nonterminal": true
+              "name": "_type_identifier"
             }
           },
           {
@@ -8144,9 +7711,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "type_parameters",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -8157,9 +7722,7 @@
                 "name": "class_heritage",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "class_heritage",
-                  "fieldName": "class_heritage",
-                  "nonterminal": true
+                  "name": "class_heritage"
                 },
                 "source": "enriched"
               },
@@ -8173,9 +7736,7 @@
             "name": "body",
             "content": {
               "type": "SYMBOL",
-              "name": "class_body",
-              "fieldName": "body",
-              "nonterminal": true
+              "name": "class_body"
             }
           }
         ]
@@ -8231,9 +7792,7 @@
                   "type": "SYMBOL",
                   "name": "nested_identifier"
                 }
-              ],
-              "fieldName": "name",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -8249,9 +7808,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "body",
-              "nonterminal": true
+              ]
             }
           }
         ]
@@ -8269,9 +7826,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "identifier",
-            "fieldName": "identifier",
-            "nonterminal": true
+            "name": "identifier"
           },
           "source": "override"
         },
@@ -8328,9 +7883,7 @@
                   "type": "SYMBOL",
                   "name": "nested_identifier"
                 }
-              ],
-              "fieldName": "module",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -8342,9 +7895,7 @@
             "name": "name",
             "content": {
               "type": "SYMBOL",
-              "name": "_type_identifier",
-              "fieldName": "name",
-              "nonterminal": true
+              "name": "_type_identifier"
             }
           }
         ]
@@ -8362,9 +7913,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_type_identifier",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "_type_identifier"
           }
         },
         {
@@ -8380,9 +7929,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type_parameters",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -8393,9 +7940,7 @@
               "name": "extends_type_clause",
               "content": {
                 "type": "SYMBOL",
-                "name": "extends_type_clause",
-                "fieldName": "extends_type_clause",
-                "nonterminal": true
+                "name": "extends_type_clause"
               },
               "source": "enriched"
             },
@@ -8414,9 +7959,7 @@
               "name": "object_type"
             },
             "named": true,
-            "value": "interface_body",
-            "fieldName": "body",
-            "nonterminal": true
+            "value": "interface_body"
           }
         }
       ]
@@ -8449,9 +7992,7 @@
                     "type": "SYMBOL",
                     "name": "generic_type"
                   }
-                ],
-                "fieldName": "type",
-                "nonterminal": true
+                ]
               }
             },
             {
@@ -8481,9 +8022,7 @@
                           "type": "SYMBOL",
                           "name": "generic_type"
                         }
-                      ],
-                      "fieldName": "type",
-                      "nonterminal": true
+                      ]
                     }
                   }
                 ]
@@ -8522,9 +8061,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "identifier",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "identifier"
           }
         },
         {
@@ -8532,9 +8069,7 @@
           "name": "body",
           "content": {
             "type": "SYMBOL",
-            "name": "enum_body",
-            "fieldName": "body",
-            "nonterminal": true
+            "name": "enum_body"
           }
         }
       ]
@@ -8576,9 +8111,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_property_name",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "_property_name"
           }
         },
         {
@@ -8599,9 +8132,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_type_identifier",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "_type_identifier"
           }
         },
         {
@@ -8617,9 +8148,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type_parameters",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -8631,9 +8160,7 @@
           "name": "value",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "value",
-            "nonterminal": true
+            "name": "type"
           }
         },
         {
@@ -8688,9 +8215,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -8731,9 +8256,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -8760,9 +8283,7 @@
             "name": "decorator",
             "content": {
               "type": "SYMBOL",
-              "name": "decorator",
-              "fieldName": "decorator",
-              "nonterminal": true
+              "name": "decorator"
             }
           }
         },
@@ -8816,9 +8337,7 @@
                 "type": "SYMBOL",
                 "name": "this"
               }
-            ],
-            "fieldName": "pattern",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -8835,9 +8354,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         }
@@ -8855,9 +8372,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         }
@@ -8875,9 +8390,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         }
@@ -8895,9 +8408,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         }
@@ -8934,9 +8445,7 @@
                 "named": true,
                 "value": "call_expression"
               }
-            ],
-            "fieldName": "object",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -8962,9 +8471,7 @@
                 "named": true,
                 "value": "property_identifier"
               }
-            ],
-            "fieldName": "property",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -8991,9 +8498,7 @@
                 "named": true,
                 "value": "member_expression"
               }
-            ],
-            "fieldName": "function",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -9001,9 +8506,7 @@
           "name": "arguments",
           "content": {
             "type": "SYMBOL",
-            "name": "arguments",
-            "fieldName": "arguments",
-            "nonterminal": true
+            "name": "arguments"
           }
         }
       ]
@@ -9125,9 +8628,7 @@
                 "type": "SYMBOL",
                 "name": "rest_pattern"
               }
-            ],
-            "fieldName": "name",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -9135,9 +8636,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type_annotation",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type_annotation"
           }
         }
       ]
@@ -9150,9 +8649,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "identifier",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "identifier"
           }
         },
         {
@@ -9164,9 +8661,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type_annotation",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type_annotation"
           }
         }
       ]
@@ -9179,9 +8674,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         },
@@ -9203,9 +8696,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         }
@@ -9286,9 +8777,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "type_parameters",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -9296,9 +8785,7 @@
             "name": "parameters",
             "content": {
               "type": "SYMBOL",
-              "name": "formal_parameters",
-              "fieldName": "parameters",
-              "nonterminal": true
+              "name": "formal_parameters"
             }
           },
           {
@@ -9310,9 +8797,7 @@
             "name": "type",
             "content": {
               "type": "SYMBOL",
-              "name": "type",
-              "fieldName": "type",
-              "nonterminal": true
+              "name": "type"
             }
           }
         ]
@@ -9522,9 +9007,7 @@
             "name": "left",
             "content": {
               "type": "SYMBOL",
-              "name": "type",
-              "fieldName": "left",
-              "nonterminal": true
+              "name": "type"
             }
           },
           {
@@ -9536,9 +9019,7 @@
             "name": "right",
             "content": {
               "type": "SYMBOL",
-              "name": "type",
-              "fieldName": "right",
-              "nonterminal": true
+              "name": "type"
             }
           },
           {
@@ -9550,9 +9031,7 @@
             "name": "consequence",
             "content": {
               "type": "SYMBOL",
-              "name": "type",
-              "fieldName": "consequence",
-              "nonterminal": true
+              "name": "type"
             }
           },
           {
@@ -9564,9 +9043,7 @@
             "name": "alternative",
             "content": {
               "type": "SYMBOL",
-              "name": "type",
-              "fieldName": "alternative",
-              "nonterminal": true
+              "name": "type"
             }
           }
         ]
@@ -9592,9 +9069,7 @@
                   "type": "SYMBOL",
                   "name": "nested_type_identifier"
                 }
-              ],
-              "fieldName": "name",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -9602,9 +9077,7 @@
             "name": "type_arguments",
             "content": {
               "type": "SYMBOL",
-              "name": "type_arguments",
-              "fieldName": "type_arguments",
-              "nonterminal": true
+              "name": "type_arguments"
             }
           }
         ]
@@ -9636,9 +9109,7 @@
                 "named": true,
                 "value": "identifier"
               }
-            ],
-            "fieldName": "name",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -9650,9 +9121,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           }
         }
       ]
@@ -9724,9 +9193,7 @@
                 "named": true,
                 "value": "call_expression"
               }
-            ],
-            "fieldName": "object",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -9761,9 +9228,7 @@
                 "named": true,
                 "value": "property_identifier"
               }
-            ],
-            "fieldName": "property",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -9812,9 +9277,7 @@
                 "named": true,
                 "value": "call_expression"
               }
-            ],
-            "fieldName": "object",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -9851,9 +9314,7 @@
                 "type": "SYMBOL",
                 "name": "number"
               }
-            ],
-            "fieldName": "index",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -9897,9 +9358,7 @@
                 "named": true,
                 "value": "subscript_expression"
               }
-            ],
-            "fieldName": "function",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -9907,9 +9366,7 @@
           "name": "arguments",
           "content": {
             "type": "SYMBOL",
-            "name": "arguments",
-            "fieldName": "arguments",
-            "nonterminal": true
+            "name": "arguments"
           }
         }
       ]
@@ -9949,9 +9406,7 @@
                 "named": true,
                 "value": "subscript_expression"
               }
-            ],
-            "fieldName": "function",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -9959,9 +9414,7 @@
           "name": "type_arguments",
           "content": {
             "type": "SYMBOL",
-            "name": "type_arguments",
-            "fieldName": "type_arguments",
-            "nonterminal": true
+            "name": "type_arguments"
           }
         }
       ]
@@ -10040,9 +9493,7 @@
           "name": "primary_type",
           "content": {
             "type": "SYMBOL",
-            "name": "primary_type",
-            "fieldName": "primary_type",
-            "nonterminal": true
+            "name": "primary_type"
           },
           "source": "enriched"
         }
@@ -10056,9 +9507,7 @@
           "name": "primary_type",
           "content": {
             "type": "SYMBOL",
-            "name": "primary_type",
-            "fieldName": "primary_type",
-            "nonterminal": true
+            "name": "primary_type"
           },
           "source": "enriched"
         },
@@ -10071,9 +9520,7 @@
           "name": "index_type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "override"
         },
@@ -10091,9 +9538,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_type_identifier",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "_type_identifier"
           }
         },
         {
@@ -10105,9 +9550,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           }
         },
         {
@@ -10186,9 +9629,7 @@
                   "type": "STRING",
                   "value": "+"
                 }
-              ],
-              "fieldName": "operator",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -10196,9 +9637,7 @@
             "name": "argument",
             "content": {
               "type": "SYMBOL",
-              "name": "number",
-              "fieldName": "argument",
-              "nonterminal": true
+              "name": "number"
             }
           }
         ]
@@ -10223,9 +9662,7 @@
             "name": "primary_type",
             "content": {
               "type": "SYMBOL",
-              "name": "primary_type",
-              "fieldName": "primary_type",
-              "nonterminal": true
+              "name": "primary_type"
             },
             "source": "enriched"
           }
@@ -10244,9 +9681,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         },
@@ -10442,9 +9877,7 @@
               "name": "accessibility_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "accessibility_modifier",
-                "fieldName": "accessibility_modifier",
-                "nonterminal": true
+                "name": "accessibility_modifier"
               },
               "source": "enriched"
             },
@@ -10478,9 +9911,7 @@
               "name": "override_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "override_modifier",
-                "fieldName": "override_modifier",
-                "nonterminal": true
+                "name": "override_modifier"
               },
               "source": "enriched"
             },
@@ -10506,9 +9937,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_property_name",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "_property_name"
           }
         },
         {
@@ -10541,9 +9970,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -10618,9 +10045,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_type_identifier",
-            "fieldName": "name",
-            "nonterminal": true
+            "name": "_type_identifier"
           }
         },
         {
@@ -10636,9 +10061,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "constraint",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -10654,9 +10077,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "value",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -10673,9 +10094,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         }
@@ -10702,9 +10121,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         }
@@ -10742,9 +10159,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type_parameters",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -10752,9 +10167,7 @@
           "name": "parameters",
           "content": {
             "type": "SYMBOL",
-            "name": "formal_parameters",
-            "fieldName": "parameters",
-            "nonterminal": true
+            "name": "formal_parameters"
           }
         },
         {
@@ -10770,9 +10183,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -10845,9 +10256,7 @@
                 "type": "SYMBOL",
                 "name": "opting_type_annotation"
               }
-            ],
-            "fieldName": "type",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -10860,9 +10269,7 @@
           "name": "primary_type",
           "content": {
             "type": "SYMBOL",
-            "name": "primary_type",
-            "fieldName": "primary_type",
-            "nonterminal": true
+            "name": "primary_type"
           },
           "source": "enriched"
         },
@@ -10917,9 +10324,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         }
@@ -10939,9 +10344,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "type",
-                  "fieldName": "type1",
-                  "nonterminal": true
+                  "name": "type"
                 },
                 "source": "override"
               },
@@ -10959,9 +10362,7 @@
             "name": "right",
             "content": {
               "type": "SYMBOL",
-              "name": "type",
-              "fieldName": "type2",
-              "nonterminal": true
+              "name": "type"
             },
             "source": "override"
           }
@@ -10982,9 +10383,7 @@
                 "name": "left",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "type",
-                  "fieldName": "type1",
-                  "nonterminal": true
+                  "name": "type"
                 },
                 "source": "override"
               },
@@ -11002,9 +10401,7 @@
             "name": "right",
             "content": {
               "type": "SYMBOL",
-              "name": "type",
-              "fieldName": "type2",
-              "nonterminal": true
+              "name": "type"
             },
             "source": "override"
           }
@@ -11030,9 +10427,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "type_parameters",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -11040,9 +10435,7 @@
             "name": "parameters",
             "content": {
               "type": "SYMBOL",
-              "name": "formal_parameters",
-              "fieldName": "parameters",
-              "nonterminal": true
+              "name": "formal_parameters"
             }
           },
           {
@@ -11067,9 +10460,7 @@
                   "type": "SYMBOL",
                   "name": "type_predicate"
                 }
-              ],
-              "fieldName": "return_type",
-              "nonterminal": true
+              ]
             }
           }
         ]
@@ -11133,9 +10524,7 @@
           "name": "alias",
           "content": {
             "type": "SYMBOL",
-            "name": "_module_export_name",
-            "fieldName": "alias",
-            "nonterminal": true
+            "name": "_module_export_name"
           }
         }
       ]
@@ -11220,9 +10609,7 @@
                 "type": "SYMBOL",
                 "name": "_destructuring_pattern"
               }
-            ],
-            "fieldName": "parameter",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -11233,9 +10620,7 @@
               "name": "type",
               "content": {
                 "type": "SYMBOL",
-                "name": "type_annotation",
-                "fieldName": "type",
-                "nonterminal": true
+                "name": "type_annotation"
               }
             },
             {
@@ -11327,9 +10712,7 @@
                   "name": "name",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "_property_name",
-                    "fieldName": "name",
-                    "nonterminal": true
+                    "name": "_property_name"
                   }
                 },
                 {
@@ -11355,9 +10738,7 @@
                         "name": "name",
                         "content": {
                           "type": "SYMBOL",
-                          "name": "_property_name",
-                          "fieldName": "name",
-                          "nonterminal": true
+                          "name": "_property_name"
                         }
                       },
                       {
@@ -11397,9 +10778,7 @@
           "name": "type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "type",
-            "nonterminal": true
+            "name": "type"
           },
           "source": "enriched"
         }
@@ -11417,9 +10796,7 @@
           "name": "alias",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "alias",
-            "nonterminal": true
+            "name": "type"
           }
         }
       ]
@@ -11580,9 +10957,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "sign",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -12010,9 +11385,7 @@
             "name": "decorator",
             "content": {
               "type": "SYMBOL",
-              "name": "decorator",
-              "fieldName": "decorator",
-              "nonterminal": true
+              "name": "decorator"
             }
           }
         },
@@ -12028,9 +11401,7 @@
               "name": "declaration",
               "content": {
                 "type": "SYMBOL",
-                "name": "declaration",
-                "fieldName": "declaration",
-                "nonterminal": true
+                "name": "declaration"
               }
             },
             {
@@ -12061,9 +11432,7 @@
               "name": "declaration",
               "content": {
                 "type": "SYMBOL",
-                "name": "declaration",
-                "fieldName": "declaration",
-                "nonterminal": true
+                "name": "declaration"
               }
             },
             {
@@ -12098,9 +11467,7 @@
             "type": "SYMBOL",
             "name": "identifier"
           }
-        ],
-        "fieldName": "parameter",
-        "nonterminal": true
+        ]
       }
     },
     "_arrow_function__call_signature": {
@@ -12194,9 +11561,7 @@
                 "named": true,
                 "value": "identifier"
               }
-            ],
-            "fieldName": "name",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -12208,9 +11573,7 @@
           "name": "alias",
           "content": {
             "type": "SYMBOL",
-            "name": "_import_identifier",
-            "fieldName": "alias",
-            "nonterminal": true
+            "name": "_import_identifier"
           }
         }
       ]
@@ -12237,9 +11600,7 @@
                 "named": true,
                 "value": "identifier"
               }
-            ],
-            "fieldName": "name",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -12251,9 +11612,7 @@
           "name": "index_type",
           "content": {
             "type": "SYMBOL",
-            "name": "type",
-            "fieldName": "index_type",
-            "nonterminal": true
+            "name": "type"
           }
         }
       ]
@@ -12311,9 +11670,7 @@
           "name": "value",
           "content": {
             "type": "SYMBOL",
-            "name": "expression",
-            "fieldName": "value",
-            "nonterminal": true
+            "name": "expression"
           }
         },
         {
@@ -12332,9 +11689,7 @@
             "name": "decorator",
             "content": {
               "type": "SYMBOL",
-              "name": "decorator",
-              "fieldName": "decorator",
-              "nonterminal": true
+              "name": "decorator"
             }
           }
         },
@@ -12436,9 +11791,7 @@
             "type": "SYMBOL",
             "name": "parenthesized_expression"
           }
-        ],
-        "fieldName": "left",
-        "nonterminal": true
+        ]
       }
     },
     "_for_header_var_kind": {
@@ -12449,9 +11802,7 @@
           "name": "kind",
           "content": {
             "type": "STRING",
-            "value": "var",
-            "fieldName": "kind",
-            "nonterminal": true
+            "value": "var"
           }
         },
         {
@@ -12468,9 +11819,7 @@
                 "type": "SYMBOL",
                 "name": "_destructuring_pattern"
               }
-            ],
-            "fieldName": "left",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -12504,9 +11853,7 @@
                 "type": "STRING",
                 "value": "const"
               }
-            ],
-            "fieldName": "kind",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -12523,9 +11870,7 @@
                 "type": "SYMBOL",
                 "name": "_destructuring_pattern"
               }
-            ],
-            "fieldName": "left",
-            "nonterminal": true
+            ]
           }
         },
         {
@@ -12811,9 +12156,7 @@
               {
                 "type": "BLANK"
               }
-            ],
-            "fieldName": "type",
-            "nonterminal": true
+            ]
           }
         }
       ]
@@ -12920,9 +12263,7 @@
                   "type": "SYMBOL",
                   "name": "import"
                 }
-              ],
-              "fieldName": "function",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -12938,9 +12279,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "type_arguments",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -12948,9 +12287,7 @@
             "name": "arguments",
             "content": {
               "type": "SYMBOL",
-              "name": "arguments",
-              "fieldName": "arguments",
-              "nonterminal": true
+              "name": "arguments"
             }
           }
         ]
@@ -12976,9 +12313,7 @@
                   "type": "SYMBOL",
                   "name": "new_expression"
                 }
-              ],
-              "fieldName": "function",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -12986,9 +12321,7 @@
             "name": "arguments",
             "content": {
               "type": "SYMBOL",
-              "name": "template_string",
-              "fieldName": "arguments",
-              "nonterminal": true
+              "name": "template_string"
             }
           }
         ]
@@ -13005,9 +12338,7 @@
             "name": "function",
             "content": {
               "type": "SYMBOL",
-              "name": "primary_expression",
-              "fieldName": "function",
-              "nonterminal": true
+              "name": "primary_expression"
             }
           },
           {
@@ -13027,9 +12358,7 @@
                 {
                   "type": "BLANK"
                 }
-              ],
-              "fieldName": "type_arguments",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -13037,9 +12366,7 @@
             "name": "arguments",
             "content": {
               "type": "SYMBOL",
-              "name": "arguments",
-              "fieldName": "arguments",
-              "nonterminal": true
+              "name": "arguments"
             }
           }
         ]
@@ -13056,9 +12383,7 @@
             "name": "argument",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "argument",
-              "nonterminal": true
+              "name": "expression"
             }
           },
           {
@@ -13075,9 +12400,7 @@
                   "type": "STRING",
                   "value": "--"
                 }
-              ],
-              "fieldName": "operator",
-              "nonterminal": true
+              ]
             }
           }
         ]
@@ -13103,9 +12426,7 @@
                   "type": "STRING",
                   "value": "--"
                 }
-              ],
-              "fieldName": "operator",
-              "nonterminal": true
+              ]
             }
           },
           {
@@ -13113,9 +12434,7 @@
             "name": "argument",
             "content": {
               "type": "SYMBOL",
-              "name": "expression",
-              "fieldName": "argument",
-              "nonterminal": true
+              "name": "expression"
             }
           }
         ]
