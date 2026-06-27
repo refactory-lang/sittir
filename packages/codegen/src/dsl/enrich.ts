@@ -931,58 +931,6 @@ function tryPromoteInRepeatSeq(
 // still happens in `applySymbolToField` (a real structural promotion, not a
 // derived-attr stamp).
 
-/** @internal — descend into structural children of `rule` and apply
- *  `visit` to each (seq/choice members; optional/repeat/repeat1/prec/field/alias
- *  content). Returns the original rule reference when no descendant changes —
- *  preserves the fixed-point identity check in `applyEnrichPasses`. */
-function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
-	if (!rule || typeof rule !== 'object') return rule;
-	const t = (rule as { type?: string }).type;
-	if (!t) return rule;
-	if (isSeqType(t) || isChoiceType(t)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
-		if (!Array.isArray(members)) return rule;
-		let changed = false;
-		const newMembers = members.map((m) => {
-			const out = visit(m);
-			if (out !== m) changed = true;
-			return out;
-		});
-		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
-	}
-	if (
-		isOptionalType(t) ||
-		isRepeatType(t) ||
-		isFieldType(t) ||
-		isPrecWrapper(rule as { type: string }) ||
-		t === 'alias' ||
-		t === 'ALIAS' ||
-		t === 'token' ||
-		t === 'TOKEN' ||
-		t === 'immediate_token' ||
-		t === 'IMMEDIATE_TOKEN' ||
-		t === 'group' ||
-		t === 'variant'
-	) {
-		const content = (rule as unknown as { content?: Rule }).content;
-		if (content === undefined) return rule;
-		const out = visit(content);
-		if (out === content) return rule;
-		return { ...rule, content: out } as Rule;
-	}
-	if (t === 'polymorph') {
-		const forms = (rule as unknown as { forms?: Array<{ content: Rule }> }).forms;
-		if (!Array.isArray(forms)) return rule;
-		let changed = false;
-		const newForms = forms.map((f) => {
-			const out = visit(f.content);
-			if (out !== f.content) changed = true;
-			return changed ? { ...f, content: out } : f;
-		});
-		return changed ? ({ ...rule, forms: newForms } as Rule) : rule;
-	}
-	return rule;
-}
 
 // Multiplicity / nonterminal are NOT stamped here — they are derived later by
 // `applyWrapperDeletion` (optimize) from the OPTIONAL/REPEAT/REPEAT1/FIELD
