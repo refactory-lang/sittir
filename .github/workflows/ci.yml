@@ -6,6 +6,17 @@ on:
   pull_request:
     branches-ignore: ["sub**"]
 
+# Crate-download resilience for every cargo-running job. The napi builds fetch
+# from a cold registry and intermittently die on `download of <crate> failed` /
+# `[16] Error in the HTTP2 framing layer` (libcurl's HTTP/2 connection collapsing
+# mid-fetch). Disabling HTTP/2 multiplexing forces one request per connection,
+# sidestepping the framing bug; retry covers other transient blips. Workflow-level
+# so it's a single source across CI / cargo-check / napi-build / parity.
+# (The local-dev equivalent lives in the gitignored .cargo/config.toml.)
+env:
+  CARGO_NET_RETRY: "10"
+  CARGO_HTTP_MULTIPLEXING: "false"
+
 jobs:
   CI:
     name: CI
@@ -29,6 +40,12 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # `pnpm run build` compiles the napi crates from a cold cargo registry.
+      # Cache the registry + target dir so cached crates skip the download path
+      # entirely (the `.cargo/config.toml` net hardening covers the cold-cache run).
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
 
       - name: Build
         run: pnpm run build

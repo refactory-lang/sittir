@@ -26,6 +26,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Crate-download resilience for the release napi builds (see ci.yml for rationale):
+# disable HTTP/2 multiplexing to sidestep `[16] Error in the HTTP2 framing layer`,
+# retry other transient registry fetch failures.
+env:
+  CARGO_NET_RETRY: "10"
+  CARGO_HTTP_MULTIPLEXING: "false"
+
 jobs:
   release:
     name: Release
