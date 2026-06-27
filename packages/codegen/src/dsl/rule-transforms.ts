@@ -549,13 +549,13 @@ export function isLeaf(rule: Rule): boolean {
 //      array E, taking the choice's separator string as the trailing separator.
 // ---------------------------------------------------------------------------
 type Mult = 'optional' | 'array' | 'nonEmptyArray' | undefined;
-export const isArrayMult = (m: Mult): boolean => m === 'array' || m === 'nonEmptyArray';
+const isArrayMult = (m: Mult): boolean => m === 'array' || m === 'nonEmptyArray';
 /**
  * Structural identity of two slot-bearing rules ignoring leaf attributes
  * (multiplicity / separator / fieldName / aliasedFrom). Used to decide that a
  * head element and a repeat element are "the same list element".
  */
-export function sameSlotShape(a: Rule, b: Rule): boolean {
+function sameSlotShape(a: Rule, b: Rule): boolean {
     if (a.type !== b.type) return false;
     switch (a.type) {
         case SYMBOL:
@@ -580,7 +580,7 @@ export function sameSlotShape(a: Rule, b: Rule): boolean {
  * If `head` + `next` form a head+repeat list pair, return the fused multi
  * element; otherwise `null`.
  */
-export function tryFusePair(head: Rule, next: Rule | undefined): Rule | null {
+function tryFusePair(head: Rule, next: Rule | undefined): Rule | null {
     if (!next) return null;
     const headMult = (head as { multiplicity?: Mult; }).multiplicity;
     if (isArrayMult(headMult)) return null; // head is already multi — not a head+repeat pair
@@ -888,7 +888,7 @@ function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
  * absent attr and fall back (`fieldName` → `content`). Only lifts attrs the node
  * doesn't already carry; arms keep theirs. Full rationale: glossary (Phase 3.5).
  */
-export function liftSharedArmAttrs(rule: ChoiceRule): Rule {
+function liftSharedArmAttrs(rule: ChoiceRule): Rule {
 	// Hoist the UNANIMOUS arm attrs (shared by EVERY arm) onto the choice node,
 	// but only those the choice doesn't already carry. Shares the arm-walk with
 	// collect-slots via `sharedArmAttrs` — the single source for shared-arm facts.
@@ -1012,7 +1012,7 @@ function mergePosition(position: readonly Rule[]): Rule {
 }
 
 /** Deduplicate rules by JSON equality, preserving first-seen order. */
-export function dedupeByJson(rules: readonly Rule[]): Rule[] {
+function dedupeByJson(rules: readonly Rule[]): Rule[] {
 	const seen = new Set<string>();
 	const out: Rule[] = [];
 	for (const r of rules) {

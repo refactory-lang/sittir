@@ -20,8 +20,7 @@
 
 import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { assertUniversalShape } from '../simplify.ts';
-import { canonicalizeSeqOfLeaves } from '../../dsl/rule-transforms.ts';
+import { canonicalizeSeqOfLeaves, assertUniversalShape } from '../../dsl/rule-transforms.ts';
 import {
 	AssembledBranch,
 	AssembledGroup,

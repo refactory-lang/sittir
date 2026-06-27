@@ -58,8 +58,8 @@ import {
 	buildParseKindRuleSignatures,
 	type AssembleWarning
 } from './model/node-map.ts';
-import { simplifyRule, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
-import { inlineRefs } from '../dsl/rule-transforms.ts';
+import { simplifyRule, hoistInnerFieldsForTemplate } from './simplify.ts';
+import { inlineRefs, extractRepeatShape } from '../dsl/rule-transforms.ts';
 import { compileWordMatcher } from './common.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
