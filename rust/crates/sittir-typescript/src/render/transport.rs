@@ -24891,7 +24891,7 @@ pub struct ExportSpecifierOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: Option<ModuleExportNameTransport>,
+    pub alias: ModuleExportNameTransport,
 }
 
 impl RenderableTransport for ExportSpecifierOptional1Transport {
@@ -26168,7 +26168,7 @@ pub struct InferTypeOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<TypeTransport>,
+    pub type_: TypeTransport,
 }
 
 impl RenderableTransport for InferTypeOptional1Transport {
@@ -27799,7 +27799,7 @@ pub struct MappedTypeClauseOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: Option<TypeTransport>,
+    pub alias: TypeTransport,
 }
 
 impl RenderableTransport for MappedTypeClauseOptional1Transport {
@@ -53277,9 +53277,7 @@ fn render_export_specifier_export_kind(t: &ExportSpecifierExportKindEnum, dest: 
 }
 
 fn render_export_specifier_optional1(node: &ExportSpecifierOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.alias {
-        render_module_export_name(child, dest)?;
-    }
+    render_module_export_name(&node.alias, dest)?;
     Ok(())
 }
 
@@ -53483,9 +53481,7 @@ fn render_index_signature_optional1(node: &IndexSignatureOptional1Transport, des
 }
 
 fn render_infer_type_optional1(node: &InferTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.type_ {
-        render_type(child, dest)?;
-    }
+    render_type(&node.type_, dest)?;
     Ok(())
 }
 
@@ -53589,9 +53585,7 @@ fn render_lhs_expression(node: &LhsExpressionTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_mapped_type_clause_optional1(node: &MappedTypeClauseOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.alias {
-        render_type(child, dest)?;
-    }
+    render_type(&node.alias, dest)?;
     Ok(())
 }
 

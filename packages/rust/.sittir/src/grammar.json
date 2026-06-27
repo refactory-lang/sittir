@@ -33,12 +33,8 @@
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
-              "name": "_statement",
-              "multiplicity": "array",
-              "nonterminal": true
-            },
-            "multiplicity": "array",
-            "nonterminal": true
+              "name": "_statement"
+            }
           },
           "source": "override"
         }
@@ -367,12 +363,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_pattern",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_token_pattern"
+          }
         },
         {
           "type": "STRING",
@@ -552,12 +544,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_tokens",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_tokens"
+          }
         },
         {
           "type": "STRING",
@@ -893,12 +881,8 @@
                   "type": "STRING",
                   "value": "?"
                 }
-              ],
-              "multiplicity": "nonEmptyArray",
-              "nonterminal": true
-            },
-            "multiplicity": "nonEmptyArray",
-            "nonterminal": true
+              ]
+            }
           }
         },
         {
@@ -1264,12 +1248,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_declaration_statement",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_declaration_statement"
+          }
         },
         {
           "type": "STRING",
@@ -2413,9 +2393,7 @@
               "type": "SYMBOL",
               "name": "extern_modifier"
             }
-          ],
-          "multiplicity": "nonEmptyArray",
-          "nonterminal": true
+          ]
         },
         "source": "override"
       }
@@ -2971,12 +2949,8 @@
                         }
                       ]
                     }
-                  ],
-                  "multiplicity": "array",
-                  "nonterminal": true
-                },
-                "multiplicity": "array",
-                "nonterminal": true
+                  ]
+                }
               }
             ]
           },
@@ -3073,12 +3047,8 @@
                       "named": true,
                       "value": "attributed_type_parameter"
                     }
-                  ],
-                  "multiplicity": "array",
-                  "nonterminal": true
-                },
-                "multiplicity": "array",
-                "nonterminal": true
+                  ]
+                }
               }
             ]
           },
@@ -4057,12 +4027,8 @@
                     "type": "SYMBOL",
                     "name": "lifetime"
                   }
-                ],
-                "multiplicity": "array",
-                "nonterminal": true
-              },
-              "multiplicity": "array",
-              "nonterminal": true
+                ]
+              }
             }
           ]
         },
@@ -4516,12 +4482,8 @@
                     "named": true,
                     "value": "type_argument"
                   }
-                ],
-                "multiplicity": "array",
-                "nonterminal": true
-              },
-              "multiplicity": "array",
-              "nonterminal": true
+                ]
+              }
             }
           ]
         },
@@ -6270,12 +6232,8 @@
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
-              "name": "attribute_item",
-              "multiplicity": "array",
-              "nonterminal": true
-            },
-            "multiplicity": "array",
-            "nonterminal": true
+              "name": "attribute_item"
+            }
           },
           "source": "override"
         },
@@ -6441,12 +6399,8 @@
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
-              "name": "attribute_item",
-              "multiplicity": "array",
-              "nonterminal": true
-            },
-            "multiplicity": "array",
-            "nonterminal": true
+              "name": "attribute_item"
+            }
           },
           "source": "override"
         },
@@ -6470,12 +6424,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "attribute_item",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "attribute_item"
+          }
         },
         {
           "type": "FIELD",
@@ -6838,12 +6788,8 @@
                     "type": "SYMBOL",
                     "name": "inner_attribute_item"
                   }
-                ],
-                "multiplicity": "array",
-                "nonterminal": true
-              },
-              "multiplicity": "array",
-              "nonterminal": true
+                ]
+              }
             },
             "source": "override"
           },
@@ -6907,12 +6853,8 @@
                   "type": "SYMBOL",
                   "name": "inner_attribute_item"
                 }
-              ],
-              "multiplicity": "array",
-              "nonterminal": true
-            },
-            "multiplicity": "array",
-            "nonterminal": true
+              ]
+            }
           },
           "source": "override"
         },
@@ -7617,12 +7559,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_statement",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_statement"
+          }
         },
         {
           "type": "FIELD",
@@ -8502,12 +8440,8 @@
                 "type": "SYMBOL",
                 "name": "string_content"
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "IMMEDIATE_TOKEN",
@@ -9089,12 +9023,8 @@
                 "named": true,
                 "value": "attributed_enum_variant"
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -9159,12 +9089,8 @@
                 "named": true,
                 "value": "attributed_field_declaration"
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -9210,12 +9136,8 @@
                 "named": true,
                 "value": "attributed_ordered_field"
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -9292,12 +9214,8 @@
                     "type": "SYMBOL",
                     "name": "where_predicate"
                   }
-                ],
-                "multiplicity": "array",
-                "nonterminal": true
-              },
-              "multiplicity": "array",
-              "nonterminal": true
+                ]
+              }
             }
           ]
         },
@@ -9482,12 +9400,8 @@
                   }
                 ]
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -9554,12 +9468,8 @@
                 "named": true,
                 "value": "attributed_parameter"
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -9690,12 +9600,8 @@
                   }
                 ]
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -9761,12 +9667,8 @@
                 "named": true,
                 "value": "attributed_argument"
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -9828,12 +9730,8 @@
                   }
                 ]
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -9935,12 +9833,8 @@
                   }
                 ]
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         }
       ]
     },
@@ -9982,12 +9876,8 @@
                   }
                 ]
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -10023,12 +9913,8 @@
                 "type": "SYMBOL",
                 "name": "_pattern"
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -10082,12 +9968,8 @@
                   }
                 ]
               }
-            ],
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -10243,12 +10125,8 @@
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
-              "name": "attribute_item",
-              "multiplicity": "array",
-              "nonterminal": true
-            },
-            "multiplicity": "array",
-            "nonterminal": true
+              "name": "attribute_item"
+            }
           },
           "source": "override"
         },
@@ -10295,12 +10173,8 @@
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
-              "name": "attribute_item",
-              "multiplicity": "array",
-              "nonterminal": true
-            },
-            "multiplicity": "array",
-            "nonterminal": true
+              "name": "attribute_item"
+            }
           },
           "source": "override"
         },
@@ -10492,12 +10366,8 @@
                     "type": "STRING",
                     "value": ";"
                   }
-                ],
-                "multiplicity": "array",
-                "nonterminal": true
-              },
-              "multiplicity": "array",
-              "nonterminal": true
+                ]
+              }
             },
             {
               "type": "CHOICE",
@@ -10546,12 +10416,8 @@
                     "type": "STRING",
                     "value": ";"
                   }
-                ],
-                "multiplicity": "array",
-                "nonterminal": true
-              },
-              "multiplicity": "array",
-              "nonterminal": true
+                ]
+              }
             },
             {
               "type": "CHOICE",
@@ -10600,12 +10466,8 @@
                     "type": "STRING",
                     "value": ";"
                   }
-                ],
-                "multiplicity": "array",
-                "nonterminal": true
-              },
-              "multiplicity": "array",
-              "nonterminal": true
+                ]
+              }
             },
             {
               "type": "CHOICE",
@@ -11254,12 +11116,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_pattern",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_token_pattern"
+          }
         },
         {
           "type": "STRING",
@@ -11278,12 +11136,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_pattern",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_token_pattern"
+          }
         },
         {
           "type": "STRING",
@@ -11302,12 +11156,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_token_pattern",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_token_pattern"
+          }
         },
         {
           "type": "STRING",
@@ -11326,12 +11176,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_tokens",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_tokens"
+          }
         },
         {
           "type": "STRING",
@@ -11350,12 +11196,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_tokens",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_tokens"
+          }
         },
         {
           "type": "STRING",
@@ -11374,12 +11216,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_tokens",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_tokens"
+          }
         },
         {
           "type": "STRING",
@@ -11398,12 +11236,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_delim_tokens",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_delim_tokens"
+          }
         },
         {
           "type": "STRING",
@@ -11422,12 +11256,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_delim_tokens",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_delim_tokens"
+          }
         },
         {
           "type": "STRING",
@@ -11446,12 +11276,8 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "_delim_tokens",
-            "multiplicity": "array",
-            "nonterminal": true
-          },
-          "multiplicity": "array",
-          "nonterminal": true
+            "name": "_delim_tokens"
+          }
         },
         {
           "type": "STRING",

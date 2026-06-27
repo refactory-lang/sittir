@@ -2121,8 +2121,8 @@ export const enum UseClauseKind {
 // Node types — concrete interfaces
 export interface AbstractTypeOptional1 {
   readonly $type: "_abstract_type_optional1";
-  readonly _type_parameters?: TypeParameters;
-  typeParameters(): TypeParameters | undefined;
+  readonly _type_parameters: TypeParameters;
+  typeParameters(): TypeParameters;
 }
 
 export interface ArrayExpressionList {
@@ -2145,8 +2145,8 @@ export interface ArrayExpressionSemi {
 
 export interface ArrayTypeOptional1 {
   readonly $type: "_array_type_optional1";
-  readonly _length?: Expression;
-  length(): Expression | undefined;
+  readonly _length: Expression;
+  length(): Expression;
 }
 
 export interface AttributedArgument {
@@ -2201,8 +2201,8 @@ export interface AttributedTypeParameter {
 
 export interface BlockOptional1 {
   readonly $type: "_block_optional1";
-  readonly _label?: Label;
-  label(): Label | undefined;
+  readonly _label: Label;
+  label(): Label;
 }
 
 export interface ClosureExpressionBlock {
@@ -2221,20 +2221,20 @@ export interface ClosureExpressionExpr {
 
 export interface ClosureExpressionOptional1 {
   readonly $type: "_closure_expression_optional1";
-  readonly _return_type?: _Type;
-  returnType(): _Type | undefined;
+  readonly _return_type: _Type;
+  returnType(): _Type;
 }
 
 export interface ConstItemOptional1 {
   readonly $type: "_const_item_optional1";
-  readonly _value?: Expression;
-  value(): Expression | undefined;
+  readonly _value: Expression;
+  value(): Expression;
 }
 
 export interface ConstParameterOptional1 {
   readonly $type: "_const_parameter_optional1";
-  readonly _value?: Block | Identifier | Literal | NegativeLiteral;
-  value(): Block | Identifier | Literal | NegativeLiteral | undefined;
+  readonly _value: Block | Identifier | Literal | NegativeLiteral;
+  value(): Block | Identifier | Literal | NegativeLiteral;
 }
 
 export interface DelimTokenTreeBrace {
@@ -2257,8 +2257,8 @@ export interface DelimTokenTreeParen {
 
 export interface EnumVariantOptional1 {
   readonly $type: "_enum_variant_optional1";
-  readonly _value?: Expression;
-  value(): Expression | undefined;
+  readonly _value: Expression;
+  value(): Expression;
 }
 
 export interface ExpressionStatementWithSemi {
@@ -2269,8 +2269,8 @@ export interface ExpressionStatementWithSemi {
 
 export interface ExternCrateDeclarationOptional1 {
   readonly $type: "_extern_crate_declaration_optional1";
-  readonly _alias?: Identifier;
-  alias(): Identifier | undefined;
+  readonly _alias: Identifier;
+  alias(): Identifier;
 }
 
 export interface FieldPatternNamed {
@@ -2283,20 +2283,20 @@ export interface FieldPatternNamed {
 
 export interface ForExpressionOptional1 {
   readonly $type: "_for_expression_optional1";
-  readonly _label?: Label;
-  label(): Label | undefined;
+  readonly _label: Label;
+  label(): Label;
 }
 
 export interface FunctionItemOptional1 {
   readonly $type: "_function_item_optional1";
-  readonly _return_type?: _Type;
-  returnType(): _Type | undefined;
+  readonly _return_type: _Type;
+  returnType(): _Type;
 }
 
 export interface FunctionSignatureItemOptional1 {
   readonly $type: "_function_signature_item_optional1";
-  readonly _return_type?: _Type;
-  returnType(): _Type | undefined;
+  readonly _return_type: _Type;
+  returnType(): _Type;
 }
 
 export interface FunctionTypeFnForm {
@@ -2307,8 +2307,8 @@ export interface FunctionTypeFnForm {
 
 export interface FunctionTypeOptional1 {
   readonly $type: "_function_type_optional1";
-  readonly _return_type?: _Type;
-  returnType(): _Type | undefined;
+  readonly _return_type: _Type;
+  returnType(): _Type;
 }
 
 export interface FunctionTypeTraitForm {
@@ -2325,8 +2325,8 @@ export interface ImplItemBody {
 
 export interface ImplItemGroup1 {
   readonly $type: "_impl_item_group1";
-  readonly _trait?: Identifier | ScopedTypeIdentifier | GenericType;
-  trait(): Identifier | ScopedTypeIdentifier | GenericType | undefined;
+  readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
+  trait(): Identifier | ScopedTypeIdentifier | GenericType;
 }
 
 export interface ImplItemNegativeClause {
@@ -2359,20 +2359,20 @@ export interface LetChain {
 
 export interface LetDeclarationOptional1 {
   readonly $type: "_let_declaration_optional1";
-  readonly _type?: _Type;
-  type(): _Type | undefined;
+  readonly _type: _Type;
+  type(): _Type;
 }
 
 export interface LetDeclarationOptional2 {
   readonly $type: "_let_declaration_optional2";
-  readonly _value?: Expression;
-  value(): Expression | undefined;
+  readonly _value: Expression;
+  value(): Expression;
 }
 
 export interface LetDeclarationOptional3 {
   readonly $type: "_let_declaration_optional3";
-  readonly _alternative?: Block;
-  alternative(): Block | undefined;
+  readonly _alternative: Block;
+  alternative(): Block;
 }
 
 export interface LineCommentDoc {
@@ -2391,8 +2391,8 @@ export interface LineCommentDoc {
 
 export interface LoopExpressionOptional1 {
   readonly $type: "_loop_expression_optional1";
-  readonly _label?: Label;
-  label(): Label | undefined;
+  readonly _label: Label;
+  label(): Label;
 }
 
 export interface MacroDefinitionBrace {
@@ -2429,8 +2429,8 @@ export interface MatchBlockArms {
 
 export interface MatchPatternOptional1 {
   readonly $type: "_match_pattern_optional1";
-  readonly _condition?: Condition;
-  condition(): Condition | undefined;
+  readonly _condition: Condition;
+  condition(): Condition;
 }
 
 export interface NonSpecialToken {
@@ -2518,8 +2518,8 @@ export interface ReferenceExpressionRawMut {
 
 export interface StaticItemOptional1 {
   readonly $type: "_static_item_optional1";
-  readonly _value?: Expression;
-  value(): Expression | undefined;
+  readonly _value: Expression;
+  value(): Expression;
 }
 
 export interface StructItemBrace {
@@ -2584,8 +2584,8 @@ export interface TypeArgument {
 
 export interface TypeParameterOptional1 {
   readonly $type: "_type_parameter_optional1";
-  readonly _default_type?: _Type;
-  defaultType(): _Type | undefined;
+  readonly _default_type: _Type;
+  defaultType(): _Type;
 }
 
 export interface UseWildcardClause {
@@ -2602,8 +2602,8 @@ export interface UseWildcardGroup1 {
 
 export interface VariadicParameterOptional1 {
   readonly $type: "_variadic_parameter_optional1";
-  readonly _pattern?: Pattern;
-  pattern(): Pattern | undefined;
+  readonly _pattern: Pattern;
+  pattern(): Pattern;
 }
 
 export interface _VisibilityModifierGroup1 {
@@ -2636,8 +2636,8 @@ export interface VisibilityModifierPub {
 
 export interface WhileExpressionOptional1 {
   readonly $type: "_while_expression_optional1";
-  readonly _label?: Label;
-  label(): Label | undefined;
+  readonly _label: Label;
+  label(): Label;
 }
 
 export interface AbstractType {
