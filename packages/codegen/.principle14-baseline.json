@@ -1,11 +1,11 @@
 {
 	"modules": {
 		"compiler/normalize.ts": 12,
-		"compiler/simplify.ts": 5,
+		"compiler/simplify.ts": 0,
 		"compiler/evaluate.ts": 14,
 		"compiler/link.ts": 42,
 		"compiler/assemble.ts": 17,
 		"compiler/model/node-map.ts": 3,
-		"dsl/rule-transforms.ts": 6
+		"dsl/rule-transforms.ts": 11
 	}
 }
