@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "51f3d8a426f4aa1d8e872c1d54fc0fdaafdd22a23784e0df17f008dd9bcee1c9",
+  "source_hash": "997725ba026ff4b0ed395d3ec82344d5aed765cf18efbeb9b1aec02a2eb018e2",
   "files": {
     "packages/rust/.sittir/grammar.js": "17734aeca759b92f250ce01d5fe1e4cb8f086d341e2ca191a530ca9f9180a446",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
@@ -416,6 +416,6 @@
   },
   "host_files": {
     "rust/crates/sittir-rust/sittir-rust.darwin-arm64.node": "freshness-checked",
-    "rust/crates/sittir-rust/sittir-rust.node": "bf5a8f7f173c7386e01da5d74a3c4575efccc7405a4dee16f8c1ee9d20ef4fd4"
+    "rust/crates/sittir-rust/sittir-rust.node": "freshness-checked"
   }
 }

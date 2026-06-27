@@ -12,8 +12,9 @@
  */
 
 import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
+import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, OptionalRule, RepeatRule, Repeat1Rule, GroupRule, VariantRule } from '../types/rule.ts';
 import type { AssembledNode } from './model/node-map.ts';
+import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
@@ -216,77 +217,99 @@ function isSlotPromotedLiteral(rule: Rule): boolean {
 	return (rule as { nonterminal?: boolean }).nonterminal === true;
 }
 
-export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = false): Rule {
+/**
+ * Minimal `SimplifyCtx` for the public boundary when no ctx is supplied (e.g.
+ * direct `simplifyRule(rule)` calls in tests). The per-rule-type handlers take a
+ * concrete `ctx: SimplifyCtx`; this normalizes once so they never see `undefined`.
+ */
+function makeDefaultCtx(): SimplifyCtx {
+	return { rules: {}, inlineKinds: new Set(), diagnostics: new DiagnosticSink() };
+}
+
+/**
+ * Dispatch a rule to its per-type simplify handler. Thin switch over the Rule
+ * union. The public entry keeps `ctx?` optional (normalized via `makeDefaultCtx`)
+ * so direct callers needn't build a ctx; each handler takes `(rule: <Type>Rule,
+ * ctx: SimplifyCtx)`. `inField` rides on `ctx` (see `SimplifyCtx.inField`).
+ */
+export function simplifyRule(rule: Rule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
 	switch (rule.type) {
 		case SEQ:
-			return collapseSeq(rule, ctx, inField);
-		case CHOICE: {
-			// Variant wrappers preserved for polymorph surface detection.
-			const members = rule.members.map((m) => simplifyRule(m, ctx, inField));
-			// Fold empty-match members (pattern(""), empty seq) into optional.
-			const empty = members.findIndex(isEmptyMatchMember);
-			if (empty >= 0 && members.length > 1) {
-				const nonEmpty = members.filter((_, i) => i !== empty);
-				const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, { type: CHOICE, members: nonEmpty });
-				return simplifyRule(withAttrsFrom(rule, { type: OPTIONAL, content: inner }), ctx, inField);
-			}
-			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
-			// Fuse same-named fields across structurally-equivalent branches, then
-			// hoist a field shared by every branch out to an enclosing seq.
-			const merged = mergeChoiceBranches({ type: CHOICE, members });
-			if (merged.type !== CHOICE) return withAttrsFrom(rule, merged);
-			return withAttrsFrom(rule, hoistSharedFieldAcrossChoiceBranches(merged));
-		}
-		case OPTIONAL: {
-			const inner = simplifyRule(rule.content, ctx, inField);
-			// Fold to empty-seq when body vanished. Exception: inside
-			// a field, anonymous strings are structural content.
-			if (inner.type === SEQ && inner.members.length === 0) {
-				return { type: SEQ, members: [] };
-			}
-			if (!inField && inner.type === STRING && !isSlotPromotedLiteral(inner)) {
-				return { type: SEQ, members: [] };
-			}
-			return hoistFieldOutOfSingleContentWrapper({
-				type: OPTIONAL,
-				content: inner
-			});
-		}
-		case REPEAT: {
-			const next = {
-				...rule,
-				content: simplifyRule(rule.content, ctx, inField)
-			};
-			return hoistFieldOutOfSingleContentWrapper(next);
-		}
-		case REPEAT1: {
-			const next = {
-				...rule,
-				content: simplifyRule(rule.content, ctx, inField)
-			};
-			return hoistFieldOutOfSingleContentWrapper(next);
-		}
-		case FIELD: {
-			// Recurse with inField=true so optional(anon-string) survives.
-			const recursed: Rule = {
-				...rule,
-				content: simplifyRule(rule.content, ctx, true)
-			};
-			return hoistInnerFieldOutOfFieldWrapper(recursed);
-		}
+			return simplifySeqRule(rule, ctx);
+		case CHOICE:
+			return simplifyChoiceRule(rule, ctx);
+		case OPTIONAL:
+			return simplifyOptionalRule(rule, ctx);
+		case REPEAT:
+		case REPEAT1:
+			return simplifyRepeatRule(rule, ctx);
+		case FIELD:
+			return simplifyFieldRule(rule, ctx);
 		case GROUP:
-			return {
-				...rule,
-				content: simplifyRule(rule.content, ctx, inField)
-			};
+			return simplifyGroupRule(rule, ctx);
 		case VARIANT:
-			return {
-				...rule,
-				content: simplifyRule(rule.content, ctx, inField)
-			};
+			return simplifyVariantRule(rule, ctx);
 		default:
 			return rule;
 	}
+}
+
+/**
+ * CHOICE: fold an empty-match member (`pattern("")`, empty seq) into `optional`;
+ * collapse a single member; fuse same-named fields across structurally-equivalent
+ * branches (`mergeChoiceBranches`), then hoist a field shared by every branch out
+ * to an enclosing seq. Variant wrappers are preserved for polymorph detection.
+ */
+function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+	const members = rule.members.map((m) => simplifyRule(m, ctx));
+	const empty = members.findIndex(isEmptyMatchMember);
+	if (empty >= 0 && members.length > 1) {
+		const nonEmpty = members.filter((_, i) => i !== empty);
+		const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, { type: CHOICE, members: nonEmpty });
+		return simplifyRule(withAttrsFrom(rule, { type: OPTIONAL, content: inner }), ctx);
+	}
+	if (members.length === 1) return withAttrsFrom(rule, members[0]!);
+	const merged = mergeChoiceBranches({ type: CHOICE, members });
+	if (merged.type !== CHOICE) return withAttrsFrom(rule, merged);
+	return withAttrsFrom(rule, hoistSharedFieldAcrossChoiceBranches(merged));
+}
+
+/**
+ * OPTIONAL: recurse; fold to empty-seq when the body vanished. Inside a field
+ * (`ctx.inField`), a bare anonymous string is structural content and survives;
+ * outside, it's a strippable delimiter. Then hoist field out of the wrapper.
+ */
+function simplifyOptionalRule(rule: OptionalRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+	const inner = simplifyRule(rule.content, ctx);
+	if (inner.type === SEQ && inner.members.length === 0) {
+		return { type: SEQ, members: [] };
+	}
+	if (!ctx.inField && inner.type === STRING && !isSlotPromotedLiteral(inner)) {
+		return { type: SEQ, members: [] };
+	}
+	return hoistFieldOutOfSingleContentWrapper({ type: OPTIONAL, content: inner });
+}
+
+/** REPEAT / REPEAT1: recurse; hoist field out of the single-content wrapper. */
+function simplifyRepeatRule(rule: RepeatRule | Repeat1Rule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+	const next = { ...rule, content: simplifyRule(rule.content, ctx) };
+	return hoistFieldOutOfSingleContentWrapper(next);
+}
+
+/** FIELD: recurse with `inField:true` (so `optional(anon-string)` survives), then hoist inner field out. */
+function simplifyFieldRule(rule: FieldRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+	const recursed: Rule = { ...rule, content: simplifyRule(rule.content, { ...ctx, inField: true }) };
+	return hoistInnerFieldOutOfFieldWrapper(recursed);
+}
+
+/** GROUP: recurse into content (structural wrapper preserved). */
+function simplifyGroupRule(rule: GroupRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+	return { ...rule, content: simplifyRule(rule.content, ctx) };
+}
+
+/** VARIANT: recurse into content (polymorph surface preserved). */
+function simplifyVariantRule(rule: VariantRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+	return { ...rule, content: simplifyRule(rule.content, ctx) };
 }
 
 /** Simplify every rule in the map, each run to fixpoint (see `normalizeToFixpoint`). */
@@ -813,9 +836,9 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
  * lattice (survivor `optional` + seq `array` → `array`); the rest ride along
  * absent-only (`withAttrsFrom`). See glossary (Phase 3.5).
  */
-function collapseSeq(rule: SeqRule, ctx?: SimplifyCtx, inField: boolean = false): Rule {
+function simplifySeqRule(rule: SeqRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
 	const members = rule.members
-		.map((m) => simplifyRule(m, ctx, inField))
+		.map((m) => simplifyRule(m, ctx))
 		.filter((m) => {
 			// Strip bare string delimiters (not slot-promoted) + empty-seq sentinels.
 			if (m.type === STRING && !isSlotPromotedLiteral(m)) return false;

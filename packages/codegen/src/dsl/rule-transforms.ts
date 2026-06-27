@@ -41,6 +41,14 @@ export interface NormalizeCtx extends TransformCtx {
 export interface SimplifyCtx extends TransformCtx {
 	/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
 	readonly polymorphSkipExtra?: ReadonlySet<string>;
+	/**
+	 * True while simplifying inside a `field(...)` wrapper. Threaded through the
+	 * per-rule-type handlers (folded in from the former `inField` parameter):
+	 * `simplifyFieldRule` recurses with `{ ...ctx, inField: true }`, and
+	 * `simplifyOptionalRule` keeps `optional(anonymous-string)` when set (inside a
+	 * field a bare string is structural content, not a strippable delimiter).
+	 */
+	readonly inField?: boolean;
 }
 
 // ---------------------------------------------------------------------------
