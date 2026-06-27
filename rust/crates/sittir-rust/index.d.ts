@@ -56,7 +56,7 @@ export interface AbstractTypeOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type_parameters?: TypeParametersTransport
+  _type_parameters: TypeParametersTransport
 }
 
 export interface AbstractTypeTransport {
@@ -126,7 +126,7 @@ export interface ArrayTypeOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _length?: ExpressionTransport
+  _length: ExpressionTransport
 }
 
 export interface ArrayTypeTransport {
@@ -332,7 +332,7 @@ export interface BlockOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _label?: LabelTransport
+  _label: LabelTransport
 }
 
 export interface BlockTransport {
@@ -438,7 +438,7 @@ export interface ClosureExpressionOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _return_type?: _TypeTransport
+  _return_type: _TypeTransport
 }
 
 export interface ClosureExpressionTransport {
@@ -510,7 +510,7 @@ export interface ConstItemOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value?: ExpressionTransport
+  _value: ExpressionTransport
 }
 
 export interface ConstItemTransport {
@@ -535,7 +535,7 @@ export interface ConstParameterOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value?: ConstParameterOptional1ValueTransportSlot
+  _value: ConstParameterOptional1ValueTransportSlot
 }
 
 export interface ConstParameterTransport {
@@ -677,7 +677,7 @@ export interface EnumVariantOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value?: ExpressionTransport
+  _value: ExpressionTransport
 }
 
 export interface EnumVariantTransport {
@@ -724,7 +724,7 @@ export interface ExternCrateDeclarationOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _alias?: IdentifierTransport
+  _alias: IdentifierTransport
 }
 
 export interface ExternCrateDeclarationTransport {
@@ -858,7 +858,7 @@ export interface ForExpressionOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _label?: LabelTransport
+  _label: LabelTransport
 }
 
 export interface ForExpressionTransport {
@@ -894,7 +894,7 @@ export interface FunctionItemOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _return_type?: _TypeTransport
+  _return_type: _TypeTransport
 }
 
 export interface FunctionItemTransport {
@@ -934,7 +934,7 @@ export interface FunctionSignatureItemOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _return_type?: _TypeTransport
+  _return_type: _TypeTransport
 }
 
 export interface FunctionSignatureItemTransport {
@@ -973,7 +973,7 @@ export interface FunctionTypeOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _return_type?: _TypeTransport
+  _return_type: _TypeTransport
 }
 
 export interface FunctionTypeTraitFormTransport {
@@ -1108,7 +1108,7 @@ export interface ImplItemGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _trait?: ImplItemGroup1TraitTransportSlot
+  _trait: ImplItemGroup1TraitTransportSlot
 }
 
 export interface ImplItemNegativeClauseTransport {
@@ -1240,7 +1240,7 @@ export interface LetDeclarationOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type?: _TypeTransport
+  _type: _TypeTransport
 }
 
 export interface LetDeclarationOptional2Transport {
@@ -1251,7 +1251,7 @@ export interface LetDeclarationOptional2Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value?: ExpressionTransport
+  _value: ExpressionTransport
 }
 
 export interface LetDeclarationOptional3Transport {
@@ -1262,7 +1262,7 @@ export interface LetDeclarationOptional3Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _alternative?: BlockTransport
+  _alternative: BlockTransport
 }
 
 export interface LetDeclarationTransport {
@@ -1335,7 +1335,7 @@ export interface LoopExpressionOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _label?: LabelTransport
+  _label: LabelTransport
 }
 
 export interface LoopExpressionTransport {
@@ -1487,7 +1487,7 @@ export interface MatchPatternOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _condition?: ConditionTransport
+  _condition: ConditionTransport
 }
 
 export interface MatchPatternTransport {
@@ -1936,7 +1936,7 @@ export interface StaticItemOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value?: ExpressionTransport
+  _value: ExpressionTransport
 }
 
 export interface StaticItemTransport {
@@ -2321,7 +2321,7 @@ export interface TypeParameterOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _default_type?: _TypeTransport
+  _default_type: _TypeTransport
 }
 
 export interface TypeParametersTransport {
@@ -2473,7 +2473,7 @@ export interface VariadicParameterOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pattern?: PatternTransport
+  _pattern: PatternTransport
 }
 
 export interface VariadicParameterTransport {
@@ -2587,7 +2587,7 @@ export interface WhileExpressionOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _label?: LabelTransport
+  _label: LabelTransport
 }
 
 export interface WhileExpressionTransport {

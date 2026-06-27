@@ -1441,8 +1441,8 @@ export interface ExpressionStatementTuple {
 
 export interface FunctionDefinitionOptional1 {
   readonly $type: "_function_definition_optional1";
-  readonly _return_type?: Type;
-  returnType(): Type | undefined;
+  readonly _return_type: Type;
+  returnType(): Type;
 }
 
 export interface ImportList {
@@ -1479,8 +1479,8 @@ export interface MatchBlockBlock {
 
 export interface RaiseStatementOptional1 {
   readonly $type: "_raise_statement_optional1";
-  readonly _cause?: Expression;
-  cause(): Expression | undefined;
+  readonly _cause: Expression;
+  cause(): Expression;
 }
 
 export interface SimplePatternNegative {

@@ -2793,13 +2793,13 @@
           "name": "return_type",
           "propertyName": "returnType",
           "paramName": "returnType",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "type",
               "parseKind": "type",
               "unresolved": true
@@ -3171,13 +3171,13 @@
           "name": "cause",
           "propertyName": "cause",
           "paramName": "cause",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "expression",
               "parseKind": "expression",
               "unresolved": true

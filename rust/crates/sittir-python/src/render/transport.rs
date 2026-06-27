@@ -12166,7 +12166,7 @@ pub struct FunctionDefinitionOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<TypeTransport>,
+    pub return_type: TypeTransport,
 }
 
 impl RenderableTransport for FunctionDefinitionOptional1Transport {
@@ -13084,7 +13084,7 @@ pub struct RaiseStatementOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_cause"))]
-    pub cause: Option<ExpressionTransport>,
+    pub cause: ExpressionTransport,
 }
 
 impl RenderableTransport for RaiseStatementOptional1Transport {
@@ -28983,9 +28983,7 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, d
 }
 
 fn render_function_definition_optional1(node: &FunctionDefinitionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.return_type {
-        render_type(child, dest)?;
-    }
+    render_type(&node.return_type, dest)?;
     Ok(())
 }
 
@@ -29064,9 +29062,7 @@ fn render_not_in(t: &NotInTransport, dest: &mut dyn ::std::fmt::Write) -> Result
 }
 
 fn render_raise_statement_optional1(node: &RaiseStatementOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.cause {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.cause, dest)?;
     Ok(())
 }
 

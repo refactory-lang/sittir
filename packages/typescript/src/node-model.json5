@@ -5511,13 +5511,13 @@
           "name": "alias",
           "propertyName": "alias",
           "paramName": "alias",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_module_export_name",
               "parseKind": "_module_export_name",
               "unresolved": true
@@ -7084,13 +7084,13 @@
           "name": "type",
           "propertyName": "type",
           "paramName": "type",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "type",
               "parseKind": "type",
               "unresolved": true
@@ -7662,13 +7662,13 @@
           "name": "alias",
           "propertyName": "alias",
           "paramName": "alias",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "type",
               "parseKind": "type",
               "unresolved": true

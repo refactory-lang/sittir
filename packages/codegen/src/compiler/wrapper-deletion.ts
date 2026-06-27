@@ -170,14 +170,24 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 					multToPush !== undefined && isSlotBearingShape ? { multiplicity: multToPush } : {};
 				return deleteWrapperWith(m, memberAttrs);
 			});
-			// Stamp the seq with accumulated attrs EXCEPT multiplicity (now on members).
+			// Stamp the seq with accumulated attrs. Multiplicity is normally pushed
+			// onto members (above) so collect-slots reads it per-slot, and omitted
+			// from the seq node. EXCEPTION: a seq carrying BARE-LITERAL members
+			// (co-optional delimiters like `=` / `in` in `optional(seq('=', value))`)
+			// — literals can't carry multiplicity (the emitter drops optional
+			// strings), so they'd render UNCONDITIONALLY, losing co-optionality
+			// (`<div disabled>` → `disabled=`). Retain the unit multiplicity on the
+			// SEQ NODE too, so the template emitter's co-optional-unit guard gates the
+			// whole sequence on its internal slot. (Enrich's seq-stamp masked this
+			// until it was removed — see project_nonterminal_authoritative_slot_signal.)
+			const hasBareLiteral = rule.members.some((m) => m.type === 'string' || m.type === 'pattern');
 			const seqAttrs: WrapperAttrs = {
 				fieldName: attrs.fieldName,
 				separator: attrs.separator,
 				aliasedFrom: attrs.aliasedFrom,
 				aliasNamed: attrs.aliasNamed,
 				nonterminal: attrs.nonterminal,
-				// multiplicity intentionally omitted — pushed onto members above
+				multiplicity: hasBareLiteral ? multToPush : undefined,
 			};
 			return stampAttrs({ ...rule, members }, seqAttrs);
 		}

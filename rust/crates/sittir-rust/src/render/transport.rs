@@ -19646,7 +19646,7 @@ pub struct AbstractTypeOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
-    pub type_parameters: Option<TypeParametersTransport>,
+    pub type_parameters: TypeParametersTransport,
 }
 
 impl RenderableTransport for AbstractTypeOptional1Transport {
@@ -19802,7 +19802,7 @@ pub struct ArrayTypeOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_length"))]
-    pub length: Option<ExpressionTransport>,
+    pub length: ExpressionTransport,
 }
 
 impl RenderableTransport for ArrayTypeOptional1Transport {
@@ -20166,7 +20166,7 @@ pub struct BlockOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
-    pub label: Option<LabelTransport>,
+    pub label: LabelTransport,
 }
 
 impl RenderableTransport for BlockOptional1Transport {
@@ -20318,7 +20318,7 @@ pub struct ClosureExpressionOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<_TypeTransport>,
+    pub return_type: _TypeTransport,
 }
 
 impl RenderableTransport for ClosureExpressionOptional1Transport {
@@ -20517,7 +20517,7 @@ pub struct ConstItemOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for ConstItemOptional1Transport {
@@ -20567,7 +20567,7 @@ pub struct ConstParameterOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ConstParameterOptional1ValueTransportSlot>,
+    pub value: ConstParameterOptional1ValueTransportSlot,
 }
 
 impl RenderableTransport for ConstParameterOptional1Transport {
@@ -20767,7 +20767,7 @@ pub struct EnumVariantOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for EnumVariantOptional1Transport {
@@ -20867,7 +20867,7 @@ pub struct ExternCrateDeclarationOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: Option<IdentifierTransport>,
+    pub alias: IdentifierTransport,
 }
 
 impl RenderableTransport for ExternCrateDeclarationOptional1Transport {
@@ -21070,7 +21070,7 @@ pub struct ForExpressionOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
-    pub label: Option<LabelTransport>,
+    pub label: LabelTransport,
 }
 
 impl RenderableTransport for ForExpressionOptional1Transport {
@@ -21223,7 +21223,7 @@ pub struct FunctionItemOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<_TypeTransport>,
+    pub return_type: _TypeTransport,
 }
 
 impl RenderableTransport for FunctionItemOptional1Transport {
@@ -21273,7 +21273,7 @@ pub struct FunctionSignatureItemOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<_TypeTransport>,
+    pub return_type: _TypeTransport,
 }
 
 impl RenderableTransport for FunctionSignatureItemOptional1Transport {
@@ -21373,7 +21373,7 @@ pub struct FunctionTypeOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: Option<_TypeTransport>,
+    pub return_type: _TypeTransport,
 }
 
 impl RenderableTransport for FunctionTypeOptional1Transport {
@@ -21523,7 +21523,7 @@ pub struct ImplItemGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trait"))]
-    pub trait_: Option<ImplItemGroup1TraitTransportSlot>,
+    pub trait_: ImplItemGroup1TraitTransportSlot,
 }
 
 impl RenderableTransport for ImplItemGroup1Transport {
@@ -22980,7 +22980,7 @@ pub struct LetDeclarationOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<_TypeTransport>,
+    pub type_: _TypeTransport,
 }
 
 impl RenderableTransport for LetDeclarationOptional1Transport {
@@ -23030,7 +23030,7 @@ pub struct LetDeclarationOptional2Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for LetDeclarationOptional2Transport {
@@ -23080,7 +23080,7 @@ pub struct LetDeclarationOptional3Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
-    pub alternative: Option<BlockTransport>,
+    pub alternative: BlockTransport,
 }
 
 impl RenderableTransport for LetDeclarationOptional3Transport {
@@ -23386,7 +23386,7 @@ pub struct LoopExpressionOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
-    pub label: Option<LabelTransport>,
+    pub label: LabelTransport,
 }
 
 impl RenderableTransport for LoopExpressionOptional1Transport {
@@ -23688,7 +23688,7 @@ pub struct MatchPatternOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
-    pub condition: Option<ConditionTransport>,
+    pub condition: ConditionTransport,
 }
 
 impl RenderableTransport for MatchPatternOptional1Transport {
@@ -26070,7 +26070,7 @@ pub struct StaticItemOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for StaticItemOptional1Transport {
@@ -26969,7 +26969,7 @@ pub struct TypeParameterOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_default_type"))]
-    pub default_type: Option<_TypeTransport>,
+    pub default_type: _TypeTransport,
 }
 
 impl RenderableTransport for TypeParameterOptional1Transport {
@@ -27350,7 +27350,7 @@ pub struct VariadicParameterOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: Option<PatternTransport>,
+    pub pattern: PatternTransport,
 }
 
 impl RenderableTransport for VariadicParameterOptional1Transport {
@@ -27554,7 +27554,7 @@ pub struct WhileExpressionOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
-    pub label: Option<LabelTransport>,
+    pub label: LabelTransport,
 }
 
 impl RenderableTransport for WhileExpressionOptional1Transport {
@@ -45810,9 +45810,7 @@ fn render_range_expression_binary_operator(t: &RangeExpressionBinaryOperatorEnum
 }
 
 fn render_abstract_type_optional1(node: &AbstractTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.type_parameters {
-        render_type_parameters(child, dest)?;
-    }
+    render_type_parameters(&node.type_parameters, dest)?;
     Ok(())
 }
 
@@ -45866,9 +45864,7 @@ fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, dest: &mut 
 }
 
 fn render_array_type_optional1(node: &ArrayTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.length {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.length, dest)?;
     Ok(())
 }
 
@@ -45973,9 +45969,7 @@ fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, des
 }
 
 fn render_block_optional1(node: &BlockOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.label {
-        render_label(child, dest)?;
-    }
+    render_label(&node.label, dest)?;
     Ok(())
 }
 
@@ -45998,9 +45992,7 @@ fn render_closure_expression_expr(node: &ClosureExpressionExprTransport, dest: &
 }
 
 fn render_closure_expression_optional1(node: &ClosureExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.return_type {
-        render__type(child, dest)?;
-    }
+    render__type(&node.return_type, dest)?;
     Ok(())
 }
 
@@ -46009,16 +46001,12 @@ fn render_compound_assignment_expr_operator(t: &CompoundAssignmentExprOperatorEn
 }
 
 fn render_const_item_optional1(node: &ConstItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.value {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.value, dest)?;
     Ok(())
 }
 
 fn render_const_parameter_optional1(node: &ConstParameterOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.value {
-        child.render_into(dest)?;
-    }
+    node.value.render_into(dest)?;
     Ok(())
 }
 
@@ -46086,9 +46074,7 @@ fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, dest: &mut
 }
 
 fn render_enum_variant_optional1(node: &EnumVariantOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.value {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.value, dest)?;
     Ok(())
 }
 
@@ -46100,9 +46086,7 @@ fn render_expression_statement_with_semi(node: &ExpressionStatementWithSemiTrans
 }
 
 fn render_extern_crate_declaration_optional1(node: &ExternCrateDeclarationOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.alias {
-        render_identifier(child, dest)?;
-    }
+    render_identifier(&node.alias, dest)?;
     Ok(())
 }
 
@@ -46119,9 +46103,7 @@ fn render_field_pattern_named(node: &FieldPatternNamedTransport, dest: &mut dyn 
 }
 
 fn render_for_expression_optional1(node: &ForExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.label {
-        render_label(child, dest)?;
-    }
+    render_label(&node.label, dest)?;
     Ok(())
 }
 
@@ -46130,16 +46112,12 @@ fn render_foreign_mod_item_semi(t: &ForeignModItemSemiTransport, dest: &mut dyn 
 }
 
 fn render_function_item_optional1(node: &FunctionItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.return_type {
-        render__type(child, dest)?;
-    }
+    render__type(&node.return_type, dest)?;
     Ok(())
 }
 
 fn render_function_signature_item_optional1(node: &FunctionSignatureItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.return_type {
-        render__type(child, dest)?;
-    }
+    render__type(&node.return_type, dest)?;
     Ok(())
 }
 
@@ -46159,9 +46137,7 @@ fn render_function_type_fn_form(node: &FunctionTypeFnFormTransport, dest: &mut d
 }
 
 fn render_function_type_optional1(node: &FunctionTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.return_type {
-        render__type(child, dest)?;
-    }
+    render__type(&node.return_type, dest)?;
     Ok(())
 }
 
@@ -46180,9 +46156,7 @@ fn render_impl_item_body(node: &ImplItemBodyTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_impl_item_group1(node: &ImplItemGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.trait_ {
-        child.render_into(dest)?;
-    }
+    node.trait_.render_into(dest)?;
     Ok(())
 }
 
@@ -46271,23 +46245,17 @@ fn render_let_chain(node: &LetChainTransport, dest: &mut dyn ::std::fmt::Write) 
 }
 
 fn render_let_declaration_optional1(node: &LetDeclarationOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.type_ {
-        render__type(child, dest)?;
-    }
+    render__type(&node.type_, dest)?;
     Ok(())
 }
 
 fn render_let_declaration_optional2(node: &LetDeclarationOptional2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.value {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.value, dest)?;
     Ok(())
 }
 
 fn render_let_declaration_optional3(node: &LetDeclarationOptional3Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.alternative {
-        render_block(child, dest)?;
-    }
+    render_block(&node.alternative, dest)?;
     Ok(())
 }
 
@@ -46315,9 +46283,7 @@ fn render_line_comment_regular_dslash(t: &LineCommentRegularDslashTransport, des
 }
 
 fn render_loop_expression_optional1(node: &LoopExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.label {
-        render_label(child, dest)?;
-    }
+    render_label(&node.label, dest)?;
     Ok(())
 }
 
@@ -46409,9 +46375,7 @@ fn render_match_block_arms(node: &MatchBlockArmsTransport, dest: &mut dyn ::std:
 }
 
 fn render_match_pattern_optional1(node: &MatchPatternOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.condition {
-        render_condition(child, dest)?;
-    }
+    render_condition(&node.condition, dest)?;
     Ok(())
 }
 
@@ -46552,9 +46516,7 @@ fn render_reserved_identifier(t: &ReservedIdentifierEnum, dest: &mut dyn ::std::
 }
 
 fn render_static_item_optional1(node: &StaticItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.value {
-        render_expression(child, dest)?;
-    }
+    render_expression(&node.value, dest)?;
     Ok(())
 }
 
@@ -46730,9 +46692,7 @@ fn render_type_identifier(t: &TypeIdentifierTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_type_parameter_optional1(node: &TypeParameterOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.default_type {
-        render__type(child, dest)?;
-    }
+    render__type(&node.default_type, dest)?;
     Ok(())
 }
 
@@ -46757,9 +46717,7 @@ fn render_use_wildcard_group1(node: &UseWildcardGroup1Transport, dest: &mut dyn 
 }
 
 fn render_variadic_parameter_optional1(node: &VariadicParameterOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.pattern {
-        render_pattern(child, dest)?;
-    }
+    render_pattern(&node.pattern, dest)?;
     Ok(())
 }
 
@@ -46786,9 +46744,7 @@ fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, dest: &
 }
 
 fn render_while_expression_optional1(node: &WhileExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.label {
-        render_label(child, dest)?;
-    }
+    render_label(&node.label, dest)?;
     Ok(())
 }
 

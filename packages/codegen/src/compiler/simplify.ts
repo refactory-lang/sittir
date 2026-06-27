@@ -1,34 +1,14 @@
 /**
- * compiler/simplify.ts — derivation-only view of a rule tree.
+ * compiler/simplify.ts — the derivation-only (SimplifiedRule) view of a rule
+ * tree, consumed by slot derivation. Strips anonymous token delimiters,
+ * collapses single-member wrappers, inlines parser-inlined helpers, and
+ * canonicalizes toward the universal seq-of-leaves shape. Template emission
+ * keeps reading the RAW rule (literals must still surface as template text).
  *
- * Strips anonymous token delimiters, collapses single-member wrappers,
- * and normalizes idempotent nestings so downstream walkers
- * (`deriveFields`, `deriveChildren`, separator discovery) see a
- * semantic-only view of each rule. Template emission continues to
- * read the raw rule — literals still need to surface as template
- * text.
- *
- * "Keyword-shaped" string detection is driven by the grammar's own
- * `word` rule — the lexer production that tree-sitter uses to
- * recognize words at parse time. Strings whose text matches the
- * grammar's word pattern are preserved (they carry lexical identity
- * the downstream paths key on); strings that don't (punctuation,
- * operators, delimiters) are stripped. When the grammar has no
- * `word` declaration, fall back to `/^\w+$/` as a generic heuristic.
- *
- * Preserves metadata that carries derivation meaning:
- *   - `optional` wrapper around non-vanishing content (required/optional flag)
- *   - `repeat` / `repeat1` separator / leading / trailing
- *   - `field` / `group` / `variant` / `clause` names
- *
- * Elides shapes that contribute nothing to derivation:
- *   - Anonymous-string members inside seqs
- *   - Empty-seq sentinels (from collapsed optional wrappers)
- *   - `optional(anonymous-string)` hints
- *   - Single-member seqs / choices
- *
- * Runs as a dedicated pipeline stage at the end of `optimize()` and
- * produces a full `simplifiedRules` map on `OptimizedGrammar`.
+ * A string member is "anonymous" (stripped) iff it is NOT slot-promoted — see
+ * `isSlotPromotedLiteral`; slot-valued keyword markers survive. Runs as the
+ * final stage of `optimize()`, producing `simplifiedRules` on OptimizedGrammar.
+ * Per-function rationale: docs/compiler-phase-glossary.md (Phase 3.5: Simplify).
  */
 
 import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
@@ -222,28 +202,18 @@ function isEmptyMatchMember(rule: Rule): boolean {
 }
 
 /**
- * Has a literal been promoted to a slot by an enclosing field / optional /
- * repeat wrapper? Such a literal carries slottiness — `nonterminal` (stamped by
- * wrapper-deletion, Table 2) or, after `inlineRefs` re-applies a slot-bearing
- * ref's pushed-down attrs, a `fieldName` / `multiplicity`. It is slot DATA (e.g.
- * the `static` / `crate` / `ref` keyword markers) and must survive simplify,
- * unlike a bare positional delimiter (`else` / `->` / `,`), which is render-only
- * and is stripped. (Supersedes the old `isKeywordShape` guard, which conflated
- * slot-valued keywords with bare syntax keywords.)
+ * Is this literal slot DATA (a value-marker like `static`/`crate`/`ref`) rather
+ * than a bare render-only delimiter (`else`/`->`/`,`)? Slot data survives
+ * simplify; bare delimiters are stripped.
+ *
+ * Keyed on `nonterminal` — the canonical slot-presence signal set by
+ * `applyWrapperDeletion` (field/repeat/repeat1 force a slot on their content,
+ * incl. terminals; a bare `optional(',')` does not). This matches collect-slots'
+ * slot check; it became reliable once `enrichMultiplicityWrappers` was removed
+ * (enrich no longer over-stamps `nonterminal` on bare optional delimiters).
  */
 function isSlotPromotedLiteral(rule: Rule): boolean {
-	// A literal is slot DATA iff it has a field NAME — a genuine named slot
-	// (`field('static_marker', 'static')` → the inlined leaf carries
-	// `fieldName:'static_marker'`). We deliberately do NOT key on `nonterminal`
-	// or `multiplicity` alone: enrich auto-promotes optional *delimiters* like a
-	// trailing `optional(',')` to `nonterminal:true` WITHOUT a meaningful field
-	// name (`project_enrich_auto_promotion_async`), and those are still
-	// render-only — keeping them flips a kind's slot multiplicity between
-	// transport + render (e.g. python `argument_list.content`). The field NAME is
-	// what separates a value-marker (`static`/`crate`/`ref`) from a bare
-	// delimiter. (Supersedes `isKeywordShape`, which conflated slot-valued
-	// keywords with bare syntax keywords.)
-	return (rule as { fieldName?: string }).fieldName !== undefined;
+	return (rule as { nonterminal?: boolean }).nonterminal === true;
 }
 
 export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = false): Rule {
@@ -261,22 +231,10 @@ export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = f
 				return simplifyRule(withAttrsFrom(rule, { type: OPTIONAL, content: inner }), ctx, inField);
 			}
 			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
-			// Merge structurally-equivalent choice branches so same-
-			// named fields across branches fuse into a single field
-			// with union content. Closes `BinaryExpression.
-			// operator: AutoStamp<"&&">`-style bugs where derivation
-			// walked an uncanonical tree and silently dropped
-			// duplicate-named field occurrences across choice branches.
+			// Fuse same-named fields across structurally-equivalent branches, then
+			// hoist a field shared by every branch out to an enclosing seq.
 			const merged = mergeChoiceBranches({ type: CHOICE, members });
 			if (merged.type !== CHOICE) return withAttrsFrom(rule, merged);
-			// Cross-branch field hoist: if every branch contains exactly
-			// one `field(A, ...)` (directly or nested in a seq), lift A
-			// out to an enclosing seq and union the contents. Handles
-			// shapes where branches differ in length / extra fields
-			// (`choice(field(A, X), seq(field(B, Y), field(A, X)))` →
-			// `seq(optional(field(B, Y)), field(A, choice(X)))`) that
-			// `mergeChoiceBranches` can't touch because it requires
-			// same-length same-kind branches.
 			return withAttrsFrom(rule, hoistSharedFieldAcrossChoiceBranches(merged));
 		}
 		case OPTIONAL: {
@@ -331,19 +289,7 @@ export function simplifyRule(rule: Rule, ctx?: SimplifyCtx, inField: boolean = f
 	}
 }
 
-/**
- * Simplify every rule in an OptimizedGrammar's rules map.
- *
- * Pipeline per rule:
- *   1. `simplifyRule` — strip anon delimiters, collapse single-member
- *      wrappers (legacy behavior).
- *   2. `canonicalize` — merge structurally-equivalent choice branches
- *      so same-named fields across branches fuse into a single
- *      `field(name, choice(v1, v2, …))`. Closes the root cause of
- *      `BinaryExpression.operator: AutoStamp<"&&">`-style bugs where
- *      derivation walked an uncanonical tree and silently dropped
- *      duplicate-named field occurrences across choice branches.
- */
+/** Simplify every rule in the map, each run to fixpoint (see `normalizeToFixpoint`). */
 export function simplifyRules(rules: Record<string, Rule>, ctx?: SimplifyCtx): Record<string, Rule> {
 	const out: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
@@ -371,17 +317,11 @@ export function computeSimplifiedRules(
 	const simplified = simplifyRules(renderRules as Record<string, Rule>, ctx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
-		// simplifyRules can re-introduce wrapper nodes (optional / field /
-		// repeat / repeat1) via hoist transformations (hoistFieldOutOfSingleContentWrapper,
-		// extractFieldAcrossBranches) and choice-empty-match folding. Apply
-		// deleteWrapper as a final pass to push any surviving wrapper attributes
-		// back down to leaf attributes, satisfying the SimplifiedRule = RenderRule
-		// (wrapper-free) invariant. deleteWrapper is idempotent on wrapper-free input.
-		// Re-fuse separated-list head+repeat pairs here too: inlineRefs can
-		// splice a hidden helper's body into a parent and re-expose a head
-		// single + tail array of the same element that wasn't adjacent in the
-		// renderRule. Running the same fusion keeps the deriver's
-		// simplifiedRule view in agreement with the emitter's renderRule.
+		// Final wrapper-free pass: simplify's hoists + choice-folding can
+		// re-introduce wrapper nodes, so deleteWrapper pushes them back to leaf
+		// attrs (SimplifiedRule = wrapper-free; idempotent on wrapper-free input).
+		// Re-fuse head+repeat list pairs too — inlineRefs can splice a helper body
+		// and re-expose a non-adjacent head-single + tail-array of the same element.
 		const wrapperFree = fuseHeadRepeatLists(
 			deleteWrapper(canonicalizeSeqOfLeaves(rule) as Rule) as Rule
 		) as SimplifiedRule;
@@ -426,27 +366,11 @@ export function computeSimplifiedRules(
 }
 
 /**
- * Run `inlineRefs` + `simplifyRule` + `canonicalize` to fixpoint.
- * Each individual transformation is non-increasing on rule nesting
- * and designed to be idempotent on its own, but the three passes can
- * enable each other:
- *
- *   - `inlineRefs` substitutes a hidden group/multi's body for
- *     its symbol reference. When the body is a seq and the ref sat
- *     inside another seq, the substitution creates a nested-seq
- *     shape `simplifyRule` can flatten.
- *   - `simplifyRule` strips anonymous delimiters and collapses
- *     single-member wrappers; a freshly-stripped branch may enable
- *     `canonicalize` to merge a sibling choice whose arms now agree.
- *   - `canonicalize` merges a choice of structurally-equivalent
- *     branches into a flat seq; the merged members may themselves
- *     be shapes `simplifyRule` can further collapse.
- *
- * The loop terminates because all three transformations are
- * non-increasing on the rule's structural size (member counts,
- * nesting depth); any change produces a strictly smaller tree by one
- * of those metrics. Safety cap at 16 iterations — a real grammar
- * converges in 2-3.
+ * Run `inlineRefs` + `simplifyRule` to fixpoint. The two passes enable each
+ * other (an inline can expose a nested seq for simplifyRule to flatten, a
+ * stripped branch can let a sibling choice merge), and each is non-increasing on
+ * structural size (member count / nesting depth), so the loop converges — real
+ * grammars in 2-3 iters; the 16-iter cap guards a non-converging shape.
  */
 function normalizeToFixpoint(
 	rule: Rule,
@@ -486,15 +410,7 @@ function rulesStructurallyEqual(a: Rule, b: Rule): boolean {
 // branches so same-named fields fuse into field(name, choice(v1, v2, ...)).
 // Bottom-up, idempotent. See compiler-phase-glossary.md for details.
 // ---------------------------------------------------------------------------
-/**
- * Hoist `field()` out of `repeat`/`repeat1`/`optional`:
- * `repeat(field('n', X))` -> `field('n', repeat(X))`.
- *
- * @remarks
- * Non-lossy -- tree-sitter field semantics are insensitive to this swap.
- * Keeps the derive walker's trivial form (fields directly under seq).
- * Preserves separator/trailing/leading metadata on the repeat.
- */
+/** `repeat(field('n', X))` → `field('n', repeat(X))` (non-lossy; keeps fields directly under seq, separator/trailing/leading preserved on the repeat). */
 function hoistFieldOutOfSingleContentWrapper(rule: Rule): Rule {
 	if (rule.type !== OPTIONAL && rule.type !== REPEAT && rule.type !== REPEAT1) return rule;
 	const inner = rule.content;
@@ -504,15 +420,10 @@ function hoistFieldOutOfSingleContentWrapper(rule: Rule): Rule {
 }
 
 /**
- * Drop an outer `field('outer', ...)` wrapper when its content contains
- * an inner `field()` at exposable depth. Tree-sitter flattens nested
- * field paths, so the inner field IS a top-level field of the parent
- * kind -- keeping the outer wrapper makes the template walker miss it.
- *
- * @remarks
- * Bails when: content is a bare field (handled by hoistField...), no
- * inner field at exposable depth, or a named-symbol sibling would lose
- * its label from the outer field.
+ * Drop an outer `field('outer', …)` wrapper when an inner `field()` sits at
+ * exposable depth (tree-sitter flattens nested field paths, so the inner field
+ * IS a top-level field of the parent). Bails on direct field nesting or a
+ * named-symbol sibling that would lose its outer-field label.
  */
 export function hoistInnerFieldOutOfFieldWrapper(rule: Rule): Rule {
 	if (rule.type !== FIELD) return rule;
@@ -702,69 +613,10 @@ function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
 }
 
 /**
- * Merge a choice-of-structurally-equivalent-branches into a flat seq
- * with per-position unioned contents.
- *
- * Shape example:
- *
- *   before:
- *     choice(
- *       seq(field('op', '&&'), …),
- *       seq(field('op', '||'), …),
- *       seq(field('op', '+'),  …),
- *     )
- *
- *   after:
- *     seq(field('op', choice('&&', '||', '+')), …)
- *
- * Fires when every branch:
- *   - Is a seq (or is a variant/group-wrapped seq, which
- *     `recurseCanonicalize` has left visible).
- *   - Has the same LENGTH as every other branch.
- *   - At each position: same member kind (field / symbol / supertype /
- *     etc.), and same field name (for fields) / same symbol name
- *     (for symbols).
- *
- * For field positions the merged content is `choice(branch0_content,
- * branch1_content, …)` — the union of per-branch contents. Derivation
- * post-merge sees ONE `field('op', choice(...))` instead of N
- * `field('op', …)` occurrences across branches, and
- * `deriveValuesForRule` on the choice emits all literal / symbol
- * values cleanly.
- *
- * For non-field positions (symbol, supertype, bare string) the content
- * is already identical across branches (shape equivalence check), so
- * we pick the first branch's occurrence as canonical.
- *
- * When the shape-equivalence check fails — branches differ in length,
- * kind, or field name — returns the input unchanged. Polymorph /
- * supertype / enum classification handles those cases downstream.
- *
- * Called bottom-up: branches passed in have already been
- * canonicalized, so nested choice-of-equivalent-branches inside a
- * branch has already been flattened.
- */
-/**
- * Lift any slot-shape ATTRIBUTE shared by every choice arm onto the choice
- * node itself.
- *
- * After wrapper-deletion the grammar is wrapper-free: a per-arm wrapper (a
- * distributed `field('op', …)`, `optional(…)`, `repeat(…)`, …) has become a
- * leaf attribute on each arm. E.g. rust binary_expression's operator position
- * is `choice(string{fieldName:'operator'}, enum{fieldName:'operator'}, …)` —
- * the field NODES are gone, `fieldName` survives only as an arm attribute. The
- * choice IS one slot, so an attribute ALL arms agree on describes the slot and
- * belongs on the choice NODE (the slot boundary): `fieldName` (the slot's
- * name), `multiplicity` (every arm `array` ⇒ the slot is `array`), `separator`
- * and `nonterminal` likewise. This mirrors `deleteWrapper`'s field→choice
- * case, which stamps the choice node when one wrapper encloses the whole
- * choice; here the wrapper was distributed across the arms instead.
- *
- * Without this, slot derivation reads the bare choice node's (absent)
- * attribute and falls back (e.g. `fieldName` → `content`). The arms keep their
- * attributes — harmless, and legacy shared-arm recovery still reads them, so
- * legacy output is unchanged (this only makes the choice-node view agree).
- * Only lifts an attribute the choice node doesn't already carry.
+ * Lift a slot-shape attribute shared by EVERY choice arm onto the choice node
+ * (the one slot boundary), so slot derivation doesn't read the bare node's
+ * absent attr and fall back (`fieldName` → `content`). Only lifts attrs the node
+ * doesn't already carry; arms keep theirs. Full rationale: glossary (Phase 3.5).
  */
 function liftSharedArmAttrs(rule: ChoiceRule): Rule {
 	// Hoist the UNANIMOUS arm attrs (shared by EVERY arm) onto the choice node,
@@ -783,21 +635,20 @@ function liftSharedArmAttrs(rule: ChoiceRule): Rule {
 	return result;
 }
 
+/**
+ * Merge a choice of structurally-equivalent branches into a flat seq with
+ * per-position unioned field contents (`choice(seq(field('op','&&')), …)` →
+ * `seq(field('op', choice('&&', …)))`). Bails (→ `liftSharedArmAttrs`) when
+ * branches aren't same-length mergeable seqs; NEVER unwraps `variant()`
+ * (intentional polymorph branches). See glossary (Phase 3.5).
+ */
 function mergeChoiceBranches(rule: ChoiceRule): Rule {
 	if (rule.members.length === 0) return rule;
-	// NEVER unwrap variant() — variants mark intentional polymorph-
-	// distinct branches that must retain their identity. If ANY
-	// member is variant-wrapped, bail: this choice is a polymorph
-	// surface, not a mergeable same-shape choice.
+	// variant() marks polymorph-distinct branches — bail, this is a polymorph surface.
 	if (rule.members.some((m) => m.type === VARIANT)) return rule;
-	// Unwrap only group/clause wrappers (purely structural).
-	const unwrapped = rule.members.map(unwrapForMerge);
-	// Special case: every branch is a bare `field` of the same name.
-	// Emerges after optimize's factorSeqChoice peels a shared
-	// prefix/suffix off a homogeneous-seq choice, leaving a choice
-	// over just the discriminator field — e.g. rust binary_expression
-	// post-factor: `choice(field('operator', '&&'), field('operator',
-	// '||'), …)`. Merge into a single `field(name, choice(contents))`.
+	const unwrapped = rule.members.map(unwrapForMerge); // group/clause only (structural)
+	// All branches a bare field of the same name (post factorSeqChoice peeling a
+	// shared prefix/suffix off a homogeneous-seq choice) → field(name, choice(contents)).
 	if (unwrapped.every((b): b is FieldRule => b.type === FIELD)) {
 		const first = unwrapped[0]!;
 		if (unwrapped.every((f) => f.name === first.name)) {
@@ -956,27 +807,17 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 /**
- * Collapse a `seq` during simplification, carrying the seq's slot attributes
- * onto the survivor when the seq NODE is discarded. `seq(x) → x` and the
- * multi-member flatten both drop the seq node, so its `multiplicity` /
- * `separator` / `fieldName` must move to the survivor or they're lost (the
- * Path-A/B multiplicity drop). `separator`/`fieldName`/`id` ride along
- * absent-only (`withAttrsFrom`); `multiplicity` COMBINES via the lattice so a
- * survivor's own inner multiplicity (e.g. `optional`) merges with the seq's
- * (e.g. `array`) → `array`, rather than the survivor silently keeping its
- * narrower own.
+ * Collapse a `seq`, carrying the seq node's slot attrs onto the survivor when
+ * the node is discarded (`seq(x) → x` / multi-member flatten) — else
+ * multiplicity/separator/fieldName are lost. `multiplicity` COMBINES via the
+ * lattice (survivor `optional` + seq `array` → `array`); the rest ride along
+ * absent-only (`withAttrsFrom`). See glossary (Phase 3.5).
  */
 function collapseSeq(rule: SeqRule, ctx?: SimplifyCtx, inField: boolean = false): Rule {
 	const members = rule.members
 		.map((m) => simplifyRule(m, ctx, inField))
 		.filter((m) => {
-			// Strip BARE string terminals + empty-seq sentinels. A literal that a
-			// field/optional/repeat wrapper promoted to a slot carries slottiness —
-			// `nonterminal`, or (after inlineRefs re-applies the ref's pushed-down
-			// attrs) a `fieldName`/`multiplicity`. That literal is slot DATA (e.g.
-			// the `static`/`crate`/`ref` keyword markers), not a bare delimiter, so
-			// it must SURVIVE simplify. Only literals with NO slottiness (bare
-			// `else`/`->`/`,`) are render-only → stripped.
+			// Strip bare string delimiters (not slot-promoted) + empty-seq sentinels.
 			if (m.type === STRING && !isSlotPromotedLiteral(m)) return false;
 			if (m.type === SEQ && m.members.length === 0) return false;
 			return true;
@@ -1010,48 +851,20 @@ function collapseSeq(rule: SeqRule, ctx?: SimplifyCtx, inField: boolean = false)
 
 
 // ---------------------------------------------------------------------------
-// Universal-shape canonicalization + post-condition check (Task 1.9 / PR0)
+// Universal-shape post-condition check (test-only).
+//
+// Invariant: every AssembledBranch / AssembledGroup body, after simplify, is a
+// SeqRule of leaves (literals + slot-refs) — no nested structural rules with
+// slot content. Established by applyWrapperDeletion → applyAutoGroups →
+// inlineRefs → simplifyRules + canonicalizeSeqOfLeaves (see glossary, Phase 3 /
+// 3.5). Wiring these asserts as a production fail-fast gate is DEFERRED (many
+// kinds still violate); env-gated via SITTIR_ASSERT_UNIVERSAL_SHAPE.
 // ---------------------------------------------------------------------------
-//
-// Per the rule-attributes refactor spec's "Universal canonical shape"
-// decision: every AssembledBranch / AssembledGroup body, after
-// simplification, should be a `SeqRule` whose members are leaves (literals
-// + slot-refs). No nested structural rules (seq / choice / optional /
-// repeat / repeat1 / field / variant / group / polymorph / clause) with
-// slot content.
-//
-// Post-PR2 the invariant is established by:
-//   - applyWrapperDeletion (optimize.ts) pushes modifier wrappers
-//     (optional / field / repeat / repeat1) down to leaf RuleBase
-//     attributes (multiplicity, fieldName, separator). Output: RenderRule.
-//   - applyAutoGroups (dsl/wire/auto-groups.ts) synthesizes hidden helpers
-//     for optional(seq(...)) / repeat(seq(...)) at wire time and registers
-//     them in grammar.inline.
-//   - inlineRefs (this file) inlines GROUP / MULTI hidden refs AND any
-//     group-lift-sourced ref whose target is in grammar.inline, matching
-//     tree-sitter's parse-time inlining.
-//   - simplifyRules + canonicalizeSeqOfLeaves run to fixpoint and a final
-//     deleteWrapper pass enforces wrapper-free output (SimplifiedRule).
-//
-// assertUniversalShape(node) remains test-only. The above sequence holds
-// the invariant on real grammars, but wiring as a production fail-fast
-// gate is deferred — flagged as a follow-up post-PR2.
 
 /**
- * Post-condition check for the universal canonical shape: every
- * AssembledBranch / AssembledGroup body must be a `SeqRule` whose members
- * are leaves (literals + slot-refs), or a single bare leaf. No nested
- * structural rules with slot content.
- *
- * No-ops for non-branch / non-group nodes (patterns, keywords, tokens,
- * enums, supertypes, multis, polymorphs — these have their own shape
- * invariants).
- *
- * Throws with kind name + offending sub-rule type when the invariant
- * doesn't hold.
- *
- * **NOT yet wired into the production pipeline** — exposed for test use
- * only. See module-level note above.
+ * Test-only post-condition check (see section note). Throws with kind + offending
+ * sub-rule type if a branch/group body isn't a seq-of-leaves (or a bare leaf);
+ * no-ops for non-branch/group nodes (they have their own shape invariants).
  */
 export function assertUniversalShape(node: AssembledNode): void {
 	if (node.modelType !== 'branch' && node.modelType !== 'group') return;
@@ -1079,16 +892,9 @@ export function assertUniversalShape(node: AssembledNode): void {
 }
 
 /**
- * Rule-level universal-shape assertion. Mirrors {@link assertUniversalShape}
- * (which checks AssembledNode.simplifiedRule) but operates on a Rule
- * directly — used by computeSimplifiedRules to fail-fast at the simplify
- * boundary rather than at assembly time.
- *
- * Called (gated) inside `computeSimplifiedRules` when the env var
- * `SITTIR_ASSERT_UNIVERSAL_SHAPE=1` is set. Not yet wired unconditionally
- * because many kinds still violate the invariant; the env-var gate lets
- * Tasks 3.B-derive-rewrite / 3.B3 / 3.B4 enable it incrementally and
- * Task 3.B6 flip the default once every kind passes.
+ * Rule-level mirror of {@link assertUniversalShape}, operating on a Rule directly
+ * so `computeSimplifiedRules` can fail-fast at the simplify boundary. Gated on
+ * `SITTIR_ASSERT_UNIVERSAL_SHAPE=1` (not yet unconditional — many kinds still violate).
  */
 export function assertUniversalShapeRule(rule: Rule, kind: string): void {
 	if (rule.type !== SEQ) {

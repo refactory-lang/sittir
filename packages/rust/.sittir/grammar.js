@@ -1130,7 +1130,6 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     r = applySymbolToField(ruleName, r, supertypeNames);
     r = applyOptionalKeyword(ruleName, r, kwRules);
     r = enrichFieldWrappers(r);
-    r = enrichMultiplicityWrappers(r);
     if (r === before) {
       converged = true;
       break;
@@ -1596,59 +1595,6 @@ function recurseChildren(rule, visit) {
     return changed ? { ...rule, forms: newForms } : rule;
   }
   return rule;
-}
-var MULTIPLICITY_BY_TYPE = {
-  optional: "optional",
-  OPTIONAL: "optional",
-  repeat: "array",
-  REPEAT: "array",
-  repeat1: "nonEmptyArray",
-  REPEAT1: "nonEmptyArray"
-};
-function enrichMultiplicityWrappers(rule) {
-  const recursed = recurseChildren(rule, enrichMultiplicityWrappers);
-  const t = recursed.type;
-  const multiplicity = t ? MULTIPLICITY_BY_TYPE[t] : void 0;
-  if (!multiplicity) return recursed;
-  const self = recursed;
-  const selfNeedsStamp = self.multiplicity !== multiplicity || self.nonterminal !== true;
-  const content = recursed.content;
-  const stampedContent = content && typeof content === "object" ? stampMultiplicityThroughWrappers(content, multiplicity) : content;
-  if (!selfNeedsStamp && stampedContent === content) return recursed;
-  const next = { ...recursed };
-  if (selfNeedsStamp) {
-    next.multiplicity = multiplicity;
-    next.nonterminal = true;
-  }
-  if (stampedContent !== content) {
-    next.content = stampedContent;
-  }
-  return next;
-}
-function stampMultiplicityThroughWrappers(node, multiplicity) {
-  const existing = node;
-  const selfNeedsStamp = existing.multiplicity !== multiplicity || existing.nonterminal !== true;
-  const t = node.type;
-  const isTransparent = !!t && (isFieldType(t) || isPrecWrapper(node) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN");
-  let newContent;
-  let contentChanged = false;
-  if (isTransparent) {
-    const content = node.content;
-    if (content && typeof content === "object") {
-      newContent = stampMultiplicityThroughWrappers(content, multiplicity);
-      contentChanged = newContent !== content;
-    }
-  }
-  if (!selfNeedsStamp && !contentChanged) return node;
-  const next = { ...node };
-  if (selfNeedsStamp) {
-    next.multiplicity = multiplicity;
-    next.nonterminal = true;
-  }
-  if (contentChanged) {
-    next.content = newContent;
-  }
-  return next;
 }
 function applyOptionalKeyword(ruleName, rule, kwRules) {
   const inner = peelPrec(rule);

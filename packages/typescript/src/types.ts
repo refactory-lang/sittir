@@ -2192,8 +2192,8 @@ export interface EnumBodyOptional1 {
 
 export interface ExportSpecifierOptional1 {
   readonly $type: "_export_specifier_optional1";
-  readonly _alias?: ModuleExportName;
-  alias(): ModuleExportName | undefined;
+  readonly _alias: ModuleExportName;
+  alias(): ModuleExportName;
 }
 
 export interface ExportStatementDefault {
@@ -2382,8 +2382,8 @@ export interface IndexSignatureOptional1 {
 
 export interface InferTypeOptional1 {
   readonly $type: "_infer_type_optional1";
-  readonly _type?: Type;
-  type(): Type | undefined;
+  readonly _type: Type;
+  type(): Type;
 }
 
 export interface Initializer {
@@ -2422,8 +2422,8 @@ export interface LhsExpression {
 
 export interface MappedTypeClauseOptional1 {
   readonly $type: "_mapped_type_clause_optional1";
-  readonly _alias?: Type;
-  alias(): Type | undefined;
+  readonly _alias: Type;
+  alias(): Type;
 }
 
 export interface _Module {

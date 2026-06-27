@@ -746,7 +746,7 @@ export interface ExportSpecifierOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _alias?: ModuleExportNameTransport
+  _alias: ModuleExportNameTransport
 }
 
 export interface ExportSpecifierTransport {
@@ -1392,7 +1392,7 @@ export interface InferTypeOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type?: TypeTransport
+  _type: TypeTransport
 }
 
 export interface InferTypeTransport {
@@ -1659,7 +1659,7 @@ export interface MappedTypeClauseOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _alias?: TypeTransport
+  _alias: TypeTransport
 }
 
 export interface MappedTypeClauseTransport {

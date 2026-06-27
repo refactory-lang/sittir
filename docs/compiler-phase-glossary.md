@@ -33,7 +33,7 @@ does), and output (what changes).
 >
 > **What's shipped (PR0 + PR1 + PR2):**
 > - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` / `aliasedFrom` / `aliasNamed` on every Rule via the shared `RuleBase` interface (`types/rule.ts` — R11 moved the Rule IR layer to `codegen/src/types/`).
-> - **enrich attribute passes** (PR0): `enrichFieldWrappers` + `enrichMultiplicityWrappers` ship in `dsl/enrich.ts`. The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`), and wrapper-attribute push-down lives in `applyWrapperDeletion`.
+> - **enrich attribute passes** (PR0): `enrichFieldWrappers` ships in `dsl/enrich.ts`. `enrichMultiplicityWrappers` was REMOVED — `multiplicity`/`nonterminal` are derived solely by `applyWrapperDeletion` from wrapper structure (enrich stamping them was premature + polluted the `nonterminal` slot signal by marking bare `optional(',')` delimiters). The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`).
 > - **`applyWrapperDeletion`** (PR1, `compiler/wrapper-deletion.ts`): new last pass of `optimize()`; pushes modifier wrappers (optional / field / repeat / repeat1 / alias) down to leaf `RuleBase` attributes. Output: `RenderRule` (wrapper-free) snapshot.
 > - **RenderRule + SimplifiedRule branded types** (PR1/PR2, `types/rule.ts`).
 > - **`computeSimplifiedRules`** (relocated PR1 to `compiler/simplify.ts`): takes RenderRule, runs `inlineRefs` + `simplifyRules` + `canonicalizeSeqOfLeaves` + `deleteWrapper` (post-fixpoint wrapper-free guard) + `fuseHeadRepeatLists`. Output: `Record<string, SimplifiedRule>`.
@@ -135,7 +135,7 @@ not the parse table.)
 
 ### `applyEnrichPasses(ruleName, rule, kwRules, supertypeNames)`
 **Pattern:** Each rule in the grammar.
-**Action:** Fixed-point loop (max 8 iterations) applying, until convergence: `applySymbolToField` → `applyOptionalKeyword` → `enrichFieldWrappers` → `enrichMultiplicityWrappers`.
+**Action:** Fixed-point loop (max 8 iterations) applying, until convergence: `applySymbolToField` → `applyOptionalKeyword` → `enrichFieldWrappers`.
 **Output:** Enriched rule with field wrappers, `_kw_*` registrations, and pushed-down attributes.
 
 ### `extractSupertypeNames(base, hasWrapper)` / `harvestSupertypeNames(result)`
@@ -173,10 +173,15 @@ not the parse table.)
 **Action:** Propagates `fieldName` (and slottiness) onto the wrapped content. The wrapper stays in place until PR3.
 **Output:** Field rule whose inner content carries the field-binding attribute directly.
 
-### `enrichMultiplicityWrappers(rule)` **(SHIPPED — PR0)**
-**Pattern:** Every `OptionalRule` / `RepeatRule` / `Repeat1Rule`.
-**Action:** Propagates `'optional'` / `'array'` / `'nonEmptyArray'` (and `nonterminal: true`) onto the wrapped content. Wrapper stays until PR3.
-**Output:** Wrapper rule whose inner content carries the multiplicity attribute directly.
+> **`enrichMultiplicityWrappers` REMOVED:** `multiplicity` + `nonterminal` are
+> derived solely by `applyWrapperDeletion` (Phase 3) from the
+> optional/repeat/repeat1/field wrapper structure — the single source of truth.
+> Stamping them in enrich was premature (nothing read them before
+> wrapper-deletion) and made `nonterminal` unreliable as the slot signal: enrich
+> marked bare `optional(',')` delimiters `nonterminal:true`, whereas
+> wrapper-deletion deliberately does not (a bare optional terminal is render-only,
+> not a slot). With it gone, `nonterminal === true` is the authoritative
+> slot-presence check everywhere (collect-slots, simplify's strip decision).
 
 > **Reconciliation:** the spec's planned `decomposeOptional` / `decomposeRepeat`
 > enrich passes were NOT implemented. Group synthesis for structural
@@ -383,8 +388,13 @@ transforms re-introduced.
 
 ### `hoistSharedFieldAcrossChoiceBranches(rule)` / `mergeChoiceBranches(rule)`
 **Pattern:** Choices where a field name appears once per branch / same-length structurally-equivalent seq branches.
-**Action:** Lift a shared field out and union its contents (residuals → optional choice); or merge into a flat seq with per-position unioned field contents (`field('op', choice('&&','||','+'))`).
+**Action:** Lift a shared field out and union its contents (residuals → optional choice); or merge into a flat seq with per-position unioned field contents (`field('op', choice('&&','||','+'))`). When the branches aren't mergeable seqs (a choice of leaf arms — the wrapper-free operator case) `mergeChoiceBranches` falls through to `liftSharedArmAttrs`.
 **Output:** `seq(field(A, choice(…)), …)`.
+
+### `liftSharedArmAttrs(rule)`
+**Pattern:** A wrapper-free `choice` whose arms each carry a slot attribute — post wrapper-deletion a distributed per-arm `field`/`optional`/`repeat` survives only as a leaf attr per arm (e.g. rust `binary_expression` operator: `choice(string{fieldName:'operator'}, enum{fieldName:'operator'}, …)`).
+**Action:** Hoists the UNANIMOUS arm attrs (`fieldName`/`multiplicity`/`separator`/`nonterminal`, via `sharedArmAttrs`) onto the choice NODE — the single slot boundary — but only attrs the node doesn't already carry. Mirrors `deleteWrapper`'s field→choice case (one wrapper enclosing the whole choice) for the distributed-across-arms case. Without it, slot derivation reads the bare node's absent attr and falls back (`fieldName` → `content`). Arms keep their attrs (legacy shared-arm recovery still reads them; output unchanged).
+**Output:** Choice with shared arm attrs stamped on the node.
 
 ### `canonicalizeSeqOfLeaves(rule)` / `isLeaf(rule)` / `assertUniversalShapeRule(rule, kind)` / `assertUniversalShape(node)`
 **Pattern:** A simplified rule body / a post-simplify rule or node.
