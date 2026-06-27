@@ -476,7 +476,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 			// → @sittir/common (WASM-dependent). Dynamic import keeps the static
 			// module graph clean for test environments.
 			const { extractParityFixtures, serializeFixtures, fixturesOutputPath } =
-				await import('./emitters/parity-fixtures.ts');
+				await import('../../tools/src/validate/parity-fixtures.ts');
 			const templatesPath = join(dirname(outDir), 'templates');
 			const extracted = await extractParityFixtures(grammarTyped, templatesPath);
 			const fxPath = fixturesOutputPath(grammarTyped);
@@ -574,13 +574,13 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 		// dynamic avoids pulling heavy native deps into the module-load path
 		// (which allows test environments without WASM to import run-codegen.ts).
 		const { validateReadProjection, formatReadProjectionReport } =
-			await import('./validate/read-projection.ts');
+			await import('../../tools/src/validate/read-projection.ts');
 		const { validateReadRenderParse, formatReadRenderParseReport } =
-			await import('./validate/read-render-parse.ts');
+			await import('../../tools/src/validate/read-render-parse.ts');
 		const { validateFactoryRenderParse, formatFactoryRenderParseReport } =
-			await import('./validate/factory-render-parse.ts');
+			await import('../../tools/src/validate/factory-render-parse.ts');
 		const { validateFrom, formatFromReport } =
-			await import('./validate/from.ts');
+			await import('../../tools/src/validate/from.ts');
 
 		// read projection (structural) — upstream of render/factory.
 		// A regression here means readNode is losing content between

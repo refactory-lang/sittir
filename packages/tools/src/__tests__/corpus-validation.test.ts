@@ -25,7 +25,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { resolve } from 'node:path';
-import { generate } from '../compiler/generate.ts';
+import { generate } from '../../../codegen/src/compiler/generate.ts';
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { validateFrom } from '../validate/from.ts';
 import { validateReadProjection } from '../validate/read-projection.ts';

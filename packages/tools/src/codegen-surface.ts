@@ -41,10 +41,12 @@ const MODULES = {
 	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
 	grammarDiagnostics: '../../codegen/src/compiler/grammar-diagnostics.ts',
 	opaqueFacts: '../../codegen/src/compiler/opaque-facts.ts',
-	factoryMap: '../../codegen/src/emitters/factory-map.ts',
 	nodeTypesLoader: '../../codegen/src/validate/node-types-loader.ts',
-	polymorphVariant: '../../codegen/src/polymorph-variant.ts',
 	nativeBinaryFreshness: '../../codegen/src/scripts/native-binary-freshness.ts',
+	renderModulePaths: '../../codegen/src/emitters/render-module-paths.ts',
+	engineLoader: '../../codegen/src/engine-loader.ts',
+	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
+	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -59,10 +61,12 @@ export interface CodegenSurface {
 	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
 	grammarDiagnostics: typeof import('../../codegen/src/compiler/grammar-diagnostics.ts');
 	opaqueFacts: typeof import('../../codegen/src/compiler/opaque-facts.ts');
-	factoryMap: typeof import('../../codegen/src/emitters/factory-map.ts');
 	nodeTypesLoader: typeof import('../../codegen/src/validate/node-types-loader.ts');
-	polymorphVariant: typeof import('../../codegen/src/polymorph-variant.ts');
 	nativeBinaryFreshness: typeof import('../../codegen/src/scripts/native-binary-freshness.ts');
+	renderModulePaths: typeof import('../../codegen/src/emitters/render-module-paths.ts');
+	engineLoader: typeof import('../../codegen/src/engine-loader.ts');
+	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
+	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -115,6 +119,12 @@ export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type OptimizedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;
 export type AssembledNodeMap = ReturnType<CodegenSurface['assemble']['assemble']>;
 export type GrammarDiagnostic = import('../../codegen/src/compiler/grammar-diagnostics.ts').GrammarDiagnostic;
+export type PolymorphVariantDescriptor = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantDescriptor;
+export type PolymorphVariantMap = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantMap;
+export type FactoryShape = import('../../codegen/src/emitters/factory-map.ts').FactoryShape;
+export type FactorySlotMeta = import('../../codegen/src/emitters/factory-map.ts').FactorySlotMeta;
+export type RawNodeEntry = import('../../codegen/src/validate/node-types-loader.ts').RawNodeEntry;
+export type OpaqueFacts = import('../../codegen/src/compiler/opaque-facts.ts').OpaqueFacts;
 
 // ---------------------------------------------------------------------------
 // Convenience: the canonical evaluate → link → normalize → assemble walk.

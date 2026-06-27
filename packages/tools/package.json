@@ -19,6 +19,7 @@
 		"type-check": "tsgo --noEmit"
 	},
 	"dependencies": {
+		"@ast-grep/wasm": "^0.42.1",
 		"@sittir/codegen": "workspace:*",
 		"@sittir/common": "workspace:*",
 		"@sittir/core": "workspace:*",

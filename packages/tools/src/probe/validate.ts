@@ -7,7 +7,7 @@
 
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadCorpusEntries, type CorpusEntry } from '../../../codegen/src/validate/common.ts';
+import { loadCorpusEntries, type CorpusEntry } from '../validate/common.ts';
 import { run as runProbeKind } from './kind.ts';
 
 type Engine = 'native' | 'js' | 'both';
@@ -66,7 +66,7 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 				return 1;
 			}
 		} else if (selector === 'first-failing') {
-			const { validateReadRenderParse } = await import('../../../codegen/src/validate/read-render-parse.ts');
+			const { validateReadRenderParse } = await import('../validate/read-render-parse.ts');
 			const templatesPath = defaultTemplatesPath(grammar);
 			const result = await validateReadRenderParse(grammar, templatesPath, {
 				backend: engine === 'native' ? 'native' : 'js',

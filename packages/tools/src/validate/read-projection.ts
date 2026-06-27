@@ -29,7 +29,9 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import type { AnyNodeData } from '@sittir/types';
-import { loadRawEntries } from './node-types-loader.ts';
+import { load } from '../codegen-surface.ts';
+
+const { loadRawEntries } = await load('nodeTypesLoader');
 import {
 	loadLanguageForGrammar,
 	loadKindNameFromId,

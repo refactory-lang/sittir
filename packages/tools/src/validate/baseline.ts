@@ -8,7 +8,7 @@ export interface CheckBaselineOptions {
 
 export async function run(opts: CheckBaselineOptions): Promise<number> {
 	if (opts.collect) {
-		const { collectBaseline, serialiseBaseline } = await import('../../../codegen/src/scripts/collect-baseline.ts');
+		const { collectBaseline, serialiseBaseline } = await import('../scripts/collect-baseline.ts');
 		const baseline = await collectBaseline(opts.backend);
 		process.stdout.write(serialiseBaseline(baseline));
 		if (opts.metrics) {
@@ -21,6 +21,6 @@ export async function run(opts: CheckBaselineOptions): Promise<number> {
 	const checkArgs: string[] = [];
 	if (opts.base) checkArgs.push('--base', opts.base);
 	if (opts.head) checkArgs.push('--head', opts.head);
-	const { run: runCheck } = await import('../../../codegen/src/scripts/check-baseline-regression.ts');
+	const { run: runCheck } = await import('../scripts/check-baseline-regression.ts');
 	return runCheck(checkArgs);
 }

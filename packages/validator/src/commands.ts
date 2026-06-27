@@ -18,7 +18,7 @@ import {
 } from './run.ts';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
-import type { ReadRenderParseFailure } from '@sittir/codegen/validate/read-render-parse';
+import type { ReadRenderParseFailure } from '../../tools/src/validate/read-render-parse.ts';
 
 export const ALL_GRAMMARS: Grammar[] = ['rust', 'typescript', 'python'];
 export const ALL_CLI_BACKENDS = ['native', 'js', 'all'] as const;

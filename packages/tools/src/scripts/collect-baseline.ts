@@ -36,8 +36,10 @@ import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts'
 import { validateFrom } from '../validate/from.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
-import { renderModuleFixturesPath } from '../emitters/render-module-paths.ts';
+import { load } from '../codegen-surface.ts';
 import { loadKindNames } from '../validate/common.ts';
+
+const { renderModuleFixturesPath } = await load('renderModulePaths');
 
 // ---------------------------------------------------------------------------
 // Schema types — see contracts/baseline-json.md

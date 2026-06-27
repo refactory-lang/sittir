@@ -79,7 +79,7 @@ import {
 	loadReadTreeNode,
 	walkNativeForKind,
 	type TSNode
-} from '../../../codegen/src/validate/common.ts';
+} from '../validate/common.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode, NodeId } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
