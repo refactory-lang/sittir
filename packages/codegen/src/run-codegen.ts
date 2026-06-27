@@ -29,16 +29,11 @@ import {
 	type GrammarDiagnostic
 } from './compiler/grammar-diagnostics.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
-import { emitSuggested } from './emitters/suggested.ts';
-import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
-// extractParityFixtures and friends are lazy-imported inside runCodegen
-// (in the shouldEmitRustRender block) because parity-fixtures.ts transitively
-// imports validate/common.ts → @sittir/common (WASM-dependent). Keeping it
-// dynamic allows test environments without WASM to import this module.
 import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
+import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 
 /**
@@ -56,8 +51,6 @@ export interface CodegenOptions {
 	all?: boolean;
 	/** Output directory for test files (default: ../tests relative to outputDir). */
 	testsDir?: string;
-	/** Run validator probes after generation (equivalent to --roundtrip). */
-	roundtrip?: boolean;
 	/** Compile override grammar to .sittir/parser.wasm (standalone step). */
 	compileParser?: boolean;
 	/** Transpile overrides.ts to .sittir/grammar.js (standalone step). */
@@ -155,7 +148,7 @@ export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {
 	}
 }
 
-const RUST_RENDER_GRAMMARS = ['rust', 'typescript', 'python'] as const;
+export const RUST_RENDER_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
 // ---------------------------------------------------------------------------
 // Grammar-diagnostics preflight gate
@@ -265,9 +258,12 @@ export async function runCodegenCli(
 // ---------------------------------------------------------------------------
 
 /**
- * Core codegen path: generate IR from grammar, write all output files,
- * run renderable check, write manifest, optionally emit-diff and run
- * roundtrip validator probes.
+ * Core codegen path: generate IR from grammar, write all output files, run the
+ * renderable check, rebuild the native binding, and write the manifest. Returns
+ * the assembled `NodeMap` so the caller (the cli `gen` orchestrator) can thread
+ * it into the tools-side post-generate validation passes (parity fixtures,
+ * round-trip probes) — this function no longer runs validation itself, which is
+ * what severs the `codegen → tools` dependency.
  *
  * Preconditions (checked by caller or CLI):
  *  - `opts.outputDir` must be set (throws otherwise)
@@ -277,7 +273,7 @@ export async function runCodegenCli(
  * options, so programmatic callers can handle them. The CLI layer converts
  * these throws to `console.error` + `process.exit(1)`.
  */
-export async function runCodegen(opts: CodegenOptions): Promise<void> {
+export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	// Codegen IS the writer of the per-grammar manifest. Internal validator runs
 	// invoked from inside this function (e.g. extractParityFixtures uses
 	// validateReadRenderParse to extract parity fixtures BEFORE the manifest is
@@ -288,7 +284,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 	// not run this function and therefore do not inherit this env.
 	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
 
-	const { grammar, outputDir, all, nodes, roundtrip, testsDir, noEmitDiff, buildNative, workspaceCheck } = opts;
+	const { grammar, outputDir, all, nodes, testsDir, noEmitDiff, buildNative, workspaceCheck } = opts;
 
 	if (!outputDir) {
 		throw new Error('Missing required argument: --output. Use --help for usage.');
@@ -452,50 +448,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 					throw e;
 				}
 			}
-
-			// --- parity-fixture extraction (spec 012 T045 / T046) ---
-			// Run the round-trip validator in fixture-capture mode — a
-			// POST-BUILD pass. Every successfully round-tripped kind emits a
-			// paired (render, roundtrip) fixture; the result is written to
-			// rust/crates/sittir-{grammar}/test-fixtures.json where the Rust
-			// parity harness (T047) reads it via serde_json.
-			//
-			// Fixture extraction MUST run after the napi rebuild: the
-			// validator's wrapped-tree candidate walk requires the NATIVE
-			// engine (backend: 'native' inside extractParityFixtures), and
-			// Askama bakes the just-emitted templates into the .node at
-			// compile time — extracting before the rebuild would capture
-			// fixtures against stale templates (or a half-built engine).
-			//
-			// FR-011 required-kinds gate lives in `extractParityFixtures` —
-			// throws when the corpus doesn't cover the exception kinds for
-			// this grammar. Regen fails loudly rather than emitting an
-			// insufficient fixture set.
-			//
-			// Lazy import: parity-fixtures transitively imports validate/common.ts
-			// → @sittir/common (WASM-dependent). Dynamic import keeps the static
-			// module graph clean for test environments.
-			const { extractParityFixtures, serializeFixtures, fixturesOutputPath } =
-				await import('../../tools/src/validate/parity-fixtures.ts');
-			const templatesPath = join(dirname(outDir), 'templates');
-			const extracted = await extractParityFixtures(grammarTyped, templatesPath);
-			const fxPath = fixturesOutputPath(grammarTyped);
-			writeFile(fxPath, serializeFixtures(extracted.fixtures));
-			console.log(
-				`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`
-			);
-			// Surface FR-011 coverage gap warnings as non-fatal stderr messages.
-			for (const w of extracted.warnings) {
-				process.stderr.write(`[warning] ${w}\n`);
-			}
-		} else {
-			// --no-build-native: the freshly emitted templates are NOT in the
-			// .node, so a native fixture pass would capture stale renders.
-			// Skip extraction rather than emit silently-wrong fixtures.
-			process.stderr.write(
-				`[warning] [codegen] parity-fixtures[${grammar}]: skipped — fixture extraction requires the ` +
-					`post-regen native rebuild (--no-build-native was passed). test-fixtures.json left unchanged.\n`
-			);
 		}
 	}
 
@@ -565,135 +517,20 @@ export async function runCodegen(opts: CodegenOptions): Promise<void> {
 		if (emitDiff) console.log(`\n${emitDiff}`);
 	}
 
-	// --- Validation probes (optional, requires web-tree-sitter) ---
-	if (roundtrip) {
-		console.log('\nRunning validator probes...');
-
-		// Lazy-import the validators — they chain through validate/common.ts
-		// which imports web-tree-sitter and @sittir/common. Keeping these
-		// dynamic avoids pulling heavy native deps into the module-load path
-		// (which allows test environments without WASM to import run-codegen.ts).
-		const { validateReadProjection, formatReadProjectionReport } =
-			await import('../../tools/src/validate/read-projection.ts');
-		const { validateReadRenderParse, formatReadRenderParseReport } =
-			await import('../../tools/src/validate/read-render-parse.ts');
-		const { validateFactoryRenderParse, formatFactoryRenderParseReport } =
-			await import('../../tools/src/validate/factory-render-parse.ts');
-		const { validateFrom, formatFromReport } =
-			await import('../../tools/src/validate/from.ts');
-
-		// read projection (structural) — upstream of render/factory.
-		// A regression here means readNode is losing content between
-		// tree-sitter's parse tree and the NodeData shape, so every
-		// downstream validator will mis-report.
-		const readProjectionResult = await validateReadProjection(grammar);
-		console.log(formatReadProjectionReport(readProjectionResult));
-
-		// Validators take the per-rule `.jinja` templates directory
-		// path (feature 011). createRenderer auto-detects directory vs
-		// legacy YAML file.
-		const templatesDir = join(dirname(outDir), 'templates');
-		const readRenderParseResult = await validateReadRenderParse(grammar, templatesDir, { backend: 'native' });
-		console.log(formatReadRenderParseReport(readRenderParseResult));
-
-		// Factory render-parse (corpus → readNode → factory() → render → re-parse)
-		const factoryRenderParseResult = await validateFactoryRenderParse(grammar, templatesDir, 'native');
-		console.log(formatFactoryRenderParseReport(factoryRenderParseResult));
-
-		// from() correctness (structural comparison: from() vs factory())
-		const fromResult = await validateFrom(grammar, 'native');
-		console.log(formatFromReport(fromResult));
-
-		// Collect render-parse failures into a structured diagnostic list and
-		// re-emit overrides.suggested.ts with the new section. Gives the
-		// user a copy-pasteable record of input-vs-rendered for every
-		// corpus case that didn't survive the render-parse path — useful for
-		// spotting missing joinBy / transform patches.
-		const parseFrag = (name: string): { entry: string; kind: string } => {
-			const m = name.match(/^(.+)\s+\[([^\]]+)\]$/);
-			return m ? { entry: m[1]!, kind: m[2]! } : { entry: name, kind: 'unknown' };
-		};
-		const diagnostics: RoundTripDiagnostic[] = [];
-		for (const e of readRenderParseResult.errors ?? []) {
-			const { entry, kind } = parseFrag(e.name);
-			diagnostics.push({
-				entry,
-				kind,
-				source: 'render',
-				category: 'parse-error',
-				message: String(e.message),
-				rendered: e.rendered,
-				input: e.input
-			});
-		}
-		for (const m of readRenderParseResult.astMismatches ?? []) {
-			const { entry, kind } = parseFrag(m.name);
-			diagnostics.push({
-				entry,
-				kind,
-				source: 'render',
-				category: 'ast-mismatch',
-				message: String(m.message),
-				rendered: m.rendered,
-				input: m.input
-			});
-		}
-		// Factory render-parse diagnostics — validator runs once per kind
-		// with entry/input/rendered captured from the corpus case. Surfaces
-		// factory-API gaps (missing fields, wrong defaults) that the weaker
-		// kind-found pass doesn't flag.
-		for (const e of factoryRenderParseResult.errors ?? []) {
-			diagnostics.push({
-				entry: e.entry ?? '(unknown)',
-				kind: e.kind,
-				source: 'factory',
-				category: 'parse-error',
-				message: String(e.message),
-				rendered: e.rendered,
-				input: e.input
-			});
-		}
-		for (const m of factoryRenderParseResult.astMismatches ?? []) {
-			diagnostics.push({
-				entry: m.entry ?? '(unknown)',
-				kind: m.kind,
-				source: 'factory',
-				category: 'ast-mismatch',
-				message: String(m.message),
-				rendered: m.rendered,
-				input: m.input
-			});
-		}
-		if (diagnostics.length > 0) {
-			const suggestedWithFailures = emitSuggested({
-				grammar,
-				nodeMap: result.nodeMap,
-				roundTripFailures: diagnostics
-			});
-			writeFile(join(dirname(outDir), 'overrides.suggested.ts'), suggestedWithFailures);
-			console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} render-parse diagnostic(s)`);
-		}
-
-		const totalFail = readRenderParseResult.fail + factoryRenderParseResult.fail + fromResult.fail;
-		if (totalFail > 0) {
-			console.error(`\n${totalFail} render-parse / from() failure(s) — see above.`);
-			process.exitCode = 1;
-		}
-	}
-
-	if (process.exitCode) {
-		console.error(`\nFailed. Generated files were written, but validation reported errors.`);
-	} else {
-		console.log(`
+	console.log(`
 Done! Generated:
   templates/*.jinja, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
-	}
 	// Spec 013: dump derive-audit counts if SITTIR_AUDIT_DERIVE=1 was set.
 	// No-op otherwise. Used to validate simplify's canonicalization before
 	// shrinking `deriveFields` / `deriveChildren` to trivial walks.
 	(await import('./compiler/model/node-map.ts')).dumpDerivationAudit(`${grammar}-derive`);
+
+	// Return the assembled NodeMap so the cli orchestrator can thread it into the
+	// tools-side post-generate validation passes (parity fixtures, round-trip
+	// probes) — validation no longer runs inside codegen.
+	return result.nodeMap;
 }
 
 // ---------------------------------------------------------------------------
@@ -712,7 +549,7 @@ Done! Generated:
  * flags) suppresses the chain prefix, deferring to whatever state is already
  * on disk — same semantics as the old `--skip-ts-chain` / standalone flags.
  */
-export async function runFullRegen(opts: CodegenOptions): Promise<void> {
+export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
 	// Set BEFORE any generate/validate work (mirrors the top-level set in cli.ts).
 	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
 
@@ -747,9 +584,10 @@ export async function runFullRegen(opts: CodegenOptions): Promise<void> {
 	}
 
 	// Run the core codegen (generate → write all files → renderable → manifest
-	// → emit-diff → optional roundtrip → native rebuild (if applicable)).
-	// The native rebuild lives inside runCodegen (within the shouldEmitRustRender
-	// block) so it runs BEFORE manifest write — matching the original ordering
-	// from mainCli where cargo build preceded writeManifestForGrammar.
-	await runCodegen(opts);
+	// → emit-diff → native rebuild (if applicable)). The native rebuild lives
+	// inside runCodegen (within the shouldEmitRustRender block) so it runs BEFORE
+	// manifest write — matching the original ordering from mainCli where cargo
+	// build preceded writeManifestForGrammar. Returns the NodeMap for the
+	// orchestrator's post-generate validation.
+	return runCodegen(opts);
 }

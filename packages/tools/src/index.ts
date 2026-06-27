@@ -22,3 +22,42 @@ export { run as compareOverrides, type CompareOverridesOptions } from './inspect
 export { run as grammarDiagnostics, type GrammarDiagnosticsOptions } from './inspect/grammar-diagnostics.ts';
 export { run as walk, type WalkOptions } from './exercise/walk.ts';
 export { run as exercise, type ExerciseOptions } from './exercise/roundtrip.ts';
+export { emitParityFixtures, runRoundtripProbes } from './post-generate.ts';
+
+// --- Canonical validation facade (absorbed from the former @sittir/validator) ---
+// Validation is a tool: it inspects the codegen product, so it lives here next to
+// the probes/baseline/diff diagnostics it shares infrastructure with.
+export {
+	runFrom,
+	runRt,
+	runCoverage,
+	runFactory,
+	defaultTemplatesPath,
+	formatFromReport,
+	formatFactoryRenderParseReport,
+	formatReadRenderParseReport
+} from './run.ts';
+
+export type {
+	Grammar,
+	Backend,
+	FromValidationResult,
+	FromValidationError,
+	FactoryRenderParseResult,
+	ReadRenderParseResult,
+	ValidateReadRenderParseOptions,
+	TemplateCoverageResult,
+	CoverageIssue
+} from './run.ts';
+
+export { appendHistory, readHistory, historyPath } from './history.ts';
+export type { ValidationRun } from './history.ts';
+
+export {
+	runCountsCli,
+	runProbeFactoryCli,
+	runHistoryCli,
+	runTraceRtCli,
+	resolveGrammars,
+	resolveBackends
+} from './commands.ts';

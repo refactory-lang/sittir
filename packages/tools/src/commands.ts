@@ -1,5 +1,5 @@
 /**
- * Reusable command implementations for @sittir/validator.
+ * Reusable command implementations for @sittir/tools' validation facade.
  *
  * Extracted from cli.ts so that @sittir/cli (and other consumers) can import
  * the run*Cli entry points without pulling in the commander-entry side-effect block.
@@ -18,7 +18,7 @@ import {
 } from './run.ts';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
-import type { ReadRenderParseFailure } from '../../tools/src/validate/read-render-parse.ts';
+import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 
 export const ALL_GRAMMARS: Grammar[] = ['rust', 'typescript', 'python'];
 export const ALL_CLI_BACKENDS = ['native', 'js', 'all'] as const;
@@ -437,7 +437,7 @@ export async function runTraceRtCli(
 }
 
 export function loadProbeTrace(): ProbeTraceFn {
-	const specifier = new URL('../../tools/src/probe/kind.ts', import.meta.url).href;
+	const specifier = new URL('./probe/kind.ts', import.meta.url).href;
 	let cached: ProbeTraceFn | undefined;
 	return ((grammar, source, opts) => {
 		if (cached) return cached(grammar, source, opts);
@@ -449,7 +449,7 @@ export function loadProbeTrace(): ProbeTraceFn {
 }
 
 export function loadValidateReadRenderParse(): ValidateReadRenderParseFn {
-	const specifier = new URL('../../codegen/src/validate/read-render-parse.ts', import.meta.url).href;
+	const specifier = new URL('./validate/read-render-parse.ts', import.meta.url).href;
 	let cached: ValidateReadRenderParseFn | undefined;
 	return ((grammar, templatesPath, options) => {
 		if (cached) return cached(grammar, templatesPath, options);

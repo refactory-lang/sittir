@@ -25,7 +25,7 @@ type Grammar = 'rust' | 'typescript' | 'python';
 // ---------------------------------------------------------------------------
 
 const VALIDATOR_PATHS: Record<string, string> = {
-	run: '@sittir/validator',
+	run: '../run.ts',
 };
 
 interface FromResult {

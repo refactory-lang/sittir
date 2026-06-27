@@ -1,6 +1,6 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withBackend } from '../../framework/options.ts';
-import { runProbeFactoryCli } from '@sittir/validator';
+import { runProbeFactoryCli } from '@sittir/tools';
 
 export const probeFactory: CommandModule = {
 	name: 'probe-factory',

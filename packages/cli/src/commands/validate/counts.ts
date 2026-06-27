@@ -1,6 +1,6 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
 import { withBackend } from '../../framework/options.ts';
-import { runCountsCli } from '@sittir/validator';
+import { runCountsCli } from '@sittir/tools';
 import { Option } from 'commander';
 
 export const counts: CommandModule = {

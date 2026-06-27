@@ -23,7 +23,6 @@
 	},
 	"dependencies": {
 		"@sittir/codegen": "workspace:*",
-		"@sittir/validator": "workspace:*",
 		"@sittir/tools": "workspace:*",
 		"commander": "^15.0.0-0"
 	},

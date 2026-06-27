@@ -10,7 +10,6 @@ export default defineConfig({
 		alias: [
 			// Resolve @sittir/* workspace packages to their TS sources so
 			// vitest can run without pre-built dist/ directories.
-			{ find: '@sittir/validator', replacement: pkg('validator/src/index.ts') },
 			{ find: '@sittir/codegen/validate/from', replacement: pkg('tools/src/validate/from.ts') },
 			{ find: '@sittir/codegen/validate/factory-render-parse', replacement: pkg('tools/src/validate/factory-render-parse.ts') },
 			{ find: '@sittir/codegen/validate/read-render-parse', replacement: pkg('tools/src/validate/read-render-parse.ts') },

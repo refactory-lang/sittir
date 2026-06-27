@@ -47,7 +47,7 @@ function newestMtimeMs(dir: string, ext: string): number | undefined {
  * @param templatesPath — the `packages/<grammar>/templates` dir (from `defaultTemplatesPath`).
  */
 export function warnIfNativeBinaryStale(grammar: string, templatesPath: string): void {
-	// packages/validator/src/ → ../../.. → repo root
+	// packages/tools/src/ → ../../.. → repo root
 	const repoRoot = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 	const crateDir = resolve(repoRoot, 'rust', 'crates', `sittir-${grammar}`);
 	if (!existsSync(crateDir)) return; // no native crate for this grammar — nothing to guard

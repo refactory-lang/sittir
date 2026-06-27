@@ -473,8 +473,7 @@ target API in flight.
 | [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readNode`, `applyEdits`, native boundary, engine interface |
 | [`@sittir/core`](packages/core)             | JS render engine (Nunjucks); reference implementation                                |
 | [`@sittir/codegen`](packages/codegen)       | Seven-phase compiler, emitters, and CLI                                              |
-| [`@sittir/tools`](packages/tools)           | Diagnostic CLIs: `probe-*`, `counts`, `walk`, `exercise`, `inspect-*`                |
-| [`@sittir/validator`](packages/validator)   | Validation facade: `counts`, `probe-factory`, `history` (CLI + run APIs)             |
+| [`@sittir/tools`](packages/tools)           | Diagnostics + validation facade: `probe-*`, `counts`, `probe-factory`, `history`, `walk`, `exercise`, `inspect-*` (CLI + run APIs) |
 | [`@sittir/rust`](packages/rust)             | Generated Rust package                                                               |
 | [`@sittir/typescript`](packages/typescript) | Generated TypeScript package                                                         |
 | [`@sittir/python`](packages/python)         | Generated Python package                                                             |

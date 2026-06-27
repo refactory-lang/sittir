@@ -47,6 +47,7 @@ const MODULES = {
 	engineLoader: '../../codegen/src/engine-loader.ts',
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
+	suggested: '../../codegen/src/emitters/suggested.ts',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -67,6 +68,7 @@ export interface CodegenSurface {
 	engineLoader: typeof import('../../codegen/src/engine-loader.ts');
 	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
+	suggested: typeof import('../../codegen/src/emitters/suggested.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -125,6 +127,7 @@ export type FactoryShape = import('../../codegen/src/emitters/factory-map.ts').F
 export type FactorySlotMeta = import('../../codegen/src/emitters/factory-map.ts').FactorySlotMeta;
 export type RawNodeEntry = import('../../codegen/src/validate/node-types-loader.ts').RawNodeEntry;
 export type OpaqueFacts = import('../../codegen/src/compiler/opaque-facts.ts').OpaqueFacts;
+export type RoundTripDiagnostic = import('../../codegen/src/emitters/suggested.ts').RoundTripDiagnostic;
 
 // ---------------------------------------------------------------------------
 // Convenience: the canonical evaluate → link → normalize → assemble walk.
