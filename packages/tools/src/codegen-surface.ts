@@ -82,6 +82,17 @@ type FunctionKeys<T> = { [K in keyof T]-?: NonNullable<T[K]> extends AnyFn ? K :
  * dynamic `import()` keeps this the allowed `tools → codegen` direction with no
  * static package edge.
  */
+/**
+ * Resolve a `MODULES` path to an absolute file URL anchored at THIS module, so
+ * the variable-specifier dynamic import resolves identically under tsx
+ * (production) and vitest (tests). A bare relative specifier resolves correctly
+ * under tsx but mis-resolves under vitest's transform (it drops the package
+ * prefix → `/codegen/...`), so anchoring to `import.meta.url` is required.
+ */
+function moduleUrl(module: keyof typeof MODULES): string {
+	return new URL(MODULES[module], import.meta.url).href;
+}
+
 export async function invoke<
 	M extends keyof CodegenSurface,
 	F extends FunctionKeys<CodegenSurface[M]> & string,
@@ -92,7 +103,7 @@ export async function invoke<
 ): Promise<Awaited<ReturnType<Extract<CodegenSurface[M][F], AnyFn>>>> {
 	// Single boundary cast: a variable-specifier dynamic import is untyped, and
 	// the public signature above is what enforces correctness at every call site.
-	const mod = (await import(MODULES[module])) as Record<string, unknown>;
+	const mod = (await import(moduleUrl(module))) as Record<string, unknown>;
 	const fn = mod[method] as (...a: readonly unknown[]) => unknown;
 	return fn(...(args as readonly unknown[])) as Awaited<ReturnType<Extract<CodegenSurface[M][F], AnyFn>>>;
 }
@@ -106,7 +117,7 @@ export async function invoke<
  * direction), and the result is the module's REAL type — no cast at the call site.
  */
 export async function load<M extends keyof CodegenSurface>(module: M): Promise<CodegenSurface[M]> {
-	return (await import(MODULES[module])) as CodegenSurface[M];
+	return (await import(moduleUrl(module))) as CodegenSurface[M];
 }
 
 // ---------------------------------------------------------------------------
