@@ -32,14 +32,6 @@ import {
 	rulesStructurallyEqual,
 	assertUniversalShapeRule,
 } from '../dsl/rule-transforms.ts';
-export { extractRepeatShape } from '../dsl/rule-transforms.ts';
-// Re-export moved functions so external consumers (wrapper-deletion.ts, tests) keep resolving.
-export {
-	fuseHeadRepeatLists,
-	hoistInnerFieldOutOfFieldWrapper,
-	assertUniversalShape,
-	assertUniversalShapeRule,
-} from '../dsl/rule-transforms.ts';
 
 // ---------------------------------------------------------------------------
 // Slot-grouping diagnostic accumulator (propose-promotion only).

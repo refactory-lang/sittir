@@ -11,7 +11,8 @@
 import { CHOICE, FIELD, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../types/rule.ts';
-import { simplifyRule, hoistInnerFieldOutOfFieldWrapper } from '../compiler/simplify.ts';
+import { simplifyRule } from '../compiler/simplify.ts';
+import { hoistInnerFieldOutOfFieldWrapper } from '../dsl/rule-transforms.ts';
 
 const str = (value: string): Rule => ({ type: STRING, value });
 const sym = (name: string): Rule => ({ type: SYMBOL, name });
