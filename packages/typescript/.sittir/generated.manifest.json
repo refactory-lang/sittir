@@ -1,11 +1,11 @@
 {
   "grammar": "typescript",
-  "source_hash": "9036a0704c488e9c6cc46481ab1dc2a0eb7003cb3cac98fd127718ba0752c6ef",
+  "source_hash": "12cb609b3f00b49091c3dcdf187144aeb5263deb32e3e5f50bd072ca33ecec3b",
   "files": {
-    "packages/typescript/.sittir/grammar.js": "53253842e53c0bf87dff91e75e18c788d2363ef4a43a5a5c89e9100b28d1ef8c",
+    "packages/typescript/.sittir/grammar.js": "6f62aed7dceda6055153c6b9e0ba1d3057ab8baa2ba234896ecb01bfdaf5274b",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.wasm": "0fb5b39078e361e4a9d07f534a0abb631b33499d0ff863d77346bacd39474e79",
-    "packages/typescript/.sittir/src/grammar.json": "cdbdaa784deba7692260b1e96fa5f5581e1cd1b65db65ff10fe8494d0c1345ed",
+    "packages/typescript/.sittir/src/grammar.json": "e8851ee90dccf83ded649f8b7c42910ca6c88c0a2a47ae181f93df280d07ab46",
     "packages/typescript/.sittir/src/node-types.json": "e19d0bcedb305adb2e050db6915da1c3b942591cef4b31c1097c170c37bf2d8b",
     "packages/typescript/.sittir/src/parser.c": "022ea15ed1b3bfe3c8eb98f5630f900b912237e13bc72b0d5551278537fc5b6d",
     "packages/typescript/.sittir/src/scanner.c": "9125013b42cb888379d9be909f1d73dfb75a37626c2cdbf4122718a2b431a6d3",

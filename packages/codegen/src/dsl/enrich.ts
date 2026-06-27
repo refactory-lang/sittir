@@ -247,7 +247,6 @@ function applyEnrichPasses(
 		// generator tables, breaking unrelated rules' reparse (rust corpus
 		// regresses by ~47/136 with this pass on).
 		r = applyOptionalKeyword(ruleName, r, kwRules);
-		r = enrichFieldWrappers(r);
 		if (r === before) { converged = true; break; }
 	}
 	if (!converged && !process.env.SITTIR_QUIET) {
@@ -257,7 +256,7 @@ function applyEnrichPasses(
 	// see the enrich-inferred (`source:'enriched'`) FIELDs, because its trigger
 	// is `optional(seq(…))` with `some(isString) && some(isField)`. Running it
 	// first (the original placement) missed every clause whose field is added
-	// by applySymbolToField/enrichFieldWrappers (e.g. rust `abstract_type`'s
+	// by applySymbolToField (e.g. rust `abstract_type`'s
 	// `for <type_parameters>`), leaving those for detectClause. One pass: once a
 	// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
 	// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
@@ -922,85 +921,16 @@ function tryPromoteInRepeatSeq(
 	return result;
 }
 
-// ---------------------------------------------------------------------------
-// Pass: field-wrapper attribute propagation
-// ---------------------------------------------------------------------------
-// For every FIELD/field node, copy the wrapper's `name` onto the wrapped
-// content as `fieldName`, and set `nonterminal: true` on the content.
-// Matches today's rule-catalog.ts force-promotion semantics: a
-// field-wrapped child is forced to nonterminal classification even when
-// the underlying rule is a terminal (string/pattern).
-//
-// Recursion order: post-order. Recurse into children first so nested
-// field wrappers see already-enriched subtrees, then apply the
-// propagation at this level if this node is itself a FIELD. Returns
-// the original rule unchanged when no propagation fires, preserving
-// the `r === before` convergence check in applyEnrichPasses.
+// `enrichFieldWrappers` REMOVED — `fieldName`/`nonterminal` are derived by
+// `applyWrapperDeletion`'s FIELD case (push the field's name + nonterminal onto
+// its content) and its SEQ case (retains fieldName on the seq node), with
+// `materializeInlinedBody` carrying fieldName through group inlining. Stamping it
+// in enrich was premature (nothing reads it before wrapper-deletion); enrich no
+// longer stamps the derived slot attributes at all (see also the removed
+// `enrichMultiplicityWrappers`). Field naming that enrich INFERS on bare symbols
+// still happens in `applySymbolToField` (a real structural promotion, not a
+// derived-attr stamp).
 
-function enrichFieldWrappers(rule: Rule): Rule {
-	const recursed = recurseChildren(rule, enrichFieldWrappers);
-	if (!isFieldType(recursed.type)) return recursed;
-	const name = (recursed as unknown as { name?: unknown }).name;
-	const content = (recursed as unknown as { content?: unknown }).content;
-	if (typeof name !== 'string' || !content || typeof content !== 'object') return recursed;
-	const existing = content as { fieldName?: unknown; nonterminal?: unknown };
-	if (existing.fieldName === name && existing.nonterminal === true) return recursed;
-	const newContent = { ...(content as object), fieldName: name, nonterminal: true };
-	return { ...recursed, content: newContent } as unknown as Rule;
-}
-
-/** @internal — descend into structural children of `rule` and apply
- *  `visit` to each (seq/choice members; optional/repeat/repeat1/prec/field/alias
- *  content). Returns the original rule reference when no descendant changes —
- *  preserves the fixed-point identity check in `applyEnrichPasses`. */
-function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
-	if (!rule || typeof rule !== 'object') return rule;
-	const t = (rule as { type?: string }).type;
-	if (!t) return rule;
-	if (isSeqType(t) || isChoiceType(t)) {
-		const members = (rule as unknown as { members?: Rule[] }).members;
-		if (!Array.isArray(members)) return rule;
-		let changed = false;
-		const newMembers = members.map((m) => {
-			const out = visit(m);
-			if (out !== m) changed = true;
-			return out;
-		});
-		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
-	}
-	if (
-		isOptionalType(t) ||
-		isRepeatType(t) ||
-		isFieldType(t) ||
-		isPrecWrapper(rule as { type: string }) ||
-		t === 'alias' ||
-		t === 'ALIAS' ||
-		t === 'token' ||
-		t === 'TOKEN' ||
-		t === 'immediate_token' ||
-		t === 'IMMEDIATE_TOKEN' ||
-		t === 'group' ||
-		t === 'variant'
-	) {
-		const content = (rule as unknown as { content?: Rule }).content;
-		if (content === undefined) return rule;
-		const out = visit(content);
-		if (out === content) return rule;
-		return { ...rule, content: out } as Rule;
-	}
-	if (t === 'polymorph') {
-		const forms = (rule as unknown as { forms?: Array<{ content: Rule }> }).forms;
-		if (!Array.isArray(forms)) return rule;
-		let changed = false;
-		const newForms = forms.map((f) => {
-			const out = visit(f.content);
-			if (out !== f.content) changed = true;
-			return changed ? { ...f, content: out } : f;
-		});
-		return changed ? ({ ...rule, forms: newForms } as Rule) : rule;
-	}
-	return rule;
-}
 
 // Multiplicity / nonterminal are NOT stamped here — they are derived later by
 // `applyWrapperDeletion` (optimize) from the OPTIONAL/REPEAT/REPEAT1/FIELD

@@ -135,7 +135,7 @@ not the parse table.)
 
 ### `applyEnrichPasses(ruleName, rule, kwRules, supertypeNames)`
 **Pattern:** Each rule in the grammar.
-**Action:** Fixed-point loop (max 8 iterations) applying, until convergence: `applySymbolToField` → `applyOptionalKeyword` → `enrichFieldWrappers`.
+**Action:** Fixed-point loop (max 8 iterations) applying, until convergence: `applySymbolToField` → `applyOptionalKeyword`.
 **Output:** Enriched rule with field wrappers, `_kw_*` registrations, and pushed-down attributes.
 
 ### `extractSupertypeNames(base, hasWrapper)` / `harvestSupertypeNames(result)`
@@ -168,10 +168,7 @@ not the parse table.)
 **Action:** Wraps the inner literal as `field(<kw>_marker, symbol(_kw_<kw>))` and registers a hidden `_kw_*` rule.
 **Output:** Rule with keyword promotions; new `_kw_*` entries.
 
-### `enrichFieldWrappers(rule)` **(SHIPPED — PR0)**
-**Pattern:** Every `FieldRule` (recursed throughout the tree via `recurseChildren`).
-**Action:** Propagates `fieldName` (and slottiness) onto the wrapped content. The wrapper stays in place until PR3.
-**Output:** Field rule whose inner content carries the field-binding attribute directly.
+> **`enrichFieldWrappers` REMOVED (with `enrichMultiplicityWrappers`):** `fieldName` + `nonterminal` are derived by `applyWrapperDeletion`'s FIELD case (pushes the field's name + nonterminal onto its content) and its SEQ case (retains fieldName on the seq node), with `materializeInlinedBody` carrying fieldName through group inlining. Stamping in enrich was premature (nothing reads it before wrapper-deletion). Field naming that enrich INFERS on bare symbols still happens in `applySymbolToField` (a real structural promotion, not a derived-attr stamp). Net: **enrich no longer stamps any derived slot attribute.**
 
 > **`enrichMultiplicityWrappers` REMOVED:** `multiplicity` + `nonterminal` are
 > derived solely by `applyWrapperDeletion` (Phase 3) from the
