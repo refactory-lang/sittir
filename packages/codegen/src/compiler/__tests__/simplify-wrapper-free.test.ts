@@ -11,7 +11,7 @@
 
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { computeSimplifiedRules, simplifyRules } from '../simplify.ts';
+import { computeSimplifiedRules } from '../simplify.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
 import type { Rule } from '../../types/rule.ts';
 
@@ -83,7 +83,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 		).toEqual([]);
 	});
 
-	it('hoistFieldOutOfSingleContentWrapper does not produce field/repeat in output', () => {
+	it('repeat/optional of a field does not produce field/repeat nodes in output', () => {
 		// A seq containing repeat(field('items', symbol('x'))) — after wrapper
 		// deletion the repeat and field are gone; simplify should not re-introduce them.
 		// After applyWrapperDeletion: { type: 'symbol', name: 'x', fieldName: 'items', multiplicity: 'array' }
@@ -113,8 +113,8 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 		).toEqual([]);
 	});
 
-	it('extractFieldAcrossBranches does not produce optional or field in output', () => {
-		// choice(field('a', X), seq(field('b', Y), field('a', X))) — hoistSharedFieldAcrossChoiceBranches
+	it('extractFieldFromBranchesForChoice does not produce optional or field in output', () => {
+		// choice(field('a', X), seq(field('b', Y), field('a', X))) — hoistSharedFieldFromBranchesForChoice
 		// extracts field('a') and wraps the residual in optional. After the fix, the
 		// optional must be pushed to leaf attrs, not left as a wrapper node.
 		const input: Record<string, Rule> = {
@@ -177,7 +177,7 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 					{ type: STRING, value: 'priv' },
 				],
 			},
-			// repeat of a field (exercices hoistFieldOutOfSingleContentWrapper)
+			// repeat of a field — wrapper-deletion turns it into a fieldName+multiplicity leaf
 			parameter_list: {
 				type: REPEAT,
 				content: {
@@ -186,7 +186,7 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 					content: { type: SYMBOL, name: 'parameter' },
 				},
 			},
-			// choice where all branches share a field (exercices extractFieldAcrossBranches)
+			// choice where all branches share a field (exercices extractFieldFromBranchesForChoice)
 			binary_expr: {
 				type: CHOICE,
 				members: [

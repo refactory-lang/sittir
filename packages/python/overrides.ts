@@ -159,7 +159,7 @@ export default grammar(
 			//   )), ':', _suite)
 			// The two arms have DIFFERENT field sets (arm 0: value + optional
 			// alias; arm 1: repeated value), so the cross-branch field merge
-			// (hoistSharedFieldAcrossChoiceBranches) can't fuse them — the
+			// (hoistSharedFieldFromBranchesForChoice) can't fuse them — the
 			// choice reaches derivation as the non-canonical
 			// `seq-member-choice-needs-variant-or-merge` shape (hard error).
 			// Split per variant so each form owns its template. Path: seq pos 2
