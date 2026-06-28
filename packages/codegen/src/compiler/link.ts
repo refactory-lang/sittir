@@ -76,6 +76,21 @@ export interface ResolveCtx {
 	readonly externalRoles: Map<string, ExternalRole>;
 }
 
+/**
+ * Pass-shared state for the hidden-rule classification cluster (R4 / #14).
+ * Folds the loose `inline`/`supertypes`/`derivations`/`applyPromotedRules`/
+ * `hiddenChoicesWithNamedAliasMembers` args that `classifyAndLogHiddenRules` +
+ * `classifyHiddenRule` + `classifyHiddenChoiceRule` threaded. The per-rule
+ * `name` stays an explicit trailing param (CW6), as in `resolveRule(rule, ctx, name)`.
+ */
+export interface HiddenClassifyCtx {
+	readonly inline?: readonly string[];
+	readonly supertypes: Set<string>;
+	readonly derivations: DerivationLog;
+	readonly applyPromotedRules: boolean;
+	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
+}
+
 /** True iff `v` is a `LinkCtx` (discriminated by the presence of `generatedIdTables`). */
 function isLinkCtx(v: IncludeFilter | LinkCtx): v is LinkCtx {
 	return 'generatedIdTables' in v || 'include' in v;
@@ -226,15 +241,13 @@ export function link(
 	// the two facets of `alias(symbol(X), $.target)` can never drift apart.
 	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(raw.rules);
 
-	classifyAndLogHiddenRules(
-		rules,
-		raw.inline,
+	classifyAndLogHiddenRules(rules, {
+		inline: raw.inline,
 		supertypes,
-		references,
 		derivations,
 		applyPromotedRules,
 		hiddenChoicesWithNamedAliasMembers
-	);
+	});
 	// PR-P Task 2: promoteAndLogTerminalRules removed — terminals classify by shape at Assemble
 
 	// `inline = hidden && !aliased && !supertype`. A supertype ref is a DISPATCH
@@ -431,7 +444,6 @@ function canonicalizeRuleLiterals(
  * @param inline - Names listed in `grammar.inline`; they are hidden even
  *   without an underscore prefix.
  * @param supertypes - Set of kind names explicitly declared in `grammar.supertypes`.
- * @param references - Symbol-reference list used by `classifyHiddenRule`.
  * @param derivations - Derivation log; promoted classifications are appended.
  * @param applyPromotedRules - When false, classifications are logged but the
  *   rule map is NOT mutated.
@@ -443,24 +455,11 @@ function canonicalizeRuleLiterals(
  *   promoter from producing bogus variant maps for kinds like ts `primary_type`
  *   that should be a single SupertypeRule.
  */
-function classifyAndLogHiddenRules(
-	rules: Record<string, Rule>,
-	inline: readonly string[] | undefined,
-	supertypes: Set<string>,
-	references: SymbolRef[],
-	derivations: DerivationLog,
-	applyPromotedRules: boolean,
-	hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>
-): void {
+function classifyAndLogHiddenRules(rules: Record<string, Rule>, ctx: HiddenClassifyCtx): void {
+	const { inline, supertypes, derivations, applyPromotedRules } = ctx;
 	for (const [name, rule] of Object.entries(rules)) {
 		if (isHiddenKind(name, inline) || supertypes.has(name)) {
-			const classified = classifyHiddenRule(
-				name,
-				rule,
-				supertypes,
-				references,
-				hiddenChoicesWithNamedAliasMembers
-			);
+			const classified = classifyHiddenRule(rule, ctx, name);
 			const classifiedSource = (classified as { source?: string }).source ?? classified.metadata?.source;
 			const isPromotedEnum = isEnumChoiceRule(classified);
 			const isPromotedSupertype = classified.type === SUPERTYPE;
@@ -1758,13 +1757,7 @@ function resolveSymbolRoleOrPass(rule: SymbolRule, ctx: ResolveCtx): Rule {
 // classifyHiddenRule — determine what a hidden rule IS
 // ---------------------------------------------------------------------------
 
-function classifyHiddenRule(
-	name: string,
-	rule: Rule,
-	supertypes: Set<string>,
-	_references: SymbolRef[],
-	hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>
-): Rule {
+function classifyHiddenRule(rule: Rule, ctx: HiddenClassifyCtx, name: string): Rule {
 	// Already classified (e.g., enum from Evaluate)
 	// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
 	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
@@ -1772,7 +1765,7 @@ function classifyHiddenRule(
 	}
 
 	if (rule.type === CHOICE) {
-		return classifyHiddenChoiceRule(name, rule, supertypes, hiddenChoicesWithNamedAliasMembers);
+		return classifyHiddenChoiceRule(rule, ctx, name);
 	}
 
 	if (isSeq(rule)) {
@@ -1806,12 +1799,8 @@ function classifyHiddenRule(
  *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
  *   structural members (seq, field, nested choice/optional/repeat) disqualify.
  */
-function classifyHiddenChoiceRule(
-	name: string,
-	rule: ChoiceRule,
-	supertypes: Set<string>,
-	hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>
-): Rule {
+function classifyHiddenChoiceRule(rule: ChoiceRule, ctx: HiddenClassifyCtx, name: string): Rule {
+	const { supertypes, hiddenChoicesWithNamedAliasMembers } = ctx;
 	if (rule.members.every((m): m is StringRule => m.type === STRING)) {
 		return normalizeEnumMembers(rule.members, 'promoted');
 	}
