@@ -3,7 +3,7 @@
 		"compiler/normalize.ts": 12,
 		"compiler/simplify.ts": 3,
 		"compiler/evaluate.ts": 14,
-		"compiler/link.ts": 42,
+		"compiler/link.ts": 39,
 		"compiler/assemble.ts": 17,
 		"compiler/model/node-map.ts": 3,
 		"dsl/rule-transforms.ts": 8
