@@ -11,27 +11,64 @@
  * Per-function rationale: docs/compiler-phase-glossary.md (Phase 3.5: Simplify).
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, OptionalRule, RepeatRule, Repeat1Rule, GroupRule, VariantRule, FieldRule } from '../types/rule.ts';
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, GroupRule, VariantRule } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
-import type { SimplifyCtx } from '../dsl/rule-transforms.ts';
-import { inlineRefs, canonicalizeSeqOfLeaves, type InlineRefsCtx } from '../dsl/rule-transforms.ts';
+import type { SimplifyCtx, RuleBuilder } from '../dsl/rule-transforms.ts';
+import { structuralBuilder, inlineRefs, canonicalizeSeqOfLeaves, type InlineRefsCtx } from '../dsl/rule-transforms.ts';
 // `extractRepeatShape` and `pushAttrsToLeaves` moved to transforms.ts (PR-O M1 de-scatter).
 // Moved functions — imported from their new home in rule-transforms.ts.
 import {
 	fuseHeadRepeatLists,
 	isEmptyMatchMember,
 	isSlotPromotedLiteral,
-	hoistFieldOutOfSingleContentWrapper,
 	hoistInnerFieldOutOfFieldWrapper,
 	hoistSharedFieldAcrossChoiceBranches,
 	mergeChoiceBranches,
 	rulesStructurallyEqual,
 	assertUniversalShapeRule,
 } from '../dsl/rule-transforms.ts';
+
+// ---------------------------------------------------------------------------
+// attributeBuilder — compiler-side RuleBuilder that pushes attributes instead
+// of constructing wrapper nodes, so simplify stays field/optional/repeat-free.
+// ---------------------------------------------------------------------------
+
+/**
+ * Compiler-side `RuleBuilder` that converts wrapper-construction calls into
+ * attribute pushes (via `deleteWrapper`), keeping simplify's output
+ * field/optional/repeat/repeat1-node-free. Structural constructors (`seq` /
+ * `choice`) delegate to the structural builder (same plain node literals).
+ *
+ * - `field(name, X)` → push `fieldName` + `nonterminal:true` onto X.
+ * - `optional(X)` → empty-seq sentinel when X is already empty; strip bare
+ *   anonymous delimiter string; otherwise `deleteWrapper(optional(X))` which
+ *   pushes `multiplicity: 'optional'` onto the leaves.
+ * - `repeat(X)` / `repeat1(X)` → `deleteWrapper({type:REPEAT|REPEAT1, content:X})`.
+ * - `seq` / `choice` → plain structural nodes (same as structuralBuilder).
+ */
+export const attributeBuilder: RuleBuilder = {
+	seq: (members) => ({ type: SEQ, members }),
+	choice: (members) => ({ type: CHOICE, members }),
+	optional: (content) => {
+		// Mirror simplifyOptionalRule semantics (the handler this replaces):
+		// empty-seq body → keep empty-seq; bare anonymous string → strip to empty-seq;
+		// otherwise deleteWrapper pushes multiplicity:'optional' onto leaves.
+		if (content.type === SEQ && content.members.length === 0) {
+			return { type: SEQ, members: [] };
+		}
+		if (content.type === STRING && !isSlotPromotedLiteral(content)) {
+			return { type: SEQ, members: [] };
+		}
+		return deleteWrapper({ type: OPTIONAL, content }) as Rule;
+	},
+	repeat: (content) => deleteWrapper({ type: REPEAT, content }) as Rule,
+	repeat1: (content) => deleteWrapper({ type: REPEAT1, content }) as Rule,
+	field: (name, content) => deleteWrapper({ type: FIELD, name, content }) as Rule,
+};
 
 // ---------------------------------------------------------------------------
 // Slot-grouping diagnostic accumulator (propose-promotion only).
@@ -86,16 +123,28 @@ export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
  * Minimal `SimplifyCtx` for the public boundary when no ctx is supplied (e.g.
  * direct `simplifyRule(rule)` calls in tests). The per-rule-type handlers take a
  * concrete `ctx: SimplifyCtx`; this normalizes once so they never see `undefined`.
+ * Injects `attributeBuilder` so even bare `simplifyRule(rule)` calls use the
+ * attribute-push strategy.
  */
-function makeDefaultCtx(): SimplifyCtx {
-	return { rules: {}, inlineKinds: new Set(), diagnostics: new DiagnosticSink() };
+export function makeDefaultCtx(): SimplifyCtx {
+	return { rules: {}, inlineKinds: new Set(), diagnostics: new DiagnosticSink(), builder: attributeBuilder };
 }
 
 /**
  * Dispatch a rule to its per-type simplify handler. Thin switch over the Rule
  * union. The public entry keeps `ctx?` optional (normalized via `makeDefaultCtx`)
  * so direct callers needn't build a ctx; each handler takes `(rule: <Type>Rule,
- * ctx: SimplifyCtx)`. `inField` rides on `ctx` (see `SimplifyCtx.inField`).
+ * ctx: SimplifyCtx)`.
+ *
+ * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 nodes must never appear
+ * in the input:
+ *  - `applyWrapperDeletion` (which runs before this in the production pipeline)
+ *    converts all wrapper nodes to `fieldName` / `multiplicity` attributes.
+ *  - Construction sites inside `mergePosition` / `extractFieldAcrossBranches`
+ *    and the empty-match fold in `simplifyChoiceRule` now delegate to
+ *    `ctx.builder` (= `attributeBuilder` in production) which pushes attributes
+ *    instead of building wrapper nodes.
+ * The `default` branch throws so any stray wrapper node is caught immediately.
  */
 export function simplifyRule(rule: Rule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
 	switch (rule.type) {
@@ -103,19 +152,32 @@ export function simplifyRule(rule: Rule, ctx: SimplifyCtx = makeDefaultCtx()): R
 			return simplifySeqRule(rule, ctx);
 		case CHOICE:
 			return simplifyChoiceRule(rule, ctx);
-		case OPTIONAL:
-			return simplifyOptionalRule(rule, ctx);
-		case REPEAT:
-		case REPEAT1:
-			return simplifyRepeatRule(rule, ctx);
-		case FIELD:
-			return simplifyFieldRule(rule, ctx);
 		case GROUP:
 			return simplifyGroupRule(rule, ctx);
 		case VARIANT:
 			return simplifyVariantRule(rule, ctx);
-		default:
+		// Leaf / terminal types — pass through as-is (no structural transformation).
+		case SYMBOL:
+		case STRING:
+		case PATTERN:
+		case ALIAS:
+		case TOKEN:
+		case SUPERTYPE:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 			return rule;
+		default:
+			// FIELD / OPTIONAL / REPEAT / REPEAT1 and any unknown type hitting this
+			// branch is a bug: all wrappers must be converted to fieldName/multiplicity
+			// attributes by applyWrapperDeletion before reaching simplify, and
+			// construction sites within simplify use ctx.builder (attributeBuilder)
+			// which pushes attributes rather than creating wrapper nodes.
+			throw new Error(
+				`simplifyRule: unexpected rule type '${(rule as Rule).type}' — ` +
+					`field/optional/repeat/repeat1 nodes must be converted to attributes ` +
+					`by applyWrapperDeletion before reaching simplify`
+			);
 	}
 }
 
@@ -124,47 +186,25 @@ export function simplifyRule(rule: Rule, ctx: SimplifyCtx = makeDefaultCtx()): R
  * collapse a single member; fuse same-named fields across structurally-equivalent
  * branches (`mergeChoiceBranches`), then hoist a field shared by every branch out
  * to an enclosing seq. Variant wrappers are preserved for polymorph detection.
+ *
+ * Uses `b.optional` / `b.choice` so the phase builder decides whether to produce
+ * a wrapper node or push attributes (attributeBuilder → attributes; structuralBuilder
+ * → nodes). The empty-match fold no longer routes through `simplifyRule` for the
+ * optional wrapper — `b.optional` applies the same semantics directly.
  */
 function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+	const b = ctx.builder ?? structuralBuilder;
 	const members = rule.members.map((m) => simplifyRule(m, ctx));
 	const empty = members.findIndex(isEmptyMatchMember);
 	if (empty >= 0 && members.length > 1) {
 		const nonEmpty = members.filter((_, i) => i !== empty);
-		const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, { type: CHOICE, members: nonEmpty });
-		return simplifyRule(withAttrsFrom(rule, { type: OPTIONAL, content: inner }), ctx);
+		const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, b.choice(nonEmpty));
+		return withAttrsFrom(rule, b.optional(inner));
 	}
 	if (members.length === 1) return withAttrsFrom(rule, members[0]!);
-	const merged = mergeChoiceBranches({ type: CHOICE, members });
+	const merged = mergeChoiceBranches(b.choice(members) as ChoiceRule, ctx);
 	if (merged.type !== CHOICE) return withAttrsFrom(rule, merged);
-	return withAttrsFrom(rule, hoistSharedFieldAcrossChoiceBranches(merged));
-}
-
-/**
- * OPTIONAL: recurse; fold to empty-seq when the body vanished. Inside a field
- * (`ctx.inField`), a bare anonymous string is structural content and survives;
- * outside, it's a strippable delimiter. Then hoist field out of the wrapper.
- */
-function simplifyOptionalRule(rule: OptionalRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
-	const inner = simplifyRule(rule.content, ctx);
-	if (inner.type === SEQ && inner.members.length === 0) {
-		return { type: SEQ, members: [] };
-	}
-	if (!ctx.inField && inner.type === STRING && !isSlotPromotedLiteral(inner)) {
-		return { type: SEQ, members: [] };
-	}
-	return hoistFieldOutOfSingleContentWrapper({ type: OPTIONAL, content: inner });
-}
-
-/** REPEAT / REPEAT1: recurse; hoist field out of the single-content wrapper. */
-function simplifyRepeatRule(rule: RepeatRule | Repeat1Rule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
-	const next = { ...rule, content: simplifyRule(rule.content, ctx) };
-	return hoistFieldOutOfSingleContentWrapper(next);
-}
-
-/** FIELD: recurse with `inField:true` (so `optional(anon-string)` survives), then hoist inner field out. */
-function simplifyFieldRule(rule: FieldRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
-	const recursed: Rule = { ...rule, content: simplifyRule(rule.content, { ...ctx, inField: true }) };
-	return hoistInnerFieldOutOfFieldWrapper(recursed);
+	return withAttrsFrom(rule, hoistSharedFieldAcrossChoiceBranches(merged, ctx));
 }
 
 /** GROUP: recurse into content (structural wrapper preserved). */
