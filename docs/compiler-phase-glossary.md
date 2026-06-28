@@ -40,7 +40,7 @@ does), and output (what changes).
 > - **Alias-body + polymorph-form snapshots** (PR2): `optimize()` threads top-level alias-bodies and polymorph-form contents through `applyWrapperDeletion` + `computeSimplifiedRules` and merges them into `renderRules` / `simplifiedRules`. `assemble.ts` reads snapshots directly; per-call `simplifyRule(...)` / `deleteWrapper(...)` fallbacks deleted.
 > - **`applyAutoGroups` re-enabled** (PR2): `dsl/wire/wire.ts` invokes it; synthesized helpers (`_<parent>_optional<N>` / `_<parent>_repeat<N>`) are registered in `grammar.inline` via `WireContext.syntheticInline`.
 > - **`inlineRefs`** (PR2, renamed from `inlineGroupRefs`): inlines (a) hidden GROUP / MULTI refs and (b) any ref whose target is in `grammar.inline`. Matches tree-sitter's parse-time inlining. R3: lives in `dsl/rule-transforms.ts` as a shared op — `inlineRefs(rule, ctx: InlineRefsCtx, visited?)`.
-> - **R3 (#14 sweep + M1 closure):** `compiler/transforms.ts` and `compiler/rule-attrs.ts` moved to **`dsl/rule-transforms.ts`** / **`dsl/rule-attrs.ts`** (named to avoid the existing `dsl/transform/` override-transform module). `SimplifyCtx` is now a real interface (`extends TransformCtx`, adds `polymorphSkipExtra?`). Entry points: `simplifyRules(rules, ctx?)`, `computeSimplifiedRules(renderRules, ctx?)`, `normalizeToFixpoint(rule, ctx, rules)`, `applyNormalizationPasses(rawRules, ctx?, preserveKinds?)`, `inlineHiddenSeqRefs(rules, ctx, keepRef)`. The `inlineRefs` / `canonicalizeSeqOfLeaves` clusters moved to `dsl/rule-transforms.ts`; **`collapseSeq` stays in simplify** (mutually recursive with `simplifyRule` — phase-internal, not a shareable op) and **`deleteWrapper`/wrapper-deletion.ts stays compiler-side** (depends on list-fusion / rule-catalog — moving it would invert the dsl→compiler direction).
+> - **R3 (#14 sweep + M1 closure):** `compiler/transforms.ts` and `compiler/rule-attrs.ts` moved to **`dsl/rule-transforms.ts`** / **`dsl/rule-attrs.ts`** (named to avoid the existing `dsl/transform/` override-transform module). `SimplifyCtx` is now a real interface (`extends TransformCtx`, adds `polymorphSkipExtra?`). Entry points: `simplifyRules(rules, ctx?)`, `computeSimplifiedRules(renderRules, ctx?)`, `normalizeToFixpoint(rule, ctx, rules)`, `applyNormalizationPasses(rawRules, ctx?, preserveKinds?)`, `inlineHiddenSeqRefs(rules, ctx, keepRef)`. The `inlineRefs` / `canonicalizeSeqOfLeaves` clusters moved to `dsl/rule-transforms.ts`; **`simplifySeqRule` (formerly `collapseSeq`) stays in simplify** (mutually recursive with `simplifyRule` — phase-internal, not a shareable op) and **`deleteWrapper`/wrapper-deletion.ts stays compiler-side** (depends on list-fusion / rule-catalog — moving it would invert the dsl→compiler direction).
 > - **`collectSlots`** (PR2/post-PR2, NEW file `compiler/collect-slots.ts`): the `deriveSlotsRaw` fold/merge/`effectiveMultiplicity` walker is **deleted**. `_deriveSlotsInternal` now delegates to `collectSlots` ("a slot IS a `nonterminal`-flagged node"). `deriveSlots` keeps its signature.
 > - **New `TemplateEmitter`** (PR2, `emitters/templates.ts`): authoritative, modelType-dispatching, consumes `node.renderRule`. `runTemplateEmitter()` is the entry point. Slot-preservation gate (`SITTIR_SLOT_PRESERVATION`) replaced the byte-equivalence diff gate.
 >
@@ -333,25 +333,46 @@ parser-inlined helpers, strips anonymous delimiters, canonicalizes toward the
 universal seq-of-leaves shape, and re-pushes any wrapper attributes that hoist
 transforms re-introduced.
 
-### `computeSimplifiedRules(renderRules, word, inlineKinds?)`
-**Pattern:** Called from `optimize()` with the RenderRule map.
+**Wrapper-node-free invariant (PR #101):** by the time Simplify runs,
+`applyWrapperDeletion` has already converted every `field`/`optional`/`repeat`/
+`repeat1` wrapper to a leaf attribute (`fieldName`/`multiplicity`/`nonterminal`).
+Simplify never re-introduces those nodes: all rule construction inside Simplify
+goes through an injected **`ctx.builder`** (a `RuleBuilder`), and the simplify
+ctx supplies the `attributeBuilder` whose wrapper constructors push attributes
+instead of building nodes. So `simplifyRule`'s switch handles only structural
+nodes (`seq`/`choice`/`group`/`variant`) + leaves, and its `default` THROWS — a
+stray `field`/`optional`/`repeat`/`repeat1` node reaching Simplify is a bug,
+caught loudly. (A full regen of all three grammars hits the throw zero times.)
+
+### `RuleBuilder` / `structuralBuilder` / `attributeBuilder`
+**Pattern:** Phase-injected rule-construction strategy (`ctx.builder`).
+**Action:** `RuleBuilder` (interface, `dsl/rule-transforms.ts`) exposes `seq`/`choice`/`optional`/`repeat`/`repeat1`/`field`. `structuralBuilder` (same file, pure, the default on `TransformCtx.builder`) builds plain wrapper nodes. `attributeBuilder` (`compiler/simplify.ts`, injected into the simplify ctx by `makeDefaultCtx` + `normalize`'s `computeSimplifiedRules` calls) overrides the wrapper constructors to push attributes via `deleteWrapper`: `field(n,X)`→`fieldName`+`nonterminal` on X; `optional(X)`→empty-seq fold / bare-delimiter strip / else `multiplicity:'optional'`; `repeat`/`repeat1`→`multiplicity`. `seq`/`choice` stay plain nodes. Construction sites resolve `ctx?.builder ?? structuralBuilder`.
+**Output:** A `Rule` — node or attribute-stamped per the active builder.
+
+### `computeSimplifiedRules(renderRules, ctx?)`
+**Pattern:** Called from `optimize()`/`normalize()` with the RenderRule map; ctx carries `builder: attributeBuilder`.
 **Action:** `simplifyRules` (fixpoint of `inlineRefs` + `simplifyRule`) → per-rule `canonicalizeSeqOfLeaves` → `deleteWrapper` (final wrapper-free guard) → `fuseHeadRepeatLists` (re-fuse head-single + tail-array pairs an inline exposed). Optionally runs `assertUniversalShapeRule` per kind when `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`.
 **Output:** `Record<string, SimplifiedRule>`.
 
-### `simplifyRules(rules, wordMatcher?, inlineKinds?)` / `normalizeToFixpoint(rule, wordMatcher, rules, inlineKinds?)`
+### `simplifyRules(rules, ctx?)` / `normalizeToFixpoint(rule, ctx?, rules)`
 **Pattern:** Full rule map / single rule.
 **Action:** `normalizeToFixpoint` loops `simplifyRule(inlineRefs(current, …))` up to 16 iterations until structural convergence (each transform is non-increasing on tree size).
 **Output:** Simplified map / converged rule.
 
-### `simplifyRule(rule, wordMatcher?, inField?)`
-**Pattern:** Any rule node.
-**Action:** seq → `collapseSeq`; choice → recurse, fold empty-match member to `optional`, collapse single-member, `mergeChoiceBranches`, then `hoistSharedFieldAcrossChoiceBranches`; optional/repeat/repeat1 → recurse + `hoistFieldOutOfSingleContentWrapper`; field → recurse with `inField=true` + `hoistInnerFieldOutOfFieldWrapper`; group/variant/clause → recurse into content.
-**Output:** Simplified rule. `withAttrsFrom` carries the discarded node's slot attributes onto the survivor.
+### `simplifyRule(rule, ctx?)`
+**Pattern:** Any rule node (post wrapper-deletion → no `field`/`optional`/`repeat` nodes at the input).
+**Action:** Per-rule-type dispatch: `seq`→`simplifySeqRule`; `choice`→`simplifyChoiceRule`; `group`→`simplifyGroupRule`; `variant`→`simplifyVariantRule`; leaves (`symbol`/`string`/`pattern`/`alias`/`token`/`supertype`/`indent`/`dedent`/`newline`) pass through unchanged; **`default` throws** (field/optional/repeat/repeat1 must already be attributes — see the wrapper-node-free invariant above). `withAttrsFrom` carries discarded nodes' slot attributes onto survivors.
+**Output:** Simplified rule.
 
-### `collapseSeq(rule, wordMatcher?, inField?)`
+### `simplifySeqRule(rule, ctx?)` (formerly `collapseSeq`)
 **Pattern:** A `seq` during simplify.
 **Action:** Maps + filters members (strips non-keyword strings and empty-seq sentinels), flattens bare nested seqs (a nested seq that carries its OWN `multiplicity`/`separator`/`fieldName` is kept as one member so its cardinality isn't lost). On collapse to one member, **`multiplicity` COMBINES via `combineMultiplicity`** (rather than the survivor silently keeping its narrower own); `separator`/`fieldName`/`id` ride along absent-only.
 **Output:** Collapsed seq / single survivor / empty seq.
+
+### `simplifyChoiceRule(rule, ctx?)`
+**Pattern:** A `choice` during simplify.
+**Action:** Recurses each member; folds an empty-match member (`pattern("")`, empty seq) into `ctx.builder.optional(inner)` (→ `multiplicity:'optional'` attribute in simplify, or empty-seq when `inner` is a bare delimiter); collapses a single member; else `mergeChoiceBranches(…, ctx)` then `hoistSharedFieldAcrossChoiceBranches(…, ctx)`. Variant wrappers are preserved for polymorph detection.
+**Output:** Simplified choice / optional-attributed inner / merged seq.
 
 ### `combineMultiplicity(outer, inner)`
 **Pattern:** Combining a pushed-down OUTER multiplicity with a leaf's INNER one.
@@ -373,20 +394,20 @@ transforms re-introduced.
 **Action:** Re-applies the referring symbol's `multiplicity`/`separator`/`fieldName` onto the inlined body's LEAVES (not an enclosing seq, which `canonicalizeSeqOfLeaves` would flatten). `pushAttrsToLeaves` descends structural nodes; the **`choice` case stamps the choice NODE itself** (the choice is a single slot boundary that survives flattening) — including `fieldName` (the leaf case did this; the choice case previously forgot, mis-naming inlined `field('body', _suite)` → `block`). Multiplicity combines via the lattice; an existing array/nonEmptyArray is preserved.
 **Output:** Body with attributes re-stamped.
 
-### `hoistFieldOutOfSingleContentWrapper(rule)`
+### `hoistFieldOutOfSingleContentWrapper(rule)` (no longer in the Simplify pipeline)
 **Pattern:** `repeat(field('n', X))` / `optional(field('n', X))`.
-**Action:** Rewrites to `field('n', repeat(X))` / `field('n', optional(X))`.
+**Action:** Rewrites to `field('n', repeat(X))` / `field('n', optional(X))`. As of PR #101 the deleted `simplifyOptionalRule`/`simplifyRepeatRule` were its only callers; field-in-wrapper is now resolved by `attributeBuilder` (via `deleteWrapper`). Still exported, exercised only by tests.
 **Output:** Field hoisted outward.
 
 ### `hoistInnerFieldOutOfFieldWrapper(rule)` / `hasNamedSiblingOfInnerField` / `isNamedReference` / `hasInnerFieldAtExposableDepth`
 **Pattern:** `field('outer', wrapper(… field('inner', X) …))`.
-**Action:** Drops the outer field when an inner field sits at exposable depth and no named-symbol sibling would lose its label. Bails on direct field nesting or a named-symbol sibling.
+**Action:** Drops the outer field when an inner field sits at exposable depth and no named-symbol sibling would lose its label. Bails on direct field nesting or a named-symbol sibling. No longer in `simplifyRule`'s switch (no FIELD case) — used by the template path `hoistInnerFieldsForTemplate`.
 **Output:** Inner content (outer field stripped) or original.
 
-### `hoistSharedFieldAcrossChoiceBranches(rule)` / `mergeChoiceBranches(rule)`
-**Pattern:** Choices where a field name appears once per branch / same-length structurally-equivalent seq branches.
-**Action:** Lift a shared field out and union its contents (residuals → optional choice); or merge into a flat seq with per-position unioned field contents (`field('op', choice('&&','||','+'))`). When the branches aren't mergeable seqs (a choice of leaf arms — the wrapper-free operator case) `mergeChoiceBranches` falls through to `liftSharedArmAttrs`.
-**Output:** `seq(field(A, choice(…)), …)`.
+### `hoistSharedFieldAcrossChoiceBranches(rule, ctx?)` / `mergeChoiceBranches(rule, ctx?)` / `extractFieldAcrossBranches(perBranch, name, ctx?)` / `mergePosition(position, ctx?)`
+**Pattern:** Choices where a field name appears once per branch / same-length structurally-equivalent seq branches. Driven by `simplifyChoiceRule`, which threads `ctx` so field construction routes through `ctx.builder.field` (→ attribute push in simplify).
+**Action:** Lift a shared field out and union its contents (residuals → `ctx.builder.optional(...)`); or merge into a flat seq with per-position unioned field contents (`field('op', choice('&&','||','+'))` → field as `fieldName` attribute on the unioned choice). When the branches aren't mergeable seqs (a choice of leaf arms — the wrapper-free operator case) `mergeChoiceBranches` falls through to `liftSharedArmAttrs`.
+**Output:** `seq(choice(…){fieldName:A}, …)` (field as attribute).
 
 ### `liftSharedArmAttrs(rule)`
 **Pattern:** A wrapper-free `choice` whose arms each carry a slot attribute — post wrapper-deletion a distributed per-arm `field`/`optional`/`repeat` survives only as a leaf attr per arm (e.g. rust `binary_expression` operator: `choice(string{fieldName:'operator'}, enum{fieldName:'operator'}, …)`).
