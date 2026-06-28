@@ -11,8 +11,8 @@
  * Per-function rationale: docs/compiler-phase-glossary.md (Phase 3.5: Simplify).
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, OptionalRule, RepeatRule, Repeat1Rule, GroupRule, VariantRule, FieldRule } from '../types/rule.ts';
+import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, OptionalRule, RepeatRule, Repeat1Rule, GroupRule, VariantRule } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
@@ -95,7 +95,14 @@ function makeDefaultCtx(): SimplifyCtx {
  * Dispatch a rule to its per-type simplify handler. Thin switch over the Rule
  * union. The public entry keeps `ctx?` optional (normalized via `makeDefaultCtx`)
  * so direct callers needn't build a ctx; each handler takes `(rule: <Type>Rule,
- * ctx: SimplifyCtx)`. `inField` rides on `ctx` (see `SimplifyCtx.inField`).
+ * ctx: SimplifyCtx)`.
+ *
+ * FIELD nodes must never appear in simplify's input — `applyWrapperDeletion`
+ * (which runs before this in the production pipeline) already converts every
+ * `field()` wrapper to a `fieldName` attribute on its content. Field-construction
+ * sites inside `mergePosition` / `extractFieldAcrossBranches` also use the
+ * attribute-push pattern rather than building FieldRule nodes. The `default`
+ * branch throws so a stray FIELD node is caught immediately.
  */
 export function simplifyRule(rule: Rule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
 	switch (rule.type) {
@@ -108,14 +115,29 @@ export function simplifyRule(rule: Rule, ctx: SimplifyCtx = makeDefaultCtx()): R
 		case REPEAT:
 		case REPEAT1:
 			return simplifyRepeatRule(rule, ctx);
-		case FIELD:
-			return simplifyFieldRule(rule, ctx);
 		case GROUP:
 			return simplifyGroupRule(rule, ctx);
 		case VARIANT:
 			return simplifyVariantRule(rule, ctx);
-		default:
+		// Leaf / terminal types — pass through as-is (no structural transformation).
+		case SYMBOL:
+		case STRING:
+		case PATTERN:
+		case ALIAS:
+		case TOKEN:
+		case SUPERTYPE:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 			return rule;
+		default:
+			// FIELD and any unknown type hitting this branch is a bug:
+			// simplify's input must be field-node-free (see JSDoc above).
+			throw new Error(
+				`simplifyRule: unexpected rule type '${(rule as Rule).type}' — ` +
+					`field nodes must be converted to fieldName attributes by applyWrapperDeletion ` +
+					`before reaching simplify`
+			);
 	}
 }
 
@@ -140,16 +162,21 @@ function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx(
 }
 
 /**
- * OPTIONAL: recurse; fold to empty-seq when the body vanished. Inside a field
- * (`ctx.inField`), a bare anonymous string is structural content and survives;
- * outside, it's a strippable delimiter. Then hoist field out of the wrapper.
+ * OPTIONAL: recurse; fold to empty-seq when the body vanished. A bare
+ * anonymous string is a strippable delimiter (not slot-promoted) — strip it.
+ * Hoist any field that surfaces in the content out of the wrapper.
+ *
+ * Note: the former `ctx.inField` guard ("inside a field wrapper, anonymous
+ * strings survive") is removed because `applyWrapperDeletion` converts all
+ * field() nodes to fieldName attributes before simplify runs — so simplify
+ * never descends into a field-wrapper context and `ctx.inField` is never set.
  */
 function simplifyOptionalRule(rule: OptionalRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
 	const inner = simplifyRule(rule.content, ctx);
 	if (inner.type === SEQ && inner.members.length === 0) {
 		return { type: SEQ, members: [] };
 	}
-	if (!ctx.inField && inner.type === STRING && !isSlotPromotedLiteral(inner)) {
+	if (inner.type === STRING && !isSlotPromotedLiteral(inner)) {
 		return { type: SEQ, members: [] };
 	}
 	return hoistFieldOutOfSingleContentWrapper({ type: OPTIONAL, content: inner });
@@ -159,12 +186,6 @@ function simplifyOptionalRule(rule: OptionalRule, ctx: SimplifyCtx = makeDefault
 function simplifyRepeatRule(rule: RepeatRule | Repeat1Rule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
 	const next = { ...rule, content: simplifyRule(rule.content, ctx) };
 	return hoistFieldOutOfSingleContentWrapper(next);
-}
-
-/** FIELD: recurse with `inField:true` (so `optional(anon-string)` survives), then hoist inner field out. */
-function simplifyFieldRule(rule: FieldRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
-	const recursed: Rule = { ...rule, content: simplifyRule(rule.content, { ...ctx, inField: true }) };
-	return hoistInnerFieldOutOfFieldWrapper(recursed);
 }
 
 /** GROUP: recurse into content (structural wrapper preserved). */

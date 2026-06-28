@@ -35,21 +35,18 @@ export interface NormalizeCtx extends TransformCtx {
 }
 
 /**
- * Simplify carries the same phase-shared state as TransformCtx. (`inField` is
- * NOT here — it is recursion-LOCAL traversal state, kept an explicit recursion
- * param, CW6.)
+ * Simplify carries the same phase-shared state as TransformCtx.
+ *
+ * Note: `inField` was removed. It was set by `simplifyFieldRule` (now deleted)
+ * to signal that simplify was descending into a field wrapper's content, which
+ * suppressed stripping of anonymous strings inside `optional()`. Since
+ * `applyWrapperDeletion` converts all field() nodes to fieldName attributes
+ * before simplify runs, no field-wrapper context exists in simplify's input —
+ * so `inField` was never set in the production path and is now gone entirely.
  */
 export interface SimplifyCtx extends TransformCtx {
 	/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
 	readonly polymorphSkipExtra?: ReadonlySet<string>;
-	/**
-	 * True while simplifying inside a `field(...)` wrapper. Threaded through the
-	 * per-rule-type handlers (folded in from the former `inField` parameter):
-	 * `simplifyFieldRule` recurses with `{ ...ctx, inField: true }`, and
-	 * `simplifyOptionalRule` keeps `optional(anonymous-string)` when set (inside a
-	 * field a bare string is structural content, not a strippable delimiter).
-	 */
-	readonly inField?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -869,17 +866,16 @@ function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
 	}
 	const unionedContent: Rule =
 		hoistedContents.length === 1 ? hoistedContents[0]! : { type: 'choice', members: hoistedContents };
-	const hoistedField: Rule = {
-		...hoistedFieldTemplate!,
-		content: unionedContent
-	};
+	// Push fieldName + nonterminal onto the content directly — same as what
+	// deleteWrapper(field(name, X)) produces — so no FieldRule node is created.
+	const hoisted: Rule = { ...unionedContent, fieldName: hoistedFieldTemplate!.name, nonterminal: true };
 	const hasEmptyResidual = residuals.some((r) => r.type === SEQ && r.members.length === 0);
 	const nonEmptyResiduals = residuals.filter((r) => !(r.type === SEQ && r.members.length === 0));
-	if (nonEmptyResiduals.length === 0) return hoistedField;
+	if (nonEmptyResiduals.length === 0) return hoisted;
 	const residualCore: Rule =
 		nonEmptyResiduals.length === 1 ? nonEmptyResiduals[0]! : { type: 'choice', members: nonEmptyResiduals };
 	const residualPart: Rule = hasEmptyResidual ? { type: 'optional', content: residualCore } : residualCore;
-	return { type: SEQ, members: [hoistedField, residualPart] };
+	return { type: SEQ, members: [hoisted, residualPart] };
 }
 
 /**
@@ -995,8 +991,10 @@ function positionsAreMergeable(position: readonly Rule[]): boolean {
  * Merge N same-position rules (already verified as mergeable) into a
  * single canonical rule.
  *
- * - Fields: same name, possibly different content → `field(name,
- *   choice(content1, content2, …))`. Deduplicate equal contents.
+ * - Fields: same name, possibly different content → push `fieldName`+`nonterminal`
+ *   onto the unified content (instead of wrapping in a `field()` node), producing
+ *   the same shape that `deleteWrapper(field(name, X))` yields. This keeps
+ *   simplify field-node-free: no FieldRule is constructed here.
  * - Symbols / supertypes / strings: return the first — all are
  *   identical by the mergeability check.
  */
@@ -1006,7 +1004,9 @@ function mergePosition(position: readonly Rule[]): Rule {
 		const fields = position.filter((p): p is FieldRule => p.type === FIELD);
 		const contents = dedupeByJson(fields.map((f) => f.content));
 		const mergedContent: Rule = contents.length === 1 ? contents[0]! : { type: 'choice', members: contents };
-		return { ...first, content: mergedContent };
+		// Push fieldName + nonterminal onto the content directly — same as what
+		// deleteWrapper(field(name, X)) produces — so no FieldRule node is created.
+		return { ...mergedContent, fieldName: first.name, nonterminal: true };
 	}
 	return first;
 }

@@ -47,8 +47,11 @@ function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<Optimize
 }
 
 describe('Assemble — simplifyRule', () => {
+	// simplifyRule's input must be field-node-free (applyWrapperDeletion must
+	// run first). These tests apply wrapper-deletion before calling simplifyRule.
+
 	it('strips non-alphanumeric string nodes and collapses single-member seq', () => {
-		const rule: Rule = {
+		const rawRule: Rule = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: '{' },
@@ -60,19 +63,26 @@ describe('Assemble — simplifyRule', () => {
 				{ type: STRING, value: '}' }
 			]
 		};
-		const simplified = simplifyRule(rule);
-		// After stripping { and }, only the field remains → single-member seq collapses to the field
-		expect(simplified.type).toBe('field');
-		expect((simplified as any).name).toBe('body');
+		// wrapper-deletion: field('body', sym('block')) → sym('block', {fieldName:'body', nonterminal:true})
+		const rule = applyWrapperDeletion({ x: rawRule }).x!;
+		const simplified = simplifyRule(rule as Rule);
+		// After stripping { and }, only the symbol (with fieldName attr) remains
+		expect(simplified.type).toBe('symbol');
+		expect((simplified as any).fieldName).toBe('body');
+		expect((simplified as any).nonterminal).toBe(true);
 	});
 
 	it('collapses single-member seq to its content', () => {
-		const rule: Rule = {
+		const rawRule: Rule = {
 			type: SEQ,
 			members: [{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'y' } }]
 		};
-		const simplified = simplifyRule(rule);
-		expect(simplified.type).toBe('field');
+		// wrapper-deletion: field('x', sym('y')) → sym('y', {fieldName:'x', nonterminal:true})
+		const rule = applyWrapperDeletion({ x: rawRule }).x!;
+		const simplified = simplifyRule(rule as Rule);
+		// seq of one symbol (with attr) collapses to that symbol
+		expect(simplified.type).toBe('symbol');
+		expect((simplified as any).fieldName).toBe('x');
 	});
 
 	it('keeps alphanumeric strings', () => {
