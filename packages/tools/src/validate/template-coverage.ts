@@ -444,7 +444,7 @@ function isFieldReferenced(
  * `$OUTER` placeholder to require.
  *
  * Mirrors the predicate inside `compiler/simplify.ts`'s
- * `hoistInnerFieldOutOfFieldWrapper`. Walks the source `grammar.json`
+ * `hoistInnerFieldFromWrapperForField`. Walks the source `grammar.json`
  * (the SAME structural source the simplify pipeline reads via Evaluate)
  * so the two derivations stay in lock-step.
  *
@@ -517,7 +517,7 @@ function collectHoistedOuterFields(
 }
 
 /**
- * Mirror of `hoistInnerFieldOutOfFieldWrapper`'s predicate, but
+ * Mirror of `hoistInnerFieldFromWrapperForField`'s predicate, but
  * operating on tree-sitter's grammar.json node shape (UPPERCASE
  * discriminants) instead of the internal `Rule` union. Returns true
  * when the outer field would be dropped by the simplify hoist.

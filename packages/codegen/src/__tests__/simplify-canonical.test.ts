@@ -9,9 +9,9 @@
  *
  * Note: `simplifyRule`'s input must be field-node-free (see simplify.ts
  * JSDoc). Field-containing inputs are now passed directly to
- * `mergeChoiceBranches` (which still handles them) rather than going
+ * `mergeBranchesForChoice` (which still handles them) rather than going
  * through `simplifyRule`, matching the actual production call graph
- * (simplifyChoiceRule calls mergeChoiceBranches with already-simplified
+ * (simplifyChoiceRule calls mergeBranchesForChoice with already-simplified
  * field-free members).
  */
 
@@ -20,7 +20,7 @@ import { describe, it, expect } from 'vitest';
 import type { Rule } from '../types/rule.ts';
 import type { ChoiceRule } from '../types/rule.ts';
 import { simplifyRule, attributeBuilder, makeDefaultCtx } from '../compiler/simplify.ts';
-import { hoistInnerFieldOutOfFieldWrapper, mergeChoiceBranches } from '../dsl/rule-transforms.ts';
+import { hoistInnerFieldFromWrapperForField, mergeBranchesForChoice } from '../compiler/simplify.ts';
 import { applyWrapperDeletion } from '../compiler/wrapper-deletion.ts';
 
 const str = (value: string): Rule => ({ type: STRING, value });
@@ -52,15 +52,15 @@ const fieldAttrs = (name: string, content: Rule): Rule => ({
 	nonterminal: true,
 });
 
-describe('mergeChoiceBranches — field-merging (directly via mergeChoiceBranches)', () => {
-	// These tests call mergeChoiceBranches directly because simplifyRule's
+describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesForChoice)', () => {
+	// These tests call mergeBranchesForChoice directly because simplifyRule's
 	// input must be field-node-free (fields must be wrapper-deleted first).
-	// mergeChoiceBranches itself still accepts field-containing input so
-	// the production path (simplifyChoiceRule → mergeChoiceBranches) can
+	// mergeBranchesForChoice itself still accepts field-containing input so
+	// the production path (simplifyChoiceRule → mergeBranchesForChoice) can
 	// handle pre-wrapper-deleted rules in tests. The output uses the
 	// attribute-push pattern: `fieldName`+`nonterminal` on the content
 	// node rather than a FieldRule wrapper — exercised by passing
-	// `attributeBuilder` (the production builder) to mergeChoiceBranches.
+	// `attributeBuilder` (the production builder) to mergeBranchesForChoice.
 
 	it("merges same-shape branches that differ only in one field's literal", () => {
 		// Pattern: binary_expression. Each arm same seq shape with
@@ -70,7 +70,7 @@ describe('mergeChoiceBranches — field-merging (directly via mergeChoiceBranche
 			seq(field('left', sym('expr')), field('op', str('||')), field('right', sym('expr'))),
 			seq(field('left', sym('expr')), field('op', str('+')), field('right', sym('expr')))
 		) as ChoiceRule;
-		const result = mergeChoiceBranches(input, makeDefaultCtx());
+		const result = mergeBranchesForChoice(input, makeDefaultCtx());
 		expect(result.type).toBe('seq');
 		const members = (result as { members: Rule[] }).members;
 		expect(members).toHaveLength(3);
@@ -88,8 +88,8 @@ describe('mergeChoiceBranches — field-merging (directly via mergeChoiceBranche
 			seq(field('kind', str('let'))),
 			seq(field('kind', str('const')))
 		) as ChoiceRule;
-		const result = mergeChoiceBranches(input, makeDefaultCtx());
-		// seq of one position — mergeChoiceBranches returns the single merged member
+		const result = mergeBranchesForChoice(input, makeDefaultCtx());
+		// seq of one position — mergeBranchesForChoice returns the single merged member
 		// (a choice node with fieldName+nonterminal attrs pushed by attributeBuilder).
 		expect((result as any).fieldName).toBe('kind');
 		expect((result as any).nonterminal).toBe(true);
@@ -103,7 +103,7 @@ describe('mergeChoiceBranches — field-merging (directly via mergeChoiceBranche
 			seq(sym('expr'), field('op', str('+')), sym('expr')),
 			seq(sym('expr'), field('op', str('-')), sym('expr'))
 		) as ChoiceRule;
-		const result = mergeChoiceBranches(input, makeDefaultCtx());
+		const result = mergeBranchesForChoice(input, makeDefaultCtx());
 		expect(result.type).toBe('seq');
 		const members = (result as { members: Rule[] }).members;
 		expect(members).toHaveLength(3);
@@ -120,7 +120,7 @@ describe('mergeChoiceBranches — field-merging (directly via mergeChoiceBranche
 			field('const', sym('_kw_const')),
 			field('unsafe', sym('_kw_unsafe'))
 		) as ChoiceRule;
-		const result = mergeChoiceBranches(input);
+		const result = mergeBranchesForChoice(input);
 		// liftSharedArmAttrs fires but branches stay as-is (no seq structure to merge).
 		expect(result.type).toBe('choice');
 		expect((result as { members: Rule[] }).members.length).toBe(3);
@@ -129,20 +129,20 @@ describe('mergeChoiceBranches — field-merging (directly via mergeChoiceBranche
 	it('does NOT merge when branches differ in MEMBER KIND at a position', () => {
 		// One branch has field, another has symbol at same position.
 		const input = choice(seq(field('op', str('='))), seq(sym('assignment_expression'))) as ChoiceRule;
-		const result = mergeChoiceBranches(input);
+		const result = mergeBranchesForChoice(input);
 		expect(result.type).toBe('choice');
 	});
 
 	it('does NOT merge variant-wrapped branches — variants preserve identity', () => {
 		// tagVariants wraps choice members in variant() to mark them as
-		// polymorph-distinct. mergeChoiceBranches must NEVER collapse those —
+		// polymorph-distinct. mergeBranchesForChoice must NEVER collapse those —
 		// doing so drops the variant names and turns a polymorph into
 		// a bare seq.
 		const input = choice(
 			variant('a', seq(field('op', str('+')), field('r', sym('expr')))),
 			variant('b', seq(field('op', str('-')), field('r', sym('expr'))))
 		) as ChoiceRule;
-		const result = mergeChoiceBranches(input);
+		const result = mergeBranchesForChoice(input);
 		expect(result.type).toBe('choice');
 		const members = (result as { members: Rule[] }).members;
 		expect(members).toHaveLength(2);
@@ -158,7 +158,7 @@ describe('mergeChoiceBranches — field-merging (directly via mergeChoiceBranche
 			seq(field('op', str('+')), field('r', sym('expr'))),
 			seq(field('op', str('-')), field('r', sym('expr')))
 		) as ChoiceRule;
-		const result = mergeChoiceBranches(input, makeDefaultCtx());
+		const result = mergeBranchesForChoice(input, makeDefaultCtx());
 		expect(result.type).toBe('seq');
 		const members = (result as { members: Rule[] }).members;
 		// op: deduplicated choice of '+' and '-' (not '+', '+', '-')
@@ -174,7 +174,7 @@ describe('mergeChoiceBranches — field-merging (directly via mergeChoiceBranche
 		const input = choice(sym('a'), sym('b'), sym('c')) as ChoiceRule;
 		// No seq structure to merge — stays as a choice. Supertype /
 		// enum classification handles this kind downstream.
-		const result = mergeChoiceBranches(input);
+		const result = mergeBranchesForChoice(input);
 		expect(result.type).toBe('choice');
 		expect((result as { members: Rule[] }).members).toHaveLength(3);
 	});
@@ -238,7 +238,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 	});
 });
 
-describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
+describe('simplifyRule — hoistInnerFieldFromWrapperForField', () => {
 	// Tree-sitter flattens nested-field-paths to top-level on the parent
 	// kind. The hoist drops an OUTER `field('outer', ...)` wrapper when
 	// its content carries an inner `field('inner', X)` reachable through
@@ -250,7 +250,7 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 		// Pre-clause-detection shape of typescript `infer_type`.
 		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
 		const expected = optional(seq(str('extends'), field('type', sym('type'))));
-		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(expected);
+		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(expected);
 	});
 
 	it('hoists through `optional(repeat1(choice(field, symbol), sep))` (typescript enum_body)', () => {
@@ -261,7 +261,7 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 			'opening',
 			optional(repeat1(choice(field('name', sym('_property_name')), sym('enum_assignment')), ','))
 		);
-		const result = hoistInnerFieldOutOfFieldWrapper(input);
+		const result = hoistInnerFieldFromWrapperForField(input);
 		expect(result.type).toBe('optional');
 	});
 
@@ -275,22 +275,21 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 			'comparators',
 			repeat1(seq(field('operators', choice(str('<'), str('>'))), sym('primary_expression')))
 		);
-		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(input);
+		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
 	});
 
 	it('does NOT hoist when the outer field directly wraps another field (no structural scaffolding)', () => {
-		// `field('outer', field('inner', X))` direct nesting belongs
-		// to `hoistFieldOutOfSingleContentWrapper`'s territory — the
-		// outer-inner direct-wrap rewrite. We bail to keep the two
-		// hoists from racing.
+		// `field('outer', field('inner', X))` direct nesting is a
+		// direct outer-inner wrap, not the scaffolded case this hoist
+		// handles. We bail to keep the two hoists from racing.
 		const input = field('outer', field('inner', sym('x')));
-		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(input);
+		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
 	});
 
 	it('does NOT hoist when the outer field has no inner field at exposable depth', () => {
 		// Plain `field('name', symbol(X))` — no inner field to hoist.
 		const input = field('name', sym('identifier'));
-		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(input);
+		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
 	});
 
 	it('does NOT hoist when the inner field is hidden behind a `symbol` reference', () => {
@@ -299,7 +298,7 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 		// current kind. Dropping the outer wrapper would lose the
 		// outer label without recovering anything.
 		const input = field('module_name', sym('dotted_name'));
-		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(input);
+		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
 	});
 
 	it('preserves anonymous-string siblings (literal "extends" stays in the hoisted seq)', () => {
@@ -307,7 +306,7 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 		// outer field's content must survive the hoist — the walker
 		// emits it as template text.
 		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
-		const result = hoistInnerFieldOutOfFieldWrapper(input);
+		const result = hoistInnerFieldFromWrapperForField(input);
 		// Walk into the optional → seq → first member: the literal.
 		expect(result.type).toBe('optional');
 		const optInner = (result as { type: 'optional'; content: Rule }).content;
@@ -319,13 +318,13 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 
 	it('integration: a NAMED supertype sibling also blocks the hoist', () => {
 		const input = field('outer', seq(sup('expression'), field('inner', sym('identifier'))));
-		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(input);
+		expect(hoistInnerFieldFromWrapperForField(input)).toEqual(input);
 	});
 
 	it('idempotent: running the hoist twice is a no-op on the hoisted shape', () => {
 		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
-		const once = hoistInnerFieldOutOfFieldWrapper(input);
-		const twice = hoistInnerFieldOutOfFieldWrapper(once);
+		const once = hoistInnerFieldFromWrapperForField(input);
+		const twice = hoistInnerFieldFromWrapperForField(once);
 		expect(twice).toEqual(once);
 	});
 });

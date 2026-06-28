@@ -334,7 +334,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// Pre-spec-013 Link ran `tagAllRulesVariants` to auto-wrap every
 		// visible choice branch in `variant('form_N' | leading-literal)`.
 		// That was a heuristic for polymorph-promotion candidacy; with the
-		// simplify pipeline's cross-branch hoist + mergeChoiceBranches
+		// simplify pipeline's cross-branch hoist + mergeBranchesForChoice
 		// handling same-shape merges directly, anonymous auto-tags
 		// served only to block those passes and to mask the grammar
 		// author's need to declare named `variant()` in overrides.ts.
@@ -580,7 +580,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 	it('homogeneous-field choices stay as raw choice (not polymorph)', () => {
 		// Two branches, both with a single `value` field — same field set
 		// → not a polymorph. Post-spec-013 Link doesn't auto-wrap them
-		// in `variant(...)`; the downstream simplify `mergeChoiceBranches`
+		// in `variant(...)`; the downstream simplify `mergeBranchesForChoice`
 		// pass handles same-shape branches by collapsing them into a
 		// flat seq with per-position unioned contents.
 		const raw = makeRaw({
