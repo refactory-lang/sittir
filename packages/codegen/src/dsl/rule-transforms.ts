@@ -16,12 +16,54 @@ import type { AssembledNode } from '../compiler/model/node-map.ts';
 // rule-attrs.ts re-exports this for existing importers.
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
+// ---------------------------------------------------------------------------
+// RuleBuilder — context-injected rule construction strategy
+// ---------------------------------------------------------------------------
+
+/**
+ * Strategy interface for constructing wrapper/structural rules. Injected via
+ * `TransformCtx.builder` so each call-site delegates node-vs-attribute
+ * decisions to the phase rather than hard-coding them. Two implementations:
+ *
+ *  - `structuralBuilder` (defined here, dsl-side): builds plain node literals
+ *    exactly as construction sites did before — byte-identical results. Used
+ *    as the no-ctx default (`ctx.builder ?? structuralBuilder`).
+ *
+ *  - `attributeBuilder` (defined in compiler/simplify.ts): overrides the
+ *    wrapper constructors to push attributes instead of building nodes — so
+ *    simplify stays field/optional/repeat/repeat1-node-free by construction.
+ */
+export interface RuleBuilder {
+	seq(members: Rule[]): Rule;
+	choice(members: Rule[]): Rule;
+	optional(content: Rule): Rule;
+	repeat(content: Rule): Rule;
+	repeat1(content: Rule): Rule;
+	field(name: string, content: Rule): Rule;
+}
+
+/**
+ * Structural builder: each method builds the plain node literal exactly as
+ * the construction sites previously did. Byte-identical to hand-written
+ * literals; used as the safe default when no ctx.builder is present.
+ */
+export const structuralBuilder: RuleBuilder = {
+	seq: (members) => ({ type: SEQ, members }),
+	choice: (members) => ({ type: CHOICE, members }),
+	optional: (content) => ({ type: OPTIONAL, content }),
+	repeat: (content) => ({ type: REPEAT, content }),
+	repeat1: (content) => ({ type: REPEAT1, content }),
+	field: (name, content) => ({ type: FIELD, name, content }),
+};
+
 /** The shared base ctx, declared ONCE (spec §7.7 / CW5). */
 export interface TransformCtx {
   readonly rules: Record<string, Rule>;
   readonly inlineKinds: ReadonlySet<string>;
   readonly wordMatcher?: (s: string) => boolean;
   readonly diagnostics: DiagnosticSink;
+  /** Optional rule-construction strategy (see RuleBuilder). Falls back to structuralBuilder. */
+  readonly builder?: RuleBuilder;
 }
 
 /**
@@ -780,15 +822,20 @@ function hasInnerFieldAtExposableDepth(rule: Rule): boolean {
  * @remarks
  * Bails on variant-wrapped branches. Requires the shared field to appear
  * exactly once per branch. One field per iteration; fixpoint picks up more.
+ *
+ * @param b - Optional rule builder; defaults to `structuralBuilder`. Pass
+ *   `attributeBuilder` (from simplify.ts) during the simplify phase so the
+ *   residual optional is pushed to leaf attrs rather than left as an OPTIONAL
+ *   node, keeping simplify's output wrapper-free.
  */
-export function hoistSharedFieldAcrossChoiceBranches(rule: ChoiceRule): Rule {
+export function hoistSharedFieldAcrossChoiceBranches(rule: ChoiceRule, ctx?: TransformCtx): Rule {
 	if (rule.members.length < 2) return rule;
 	if (rule.members.some((m) => m.type === VARIANT)) return rule;
 	const perBranch = rule.members.map(normalizeBranchToMembers);
 	const fieldNameCounts = perBranch.map(countFieldNames);
 	const candidate = firstFieldNameSharedExactlyOncePerBranch(fieldNameCounts);
 	if (candidate === null) return rule;
-	return extractFieldAcrossBranches(perBranch, candidate);
+	return extractFieldAcrossBranches(perBranch, candidate, ctx);
 }
 
 /**
@@ -838,8 +885,13 @@ function firstFieldNameSharedExactlyOncePerBranch(perBranchCounts: Map<string, n
  * Extract `field(name, ...)` from each branch, union their contents
  * into a single hoisted field, and keep branch-specific residuals as
  * a side choice wrapped in optional when any branch has nothing left.
+ *
+ * @param b - Rule builder used for field + optional construction. Pass
+ *   `attributeBuilder` during the simplify phase so wrapper nodes are
+ *   attribute-pushed rather than built as nodes.
  */
-function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
+function extractFieldAcrossBranches(perBranch: Rule[][], name: string, ctx?: TransformCtx): Rule {
+	const b = ctx?.builder ?? structuralBuilder;
 	const hoistedContents: Rule[] = [];
 	const residuals: Rule[] = [];
 	let hoistedFieldTemplate: FieldRule | null = null;
@@ -856,7 +908,7 @@ function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
 		if (!extracted)
 			return {
 				type: CHOICE,
-				members: perBranch.map((b) => (b.length === 1 ? b[0]! : { type: 'seq', members: b }))
+				members: perBranch.map((br) => (br.length === 1 ? br[0]! : { type: 'seq', members: br }))
 			};
 		hoistedFieldTemplate = hoistedFieldTemplate ?? extracted;
 		hoistedContents.push(extracted.content);
@@ -866,15 +918,17 @@ function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
 	}
 	const unionedContent: Rule =
 		hoistedContents.length === 1 ? hoistedContents[0]! : { type: 'choice', members: hoistedContents };
-	// Push fieldName + nonterminal onto the content directly — same as what
-	// deleteWrapper(field(name, X)) produces — so no FieldRule node is created.
-	const hoisted: Rule = { ...unionedContent, fieldName: hoistedFieldTemplate!.name, nonterminal: true };
+	// Use b.field so the phase builder decides node-vs-attribute (attributeBuilder
+	// pushes fieldName+nonterminal onto the content; structuralBuilder wraps in FIELD).
+	const hoisted: Rule = b.field(hoistedFieldTemplate!.name, unionedContent);
 	const hasEmptyResidual = residuals.some((r) => r.type === SEQ && r.members.length === 0);
 	const nonEmptyResiduals = residuals.filter((r) => !(r.type === SEQ && r.members.length === 0));
 	if (nonEmptyResiduals.length === 0) return hoisted;
 	const residualCore: Rule =
 		nonEmptyResiduals.length === 1 ? nonEmptyResiduals[0]! : { type: 'choice', members: nonEmptyResiduals };
-	const residualPart: Rule = hasEmptyResidual ? { type: 'optional', content: residualCore } : residualCore;
+	// Use b.optional so the phase builder decides node-vs-attribute (attributeBuilder
+	// pushes multiplicity:'optional' onto leaves; structuralBuilder wraps in OPTIONAL).
+	const residualPart: Rule = hasEmptyResidual ? b.optional(residualCore) : residualCore;
 	return { type: SEQ, members: [hoisted, residualPart] };
 }
 
@@ -907,36 +961,40 @@ function liftSharedArmAttrs(rule: ChoiceRule): Rule {
  * `seq(field('op', choice('&&', …)))`). Bails (→ `liftSharedArmAttrs`) when
  * branches aren't same-length mergeable seqs; NEVER unwraps `variant()`
  * (intentional polymorph branches). See glossary (Phase 3.5).
+ *
+ * @param b - Optional rule builder for field/optional construction at merge
+ *   positions. Defaults to `structuralBuilder`; pass `attributeBuilder` during
+ *   the simplify phase to keep output wrapper-free.
  */
-export function mergeChoiceBranches(rule: ChoiceRule): Rule {
+export function mergeChoiceBranches(rule: ChoiceRule, ctx?: TransformCtx): Rule {
 	if (rule.members.length === 0) return rule;
 	// variant() marks polymorph-distinct branches — bail, this is a polymorph surface.
 	if (rule.members.some((m) => m.type === VARIANT)) return rule;
 	const unwrapped = rule.members.map(unwrapForMerge); // group/clause only (structural)
 	// All branches a bare field of the same name (post factorSeqChoice peeling a
 	// shared prefix/suffix off a homogeneous-seq choice) → field(name, choice(contents)).
-	if (unwrapped.every((b): b is FieldRule => b.type === FIELD)) {
+	if (unwrapped.every((br): br is FieldRule => br.type === FIELD)) {
 		const first = unwrapped[0]!;
 		if (unwrapped.every((f) => f.name === first.name)) {
-			return mergePosition(unwrapped);
+			return mergePosition(unwrapped, ctx);
 		}
 	}
 	// Every branch must be a seq of the same length. When the branches are
 	// NOT mergeable seqs (e.g. a choice of leaf arms — the wrapper-free operator
 	// case), still lift any attribute all arms share onto the choice node.
-	if (!unwrapped.every((b): b is SeqRule => b.type === SEQ)) return liftSharedArmAttrs(rule);
+	if (!unwrapped.every((br): br is SeqRule => br.type === SEQ)) return liftSharedArmAttrs(rule);
 	const len = unwrapped[0]!.members.length;
-	if (!unwrapped.every((b) => b.members.length === len)) return liftSharedArmAttrs(rule);
+	if (!unwrapped.every((br) => br.members.length === len)) return liftSharedArmAttrs(rule);
 	// Check position-by-position structural equivalence.
 	for (let i = 0; i < len; i++) {
-		const position = unwrapped.map((b) => b.members[i]!);
+		const position = unwrapped.map((br) => br.members[i]!);
 		if (!positionsAreMergeable(position)) return liftSharedArmAttrs(rule);
 	}
 	// All positions mergeable. Build the merged seq.
 	const mergedMembers: Rule[] = [];
 	for (let i = 0; i < len; i++) {
-		const position = unwrapped.map((b) => b.members[i]!);
-		mergedMembers.push(mergePosition(position));
+		const position = unwrapped.map((br) => br.members[i]!);
+		mergedMembers.push(mergePosition(position, ctx));
 	}
 	if (mergedMembers.length === 0) return { type: SEQ, members: [] };
 	if (mergedMembers.length === 1) return mergedMembers[0]!;
@@ -991,22 +1049,21 @@ function positionsAreMergeable(position: readonly Rule[]): boolean {
  * Merge N same-position rules (already verified as mergeable) into a
  * single canonical rule.
  *
- * - Fields: same name, possibly different content → push `fieldName`+`nonterminal`
- *   onto the unified content (instead of wrapping in a `field()` node), producing
- *   the same shape that `deleteWrapper(field(name, X))` yields. This keeps
- *   simplify field-node-free: no FieldRule is constructed here.
+ * - Fields: same name, possibly different content → use `b.field(name, content)`
+ *   which delegates to the phase builder: `attributeBuilder` pushes
+ *   `fieldName`+`nonterminal` onto the content (same as `deleteWrapper(field(...))`
+ *   produces); `structuralBuilder` wraps in a FieldRule.
  * - Symbols / supertypes / strings: return the first — all are
  *   identical by the mergeability check.
  */
-function mergePosition(position: readonly Rule[]): Rule {
+function mergePosition(position: readonly Rule[], ctx?: TransformCtx): Rule {
+	const b = ctx?.builder ?? structuralBuilder;
 	const first = position[0]!;
 	if (first.type === FIELD) {
 		const fields = position.filter((p): p is FieldRule => p.type === FIELD);
 		const contents = dedupeByJson(fields.map((f) => f.content));
 		const mergedContent: Rule = contents.length === 1 ? contents[0]! : { type: 'choice', members: contents };
-		// Push fieldName + nonterminal onto the content directly — same as what
-		// deleteWrapper(field(name, X)) produces — so no FieldRule node is created.
-		return { ...mergedContent, fieldName: first.name, nonterminal: true };
+		return b.field(first.name, mergedContent);
 	}
 	return first;
 }
