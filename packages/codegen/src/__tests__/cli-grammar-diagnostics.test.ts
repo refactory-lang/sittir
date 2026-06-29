@@ -14,7 +14,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runCodegenCli } from '../run-codegen.ts';
-import type { GrammarDiagnostic } from '../compiler/grammar-diagnostics.ts';
+import type { GrammarDiagnostic } from '../compiler/diagnostics/grammar-diagnostics.ts';
 
 /** Build a minimal-but-valid GrammarDiagnostic for preflight gate tests. */
 function makeDiagnostic(
@@ -56,7 +56,7 @@ describe('codegen CLI grammar-diagnostics preflight', () => {
 	});
 
 	it('fails with GrammarDiagnosticError in non-interactive mode', async () => {
-		const { GrammarDiagnosticError } = await import('../compiler/grammar-diagnostics.ts');
+		const { GrammarDiagnosticError } = await import('../compiler/diagnostics/grammar-diagnostics.ts');
 		await expect(
 			runCodegenCli([...BASE_ARGV], {
 				isTTY: false,

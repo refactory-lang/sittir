@@ -11,7 +11,7 @@
  *     unnamed-multi → `content`).
  */
 import { describe, it, expect } from 'vitest';
-import { countContentSlots } from '../slot-count.ts';
+import { countContentSlots } from '../diagnostics/slot-grouping.ts';
 import type { Rule } from './rule.ts';
 
 const sym = (name: string): Rule => ({ type: 'symbol', name }) as unknown as Rule;

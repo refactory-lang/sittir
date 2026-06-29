@@ -14,8 +14,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { diagnoseSlotGrouping } from './diagnose-slot-grouping.ts';
-import type { SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
+import { diagnoseSlotGrouping } from './slot-grouping.ts';
+import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
 
 // Rule helpers (simplified rules — no wrapper nodes in production path)
 const sym = (name: string) => ({ type: 'symbol', name }) as any;

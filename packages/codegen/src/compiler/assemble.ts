@@ -61,8 +61,8 @@ import {
 import { simplifyRule, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { inlineRefs, extractRepeatShape } from '../dsl/rule-transforms.ts';
 import { compileWordMatcher } from './common.ts';
-import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
-import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
+import type { ParseKindCollisionDiagnostic } from './diagnostics/parsekind-collisions.ts';
+import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 
 /**

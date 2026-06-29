@@ -1,5 +1,5 @@
-import type { Diagnostic } from '../types/diagnostics.ts';
-import type { RuleId } from '../types/rule.ts';
+import type { Diagnostic } from '../../types/diagnostics.ts';
+import type { RuleId } from '../../types/rule.ts';
 
 export type DeriveShapeCode =
 	| 'alias-collision'

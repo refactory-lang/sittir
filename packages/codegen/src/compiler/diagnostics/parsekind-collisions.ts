@@ -1,4 +1,4 @@
-import type { Diagnostic } from '../types/diagnostics.ts';
+import type { Diagnostic } from '../../types/diagnostics.ts';
 
 export interface ParseKindCollisionDiagnostic extends Diagnostic {
 	readonly code: 'parsekind-noninjective';

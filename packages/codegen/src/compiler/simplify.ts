@@ -16,7 +16,7 @@ import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, 
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
-import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
+import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { SimplifyCtx, RuleBuilder, TransformCtx } from '../dsl/rule-transforms.ts';
 import { structuralBuilder, inlineRefs, recurseChildren, fuseHeadRepeatLists, type InlineRefsCtx } from '../dsl/rule-transforms.ts';
 import type { AssembledNode } from './model/node-map.ts';

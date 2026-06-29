@@ -9,7 +9,7 @@
  * but is intentionally unused here (prefixed with _).
  *
  * Design note: the gate keys on severity === 'fail', NOT on canProceed.
- * This is deliberate: diagnose-derive-shapes.ts already emits canProceed:false
+ * This is deliberate: diagnostics/derive-shapes.ts already emits canProceed:false
  * diagnostics — keying on canProceed would halt emission the moment PR-H
  * routes real diagnostics into the sink. The (currently unused) 'fail'
  * severity is what makes the gate inert until PR-L.
