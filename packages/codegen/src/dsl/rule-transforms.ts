@@ -6,7 +6,6 @@
  */
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
-import type { DiagnosticSink } from '../types/diagnostics.ts';
 
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
 // missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
@@ -54,33 +53,12 @@ export const structuralBuilder: RuleBuilder = {
 	field: (name, content) => ({ type: FIELD, name, content }),
 };
 
-/** The shared base ctx, declared ONCE (spec §7.7 / CW5). */
-export interface TransformCtx {
-  readonly rules: Record<string, Rule>;
-  readonly inlineKinds: ReadonlySet<string>;
-  readonly wordMatcher?: (s: string) => boolean;
-  readonly diagnostics: DiagnosticSink;
-  /** Optional rule-construction strategy (see RuleBuilder). Falls back to structuralBuilder. */
-  readonly builder?: RuleBuilder;
-}
-
-// NormalizeCtx moved to compiler/normalize.ts (now a class extending the
-// compiler BaseCtx — phase ctxs live in the compiler layer, not dsl).
-
-/**
- * Simplify carries the same phase-shared state as TransformCtx.
- *
- * Note: `inField` was removed. It was set by `simplifyFieldRule` (now deleted)
- * to signal that simplify was descending into a field wrapper's content, which
- * suppressed stripping of anonymous strings inside `optional()`. Since
- * `applyWrapperDeletion` converts all field() nodes to fieldName attributes
- * before simplify runs, no field-wrapper context exists in simplify's input —
- * so `inField` was never set in the production path and is now gone entirely.
- */
-export interface SimplifyCtx extends TransformCtx {
-	/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
-	readonly polymorphSkipExtra?: ReadonlySet<string>;
-}
+// Phase contexts moved to the compiler layer (R12): compiler/ctx.ts holds
+// `BaseCtx<R>`; per-phase classes (NormalizeCtx / SimplifyCtx / …) extend it in
+// their phase files. This dsl module keeps only the `RuleBuilder` strategy +
+// the shared transform utilities below. Helpers that need a builder take a
+// structural `{ builder?: RuleBuilder }` slice — never the compiler ctx — so
+// there is no dsl -> compiler cycle.
 
 // ---------------------------------------------------------------------------
 // Shared, idempotent rule transforms (PR-O M1 — de-scatter, not de-dup).

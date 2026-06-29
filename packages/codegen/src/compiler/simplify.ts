@@ -17,7 +17,30 @@ import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
-import type { SimplifyCtx, RuleBuilder, TransformCtx } from '../dsl/rule-transforms.ts';
+import type { RuleBuilder } from '../dsl/rule-transforms.ts';
+import { BaseCtx, type BaseCtxInit } from './ctx.ts';
+
+/**
+ * Simplify phase context (R12) — a class extending `BaseCtx<RenderRule>`:
+ * simplify operates on the wrapper-free render view, so its `ctx.rules` holds
+ * `Record<string, RenderRule>` (the map being simplified — option 2). Adds the
+ * inline-decision set and the variant-resolved polymorph skip-set the
+ * slot-grouping diagnostic consults. (Was an interface extending the dsl
+ * `TransformCtx`; now a compiler-layer class — see compiler/ctx.ts.)
+ */
+export class SimplifyCtx extends BaseCtx<RenderRule> {
+	readonly inlineKinds: ReadonlySet<string>;
+	/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
+	readonly polymorphSkipExtra?: ReadonlySet<string>;
+	constructor(init: BaseCtxInit<RenderRule> & { inlineKinds?: ReadonlySet<string>; polymorphSkipExtra?: ReadonlySet<string> }) {
+		// Default builder to attributeBuilder — simplify's wrapper-free output is
+		// realized by the attribute-push strategy. Callers may override via
+		// init.builder; the construction sites read ctx.builder, never a direct ref.
+		super({ ...init, builder: init.builder ?? attributeBuilder });
+		this.inlineKinds = init.inlineKinds ?? new Set();
+		this.polymorphSkipExtra = init.polymorphSkipExtra;
+	}
+}
 import { structuralBuilder, inlineRefs, recurseChildren, fuseHeadRepeatLists, type InlineRefsCtx } from '../dsl/rule-transforms.ts';
 import type { AssembledNode } from './model/node-map.ts';
 
@@ -264,7 +287,7 @@ function firstFieldNameSharedExactlyOncePerBranch(perBranchCounts: Map<string, n
  * a side choice wrapped in optional when any branch has nothing left.
  *
  */
-function extractFieldFromBranchesForChoice(perBranch: Rule[][], name: string, ctx?: TransformCtx): Rule {
+function extractFieldFromBranchesForChoice(perBranch: Rule[][], name: string, ctx?: SimplifyCtx): Rule {
 	const b = ctx?.builder ?? structuralBuilder;
 	const hoistedContents: Rule[] = [];
 	const residuals: Rule[] = [];
@@ -307,7 +330,7 @@ function extractFieldFromBranchesForChoice(perBranch: Rule[][], name: string, ct
  * unioning field contents across branches. Residuals become optional choice.
  *
  */
-export function hoistSharedFieldFromBranchesForChoice(rule: ChoiceRule, ctx?: TransformCtx): Rule {
+export function hoistSharedFieldFromBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): Rule {
 	if (rule.members.length < 2) return rule;
 	if (rule.members.some((m) => m.type === VARIANT)) return rule;
 	const perBranch = rule.members.map(normalizeBranchToMembers);
@@ -369,7 +392,7 @@ function positionsAreMergeable(position: readonly Rule[]): boolean {
  * Merge N same-position rules (already verified as mergeable) into a single canonical rule.
  *
  */
-function mergePositionForChoice(position: readonly Rule[], ctx?: TransformCtx): Rule {
+function mergePositionForChoice(position: readonly Rule[], ctx?: SimplifyCtx): Rule {
 	const b = ctx?.builder ?? structuralBuilder;
 	const first = position[0]!;
 	if (first.type === FIELD) {
@@ -407,7 +430,7 @@ export function rulesStructurallyEqual(a: Rule, b: Rule): boolean {
  * branches aren't same-length mergeable seqs; NEVER unwraps `variant()`.
  *
  */
-export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: TransformCtx): Rule {
+export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): Rule {
 	if (rule.members.length === 0) return rule;
 	// variant() marks polymorph-distinct branches — bail, this is a polymorph surface.
 	if (rule.members.some((m) => m.type === VARIANT)) return rule;
@@ -543,7 +566,7 @@ export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
  * attribute-push strategy.
  */
 export function makeDefaultCtx(): SimplifyCtx {
-	return { rules: {}, inlineKinds: new Set(), diagnostics: new DiagnosticSink(), builder: attributeBuilder };
+	return new SimplifyCtx({ rules: {}, diagnostics: new DiagnosticSink(), builder: attributeBuilder });
 }
 
 /**
@@ -653,11 +676,15 @@ export function simplifyRules(rules: Record<string, Rule>, ctx?: SimplifyCtx): R
  * @returns A new map containing the simplified form of each rule.
  */
 export function computeSimplifiedRules(
-	renderRules: Record<string, RenderRule>,
-	ctx?: SimplifyCtx
+	ctx: SimplifyCtx
 ): Record<string, SimplifiedRule> {
-	const inlineKinds = ctx?.inlineKinds ?? new Set<string>();
-	const polymorphSkipExtra = ctx?.polymorphSkipExtra ?? new Set<string>();
+	// Option 2 (R12): the operated-on render-rule map lives on ctx.rules.
+	// Construction sites delegate wrapper-vs-attribute to ctx.builder (SimplifyCtx
+	// defaults it to attributeBuilder — simplify's wrapper-free strategy); we
+	// never reach for a builder directly here.
+	const renderRules = ctx.rules;
+	const inlineKinds = ctx.inlineKinds;
+	const polymorphSkipExtra = ctx.polymorphSkipExtra ?? new Set<string>();
 	const simplified = simplifyRules(renderRules as Record<string, Rule>, ctx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {

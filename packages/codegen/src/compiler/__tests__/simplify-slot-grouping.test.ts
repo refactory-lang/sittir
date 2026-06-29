@@ -14,8 +14,7 @@
 
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { describe, it, expect, afterEach } from 'vitest';
-import { computeSimplifiedRules } from '../simplify.ts';
-import { drainSlotGroupingDiagnostics } from '../simplify.ts';
+import { computeSimplifiedRules, drainSlotGroupingDiagnostics, SimplifyCtx } from '../simplify.ts';
 import type { RenderRule } from '../../types/rule.ts';
 
 afterEach(() => {
@@ -38,7 +37,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 			} as any,
 		};
 		const inlineKinds = new Set(['_parent_repeat1']);
-		computeSimplifiedRules(renderRules, { rules: renderRules, inlineKinds, diagnostics: new DiagnosticSink() });
+		computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, inlineKinds, diagnostics: new DiagnosticSink() }));
 		const diagnostics = drainSlotGroupingDiagnostics();
 		const multiSlot = diagnostics.filter((d) => d.code === 'multi-slot-nested-seq');
 		expect(multiSlot.length).toBeGreaterThanOrEqual(1);
@@ -59,7 +58,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				],
 			} as any,
 		};
-		computeSimplifiedRules(renderRules);
+		computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
 		const diagnostics = drainSlotGroupingDiagnostics();
 		expect(diagnostics.filter((d) => d.code === 'multi-slot-nested-seq')).toHaveLength(0);
 	});
@@ -74,7 +73,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				],
 			} as any,
 		};
-		computeSimplifiedRules(renderRules);
+		computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
 		const diagnostics = drainSlotGroupingDiagnostics();
 		expect(diagnostics).toHaveLength(0);
 	});

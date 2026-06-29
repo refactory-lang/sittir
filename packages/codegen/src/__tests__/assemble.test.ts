@@ -2,7 +2,8 @@ import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { assemble, classifyNode, simplifyRule, nameNode } from '../compiler/assemble.ts';
-import { computeSimplifiedRules } from '../compiler/simplify.ts';
+import { computeSimplifiedRules, SimplifyCtx } from '../compiler/simplify.ts';
+import { DiagnosticSink } from '../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import type { Rule } from '../types/rule.ts';
 import type { OptimizedGrammar } from '../compiler/types.ts';
@@ -20,13 +21,13 @@ function deriveFields(rule: Rule) {
 
 function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
 	const renderRules = applyWrapperDeletion(rules);
-	const simplifiedRules = computeSimplifiedRules(renderRules);
+	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(overrides.topLevelAliasBodies);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
-		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender);
+		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ rules: aliasBodiesRender, diagnostics: new DiagnosticSink() }));
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			renderRules[kind] = rule;
 		}
