@@ -17,6 +17,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
+import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type {
 	AssembledNode,
 	RenderTemplateSurface,
@@ -4217,7 +4218,7 @@ function literalToVariantName(literal: string): string {
 	if (known !== undefined) return known;
 
 	// Alphanumeric / underscore — PascalCase each segment.
-	if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(literal)) {
+	if (isAsciiIdentifier(literal)) {
 		const pascal = literal
 			.split('_')
 			.filter(Boolean)

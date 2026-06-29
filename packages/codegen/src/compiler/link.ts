@@ -43,6 +43,7 @@ import type {
 } from './types.ts';
 import { hasAnyField } from './model/node-map.ts';
 import { collectFieldNames } from '../types/rule.ts';
+import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
@@ -1885,6 +1886,7 @@ function collectSubtypeNames(rule: Rule): string[] {
 				}
 				return;
 			case STRING:
+				// grammar-token shape (name vs punctuation) — NOT util/isAsciiIdentifier; matchesWordShape candidate.
 				if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(current.value)) names.push(current.value);
 				return;
 			case CHOICE:
@@ -2441,7 +2443,6 @@ export function liftSeparators(rule: Rule): Rule {
 // docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md.
 // Pure — no I/O, no side effects on inputs.
 // ---------------------------------------------------------------------------
-const IDENTIFIER_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 /**
  * Walk a path string ('1/1/0/1/3') into a rule tree, returning the
  * sub-rule at that path. Path segments index into:
@@ -2573,7 +2574,7 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
             if (discriminator.length === 0) {
                 throw new Error(`groups['${kind}']['${path}']: discriminator must be a non-empty identifier`);
             }
-            if (!IDENTIFIER_RE.test(discriminator)) {
+            if (!isAsciiIdentifier(discriminator)) {
                 throw new Error(
                     `groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`
                 );

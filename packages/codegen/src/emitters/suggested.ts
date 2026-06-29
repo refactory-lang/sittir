@@ -19,6 +19,7 @@
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry } from '../compiler/types.ts';
 import type { Rule } from '../types/rule.ts';
+import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type { PolymorphCandidateLocation } from '../compiler/link.ts';
 
 /**
@@ -810,8 +811,6 @@ function hasGroupableStructure(rule: Rule): boolean {
 	}
 }
 
-const IDENTIFIER_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
-
 function guessGroupDiscriminator(rule: Rule, path: readonly number[]): string {
 	const peel = (r: Rule): string | null => {
 		switch (r.type) {
@@ -840,7 +839,7 @@ function guessGroupDiscriminator(rule: Rule, path: readonly number[]): string {
 		}
 	};
 	const guess = peel(rule);
-	if (guess && IDENTIFIER_RE.test(guess)) return guess;
+	if (guess && isAsciiIdentifier(guess)) return guess;
 	// Position-based fallback: 'g' + underscore-joined path (e.g. g1_1)
 	return 'g' + path.join('_');
 }
