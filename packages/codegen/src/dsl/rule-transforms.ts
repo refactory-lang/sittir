@@ -64,15 +64,8 @@ export interface TransformCtx {
   readonly builder?: RuleBuilder;
 }
 
-/**
- * Normalize adds one optional extra: the polymorph skip-set for the
- * slot-grouping diagnostic. Kept optional (not on TransformCtx base) so the
- * Task-1 test's bare TransformCtx literal still satisfies NormalizeCtx.
- */
-export interface NormalizeCtx extends TransformCtx {
-  /** Kinds to exclude from the slot-grouping "propose-promotion" diagnostic. */
-  readonly polymorphSkip?: ReadonlySet<string>;
-}
+// NormalizeCtx moved to compiler/normalize.ts (now a class extending the
+// compiler BaseCtx — phase ctxs live in the compiler layer, not dsl).
 
 /**
  * Simplify carries the same phase-shared state as TransformCtx.

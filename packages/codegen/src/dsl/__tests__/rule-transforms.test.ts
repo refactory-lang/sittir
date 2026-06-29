@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { TransformCtx, NormalizeCtx, SimplifyCtx } from '../rule-transforms.ts';
+import type { TransformCtx, SimplifyCtx } from '../rule-transforms.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 
 describe('transform ctx shapes', () => {
@@ -10,9 +10,9 @@ describe('transform ctx shapes', () => {
       diagnostics: new DiagnosticSink(),
     };
     expect(ctx.diagnostics).toBeInstanceOf(DiagnosticSink);
-    // NormalizeCtx is an alias; SimplifyCtx extends — both ARE a TransformCtx.
-    const n: NormalizeCtx = ctx;
+    // SimplifyCtx extends TransformCtx — a bare TransformCtx literal satisfies it.
+    // (NormalizeCtx moved to compiler/normalize.ts as a BaseCtx subclass.)
     const s: SimplifyCtx = ctx;
-    expect(n).toBe(s);
+    expect(s.diagnostics).toBeInstanceOf(DiagnosticSink);
   });
 });

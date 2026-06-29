@@ -22,7 +22,27 @@ import { resolveGroupOrMultiInlineTarget } from '../dsl/rule-transforms.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
-import type { NormalizeCtx, SimplifyCtx } from '../dsl/rule-transforms.ts';
+import type { SimplifyCtx } from '../dsl/rule-transforms.ts';
+import { BaseCtx, type BaseCtxInit } from './ctx.ts';
+
+/**
+ * Normalize/optimize phase context — a class extending the shared compiler
+ * BaseCtx (was an interface extending the dsl `TransformCtx`). Adds the
+ * inline-decision set and the polymorph skip-set the slot-grouping diagnostic
+ * consults, on top of BaseCtx's grammar facts (rules / diagnostics / wordMatcher
+ * / builder). See compiler/ctx.ts.
+ */
+export class NormalizeCtx extends BaseCtx {
+	/** Inline-decision set (kinds emitters skip / optimize preserves). */
+	readonly inlineKinds: ReadonlySet<string>;
+	/** Kinds to exclude from the slot-grouping "propose-promotion" diagnostic. */
+	readonly polymorphSkip?: ReadonlySet<string>;
+	constructor(init: BaseCtxInit & { inlineKinds?: ReadonlySet<string>; polymorphSkip?: ReadonlySet<string> }) {
+		super(init);
+		this.inlineKinds = init.inlineKinds ?? new Set();
+		this.polymorphSkip = init.polymorphSkip;
+	}
+}
 
 /**
  * Run the full ordered pipeline of non-lossy normalization passes over the
