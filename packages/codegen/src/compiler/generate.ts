@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
-import { normalizeGrammar } from './normalize.ts';
+import { normalizeGrammar, NormalizeCtx } from './normalize.ts';
 import { assemble, hydrateSlotRefs, classifyNode } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
@@ -30,7 +30,6 @@ import { drainSlotGroupingDiagnostics } from './simplify.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
-import type { NormalizeCtx } from '../dsl/rule-transforms.ts';
 import type { AssembleCtx } from './assemble.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
@@ -230,12 +229,12 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Phase 3: Optimize — build a NormalizeCtx carrying the inline-decision set
 	// and polymorph skip-set; pass it to optimize so the simplify phase can read
 	// them off ctx (PR-H ctx threading).
-	const normalizeCtx: NormalizeCtx = {
+	const normalizeCtx = new NormalizeCtx({
 		rules: linked.rules,
 		inlineKinds: inlinableKinds,
 		diagnostics,
 		polymorphSkip: polymorphsConfigSkip,
-	};
+	});
 	const optimized = normalizeGrammar(linked, normalizeCtx);
 	tracePhaseRules('optimize', optimized.rules);
 	tracePhaseRules('simplify', optimized.simplifiedRules);
