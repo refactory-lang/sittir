@@ -39,7 +39,7 @@ const MODULES = {
 	normalize: '../../codegen/src/compiler/normalize.ts',
 	assemble: '../../codegen/src/compiler/assemble.ts',
 	resolveGrammar: '../../codegen/src/compiler/resolve-grammar.ts',
-	grammarDiagnostics: '../../codegen/src/compiler/grammar-diagnostics.ts',
+	grammarDiagnostics: '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts',
 	opaqueFacts: '../../codegen/src/compiler/opaque-facts.ts',
 	nodeTypesLoader: '../../codegen/src/validate/node-types-loader.ts',
 	nativeBinaryFreshness: '../../codegen/src/scripts/native-binary-freshness.ts',
@@ -60,7 +60,7 @@ export interface CodegenSurface {
 	normalize: typeof import('../../codegen/src/compiler/normalize.ts');
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
 	resolveGrammar: typeof import('../../codegen/src/compiler/resolve-grammar.ts');
-	grammarDiagnostics: typeof import('../../codegen/src/compiler/grammar-diagnostics.ts');
+	grammarDiagnostics: typeof import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts');
 	opaqueFacts: typeof import('../../codegen/src/compiler/opaque-facts.ts');
 	nodeTypesLoader: typeof import('../../codegen/src/validate/node-types-loader.ts');
 	nativeBinaryFreshness: typeof import('../../codegen/src/scripts/native-binary-freshness.ts');
@@ -131,7 +131,7 @@ export type RawGrammar = Awaited<ReturnType<CodegenSurface['evaluate']['evaluate
 export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type OptimizedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;
 export type AssembledNodeMap = ReturnType<CodegenSurface['assemble']['assemble']>;
-export type GrammarDiagnostic = import('../../codegen/src/compiler/grammar-diagnostics.ts').GrammarDiagnostic;
+export type GrammarDiagnostic = import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts').GrammarDiagnostic;
 export type PolymorphVariantDescriptor = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantDescriptor;
 export type PolymorphVariantMap = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantMap;
 export type FactoryShape = import('../../codegen/src/emitters/factory-map.ts').FactoryShape;
