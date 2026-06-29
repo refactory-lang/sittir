@@ -735,7 +735,7 @@ function normalizeToFixpoint(
 	return current;
 }
 
-// compileWordMatcher moved to ./common.ts (shared by assemble, optimize, emitters).
+// compileWordMatcher moved to ../util/word-matcher.ts (shared by assemble, emitters, dsl).
 
 // ---------------------------------------------------------------------------
 // Template-side hoist — inner-field hoist WITHOUT stripping anonymous
