@@ -62,11 +62,11 @@ import {
 	diagnoseParseKindCollisions,
 	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
-} from '../diagnose-parsekind-collisions.ts';
+} from '../diagnostics/parsekind-collisions.ts';
 import {
 	describeDeriveShape,
 	type DeriveShapeDiagnostic
-} from '../diagnose-derive-shapes.ts';
+} from '../diagnostics/derive-shapes.ts';
 
 // ============================================================================
 // 1. Diagnostics & module state

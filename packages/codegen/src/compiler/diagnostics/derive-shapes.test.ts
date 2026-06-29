@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { describeDeriveShape } from './diagnose-derive-shapes.ts';
+import { describeDeriveShape } from './derive-shapes.ts';
 
 describe('describeDeriveShape', () => {
 	it('maps seq-with-nested-seq directly', () => {

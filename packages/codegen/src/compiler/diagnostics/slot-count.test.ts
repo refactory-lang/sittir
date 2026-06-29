@@ -12,10 +12,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { countSlots } from './slot-count.ts';
-import { collectSlots, setUnnamedChoiceWarner } from './collect-slots.ts';
-import { deleteWrapper } from './wrapper-deletion.ts';
-import type { Rule } from '../types/rule.ts';
+import { countSlots } from './slot-grouping.ts';
+import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
+import { deleteWrapper } from '../wrapper-deletion.ts';
+import type { Rule } from '../../types/rule.ts';
 import { afterEach } from 'vitest';
 
 const sym = (name: string) => ({ type: 'symbol', name }) as any;

@@ -5,8 +5,8 @@ import {
 	collectGrammarDiagnostics,
 	collectGrammarDiagnosticsForGrammar,
 	GrammarDiagnosticError
-} from '../compiler/grammar-diagnostics.ts';
-import type { DeriveShapeDiagnostic } from '../compiler/diagnose-derive-shapes.ts';
+} from '../compiler/diagnostics/grammar-diagnostics.ts';
+import type { DeriveShapeDiagnostic } from '../compiler/diagnostics/derive-shapes.ts';
 import type { RawGrammar } from '../compiler/types.ts';
 
 function buildRawGrammar(rules: Record<string, unknown>): RawGrammar {

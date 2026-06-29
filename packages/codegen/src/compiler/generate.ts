@@ -37,7 +37,7 @@ import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { RoundTripDiagnostic } from '../emitters/suggested.ts';
 import type { GeneratedIdTables } from './generated-metadata.ts'; // exposed via GeneratedFiles
-import type { SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
+import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 
 export interface GeneratedFiles {
 	grammar: string;

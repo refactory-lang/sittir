@@ -27,7 +27,7 @@ import {
 	formatGrammarDiagnostics,
 	fromSlotGrouping,
 	type GrammarDiagnostic
-} from './compiler/grammar-diagnostics.ts';
+} from './compiler/diagnostics/grammar-diagnostics.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';

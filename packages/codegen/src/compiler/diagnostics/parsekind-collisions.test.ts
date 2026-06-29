@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { choice, alias, seq } from './evaluate.ts';
-import { buildRuleCatalog } from './rule-catalog.ts';
-import { link } from './link.ts';
-import { normalizeGrammar } from './normalize.ts';
-import { assemble } from './assemble.ts';
-import type { RawGrammar } from './types.ts';
-import { AssembledNonterminal, AssembledPolymorph } from './model/node-map.ts';
-import { diagnoseParseKindCollisions } from './diagnose-parsekind-collisions.ts';
+import { choice, alias, seq } from '../evaluate.ts';
+import { buildRuleCatalog } from '../rule-catalog.ts';
+import { link } from '../link.ts';
+import { normalizeGrammar } from '../normalize.ts';
+import { assemble } from '../assemble.ts';
+import type { RawGrammar } from '../types.ts';
+import { AssembledNonterminal, AssembledPolymorph } from '../model/node-map.ts';
+import { diagnoseParseKindCollisions } from './parsekind-collisions.ts';
 
 function buildNodeMap(rules: Record<string, unknown>) {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
