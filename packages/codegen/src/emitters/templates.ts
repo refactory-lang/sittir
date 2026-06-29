@@ -47,7 +47,7 @@ import type {
 } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
-import { compileWordMatcher } from '../compiler/common.ts';
+import { compileWordMatcher } from '../util/word-matcher.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission } from './shared.ts';
 

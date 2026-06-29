@@ -60,7 +60,7 @@ import {
 } from './model/node-map.ts';
 import { simplifyRule, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { inlineRefs, extractRepeatShape } from '../dsl/rule-transforms.ts';
-import { compileWordMatcher } from './common.ts';
+import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnostics/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
@@ -156,7 +156,8 @@ export function assemble(
 			);
 			const modelType = classifyNode(kind, inlinedRule, {
 				variantParents,
-				parentAliasedKinds: optimized.parentAliasedKinds
+				parentAliasedKinds: optimized.parentAliasedKinds,
+				wordMatcher
 			});
 			// `simplifiedRules[kind]` and `renderRules[kind]` are both pre-computed
 			// by optimize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
@@ -1073,24 +1074,10 @@ function shortenIrKey(kind: string): string {
 // collectAnonymousNodes — extract string literals from rules as token/keyword entries
 // ---------------------------------------------------------------------------
 
-/**
- * Test whether a grammar string literal has "keyword shape" — i.e., whether
- * tree-sitter will lex it as a word token under the grammar's `word` rule.
- *
- * @param value - The literal text from the grammar (e.g., `"if"`, `"+"`, `"->"`).
- * @param wordMatcher - The compiled word-rule pattern from {@link compileWordMatcher},
- *   or `undefined` when the grammar has no `word` declaration.
- * @returns `true` when `value` matches the word pattern (or `/^\w+$/` as fallback),
- *   indicating the literal is an `AssembledKeyword`; `false` for punctuation /
- *   operators that become `AssembledToken`.
- * @remarks
- *   Keyword-shape is "lexes as a word under the grammar's `word` rule". When the
- *   grammar declares no `word` (or we can't extract its pattern), falls back to
- *   the conservative `/^\w+$/` heuristic.
- */
-function detectKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean {
-	return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
-}
+// "Keyword shape" (does a literal lex as a word under the grammar's `word`
+// rule?) is tested via `matchesWordShape` from util/word-matcher.ts — the single
+// source of truth that bakes the `/^\w+$/` fallback. Both call sites
+// (collectAnonymousNodes and classifyNode's STRING case) route through it.
 
 function collectAnonymousNodes(
 	rules: Record<string, Rule>,
@@ -1125,7 +1112,7 @@ function collectAnonymousNodes(
 		if (nodes.has(kindName)) continue; // Already classified as a named rule
 		if (literalText === '' || /^\s+$/.test(literalText)) continue; // Skip whitespace/empty
 
-		const isWordShape = detectKeywordShape(literalText, wordMatcher);
+		const isWordShape = matchesWordShape(literalText, wordMatcher);
 		const syntheticStringRule: StringRule = { type: STRING, value: literalText };
 
 		if (isWordShape) {
@@ -1224,7 +1211,7 @@ type ModelType = AssembledNode['modelType'];
 export function classifyNode(
 	kind: string,
 	rule: Rule,
-	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string> }
+	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string>; wordMatcher?: RegExp }
 ): ModelType {
 	// PR-P: enum-shaped ChoiceRules detected via isEnumChoiceRule before switch.
 	if (isEnumChoiceRule(rule)) return 'enum';
@@ -1238,7 +1225,8 @@ export function classifyNode(
 		case PATTERN:
 			return 'pattern';
 		case STRING:
-			return /^\w+$/.test(rule.value) ? 'keyword' : 'token';
+			// keyword vs token honours the grammar's `word` rule — see matchesWordShape.
+			return matchesWordShape(rule.value, opts?.wordMatcher) ? 'keyword' : 'token';
 	}
 
 	if (isHiddenRepeatHelper(kind, rule, opts?.parentAliasedKinds)) return 'multi';

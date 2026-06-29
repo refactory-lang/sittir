@@ -1,32 +1,35 @@
 /**
- * compiler/common.ts — utilities shared across multiple pipeline
- * phases and downstream emitters.
+ * util/word-matcher.ts — grammar-aware word/identifier-shape matching.
  *
- * Anything exported here is consumed by two or more sibling modules
- * from different layers (compiler phase + emitter, or two distinct
- * phases).  A helper that is only used by one other file stays in
- * that file; a helper that is used everywhere lives here.
+ * Foundational utility layer: depends only on the Rule IR (`types/`), so it can
+ * be shared by dsl, compiler, and emitters without a layering cycle
+ * (`types <- util <- dsl <- compiler <- emitters`). Relocated from the former
+ * `compiler/common.ts` so the dsl layer can consume it too.
+ *
+ * Single source of truth for "does this string lex as a word under the
+ * grammar's `word` rule?" — `compileWordMatcher` builds the grammar-derived
+ * RegExp; `matchesWordShape` is the canonical predicate that bakes the
+ * `/^\w+$/` fallback so call sites never re-spell it.
  */
 
 import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule } from '../types/rule.ts';
 
 /**
- * Compile the grammar's `word` rule into a full-match RegExp so
- * emitters can check whether an arbitrary string matches the
- * grammar's identifier shape (e.g. "does `match` look like an
- * identifier under python's soft-keyword rules?").
+ * Compile the grammar's `word` rule into a full-match RegExp so callers can
+ * check whether an arbitrary string matches the grammar's identifier shape
+ * (e.g. "does `match` look like an identifier under python's soft-keyword
+ * rules?").
  *
  * Returns `undefined` when:
  * - `word` is null / missing / not a known rule name.
- * - The rule's tree references shapes the walker doesn't
- *   understand (e.g. a symbol ref into another rule). Callers
- *   fall back to a generic `/^\w+$/` heuristic in that case.
+ * - The rule's tree references shapes the walker doesn't understand (e.g. a
+ *   symbol ref into another rule). Callers should route through
+ *   {@link matchesWordShape}, which applies the `/^\w+$/` fallback in that case.
  *
  * @remarks
- *   First tries the `u` flag (needed for `\p{...}` property
- *   escapes); if that fails, retries flag-less so older grammars
- *   keep working.
+ *   First tries the `u` flag (needed for `\p{...}` property escapes); if that
+ *   fails, retries flag-less so older grammars keep working.
  */
 export function compileWordMatcher(
 	word: string | null | undefined,
@@ -47,6 +50,25 @@ export function compileWordMatcher(
 			return undefined;
 		}
 	}
+}
+
+/**
+ * The canonical "does this literal lex as a word?" predicate — i.e. whether
+ * tree-sitter will lex it as a word token under the grammar's `word` rule.
+ *
+ * Single source of truth for the keyword/word-shape test: pass the grammar's
+ * compiled matcher (from {@link compileWordMatcher}) when available; when it is
+ * `undefined` (no `word` declaration, or the rule shape isn't expressible as a
+ * single regex), this falls back to the conservative `/^\w+$/` heuristic.
+ * Call sites MUST route through this rather than re-spelling the fallback.
+ *
+ * @param value - The literal text from the grammar (e.g. `"if"`, `"+"`, `"->"`).
+ * @param wordMatcher - The compiled word-rule pattern, or `undefined`.
+ * @returns `true` when `value` has word shape (→ `AssembledKeyword`); `false`
+ *   for punctuation / operators (→ `AssembledToken`).
+ */
+export function matchesWordShape(value: string, wordMatcher: RegExp | undefined): boolean {
+	return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
 }
 
 /**
