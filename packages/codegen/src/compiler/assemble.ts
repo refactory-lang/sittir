@@ -651,6 +651,7 @@ function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen:
 		case CHOICE:
 			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, rules, seen));
 		case STRING:
+			// grammar-token shape (name vs literal) — intentionally NOT util/isAsciiIdentifier; this is a grammar-word question (matchesWordShape candidate).
 			return /^[A-Za-z_][A-Za-z0-9_]*$/.test(rule.value) ? [] : [rule.value];
 		case VARIANT:
 		case GROUP:

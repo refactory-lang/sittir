@@ -456,6 +456,8 @@ function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
 	return { inner: rule, isOptional: false };
 }
 
+// Grammar-token shape (is this keyword word-like?) — kept local, distinct from
+// util/isAsciiIdentifier; this is a grammar-word question (matchesWordShape candidate).
 function isIdentifierShaped(value: string): boolean {
 	return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
 }
