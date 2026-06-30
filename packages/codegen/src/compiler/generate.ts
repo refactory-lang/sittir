@@ -165,7 +165,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 	// Phase 2: Link — pass the include filter so derivation passes
 	// know whether to mutate the rule tree or only log to the sidecar.
-	const linked = link(raw, cfg.include, generatedIdTables);
+	const linked = link(raw, { include: cfg.include, generatedIdTables });
 	tracePhaseRules('link', linked.rules);
 
 	// Authoritative inline list from the compiled grammar.json (if present).
