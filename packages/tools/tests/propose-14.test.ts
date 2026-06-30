@@ -56,12 +56,32 @@ describe('propose-14 signature classification', () => {
 		expect(recs[0].params.map((p) => p.name)).toEqual(['rule', 'rules', 'seen']);
 	});
 
-	it('requires ctx in SECOND position — (ctx, target) is non-conforming', () => {
+	it('the FIRST param is always the target, even when it looks ctx-shaped — (ctx, target) is non-conforming', () => {
 		const recs = classifySource(
 			'compiler/link.ts',
 			'function resolveRef(ctx: LinkCtx, rule: Rule) {}',
 		);
 		expect(recs[0].bucket).toBe('non-conforming');
+	});
+
+	it('classifies ctx in a LATER position as conforming — extra optional args may precede it', () => {
+		// Mirrors assemble()'s real shape: optimized, generatedIdTables?, assembleCtx?.
+		const recs = classifySource(
+			'compiler/assemble.ts',
+			'export function assemble(optimized: OptimizedGrammar, generatedIdTables: GeneratedIdTables, ctx: AssembleCtx) { return ctx; }',
+		);
+		expect(recs[0].bucket).toBe('conforming');
+	});
+
+	it('classifies a param literally named `ctx` as conforming even when its type does not end in Ctx', () => {
+		// Mirrors link()'s own signature after the LinkCtx -> LinkOptions rename:
+		// the public options bag is intentionally NOT *Ctx-suffixed, but the
+		// param is still named `ctx` per convention.
+		const recs = classifySource(
+			'compiler/link.ts',
+			'export function link(raw: RawGrammar, ctx: LinkOptions): LinkedGrammar { return raw; }',
+		);
+		expect(recs[0].bucket).toBe('conforming');
 	});
 
 	it('records class methods as Class.method and accessors as getter-candidate', () => {

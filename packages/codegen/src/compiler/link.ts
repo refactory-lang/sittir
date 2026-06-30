@@ -1587,7 +1587,6 @@ function isTerminalShape_allowBareTerm(rule: Rule): boolean {
 // ---------------------------------------------------------------------------
 
 function resolveRule(rule: Rule, ctx: LinkCtx, currentName: string): Rule {
-	const { rules: allRules, supertypes, externalRoles } = ctx;
 	switch (rule.type) {
 		case SEQ:
 			return {
