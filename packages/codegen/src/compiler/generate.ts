@@ -24,13 +24,12 @@ import { emitEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.ts';
-import { loadGeneratedIdTables, collectGeneratedKindEntries } from './generated-metadata.ts';
+import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
-import type { AssembleCtx } from './assemble.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
@@ -239,18 +238,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	tracePhaseRules('optimize', optimized.rules);
 	tracePhaseRules('simplify', optimized.simplifiedRules);
 
-	// Phase 4: Assemble — build AssembleCtx with kindEntries + the sink.
-	// nodeMap is populated during assemble(); pass the nodes Map directly so
-	// AssembleCtx carries a live reference (post-passes read peers from it).
-	const generatedKindEntries = generatedIdTables
-		? collectGeneratedKindEntries(generatedIdTables)
-		: undefined;
-	const assembleCtx: AssembleCtx = {
-		kindEntries: generatedKindEntries,
-		nodeMap: new Map(), // placeholder; assemble() builds the real map internally
-		diagnostics,
-	};
-	const nodeMap = assemble(optimized, generatedIdTables, assembleCtx);
+	// Phase 4: Assemble — assemble() builds its own AssembleCtx internally
+	// (R12 PR-3) from `optimized` + `generatedIdTables`, owning the node map.
+	const nodeMap = assemble(optimized, generatedIdTables);
 	traceAssembleNodes('assemble', nodeMap.nodes);
 
 	// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so

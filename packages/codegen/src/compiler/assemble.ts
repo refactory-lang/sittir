@@ -9,6 +9,7 @@ import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, S
 import type {
 	Rule,
 	RenderRule,
+	SimplifiedRule,
 	GroupRule,
 	SymbolRule,
 	SeqRule,
@@ -63,32 +64,51 @@ import { inlineRefs, extractRepeatShape } from '../dsl/rule-transforms.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnostics/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
-import type { DiagnosticSink } from '../types/diagnostics.ts';
+import { DiagnosticSink } from '../types/diagnostics.ts';
+import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
 /**
- * Phase context for the Assemble phase (spec §7.7 / CW5).
+ * Phase context for the Assemble phase (R12 PR-3, extends `BaseCtx<SimplifiedRule>`).
  *
- * `nodeMap` is the cross-node store the post-passes need for
- * `markUserFacing` / resolveColliding / resolveIrKeys / collectAnonymous — it
- * carries the mutable Map so the post-passes can read peers. `kindEntries` feeds
- * the same per-node constructors that previously received it positionally.
- * `diagnostics` is the PR-G DiagnosticSink; slot-level diagnostics (unnamed-
- * choice slots, unslotted-child failures) emit here rather than to module-global
- * accumulators.
+ * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies`, + `rawRules` for the
+ * supertype-subtype resolution family — R4 / #14; `seen` cycle-guards and the
+ * per-call subtypeSet stay explicit pass-local params, CW6). `rawRules` is
+ * `optimized.rules` (the pre-simplify view: hidden-rule resolution needs to see
+ * ALIAS/GROUP/TOKEN/VARIANT wrapper shapes that `BaseCtx.rules` — the
+ * `SimplifiedRule` view — has already collapsed), so it's a distinct field, not
+ * a reuse of the inherited `rules`.
+ *
+ * `nodes` is the cross-node store the post-passes need for `markUserFacing` /
+ * resolveColliding / resolveIrKeys / collectAnonymous — a live `Map` so the
+ * post-passes can read peers; exposed as a getter (the class's one mutation
+ * surface) rather than a bare public field. `kindEntries` feeds the same
+ * per-node constructors that previously received it positionally.
  */
-/**
- * Pass-constant state for the supertype-subtype resolution family (R4 / #14).
- * `seen` cycle-guards and the per-call subtypeSet stay explicit (CW6).
- */
-export interface SubtypeCtx {
-	readonly rules: Record<string, Rule>;
-	readonly topLevelAliasBodies: ReadonlyMap<string, Rule>;
-}
-
-export interface AssembleCtx {
+export class AssembleCtx extends BaseCtx<SimplifiedRule> {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
-	readonly nodeMap: Map<string, AssembledNode>;
-	readonly diagnostics: DiagnosticSink;
+	readonly rawRules: Record<string, Rule>;
+	readonly topLevelAliasBodies: ReadonlyMap<string, Rule>;
+	private readonly _nodes: Map<string, AssembledNode>;
+
+	constructor(
+		init: BaseCtxInit<SimplifiedRule> & {
+			rawRules: Record<string, Rule>;
+			kindEntries?: readonly GeneratedKindEntry[];
+			topLevelAliasBodies?: ReadonlyMap<string, Rule>;
+			nodes?: Map<string, AssembledNode>;
+		}
+	) {
+		super(init);
+		this.kindEntries = init.kindEntries;
+		this.rawRules = init.rawRules;
+		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
+		this._nodes = init.nodes ?? new Map();
+	}
+
+	/** Live node-map accumulator built during assemble(); post-passes read peers from it. */
+	get nodes(): Map<string, AssembledNode> {
+		return this._nodes;
+	}
 }
 
 export interface AssembledNodeMap extends NodeMap {
@@ -106,9 +126,19 @@ export function assemble(
 	generatedIdTables?: GeneratedIdTables,
 	assembleCtx?: AssembleCtx
 ): AssembledNodeMap {
-	const nodes = new Map<string, AssembledNode>();
-	const wordMatcher = compileWordMatcher(optimized.word, optimized.rules);
-	const kindEntries = assembleCtx?.kindEntries ?? collectGeneratedKindEntries(generatedIdTables);
+	const wordMatcherRegex = compileWordMatcher(optimized.word, optimized.rules);
+	const ctx =
+		assembleCtx ??
+		new AssembleCtx({
+			rules: optimized.simplifiedRules,
+			rawRules: optimized.rules,
+			diagnostics: new DiagnosticSink(),
+			wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
+			kindEntries: generatedIdTables ? collectGeneratedKindEntries(generatedIdTables) : undefined,
+			topLevelAliasBodies: optimized.topLevelAliasBodies ?? new Map()
+		});
+	const nodes = ctx.nodes;
+	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(generatedIdTables);
 	resetParseKindCollisionDiagnostics();
 	resetDeriveShapeDiagnostics();
 	// Parents that went through Link's variant() push-down keep their
@@ -157,7 +187,7 @@ export function assemble(
 			const modelType = classifyNode(kind, inlinedRule, {
 				variantParents,
 				parentAliasedKinds: optimized.parentAliasedKinds,
-				wordMatcher
+				wordMatcher: wordMatcherRegex
 			});
 			// `simplifiedRules[kind]` and `renderRules[kind]` are both pre-computed
 			// by optimize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
@@ -206,7 +236,7 @@ export function assemble(
 					break;
 				}
 				case 'supertype': {
-					const subtypes = resolveSupertypeSubtypes(assemblyRule, optimized);
+					const subtypes = resolveSupertypeSubtypes(assemblyRule, ctx);
 					nodes.set(
 						kind,
 						new AssembledSupertype(kind, assemblyRule as SupertypeRule | ChoiceRule, subtypes)
@@ -242,7 +272,7 @@ export function assemble(
 			}
 		}
 
-		collectAnonymousNodes(optimized.rules, nodes, wordMatcher, kindEntries);
+		collectAnonymousNodes(optimized.rules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
 		// Pre-compute the two cross-node sets once, then run the merged
@@ -409,8 +439,8 @@ function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<stri
 /**
  * Resolve the subtype kind list for a supertype node from its rule.
  *
- * @param rule - The rule as it appears in `optimized.rules` (pre-inlining).
- * @param optimized - The full optimized grammar, used for hidden-rule resolution.
+ * @param rule - The rule as it appears in `ctx.rawRules` (pre-inlining).
+ * @param ctx - The Assemble phase context, used for hidden-rule resolution.
  * @returns The ordered list of concrete kind names that are members of this
  *   supertype union after resolving any hidden-rule indirections.
  * @remarks
@@ -422,7 +452,7 @@ function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<stri
  *   Hidden names (`_foo`) are then resolved to the concrete kinds that
  *   tree-sitter actually surfaces at runtime via {@link resolveHiddenSubtypes}.
  */
-function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): string[] {
+function resolveSupertypeSubtypes(rule: Rule, ctx: AssembleCtx): string[] {
 	let subtypes: string[];
 	if (rule.type === SUPERTYPE) {
 		subtypes = rule.subtypes;
@@ -436,7 +466,7 @@ function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): stri
 	}
 	return resolveHiddenSubtypes(
 		subtypes,
-		{ rules: optimized.rules, topLevelAliasBodies: optimized.topLevelAliasBodies ?? new Map() },
+		ctx,
 		rule.type === SUPERTYPE ? rule.name : undefined
 	);
 }
@@ -508,8 +538,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  * concrete kinds that actually appear in the parse tree.
  *
  * @param names - Raw subtype names from the rule tree (may include `_`-prefixed hidden names).
- * @param rules - The full optimized rule map, used to resolve hidden rule bodies.
- * @param aliasedHiddenKinds - Pre-Link alias map from hidden kind to its aliased target.
+ * @param ctx - Assemble phase context; `ctx.rawRules`/`ctx.topLevelAliasBodies` resolve hidden rule bodies.
  * @returns The resolved list of concrete kind names, deduplicated and in visitation order.
  * @remarks
  *   Tree-sitter inlines hidden rules at parse time — a `_type_identifier` defined as
@@ -525,8 +554,8 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  *
  *   Non-hidden names pass through unchanged.
  */
-function resolveHiddenSubtypes(names: readonly string[], ctx: SubtypeCtx, ownerName?: string): string[] {
-	const { rules, topLevelAliasBodies } = ctx;
+function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, ownerName?: string): string[] {
+	const { rawRules: rules, topLevelAliasBodies } = ctx;
 	// Post-synthesis-removal: the rules map is keyed by SOURCE kinds
 	// only (hidden `_X`). Subtype names surface as source kinds; we
 	// no longer redirect through the aliasedHiddenKinds table (which
@@ -549,7 +578,7 @@ function resolveHiddenSubtypes(names: readonly string[], ctx: SubtypeCtx, ownerN
 		}
 		const body = topLevelAliasBodies.get(name) ?? rule;
 		if (rule.type === SUPERTYPE || topLevelAliasBodies.has(name)) out.push(name);
-		const resolved = resolveHiddenRuleContent(body, rules, new Set([name]));
+		const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx);
 		if (resolved.length === 0) {
 			if (!out.includes(name)) out.push(name);
 			return;
@@ -570,8 +599,8 @@ function resolveHiddenSubtypes(names: readonly string[], ctx: SubtypeCtx, ownerN
 	return includeAliasMemberKinds(out, ctx, ownerName);
 }
 
-function includeAliasMemberKinds(subtypes: readonly string[], ctx: SubtypeCtx, ownerName?: string): string[] {
-	const { rules, topLevelAliasBodies } = ctx;
+function includeAliasMemberKinds(subtypes: readonly string[], ctx: AssembleCtx, ownerName?: string): string[] {
+	const { rawRules: rules } = ctx;
 	const out = [...subtypes];
 	const subtypeSet = new Set(subtypes);
 	let changed = true;
@@ -590,19 +619,19 @@ function includeAliasMemberKinds(subtypes: readonly string[], ctx: SubtypeCtx, o
 	return out;
 }
 
-function isAliasMemberKind(rule: Rule, ctx: SubtypeCtx, name: string, subtypeSet: ReadonlySet<string>): boolean {
-	const { rules, topLevelAliasBodies } = ctx;
+function isAliasMemberKind(rule: Rule, ctx: AssembleCtx, name: string, subtypeSet: ReadonlySet<string>): boolean {
+	const { topLevelAliasBodies } = ctx;
 	if (!topLevelAliasBodies.has(name)) return false;
 	const body = topLevelAliasBodies.get(name) ?? rule;
-	const resolved = resolveHiddenRuleContent(body, rules, new Set([name]));
+	const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx);
 	if (resolved.length === 0) return false;
 	return resolved.every((member) =>
 		isCompatibleSubtypeMember(member, ctx, subtypeSet, new Set())
 	);
 }
 
-function isCompatibleSubtypeMember(name: string, ctx: SubtypeCtx, subtypeSet: ReadonlySet<string>, seen: Set<string>): boolean {
-	const { rules, topLevelAliasBodies } = ctx;
+function isCompatibleSubtypeMember(name: string, ctx: AssembleCtx, subtypeSet: ReadonlySet<string>, seen: Set<string>): boolean {
+	const { rawRules: rules, topLevelAliasBodies } = ctx;
 	if (subtypeSet.has(name)) return true;
 	if (!name.startsWith('_')) return false;
 	if (seen.has(name)) return false;
@@ -610,14 +639,15 @@ function isCompatibleSubtypeMember(name: string, ctx: SubtypeCtx, subtypeSet: Re
 	if (!rule) return false;
 	seen.add(name);
 	const body = topLevelAliasBodies.get(name) ?? rule;
-	const resolved = resolveHiddenRuleContent(body, rules, new Set([name]));
+	const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx);
 	if (resolved.length === 0) return false;
 	return resolved.every((member) =>
 		isCompatibleSubtypeMember(member, ctx, subtypeSet, seen)
 	);
 }
 
-function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen: Set<string>): string[] {
+function resolveHiddenRuleContent(rule: Rule, seen: Set<string>, ctx: AssembleCtx): string[] {
+	const rules = ctx.rawRules;
 	switch (rule.type) {
 		case ALIAS:
 			// Resolve to the SOURCE kind (what's in the rules map).
@@ -638,7 +668,7 @@ function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen:
 			if (seen.has(refName)) return [];
 			seen.add(refName);
 			const target = rules[refName];
-			return target ? resolveHiddenRuleContent(target, rules, seen) : [refName];
+			return target ? resolveHiddenRuleContent(target, seen, ctx) : [refName];
 		}
 		case SUPERTYPE:
 			return rule.subtypes.flatMap((s) => {
@@ -646,17 +676,24 @@ function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen:
 				seen.add(s);
 				if (!s.startsWith('_')) return [s];
 				const target = rules[s];
-				return target ? resolveHiddenRuleContent(target, rules, seen) : [s];
+				return target ? resolveHiddenRuleContent(target, seen, ctx) : [s];
 			});
 		case CHOICE:
-			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, rules, seen));
-		case STRING:
-			// grammar-token shape (name vs literal) — intentionally NOT util/isAsciiIdentifier; this is a grammar-word question (matchesWordShape candidate).
-			return /^[A-Za-z_][A-Za-z0-9_]*$/.test(rule.value) ? [] : [rule.value];
+			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, seen, ctx));
+		case STRING: {
+			// Grammar-token shape (name vs literal) — routed through the
+			// grammar's own word-matcher (R12 Camp A); single source of
+			// truth via matchesWordShape, replacing the former hardcoded
+			// identifier-shape regex.
+			const isWordShape = ctx.wordMatcher
+				? ctx.wordMatcher(rule.value)
+				: matchesWordShape(rule.value, undefined);
+			return isWordShape ? [] : [rule.value];
+		}
 		case VARIANT:
 		case GROUP:
 		case TOKEN:
-			return resolveHiddenRuleContent((rule as { content: Rule }).content, rules, seen);
+			return resolveHiddenRuleContent((rule as { content: Rule }).content, seen, ctx);
 		default:
 			return [];
 	}
