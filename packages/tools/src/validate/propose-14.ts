@@ -61,12 +61,23 @@ export interface BaselineFile {
 	modules: Record<string, number>;
 }
 
+const stripOptionalUndefined = (type: string): string =>
+	type.replace(/\s*\|\s*undefined\s*$/, '').replace(/^\s*undefined\s*\|\s*/, '').trim();
+
 function bucketOf(params: FnRecord['params']): Exclude<Principle14Bucket, 'dead'> {
 	if (params.length === 0) return 'zero-param';
 	if (params.length === 1) return 'getter-candidate';
-	const second = (params[1]?.type ?? '').replace(/\s*\|\s*undefined\s*$/, '').replace(/^\s*undefined\s*\|\s*/, '').trim();
-	if (/Ctx$/.test(second)) return 'conforming';
-	return 'non-conforming';
+	// A conforming pipeline fn is `(target, ctx: *Ctx, <recursion-local>...)` —
+	// the ctx param isn't always SECOND: entry points like `assemble(optimized,
+	// generatedIdTables?, ctx?: AssembleCtx)` carry extra optional args before
+	// it. Scan every param after the first (the target) for either a type
+	// ending in `Ctx`, or the param literally named `ctx` (the convention every
+	// pipeline fn already follows — `ctx: SimplifyCtx`, `ctx: AssembleCtx`, … —
+	// a more direct signal than the type-name suffix when both are available).
+	const hasCtxParam = params
+		.slice(1)
+		.some((p) => p.name === 'ctx' || stripOptionalUndefined(p.type).endsWith('Ctx'));
+	return hasCtxParam ? 'conforming' : 'non-conforming';
 }
 
 /** Classify every function/method/getter/arrow-const in one module's source. */

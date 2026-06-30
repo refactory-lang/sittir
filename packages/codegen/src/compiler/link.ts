@@ -44,81 +44,84 @@ import type {
 import { hasAnyField } from './model/node-map.ts';
 import { collectFieldNames } from '../types/rule.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
+import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
+import { DiagnosticSink } from '../types/diagnostics.ts';
+import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
 // ---------------------------------------------------------------------------
 
 /**
- * Phase context for the Link phase (spec §7.7).
+ * Public options bag for {@link link} (formerly named `LinkCtx` — renamed so
+ * the name is free for the phase-internal context below, matching the
+ * NormalizeCtx/SimplifyCtx/AssembleCtx convention).
  *
  * Folds the former positional `include?` + `generatedIdTables?` args into a
- * single ctx object so every pipeline method follows the `(target, ctx)`
- * convention (CW5). Both fields remain optional for backward compatibility with
- * call sites that have not yet been migrated.
+ * single `(raw, ctx?)` shape (CW5). The old 3-arg positional form is gone —
+ * every real caller either omitted both or used it positionally, and the
+ * one that did (generate.ts) is updated alongside this.
  */
-export interface LinkCtx {
+export interface LinkOptions {
 	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
 }
 
 /**
- * Pass-constant state for the rule-resolution walk (R4 / #14). `currentName`
- * stays an explicit parameter — it is per-top-level-rule attribution (CW6).
+ * Phase context for the Link phase (R12 PR-4, extends `BaseCtx<Rule>`).
+ *
+ * Merges the former `ResolveCtx` (rule-resolution walk: `rules` — inherited
+ * from `BaseCtx`, was `allRules` — `supertypes`, `externalRoles`) and
+ * `HiddenClassifyCtx` (hidden-rule classification cluster: `inline`,
+ * `derivations`, `applyPromotedRules`, `hiddenChoicesWithNamedAliasMembers`)
+ * — both were R4 / #14 pass-constant/pass-shared state for the same `link()`
+ * call, just threaded as two separate bags. `currentName`/per-rule `name`
+ * stay explicit trailing params (CW6), as in `resolveRule(rule, ctx, name)`.
+ *
+ * `externalRoles` and `derivations` are write-through accumulators mutated
+ * during the resolve/classify walks (role-lookup memoization and the
+ * promoted-rules log, respectively) — kept as plain mutable fields rather
+ * than wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
  */
-export interface ResolveCtx {
-	readonly allRules: Record<string, Rule>;
-	readonly supertypes: Set<string>;
+export class LinkCtx extends BaseCtx<Rule> {
+	readonly supertypes: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
-}
-
-/**
- * Pass-shared state for the hidden-rule classification cluster (R4 / #14).
- * Folds the loose `inline`/`supertypes`/`derivations`/`applyPromotedRules`/
- * `hiddenChoicesWithNamedAliasMembers` args that `classifyAndLogHiddenRules` +
- * `classifyHiddenRule` + `classifyHiddenChoiceRule` threaded. The per-rule
- * `name` stays an explicit trailing param (CW6), as in `resolveRule(rule, ctx, name)`.
- */
-export interface HiddenClassifyCtx {
 	readonly inline?: readonly string[];
-	readonly supertypes: Set<string>;
 	readonly derivations: DerivationLog;
 	readonly applyPromotedRules: boolean;
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
-}
 
-/** True iff `v` is a `LinkCtx` (discriminated by the presence of `generatedIdTables`). */
-function isLinkCtx(v: IncludeFilter | LinkCtx): v is LinkCtx {
-	return 'generatedIdTables' in v || 'include' in v;
-}
-
-export function link(
-	raw: RawGrammar,
-	includeOrCtx?: IncludeFilter | LinkCtx,
-	generatedIdTables?: GeneratedIdTables
-): LinkedGrammar {
-	// Accept either the old positional form link(raw, include?, tables?) or
-	// the new ctx form link(raw, ctx?). A LinkCtx carries `include` and/or
-	// `generatedIdTables`; an IncludeFilter carries `rules` / `fields`.
-	let include: IncludeFilter | undefined;
-	let resolvedIdTables: GeneratedIdTables | undefined = generatedIdTables;
-	if (includeOrCtx !== undefined) {
-		if (isLinkCtx(includeOrCtx)) {
-			include = includeOrCtx.include;
-			resolvedIdTables = includeOrCtx.generatedIdTables ?? generatedIdTables;
-		} else {
-			include = includeOrCtx;
+	constructor(
+		init: BaseCtxInit<Rule> & {
+			supertypes: ReadonlySet<string>;
+			externalRoles: Map<string, ExternalRole>;
+			inline?: readonly string[];
+			derivations: DerivationLog;
+			applyPromotedRules: boolean;
+			hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
 		}
+	) {
+		super(init);
+		this.supertypes = init.supertypes;
+		this.externalRoles = init.externalRoles;
+		this.inline = init.inline;
+		this.derivations = init.derivations;
+		this.applyPromotedRules = init.applyPromotedRules;
+		this.hiddenChoicesWithNamedAliasMembers = init.hiddenChoicesWithNamedAliasMembers;
 	}
+}
+
+export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
+	const include = ctx?.include;
 	const supertypes = new Set(raw.supertypes);
 	const externalRoles = buildExternalRolesMap(raw.externalRoles);
 	const references = [...raw.references];
-	const kindEntries = collectGeneratedKindEntries(resolvedIdTables);
+	const kindEntries = collectGeneratedKindEntries(ctx?.generatedIdTables);
 
 	// Resolve include defaults: undefined means "include everything".
 	// Explicit empty arrays mean "include nothing of this category".
@@ -136,11 +139,34 @@ export function link(
 		repeatedShapes: []
 	};
 
-	// Resolve all rules
-	const resolveCtx: ResolveCtx = { allRules: raw.rules, supertypes, externalRoles };
+	// Compute the hidden-choice classification guard from the RAW
+	// (pre-resolveRule) rules — hoisted above the resolve loop (pure function
+	// of `raw.rules`, independent of it) so ONE LinkCtx instance can serve
+	// both the resolve walk and the later hidden-rule classification pass.
+	//
+	// hiddenChoicesWithNamedAliasMembers: hidden choice kinds whose own body
+	// has named-alias members → must NOT be promoted to supertype.
+	const hiddenChoicesWithNamedAliasMembers = collectHiddenChoicesWithNamedAliasMembers(raw.rules);
+	const wordMatcherRegex = compileWordMatcher(raw.word, raw.rules);
+
+	// Resolve all rules. Named `linkCtx` (not `ctx`) to avoid shadowing the
+	// public `ctx: LinkOptions` entry param above — this is the internal,
+	// BaseCtx-extending phase context threaded through the resolve/classify
+	// walks below, a distinct object from the public options bag.
+	const linkCtx = new LinkCtx({
+		rules: raw.rules,
+		diagnostics: new DiagnosticSink(),
+		wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
+		supertypes,
+		externalRoles,
+		inline: raw.inline,
+		derivations,
+		applyPromotedRules,
+		hiddenChoicesWithNamedAliasMembers
+	});
 	const rules: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
-		rules[name] = resolveRule(rule, resolveCtx, name);
+		rules[name] = resolveRule(rule, linkCtx, name);
 	}
 
 	// Lift separated lists into canonical separator-bearing repeat nodes:
@@ -169,7 +195,7 @@ export function link(
 	// §D-2a DIAGNOSTIC-ONLY content-alias provenance (see LinkedGrammar docs).
 	const contentAliasedFrom = new Map<string, string>();
 	const contentAliasedTo = new Map<string, string[]>();
-	mintContentAliasKinds(rules, resolveCtx, contentAliasedFrom, contentAliasedTo);
+	mintContentAliasKinds(rules, linkCtx, contentAliasedFrom, contentAliasedTo);
 
 	stripResolvedRoleRules(rules);
 	createSyntheticExternalRules(rules, raw.externals);
@@ -228,27 +254,20 @@ export function link(
 		}
 	}
 
-	// Compute classification guards from the RAW (pre-resolveRule) rules so
-	// the original alias structure is still visible.
+	// Compute the remaining classification guard from the RAW (pre-resolveRule)
+	// rules so the original alias structure is still visible.
+	// (hiddenChoicesWithNamedAliasMembers is computed earlier, above the
+	// resolve loop, and already lives on `linkCtx`.)
 	//
-	// - hiddenChoicesWithNamedAliasMembers: hidden choice kinds whose own
-	//   body has named-alias members → must NOT be promoted to supertype.
 	// - parentAliasedKinds: hidden kinds that appear as the content of a
 	//   named alias in any parent rule → real runtime CST nodes even when
 	//   their normalized body is a repeat1 → must NOT be classified as multi.
-	const hiddenChoicesWithNamedAliasMembers = collectHiddenChoicesWithNamedAliasMembers(raw.rules);
 	// ONE deep-walk yields BOTH the hidden-aliased set (classifier guard) and the
 	// visible→visible alias-target map (slot accept-set union), derived together so
 	// the two facets of `alias(symbol(X), $.target)` can never drift apart.
 	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(raw.rules);
 
-	classifyAndLogHiddenRules(rules, {
-		inline: raw.inline,
-		supertypes,
-		derivations,
-		applyPromotedRules,
-		hiddenChoicesWithNamedAliasMembers
-	});
+	classifyAndLogHiddenRules(rules, linkCtx);
 	// PR-P Task 2: promoteAndLogTerminalRules removed — terminals classify by shape at Assemble
 
 	// `inline = hidden && !aliased && !supertype`. A supertype ref is a DISPATCH
@@ -272,7 +291,7 @@ export function link(
 	const complexAliasTargetHidden = deriveComplexAliasTargetHidden(raw.rules);
 	const topLevelAliasBodies = collectTopLevelAliasBodies(
 		rules,
-		resolveCtx,
+		linkCtx,
 		complexAliasTargetHidden.size > 0 ? complexAliasTargetHidden : undefined
 	);
 	canonicalizeCatalogLiteralRefs(rules, kindEntries);
@@ -441,13 +460,12 @@ function canonicalizeRuleLiterals(
  * the derivation log.
  *
  * @param rules - Mutable resolved rules map; entries are replaced when
- *   classification succeeds and `applyPromotedRules` is true.
- * @param inline - Names listed in `grammar.inline`; they are hidden even
- *   without an underscore prefix.
- * @param supertypes - Set of kind names explicitly declared in `grammar.supertypes`.
- * @param derivations - Derivation log; promoted classifications are appended.
- * @param applyPromotedRules - When false, classifications are logged but the
- *   rule map is NOT mutated.
+ *   classification succeeds and `ctx.applyPromotedRules` is true.
+ * @param ctx - Link phase context. `ctx.inline` lists names from
+ *   `grammar.inline`, hidden even without an underscore prefix;
+ *   `ctx.supertypes` is the grammar-declared supertype set; `ctx.derivations`
+ *   gets promoted classifications appended; `ctx.applyPromotedRules` false
+ *   means classifications are logged but the rule map is NOT mutated.
  * @remarks
  *   A kind is "hidden" when its name starts with `_` OR appears in the
  *   grammar's `inline:` array — the latter catches grammars that don't follow
@@ -456,7 +474,7 @@ function canonicalizeRuleLiterals(
  *   promoter from producing bogus variant maps for kinds like ts `primary_type`
  *   that should be a single SupertypeRule.
  */
-function classifyAndLogHiddenRules(rules: Record<string, Rule>, ctx: HiddenClassifyCtx): void {
+function classifyAndLogHiddenRules(rules: Record<string, Rule>, ctx: LinkCtx): void {
 	const { inline, supertypes, derivations, applyPromotedRules } = ctx;
 	for (const [name, rule] of Object.entries(rules)) {
 		if (isHiddenKind(name, inline) || supertypes.has(name)) {
@@ -685,7 +703,7 @@ function collectAliasedByParents(rawRules: Record<string, Rule>): {
  */
 function mintContentAliasKinds(
 	rules: Record<string, Rule>,
-	ctx: ResolveCtx,
+	ctx: LinkCtx,
 	/**
 	 * DIAGNOSTIC-ONLY accumulators (§D-2a). When a visible twin `<name>` is
 	 * minted from a hidden symbol body `_<name>`, record `<name> → _<name>` in
@@ -725,7 +743,7 @@ function mintContentAliasKinds(
 					let body: Rule = content;
 					if (content.type === SYMBOL) {
 						const hiddenBody = (content as SymbolRule).name;
-						const target = ctx.allRules[hiddenBody];
+						const target = ctx.rules[hiddenBody];
 						if (target) body = target;
 						// DIAGNOSTIC-ONLY provenance: visible twin → hidden body kind.
 						if (contentAliasedFrom) contentAliasedFrom.set(value, hiddenBody);
@@ -754,15 +772,15 @@ function mintContentAliasKinds(
 			walk((rule as { content: Rule }).content, ownerName);
 		}
 	}
-	for (const [name, rule] of Object.entries(ctx.allRules)) walk(rule, name);
+	for (const [name, rule] of Object.entries(ctx.rules)) walk(rule, name);
 }
 
 function collectTopLevelAliasBodies(
 	resolvedRules: Record<string, Rule>,
-	ctx: ResolveCtx,
+	ctx: LinkCtx,
 	complexAliasTargetHidden?: ReadonlySet<string>
 ): Map<string, Rule> {
-	const rawRules = ctx.allRules;
+	const rawRules = ctx.rules;
 	const out = new Map<string, Rule>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
@@ -818,7 +836,7 @@ function extractTopLevelNamedAliasContent(rule: Rule): Rule | undefined {
 
 function dereferenceTopLevelAliasBody(
 	rule: Rule,
-	ctx: ResolveCtx,
+	ctx: LinkCtx,
 	resolvedRules: Record<string, Rule>,
 	seen: Set<string>
 ): Rule {
@@ -1568,8 +1586,8 @@ function isTerminalShape_allowBareTerm(rule: Rule): boolean {
 // resolveRule — recursive resolution of all reference types
 // ---------------------------------------------------------------------------
 
-function resolveRule(rule: Rule, ctx: ResolveCtx, currentName: string): Rule {
-	const { allRules, supertypes, externalRoles } = ctx;
+function resolveRule(rule: Rule, ctx: LinkCtx, currentName: string): Rule {
+	const { rules: allRules, supertypes, externalRoles } = ctx;
 	switch (rule.type) {
 		case SEQ:
 			return {
@@ -1678,10 +1696,8 @@ function resolveRule(rule: Rule, ctx: ResolveCtx, currentName: string): Rule {
  * Resolve a `repeat1` rule while preserving the `repeat1` type through Link.
  *
  * @param rule - The `repeat1` rule to resolve.
+ * @param ctx - Link phase context (`rules`/`supertypes`/`externalRoles`).
  * @param currentName - Name of the rule being resolved (for error context).
- * @param allRules - Full grammar rule map.
- * @param supertypes - Set of grammar-declared supertype names.
- * @param externalRoles - Pre-bound external role map (mutated by role detection).
  * @returns The resolved repeat1 rule with its content recursively resolved.
  * @remarks
  *   Downstream derivation reads the `repeat1` type to stamp `nonEmpty: true`
@@ -1690,7 +1706,7 @@ function resolveRule(rule: Rule, ctx: ResolveCtx, currentName: string): Rule {
  *   `repeat1` → `repeat` here unconditionally, which erased the non-empty
  *   signal.
  */
-function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: ResolveCtx, currentName: string): Rule {
+function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, currentName: string): Rule {
 	return {
 		...rule,
 		content: resolveRule(rule.content, ctx, currentName)
@@ -1702,17 +1718,17 @@ function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: ResolveCtx, cu
  *
  * @param content - The body of the alias (typically a symbol referencing the
  *   original kind).
+ * @param ctx - Link phase context; `ctx.supertypes` are not valid
+ *   aliased-from sources.
  * @param targetName - The alias target kind name (the visible kind produced in
  *   the parse tree).
- * @param supertypes - Set of supertype names; supertypes are not valid
- *   aliased-from sources.
  * @returns A `SymbolRule` for `targetName`, with `aliasedFrom` set when the
  *   body resolves to a concrete non-supertype symbol.
  * @remarks
  *   Preserving alias provenance lets the wrap emitter rewrite `$type` at
  *   drill-in via `drillAs()` for alias-target rewrites.
  */
-function resolveNamedAliasWithProvenance(content: Rule, ctx: ResolveCtx, targetName: string): Rule {
+function resolveNamedAliasWithProvenance(content: Rule, ctx: LinkCtx, targetName: string): Rule {
 	const aliasedFrom = extractAliasedFromName(content, ctx.supertypes);
 	const sym: SymbolRule = aliasedFrom
 		? { type: 'symbol', name: targetName, aliasedFrom, inline: false }
@@ -1724,9 +1740,9 @@ function resolveNamedAliasWithProvenance(content: Rule, ctx: ResolveCtx, targetN
  * Resolve a symbol rule, inlining it when it references an external role token.
  *
  * @param rule - The symbol rule to resolve.
- * @param allRules - Full grammar rule map used for legacy structural detection.
- * @param externalRoles - Pre-bound external role map; entries are added when
- *   a dummy role rule is detected (legacy path).
+ * @param ctx - Link phase context; `ctx.rules` is used for legacy structural
+ *   detection, `ctx.externalRoles` is the pre-bound external role map (entries
+ *   are added when a dummy role rule is detected — legacy path).
  * @returns An inlined role rule (`indent`/`dedent`/`newline`) when the symbol
  *   resolves to an external role; the original symbol rule otherwise.
  * @remarks
@@ -1740,8 +1756,8 @@ function resolveNamedAliasWithProvenance(content: Rule, ctx: ResolveCtx, targetN
  *     downstream consumers.
  *   Visible symbols that don't match either path are returned unchanged.
  */
-function resolveSymbolRoleOrPass(rule: SymbolRule, ctx: ResolveCtx): Rule {
-	const { allRules, externalRoles } = ctx;
+function resolveSymbolRoleOrPass(rule: SymbolRule, ctx: LinkCtx): Rule {
+	const { rules: allRules, externalRoles } = ctx;
 	const preBound = externalRoles.get(rule.name);
 	if (preBound) {
 		return { type: preBound.role } as Rule;
@@ -1758,7 +1774,7 @@ function resolveSymbolRoleOrPass(rule: SymbolRule, ctx: ResolveCtx): Rule {
 // classifyHiddenRule — determine what a hidden rule IS
 // ---------------------------------------------------------------------------
 
-function classifyHiddenRule(rule: Rule, ctx: HiddenClassifyCtx, name: string): Rule {
+function classifyHiddenRule(rule: Rule, ctx: LinkCtx, name: string): Rule {
 	// Already classified (e.g., enum from Evaluate)
 	// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
 	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
@@ -1780,9 +1796,10 @@ function classifyHiddenRule(rule: Rule, ctx: HiddenClassifyCtx, name: string): R
 /**
  * Classify a hidden `choice` rule per the spec taxonomy.
  *
- * @param name - The grammar kind name (used to check the grammar's supertypes).
  * @param rule - A `ChoiceRule` to classify.
- * @param supertypes - Set of kind names explicitly declared in `grammar.supertypes`.
+ * @param ctx - Link phase context; `ctx.supertypes` are kind names explicitly
+ *   declared in `grammar.supertypes`.
+ * @param name - The grammar kind name (used to check `ctx.supertypes`).
  * @returns An `EnumRule`, `SupertypeRule`, or the original rule unchanged.
  * @remarks
  *   Classification:
@@ -1800,7 +1817,7 @@ function classifyHiddenRule(rule: Rule, ctx: HiddenClassifyCtx, name: string): R
  *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
  *   structural members (seq, field, nested choice/optional/repeat) disqualify.
  */
-function classifyHiddenChoiceRule(rule: ChoiceRule, ctx: HiddenClassifyCtx, name: string): Rule {
+function classifyHiddenChoiceRule(rule: ChoiceRule, ctx: LinkCtx, name: string): Rule {
 	const { supertypes, hiddenChoicesWithNamedAliasMembers } = ctx;
 	if (rule.members.every((m): m is StringRule => m.type === STRING)) {
 		return normalizeEnumMembers(rule.members, 'promoted');
@@ -1819,7 +1836,7 @@ function classifyHiddenChoiceRule(rule: ChoiceRule, ctx: HiddenClassifyCtx, name
 		m.type === SYMBOL || isEnumChoiceRule(m) || m.type === STRING;
 	const allCompatible = rule.members.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
-		const subtypes = collectSubtypeNames(rule);
+		const subtypes = collectSubtypeNames(rule, ctx);
 		// Only promote if we actually resolved subtype names. An empty
 		// subtypes list means the choice members aren't symbols and we
 		// can't project a union — fall through to leave-as-is.
@@ -1869,8 +1886,12 @@ function classifyHiddenSeqRule(name: string, rule: SeqRule): Rule {
  * tree-sitter produces for aliased nodes). `seq` members are walked
  * for the rare hybrid case where a supertype branch wraps a single
  * symbol in a seq.
+ *
+ * @param rule - The rule subtree to walk for subtype names.
+ * @param ctx - Link phase context; `ctx.wordMatcher` decides whether a bare
+ *   string-literal member lexes as a word (keyword) vs punctuation.
  */
-function collectSubtypeNames(rule: Rule): string[] {
+function collectSubtypeNames(rule: Rule, ctx: LinkCtx): string[] {
 	const names: string[] = [];
 	const visit = (current: Rule): void => {
 		switch (current.type) {
@@ -1885,10 +1906,17 @@ function collectSubtypeNames(rule: Rule): string[] {
 					visit(current.content);
 				}
 				return;
-			case STRING:
-				// grammar-token shape (name vs punctuation) — NOT util/isAsciiIdentifier; matchesWordShape candidate.
-				if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(current.value)) names.push(current.value);
+			case STRING: {
+				// Grammar-token shape (name vs punctuation) — routed through the
+				// grammar's own word-matcher (R12 Camp A); single source of truth
+				// via matchesWordShape, replacing the former hardcoded
+				// identifier-shape regex.
+				const isWordShape = ctx.wordMatcher
+					? ctx.wordMatcher(current.value)
+					: matchesWordShape(current.value, undefined);
+				if (!isWordShape) names.push(current.value);
 				return;
+			}
 			case CHOICE:
 			case SEQ:
 				for (const member of current.members) visit(member);
