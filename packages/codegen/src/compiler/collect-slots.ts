@@ -32,7 +32,7 @@
  */
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, Multiplicity, RuleSource } from '../types/rule.ts';
+import type { AnyRule, RuleBase, Multiplicity, RuleSource } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
@@ -58,8 +58,8 @@ import { findRepeatFlag } from '../dsl/rule-transforms.ts';
  * separator), but an inner arm carries the structured separator object set by
  * `applyWrapperDeletion`.
  */
-function findNestedSeparator(rule: Rule): Rule['separator'] {
-	const sep = rule.separator;
+function findNestedSeparator(rule: AnyRule): RuleBase<'optimize'>['separator'] {
+	const sep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator;
 	if (sep !== undefined) return sep;
 	switch (rule.type) {
 		case SEQ:
@@ -135,7 +135,7 @@ export function drainUnnamedChoiceSlots(): string[] {
  * the choice slot correctly named instead of defaulting to `content`. Thin
  * adapter over the shared {@link sharedArmAttrs} arm-walk.
  */
-function sharedArmFieldName(rule: Rule): string | undefined {
+function sharedArmFieldName(rule: AnyRule): string | undefined {
 	return sharedArmAttrs(rule).fieldName;
 }
 
@@ -146,7 +146,7 @@ function sharedArmFieldName(rule: Rule): string | undefined {
  * simplify left on an inner arm (e.g. `choice(choice(X){nonEmptyArray}, X)`)
  * up to the outer choice slot. Thin adapter over {@link sharedArmAttrs}.
  */
-function strongestArmMultiplicity(rule: Rule): Multiplicity | undefined {
+function strongestArmMultiplicity(rule: AnyRule): Multiplicity | undefined {
 	return sharedArmAttrs(rule).strongestMultiplicity;
 }
 
@@ -155,7 +155,7 @@ function strongestArmMultiplicity(rule: Rule): Multiplicity | undefined {
  * nonterminal slot boundary) carries a `fieldName`. Used to decide whether a
  * choice arm is "structural" (contributes named fields) vs a bare union member.
  */
-function carriesNamedField(rule: Rule): boolean {
+function carriesNamedField(rule: AnyRule): boolean {
 	if ((rule as { fieldName?: string }).fieldName !== undefined) return true;
 	switch (rule.type) {
 		case SEQ:
@@ -169,7 +169,7 @@ function carriesNamedField(rule: Rule): boolean {
 		case GROUP:
 		case TOKEN:
 		case ALIAS:
-			return carriesNamedField((rule as { content: Rule }).content);
+			return carriesNamedField((rule as { content: AnyRule }).content);
 		default:
 			return false;
 	}
@@ -181,7 +181,7 @@ function carriesNamedField(rule: Rule): boolean {
  * slots rather than forming a single value union. Such a choice must be
  * distributed into its arms (and merged by name), not collapsed to one slot.
  */
-function isStructuralChoice(rule: Extract<Rule, { type: 'choice' }>): boolean {
+function isStructuralChoice(rule: Extract<AnyRule, { type: 'choice' }>): boolean {
 	// All arms field-named with the SAME name → operator-enum style; that is a
 	// single slot recovered by `sharedArmFieldName`, NOT structural.
 	if (sharedArmFieldName(rule) !== undefined) return false;
@@ -254,7 +254,7 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 }
 
 /** True iff this node is a slot-bearing nonterminal (intrinsic or pushed-down). */
-function isSlotNode(rule: Rule): boolean {
+function isSlotNode(rule: AnyRule): boolean {
 	if ((rule as { nonterminal?: boolean }).nonterminal === true) return true;
 	return isNonterminalRuleType(rule);
 }
@@ -277,7 +277,7 @@ function isSlotNode(rule: Rule): boolean {
  * group/variant ancestor (push-down handles the seq-member case separately
  * by relaxing in the seq push-down itself).
  */
-function slotMultiplicity(rule: Rule, inherited: Multiplicity): Multiplicity {
+function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity {
 	const own = (rule as { multiplicity?: Multiplicity }).multiplicity;
 	if (own !== undefined) return own;
 	// Relax an inherited nonEmptyArray: a member of a repeat1-wrapped group is
@@ -293,11 +293,11 @@ function slotMultiplicity(rule: Rule, inherited: Multiplicity): Multiplicity {
  * used only to label the unnamed-choice warning.
  */
 function buildSlot(
-	rule: Rule,
+	rule: AnyRule,
 	kindForName: string | undefined,
 	kindEntries: readonly GeneratedKindEntry[] | undefined,
 	inherited: Multiplicity,
-	inheritedSeparator: Rule['separator']
+	inheritedSeparator: RuleBase<'optimize'>['separator']
 ): AssembledNonterminal | null {
 	// A choice that carries no multiplicity of its own may still be an array
 	// slot: simplify folds `choice(commaSep1(X), X)` into a nested
@@ -445,11 +445,11 @@ function buildSlot(
  * @param kindEntries generated kind table (for literal → kind resolution)
  */
 export function collectSlots(
-	rule: Rule,
+	rule: AnyRule,
 	kindForName?: string,
 	kindEntries?: readonly GeneratedKindEntry[],
 	inherited: Multiplicity = 'single',
-	inheritedSeparator: Rule['separator'] = undefined
+	inheritedSeparator: RuleBase<'optimize'>['separator'] = undefined
 ): AssembledNonterminal[] {
 	switch (rule.type) {
 		case SEQ: {
@@ -518,7 +518,7 @@ export function collectSlots(
  * with the right glue.
  */
 
-export function findRepeatSeparator(rule: Rule): string | undefined {
+export function findRepeatSeparator(rule: AnyRule): string | undefined {
     switch (rule.type) {
         case REPEAT:
         case REPEAT1:
@@ -552,12 +552,12 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
  * any trailing repeat.
  */
 
-export function findFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): Set<string> {
+export function findFieldsWithRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): Set<string> {
     const out = new Set<string>();
     collectFieldsWithRepeatFlag(rule, flag, out);
     return out;
 }
-function collectFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading', acc: Set<string>): void {
+function collectFieldsWithRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading', acc: Set<string>): void {
     switch (rule.type) {
         case FIELD:
             if (findRepeatFlag(rule.content, flag)) acc.add(rule.name);

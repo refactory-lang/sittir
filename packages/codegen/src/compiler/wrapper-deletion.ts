@@ -3,7 +3,7 @@
  *
  * Pushes modifier wrappers (optional / field / repeat / repeat1) down to
  * leaf attributes (fieldName, multiplicity, separator) on RuleBase.
- * The result type is RenderRule: the Rule union minus the four wrapper
+ * The result type is RenderRule: the Rule<'link'> union minus the four wrapper
  * variants, so consumers that only see RenderRule cannot accidentally
  * re-wrap a leaf.
  *
@@ -35,7 +35,7 @@ import { combineMultiplicity } from '../dsl/rule-attrs.ts';
 interface WrapperAttrs {
 	fieldName?: string;
 	multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
-	separator?: Rule['separator'];
+	separator?: Rule<'link'>['separator'];
 	aliasedFrom?: string;
 	aliasNamed?: boolean;
 	inline?: boolean;
@@ -51,7 +51,7 @@ interface WrapperAttrs {
  * consecutive wrappers, then recurse structurally and stamp collected
  * attrs onto the leaf.
  */
-function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
+function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 	switch (rule.type) {
 		// ----- Wrapper cases — peel and accumulate -----
 
@@ -250,7 +250,7 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
  * We only include keys that have actual values to avoid polluting the object
  * with `undefined`-valued fields.
  */
-function stampAttrs(rule: Rule, attrs: WrapperAttrs): RenderRule {
+function stampAttrs(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 	if (
 		attrs.fieldName === undefined &&
 		attrs.multiplicity === undefined &&
@@ -284,7 +284,7 @@ function stampAttrs(rule: Rule, attrs: WrapperAttrs): RenderRule {
  * Structural rules (seq / choice / variant / group / clause / terminal /
  * polymorph) are recursed into so the entire rule tree is wrapper-free.
  */
-export function deleteWrapper(rule: Rule): RenderRule {
+export function deleteWrapper(rule: Rule<'link'>): RenderRule {
 	return deleteWrapperWith(rule, {});
 }
 
@@ -295,7 +295,7 @@ export function deleteWrapper(rule: Rule): RenderRule {
  * This is the map-form used by `optimize()` to produce the `renderRules`
  * snapshot.
  */
-export function applyWrapperDeletion(rules: Record<string, Rule>): Record<string, RenderRule> {
+export function applyWrapperDeletion(rules: Record<string, Rule<'link'>>): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		// Fuse separated-list head+repeat pairs into one multi slot AFTER

@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { normalizeGrammar, NormalizeCtx } from './normalize.ts';
-import { assemble, hydrateSlotRefs, classifyNode } from './assemble.ts';
+import { assemble, AssembleCtx, hydrateSlotRefs, classifyNode } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
@@ -238,9 +238,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	tracePhaseRules('optimize', optimized.rules);
 	tracePhaseRules('simplify', optimized.simplifiedRules);
 
-	// Phase 4: Assemble — assemble() builds its own AssembleCtx internally
-	// (R12 PR-3) from `optimized` + `generatedIdTables`, owning the node map.
-	const nodeMap = assemble(optimized, generatedIdTables);
+	// Phase 4: Assemble — caller-owned ctx (R12): built from `optimized` via
+	// the canonical factory, threading the pipeline's live DiagnosticSink.
+	const nodeMap = assemble(optimized, AssembleCtx.from(optimized, generatedIdTables, diagnostics));
 	traceAssembleNodes('assemble', nodeMap.nodes);
 
 	// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so

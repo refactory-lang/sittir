@@ -26,7 +26,7 @@ import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../compiler/generated-metadata.ts';
 import { runTemplateEmitter } from '../emitters/templates.ts';
@@ -152,7 +152,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
 	const optimized = normalizeGrammar(linked);
-	const nodeMap = assemble(optimized);
+	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
 	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
@@ -296,7 +296,7 @@ async function buildRustFixtureForParity() {
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
 	const optimized = normalizeGrammar(linked);
-	const nodeMap = assemble(optimized);
+	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 
 	// loadGeneratedIdTables uses process.cwd() which is packages/codegen when vitest runs.
 	// Use the repo root (anchored to this file) to reliably locate parser.c.

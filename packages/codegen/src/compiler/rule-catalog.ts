@@ -13,7 +13,7 @@ import type { Rule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 
 interface BuildResult {
-	readonly rule: Rule;
+	readonly rule: Rule<'evaluate'>;
 	readonly id: RuleId;
 	readonly classification: RuleClassification;
 }
@@ -25,7 +25,7 @@ interface ClassificationForce {
 }
 
 export interface RuleCatalogBuildResult {
-	readonly rules: Record<string, Rule>;
+	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly ruleCatalog: RuleCatalog;
 }
 
@@ -38,13 +38,13 @@ export function createEmptyRuleCatalog(): RuleCatalog {
 }
 
 export function buildRuleCatalog(
-	rules: Record<string, Rule>,
+	rules: Record<string, Rule<'evaluate'>>,
 	provenanceByKind: ReadonlyMap<string, RuleProvenance> = new Map()
 ): RuleCatalogBuildResult {
 	const byId = new Map<RuleId, RuleCatalogEntry>();
 	const rootsByKind = new Map<string, RuleId>();
 	const classificationById = new Map<RuleId, RuleClassification>();
-	const identifiedRules: Record<string, Rule> = {};
+	const identifiedRules: Record<string, Rule<'evaluate'>> = {};
 
 	for (const ownerKind of Object.keys(rules).sort()) {
 		const rule = rules[ownerKind];
@@ -78,7 +78,7 @@ export function attachReferenceRuleIds(references: readonly SymbolRef[], ruleCat
 }
 
 interface IdentifyParams {
-	readonly rule: Rule;
+	readonly rule: Rule<'evaluate'>;
 	readonly ownerKind: string;
 	readonly parentId: RuleId | undefined;
 	readonly path: readonly RulePathSegment[];
@@ -110,7 +110,7 @@ function identifyRule(params: IdentifyParams): BuildResult {
 }
 
 function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult[] {
-	const childParams = (rule: Rule, segment: RulePathSegment, force = {}) =>
+	const childParams = (rule: Rule<'evaluate'>, segment: RulePathSegment, force = {}) =>
 		identifyRule({
 			rule,
 			ownerKind: params.ownerKind,
@@ -169,7 +169,7 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 	}
 }
 
-function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly BuildResult[]): Rule {
+function withIdentifiedChildren(rule: Rule<'evaluate'>, id: RuleId, children: readonly BuildResult[]): Rule<'evaluate'> {
 	switch (rule.type) {
 		case SEQ:
 		case CHOICE:
@@ -198,7 +198,7 @@ function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly Build
 }
 
 function classifyRule(
-	rule: Rule,
+	rule: Rule<'evaluate'>,
 	id: RuleId,
 	children: readonly BuildResult[],
 	force: ClassificationForce
@@ -220,10 +220,10 @@ function classifyRule(
  *
  * Both {@link classifyIntrinsic} (catalog build, classifies pre-built
  * `BuildResult` children) and {@link isNonterminalRuleType} (children-free
- * predicate over a bare `Rule`) call this with their own computation of
+ * predicate over a bare `Rule<'evaluate'>`) call this with their own computation of
  * `anyChildNonterminal`, so the per-rule-type table lives in one place.
  */
-function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): RuleClassification['kind'] {
+function classifyByType(ruleType: Rule<'evaluate'>['type'], anyChildNonterminal: boolean): RuleClassification['kind'] {
 	switch (ruleType) {
 		case SYMBOL:
 		case SUPERTYPE:
@@ -238,7 +238,7 @@ function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): R
 			// sequence (array slot) even when its content is terminal.
 			return 'nonterminal';
 		case STRING:
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'evaluate'> union.
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
@@ -257,13 +257,13 @@ function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): R
 	}
 }
 
-function classifyIntrinsic(rule: Rule, children: readonly BuildResult[]): RuleClassification['kind'] {
+function classifyIntrinsic(rule: Rule<'evaluate'>, children: readonly BuildResult[]): RuleClassification['kind'] {
 	const anyChildNonterminal = children.some((child) => child.classification.kind === 'nonterminal');
 	return classifyByType(rule.type, anyChildNonterminal);
 }
 
 /**
- * Pure, children-free terminality predicate over a {@link Rule}.
+ * Pure, children-free terminality predicate over a {@link Rule<'evaluate'>}.
  *
  * Shares the per-rule-type decision table with {@link classifyIntrinsic} via
  * {@link classifyByType}, but recurses on the rule's own children instead of
@@ -272,12 +272,12 @@ function classifyIntrinsic(rule: Rule, children: readonly BuildResult[]): RuleCl
  *
  * Returns `true` when the rule is intrinsically a slot-bearing nonterminal.
  */
-export function isNonterminalRuleType(rule: Rule): boolean {
+export function isNonterminalRuleType(rule: Rule<'evaluate'>): boolean {
 	const anyChildNonterminal = ruleChildren(rule).some(isNonterminalRuleType);
 	return classifyByType(rule.type, anyChildNonterminal) === 'nonterminal';
 }
 
-function ruleChildren(rule: Rule): readonly Rule[] {
+function ruleChildren(rule: Rule<'evaluate'>): readonly Rule<'evaluate'>[] {
 	switch (rule.type) {
 		case TOKEN:
 		case FIELD:
@@ -285,7 +285,7 @@ function ruleChildren(rule: Rule): readonly Rule[] {
 		case OPTIONAL:
 		case VARIANT:
 		case GROUP:
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'evaluate'> union.
 			return [rule.content];
 		case SEQ:
 			return rule.members;

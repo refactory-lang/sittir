@@ -19,7 +19,7 @@
  * too; splitting it into `./node-map.ts` is a later step.
  */
 
-import type { Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
+import type { AnyRule, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
@@ -43,7 +43,7 @@ export type RulePathSegment =
 export interface RuleCatalogEntry {
 	readonly id: RuleId;
 	readonly ownerKind: string;
-	readonly ruleType: Rule['type'];
+	readonly ruleType: AnyRule['type'];
 	readonly parentId?: RuleId;
 	readonly path: readonly RulePathSegment[];
 	readonly childIds: readonly RuleId[];
@@ -134,7 +134,7 @@ export interface GeneratedMetadataCatalog {
 
 export interface RawGrammar {
 	readonly name: string;
-	readonly rules: Record<string, Rule>;
+	readonly rules: Record<string, Rule<'evaluate'>>;
 	readonly ruleCatalog: RuleCatalog;
 	readonly extras: string[];
 	readonly externals: string[];
@@ -192,7 +192,7 @@ export interface RawGrammar {
 	 * `_outer_block_doc_comment_marker`); values are the sittir-side Rule
 	 * bodies (e.g. `{ type: 'string', value: '!' }`).
 	 */
-	readonly renderAs?: Record<string, Rule>;
+	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 }
 
 /**
@@ -225,7 +225,7 @@ export interface SuggestedOverride {
 	 */
 	readonly path: (string | number)[];
 	/** The rule fragment the override would emit (typically a `field()` wrapper). */
-	readonly rule: Rule;
+	readonly rule: Rule<'evaluate'>;
 	/** Human-readable derivation tag — `field-name-inference: 6/6 ...`. */
 	readonly derivation: string;
 	/** Confidence based on agreement ratio. */
@@ -317,7 +317,7 @@ export interface PromotedRuleEntry {
 
 export interface LinkedGrammar {
 	readonly name: string;
-	readonly rules: Record<string, Rule>;
+	readonly rules: Record<string, Rule<'link'>>;
 	readonly supertypes: Set<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly externals?: readonly string[];
@@ -350,7 +350,7 @@ export interface LinkedGrammar {
 	 *
 	 * Optional so hand-constructed test fixtures can omit it.
 	 */
-	readonly topLevelAliasBodies?: Map<string, Rule>;
+	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
 	/**
@@ -414,9 +414,9 @@ export interface IncludeFilter {
 
 export interface OptimizedGrammar {
 	readonly name: string;
-	readonly rules: Record<string, Rule>;
+	readonly rules: Record<string, Rule<'link'>>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
-	readonly topLevelAliasBodies?: Map<string, Rule>;
+	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	/** Propagated from {@link LinkedGrammar.parentAliasedKinds}. */
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	/** Propagated from {@link LinkedGrammar.visibleAliasTargets}. */
@@ -497,7 +497,7 @@ export interface NodeMap {
 	 * the walker falls back to `$$$CHILDREN` which is wrong for hidden
 	 * helpers whose fields get promoted onto the parent node.
 	 */
-	readonly rules?: Record<string, Rule>;
+	readonly rules?: Record<string, Rule<'link'>>;
 	/**
 	 * Pre-Optimize rules (from Link). The suggester needs these for
 	 * polymorph-path computation: `findAllPolymorphCandidates` paths
@@ -509,7 +509,7 @@ export interface NodeMap {
 	 * emitted `variant()` keys then fail when applied to the base
 	 * grammar's prec-wrapped-seq-of-choice shape.
 	 */
-	readonly linkedRules?: Record<string, Rule>;
+	readonly linkedRules?: Record<string, Rule<'link'>>;
 	/**
 	 * Grammar's `word` rule kind — the lexer's word-recognition
 	 * production. Tree-sitter uses this to disambiguate keywords

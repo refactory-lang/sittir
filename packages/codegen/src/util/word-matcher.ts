@@ -13,7 +13,7 @@
  */
 
 import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule } from '../types/rule.ts';
+import type { AnyRule, Rule } from '../types/rule.ts';
 
 /**
  * Compile the grammar's `word` rule into a full-match RegExp so callers can
@@ -33,7 +33,7 @@ import type { Rule } from '../types/rule.ts';
  */
 export function compileWordMatcher(
 	word: string | null | undefined,
-	rules: Record<string, Rule>
+	rules: Record<string, AnyRule>
 ): RegExp | undefined {
 	if (!word) return undefined;
 	const wordRule = rules[word];
@@ -77,7 +77,7 @@ export function matchesWordShape(value: string, wordMatcher: RegExp | undefined)
  * symbol references (which would need another rule lookup) and
  * anything outside the supported text-terminal shapes.
  */
-function ruleToRegexSource(rule: Rule): string | null {
+function ruleToRegexSource(rule: AnyRule): string | null {
 	switch (rule.type) {
 		case PATTERN:
 			return rule.value;
@@ -85,7 +85,7 @@ function ruleToRegexSource(rule: Rule): string | null {
 			return escapeRegexLiteral(rule.value);
 		case TOKEN:
 		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
-			return ruleToRegexSource((rule as { content: Rule }).content);
+			return ruleToRegexSource((rule as { content: AnyRule }).content);
 		case SEQ: {
 			const parts: string[] = [];
 			for (const m of rule.members) {

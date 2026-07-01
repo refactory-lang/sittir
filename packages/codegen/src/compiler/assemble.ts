@@ -2,7 +2,7 @@
  * compiler/assemble.ts — Assemble phase.
  *
  * First time nodes appear. All metadata (required, multiple, contentTypes,
- * detectToken, modelType) derived from the rule tree — not carried on Rule nodes.
+ * detectToken, modelType) derived from the rule tree — not carried on Rule<'link'> nodes.
  */
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
@@ -22,8 +22,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { isLinkSymbol, isEnumChoiceRule } from '../types/rule.ts';
-import { deleteWrapper } from './wrapper-deletion.ts';
-import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
+import type { OptimizedGrammar, NodeMap, SignaturePool } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
 import {
@@ -86,20 +85,23 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
  */
 export class AssembleCtx extends BaseCtx<SimplifiedRule> {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
-	readonly rawRules: Record<string, Rule>;
-	readonly topLevelAliasBodies: ReadonlyMap<string, Rule>;
+	readonly generatedIdTables?: GeneratedIdTables;
+	readonly rawRules: Record<string, Rule<'link'>>;
+	readonly topLevelAliasBodies: ReadonlyMap<string, Rule<'link'>>;
 	private readonly _nodes: Map<string, AssembledNode>;
 
 	constructor(
 		init: BaseCtxInit<SimplifiedRule> & {
-			rawRules: Record<string, Rule>;
+			rawRules: Record<string, Rule<'link'>>;
+			generatedIdTables?: GeneratedIdTables;
 			kindEntries?: readonly GeneratedKindEntry[];
-			topLevelAliasBodies?: ReadonlyMap<string, Rule>;
+			topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
 			nodes?: Map<string, AssembledNode>;
 		}
 	) {
 		super(init);
 		this.kindEntries = init.kindEntries;
+		this.generatedIdTables = init.generatedIdTables;
 		this.rawRules = init.rawRules;
 		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
 		this._nodes = init.nodes ?? new Map();
@@ -108,6 +110,28 @@ export class AssembleCtx extends BaseCtx<SimplifiedRule> {
 	/** Live node-map accumulator built during assemble(); post-passes read peers from it. */
 	get nodes(): Map<string, AssembledNode> {
 		return this._nodes;
+	}
+
+	/**
+	 * Canonical construction from an OptimizedGrammar — the ONE derivation of
+	 * the assemble view (simplified rules on `rules`, raw rules on `rawRules`,
+	 * the grammar word-matcher, alias bodies). Callers own the ctx (R12):
+	 * generate.ts passes its live DiagnosticSink; tests take the default.
+	 */
+	static from(
+		optimized: OptimizedGrammar,
+		generatedIdTables?: GeneratedIdTables,
+		diagnostics: DiagnosticSink = new DiagnosticSink()
+	): AssembleCtx {
+		const wordMatcherRegex = compileWordMatcher(optimized.word, optimized.rules);
+		return new AssembleCtx({
+			rules: optimized.simplifiedRules,
+			rawRules: optimized.rules,
+			diagnostics,
+			wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
+			generatedIdTables,
+			topLevelAliasBodies: optimized.topLevelAliasBodies ?? new Map()
+		});
 	}
 }
 
@@ -120,25 +144,12 @@ export interface AssembledNodeMap extends NodeMap {
 // ---------------------------------------------------------------------------
 // assemble() — main entry point
 // ---------------------------------------------------------------------------
-
-export function assemble(
-	optimized: OptimizedGrammar,
-	generatedIdTables?: GeneratedIdTables,
-	assembleCtx?: AssembleCtx
-): AssembledNodeMap {
+export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): AssembledNodeMap {
 	const wordMatcherRegex = compileWordMatcher(optimized.word, optimized.rules);
-	const ctx =
-		assembleCtx ??
-		new AssembleCtx({
-			rules: optimized.simplifiedRules,
-			rawRules: optimized.rules,
-			diagnostics: new DiagnosticSink(),
-			wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
-			kindEntries: generatedIdTables ? collectGeneratedKindEntries(generatedIdTables) : undefined,
-			topLevelAliasBodies: optimized.topLevelAliasBodies ?? new Map()
-		});
 	const nodes = ctx.nodes;
-	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(generatedIdTables);
+	// collectGeneratedKindEntries(undefined) is []; keep the non-optional
+	// entries array downstream constructors expect.
+	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
 	resetParseKindCollisionDiagnostics();
 	resetDeriveShapeDiagnostics();
 	// Parents that went through Link's variant() push-down keep their
@@ -201,7 +212,7 @@ export function assemble(
 						kind,
 						new AssembledBranch(
 							kind,
-							inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
+							inlinedRule as SeqRule<'link'> | ChoiceRule<'link'> | RepeatRule | Repeat1Rule,
 							simplifiedRule,
 							renderRule,
 							{
@@ -222,24 +233,24 @@ export function assemble(
 				case 'keyword': {
 					nodes.set(
 						kind,
-						new AssembledKeyword(kind, assemblyRule as StringRule, { kindEntries })
+						new AssembledKeyword(kind, assemblyRule as StringRule<'link'>, { kindEntries })
 					);
 					break;
 				}
 				case 'token': {
-					// Hidden — no factoryName; token kinds have StringRule bodies
-					nodes.set(kind, new AssembledToken(kind, assemblyRule as StringRule, { kindEntries }));
+					// Hidden — no factoryName; token kinds have StringRule<'link'> bodies
+					nodes.set(kind, new AssembledToken(kind, assemblyRule as StringRule<'link'>, { kindEntries }));
 					break;
 				}
 				case 'enum': {
-					nodes.set(kind, new AssembledEnum(kind, assemblyRule as EnumRule, { kindEntries }));
+					nodes.set(kind, new AssembledEnum(kind, assemblyRule as EnumRule<'link'>, { kindEntries }));
 					break;
 				}
 				case 'supertype': {
 					const subtypes = resolveSupertypeSubtypes(assemblyRule, ctx);
 					nodes.set(
 						kind,
-						new AssembledSupertype(kind, assemblyRule as SupertypeRule | ChoiceRule, subtypes)
+						new AssembledSupertype(kind, assemblyRule as SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes)
 					);
 					break;
 				}
@@ -346,16 +357,16 @@ export function assemble(
 			const slotsByName = new Map<string, AssembledNonterminal>();
 			for (const slot of allSlotsOf(node)) slotsByName.set(slot.name, slot);
 			// Walk the raw rule tree collecting FieldRule ids by name.
-			const walkForFieldIds = (r: Rule): void => {
+			const walkForFieldIds = (r: Rule<'link'>): void => {
 				if (r.type === FIELD && r.id) {
 					const slot = slotsByName.get(r.name);
 					if (slot && !slotByRuleId.has(r.id)) slotByRuleId.set(r.id, slot);
 				}
 				if ('members' in r && Array.isArray((r as { members?: unknown }).members)) {
-					for (const m of (r as { members: Rule[] }).members) walkForFieldIds(m);
+					for (const m of (r as { members: Rule<'link'>[] }).members) walkForFieldIds(m);
 				}
-				if ('content' in r && (r as { content?: Rule }).content) {
-					walkForFieldIds((r as { content: Rule }).content);
+				if ('content' in r && (r as { content?: Rule<'link'> }).content) {
+					walkForFieldIds((r as { content: Rule<'link'> }).content);
 				}
 			};
 			walkForFieldIds(rawRule);
@@ -407,15 +418,15 @@ export function assemble(
  * layer deep and the slot model would still treat references as
  * required-single.
  */
-function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<string> {
+function collectOptionalBodyKinds(rules: Record<string, Rule<'link'>>): ReadonlySet<string> {
 	const out = new Set<string>();
-	const isBlank = (r: Rule): boolean =>
+	const isBlank = (r: Rule<'link'>): boolean =>
 		(r.type === CHOICE && r.members.length === 0) ||
 		(r.type === SEQ && r.members.length === 0);
-	const unwrap = (r: Rule): Rule => {
+	const unwrap = (r: Rule<'link'>): Rule<'link'> => {
 		if (r.type === ALIAS || r.type === TOKEN) {
-			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
-			return unwrap((r as { content: Rule }).content);
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+			return unwrap((r as { content: Rule<'link'> }).content);
 		}
 		return r;
 	};
@@ -445,21 +456,21 @@ function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<stri
  *   supertype union after resolving any hidden-rule indirections.
  * @remarks
  *   Sources in priority order:
- *   1. `SupertypeRule.subtypes` — Link's pre-computed list.
+ *   1. `SupertypeRule<'link'>.subtypes` — Link's pre-computed list.
  *   2. `choice` members — each `symbol` child's name (fallback).
  *   3. Empty list — for any other rule shape (best-effort).
  *
  *   Hidden names (`_foo`) are then resolved to the concrete kinds that
  *   tree-sitter actually surfaces at runtime via {@link resolveHiddenSubtypes}.
  */
-function resolveSupertypeSubtypes(rule: Rule, ctx: AssembleCtx): string[] {
+function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[] {
 	let subtypes: string[];
 	if (rule.type === SUPERTYPE) {
 		subtypes = rule.subtypes;
 	} else if (rule.type === CHOICE) {
 		subtypes = rule.members
 			.map((m) => (m.type === 'variant' ? m.content : m))
-			.filter((m): m is SymbolRule => m.type === 'symbol')
+			.filter((m): m is SymbolRule<'link'> => m.type === 'symbol')
 			.map((m) => m.name);
 	} else {
 		subtypes = [];
@@ -472,7 +483,7 @@ function resolveSupertypeSubtypes(rule: Rule, ctx: AssembleCtx): string[] {
 }
 
 /**
- * Unwrap a `GroupRule` to obtain the inner content rule, its simplified view,
+ * Unwrap a `GroupRule<'link'>` to obtain the inner content rule, its simplified view,
  * and its wrapper-deleted RenderRule.
  *
  * @param rule - The raw rule from `optimized.rules`.
@@ -483,27 +494,27 @@ function resolveSupertypeSubtypes(rule: Rule, ctx: AssembleCtx): string[] {
  *   the simplified view of that inner content; `groupRenderRule` — the
  *   wrapper-deleted view of the inner content.
  * @remarks
- *   When the rule is a `GroupRule` the pre-computed `simplifiedRule` and
+ *   When the rule is a `GroupRule<'link'>` the pre-computed `simplifiedRule` and
  *   `renderRule` apply to the OUTER group wrapper (the top-level kind entry).
  *   `applyWrapperDeletion` and `simplifyRule` both recurse through group wrappers
  *   preserving the outer node, so `renderRule.content` and `simplifiedRule.content`
  *   are the wrapper-deleted / simplified inner content respectively. Non-group
  *   rules pass through as-is (the fallback path — groups that didn't get the
- *   `GroupRule` wrapper).
+ *   `GroupRule<'link'>` wrapper).
  */
 function unwrapGroupRuleAndSimplified(
-	rule: Rule,
-	simplifiedRule: Rule,
+	rule: Rule<'link'>,
+	simplifiedRule: Rule<'link'>,
 	renderRule: RenderRule
-): { groupRule: Rule; groupSimplified: Rule; groupRenderRule: RenderRule } {
+): { groupRule: Rule<'link'>; groupSimplified: Rule<'link'>; groupRenderRule: RenderRule } {
 	const groupRule = rule.type === GROUP ? rule.content : rule;
 	// applyWrapperDeletion preserves group structure: renderRule.type === 'group'
 	// when the source rule was a group, with renderRule.content being the
 	// wrapper-deleted inner content. Same for simplifiedRule (simplifyRule recurses
 	// through group wrappers preserving the outer group node).
-	const groupSimplified = rule.type === GROUP ? (simplifiedRule as GroupRule).content : simplifiedRule;
+	const groupSimplified = rule.type === GROUP ? (simplifiedRule as GroupRule<'link'>).content : simplifiedRule;
 	const groupRenderRule: RenderRule =
-		rule.type === GROUP ? ((renderRule as GroupRule).content as RenderRule) : renderRule;
+		rule.type === GROUP ? ((renderRule as GroupRule<'link'>).content as RenderRule) : renderRule;
 	return { groupRule, groupSimplified, groupRenderRule };
 }
 
@@ -619,7 +630,7 @@ function includeAliasMemberKinds(subtypes: readonly string[], ctx: AssembleCtx, 
 	return out;
 }
 
-function isAliasMemberKind(rule: Rule, ctx: AssembleCtx, name: string, subtypeSet: ReadonlySet<string>): boolean {
+function isAliasMemberKind(rule: Rule<'link'>, ctx: AssembleCtx, name: string, subtypeSet: ReadonlySet<string>): boolean {
 	const { topLevelAliasBodies } = ctx;
 	if (!topLevelAliasBodies.has(name)) return false;
 	const body = topLevelAliasBodies.get(name) ?? rule;
@@ -646,7 +657,7 @@ function isCompatibleSubtypeMember(name: string, ctx: AssembleCtx, subtypeSet: R
 	);
 }
 
-function resolveHiddenRuleContent(rule: Rule, seen: Set<string>, ctx: AssembleCtx): string[] {
+function resolveHiddenRuleContent(rule: Rule<'link'>, seen: Set<string>, ctx: AssembleCtx): string[] {
 	const rules = ctx.rawRules;
 	switch (rule.type) {
 		case ALIAS:
@@ -693,7 +704,7 @@ function resolveHiddenRuleContent(rule: Rule, seen: Set<string>, ctx: AssembleCt
 		case VARIANT:
 		case GROUP:
 		case TOKEN:
-			return resolveHiddenRuleContent((rule as { content: Rule }).content, seen, ctx);
+			return resolveHiddenRuleContent((rule as { content: Rule<'link'> }).content, seen, ctx);
 		default:
 			return [];
 	}
@@ -1118,7 +1129,7 @@ function shortenIrKey(kind: string): string {
 // (collectAnonymousNodes and classifyNode's STRING case) route through it.
 
 function collectAnonymousNodes(
-	rules: Record<string, Rule>,
+	rules: Record<string, Rule<'link'>>,
 	nodes: Map<string, AssembledNode>,
 	wordMatcher: RegExp | undefined,
 	kindEntries: readonly GeneratedKindEntry[]
@@ -1151,7 +1162,7 @@ function collectAnonymousNodes(
 		if (literalText === '' || /^\s+$/.test(literalText)) continue; // Skip whitespace/empty
 
 		const isWordShape = matchesWordShape(literalText, wordMatcher);
-		const syntheticStringRule: StringRule = { type: STRING, value: literalText };
+		const syntheticStringRule: StringRule<'link'> = { type: STRING, value: literalText };
 
 		if (isWordShape) {
 			// Keyword token (e.g., "if", "class", "pub")
@@ -1179,7 +1190,7 @@ function collectAnonymousNodes(
  *   node, so collecting the enum member strings as anonymous token kinds would
  *   be incorrect.
  */
-function walkForStrings(rule: Rule, out: Map<string, string>): void {
+function walkForStrings(rule: Rule<'link'>, out: Map<string, string>): void {
 	switch (rule.type) {
 		case STRING:
 			out.set(rule.value, rule.value);
@@ -1236,9 +1247,9 @@ type ModelType = AssembledNode['modelType'];
  * By the time rules reach Assemble, Link and Optimize have already
  * pre-classified the interesting cases via dedicated rule types:
  *
- *   EnumRule       — Link: choice-of-strings
- *   SupertypeRule  — Link: hidden choice-of-symbols (grammar or promoted)
- *   GroupRule      — Link: hidden seq with fields
+ *   EnumRule<'link'>       — Link: choice-of-strings
+ *   SupertypeRule<'link'>  — Link: hidden choice-of-symbols (grammar or promoted)
+ *   GroupRule<'link'>      — Link: hidden seq with fields
  *   TerminalRule   — Link: subtree with no fields and no symbol refs
  *   PolymorphRule  — Optimize: choice-of-variants with heterogeneous fields
  *
@@ -1248,7 +1259,7 @@ type ModelType = AssembledNode['modelType'];
  */
 export function classifyNode(
 	kind: string,
-	rule: Rule,
+	rule: Rule<'link'>,
 	opts?: { variantParents?: ReadonlySet<string>; parentAliasedKinds?: ReadonlySet<string>; wordMatcher?: RegExp }
 ): ModelType {
 	// PR-P: enum-shaped ChoiceRules detected via isEnumChoiceRule before switch.
@@ -1297,7 +1308,7 @@ export function classifyNode(
  */
 function isHiddenRepeatHelper(
 	kind: string,
-	rule: Rule,
+	rule: Rule<'link'>,
 	parentAliasedKinds?: ReadonlySet<string>
 ): boolean {
 	if (!kind.startsWith('_')) return false;
@@ -1327,7 +1338,7 @@ function isHiddenRepeatHelper(
  *   getters (`AssembledBranch.fields`, `AssembledBranch.children`) do
  *   the full walk later, once.
  */
-function classifyBranchOrContainer(rule: Rule): ModelType | null {
+function classifyBranchOrContainer(rule: Rule<'link'>): ModelType | null {
 	if (hasAnyField(rule) || hasAnyChild(rule)) return 'branch';
 	return null;
 }
@@ -1345,8 +1356,8 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  *   All-text subtree → leaf; pure choice-of-strings → enum. Anything still
  *   unclassifiable after this is a real pipeline error.
  */
-function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
-	// PR-P: isEnumChoiceRule checked BEFORE isAllTextShape — an all-STRING ChoiceRule
+function classifyTerminalFallback(kind: string, rule: Rule<'link'>): ModelType {
+	// PR-P: isEnumChoiceRule checked BEFORE isAllTextShape — an all-STRING ChoiceRule<'link'>
 	// passes isAllTextShape too, but must classify as 'enum', not 'pattern'.
 	if (isEnumChoiceRule(rule)) return 'enum';
 	if (isAllTextShape(rule)) return 'pattern';
@@ -1366,7 +1377,7 @@ function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
  * to suppress content-collision false-positives on pattern kinds — DRY:
  * one definition, no mirrored copy that can drift (e.g. the REPEAT1 case).
  */
-export function isAllTextShape(rule: Rule): boolean {
+export function isAllTextShape(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case STRING:
 		case PATTERN:
@@ -1476,4 +1487,3 @@ const TS_RESERVED_WORDS = new Set([
 function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
 }
-

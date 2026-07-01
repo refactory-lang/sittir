@@ -16,7 +16,7 @@ import { existsSync } from 'node:fs';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
-import { assemble, hydrateSlotRefs } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx, hydrateSlotRefs } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { runRenderModuleEmitter } from '../emitters/render-module-runner.ts';
@@ -53,7 +53,7 @@ async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
 	const optimized = normalizeGrammar(linked);
-	const nodeMap = assemble(optimized);
+	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 	hydrateSlotRefs(nodeMap);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 

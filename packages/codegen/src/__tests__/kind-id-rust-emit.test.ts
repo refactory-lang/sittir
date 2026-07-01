@@ -2,7 +2,7 @@ import { PATTERN } from '../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { field, seq } from '../compiler/evaluate.ts';
 import { buildRuleCatalog } from '../compiler/rule-catalog.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
@@ -67,7 +67,7 @@ describe('emitKindIdRust', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth',
@@ -84,7 +84,7 @@ describe('emitKindIdRust', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth',
@@ -100,7 +100,7 @@ describe('emitKindIdRust', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth',
@@ -203,7 +203,7 @@ describe('emitKindIdRust', () => {
 
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth2',

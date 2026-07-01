@@ -3,7 +3,7 @@ import { seq } from '../evaluate.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
-import { assemble } from '../assemble.ts';
+import { assemble, AssembleCtx } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
 import type { AssembledBranch, AssembledNonterminal } from '../model/node-map.ts';
 import { classifyChildFactorySurface, classifyFactoryShape, resolveSingleFieldFactorySlot } from '../../emitters/shared.ts';
@@ -23,7 +23,8 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		word: null,
 		references: [],
 	};
-	return assemble(normalizeGrammar(link(raw)));
+	const optimized = normalizeGrammar(link(raw));
+	return assemble(optimized, AssembleCtx.from(optimized));
 }
 
 function getBranch(nodeMap: ReturnType<typeof buildNodeMap>, kind: string): AssembledBranch {

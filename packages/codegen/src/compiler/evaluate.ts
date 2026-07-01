@@ -25,6 +25,7 @@ import type {
 	SymbolRef
 } from '../types/rule.ts';
 import { normalizeEnumMembers, isEnumChoiceRule } from '../types/rule.ts';
+import type { AnyRule } from '../types/rule.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
@@ -36,32 +37,32 @@ import type { PolymorphVariant } from './types.ts';
 // Input type — anything the DSL functions accept
 // ---------------------------------------------------------------------------
 
-type Input = string | RegExp | Rule;
+type Input = string | RegExp | Rule<'evaluate'>;
 
-// Augmented SymbolRule that carries a ref for in-place enrichment
-interface SymbolRuleWithRef extends SymbolRule {
+// Augmented SymbolRule<'evaluate'> that carries a ref for in-place enrichment
+interface SymbolRuleWithRef extends SymbolRule<'evaluate'> {
 	readonly _ref?: SymbolRef;
 }
 
 // ---------------------------------------------------------------------------
-// normalize — convert raw input to a Rule
+// normalize — convert raw input to a Rule<'evaluate'>
 // ---------------------------------------------------------------------------
 
-export function normalize(input: Input): Rule {
+export function normalize(input: Input): Rule<'evaluate'> {
 	if (input === undefined || input === null) {
 		throw new Error('Undefined symbol');
 	}
 
 	if (typeof input === 'string') {
-		return { type: STRING, value: input } satisfies StringRule;
+		return { type: STRING, value: input } satisfies StringRule<'evaluate'>;
 	}
 
 	if (input instanceof RegExp) {
-		return { type: PATTERN, value: input.source } satisfies PatternRule;
+		return { type: PATTERN, value: input.source } satisfies PatternRule<'evaluate'>;
 	}
 
 	if (typeof input === 'object' && 'type' in input) {
-		return input as Rule;
+		return input as Rule<'evaluate'>;
 	}
 
 	throw new TypeError(`Invalid rule: ${input}`);
@@ -86,7 +87,7 @@ export function normalize(input: Input): Rule {
  * wire and enrich-injection, so author callbacks see the un-lifted shape and
  * every separated list — authored or synthesized — is lifted from one place.
  */
-export function seq(...members: Input[]): Rule {
+export function seq(...members: Input[]): Rule<'evaluate'> {
 	const normalized = members.map(normalize);
 
 	if (normalized.length === 1) return normalized[0]!;
@@ -110,15 +111,15 @@ export function seq(...members: Input[]): Rule {
  * only ever see the optional shape.
  *
  * @remarks
- * An all-string choice is compacted to an `EnumRule` for fast downstream
+ * An all-string choice is compacted to an `EnumRule<'evaluate'>` for fast downstream
  * handling.
  */
-export function choice(...members: Input[]): Rule {
+export function choice(...members: Input[]): Rule<'evaluate'> {
 	const normalized = members.map(normalize);
 
 	if (normalized.length === 1) return normalized[0]!;
 
-	const isBlank = (r: Rule): boolean =>
+	const isBlank = (r: Rule<'evaluate'>): boolean =>
 		(r.type === SEQ && r.members.length === 0) || (r.type === CHOICE && r.members.length === 0);
 	const blankIdx = normalized.findIndex(isBlank);
 	if (blankIdx !== -1 && normalized.length === 2) {
@@ -128,13 +129,13 @@ export function choice(...members: Input[]): Rule {
 		return optional(other);
 	}
 
-	// Detect all-string choice → EnumRule
+	// Detect all-string choice → EnumRule<'evaluate'>
 	if (normalized.length > 0 && normalized.every((m) => m.type === STRING)) {
-		return normalizeEnumMembers(normalized as StringRule[], 'grammar');
+		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[], 'grammar');
 	}
 
 	if (normalized.length >= 2 && normalized.every((m) => m.type === FIELD)) {
-		return collapseAllFieldChoiceMembers(normalized as FieldRule[]);
+		return collapseAllFieldChoiceMembers(normalized as FieldRule<'evaluate'>[]);
 	}
 
 	return { type: CHOICE, members: normalized };
@@ -143,8 +144,8 @@ export function choice(...members: Input[]): Rule {
 /**
  * Collapse an all-field choice into a factored field or a choice-of-variants.
  *
- * @param fieldMembers - All members of the choice, already confirmed to be FieldRule.
- * @returns A factored `FieldRule`, a `choice` of variants, or a raw `choice` when
+ * @param fieldMembers - All members of the choice, already confirmed to be FieldRule<'evaluate'>.
+ * @returns A factored `FieldRule<'evaluate'>`, a `choice` of variants, or a raw `choice` when
  *   any branch wraps an alias.
  * @remarks
  * Two sub-cases:
@@ -154,7 +155,7 @@ export function choice(...members: Input[]): Rule {
  *    to an enum when all inners are strings.
  *
  * 2. All branches have DIFFERENT field names — retype each field node as
- *    a variant node. `FieldRule` and `VariantRule` share the same shape
+ *    a variant node. `FieldRule<'evaluate'>` and `VariantRule` share the same shape
  *    (`name` + `content`), so the rewrite is purely a discriminator
  *    change. This is the encoding overrides.ts uses for polymorphs:
  *    `choice(field('body', seq(...)), field('semi', seq(...)))` becomes
@@ -173,7 +174,7 @@ export function choice(...members: Input[]): Rule {
  * classification and leaves the alias target unregistered (observed on
  * rust `_line_doc_comment_marker` / `_block_doc_comment_marker`).
  */
-function collapseAllFieldChoiceMembers(fieldMembers: FieldRule[]): Rule {
+function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): Rule<'evaluate'> {
 	const anyAlias = fieldMembers.some((f) => f.content.type === ALIAS);
 	if (anyAlias) {
 		return { type: CHOICE, members: fieldMembers };
@@ -194,7 +195,7 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule[]): Rule {
 	// Same `name`, same `content`, only the discriminator changes.
 	// Downstream (Link's `promotePolymorph`, walker, assemble) consumes
 	// variants as polymorph-form markers when they appear at the top level.
-	const retyped: Rule[] = fieldMembers.map((f) => ({
+	const retyped: Rule<'evaluate'>[] = fieldMembers.map((f) => ({
 		type: 'variant' as const,
 		name: f.name,
 		content: f.content
@@ -221,7 +222,7 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule[]): Rule {
  * The non-empty guarantee a bare `repeat1` carries only holds when there
  * is no `optional` wrapper to swallow the empty case.
  */
-export function optional(content: Input): Rule {
+export function optional(content: Input): Rule<'evaluate'> {
 	const resolved = normalize(content);
 	walkRefs(resolved, (ref) => {
 		ref.optional = true;
@@ -251,7 +252,7 @@ export function optional(content: Input): Rule {
  * `repeat(optional(x))` collapses to `repeat(x)` — repeat already handles
  * zero occurrences, so the optional wrapper is redundant.
  */
-export function repeat(content: Input): Rule {
+export function repeat(content: Input): Rule<'evaluate'> {
 	const resolved = normalize(content);
 	walkRefs(resolved, (ref) => {
 		ref.repeated = true;
@@ -283,7 +284,7 @@ export function repeat(content: Input): Rule {
  * matches `repeat(x)`'s language — not `repeat1(x)`'s. The shape is
  * left alone to preserve grammar author intent.
  */
-export function repeat1(content: Input): Rule {
+export function repeat1(content: Input): Rule<'evaluate'> {
 	const resolved = normalize(content);
 	walkRefs(resolved, (ref) => {
 		ref.repeated = true;
@@ -340,13 +341,13 @@ export function isHiddenKind(name: string, inlineList?: readonly string[]): bool
 // Ref enrichment helpers
 // ---------------------------------------------------------------------------
 
-function getRef(rule: Rule): SymbolRef | undefined {
+function getRef(rule: Rule<'evaluate'>): SymbolRef | undefined {
 	return (rule as SymbolRuleWithRef)._ref;
 }
 
 /**
  * Walk a rule tree and call `visit` on every direct symbol reference
- * (`_ref`-bearing SymbolRule), including refs nested inside `seq`,
+ * (`_ref`-bearing SymbolRule<'evaluate'>), including refs nested inside `seq`,
  * `choice`, `optional`, `repeat`, `repeat1`, and `prec` wrappers.
  *
  * Stops at nested `field` boundaries: a `field('y', $.foo)` inside a
@@ -357,19 +358,19 @@ function getRef(rule: Rule): SymbolRef | undefined {
  * with its own surface, so the inner reference doesn't inherit the
  * outer wrapper's modifiers.
  */
-function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
+function walkRefs(rule: Rule<'evaluate'>, visit: (ref: SymbolRef) => void): void {
 	const ref = getRef(rule);
 	if (ref) visit(ref);
 	switch (rule.type) {
 		case SEQ:
 		case CHOICE:
-			for (const m of (rule as { members: Rule[] }).members) walkRefs(m, visit);
+			for (const m of (rule as { members: Rule<'evaluate'>[] }).members) walkRefs(m, visit);
 			return;
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
 		case 'prec' as never: // prec wrappers are stripped by normalize but defensive
-			walkRefs((rule as { content: Rule }).content, visit);
+			walkRefs((rule as { content: Rule<'evaluate'> }).content, visit);
 			return;
 		case FIELD:
 		case ALIAS:
@@ -390,9 +391,9 @@ function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
  * @param name - The field name (snake_case, raw grammar name).
  * @param content - The rule occupying this field position. Omit to
  *   create a placeholder for `resolvePatch` in transform() patches.
- * @returns A FieldRule with the field name and resolved content.
+ * @returns A FieldRule<'evaluate'> with the field name and resolved content.
  * @remarks
- * When `content` is omitted, a placeholder FieldRule is returned with
+ * When `content` is omitted, a placeholder FieldRule<'evaluate'> is returned with
  * `_needsContent: true`, which `resolvePatch` swaps out with the
  * original member when applying transform() patches.
  * @remarks
@@ -408,7 +409,7 @@ function walkRefs(rule: Rule, visit: (ref: SymbolRef) => void): void {
  * field/alias boundaries — those own their own field name. Does not
  * overwrite a field name already set by an inner wrapper.
  */
-export function field(name: string, content?: Input): FieldRule {
+export function field(name: string, content?: Input): FieldRule<'evaluate'> {
 	if (content === undefined) {
 		return {
 			type: FIELD,
@@ -439,7 +440,7 @@ export function field(name: string, content?: Input): FieldRule {
  * canonical across all the equivalent list encodings grammar authors
  * write.
  */
-function collapseOptionalRepeatInField(resolved: Rule): Rule {
+function collapseOptionalRepeatInField(resolved: Rule<'evaluate'>): Rule<'evaluate'> {
 	if (resolved.type !== OPTIONAL) return resolved;
 	const inner = resolved.content;
 	if (inner.type === 'repeat') {
@@ -469,47 +470,47 @@ function collapseOptionalRepeatInField(resolved: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 interface TokenFn {
-	(content: Input): TokenRule;
-	immediate: (content: Input) => TokenRule;
+	(content: Input): TokenRule<'evaluate'>;
+	immediate: (content: Input) => TokenRule<'evaluate'>;
 }
 
 export const token: TokenFn = Object.assign(
-	function token(content: Input): TokenRule {
+	function token(content: Input): TokenRule<'evaluate'> {
 		return { type: TOKEN, content: normalize(content), immediate: false };
 	},
 	{
-		immediate(content: Input): TokenRule {
+		immediate(content: Input): TokenRule<'evaluate'> {
 			return { type: TOKEN, content: normalize(content), immediate: true };
 		}
 	}
 );
 
 // ---------------------------------------------------------------------------
-// Precedence — stripped; returns the content Rule
+// Precedence — stripped; returns the content Rule<'evaluate'>
 // ---------------------------------------------------------------------------
 
 interface PrecFn {
-	(precedence: number, content: Input): Rule;
-	left: (precedence: number, content: Input) => Rule;
-	right: (precedence: number, content: Input) => Rule;
-	dynamic: (precedence: number, content: Input) => Rule;
+	(precedence: number, content: Input): Rule<'evaluate'>;
+	left: (precedence: number, content: Input) => Rule<'evaluate'>;
+	right: (precedence: number, content: Input) => Rule<'evaluate'>;
+	dynamic: (precedence: number, content: Input) => Rule<'evaluate'>;
 }
 
 export const prec: PrecFn = Object.assign(
-	function prec(precedenceOrContent: number | Input, content?: Input): Rule {
+	function prec(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 		if (content === undefined) return normalize(precedenceOrContent as Input);
 		return normalize(content);
 	},
 	{
-		left(precedenceOrContent: number | Input, content?: Input): Rule {
+		left(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 			if (content == null) return normalize(precedenceOrContent as Input);
 			return normalize(content);
 		},
-		right(precedenceOrContent: number | Input, content?: Input): Rule {
+		right(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 			if (content == null) return normalize(precedenceOrContent as Input);
 			return normalize(content);
 		},
-		dynamic(precedenceOrContent: number | Input, content?: Input): Rule {
+		dynamic(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 			if (content == null) return normalize(precedenceOrContent as Input);
 			return normalize(content);
 		}
@@ -520,7 +521,7 @@ export const prec: PrecFn = Object.assign(
 // Alias + blank (needed for grammar.js compatibility)
 // ---------------------------------------------------------------------------
 
-export function alias(rule: Input, value: string | Rule): AliasRule {
+export function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evaluate'> {
 	const content = normalize(rule);
 	if (typeof value === 'string') {
 		return { type: ALIAS, content, named: false, value };
@@ -538,13 +539,13 @@ export function alias(rule: Input, value: string | Rule): AliasRule {
 			type: ALIAS,
 			content,
 			named: true,
-			value: (value as SymbolRule).name
+			value: (value as SymbolRule<'evaluate'>).name
 		};
 	}
 	throw new Error(`Invalid alias value: ${value}`);
 }
 
-export function blank(): Rule {
+export function blank(): Rule<'evaluate'> {
 	// BLANK is represented as choice() with no members — absorbed by choice()
 	return { type: CHOICE, members: [] };
 }
@@ -562,7 +563,7 @@ export function blank(): Rule {
  * bare string literals, and so that any author rule body that calls
  * `string(...)` explicitly continues to work.
  */
-export function string(value: string): StringRule {
+export function string(value: string): StringRule<'evaluate'> {
 	return { type: STRING, value };
 }
 
@@ -608,7 +609,7 @@ interface MetadataSinks {
  */
 export interface EvaluateCtx {
 	/** The rule record under evaluation (mutated by passes). */
-	readonly rules: Record<string, Rule>;
+	readonly rules: Record<string, Rule<'evaluate'>>;
 	/** Per-kind provenance (mutated as synthetic rules are injected). */
 	readonly provenanceByKind: Map<string, RuleProvenance>;
 	/** Symbol-reference accumulator shared across all rule evaluations. */
@@ -616,7 +617,7 @@ export interface EvaluateCtx {
 	/** The grammar options under evaluation. */
 	readonly opts: GrammarOptions;
 	/** Base-grammar rules snapshot (empty for fresh grammars). */
-	readonly baseRules: Record<string, Rule>;
+	readonly baseRules: Record<string, Rule<'evaluate'>>;
 	/** The evaluated base grammar object, or null for fresh grammars. */
 	readonly baseGrammar: unknown;
 	/** The externals metadata sink (same live array as sinks.externals). */
@@ -630,7 +631,7 @@ export interface EvaluateCtx {
 }
 
 function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: GrammarOptions): { grammar: any } {
-	let baseRules: Record<string, Rule> = {};
+	let baseRules: Record<string, Rule<'evaluate'>> = {};
 	let baseGrammar: any = null;
 	let opts: GrammarOptions;
 
@@ -646,7 +647,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	mergeEnrichOverridesIntoOptions(optionsOrBase, opts);
 
 	const refs: SymbolRef[] = seedRefsFromBaseGrammar(baseGrammar);
-	const rules: Record<string, Rule> = { ...baseRules };
+	const rules: Record<string, Rule<'evaluate'>> = { ...baseRules };
 	const provenanceByKind = new Map<string, RuleProvenance>();
 
 	// Extract metadata
@@ -765,7 +766,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
  * own parser identity; the visible target `doc_comment` is the alias
  * destination, not a hidden kind.
  */
-function synthesizeInlineAliasSources(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
+function synthesizeInlineAliasSources(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const externalSet = new Set(ctx.externals);
 	const ruleEntries = Object.entries(rules);
 	for (const [name, rule] of ruleEntries) {
@@ -773,9 +774,9 @@ function synthesizeInlineAliasSources(rules: Record<string, Rule>, ctx: Evaluate
 	}
 }
 
-function rewriteInlineAliases(rule: Rule, ctx: EvaluateCtx, externals: ReadonlySet<string>): Rule {
+function rewriteInlineAliases(rule: Rule<'evaluate'>, ctx: EvaluateCtx, externals: ReadonlySet<string>): Rule<'evaluate'> {
 	const { rules, provenanceByKind } = ctx;
-	const recurse = (r: Rule): Rule => rewriteInlineAliases(r, ctx, externals);
+	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteInlineAliases(r, ctx, externals);
 	switch (rule.type) {
 		case ALIAS:
 			if (rule.named && rule.value) {
@@ -816,14 +817,14 @@ function rewriteInlineAliases(rule: Rule, ctx: EvaluateCtx, externals: ReadonlyS
 					}
 					return {
 						...rule,
-						content: { type: SYMBOL, name: syntheticHiddenName } as SymbolRule
+						content: { type: SYMBOL, name: syntheticHiddenName } as SymbolRule<'evaluate'>
 					};
 				}
 			}
 			return { ...rule, content: recurse(rule.content) };
 		case SEQ:
 		case CHOICE:
-			return { ...rule, members: rule.members.map(recurse) } as Rule;
+			return { ...rule, members: rule.members.map(recurse) } as Rule<'evaluate'>;
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
@@ -833,8 +834,8 @@ function rewriteInlineAliases(rule: Rule, ctx: EvaluateCtx, externals: ReadonlyS
 		case GROUP:
 			return {
 				...rule,
-				content: recurse((rule as { content: Rule }).content)
-			} as Rule;
+				content: recurse((rule as { content: Rule<'evaluate'> }).content)
+			} as Rule<'evaluate'>;
 		default:
 			return rule;
 	}
@@ -847,18 +848,18 @@ function rewriteInlineAliases(rule: Rule, ctx: EvaluateCtx, externals: ReadonlyS
 /**
  * Post-evaluation pass: detect `field(name, enum([...]))` patterns inside
  * every rule and synthesize a named hidden rule for each one. Replace the
- * field's inline enum content with a `SymbolRule` referencing the new rule.
+ * field's inline enum content with a `SymbolRule<'evaluate'>` referencing the new rule.
  *
  * @remarks
  * A field whose content is a choice-of-literals (already collapsed to
- * `EnumRule` by `choice()`) represents a closed, compile-time-known set of
+ * `EnumRule<'evaluate'>` by `choice()`) represents a closed, compile-time-known set of
  * operator/punctuation tokens. Promoting these to named hidden rules enables
  * downstream emitters to generate a compact Rust enum with KindId-backed
  * discriminants rather than a heap-allocated `text: String` field.
  *
  * Also follows single-step symbol indirections: when a field's content is a
- * bare `SymbolRule` referencing a rule that resolves to a `StringRule` or
- * `EnumRule` (e.g. `field('mutability', $.mutable_specifier)` where
+ * bare `SymbolRule<'evaluate'>` referencing a rule that resolves to a `StringRule<'evaluate'>` or
+ * `EnumRule<'evaluate'>` (e.g. `field('mutability', $.mutable_specifier)` where
  * `mutable_specifier` = `'mut'`), the target rule's literals are collected
  * and a new enum kind is synthesized in the same way.
  *
@@ -875,7 +876,7 @@ function rewriteInlineAliases(rule: Rule, ctx: EvaluateCtx, externals: ReadonlyS
  * @param rules - Mutable rules map; synthesized rules are added in place.
  * @param provenanceByKind - Provenance map; entries are added for each new kind.
  */
-function synthesizeFieldEnumRules(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
+function synthesizeFieldEnumRules(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	// First pass: collect all (parentKind, fieldName, members) triples so we
 	// can count how often each field name appears with the same member set and
 	// build the canonical-name dedup map before any rewriting happens.
@@ -884,8 +885,8 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule>, ctx: EvaluateCtx)
 	const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, ctx);
 
 	// Second pass: rewrite rules using the pre-computed canonical names.
-	const rewrites = new Map<string, Rule>();
-	const newRules = new Map<string, Rule>();
+	const rewrites = new Map<string, Rule<'evaluate'>>();
+	const newRules = new Map<string, Rule<'evaluate'>>();
 
 	const sweep: FieldEnumSweepState = { newRules, memberKeyToCanonicalName, conflictingSites };
 	for (const [parentKind, rule] of Object.entries(rules)) {
@@ -929,7 +930,7 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule>, ctx: EvaluateCtx)
  *
  * Criteria for removal:
  * - Hidden rule (name starts with `_`).
- * - Is an EnumRule.
+ * - Is an EnumRule<'evaluate'>.
  * - Its sorted member set maps to a DIFFERENT canonical name in
  *   `memberKeyToCanonicalName` (i.e., this name is not the canonical one).
  *
@@ -942,7 +943,7 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule>, ctx: EvaluateCtx)
  * @param memberKeyToCanonicalName - The current pass's canonical name map.
  */
 function purgeSupersededEnumRules(
-	rules: Record<string, Rule>,
+	rules: Record<string, Rule<'evaluate'>>,
 	ctx: EvaluateCtx,
 	memberKeyToCanonicalName: Map<string, string>
 ): void {
@@ -953,7 +954,7 @@ function purgeSupersededEnumRules(
 		// PR-P: ENUM type retired — detect via isEnumChoiceRule.
 		if (!isEnumChoiceRule(rule)) continue;
 
-		const memberKey = [...(rule.members as StringRule[])]
+		const memberKey = [...(rule.members as StringRule<'evaluate'>[])]
 			.map((m) => m.value)
 			.sort()
 			.join(',');
@@ -974,8 +975,8 @@ interface FieldEnumOccurrence {
 	readonly fieldName: string;
 	/** The sorted, comma-joined literal values — used as the dedup key. */
 	readonly memberKey: string;
-	/** The actual member list for constructing the EnumRule. */
-	readonly members: StringRule[];
+	/** The actual member list for constructing the EnumRule<'evaluate'>. */
+	readonly members: StringRule<'evaluate'>[];
 }
 
 /**
@@ -985,7 +986,7 @@ interface FieldEnumOccurrence {
  * @param rules - The full grammar rules map after evaluate-time synthesis.
  * @returns Array of occurrence records, one per qualifying field position.
  */
-function collectFieldEnumOccurrences(rules: Record<string, Rule>, ctx: EvaluateCtx): FieldEnumOccurrence[] {
+function collectFieldEnumOccurrences(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): FieldEnumOccurrence[] {
 	const occurrences: FieldEnumOccurrence[] = [];
 	for (const [parentKind, rule] of Object.entries(rules)) {
 		walkFieldEnums(rule, ctx, parentKind, occurrences);
@@ -1001,7 +1002,7 @@ function collectFieldEnumOccurrences(rules: Record<string, Rule>, ctx: EvaluateC
  * @param rules - Full rules map for symbol resolution.
  * @param out - Accumulator for discovered occurrences.
  */
-function walkFieldEnums(rule: Rule, ctx: EvaluateCtx, parentKind: string, out: FieldEnumOccurrence[]): void {
+function walkFieldEnums(rule: Rule<'evaluate'>, ctx: EvaluateCtx, parentKind: string, out: FieldEnumOccurrence[]): void {
 	switch (rule.type) {
 		case FIELD: {
 			// Peel one level of repeat/repeat1 wrapper so that
@@ -1028,7 +1029,7 @@ function walkFieldEnums(rule: Rule, ctx: EvaluateCtx, parentKind: string, out: F
 		case VARIANT:
 		case GROUP:
 		case TOKEN:
-			walkFieldEnums((rule as { content: Rule }).content, ctx, parentKind, out);
+			walkFieldEnums((rule as { content: Rule<'evaluate'> }).content, ctx, parentKind, out);
 			return;
 		default:
 			return;
@@ -1170,7 +1171,7 @@ function canReuseExistingEnumName(name: string, ctx: EvaluateCtx, memberKey: str
 /**
  * Build the stable key used for enum-member deduplication.
  */
-function buildEnumMemberKey(members: readonly StringRule[]): string {
+function buildEnumMemberKey(members: readonly StringRule<'evaluate'>[]): string {
 	return [...members]
 		.map((m) => m.value)
 		.sort()
@@ -1249,7 +1250,7 @@ function deriveCandidateName(
  * @param rules - Full grammar rules map.
  * @returns `true` when `rules[fieldName]` resolves to the same member set.
  */
-function fieldNameMatchesGrammarRule(fieldName: string, ctx: EvaluateCtx, members: StringRule[]): boolean {
+function fieldNameMatchesGrammarRule(fieldName: string, ctx: EvaluateCtx, members: StringRule<'evaluate'>[]): boolean {
 	const rule = ctx.rules[fieldName];
 	if (rule === undefined) return false;
 
@@ -1267,7 +1268,7 @@ function fieldNameMatchesGrammarRule(fieldName: string, ctx: EvaluateCtx, member
 /** Pass-local state for one synthesizeFieldEnumRules sweep (CW6: explicit param, not ctx). */
 interface FieldEnumSweepState {
 	/** Accumulator for synthesized literal-set rule entries. */
-	readonly newRules: Map<string, Rule>;
+	readonly newRules: Map<string, Rule<'evaluate'>>;
 	/** Pre-computed dedup map from the first pass. */
 	readonly memberKeyToCanonicalName: Map<string, string>;
 	/** Field sites with conflicting member sets — left inline. */
@@ -1285,9 +1286,9 @@ interface FieldEnumSweepState {
  * @param sweep - The pass-local sweep state.
  * @returns The rewritten rule (may be structurally identical if no change was needed).
  */
-function rewriteFieldEnums(rule: Rule, ctx: EvaluateCtx, parentKind: string, sweep: FieldEnumSweepState): Rule {
+function rewriteFieldEnums(rule: Rule<'evaluate'>, ctx: EvaluateCtx, parentKind: string, sweep: FieldEnumSweepState): Rule<'evaluate'> {
 	const { newRules, memberKeyToCanonicalName, conflictingSites } = sweep;
-	const recurse = (r: Rule): Rule => rewriteFieldEnums(r, ctx, parentKind, sweep);
+	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteFieldEnums(r, ctx, parentKind, sweep);
 
 	switch (rule.type) {
 		case FIELD: {
@@ -1310,18 +1311,18 @@ function rewriteFieldEnums(rule: Rule, ctx: EvaluateCtx, parentKind: string, swe
 					source: rule.source,
 					nameFrom: rule.nameFrom,
 					blockBearer: rule.blockBearer
-				} satisfies FieldRule;
+				} satisfies FieldRule<'evaluate'>;
 			}
 			// Content isn't an enum candidate — recurse to find nested fields.
 			const newContent = recurse(rule.content);
 			if (newContent === rule.content) return rule;
-			return { ...rule, content: newContent } as FieldRule;
+			return { ...rule, content: newContent } as FieldRule<'evaluate'>;
 		}
 		case SEQ:
 		case CHOICE: {
 			const newMembers = rule.members.map(recurse);
 			if (newMembers.every((m, i) => m === rule.members[i])) return rule;
-			return { ...rule, members: newMembers } as Rule;
+			return { ...rule, members: newMembers } as Rule<'evaluate'>;
 		}
 		case OPTIONAL:
 		case REPEAT:
@@ -1329,9 +1330,9 @@ function rewriteFieldEnums(rule: Rule, ctx: EvaluateCtx, parentKind: string, swe
 		case VARIANT:
 		case GROUP:
 		case TOKEN: {
-			const newContent = recurse((rule as { content: Rule }).content);
-			if (newContent === (rule as { content: Rule }).content) return rule;
-			return { ...rule, content: newContent } as Rule;
+			const newContent = recurse((rule as { content: Rule<'evaluate'> }).content);
+			if (newContent === (rule as { content: Rule<'evaluate'> }).content) return rule;
+			return { ...rule, content: newContent } as Rule<'evaluate'>;
 		}
 		default:
 			return rule;
@@ -1347,14 +1348,14 @@ function rewriteFieldEnums(rule: Rule, ctx: EvaluateCtx, parentKind: string, swe
  *
  * Qualifying shapes:
  *
- * 1. `EnumRule` (inline `choice('+', '-', ...)` already collapsed) — use
+ * 1. `EnumRule<'evaluate'>` (inline `choice('+', '-', ...)` already collapsed) — use
  *    its members directly. `replacementContent` is `symbol(enumKindName)`.
  *
- * 2. `StringRule` (single literal inline in the field position) — wrap in
+ * 2. `StringRule<'evaluate'>` (single literal inline in the field position) — wrap in
  *    a 1-member enum. `replacementContent` is `symbol(enumKindName)`.
  *
- * 3. `SymbolRule` whose referent in `rules` resolves to a `StringRule` or
- *    `EnumRule` — use that rule's literals. Follows exactly one level of
+ * 3. `SymbolRule<'evaluate'>` whose referent in `rules` resolves to a `StringRule<'evaluate'>` or
+ *    `EnumRule<'evaluate'>` — use that rule's literals. Follows exactly one level of
  *    indirection (symbol → literal | enum).
  *    `replacementContent` is `symbol(enumKindName)`.
  *
@@ -1373,15 +1374,15 @@ function rewriteFieldEnums(rule: Rule, ctx: EvaluateCtx, parentKind: string, swe
  *   or `null` when the content does not qualify.
  */
 function tryExtractFieldEnum(
-	content: Rule,
+	content: Rule<'evaluate'>,
 	ctx: EvaluateCtx,
 	memberKeyToCanonicalName: Map<string, string>
-): { enumKindName: string; synthesizedRule: Rule; replacementContent: Rule } | null {
+): { enumKindName: string; synthesizedRule: Rule<'evaluate'>; replacementContent: Rule<'evaluate'> } | null {
 	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
 	// is handled alongside `field(name, enum)`. The wrapper type is remembered
 	// so the rewrite can restore it around the synthesized symbol reference.
 	const repeatWrapperType = content.type === REPEAT || content.type === REPEAT1 ? content.type : null;
-	const innerContent = repeatWrapperType !== null ? (content as RepeatRule | Repeat1Rule).content : content;
+	const innerContent = repeatWrapperType !== null ? (content as RepeatRule<'evaluate'> | Repeat1Rule<'evaluate'>).content : content;
 
 	const members = resolveToEnumMembers(innerContent, ctx);
 	if (members === null || members.length === 0) return null;
@@ -1392,13 +1393,13 @@ function tryExtractFieldEnum(
 
 	const synthesizedRule = normalizeEnumMembers(members, 'grammar');
 
-	const symRule: SymbolRule = { type: SYMBOL, name: enumKindName, hidden: true };
-	const replacementContent: Rule =
+	const symRule: SymbolRule<'evaluate'> = { type: SYMBOL, name: enumKindName, hidden: true };
+	const replacementContent: Rule<'evaluate'> =
 		repeatWrapperType === null
 			? symRule
 			: repeatWrapperType === REPEAT
-				? { ...(content as RepeatRule), content: symRule }
-				: { ...(content as Repeat1Rule), content: symRule };
+				? { ...(content as RepeatRule<'evaluate'>), content: symRule }
+				: { ...(content as Repeat1Rule<'evaluate'>), content: symRule };
 
 	return { enumKindName, synthesizedRule, replacementContent };
 }
@@ -1413,7 +1414,7 @@ function tryExtractFieldEnum(
  * @returns The inner content when `rule` is a `repeat` or `repeat1`,
  *   otherwise `rule` itself.
  */
-function peelRepeatWrapper(rule: Rule): Rule {
+function peelRepeatWrapper(rule: Rule<'evaluate'>): Rule<'evaluate'> {
 	if (rule.type === REPEAT || rule.type === REPEAT1) return rule.content;
 	return rule;
 }
@@ -1425,16 +1426,16 @@ function peelRepeatWrapper(rule: Rule): Rule {
  *
  * @param rule - The rule to inspect.
  * @param rules - Full rules map for one-level symbol indirection.
- * @returns An array of `StringRule` members, or `null`.
+ * @returns An array of `StringRule<'evaluate'>` members, or `null`.
  * @remarks
  * Only one level of symbol indirection is followed. Chains like
  * `symbol → symbol → enum` are intentionally NOT followed — deeper
  * resolution belongs in Link, and multi-level chains are uncommon for
  * operator fields.
  */
-function resolveToEnumMembers(rule: Rule, ctx: EvaluateCtx): StringRule[] | null {
+function resolveToEnumMembers(rule: Rule<'evaluate'>, ctx: EvaluateCtx): StringRule<'evaluate'>[] | null {
 	// PR-P: ENUM type retired — detect via isEnumChoiceRule first.
-	if (isEnumChoiceRule(rule)) return rule.members as StringRule[];
+	if (isEnumChoiceRule(rule)) return rule.members as StringRule<'evaluate'>[];
 	switch (rule.type) {
 		// PR-P: ENUM case removed — handled by isEnumChoiceRule above.
 		case STRING:
@@ -1455,16 +1456,16 @@ function resolveToEnumMembers(rule: Rule, ctx: EvaluateCtx): StringRule[] | null
  * Resolve a target rule to enum members without further symbol indirection.
  *
  * @param target - The resolved rule (one hop from a symbol reference).
- * @returns An array of `StringRule` members, or `null` when the target is
+ * @returns An array of `StringRule<'evaluate'>` members, or `null` when the target is
  *   not a literal or all-literal choice/enum.
  * @remarks
  * Kept separate from {@link resolveToEnumMembers} to make the "one-level
  * indirection" constraint explicit and prevent accidental chain following.
- * A `ChoiceRule` reaching here is the raw evaluate-time form — all-string
- * choices should already have been collapsed to `EnumRule` by `choice()`,
+ * A `ChoiceRule<'evaluate'>` reaching here is the raw evaluate-time form — all-string
+ * choices should already have been collapsed to `EnumRule<'evaluate'>` by `choice()`,
  * but handle the raw form defensively.
  */
-function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
+function resolveToEnumMembersOneLevelDeep(target: Rule<'evaluate'>): StringRule<'evaluate'>[] | null {
 	switch (target.type) {
 		case STRING:
 			return [target];
@@ -1473,7 +1474,7 @@ function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
 			// After PR-P, normalizeEnumMembers emits type: CHOICE for enum sets.
 			// The ENUM case (type: 'enum') is also handled here for safety.
 			if (target.members.length === 0) return null;
-			const allStrings = target.members.every((m): m is StringRule => m.type === 'string');
+			const allStrings = target.members.every((m): m is StringRule<'evaluate'> => m.type === 'string');
 			return allStrings ? target.members : null;
 		}
 		default:
@@ -1563,10 +1564,10 @@ function drainPolymorphsConfigMetadata(opts: GrammarOptions): Record<string, Rec
  * the base IMMEDIATE_TOKEN body and use it instead of the sittir-side
  * render body).
  *
- * @returns A Record<string, Rule> for `RawGrammar.renderAs`, or
+ * @returns A Record<string, Rule<'evaluate'>> for `RawGrammar.renderAs`, or
  * `undefined` when no `renderAs:` was declared.
  */
-function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<string, Rule> | undefined {
+function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<string, Rule<'evaluate'>> | undefined {
 	const { rules, refs, provenanceByKind } = ctx;
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (!wireCtx || !wireCtx.renderAs) return undefined;
@@ -1575,7 +1576,7 @@ function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<s
 	const rawEntries = wireCtx.renderAs($ as unknown as Record<string, unknown>);
 	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
 
-	const result: Record<string, Rule> = {};
+	const result: Record<string, Rule<'evaluate'>> = {};
 	for (const [name, rawBody] of Object.entries(rawEntries)) {
 		const rule = normalize(rawBody as Input);
 		result[name] = rule;
@@ -1663,7 +1664,7 @@ function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
  * @param refs - Mutable symbol-reference accumulator shared across rule evaluations.
  * @param rules - Mutable output map where evaluated and synthetic rules are stored.
  */
-function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
+function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const { opts, refs, provenanceByKind } = ctx;
 	evaluateRuleFunctions(rules, ctx);
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
@@ -1731,10 +1732,10 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule>, ctx: Eval
  * so this stays false for them and is never overwritten). This is not consumer
  * branching — it makes `grammarFn`'s read of its inputs equal to tree-sitter's.
  */
-function adoptFinalBaseRules(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
+function adoptFinalBaseRules(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const { baseGrammar, baseRules } = ctx;
 	if (baseGrammar === null || baseGrammar === undefined) return;
-	const finalBase = (baseGrammar as { rules: Record<string, Rule> }).rules;
+	const finalBase = (baseGrammar as { rules: Record<string, Rule<'evaluate'>> }).rules;
 	for (const name of Object.keys(finalBase)) {
 		const finalRule = finalBase[name];
 		const entry = baseRules[name];
@@ -1770,7 +1771,7 @@ function adoptFinalBaseRules(rules: Record<string, Rule>, ctx: EvaluateCtx): voi
  * content). Skips rules whose body is non-blank (author-declared hidden
  * helpers are legitimate and can have any body).
  */
-function prunePlaceholderOrphans(rules: Record<string, Rule>, wireCtx: WireContext): void {
+function prunePlaceholderOrphans(rules: Record<string, Rule<'evaluate'>>, wireCtx: WireContext): void {
 	for (const name of Object.keys(rules)) {
 		if (!name.startsWith('_')) continue;
 		if (wireCtx.deposits.has(name)) continue;
@@ -1783,7 +1784,7 @@ function prunePlaceholderOrphans(rules: Record<string, Rule>, wireCtx: WireConte
 /**
  * True when `rule` is the empty-choice sentinel returned by `blank()`.
  */
-function isBlankRule(rule: Rule): boolean {
+function isBlankRule(rule: Rule<'evaluate'>): boolean {
 	return rule.type === CHOICE && rule.members.length === 0;
 }
 
@@ -1803,7 +1804,7 @@ function isBlankRule(rule: Rule): boolean {
  */
 interface PatternCandidate {
 	readonly name: string;
-	readonly body: Rule;
+	readonly body: Rule<'evaluate'>;
 	readonly aliasAs?: string;
 }
 
@@ -1833,7 +1834,7 @@ interface PatternCandidate {
  * body that would have been pruned is instead preserved because it has real
  * content.
  */
-function applyPatternReplacement(rules: Record<string, Rule>, ctx: EvaluateCtx, wireCtx: WireContext): void {
+function applyPatternReplacement(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx, wireCtx: WireContext): void {
 	const { baseRules, provenanceByKind } = ctx;
 	// Step 1: identify pattern candidates.
 	// Path A — legacy `_`-prefix candidates declared in `rules:`.
@@ -1890,17 +1891,17 @@ function applyPatternReplacement(rules: Record<string, Rule>, ctx: EvaluateCtx, 
  *
  * Exported for use by `deriveComplexAliasTargetHidden`.
  */
-export function isComplexBody(rule: Rule): boolean {
+export function isComplexBody(rule: Rule<'evaluate'>): boolean {
 	switch (rule.type) {
 		case SEQ:
-			return (rule as SeqRule).members.length >= 2;
+			return (rule as SeqRule<'evaluate'>).members.length >= 2;
 		case CHOICE:
-			return (rule as ChoiceRule).members.length >= 2;
+			return (rule as ChoiceRule<'evaluate'>).members.length >= 2;
 		case REPEAT:
 		case REPEAT1: {
 			// A REPEAT is complex only when its content is itself non-trivial
 			// (not a bare string or symbol).
-			const content = (rule as RepeatRule).content;
+			const content = (rule as RepeatRule<'evaluate'>).content;
 			return content.type !== STRING && content.type !== SYMBOL && content.type !== PATTERN;
 		}
 		default:
@@ -1929,10 +1930,10 @@ export function isComplexBody(rule: Rule): boolean {
  * The walk covers seq/choice members, content, polymorph forms, and
  * separator rule lists so aliases nested in any position are captured.
  */
-export function deriveComplexAliasTargetHidden(rules: Record<string, Rule>): ReadonlySet<string> {
+export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): ReadonlySet<string> {
 	const candidates = new Set<string>();
 
-	function walk(rule: Rule): void {
+	function walk(rule: AnyRule): void {
 		// Pre-link form: alias(symbol(_X), $visible)
 		if (rule.type === ALIAS) {
 			if (rule.named && rule.content.type === 'symbol' && rule.content.name.startsWith('_')) {
@@ -1954,7 +1955,8 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, Rule>): Rea
 			walk(rule.content);
 		}
 		// `separator` may be a string (a literal delimiter — no nested rules),
-		// a readonly Rule[], OR `{ rules: Rule[] }` — handle the rule-bearing forms
+		// a readonly Rule[], OR `{ rules: Rule[] }` (post-optimize object form) —
+		// handle the rule-bearing forms
 		// so aliases nested in either are captured.
 		if ('separator' in rule && rule.separator) {
 			const sep = rule.separator;
@@ -1982,15 +1984,15 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, Rule>): Rea
  * object reference when no replacement occurs (allows cheap change-detection
  * by reference equality in the caller).
  */
-function replacePatterns(rule: Rule, candidates: PatternCandidate[]): Rule {
+function replacePatterns(rule: Rule<'evaluate'>, candidates: PatternCandidate[]): Rule<'evaluate'> {
 	// Check if this node itself matches any candidate.
 	for (const c of candidates) {
 		if (patternRulesEqual(rule, c.body)) {
-			const symRef: SymbolRule = { type: SYMBOL, name: c.name, hidden: true };
+			const symRef: SymbolRule<'evaluate'> = { type: SYMBOL, name: c.name, hidden: true };
 			// Body-pattern groups path: wrap the hidden symbol in an
 			// alias() so tree-sitter emits the visible kind as a CST node.
 			if (c.aliasAs !== undefined) {
-				return { type: ALIAS, content: symRef, named: true, value: c.aliasAs } satisfies AliasRule;
+				return { type: ALIAS, content: symRef, named: true, value: c.aliasAs } satisfies AliasRule<'evaluate'>;
 			}
 			return symRef;
 		}
@@ -1998,34 +2000,34 @@ function replacePatterns(rule: Rule, candidates: PatternCandidate[]): Rule {
 	// Otherwise recurse into children.
 	switch (rule.type) {
 		case SEQ: {
-			const r = rule as SeqRule;
+			const r = rule as SeqRule<'evaluate'>;
 			const members = replaceInArray(r.members, candidates);
-			return members === r.members ? rule : ({ ...r, members } as Rule);
+			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
 		}
 		case CHOICE: {
-			const r = rule as ChoiceRule;
+			const r = rule as ChoiceRule<'evaluate'>;
 			const members = replaceInArray(r.members, candidates);
-			return members === r.members ? rule : ({ ...r, members } as Rule);
+			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
 		}
 		case OPTIONAL: {
-			const r = rule as OptionalRule;
+			const r = rule as OptionalRule<'evaluate'>;
 			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule);
+			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
 		}
 		case REPEAT: {
-			const r = rule as RepeatRule;
+			const r = rule as RepeatRule<'evaluate'>;
 			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule);
+			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
 		}
 		case REPEAT1: {
-			const r = rule as Repeat1Rule;
+			const r = rule as Repeat1Rule<'evaluate'>;
 			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule);
+			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
 		}
 		case FIELD: {
-			const r = rule as FieldRule;
+			const r = rule as FieldRule<'evaluate'>;
 			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule);
+			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
 		}
 		default:
 			return rule;
@@ -2036,9 +2038,9 @@ function replacePatterns(rule: Rule, candidates: PatternCandidate[]): Rule {
  * Map `replacePatterns` over an array, returning the original array when no
  * element changed (cheap reference-equality check for the parent node).
  */
-function replaceInArray(members: Rule[], candidates: PatternCandidate[]): Rule[] {
+function replaceInArray(members: Rule<'evaluate'>[], candidates: PatternCandidate[]): Rule<'evaluate'>[] {
 	let changed = false;
-	const out: Rule[] = members.map((m) => {
+	const out: Rule<'evaluate'>[] = members.map((m) => {
 		const r = replacePatterns(m, candidates);
 		if (r !== m) changed = true;
 		return r;
@@ -2047,7 +2049,7 @@ function replaceInArray(members: Rule[], candidates: PatternCandidate[]): Rule[]
 }
 
 /**
- * Structural equality for pattern matching. Compares two Rule trees
+ * Structural equality for pattern matching. Compares two Rule<'evaluate'> trees
  * recursively. Intentionally ignores the `id` field (assigned later by
  * `buildRuleCatalog`) and provenance/source annotations — only shape matters.
  *
@@ -2061,46 +2063,46 @@ function replaceInArray(members: Rule[], candidates: PatternCandidate[]): Rule[]
  * - FIELD: name AND content must match. A field wrapper carrying the same
  *   content but a different name is a different structural pattern.
  */
-function patternRulesEqual(a: Rule, b: Rule): boolean {
+function patternRulesEqual(a: Rule<'evaluate'>, b: Rule<'evaluate'>): boolean {
 	if (a.type !== b.type) return false;
 	switch (a.type) {
 		case STRING:
-			return a.value === (b as StringRule).value;
+			return a.value === (b as StringRule<'evaluate'>).value;
 		case PATTERN:
-			return a.value === (b as PatternRule).value;
+			return a.value === (b as PatternRule<'evaluate'>).value;
 		case SYMBOL:
-			return a.name === (b as SymbolRule).name;
+			return a.name === (b as SymbolRule<'evaluate'>).name;
 		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
 		case SEQ: {
-			const bSeq = b as SeqRule;
+			const bSeq = b as SeqRule<'evaluate'>;
 			return (
 				a.members.length === bSeq.members.length &&
 				a.members.every((m, i) => patternRulesEqual(m, bSeq.members[i]!))
 			);
 		}
 		case CHOICE: {
-			const bCh = b as ChoiceRule;
+			const bCh = b as ChoiceRule<'evaluate'>;
 			return (
 				a.members.length === bCh.members.length &&
 				a.members.every((m, i) => patternRulesEqual(m, bCh.members[i]!))
 			);
 		}
 		case OPTIONAL:
-			return patternRulesEqual(a.content, (b as OptionalRule).content);
+			return patternRulesEqual(a.content, (b as OptionalRule<'evaluate'>).content);
 		case REPEAT: {
-			const bRep = b as RepeatRule;
+			const bRep = b as RepeatRule<'evaluate'>;
 			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
 		}
 		case REPEAT1: {
-			const bRep = b as Repeat1Rule;
+			const bRep = b as Repeat1Rule<'evaluate'>;
 			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
 		}
 		case FIELD: {
-			const bFld = b as FieldRule;
+			const bFld = b as FieldRule<'evaluate'>;
 			return a.name === bFld.name && patternRulesEqual(a.content, bFld.content);
 		}
 		case ALIAS: {
-			const bAl = b as AliasRule;
+			const bAl = b as AliasRule<'evaluate'>;
 			return a.named === bAl.named && a.value === bAl.value && patternRulesEqual(a.content, bAl.content);
 		}
 		default:
@@ -2143,7 +2145,7 @@ function evaluateMetadataCallbacksInScope(opts: GrammarOptions, ctx: EvaluateCtx
  * wire()'s wrapped rule fns own their own context management
  * (currentRuleKind) per invocation — no try/finally needed here.
  */
-function evaluateRuleFunctions(rules: Record<string, Rule>, ctx: EvaluateCtx): void {
+function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const { opts, baseRules, refs, provenanceByKind, isExtension } = ctx;
 	for (const [name, ruleFn] of Object.entries(opts.rules)) {
 		const $ = createProxy(name, refs);
@@ -2174,10 +2176,10 @@ function evaluateRuleFunctions(rules: Record<string, Rule>, ctx: EvaluateCtx): v
  * — the outer's deposit + an inner variant split). Skipping preserves
  * the transform; the raw deposit is still correct when no compose ran.
  */
-function injectSyntheticRules(rules: Record<string, Rule>, ctx: EvaluateCtx, syntheticRules: Map<string, unknown>): void {
+function injectSyntheticRules(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx, syntheticRules: Map<string, unknown>): void {
 	for (const [name, content] of syntheticRules) {
 		if (name in rules) continue;
-		rules[name] = content as Rule;
+		rules[name] = content as Rule<'evaluate'>;
 		ctx.provenanceByKind.set(name, 'evaluate-synthesized');
 	}
 }

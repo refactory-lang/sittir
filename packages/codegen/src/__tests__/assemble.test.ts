@@ -1,7 +1,7 @@
 import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
-import { assemble, classifyNode, simplifyRule, nameNode } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../compiler/assemble.ts';
 import { computeSimplifiedRules, SimplifyCtx } from '../compiler/simplify.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../compiler/wrapper-deletion.ts';
@@ -261,7 +261,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(optimized).nodes.get('_type_identifier');
+		const node = assemble(optimized, AssembleCtx.from(optimized)).nodes.get('_type_identifier');
 		expect(node?.modelType).toBe('pattern');
 	});
 
@@ -299,7 +299,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(optimized).nodes.get('_pair_alias');
+		const node = assemble(optimized, AssembleCtx.from(optimized)).nodes.get('_pair_alias');
 		expect(node?.modelType).toBe('branch');
 		expect(allSlotsOf(node!).map((slot) => slot.name)).toEqual(['left', 'right']);
 	});
@@ -331,7 +331,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(optimized).nodes.get('_property_name');
+		const node = assemble(optimized, AssembleCtx.from(optimized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
 		expect((node as any).subtypes).toEqual(['identifier', 'string', '_property_identifier']);
 	});
@@ -383,7 +383,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(optimized).nodes.get('_property_name');
+		const node = assemble(optimized, AssembleCtx.from(optimized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
 		expect((node as any).subtypes).toEqual([
 			'identifier',
@@ -543,7 +543,7 @@ describe('Assemble — assemble()', () => {
 			},
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 		expect(nodeMap.name).toBe('test');
 		expect(nodeMap.nodes.get('function_item')?.modelType).toBe('branch');
 		expect(nodeMap.nodes.get('identifier')?.modelType).toBe('pattern');
@@ -563,7 +563,7 @@ describe('Assemble — assemble()', () => {
 			},
 			id: { type: PATTERN, value: '[a-z]+' }
 		});
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 		const fnNode = nodeMap.nodes.get('function_item')!;
 		expect(fnNode.typeName).toBe('FunctionItem');
 		expect(fnNode.factoryName).toBe('functionItem');

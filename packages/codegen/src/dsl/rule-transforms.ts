@@ -5,7 +5,7 @@
  * contract so signatures across normalize/simplify can thread it.
  */
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
+import type { AnyRule, RuleBase, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
 
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
 // missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
@@ -31,12 +31,12 @@ export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray'
  *    simplify stays field/optional/repeat/repeat1-node-free by construction.
  */
 export interface RuleBuilder {
-	seq(members: Rule[]): Rule;
-	choice(members: Rule[]): Rule;
-	optional(content: Rule): Rule;
-	repeat(content: Rule): Rule;
-	repeat1(content: Rule): Rule;
-	field(name: string, content: Rule): Rule;
+	seq(members: AnyRule[]): AnyRule;
+	choice(members: AnyRule[]): AnyRule;
+	optional(content: AnyRule): AnyRule;
+	repeat(content: AnyRule): AnyRule;
+	repeat1(content: AnyRule): AnyRule;
+	field(name: string, content: AnyRule): AnyRule;
 }
 
 /**
@@ -127,12 +127,14 @@ export function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMult
  *
  * Moved from template-walker.ts (origin: template-walker.ts:65).
  */
-export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolean {
+export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boolean {
 	// RenderRule leaf-attribute path: applyWrapperDeletion stamps the
 	// separator info as an object `{ rules, trailing?, leading? }` onto the
 	// leaf when the repeat wrapper carries the flag. Check this FIRST so
 	// RenderRule input (no repeat/repeat1 wrappers) still returns correctly.
-	const sep = rule.separator;
+	// (Structural read: `separator` only exists on the optimize-phase view,
+	// and this fn deliberately accepts any phase.)
+	const sep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator;
 	if (typeof sep === 'object' && !Array.isArray(sep) && sep !== null) {
 		if ((sep as { trailing?: boolean; leading?: boolean })[flag] === true) return true;
 	}
@@ -162,7 +164,7 @@ export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolea
  *
  * Moved from simplify.ts (origin: simplify.ts:1164).
  */
-export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
+export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
 	switch (rule.type) {
 		case REPEAT:
 			return { repeat: rule, nonEmpty: false };
@@ -172,7 +174,7 @@ export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Ru
 		case VARIANT:
 		case GROUP:
 		case TOKEN:
-			return extractRepeatShape((rule as { content: Rule }).content);
+			return extractRepeatShape((rule as { content: AnyRule }).content);
 		default:
 			return null;
 	}
@@ -188,17 +190,17 @@ export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Ru
  * Moved from simplify.ts (origin: simplify.ts:1101). Was file-local; now exported.
  */
 export function pushAttrsToLeaves(
-	rule: Rule,
+	rule: AnyRule,
 	multiplicity: 'optional' | 'array' | 'nonEmptyArray' | undefined,
 	separator: unknown,
 	fieldName: string | undefined
-): Rule {
-	const recurse = (r: Rule): Rule => pushAttrsToLeaves(r, multiplicity, separator, fieldName);
+): AnyRule {
+	const recurse = (r: AnyRule): AnyRule => pushAttrsToLeaves(r, multiplicity, separator, fieldName);
 	switch (rule.type) {
 		case SEQ:
 			// A seq is flattened into its parent by `canonicalizeSeqOfLeaves`, so
 			// a seq-level multiplicity would be lost. Push into members instead.
-			return { ...rule, members: (rule as { members: Rule[] }).members.map(recurse) } as Rule;
+			return { ...rule, members: (rule as { members: AnyRule[] }).members.map(recurse) } as AnyRule;
 		case CHOICE: {
 			// A choice at a seq position is a SINGLE slot boundary (the field
 			// walker unions its arms into one slot). `deriveSlotsRaw`'s choice
@@ -219,7 +221,7 @@ export function pushAttrsToLeaves(
 			if (fieldName !== undefined && (rule as { fieldName?: string }).fieldName === undefined) {
 				patch['fieldName'] = fieldName;
 			}
-			return { ...rule, ...patch } as Rule;
+			return { ...rule, ...patch } as AnyRule;
 		}
 		case GROUP:
 		case VARIANT:
@@ -229,7 +231,7 @@ export function pushAttrsToLeaves(
 		case REPEAT:
 		case REPEAT1:
 		case FIELD:
-			return { ...rule, content: recurse((rule as { content: Rule }).content) } as Rule;
+			return { ...rule, content: recurse((rule as { content: AnyRule }).content) } as AnyRule;
 		default: {
 			// Leaf: symbol / string / pattern / terminal / enum / supertype / etc.
 			const cur = (rule as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
@@ -240,7 +242,7 @@ export function pushAttrsToLeaves(
 			if (fieldName !== undefined && (rule as { fieldName?: string }).fieldName === undefined) {
 				patch['fieldName'] = fieldName;
 			}
-			return { ...rule, ...patch } as Rule;
+			return { ...rule, ...patch } as AnyRule;
 		}
 	}
 }
@@ -252,7 +254,7 @@ export function pushAttrsToLeaves(
  * a full TransformCtx.
  */
 export interface InlineRefsCtx {
-	readonly rules: Readonly<Record<string, Rule>>;
+	readonly rules: Readonly<Record<string, AnyRule>>;
 	readonly inlineKinds?: ReadonlySet<string>;
 }
 
@@ -278,10 +280,10 @@ const EMPTY_INLINE_KINDS: ReadonlySet<string> = new Set();
  *
  * Cycle-safe via visited set.
  */
-export function inlineRefs(rule: Rule, ctx: InlineRefsCtx, visited: ReadonlySet<string> = new Set()): Rule {
+export function inlineRefs<R extends AnyRule>(rule: R, ctx: InlineRefsCtx, visited: ReadonlySet<string> = new Set()): R {
 	const rules = ctx.rules;
 	const inlineKinds = ctx.inlineKinds ?? EMPTY_INLINE_KINDS;
-	const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineRefs(r, ctx, v);
+	const recurse = (r: AnyRule, v: ReadonlySet<string>): AnyRule => inlineRefs(r, ctx, v);
 	switch (rule.type) {
 		case SYMBOL: {
 			// grammar.inline is the single source of truth for inlining. Any
@@ -370,8 +372,8 @@ export function inlineRefs(rule: Rule, ctx: InlineRefsCtx, visited: ReadonlySet<
 		case TOKEN:
 			return {
 				...rule,
-				content: recurse((rule as { content: Rule }).content, visited)
-			} as Rule;
+				content: recurse((rule as { content: AnyRule }).content, visited)
+			} as AnyRule;
 		default:
 			return rule;
 	}
@@ -389,11 +391,11 @@ export function inlineRefs(rule: Rule, ctx: InlineRefsCtx, visited: ReadonlySet<
  * All other hidden rules stay as-is — they are distinct structural
  * nodes or dispatch points.
  */
-export function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
+export function resolveGroupOrMultiInlineTarget(target: AnyRule): AnyRule | null {
 	const isGroup = target.type === GROUP;
 	const isMulti = extractRepeatShape(target) !== null;
 	if (!isGroup && !isMulti) return null;
-	return isGroup ? (target as { content: Rule }).content : target;
+	return isGroup ? (target as { content: AnyRule }).content : target;
 }
 
 /**
@@ -421,7 +423,7 @@ export function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
  *
  * No-op when the referring symbol carries no non-default leaf attributes.
  */
-function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
+function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {
 	const r = ref as {
 		multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
 		separator?: unknown;
@@ -434,15 +436,15 @@ function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
 }
 
 /**
- * Generic post-order child recursion for the `Rule` IR. Mirrors
+ * Generic post-order child recursion for the `AnyRule` IR. Mirrors
  * `dsl/enrich.ts:recurseChildren` but tightened to the canonical typed
- * Rule shape (no string-typed legacy variants like 'TOKEN' / 'ALIAS' /
+ * AnyRule shape (no string-typed legacy variants like 'TOKEN' / 'ALIAS' /
  * 'IMMEDIATE_TOKEN' — those don't appear post-evaluate).
  *
  * Identity-preserving: returns the input rule unchanged when no child
  * was rewritten (`visit` returned the same reference for every child).
  */
-export function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
+export function recurseChildren<R extends AnyRule>(rule: R, visit: (r: R) => R): R {
 	switch (rule.type) {
 		case SEQ:
 		case CHOICE: {
@@ -453,7 +455,7 @@ export function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 				if (out !== m) changed = true;
 				return out;
 			});
-			return changed ? ({ ...rule, members: next } as Rule) : rule;
+			return changed ? ({ ...rule, members: next } as AnyRule) : rule;
 		}
 		case OPTIONAL:
 		case REPEAT:
@@ -463,9 +465,9 @@ export function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 		case GROUP:
 		case TOKEN:
 		case ALIAS: {
-			const content = (rule as { content: Rule }).content;
+			const content = (rule as { content: AnyRule }).content;
 			const out = visit(content);
-			return out === content ? rule : ({ ...rule, content: out } as Rule);
+			return out === content ? rule : ({ ...rule, content: out } as AnyRule);
 		}
 		default:
 			return rule;
@@ -495,7 +497,7 @@ const isArrayMult = (m: Mult): boolean => m === 'array' || m === 'nonEmptyArray'
  * (multiplicity / separator / fieldName / aliasedFrom). Used to decide that a
  * head element and a repeat element are "the same list element".
  */
-function sameSlotShape(a: Rule, b: Rule): boolean {
+function sameSlotShape(a: AnyRule, b: AnyRule): boolean {
     if (a.type !== b.type) return false;
     switch (a.type) {
         case SYMBOL:
@@ -520,7 +522,7 @@ function sameSlotShape(a: Rule, b: Rule): boolean {
  * If `head` + `next` form a head+repeat list pair, return the fused multi
  * element; otherwise `null`.
  */
-function tryFusePair(head: Rule, next: Rule | undefined): Rule | null {
+function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
     if (!next) return null;
     const headMult = (head as { multiplicity?: Mult; }).multiplicity;
     if (isArrayMult(headMult)) return null; // head is already multi — not a head+repeat pair
@@ -539,14 +541,14 @@ function tryFusePair(head: Rule, next: Rule | undefined): Rule | null {
             (m) => isArrayMult((m as { multiplicity?: Mult; }).multiplicity) && sameSlotShape(head, m)
         );
         if (sepArm && repArm) {
-            const repSep = (repArm as { separator?: Rule['separator']; }).separator;
+            const repSep = (repArm as { separator?: RuleBase<'optimize'>['separator']; }).separator;
             if (repSep !== undefined) return repArm;
             // Fall back to the choice's separator-string arm, marking trailing.
             const sepStr = (sepArm as { value: string; }).value;
             return {
                 ...repArm,
                 separator: { rules: [{ type: 'string', value: sepStr }], trailing: true }
-            } as Rule;
+            } as AnyRule;
         }
     }
 
@@ -560,11 +562,11 @@ function tryFusePair(head: Rule, next: Rule | undefined): Rule | null {
  * applies).
  */
 
-export function fuseHeadRepeatLists(rule: Rule): Rule {
+export function fuseHeadRepeatLists<R extends AnyRule>(rule: R): R {
     const recursed = recurseChildren(rule, fuseHeadRepeatLists);
     if (recursed.type !== SEQ) return recursed;
     const members = (recursed as SeqRule).members;
-    const out: Rule[] = [];
+    const out: AnyRule[] = [];
     let changed = false;
     for (let i = 0; i < members.length; i++) {
         const fused = tryFusePair(members[i]!, members[i + 1]);
@@ -577,6 +579,6 @@ export function fuseHeadRepeatLists(rule: Rule): Rule {
         out.push(members[i]!);
     }
     if (!changed) return recursed;
-    return { ...recursed, members: out } as Rule;
+    return { ...recursed, members: out } as AnyRule;
 }
 

@@ -2,9 +2,9 @@
  * compiler/model/node-map.ts — the AssembledNode model: the assembled-node
  * class hierarchy plus the slot derivation and naming projection that build it.
  *
- * Split from the Rule IR file (now `types/rule.ts`, R11). The classes here
+ * Split from the Rule<'link'> IR file (now `types/rule.ts`, R11). The classes here
  * represent what an assembled grammar node looks like after the full pipeline
- * has classified and enriched the Rule — each subclass corresponds to one
+ * has classified and enriched the Rule<'link'> — each subclass corresponds to one
  * ModelType (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
  * `supertype`, `group`, `multi`). `container` was merged into `branch`
  * (slot-surface distinctions derived from `slotClass`).
@@ -20,8 +20,8 @@
  *      accumulators + the optional-body and audit-context module pointers.
  *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
  *      content types, cardinality (`deriveSlotCardinality`…), value guards,
- *      naming utilities (`snakeToCamel`/`pluralize`), the Rule walkers
- *      (`hasAnyField`/`hasAnyChild`), and the Rule → slots/values derivation
+ *      naming utilities (`snakeToCamel`/`pluralize`), the Rule<'link'> walkers
+ *      (`hasAnyField`/`hasAnyChild`), and the Rule<'link'> → slots/values derivation
  *      (`deriveSlots`, `deriveValuesForRule`, `dedupeValues`, separators, `nameNode`).
  *   3. AssembledNonterminal & naming projection — the slot class + `kindsOf`/
  *      `valueParseKindsOf` + the `projectSlotNaming` projection.
@@ -35,6 +35,7 @@
 
 import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
+	AnyRule,
 	Rule,
 	RenderRule,
 	RuleSource,
@@ -174,7 +175,7 @@ export function drainAssembleWarnings(): AssembleWarning[] {
  * below (moved from field-shape.ts in R7 de-scatter; uses the node-map version).
  */
 
-export function fieldContentIsMultiSibling(content: Rule): boolean {
+export function fieldContentIsMultiSibling(content: Rule<'link'>): boolean {
     const core = unwrapStructuralPassthroughs(content);
     if (core.type === CHOICE) {
         return core.members.some((member) => fieldContentIsMultiSibling(member));
@@ -182,14 +183,14 @@ export function fieldContentIsMultiSibling(content: Rule): boolean {
     if (core.type !== SEQ) return false;
     let count = 0;
     for (const member of core.members) {
-        let unwrapped: Rule = member;
+        let unwrapped: Rule<'link'> = member;
         while (unwrapped.type === OPTIONAL ||
             unwrapped.type === VARIANT ||
             unwrapped.type === GROUP ||
             unwrapped.type === TOKEN
-            // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+            // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
         ) {
-            unwrapped = (unwrapped as { content: Rule; }).content;
+            unwrapped = (unwrapped as { content: Rule<'link'>; }).content;
         }
         switch (unwrapped.type) {
             case SYMBOL:
@@ -486,7 +487,7 @@ export interface RenderTemplateSlot {
 }
 
 // ---------------------------------------------------------------------------
-// Derivation helpers — walk a Rule to produce fields, children, content types
+// Derivation helpers — walk a Rule<'link'> to produce fields, children, content types
 // ---------------------------------------------------------------------------
 
 /**
@@ -573,7 +574,7 @@ export function safeParamName(name: string): string {
  * know IF fields exist — not the full list. Shorter-circuits than
  * deriveFields.
  */
-export function hasAnyField(rule: Rule): boolean {
+export function hasAnyField(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case FIELD:
 			return true;
@@ -596,7 +597,7 @@ export function hasAnyField(rule: Rule): boolean {
  * reference (visible OR hidden)? Hidden symbols dispatch to concrete
  * subtypes at parse time, so they DO contribute children.
  */
-export function hasAnyChild(rule: Rule): boolean {
+export function hasAnyChild(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case SYMBOL:
 		case SUPERTYPE:
@@ -656,7 +657,7 @@ let currentAuditKind: string | undefined;
 export function setAuditKindContext(kind: string | undefined): void {
 	currentAuditKind = kind;
 }
-function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void {
+function auditDerivationShape(rule: Rule<'link'>, context: 'fields' | 'children'): void {
 	const mode = deriveAuditMode();
 	if (mode === 'off') return;
 	const shape = classifyTopLevelShape(rule);
@@ -687,7 +688,7 @@ function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void 
 		}
 	}
 }
-function classifyTopLevelShape(rule: Rule): string {
+function classifyTopLevelShape(rule: Rule<'link'>): string {
 	// Canonical for the trivial walk: the tree rooted at `rule`
 	// — traversed through the structural wrappers the walker descends
 	// (seq, optional, repeat, repeat1, choice, clause, variant) — must
@@ -740,7 +741,7 @@ function classifyTopLevelShape(rule: Rule): string {
 		case STRING:
 		case PATTERN:
 		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled in CHOICE above.
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 		case SUPERTYPE:
 		case INDENT:
 		case DEDENT:
@@ -803,7 +804,7 @@ function classifyTopLevelShape(rule: Rule): string {
 		case ALIAS:
 			return `wrapper-${rule.type}`;
 		default:
-			return `other-${(rule as Rule).type}`;
+			return `other-${(rule as Rule<'link'>).type}`;
 	}
 }
 /**
@@ -823,8 +824,8 @@ function classifyTopLevelShape(rule: Rule): string {
  * lexes as a single token stream; the derive walker treats this as a
  * single-value child slot just like a symbol member.
  */
-function isTokenLikeChoiceMember(m: Rule): boolean {
-	const peel = (r: Rule): Rule =>
+function isTokenLikeChoiceMember(m: Rule<'link'>): boolean {
+	const peel = (r: Rule<'link'>): Rule<'link'> =>
 		r.type === ALIAS
 			? peel(r.content)
 			: r.type === TOKEN
@@ -883,7 +884,7 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
  * through to `isTokenLikeChoiceMember` for non-seq members so a mixed
  * choice `(seq(X, '&&', Y), bareY)` still qualifies.
  */
-function isFlatSymbolSeqOrTokenLike(m: Rule): boolean {
+function isFlatSymbolSeqOrTokenLike(m: Rule<'link'>): boolean {
 	if (m.type === SEQ) {
 		return m.members.every(isTokenLikeChoiceMember);
 	}
@@ -913,8 +914,8 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
  * wrapper-free from `computeSimplifiedRules` — `deleteWrapper` is idempotent
  * on wrapper-free input, so this is a no-op on the hot path.
  */
-function _deriveSlotsInternal(rule: Rule, ctx?: DeriveCtx): AssembledNonterminal[] {
-	const canonical = deleteWrapper(rule) as Rule;
+function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNonterminal[] {
+	const canonical = deleteWrapper(rule) as Rule<'link'>;
 	// Set the audit kind context for the duration of this derivation so
 	// auditDerivationShape() can attribute shapes to their originating kind.
 	// Save/restore guards against cross-kind bleed if derivations nest.
@@ -992,9 +993,9 @@ export interface DeriveCtx {
 	/** Visible alias target → source kinds (alias-source slot expansion). */
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	/** Post-simplify rules, for alias-source value derivation. */
-	readonly simplifiedRules?: Record<string, Rule>;
+	readonly simplifiedRules?: Record<string, Rule<'link'>>;
 	/** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
-	readonly nodes?: ReadonlyMap<string, AssembledNodeBase<Rule>>;
+	readonly nodes?: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>;
 }
 
 /** {@link DeriveCtx} with the owning kind bound — per-kind record builders. */
@@ -1002,7 +1003,7 @@ export interface KindedDeriveCtx extends DeriveCtx {
 	readonly kindName: string;
 }
 
-export function buildParseKindRuleSignatures<T extends Rule>(
+export function buildParseKindRuleSignatures<T extends Rule<'link'>>(
 	rules: Readonly<Record<string, T>>
 ): Readonly<Record<string, string>> {
 	return Object.fromEntries(
@@ -1099,18 +1100,18 @@ function normalizeRuleForSignature(value: unknown): unknown {
 }
 
 /**
- * Extract a separator string from a Rule['separator'] value.
+ * Extract a separator string from a Rule<'link'>['separator'] value.
  * Returns undefined when the separator is absent or empty.
- * Handles string, Rule[], and the object form { rules, trailing?, leading? }.
+ * Handles string, Rule<'link'>[], and the object form { rules, trailing?, leading? }.
  */
-export function extractSeparatorString(sep: Rule['separator']): string | undefined {
+export function extractSeparatorString(sep: Rule<'link'>['separator']): string | undefined {
 	if (sep === undefined) return undefined;
 	if (typeof sep === 'string') return sep || undefined;
 	if (Array.isArray(sep)) {
 		const str = sep.map((r) => ('value' in r ? (r as { value: string }).value : '')).join('');
 		return str || undefined;
 	}
-	// Object form { rules: Rule[], trailing?, leading? }
+	// Object form { rules: Rule<'link'>[], trailing?, leading? }
 	const rules = (sep as { rules: readonly { value?: string }[] }).rules;
 	const str = rules.map((r) => r.value ?? '').join('');
 	return str || undefined;
@@ -1172,7 +1173,7 @@ export function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: s
  * ordering. A future cleanup could rewrite the walk to preserve true
  * declared-order with one unified pass over the rule tree.
  */
-export function deriveSlots(rule: Rule, ctx?: DeriveCtx): readonly AssembledNonterminal[] {
+export function deriveSlots(rule: Rule<'link'>, ctx?: DeriveCtx): readonly AssembledNonterminal[] {
 	// The field walker handles positional symbol/supertype/choice content
 	// too, so it produces every slot — no separate children walker needed.
 	return _deriveSlotsInternal(rule, ctx);
@@ -1192,7 +1193,7 @@ export function deriveSlots(rule: Rule, ctx?: DeriveCtx): readonly AssembledNont
  * contains fields) are NOT synthetic — those have real field values
  * that tree-sitter populates at parse time.
  */
-export function isSyntheticFieldWrapper(content: Rule): boolean {
+export function isSyntheticFieldWrapper(content: Rule<'link'>): boolean {
 	if (content.type === REPEAT || content.type === REPEAT1) {
 		return isSyntheticFieldWrapper(content.content);
 	}
@@ -1218,7 +1219,7 @@ export function isSyntheticFieldWrapper(content: Rule): boolean {
  * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
  */
 export function deriveValuesForRule(
-	rule: Rule,
+	rule: Rule<'link'>,
 	ctx: DeriveCtx | undefined,
 	multiplicity: Multiplicity
 ): NodeOrTerminal[] {
@@ -1304,7 +1305,7 @@ export function deriveValuesForRule(
 			// and single → optional when recursing into the non-blank arms.
 			// Mirrors the fieldContentMultiplicity choice handling and the
 			// rule-body lookthrough in assemble.ts.
-			const isBlank = (r: Rule): boolean =>
+			const isBlank = (r: Rule<'link'>): boolean =>
 				(r.type === CHOICE && r.members.length === 0) ||
 				(r.type === SEQ && r.members.length === 0);
 			const nonBlank = rule.members.filter((m) => !isBlank(m));
@@ -1531,7 +1532,7 @@ export function nameNode(kind: string): {
 	return { typeName, factoryName, irKey };
 }
 
-export abstract class AssembledNodeBase<R extends Rule = Rule> {
+export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	readonly kind: string;
 	// typeName / factoryName are writable so assemble()'s post-pass
 	// (resolveCollidingNames) can rename hidden kinds that clashed with
@@ -1550,8 +1551,8 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 */
 	irKey?: string;
 	/**
-	 * Rule-level provenance. Mirrors the `source` field on the
-	 * underlying Rule (EnumRule, SupertypeRule, PolymorphRule).
+	 * Rule<'link'>-level provenance. Mirrors the `source` field on the
+	 * underlying Rule<'link'> (EnumRule<'link'>, SupertypeRule<'link'>, PolymorphRule).
 	 * PR-P Task 2: TerminalRule removed from the list — deleted. Undefined for branches/containers/groups, which
 	 * don't have a rule-level classification. The suggested.ts emitter
 	 * surfaces nodes whose source is `'promoted'` as rule-level
@@ -1627,7 +1628,7 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	/**
 	 * The grammar rule that produced this assembled node. All 10 concrete
 	 * subclasses store their rule here. The generic parameter `R` narrows
-	 * this to the exact Rule subset each subclass accepts — the narrowing
+	 * this to the exact Rule<'link'> subset each subclass accepts — the narrowing
 	 * is truthful at runtime (not just documentation) because every
 	 * subclass constructor stores its rule argument here.
 	 *
@@ -1757,7 +1758,7 @@ export interface AssembledNonterminalInit {
 	readonly hasLeading: boolean;
 	readonly source: 'grammar' | 'override' | 'promoted' | 'enriched' | 'inferred';
 	/**
-	 * Rule-ids of every simplified/render-rule position that produced this slot —
+	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot —
 	 * see `AssembledNonterminal.sourceRuleIds`.
 	 */
 	readonly sourceRuleIds: readonly RuleId[];
@@ -1797,7 +1798,7 @@ export class AssembledNonterminal {
 	readonly hasLeading: boolean;
 	readonly source: 'grammar' | 'override' | 'promoted' | 'enriched' | 'inferred';
 	/**
-	 * Rule-ids of every simplified/render-rule position that produced this slot.
+	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot.
 	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
 	 * view a consumer walks to the owning slot without owner traversal. Empty
 	 * when the source rules carry no ids (hand-constructed test fixtures that
@@ -2211,7 +2212,7 @@ function expandSlotWithVisibleAliasSources(
  *   inputs (kind entries, collision signatures, alias targets, rules).
  */
 function buildSlotsRecord(
-	rule: Rule,
+	rule: Rule<'link'>,
 	ctx: KindedDeriveCtx,
 	renderRule?: RenderRule
 ): Readonly<Record<string, AssembledNonterminal>> {
@@ -2428,21 +2429,21 @@ function _isAutoStampSlotForParameterless(
 // ============================================================================
 
 export class AssembledBranch<
-	R extends SeqRule | ChoiceRule | RepeatRule | Repeat1Rule =
-		| SeqRule
-		| ChoiceRule
+	R extends SeqRule<'link'> | ChoiceRule<'link'> | RepeatRule | Repeat1Rule =
+		| SeqRule<'link'>
+		| ChoiceRule<'link'>
 		| RepeatRule
 		| Repeat1Rule
 > extends AssembledNodeBase<R> {
 	readonly modelType = 'branch' as const;
-	// rule narrowed to SeqRule | ChoiceRule | RepeatRule | Repeat1Rule —
+	// rule narrowed to SeqRule<'link'> | ChoiceRule<'link'> | RepeatRule | Repeat1Rule —
 	// branches classify from compositional rules that carry fields and/or
 	// ordered children. The prior `AssembledContainer` class was absorbed —
 	// repeat / repeat1 shapes (no `field()` on the rule) now route here too.
 	// Emitter behavior should key off `slotClass` / slot facts rather than a
 	// separate branch-global shape discriminator.
 	/**
-	 * Rule with anonymous tokens / structural wrappers stripped.
+	 * Rule<'link'> with anonymous tokens / structural wrappers stripped.
 	 * Computed once by assemble() via `simplifyRule(init.rule)` and
 	 * stored here so derivation walks (`deriveFields`, `deriveChildren`,
 	 * separator discovery) don't have to re-navigate past delimiter
@@ -2450,7 +2451,7 @@ export class AssembledBranch<
 	 * `rule` because templates need the literals to surface as
 	 * template text. Stage 1: populated but not yet read.
 	 */
-	readonly simplifiedRule: Rule;
+	readonly simplifiedRule: Rule<'link'>;
 	/**
 	 * Wrapper-deleted view of the rule, sourced from
 	 * `optimized.renderRules[kind]` at assemble time. Optional / field /
@@ -2503,7 +2504,7 @@ export class AssembledBranch<
 	constructor(
 		kind: string,
 		rule: R,
-		simplifiedRule: Rule,
+		simplifiedRule: Rule<'link'>,
 		renderRule: RenderRule,
 		opts?: {
 			factoryName?: string;
@@ -2514,7 +2515,7 @@ export class AssembledBranch<
 			parseKindCollisionContext?: ParseKindCollisionContext;
 			slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
 			visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
-			simplifiedRules?: Record<string, Rule>;
+			simplifiedRules?: Record<string, Rule<'link'>>;
 		}
 	) {
 		super(kind, rule, opts);
@@ -2542,7 +2543,7 @@ export class AssembledBranch<
 	 * carry an ordered member tuple (the `content` is a single repeated
 	 * rule, surfaced via `children`).
 	 */
-	get members(): readonly Rule[] {
+	get members(): readonly Rule<'link'>[] {
 		const r = this.rule;
 		return r.type === SEQ || r.type === CHOICE ? r.members : [];
 	}
@@ -2590,7 +2591,7 @@ export class AssembledBranch<
 	// parameterless getter. Attached by assemble() after all nodes are constructed
 	// (via attachNodeMap). Not set in test fixtures — those resolve false.
 	// Private to prevent serialization walks from descending into the whole map.
-	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule>> | undefined = undefined;
+	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>> | undefined = undefined;
 
 	/**
 	 * Attach the assembled node map so the `parameterless` getter can resolve
@@ -2598,7 +2599,7 @@ export class AssembledBranch<
 	 * assemble() after all nodes are populated. Safe to call multiple times
 	 * (idempotent for the same map reference).
 	 */
-	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule>>): void {
+	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>): void {
 		this.#nodes = nodes;
 	}
 
@@ -2681,7 +2682,7 @@ export class AssembledBranch<
  * markers from tagVariants). Every member has exactly three elements:
  * string-literal, repeat/repeat1 of a hidden symbol, string-literal.
  */
-function isVerbatimTokenStream(rule: Rule): boolean {
+function isVerbatimTokenStream(rule: Rule<'link'>): boolean {
 	if (rule.type !== CHOICE) return false;
 	if (rule.members.length === 0) return false;
 	return rule.members.every((m) => {
@@ -2710,7 +2711,7 @@ function isVerbatimTokenStream(rule: Rule): boolean {
  * Only fires for containers — branch nodes with named fields are handled
  * by the field-conditional path and don't reach `isTextTemplate`.
  */
-function hasOptionalPunctPrefix(rule: Rule): boolean {
+function hasOptionalPunctPrefix(rule: Rule<'link'>): boolean {
 	if (rule.type !== SEQ || rule.members.length < 2) return false;
 	const first = rule.members[0]!;
 	if (first.type !== 'optional') return false;
@@ -2721,7 +2722,7 @@ function hasOptionalPunctPrefix(rule: Rule): boolean {
 /** Return true when a rule contains only string/pattern literals with no
  *  symbol references or field wrappers. Mirrors `containsOnlyPunctuation`
  *  in `template-walker.ts` (kept local to avoid a cross-file import). */
-function isAllPunct(rule: Rule): boolean {
+function isAllPunct(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case STRING:
 		case PATTERN:
@@ -2736,13 +2737,13 @@ function isAllPunct(rule: Rule): boolean {
 			return false;
 		case SEQ:
 		case CHOICE:
-			return (rule as { members: Rule[] }).members.every(isAllPunct);
+			return (rule as { members: Rule<'link'>[] }).members.every(isAllPunct);
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
 		case VARIANT:
 		case GROUP:
-			return isAllPunct((rule as { content: Rule }).content);
+			return isAllPunct((rule as { content: Rule<'link'> }).content);
 		default:
 			return false;
 	}
@@ -2763,16 +2764,16 @@ function isAllPunct(rule: Rule): boolean {
  * - `token`, `terminal` — terminalisation wrappers; the inner rule
  *   carries the actual content shape.
  *
- * @remarks Exhaustive `switch` on `Rule.type`; non-passthrough rules
+ * @remarks Exhaustive `switch` on `Rule<'link'>.type`; non-passthrough rules
  * (seq/choice/repeat/repeat1/field/symbol/string/pattern/etc.) are
  * returned as-is. `assertNever` locks the switch shut so adding a new
- * Rule variant becomes a compile error here instead of silently
+ * Rule<'link'> variant becomes a compile error here instead of silently
  * skipping the unwrap step.
  *
  * @see template-walker.ts `fieldContentIsMultiSibling`.
  */
-export function unwrapStructuralPassthroughs(rule: Rule): Rule {
-	let r: Rule = rule;
+export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
+	let r: Rule<'link'> = rule;
 	for (;;) {
 		switch (r.type) {
 			case OPTIONAL:
@@ -2780,7 +2781,7 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 			case GROUP:
 			case ALIAS:
 			case TOKEN:
-			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 				r = r.content;
 				continue;
 			case SEQ:
@@ -2817,7 +2818,7 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
  * entirely — `modelType` is inherited as `'branch'` from `AssembledBranch`.
  * Callers comparing `node.modelType === 'polymorph'` will simply never match.
  */
-export class AssembledPolymorph extends AssembledBranch<ChoiceRule> {
+export class AssembledPolymorph extends AssembledBranch<ChoiceRule<'link'>> {
 	// No modelType override — inherits 'branch' from AssembledBranch.
 	// Resolves the P1 @ts-expect-error TS2416 that existed in the old class.
 	override readonly source: 'promoted' | 'override';
@@ -2825,7 +2826,7 @@ export class AssembledPolymorph extends AssembledBranch<ChoiceRule> {
 
 	constructor(
 		kind: string,
-		rule: ChoiceRule,
+		rule: ChoiceRule<'link'>,
 		forms: AssembledGroup[],
 		opts?: {
 			source?: 'promoted' | 'override';
@@ -2836,7 +2837,7 @@ export class AssembledPolymorph extends AssembledBranch<ChoiceRule> {
 		}
 	) {
 		const slotRecord = structuralSlotRecordFromForms(forms, { kindName: kind, collision: opts?.parseKindCollisionContext });
-		super(kind, rule, rule as Rule, rule as RenderRule, {
+		super(kind, rule, rule as Rule<'link'>, rule as RenderRule, {
 			factoryName: opts?.factoryName,
 			irKey: opts?.irKey,
 			variantChildKinds: opts?.variantChildKinds,
@@ -2874,17 +2875,17 @@ export class AssembledPolymorph extends AssembledBranch<ChoiceRule> {
  * Introduced alongside the rename of the previous
  * open-text `AssembledLeaf` class to `AssembledPattern`.
  */
-export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNodeBase<R> {}
+export abstract class AssembledLeaf<R extends AnyRule = Rule<'link'>> extends AssembledNodeBase<R> {}
 
 /**
  * Open-text non-branch kind whose surface form is matched by a regex
- * (PatternRule) or is a pure-text structural rule (terminal-shape, no
+ * (PatternRule<'link'>) or is a pure-text structural rule (terminal-shape, no
  * fields, no symbol refs). Examples: `identifier`, `integer_literal`,
  * `string_content`.
  *
- * PR-P Task 2: widened from `PatternRule | TerminalRule` to `Rule` because
+ * PR-P Task 2: widened from `PatternRule<'link'> | TerminalRule` to `Rule<'link'>` because
  * TerminalRule was deleted — terminal-shape kinds now arrive with their
- * original unwrapped rule (may be SeqRule, ChoiceRule, etc.).
+ * original unwrapped rule (may be SeqRule<'link'>, ChoiceRule<'link'>, etc.).
  *
  * Renamed from the original `AssembledLeaf` class. The `modelType`
  * discriminant is `'pattern'` (renamed from `'leaf'` during the
@@ -2892,14 +2893,14 @@ export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNode
  * is now an abstract base (above); `AssembledPattern` is one of its
  * four concrete subclasses.
  */
-export class AssembledPattern extends AssembledLeaf<Rule> {
+export class AssembledPattern extends AssembledLeaf<Rule<'link'>> {
 	readonly modelType = 'pattern' as const;
 
-	constructor(kind: string, rule: Rule, opts?: { factoryName?: string; irKey?: string }) {
+	constructor(kind: string, rule: Rule<'link'>, opts?: { factoryName?: string; irKey?: string }) {
 		super(kind, rule, opts);
 	}
 
-	/** The leaf's regex pattern value when the rule is a PatternRule; undefined otherwise. */
+	/** The leaf's regex pattern value when the rule is a PatternRule<'link'>; undefined otherwise. */
 	get pattern(): string | undefined {
 		return this.rule.type === PATTERN ? this.rule.value || undefined : undefined;
 	}
@@ -2933,7 +2934,7 @@ export class AssembledPattern extends AssembledLeaf<Rule> {
  * Blanks (empty `choice` / `seq`) are skipped — they contribute no text and
  * represent the "omit" arm of an `optional`.
  */
-function collectFixedLiteral(rule: Rule): string | undefined {
+function collectFixedLiteral(rule: Rule<'link'>): string | undefined {
 	switch (rule.type) {
 		case STRING:
 			return rule.value || undefined;
@@ -2971,7 +2972,7 @@ function collectFixedLiteral(rule: Rule): string | undefined {
 		}
 		case TOKEN:
 			// token(X) wrapper — recurse into content
-			return collectFixedLiteral((rule as { content: Rule }).content);
+			return collectFixedLiteral((rule as { content: Rule<'link'> }).content);
 		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted; collectFixedLiteral
 		// called on the unwrapped rule directly now (see AssembledPattern.fixedLiteralText).
 		default:
@@ -2980,13 +2981,13 @@ function collectFixedLiteral(rule: Rule): string | undefined {
 	}
 }
 
-export class AssembledKeyword extends AssembledLeaf<StringRule> {
+export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 	readonly modelType = 'keyword' as const;
 	readonly resolvedKind?: string;
 
 	constructor(
 		kind: string,
-		rule: StringRule,
+		rule: StringRule<'link'>,
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
@@ -2998,7 +2999,7 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 		this.resolvedKind = findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind;
 	}
 
-	/** The literal text this keyword produces (read from the StringRule). */
+	/** The literal text this keyword produces (read from the StringRule<'link'>). */
 	get text(): string {
 		return this.rule.value;
 	}
@@ -3027,11 +3028,11 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	}
 }
 
-export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
+export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule> {
 	readonly modelType = 'token' as const;
 	readonly resolvedKind?: string;
 
-	constructor(kind: string, rule: StringRule | TokenRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
+	constructor(kind: string, rule: StringRule<'link'> | TokenRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
 		super(kind, rule, { hidden: true });
 		this.resolvedKind =
 			rule.type === STRING ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
@@ -3039,7 +3040,7 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	// No emitFactory — tokens are always hidden, no factoryName.
 
 	/**
-	 * Single-literal tokens (StringRule) are parameterless — they stamp to
+	 * Single-literal tokens (StringRule<'link'>) are parameterless — they stamp to
 	 * the literal (as const) the same way keywords do. Pattern-based tokens
 	 * (TokenRule) carry no single user-visible string and stay
 	 * non-parameterless.
@@ -3115,13 +3116,13 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	}
 }
 
-export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
+export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
 
 	constructor(
 		kind: string,
-		rule: ChoiceRule,
+		rule: ChoiceRule<'link'>,
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
@@ -3129,7 +3130,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 		}
 	) {
 		super(kind, rule, opts);
-		// PR-P: members are StringRule (pre-link) or LINK-SYMBOL (post-link);
+		// PR-P: members are StringRule<'link'> (pre-link) or LINK-SYMBOL (post-link);
 		// use literalTextOf for both forms.
 		this.resolvedKinds = rule.members
 			.map((member) => {
@@ -3139,7 +3140,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 			.filter((member): member is string => member !== undefined);
 		if (this.values.length < 2) {
 			throw new Error(
-				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to StringRule`
+				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to StringRule<'link'>`
 			);
 		}
 	}
@@ -3150,16 +3151,16 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule> {
 	}
 }
 
-export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | ChoiceRule> {
+export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> | ChoiceRule<'link'>> {
 	readonly modelType = 'supertype' as const;
 	// #subtypes stores the RESOLVED subtype list (hidden names expanded to
 	// their concrete kinds) — this differs from rule.subtypes which carries
 	// the raw names as declared in the grammar. Do NOT replace with rule.subtypes.
 	readonly #subtypes: string[];
 
-	constructor(kind: string, rule: SupertypeRule | ChoiceRule, subtypes: string[]) {
+	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: string[]) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
-		super(kind, rule as SupertypeRule, { hidden: true });
+		super(kind, rule as SupertypeRule<'link'>, { hidden: true });
 		this.#subtypes = subtypes;
 	}
 
@@ -3205,11 +3206,11 @@ export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> 
 		super(kind, rule, { hidden: true, irKey: opts?.irKey });
 	}
 
-	/** The repeat's inner content type — raw Rule, for downstream
+	/** The repeat's inner content type — raw Rule<'link'>, for downstream
 	 * consumers that need the element union (types emitter maps this
 	 * to a union of TypeNames, inlineRefs hands the whole repeat
 	 * back to referrers). */
-	get elementRule(): Rule {
+	get elementRule(): Rule<'link'> {
 		return this.rule.content;
 	}
 
@@ -3236,14 +3237,14 @@ export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> 
 	}
 }
 
-export class AssembledGroup extends AssembledNodeBase<Rule> {
+export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	readonly modelType = 'group' as const;
-	// rule typed as Rule — groups can carry GroupRule (pre-unwrap),
-	// SeqRule/ChoiceRule after unwrapGroupRuleAndSimplified(), or any
-	// Rule when constructed as polymorph forms (form.content can be
-	// any Rule type).
+	// rule typed as Rule<'link'> — groups can carry GroupRule<'link'> (pre-unwrap),
+	// SeqRule<'link'>/ChoiceRule<'link'> after unwrapGroupRuleAndSimplified(), or any
+	// Rule<'link'> when constructed as polymorph forms (form.content can be
+	// any Rule<'link'> type).
 	/** See `AssembledBranch.simplifiedRule`. */
-	readonly simplifiedRule: Rule;
+	readonly simplifiedRule: Rule<'link'>;
 	/** See `AssembledBranch.renderRule`. Sourced from `optimized.renderRules[kind]` at assemble time. */
 	readonly renderRule: RenderRule;
 	readonly detectToken?: string;
@@ -3275,8 +3276,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 
 	constructor(
 		kind: string,
-		rule: Rule,
-		simplifiedRule: Rule,
+		rule: Rule<'link'>,
+		simplifiedRule: Rule<'link'>,
 		renderRule: RenderRule,
 		opts?: {
 			factoryName?: string;
@@ -3319,14 +3320,14 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 
 	// Node map back-reference for pre-hydration UnresolvedRef resolution.
 	// See AssembledBranch.#nodes for full rationale.
-	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule>> | undefined = undefined;
+	#nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>> | undefined = undefined;
 
 	/**
 	 * Attach the assembled node map so the `parameterless` getter can resolve
 	 * UnresolvedRef slots by name before `hydrateSlotRefs` runs. See
 	 * {@link AssembledBranch.attachNodeMap} for full documentation.
 	 */
-	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule>>): void {
+	attachNodeMap(nodes: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>): void {
 		this.#nodes = nodes;
 	}
 

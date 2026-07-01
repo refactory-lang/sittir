@@ -12,7 +12,7 @@
  */
 
 import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, GroupRule, VariantRule } from '../types/rule.ts';
+import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, GroupRule, VariantRule } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
@@ -75,11 +75,11 @@ export const attributeBuilder: RuleBuilder = {
 		if (content.type === STRING && !isSlotPromotedLiteral(content)) {
 			return { type: SEQ, members: [] };
 		}
-		return deleteWrapper({ type: OPTIONAL, content }) as Rule;
+		return deleteWrapper({ type: OPTIONAL, content }) as RenderRule;
 	},
-	repeat: (content) => deleteWrapper({ type: REPEAT, content }) as Rule,
-	repeat1: (content) => deleteWrapper({ type: REPEAT1, content }) as Rule,
-	field: (name, content) => deleteWrapper({ type: FIELD, name, content }) as Rule,
+	repeat: (content) => deleteWrapper({ type: REPEAT, content }) as RenderRule,
+	repeat1: (content) => deleteWrapper({ type: REPEAT1, content }) as RenderRule,
+	field: (name, content) => deleteWrapper({ type: FIELD, name, content }) as RenderRule,
 };
 
 // ---------------------------------------------------------------------------
@@ -100,7 +100,7 @@ export const attributeBuilder: RuleBuilder = {
  * `seq([X])` → `X` shapes left behind by upstream transformations.
  * Idempotent — running it twice produces the same result as running once.
  */
-export function canonicalizeSeqOfLeaves(rule: Rule): Rule {
+export function canonicalizeSeqOfLeaves(rule: AnyRule): AnyRule {
 	const recursed = recurseChildren(rule, canonicalizeSeqOfLeaves);
 	if (recursed.type === SEQ && recursed.members.length === 1) {
 		const survivor = recursed.members[0]!;
@@ -115,7 +115,7 @@ export function canonicalizeSeqOfLeaves(rule: Rule): Rule {
 				(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
 			);
 			// Only stamp when non-default (single → undefined per combineMultiplicity).
-			if (combined !== undefined) return { ...carried, multiplicity: combined } as Rule;
+			if (combined !== undefined) return { ...carried, multiplicity: combined } as AnyRule;
 		}
 		return carried;
 	}
@@ -127,7 +127,7 @@ export function canonicalizeSeqOfLeaves(rule: Rule): Rule {
  * literal) with no further structural content underneath. Used by
  * `assertUniversalShape` to validate seq members.
  */
-function isLeaf(rule: Rule): boolean {
+function isLeaf(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case SYMBOL:
 		case ALIAS:
@@ -148,7 +148,7 @@ function isLeaf(rule: Rule): boolean {
  * signal for "this branch contributes nothing" so the enclosing choice
  * can be simplified to `optional(non-empty-branches)`.
  */
-export function isEmptyMatchMember(rule: Rule): boolean {
+export function isEmptyMatchMember(rule: AnyRule): boolean {
 	if (rule.type === PATTERN && rule.value === '') return true;
 	if (rule.type === SEQ && rule.members.length === 0) return true;
 	return false;
@@ -159,7 +159,7 @@ export function isEmptyMatchMember(rule: Rule): boolean {
  * than a bare render-only delimiter (`else`/`->`/`,`)? Slot data survives
  * simplify; bare delimiters are stripped.
  */
-export function isSlotPromotedLiteral(rule: Rule): boolean {
+export function isSlotPromotedLiteral(rule: AnyRule): boolean {
 	return (rule as { nonterminal?: boolean }).nonterminal === true;
 }
 
@@ -167,7 +167,7 @@ export function isSlotPromotedLiteral(rule: Rule): boolean {
  * Hoist guard: true when any seq inside `rule` mixes field() members
  * with named-symbol siblings.
  */
-function hasNamedSiblingOfInnerField(rule: Rule): boolean {
+function hasNamedSiblingOfInnerField(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case SEQ: {
 			const containsField = rule.members.some((m) => m.type === 'field');
@@ -193,7 +193,7 @@ function hasNamedSiblingOfInnerField(rule: Rule): boolean {
 }
 
 /** True when `rule` is (or wraps) a symbol/supertype that tree-sitter would label. */
-function isNamedReference(rule: Rule): boolean {
+function isNamedReference(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case SYMBOL:
 		case SUPERTYPE:
@@ -210,7 +210,7 @@ function isNamedReference(rule: Rule): boolean {
 	}
 }
 
-function hasInnerFieldAtExposableDepth(rule: Rule): boolean {
+function hasInnerFieldAtExposableDepth(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case FIELD:
 			return true;
@@ -235,7 +235,7 @@ function hasInnerFieldAtExposableDepth(rule: Rule): boolean {
  * named-symbol sibling that would lose its outer-field label.
  *
  */
-export function hoistInnerFieldFromWrapperForField(rule: Rule): Rule {
+export function hoistInnerFieldFromWrapperForField(rule: AnyRule): AnyRule {
 	if (rule.type !== FIELD) return rule;
 	const content = rule.content;
 	if (content.type === 'field') return rule; // direct nesting handled elsewhere
@@ -248,7 +248,7 @@ export function hoistInnerFieldFromWrapperForField(rule: Rule): Rule {
 /**
  * Expand a choice branch into a flat array of its top-level members.
  */
-function normalizeBranchToMembers(branch: Rule): Rule[] {
+function normalizeBranchToMembers(branch: AnyRule): AnyRule[] {
 	if (branch.type === SEQ) return branch.members;
 	return [branch];
 }
@@ -256,7 +256,7 @@ function normalizeBranchToMembers(branch: Rule): Rule[] {
 /**
  * Count occurrences of each field name in a branch's top-level members.
  */
-function countFieldNames(members: Rule[]): Map<string, number> {
+function countFieldNames(members: AnyRule[]): Map<string, number> {
 	const counts = new Map<string, number>();
 	for (const m of members) {
 		if (m.type === FIELD) counts.set(m.name, (counts.get(m.name) ?? 0) + 1);
@@ -287,13 +287,13 @@ function firstFieldNameSharedExactlyOncePerBranch(perBranchCounts: Map<string, n
  * a side choice wrapped in optional when any branch has nothing left.
  *
  */
-function extractFieldFromBranchesForChoice(perBranch: Rule[][], name: string, ctx?: SimplifyCtx): Rule {
+function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string, ctx?: SimplifyCtx): AnyRule {
 	const b = ctx?.builder ?? structuralBuilder;
-	const hoistedContents: Rule[] = [];
-	const residuals: Rule[] = [];
+	const hoistedContents: AnyRule[] = [];
+	const residuals: AnyRule[] = [];
 	let hoistedFieldTemplate: FieldRule | null = null;
 	for (const members of perBranch) {
-		const rest: Rule[] = [];
+		const rest: AnyRule[] = [];
 		let extracted: FieldRule | null = null;
 		for (const m of members) {
 			if (m.type === FIELD && m.name === name && extracted === null) {
@@ -313,15 +313,15 @@ function extractFieldFromBranchesForChoice(perBranch: Rule[][], name: string, ct
 			rest.length === 0 ? { type: 'seq', members: [] } : rest.length === 1 ? rest[0]! : { type: 'seq', members: rest }
 		);
 	}
-	const unionedContent: Rule =
+	const unionedContent: AnyRule =
 		hoistedContents.length === 1 ? hoistedContents[0]! : { type: 'choice', members: hoistedContents };
-	const hoisted: Rule = b.field(hoistedFieldTemplate!.name, unionedContent);
+	const hoisted: AnyRule = b.field(hoistedFieldTemplate!.name, unionedContent);
 	const hasEmptyResidual = residuals.some((r) => r.type === SEQ && r.members.length === 0);
 	const nonEmptyResiduals = residuals.filter((r) => !(r.type === SEQ && r.members.length === 0));
 	if (nonEmptyResiduals.length === 0) return hoisted;
-	const residualCore: Rule =
+	const residualCore: AnyRule =
 		nonEmptyResiduals.length === 1 ? nonEmptyResiduals[0]! : { type: 'choice', members: nonEmptyResiduals };
-	const residualPart: Rule = hasEmptyResidual ? b.optional(residualCore) : residualCore;
+	const residualPart: AnyRule = hasEmptyResidual ? b.optional(residualCore) : residualCore;
 	return { type: SEQ, members: [hoisted, residualPart] };
 }
 
@@ -330,7 +330,7 @@ function extractFieldFromBranchesForChoice(perBranch: Rule[][], name: string, ct
  * unioning field contents across branches. Residuals become optional choice.
  *
  */
-export function hoistSharedFieldFromBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): Rule {
+export function hoistSharedFieldFromBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): AnyRule {
 	if (rule.members.length < 2) return rule;
 	if (rule.members.some((m) => m.type === VARIANT)) return rule;
 	const perBranch = rule.members.map(normalizeBranchToMembers);
@@ -343,7 +343,7 @@ export function hoistSharedFieldFromBranchesForChoice(rule: ChoiceRule, ctx?: Si
 /**
  * Lift a slot-shape attribute shared by EVERY choice arm onto the choice node.
  */
-function liftSharedArmAttrs(rule: ChoiceRule): Rule {
+function liftSharedArmAttrs(rule: ChoiceRule): AnyRule {
 	const shared = sharedArmAttrs(rule);
 	let result: ChoiceRule = rule;
 	if (result.fieldName === undefined && shared.fieldName !== undefined)
@@ -360,7 +360,7 @@ function liftSharedArmAttrs(rule: ChoiceRule): Rule {
 /**
  * Peel `group` wrappers to expose the seq inside.
  */
-function unwrapForMerge(rule: Rule): Rule {
+function unwrapForMerge(rule: AnyRule): AnyRule {
 	if (rule.type === GROUP) return unwrapForMerge(rule.content);
 	return rule;
 }
@@ -369,7 +369,7 @@ function unwrapForMerge(rule: Rule): Rule {
  * Are these positions (one per branch, all at the same seq index)
  * structurally equivalent?
  */
-function positionsAreMergeable(position: readonly Rule[]): boolean {
+function positionsAreMergeable(position: readonly AnyRule[]): boolean {
 	if (position.length === 0) return true;
 	const first = position[0]!;
 	if (first.type === FIELD) {
@@ -392,22 +392,22 @@ function positionsAreMergeable(position: readonly Rule[]): boolean {
  * Merge N same-position rules (already verified as mergeable) into a single canonical rule.
  *
  */
-function mergePositionForChoice(position: readonly Rule[], ctx?: SimplifyCtx): Rule {
+function mergePositionForChoice(position: readonly AnyRule[], ctx?: SimplifyCtx): AnyRule {
 	const b = ctx?.builder ?? structuralBuilder;
 	const first = position[0]!;
 	if (first.type === FIELD) {
 		const fields = position.filter((p): p is FieldRule => p.type === FIELD);
 		const contents = dedupeByJson(fields.map((f) => f.content));
-		const mergedContent: Rule = contents.length === 1 ? contents[0]! : { type: 'choice', members: contents };
+		const mergedContent: AnyRule = contents.length === 1 ? contents[0]! : { type: 'choice', members: contents };
 		return b.field(first.name, mergedContent);
 	}
 	return first;
 }
 
 /** Deduplicate rules by JSON equality, preserving first-seen order. */
-function dedupeByJson(rules: readonly Rule[]): Rule[] {
+function dedupeByJson(rules: readonly AnyRule[]): AnyRule[] {
 	const seen = new Set<string>();
-	const out: Rule[] = [];
+	const out: AnyRule[] = [];
 	for (const r of rules) {
 		const key = JSON.stringify(r);
 		if (seen.has(key)) continue;
@@ -418,9 +418,9 @@ function dedupeByJson(rules: readonly Rule[]): Rule[] {
 }
 
 /**
- * Structural Rule equality — compares all discriminant + content fields recursively.
+ * Structural AnyRule equality — compares all discriminant + content fields recursively.
  */
-export function rulesStructurallyEqual(a: Rule, b: Rule): boolean {
+export function rulesStructurallyEqual(a: AnyRule, b: AnyRule): boolean {
 	return JSON.stringify(a) === JSON.stringify(b);
 }
 
@@ -430,7 +430,7 @@ export function rulesStructurallyEqual(a: Rule, b: Rule): boolean {
  * branches aren't same-length mergeable seqs; NEVER unwraps `variant()`.
  *
  */
-export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): Rule {
+export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): AnyRule {
 	if (rule.members.length === 0) return rule;
 	// variant() marks polymorph-distinct branches — bail, this is a polymorph surface.
 	if (rule.members.some((m) => m.type === VARIANT)) return rule;
@@ -452,7 +452,7 @@ export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): Rul
 		if (!positionsAreMergeable(position)) return liftSharedArmAttrs(rule);
 	}
 	// All positions mergeable. Build the merged seq.
-	const mergedMembers: Rule[] = [];
+	const mergedMembers: AnyRule[] = [];
 	for (let i = 0; i < len; i++) {
 		const position = unwrapped.map((br) => br.members[i]!);
 		mergedMembers.push(mergePositionForChoice(position, ctx));
@@ -488,10 +488,10 @@ export function assertUniversalShape(node: AssembledNode): void {
 }
 
 /**
- * Rule-level mirror of {@link assertUniversalShape}, operating on a Rule directly
+ * AnyRule-level mirror of {@link assertUniversalShape}, operating on a AnyRule directly
  * so `computeSimplifiedRules` can fail-fast at the simplify boundary.
  */
-export function assertUniversalShapeRule(rule: Rule, kind: string): void {
+export function assertUniversalShapeRule(rule: AnyRule, kind: string): void {
 	if (rule.type !== SEQ) {
 		if (!isLeaf(rule)) {
 			throw new Error(
@@ -570,9 +570,9 @@ export function makeDefaultCtx(): SimplifyCtx {
 }
 
 /**
- * Dispatch a rule to its per-type simplify handler. Thin switch over the Rule
+ * Dispatch a rule to its per-type simplify handler. Thin switch over the AnyRule
  * union. The public entry keeps `ctx?` optional (normalized via `makeDefaultCtx`)
- * so direct callers needn't build a ctx; each handler takes `(rule: <Type>Rule,
+ * so direct callers needn't build a ctx; each handler takes `(rule: <Type>AnyRule,
  * ctx: SimplifyCtx)`.
  *
  * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 nodes must never appear
@@ -585,7 +585,7 @@ export function makeDefaultCtx(): SimplifyCtx {
  *    instead of building wrapper nodes.
  * The `default` branch throws so any stray wrapper node is caught immediately.
  */
-export function simplifyRule(rule: Rule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+export function simplifyRule(rule: AnyRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	switch (rule.type) {
 		case SEQ:
 			return simplifySeqRule(rule, ctx);
@@ -613,7 +613,7 @@ export function simplifyRule(rule: Rule, ctx: SimplifyCtx = makeDefaultCtx()): R
 			// construction sites within simplify use ctx.builder (attributeBuilder)
 			// which pushes attributes rather than creating wrapper nodes.
 			throw new Error(
-				`simplifyRule: unexpected rule type '${(rule as Rule).type}' — ` +
+				`simplifyRule: unexpected rule type '${(rule as AnyRule).type}' — ` +
 					`field/optional/repeat/repeat1 nodes must be converted to attributes ` +
 					`by applyWrapperDeletion before reaching simplify`
 			);
@@ -631,13 +631,13 @@ export function simplifyRule(rule: Rule, ctx: SimplifyCtx = makeDefaultCtx()): R
  * → nodes). The empty-match fold no longer routes through `simplifyRule` for the
  * optional wrapper — `b.optional` applies the same semantics directly.
  */
-function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	const b = ctx.builder ?? structuralBuilder;
 	const members = rule.members.map((m) => simplifyRule(m, ctx));
 	const empty = members.findIndex(isEmptyMatchMember);
 	if (empty >= 0 && members.length > 1) {
 		const nonEmpty = members.filter((_, i) => i !== empty);
-		const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, b.choice(nonEmpty));
+		const inner: AnyRule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, b.choice(nonEmpty));
 		return withAttrsFrom(rule, b.optional(inner));
 	}
 	if (members.length === 1) return withAttrsFrom(rule, members[0]!);
@@ -647,18 +647,18 @@ function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx(
 }
 
 /** GROUP: recurse into content (structural wrapper preserved). */
-function simplifyGroupRule(rule: GroupRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+function simplifyGroupRule(rule: GroupRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	return { ...rule, content: simplifyRule(rule.content, ctx) };
 }
 
 /** VARIANT: recurse into content (polymorph surface preserved). */
-function simplifyVariantRule(rule: VariantRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+function simplifyVariantRule(rule: VariantRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	return { ...rule, content: simplifyRule(rule.content, ctx) };
 }
 
 /** Simplify every rule in the map, each run to fixpoint (see `normalizeToFixpoint`). */
-export function simplifyRules(rules: Record<string, Rule>, ctx?: SimplifyCtx): Record<string, Rule> {
-	const out: Record<string, Rule> = {};
+export function simplifyRules(rules: Record<string, AnyRule>, ctx?: SimplifyCtx): Record<string, AnyRule> {
+	const out: Record<string, AnyRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		out[name] = normalizeToFixpoint(rule, ctx, rules);
 	}
@@ -685,7 +685,7 @@ export function computeSimplifiedRules(
 	const renderRules = ctx.rules;
 	const inlineKinds = ctx.inlineKinds;
 	const polymorphSkipExtra = ctx.polymorphSkipExtra ?? new Set<string>();
-	const simplified = simplifyRules(renderRules as Record<string, Rule>, ctx);
+	const simplified = simplifyRules(renderRules as Record<string, AnyRule>, ctx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
 		// Final wrapper-free pass: simplify's hoists + choice-folding can
@@ -694,7 +694,7 @@ export function computeSimplifiedRules(
 		// Re-fuse head+repeat list pairs too — inlineRefs can splice a helper body
 		// and re-expose a non-adjacent head-single + tail-array of the same element.
 		const wrapperFree = fuseHeadRepeatLists(
-			deleteWrapper(canonicalizeSeqOfLeaves(rule) as Rule) as Rule
+			deleteWrapper(canonicalizeSeqOfLeaves(rule) as AnyRule) as AnyRule
 		) as SimplifiedRule;
 		canonicalized[kind] = wrapperFree;
 	}
@@ -744,10 +744,10 @@ export function computeSimplifiedRules(
  * grammars in 2-3 iters; the 16-iter cap guards a non-converging shape.
  */
 function normalizeToFixpoint(
-	rule: Rule,
+	rule: AnyRule,
 	ctx: SimplifyCtx | undefined,
-	rules: Readonly<Record<string, Rule>>
-): Rule {
+	rules: Readonly<Record<string, AnyRule>>
+): AnyRule {
 	const ictx: InlineRefsCtx = { rules, inlineKinds: ctx?.inlineKinds };
 	const MAX_ITERS = 16;
 	let current = rule;
@@ -775,7 +775,7 @@ function normalizeToFixpoint(
  * literals and structure; only drops outer field wrappers with exposable
  * inner fields. Idempotent.
  */
-export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
+export function hoistInnerFieldsForTemplate(rule: AnyRule): AnyRule {
 	switch (rule.type) {
 		case SEQ:
 			return {
@@ -795,10 +795,10 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 		case TOKEN:
 			return {
 				...rule,
-				content: hoistInnerFieldsForTemplate((rule as { content: Rule }).content)
-			} as Rule;
+				content: hoistInnerFieldsForTemplate((rule as { content: AnyRule }).content)
+			} as AnyRule;
 		case FIELD: {
-			const recursed: Rule = {
+			const recursed: AnyRule = {
 				...rule,
 				content: hoistInnerFieldsForTemplate(rule.content)
 			};
@@ -821,7 +821,7 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
  * lattice (survivor `optional` + seq `array` → `array`); the rest ride along
  * absent-only (`withAttrsFrom`). See glossary (Phase 3.5).
  */
-function simplifySeqRule(rule: SeqRule, ctx: SimplifyCtx = makeDefaultCtx()): Rule {
+function simplifySeqRule(rule: SeqRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	const members = rule.members
 		.map((m) => simplifyRule(m, ctx))
 		.filter((m) => {
@@ -851,7 +851,7 @@ function simplifySeqRule(rule: SeqRule, ctx: SimplifyCtx = makeDefaultCtx()): Ru
 			(survivor as { multiplicity?: LeafMultiplicity }).multiplicity
 		);
 		// Only stamp when non-default (single → undefined per combineMultiplicity).
-		if (combined !== undefined) return { ...carried, multiplicity: combined } as Rule;
+		if (combined !== undefined) return { ...carried, multiplicity: combined } as AnyRule;
 		return carried;
 	}
 	return withAttrsFrom(rule, { type: SEQ, members });

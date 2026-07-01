@@ -65,7 +65,7 @@ export interface EmitCtx {
 	readonly nodeMap: NodeMap;
 	readonly wordMatcher: RegExp;
 	readonly externals: readonly string[];
-	readonly rules: Record<string, Rule>;
+	readonly rules: Record<string, Rule<'link'>>;
 	/**
 	 * Cycle guard for hidden-helper recursion in `emitSymbol`. The legacy
 	 * walker tracks visited helper names via the per-walk `seen` set keyed
@@ -149,7 +149,7 @@ export function escapeJinjaString(value: string): string {
 	return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
 }
 
-export function stringifyRule(rule: Rule): string {
+export function stringifyRule(rule: Rule<'link'>): string {
 	switch (rule.type) {
 		case STRING:
 			return rule.value;
@@ -310,7 +310,7 @@ export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
 		unwrapped.type === TOKEN ||
 		(unwrapped.type === ALIAS && !unwrapped.named)
 	) {
-		unwrapped = (unwrapped as Extract<typeof unwrapped, { content: Rule }>).content;
+		unwrapped = (unwrapped as Extract<typeof unwrapped, { content: Rule<'link'> }>).content;
 	}
 	// Field inner: use the field name.
 	if (unwrapped.type === FIELD) {
@@ -326,9 +326,9 @@ export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
 }
 
 // ---------------------------------------------------------------------------
-// emitRule — Rule.type dispatcher
+// emitRule — Rule<'link'>.type dispatcher
 //
-// Walks a Rule subtree producing Jinja directly. Replaces the legacy
+// Walks a Rule<'link'> subtree producing Jinja directly. Replaces the legacy
 // `template-walker.ts` + `translateToJinja` two-pass pipeline (the legacy
 // node-map.ts half was deleted in R1 once this dispatcher fully took over).
 //
@@ -357,7 +357,7 @@ export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
 //
 // Key decisions:
 // - Walk left/right subtrees through structural containers to find
-//   rightmost/leftmost StringRule text.
+//   rightmost/leftmost StringRule<'link'> text.
 // - Honor `immediate: true` on right-side token rules as authoritative
 //   no-space override (tree-sitter token.immediate construct).
 // - Test `leftLiteralText + rightFirstChar` against wordMatcher. If the
@@ -404,7 +404,7 @@ function literalEnd(text: string): BoundaryEnd {
 }
 
 /**
- * Walk a Rule subtree rightward to classify the rightmost boundary.
+ * Walk a Rule<'link'> subtree rightward to classify the rightmost boundary.
  * Returns:
  *   - `literal(text)` when a concrete string literal anchors the right edge.
  *   - `slot` when the right edge is a slot-emitting symbol or field (the slot
@@ -415,7 +415,7 @@ function literalEnd(text: string): BoundaryEnd {
  * Does NOT follow symbol refs into other kinds (conservative — that would
  * require cross-rule resolution and cycle handling).
  */
-function rightmostBoundary(rule: Rule): BoundaryEnd {
+function rightmostBoundary(rule: Rule<'link'>): BoundaryEnd {
 	// §D-2a spacing stopgap: a `seq` tagged `metadata.inlinedFrom` was an opaque
 	// `symbol(_x)` ref before the normalize inline hoist spliced it in. At its
 	// OUTER boundaries it must keep spacing like the opaque unit it replaced
@@ -457,7 +457,7 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
 		case FIELD:
 		case ALIAS:
 		case TOKEN:
-			if ('content' in rule) return rightmostBoundary((rule as { content: Rule }).content);
+			if ('content' in rule) return rightmostBoundary((rule as { content: Rule<'link'> }).content);
 			return UNKNOWN_END;
 		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE/default.
 		case SYMBOL:
@@ -474,10 +474,10 @@ function rightmostBoundary(rule: Rule): BoundaryEnd {
 }
 
 /**
- * Walk a Rule subtree leftward to classify the leftmost boundary.
+ * Walk a Rule<'link'> subtree leftward to classify the leftmost boundary.
  * Symmetric to {@link rightmostBoundary}.
  */
-function leftmostBoundary(rule: Rule): BoundaryEnd {
+function leftmostBoundary(rule: Rule<'link'>): BoundaryEnd {
 	// §D-2a spacing stopgap (symmetric to rightmostBoundary): an inlined-from seq
 	// keeps opaque-symbol spacing at its outer boundaries.
 	if (rule.type === SEQ && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
@@ -513,7 +513,7 @@ function leftmostBoundary(rule: Rule): BoundaryEnd {
 		case FIELD:
 		case ALIAS:
 		case TOKEN:
-			if ('content' in rule) return leftmostBoundary((rule as { content: Rule }).content);
+			if ('content' in rule) return leftmostBoundary((rule as { content: Rule<'link'> }).content);
 			return UNKNOWN_END;
 		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE/default.
 		case SYMBOL:
@@ -533,7 +533,7 @@ function leftmostBoundary(rule: Rule): BoundaryEnd {
  * `token.immediate(...)` wrapper — meaning tree-sitter requires it to
  * immediately follow the preceding token with no whitespace.
  */
-function isLeftmostTerminalImmediate(rule: Rule): boolean {
+function isLeftmostTerminalImmediate(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case TOKEN:
 			return (rule as { immediate: boolean }).immediate === true;
@@ -558,7 +558,7 @@ function isLeftmostTerminalImmediate(rule: Rule): boolean {
 		case GROUP:
 		case FIELD:
 		case ALIAS:
-			if ('content' in rule) return isLeftmostTerminalImmediate((rule as { content: Rule }).content);
+			if ('content' in rule) return isLeftmostTerminalImmediate((rule as { content: Rule<'link'> }).content);
 			return false;
 		default:
 			return false;
@@ -660,7 +660,7 @@ function charsRequireSpace(leftChar: string, rightChar: string, wordMatcher: Reg
 }
 
 /**
- * Decide if a space is needed between two adjacent seq-member Rule nodes,
+ * Decide if a space is needed between two adjacent seq-member Rule<'link'> nodes,
  * given their emitted text fragments.
  *
  * Algorithm (Bug 6):
@@ -676,8 +676,8 @@ function charsRequireSpace(leftChar: string, rightChar: string, wordMatcher: Reg
  * 4. Conservative fallback: unknown side → return true (round-trip safe).
  */
 function needsSeqSpace(
-	left: Rule,
-	right: Rule,
+	left: Rule<'link'>,
+	right: Rule<'link'>,
 	wordMatcher: RegExp,
 	leftText?: string,
 	rightText?: string
@@ -872,7 +872,7 @@ function _insertBeforeTopLevelEndifTags(str: string, insert: string): string {
 	return result;
 }
 
-export function emitRule(rule: Rule, ctx: EmitCtx): string {
+export function emitRule(rule: Rule<'link'>, ctx: EmitCtx): string {
 	switch (rule.type) {
 		case STRING:
 			// Bug 3 fix: if a string literal carries `fieldName` (stamped by
@@ -922,7 +922,7 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			// boundaries — grammar-derived rather than ad-hoc character classes.
 			//
 			// Emit each member, retaining a parallel [rule, emission] pair so the
-			// boundary check can walk the original Rule subtrees for literal text,
+			// boundary check can walk the original Rule<'link'> subtrees for literal text,
 			// while the output array holds the (possibly space-absorbed) strings.
 			//
 			// Absorb-into-conditional refinement (Bug 6 follow-up): when a
@@ -942,7 +942,7 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			// This produces master's canonical pattern:
 			//   `A{% if c %} … {% endif %} B`  (inner-leading absorbed + outer
 			//                                     space after endif)
-			const emitted: Array<{ rule: Rule; text: string }> = [];
+			const emitted: Array<{ rule: Rule<'link'>; text: string }> = [];
 			for (const m of rule.members) {
 				const text = emitRule(m, ctx);
 				if (text !== '') emitted.push({ rule: m, text });
@@ -1038,7 +1038,7 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 		// Transparent wrappers — recurse into content. Variant / group /
 		// token / unnamed-alias have no template-level surface
 		// of their own; the inner rule's emission is what the renderer sees.
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 		case TOKEN:
 		case VARIANT:
 		case GROUP:
@@ -1088,7 +1088,7 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 
 		default: {
 			const _exhaustive: never = rule;
-			throw new Error(`emitRule: unhandled Rule.type ${(_exhaustive as Rule).type}`);
+			throw new Error(`emitRule: unhandled Rule<'link'>.type ${(_exhaustive as Rule<'link'>).type}`);
 		}
 	}
 }
@@ -1113,7 +1113,7 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
  * Returns `undefined` when neither source finds a slot (test fixtures,
  * transient sub-rules without a registered slot).
  */
-function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined {
+function lookupSlot(rule: Rule<'link'>, ctx: EmitCtx): AssembledNonterminal | undefined {
 	// Primary: slotByRuleId (by registered rule ID)
 	if (rule.id) {
 		const byId = ctx.nodeMap.slotByRuleId.get(rule.id);
@@ -1166,18 +1166,18 @@ function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined 
 
 /**
  * Project a rule's separator metadata onto a primitive `string`. The
- * shared `RuleBase.separator` is a union of (string | Rule[] | object);
+ * shared `RuleBase.separator` is a union of (string | Rule<'link'>[] | object);
  * the rendering layer only needs the primitive textual separator. For
  * structured separators we stringify each rule and concatenate so the
  * resulting join filter still represents the source text faithfully.
  */
-function separatorToString(rule: Rule): string | undefined {
+function separatorToString(rule: Rule<'link'>): string | undefined {
 	const sep = rule.separator;
 	if (sep === undefined) return undefined;
 	if (typeof sep === 'string') return sep;
 	if (Array.isArray(sep)) return sep.map(stringifyRule).join('');
 	// object form: { rules, trailing?, leading? }
-	const obj = sep as { rules: readonly Rule[] };
+	const obj = sep as { rules: readonly Rule<'link'>[] };
 	return obj.rules.map(stringifyRule).join('');
 }
 
@@ -1193,7 +1193,7 @@ function separatorToString(rule: Rule): string | undefined {
  * `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
  * through wrapper-deletion onto the slot entries.
  */
-function selectJoinFilter(rule: Rule, slot?: AssembledNonterminal): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
+function selectJoinFilter(rule: Rule<'link'>, slot?: AssembledNonterminal): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
 	const repeatLike = rule as { trailing?: boolean; leading?: boolean };
 	const trailing = repeatLike.trailing === true;
 	const leading = repeatLike.leading === true;
@@ -1260,7 +1260,7 @@ const DEFAULT_JOIN_SEPARATOR = ' ';
  * content fragments of a Python string literal (`string_content`,
  * `interpolation`) must concatenate without separator.
  */
-function emitListSlot(slotName: string, rule: Rule, slot?: AssembledNonterminal): string {
+function emitListSlot(slotName: string, rule: Rule<'link'>, slot?: AssembledNonterminal): string {
 	const filter = selectJoinFilter(rule, slot);
 	// Immediate-terminal check: when ALL slot values are terminal entries
 	// stamped with `immediate: true` (produced by `token.immediate(…)` in
@@ -1306,7 +1306,7 @@ function emitScalarSlot(slotName: string): string {
  * is honoured as a fallback for the case where wrapper push-down stamped the
  * leaf but slot derivation under-counted (the prior emitSymbol "Bug 5" path).
  */
-function emitSlotReference(rule: Rule, slot: AssembledNonterminal): string {
+function emitSlotReference(rule: Rule<'link'>, slot: AssembledNonterminal): string {
 	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 	const mult = (rule as { multiplicity?: string }).multiplicity;
 	if (mult === 'array' || mult === 'nonEmptyArray' || isMultiple(slot)) {
@@ -1324,7 +1324,7 @@ function emitSlotReference(rule: Rule, slot: AssembledNonterminal): string {
  * e.g. a deleteWrapper-stamped fieldName whose rule id / fieldName didn't
  * resolve in `lookupSlot`). Prefer `emitSlotReference` whenever a slot exists.
  */
-function emitFieldNameSlot(slotName: string, rule: Rule): string {
+function emitFieldNameSlot(slotName: string, rule: Rule<'link'>): string {
 	const mult = (rule as { multiplicity?: string }).multiplicity;
 	if (mult === 'array' || mult === 'nonEmptyArray') {
 		return emitListSlot(slotName, rule);
@@ -1347,7 +1347,7 @@ function emitSymbolSlot(kindName: string, _ctx: EmitCtx): string {
 }
 
 // ---------------------------------------------------------------------------
-// Per-Rule.type helpers
+// Per-Rule<'link'>.type helpers
 // ---------------------------------------------------------------------------
 
 // emitField, emitOptional, and emitRepeat were deleted in PR2 Task 3.B3.
@@ -1367,7 +1367,7 @@ function emitSymbolSlot(kindName: string, _ctx: EmitCtx): string {
  *  - 'optional'               → conditional scalar: `{% if name | isPresent %}{{ name }}{% endif %}`
  *  - undefined (required)     → scalar: `{{ name }}`
  */
-function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): string {
+function emitSymbol(rule: Extract<Rule<'link'>, { type: 'symbol' }>, ctx: EmitCtx): string {
 	// Link-synthesized symbols carry their original literal text — render
 	// it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
 	// `foo` not as a slot reference.
@@ -1450,7 +1450,7 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 			}
 			ctx.visitingHelpers.add(rule.name);
 			try {
-				const helperRenderRule = (targetNode as { renderRule: Rule }).renderRule;
+				const helperRenderRule = (targetNode as { renderRule: Rule<'link'> }).renderRule;
 				const helperBody = emitRule(helperRenderRule, ctx);
 				const multiplicity = rule.multiplicity;
 				// Multiplicity is applied at the inlined SEQ UNIT (never the leaves —
@@ -1539,7 +1539,7 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 // gating-slot resolver is the SINGLE source of slot-count truth (DRY); the
 // inline hoist deliberately does not pre-count. Diagnostic only — never throws.
 const warnedMultiSlotGroups = new Set<string>();
-function warnMultiSlotMultiplicityGroup(rule: Extract<Rule, { type: 'seq' }>, ctx: EmitCtx): void {
+function warnMultiSlotMultiplicityGroup(rule: Extract<Rule<'link'>, { type: 'seq' }>, ctx: EmitCtx): void {
 	const keys = new Set<string>();
 	for (const m of rule.members) {
 		const k = pickConditionalKey(m, ctx);
@@ -1561,7 +1561,7 @@ function warnMultiSlotMultiplicityGroup(rule: Extract<Rule, { type: 'seq' }>, ct
  * field metadata lives as `fieldName` on the leaf. Check leaf attributes
  * first, then transparent wrappers, then symbol/seq fallbacks.
  */
-function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
+function pickConditionalKey(content: Rule<'link'>, ctx: EmitCtx): string | undefined {
 	// PR2 Task 3.B3: field wrappers no longer appear in RenderRule. Check
 	// the leaf-level fieldName attribute instead (pushed down from FieldRule
 	// by the enrich / push-down pass).
@@ -1573,7 +1573,7 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 		return content.name.toLowerCase();
 	}
 	// Transparent wrappers — recurse.
-	// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+	// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 	if (
 		content.type === VARIANT ||
 		content.type === GROUP ||
@@ -1606,7 +1606,7 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 	}
 	// A symbol with a slot back-pointer — gate on its kind slot name.
 	if (content.type === SYMBOL) {
-		const sym = content as Extract<Rule, { type: 'symbol' }>;
+		const sym = content as Extract<Rule<'link'>, { type: 'symbol' }>;
 		return (sym.name.replace(/^_+/, '') || 'children').toLowerCase();
 	}
 	return undefined;
@@ -1616,7 +1616,7 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 // Those wrapper types no longer appear in RenderRule; their slot facts are
 // now leaf attributes on the inner rule, consumed by emitSymbol directly.
 
-function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): string {
+function emitChoice(rule: Extract<Rule<'link'>, { type: 'choice' }>, ctx: EmitCtx): string {
 	// Every choice that surfaces as data is a registered slot — there is no
 	// "positional choice" anymore (kind-named slots). Look the slot up by the
 	// choice's rule id (the deleteWrapper-stamped `fieldName` case resolves via
@@ -1715,14 +1715,14 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 		// than named slot references. Checking them would produce false positives.
 		if (slot.isUnnamed) continue;
 		// Skip link-sourced slots — derived from link-phase synthesized symbol
-		// rules (SymbolRule.source === 'link'). These are inlined as their
+		// rules (SymbolRule<'link'>.source === 'link'). These are inlined as their
 		// literal text by emitSymbol (`rule.source === 'link'` → escapeLiteral),
 		// so the template will contain the literal string rather than a
 		// `{{ slotName }}` reference. Trying to find the slot name in the body
 		// would produce false positives (e.g. binary_expression.operator which
 		// emits '&&' instead of '{{ operator }}').
 		// Note: slot.source is typed as AssembledNonterminal.source but at
-		// runtime can also be 'link' or 'group-lift' (from SymbolRule.source
+		// runtime can also be 'link' or 'group-lift' (from SymbolRule<'link'>.source
 		// propagated through deriveSlotsRaw).
 		if ((slot.source as string) === 'link' || (slot.source as string) === 'group-lift') continue;
 		// Skip slots where no value is required (all are optional/array). These

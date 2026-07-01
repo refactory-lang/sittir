@@ -1,4 +1,4 @@
-import { assemble, type AssembledNodeMap } from '../assemble.ts';
+import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import type { ParseKindCollisionDiagnostic } from './parsekind-collisions.ts';
@@ -132,7 +132,8 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
 }): { nodeMap: AssembledNodeMap; diagnostics: readonly GrammarDiagnostic[] } {
 	const linked = link(input.rawGrammar);
-	const nodeMap = assemble(normalizeGrammar(linked));
+	const optimized = normalizeGrammar(linked);
+	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 	// drain slot-grouping diagnostics populated during the optimize() pass
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	// §D-2c content-alias injectivity — sole consumer of the diagnostic-only

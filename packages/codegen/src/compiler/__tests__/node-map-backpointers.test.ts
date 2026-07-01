@@ -4,7 +4,7 @@ import { choice, field, seq } from '../evaluate.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
-import { assemble } from '../assemble.ts';
+import { assemble, AssembleCtx } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
 import type { ChoiceRule, FieldRule, RenderRule, Rule } from '../../types/rule.ts';
 
@@ -45,7 +45,7 @@ describe('NodeMap back-pointer maps', () => {
 		};
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 		// Return the post-optimize rules — that's what assemble walks, so
 		// the ids on these rules are what nodeByRuleId / slotByRuleId key
 		// off. The raw input rules may have stale ids after link/optimize
@@ -71,7 +71,7 @@ describe('NodeMap back-pointer maps', () => {
 		};
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		return { ...optimized, nodeMap: assemble(optimized) };
+		return { ...optimized, nodeMap: assemble(optimized, AssembleCtx.from(optimized)) };
 	}
 
 	it('nodeMap.nodeByRuleId is populated with kind roots when ids survive the pipeline', () => {

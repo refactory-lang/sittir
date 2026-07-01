@@ -26,7 +26,7 @@ import { createRequire } from 'node:module';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { allStructuralSlotsOf, projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 
 const requireFromHere = createRequire(import.meta.url);
@@ -147,7 +147,8 @@ function resolveEntryPath(grammar: Grammar, repoRoot: string): string {
 
 async function probeGrammar(grammar: Grammar, repoRoot: string): Promise<Divergence[]> {
 	const raw = await evaluate(resolveEntryPath(grammar, repoRoot));
-	const nodeMap = assemble(normalizeGrammar(link(raw, undefined)));
+	const optimized = normalizeGrammar(link(raw, undefined));
+	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 	const divergences: Divergence[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		for (const slot of allStructuralSlotsOf(node)) {
