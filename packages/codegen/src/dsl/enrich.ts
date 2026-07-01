@@ -78,6 +78,7 @@ import type { RuntimeRule } from '../types/runtime-shapes.ts';
 import { detectRepeatSeparator } from './list-patterns.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { ruleMatchesEmpty, isInlineSafe } from './group-classify.ts';
+import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
 // The outer wrapper is `{ grammar: {...} }` because tree-sitter's
@@ -109,7 +110,16 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	const rulesBag = (hasWrapper ? base.grammar?.rules : (base as unknown as { rules?: unknown }).rules) as
 		| Record<string, Rule>
 		| undefined;
-	if (!rulesBag) return base;
+	if (!rulesBag) return base as unknown as EnrichedGrammar<B>;
+	// Grammar-wide word-shape matcher (R12 Camp A). By this point `base` has
+	// already been through sittir's own `grammarFn` (the globalThis.grammar
+	// shim every overrides.ts's `grammar()`/`enrich()` call chain runs under
+	// — see compiler/evaluate.ts saveAndInjectDslGlobals), so `word` is a
+	// resolved rule NAME (string | null), not the raw `$ => $.identifier`
+	// callback — confirmed empirically, not assumed. Single source of truth
+	// via matchesWordShape; used by pass 3's optional-keyword-prefix below.
+	const grammarMeta = (hasWrapper ? base.grammar : base) as { word?: string | null } | undefined;
+	const wordMatcher = compileWordMatcher(grammarMeta?.word ?? null, rulesBag);
 	// Extract declared supertype names so pass 3 can treat `_prefix`-
 	// stripped labels as valid field names (e.g. `optional($._expression)`
 	// → `field('expression', $._expression)`). `supertypes` is a
@@ -147,7 +157,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
 		enrichedRules[name] = rule
-			? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames)
+			? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, wordMatcher)
 			: rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
@@ -224,7 +234,8 @@ function applyEnrichPasses(
 	clauseGroupRules: Record<string, Rule>,
 	clauseDedupeMap: Record<string, string>,
 	groupDedupeMap: Record<string, string>,
-	visibleGroupHiddenNames: Set<string>
+	visibleGroupHiddenNames: Set<string>,
+	wordMatcher: RegExp | undefined
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -246,7 +257,7 @@ function applyEnrichPasses(
 		// adds `_kw_<name>` hidden rules that shift tree-sitter's parser-
 		// generator tables, breaking unrelated rules' reparse (rust corpus
 		// regresses by ~47/136 with this pass on).
-		r = applyOptionalKeyword(ruleName, r, kwRules);
+		r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
 		if (r === before) { converged = true; break; }
 	}
 	if (!converged && !process.env.SITTIR_QUIET) {
@@ -454,12 +465,6 @@ function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
 		}
 	}
 	return { inner: rule, isOptional: false };
-}
-
-// Grammar-token shape (is this keyword word-like?) — kept local, distinct from
-// util/isAsciiIdentifier; this is a grammar-word question (matchesWordShape candidate).
-function isIdentifierShaped(value: string): boolean {
-	return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
 }
 
 function reportSkip(pass: string, ruleName: string, reason: string): void {
@@ -946,11 +951,11 @@ function tryPromoteInRepeatSeq(
 // Pass 2: optional keyword-prefix
 // ---------------------------------------------------------------------------
 
-function applyOptionalKeyword(ruleName: string, rule: Rule, kwRules: Record<string, Rule>): Rule {
+function applyOptionalKeyword(ruleName: string, rule: Rule, kwRules: Record<string, Rule>, wordMatcher: RegExp | undefined): Rule {
 	// Peel prec wrappers so claimed-name set covers the inner seq.
 	const inner = peelPrec(rule);
 	const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>();
-	return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule;
+	return walkOptionalKeyword(ruleName, rule, claimed, kwRules, wordMatcher) ?? rule;
 }
 
 /** @internal — strip any number of prec/prec.left/prec.right/prec.dynamic
@@ -968,13 +973,14 @@ function walkOptionalKeyword(
 	ruleName: string,
 	rule: Rule,
 	claimedAtSeqLevel: Set<string>,
-	kwRules: Record<string, Rule>
+	kwRules: Record<string, Rule>,
+	wordMatcher: RegExp | undefined
 ): Rule | null {
 	if (isSeqType(rule.type)) {
 		const members = (rule as unknown as { members: Rule[] }).members;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
 			if (out === null) return m;
 			changed = true;
 			return out;
@@ -985,7 +991,7 @@ function walkOptionalKeyword(
 		const members = (rule as unknown as { members: Rule[] }).members;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
 			if (out === null) return m;
 			changed = true;
 			return out;
@@ -994,9 +1000,9 @@ function walkOptionalKeyword(
 	}
 	const peeled = peelOptional(rule);
 	if (peeled.isOptional) {
-		const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules);
+		const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
 		if (replacement !== null) return replacement;
-		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
+		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
 		if (innerRewritten !== null) {
 			return rebuildOptional(rule, innerRewritten);
 		}
@@ -1004,14 +1010,14 @@ function walkOptionalKeyword(
 	}
 	if (isRepeatType(rule.type) || isFieldType(rule.type)) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
 	// Descend through prec wrappers to reach inner seqs.
 	if (isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
@@ -1023,12 +1029,13 @@ function tryPromoteInnerKeyword(
 	optionalRule: Rule,
 	inner: Rule,
 	claimed: Set<string>,
-	kwRules: Record<string, Rule>
+	kwRules: Record<string, Rule>,
+	wordMatcher: RegExp | undefined
 ): Rule | null {
 	const innerNorm = normalizeMember(inner);
 	if (!isStringType(innerNorm.type)) return null;
 	const kw = innerNorm.value;
-	if (typeof kw !== 'string' || !isIdentifierShaped(kw)) return null;
+	if (typeof kw !== 'string' || !matchesWordShape(kw, wordMatcher)) return null;
 	// `_marker` suffix avoids JS-reserved-keyword collisions.
 	const fieldName = `${kw}_marker`;
 	if (claimed.has(fieldName)) {
@@ -1606,4 +1613,3 @@ function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	(node as { metadata?: { source?: string } }).metadata = { source: 'enrich' };
 	return node;
 }
-
