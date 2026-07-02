@@ -32,7 +32,7 @@
  */
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, RuleBase, Multiplicity, RuleSource } from '../types/rule.ts';
+import type { AnyRule, RuleBase, Multiplicity } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
@@ -315,8 +315,20 @@ function buildSlot(
 	const mult = armLifted ?? slotMultiplicity(rule, inherited);
 
 	// --- Determine the slot name ---
+	// (debt PR-P1) `source` is now a purely STRUCTURAL classification derived
+	// from whether the slot has a declared `fieldName` — NOT a read of any
+	// rule-level provenance tag (`FieldRule.source` / `SymbolRule.source` no
+	// longer exist as top-level fields; the fact lives in the opaque
+	// `metadata` bag, carried blindly below via `slot.metadata`, never
+	// branched on here). A named (fieldName-bearing) slot defaults to
+	// 'grammar'; a positional (no-fieldName) slot defaults to 'inferred' —
+	// matching the old `deriveSlotsRaw` walker's behavior exactly, since
+	// every prior rule-level `.source` read here was already unreachable
+	// dead code for any FieldRule/SymbolRule (those never had a `.source`
+	// value that could survive to this point through a live production
+	// path — see debt PR-P1 item 4 in the governing doctrine).
 	let baseName: string | undefined = (rule as { fieldName?: string }).fieldName;
-	let source: AssembledNonterminal['source'] = (rule as { source?: RuleSource }).source ?? 'grammar';
+	let source: AssembledNonterminal['source'] = 'grammar';
 
 	if (baseName === undefined) {
 		switch (rule.type) {
@@ -324,13 +336,7 @@ function buildSlot(
 				// Drop the hidden-rule leading underscore (`_expression` → `expression`).
 				baseName = rule.name.replace(/^_+/, '') || rule.name;
 				// A positional (no-fieldName) symbol slot is ALWAYS `inferred` —
-				// matching the old `deriveSlotsRaw` walker. Preserving the rule's
-				// own `source` (e.g. `'group-lift'`) would break the emitter's
-				// group-lift inline guard (`emitSymbol`: inferred + group-lift →
-				// inline the helper body; non-inferred → emit an opaque
-				// `{{ _<kind>_optionalN }}` slot ref, hiding the helper's real
-				// inner fields like `let_declaration.alternative` from parent
-				// coverage + render).
+				// matching the old `deriveSlotsRaw` walker.
 				source = 'inferred';
 				break;
 			}
@@ -366,7 +372,7 @@ function buildSlot(
 					unnamedChoiceWarner(rule.id ?? kindForName);
 				}
 				baseName = 'content';
-				source = (rule as { source?: RuleSource }).source ?? 'inferred';
+				source = 'inferred';
 				break;
 			}
 			default:
@@ -378,7 +384,7 @@ function buildSlot(
 				// classifies them nonterminal). Eliding here dropped real slots
 				// (e.g. token_repetition's operator enum + separator pattern).
 				baseName = 'content';
-				source = (rule as { source?: RuleSource }).source ?? 'inferred';
+				source = 'inferred';
 				break;
 		}
 	}
@@ -437,6 +443,10 @@ function buildSlot(
 		hasLeading,
 		source,
 		sourceRuleIds: rule.id ? [rule.id] : [],
+		// (debt PR-P1, item 4) Blind opaque passthrough — never read/branched
+		// on here or by any compiler consumer. Only a dsl-sanctioned reader
+		// (diagnostics / node-model serialization) may open this bag.
+		ruleMetadata: rule.metadata,
 	});
 }
 

@@ -24,7 +24,8 @@ import type {
 	EnumRule,
 	SymbolRef
 } from '../types/rule.ts';
-import { normalizeEnumMembers, isEnumChoiceRule } from '../types/rule.ts';
+import { isEnumChoiceRule } from '../types/rule.ts';
+import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import type { AnyRule } from '../types/rule.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
@@ -189,7 +190,7 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): R
 			type: FIELD,
 			name: names[0]!,
 			content: inner,
-			source: 'grammar'
+			metadata: makeRuleMetadata({ fieldSource: 'grammar' })
 		};
 	}
 	// Heterogeneous names → retype each field node as a variant node.
@@ -1309,7 +1310,10 @@ function rewriteFieldEnums(rule: Rule<'evaluate'>, ctx: EvaluateCtx, parentKind:
 					type: FIELD,
 					name: rule.name,
 					content: replacementContent,
-					source: rule.source,
+					// (debt PR-P1) Blind carry — `fieldSource` now lives inside the
+					// opaque `metadata` bag; this rebuild must not read/branch on it,
+					// just propagate it forward untouched.
+					metadata: rule.metadata,
 					blockBearer: rule.blockBearer
 				} satisfies FieldRule<'evaluate'>;
 			}

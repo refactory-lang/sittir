@@ -1,11 +1,11 @@
 {
   "grammar": "typescript",
-  "source_hash": "1a827bae0c90b7b31d6987465d184f0d240b7d6006afafc6ba31e84105321058",
+  "source_hash": "4073d81f23531743972ac2fc25cced8cc07decda1109aee8228c47aac3e39c4c",
   "files": {
-    "packages/typescript/.sittir/grammar.js": "f41b664c7ca6745df37e0c1fa46962697b6072be8197b87ac9358bc11e814856",
+    "packages/typescript/.sittir/grammar.js": "d324e6aab548ce37bbc6a56909cd178bcc3004ce3a15fdd995f013ae38a856ec",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.wasm": "0fb5b39078e361e4a9d07f534a0abb631b33499d0ff863d77346bacd39474e79",
-    "packages/typescript/.sittir/src/grammar.json": "e8851ee90dccf83ded649f8b7c42910ca6c88c0a2a47ae181f93df280d07ab46",
+    "packages/typescript/.sittir/src/grammar.json": "8f58d277cdd400d27d55a74ed5ee1283bb2c7660fbdc5485a06c8cbb9f6713fc",
     "packages/typescript/.sittir/src/node-types.json": "e19d0bcedb305adb2e050db6915da1c3b942591cef4b31c1097c170c37bf2d8b",
     "packages/typescript/.sittir/src/parser.c": "022ea15ed1b3bfe3c8eb98f5630f900b912237e13bc72b0d5551278537fc5b6d",
     "packages/typescript/.sittir/src/scanner.c": "9125013b42cb888379d9be909f1d73dfb75a37626c2cdbf4122718a2b431a6d3",
@@ -25,7 +25,7 @@
     "packages/typescript/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/typescript/src/ir.ts": "c56dc43846f60e0633d4c332ea7714b1ee813c100449e00f422151fa00b72078",
     "packages/typescript/src/is.ts": "349072bc49df5eea56177e4b5b29d259938f961fc520a24cfecb9ad267009923",
-    "packages/typescript/src/node-model.json5": "734ac3545f39da140ae586006614a7b31f61de568414b435129ed37b9ceaf54c",
+    "packages/typescript/src/node-model.json5": "141965e324891d55bf2c082fef59cfc0c1464dadb0219ababde8345dbd8ed7ca",
     "packages/typescript/src/type-test.ts": "5dbaac70cb486a0c4bb440bb965cf0b7d198b4954c9ce1dbef158ef0960ea083",
     "packages/typescript/src/types.ts": "29f467c3a24d72bb52718ec43bef0ffd0248741b993d1aea4fb39f70d3101915",
     "packages/typescript/src/utils.ts": "b6265835f7a8605008a7d0d0188362d6ebe5a73876c19a94c0193d52b5532c9c",

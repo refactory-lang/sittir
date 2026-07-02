@@ -207,8 +207,7 @@ describe('Assemble — classifyNode', () => {
 		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: '_expression',
-			subtypes: ['binary_expression', 'identifier'],
-			source: 'grammar'
+			subtypes: ['binary_expression', 'identifier']
 		};
 		expect(classifyNode('_expression', rule)).toBe('supertype');
 	});
@@ -219,8 +218,7 @@ describe('Assemble — classifyNode', () => {
 		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: 'expression',
-			subtypes: ['binary_expression', 'identifier'],
-			source: 'grammar'
+			subtypes: ['binary_expression', 'identifier']
 		};
 		expect(classifyNode('expression', rule)).toBe('supertype');
 		expect(classifyNode('_expression', rule)).toBe('supertype');
@@ -310,14 +308,12 @@ describe('Assemble — classifyNode', () => {
 				_property_name: {
 					type: SUPERTYPE,
 					name: '_property_name',
-					subtypes: ['identifier', 'string'],
-					source: 'grammar'
+					subtypes: ['identifier', 'string']
 				},
 				_property_identifier: {
 					type: SUPERTYPE,
 					name: '_property_identifier',
-					subtypes: ['identifier'],
-					source: 'grammar'
+					subtypes: ['identifier']
 				},
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				string: { type: PATTERN, value: '".*"' }
@@ -342,26 +338,22 @@ describe('Assemble — classifyNode', () => {
 				_property_name: {
 					type: SUPERTYPE,
 					name: '_property_name',
-					subtypes: ['identifier', 'string'],
-					source: 'grammar'
+					subtypes: ['identifier', 'string']
 				},
 				_type_identifier: {
 					type: SUPERTYPE,
 					name: '_type_identifier',
-					subtypes: ['identifier'],
-					source: 'grammar'
+					subtypes: ['identifier']
 				},
 				_reserved_identifier: {
 					type: SUPERTYPE,
 					name: '_reserved_identifier',
-					subtypes: ['identifier'],
-					source: 'grammar'
+					subtypes: ['identifier']
 				},
 				_property_identifier: {
 					type: SUPERTYPE,
 					name: '_property_identifier',
-					subtypes: ['_type_identifier', '_reserved_identifier', 'identifier'],
-					source: 'grammar'
+					subtypes: ['_type_identifier', '_reserved_identifier', 'identifier']
 				},
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				string: { type: PATTERN, value: '".*"' }

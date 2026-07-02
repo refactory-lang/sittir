@@ -63,7 +63,12 @@ export type FieldLike = {
 	type: 'field' | 'FIELD';
 	name: string;
 	content: unknown;
-	source?: string;
+	/** Opaque (debt PR-P1): the former `source?: string` provenance tag is
+	 *  gone — `dsl/primitives/field.ts` now stamps `metadata.fieldSource`
+	 *  instead (via `dsl/rule-metadata.ts`'s `makeRuleMetadata`). Untyped
+	 *  here since `types/` cannot import the opaque brand's dsl-owned
+	 *  constructor; writers cast through `unknown`. */
+	metadata?: unknown;
 };
 
 export function isSymbolLike(v: unknown): v is SymbolLike {

@@ -61,6 +61,7 @@
 
 import type { Rule } from '../types/rule.ts';
 import { sym } from '../types/rule.ts';
+import { makeRuleMetadata } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
 import {
@@ -410,12 +411,13 @@ function nativeRuleFn<F>(...names: string[]): F {
 /** Wrap `content` in a FIELD via the injected `field()` constructor. The
  *  runtime fn normalizes the content and stamps `fieldName` on inner symbol
  *  refs (subsuming the former hand-rolled `propagateFieldName`); we add
- *  enrich's `source` marker so downstream passes recognize the promotion as
- *  enrich-originated rather than author-written. */
+ *  enrich's `fieldSource` marker (opaque `metadata` bag — debt PR-P1) so
+ *  downstream passes recognize the promotion as enrich-originated rather
+ *  than author-written. */
 function makeField(name: string, content: unknown): Rule {
 	const field = nativeRuleFn<(n: string, c: unknown) => Rule>('field');
 	const node = field(name, content);
-	(node as { source?: string }).source = 'enriched';
+	(node as { metadata?: unknown }).metadata = makeRuleMetadata({ fieldSource: 'enriched' });
 	return node;
 }
 
@@ -1583,17 +1585,15 @@ function visibleGroupSynthName(
  * (clause hoist today; all `optional(seq)`/`repeat(seq)` once the hoist
  * generalizes), case-matched to the optional/choice wrapper's type convention.
  *
- * Provenance markers:
- *   - `metadata.source: 'enrich'` — the NEW canonical marker. Path-descent
+ * Provenance markers (both now live inside the opaque `metadata` bag — debt
+ * PR-P1; the former top-level `SymbolRule.source` field is deleted):
+ *   - `metadata.source: 'enrich'` — the canonical marker. Path-descent
  *     (transform-path.ts) reads this to recognize an enrich-synthesized
  *     group-lift symbol and travel THROUGH it into the hoisted body, so
  *     authored `transform()`/`groups:` path patches that address into a
- *     now-hoisted seq still resolve. Lives under `metadata` because the
- *     top-level `source` tag is being retired (provenance consolidates here).
- *   - `source: 'group-lift'` — LEGACY marker (sunset target; rule.ts:349).
- *     Still read by the IR-path consumers (simplify / templates / suggested).
- *     Kept dual transitionally; deleted once those readers migrate to
- *     `metadata.source`.
+ *     now-hoisted seq still resolve.
+ *   - `metadata.symbolSource: 'group-lift'` — relocated legacy marker (was
+ *     the top-level `SymbolRule.source`). Diagnostics only.
  */
 function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
 	const t = (referenceRule as { type?: string }).type ?? '';
@@ -1615,8 +1615,7 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
 	const base = isUpper ? { type: 'SYMBOL' as const, name } : sym(name);
 	return {
 		...base,
-		source: 'group-lift',
-		metadata: { source: 'enrich' }
+		metadata: makeRuleMetadata({ source: 'enrich', symbolSource: 'group-lift' })
 	} as unknown as Rule;
 }
 
@@ -1648,6 +1647,6 @@ function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	// `mintContentAliasKinds` keys on it — and the runtime alias() doesn't add
 	// it, so stamp it on the cased result.
 	const node = aliasFn(symbolRef, symbol(name));
-	(node as { metadata?: { source?: string } }).metadata = { source: 'enrich' };
+	(node as { metadata?: unknown }).metadata = makeRuleMetadata({ source: 'enrich' });
 	return node;
 }

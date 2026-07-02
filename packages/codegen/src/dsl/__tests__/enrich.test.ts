@@ -3,6 +3,7 @@ import { describe, it, expect, vi, afterEach, beforeAll, afterAll } from 'vitest
 import { enrich } from '../enrich.ts';
 import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import { readRuleMetadata } from '../rule-metadata.ts';
 
 // Minimal helper: build a tree-sitter grammar result in the shape our
 // grammarFn produces — `{ grammar: { name, rules } }`.
@@ -82,15 +83,15 @@ describe('enrich()', () => {
 			expect(rule.members[0]).toMatchObject({
 				type: 'field',
 				name: 'function',
-				content: { type: 'symbol', name: 'function' },
-				source: 'enriched'
+				content: { type: 'symbol', name: 'function' }
 			});
+			expect(readRuleMetadata((rule.members[0] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 			expect(rule.members[2]).toMatchObject({
 				type: 'field',
 				name: 'arguments',
-				content: { type: 'symbol', name: 'arguments' },
-				source: 'enriched'
+				content: { type: 'symbol', name: 'arguments' }
 			});
+			expect(readRuleMetadata((rule.members[2] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 			// String delimiters untouched
 			expect(rule.members[1]).toMatchObject({ type: 'string', value: '(' });
 			expect(rule.members[3]).toMatchObject({ type: 'string', value: ')' });
@@ -154,15 +155,15 @@ describe('enrich()', () => {
 			expect(rule.members[0]).toMatchObject({
 				type: 'field',
 				name: 'expression1',
-				content: { type: 'symbol', name: 'expression' },
-				source: 'enriched'
+				content: { type: 'symbol', name: 'expression' }
 			});
+			expect(readRuleMetadata((rule.members[0] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 			expect(rule.members[2]).toMatchObject({
 				type: 'field',
 				name: 'expression2',
-				content: { type: 'symbol', name: 'expression' },
-				source: 'enriched'
+				content: { type: 'symbol', name: 'expression' }
 			});
+			expect(readRuleMetadata((rule.members[2] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 		});
 
 		it('skips when the same kind also appears inside a REPEAT in the same body', () => {
@@ -247,9 +248,9 @@ describe('enrich()', () => {
 			// rhs promoted
 			expect(rule.members[2]).toMatchObject({
 				type: 'field',
-				name: 'rhs',
-				source: 'enriched'
+				name: 'rhs'
 			});
+			expect(readRuleMetadata((rule.members[2] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 		});
 	});
 
@@ -280,10 +281,14 @@ describe('enrich()', () => {
 				content: {
 					type: 'field',
 					name: 'async_marker',
-					content: { type: 'symbol', name: '_kw_async_marker' },
-					source: 'enriched'
+					content: { type: 'symbol', name: '_kw_async_marker' }
 				}
 			});
+			expect(
+				readRuleMetadata(
+					((rule.members[0] as { content?: unknown }).content as { metadata?: unknown } | undefined)?.metadata
+				)?.fieldSource
+			).toBe('enriched');
 			// 'def' is NOT promoted — bare leading literal, only the
 			// optional variant is handled (spec 006 restriction).
 			expect(rule.members[1]).toMatchObject({ type: 'string', value: 'def' });

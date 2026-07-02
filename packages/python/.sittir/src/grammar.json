@@ -169,7 +169,9 @@
             "type": "SYMBOL",
             "name": "import_prefix"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "CHOICE",
@@ -181,7 +183,9 @@
                 "type": "SYMBOL",
                 "name": "dotted_name"
               },
-              "source": "enriched"
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -294,7 +298,9 @@
               }
             ]
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -525,7 +531,9 @@
             "type": "SYMBOL",
             "name": "expression"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -703,9 +711,9 @@
             {
               "type": "SYMBOL",
               "name": "_raise_statement_optional1",
-              "source": "group-lift",
               "metadata": {
-                "source": "enrich"
+                "source": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -1192,7 +1200,9 @@
               "name": "except_clause"
             }
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "CHOICE",
@@ -1204,7 +1214,9 @@
                 "type": "SYMBOL",
                 "name": "else_clause"
               },
-              "source": "enriched"
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -1221,7 +1233,9 @@
                 "type": "SYMBOL",
                 "name": "finally_clause"
               },
-              "source": "enriched"
+              "metadata": {
+                "fieldSource": "enriched"
+              }
             },
             {
               "type": "BLANK"
@@ -1315,7 +1329,9 @@
             "type": "SYMBOL",
             "name": "_suite"
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -1345,7 +1361,9 @@
             "type": "SYMBOL",
             "name": "with_clause"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "STRING",
@@ -1458,9 +1476,9 @@
             {
               "type": "SYMBOL",
               "name": "_function_definition_optional1",
-              "source": "group-lift",
               "metadata": {
-                "source": "enrich"
+                "source": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -1525,7 +1543,9 @@
             "type": "SYMBOL",
             "name": "expression"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -1543,7 +1563,9 @@
             "type": "SYMBOL",
             "name": "expression"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -1648,9 +1670,9 @@
               {
                 "type": "SYMBOL",
                 "name": "_exec_statement_optional1",
-                "source": "group-lift",
                 "metadata": {
-                  "source": "enrich"
+                  "source": "enrich",
+                  "symbolSource": "group-lift"
                 }
               },
               {
@@ -1658,7 +1680,9 @@
               }
             ]
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -1675,7 +1699,9 @@
               "type": "SYMBOL",
               "name": "_kw_type"
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "FIELD",
@@ -1862,9 +1888,9 @@
               {
                 "type": "SYMBOL",
                 "name": "_argument_list_optional1",
-                "source": "group-lift",
                 "metadata": {
-                  "source": "enrich"
+                  "source": "enrich",
+                  "symbolSource": "group-lift"
                 }
               },
               {
@@ -1872,7 +1898,9 @@
               }
             ]
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -1923,7 +1951,9 @@
             "type": "SYMBOL",
             "name": "expression"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "FIELD",
@@ -1932,7 +1962,9 @@
             "type": "SYMBOL",
             "name": "_newline"
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -2245,9 +2277,9 @@
             {
               "type": "SYMBOL",
               "name": "__list_pattern_optional1",
-              "source": "group-lift",
               "metadata": {
-                "source": "enrich"
+                "source": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -2274,9 +2306,9 @@
             {
               "type": "SYMBOL",
               "name": "__list_pattern_optional1",
-              "source": "group-lift",
               "metadata": {
-                "source": "enrich"
+                "source": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -2303,9 +2335,9 @@
             {
               "type": "SYMBOL",
               "name": "_dict_pattern_optional1",
-              "source": "group-lift",
               "metadata": {
-                "source": "enrich"
+                "source": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -2354,7 +2386,9 @@
             "type": "SYMBOL",
             "name": "identifier"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "STRING",
@@ -2367,7 +2401,9 @@
             "type": "SYMBOL",
             "name": "_simple_pattern"
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -2393,7 +2429,9 @@
                 }
               ]
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "CHOICE",
@@ -2409,7 +2447,9 @@
                   "type": "SYMBOL",
                   "name": "_kw_identifier"
                 },
-                "source": "override"
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
             ]
           }
@@ -2426,7 +2466,9 @@
             "type": "SYMBOL",
             "name": "dotted_name"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "STRING",
@@ -2441,9 +2483,9 @@
               {
                 "type": "SYMBOL",
                 "name": "__list_pattern_optional1",
-                "source": "group-lift",
                 "metadata": {
-                  "source": "enrich"
+                  "source": "enrich",
+                  "symbolSource": "group-lift"
                 }
               },
               {
@@ -2451,7 +2493,9 @@
               }
             ]
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -2480,7 +2524,9 @@
                 }
               ]
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "FIELD",
@@ -2498,7 +2544,9 @@
                 }
               ]
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "FIELD",
@@ -2516,7 +2564,9 @@
                 }
               ]
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "CHOICE",
@@ -2890,7 +2940,9 @@
               "type": "SYMBOL",
               "name": "expression"
             },
-            "source": "enriched"
+            "metadata": {
+              "fieldSource": "enriched"
+            }
           },
           {
             "type": "STRING",
@@ -3679,7 +3731,9 @@
               "type": "SYMBOL",
               "name": "primary_expression"
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "FIELD",
@@ -3696,7 +3750,9 @@
                 "value": "comparison_operator_comparator"
               }
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       }
@@ -4172,7 +4228,9 @@
                 "type": "SYMBOL",
                 "name": "expression"
               },
-              "source": "override"
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -4193,7 +4251,9 @@
                 "type": "SYMBOL",
                 "name": "expression"
               },
-              "source": "override"
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "BLANK"
@@ -4211,9 +4271,9 @@
                 "content": {
                   "type": "SYMBOL",
                   "name": "_slice_group1",
-                  "source": "group-lift",
                   "metadata": {
-                    "source": "enrich"
+                    "source": "enrich",
+                    "symbolSource": "group-lift"
                   }
                 },
                 "named": true,
@@ -4227,7 +4287,9 @@
               }
             ]
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -4362,7 +4424,9 @@
                 }
               ]
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "FIELD",
@@ -4371,7 +4435,9 @@
               "type": "SYMBOL",
               "name": "identifier"
             },
-            "source": "enriched"
+            "metadata": {
+              "fieldSource": "enriched"
+            }
           }
         ]
       }
@@ -4403,7 +4469,9 @@
                 }
               ]
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "FIELD",
@@ -4412,7 +4480,9 @@
               "type": "SYMBOL",
               "name": "type_parameter"
             },
-            "source": "enriched"
+            "metadata": {
+              "fieldSource": "enriched"
+            }
           }
         ]
       }
@@ -4430,7 +4500,9 @@
               "type": "SYMBOL",
               "name": "type"
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -4443,7 +4515,9 @@
               "type": "SYMBOL",
               "name": "type"
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       }
@@ -4461,7 +4535,9 @@
               "type": "SYMBOL",
               "name": "type"
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -4474,7 +4550,9 @@
               "type": "SYMBOL",
               "name": "type"
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       }
@@ -4489,7 +4567,9 @@
             "type": "SYMBOL",
             "name": "type"
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -4502,7 +4582,9 @@
             "type": "SYMBOL",
             "name": "identifier"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -4623,9 +4705,9 @@
               {
                 "type": "SYMBOL",
                 "name": "_dictionary_optional1",
-                "source": "group-lift",
                 "metadata": {
-                  "source": "enrich"
+                  "source": "enrich",
+                  "symbolSource": "group-lift"
                 }
               },
               {
@@ -4633,7 +4715,9 @@
               }
             ]
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -4913,7 +4997,9 @@
                   "type": "SYMBOL",
                   "name": "_kw_async_marker"
                 },
-                "source": "override"
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "BLANK"
@@ -4994,7 +5080,9 @@
             "type": "SYMBOL",
             "name": "expression"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -5011,7 +5099,9 @@
               "type": "SYMBOL",
               "name": "expression"
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -5024,7 +5114,9 @@
               "type": "SYMBOL",
               "name": "expression"
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -5037,7 +5129,9 @@
               "type": "SYMBOL",
               "name": "expression"
             },
-            "source": "override"
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       }
@@ -5068,7 +5162,9 @@
             "type": "SYMBOL",
             "name": "string_start"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "FIELD",
@@ -5089,7 +5185,9 @@
               ]
             }
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "FIELD",
@@ -5098,7 +5196,9 @@
             "type": "SYMBOL",
             "name": "string_end"
           },
-          "source": "enriched"
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -5722,7 +5822,9 @@
               "type": "SYMBOL",
               "name": "primary_expression"
             },
-            "source": "enriched"
+            "metadata": {
+              "fieldSource": "enriched"
+            }
           }
         ]
       }
@@ -6138,7 +6240,9 @@
             "type": "SYMBOL",
             "name": "expression"
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "CHOICE",
@@ -6168,7 +6272,9 @@
             "type": "SYMBOL",
             "name": "expression"
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -6628,7 +6734,9 @@
               }
             ]
           },
-          "source": "override"
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "SYMBOL",
