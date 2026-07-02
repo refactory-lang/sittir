@@ -10,9 +10,8 @@
  * - Assemble  produces {@link NodeMap}.
  *
  * Diagnostic / suggester-input types live here too ({@link DerivationLog}
- * and its entry types, {@link SuggestedOverride}, {@link IncludeFilter})
- * because they flow between Link and the suggester emitter, not through
- * the rule tree itself.
+ * and its entry types, {@link IncludeFilter}) because they flow between
+ * Link and the suggester emitter, not through the rule tree itself.
  *
  * The Rule model (Rule union + type guards + SymbolRef) stays in
  * `./rule.ts`. The AssembledNode hierarchy currently stays in `rule.ts`
@@ -84,7 +83,7 @@ export type KindPresenceFlag = number;
  * What sittir can do with a kind. Behavior-based; complements
  * `KindPresenceFlag`'s file-based / existence-based view.
  */
-export const KindUseFlag = {
+const KindUseFlag = {
 	None: 0,
 	/** Sittir can ingest/hydrate the kind from parsed runtime nodes. */
 	Readable: 1 << 0,
@@ -93,7 +92,7 @@ export const KindUseFlag = {
 	/** Sittir can render/dispatch it. */
 	Renderable: 1 << 2
 } as const;
-export type KindUseFlag = number;
+type KindUseFlag = number;
 
 /**
  * Parser-origin metadata for a kind. Derived from the C symbol name.
@@ -207,30 +206,6 @@ export interface RefineForm {
 // ---------------------------------------------------------------------------
 // Derivation log — sidecar of everything Link inferred / promoted
 // ---------------------------------------------------------------------------
-
-/**
- * Suggested override entry — emitted by the suggested.ts emitter from
- * fields whose `source` is `'enriched'`, and from rules
- * whose `source` is `'promoted'`. The classification work happens in
- * Link; this type is just the wire shape the emitter consumes.
- */
-export interface SuggestedOverride {
-	/** The parent kind that needs the override applied. */
-	readonly kind: string;
-	/**
-	 * Position within the parent rule the override would target. Empty
-	 * array when the suggestion applies at the symbol level (e.g.
-	 * global-optionality, naming-consistency diagnostics) rather than
-	 * at a specific position.
-	 */
-	readonly path: (string | number)[];
-	/** The rule fragment the override would emit (typically a `field()` wrapper). */
-	readonly rule: Rule<'evaluate'>;
-	/** Human-readable derivation tag — `field-name-inference: 6/6 ...`. */
-	readonly derivation: string;
-	/** Confidence based on agreement ratio. */
-	readonly confidence: 'high' | 'medium' | 'low';
-}
 
 /**
  * DerivationLog — sidecar record of everything Link inferred / promoted.
@@ -398,8 +373,8 @@ export interface LinkedGrammar {
  * `grammar` and `override` are always-on — user-authored content cannot
  * be filtered out.
  */
-export type DerivedRuleSource = 'promoted';
-export type DerivedFieldSource = 'enriched' | 'inferred';
+type DerivedRuleSource = 'promoted';
+type DerivedFieldSource = 'enriched' | 'inferred';
 
 export interface IncludeFilter {
 	/** Derived rule classifications to KEEP. Defaults to all. */

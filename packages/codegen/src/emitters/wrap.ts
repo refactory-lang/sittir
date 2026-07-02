@@ -85,8 +85,10 @@ export interface EmitWrapConfig {
 }
 
 /**
- * Standalone entry point — preserved for backwards compatibility (tests,
- * CLI callers). Delegates to the emitter protocol (init → loop → finalize).
+ * Standalone entry point — preserved for backwards compatibility (tests
+ * only; production goes through `new WrapEmitter(...)` directly, see
+ * `emitters/emit.ts`). Delegates to the emitter protocol (init → loop →
+ * finalize).
  */
 export function emitWrap(config: EmitWrapConfig): string {
 	const wrapEmitter = new WrapEmitter(config);
