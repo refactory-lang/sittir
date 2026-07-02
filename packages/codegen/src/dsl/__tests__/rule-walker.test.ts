@@ -35,3 +35,37 @@ describe('RuleWalker.childrenOf', () => {
 		expect(w.childrenOf(objLeaf)).toEqual([sep]);
 	});
 });
+
+describe('RuleWalker.map', () => {
+	const w = new RuleWalker();
+	it('returns the SAME reference when visit changes nothing (fixpoint identity)', () => {
+		const tree = { type: SEQ, members: [str('a'), { type: OPTIONAL, content: sym('x') }] } as AnyRule;
+		expect(w.map(tree, (r) => r)).toBe(tree);
+	});
+	it('rebuilds only the spine above a changed node', () => {
+		const keep = str('keep');
+		const tree = { type: SEQ, members: [keep, sym('old')] } as AnyRule;
+		const out = w.map(tree, (r) => (r.type === SYMBOL && r.name === 'old' ? sym('new') : r)) as { members: AnyRule[] };
+		expect(out).not.toBe(tree);
+		expect(out.members[0]).toBe(keep);
+		expect((out.members[1] as { name: string }).name).toBe('new');
+	});
+});
+
+describe('RuleWalker.fold / find', () => {
+	const w = new RuleWalker();
+	const tree = { type: SEQ, members: [str('a'), { type: CHOICE, members: [sym('x'), str('b')] }] } as AnyRule;
+	it('fold visits root-first, pre-order', () => {
+		const types = w.fold(tree, [] as string[], (acc, r) => (acc.push(r.type), acc));
+		expect(types).toEqual([SEQ, STRING, CHOICE, SYMBOL, STRING]);
+	});
+	it('find short-circuits at the first match', () => {
+		let visits = 0;
+		const hit = w.find(tree, (r) => (visits++, r.type === STRING));
+		expect((hit as { value: string }).value).toBe('a');
+		expect(visits).toBe(2); // root seq, then str('a')
+	});
+	it('find returns undefined on no match', () => {
+		expect(w.find(tree, (r) => r.type === 'indent')).toBeUndefined();
+	});
+});

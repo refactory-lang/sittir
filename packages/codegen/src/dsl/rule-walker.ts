@@ -44,4 +44,47 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		else if (typeof sep === 'object' && sep !== null && 'rules' in sep) out.push(...(sep.rules as readonly R[]));
 		return out;
 	}
+
+	/**
+	 * Bottom-up rebuild. Applies `visit` to each child's mapped result, then
+	 * rebuilds this node ONLY if a child changed. Returns the SAME reference
+	 * when nothing changed — load-bearing for fixpoint loops that compare
+	 * `r === before` (enrich). Rebuild covers members/content edges; stamped
+	 * separator rules are visited but never rebuilt (they are leaf literals
+	 * in practice; rebuilding stamped attrs is transform-pass territory).
+	 */
+	map(rule: R, visit: (r: R) => R): R {
+		const bag = rule as { members?: readonly R[]; content?: R };
+		if (Array.isArray(bag.members)) {
+			let changed = false;
+			const next = bag.members.map((m) => {
+				const out = visit(this.map(m, visit));
+				if (out !== m) changed = true;
+				return out;
+			});
+			return changed ? ({ ...(rule as object), members: next } as R) : rule;
+		}
+		if (bag.content && typeof bag.content === 'object') {
+			const out = visit(this.map(bag.content, visit));
+			return out === bag.content ? rule : ({ ...(rule as object), content: out } as R);
+		}
+		return rule;
+	}
+
+	/** Pre-order accumulate: visits `rule` itself, then descends childrenOf. */
+	fold<A>(rule: R, init: A, f: (acc: A, r: R) => A): A {
+		let acc = f(init, rule);
+		for (const child of this.childrenOf(rule)) acc = this.fold(child, acc, f);
+		return acc;
+	}
+
+	/** Pre-order search: tests `rule` itself, short-circuits on first match. */
+	find(rule: R, pred: (r: R) => boolean): R | undefined {
+		if (pred(rule)) return rule;
+		for (const child of this.childrenOf(rule)) {
+			const hit = this.find(child, pred);
+			if (hit !== undefined) return hit;
+		}
+		return undefined;
+	}
 }
