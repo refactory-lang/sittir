@@ -6,6 +6,7 @@ import type { DerivationLog } from '../types.ts';
 import type { Rule, SymbolRef } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { createEmptyRuleCatalog } from '../rule-catalog.ts';
+import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
 
 function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
@@ -124,11 +125,13 @@ describe('Link — hidden rule classification', () => {
 			{ supertypes: ['_expression'] }
 		);
 		const linked = link(raw);
+		// (debt PR-P1) `SupertypeRule.source` is deleted (item 3: link's
+		// classifier now returns its classification/source via ClassifyResult
+		// instead of stamping it onto the rule).
 		expect(linked.rules['_expression']).toEqual({
 			type: 'supertype',
 			name: '_expression',
-			subtypes: ['binary_expression', 'identifier'],
-			source: 'grammar'
+			subtypes: ['binary_expression', 'identifier']
 		});
 	});
 
@@ -150,7 +153,12 @@ describe('Link — hidden rule classification', () => {
 });
 
 describe('Link — field provenance', () => {
-	it('preserves field source from override', () => {
+	// (debt PR-P1) `FieldRule.source` (top-level) is deleted; the fact
+	// relocated into the opaque `metadata` bag as `fieldSource`, written via
+	// `makeRuleMetadata` and read back only via `readRuleMetadata` (this test
+	// file, asserting compiler blind-carry behavior, is a legitimate reader —
+	// it is verifying Link propagates the bag unchanged, not branching on it).
+	it('preserves field provenance metadata from override across Link (blind carry)', () => {
 		const raw = makeRaw({
 			item: {
 				type: SEQ,
@@ -159,7 +167,7 @@ describe('Link — field provenance', () => {
 						type: FIELD,
 						name: 'body',
 						content: { type: 'symbol', name: 'block' },
-						source: 'override'
+						metadata: makeRuleMetadata({ fieldSource: 'override' })
 					}
 				]
 			},
@@ -167,7 +175,7 @@ describe('Link — field provenance', () => {
 		});
 		const linked = link(raw);
 		const item = linked.rules['item'] as any;
-		expect(item.members[0].source).toBe('override');
+		expect(readRuleMetadata(item.members[0].metadata)?.fieldSource).toBe('override');
 	});
 });
 

@@ -53,6 +53,7 @@ import type {
 	RuleId
 } from '../../types/rule.ts';
 import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '../../types/rule.ts';
+import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import { findGeneratedKindEntry } from '../generated-metadata.ts';
 import { tokenToName } from '../normalize.ts';
@@ -1231,15 +1232,21 @@ export function deriveValuesForRule(
 		case SYMBOL: {
 			// Link-synthesized operator literal (Chunk D1): `canonicalizeRuleLiterals`
 			// rewrites a field-wrapped operator literal (`'<'`) into
-			// `symbol{ name: 'lt', source: 'link', literal: '<' }`. The `name` is
-			// the alias-target kind (the runtime `$type`) and `literal` is the
-			// original source string. Emit a TERMINAL of the source string —
-			// `value` is what the renderer emits (`<`), `resolvedKind` is the
-			// alias-target kindId read-time matching keys on (`lt`). Dropping
-			// `literal` (the old behavior) leaked a PHANTOM kind ref (`Lt`/`LtEq`)
-			// into the operator enum and left render emitting the bare literal
-			// while read could not populate the slot.
-			if (rule.source === 'link' && rule.literal !== undefined) {
+			// `symbol{ name: 'lt', literal: '<', metadata: {symbolSource: 'link'} }`.
+			// The `name` is the alias-target kind (the runtime `$type`) and
+			// `literal` is the original source string. Emit a TERMINAL of the
+			// source string — `value` is what the renderer emits (`<`),
+			// `resolvedKind` is the alias-target kindId read-time matching keys
+			// on (`lt`). Dropping `literal` (the old behavior) leaked a PHANTOM
+			// kind ref (`Lt`/`LtEq`) into the operator enum and left render
+			// emitting the bare literal while read could not populate the slot.
+			//
+			// (debt PR-P1) Was `rule.source === 'link' && rule.literal !==
+			// undefined`; `literal` is set ONLY by `canonicalizeRuleLiterals`
+			// alongside the (now-deleted) `source: 'link'` stamp — its one and
+			// only writer — so `literal !== undefined` alone is the exact same
+			// condition, structurally, not an inference.
+			if (rule.literal !== undefined) {
 				return [
 					{
 						value: rule.literal,
@@ -1769,6 +1776,15 @@ export interface AssembledNonterminalInit {
 	/** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
 	 *  never read here to drive logic or emission; defaults to empty. */
 	readonly metadata?: OpaqueFacts;
+	/**
+	 * (debt PR-P1, item 4) Blind passthrough of the owning rule's opaque
+	 * `RuleMetadata` bag (`types/rule.ts`'s `RuleBase.metadata`). Collect-slots
+	 * copies this WITHOUT reading it — never branch on it here. Only a
+	 * dsl-sanctioned reader (`dsl/rule-metadata.ts`'s `readRuleMetadata`, from
+	 * enrich/wire/diagnostics code) may open it, e.g. for node-model
+	 * serialization or validator diagnostics.
+	 */
+	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 }
 
@@ -1812,6 +1828,9 @@ export class AssembledNonterminal {
 	/** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
 	 *  never read here to drive logic or emission. */
 	readonly metadata: OpaqueFacts;
+	/** (debt PR-P1) Blind passthrough of the owning rule's opaque
+	 *  `RuleMetadata` — see {@link AssembledNonterminalInit.ruleMetadata}. */
+	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 
 	get storageName(): string { return projectSlotNaming(this).storageName; }
@@ -1835,6 +1854,7 @@ export class AssembledNonterminal {
 		this.source = init.source;
 		this.sourceRuleIds = init.sourceRuleIds;
 		this.metadata = init.metadata ?? opaqueFacts({});
+		this.ruleMetadata = init.ruleMetadata;
 		this.storageInfo = init.storageInfo;
 	}
 
@@ -1848,6 +1868,7 @@ export class AssembledNonterminal {
 			source: this.source,
 			sourceRuleIds: this.sourceRuleIds,
 			metadata: this.metadata,
+			ruleMetadata: this.ruleMetadata,
 			storageInfo: this.storageInfo,
 			...overrides,
 		});

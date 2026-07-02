@@ -19,6 +19,7 @@
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { readRuleMetadata } from '../../../codegen/src/dsl/rule-metadata.ts';
 
 export interface FieldProvenanceOptions {
 	grammar: string;
@@ -39,7 +40,19 @@ interface GrammarJson {
 	rules: Record<string, unknown>;
 }
 
-function isField(node: unknown): node is { type: string; name: string; content: unknown; source?: string } {
+/**
+ * (debt PR-P1) `FIELD.source` is gone from the emitted `grammar.json`
+ * shape too — tree-sitter round-trips whatever `overrides.ts` produced,
+ * and sittir's field-rule provenance now lives in `metadata.fieldSource`
+ * (opaque to the compiler; this diagnostics tool is a sanctioned reader of
+ * the real shape via `dsl/rule-metadata.ts`'s `readRuleMetadata`). Grammar
+ * JSON's `metadata` here is the same plain object that `makeRuleMetadata`
+ * constructs, round-tripped through JSON — `readRuleMetadata` still works
+ * on it since the brand is type-level only (erased at runtime).
+ */
+function isField(
+	node: unknown
+): node is { type: string; name: string; content: unknown; metadata?: unknown } {
 	return !!node && typeof node === 'object' && (node as { type?: unknown }).type === 'FIELD';
 }
 
@@ -67,7 +80,7 @@ function walkRule(kind: string, node: unknown, path: string[], rows: FieldRow[])
 			kind,
 			path: path.join('/') || '(root)',
 			name: node.name,
-			source: node.source ?? 'grammar',
+			source: readRuleMetadata(node.metadata)?.fieldSource ?? 'grammar',
 			redundantNested: innerFieldNames.has(node.name)
 		});
 	}

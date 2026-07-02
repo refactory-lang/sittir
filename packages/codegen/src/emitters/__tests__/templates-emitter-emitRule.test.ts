@@ -33,6 +33,7 @@ import type {
 } from '../../types/rule.ts';
 import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
 import { emitRule, type EmitCtx } from '../templates.ts';
+import { makeRuleMetadata } from '../../dsl/rule-metadata.ts';
 
 function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 	return {
@@ -323,18 +324,34 @@ describe('emitRule — symbol', () => {
 	});
 
 	it('emits the literal for a link-synthesized symbol', () => {
+		// (debt PR-P1) `SymbolRule.source` (top-level) is deleted; emitSymbol
+		// now keys on the STRUCTURAL `literal` field alone (link.ts's
+		// `canonicalizeRuleLiterals` is the sole writer, and it always sets
+		// `literal` together with `metadata.symbolSource: 'link'`, so
+		// `literal !== undefined` is the exact same condition).
 		const rule: SymbolRule = {
 			type: SYMBOL,
 			name: '_kw_async',
-			source: 'link',
 			literal: 'async'
 		};
 		expect(emitRule(rule, makeCtx())).toBe('async');
 	});
 
-	it('emits nothing for a link symbol without a literal', () => {
-		const rule: SymbolRule = { type: SYMBOL, name: '_kw_void', source: 'link' };
-		expect(emitRule(rule, makeCtx())).toBe('');
+	it('falls through to scalar-slot emission for a symbol tagged link-sourced but with no literal', () => {
+		// (debt PR-P1) This case is UNREACHABLE from the live pipeline —
+		// link.ts's one writer of `metadata.symbolSource: 'link'` always sets
+		// `literal` alongside it — but exercises the boundary directly to
+		// prove emitSymbol does NOT branch on the opaque `metadata` bag: with
+		// `literal` absent, it must fall through past the literal-emission
+		// branch to ordinary scalar-slot handling, regardless of metadata.
+		const rule: SymbolRule = {
+			type: SYMBOL,
+			name: '_kw_void',
+			metadata: makeRuleMetadata({ symbolSource: 'link' })
+		};
+		// Fallback: bare kind-named scalar slot, name.replace(/^_+/, '') —
+		// strips only the leading underscore, not the `kw_` prefix.
+		expect(emitRule(rule, makeCtx())).toBe('{{ kw_void }}');
 	});
 
 	it('inlines a hidden helper rule when present in ctx.rules', () => {

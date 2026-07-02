@@ -524,6 +524,11 @@ function sym(name) {
   return { type: SYMBOL, name, hidden: name.startsWith("_"), inline: name.startsWith("_") };
 }
 
+// packages/codegen/src/dsl/rule-metadata.ts
+function makeRuleMetadata(shape) {
+  return shape;
+}
+
 // packages/codegen/src/dsl/list-patterns.ts
 function firstStringOfChoice(r) {
   if (!typeEq(r.type, "choice")) return null;
@@ -856,7 +861,7 @@ function nativeRuleFn(...names) {
 function makeField(name, content) {
   const field2 = nativeRuleFn("field");
   const node = field2(name, content);
-  node.source = "enriched";
+  node.metadata = makeRuleMetadata({ fieldSource: "enriched" });
   return node;
 }
 function makeSymbol(name) {
@@ -1525,15 +1530,14 @@ function makeGroupLiftSymbol(referenceRule, name) {
   const base2 = isUpper ? { type: "SYMBOL", name } : sym(name);
   return {
     ...base2,
-    source: "group-lift",
-    metadata: { source: "enrich" }
+    metadata: makeRuleMetadata({ source: "enrich", symbolSource: "group-lift" })
   };
 }
 function makeVisibleGroupAlias(symbolRef, name) {
   const aliasFn = nativeRuleFn("alias");
   const symbol = nativeRuleFn("symbol", "sym");
   const node = aliasFn(symbolRef, symbol(name));
-  node.metadata = { source: "enrich" };
+  node.metadata = makeRuleMetadata({ source: "enrich" });
   return node;
 }
 
@@ -2040,14 +2044,15 @@ function buildTwoArgFieldResult(native, name, content) {
   const initial = native(name, content);
   const inner = initial.content;
   const symbolized = maybeKeywordSymbol(name, inner);
+  const metadata = makeRuleMetadata({ fieldSource: "override" });
   if (symbolized !== inner) {
     const reconstructed = native(name, symbolized);
     return {
       ...reconstructed,
-      source: "override"
+      metadata
     };
   }
-  return { ...initial, source: "override" };
+  return { ...initial, metadata };
 }
 
 // packages/codegen/src/dsl/transform/transform.ts
@@ -2283,7 +2288,7 @@ function resolvePatch(patch, originalMember, precStack) {
     return resolveFieldPlaceholder(patch, originalMember, precStack);
   }
   if (isFieldLike(patch)) {
-    return { ...patch, source: "override" };
+    return { ...patch, metadata: makeRuleMetadata({ fieldSource: "override" }) };
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
@@ -2291,7 +2296,10 @@ function resolvePatch(patch, originalMember, precStack) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
     if (variantBranchIsUnmaterializable(originalMember)) {
-      return { ...deField(originalMember), source: "override" };
+      return {
+        ...deField(originalMember),
+        metadata: makeRuleMetadata({ fieldSource: "override" })
+      };
     }
     if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
       throw new Error(
@@ -2403,7 +2411,11 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
     const nested = findEnrichShapedFieldThroughTransparentWrappers(originalMember);
     if (nested !== null) {
       const overrideName = patch.name;
-      const renamedField = { ...nested.found, name: overrideName, source: "override" };
+      const renamedField = {
+        ...nested.found,
+        name: overrideName,
+        metadata: makeRuleMetadata({ fieldSource: "override" })
+      };
       const reconstructed = nested.reconstruct(renamedField);
       return reconstructed;
     }
@@ -2419,7 +2431,7 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
     );
   }
   const result = native(patch.name, content);
-  return { ...result, source: "override" };
+  return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
   const hiddenName = "_" + patch.name;

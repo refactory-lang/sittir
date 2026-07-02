@@ -46,6 +46,17 @@ import type {
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, Multiplicity, RepeatRule, Repeat1Rule } from '../types/rule.ts';
+// (debt PR-P1 scoping note) `readRuleMetadata` is normally restricted to
+// enrich/wire/diagnostics — this file is neither. The `inlinedFrom` reads
+// below are a PRE-EXISTING violation already flagged as its own follow-up
+// item (lingering-debt-inventory-research.md §3.2: "not removable [here] —
+// needs a structural-fact replacement + render validation"), explicitly NOT
+// one of this PR's 5 work items. Importing here makes the violation EXPLICIT
+// and greppable rather than silently bypassing the opaque brand via an ad
+// hoc unsafe cast — the honest choice given the real fix is out of scope.
+// TODO(debt-pr-p1-followup): replace the 3 `inlinedFrom` reads below with a
+// structural fact + render-output validation gate, then delete this import.
+import { readRuleMetadata } from '../dsl/rule-metadata.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import { compileWordMatcher } from '../util/word-matcher.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -431,7 +442,7 @@ function rightmostBoundary(rule: Rule<'link'>): BoundaryEnd {
 	// (`for await (`, not `for await(`) — so report it as slot-like (word-like)
 	// rather than walking into its first/last literal. (Strategic render-time
 	// spacing supersedes this — see the deferred follow-up in the plan.)
-	if (rule.type === SEQ && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
+	if (rule.type === SEQ && readRuleMetadata(rule.metadata)?.inlinedFrom !== undefined) return SLOT_END;
 	switch (rule.type) {
 		case STRING:
 			// Named field-wrapped string — it becomes a slot, not a literal.
@@ -489,7 +500,7 @@ function rightmostBoundary(rule: Rule<'link'>): BoundaryEnd {
 function leftmostBoundary(rule: Rule<'link'>): BoundaryEnd {
 	// §D-2a spacing stopgap (symmetric to rightmostBoundary): an inlined-from seq
 	// keeps opaque-symbol spacing at its outer boundaries.
-	if (rule.type === SEQ && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
+	if (rule.type === SEQ && readRuleMetadata(rule.metadata)?.inlinedFrom !== undefined) return SLOT_END;
 	switch (rule.type) {
 		case STRING:
 			if ((rule as { fieldName?: string }).fieldName !== undefined) return SLOT_END;
@@ -1387,7 +1398,7 @@ function emitSymbol(rule: Extract<Rule<'link'>, { type: 'symbol' }>, ctx: EmitCt
 	// Chunk D2: a link-symbol renders its literal verbatim ONLY when it has no
 	// `fieldName`. A field-wrapped link-operator literal (stamped by
 	// deleteWrapper from a surrounding field() wrapper, e.g.
-	// `field('operator', symbol(name='amp_amp', source='link', literal='&&'))`)
+	// `field('operator', symbol(name='amp_amp', literal='&&'))`)
 	// is a SLOT — it must fall through to the standard slot path below so the
 	// renderer substitutes the actual operator from the parse tree (the now-
 	// separate operator slot, Chunk D1) instead of the first arm's hard-coded
@@ -1395,9 +1406,15 @@ function emitSymbol(rule: Extract<Rule<'link'>, { type: 'symbol' }>, ctx: EmitCt
 	// `fieldName: 'operator'` across arms with different literals.) Emitting the
 	// literal here would render `a < b` as the first arm's operator regardless
 	// of the parsed operator and leave read unable to populate the slot.
+	//
+	// (debt PR-P1) Was `rule.source === 'link'`; `literal` is set ONLY by
+	// link.ts's `canonicalizeRuleLiterals` alongside the deleted `source:
+	// 'link'` stamp (its only writer), so checking `literal !== undefined`
+	// directly is the exact same condition, structurally — not an inference,
+	// the same write site produced both facts together.
 	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
-	if (rule.source === 'link' && symbolFieldName === undefined) {
-		return rule.literal !== undefined ? escapeLiteral(rule.literal) : '';
+	if (rule.literal !== undefined && symbolFieldName === undefined) {
+		return escapeLiteral(rule.literal);
 	}
 
 	// PR2 Task 3.B3: check leaf-level attributes pushed down from wrapper
@@ -1559,7 +1576,7 @@ function warnMultiSlotMultiplicityGroup(rule: Extract<Rule<'link'>, { type: 'seq
 		if (k) keys.add(k);
 	}
 	if (keys.size <= 1) return;
-	const from = rule.metadata?.inlinedFrom ?? '<seq>';
+	const from = readRuleMetadata(rule.metadata)?.inlinedFrom ?? '<seq>';
 	const tag = `${ctx.currentKind ?? '?'}:${from}`;
 	if (warnedMultiSlotGroups.has(tag)) return;
 	warnedMultiSlotGroups.add(tag);
@@ -1729,17 +1746,26 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 		// correctly handles these via symbol inlining or literal emission rather
 		// than named slot references. Checking them would produce false positives.
 		if (slot.isUnnamed) continue;
-		// Skip link-sourced slots — derived from link-phase synthesized symbol
-		// rules (SymbolRule<'link'>.source === 'link'). These are inlined as their
-		// literal text by emitSymbol (`rule.source === 'link'` → escapeLiteral),
-		// so the template will contain the literal string rather than a
-		// `{{ slotName }}` reference. Trying to find the slot name in the body
-		// would produce false positives (e.g. binary_expression.operator which
-		// emits '&&' instead of '{{ operator }}').
-		// Note: slot.source is typed as AssembledNonterminal.source but at
-		// runtime can also be 'link' or 'group-lift' (from SymbolRule<'link'>.source
-		// propagated through deriveSlotsRaw).
-		if ((slot.source as string) === 'link' || (slot.source as string) === 'group-lift') continue;
+		// (debt PR-P1, item 4) REMOVED a former provenance-reading skip here:
+		// `(slot.source as string) === 'link' || 'group-lift'`. Per the
+		// doctrine, a compiler decision may not key on rule/slot provenance —
+		// this had to become either a structural check or a proven-redundant
+		// deletion. Verified EMPIRICALLY (not just by static reasoning) before
+		// deleting: generated `node-model.json5` for all three grammars at the
+		// pre-PR-P1 baseline (rust/typescript/python) has exactly ONE slot
+		// anywhere with `source: 'link'` or `'group-lift'` — typescript's
+		// `binary_expression.operator` (the exact case this comment used to
+		// cite) — and its `values[]` are ALL terminals (zero node-refs), i.e.
+		// `kindsOf(slot).length === 0`, which is ALREADY skipped by the check
+		// directly above. So the condition never once changed this function's
+		// outcome on any of the three grammars: it is provably redundant, not
+		// merely theoretically so. Deleting it is a genuine dead-condition
+		// removal — there is no structural fact to convert it to because it
+		// never selected anything the prior check hadn't already excluded.
+		// (Root cause: link-synthesized operator literals become terminal
+		// `.value` entries with no node-ref, per `deriveValuesForRule`'s
+		// SYMBOL case in node-map.ts — `kindsOf` is the exact structural
+		// signal this check was informally approximating via provenance.)
 		// Skip slots where no value is required (all are optional/array). These
 		// arise from `mergeChoiceArmSlots` cross-arm relaxation: a slot present
 		// in only some choice arms gets its values' multiplicities relaxed from

@@ -15,6 +15,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
 import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import { readRuleMetadata } from '../rule-metadata.ts';
 
 // enrich's builders call the runtime-injected DSL constructors
 // (globalThis.field/symbol/alias); install the fakes for these raw enrich()
@@ -69,11 +70,16 @@ describe('enrich clause-hoist pass — basic optional(seq(STRING, FIELD))', () =
 
 		// The parent's optional member must now reference the symbol
 		const parent = rules.parent as { type: string; members: Array<unknown> };
-		const optMember = parent.members[1] as { type: string; content: { type: string; name: string; source?: string } };
+		const optMember = parent.members[1] as {
+			type: string;
+			content: { type: string; name: string; metadata?: unknown };
+		};
 		expect(optMember.type).toBe('optional');
 		expect(optMember.content.type).toBe('symbol');
 		expect(optMember.content.name).toBe('_parent_optional1');
-		expect(optMember.content.source).toBe('group-lift');
+		// (debt PR-P1) `SymbolRule.source` is deleted; the fact relocated into
+		// the opaque `metadata` bag as `symbolSource`.
+		expect(readRuleMetadata(optMember.content.metadata)?.symbolSource).toBe('group-lift');
 	});
 
 	it('slot-count preservation: parent top-level member count unchanged', () => {
@@ -139,13 +145,18 @@ describe('enrich clause-hoist pass — CHOICE[seq, BLANK] form', () => {
 
 		// The CHOICE[seq, BLANK] must be rewritten to CHOICE[SYMBOL(...), BLANK]
 		const parent = rules.parent as { type: string; members: unknown[] };
-		const choiceMember = parent.members[1] as { type: string; members: Array<{ type: string; name?: string; source?: string }> };
+		const choiceMember = parent.members[1] as {
+			type: string;
+			members: Array<{ type: string; name?: string; metadata?: unknown }>;
+		};
 		expect(choiceMember.type).toBe('CHOICE');
 		const nonBlank = choiceMember.members.find((m) => m.type !== 'BLANK');
 		expect(nonBlank).toBeDefined();
 		expect(nonBlank!.type).toBe('SYMBOL');
 		expect(nonBlank!.name).toBe('_parent_optional1');
-		expect(nonBlank!.source).toBe('group-lift');
+		// (debt PR-P1) `SymbolRule.source` is deleted; relocated to
+		// `metadata.symbolSource`.
+		expect(readRuleMetadata(nonBlank!.metadata)?.symbolSource).toBe('group-lift');
 	});
 
 	it('lowercase choice[seq, blank] form also descends', () => {

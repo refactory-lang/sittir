@@ -3,6 +3,7 @@ import { parsePath, applyPath } from '../transform/transform-path.ts';
 import { transform } from '../transform/transform.ts';
 import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import { makeRuleMetadata, readRuleMetadata } from '../rule-metadata.ts';
 
 // Helpers return `any` so tests can mix them freely with the
 // transform path-helpers, which operate on the `RuntimeRule` supertype
@@ -244,14 +245,14 @@ describe('transform() — object form with path keys', () => {
 		const r = flat as any;
 		expect(r.members[0]).toMatchObject({
 			type: 'field',
-			name: 'any',
-			source: 'override'
+			name: 'any'
 		});
+		expect(readRuleMetadata(r.members[0].metadata)?.fieldSource).toBe('override');
 		expect(r.members[1]).toMatchObject({
 			type: 'field',
-			name: 'any',
-			source: 'override'
+			name: 'any'
 		});
+		expect(readRuleMetadata(r.members[1].metadata)?.fieldSource).toBe('override');
 	});
 
 	it('reaches into nested structure via path', () => {
@@ -288,9 +289,9 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 		const r = result as any;
 		expect(r.members[0]).toMatchObject({
 			type: 'field',
-			name: 'first',
-			source: 'override'
+			name: 'first'
 		});
+		expect(readRuleMetadata(r.members[0].metadata)?.fieldSource).toBe('override');
 	});
 
 	it('unwraps an enrich-shaped field on the original member before re-wrapping', async () => {
@@ -314,7 +315,7 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 				type: 'field',
 				name: 'expr',
 				content: sym('expr'),
-				source: 'enriched'
+				metadata: makeRuleMetadata({ fieldSource: 'enriched' })
 			} as Rule<'evaluate'>,
 			sym('rhs')
 		);
@@ -324,10 +325,10 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 		expect(r.members[0]).toMatchObject({
 			type: 'field',
 			name: 'override_name',
-			source: 'override',
 			// Inner content is the original symbol, NOT a nested field.
 			content: { type: 'symbol', name: 'expr' }
 		});
+		expect(readRuleMetadata(r.members[0].metadata)?.fieldSource).toBe('override');
 		// Belt-and-suspenders: the inner content must not itself be a field.
 		expect(r.members[0].content.type).not.toBe('field');
 	});

@@ -430,6 +430,19 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
    the transparent shape, any author" — a meaning, not an authorship inference.
    Folds into PR-P1 (provenance → metadata) as its type-design core.
 
+4. **Kind-minting is derived structurally, not from enrich tags** (user, 2026-07-02).
+   The residual `metadata.source === 'enrich'` reads in link/evaluate (the content-alias
+   mint gate, `isEnrichContentAlias`) must NOT become a declared protocol flag — the
+   compiler mints kinds from the SAME facts tree-sitter has structurally: e.g. (1) the
+   named alias's target name does not appear elsewhere in the grammar as a rule
+   definition, (2) the alias is used exactly once, etc. Rationale: tree-sitter's own
+   node-emission behavior is a function of grammar structure, so deriving from identical
+   facts guarantees parser/IR agreement by construction (same argument as the Camp A
+   word-matcher unification). The enrich tag was a proxy for "referenced rule body does
+   not exist yet" — replace the proxy with the fact. Scope: all 3 remaining
+   `metadata.source === 'enrich'` reads left by PR-P1's scoping note; each gets a
+   diagnosed structural condition, byte-neutral gated.
+
 ## 6. Open questions for the design discussion
 
 1. **Is "one boundary module" an acceptable answer to "there should be a SSOT"?** §0 argues

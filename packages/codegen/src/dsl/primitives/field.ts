@@ -28,6 +28,7 @@ import type { FieldLike } from '../../types/runtime-shapes.ts';
 import { wireRegisterSyntheticInline, wireRegisterSyntheticRule } from '../wire/wire.ts';
 import { isStringType, isOptionalType, isChoiceType } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
+import { makeRuleMetadata } from '../rule-metadata.ts';
 
 /**
  * Shared `FIELD(name, <shape-containing-STRING>)` →
@@ -219,7 +220,7 @@ export function field(name: string, content?: Input): FieldPlaceholder | FieldLi
 
 /**
  * Invoke the runtime-injected `field()` function, symbolize any bare STRING
- * content, and tag the result `source: 'override'`.
+ * content, and tag the result `metadata.fieldSource: 'override'`.
  *
  * @remarks
  * The native `field()` call normalizes `content` into a rule shape (plain
@@ -229,24 +230,26 @@ export function field(name: string, content?: Input): FieldPlaceholder | FieldLi
  * around it (the normalizer strips FIELD wrappers around bare STRING nodes).
  * wire() later auto-inlines the helper back into the parse state machine so
  * the parser still sees the original bare token at the call site.
- * Tagging `source: 'override'` lets `derive-overrides-json` recognize
- * user-authored field() calls and skip them from the runtime routing map.
+ * Tagging `metadata.fieldSource: 'override'` (debt PR-P1: was the top-level
+ * `source: 'override'`, now the opaque metadata bag) records that a
+ * user-authored `field()` call produced this rule, for diagnostics only.
  *
  * @param native - The runtime-injected `field(name, content)` function.
  * @param name - The field name to assign.
  * @param content - The raw content to place under the field.
- * @returns A FieldLike with `source: 'override'` stamped on it.
+ * @returns A FieldLike with `metadata.fieldSource: 'override'` stamped on it.
  */
 function buildTwoArgFieldResult(native: (n: string, c: Input) => unknown, name: string, content: Input): FieldLike {
 	const initial = native(name, content) as FieldLike & { content?: unknown };
 	const inner = initial.content;
 	const symbolized = maybeKeywordSymbol(name, inner);
+	const metadata = makeRuleMetadata({ fieldSource: 'override' });
 	if (symbolized !== inner) {
 		const reconstructed = native(name, symbolized as Input) as FieldLike;
 		return {
 			...reconstructed,
-			source: 'override' as const
+			metadata
 		} as unknown as FieldLike;
 	}
-	return { ...initial, source: 'override' as const } as unknown as FieldLike;
+	return { ...initial, metadata } as unknown as FieldLike;
 }

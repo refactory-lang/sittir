@@ -55,6 +55,7 @@ import {
 	isPlainRepeatType
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
+import { makeRuleMetadata } from '../rule-metadata.ts';
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys
@@ -80,8 +81,8 @@ import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
  *    transparent so the same paths work in both sittir and tree-sitter
  *    runtimes.
  *
- * Field patches are marked `source: 'override'` so derive-overrides-json
- * recognizes them. One-arg `field('name')` placeholders are filled in
+ * Field patches are marked `metadata.fieldSource: 'override'` (debt PR-P1)
+ * for diagnostics. One-arg `field('name')` placeholders are filled in
  * from the original member at the target position; an enrich-inferred
  * field wrapper on the original is unwrapped before re-wrapping to
  * avoid nested fields.
@@ -650,10 +651,10 @@ function resolvePatch(
 		return resolveFieldPlaceholder(patch, originalMember, precStack);
 	}
 	// Two-arg field passed through directly — accept either case.
-	// Tag `source: 'override'` so derive-overrides-json and template
-	// walker recognize it as user-authored.
+	// Tag `metadata.fieldSource: 'override'` (debt PR-P1) so diagnostics
+	// recognize it as user-authored.
 	if (isFieldLike(patch)) {
-		return { ...patch, source: 'override' as const } as unknown as RuntimeRule;
+		return { ...patch, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule;
 	}
 	// Variant placeholder — variant('suffix'): auto-prefix with current
 	// rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
@@ -674,7 +675,10 @@ function resolvePatch(
 		// (rendered `content`) instead of leaking a stray `value` field
 		// the template would drop.
 		if (variantBranchIsUnmaterializable(originalMember)) {
-			return { ...(deField(originalMember) as object), source: 'override' as const } as unknown as RuntimeRule;
+			return {
+				...(deField(originalMember) as object),
+				metadata: makeRuleMetadata({ fieldSource: 'override' })
+			} as unknown as RuntimeRule;
 		}
 		if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
 			throw new Error(
@@ -719,7 +723,7 @@ function resolvePatch(
  * @param patch - The one-arg FieldPlaceholder with the desired field name.
  * @param originalMember - The rule currently at the target position.
  * @param precStack - Accumulated prec wrappers for keyword symbol synthesis.
- * @returns A new field rule marked `source: 'override'`.
+ * @returns A new field rule marked `metadata.fieldSource: 'override'`.
  * @throws {Error} If no global `field()` function is available in the runtime.
  */
 /**
@@ -891,7 +895,11 @@ function resolveFieldPlaceholder(
 			// Rename the inferred field in place and reconstruct the wrappers.
 			// Result: optional(field('trailing_where_clause', $.where_clause))
 			// instead of: field('trailing_where_clause', optional(field('where_clause2', ...)))
-			const renamedField = { ...nested.found, name: overrideName, source: 'override' as const };
+			const renamedField = {
+				...nested.found,
+				name: overrideName,
+				metadata: makeRuleMetadata({ fieldSource: 'override' })
+			};
 			const reconstructed = nested.reconstruct(renamedField) as RuntimeRule;
 			return reconstructed;
 		}
@@ -907,7 +915,7 @@ function resolveFieldPlaceholder(
 		);
 	}
 	const result = native(patch.name, content) as object;
-	return { ...result, source: 'override' as const } as unknown as RuntimeRule;
+	return { ...result, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule;
 }
 
 /**
@@ -936,7 +944,8 @@ function resolveAliasPlaceholder(
 
 /**
  * Wrap a member at a position using a wrapper function that receives
- * the original content. The wrapper's result is marked `source: 'override'`.
+ * the original content. The wrapper's result is marked
+ * `metadata.fieldSource: 'override'`.
  *
  * Reconstructs via the runtime's native `seq()` so the result has the
  * runtime-correct rule shape (sittir lowercase vs tree-sitter
@@ -959,7 +968,7 @@ export function insert(
 
 	const wrapped = wrapper(members[position]!);
 	members[position] = isFieldLike(wrapped)
-		? ({ ...wrapped, source: 'override' as const } as unknown as RuntimeRule)
+		? ({ ...wrapped, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule)
 		: wrapped;
 
 	return reconstructContainer(original, members);

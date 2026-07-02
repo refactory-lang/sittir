@@ -23,6 +23,7 @@ import { assemble, AssembleCtx } from '../assemble.ts';
 import { transform, insert, replace } from '../../dsl/transform/transform.ts';
 import type { SymbolRef } from '../../types/rule.ts';
 import { expectCompleteCatalog, serializeCatalog, walkRule } from '../../__tests__/helpers/rule-catalog.ts';
+import { readRuleMetadata } from '../../dsl/rule-metadata.ts';
 
 // Install sittir's lowercase DSL primitives as globals so transform()'s
 // native-dsl delegation paths can reach them when this test imports
@@ -284,12 +285,17 @@ describe('Evaluate — DSL functions', () => {
 				1: field('body', { type: 'symbol', name: 'block' })
 			});
 			expect(result.type).toBe('seq');
-			expect((result as any).members[1]).toEqual({
+			const member = (result as any).members[1];
+			// (debt PR-P1) `source` moved into the opaque `metadata` bag as
+			// `fieldSource`; assert the structural shape + the metadata fact
+			// separately instead of a flat `.toEqual` including a raw `source`.
+			expect(member).toEqual({
 				type: 'field',
 				name: 'body',
 				content: { type: 'symbol', name: 'block' },
-				source: 'override'
+				metadata: expect.anything()
 			});
+			expect(readRuleMetadata(member.metadata)?.fieldSource).toBe('override');
 		});
 
 		it('preserves members not targeted by patches', () => {
@@ -310,11 +316,11 @@ describe('Evaluate — DSL functions', () => {
 			});
 		});
 
-		it('marks transformed fields with source override', () => {
+		it('marks transformed fields with metadata.fieldSource override', () => {
 			const result = transform(original, {
 				1: field('body', { type: 'symbol', name: 'block' })
 			});
-			expect((result as any).members[1].source).toBe('override');
+			expect(readRuleMetadata((result as any).members[1].metadata)?.fieldSource).toBe('override');
 		});
 
 		it('supports multiple patches in one call', () => {
@@ -338,12 +344,14 @@ describe('Evaluate — DSL functions', () => {
 
 		it('wraps a member at a position with a field using the original content', () => {
 			const result = insert(original, 1, (content: any) => field('body', content));
-			expect((result as any).members[1]).toEqual({
+			const member = (result as any).members[1];
+			expect(member).toEqual({
 				type: 'field',
 				name: 'body',
 				content: { type: 'symbol', name: 'block' },
-				source: 'override'
+				metadata: expect.anything()
 			});
+			expect(readRuleMetadata(member.metadata)?.fieldSource).toBe('override');
 		});
 	});
 

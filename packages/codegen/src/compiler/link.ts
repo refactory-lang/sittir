@@ -26,7 +26,8 @@ import type {
 	RepeatRule,
 	VariantRule,
 } from '../types/rule.ts';
-import { isSeq, isChoice, normalizeEnumMembers, isEnumChoiceRule, sym, replaceAtPath, isSymbol, isString, isRepeat1, isRepeat, isOptional, isField } from '../types/rule.ts';
+import { isSeq, isChoice, isEnumChoiceRule, sym, replaceAtPath, isSymbol, isString, isRepeat1, isRepeat, isOptional, isField } from '../types/rule.ts';
+import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import {
 	collectGeneratedKindEntries,
 	findGeneratedKindEntry,
@@ -447,9 +448,9 @@ function canonicalizeRuleLiterals(
 			return {
 				type: SYMBOL,
 				name: entry.kind,
-				source: 'link',
 				literal: rule.value,
-				inline: isHiddenKind(entry.kind)
+				inline: isHiddenKind(entry.kind),
+				metadata: makeRuleMetadata({ symbolSource: 'link' })
 			};
 		}
 		default:
@@ -480,18 +481,13 @@ function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: Lin
 	const { inline, supertypes, derivations, applyPromotedRules } = ctx;
 	for (const [name, rule] of Object.entries(rules)) {
 		if (isHiddenKind(name, inline) || supertypes.has(name)) {
-			const classified = classifyHiddenRule(rule, ctx, name);
-			const classifiedSource = (classified as { source?: string }).source ?? classified.metadata?.source;
-			const isPromotedEnum = isEnumChoiceRule(classified);
-			const isPromotedSupertype = classified.type === SUPERTYPE;
-			if (
-				classified !== rule &&
-				(isPromotedEnum || isPromotedSupertype) &&
-				(classifiedSource === 'promoted' || classifiedSource === 'grammar')
-			) {
+			// (debt PR-P1, item 3) Branch on the RETURNED classification only —
+			// never re-read a stamp off `classified.rule`. See ClassifyResult.
+			const { rule: classified, classification } = classifyHiddenRule(rule, ctx, name);
+			if (classified !== rule && classification !== undefined) {
 				derivations.promotedRules.push({
 					kind: name,
-					classification: isPromotedEnum ? 'enum' : 'supertype',
+					classification,
 					applied: applyPromotedRules
 				});
 				if (applyPromotedRules) rules[name] = classified;
@@ -703,6 +699,21 @@ function collectAliasedByParents(rawRules: Record<string, Rule<'link'>>): {
  *
  * @param rawRules - The EVALUATED (pre-resolveRule) rules — alias nodes present.
  * @param rules - The mutable resolved rules map; minted bodies are added here.
+ *
+ * (debt PR-P1 scoping note) This function's `metadata.source === 'enrich'`
+ * read (and the two siblings in `resolveRule`'s ALIAS case + `evaluate.ts`'s
+ * `rewriteInlineAliases`) is OUT OF SCOPE for this PR's item 3, which targets
+ * only the `classifyHiddenRule`/`classifyHiddenChoiceRule` stamp-then-reread
+ * chain. This one is a pre-existing, already-documented enrich→link HANDOFF
+ * PROTOCOL (enrich plants `metadata.source: 'enrich'` specifically so link's
+ * `mintContentAliasKinds` can find and resolve THROUGH the marked position —
+ * see `dsl/enrich.ts`'s `makeVisibleGroupAlias` doc comment). It is the same
+ * class of exemption decision 3's corollary already grants
+ * `isEnrichShapedFieldWrapper` (wire's transform machinery) — a deliberate,
+ * narrow cross-phase signal for a specific synthesis event, not a
+ * reconstruction of rule authorship for a general decision. Left unconverted;
+ * flagging for whoever re-reviews the full `metadata.source==='enrich'`
+ * surface later.
  */
 function mintContentAliasKinds(
 	rules: Record<string, Rule<'link'>>,
@@ -1776,11 +1787,31 @@ function resolveSymbolRoleOrPass(rule: SymbolRule<'link'>, ctx: LinkCtx): Rule<'
 // classifyHiddenRule — determine what a hidden rule IS
 // ---------------------------------------------------------------------------
 
-function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Rule<'link'> {
+/**
+ * Result of classifying a hidden (or grammar-declared-supertype) rule.
+ *
+ * (debt PR-P1, item 3) Replaces the former stamp-then-reread pattern: the
+ * classifiers used to stamp a top-level `source` / `metadata.source` tag onto
+ * the returned rule, and the caller (`classifyAndLogHiddenRules`) re-read that
+ * stamp off the rule to decide whether to log a derivation + mutate the rule
+ * map. Per decision 3's corollary, that "stamp then re-inspect the rule"
+ * pattern must become direct return-value dataflow: the classifier now
+ * returns its classification/source ALONGSIDE the rule, and the caller reads
+ * ONLY the return value — never re-reads a tag off `rule`.
+ */
+interface ClassifyResult {
+	readonly rule: Rule<'link'>;
+	/** Set only when `rule` was newly classified this call (enum or supertype). */
+	readonly classification?: 'enum' | 'supertype';
+	/** Provenance of the classification, for the derivation log (diagnostics only). */
+	readonly source?: 'grammar' | 'promoted';
+}
+
+function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): ClassifyResult {
 	// Already classified (e.g., enum from Evaluate)
 	// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
 	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
-		return rule;
+		return { rule };
 	}
 
 	if (rule.type === CHOICE) {
@@ -1788,11 +1819,11 @@ function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Rul
 	}
 
 	if (isSeq(rule)) {
-		return classifyHiddenSeqRule(name, rule);
+		return { rule: classifyHiddenSeqRule(name, rule) };
 	}
 
 	// Other hidden rules survive as-is — Assemble classifies by structure
-	return rule;
+	return { rule };
 }
 
 /**
@@ -1802,7 +1833,9 @@ function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Rul
  * @param ctx - Link phase context; `ctx.supertypes` are kind names explicitly
  *   declared in `grammar.supertypes`.
  * @param name - The grammar kind name (used to check `ctx.supertypes`).
- * @returns An `EnumRule<'link'>`, `SupertypeRule<'link'>`, or the original rule unchanged.
+ * @returns A {@link ClassifyResult}: `rule` is an `EnumRule<'link'>`,
+ *   `SupertypeRule<'link'>`, or the original rule unchanged; `classification`
+ *   / `source` are set only when a new classification was made.
  * @remarks
  *   Classification:
  *   - All-string members → `EnumRule<'link'>` (promoted).
@@ -1819,10 +1852,10 @@ function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Rul
  *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
  *   structural members (seq, field, nested choice/optional/repeat) disqualify.
  */
-function classifyHiddenChoiceRule(rule: ChoiceRule<'link'>, ctx: LinkCtx, name: string): Rule<'link'> {
+function classifyHiddenChoiceRule(rule: ChoiceRule<'link'>, ctx: LinkCtx, name: string): ClassifyResult {
 	const { supertypes, hiddenChoicesWithNamedAliasMembers } = ctx;
 	if (rule.members.every((m): m is StringRule<'link'> => m.type === STRING)) {
-		return normalizeEnumMembers(rule.members, 'promoted');
+		return { rule: normalizeEnumMembers(rule.members, 'promoted'), classification: 'enum', source: 'promoted' };
 	}
 
 	// If this hidden choice's ORIGINAL (pre-resolveRule) rule body contained
@@ -1831,7 +1864,7 @@ function classifyHiddenChoiceRule(rule: ChoiceRule<'link'>, ctx: LinkCtx, name: 
 	// supertype promotion so these kinds fall through to branch classification.
 	// Grammar-declared supertypes (in grammar.supertypes) are never blocked.
 	if (hiddenChoicesWithNamedAliasMembers.has(name) && !supertypes.has(name)) {
-		return rule;
+		return { rule };
 	}
 
 	const supertypeCompatible = (m: Rule<'link'>): boolean =>
@@ -1843,17 +1876,17 @@ function classifyHiddenChoiceRule(rule: ChoiceRule<'link'>, ctx: LinkCtx, name: 
 		// subtypes list means the choice members aren't symbols and we
 		// can't project a union — fall through to leave-as-is.
 		if (subtypes.length > 0) {
+			const source = supertypes.has(name) ? 'grammar' : 'promoted';
 			return {
-				type: SUPERTYPE,
-				name,
-				subtypes,
-				source: supertypes.has(name) ? 'grammar' : 'promoted'
-			} satisfies SupertypeRule<'link'>;
+				rule: { type: SUPERTYPE, name, subtypes } satisfies SupertypeRule<'link'>,
+				classification: 'supertype',
+				source
+			};
 		}
 	}
 
 	// Mixed/structural hidden choice — survive as-is.
-	return rule;
+	return { rule };
 }
 
 /**
@@ -2741,7 +2774,7 @@ function liftRule(target: Rule<'link'>, synName: string, _discriminator: string)
     // the one constructor (then revised at wrapper push-down / link supertype pass)
     // keeps `inline` authoritative on the renderRules path, so normalize's fold
     // can read it instead of re-deriving hiddenness structurally.
-    const synSym = { ...sym(synName), source: 'group-lift' as const };
+    const synSym = { ...sym(synName), metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) };
     // (_discriminator kept for future use; the current implementation does not use it.
     // The discriminator participates only in the synthesized kind name component.)
     switch (target.type) {

@@ -17,6 +17,7 @@ import {
 	ALIAS,
 	TOKEN,
 } from './rule-types.ts';
+import type { RuleMetadata } from './rule-metadata-brand.ts';
 /**
  * compiler/rule.ts — Shared IR
  *
@@ -122,14 +123,20 @@ export type RuleBase<Phase extends PhaseName = 'optimize'> = {
 	readonly inline?: boolean;
 
 	/**
-	 * Inert provenance bag. NEVER drives compiler behavior beyond path-descent
-	 * lookup keying (`feedback_metadata_not_behavior`): structural facts decide
-	 * folding/slotting. `source` marks how the rule entered the tree
-	 * (`'enrich'` for the enrich-lifted SYMBOL ref; `'group-lift'` legacy);
-	 * `inlinedFrom` records the hidden kind whose body was spliced in by the
-	 * normalize inline hoist (§D-2a), for diagnostics only.
+	 * Inert, OPAQUE provenance bag (debt PR-P1: `RuleMetadata` replaces the
+	 * former structurally-typed `{ source?; inlinedFrom? }` shape). NEVER
+	 * drives compiler behavior beyond path-descent lookup keying
+	 * (`feedback_metadata_not_behavior`): structural facts decide
+	 * folding/slotting. The real shape (`source` / `inlinedFrom` / the
+	 * relocated `fieldSource` / `symbolSource` facts — see item 2 of debt
+	 * PR-P1) and its construct/read accessors live in
+	 * `dsl/rule-metadata.ts`, importable only by enrich, wire (incl. its
+	 * transform machinery), and diagnostics-emission code. `types/` cannot
+	 * import `dsl/` (layering: dsl → types ← compiler), so only the opaque
+	 * brand type lives here — see `types/rule-metadata-brand.ts` for why the
+	 * brand and the real shape are split across two files.
 	 */
-	readonly metadata?: { source?: RuleSource | 'enrich' | 'group-lift'; inlinedFrom?: string };
+	readonly metadata?: RuleMetadata;
 } & (Phase extends OptimizedPhase
 	? {
 			// All six stamped attributes below are populated by
@@ -297,12 +304,22 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends WrapperPhase
 // Named patterns
 // ---------------------------------------------------------------------------
 
+/**
+ * (debt PR-P1, item 2) The former top-level `source?: 'grammar' | 'override' |
+ * 'enriched' | 'inferred'` field is DELETED. The fact relocated into
+ * `RuleBase.metadata` as `fieldSource` (`dsl/rule-metadata.ts`'s
+ * `RuleMetadataShape.fieldSource`) — write via `makeRuleMetadata`, read via
+ * `readRuleMetadata` (dsl/enrich/wire/diagnostics only). The `'inferred'` arm
+ * was dropped entirely: confirmed zero production writer
+ * (lingering-debt-inventory-research.md §2.6) — only `compiler/collect-slots.ts`
+ * wrote it, and that was the unrelated SLOT-level `AssembledNonterminal.source`,
+ * not this field.
+ */
 export type FieldRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 	? RuleBase<T> & {
 			readonly type: typeof FIELD;
 			readonly name: string;
 			readonly content: Rule<T>;
-			readonly source?: 'grammar' | 'override' | 'enriched' | 'inferred';
 			/**
 			 * True if the field's value is rendered as an indented block — its
 			 * content resolves (through symbol refs) to a subtree containing an
@@ -380,29 +397,29 @@ export function isEnumChoiceRule<R extends AnyRule>(
 /**
  * Normalize a closed literal set to the canonical rule shape.
  *
- * @remarks
- * Multi-member sets remain a ChoiceRule (enum-shaped). A single literal
- * collapses to that StringRule so downstream phases classify it as the
- * corresponding keyword/token instead of carrying a degenerate enum shape.
- * The `source` provenance is carried in `metadata.source` (not top-level).
+ * (debt PR-P1) Relocated to `dsl/rule-metadata.ts` — it constructs the
+ * `metadata.source` bag, and `types/` cannot import the dsl-owned
+ * `makeRuleMetadata` write seam (layering: dsl → types ← compiler). See that
+ * module for the implementation; re-exported here is NOT done deliberately —
+ * callers (compiler/link.ts, compiler/evaluate.ts) already import from
+ * `dsl/`, so they import `normalizeEnumMembers` from its new home directly.
  */
-export function normalizeEnumMembers(
-	members: readonly StringRule[],
-	source?: RuleSource
-): StringRule | ChoiceRule {
-	if (members.length === 1) return members[0]!;
-	return {
-		type: CHOICE,
-		members: members as StringRule[],
-		...(source !== undefined ? { metadata: { source } } : {})
-	} satisfies ChoiceRule;
-}
 
+/**
+ * (debt PR-P1, item 3) `source` moved off this type into `metadata.source`
+ * (`dsl/rule-metadata.ts`). Audited: no downstream consumer (assemble.ts,
+ * emitters) reads `SupertypeRule.source` as a structural discriminant — the
+ * only prior reader was link.ts's own stamp-then-reread
+ * (`classifyAndLogHiddenRules`), converted to return-value dataflow (see
+ * `classifyHiddenChoiceRule`'s new return shape). Unlike
+ * `PolymorphVariantDescriptor.source` (polymorph-variant.ts — a genuine
+ * structural discriminant of a tagged union), this was pure carried
+ * provenance with no structural role.
+ */
 export type SupertypeRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
 	readonly type: typeof SUPERTYPE;
 	readonly name: string;
 	readonly subtypes: string[];
-	readonly source?: RuleSource;
 }
 
 export type GroupRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
@@ -448,10 +465,19 @@ export type NewlineRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
 // exist in the WrapperPhase views.
 // ---------------------------------------------------------------------------
 
+/**
+ * (debt PR-P1, item 2) The former top-level `source?: 'grammar' | 'link' |
+ * 'group-lift'` field is DELETED. The fact relocated into `RuleBase.metadata`
+ * as `symbolSource` (`dsl/rule-metadata.ts`'s `RuleMetadataShape.symbolSource`).
+ * The one behavior-driving reader (`emitters/templates.ts`'s `emitSymbol` /
+ * `assertSlotPreservation`, keying on `'link'` to inline a literal instead of
+ * emitting a slot reference) now reads the STRUCTURAL `literal` field
+ * (present iff link synthesized the ref from a string token) instead —
+ * see templates.ts.
+ */
 export type SymbolRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
 	readonly type: typeof SYMBOL;
 	readonly name: string;
-	readonly source?: 'grammar' | 'link' | 'group-lift';
 	/** Original literal text when Link synthesized this ref from a string token. */
 	readonly literal?: string;
 	readonly hidden?: boolean;
@@ -509,8 +535,16 @@ export const isGroup = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof
 export const isString = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof STRING }> => r.type === STRING;
 export const isSymbol = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof SYMBOL }> => r.type === SYMBOL;
 export const isAlias = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof ALIAS }> => r.type === ALIAS;
+/**
+ * (debt PR-P1) Was `r.type === SYMBOL && r.source === 'link'`; `SymbolRule.source`
+ * is deleted (relocated to `metadata.symbolSource`, dsl-owned + opaque). `literal`
+ * is set ONLY by `compiler/link.ts`'s `canonicalizeRuleLiterals` — the same
+ * (now-sole) writer that used to also stamp `source: 'link'` — so checking
+ * `literal !== undefined` directly is the exact same condition structurally,
+ * not a re-derivation: the one write site produced both facts together.
+ */
 export const isLinkSymbol = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof SYMBOL }> =>
-	r.type === SYMBOL && r.source === 'link';
+	r.type === SYMBOL && r.literal !== undefined;
 export const literalTextOf = (r: AnyRule): string | undefined =>
 	r.type === STRING ? r.value : isLinkSymbol(r) ? r.literal : undefined;
 
