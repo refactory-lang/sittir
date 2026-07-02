@@ -392,6 +392,9 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 				if (seen.has(dkey)) continue;
 				seen.add(dkey);
 				fieldPatches.push({
+					// tsgo does not narrow the destructured `pos` through the
+					// `pos === null` continue above (verified: removing the assertion
+					// fails TS2322) — same checker gap as the `inferred!` case.
 					pos: pos!,
 					fieldName: e.fieldName,
 					targetSymbol: e.targetSymbol,
