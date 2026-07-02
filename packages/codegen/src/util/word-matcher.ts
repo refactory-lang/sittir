@@ -13,7 +13,7 @@
  */
 
 import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule } from '../types/rule.ts';
+import type { AnyRule } from '../types/rule.ts';
 
 /**
  * Compile the grammar's `word` rule into a full-match RegExp so callers can
@@ -76,19 +76,34 @@ export function matchesWordShape(value: string, wordMatcher: RegExp | undefined)
  * for shapes that can't be expressed as a single regex — notably
  * symbol references (which would need another rule lookup) and
  * anything outside the supported text-terminal shapes.
+ *
+ * DUAL-CASE discriminants: this walker runs in BOTH the sittir pipeline
+ * (lowercase rule types) and the tree-sitter CLI path, where enrich() sees
+ * the native DSL objects with UPPERCASE discriminants (`'PATTERN'`,
+ * `'TOKEN'`, `'IMMEDIATE_TOKEN'`, …). Case-normalize before dispatching so
+ * both paths compile the same word regex — previously the CLI path silently
+ * fell back to `/^\w+$/` while the sittir path used the real grammar word
+ * rule, letting keyword-promotion diverge between parser and IR (PR #111
+ * review finding).
  */
 function ruleToRegexSource(rule: AnyRule): string | null {
-	switch (rule.type) {
+	const shaped = rule as {
+		value?: string;
+		content?: AnyRule;
+		members?: readonly AnyRule[];
+	};
+	switch (String(rule.type).toLowerCase()) {
 		case PATTERN:
-			return rule.value;
+			return shaped.value ?? null;
 		case STRING:
-			return escapeRegexLiteral(rule.value);
+			return shaped.value === undefined ? null : escapeRegexLiteral(shaped.value);
 		case TOKEN:
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
-			return ruleToRegexSource((rule as { content: AnyRule }).content);
+		case 'immediate_token':
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+			return shaped.content ? ruleToRegexSource(shaped.content) : null;
 		case SEQ: {
 			const parts: string[] = [];
-			for (const m of rule.members) {
+			for (const m of shaped.members ?? []) {
 				const p = ruleToRegexSource(m);
 				if (p === null) return null;
 				parts.push(`(?:${p})`);
@@ -97,7 +112,7 @@ function ruleToRegexSource(rule: AnyRule): string | null {
 		}
 		case CHOICE: {
 			const parts: string[] = [];
-			for (const m of rule.members) {
+			for (const m of shaped.members ?? []) {
 				const p = ruleToRegexSource(m);
 				if (p === null) return null;
 				parts.push(p);
@@ -105,17 +120,17 @@ function ruleToRegexSource(rule: AnyRule): string | null {
 			return `(?:${parts.join('|')})`;
 		}
 		case OPTIONAL: {
-			const p = ruleToRegexSource(rule.content);
+			const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
 			if (p === null) return null;
 			return `(?:${p})?`;
 		}
 		case REPEAT: {
-			const p = ruleToRegexSource(rule.content);
+			const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
 			if (p === null) return null;
 			return `(?:${p})*`;
 		}
 		case REPEAT1: {
-			const p = ruleToRegexSource(rule.content);
+			const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
 			if (p === null) return null;
 			return `(?:${p})+`;
 		}

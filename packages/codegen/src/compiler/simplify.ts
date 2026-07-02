@@ -572,7 +572,7 @@ export function makeDefaultCtx(): SimplifyCtx {
 /**
  * Dispatch a rule to its per-type simplify handler. Thin switch over the AnyRule
  * union. The public entry keeps `ctx?` optional (normalized via `makeDefaultCtx`)
- * so direct callers needn't build a ctx; each handler takes `(rule: <Type>AnyRule,
+ * so direct callers needn't build a ctx; each handler takes `(rule: <Type>Rule,
  * ctx: SimplifyCtx)`.
  *
  * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 nodes must never appear

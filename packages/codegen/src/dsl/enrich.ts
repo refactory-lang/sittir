@@ -111,15 +111,23 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		| Record<string, Rule>
 		| undefined;
 	if (!rulesBag) return base as unknown as EnrichedGrammar<B>;
-	// Grammar-wide word-shape matcher (R12 Camp A). By this point `base` has
-	// already been through sittir's own `grammarFn` (the globalThis.grammar
-	// shim every overrides.ts's `grammar()`/`enrich()` call chain runs under
-	// — see compiler/evaluate.ts saveAndInjectDslGlobals), so `word` is a
-	// resolved rule NAME (string | null), not the raw `$ => $.identifier`
-	// callback — confirmed empirically, not assumed. Single source of truth
-	// via matchesWordShape; used by pass 3's optional-keyword-prefix below.
-	const grammarMeta = (hasWrapper ? base.grammar : base) as { word?: string | null } | undefined;
-	const wordMatcher = compileWordMatcher(grammarMeta?.word ?? null, rulesBag);
+	// Grammar-wide word-shape matcher (R12 Camp A). `word`'s shape depends on
+	// which runtime is evaluating us: under sittir's own `grammarFn` (the
+	// globalThis.grammar shim — see compiler/evaluate.ts
+	// saveAndInjectDslGlobals) it is already a resolved rule NAME
+	// (string | null); but the emitted `.sittir/grammar.js` runs enrich()
+	// BEFORE tree-sitter's native `grammar()`, so there `word` is still the
+	// raw `$ => $.identifier` callback. Resolve the callback form with the
+	// same symbol-shaped-proxy trick `extractSupertypeNames` uses, so both
+	// paths compile the SAME word regex (PR #111 review finding — previously
+	// the CLI path silently fell back to /^\w+$/, letting keyword promotion
+	// diverge between parser and IR). ruleToRegexSource in util/word-matcher
+	// is dual-case for the same reason. Single source of truth via
+	// matchesWordShape; used by pass 3's optional-keyword-prefix below.
+	const grammarMeta = (hasWrapper ? base.grammar : base) as
+		| { word?: string | null | ((dollar: unknown) => unknown) }
+		| undefined;
+	const wordMatcher = compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag);
 	// Extract declared supertype names so pass 3 can treat `_prefix`-
 	// stripped labels as valid field names (e.g. `optional($._expression)`
 	// → `field('expression', $._expression)`). `supertypes` is a
@@ -319,6 +327,36 @@ function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<
 	// sittir evaluate() emits `['_expr', …]`. Accept both forms.
 	if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
 	return new Set();
+}
+
+/**
+ * Resolve the grammar's `word` declaration to a rule NAME across both
+ * runtimes. Under sittir's grammarFn it is already a string; in the emitted
+ * `.sittir/grammar.js` (which runs enrich BEFORE tree-sitter's native
+ * `grammar()`) it is still the raw `$ => $.identifier` callback — invoke it
+ * with the same symbol-shaped proxy `extractSupertypeNames` uses and take
+ * the returned symbol's name. Returns null when absent/unresolvable (the
+ * word matcher then falls back via matchesWordShape).
+ */
+function extractWordName(word: unknown): string | null {
+	if (typeof word === 'string') return word;
+	if (typeof word !== 'function') return null;
+	const dollar = new Proxy(
+		{},
+		{
+			get(_t, prop) {
+				if (typeof prop === 'string') return { type: 'SYMBOL', name: prop };
+				return undefined;
+			}
+		}
+	);
+	try {
+		const result = (word as (proxy: unknown) => unknown)(dollar);
+		const name = (result as { name?: unknown } | undefined)?.name;
+		return typeof name === 'string' ? name : null;
+	} catch {
+		return null;
+	}
 }
 
 /**
