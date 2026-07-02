@@ -330,14 +330,21 @@ function materializeInlinedBody(
 	// multiplicity rides the sequence (gated at emit on its single internal
 	// slot). A non-seq body (single member group) is wrapped in a 1-member seq
 	// so it carries the same seq-unit gating uniformly.
+	//
+	// `splicedBody: true` (debt PR-0c) is the DECLARED structural flag —
+	// distinct from the `inlinedFrom` provenance value in `metadata` — that
+	// `emitters/templates.ts`'s boundary walkers key on to keep this seq's
+	// outer-boundary spacing like the opaque `symbol(_x)` ref it replaced.
+	// See `RuleBase.splicedBody`'s doc comment (types/rule.ts).
 	if (body.type === SEQ) {
-		return { ...body, ...carry, metadata: meta } as Rule<'link'>;
+		return { ...body, ...carry, metadata: meta, splicedBody: true } as Rule<'link'>;
 	}
 	return {
 		type: 'seq',
 		members: [body],
 		...carry,
-		metadata: meta
+		metadata: meta,
+		splicedBody: true
 	} as Rule<'link'>;
 }
 

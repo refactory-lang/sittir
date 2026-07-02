@@ -46,17 +46,6 @@ import type {
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, Multiplicity, RepeatRule, Repeat1Rule } from '../types/rule.ts';
-// (debt PR-P1 scoping note) `readRuleMetadata` is normally restricted to
-// enrich/wire/diagnostics — this file is neither. The `inlinedFrom` reads
-// below are a PRE-EXISTING violation already flagged as its own follow-up
-// item (lingering-debt-inventory-research.md §3.2: "not removable [here] —
-// needs a structural-fact replacement + render validation"), explicitly NOT
-// one of this PR's 5 work items. Importing here makes the violation EXPLICIT
-// and greppable rather than silently bypassing the opaque brand via an ad
-// hoc unsafe cast — the honest choice given the real fix is out of scope.
-// TODO(debt-pr-p1-followup): replace the 3 `inlinedFrom` reads below with a
-// structural fact + render-output validation gate, then delete this import.
-import { readRuleMetadata } from '../dsl/rule-metadata.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import { compileWordMatcher } from '../util/word-matcher.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -436,13 +425,15 @@ function literalEnd(text: string): BoundaryEnd {
  * require cross-rule resolution and cycle handling).
  */
 function rightmostBoundary(rule: Rule<'link'>): BoundaryEnd {
-	// §D-2a spacing stopgap: a `seq` tagged `metadata.inlinedFrom` was an opaque
-	// `symbol(_x)` ref before the normalize inline hoist spliced it in. At its
-	// OUTER boundaries it must keep spacing like the opaque unit it replaced
-	// (`for await (`, not `for await(`) — so report it as slot-like (word-like)
-	// rather than walking into its first/last literal. (Strategic render-time
-	// spacing supersedes this — see the deferred follow-up in the plan.)
-	if (rule.type === SEQ && readRuleMetadata(rule.metadata)?.inlinedFrom !== undefined) return SLOT_END;
+	// §D-2a spacing stopgap: a `seq` with the declared `splicedBody` flag was
+	// an opaque `symbol(_x)` ref before the normalize inline hoist spliced it
+	// in (`compiler/normalize.ts`'s `materializeInlinedBody` — see
+	// `RuleBase.splicedBody`'s doc comment). At its OUTER boundaries it must
+	// keep spacing like the opaque unit it replaced (`for await (`, not
+	// `for await(`) — so report it as slot-like (word-like) rather than
+	// walking into its first/last literal. (Strategic render-time spacing
+	// supersedes this — see the deferred follow-up in the plan.)
+	if (rule.type === SEQ && rule.splicedBody === true) return SLOT_END;
 	switch (rule.type) {
 		case STRING:
 			// Named field-wrapped string — it becomes a slot, not a literal.
@@ -498,9 +489,10 @@ function rightmostBoundary(rule: Rule<'link'>): BoundaryEnd {
  * Symmetric to {@link rightmostBoundary}.
  */
 function leftmostBoundary(rule: Rule<'link'>): BoundaryEnd {
-	// §D-2a spacing stopgap (symmetric to rightmostBoundary): an inlined-from seq
-	// keeps opaque-symbol spacing at its outer boundaries.
-	if (rule.type === SEQ && readRuleMetadata(rule.metadata)?.inlinedFrom !== undefined) return SLOT_END;
+	// §D-2a spacing stopgap (symmetric to rightmostBoundary): a spliced-body
+	// seq (declared `splicedBody` flag) keeps opaque-symbol spacing at its
+	// outer boundaries.
+	if (rule.type === SEQ && rule.splicedBody === true) return SLOT_END;
 	switch (rule.type) {
 		case STRING:
 			if ((rule as { fieldName?: string }).fieldName !== undefined) return SLOT_END;
@@ -1576,12 +1568,17 @@ function warnMultiSlotMultiplicityGroup(rule: Extract<Rule<'link'>, { type: 'seq
 		if (k) keys.add(k);
 	}
 	if (keys.size <= 1) return;
-	const from = readRuleMetadata(rule.metadata)?.inlinedFrom ?? '<seq>';
-	const tag = `${ctx.currentKind ?? '?'}:${from}`;
+	// Message label: the distinct internal slot names identify the offending
+	// group precisely enough for a diagnostic (the hidden source-kind name
+	// this seq was spliced from is not available here without a metadata
+	// read — see `RuleBase.splicedBody`; the slot list is sufficient to find
+	// the site, and dedup below is still keyed uniquely per kind + slot set).
+	const slotsLabel = [...keys].join(',');
+	const tag = `${ctx.currentKind ?? '?'}:${slotsLabel}`;
 	if (warnedMultiSlotGroups.has(tag)) return;
 	warnedMultiSlotGroups.add(tag);
 	console.warn(
-		`templates: multi-slot multiplicity group (kind '${ctx.currentKind ?? '?'}', inlinedFrom '${from}', slots ${[...keys].join(', ')}) — should have been a visible group`
+		`templates: multi-slot multiplicity group (kind '${ctx.currentKind ?? '?'}', slots ${[...keys].join(', ')}) — should have been a visible group`
 	);
 }
 
