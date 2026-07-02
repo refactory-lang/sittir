@@ -56,9 +56,10 @@ function isEnrichShapedFieldWrapper(v) {
   const symName = extractSymbolName(v.content);
   if (symName === void 0) return false;
   if (symName.startsWith("_kw_")) return true;
-  const baseName = v.name.replace(/[0-9]+$/, "");
   const strippedSym = symName.replace(/^_/, "");
-  return baseName === symName || baseName === strippedSym;
+  if (v.name === symName || v.name === strippedSym) return true;
+  const baseName = v.name.replace(/[0-9]+$/, "");
+  return baseName !== v.name && (baseName === symName || baseName === strippedSym);
 }
 function isContainerType(t) {
   return t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE";
@@ -2305,7 +2306,7 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   return patch;
 }
-function findInferredFieldThroughTransparentWrappers(node) {
+function findEnrichShapedFieldThroughTransparentWrappers(node) {
   const r = node;
   if (!r || typeof r !== "object") return null;
   const t = r.type;
@@ -2320,7 +2321,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
         reconstruct: (newInner) => ({ ...r, content: newInner })
       };
     }
-    const deeper = findInferredFieldThroughTransparentWrappers(inner);
+    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
     if (deeper) {
       return {
         found: deeper.found,
@@ -2350,7 +2351,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
         }
       };
     }
-    const deeper = findInferredFieldThroughTransparentWrappers(inner);
+    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
     if (deeper) {
       return {
         found: deeper.found,
@@ -2373,7 +2374,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
         reconstruct: (newInner) => ({ ...r, content: newInner })
       };
     }
-    const deeper = findInferredFieldThroughTransparentWrappers(inner);
+    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
     if (deeper) {
       return {
         found: deeper.found,
@@ -2398,7 +2399,7 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
     }
     content = content.content;
   } else {
-    const nested = findInferredFieldThroughTransparentWrappers(originalMember);
+    const nested = findEnrichShapedFieldThroughTransparentWrappers(originalMember);
     if (nested !== null) {
       const overrideName = patch.name;
       const renamedField = { ...nested.found, name: overrideName, source: "override" };

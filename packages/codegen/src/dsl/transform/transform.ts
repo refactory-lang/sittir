@@ -739,7 +739,7 @@ function resolvePatch(
  *
  * Only used by resolveFieldPlaceholder for the nested-enrich-shaped-field case.
  */
-function findInferredFieldThroughTransparentWrappers(
+function findEnrichShapedFieldThroughTransparentWrappers(
 	node: unknown
 ): { found: FieldLike; reconstruct: (newInner: unknown) => unknown } | null {
 	const r = node as Record<string, unknown>;
@@ -759,7 +759,7 @@ function findInferredFieldThroughTransparentWrappers(
 				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
 			};
 		}
-		const deeper = findInferredFieldThroughTransparentWrappers(inner);
+		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
 		if (deeper) {
 			return {
 				found: deeper.found,
@@ -794,7 +794,7 @@ function findInferredFieldThroughTransparentWrappers(
 				}
 			};
 		}
-		const deeper = findInferredFieldThroughTransparentWrappers(inner);
+		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
 		if (deeper) {
 			return {
 				found: deeper.found,
@@ -828,7 +828,7 @@ function findInferredFieldThroughTransparentWrappers(
 				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
 			};
 		}
-		const deeper = findInferredFieldThroughTransparentWrappers(inner);
+		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
 		if (deeper) {
 			return {
 				found: deeper.found,
@@ -883,10 +883,10 @@ function resolveFieldPlaceholder(
 		//   field('where_clause', optional(field('where_clause1', ...)))
 		// tree-sitter collapses nested field wrappers to the innermost name,
 		// so the intended rename never reaches the parser.
-		const nested = findInferredFieldThroughTransparentWrappers(originalMember);
+		const nested = findEnrichShapedFieldThroughTransparentWrappers(originalMember);
 		if (nested !== null) {
 			const overrideName = patch.name;
-			// findInferredFieldThroughTransparentWrappers only returns for
+			// findEnrichShapedFieldThroughTransparentWrappers only returns for
 			// structurally enrich-shaped fields, so this is always a safe rename.
 			// Rename the inferred field in place and reconstruct the wrappers.
 			// Result: optional(field('trailing_where_clause', $.where_clause))
