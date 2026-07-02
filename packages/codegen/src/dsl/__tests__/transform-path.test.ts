@@ -293,22 +293,28 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 		});
 	});
 
-	it('unwraps an enrich-inferred field on the original member before re-wrapping', async () => {
+	it('unwraps an enrich-shaped field on the original member before re-wrapping', async () => {
 		// This is the explicit fix for enrich+override nested-field
 		// bugs. When enrich has already wrapped a seq member as
-		// `field('xxx', $.sym, source: 'inferred')` and the override's
-		// transform patches that position with a one-arg `field('new')`
-		// placeholder, resolvePatch must unwrap the inferred layer so
-		// the result is `field('new', $.sym, source: 'override')`, NOT
-		// `field('new', field('xxx', $.sym), source: 'override')`.
+		// `field('expr', $.expr)` — enrich's real symbol-to-field shape
+		// (fieldName === symbolName; see `isEnrichShapedFieldWrapper`) —
+		// and the override's transform patches that position with a
+		// one-arg `field('new')` placeholder, resolvePatch must unwrap
+		// the enrich-shaped layer so the result is
+		// `field('new', $.expr, source: 'override')`, NOT
+		// `field('new', field('expr', $.expr), source: 'override')`.
+		// Per the 2026-07-02 user decision, this transparency is derived
+		// structurally (shape), not from the `source` provenance tag —
+		// the `source: 'enriched'` here documents realistic enrich
+		// output but is not what makes the wrapper transparent.
 		const { field: oneArgField } = await import('../primitives/field.ts');
 		const rule = seq(
-			// Simulate enrich-inferred field wrapper on position 0.
+			// Simulate enrich's symbol-to-field wrapper on position 0.
 			{
 				type: 'field',
-				name: 'inferred_name',
+				name: 'expr',
 				content: sym('expr'),
-				source: 'inferred'
+				source: 'enriched'
 			} as Rule<'evaluate'>,
 			sym('rhs')
 		);
