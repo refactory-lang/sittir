@@ -146,7 +146,15 @@ Land the class + `BaseCtx.walker` + migrate **exemplars per family** — not all
   the walker's SYMBOL-node deref). Same category as emitRule per the scope decision above;
   no mapDeep primitive is warranted.
 
-Remaining walks migrate opportunistically in later passes (each gated). Gates:
+Remaining walks: SURVEYED (batch 1, 2026-07-02, commit 5fa32d95) — the 7 most
+promising fold/find-family candidates yielded 1 migration (`referencesSelf` →
+`walker.find`) and 6 principled skips (per-type dispatchers, deliberately-curated
+edge sets narrower than childrenOf, order-sensitive byte-identity walks, dual-case
+runtime-shape domains, and non-walks). The original "~50 opportunistic migrations"
+estimate was inflated: most hand-rolled walks fall in categories this spec's own
+scope rules exempt. Transform-family (`recurseChildren` callers) migrate only WITH
+the visitor rewrite (see its deprecation note) when a site is otherwise being
+touched — no standalone migration passes are planned. Gates:
 `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native` holds rust 117 / ts 75 / py 102;
 `propose-14` ratchet OK; oxlint parity.
 
