@@ -19,7 +19,9 @@
 // `ShapedSymbols` (rule-name autocomplete) instead of an `any`/`unknown` sink,
 // and each `previous`/`original` is the precise per-rule post-enrich shape —
 // without any explicit `WireConfig` annotation on the payload itself.
+/// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
+
 import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-shape.rust.ts';
 import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';

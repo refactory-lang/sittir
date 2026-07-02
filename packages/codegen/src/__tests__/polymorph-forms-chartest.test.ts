@@ -13,7 +13,7 @@ import { describe, it, expect } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
@@ -25,7 +25,7 @@ describe('polymorph forms characterization — PR-M guard (retired)', () => {
 			const raw = await evaluate(overridePath);
 			const linked = link(raw);
 			const optimized = normalizeGrammar(linked);
-			const nodeMap = assemble(optimized);
+			const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 
 			let polymorphCount = 0;
 			for (const [, node] of nodeMap.nodes) {

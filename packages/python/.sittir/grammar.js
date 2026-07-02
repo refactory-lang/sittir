@@ -499,7 +499,15 @@ function alias(rule, value) {
 }
 
 // packages/codegen/src/types/rule-types.ts
+var SEQ = "seq";
+var OPTIONAL = "optional";
+var CHOICE = "choice";
+var REPEAT = "repeat";
+var REPEAT1 = "repeat1";
+var STRING = "string";
+var PATTERN = "pattern";
 var SYMBOL = "symbol";
+var TOKEN = "token";
 
 // packages/codegen/src/types/rule.ts
 function sym(name) {
@@ -626,6 +634,78 @@ function isInlineSafe(seqBody) {
   return isFieldType(coreType) || isSymbolType(coreType);
 }
 
+// packages/codegen/src/util/word-matcher.ts
+function compileWordMatcher(word, rules) {
+  if (!word) return void 0;
+  const wordRule = rules[word];
+  if (!wordRule) return void 0;
+  const src = ruleToRegexSource(wordRule);
+  if (src === null) return void 0;
+  const full = `^(?:${src})$`;
+  try {
+    return new RegExp(full, "u");
+  } catch {
+    try {
+      return new RegExp(full);
+    } catch {
+      return void 0;
+    }
+  }
+}
+function matchesWordShape(value, wordMatcher) {
+  return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
+}
+function ruleToRegexSource(rule) {
+  const shaped = rule;
+  switch (String(rule.type).toLowerCase()) {
+    case PATTERN:
+      return shaped.value ?? null;
+    case STRING:
+      return shaped.value === void 0 ? null : escapeRegexLiteral(shaped.value);
+    case TOKEN:
+    case "immediate_token":
+      return shaped.content ? ruleToRegexSource(shaped.content) : null;
+    case SEQ: {
+      const parts = [];
+      for (const m of shaped.members ?? []) {
+        const p = ruleToRegexSource(m);
+        if (p === null) return null;
+        parts.push(`(?:${p})`);
+      }
+      return parts.join("");
+    }
+    case CHOICE: {
+      const parts = [];
+      for (const m of shaped.members ?? []) {
+        const p = ruleToRegexSource(m);
+        if (p === null) return null;
+        parts.push(p);
+      }
+      return `(?:${parts.join("|")})`;
+    }
+    case OPTIONAL: {
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
+      if (p === null) return null;
+      return `(?:${p})?`;
+    }
+    case REPEAT: {
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
+      if (p === null) return null;
+      return `(?:${p})*`;
+    }
+    case REPEAT1: {
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
+      if (p === null) return null;
+      return `(?:${p})+`;
+    }
+    default:
+      return null;
+  }
+}
+function escapeRegexLiteral(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 // packages/codegen/src/dsl/enrich.ts
 function enrich(baseInput) {
   const base2 = baseInput;
@@ -635,6 +715,8 @@ function enrich(baseInput) {
   const hasWrapper = "grammar" in base2;
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
   if (!rulesBag) return base2;
+  const grammarMeta = hasWrapper ? base2.grammar : base2;
+  const wordMatcher = compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag);
   const supertypeNames = extractSupertypeNames(base2, hasWrapper);
   const kwRules = {};
   const clauseGroupRules = {};
@@ -644,7 +726,7 @@ function enrich(baseInput) {
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames) : rule;
+    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, wordMatcher) : rule;
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
   setGroupLiftRuleMap({
@@ -674,14 +756,14 @@ function getEnrichClauseGroups(grammar2) {
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
-function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames) {
+function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, wordMatcher) {
   const MAX_ITERATIONS = 8;
   let r = rule;
   let converged = false;
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
-    r = applyOptionalKeyword(ruleName, r, kwRules);
+    r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
     if (r === before) {
       converged = true;
       break;
@@ -718,6 +800,26 @@ function extractSupertypeNames(base2, hasWrapper) {
   }
   if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
   return /* @__PURE__ */ new Set();
+}
+function extractWordName(word) {
+  if (typeof word === "string") return word;
+  if (typeof word !== "function") return null;
+  const dollar = new Proxy(
+    {},
+    {
+      get(_t, prop) {
+        if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+        return void 0;
+      }
+    }
+  );
+  try {
+    const result = word(dollar);
+    const name = result?.name;
+    return typeof name === "string" ? name : null;
+  } catch {
+    return null;
+  }
 }
 function harvestSupertypeNames(result) {
   const names = /* @__PURE__ */ new Set();
@@ -801,9 +903,6 @@ function peelOptional(rule) {
     }
   }
   return { inner: rule, isOptional: false };
-}
-function isIdentifierShaped(value) {
-  return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
 }
 function reportSkip(pass, ruleName, reason) {
   if (process.env.SITTIR_QUIET) return;
@@ -1102,10 +1201,10 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
   }
   return result;
 }
-function applyOptionalKeyword(ruleName, rule, kwRules) {
+function applyOptionalKeyword(ruleName, rule, kwRules, wordMatcher) {
   const inner = peelPrec(rule);
   const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : /* @__PURE__ */ new Set();
-  return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule;
+  return walkOptionalKeyword(ruleName, rule, claimed, kwRules, wordMatcher) ?? rule;
 }
 function peelPrec(rule) {
   let cursor = rule;
@@ -1114,12 +1213,12 @@ function peelPrec(rule) {
   }
   return cursor;
 }
-function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
+function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules, wordMatcher) {
   if (isSeqType(rule.type)) {
     const members = rule.members;
     let changed = false;
     const newMembers = members.map((m) => {
-      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
       if (out === null) return m;
       changed = true;
       return out;
@@ -1130,7 +1229,7 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
     const members = rule.members;
     let changed = false;
     const newMembers = members.map((m) => {
-      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
       if (out === null) return m;
       changed = true;
       return out;
@@ -1139,9 +1238,9 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
   }
   const peeled = peelOptional(rule);
   if (peeled.isOptional) {
-    const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules);
+    const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
     if (replacement !== null) return replacement;
-    const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
+    const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
     if (innerRewritten !== null) {
       return rebuildOptional(rule, innerRewritten);
     }
@@ -1149,23 +1248,23 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
   }
   if (isRepeatType(rule.type) || isFieldType(rule.type)) {
     const content = rule.content;
-    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
     if (out === null) return null;
     return { ...rule, content: out };
   }
   if (isPrecWrapper(rule)) {
     const content = rule.content;
-    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
     if (out === null) return null;
     return { ...rule, content: out };
   }
   return null;
 }
-function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules) {
+function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules, wordMatcher) {
   const innerNorm = normalizeMember(inner);
   if (!isStringType(innerNorm.type)) return null;
   const kw = innerNorm.value;
-  if (typeof kw !== "string" || !isIdentifierShaped(kw)) return null;
+  if (typeof kw !== "string" || !matchesWordShape(kw, wordMatcher)) return null;
   const fieldName = `${kw}_marker`;
   if (claimed.has(fieldName)) {
     reportSkip("optional-keyword-prefix", ruleName, `field '${fieldName}' already exists`);
@@ -2553,7 +2652,7 @@ var overrides_default = grammar(
       //   )), ':', _suite)
       // The two arms have DIFFERENT field sets (arm 0: value + optional
       // alias; arm 1: repeated value), so the cross-branch field merge
-      // (hoistSharedFieldAcrossChoiceBranches) can't fuse them — the
+      // (hoistSharedFieldFromBranchesForChoice) can't fuse them — the
       // choice reaches derivation as the non-canonical
       // `seq-member-choice-needs-variant-or-merge` shape (hard error).
       // Split per variant so each form owns its template. Path: seq pos 2

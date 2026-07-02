@@ -19,7 +19,7 @@ import {
 } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { transform, insert, replace } from '../dsl/transform/transform.ts';
 import type { SymbolRef } from '../types/rule.ts';
 import { expectCompleteCatalog, serializeCatalog, walkRule } from './helpers/rule-catalog.ts';
@@ -606,7 +606,8 @@ describe('Evaluate — evaluate()', () => {
 			// PR-P: enum-shaped choices are type 'choice' now.
 			expect(operatorKinds.sort()).toEqual(['choice', 'string', 'string']);
 
-			const nodeMap = assemble(normalizeGrammar(link(raw)));
+			const optimized = normalizeGrammar(link(raw));
+			const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 			const node = nodeMap.nodes.get('binary_expression');
 			expect(node && 'slots' in node).toBe(true);
 			const operatorSlot = node && 'slots' in node ? node.slots.operator : undefined;

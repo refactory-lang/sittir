@@ -18,7 +18,7 @@ import type { RawGrammar, RefineForm } from '../compiler/types.ts';
 import { link } from '../compiler/link.ts';
 import { resolveRefinePath, narrowedFieldLiteralsForForm } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { emitTypes } from '../emitters/types.ts';
 import { emitFactories } from '../emitters/factories.ts';
 import { emitIr } from '../emitters/ir.ts';
@@ -306,7 +306,7 @@ function runPipeline(forms: RefineForm[]) {
 function runPipelineRaw(raw: RawGrammar) {
 	const linked = link(raw);
 	const optimized = normalizeGrammar(linked);
-	const nodeMap = assemble(optimized);
+	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 	const generatedIdTables = makeGeneratedIdTables();
 	return {
 		nodeMap,
@@ -395,7 +395,7 @@ describe('types emitter — per-form namespace sugar', () => {
 		const noRefine: RawGrammar = { ...raw, refineForms: undefined };
 		const linked = link(noRefine);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 		const src = emitTypes({
 			grammar: 'synth',
 			nodeMap,
@@ -454,7 +454,7 @@ describe('factories emitter — per-form factory emission', () => {
 		]);
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 		const { factories } = emitAll({ grammar: 'synth', nodeMap });
 		expect(factories).toMatch(/export function ifaceBodyCurly\(/);
 		expect(factories).toMatch(/export function ifaceBodyFlow\(/);

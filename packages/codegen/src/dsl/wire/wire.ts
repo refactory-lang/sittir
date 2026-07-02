@@ -121,7 +121,7 @@ export interface WireContext {
 	 *  auto-prefix behavior (`variant('eq')` under `assignment` →
 	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
 	currentRuleKind: string | null;
-	/** Rule names explicitly authored in `config.rules`. Synthetic `_kw_*`
+	/** Rule<'evaluate'> names explicitly authored in `config.rules`. Synthetic `_kw_*`
 	 *  auto-inline only applies to helpers wire synthesized itself. */
 	readonly authoredRuleNames: ReadonlySet<string>;
 }
@@ -423,7 +423,7 @@ export type PatchMap = Record<string, unknown>;
  * CONCRETE rule names (including hidden `_`-prefixed rules). Crucially it has NO
  * index signature, so `$.x` does NOT leak `| undefined` under
  * `noUncheckedIndexedAccess` — unlike tree-sitter's `GrammarSymbols`, whose
- * index-signature leak makes `$.x: SymbolRule | undefined` and breaks
+ * index-signature leak makes `$.x: SymbolRule<'evaluate'> | undefined` and breaks
  * composition (`undefined ⊄ AuthoringRule`) in overrides.ts authoring.
  */
 export type ShapedSymbols<B extends GrammarJson> = {
@@ -446,7 +446,7 @@ export type WireConfig< B extends GrammarJson, NewRules extends string = string>
 		previous: readonly (readonly AuthoringRule[])[]
 	) => readonly (readonly AuthoringRule[])[];
 	/**
-	 * Rule bodies — clean-`$` builders. `previous`/`original` is typed PER RULE as
+	 * Rule<'evaluate'> bodies — clean-`$` builders. `previous`/`original` is typed PER RULE as
 	 * `B['rules'][K]` directly — the input rule's exact shape, preserved not
 	 * flattened. (`B` here is the ALREADY-ENRICHED schema from `enrich()`'s typed
 	 * return, so `B['rules'][K]` is the post-enrich shape; no re-application of
@@ -613,7 +613,7 @@ export function wire<B extends GrammarJson = any> (
 
 	const polymorphs = cfg.polymorphs ?? {};
 	const transforms = cfg.transforms ?? {};
-	const outRules: Record<string, Rule> = { ...cfg.rules } as Record<string, Rule>;
+	const outRules: Record<string, Rule<'evaluate'>> = { ...cfg.rules } as Record<string, Rule<'evaluate'>>;
 
 	// Transforms first, polymorphs second — transforms wrap the user
 	// fn innermost and see the base-shape rule tree; polymorphs wrap
@@ -1167,7 +1167,7 @@ function makeSimpleDollarProxy(): Record<string, unknown> {
  *
  * Uses `typeEq` for dual-case awareness (sittir lowercase ↔ tree-sitter
  * uppercase). Mirrors the `isComplexBody` check in evaluate.ts but operates
- * on RuntimeRule (unknown shape) rather than the typed sittir Rule.
+ * on RuntimeRule (unknown shape) rather than the typed sittir Rule<'evaluate'>.
  *
  * Exclusions:
  * - Single STRING / string literal → would match every identical literal
@@ -1360,7 +1360,7 @@ function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCan
  *
  * This is the tree-sitter-runtime counterpart of evaluate.ts's
  * `applyPatternReplacement`. Whereas evaluate.ts can run a post-evaluation
- * pass over already-computed Rule objects, wire.ts must wrap rule fns because
+ * pass over already-computed Rule<'evaluate'> objects, wire.ts must wrap rule fns because
  * tree-sitter evaluates them lazily one by one.
  *
  * A candidate is an authored `_`-prefixed rule in `outRules` whose eagerly-

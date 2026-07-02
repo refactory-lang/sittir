@@ -427,9 +427,9 @@ function serializeValue(v: NodeOrTerminal): SerializedValue {
  * `elementRule`. Walks choice/symbol/supertype; drops anonymous literals.
  * Used only for diagnostic display in node-model.json5.
  */
-function extractElementKinds(rule: Rule): string[] {
+function extractElementKinds(rule: Rule<'link'>): string[] {
 	const out = new Set<string>();
-	const walk = (r: Rule): void => {
+	const walk = (r: Rule<'link'>): void => {
 		switch (r.type) {
 			case SYMBOL:
 				out.add(r.name);

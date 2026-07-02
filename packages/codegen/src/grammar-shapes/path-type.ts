@@ -26,7 +26,7 @@
  * a cheap hand-rolled union over the top-level members tuple.
  */
 
-import type { GrammarNode, SeqNode, ChoiceNode, PrecNodeUnion, SingleContentWrapper } from './grammar-json.ts';
+import type { GrammarNode, Seq as SeqNode, Choice as ChoiceNode, PrecNodeUnion, SingleContentWrapper } from './grammar-json.ts';
 // Type-only imports of the DSL primitive return interfaces (DRY value-axis;
 // no runtime cycle — primitives don't import grammar-shapes).
 import type { FieldPlaceholder } from '../dsl/primitives/field.ts';

@@ -67,14 +67,14 @@ export class NormalizeCtx extends BaseCtx {
  */
 // DIAGNOSTIC (`DBG_ID_LOSS=<kind>`): print the first choice's id for <kind>
 // after each normalization pass, to pinpoint where a rule id gets dropped.
-function dbgChoiceId(label: string, rules: Record<string, Rule>): void {
+function dbgChoiceId(label: string, rules: Record<string, Rule<'link'>>): void {
 	const target = process.env.DBG_ID_LOSS;
 	if (!target) return;
 	const r = rules[target];
 	if (!r) return;
-	const find = (x: Rule): string | undefined => {
+	const find = (x: Rule<'link'>): string | undefined => {
 		if (x.type === CHOICE) return (x as { id?: string }).id ?? '<NONE>';
-		const xs = x as { members?: readonly Rule[]; content?: Rule };
+		const xs = x as { members?: readonly Rule<'link'>[]; content?: Rule<'link'> };
 		for (const m of xs.members ?? []) {
 			const g = find(m);
 			if (g) return g;
@@ -105,7 +105,7 @@ function dbgChoiceId(label: string, rules: Record<string, Rule>): void {
  * diagnostic-only). Invariant under folding: splices RELOCATE `symbol` refs
  * rather than remove them, so refcounts are conserved across passes.
  */
-export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<string> {
+export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): Set<string> {
 	const refcount = new Map<string, number>();
 	// Hidden kinds `_x` that have a VISIBLE NAME-TWIN: a parse-kind rule named
 	// exactly `x` (leading `_` stripped) whose body is/contains `symbol(_x)`.
@@ -121,7 +121,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<strin
 
 	const isHidden = (name: string): boolean => name.startsWith('_');
 
-	const walk = (rule: Rule, ownerTwinTarget: string | undefined): void => {
+	const walk = (rule: Rule<'link'>, ownerTwinTarget: string | undefined): void => {
 		if (rule.type === SYMBOL) {
 			const name = rule.name;
 			if (isHidden(name)) {
@@ -136,7 +136,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<strin
 			}
 			return;
 		}
-		const xs = rule as { members?: readonly Rule[]; content?: Rule };
+		const xs = rule as { members?: readonly Rule<'link'>[]; content?: Rule<'link'> };
 		for (const m of xs.members ?? []) walk(m, ownerTwinTarget);
 		if (xs.content) walk(xs.content, ownerTwinTarget);
 	};
@@ -183,7 +183,7 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule>>): Set<strin
  * Returns `true` when any splice happened (drives the normalize fixpoint loop).
  */
 export function inlineHiddenSeqRefs(
-	rules: Record<string, Rule>,
+	rules: Record<string, Rule<'link'>>,
 	_ctx: NormalizeCtx | undefined,
 	keepRef: ReadonlySet<string>
 ): boolean {
@@ -224,10 +224,10 @@ export function inlineHiddenSeqRefs(
  * `metadata.inlinedFrom = _x`. Returns the same reference when nothing changed.
  */
 function spliceFoldableRefs(
-	rule: Rule,
+	rule: Rule<'link'>,
 	foldable: ReadonlySet<string>,
-	rules: Readonly<Record<string, Rule>>
-): Rule {
+	rules: Readonly<Record<string, Rule<'link'>>>
+): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL: {
 			if (!foldable.has(rule.name)) return rule;
@@ -287,10 +287,10 @@ function spliceFoldableRefs(
 		case FIELD:
 		case VARIANT:
 		case GROUP: {
-			const inner = spliceFoldableRefs((rule as { content: Rule }).content, foldable, rules);
-			return inner === (rule as { content: Rule }).content
+			const inner = spliceFoldableRefs((rule as { content: Rule<'link'> }).content, foldable, rules);
+			return inner === (rule as { content: Rule<'link'> }).content
 				? rule
-				: ({ ...rule, content: inner } as Rule);
+				: ({ ...rule, content: inner } as Rule<'link'>);
 		}
 		default:
 			return rule;
@@ -306,18 +306,18 @@ function spliceFoldableRefs(
  * render emitter gates the whole sequence on its single internal slot.
  */
 function materializeInlinedBody(
-	ref: Extract<Rule, { type: 'symbol' }>,
-	body: Rule,
+	ref: Extract<Rule<'link'>, { type: 'symbol' }>,
+	body: Rule<'link'>,
 	inlinedFrom: string
-): Rule {
+): Rule<'link'> {
 	const r = ref as {
 		multiplicity?: LeafMultiplicity;
-		separator?: Rule['separator'];
+		separator?: Rule<'link'>['separator'];
 		fieldName?: string;
 	};
 	const carry: {
 		multiplicity?: LeafMultiplicity;
-		separator?: Rule['separator'];
+		separator?: Rule<'link'>['separator'];
 		fieldName?: string;
 	} = {};
 	if (r.multiplicity !== undefined) carry.multiplicity = r.multiplicity;
@@ -331,22 +331,22 @@ function materializeInlinedBody(
 	// slot). A non-seq body (single member group) is wrapped in a 1-member seq
 	// so it carries the same seq-unit gating uniformly.
 	if (body.type === SEQ) {
-		return { ...body, ...carry, metadata: meta } as Rule;
+		return { ...body, ...carry, metadata: meta } as Rule<'link'>;
 	}
 	return {
 		type: 'seq',
 		members: [body],
 		...carry,
 		metadata: meta
-	} as Rule;
+	} as Rule<'link'>;
 }
 
 function applyNormalizationPasses(
-	rawRules: Record<string, Rule>,
+	rawRules: Record<string, Rule<'link'>>,
 	ctx?: NormalizeCtx,
 	preserveKinds?: ReadonlySet<string>
-): Record<string, Rule> {
-	let rules: Record<string, Rule> = {};
+): Record<string, Rule<'link'>> {
+	let rules: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(rawRules)) {
 		rules[name] = collapseWrappers(rule, ctx);
 	}
@@ -424,7 +424,7 @@ export function normalizeGrammar(
 	// so renderRules / simplifiedRules cover them too. Eliminates the
 	// assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
 	if (linked.topLevelAliasBodies) {
-		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(linked.topLevelAliasBodies);
+		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(linked.topLevelAliasBodies);
 		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
 		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ rules: aliasBodiesRender, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
@@ -470,7 +470,7 @@ export function normalizeGrammar(
  * through `optional`, `repeat`, `field`, `variant`, `clause`,
  * `group`, `token` wrappers. Non-lossy.
  */
-export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
+export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ: {
 			const members = rule.members.map((m) => fanOutSeqChoices(m));
@@ -484,12 +484,12 @@ export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
 			if (!isChoice(choice)) return { ...rule, members };
 			const before = members.slice(0, choiceIdx);
 			const after = members.slice(choiceIdx + 1);
-			const branches: Rule[] = choice.members.map((branch) => {
+			const branches: Rule<'link'>[] = choice.members.map((branch) => {
 				const inner = branch.type === VARIANT ? branch.content : branch;
 				const seqMembers = [...before, inner, ...after];
 				if (seqMembers.length === 1) return seqMembers[0]!;
 				// Preserve variant labels by re-wrapping.
-				const flat: Rule = { type: SEQ, members: seqMembers };
+				const flat: Rule<'link'> = { type: SEQ, members: seqMembers };
 				return branch.type === VARIANT ? { type: VARIANT, name: branch.name, content: flat } : flat;
 			});
 			// The fanned choice replaces this seq 1:1 — carry the inner choice's
@@ -541,7 +541,7 @@ export function fanOutSeqChoices(rule: Rule, _ctx?: NormalizeCtx): Rule {
  * extractor would mis-align, or already represent the "zero-or-more"
  * semantics that factoring produces.
  */
-function isAtomForFactoring(rule: Rule): boolean {
+function isAtomForFactoring(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case SYMBOL:
 		case STRING:
@@ -569,15 +569,15 @@ function isAtomForFactoring(rule: Rule): boolean {
  * Variant labels on branches are preserved in the returned nonEmpty rules.
  */
 function extractFactoredChoiceBody(
-	members: Rule[],
-	seqs: Rule[][],
+	members: Rule<'link'>[],
+	seqs: Rule<'link'>[][],
 	prefixLen: number,
 	suffixLen: number
-): { prefix: Rule[]; suffix: Rule[]; nonEmpty: Rule[]; hasEmpty: boolean } {
+): { prefix: Rule<'link'>[]; suffix: Rule<'link'>[]; nonEmpty: Rule<'link'>[]; hasEmpty: boolean } {
 	const prefix = seqs[0]!.slice(0, prefixLen);
 	const suffix = prefixLen < seqs[0]!.length ? seqs[0]!.slice(seqs[0]!.length - suffixLen) : [];
 	let hasEmpty = false;
-	const nonEmpty: Rule[] = [];
+	const nonEmpty: Rule<'link'>[] = [];
 	for (let i = 0; i < members.length; i++) {
 		const m = members[i]!;
 		const s = seqs[i]!;
@@ -586,7 +586,7 @@ function extractFactoredChoiceBody(
 			hasEmpty = true;
 			continue;
 		}
-		const bodyRule: Rule = body.length === 1 ? body[0]! : { type: 'seq', members: body };
+		const bodyRule: Rule<'link'> = body.length === 1 ? body[0]! : { type: 'seq', members: body };
 		nonEmpty.push(m.type === VARIANT ? { type: VARIANT, name: m.name, content: bodyRule } : bodyRule);
 	}
 	return { prefix, suffix, nonEmpty, hasEmpty };
@@ -602,7 +602,7 @@ function extractFactoredChoiceBody(
  * via `rulesEqual`). Only applies at the top level of a `choice`;
  * recurses through wrappers for nested choices. Non-lossy.
  */
-export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
+export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
 	switch (rule.type) {
 		case CHOICE: {
 			const members = rule.members.map((m) => factorChoiceBranches(m));
@@ -610,7 +610,7 @@ export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
 			// Bare atoms normalized to single-member seqs for uniform factoring.
 			const canFactor = unwrapped.length >= 2 && unwrapped.every((b) => b.type === 'seq' || isAtomForFactoring(b));
 			if (!canFactor) return { ...rule, members };
-			const seqs = unwrapped.map((b) => (b.type === 'seq' ? (b as SeqRule).members : [b]));
+			const seqs = unwrapped.map((b) => (b.type === 'seq' ? (b as SeqRule<'link'>).members : [b]));
 			const prefixLen = findCommonPrefix(seqs);
 			const suffixLen = findCommonSuffix(seqs, prefixLen);
 			if (prefixLen === 0 && suffixLen === 0) return { ...rule, members };
@@ -622,12 +622,12 @@ export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
 			// Spread `rule` (the factored choice) to preserve separator/multiplicity/
 			// etc., then override only `members`. When there's exactly one branch,
 			// skip the choice wrapper (shape is already correct).
-			const core: Rule =
+			const core: Rule<'link'> =
 				nonEmpty.length === 1
 					? nonEmpty[0]!
 					: { ...rule, type: 'choice', members: nonEmpty };
-			const inner: Rule = hasEmpty ? { type: 'optional', content: core } : core;
-			const outerMembers: Rule[] = [...prefix, inner, ...suffix];
+			const inner: Rule<'link'> = hasEmpty ? { type: 'optional', content: core } : core;
+			const outerMembers: Rule<'link'>[] = [...prefix, inner, ...suffix];
 			return outerMembers.length === 1 ? outerMembers[0]! : { type: SEQ, members: outerMembers };
 		}
 		case SEQ: {
@@ -659,11 +659,11 @@ export function factorChoiceBranches(rule: Rule, _ctx?: NormalizeCtx): Rule {
  * adjacent duplicates; non-adjacent duplicates are almost always
  * intentional repetition in the grammar.
  */
-export function dedupeSeqMembers(rule: Rule, _ctx?: NormalizeCtx): Rule {
+export function dedupeSeqMembers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ: {
 			const members = rule.members.map((m) => dedupeSeqMembers(m));
-			const deduped: Rule[] = [];
+			const deduped: Rule<'link'>[] = [];
 			for (const m of members) {
 				const prev = deduped[deduped.length - 1];
 				if (prev && rulesEqual(prev, m)) continue;
@@ -707,12 +707,12 @@ export function dedupeSeqMembers(rule: Rule, _ctx?: NormalizeCtx): Rule {
  * produce the same downstream shape whether the helper exists as
  * its own entry or as an expansion in its parent.
  */
-function inlineSingleUseHidden(rules: Record<string, Rule>, ctx?: NormalizeCtx, preserveKinds?: ReadonlySet<string>): Record<string, Rule> {
+function inlineSingleUseHidden(rules: Record<string, Rule<'link'>>, ctx?: NormalizeCtx, preserveKinds?: ReadonlySet<string>): Record<string, Rule<'link'>> {
 	// Work on a shallow copy — we mutate entries and delete keys.
 	// ctx is currently unused-but-uniform: it is threaded so the
 	// future trace wrapper (#14) can intercept all normalize passes.
 	void ctx;
-	const work: Record<string, Rule> = { ...rules };
+	const work: Record<string, Rule<'link'>> = { ...rules };
 	iterateInliningToFixedPoint(work, preserveKinds);
 	return work;
 }
@@ -727,7 +727,7 @@ function inlineSingleUseHidden(rules: Record<string, Rule>, ctx?: NormalizeCtx, 
  * opportunities where a parent being inlined exposes a new single-use child.
  * The loop breaks early when a full pass produces no changes.
  */
-function iterateInliningToFixedPoint(work: Record<string, Rule>, preserveKinds?: ReadonlySet<string>): void {
+function iterateInliningToFixedPoint(work: Record<string, Rule<'link'>>, preserveKinds?: ReadonlySet<string>): void {
 	for (let pass = 0; pass < 4; pass++) {
 		const refCounts = countReferences(work);
 		let changed = false;
@@ -759,7 +759,7 @@ function iterateInliningToFixedPoint(work: Record<string, Rule>, preserveKinds?:
  * already have explicit structural meaning. Only raw `seq`, `choice`,
  * `optional`, and `repeat` helpers get inlined.
  */
-function isStructurallyMeaningfulHiddenRule(rule: Rule): boolean {
+function isStructurallyMeaningfulHiddenRule(rule: Rule<'link'>): boolean {
 	// PR-P: rule.type === ENUM replaced with isEnumChoiceRule.
 	// PR-P Task 2: rule.type === TERMINAL replaced with isTerminalShape — TerminalRule deleted;
 	// terminal-shape rules now classify by shape at Assemble, but must still be preserved
@@ -782,7 +782,7 @@ function isStructurallyMeaningfulHiddenRule(rule: Rule): boolean {
  * @param rule - The hidden rule's current content.
  * @returns `true` when a parent was found and the inline succeeded.
  */
-function spliceHiddenRuleIntoSingleParent(work: Record<string, Rule>, name: string, rule: Rule): boolean {
+function spliceHiddenRuleIntoSingleParent(work: Record<string, Rule<'link'>>, name: string, rule: Rule<'link'>): boolean {
 	for (const [parentName, parentRule] of Object.entries(work)) {
 		if (parentName === name) continue;
 		const replaced = replaceSymbolRef(parentRule, name, rule);
@@ -798,10 +798,10 @@ function spliceHiddenRuleIntoSingleParent(work: Record<string, Rule>, name: stri
 /**
  * Count outgoing references per kind across the rule map. Walks
  * symbol refs (via `walkSymbols`) and also includes names carried
- * in `SupertypeRule.subtypes` — those aren't wrapped in a symbol
+ * in `SupertypeRule<'link'>.subtypes` — those aren't wrapped in a symbol
  * node but downstream classification needs the entry to survive.
  */
-function countReferences(rules: Record<string, Rule>): Map<string, number> {
+function countReferences(rules: Record<string, Rule<'link'>>): Map<string, number> {
 	const counts = new Map<string, number>();
 	for (const rule of Object.values(rules)) {
 		walkSymbols(rule, (name) => {
@@ -811,7 +811,7 @@ function countReferences(rules: Record<string, Rule>): Map<string, number> {
 	return counts;
 }
 
-function walkSymbols(rule: Rule, visit: (name: string) => void): void {
+function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 	switch (rule.type) {
 		case SYMBOL:
 			visit(rule.name);
@@ -840,7 +840,7 @@ function walkSymbols(rule: Rule, visit: (name: string) => void): void {
  * content of `targetRule`. Returns the same reference when nothing
  * changed so callers can do identity comparison.
  */
-function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rule {
+function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Rule<'link'>): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL:
 			if (rule.name === targetName) return targetRule;
@@ -883,7 +883,7 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
  * equivalents. Non-lossy — every collapse preserves the set of
  * strings the rule matches.
  */
-export function collapseWrappers(rule: Rule, _ctx?: NormalizeCtx): Rule {
+export function collapseWrappers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
 	switch (rule.type) {
 		case OPTIONAL: {
 			const inner = collapseWrappers(rule.content);
@@ -917,7 +917,7 @@ export function collapseWrappers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 						(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
 					);
 					// Only stamp when non-default (single → undefined per combineMultiplicity).
-					if (combined !== undefined) return { ...carried, multiplicity: combined } as Rule;
+					if (combined !== undefined) return { ...carried, multiplicity: combined } as Rule<'link'>;
 				}
 				return carried;
 			}
@@ -938,7 +938,7 @@ export function collapseWrappers(rule: Rule, _ctx?: NormalizeCtx): Rule {
 	}
 }
 
-function outerFromParts(prefix: Rule[], suffix: Rule[]): Rule {
+function outerFromParts(prefix: Rule<'link'>[], suffix: Rule<'link'>[]): Rule<'link'> {
 	const members = [...prefix, ...suffix];
 	if (members.length === 0) {
 		// Unreachable: factorChoiceBranches early-returns on
@@ -954,7 +954,7 @@ function outerFromParts(prefix: Rule[], suffix: Rule[]): Rule {
 // rulesEqual — structural equality
 // ---------------------------------------------------------------------------
 
-export function rulesEqual(a: Rule, b: Rule): boolean {
+export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {
 	if (a.type !== b.type) return false;
 
 	switch (a.type) {
@@ -1004,7 +1004,7 @@ export function rulesEqual(a: Rule, b: Rule): boolean {
 // factorSeqChoice — extract common prefix/suffix from choice branches
 // ---------------------------------------------------------------------------
 
-export function factorSeqChoice(branches: Rule[]): Rule[] {
+export function factorSeqChoice(branches: Rule<'link'>[]): Rule<'link'>[] {
 	// Check if all branches are seqs
 	const seqs = branches.map((b) => (b.type === SEQ ? b.members : [b]));
 
@@ -1014,7 +1014,7 @@ export function factorSeqChoice(branches: Rule[]): Rule[] {
 	const suffixLen = findCommonSuffix(seqs, prefixLen);
 
 	// Extract factored branches (the parts that differ)
-	return branches.map((b): Rule => {
+	return branches.map((b): Rule<'link'> => {
 		if (b.type === SEQ) {
 			const members = b.members.slice(prefixLen, b.members.length - suffixLen);
 			return members.length === 1 ? members[0]! : { type: SEQ, members };
@@ -1023,7 +1023,7 @@ export function factorSeqChoice(branches: Rule[]): Rule[] {
 	});
 }
 
-function findCommonPrefix(seqs: Rule[][]): number {
+function findCommonPrefix(seqs: Rule<'link'>[][]): number {
 	if (seqs.length === 0) return 0;
 	const first = seqs[0]!;
 	let len = 0;
@@ -1035,7 +1035,7 @@ function findCommonPrefix(seqs: Rule[][]): number {
 	return len;
 }
 
-function findCommonSuffix(seqs: Rule[][], prefixLen: number): number {
+function findCommonSuffix(seqs: Rule<'link'>[][], prefixLen: number): number {
 	if (seqs.length === 0) return 0;
 	const first = seqs[0]!;
 	let len = 0;

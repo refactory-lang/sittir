@@ -52,11 +52,11 @@
 // `SymbolRule` directly. `Rule` is the ambient tree-sitter union.
 // ---------------------------------------------------------------------------
 
-export interface Seq<M extends readonly GrammarNode[]> {
+export interface Seq<M extends readonly GrammarNode[] = readonly GrammarNode[]> {
 	readonly type: 'SEQ';
 	readonly members: M;
 }
-export interface Choice<M extends readonly GrammarNode[]> {
+export interface Choice<M extends readonly GrammarNode[] = readonly GrammarNode[]> {
 	readonly type: 'CHOICE';
 	readonly members: M;
 }
@@ -66,7 +66,7 @@ export interface Str<V extends string = string> {
 	readonly type: 'STRING';
 	readonly value: V;
 }
-export interface Pattern<V extends string = string> {
+export interface Pattern<V extends string | RegExp | RustRegex = string> {
 	readonly type: 'PATTERN';
 	readonly value: V;
 	readonly flags?: string;
@@ -152,26 +152,9 @@ export type GrammarNode =
  */
 export type AuthoringRule = GrammarNode | string | RegExp;
 
-// ---------------------------------------------------------------------------
-// Back-compat aliases — Phase-1 enrich-type.ts / path-type.ts reference the
-// `…Node` names. `readonly [...] ⊑ readonly GrammarNode[]` holds, so
-// `N extends SeqNode` etc. behave identically to the parameterized forms.
-// ---------------------------------------------------------------------------
+export type AuthoringRuleToNode<S extends string | RegExp | GrammarNode> = S extends string ? Str<S> : S extends RegExp ? Pattern<S> : S extends GrammarNode ? S : S;
 
-export type SeqNode = Seq<readonly GrammarNode[]>;
-export type ChoiceNode = Choice<readonly GrammarNode[]>;
-export type SymbolNode = Sym<string>;
-export type BlankNode = Blank;
-export type RepeatNode = Repeat<GrammarNode>;
-export type Repeat1Node = Repeat1<GrammarNode>;
-export type FieldNode = Field<string, GrammarNode>;
-export type AliasNode = Alias<string, GrammarNode>;
-export type TokenNode = Token<GrammarNode>;
-export type ImmediateTokenNode = ImmediateToken<GrammarNode>;
-export type PrecNode = Prec<GrammarNode>;
-export type PrecLeftNode = PrecLeft<GrammarNode>;
-export type PrecRightNode = PrecRight<GrammarNode>;
-export type PrecDynamicNode = PrecDynamic<GrammarNode>;
+export type AuthoringRulesToRules<M extends readonly AuthoringRule[]> = M extends readonly [infer Head extends AuthoringRule, ...infer Rest extends AuthoringRule[]] ? [AuthoringRuleToNode<Head>, ...AuthoringRulesToRules<Rest>] : [];
 
 /** Top-level compiled grammar.json shape (the subset we type off). */
 export interface GrammarJson {
@@ -188,13 +171,13 @@ export interface GrammarJson {
 // ---------------------------------------------------------------------------
 
 /** PREC wrappers are transparent to path addressing (skip a segment). */
-export type PrecNodeUnion = PrecNode | PrecLeftNode | PrecRightNode | PrecDynamicNode;
+export type PrecNodeUnion = Prec | PrecLeft | PrecRight | PrecDynamic;
 
 /** Single-content wrappers that CONSUME a path segment (index 0 / -1). */
-export type SingleContentWrapper = RepeatNode | Repeat1Node | FieldNode | AliasNode | TokenNode | ImmediateTokenNode;
+export type SingleContentWrapper = Repeat | Repeat1 | Field | Alias | Token | ImmediateToken;
 
 /** Container nodes whose members are positionally addressable. */
-export type ContainerNode = SeqNode | ChoiceNode;
+export type ContainerNode<M extends readonly GrammarNode[] = GrammarNode[]> = Seq<M> | Choice<M>;
 
 // ---------------------------------------------------------------------------
 // MutableDeep<> — the readonly→mutable bridge used ONLY to PROVE the

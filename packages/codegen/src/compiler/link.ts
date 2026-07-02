@@ -73,7 +73,7 @@ export interface LinkOptions {
 }
 
 /**
- * Phase context for the Link phase (R12 PR-4, extends `BaseCtx<Rule>`).
+ * Phase context for the Link phase (R12 PR-4, extends `BaseCtx<Rule<'link'>>`).
  *
  * Merges the former `ResolveCtx` (rule-resolution walk: `rules` — inherited
  * from `BaseCtx`, was `allRules` — `supertypes`, `externalRoles`) and
@@ -88,7 +88,7 @@ export interface LinkOptions {
  * promoted-rules log, respectively) — kept as plain mutable fields rather
  * than wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
  */
-export class LinkCtx extends BaseCtx<Rule> {
+export class LinkCtx extends BaseCtx<Rule<'link'>> {
 	readonly supertypes: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly inline?: readonly string[];
@@ -97,7 +97,7 @@ export class LinkCtx extends BaseCtx<Rule> {
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
 
 	constructor(
-		init: BaseCtxInit<Rule> & {
+		init: BaseCtxInit<Rule<'link'>> & {
 			supertypes: ReadonlySet<string>;
 			externalRoles: Map<string, ExternalRole>;
 			inline?: readonly string[];
@@ -164,7 +164,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		applyPromotedRules,
 		hiddenChoicesWithNamedAliasMembers
 	});
-	const rules: Record<string, Rule> = {};
+	const rules: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
 		rules[name] = resolveRule(rule, linkCtx, name);
 	}
@@ -221,7 +221,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 
 	// Group lift pass — run BEFORE classifyAndLogHiddenRules so path
 	// resolution addresses the raw resolved seq/choice bodies before
-	// classifyHiddenSeqRule wraps them in GroupRule nodes. Also runs
+	// classifyHiddenSeqRule wraps them in GroupRule<'link'> nodes. Also runs
 	// BEFORE polymorph alias so lifts happen against the original rule
 	// body. See:
 	//   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
@@ -236,7 +236,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 			if (!(key in lifted.rules)) delete rules[key];
 		}
 		Object.assign(rules, lifted.rules);
-		// Force-classify synthesized kinds as GroupRule so downstream
+		// Force-classify synthesized kinds as GroupRule<'link'> so downstream
 		// optimize.inlineSingleUseHidden skips them (it preserves 'group'
 		// type rules) and assemble sees them as AssembledGroup candidates.
 		for (const synthKind of lifted.synthesizedKinds) {
@@ -249,7 +249,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 					type: GROUP,
 					name: synthKind,
 					content: liftSeparators(body)
-				} satisfies GroupRule;
+				} satisfies GroupRule<'link'>;
 			}
 		}
 	}
@@ -358,7 +358,7 @@ function buildExternalRolesMap(rawExternalRoles: Map<string, ExternalRole> | und
  *   inlined to an `indent` node. Strip the top-level entries so Assemble
  *   doesn't try to classify them as real kinds.
  */
-function stripResolvedRoleRules(rules: Record<string, Rule>): void {
+function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 	for (const name of Object.keys(rules)) {
 		const r = rules[name]!;
 		if (r.type === INDENT || r.type === DEDENT || r.type === NEWLINE) {
@@ -377,16 +377,16 @@ function stripResolvedRoleRules(rules: Record<string, Rule>): void {
  *   Per design: Link creates empty pattern leaf rules for them so downstream
  *   phases (Assemble, codegen) see them as known leaf kinds.
  */
-function createSyntheticExternalRules(rules: Record<string, Rule>, externals: readonly string[]): void {
+function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, externals: readonly string[]): void {
 	for (const ext of externals) {
 		if (!rules[ext]) {
-			rules[ext] = { type: 'pattern', value: '' } as Rule;
+			rules[ext] = { type: 'pattern', value: '' } as Rule<'link'>;
 		}
 	}
 }
 
 function canonicalizeCatalogLiteralRefs(
-	rules: Record<string, Rule>,
+	rules: Record<string, Rule<'link'>>,
 	kindEntries: readonly GeneratedKindEntry[]
 ): void {
 	for (const [name, rule] of Object.entries(rules)) {
@@ -395,7 +395,7 @@ function canonicalizeCatalogLiteralRefs(
 }
 
 function canonicalizeCatalogLiteralRefsInMap(
-	rules: Map<string, Rule>,
+	rules: Map<string, Rule<'link'>>,
 	kindEntries: readonly GeneratedKindEntry[]
 ): void {
 	for (const [name, rule] of rules.entries()) {
@@ -404,10 +404,10 @@ function canonicalizeCatalogLiteralRefsInMap(
 }
 
 function canonicalizeRuleLiterals(
-	rule: Rule,
+	rule: Rule<'link'>,
 	kindEntries: readonly GeneratedKindEntry[],
 	allowLiteralRewrite: boolean
-): Rule {
+): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
 			return {
@@ -472,9 +472,9 @@ function canonicalizeRuleLiterals(
  *   the convention. Tree-sitter's supertype feature marks visible rules whose
  *   CST node never appears — classifying them here prevents the polymorph
  *   promoter from producing bogus variant maps for kinds like ts `primary_type`
- *   that should be a single SupertypeRule.
+ *   that should be a single SupertypeRule<'link'>.
  */
-function classifyAndLogHiddenRules(rules: Record<string, Rule>, ctx: LinkCtx): void {
+function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	const { inline, supertypes, derivations, applyPromotedRules } = ctx;
 	for (const [name, rule] of Object.entries(rules)) {
 		if (isHiddenKind(name, inline) || supertypes.has(name)) {
@@ -526,30 +526,30 @@ function classifyAndLogHiddenRules(rules: Record<string, Rule>, ctx: LinkCtx): v
  *     box-at-back-edge transport. Direct self-reference is detected here; the
  *     box-SCC pass handles the boxing.
  */
-function markSupertypeRefsNonInline(rules: Record<string, Rule>): void {
+function markSupertypeRefsNonInline(rules: Record<string, Rule<'link'>>): void {
 	const nonInlineKinds = new Set<string>();
 	for (const [name, rule] of Object.entries(rules)) {
 		if (rule.type === SUPERTYPE || referencesSelf(rule, name)) nonInlineKinds.add(name);
 	}
 	if (nonInlineKinds.size === 0) return;
-	const walk = (rule: Rule): Rule => {
+	const walk = (rule: Rule<'link'>): Rule<'link'> => {
 		if (rule.type === SYMBOL) {
 			return nonInlineKinds.has(rule.name) && rule.inline !== false
 				? { ...rule, inline: false }
 				: rule;
 		}
-		const xs = rule as { members?: readonly Rule[]; content?: Rule };
-		if (xs.members) return { ...rule, members: xs.members.map(walk) } as Rule;
-		if (xs.content) return { ...rule, content: walk(xs.content) } as Rule;
+		const xs = rule as { members?: readonly Rule<'link'>[]; content?: Rule<'link'> };
+		if (xs.members) return { ...rule, members: xs.members.map(walk) } as Rule<'link'>;
+		if (xs.content) return { ...rule, content: walk(xs.content) } as Rule<'link'>;
 		return rule;
 	};
 	for (const name of Object.keys(rules)) rules[name] = walk(rules[name]!);
 }
 
 /** True when `rule`'s tree contains a SYMBOL ref back to its own kind `self`. */
-function referencesSelf(rule: Rule, self: string): boolean {
+function referencesSelf(rule: Rule<'link'>, self: string): boolean {
 	if (rule.type === SYMBOL) return rule.name === self;
-	const xs = rule as { members?: readonly Rule[]; content?: Rule };
+	const xs = rule as { members?: readonly Rule<'link'>[]; content?: Rule<'link'> };
 	if (xs.members) return xs.members.some((m) => referencesSelf(m, self));
 	if (xs.content) return referencesSelf(xs.content, self);
 	return false;
@@ -563,7 +563,7 @@ function referencesSelf(rule: Rule, self: string): boolean {
  * Link's alias-collapse would leave downstream passes thinking the
  * hidden rule still produces the original kind.
  */
-function collectAliasedHiddenKinds(rawRules: Record<string, Rule>): Map<string, string> {
+function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'link'>>): Map<string, string> {
 	const out = new Map<string, string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
@@ -573,14 +573,14 @@ function collectAliasedHiddenKinds(rawRules: Record<string, Rule>): Map<string, 
 	return out;
 }
 
-function extractTopLevelAliasTarget(rule: Rule): string | undefined {
+function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.value;
 	if (
 		rule.type === GROUP ||
 		rule.type === VARIANT ||
 		rule.type === TOKEN
 	) {
-		return extractTopLevelAliasTarget((rule as { content: Rule }).content);
+		return extractTopLevelAliasTarget((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
 }
@@ -606,7 +606,7 @@ function extractTopLevelAliasTarget(rule: Rule): string | undefined {
  * @param rawRules - The EVALUATED (pre-link/pre-resolveRule) rules map.
  *   Must be called before `resolveRule` flattens alias nodes to symbols.
  */
-function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule>): ReadonlySet<string> {
+function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule<'link'>>): ReadonlySet<string> {
 	const out = new Set<string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
@@ -642,13 +642,13 @@ function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule
  *
  * @param rawRules - The EVALUATED (pre-resolveRule) rules map, alias nodes present.
  */
-function collectAliasedByParents(rawRules: Record<string, Rule>): {
+function collectAliasedByParents(rawRules: Record<string, Rule<'link'>>): {
 	parentAliasedKinds: ReadonlySet<string>;
 	visibleAliasTargets: ReadonlyMap<string, readonly string[]>;
 } {
 	const parentAliasedKinds = new Set<string>();
 	const visibleAliasTargets = new Map<string, string[]>();
-	function walk(rule: Rule): void {
+	function walk(rule: Rule<'link'>): void {
 		if (rule.type === ALIAS) {
 			if (rule.named && rule.content.type === 'symbol') {
 				const source = rule.content.name;
@@ -666,11 +666,11 @@ function collectAliasedByParents(rawRules: Record<string, Rule>): {
 			walk(rule.content);
 			return;
 		}
-		if ('members' in rule && Array.isArray((rule as ChoiceRule | SeqRule).members)) {
-			for (const m of (rule as ChoiceRule | SeqRule).members) walk(m);
+		if ('members' in rule && Array.isArray((rule as ChoiceRule<'link'> | SeqRule<'link'>).members)) {
+			for (const m of (rule as ChoiceRule<'link'> | SeqRule<'link'>).members) walk(m);
 		}
-		if ('content' in rule && (rule as { content?: Rule }).content) {
-			walk((rule as { content: Rule }).content);
+		if ('content' in rule && (rule as { content?: Rule<'link'> }).content) {
+			walk((rule as { content: Rule<'link'> }).content);
 		}
 	}
 	for (const rule of Object.values(rawRules)) walk(rule);
@@ -702,7 +702,7 @@ function collectAliasedByParents(rawRules: Record<string, Rule>): {
  * @param rules - The mutable resolved rules map; minted bodies are added here.
  */
 function mintContentAliasKinds(
-	rules: Record<string, Rule>,
+	rules: Record<string, Rule<'link'>>,
 	ctx: LinkCtx,
 	/**
 	 * DIAGNOSTIC-ONLY accumulators (§D-2a). When a visible twin `<name>` is
@@ -714,7 +714,7 @@ function mintContentAliasKinds(
 	contentAliasedFrom?: Map<string, string>,
 	contentAliasedTo?: Map<string, string[]>
 ): void {
-	function isEnrichContentAlias(rule: Rule): boolean {
+	function isEnrichContentAlias(rule: Rule<'link'>): boolean {
 		if (rule.type !== ALIAS) return false;
 		const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
 		// Only enrich-tagged aliases mint a kind. A symbol alias WITHOUT this tag
@@ -725,13 +725,13 @@ function mintContentAliasKinds(
 		//   - symbol content `alias($._<name>, $.<name>)` — the current shape; the
 		//     hidden `_<name>` rule's body is resolved THROUGH the symbol below.
 		//   - non-symbol content (legacy direct content-alias), still registered.
-		const content = (rule as { content?: Rule }).content;
+		const content = (rule as { content?: Rule<'link'> }).content;
 		return content !== undefined;
 	}
-	function walk(rule: Rule, ownerName: string): void {
+	function walk(rule: Rule<'link'>, ownerName: string): void {
 		if (rule.type === ALIAS) {
 			const value = (rule as { value?: string }).value;
-			const content = (rule as { content?: Rule }).content;
+			const content = (rule as { content?: Rule<'link'> }).content;
 			if (isEnrichContentAlias(rule) && typeof value === 'string' && value.length > 0 && content) {
 				if (!(value in rules)) {
 					// Resolve THROUGH a symbol-form alias content: the enrich visible
@@ -740,9 +740,9 @@ function mintContentAliasKinds(
 					// hidden rule's BODY (not the bare symbol ref), so the minted kind
 					// carries the group's real slots/template. Non-symbol content
 					// (legacy) resolves directly.
-					let body: Rule = content;
+					let body: Rule<'link'> = content;
 					if (content.type === SYMBOL) {
-						const hiddenBody = (content as SymbolRule).name;
+						const hiddenBody = (content as SymbolRule<'link'>).name;
 						const target = ctx.rules[hiddenBody];
 						if (target) body = target;
 						// DIAGNOSTIC-ONLY provenance: visible twin → hidden body kind.
@@ -765,23 +765,23 @@ function mintContentAliasKinds(
 			if (content) walk(content, ownerName);
 			return;
 		}
-		if ('members' in rule && Array.isArray((rule as ChoiceRule | SeqRule).members)) {
-			for (const m of (rule as ChoiceRule | SeqRule).members) walk(m, ownerName);
+		if ('members' in rule && Array.isArray((rule as ChoiceRule<'link'> | SeqRule<'link'>).members)) {
+			for (const m of (rule as ChoiceRule<'link'> | SeqRule<'link'>).members) walk(m, ownerName);
 		}
-		if ('content' in rule && (rule as { content?: Rule }).content) {
-			walk((rule as { content: Rule }).content, ownerName);
+		if ('content' in rule && (rule as { content?: Rule<'link'> }).content) {
+			walk((rule as { content: Rule<'link'> }).content, ownerName);
 		}
 	}
 	for (const [name, rule] of Object.entries(ctx.rules)) walk(rule, name);
 }
 
 function collectTopLevelAliasBodies(
-	resolvedRules: Record<string, Rule>,
+	resolvedRules: Record<string, Rule<'link'>>,
 	ctx: LinkCtx,
 	complexAliasTargetHidden?: ReadonlySet<string>
-): Map<string, Rule> {
+): Map<string, Rule<'link'>> {
 	const rawRules = ctx.rules;
-	const out = new Map<string, Rule>();
+	const out = new Map<string, Rule<'link'>>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
 		const content = extractTopLevelNamedAliasContent(rule);
@@ -822,24 +822,24 @@ function collectTopLevelAliasBodies(
 	return out;
 }
 
-function extractTopLevelNamedAliasContent(rule: Rule): Rule | undefined {
+function extractTopLevelNamedAliasContent(rule: Rule<'link'>): Rule<'link'> | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.content;
 	if (
 		rule.type === GROUP ||
 		rule.type === VARIANT ||
 		rule.type === TOKEN
 	) {
-		return extractTopLevelNamedAliasContent((rule as { content: Rule }).content);
+		return extractTopLevelNamedAliasContent((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
 }
 
 function dereferenceTopLevelAliasBody(
-	rule: Rule,
+	rule: Rule<'link'>,
 	ctx: LinkCtx,
-	resolvedRules: Record<string, Rule>,
+	resolvedRules: Record<string, Rule<'link'>>,
 	seen: Set<string>
-): Rule {
+): Rule<'link'> {
 	const supertypes = ctx.supertypes;
 	if (rule.type !== SYMBOL) return rule;
 	const refName = rule.aliasedFrom ?? rule.name;
@@ -875,7 +875,7 @@ function dereferenceTopLevelAliasBody(
  *   this slot, label the result `as_pattern_target`". Using the supertype as
  *   canonical would strip the concrete kind the runtime actually produces.
  */
-function extractAliasedFromName(content: Rule, supertypes: Set<string>): string | undefined {
+function extractAliasedFromName(content: Rule<'link'>, supertypes: Set<string>): string | undefined {
 	if (content.type === SYMBOL) {
 		// Record the alias SOURCE as provenance even when it is a supertype.
 		// `alias($.expression, $.as_pattern_target)` aliases the `expression`
@@ -892,7 +892,7 @@ function extractAliasedFromName(content: Rule, supertypes: Set<string>): string 
 		content.type === GROUP ||
 		content.type === TOKEN
 	) {
-		return extractAliasedFromName((content as { content: Rule }).content, supertypes);
+		return extractAliasedFromName((content as { content: Rule<'link'> }).content, supertypes);
 	}
 	return undefined;
 }
@@ -914,12 +914,12 @@ function extractAliasedFromName(content: Rule, supertypes: Set<string>): string 
  * reference at parse time and is opaque to the parent's structural
  * shape.
  */
-function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule>): boolean {
+function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule<'link'>>): boolean {
 	const target = rules[kindName];
 	if (!target) return false;
 	if (target.type === GROUP) return true;
 	// Pure repeat/repeat1 (possibly wrapped in optional/variant) = multi.
-	const unwrap = (r: Rule): Rule => (r.type === OPTIONAL || r.type === VARIANT ? unwrap(r.content) : r);
+	const unwrap = (r: Rule<'link'>): Rule<'link'> => (r.type === OPTIONAL || r.type === VARIANT ? unwrap(r.content) : r);
 	const bare = unwrap(target);
 	return bare.type === REPEAT || bare.type === REPEAT1;
 }
@@ -933,7 +933,7 @@ function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule>): 
 // Structurally identical members are deduplicated (non-lossy: tree-sitter
 // would parse them the same way).
 
-export function wrapVariants(choice: Rule): Rule {
+export function wrapVariants(choice: Rule<'link'>): Rule<'link'> {
 	if (choice.type !== CHOICE) return choice;
 
 	const members = choice.members.map((member, i) => {
@@ -942,15 +942,15 @@ export function wrapVariants(choice: Rule): Rule {
 			type: 'variant' as const,
 			name: variantName,
 			content: member
-		} satisfies VariantRule;
+		} satisfies VariantRule<'link'>;
 	});
 
 	return { type: CHOICE, members: deduplicateVariants(members) };
 }
 
-export function deduplicateVariants(variants: Rule[]): Rule[] {
-	const seen: Rule[] = [];
-	const result: Rule[] = [];
+export function deduplicateVariants(variants: Rule<'link'>[]): Rule<'link'>[] {
+	const seen: Rule<'link'>[] = [];
+	const result: Rule<'link'>[] = [];
 
 	for (const v of variants) {
 		const content = v.type === VARIANT ? v.content : v;
@@ -964,7 +964,7 @@ export function deduplicateVariants(variants: Rule[]): Rule[] {
 	return result;
 }
 
-export function nameVariant(variant: Rule, index: number, _all: Rule[]): string {
+export function nameVariant(variant: Rule<'link'>, index: number, _all: Rule<'link'>[]): string {
 	// Find a distinguishing string literal in this branch.
 	const detectToken = findDetectToken(variant);
 	if (detectToken) return tokenToName(detectToken);
@@ -976,7 +976,7 @@ export function nameVariant(variant: Rule, index: number, _all: Rule[]): string 
 	return `form_${index}`;
 }
 
-function findDetectToken(rule: Rule): string | null {
+function findDetectToken(rule: Rule<'link'>): string | null {
 	if (rule.type === STRING) return rule.value;
 	if (rule.type === SEQ && rule.members.length > 0) {
 		for (const m of rule.members) {
@@ -986,7 +986,7 @@ function findDetectToken(rule: Rule): string | null {
 	return null;
 }
 
-function findDetectSymbol(rule: Rule): string | null {
+function findDetectSymbol(rule: Rule<'link'>): string | null {
 	if (rule.type === SYMBOL) return rule.name;
 	if (rule.type === FIELD) return rule.name;
 	if (rule.type === SEQ) {
@@ -1002,7 +1002,7 @@ function findDetectSymbol(rule: Rule): string | null {
 // into details we don't care about for "are these two variants the
 // same shape". We compare member-by-member, normalising variant
 // wrappers to their content.
-function rulesEqualForVariant(a: Rule, b: Rule): boolean {
+function rulesEqualForVariant(a: Rule<'link'>, b: Rule<'link'>): boolean {
 	if (a.type !== b.type) return false;
 	// `a.type === b.type` narrows `a` via the switch below, but TS can't
 	// propagate that narrowing to `b`. One cast-to-`typeof a` per case
@@ -1048,11 +1048,11 @@ function rulesEqualForVariant(a: Rule, b: Rule): boolean {
 // ---------------------------------------------------------------------------
 //
 export interface VariantChoiceLocation {
-	choice: ChoiceRule;
+	choice: ChoiceRule<'link'>;
 	/** Members of the outer seq that appear before the choice. */
-	prefix: Rule[];
+	prefix: Rule<'link'>[];
 	/** Members of the outer seq that appear after the choice. */
-	suffix: Rule[];
+	suffix: Rule<'link'>[];
 }
 
 // ---------------------------------------------------------------------------
@@ -1069,7 +1069,7 @@ export interface VariantChoiceLocation {
 // what the user wrote. Mutates `rules` in place; logs to derivations.
 
 export function applyOverridePolymorphs(
-	rules: Record<string, Rule>,
+	rules: Record<string, Rule<'link'>>,
 	variants: PolymorphVariant[],
 	derivations: DerivationLog
 ): void {
@@ -1093,11 +1093,11 @@ export function applyOverridePolymorphs(
 		const variantChildSymbolNames = new Set(children.map((c) => polymorphVisibleName(parentKind, c)));
 		// Check whether any variant-child symbol appears in the found choice — either
 		// as a direct member or nested inside choice/seq arms at any shallow depth.
-		const symbolInNames = (r: Rule): boolean => {
+		const symbolInNames = (r: Rule<'link'>): boolean => {
 			const inner = r.type === VARIANT ? r.content : r;
 			return inner.type === 'symbol' && variantChildSymbolNames.has(inner.name);
 		};
-		const symbolInRule = (r: Rule): boolean => {
+		const symbolInRule = (r: Rule<'link'>): boolean => {
 			if (symbolInNames(r)) return true;
 			const inner = r.type === VARIANT ? r.content : r;
 			if (inner.type === 'choice') return inner.members.some(symbolInNames);
@@ -1179,7 +1179,7 @@ function emitVariantChildDerivations(parentKind: string, children: string[], der
  * @param children - Registered variant-child short names for `parentKind`.
  */
 function pushAmbientScaffoldIntoVariantChildren(
-	rules: Record<string, Rule>,
+	rules: Record<string, Rule<'link'>>,
 	parentKind: string,
 	children: readonly string[]
 ): void {
@@ -1206,10 +1206,10 @@ function pushAmbientScaffoldIntoVariantChildren(
  * unchanged.
  */
 function rewriteSeqWithVariantAliasChoice(
-	rule: Rule,
-	rules: Record<string, Rule>,
+	rule: Rule<'link'>,
+	rules: Record<string, Rule<'link'>>,
 	variantChildVisibleNames: Set<string>
-): Rule {
+): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ: {
 			// Does this seq directly contain the alias-choice?
@@ -1232,11 +1232,11 @@ function rewriteSeqWithVariantAliasChoice(
 		case FIELD:
 		case TOKEN: {
 			const content = rewriteSeqWithVariantAliasChoice(
-				(rule as { content: Rule }).content,
+				(rule as { content: Rule<'link'> }).content,
 				rules,
 				variantChildVisibleNames
 			);
-			return { ...(rule as object), content } as Rule;
+			return { ...(rule as object), content } as Rule<'link'>;
 		}
 		default:
 			return rule;
@@ -1251,7 +1251,7 @@ function rewriteSeqWithVariantAliasChoice(
  * this pass runs — so both raw `alias` rules AND collapsed symbol refs
  * need to count.
  */
-function isAllAliasChoice(rule: Rule, variantChildVisibleNames: Set<string>): boolean {
+function isAllAliasChoice(rule: Rule<'link'>, variantChildVisibleNames: Set<string>): boolean {
 	if (rule.type !== CHOICE || rule.members.length === 0) return false;
 	return rule.members.every((m) => {
 		const core = m.type === 'variant' ? m.content : m;
@@ -1267,11 +1267,11 @@ function isAllAliasChoice(rule: Rule, variantChildVisibleNames: Set<string>): bo
  * alias's `_${parent}_${child}` hidden-rule body. Return the seq with the
  * literals removed (single-member seq collapses to its inner content).
  */
-function applyVariantScaffoldPushDown(seq: SeqRule, choiceIdx: number, rules: Record<string, Rule>): Rule {
-	const prefix = seq.members.slice(0, choiceIdx).filter((m) => m.type === STRING) as StringRule[];
-	const suffix = seq.members.slice(choiceIdx + 1).filter((m) => m.type === STRING) as StringRule[];
+function applyVariantScaffoldPushDown(seq: SeqRule<'link'>, choiceIdx: number, rules: Record<string, Rule<'link'>>): Rule<'link'> {
+	const prefix = seq.members.slice(0, choiceIdx).filter((m) => m.type === STRING) as StringRule<'link'>[];
+	const suffix = seq.members.slice(choiceIdx + 1).filter((m) => m.type === STRING) as StringRule<'link'>[];
 	if (prefix.length === 0 && suffix.length === 0) return seq; // nothing to push
-	const choice = seq.members[choiceIdx] as ChoiceRule;
+	const choice = seq.members[choiceIdx] as ChoiceRule<'link'>;
 	for (const member of choice.members) {
 		const core = member.type === VARIANT ? member.content : member;
 		let visibleName: string | null = null;
@@ -1291,7 +1291,7 @@ function applyVariantScaffoldPushDown(seq: SeqRule, choiceIdx: number, rules: Re
 		// which is what render consults — picks up the pushed scaffold.
 		const body = rules[hiddenName] ?? rules[visibleName];
 		if (!body) continue;
-		const wrapped: Rule = {
+		const wrapped: Rule<'link'> = {
 			type: SEQ,
 			members: [...prefix, body, ...suffix]
 		};
@@ -1305,7 +1305,7 @@ function applyVariantScaffoldPushDown(seq: SeqRule, choiceIdx: number, rules: Re
 	return { type: SEQ, members: remaining };
 }
 
-export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
+export function findVariantChoice(rule: Rule<'link'>): VariantChoiceLocation | null {
 	// Matches bare choices (post-spec-013) and seq-wrapped choices.
 	if (isChoice(rule)) {
 		return { choice: rule, prefix: [], suffix: [] };
@@ -1317,7 +1317,7 @@ export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
 			const more = rule.members.findIndex((m, i) => i !== choiceIdx && m.type === 'choice');
 			if (more !== -1) return null;
 			return {
-				choice: rule.members[choiceIdx] as ChoiceRule,
+				choice: rule.members[choiceIdx] as ChoiceRule<'link'>,
 				prefix: rule.members.slice(0, choiceIdx),
 				suffix: rule.members.slice(choiceIdx + 1)
 			};
@@ -1328,21 +1328,21 @@ export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
 		// Guard: there must be zero choices at the outer level AND exactly one in the
 		// inner seq; if more than one choice total, bail (ambiguous).
 		const innerSeqIdx = rule.members.findIndex(
-			(m) => m.type === SEQ && (m as SeqRule).members.some((mm) => mm.type === CHOICE)
+			(m) => m.type === SEQ && (m as SeqRule<'link'>).members.some((mm) => mm.type === CHOICE)
 		);
 		if (innerSeqIdx === -1) return null;
 		// Make sure there is no other member that is also a seq with a choice in it,
 		// and no choices at all elsewhere in the outer seq.
 		const outerChoiceCount = rule.members.filter((m) => m.type === 'choice').length;
 		if (outerChoiceCount > 0) return null; // would have been caught above, defensive
-		const innerSeq = rule.members[innerSeqIdx] as SeqRule;
+		const innerSeq = rule.members[innerSeqIdx] as SeqRule<'link'>;
 		const innerChoiceIdx = innerSeq.members.findIndex((m) => m.type === CHOICE);
 		if (innerChoiceIdx === -1) return null;
 		// Ensure there is only ONE choice total across outer + inner levels.
 		const innerChoiceCount = innerSeq.members.filter((m) => m.type === CHOICE).length;
 		const otherSeqChoiceCount = rule.members
 			.filter((m, i) => i !== innerSeqIdx && m.type === 'seq')
-			.reduce((acc, m) => acc + (m as SeqRule).members.filter((mm) => mm.type === CHOICE).length, 0);
+			.reduce((acc, m) => acc + (m as SeqRule<'link'>).members.filter((mm) => mm.type === CHOICE).length, 0);
 		if (innerChoiceCount !== 1 || otherSeqChoiceCount > 0) return null;
 		// Merge outer prefix/suffix with the inner seq's non-choice members.
 		const outerPrefix = rule.members.slice(0, innerSeqIdx);
@@ -1350,7 +1350,7 @@ export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
 		const innerPrefix = innerSeq.members.slice(0, innerChoiceIdx);
 		const innerSuffix = innerSeq.members.slice(innerChoiceIdx + 1);
 		return {
-			choice: innerSeq.members[innerChoiceIdx] as ChoiceRule,
+			choice: innerSeq.members[innerChoiceIdx] as ChoiceRule<'link'>,
 			prefix: [...outerPrefix, ...innerPrefix],
 			suffix: [...innerSuffix, ...outerSuffix]
 		};
@@ -1496,12 +1496,12 @@ export function tokenToName(token: string): string {
  *
  * Skips rules that already have a classification wrapper (enum, supertype,
  * group) — those are structural but Assemble has dedicated classifiers.
- * PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+ * PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
  */
-export function isTerminalShape(rule: Rule): boolean {
+export function isTerminalShape(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		// PR-P: ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this.
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 		case SUPERTYPE:
 		case GROUP:
 			return false; // already has a structural classification
@@ -1548,7 +1548,7 @@ export function isTerminalShape(rule: Rule): boolean {
  * Like isTerminalShape but bare terminals (string/pattern/whitespace) count
  * as terminal. Used to recurse into composed structures.
  */
-function isTerminalShape_allowBareTerm(rule: Rule): boolean {
+function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case STRING:
 		case PATTERN:
@@ -1586,7 +1586,7 @@ function isTerminalShape_allowBareTerm(rule: Rule): boolean {
 // resolveRule — recursive resolution of all reference types
 // ---------------------------------------------------------------------------
 
-function resolveRule(rule: Rule, ctx: LinkCtx, currentName: string): Rule {
+function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
 			return {
@@ -1645,7 +1645,7 @@ function resolveRule(rule: Rule, ctx: LinkCtx, currentName: string): Rule {
 				// reference the minted VISIBLE kind by a clean `symbol(<name>)` ref;
 				// `mintContentAliasKinds` registers the body. (Symbol content WITHOUT
 				// the enrich tag is an authored relabel handled below via aliasedFrom.)
-				return { type: 'symbol', name: rule.value, inline: false } as Rule;
+				return { type: 'symbol', name: rule.value, inline: false } as Rule<'link'>;
 			}
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
 				return resolveNamedAliasWithProvenance(rule.content, ctx, rule.value);
@@ -1705,7 +1705,7 @@ function resolveRule(rule: Rule, ctx: LinkCtx, currentName: string): Rule {
  *   `repeat1` → `repeat` here unconditionally, which erased the non-empty
  *   signal.
  */
-function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, currentName: string): Rule {
+function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, currentName: string): Rule<'link'> {
 	return {
 		...rule,
 		content: resolveRule(rule.content, ctx, currentName)
@@ -1721,18 +1721,18 @@ function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, curre
  *   aliased-from sources.
  * @param targetName - The alias target kind name (the visible kind produced in
  *   the parse tree).
- * @returns A `SymbolRule` for `targetName`, with `aliasedFrom` set when the
+ * @returns A `SymbolRule<'link'>` for `targetName`, with `aliasedFrom` set when the
  *   body resolves to a concrete non-supertype symbol.
  * @remarks
  *   Preserving alias provenance lets the wrap emitter rewrite `$type` at
  *   drill-in via `drillAs()` for alias-target rewrites.
  */
-function resolveNamedAliasWithProvenance(content: Rule, ctx: LinkCtx, targetName: string): Rule {
+function resolveNamedAliasWithProvenance(content: Rule<'link'>, ctx: LinkCtx, targetName: string): Rule<'link'> {
 	const aliasedFrom = extractAliasedFromName(content, ctx.supertypes);
-	const sym: SymbolRule = aliasedFrom
+	const sym: SymbolRule<'link'> = aliasedFrom
 		? { type: 'symbol', name: targetName, aliasedFrom, inline: false }
 		: { type: 'symbol', name: targetName, inline: false };
-	return sym as unknown as Rule;
+	return sym as unknown as Rule<'link'>;
 }
 
 /**
@@ -1755,11 +1755,11 @@ function resolveNamedAliasWithProvenance(content: Rule, ctx: LinkCtx, targetName
  *     downstream consumers.
  *   Visible symbols that don't match either path are returned unchanged.
  */
-function resolveSymbolRoleOrPass(rule: SymbolRule, ctx: LinkCtx): Rule {
+function resolveSymbolRoleOrPass(rule: SymbolRule<'link'>, ctx: LinkCtx): Rule<'link'> {
 	const { rules: allRules, externalRoles } = ctx;
 	const preBound = externalRoles.get(rule.name);
 	if (preBound) {
-		return { type: preBound.role } as Rule;
+		return { type: preBound.role } as Rule<'link'>;
 	}
 	const target = allRules[rule.name];
 	if (target && (target.type === INDENT || target.type === DEDENT || target.type === NEWLINE)) {
@@ -1773,7 +1773,7 @@ function resolveSymbolRoleOrPass(rule: SymbolRule, ctx: LinkCtx): Rule {
 // classifyHiddenRule — determine what a hidden rule IS
 // ---------------------------------------------------------------------------
 
-function classifyHiddenRule(rule: Rule, ctx: LinkCtx, name: string): Rule {
+function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Rule<'link'> {
 	// Already classified (e.g., enum from Evaluate)
 	// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
 	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
@@ -1795,16 +1795,16 @@ function classifyHiddenRule(rule: Rule, ctx: LinkCtx, name: string): Rule {
 /**
  * Classify a hidden `choice` rule per the spec taxonomy.
  *
- * @param rule - A `ChoiceRule` to classify.
+ * @param rule - A `ChoiceRule<'link'>` to classify.
  * @param ctx - Link phase context; `ctx.supertypes` are kind names explicitly
  *   declared in `grammar.supertypes`.
  * @param name - The grammar kind name (used to check `ctx.supertypes`).
- * @returns An `EnumRule`, `SupertypeRule`, or the original rule unchanged.
+ * @returns An `EnumRule<'link'>`, `SupertypeRule<'link'>`, or the original rule unchanged.
  * @remarks
  *   Classification:
- *   - All-string members → `EnumRule` (promoted).
+ *   - All-string members → `EnumRule<'link'>` (promoted).
  *   - Supertype-compatible members (symbols, named aliases, enums/strings) →
- *     `SupertypeRule` when at least one concrete subtype name can be resolved.
+ *     `SupertypeRule<'link'>` when at least one concrete subtype name can be resolved.
  *   - Mixed/structural members → rule unchanged; Assemble classifies by shape.
  *
  *   The old rule ("any hidden choice → supertype, subtypes best-effort")
@@ -1816,9 +1816,9 @@ function classifyHiddenRule(rule: Rule, ctx: LinkCtx, name: string): Rule {
  *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
  *   structural members (seq, field, nested choice/optional/repeat) disqualify.
  */
-function classifyHiddenChoiceRule(rule: ChoiceRule, ctx: LinkCtx, name: string): Rule {
+function classifyHiddenChoiceRule(rule: ChoiceRule<'link'>, ctx: LinkCtx, name: string): Rule<'link'> {
 	const { supertypes, hiddenChoicesWithNamedAliasMembers } = ctx;
-	if (rule.members.every((m): m is StringRule => m.type === STRING)) {
+	if (rule.members.every((m): m is StringRule<'link'> => m.type === STRING)) {
 		return normalizeEnumMembers(rule.members, 'promoted');
 	}
 
@@ -1831,7 +1831,7 @@ function classifyHiddenChoiceRule(rule: ChoiceRule, ctx: LinkCtx, name: string):
 		return rule;
 	}
 
-	const supertypeCompatible = (m: Rule): boolean =>
+	const supertypeCompatible = (m: Rule<'link'>): boolean =>
 		m.type === SYMBOL || isEnumChoiceRule(m) || m.type === STRING;
 	const allCompatible = rule.members.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
@@ -1845,7 +1845,7 @@ function classifyHiddenChoiceRule(rule: ChoiceRule, ctx: LinkCtx, name: string):
 				name,
 				subtypes,
 				source: supertypes.has(name) ? 'grammar' : 'promoted'
-			} satisfies SupertypeRule;
+			} satisfies SupertypeRule<'link'>;
 		}
 	}
 
@@ -1854,11 +1854,11 @@ function classifyHiddenChoiceRule(rule: ChoiceRule, ctx: LinkCtx, name: string):
 }
 
 /**
- * Classify a hidden `seq` rule as a `GroupRule` when it contains fields.
+ * Classify a hidden `seq` rule as a `GroupRule<'link'>` when it contains fields.
  *
  * @param name - The grammar kind name for the group.
- * @param rule - A `SeqRule` to classify.
- * @returns A `GroupRule` wrapping the seq when fields are present; the original
+ * @param rule - A `SeqRule<'link'>` to classify.
+ * @returns A `GroupRule<'link'>` wrapping the seq when fields are present; the original
  *   rule otherwise.
  * @remarks
  *   Uses `hasAnyField` so nested structures (`repeat(field(...))`,
@@ -1867,13 +1867,13 @@ function classifyHiddenChoiceRule(rule: ChoiceRule, ctx: LinkCtx, name: string):
  *   `seq(repeat1(field('name', ...)), optional(','))` — no direct field member,
  *   but the repeated field inside is exactly what groups capture.
  */
-function classifyHiddenSeqRule(name: string, rule: SeqRule): Rule {
+function classifyHiddenSeqRule(name: string, rule: SeqRule<'link'>): Rule<'link'> {
 	if (hasAnyField(rule)) {
 		return {
 			type: GROUP,
 			name,
 			content: rule
-		} satisfies GroupRule;
+		} satisfies GroupRule<'link'>;
 	}
 	return rule;
 }
@@ -1890,9 +1890,9 @@ function classifyHiddenSeqRule(name: string, rule: SeqRule): Rule {
  * @param ctx - Link phase context; `ctx.wordMatcher` decides whether a bare
  *   string-literal member lexes as a word (keyword) vs punctuation.
  */
-function collectSubtypeNames(rule: Rule, ctx: LinkCtx): string[] {
+function collectSubtypeNames(rule: Rule<'link'>, ctx: LinkCtx): string[] {
 	const names: string[] = [];
-	const visit = (current: Rule): void => {
+	const visit = (current: Rule<'link'>): void => {
 		switch (current.type) {
 			case SYMBOL:
 				names.push(current.aliasedFrom ?? current.name);
@@ -1941,7 +1941,7 @@ function collectSubtypeNames(rule: Rule, ctx: LinkCtx): string[] {
 // enrichPositions — walk SEQ members to assign position to SymbolRefs
 // ---------------------------------------------------------------------------
 
-export function enrichPositions(rules: Record<string, Rule>, refs: SymbolRef[]): void {
+export function enrichPositions(rules: Record<string, Rule<'link'>>, refs: SymbolRef[]): void {
 	for (const ref of refs) {
 		const rule = rules[ref.from];
 		if (!rule || rule.type !== SEQ) continue;
@@ -1984,13 +1984,13 @@ export function computeParentSets(refs: SymbolRef[]): Map<string, SymbolRef[]> {
 // automatically without baking depth into the rule tree.
 const BLOCK_SEPARATOR = '\n';
 
-function hoistIndentIntoRepeat(rules: Record<string, Rule>): void {
+function hoistIndentIntoRepeat(rules: Record<string, Rule<'link'>>): void {
 	for (const [, rule] of Object.entries(rules)) {
 		walkForIndentHoist(rule, rules);
 	}
 }
 
-function walkForIndentHoist(rule: Rule, rules: Record<string, Rule>): void {
+function walkForIndentHoist(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): void {
 	switch (rule.type) {
 		case SEQ: {
 			// Find every `indent` member; for each, promote the nearest
@@ -2030,7 +2030,7 @@ function walkForIndentHoist(rule: Rule, rules: Record<string, Rule>): void {
  * (seq/optional/group/field). `visited` guards against recursive hidden
  * chains so a left-recursive helper doesn't stack-overflow. Idempotent.
  */
-function assignRepeatSeparator(rule: Rule, rules: Record<string, Rule>, visited: Set<string>): boolean {
+function assignRepeatSeparator(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>, visited: Set<string>): boolean {
 	if (rule.type === REPEAT || rule.type === REPEAT1) {
 		if (!rule.separator) (rule as { separator?: string }).separator = BLOCK_SEPARATOR;
 		return true;
@@ -2063,7 +2063,7 @@ function assignRepeatSeparator(rule: Rule, rules: Record<string, Rule>, visited:
 // Python-style `class X:\n  body` requires a newline + indent before the
 // block's rendered content. The template walker emits `\n  $BODY` for a
 // field whose content resolves (via symbol deref) to a subtree containing
-// an `indent` Rule node. This pass computes the set of "block-bearer"
+// an `indent` Rule<'link'> node. This pass computes the set of "block-bearer"
 // kinds by reachability and tags every matching field with `blockBearer: true`.
 
 /**
@@ -2081,7 +2081,7 @@ function assignRepeatSeparator(rule: Rule, rules: Record<string, Rule>, visited:
  *   it's visible, so consumers of `else_clause` are NOT block-bearers
  *   themselves (the `else_clause` renders flush-left).
  */
-function computeHiddenBearerSet(rules: Record<string, Rule>): Set<string> {
+function computeHiddenBearerSet(rules: Record<string, Rule<'link'>>): Set<string> {
 	const bearers = new Set<string>();
 	for (const [name, rule] of Object.entries(rules)) {
 		if (name.startsWith('_') && containsIndent(rule)) bearers.add(name);
@@ -2101,7 +2101,7 @@ function computeHiddenBearerSet(rules: Record<string, Rule>): Set<string> {
 	return bearers;
 }
 
-function annotateBlockBearerFields(rules: Record<string, Rule>): void {
+function annotateBlockBearerFields(rules: Record<string, Rule<'link'>>): void {
 	const bearers = computeHiddenBearerSet(rules);
 	// Mutate fields whose content reaches a bearer through hidden-only
 	// intermediates. `markBlockBearerFields` recurses so nested visible
@@ -2111,7 +2111,7 @@ function annotateBlockBearerFields(rules: Record<string, Rule>): void {
 	}
 }
 
-function containsIndent(rule: Rule): boolean {
+function containsIndent(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case INDENT:
 			return true;
@@ -2132,7 +2132,7 @@ function containsIndent(rule: Rule): boolean {
 	}
 }
 
-function referencesBearer(rule: Rule, bearers: ReadonlySet<string>): boolean {
+function referencesBearer(rule: Rule<'link'>, bearers: ReadonlySet<string>): boolean {
 	switch (rule.type) {
 		case SYMBOL:
 			return bearers.has(rule.name);
@@ -2153,7 +2153,7 @@ function referencesBearer(rule: Rule, bearers: ReadonlySet<string>): boolean {
 	}
 }
 
-function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
+function markBlockBearerFields(rule: Rule<'link'>, bearers: ReadonlySet<string>): void {
 	switch (rule.type) {
 		case FIELD:
 			if (referencesBearer(rule.content, bearers)) {
@@ -2204,7 +2204,7 @@ function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
  *     named visible rule (candidates for a choice-of-symbols),
  *     `group` otherwise.
  */
-function collectRepeatedShapes(rules: Record<string, Rule>, out: RepeatedShapeEntry[]): void {
+function collectRepeatedShapes(rules: Record<string, Rule<'link'>>, out: RepeatedShapeEntry[]): void {
 	// Build the set of already-declared supertype signatures so we
 	// don't duplicate-suggest what the grammar author already wrote.
 	const existingSupertypeKeys = new Set<string>();
@@ -2253,7 +2253,7 @@ function collectRepeatedShapes(rules: Record<string, Rule>, out: RepeatedShapeEn
  * before yielding, matching the way the from emitter classifies
  * resolver kind lists.
  */
-function collectFieldKindSets(rule: Rule, yield_: (kinds: readonly string[]) => void): void {
+function collectFieldKindSets(rule: Rule<'link'>, yield_: (kinds: readonly string[]) => void): void {
 	switch (rule.type) {
 		case FIELD: {
 			const kinds = directContentKinds(rule.content);
@@ -2282,7 +2282,7 @@ function collectFieldKindSets(rule: Rule, yield_: (kinds: readonly string[]) => 
  * resolves to. Unwraps seq/choice/optional/repeat/variant but
  * stops at field/symbol boundaries.
  */
-function directContentKinds(rule: Rule): string[] {
+function directContentKinds(rule: Rule<'link'>): string[] {
 	switch (rule.type) {
 		case SYMBOL:
 			return [rule.name];
@@ -2343,14 +2343,14 @@ function suggestSharedName(kinds: readonly string[]): string {
  * `null`.
  */
 
-export function absorbTrailingSeparator(members: Rule[]): Rule[] | null {
+export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[] | null {
     let changed = false;
-    const out: Rule[] = [];
+    const out: Rule<'link'>[] = [];
     for (let i = 0; i < members.length; i++) {
         const cur = members[i]!;
         const next = members[i + 1];
         const isSepRepeat = (cur.type === REPEAT || cur.type === REPEAT1) && cur.separator !== undefined && !cur.trailing;
-        const isOptionalSepLit = (r: Rule | undefined, sep: string): boolean => !!r && r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
+        const isOptionalSepLit = (r: Rule<'link'> | undefined, sep: string): boolean => !!r && r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
         if (isSepRepeat && isOptionalSepLit(next, (cur as RepeatRule | Repeat1Rule).separator!)) {
             out.push({ ...(cur as RepeatRule | Repeat1Rule), trailing: true });
             i++;
@@ -2369,7 +2369,7 @@ export function absorbTrailingSeparator(members: Rule[]): Rule[] | null {
  * when this runs bottom-up (children lifted first).
  */
 
-export function liftCommaSep(members: Rule[]): Rule | null {
+export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
     if (members.length < 2 || members.length > 3) return null;
 
     const repeatIdx = findRepeatWithSeparator(members);
@@ -2378,8 +2378,8 @@ export function liftCommaSep(members: Rule[]): Rule | null {
     const sep = repeatNode.separator!;
     const elem = repeatNode.content;
 
-    const matchesElem = (r: Rule): boolean => rulesEqual(r, elem);
-    const matchesOptionalSep = (r: Rule): boolean => r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
+    const matchesElem = (r: Rule<'link'>): boolean => rulesEqual(r, elem);
+    const matchesOptionalSep = (r: Rule<'link'>): boolean => r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
 
     // Case 1: [x, repeat(sep, x)]
     if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
@@ -2403,7 +2403,7 @@ export function liftCommaSep(members: Rule[]): Rule | null {
  * Locate the unique repeat-with-separator member in a seq's member list, or
  * `-1` when there is zero or more than one (not a commaSep shape).
  */
-function findRepeatWithSeparator(members: Rule[]): number {
+function findRepeatWithSeparator(members: Rule<'link'>[]): number {
     return members.findIndex((m) => m.type === REPEAT && m.separator !== undefined);
 }
 /**
@@ -2415,7 +2415,7 @@ function findRepeatWithSeparator(members: Rule[]): number {
  * own modifier attributes onto the replacement, since the repeat takes the
  * seq's structural position.
  */
-function liftSeqMembers(seq: SeqRule, members: Rule[]): Rule {
+function liftSeqMembers(seq: SeqRule<'link'>, members: Rule<'link'>[]): Rule<'link'> {
     const lifted = liftCommaSep(members);
     if (lifted) return { ...carrySeqAttrs(seq), ...lifted };
     const absorbed = absorbTrailingSeparator(members);
@@ -2423,7 +2423,7 @@ function liftSeqMembers(seq: SeqRule, members: Rule[]): Rule {
 }
 /** Pick the position-carried modifier attrs a seq passes to a repeat that
  *  replaces it (id/fieldName/multiplicity/nonterminal/metadata) — NOT `members`. */
-function carrySeqAttrs(seq: SeqRule): Partial<SeqRule> {
+function carrySeqAttrs(seq: SeqRule<'link'>): Partial<SeqRule<'link'>> {
     const { members: _members, ...rest } = seq;
     return rest;
 }
@@ -2434,7 +2434,7 @@ function carrySeqAttrs(seq: SeqRule): Partial<SeqRule> {
  * constructors produced by lifting inner-to-outer at call time.
  */
 
-export function liftSeparators(rule: Rule): Rule {
+export function liftSeparators(rule: Rule<'link'>): Rule<'link'> {
     switch (rule.type) {
         case SEQ:
             return liftSeqMembers(rule, rule.members.map(liftSeparators));
@@ -2460,7 +2460,7 @@ export function liftSeparators(rule: Rule): Rule {
             // later still in normalize. Their bodies are lifted AT those
             // construction sites, so skipping them here is correct, not lossy.
             // (The pre-link DSL-shaped uppercase 'GROUP'/'VARIANT' are a separate
-            // dsl/ vocabulary that never reaches this compiler-Rule walker.)
+            // dsl/ vocabulary that never reaches this compiler-Rule<'link'> walker.)
             return rule;
     }
 }
@@ -2482,9 +2482,9 @@ export function liftSeparators(rule: Rule): Rule {
  * by `polymorphs:` / `transforms:` in `overrides.ts`.
  */
 
-export function resolveGroupPath(rule: Rule, path: string): Rule {
+export function resolveGroupPath(rule: Rule<'link'>, path: string): Rule<'link'> {
     const segments = path.split('/').filter((s) => s.length > 0);
-    let cur: Rule = rule;
+    let cur: Rule<'link'> = rule;
     for (let i = 0; i < segments.length; i++) {
         const seg = segments[i]!;
         const idx = parseInt(seg, 10);
@@ -2495,7 +2495,7 @@ export function resolveGroupPath(rule: Rule, path: string): Rule {
     }
     return cur;
 }
-function stepInto(rule: Rule, idx: number, fullPath: string): Rule {
+function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link'> {
     switch (rule.type) {
         case SEQ:
         case CHOICE: {
@@ -2520,7 +2520,7 @@ function stepInto(rule: Rule, idx: number, fullPath: string): Rule {
                     `group path '${fullPath}' does not resolve: index ${idx} invalid for wrapper '${rule.type}' (only 0 is content)`
                 );
             }
-            return (rule as { content: Rule; }).content;
+            return (rule as { content: Rule<'link'>; }).content;
         default:
             throw new Error(
                 `group path '${fullPath}' does not resolve: cannot descend into rule of type '${rule.type}'`
@@ -2537,7 +2537,7 @@ export interface DeriveSynthesizedNameArgs {
 /**
  * Compute the synthesized hidden kind name for a group lift.
  *
- * Rule: `_<parent>` + for each path-prefix that ALSO appears as a key
+ * Rule<'link'>: `_<parent>` + for each path-prefix that ALSO appears as a key
  * in polymorphs[parent], append `_<variantName>` + `_<discriminator>`.
  *
  * Polymorph prefixes are matched by string prefix of the slash-joined
@@ -2567,7 +2567,7 @@ export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
 export interface ValidateGroupsArgs {
     groups: Record<string, Record<string, string> | undefined>;
     polymorphs: Record<string, Record<string, string> | undefined>;
-    rules: Record<string, Rule>;
+    rules: Record<string, Rule<'link'>>;
     warn?: (msg: string) => void;
 }
 /**
@@ -2591,7 +2591,7 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
         for (const path of liftPaths) {
             const discriminator = lifts[path]!;
 
-            let target: Rule;
+            let target: Rule<'link'>;
             try {
                 target = resolveGroupPath(root, path);
             } catch (e) {
@@ -2656,7 +2656,7 @@ function isAncestorPath(ancestor: string, descendant: string): boolean {
     }
     return true;
 }
-function hasStructuralMember(rule: Rule): boolean {
+function hasStructuralMember(rule: Rule<'link'>): boolean {
     switch (rule.type) {
         case FIELD:
         case SYMBOL:
@@ -2672,21 +2672,21 @@ function hasStructuralMember(rule: Rule): boolean {
         case ALIAS:
         case VARIANT:
         case GROUP:
-            return hasStructuralMember((rule as { content: Rule; }).content);
+            return hasStructuralMember((rule as { content: Rule<'link'>; }).content);
         default:
             return false;
     }
 }
 
 export interface ApplyGroupOverridesArgs {
-    rules: Record<string, Rule>;
+    rules: Record<string, Rule<'link'>>;
     groups: Record<string, Record<string, string> | undefined>;
     polymorphs: Record<string, Record<string, string> | undefined>;
     warn?: (msg: string) => void;
 }
 
 export interface ApplyGroupOverridesResult {
-    rules: Record<string, Rule>;
+    rules: Record<string, Rule<'link'>>;
     synthesizedKinds: readonly string[];
 }
 /**
@@ -2705,7 +2705,7 @@ export interface ApplyGroupOverridesResult {
 export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOverridesResult {
     validateGroupsConfig(args);
 
-    const newRules: Record<string, Rule> = { ...args.rules };
+    const newRules: Record<string, Rule<'link'>> = { ...args.rules };
     const synthesizedKinds: string[] = [];
 
     for (const [kind, lifts] of Object.entries(args.groups)) {
@@ -2731,7 +2731,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 
     return { rules: newRules, synthesizedKinds };
 }
-function liftRule(target: Rule, synName: string, _discriminator: string): { liftedBody: Rule; replacement: Rule; } {
+function liftRule(target: Rule<'link'>, synName: string, _discriminator: string): { liftedBody: Rule<'link'>; replacement: Rule<'link'>; } {
     // Mint the helper ref through evaluate's `symbol()` so it gets the SAME
     // construction-time stamps (`hidden`, `inline = name.startsWith('_')`) as any
     // other ref — group-lift helpers are `_`-prefixed → inline=true. Stamping at
@@ -2745,17 +2745,17 @@ function liftRule(target: Rule, synName: string, _discriminator: string): { lift
         case OPTIONAL:
             return {
                 liftedBody: target.content,
-                replacement: { type: 'optional', content: synSym } as Rule
+                replacement: { type: 'optional', content: synSym } as Rule<'link'>
             };
         case REPEAT:
             return {
                 liftedBody: target.content,
-                replacement: { type: 'repeat', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
+                replacement: { type: 'repeat', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule<'link'>
             };
         case REPEAT1:
             return {
                 liftedBody: target.content,
-                replacement: { type: 'repeat1', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
+                replacement: { type: 'repeat1', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule<'link'>
             };
         default:
             return { liftedBody: target, replacement: synSym };
@@ -2779,7 +2779,7 @@ function clone<T>(value: T): T {
  * map not mutated.
  *
  * Symbol resolution is transitive: when `x` itself is not in `renderAs`
- * but `rules[x]` is a `StringRule` whose value matches a renderAs literal,
+ * but `rules[x]` is a `StringRule<'link'>` whose value matches a renderAs literal,
  * the stamp fires. This handles post-evaluate renaming — evaluate's
  * `synthesizeFieldEnumRules` replaces `field(n, SYMBOL(renderAs))` with
  * `field(n, SYMBOL(_parentKind_fieldName))` where the new hidden rule
@@ -2793,9 +2793,9 @@ function clone<T>(value: T): T {
  */
 
 export function stampStaticRenderAs(
-    rules: Record<string, Rule>,
-    renderAs: Record<string, Rule>
-): Record<string, Rule> {
+    rules: Record<string, Rule<'link'>>,
+    renderAs: Record<string, Rule<'link'>>
+): Record<string, Rule<'link'>> {
     // Build the stamp lookup: renderAs-key → literal value, for entries
     // that are single string() bodies.
     const renderStamps: Record<string, string> = {};
@@ -2842,7 +2842,7 @@ export function stampStaticRenderAs(
     }
     if (Object.keys(symToLit).length === 0 && blankStamps.size === 0) return rules;
 
-    const out: Record<string, Rule> = {};
+    const out: Record<string, Rule<'link'>> = {};
     for (const [name, rule] of Object.entries(rules)) {
         // Blank-stamped entries are removed from the rules map: their
         // references have been replaced inline with the blank sentinel
@@ -2859,17 +2859,17 @@ export function stampStaticRenderAs(
  * `blank()` produces `{ type: 'choice', members: [] }` (see evaluate.ts).
  * Same shape detection used by choice()'s optional-collapse pass.
  */
-function isBlankRule(rule: Rule): boolean {
+function isBlankRule(rule: Rule<'link'>): boolean {
     return (
         (rule.type === CHOICE && rule.members.length === 0) ||
         (rule.type === SEQ && rule.members.length === 0)
     );
 }
 function rewriteRuleForStamp(
-    rule: Rule,
+    rule: Rule<'link'>,
     symToLit: Record<string, string>,
     blankStamps: ReadonlySet<string>
-): Rule {
+): Rule<'link'> {
     switch (rule.type) {
         case SYMBOL: {
             const lit = symToLit[rule.name];
@@ -2903,7 +2903,7 @@ function rewriteRuleForStamp(
         case REPEAT1:
         case VARIANT:
         case GROUP:
-            return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule;
+            return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule<'link'>;
 
         case SEQ:
             return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps)) };
@@ -2931,7 +2931,7 @@ function rewriteRuleForStamp(
  * candidate checking. Does NOT recurse into field/optional/etc — only
  * strips alias/token transparency layers.
  */
-function unwrapAliasForCheck(rule: Rule): Rule {
+function unwrapAliasForCheck(rule: Rule<'link'>): Rule<'link'> {
     if (rule.type === ALIAS || rule.type === TOKEN) return unwrapAliasForCheck(rule.content);
     return rule;
 }
@@ -2959,30 +2959,30 @@ export interface RefinePathResolution {
      *  case, but we keep this optional so future non-field refinement
      *  sites don't need a schema change). */
     readonly fieldName: string | undefined;
-    /** The resolved choice rule — either a `ChoiceRule` or an `EnumRule`
+    /** The resolved choice rule — either a `ChoiceRule<'link'>` or an `EnumRule<'link'>`
      *  (the normalized choice-of-strings). Both expose `members`, so
      *  consumers that walk them uniformly work without adapting. */
-    readonly choice: ChoiceRule | EnumRule;
+    readonly choice: ChoiceRule<'link'> | EnumRule<'link'>;
 }
 /**
  * Validate every refine form's paths and selections for one kind.
  * Throws on the first failure — codegen fails loud when a refine
  * declaration is inconsistent with the rule shape.
  *
- * @param kind - Rule kind being validated (used in error messages).
+ * @param kind - Rule<'link'> kind being validated (used in error messages).
  * @param rule - Post-link rule tree for `kind`.
  * @param forms - Ordered list of refine forms declared for `kind`.
  * @param rules - Optional rules map for resolving symbol references
  *   introduced by evaluate's field-enum synthesis pass. When a path
- *   terminus resolves to a `SymbolRule`, the target rule is looked up
- *   here to retrieve the underlying `EnumRule`.
+ *   terminus resolves to a `SymbolRule<'link'>`, the target rule is looked up
+ *   here to retrieve the underlying `EnumRule<'link'>`.
  */
 
 export function validateRefineForms(
     kind: string,
-    rule: Rule,
+    rule: Rule<'link'>,
     forms: readonly RefineForm[],
-    rules?: Readonly<Record<string, Rule>>
+    rules?: Readonly<Record<string, Rule<'link'>>>
 ): void {
     for (const form of forms) {
         for (const [pathStr, selection] of Object.entries(form.selections)) {
@@ -2994,7 +2994,7 @@ export function validateRefineForms(
 /**
  * Resolve a refine() path against a rule tree to the target CHOICE.
  *
- * @param kind - Rule kind being validated (used in error messages).
+ * @param kind - Rule<'link'> kind being validated (used in error messages).
  * @param formName - Refine form name (used in error messages).
  * @param pathStr - The path string as declared in the refine() call.
  * @param rule - Post-link rule tree for `kind`.
@@ -3009,14 +3009,14 @@ export function resolveRefinePath(
     kind: string,
     formName: string,
     pathStr: string,
-    rule: Rule,
-    rules?: Readonly<Record<string, Rule>>
+    rule: Rule<'link'>,
+    rules?: Readonly<Record<string, Rule<'link'>>>
 ): RefinePathResolution {
     const segments = parsePath(pathStr);
     if (segments.length === 0) {
         throw new Error(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
     }
-    let cur: Rule = rule;
+    let cur: Rule<'link'> = rule;
     let fieldName: string | undefined;
     for (let i = 0; i < segments.length; i++) {
         const seg = segments[i]!;
@@ -3040,7 +3040,7 @@ export function resolveRefinePath(
  * unsupported for refine paths, and `fieldName` descends through a
  * `field(name, ...)` wrapper.
  */
-function stepPath(rule: Rule, seg: PathSegment, kind: string, formName: string, pathStr: string): { next: Rule; } {
+function stepPath(rule: Rule<'link'>, seg: PathSegment, kind: string, formName: string, pathStr: string): { next: Rule<'link'>; } {
     switch (seg.kind) {
         case 'fieldName': {
             const target = findFieldByName(rule, seg.name);
@@ -3090,23 +3090,23 @@ function stepPath(rule: Rule, seg: PathSegment, kind: string, formName: string, 
  * enum. Wrappers between the start and the terminal choice are
  * structurally transparent for selection purposes.
  *
- * `EnumRule` is shape-compatible with `ChoiceRule` (both expose
+ * `EnumRule<'link'>` is shape-compatible with `ChoiceRule<'link'>` (both expose
  * `members`) — callers that walk members uniformly can accept the union
  * without further adaptation. The discriminant is still useful
  * information downstream so we surface it here instead of collapsing.
  */
 /**
- * Unwrap wrappers to reach a `ChoiceRule` or `EnumRule`.
+ * Unwrap wrappers to reach a `ChoiceRule<'link'>` or `EnumRule<'link'>`.
  *
  * @param rule - The rule to unwrap.
  * @param rules - Optional rules map for resolving synthesized symbol
- *   references. When `rule` is a `SymbolRule` whose name starts with `_`
+ *   references. When `rule` is a `SymbolRule<'link'>` whose name starts with `_`
  *   (a synthesized field-enum hidden rule), the target is looked up in
  *   `rules` and unwrapped. One level of indirection only.
  * @returns The underlying choice or enum, or `undefined` when the rule
  *   does not reduce to one.
  */
-function unwrapToChoice(rule: Rule, rules?: Readonly<Record<string, Rule>>): ChoiceRule | EnumRule | undefined {
+function unwrapToChoice(rule: Rule<'link'>, rules?: Readonly<Record<string, Rule<'link'>>>): ChoiceRule<'link'> | EnumRule<'link'> | undefined {
     let cur = rule;
     const visitedSymbols = new Set<string>();
     for (; ;) {
@@ -3137,7 +3137,7 @@ function unwrapToChoice(rule: Rule, rules?: Readonly<Record<string, Rule>>): Cho
  * field. Returns the first match (refine paths target one field per
  * segment; duplicate field names at the same level aren't meaningful).
  */
-function findFieldByName(rule: Rule, fieldName: string): FieldRule | undefined {
+function findFieldByName(rule: Rule<'link'>, fieldName: string): FieldRule | undefined {
     if (isField(rule)) return rule.name === fieldName ? rule : undefined;
     if (isSeq(rule)) {
         for (const m of rule.members) {
@@ -3154,7 +3154,7 @@ function findFieldByName(rule: Rule, fieldName: string): FieldRule | undefined {
 /**
  * Validate one selection value against the target choice.
  *
- * @param kind - Rule kind (error-message context).
+ * @param kind - Rule<'link'> kind (error-message context).
  * @param formName - Refine form name (error-message context).
  * @param pathStr - Path string (error-message context).
  * @param choice - The resolved choice rule.
@@ -3165,10 +3165,10 @@ function validateSelection(
     kind: string,
     formName: string,
     pathStr: string,
-    choice: ChoiceRule | EnumRule,
+    choice: ChoiceRule<'link'> | EnumRule<'link'>,
     selection: number | string
 ): void {
-    const arms: readonly Rule[] = choice.members;
+    const arms: readonly Rule<'link'>[] = choice.members;
     if (typeof selection === 'number') {
         if (selection < 0 || selection >= arms.length) {
             throw new Error(
@@ -3191,10 +3191,10 @@ function validateSelection(
  * `variant` wrapper to reach the underlying string. Non-string arms
  * return `undefined`.
  */
-function unwrapToStringValue(rule: Rule): string | undefined {
+function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
     if (isString(rule)) return rule.value;
     if (rule.type === VARIANT) {
-        const inner = (rule as { content: Rule; }).content;
+        const inner = (rule as { content: Rule<'link'>; }).content;
         if (isString(inner)) return inner.value;
     }
     return undefined;
@@ -3217,9 +3217,9 @@ function unwrapToStringValue(rule: Rule): string | undefined {
  */
 
 export function narrowedFieldLiteralsForForm(
-    rule: Rule,
+    rule: Rule<'link'>,
     form: RefineForm,
-    rules?: Readonly<Record<string, Rule>>
+    rules?: Readonly<Record<string, Rule<'link'>>>
 ): Array<{ fieldName: string; literal: string; }> {
     const out: Array<{ fieldName: string; literal: string; }> = [];
     for (const [pathStr, selection] of Object.entries(form.selections)) {
@@ -3237,21 +3237,21 @@ export function narrowedFieldLiteralsForForm(
  * non-string branch.
  */
 
-export function resolveSelectionLiteral(choice: ChoiceRule | EnumRule, selection: number | string): string | undefined {
+export function resolveSelectionLiteral(choice: ChoiceRule<'link'> | EnumRule<'link'>, selection: number | string): string | undefined {
     if (typeof selection === 'string') return selection;
     const arm = choice.members[selection];
     if (!arm) return undefined;
     return unwrapToStringValue(arm);
 }
 // ---------------------------------------------------------------------------
-// Rule-shape helpers (localized — we don't want link-refine to grow into
+// Rule<'link'>-shape helpers (localized — we don't want link-refine to grow into
 // a general rule-walking utility; it's path-resolution only)
 // ---------------------------------------------------------------------------
-function membersOf(rule: Rule): Rule[] | undefined {
+function membersOf(rule: Rule<'link'>): Rule<'link'>[] | undefined {
     if (rule.type === SEQ || rule.type === CHOICE) return rule.members;
     return undefined;
 }
-function singleContentOf(rule: Rule): Rule | undefined {
+function singleContentOf(rule: Rule<'link'>): Rule<'link'> | undefined {
     switch (rule.type) {
         case OPTIONAL:
         case REPEAT:
@@ -3259,7 +3259,7 @@ function singleContentOf(rule: Rule): Rule | undefined {
         case FIELD:
         case VARIANT:
         case GROUP:
-            // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+            // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
             return rule.content;
         default:
             return undefined;

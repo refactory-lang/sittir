@@ -42,7 +42,7 @@ import type { PolymorphCandidateLocation } from '../compiler/link.ts';
  *   Previously duplicated as an inline ladder inside `armNamesFor`.
  *   Both paths now share this base-name function.
  */
-function deriveArmNameFromRule(node: Rule, index: number): string {
+function deriveArmNameFromRule(node: Rule<'link'>, index: number): string {
 	if (node.type === VARIANT) return node.name;
 	if (node.type === SYMBOL || node.type === SUPERTYPE) return node.name;
 	if (node.type === SEQ && node.members.length > 0) {
@@ -71,8 +71,8 @@ function deriveArmNameFromRule(node: Rule, index: number): string {
  *   uniqueness guard accepts the full set.
  */
 function deduplicateArmNames(
-	members: readonly Rule[],
-	nameFn: (m: Rule, i: number) => string = deriveArmNameFromRule
+	members: readonly Rule<'link'>[],
+	nameFn: (m: Rule<'link'>, i: number) => string = deriveArmNameFromRule
 ): string[] {
 	const counts = new Map<string, number>();
 	return members.map((m, i) => {
@@ -109,8 +109,8 @@ function _armNamesFor(cand: PolymorphCandidateLocation): string[] {
  * candidate despite Link's suggestion (rare but possible when multiple
  * passes run; defensive).
  */
-function _locateTopLevelChoice(rule: Rule): { choicePath: string; arms: string[] } | null {
-	function walk(node: Rule, path: string): { choicePath: string; arms: string[] } | null {
+function _locateTopLevelChoice(rule: Rule<'link'>): { choicePath: string; arms: string[] } | null {
+	function walk(node: Rule<'link'>, path: string): { choicePath: string; arms: string[] } | null {
 		if (node.type === CHOICE) {
 			const arms = deduplicateArmNames(node.members, deriveArmNameFromRule);
 			return { choicePath: path, arms };
@@ -146,9 +146,9 @@ function _locateTopLevelChoice(rule: Rule): { choicePath: string; arms: string[]
  * (applied inference). Returns null when the rule is not a SEQ at the
  * top level or the target can't be located as a direct member.
  */
-function findSymbolPosition(rule: Rule, targetSymbol: string, fieldName: string): number | null {
+function findSymbolPosition(rule: Rule<'link'>, targetSymbol: string, fieldName: string): number | null {
 	if (rule.type !== SEQ) return null;
-	const unwrap = (r: Rule): Rule => {
+	const unwrap = (r: Rule<'link'>): Rule<'link'> => {
 		switch (r.type) {
 			case OPTIONAL:
 			case VARIANT:
@@ -185,7 +185,7 @@ function findSymbolPosition(rule: Rule, targetSymbol: string, fieldName: string)
 export interface RoundTripDiagnostic {
 	/** Corpus entry name (e.g., "Async / await used as identifiers"). */
 	readonly entry: string;
-	/** Rule kind the validator was testing. */
+	/** Rule<'link'> kind the validator was testing. */
 	readonly kind: string;
 	/**
 	 * Which validator raised the diagnostic:
@@ -255,7 +255,7 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	lines.push('// Summary');
 	lines.push('// ---------------------------------------------------------------');
 	lines.push(`// Field inferences:  ${log.inferredFields.length}  (${inferredApplied} applied, ${inferredHeld} held)`);
-	lines.push(`// Rule promotions:   ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`);
+	lines.push(`// Rule<'link'> promotions:   ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`);
 	lines.push(`// Repeated shapes:   ${log.repeatedShapes.length}  (advisory — suggested supertypes/groups)`);
 	if (roundTripFailures.length > 0) {
 		const parseErrors = roundTripFailures.filter((f) => f.category === 'parse-error').length;
@@ -704,7 +704,7 @@ export interface GroupCandidate {
  *   - Have ≥1 structural member (field / symbol / supertype).
  *   - Are not already a group-lifted symbol ref (source === 'group-lift').
  */
-export function detectGroupCandidates(rules: Record<string, Rule>): GroupCandidate[] {
+export function detectGroupCandidates(rules: Record<string, Rule<'link'>>): GroupCandidate[] {
 	const out: GroupCandidate[] = [];
 	for (const [kind, body] of Object.entries(rules)) {
 		walkBodyForGroups(body, [], { kind, isTopLevel: true }, out);
@@ -713,7 +713,7 @@ export function detectGroupCandidates(rules: Record<string, Rule>): GroupCandida
 }
 
 function walkBodyForGroups(
-	rule: Rule,
+	rule: Rule<'link'>,
 	path: readonly number[],
 	ctx: { kind: string; isTopLevel: boolean },
 	out: GroupCandidate[]
@@ -729,7 +729,7 @@ function walkBodyForGroups(
 		(rule.type === OPTIONAL || rule.type === REPEAT || rule.type === REPEAT1) &&
 		!ctx.isTopLevel
 	) {
-		const inner = (rule as { content: Rule }).content;
+		const inner = (rule as { content: Rule<'link'> }).content;
 		if (inner.type === SEQ && hasGroupableStructure(inner)) {
 			out.push({
 				kind: ctx.kind,
@@ -771,7 +771,7 @@ function walkBodyForGroups(
 		case ALIAS:
 		case VARIANT:
 			// For non-cardinality-with-structural-seq cases, descend normally.
-			walkBodyForGroups((rule as { content: Rule }).content, [...path, 0], childCtx, out);
+			walkBodyForGroups((rule as { content: Rule<'link'> }).content, [...path, 0], childCtx, out);
 			break;
 		case GROUP:
 			// A top-level `group` rule wraps the rule body transparently — treat
@@ -779,7 +779,7 @@ function walkBodyForGroups(
 			// incorrectly flagged as a nested-seq candidate. At non-top-level a
 			// group wrapper is meaningful (it signals grouping) so use childCtx.
 			walkBodyForGroups(
-				(rule as { content: Rule }).content,
+				(rule as { content: Rule<'link'> }).content,
 				[...path, 0],
 				ctx.isTopLevel ? ctx : childCtx,
 				out
@@ -789,7 +789,7 @@ function walkBodyForGroups(
 	}
 }
 
-function hasGroupableStructure(rule: Rule): boolean {
+function hasGroupableStructure(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case FIELD:
 		case SYMBOL:
@@ -805,14 +805,14 @@ function hasGroupableStructure(rule: Rule): boolean {
 		case ALIAS:
 		case VARIANT:
 		case GROUP:
-			return hasGroupableStructure((rule as { content: Rule }).content);
+			return hasGroupableStructure((rule as { content: Rule<'link'> }).content);
 		default:
 			return false;
 	}
 }
 
-function guessGroupDiscriminator(rule: Rule, path: readonly number[]): string {
-	const peel = (r: Rule): string | null => {
+function guessGroupDiscriminator(rule: Rule<'link'>, path: readonly number[]): string {
+	const peel = (r: Rule<'link'>): string | null => {
 		switch (r.type) {
 			case SYMBOL:
 			case SUPERTYPE:
@@ -833,7 +833,7 @@ function guessGroupDiscriminator(rule: Rule, path: readonly number[]): string {
 			case ALIAS:
 			case VARIANT:
 			case GROUP:
-				return peel((r as { content: Rule }).content);
+				return peel((r as { content: Rule<'link'> }).content);
 			default:
 				return null;
 		}

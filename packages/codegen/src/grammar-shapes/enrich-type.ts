@@ -55,13 +55,13 @@
 
 import type {
 	GrammarNode,
-	SeqNode,
-	ChoiceNode,
-	SymbolNode,
-	BlankNode,
-	FieldNode,
-	RepeatNode,
-	Repeat1Node,
+	Seq as SeqNode,
+	Choice as ChoiceNode,
+	Sym as SymbolNode,
+	Blank as BlankNode,
+	Field as FieldNode,
+	Repeat as RepeatNode,
+	Repeat1 as Repeat1Node,
 	PrecNodeUnion
 } from './grammar-json.ts';
 

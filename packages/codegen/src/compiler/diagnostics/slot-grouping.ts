@@ -172,7 +172,7 @@ export function diagnoseSlotGrouping(
  *   This flag lets checkSeq distinguish the two sources of inSlotPosition.
  */
 function walkRule(
-	rule: Rule,
+	rule: Rule<'link'>,
 	ownerKind: string,
 	records: SlotGroupingDiagnostic[],
 	inSlotPosition: boolean,
@@ -213,13 +213,13 @@ function walkRule(
 		case FIELD:
 			// Simplified rules normally have wrappers deleted, but handle
 			// defensively. Content is in slot position (genuine group-lift position).
-			walkRule((rule as unknown as { content: Rule }).content, ownerKind, records, /* inSlotPosition= */ true, /* inChoiceArm= */ false);
+			walkRule((rule as unknown as { content: Rule<'link'> }).content, ownerKind, records, /* inSlotPosition= */ true, /* inChoiceArm= */ false);
 			break;
 
 		case VARIANT:
 		case GROUP:
 			// Transparent structural wrappers — propagate current slot position.
-			walkRule((rule as { content: Rule }).content, ownerKind, records, inSlotPosition, inChoiceArm);
+			walkRule((rule as { content: Rule<'link'> }).content, ownerKind, records, inSlotPosition, inChoiceArm);
 			break;
 
 		default:
@@ -233,7 +233,7 @@ function walkRule(
 // ---------------------------------------------------------------------------
 
 function checkSeq(
-	rule: Extract<Rule, { type: 'seq' }>,
+	rule: Extract<Rule<'link'>, { type: 'seq' }>,
 	ownerKind: string,
 	records: SlotGroupingDiagnostic[],
 	inChoiceArm: boolean
@@ -267,7 +267,7 @@ function checkSeq(
 // ---------------------------------------------------------------------------
 
 function checkRepeat(
-	rule: Extract<Rule, { type: 'repeat' | 'repeat1' }>,
+	rule: Extract<Rule<'link'>, { type: 'repeat' | 'repeat1' }>,
 	ownerKind: string,
 	records: SlotGroupingDiagnostic[]
 ): void {
@@ -301,8 +301,8 @@ function checkRepeat(
 }
 
 function checkRepeatOfSymbol(
-	_repeatRule: Extract<Rule, { type: 'repeat' | 'repeat1' }>,
-	content: Rule,
+	_repeatRule: Extract<Rule<'link'>, { type: 'repeat' | 'repeat1' }>,
+	content: Rule<'link'>,
 	ownerKind: string,
 	records: SlotGroupingDiagnostic[]
 ): void {
@@ -369,7 +369,7 @@ function checkRepeatOfSymbol(
  * future consumer that needs a count without building full `AssembledNonterminal`
  * records. Consumers must NOT re-derive terminality — call this function.
  */
-export function countSlots(rule: Rule): number {
+export function countSlots(rule: Rule<'link'>): number {
 	switch (rule.type) {
 		case SEQ:
 			// Distribute: the seq itself emits no slot; sum its members.
@@ -406,7 +406,7 @@ export function countSlots(rule: Rule): number {
  * Counted on the simplified rule BEFORE `mergeSlotsByName` folds duplicate
  * `content` slots into one (which would mask the collision).
  */
-export function countContentSlots(rule: Rule): number {
+export function countContentSlots(rule: Rule<'link'>): number {
 	switch (rule.type) {
 		case SEQ:
 			// A field-named seq is a single named slot — do not distribute. Only an
@@ -423,7 +423,7 @@ export function countContentSlots(rule: Rule): number {
 }
 
 /** A slot boundary that resolves to the generic `content` storage name. */
-function isContentSlot(rule: Rule): boolean {
+function isContentSlot(rule: Rule<'link'>): boolean {
 	if (!isNonterminalRuleType(rule)) return false; // terminal — emits no slot
 	if ((rule as { fieldName?: string }).fieldName !== undefined) return false; // named slot
 	const { named, hasUnnamed } = slotKindProfile(rule);
@@ -437,7 +437,7 @@ function isContentSlot(rule: Rule): boolean {
  * it carries any unnamed value (literal / pattern / enum / anonymous token).
  * Mirrors `projectSlotNaming`'s storageName inputs at the rule level.
  */
-function slotKindProfile(rule: Rule): { named: Set<string>; hasUnnamed: boolean } {
+function slotKindProfile(rule: Rule<'link'>): { named: Set<string>; hasUnnamed: boolean } {
 	switch (rule.type) {
 		case SYMBOL:
 		case SUPERTYPE:
@@ -445,7 +445,7 @@ function slotKindProfile(rule: Rule): { named: Set<string>; hasUnnamed: boolean 
 		case CHOICE: {
 			const named = new Set<string>();
 			let hasUnnamed = false;
-			for (const m of (rule as { members: Rule[] }).members) {
+			for (const m of (rule as { members: Rule<'link'>[] }).members) {
 				const p = slotKindProfile(m);
 				for (const n of p.named) named.add(n);
 				hasUnnamed = hasUnnamed || p.hasUnnamed;
@@ -456,7 +456,7 @@ function slotKindProfile(rule: Rule): { named: Set<string>; hasUnnamed: boolean 
 		case REPEAT1:
 		case OPTIONAL:
 		case FIELD:
-			return slotKindProfile((rule as { content: Rule }).content);
+			return slotKindProfile((rule as { content: Rule<'link'> }).content);
 		default:
 			// string / pattern / enum / indent / dedent / newline / terminal / token
 			// — no named kind, contributes an unnamed value.

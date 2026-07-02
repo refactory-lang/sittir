@@ -48,7 +48,7 @@ import { resolveGrammarJsPath } from '../../../codegen/src/compiler/resolve-gram
 import { evaluate } from '../../../codegen/src/compiler/evaluate.ts';
 import { link } from '../../../codegen/src/compiler/link.ts';
 import { normalizeGrammar } from '../../../codegen/src/compiler/normalize.ts';
-import { assemble, hydrateSlotRefs } from '../../../codegen/src/compiler/assemble.ts';
+import { assemble, AssembleCtx, hydrateSlotRefs } from '../../../codegen/src/compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
 import { emitTypes } from '../../../codegen/src/emitters/types.ts';
 import { runTemplateEmitter } from '../../../codegen/src/emitters/templates.ts';
@@ -93,7 +93,7 @@ const optimized = normalizeGrammar(linked);
 stages.optimize = optimized.rules[kind] ?? null;
 stages.simplify = optimized.simplifiedRules?.[kind] ?? null;
 
-const nodeMap = assemble(optimized);
+const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 const node = nodeMap.nodes.get(kind) ?? null;
 stages.assemble = node ? summarizeAssembled(node) : null;
 const generatedIdTables = await loadGeneratedIdTables(grammar);

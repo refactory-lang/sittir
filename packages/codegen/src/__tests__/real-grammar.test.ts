@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath } from '../compiler/resolve-grammar.ts';
 
 // Raw base grammars (no override() / variant() applied) still contain
@@ -76,7 +76,7 @@ describe('Full pipeline — evaluate → link → optimize → assemble', () => 
 		const raw = await evaluate(pythonGrammar);
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 
 		expect(nodeMap.name).toBe('python');
 		expect(nodeMap.nodes.size).toBeGreaterThan(50);
@@ -94,7 +94,7 @@ describe('Full pipeline — evaluate → link → optimize → assemble', () => 
 		const raw = await evaluate(rustGrammar);
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 
 		expect(nodeMap.name).toBe('rust');
 		expect(nodeMap.nodes.size).toBeGreaterThan(100);

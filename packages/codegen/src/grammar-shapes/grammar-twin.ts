@@ -35,7 +35,7 @@ import type { EnrichRule } from './enrich-type.ts';
 // Depth is a tuple-length counter (type-fest style); cap small (default 1).
 // ---------------------------------------------------------------------------
 
-type Decr<N extends readonly unknown[]> = N extends readonly [unknown, ...infer Rest] ? Rest : [];
+type _Decr<N extends readonly unknown[]> = N extends readonly [unknown, ...infer Rest] ? Rest : [];
 
 /**
  * Expand a SYMBOL node to its rule body, bounded by `DepthTuple` length.

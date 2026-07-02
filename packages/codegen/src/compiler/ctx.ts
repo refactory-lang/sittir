@@ -21,19 +21,22 @@
  * `{ builder?: RuleBuilder }` slice, NOT this class, so no `dsl → compiler` cycle.
  */
 
-import type { Rule } from '../types/rule.ts';
+import type { AnyRule, Rule } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import type { RuleBuilder } from '../dsl/rule-transforms.ts';
 
 /**
  * Construction inputs shared by every phase ctx.
  *
- * `R` is the rule-view this phase operates on — `Rule` (raw, pre-wrapper-deletion),
- * `RenderRule` (wrapper-free / "optimized"), or `SimplifiedRule`. The pipeline
- * refines it in order: `BaseCtx<Rule>` (evaluate/link/normalize) → `BaseCtx<RenderRule>`
- * (simplify) → `BaseCtx<SimplifiedRule>` (assemble).
+ * `R` is the rule-view this phase operates on — `Rule<'evaluate'>` /
+ * `Rule<'link'>` (pre-wrapper-deletion), `RenderRule` (wrapper-free /
+ * "optimized"), or `SimplifiedRule`. The pipeline refines it in order:
+ * `BaseCtx<Rule<'evaluate'>>` (link) → `BaseCtx<Rule<'link'>>` (normalize) →
+ * `BaseCtx<RenderRule>` (simplify) → `BaseCtx<SimplifiedRule>` (assemble).
+ * Constrained by `AnyRule` (the union over all phase views) so any phase's
+ * view — including the wrapper-bearing ones — satisfies it.
  */
-export interface BaseCtxInit<R extends Rule = Rule> {
+export interface BaseCtxInit<R extends AnyRule = Rule> {
 	readonly rules: Record<string, R>;
 	readonly diagnostics: DiagnosticSink;
 	/**
@@ -56,7 +59,7 @@ export interface BaseCtxInit<R extends Rule = Rule> {
  * force a lossy reconciliation. Mutation surfaces (e.g. the node map built
  * during Assemble) live on the concrete subclass as methods, never on this base.
  */
-export abstract class BaseCtx<R extends Rule = Rule> {
+export abstract class BaseCtx<R extends AnyRule = Rule> {
 	readonly rules: Record<string, R>;
 	readonly wordMatcher?: (s: string) => boolean;
 	readonly diagnostics: DiagnosticSink;

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { field, seq } from '../compiler/evaluate.ts';
 import { buildRuleCatalog } from '../compiler/rule-catalog.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, AssembleCtx } from '../compiler/assemble.ts';
 import { link } from '../compiler/link.ts';
 import { normalizeGrammar } from '../compiler/normalize.ts';
 import { emitTypes } from '../emitters/types.ts';
@@ -67,7 +67,7 @@ describe('KindId emission', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
 		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized);
+		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
 		const contents = emitTypes({
 			grammar: 'synth',
 			nodeMap,
