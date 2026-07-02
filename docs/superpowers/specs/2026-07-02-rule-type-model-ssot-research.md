@@ -418,8 +418,17 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
    the promoted-rules MUTATION decision; fix by having the classifier RETURN its
    classification alongside the rule instead of stamping-then-re-reading; (b)
    collect-slots' slot-`source` derivation — becomes a blind bag carry (node-model
-   serialization keeps working) or moves out of the compiler. Folds into PR-P1
-   (provenance → metadata) as its type-design core.
+   serialization keeps working) or moves out of the compiler. COROLLARY (user,
+   2026-07-02): the compiler must not infer provenance STRUCTURALLY either —
+   replacing a `source` tag with a shape test that reconstructs "who authored this"
+   is the same violation laundered through structure. Compiler behavior keys on
+   facts named for what they MEAN (semantic/structural facts, or explicitly
+   DECLARED flags set at authoring time); stamp-then-reread patterns become
+   pass-internal dataflow (return values). The dsl-side
+   `isEnrichShapedFieldWrapper` is exempt twice over: it lives in wire's transform
+   machinery (sanctioned), and decision (a) redefined its semantic to "wrapper of
+   the transparent shape, any author" — a meaning, not an authorship inference.
+   Folds into PR-P1 (provenance → metadata) as its type-design core.
 
 ## 6. Open questions for the design discussion
 
