@@ -263,9 +263,10 @@ structural replacement, after which the field becomes diagnostics-only or remova
 - transform.ts patch-transparency reads (754/785/823/848): structural signatures
   exist — enrich pass 1 emits `field(name, SYMBOL(name))` (fieldName === symbol
   name); keyword passes emit `field(…, SYMBOL(_kw_*))` (reserved prefix). DESIGN
-  QUESTION to settle first: user-authored `field('kind', $.kind)` is shape-identical
-  to pass-1 output — going structural makes identical wrappers transparent regardless
-  of author (arguably more consistent; decide in the design discussion).
+  QUESTION — RESOLVED (user, 2026-07-02): YES, structural semantics win —
+  a user-authored wrapper shape-identical to enrich output IS patch-transparent.
+  Provenance is not needed for transparency; the transform.ts reads convert to the
+  structural signatures unconditionally.
 - collect-slots → node-model → generated `if (desc.source === "override")`
   (emitters/wrap.ts:1386): the CLEAR violation — generated RUNTIME code branching on
   provenance; needs slot-level structural derivation. Highest priority of the set.
