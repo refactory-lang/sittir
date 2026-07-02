@@ -656,16 +656,18 @@ function matchesWordShape(value, wordMatcher) {
   return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
 }
 function ruleToRegexSource(rule) {
-  switch (rule.type) {
+  const shaped = rule;
+  switch (String(rule.type).toLowerCase()) {
     case PATTERN:
-      return rule.value;
+      return shaped.value ?? null;
     case STRING:
-      return escapeRegexLiteral(rule.value);
+      return shaped.value === void 0 ? null : escapeRegexLiteral(shaped.value);
     case TOKEN:
-      return ruleToRegexSource(rule.content);
+    case "immediate_token":
+      return shaped.content ? ruleToRegexSource(shaped.content) : null;
     case SEQ: {
       const parts = [];
-      for (const m of rule.members) {
+      for (const m of shaped.members ?? []) {
         const p = ruleToRegexSource(m);
         if (p === null) return null;
         parts.push(`(?:${p})`);
@@ -674,7 +676,7 @@ function ruleToRegexSource(rule) {
     }
     case CHOICE: {
       const parts = [];
-      for (const m of rule.members) {
+      for (const m of shaped.members ?? []) {
         const p = ruleToRegexSource(m);
         if (p === null) return null;
         parts.push(p);
@@ -682,17 +684,17 @@ function ruleToRegexSource(rule) {
       return `(?:${parts.join("|")})`;
     }
     case OPTIONAL: {
-      const p = ruleToRegexSource(rule.content);
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
       if (p === null) return null;
       return `(?:${p})?`;
     }
     case REPEAT: {
-      const p = ruleToRegexSource(rule.content);
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
       if (p === null) return null;
       return `(?:${p})*`;
     }
     case REPEAT1: {
-      const p = ruleToRegexSource(rule.content);
+      const p = shaped.content ? ruleToRegexSource(shaped.content) : null;
       if (p === null) return null;
       return `(?:${p})+`;
     }
@@ -714,7 +716,7 @@ function enrich(baseInput) {
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
   if (!rulesBag) return base2;
   const grammarMeta = hasWrapper ? base2.grammar : base2;
-  const wordMatcher = compileWordMatcher(grammarMeta?.word ?? null, rulesBag);
+  const wordMatcher = compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag);
   const supertypeNames = extractSupertypeNames(base2, hasWrapper);
   const kwRules = {};
   const clauseGroupRules = {};
@@ -798,6 +800,26 @@ function extractSupertypeNames(base2, hasWrapper) {
   }
   if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
   return /* @__PURE__ */ new Set();
+}
+function extractWordName(word) {
+  if (typeof word === "string") return word;
+  if (typeof word !== "function") return null;
+  const dollar = new Proxy(
+    {},
+    {
+      get(_t, prop) {
+        if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+        return void 0;
+      }
+    }
+  );
+  try {
+    const result = word(dollar);
+    const name = result?.name;
+    return typeof name === "string" ? name : null;
+  } catch {
+    return null;
+  }
 }
 function harvestSupertypeNames(result) {
   const names = /* @__PURE__ */ new Set();

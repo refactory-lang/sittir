@@ -171,7 +171,7 @@ export interface GrammarJson {
 // ---------------------------------------------------------------------------
 
 /** PREC wrappers are transparent to path addressing (skip a segment). */
-export type PrecNodeUnion = Prec | PrecLeft | PrecRight| PrecDynamic
+export type PrecNodeUnion = Prec | PrecLeft | PrecRight | PrecDynamic;
 
 /** Single-content wrappers that CONSUME a path segment (index 0 / -1). */
 export type SingleContentWrapper = Repeat | Repeat1 | Field | Alias | Token | ImmediateToken;
