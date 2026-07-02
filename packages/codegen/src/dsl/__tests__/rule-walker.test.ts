@@ -69,3 +69,40 @@ describe('RuleWalker.fold / find', () => {
 		expect(w.find(tree, (r) => r.type === 'indent')).toBeUndefined();
 	});
 });
+
+describe('RuleWalker deref wing', () => {
+	const rules: Record<string, AnyRule> = {
+		a: { type: SEQ, members: [sym('b'), str('lit')] } as AnyRule,
+		b: { type: CHOICE, members: [sym('a'), str('deep')] } as AnyRule, // cycle a -> b -> a
+	};
+	const w = new RuleWalker(rules);
+	it('deref resolves one step; undefined for unknown/non-symbol', () => {
+		expect(w.deref(sym('a'))).toBe(rules.a);
+		expect(w.deref(sym('nope'))).toBeUndefined();
+		expect(w.deref(str('x'))).toBeUndefined();
+	});
+	it('deref throws when constructed without rules', () => {
+		expect(() => new RuleWalker().deref(sym('a'))).toThrow(/rules/);
+	});
+	it('foldDeep follows refs and terminates on cycles', () => {
+		const values = w.foldDeep(rules.a!, [] as string[], (acc, r) =>
+			(r.type === STRING ? (acc.push(r.value), acc) : acc));
+		expect(values.sort()).toEqual(['deep', 'lit']);
+	});
+	it('findDeep finds through refs, cycle-safe', () => {
+		expect((w.findDeep(rules.a!, (r) => r.type === STRING && r.value === 'deep') as { value: string }).value).toBe('deep');
+		expect(w.findDeep(rules.a!, (r) => r.type === 'indent')).toBeUndefined();
+	});
+	it('foldDeep visits a diamond-shared target only once', () => {
+		const diamondRules: Record<string, AnyRule> = {
+			s: { type: SEQ, members: [sym('x'), sym('y')] } as AnyRule,
+			x: { type: SEQ, members: [sym('shared')] } as AnyRule,
+			y: { type: SEQ, members: [sym('shared')] } as AnyRule,
+			shared: str('once'),
+		};
+		const dw = new RuleWalker(diamondRules);
+		const values = dw.foldDeep(diamondRules.s!, [] as string[], (acc, r) =>
+			(r.type === STRING ? (acc.push(r.value), acc) : acc));
+		expect(values).toEqual(['once']);
+	});
+});

@@ -10,11 +10,11 @@
  */
 import type { AnyRule, RuleBase } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
+import { SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 
 type StampedSeparator = RuleBase<'optimize'>['separator'];
 
 export class RuleWalker<R extends AnyRule = AnyRule> {
-	// eslint-disable-next-line no-unused-private-class-members -- reserved for the map/fold/find + deref wing added in later R12 PR-6 tasks
 	readonly #rules?: Readonly<Record<string, R>>;
 	/** Sink for future diagnostic-emitting walks (slot-grouping family). Public
 	 *  readonly (not #private) — nothing reads it yet; a private field would
@@ -86,5 +86,61 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 			if (hit !== undefined) return hit;
 		}
 		return undefined;
+	}
+
+	/** One-step SYMBOL resolve through the bound rules map. */
+	deref(ref: R): R | undefined {
+		if (this.#rules === undefined) {
+			throw new Error('RuleWalker.deref: walker was constructed without a rules map');
+		}
+		if (ref.type !== SYMBOL) return undefined;
+		return this.#rules[(ref as { name: string }).name];
+	}
+
+	/**
+	 * fold that additionally descends THROUGH symbol refs (cycle-safe). Each
+	 * reachable rule node is visited at most once per invocation (seen-set
+	 * keyed on node identity); symbol refs are followed through the bound
+	 * rules map.
+	 */
+	foldDeep<A>(rule: R, init: A, f: (acc: A, r: R) => A): A {
+		const seen = new Set<R>();
+		const go = (r: R, acc: A): A => {
+			if (seen.has(r)) return acc;
+			seen.add(r);
+			acc = f(acc, r);
+			if (r.type === SYMBOL) {
+				const target = this.deref(r);
+				return target === undefined ? acc : go(target, acc);
+			}
+			for (const child of this.childrenOf(r)) acc = go(child, acc);
+			return acc;
+		};
+		return go(rule, init);
+	}
+
+	/**
+	 * find that additionally descends THROUGH symbol refs (cycle-safe). Each
+	 * reachable rule node is visited at most once per invocation (seen-set
+	 * keyed on node identity); symbol refs are followed through the bound
+	 * rules map.
+	 */
+	findDeep(rule: R, pred: (r: R) => boolean): R | undefined {
+		const seen = new Set<R>();
+		const go = (r: R): R | undefined => {
+			if (seen.has(r)) return undefined;
+			seen.add(r);
+			if (pred(r)) return r;
+			if (r.type === SYMBOL) {
+				const target = this.deref(r);
+				return target === undefined ? undefined : go(target);
+			}
+			for (const child of this.childrenOf(r)) {
+				const hit = go(child);
+				if (hit !== undefined) return hit;
+			}
+			return undefined;
+		};
+		return go(rule);
 	}
 }
