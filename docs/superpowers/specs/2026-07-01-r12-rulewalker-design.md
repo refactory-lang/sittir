@@ -103,6 +103,13 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 }
 ```
 
+The seen-set contract: each reachable rule node is visited at most once per invocation,
+keyed on rule **object identity** (not symbol name). Identity-keying (rather than
+name-keying) was an in-flight adjudication: the plan's own cycle test was authoritative,
+and name-keyed dedup double-counted nodes reachable both directly and via a ref-chain;
+identity-keying also naturally dedupes diamond ref patterns (two refs resolving to one
+shared node visited once, not twice).
+
 Phase-generic end to end: `BaseCtx<Rule<'link'>>.walker` walks link-view rules; the
 type parameter flows through every lambda.
 
@@ -127,11 +134,12 @@ the convention one-liner to `.claude/codegen-conventions.md`.
 
 Land the class + `BaseCtx.walker` + migrate **exemplars per family** — not all 57:
 
-- `recurseChildren` (rule-transforms) — superseded by / delegates to `walker.map` semantics
-- `walkFieldNames` (types/rule.ts) → `fold`
-- `findRepeatFlag` (rule-transforms) → own switch + walker recursion
-- `deriveComplexAliasTargetHidden` + `resolveHiddenRuleContent` → deref wing
-  (kills two hand-rolled seen-sets)
+- `findRepeatFlag` (rule-transforms) → `walker.find` (own predicate keeps the flag/separator dispatch)
+- `deriveComplexAliasTargetHidden` (evaluate) → `walker.fold` (separator edges now come from childrenOf)
+- `recurseChildren` (rule-transforms) → deprecated pointer to `walker.map`; callers migrate opportunistically
+- `walkFieldNames` (types/rule.ts) — NOT migrated: types-layer cannot depend on dsl; stays self-contained
+- `resolveHiddenRuleContent` (assemble) — deferred to the follow-up sweep: its per-type flatMap
+  shape needs a mapDeep-like primitive; evaluate that against real need then
 
 Remaining walks migrate opportunistically in later passes (each gated). Gates:
 `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native` holds rust 117 / ts 75 / py 102;
@@ -145,5 +153,6 @@ New `dsl/__tests__/rule-walker.test.ts`:
 - `fold` pre-order visit order
 - `find` short-circuit (visit count stops at first match)
 - `deref`/`*Deep` cycle termination on self-referential rules maps
+- `deref`/`*Deep` diamond dedup (two refs to one shared node → visited once)
 
 Migrated exemplar walks keep their existing tests as behavioral locks.
