@@ -137,6 +137,25 @@ export type RuleBase<Phase extends PhaseName = 'optimize'> = {
 	 * brand and the real shape are split across two files.
 	 */
 	readonly metadata?: RuleMetadata;
+
+	/**
+	 * Declared structural flag (debt PR-0c / doctrine decision 3's corollary):
+	 * true when this `seq` is a hidden group's body SPLICED directly into a
+	 * parent at what used to be an opaque `symbol(_x)` ref position
+	 * (`compiler/normalize.ts`'s `materializeInlinedBody`, the fold-inline
+	 * pass). Not provenance — it names a present-tense fact about the tree
+	 * shape at this position ("this seq occupies a splice site"), set ONCE by
+	 * the pass that performs the splice, read directly (no re-derivation, no
+	 * stamp-then-reread through the opaque `metadata` bag). Consumed by
+	 * `emitters/templates.ts`'s boundary walkers
+	 * (`rightmostBoundary`/`leftmostBoundary`): a spliced seq must keep
+	 * spacing like the opaque unit it replaced (`for await (`, not
+	 * `for await(`) rather than exposing its own first/last literal at the
+	 * outer boundary. Mirrors `inline`'s pattern (a per-ref declared
+	 * construction stamp read directly off the rule) — see that field's doc
+	 * comment above.
+	 */
+	readonly splicedBody?: boolean;
 } & (Phase extends OptimizedPhase
 	? {
 			// All six stamped attributes below are populated by

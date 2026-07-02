@@ -1602,9 +1602,16 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
 	// Pure ref — NO inline body. Tree-sitter serializes any extra structural
 	// field on a SYMBOL into grammar.json (a `content` here leaks the seq into
 	// the parser), so the symbol stays a clean name-ref. `metadata.source` is
-	// the only added marker: path-descent reads it and LOOKS UP the referenced
-	// `_<parent>_<kind><N>` rule body by name to travel through (not by carrying
-	// the body here). `metadata` is inert to tree-sitter's parse tables.
+	// the only added marker: `dsl/transform/transform-path.ts`'s path-descent
+	// (the sanctioned dsl-side reader — doctrine decision 3) reads it and
+	// LOOKS UP the referenced `_<parent>_<kind><N>` rule body by name to travel
+	// through (not by carrying the body here). `metadata` is inert to
+	// tree-sitter's parse tables. (Debt PR-0c: the compiler side no longer
+	// reads this tag — `compiler/link.ts`'s `mintContentAliasKinds` and
+	// `resolveRule`'s ALIAS case, and `compiler/evaluate.ts`'s
+	// `rewriteInlineAliases`, now identify this population structurally via
+	// `isClauseHoistVisibleGroupAlias`. The write here stays load-bearing for
+	// transform-path only.)
 	// Route the lower-case (IR/render-side) ref through evaluate's `symbol()`
 	// so it carries the SAME construction stamps (`hidden`, `inline =
 	// name.startsWith('_')`) as every other ref — these `_<parent>_<kind>N`
@@ -1631,10 +1638,17 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
  *   multi-member seq). tree-sitter renames that ONE symbol-node into ONE visible
  *   CST node for `<name>` (a real kindId in parser.c). Aliasing the raw seq
  *   instead made tree-sitter DISTRIBUTE the alias name across the seq members.
- * - `metadata.source === 'enrich'` is REQUIRED: transform-path travels THROUGH
- *   it for authored path-patches, and link's `mintContentAliasKinds` keys on it
- *   to resolve THROUGH the symbol and register `<name> = <hidden body>` as the
- *   IR rule.
+ * - `metadata.source === 'enrich'` is REQUIRED for transform-path: it travels
+ *   THROUGH this tag for authored path-patches
+ *   (`dsl/transform/transform-path.ts`'s `isEnrichContentAlias` /
+ *   `descendThroughEnrichContentAlias` — the sanctioned dsl-side reader,
+ *   doctrine decision 3). (Debt PR-0c: `compiler/link.ts`'s
+ *   `mintContentAliasKinds` no longer reads this tag — it identifies the
+ *   same population structurally via `isClauseHoistVisibleGroupAlias`,
+ *   keying on the alias's `optional`/`CHOICE[x,BLANK]` parent shape, the
+ *   target name's absence from `rules`, and the hidden content symbol not
+ *   being in the grammar's `inline:` list. The write here stays load-bearing
+ *   for transform-path only.)
  * - Case is the active runtime's: built via the injected `alias()`/`symbol()`
  *   constructors, so sittir evaluate yields lowercase, tree-sitter CLI uppercase.
  */
@@ -1643,9 +1657,8 @@ function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
 	// Pass a SYMBOL value so the runtime constructor sets named:true, value=name
 	// (a bare-string value would yield named:false). `metadata.source: 'enrich'`
-	// is REQUIRED — transform-path travels through it and link's
-	// `mintContentAliasKinds` keys on it — and the runtime alias() doesn't add
-	// it, so stamp it on the cased result.
+	// is REQUIRED for transform-path's path-descent (see doc comment above) —
+	// the runtime alias() doesn't add it, so stamp it on the cased result.
 	const node = aliasFn(symbolRef, symbol(name));
 	(node as { metadata?: unknown }).metadata = makeRuleMetadata({ source: 'enrich' });
 	return node;

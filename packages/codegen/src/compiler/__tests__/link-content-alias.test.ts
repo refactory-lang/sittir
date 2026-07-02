@@ -6,11 +6,20 @@ import type { Rule } from '../../types/rule.ts';
 /**
  * Chunk 2 — `mintContentAliasKinds` link pass.
  *
- * enrich wraps an inline-unsafe `optional(seq)` / bare `choice` in
- * `alias(<non-symbol content>, $.<name>)` tagged `metadata.source === 'enrich'`.
- * The new link pass registers `<name> = <content>` in the linked rules map so
- * codegen mints the visible kind (template / type / slots). The kindId is real
+ * `applyClauseHoist`'s `peelOptionalSeq` surfaces an inline-unsafe
+ * `optional(seq)` / bare `choice` as a visible CST node by wrapping a SYMBOL
+ * ref to its hoisted hidden body in `alias(symbol(_<name>), $.<name>)` —
+ * ALWAYS positioned directly inside the `optional(...)` (or a 2-member
+ * `CHOICE[x, BLANK]`) that `peelOptionalSeq` recognized, never bare. The link
+ * pass registers `<name> = <hidden body>` in the linked rules map so codegen
+ * mints the visible kind (template / type / slots). The kindId is real
  * (tree-sitter emits the alias in parser.c).
+ *
+ * The population is identified STRUCTURALLY (debt PR-0c / doctrine decision
+ * 4, `isClauseHoistVisibleGroupAlias`), not via a provenance tag — the
+ * fixtures below wrap each candidate alias in `optional(...)` to match the
+ * real shape `peelOptionalSeq` produces (verified against all 3 real
+ * grammars; a bare, un-wrapped alias is never what enrich emits).
  *
  * Guards:
  *  - SYMBOL aliases (`alias($._hidden, $.relabeled)`) keep their existing
@@ -38,26 +47,29 @@ const str = (v: string): Rule<'evaluate'> => ({ type: 'string', value: v }) as R
 const field = (n: string, c: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'field', name: n, content: c }) as Rule<'evaluate'>;
 const seq = (...m: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'seq', members: m }) as Rule<'evaluate'>;
 const choice = (...m: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'choice', members: m }) as Rule<'evaluate'>;
-// enrich visible-group alias: a SYMBOL ref to the hidden `_<name>` rule wrapped
-// in a metadata.source='enrich' alias (`alias($._<name>, $.<name>)`).
+const optional = (c: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'optional', content: c }) as Rule<'evaluate'>;
+// Clause-hoist visible-group alias: a SYMBOL ref to the hidden `_<name>` rule
+// wrapped in `alias(symbol(_<name>), $.<name>)` — the exact shape
+// `applyClauseHoist`'s `peelOptionalSeq` produces. The structural mint
+// condition (`isClauseHoistVisibleGroupAlias`) additionally requires this
+// alias's immediate parent to be `optional(...)` (or a 2-member
+// `CHOICE[x, BLANK]`) — callers below wrap it accordingly.
 const groupAlias = (hiddenName: string, name: string): Rule<'evaluate'> =>
-	({ type: 'alias', content: sym(hiddenName), named: true, value: name, metadata: { source: 'enrich' } }) as unknown as Rule<'evaluate'>;
-// Legacy direct content-alias (non-symbol content) — still registered.
-const contentAlias = (content: Rule<'evaluate'>, name: string): Rule<'evaluate'> =>
-	({ type: 'alias', content, named: true, value: name, metadata: { source: 'enrich' } }) as unknown as Rule<'evaluate'>;
-// Authored relabel alias (NO enrich tag) — keeps aliasedFrom handling, NOT minted.
+	({ type: 'alias', content: sym(hiddenName), named: true, value: name }) as unknown as Rule<'evaluate'>;
+// Authored relabel alias (target is a pre-existing rule, or content is a
+// visible symbol) — keeps aliasedFrom handling, NOT minted.
 const symbolAlias = (refName: string, name: string): Rule<'evaluate'> =>
 	({ type: 'alias', content: sym(refName), named: true, value: name }) as unknown as Rule<'evaluate'>;
 
 describe('mintContentAliasKinds — link pass', () => {
-	it('registers <name> from the HIDDEN rule body for a symbol-form enrich group alias', () => {
-		// New shape: enrich emits `alias($._parens, $.parens)` + a hidden `_parens`
-		// rule. The mint pass resolves THROUGH the symbol → registers
-		// `parens = <_parens body>`.
+	it('registers <name> from the HIDDEN rule body for a symbol-form clause-hoist group alias', () => {
+		// Real shape: `applyClauseHoist` emits `optional(alias($._parens, $.parens))`
+		// + a hidden `_parens` rule. The mint pass resolves THROUGH the symbol →
+		// registers `parens = <_parens body>`.
 		const parensBody = seq(str('('), choice(sym('self'), sym('super')), str(')'));
 		const linked = link(
 			rawWith({
-				visibility_modifier: seq(str('pub'), groupAlias('_parens', 'parens')),
+				visibility_modifier: seq(str('pub'), optional(groupAlias('_parens', 'parens'))),
 				_parens: parensBody,
 				self: str('self'),
 				super: str('super')
@@ -66,34 +78,28 @@ describe('mintContentAliasKinds — link pass', () => {
 		// The minted VISIBLE kind exists (body is a seq, not a bare symbol).
 		expect(linked.rules.parens).toBeDefined();
 		expect((linked.rules.parens as { type: string }).type).toBe('seq');
-		// The parent reference resolved to a SYMBOL ref to the minted kind.
+		// The parent reference resolved to a SYMBOL ref to the minted kind
+		// (through the optional wrapper, pushed down to leaf attributes by
+		// wrapper-deletion at the Optimize phase — at Link the optional wrapper
+		// itself still holds the resolved alias content).
 		const vm = linked.rules.visibility_modifier as { type: string; members: Rule[] };
-		const ref = vm.members[1] as { type: string; name?: string };
-		expect(ref.type).toBe('symbol');
-		expect(ref.name).toBe('parens');
+		const opt = vm.members[1] as { type: string; content?: { type: string; name?: string } };
+		expect(opt.type).toBe('optional');
+		expect(opt.content?.type).toBe('symbol');
+		expect(opt.content?.name).toBe('parens');
 	});
 
-	it('registers <name> = <content> for a legacy (non-symbol) enrich content-alias', () => {
-		const parensBody = seq(str('('), choice(sym('self'), sym('super')), str(')'));
-		const linked = link(
-			rawWith({
-				visibility_modifier: seq(str('pub'), contentAlias(parensBody, 'parens')),
-				self: str('self'),
-				super: str('super')
-			})
-		);
-		expect(linked.rules.parens).toBeDefined();
-		const vm = linked.rules.visibility_modifier as { type: string; members: Rule[] };
-		const ref = vm.members[1] as { type: string; name?: string };
-		expect(ref.type).toBe('symbol');
-		expect(ref.name).toBe('parens');
-	});
-
-	it('registers a default-named group kind from a symbol-form group alias', () => {
+	it('registers a default-named group kind from a symbol-form group alias inside a CHOICE[x, BLANK]', () => {
+		// `peelOptionalSeq`'s other recognized shape: a 2-member CHOICE with a
+		// BLANK sibling (the desugared `optional(x)` form).
 		const body = seq({ type: 'repeat1', content: choice(field('name', sym('id')), sym('enum_assignment')) } as Rule<'evaluate'>);
 		const linked = link(
 			rawWith({
-				enum_body: seq(str('{'), groupAlias('_enum_body_group1', 'enum_body_group1'), str('}')),
+				enum_body: seq(
+					str('{'),
+					choice(groupAlias('_enum_body_group1', 'enum_body_group1'), { type: 'blank' } as unknown as Rule<'evaluate'>),
+					str('}')
+				),
 				_enum_body_group1: body,
 				id: { type: 'pattern', value: '[a-z]+' } as Rule<'evaluate'>,
 				enum_assignment: seq(sym('id'), str('='), sym('id'))
@@ -102,17 +108,33 @@ describe('mintContentAliasKinds — link pass', () => {
 		expect(linked.rules.enum_body_group1).toBeDefined();
 	});
 
-	it('does NOT mint a kind for a SYMBOL alias (aliasedFrom path untouched)', () => {
+	it('does NOT mint a kind for a SYMBOL alias whose target already has a rule body (authored relabel, aliasedFrom path untouched)', () => {
 		const linked = link(
 			rawWith({
-				parentC: seq(symbolAlias('_hidden', 'relabeled')),
-				_hidden: str('x')
+				parentC: seq(optional(symbolAlias('_hidden', 'relabeled'))),
+				_hidden: str('x'),
+				// A real rule body under the alias TARGET name — the structural mint
+				// condition's "target has no independent body" test excludes this.
+				relabeled: str('y')
 			})
 		);
-		// No spurious top-level 'relabeled' rule registered by the content pass.
-		// (resolveNamedAliasWithProvenance turns the ref into symbol('relabeled',
-		// aliasedFrom:'_hidden') — but the content pass must not ADD a rule body.)
-		expect(linked.rules.relabeled).toBeUndefined();
+		// The pre-existing 'relabeled' body is untouched (not overwritten with
+		// the alias's hidden content) — the content pass must not clobber it.
+		expect((linked.rules.relabeled as { type: string; value?: string }).value).toBe('y');
+	});
+
+	it('does NOT mint a kind for an alias whose immediate parent is NOT optional/CHOICE[x,BLANK] (e.g. repeat1 — wire groups: shape)', () => {
+		// Mirrors wire's `groups:` body-pattern replacement output
+		// (`alias($._hidden, $.visible)` inside `repeat1(...)`, not `optional`) —
+		// resolved via the ordinary `aliasedFrom` fallback instead of minting.
+		const linked = link(
+			rawWith({
+				parentE: seq(field('items', { type: 'repeat1', content: groupAlias('_hidden2', 'visible2') } as Rule<'evaluate'>)),
+				_hidden2: seq(str('a'), field('b', sym('id'))),
+				id: { type: 'pattern', value: '[a-z]+' } as Rule<'evaluate'>
+			})
+		);
+		expect(linked.rules.visible2).toBeUndefined();
 	});
 
 	it('does NOT clobber an existing rule of the same name', () => {
@@ -121,7 +143,8 @@ describe('mintContentAliasKinds — link pass', () => {
 		const existing = seq(str('existing'), field('marker', sym('b')));
 		const linked = link(
 			rawWith({
-				parentD: seq(contentAlias(seq(str('a'), field('other', sym('b'))), 'taken')),
+				parentD: seq(optional(groupAlias('_taken_hidden', 'taken'))),
+				_taken_hidden: seq(str('a'), field('other', sym('b'))),
 				taken: existing,
 				b: str('b')
 			})

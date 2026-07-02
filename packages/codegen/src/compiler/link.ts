@@ -25,6 +25,8 @@ import type {
 	StringRule,
 	RepeatRule,
 	VariantRule,
+	AliasRule,
+	AnyRule,
 } from '../types/rule.ts';
 import { isSeq, isChoice, isEnumChoiceRule, sym, replaceAtPath, isSymbol, isString, isRepeat1, isRepeat, isOptional, isField } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
@@ -47,7 +49,12 @@ import { hasAnyField } from './model/node-map.ts';
 import { collectFieldNames } from '../types/rule.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
-import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
+import {
+	isHiddenKind,
+	deriveComplexAliasTargetHidden,
+	isClauseHoistVisibleGroupAlias,
+	isOptionalOrBlankChoice
+} from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
@@ -677,20 +684,32 @@ function collectAliasedByParents(rawRules: Record<string, Rule<'link'>>): {
 }
 
 /**
- * Mint visible IR kinds from enrich content-aliases.
+ * Mint visible IR kinds from clause-hoist visible-group aliases.
  *
- * enrich surfaces an inline-unsafe `optional(seq)` / bare `choice` as a visible
- * CST node by wrapping its CONTENT in `alias(<content>, $.<name>)` tagged
- * `metadata.source === 'enrich'`. tree-sitter assigns `<name>` a real kindId in
- * `parser.c` (the alias lives in the grammar) — so the kind is a real CST kind.
- * This pass supplies the matching IR rule entry: it registers
- * `rules[<name>] = resolveRule(<content>)` so codegen emits the kind's template,
- * type, and slots.
+ * `applyClauseHoist`'s `peelOptionalSeq` surfaces an inline-unsafe
+ * `optional(seq)` / bare `choice` as a visible CST node by wrapping a SYMBOL
+ * ref to its hoisted hidden body in `alias(symbol(_<name>), $.<name>)`.
+ * tree-sitter assigns `<name>` a real kindId in `parser.c` (the alias lives
+ * in the grammar) — so the kind is a real CST kind. This pass supplies the
+ * matching IR rule entry: it registers `rules[<name>] = resolveRule(<hidden
+ * body>)` so codegen emits the kind's template, type, and slots.
  *
- * The alias is keyed on **non-symbol** content — `alias($._sym, $.name)` keeps
- * its existing `aliasedFrom` provenance (handled by
- * `resolveNamedAliasWithProvenance`) and is NOT minted here. An existing rule of
- * the same name is left byte-unchanged (no clobber).
+ * The population is identified STRUCTURALLY (debt PR-0c / doctrine decision
+ * 4), not via a provenance tag: `isClauseHoistVisibleGroupAlias` requires
+ * (a) the alias's immediate parent is `optional(...)` or a 2-member
+ * `CHOICE[x, BLANK]` — the exact shape `peelOptionalSeq` recognizes; (b) the
+ * alias VALUE has no independent rule body elsewhere in `rules` — the target
+ * name has no rule definition of its own, exactly the fact tree-sitter's own
+ * grammar compiler keys on; (c) the alias CONTENT is a symbol ref to a
+ * `_`-prefixed hidden rule (not a visible rule being relabeled — an authored
+ * relabel like `alias($.identifier, $.statement_identifier)` keeps its
+ * `aliasedFrom` provenance via `resolveNamedAliasWithProvenance` and is NOT
+ * minted here); (d) that hidden rule is not in the grammar's `inline:` list
+ * (an inlined helper is a polymorph-variant-hoist byproduct with no CST node
+ * of its own — a different producer). These four conditions select EXACTLY
+ * the same population the retired `metadata.source === 'enrich'` tag did,
+ * verified across all 3 real grammars. An existing rule of the same name is
+ * left byte-unchanged (no clobber).
  *
  * Runs after the `resolveRule` loop (which already turned the PARENT alias
  * reference into a clean `symbol(<name>)` ref) and before
@@ -699,21 +718,6 @@ function collectAliasedByParents(rawRules: Record<string, Rule<'link'>>): {
  *
  * @param rawRules - The EVALUATED (pre-resolveRule) rules — alias nodes present.
  * @param rules - The mutable resolved rules map; minted bodies are added here.
- *
- * (debt PR-P1 scoping note) This function's `metadata.source === 'enrich'`
- * read (and the two siblings in `resolveRule`'s ALIAS case + `evaluate.ts`'s
- * `rewriteInlineAliases`) is OUT OF SCOPE for this PR's item 3, which targets
- * only the `classifyHiddenRule`/`classifyHiddenChoiceRule` stamp-then-reread
- * chain. This one is a pre-existing, already-documented enrich→link HANDOFF
- * PROTOCOL (enrich plants `metadata.source: 'enrich'` specifically so link's
- * `mintContentAliasKinds` can find and resolve THROUGH the marked position —
- * see `dsl/enrich.ts`'s `makeVisibleGroupAlias` doc comment). It is the same
- * class of exemption decision 3's corollary already grants
- * `isEnrichShapedFieldWrapper` (wire's transform machinery) — a deliberate,
- * narrow cross-phase signal for a specific synthesis event, not a
- * reconstruction of rule authorship for a general decision. Left unconverted;
- * flagging for whoever re-reviews the full `metadata.source==='enrich'`
- * surface later.
  */
 function mintContentAliasKinds(
 	rules: Record<string, Rule<'link'>>,
@@ -728,32 +732,31 @@ function mintContentAliasKinds(
 	contentAliasedFrom?: Map<string, string>,
 	contentAliasedTo?: Map<string, string[]>
 ): void {
-	function isEnrichContentAlias(rule: Rule<'link'>): boolean {
-		if (rule.type !== ALIAS) return false;
-		const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
-		// Only enrich-tagged aliases mint a kind. A symbol alias WITHOUT this tag
-		// is an authored relabel (`alias($._hidden, $.visible)`) and keeps its
-		// `aliasedFrom` provenance handling — never minted here.
-		if (meta?.source !== 'enrich') return false;
-		// Accept BOTH forms of the enrich visible-group alias:
-		//   - symbol content `alias($._<name>, $.<name>)` — the current shape; the
-		//     hidden `_<name>` rule's body is resolved THROUGH the symbol below.
-		//   - non-symbol content (legacy direct content-alias), still registered.
-		const content = (rule as { content?: Rule<'link'> }).content;
-		return content !== undefined;
-	}
-	function walk(rule: Rule<'link'>, ownerName: string): void {
+	function walk(rule: Rule<'link'>, ownerName: string, parentIsOptionalSeq: boolean): void {
 		if (rule.type === ALIAS) {
 			const value = (rule as { value?: string }).value;
 			const content = (rule as { content?: Rule<'link'> }).content;
-			if (isEnrichContentAlias(rule) && typeof value === 'string' && value.length > 0 && content) {
+			// Structural mint condition (debt PR-0c / doctrine decision 4) —
+			// replaces the former `metadata.source === 'enrich'` tag read. See
+			// `isClauseHoistVisibleGroupAlias`'s doc comment for the full
+			// rationale and the probe verifying this selects the identical
+			// population across all 3 real grammars.
+			if (
+				isClauseHoistVisibleGroupAlias(rule as unknown as AliasRule<'link'>, {
+					rules: ctx.rules,
+					inlineNames: ctx.inline,
+					parentIsOptionalSeq
+				}) &&
+				typeof value === 'string' &&
+				value.length > 0 &&
+				content
+			) {
 				if (!(value in rules)) {
-					// Resolve THROUGH a symbol-form alias content: the enrich visible
-					// group is `alias($._<name>, $.<name>)` whose content is a SYMBOL
-					// ref to the hidden `_<name>` rule. Register the kind from the
-					// hidden rule's BODY (not the bare symbol ref), so the minted kind
-					// carries the group's real slots/template. Non-symbol content
-					// (legacy) resolves directly.
+					// Resolve THROUGH a symbol-form alias content: the clause-hoist
+					// visible group is `alias($._<name>, $.<name>)` whose content is a
+					// SYMBOL ref to the hidden `_<name>` rule. Register the kind from
+					// the hidden rule's BODY (not the bare symbol ref), so the minted
+					// kind carries the group's real slots/template.
 					let body: Rule<'link'> = content;
 					if (content.type === SYMBOL) {
 						const hiddenBody = (content as SymbolRule<'link'>).name;
@@ -776,17 +779,30 @@ function mintContentAliasKinds(
 					);
 				}
 			}
-			if (content) walk(content, ownerName);
+			if (content) walk(content, ownerName, false);
+			return;
+		}
+		if (rule.type === OPTIONAL && 'content' in rule) {
+			const content = (rule as { content?: Rule<'link'> }).content;
+			if (content) walk(content, ownerName, true);
+			return;
+		}
+		if (rule.type === CHOICE && 'members' in rule && Array.isArray((rule as ChoiceRule<'link'>).members)) {
+			// A 2-member CHOICE[x, BLANK] is the desugared `optional(x)` form —
+			// its members' immediate-child alias qualifies exactly like
+			// `optional(...)`'s content does.
+			const isBlankChoice = isOptionalOrBlankChoice(rule as unknown as AnyRule);
+			for (const m of (rule as ChoiceRule<'link'>).members) walk(m, ownerName, isBlankChoice);
 			return;
 		}
 		if ('members' in rule && Array.isArray((rule as ChoiceRule<'link'> | SeqRule<'link'>).members)) {
-			for (const m of (rule as ChoiceRule<'link'> | SeqRule<'link'>).members) walk(m, ownerName);
+			for (const m of (rule as ChoiceRule<'link'> | SeqRule<'link'>).members) walk(m, ownerName, false);
 		}
 		if ('content' in rule && (rule as { content?: Rule<'link'> }).content) {
-			walk((rule as { content: Rule<'link'> }).content, ownerName);
+			walk((rule as { content: Rule<'link'> }).content, ownerName, false);
 		}
 	}
-	for (const [name, rule] of Object.entries(ctx.rules)) walk(rule, name);
+	for (const [name, rule] of Object.entries(ctx.rules)) walk(rule, name, false);
 }
 
 function collectTopLevelAliasBodies(
@@ -1600,7 +1616,12 @@ function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
 // resolveRule — recursive resolution of all reference types
 // ---------------------------------------------------------------------------
 
-function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rule<'link'> {
+function resolveRule(
+	rule: Rule<'link'>,
+	ctx: LinkCtx,
+	currentName: string,
+	parentIsOptionalSeq = false
+): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
 			return {
@@ -1608,14 +1629,20 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 				members: rule.members.map((m) => resolveRule(m, ctx, currentName))
 			};
 
-		case CHOICE:
+		case CHOICE: {
+			// A 2-member CHOICE[x, BLANK] is the desugared `optional(x)` form —
+			// its immediate-child alias qualifies as a clause-hoist mint site
+			// exactly like `optional(...)`'s content does. See
+			// `isClauseHoistVisibleGroupAlias` / `isOptionalOrBlankChoice`.
+			const isBlankChoice = isOptionalOrBlankChoice(rule as unknown as AnyRule);
 			return {
 				...rule,
-				members: rule.members.map((m) => resolveRule(m, ctx, currentName))
+				members: rule.members.map((m) => resolveRule(m, ctx, currentName, isBlankChoice))
 			};
+		}
 
 		case OPTIONAL: {
-			const content = resolveRule(rule.content, ctx, currentName);
+			const content = resolveRule(rule.content, ctx, currentName, true);
 			return { ...rule, content };
 		}
 
@@ -1639,26 +1666,29 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 			return resolveRule(rule.content, ctx, currentName);
 
 		case ALIAS: {
-			// enrich content-alias (`alias(<non-symbol content>, $.<name>)` tagged
-			// metadata.source='enrich'): the PARENT must reference the minted kind
-			// by a clean SYMBOL ref so codegen emits the visible group via its own
-			// AssembledGroup template. `mintContentAliasKinds` registers the body
-			// under `<name>`. Fire for BOTH declared (`parens`) and default
-			// (`_enum_body_group1`) names — the default name is `_`-prefixed, so we
-			// must NOT route it through the generic `!startsWith('_')` branch (which
-			// would inline the content instead of referencing the kind).
-			const aliasMeta = (rule as unknown as { metadata?: { source?: string } }).metadata;
+			// Clause-hoist visible-group mint site (`alias(symbol(_<name>),
+			// $.<name>)`, structurally identified by `isClauseHoistVisibleGroupAlias`
+			// — see debt PR-0c / doctrine decision 4): the PARENT must reference
+			// the minted kind by a clean SYMBOL ref so codegen emits the visible
+			// group via its own AssembledGroup template. `mintContentAliasKinds`
+			// registers the body under `<name>`. Fire for BOTH declared (`parens`)
+			// and default (`_enum_body_group1`) names — the default name is
+			// `_`-prefixed, so we must NOT route it through the generic
+			// `!startsWith('_')` branch (which would inline the content instead
+			// of referencing the kind).
 			if (
-				aliasMeta?.source === 'enrich' &&
-				rule.named &&
-				typeof rule.value === 'string' &&
-				rule.value.length > 0
+				isClauseHoistVisibleGroupAlias(rule as unknown as AliasRule<'link'>, {
+					rules: ctx.rules,
+					inlineNames: ctx.inline,
+					parentIsOptionalSeq
+				})
 			) {
-				// enrich visible-group alias — its content is now a SYMBOL ref to the
-				// hidden `_<name>` rule (`alias($._<name>, $.<name>)`). The PARENT must
-				// reference the minted VISIBLE kind by a clean `symbol(<name>)` ref;
-				// `mintContentAliasKinds` registers the body. (Symbol content WITHOUT
-				// the enrich tag is an authored relabel handled below via aliasedFrom.)
+				// The content is now a SYMBOL ref to the hidden `_<name>` rule
+				// (`alias($._<name>, $.<name>)`). The PARENT must reference the
+				// minted VISIBLE kind by a clean `symbol(<name>)` ref;
+				// `mintContentAliasKinds` registers the body. (Symbol content
+				// that does NOT satisfy the structural mint condition is an
+				// authored relabel, handled below via `aliasedFrom`.)
 				return { type: 'symbol', name: rule.value, inline: false } as Rule<'link'>;
 			}
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {

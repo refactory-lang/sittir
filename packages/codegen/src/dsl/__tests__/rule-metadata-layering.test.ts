@@ -68,17 +68,15 @@ const SANCTIONED_TOOLS_DIRS = ['validate/', 'probe/', 'discover/'];
  * Each entry MUST cite the reason and a follow-up pointer — this list is
  * the ONLY escape hatch; anything else failing the scan is a real
  * violation to fix, not to allowlist.
+ *
+ * Empty as of debt PR-0c: the last exception (`emitters/templates.ts`'s
+ * §D-2a spacing stopgap) was converted to a structural read
+ * (`RuleBase.splicedBody`, a declared top-level flag — see that field's doc
+ * comment in types/rule.ts) and no longer imports `readRuleMetadata`. The
+ * gate is exception-free; any future entry here needs the same bar this one
+ * met (individually justified, with a tracked follow-up) before landing.
  */
-const ALLOWLIST: ReadonlyMap<string, string> = new Map([
-	[
-		'emitters/templates.ts',
-		'debt PR-P1 scoping note (pre-existing "§D-2a spacing stopgap" reading ' +
-			'metadata.inlinedFrom for a render decision) — tracked as its own ' +
-			'follow-up (lingering-debt-inventory-research.md §3.2), explicitly ' +
-			'out of scope for PR-P1 items 1-5. See the TODO(debt-pr-p1-followup) ' +
-			'comment at the top of templates.ts.'
-	]
-]);
+const ALLOWLIST: ReadonlyMap<string, string> = new Map([]);
 
 function walk(dir: string, out: string[]): void {
 	for (const name of readdirSync(dir)) {
