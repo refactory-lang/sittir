@@ -407,6 +407,16 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
    Mechanical sweeps run via lspeasy (LSP-driven rename/replace) — previously avoided;
    the accumulated debt now justifies it.
 
+3. **Metadata is type-level OPAQUE to the compiler.** `RuleBase.metadata` becomes an
+   opaque branded type (`RuleMetadata`); its shape + accessor functions live in a
+   dsl/diagnostics-owned module. Compiler code can carry/copy the bag but cannot inspect
+   it — any compiler-side import of the accessor module is a lint violation (same
+   ast-grep gate family as the case/suffix rules). dsl keeps sanctioned access (e.g.
+   transform-path's `source === 'enrich'` descent keying). Forces two existing
+   compiler-side reads to move, both already queued: templates.ts's `inlinedFrom`
+   branch (the flagged violation) and link.ts:484's provenance fallback. Folds into
+   PR-P1 (provenance → metadata) as its type-design core.
+
 ## 6. Open questions for the design discussion
 
 1. **Is "one boundary module" an acceptable answer to "there should be a SSOT"?** §0 argues
