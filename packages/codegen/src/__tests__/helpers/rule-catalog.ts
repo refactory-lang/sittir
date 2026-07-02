@@ -3,7 +3,7 @@ import { expect } from 'vitest';
 import type { Rule, RuleId } from '../../types/rule.ts';
 import type { RuleCatalog } from '../../compiler/types.ts';
 
-export function collectRuleIds(rule: Rule): RuleId[] {
+export function collectRuleIds(rule: Rule<'evaluate'>): RuleId[] {
 	const ids: RuleId[] = [];
 	walkRule(rule, (node) => {
 		expect(node.id).toBeTypeOf('string');
@@ -12,7 +12,7 @@ export function collectRuleIds(rule: Rule): RuleId[] {
 	return ids;
 }
 
-export function expectCompleteCatalog(rules: Record<string, Rule>, catalog: RuleCatalog): void {
+export function expectCompleteCatalog(rules: Record<string, Rule<'evaluate'>>, catalog: RuleCatalog): void {
 	const seen = new Set<RuleId>();
 	for (const [kind, rule] of Object.entries(rules)) {
 		const ids = collectRuleIds(rule);
@@ -37,7 +37,7 @@ export function serializeCatalog(catalog: RuleCatalog): unknown {
 	};
 }
 
-export function walkRule(rule: Rule, visit: (rule: Rule) => void): void {
+export function walkRule(rule: Rule<'evaluate'>, visit: (rule: Rule<'evaluate'>) => void): void {
 	visit(rule);
 	switch (rule.type) {
 		case SEQ:

@@ -4,17 +4,18 @@ import { AssembledBranch, AssembledNonterminal, AssembledPattern, type Assembled
 import type { SeqRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel } from '../node-model.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 
 describe('node-model emitter', () => {
 	it('serializes per-value parseKind without slot-level aliasSources', () => {
-		const rule: SeqRule = {
+		const rule: SeqRule<'link'> = {
 			type: SEQ,
 			members: [{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'identifier' } }]
 		};
 		const nodes = new Map<string, AssembledNode>();
 		nodes.set(
 			'alias_host',
-			new AssembledBranch('alias_host', rule, rule, rule, {
+			new AssembledBranch('alias_host', rule, rule, deleteWrapper(rule), {
 				slotRecord: Object.freeze({
 					value: new AssembledNonterminal({
 						fieldName: 'value',

@@ -13,7 +13,7 @@
  */
 
 import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, SeqRule } from '../types/rule.ts';
+import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice, isEnumChoiceRule } from '../types/rule.ts';
 import { isTerminalShape } from './link.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
@@ -32,12 +32,12 @@ import { DiagnosticSink } from '../types/diagnostics.ts';
  * consults, on top of BaseCtx's grammar facts (rules / diagnostics / wordMatcher
  * / builder). See compiler/ctx.ts.
  */
-export class NormalizeCtx extends BaseCtx {
+export class NormalizeCtx extends BaseCtx<Rule<'link'>> {
 	/** Inline-decision set (kinds emitters skip / optimize preserves). */
 	readonly inlineKinds: ReadonlySet<string>;
 	/** Kinds to exclude from the slot-grouping "propose-promotion" diagnostic. */
 	readonly polymorphSkip?: ReadonlySet<string>;
-	constructor(init: BaseCtxInit & { inlineKinds?: ReadonlySet<string>; polymorphSkip?: ReadonlySet<string> }) {
+	constructor(init: BaseCtxInit<Rule<'link'>> & { inlineKinds?: ReadonlySet<string>; polymorphSkip?: ReadonlySet<string> }) {
 		super(init);
 		this.inlineKinds = init.inlineKinds ?? new Set();
 		this.polymorphSkip = init.polymorphSkip;
@@ -255,7 +255,7 @@ function spliceFoldableRefs(
 			// would surface those internals (`extends {{ type }}`) and rename the
 			// slot — a render + slot regression. Only STRUCTURAL (un-fielded) group
 			// refs fold; field-wrapped groups stay as their single slot.
-			if (rule.fieldName !== undefined) return rule;
+			if ((rule as { fieldName?: string }).fieldName !== undefined) return rule;
 			const target = rules[rule.name];
 			if (!target) return rule;
 			const body = resolveGroupOrMultiInlineTarget(target);
@@ -312,12 +312,12 @@ function materializeInlinedBody(
 ): Rule<'link'> {
 	const r = ref as {
 		multiplicity?: LeafMultiplicity;
-		separator?: Rule<'link'>['separator'];
+		separator?: RuleBase<'optimize'>['separator'];
 		fieldName?: string;
 	};
 	const carry: {
 		multiplicity?: LeafMultiplicity;
-		separator?: Rule<'link'>['separator'];
+		separator?: RuleBase<'optimize'>['separator'];
 		fieldName?: string;
 	} = {};
 	if (r.multiplicity !== undefined) carry.multiplicity = r.multiplicity;
@@ -917,7 +917,8 @@ export function collapseWrappers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 						(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
 					);
 					// Only stamp when non-default (single → undefined per combineMultiplicity).
-					if (combined !== undefined) return { ...carried, multiplicity: combined } as Rule<'link'>;
+					if (combined !== undefined)
+						return { ...carried, multiplicity: combined } as unknown as Rule<'link'>;
 				}
 				return carried;
 			}

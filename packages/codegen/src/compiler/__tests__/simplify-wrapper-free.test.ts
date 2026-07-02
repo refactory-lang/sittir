@@ -14,7 +14,7 @@ import { describe, it, expect } from 'vitest';
 import { computeSimplifiedRules, SimplifyCtx } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
-import type { Rule } from '../../types/rule.ts';
+import type { AnyRule, Rule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
 // Recursive wrapper scanner
@@ -22,7 +22,7 @@ import type { Rule } from '../../types/rule.ts';
 
 const WRAPPER_TYPES = new Set(['optional', 'field', 'repeat', 'repeat1']);
 
-function findWrappers(rule: Rule, path: string = ''): string[] {
+function findWrappers(rule: AnyRule, path: string = ''): string[] {
 	const out: string[] = [];
 	if (WRAPPER_TYPES.has(rule.type)) {
 		out.push(`${path}:${rule.type}`);
@@ -36,12 +36,12 @@ function findWrappers(rule: Rule, path: string = ''): string[] {
 		}
 	}
 	if ('content' in rule && rule.content && typeof rule.content === 'object' && 'type' in rule.content) {
-		out.push(...findWrappers(rule.content as Rule, `${path}.content`));
+		out.push(...findWrappers(rule.content as AnyRule, `${path}.content`));
 	}
 	return out;
 }
 
-function findWrappersInMap(rules: Record<string, Rule>): Array<{ kind: string; path: string; type: string }> {
+function findWrappersInMap(rules: Record<string, AnyRule>): Array<{ kind: string; path: string; type: string }> {
 	const result: Array<{ kind: string; path: string; type: string }> = [];
 	for (const [kind, rule] of Object.entries(rules)) {
 		const wrappers = findWrappers(rule, kind);
@@ -66,7 +66,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 	it('choice-with-empty-match does not produce optional in output', () => {
 		// choice(pattern(""), symbol('a')) folds to optional(symbol('a'))
 		// but that optional must be pushed to leaf attribute (multiplicity: optional)
-		const input: Record<string, Rule> = {
+		const input: Record<string, Rule<'link'>> = {
 			r1: {
 				type: CHOICE,
 				members: [
@@ -89,7 +89,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 		// deletion the repeat and field are gone; simplify should not re-introduce them.
 		// After applyWrapperDeletion: { type: 'symbol', name: 'x', fieldName: 'items', multiplicity: 'array' }
 		// computeSimplifiedRules must preserve these leaf-level attributes, not re-wrap.
-		const input: Record<string, Rule> = {
+		const input: Record<string, Rule<'link'>> = {
 			r1: {
 				type: SEQ,
 				members: [
@@ -118,7 +118,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 		// choice(field('a', X), seq(field('b', Y), field('a', X))) — hoistSharedFieldFromBranchesForChoice
 		// extracts field('a') and wraps the residual in optional. After the fix, the
 		// optional must be pushed to leaf attrs, not left as a wrapper node.
-		const input: Record<string, Rule> = {
+		const input: Record<string, Rule<'link'>> = {
 			r1: {
 				type: CHOICE,
 				members: [
@@ -151,7 +151,7 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 	it('wrapper-free minimal grammar produces no wrappers in output', () => {
 		// Construct a minimal set of rule shapes that exercises seq, choice,
 		// optional (via empty-match), repeat, field, and the hoist functions.
-		const inputRules: Record<string, Rule> = {
+		const inputRules: Record<string, Rule<'link'>> = {
 			// seq with a field-wrapped symbol
 			function_decl: {
 				type: SEQ,

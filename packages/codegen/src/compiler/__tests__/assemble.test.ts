@@ -15,17 +15,17 @@ import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../model/node-m
 // Pre-process raw rules through deleteWrapper so deriveSlotsRaw receives
 // canonical (wrapper-free) input — mirrors how the production pipeline
 // applies applyWrapperDeletion before assembling.
-function deriveFields(rule: Rule) {
+function deriveFields(rule: Rule<'link'>) {
 	return deriveSlots(deleteWrapper(rule)).filter((s) => s.source !== 'inferred');
 }
 
-function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
+function makeOptimized(rules: Record<string, Rule<'link'>>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
 	const renderRules = applyWrapperDeletion(rules);
 	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
-		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(overrides.topLevelAliasBodies);
+		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(overrides.topLevelAliasBodies);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
 		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ rules: aliasBodiesRender, diagnostics: new DiagnosticSink() }));
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
@@ -52,7 +52,7 @@ describe('Assemble — simplifyRule', () => {
 	// run first). These tests apply wrapper-deletion before calling simplifyRule.
 
 	it('strips non-alphanumeric string nodes and collapses single-member seq', () => {
-		const rawRule: Rule = {
+		const rawRule: Rule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: '{' },
@@ -74,7 +74,7 @@ describe('Assemble — simplifyRule', () => {
 	});
 
 	it('collapses single-member seq to its content', () => {
-		const rawRule: Rule = {
+		const rawRule: Rule<'link'> = {
 			type: SEQ,
 			members: [{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'y' } }]
 		};
@@ -87,7 +87,7 @@ describe('Assemble — simplifyRule', () => {
 	});
 
 	it('keeps alphanumeric strings', () => {
-		const rule: Rule = { type: STRING, value: 'pub' };
+		const rule: Rule<'link'> = { type: STRING, value: 'pub' };
 		const simplified = simplifyRule(rule);
 		expect(simplified).toEqual({ type: 'string', value: 'pub' });
 	});
@@ -95,7 +95,7 @@ describe('Assemble — simplifyRule', () => {
 
 describe('Assemble — classifyNode', () => {
 	it('classifies visible seq with fields as branch', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
@@ -121,7 +121,7 @@ describe('Assemble — classifyNode', () => {
 		// folded into `'branch'`. Container-shape kinds (no `field()` on
 		// the rule) are still `AssembledBranch` instances; the per-emitter
 		// discriminator is now `AssembledBranch.isContainerShape`.
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
@@ -129,7 +129,7 @@ describe('Assemble — classifyNode', () => {
 	});
 
 	it('classifies visible choice with same field set as branch', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: CHOICE,
 			members: [
 				{
@@ -178,22 +178,22 @@ describe('Assemble — classifyNode', () => {
 	});
 
 	it('classifies visible pattern as pattern', () => {
-		const rule: Rule = { type: PATTERN, value: '[a-z]+' };
+		const rule: Rule<'link'> = { type: PATTERN, value: '[a-z]+' };
 		expect(classifyNode('identifier', rule)).toBe('pattern');
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
-		const rule: Rule = { type: STRING, value: 'true' };
+		const rule: Rule<'link'> = { type: STRING, value: 'true' };
 		expect(classifyNode('true', rule)).toBe('keyword');
 	});
 
 	it('classifies visible non-alphanumeric string as token (T027b)', () => {
-		const rule: Rule = { type: STRING, value: '->' };
+		const rule: Rule<'link'> = { type: STRING, value: '->' };
 		expect(classifyNode('arrow', rule)).toBe('token');
 	});
 
 	it('classifies enum as enum', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: CHOICE,
 			members: [
 				{ type: STRING, value: 'pub' },
@@ -204,7 +204,7 @@ describe('Assemble — classifyNode', () => {
 	});
 
 	it('classifies hidden choice as supertype when already SupertypeRule', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: '_expression',
 			subtypes: ['binary_expression', 'identifier'],
@@ -216,7 +216,7 @@ describe('Assemble — classifyNode', () => {
 	it('classifies SupertypeRule (from Link) as supertype regardless of name', () => {
 		// Link classifies hidden choice-of-symbols as SupertypeRule
 		// Assemble just passes it through — no name check needed
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: 'expression',
 			subtypes: ['binary_expression', 'identifier'],
@@ -228,7 +228,7 @@ describe('Assemble — classifyNode', () => {
 	});
 
 	it('classifies hidden seq with fields as group', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: GROUP,
 			name: '_sig',
 			content: {
@@ -294,7 +294,7 @@ describe('Assemble — classifyNode', () => {
 									content: { type: SYMBOL, name: 'expr' }
 								}
 							]
-						} satisfies Rule
+						} satisfies Rule<'link'>
 					]
 				])
 			}
@@ -399,7 +399,7 @@ describe('Assemble — T027a empty seq after stripping', () => {
 		// PR-P Task 2: Link no longer wraps pure-terminal subtrees as TerminalRule.
 		// Rules arrive as their original unwrapped type; classifyNode dispatches
 		// terminal-shaped SEQs through classifyTerminalFallback (isAllTextShape → 'pattern').
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: '{' },
@@ -413,7 +413,7 @@ describe('Assemble — T027a empty seq after stripping', () => {
 
 describe('Rule — deriveFields', () => {
 	it('extracts fields from a seq rule', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
@@ -436,7 +436,7 @@ describe('Rule — deriveFields', () => {
 	});
 
 	it('derives required=true for non-optional fields', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: SEQ,
 			members: [{ type: FIELD, name: 'x', content: { type: SYMBOL, name: 'y' } }]
 		};
@@ -445,7 +445,7 @@ describe('Rule — deriveFields', () => {
 	});
 
 	it('derives required=false for optional fields', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: OPTIONAL,
 			content: {
 				type: FIELD,
@@ -458,7 +458,7 @@ describe('Rule — deriveFields', () => {
 	});
 
 	it('derives multiple=true for repeated fields', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: REPEAT,
 			content: {
 				type: FIELD,
@@ -479,7 +479,7 @@ describe('Rule — deriveFields', () => {
 		// `choice(seq(field('name'),...), ...)` keeps its distinct `name`/`type`/
 		// `value` fields instead of collapsing to a single `content`. A choice of
 		// BARE kinds / literals (no fields, no seqs) is still ONE union slot.
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'default' },

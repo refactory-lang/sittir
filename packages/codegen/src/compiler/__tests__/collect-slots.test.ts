@@ -20,10 +20,10 @@ import { deleteWrapper } from '../wrapper-deletion.ts';
 import { isTerminalValue } from '../model/node-map.ts';
 import type { Rule } from '../../types/rule.ts';
 
-const sym = (name: string): Rule => ({ type: SYMBOL, name });
-const str = (value: string): Rule => ({ type: STRING, value });
+const sym = (name: string): Rule<'link'> => ({ type: SYMBOL, name });
+const str = (value: string): Rule<'link'> => ({ type: STRING, value });
 
-function slots(rule: Rule) {
+function slots(rule: Rule<'link'>) {
 	return collectSlots(deleteWrapper(rule) as Rule);
 }
 
@@ -76,7 +76,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	it('comparison_operator inner seq: operators choice NOT folded into operand slot', () => {
 		// seq{f:comparators, m:nonEmpty}( choice{f:operators}, symbol(primary_expression) )
 		// → operators slot (choice) + a symbol slot; operators NOT folded in.
-		const inner: Rule = {
+		const inner: Rule<'link'> = {
 			type: REPEAT1,
 			content: {
 				type: SEQ,
@@ -108,7 +108,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	it('unnamed top-level choice → content slot + warning', () => {
 		const warned: (string | undefined)[] = [];
 		setUnnamedChoiceWarner((k) => warned.push(k));
-		const rule: Rule = { type: CHOICE, members: [sym('a'), sym('b')] };
+		const rule: Rule<'link'> = { type: CHOICE, members: [sym('a'), sym('b')] };
 		const out = collectSlots(deleteWrapper(rule) as Rule, 'my_kind');
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('content');
@@ -118,7 +118,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	it('field-named choice → fieldName slot, no warning', () => {
 		const warned: (string | undefined)[] = [];
 		setUnnamedChoiceWarner((k) => warned.push(k));
-		const rule: Rule = { type: FIELD, name: 'value', content: { type: CHOICE, members: [sym('a'), sym('b')] } };
+		const rule: Rule<'link'> = { type: FIELD, name: 'value', content: { type: CHOICE, members: [sym('a'), sym('b')] } };
 		const out = collectSlots(deleteWrapper(rule) as Rule, 'my_kind');
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('value');
@@ -128,7 +128,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	it('polymorph → content slot, no unnamed-choice warning', () => {
 		const warned: (string | undefined)[] = [];
 		setUnnamedChoiceWarner((k) => warned.push(k));
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: 'polymorph',
 			name: 'except_clause',
 			forms: [
@@ -143,7 +143,7 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	});
 
 	it('seq distributes — two symbol members → two slots', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: SEQ,
 			members: [{ type: FIELD, name: 'left', content: sym('a') }, { type: FIELD, name: 'right', content: sym('b') }],
 		};

@@ -10,7 +10,7 @@
  *
  * Noise-free when unset: the env-var lookup is O(1) and returns early.
  */
-import type { Rule } from '../types/rule.ts';
+import type { AnyRule } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 
 const FLAG = 'SITTIR_TRACE';
@@ -31,7 +31,7 @@ function tracedKinds(): readonly string[] {
  * in every phase (Link may classify a kind into a synthetic type;
  * Optimize may inline single-use hidden rules, removing the entry).
  */
-export function tracePhaseRules(phase: string, rules: Record<string, Rule> | undefined | null): void {
+export function tracePhaseRules(phase: string, rules: Record<string, AnyRule> | undefined | null): void {
 	const kinds = tracedKinds();
 	if (kinds.length === 0 || !rules) return;
 	for (const k of kinds) {

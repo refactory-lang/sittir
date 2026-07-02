@@ -10,7 +10,7 @@ import type { Rule } from '../../types/rule.ts';
 // the same expectations hold over the unified slots view.
 // Pre-process raw rules through deleteWrapper so deriveSlotsRaw receives
 // canonical (wrapper-free) input.
-function deriveChildren(rule: Rule) {
+function deriveChildren(rule: Rule<'link'>) {
 	return deriveSlots(deleteWrapper(rule)).filter((s) => s.source === 'inferred');
 }
 
@@ -35,7 +35,7 @@ describe('node-map — optional(repeat1(...)) multiplicity', () => {
 	it('treats optional(repeat1(symbol, sep)) as array, not nonEmptyArray', () => {
 		// Body shape after evaluate's commaSep1 lift:
 		//   seq('(', optional(repeat1(parameter, sep=',')), ')')
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: '(' },
@@ -60,7 +60,7 @@ describe('node-map — optional(repeat1(...)) multiplicity', () => {
 
 	it('still treats bare repeat1(symbol) as nonEmptyArray', () => {
 		// Sanity: removing the outer optional → nonEmpty signal must survive.
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'parameter' }
 		};
@@ -72,7 +72,7 @@ describe('node-map — optional(repeat1(...)) multiplicity', () => {
 	it('treats optional(repeat(symbol)) as array (unchanged behaviour)', () => {
 		// Pre-existing repeat (not repeat1) inside optional: already 'array',
 		// not affected by the fix. Asserted to lock the contract.
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: OPTIONAL,
 			content: {
 				type: REPEAT,

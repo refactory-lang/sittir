@@ -26,7 +26,7 @@ import type { Rule, TokenRule, StringRule } from '../../types/rule.ts';
 describe('§H1 — TokenRule metadata threading', () => {
 	it('preserves immediate=true through deriveValuesForRule', () => {
 		// Grammar shape: field('x', token.immediate('foo'))
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: FIELD,
 			name: 'x',
 			content: {
@@ -47,7 +47,7 @@ describe('§H1 — TokenRule metadata threading', () => {
 
 	it('preserves immediate=false on plain token() wrapper', () => {
 		// Grammar shape: field('x', token('foo')) — lexer hint, not adjacency.
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: FIELD,
 			name: 'x',
 			content: {
@@ -66,7 +66,7 @@ describe('§H1 — TokenRule metadata threading', () => {
 
 	it('leaves bare string terminals untagged', () => {
 		// Grammar shape: field('x', 'foo') — no token wrapper at all.
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: FIELD,
 			name: 'x',
 			content: { type: STRING, value: 'foo' }

@@ -16,7 +16,7 @@ import {
 import type { Rule } from '../../types/rule.ts';
 import type { LinkedGrammar, ExternalRole } from '../types.ts';
 
-function makeLinked(rules: Record<string, Rule>, overrides?: Partial<LinkedGrammar>): LinkedGrammar {
+function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<LinkedGrammar>): LinkedGrammar {
 	return {
 		name: 'test',
 		rules,
@@ -442,7 +442,7 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 
 describe('Optimize — collapseWrappers (T062)', () => {
 	it('collapses optional(optional(x)) → optional(x)', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: OPTIONAL,
 			content: { type: OPTIONAL, content: { type: STRING, value: 'a' } }
 		};
@@ -452,7 +452,7 @@ describe('Optimize — collapseWrappers (T062)', () => {
 	});
 
 	it('collapses repeat(repeat(x)) → repeat(x)', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: REPEAT,
 			content: { type: REPEAT, content: { type: STRING, value: 'a' } }
 		};
@@ -462,7 +462,7 @@ describe('Optimize — collapseWrappers (T062)', () => {
 	});
 
 	it('collapses optional(repeat(x)) → repeat(x)', () => {
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: OPTIONAL,
 			content: { type: REPEAT, content: { type: STRING, value: 'a' } }
 		};

@@ -109,7 +109,7 @@ describe('deleteWrapper — seq recursion', () => {
 	it('recurses into seq members and deletes wrappers inside', () => {
 		const a: OptionalRule = { type: OPTIONAL, content: sym('a') };
 		const b: SymbolRule = sym('b');
-		const seq: SeqRule = { type: SEQ, members: [a, b] };
+		const seq: SeqRule<'link'> = { type: SEQ, members: [a, b] };
 		const out = deleteWrapper(seq);
 		expect(out.type).toBe('seq');
 		const members = (out as SeqRule).members;
@@ -164,7 +164,7 @@ describe('deleteWrapper — idempotence', () => {
 
 describe('applyWrapperDeletion — map form', () => {
 	it('transforms every rule in the map', () => {
-		const rules: Record<string, Rule> = {
+		const rules: Record<string, Rule<'link'>> = {
 			foo: { type: OPTIONAL, content: sym('bar') } as OptionalRule,
 			baz: sym('qux'),
 		};

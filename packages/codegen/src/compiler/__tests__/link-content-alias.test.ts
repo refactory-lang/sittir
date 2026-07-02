@@ -19,7 +19,7 @@ import type { Rule } from '../../types/rule.ts';
  *  - An existing rule with the same name is left byte-unchanged (no clobber).
  */
 
-function rawWith(rules: Record<string, Rule>): RawGrammar {
+function rawWith(rules: Record<string, Rule<'evaluate'>>): RawGrammar {
 	return {
 		name: 'synth',
 		rules,
@@ -33,21 +33,21 @@ function rawWith(rules: Record<string, Rule>): RawGrammar {
 	} as unknown as RawGrammar;
 }
 
-const sym = (n: string): Rule => ({ type: 'symbol', name: n }) as Rule;
-const str = (v: string): Rule => ({ type: 'string', value: v }) as Rule;
-const field = (n: string, c: Rule): Rule => ({ type: 'field', name: n, content: c }) as Rule;
-const seq = (...m: Rule[]): Rule => ({ type: 'seq', members: m }) as Rule;
-const choice = (...m: Rule[]): Rule => ({ type: 'choice', members: m }) as Rule;
+const sym = (n: string): Rule<'evaluate'> => ({ type: 'symbol', name: n }) as Rule<'evaluate'>;
+const str = (v: string): Rule<'evaluate'> => ({ type: 'string', value: v }) as Rule<'evaluate'>;
+const field = (n: string, c: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'field', name: n, content: c }) as Rule<'evaluate'>;
+const seq = (...m: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'seq', members: m }) as Rule<'evaluate'>;
+const choice = (...m: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'choice', members: m }) as Rule<'evaluate'>;
 // enrich visible-group alias: a SYMBOL ref to the hidden `_<name>` rule wrapped
 // in a metadata.source='enrich' alias (`alias($._<name>, $.<name>)`).
-const groupAlias = (hiddenName: string, name: string): Rule =>
-	({ type: 'alias', content: sym(hiddenName), named: true, value: name, metadata: { source: 'enrich' } }) as unknown as Rule;
+const groupAlias = (hiddenName: string, name: string): Rule<'evaluate'> =>
+	({ type: 'alias', content: sym(hiddenName), named: true, value: name, metadata: { source: 'enrich' } }) as unknown as Rule<'evaluate'>;
 // Legacy direct content-alias (non-symbol content) — still registered.
-const contentAlias = (content: Rule, name: string): Rule =>
-	({ type: 'alias', content, named: true, value: name, metadata: { source: 'enrich' } }) as unknown as Rule;
+const contentAlias = (content: Rule<'evaluate'>, name: string): Rule<'evaluate'> =>
+	({ type: 'alias', content, named: true, value: name, metadata: { source: 'enrich' } }) as unknown as Rule<'evaluate'>;
 // Authored relabel alias (NO enrich tag) — keeps aliasedFrom handling, NOT minted.
-const symbolAlias = (refName: string, name: string): Rule =>
-	({ type: 'alias', content: sym(refName), named: true, value: name }) as unknown as Rule;
+const symbolAlias = (refName: string, name: string): Rule<'evaluate'> =>
+	({ type: 'alias', content: sym(refName), named: true, value: name }) as unknown as Rule<'evaluate'>;
 
 describe('mintContentAliasKinds — link pass', () => {
 	it('registers <name> from the HIDDEN rule body for a symbol-form enrich group alias', () => {
@@ -90,12 +90,12 @@ describe('mintContentAliasKinds — link pass', () => {
 	});
 
 	it('registers a default-named group kind from a symbol-form group alias', () => {
-		const body = seq({ type: 'repeat1', content: choice(field('name', sym('id')), sym('enum_assignment')) } as Rule);
+		const body = seq({ type: 'repeat1', content: choice(field('name', sym('id')), sym('enum_assignment')) } as Rule<'evaluate'>);
 		const linked = link(
 			rawWith({
 				enum_body: seq(str('{'), groupAlias('_enum_body_group1', 'enum_body_group1'), str('}')),
 				_enum_body_group1: body,
-				id: { type: 'pattern', value: '[a-z]+' } as Rule,
+				id: { type: 'pattern', value: '[a-z]+' } as Rule<'evaluate'>,
 				enum_assignment: seq(sym('id'), str('='), sym('id'))
 			})
 		);

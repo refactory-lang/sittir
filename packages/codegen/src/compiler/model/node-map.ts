@@ -37,6 +37,7 @@ import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN
 import type {
 	AnyRule,
 	Rule,
+	RuleBase,
 	RenderRule,
 	RuleSource,
 	SeqRule,
@@ -1100,11 +1101,14 @@ function normalizeRuleForSignature(value: unknown): unknown {
 }
 
 /**
- * Extract a separator string from a Rule<'link'>['separator'] value.
+ * Extract a separator string from a `RuleBase<'optimize'>['separator']`
+ * value (the stamped leaf form `applyWrapperDeletion` produces — this
+ * function only ever sees post-Optimize separators, never the `link`-phase
+ * `RepeatRule.separator?: string`).
  * Returns undefined when the separator is absent or empty.
- * Handles string, Rule<'link'>[], and the object form { rules, trailing?, leading? }.
+ * Handles string, Rule[], and the object form { rules, trailing?, leading? }.
  */
-export function extractSeparatorString(sep: Rule<'link'>['separator']): string | undefined {
+export function extractSeparatorString(sep: RuleBase<'optimize'>['separator']): string | undefined {
 	if (sep === undefined) return undefined;
 	if (typeof sep === 'string') return sep || undefined;
 	if (Array.isArray(sep)) {

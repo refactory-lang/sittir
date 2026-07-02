@@ -16,11 +16,12 @@ import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { emitRenderModule } from '../render-module.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 
 const nodeMapWith = makeNodeMapWith;
 
 function makeMinimalNodeMap(): NodeMap {
-	const callRule: SeqRule = {
+	const callRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -45,7 +46,7 @@ function makeMinimalNodeMap(): NodeMap {
 			}
 		]
 	};
-	const expressionRule: ChoiceRule = {
+	const expressionRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [
 			{ type: SYMBOL, name: 'identifier' },
@@ -53,7 +54,7 @@ function makeMinimalNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRule));
+	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRule, deleteWrapper(callRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }));
 	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }));
@@ -72,18 +73,18 @@ function makeMinimalNodeMap(): NodeMap {
 }
 
 function makeRequiredChildrenNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('child_parent', new AssembledBranch('child_parent', parentRule, parentRule));
+	nodes.set('child_parent', new AssembledBranch('child_parent', parentRule, parentRule, deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeOptionalChildrenNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -93,13 +94,13 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('optional_parent', new AssembledBranch('optional_parent', parentRule, parentRule));
+	nodes.set('optional_parent', new AssembledBranch('optional_parent', parentRule, parentRule, deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeRepeatedChildrenNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -109,13 +110,13 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('repeated_parent', new AssembledBranch('repeated_parent', parentRule, parentRule));
+	nodes.set('repeated_parent', new AssembledBranch('repeated_parent', parentRule, parentRule, deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeRepeatedFieldNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -129,13 +130,13 @@ function makeRepeatedFieldNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('repeated_field_parent', new AssembledBranch('repeated_field_parent', parentRule, parentRule));
+	nodes.set('repeated_field_parent', new AssembledBranch('repeated_field_parent', parentRule, parentRule, deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeOptionalRepeatedFieldNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -149,13 +150,13 @@ function makeOptionalRepeatedFieldNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('optional_repeated_field_parent', new AssembledBranch('optional_repeated_field_parent', parentRule, parentRule));
+	nodes.set('optional_repeated_field_parent', new AssembledBranch('optional_repeated_field_parent', parentRule, parentRule, deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeReservedNestedSupertypeNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -165,11 +166,11 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 			}
 		]
 	};
-	const literalRule: ChoiceRule = {
+	const literalRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [{ type: SYMBOL, name: 'string_literal' }]
 	};
-	const expressionRule: ChoiceRule = {
+	const expressionRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [
 			{ type: SYMBOL, name: '_literal' },
@@ -177,7 +178,7 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('parent_expression', new AssembledBranch('parent_expression', parentRule, parentRule));
+	nodes.set('parent_expression', new AssembledBranch('parent_expression', parentRule, parentRule, deleteWrapper(parentRule)));
 	nodes.set('string_literal', new AssembledPattern('string_literal', { type: PATTERN, value: '".*"' }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, ['string_literal']));
@@ -186,26 +187,26 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 }
 
 function makePolymorphSingularChildrenNodeMap(): NodeMap {
-	const identRule: SeqRule = {
+	const identRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
-	const integerRule: SeqRule = {
+	const integerRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'integer' }]
 	};
-	const parentRule: ChoiceRule = {
+	const parentRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [
 			{ type: SYMBOL, name: 'expression__form_identifier' },
 			{ type: SYMBOL, name: 'expression__form_integer' }
 		]
 	};
-	const identifierForm = new AssembledGroup('expression__form_identifier', identRule, identRule, {
+	const identifierForm = new AssembledGroup('expression__form_identifier', identRule, identRule, deleteWrapper(identRule), {
 		name: 'identifier',
 		parentKind: 'expression'
 	});
-	const integerForm = new AssembledGroup('expression__form_integer', integerRule, integerRule, {
+	const integerForm = new AssembledGroup('expression__form_integer', integerRule, integerRule, deleteWrapper(integerRule), {
 		name: 'integer',
 		parentKind: 'expression'
 	});
@@ -223,38 +224,38 @@ function makePolymorphSingularChildrenNodeMap(): NodeMap {
 }
 
 function makeSupertypeAndSubtypeChildrenNodeMap(): NodeMap {
-	const parentRule: ChoiceRule = {
+	const parentRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [
 			{ type: SYMBOL, name: '_expression' },
 			{ type: SYMBOL, name: 'identifier' }
 		]
 	};
-	const expressionRule: ChoiceRule = {
+	const expressionRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [
 			{ type: SYMBOL, name: 'identifier' },
 			{ type: SYMBOL, name: 'call_expression' }
 		]
 	};
-	const callRule: SeqRule = {
+	const callRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('supertype_alias_parent', new AssembledBranch('supertype_alias_parent', parentRule, parentRule));
+	nodes.set('supertype_alias_parent', new AssembledBranch('supertype_alias_parent', parentRule, parentRule, deleteWrapper(parentRule)));
 	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['identifier', 'call_expression']));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRule));
+	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRule, deleteWrapper(callRule)));
 	return nodeMapWith(nodes);
 }
 
 function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
-	const wrapperRule: SeqRule = {
+	const wrapperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
-	const parentRule: ChoiceRule = {
+	const parentRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [
 			{ type: SYMBOL, name: '_wrapped_item' },
@@ -262,15 +263,15 @@ function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('hidden_wrapper_parent', new AssembledBranch('hidden_wrapper_parent', parentRule, parentRule));
-	nodes.set('_wrapped_item', new AssembledBranch('_wrapped_item', wrapperRule, wrapperRule));
+	nodes.set('hidden_wrapper_parent', new AssembledBranch('hidden_wrapper_parent', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('_wrapped_item', new AssembledBranch('_wrapped_item', wrapperRule, wrapperRule, deleteWrapper(wrapperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -280,17 +281,17 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('optional_repeated_parent', new AssembledBranch('optional_repeated_parent', parentRule, parentRule));
+	nodes.set('optional_repeated_parent', new AssembledBranch('optional_repeated_parent', parentRule, parentRule, deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
 
 function makeTransparentStatementWrapperNodeMap(): NodeMap {
-	const wrapperRule: SeqRule = {
+	const wrapperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: '_simple_statement' }]
 	};
-	const moduleRule: SeqRule = {
+	const moduleRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -299,20 +300,20 @@ function makeTransparentStatementWrapperNodeMap(): NodeMap {
 			}
 		]
 	};
-	const simpleStatementRule: ChoiceRule = {
+	const simpleStatementRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [{ type: SYMBOL, name: 'expression_statement' }]
 	};
-	const statementRule: ChoiceRule = {
+	const statementRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [{ type: SYMBOL, name: '_simple_statements' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('_simple_statement', new AssembledSupertype('_simple_statement', simpleStatementRule, ['expression_statement']));
 	nodes.set('_statement', new AssembledSupertype('_statement', statementRule, ['_simple_statements']));
-	nodes.set('_simple_statements', new AssembledBranch('_simple_statements', wrapperRule, wrapperRule));
+	nodes.set('_simple_statements', new AssembledBranch('_simple_statements', wrapperRule, wrapperRule, deleteWrapper(wrapperRule)));
 	nodes.set('expression_statement', new AssembledPattern('expression_statement', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('module', new AssembledBranch('module', moduleRule, moduleRule));
+	nodes.set('module', new AssembledBranch('module', moduleRule, moduleRule, deleteWrapper(moduleRule)));
 	return nodeMapWith(nodes);
 }
 
@@ -321,7 +322,7 @@ function makeTransparentStatementWrapperNodeMap(): NodeMap {
 // kinds with no grammar supertype covering both. Under cleanup-rules §E1, such
 // a named heterogeneous field should also get a per-slot typed enum.
 function makeNamedHeterogeneousFieldNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -338,7 +339,7 @@ function makeNamedHeterogeneousFieldNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('field_expression', new AssembledBranch('field_expression', parentRule, parentRule));
+	nodes.set('field_expression', new AssembledBranch('field_expression', parentRule, parentRule, deleteWrapper(parentRule)));
 	nodes.set(
 		'field_identifier',
 		new AssembledPattern('field_identifier', { type: PATTERN, value: '[a-zA-Z_][a-zA-Z0-9_]*' })
@@ -348,7 +349,7 @@ function makeNamedHeterogeneousFieldNodeMap(): NodeMap {
 }
 
 function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -363,11 +364,11 @@ function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 			}
 		]
 	};
-	const pairRule: SeqRule = {
+	const pairRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
-	const shorthandRule: ChoiceRule = {
+	const shorthandRule: ChoiceRule<'link'> = {
 		type: CHOICE,
 		members: [
 			{ type: SYMBOL, name: 'identifier' },
@@ -375,8 +376,8 @@ function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('object_like', new AssembledBranch('object_like', parentRule, parentRule));
-	nodes.set('pair', new AssembledBranch('pair', pairRule, pairRule));
+	nodes.set('object_like', new AssembledBranch('object_like', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('pair', new AssembledBranch('pair', pairRule, pairRule, deleteWrapper(pairRule)));
 	nodes.set(
 		'_shorthand_property_identifier',
 		new AssembledSupertype('_shorthand_property_identifier', shorthandRule, [

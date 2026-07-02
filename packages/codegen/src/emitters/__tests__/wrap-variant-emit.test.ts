@@ -10,6 +10,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 
 const wrapEmitterSource = readFileSync(new URL('../wrap.ts', import.meta.url), 'utf8');
 
@@ -24,12 +25,12 @@ function extractFunctionBody(source: string, functionName: string): string {
 }
 
 function makeHiddenGroupNodeMap() {
-	const helperRule: SeqRule = {
+	const helperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, helperRule));
+	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, helperRule, deleteWrapper(helperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -43,12 +44,12 @@ function makeNoFactoryHiddenGroupNodeMap() {
 }
 
 function makeTransparentHiddenGroupNodeMap() {
-	const helperRule: SeqRule = {
+	const helperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_export_statement_default', new AssembledGroup('_export_statement_default', helperRule, helperRule));
+	nodes.set('_export_statement_default', new AssembledGroup('_export_statement_default', helperRule, helperRule, deleteWrapper(helperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }

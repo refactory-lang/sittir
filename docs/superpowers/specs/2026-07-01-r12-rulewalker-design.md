@@ -140,8 +140,11 @@ Land the class + `BaseCtx.walker` + migrate **exemplars per family** — not all
 - `deriveComplexAliasTargetHidden` (evaluate) → `walker.fold` (separator edges now come from childrenOf)
 - `recurseChildren` (rule-transforms) → deprecated pointer to `walker.map`; callers migrate opportunistically
 - `walkFieldNames` (types/rule.ts) — NOT migrated: types-layer cannot depend on dsl; stays self-contained
-- `resolveHiddenRuleContent` (assemble) — deferred to the follow-up sweep: its per-type flatMap
-  shape needs a mapDeep-like primitive; evaluate that against real need then
+- `resolveHiddenRuleContent` (assemble) — evaluated 2026-07-02 and CLOSED as won't-migrate:
+  it is a per-type DISPATCHER, not a traversal (each case decides both what to emit and where
+  to descend, including deref by NAME STRINGS through supertype subtypes — inexpressible via
+  the walker's SYMBOL-node deref). Same category as emitRule per the scope decision above;
+  no mapDeep primitive is warranted.
 
 Remaining walks migrate opportunistically in later passes (each gated). Gates:
 `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native` holds rust 117 / ts 75 / py 102;

@@ -43,7 +43,7 @@ function cleanSlot(): AssembledNonterminal {
 		hasLeading: false,
 		source: 'inferred',
 		fieldName: undefined,
-	} as AssembledNonterminal;
+	} as unknown as AssembledNonterminal;
 }
 
 describe('diffSlotNames — PR-A wide divergence probe core', () => {
@@ -53,7 +53,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 
 	it('reports a storageName divergence (legacy != projected)', () => {
 		// Legacy stored 'block', but the projection from values[parseKind=expression] is 'expression'.
-		const slot = { ...cleanSlot(), storageName: 'block', name: 'block' } as AssembledNonterminal;
+		const slot = { ...cleanSlot(), storageName: 'block', name: 'block' } as unknown as AssembledNonterminal;
 		const out = diffSlotNames(slot, 'function_definition');
 		expect(out).toContainEqual(
 			expect.objectContaining({
@@ -75,7 +75,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			propertyName: snakeToCamel(storage), // BUG: not pluralized
 			paramName: safeParamName(snakeToCamel(storage)),
 			values: [nodeRefValue('parameter', 'array')],
-		} as AssembledNonterminal;
+		} as unknown as AssembledNonterminal;
 		const out = diffSlotNames(slot, 'parameters');
 		expect(out).toContainEqual(
 			expect.objectContaining({
@@ -98,7 +98,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			propertyName: 'content',
 			paramName: 'content',
 			values: [nodeRefValue('identifier'), literalValue('_')],
-		} as AssembledNonterminal;
+		} as unknown as AssembledNonterminal;
 		expect(diffSlotNames(slot, 'splat_pattern')).toEqual([]);
 	});
 
@@ -109,7 +109,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			storageName: 'expression',
 			name: 'expression',
 			values: [nodeRefValue('_expression')],
-		} as AssembledNonterminal;
+		} as unknown as AssembledNonterminal;
 		expect(diffSlotNames(slot, 'array_expression')).toEqual([]);
 	});
 
@@ -136,7 +136,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			propertyName: 'block',
 			paramName: 'block',
 			values: [aliasedRef('_simple_statements', 'block'), aliasedRef('block', 'block'), aliasedRef('_newline', 'block')],
-		} as AssembledNonterminal;
+		} as unknown as AssembledNonterminal;
 
 		const proj = projectSlotNaming(slot);
 		expect(proj.storageName).toBe('content'); // storageKind (multi) → content
@@ -157,7 +157,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			parseKind: { kind: 'unresolved-ref', name: 'object_type' },
 			multiplicity: 'single',
 		} as unknown as NodeOrTerminal;
-		const slot = { ...cleanSlot(), values: [aliased] } as AssembledNonterminal;
+		const slot = { ...cleanSlot(), values: [aliased] } as unknown as AssembledNonterminal;
 		const proj = projectSlotNaming(slot);
 		expect(proj.storageName).toBe('interface_body');
 		expect(proj.parseNames).toEqual(['object_type']);

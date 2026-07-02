@@ -20,6 +20,7 @@ import {
 	type AssembledNode
 } from '../../compiler/model/node-map.ts';
 import { resolveHoistedForm } from '../shared.ts';
+import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic rule + NodeMap builders.
@@ -31,38 +32,38 @@ import { resolveHoistedForm } from '../shared.ts';
 // inner kind via `symbol('inner_binary')`.
 // ---------------------------------------------------------------------------
 
-function mkSymbol(name: string): Rule {
-	return { type: 'symbol', name } as Rule;
+function mkSymbol(name: string): Rule<'link'> {
+	return { type: 'symbol', name } as Rule<'link'>;
 }
 
-function mkField(name: string, content: Rule): Rule {
-	return { type: 'field', name, content, source: 'grammar' } as Rule;
+function mkField(name: string, content: Rule<'link'>): Rule<'link'> {
+	return { type: 'field', name, content, source: 'grammar' } as Rule<'link'>;
 }
 
-function mkSeq(members: Rule[]): SeqRule {
+function mkSeq(members: Rule<'link'>[]): SeqRule<'link'> {
 	return { type: SEQ, members };
 }
 
 /** Inner rule: two fields `left` + `right`. */
-function makeInnerRule(): SeqRule {
+function makeInnerRule(): SeqRule<'link'> {
 	return mkSeq([mkField('left', mkSymbol('expr')), mkField('right', mkSymbol('expr'))]);
 }
 
 /** Form rule: one child slot pointing at `inner_binary`. */
-function makeFormRule(): SeqRule {
+function makeFormRule(): SeqRule<'link'> {
 	return mkSeq([mkSymbol('inner_binary')]);
 }
 
 function makeInner(): AssembledBranch {
 	const rule = makeInnerRule();
-	return new AssembledBranch('inner_binary', rule, rule, {
+	return new AssembledBranch('inner_binary', rule, rule, deleteWrapper(rule), {
 		factoryName: 'innerBinary'
 	});
 }
 
 function makeForm(): AssembledGroup {
 	const rule = makeFormRule();
-	return new AssembledGroup('outer__form_binary', rule, rule, {
+	return new AssembledGroup('outer__form_binary', rule, rule, deleteWrapper(rule), {
 		factoryName: 'outerFormBinary',
 		name: 'binary',
 		parentKind: 'outer'
@@ -88,7 +89,7 @@ describe('resolveHoistedForm — collision guard', () => {
 
 		const form = makeForm();
 		// Install a form-level field that collides with the inner `left`.
-		const collidingField: AssembledNonterminal = {
+		const collidingField = {
 			name: 'left',
 			propertyName: 'left',
 			configKey: 'left',
@@ -98,7 +99,7 @@ describe('resolveHoistedForm — collision guard', () => {
 			source: 'grammar',
 			hasTrailing: false,
 			hasLeading: false
-		};
+		} as unknown as AssembledNonterminal;
 		// form.fields is a getter backed by #fields cache; we override for
 		// the test via Object.defineProperty to avoid reaching into the
 		// caching internals. Using a read-only descriptor preserves the
@@ -131,7 +132,7 @@ describe('resolveHoistedForm — collision guard', () => {
 		const form = makeForm();
 
 		// Form-level field name that does NOT collide with inner fields.
-		const nonCollidingField: AssembledNonterminal = {
+		const nonCollidingField = {
 			name: 'operator',
 			propertyName: 'operator',
 			configKey: 'operator',
@@ -141,7 +142,7 @@ describe('resolveHoistedForm — collision guard', () => {
 			source: 'grammar',
 			hasTrailing: false,
 			hasLeading: false
-		};
+		} as unknown as AssembledNonterminal;
 		Object.defineProperty(form, 'fields', {
 			value: [nonCollidingField],
 			configurable: true

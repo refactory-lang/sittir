@@ -12,7 +12,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { countContentSlots } from '../diagnostics/slot-grouping.ts';
-import type { Rule } from './rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 const sym = (name: string): Rule => ({ type: 'symbol', name }) as unknown as Rule;
 const str = (value: string): Rule => ({ type: 'string', value }) as unknown as Rule;

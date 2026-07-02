@@ -11,6 +11,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import { emitAll } from '../emit.ts';
 import { TemplateEmitter } from '../templates.ts';
+import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 
 function makeNodeMap(): NodeMap {
 	return {
@@ -26,20 +27,20 @@ function makeNodeMap(): NodeMap {
 }
 
 function makeBranch(kind: string, label: string): AssembledBranch {
-	const rule: SeqRule = {
+	const rule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: STRING, value: label }]
 	};
-	return new AssembledBranch(kind, rule, rule);
+	return new AssembledBranch(kind, rule, rule, deleteWrapper(rule));
 }
 
 function makeHiddenHelperNodeMap(): NodeMap {
-	const helperRule: SeqRule = {
+	const helperRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, helperRule));
+	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, helperRule, deleteWrapper(helperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return {
 		...makeNodeMap(),

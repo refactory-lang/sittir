@@ -4,7 +4,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -275,9 +275,14 @@ function emitContainerTest(
 	lines.push('');
 }
 
+// NOTE: dead code — the dispatch switch above (`node.modelType`) has no
+// 'polymorph' arm; AssembledPolymorph reports modelType 'branch' (inherited
+// from AssembledBranch) and routes through emitBranchTest/emitContainerTest
+// instead. Retyped against the concrete class (not deleted) — same pattern
+// as wrap.polymorph / WrapEmitter.emitPolymorph in emitters/wrap.ts.
 function emitPolymorphTest(
 	lines: string[],
-	node: AssembledNode,
+	node: AssembledPolymorph,
 	kind: string,
 	key: string,
 	nodeMap: NodeMap,

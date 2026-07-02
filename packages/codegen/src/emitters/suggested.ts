@@ -18,9 +18,22 @@
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry } from '../compiler/types.ts';
+import { AssembledSupertype } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
-import type { PolymorphCandidateLocation } from '../compiler/link.ts';
+import type { ChoiceRule } from '../types/rule.ts';
+
+/**
+ * Structural shape consumed by `_armNamesFor` — a polymorph candidate
+ * location's discovered top-level choice. `PolymorphCandidateLocation` (the
+ * type this used to import from `compiler/link.ts`) no longer exists there;
+ * `_armNamesFor` has no callers (dead per the leading-underscore convention),
+ * so this is a minimal local type restoring the shape it actually reads
+ * (`cand.choice.members`) rather than resurrecting a removed export.
+ */
+interface PolymorphCandidateLocation {
+	readonly choice: ChoiceRule<'link'>;
+}
 
 /**
  * Derive a short, readable base label for a single choice arm.
@@ -357,8 +370,15 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 			samples: number;
 		}> = [];
 		const nonPositional: InferredFieldEntry[] = [];
-		if (inferred) {
-			const resolved = inferred.map((e) => ({
+		if (inferred !== undefined) {
+			// `inferred` is captured by the `emitTransform(kind, () => …)`
+			// closure later in this loop body; tsgo's control-flow narrowing
+			// doesn't carry the `!== undefined` guard through to reads here once
+			// a later closure in the same scope also references the variable
+			// (verified in isolation — the guard is genuinely sound at runtime).
+			// Non-null assertion matches the file's existing idiom for
+			// checker-can't-see-it cases (e.g. `node.members[i]!` above).
+			const resolved = inferred!.map((e) => ({
 				e,
 				pos: parentRule ? findSymbolPosition(parentRule, e.targetSymbol, e.fieldName) : null
 			}));
@@ -372,7 +392,10 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 				if (seen.has(dkey)) continue;
 				seen.add(dkey);
 				fieldPatches.push({
-					pos,
+					// tsgo does not narrow the destructured `pos` through the
+					// `pos === null` continue above (verified: removing the assertion
+					// fails TS2322) — same checker gap as the `inferred!` case.
+					pos: pos!,
 					fieldName: e.fieldName,
 					targetSymbol: e.targetSymbol,
 					applied: e.applied,
@@ -500,7 +523,14 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	}
 	for (const entry of promotedSupertypes) {
 		const node = nodeMap.nodes.get(entry.kind);
-		const subs = node && node.modelType === 'supertype' ? node.subtypes : [];
+		// `node instanceof AssembledSupertype` is the established discriminator
+		// for reaching `.subtypes` (see emitters/shared.ts:264/287) — a bare
+		// `modelType === 'supertype'` string comparison doesn't narrow the
+		// `AssembledNode` union to the concrete class. tsgo's control-flow
+		// narrowing doesn't carry through to the ternary's true-branch member
+		// access here (verified in isolation), so the `.subtypes` read needs an
+		// explicit non-null + cast past the checker gap.
+		const subs = node instanceof AssembledSupertype ? (node as AssembledSupertype).subtypes : [];
 		emit(entry.kind, () => {
 			const tag = entry.applied ? 'applied' : 'held';
 			lines.push(`  // [${tag}] promoted supertype`);

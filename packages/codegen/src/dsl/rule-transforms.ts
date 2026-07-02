@@ -306,7 +306,12 @@ export function inlineRefs<R extends AnyRule>(rule: R, ctx: InlineRefsCtx, visit
 				// inlined body in the equivalent modifier and re-run the
 				// (idempotent) deleteWrapper to re-push the attributes onto the
 				// inlined leaves.
-				return reapplyInlinedLeafAttrs(rule, inlined);
+				// `inlined` comes back typed `AnyRule` (via the internal `recurse`
+				// closure, which type-erases to keep the recursive call generic),
+				// but is structurally the same phase-view shape as `rule: R` —
+				// `inlineRefs` never changes which phase's rule shape it operates
+				// over, only rewrites refs within it.
+				return reapplyInlinedLeafAttrs(rule, inlined) as unknown as R;
 			}
 
 			// Not inline-listed. Inline EVERY hidden helper ref, mirroring what
@@ -342,12 +347,13 @@ export function inlineRefs<R extends AnyRule>(rule: R, ctx: InlineRefsCtx, visit
 			// `optional(SYMBOL(_initializer))` to `SYMBOL{multiplicity:'optional'}`;
 			// without this the optional is dropped on inline and the spliced leaf
 			// (e.g. required_parameter's `value`) collapses to a required single.
-			return reapplyInlinedLeafAttrs(rule, inlineRefs(inlineTarget, ctx, next));
+			// See the same-shape rationale on the inline-listed path's cast above.
+			return reapplyInlinedLeafAttrs(rule, inlineRefs(inlineTarget, ctx, next)) as unknown as R;
 		}
 		case SEQ:
-			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) };
+			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) } as unknown as R;
 		case CHOICE:
-			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) };
+			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) } as unknown as R;
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
@@ -358,7 +364,7 @@ export function inlineRefs<R extends AnyRule>(rule: R, ctx: InlineRefsCtx, visit
 			return {
 				...rule,
 				content: recurse((rule as { content: AnyRule }).content, visited)
-			} as AnyRule;
+			} as unknown as R;
 		default:
 			return rule;
 	}
@@ -452,14 +458,19 @@ export function recurseChildren<R extends AnyRule>(rule: R, visit: (r: R) => R):
 	switch (rule.type) {
 		case SEQ:
 		case CHOICE: {
-			const members = rule.members;
+			// `rule.members` is typed `Rule<PhaseName>[]` (the general per-member
+			// union for this structural node), narrower than the exact `R` the
+			// caller's `visit` expects — but every member IS an `R`-shaped rule
+			// at runtime (same phase view as the parent `rule: R`); only the
+			// generic's structural inference loses that connection here.
+			const members = rule.members as unknown as R[];
 			let changed = false;
 			const next = members.map((m) => {
 				const out = visit(m);
 				if (out !== m) changed = true;
 				return out;
 			});
-			return changed ? ({ ...rule, members: next } as AnyRule) : rule;
+			return changed ? ({ ...rule, members: next } as unknown as R) : rule;
 		}
 		case OPTIONAL:
 		case REPEAT:
@@ -469,9 +480,9 @@ export function recurseChildren<R extends AnyRule>(rule: R, visit: (r: R) => R):
 		case GROUP:
 		case TOKEN:
 		case ALIAS: {
-			const content = (rule as { content: AnyRule }).content;
+			const content = (rule as { content: AnyRule }).content as R;
 			const out = visit(content);
-			return out === content ? rule : ({ ...rule, content: out } as AnyRule);
+			return out === content ? rule : ({ ...rule, content: out } as unknown as R);
 		}
 		default:
 			return rule;
@@ -583,6 +594,6 @@ export function fuseHeadRepeatLists<R extends AnyRule>(rule: R): R {
         out.push(members[i]!);
     }
     if (!changed) return recursed;
-    return { ...recursed, members: out } as AnyRule;
+    return { ...recursed, members: out } as unknown as R;
 }
 

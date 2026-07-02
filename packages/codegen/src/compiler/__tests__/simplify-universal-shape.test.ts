@@ -26,7 +26,7 @@ import {
 	AssembledGroup,
 	AssembledPattern,
 } from '../model/node-map.ts';
-import type { Rule, SeqRule } from '../../types/rule.ts';
+import type { RenderRule, Rule, SeqRule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
 // canonicalizeSeqOfLeaves
@@ -34,7 +34,7 @@ import type { Rule, SeqRule } from '../../types/rule.ts';
 
 describe('canonicalizeSeqOfLeaves', () => {
 	it('top-level seq of leaves stays unchanged', () => {
-		const rule: SeqRule = {
+		const rule: SeqRule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
@@ -47,15 +47,15 @@ describe('canonicalizeSeqOfLeaves', () => {
 	});
 
 	it('degenerate single-member seq gets flattened', () => {
-		const inner: Rule = { type: SYMBOL, name: 'X' };
-		const rule: SeqRule = { type: SEQ, members: [inner] };
+		const inner: Rule<'link'> = { type: SYMBOL, name: 'X' };
+		const rule: SeqRule<'link'> = { type: SEQ, members: [inner] };
 		expect(canonicalizeSeqOfLeaves(rule)).toEqual(inner);
 	});
 
 	it('nested single-member seq gets recursively flattened', () => {
 		// seq([seq([X])]) -> X
-		const inner: Rule = { type: SYMBOL, name: 'X' };
-		const rule: SeqRule = {
+		const inner: Rule<'link'> = { type: SYMBOL, name: 'X' };
+		const rule: SeqRule<'link'> = {
 			type: SEQ,
 			members: [{ type: SEQ, members: [inner] }],
 		};
@@ -63,7 +63,7 @@ describe('canonicalizeSeqOfLeaves', () => {
 	});
 
 	it('is idempotent (running twice produces same result)', () => {
-		const rule: SeqRule = {
+		const rule: SeqRule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: '{' },
@@ -80,7 +80,7 @@ describe('canonicalizeSeqOfLeaves', () => {
 		// canonicalizeSeqOfLeaves does NOT push down attributes — it only
 		// flattens degenerate single-member seqs. A field-wrapped leaf with
 		// a degenerate seq inside should collapse the seq but keep the field.
-		const rule: Rule = {
+		const rule: Rule<'link'> = {
 			type: FIELD,
 			name: 'op',
 			content: { type: SEQ, members: [{ type: STRING, value: '+' }] },
@@ -99,26 +99,26 @@ describe('canonicalizeSeqOfLeaves', () => {
 
 describe('assertUniversalShape', () => {
 	it('passes for well-shaped AssembledBranch (seq of leaves)', () => {
-		const body: SeqRule = {
+		const body: SeqRule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
 				{ type: SYMBOL, name: 'name' },
 			],
 		};
-		const node = new AssembledBranch('function_decl', body, body);
+		const node = new AssembledBranch('function_decl', body, body, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
 	it('passes for well-shaped AssembledGroup (seq of leaves)', () => {
-		const body: SeqRule = {
+		const body: SeqRule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: SYMBOL, name: 'modifier' },
 				{ type: STRING, value: 'static' },
 			],
 		};
-		const node = new AssembledGroup('_modifiers', body, body);
+		const node = new AssembledGroup('_modifiers', body, body, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -127,8 +127,8 @@ describe('assertUniversalShape', () => {
 		// been flattened by canonicalizeSeqOfLeaves from seq([X]) -> X.
 		// However AssembledBranch's R generic doesn't permit a bare symbol,
 		// so we test the case via AssembledGroup which accepts any Rule.
-		const body: Rule = { type: SYMBOL, name: 'X' };
-		const node = new AssembledGroup('_passthrough', body, body);
+		const body: Rule<'link'> = { type: SYMBOL, name: 'X' };
+		const node = new AssembledGroup('_passthrough', body, body, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -136,7 +136,7 @@ describe('assertUniversalShape', () => {
 		// optional(symbol) is a structural wrapper around a slot-ref — this
 		// is the kind of shape decomposeOptional should have lifted into a
 		// hidden group. assertUniversalShape catches the violation.
-		const body: SeqRule = {
+		const body: SeqRule<'link'> = {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
@@ -146,14 +146,14 @@ describe('assertUniversalShape', () => {
 				},
 			],
 		};
-		const node = new AssembledGroup('function_decl', body, body);
+		const node = new AssembledGroup('function_decl', body, body, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).toThrow(
 			/Universal-shape violation in kind 'function_decl'/
 		);
 	});
 
 	it('throws with offending sub-rule type in error message', () => {
-		const body: SeqRule = {
+		const body: SeqRule<'link'> = {
 			type: SEQ,
 			members: [
 				{
@@ -165,19 +165,19 @@ describe('assertUniversalShape', () => {
 				},
 			],
 		};
-		const node = new AssembledGroup('_choice_wrap', body, body);
+		const node = new AssembledGroup('_choice_wrap', body, body, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).toThrow(/choice/);
 	});
 
 	it('throws for non-seq, non-leaf body (e.g. bare choice)', () => {
-		const body: Rule = {
+		const body: Rule<'link'> = {
 			type: CHOICE,
 			members: [
 				{ type: SYMBOL, name: 'a' },
 				{ type: SYMBOL, name: 'b' },
 			],
 		};
-		const node = new AssembledGroup('_choice_kind', body, body);
+		const node = new AssembledGroup('_choice_kind', body, body, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).toThrow(
 			/Universal-shape violation/
 		);

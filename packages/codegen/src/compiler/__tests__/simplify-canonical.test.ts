@@ -17,40 +17,40 @@
 
 import { CHOICE, FIELD, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import type { Rule } from '../../types/rule.ts';
+import type { AnyRule, Rule } from '../../types/rule.ts';
 import type { ChoiceRule } from '../../types/rule.ts';
 import { simplifyRule, attributeBuilder, makeDefaultCtx } from '../simplify.ts';
 import { hoistInnerFieldFromWrapperForField, mergeBranchesForChoice } from '../simplify.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
 
-const str = (value: string): Rule => ({ type: STRING, value });
-const sym = (name: string): Rule => ({ type: SYMBOL, name });
-const sup = (name: string): Rule => ({ type: SUPERTYPE, name, subtypes: [] });
-const field = (name: string, content: Rule): Rule => ({
+const str = (value: string): Rule<'link'> => ({ type: STRING, value });
+const sym = (name: string): Rule<'link'> => ({ type: SYMBOL, name });
+const sup = (name: string): Rule<'link'> => ({ type: SUPERTYPE, name, subtypes: [] });
+const field = (name: string, content: Rule<'link'>): Rule<'link'> => ({
 	type: FIELD,
 	name,
 	content
 });
-const seq = (...members: Rule[]): Rule => ({ type: SEQ, members });
-const choice = (...members: Rule[]): Rule => ({ type: CHOICE, members });
-const variant = (name: string, content: Rule): Rule => ({
+const seq = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: SEQ, members });
+const choice = (...members: Rule<'link'>[]): Rule<'link'> => ({ type: CHOICE, members });
+const variant = (name: string, content: Rule<'link'>): Rule<'link'> => ({
 	type: VARIANT,
 	name,
 	content
 });
-const optional = (content: Rule): Rule => ({ type: OPTIONAL, content });
-const repeat1 = (content: Rule, separator?: string): Rule =>
+const optional = (content: Rule<'link'>): Rule<'link'> => ({ type: OPTIONAL, content });
+const repeat1 = (content: Rule<'link'>, separator?: string): Rule<'link'> =>
 	separator !== undefined ? { type: REPEAT1, content, separator } : { type: REPEAT1, content };
 
 /**
  * Helper: result of pushing a field wrapper down to its content as leaf attrs,
  * exactly as `applyWrapperDeletion(field(name, content))` produces.
  */
-const fieldAttrs = (name: string, content: Rule): Rule => ({
+const fieldAttrs = (name: string, content: AnyRule): Rule => ({
 	...content,
 	fieldName: name,
 	nonterminal: true,
-});
+}) as Rule;
 
 describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesForChoice)', () => {
 	// These tests call mergeBranchesForChoice directly because simplifyRule's

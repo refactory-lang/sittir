@@ -20,6 +20,8 @@ export function makeNodeMapWith(nodes: Map<string, AssembledNode>, polymorphForm
 	return {
 		name: 'rust',
 		nodes,
+		nodeByRuleId: new Map(),
+		slotByRuleId: new Map(),
 		signatures: { signatures: new Map() },
 		derivations: {
 			inferredFields: [],
@@ -34,7 +36,7 @@ export function makeNodeMapWith(nodes: Map<string, AssembledNode>, polymorphForm
 }
 
 export function makeMinimalNodeMap(): NodeMap {
-	const callRule: SeqRule = {
+	const callRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -68,7 +70,7 @@ export function makeMinimalNodeMap(): NodeMap {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const callRuleSimplified = deleteWrapper(callRule) as RenderRule & typeof callRule;
-	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRuleSimplified));
+	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRuleSimplified, callRuleSimplified));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }));
 	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }));

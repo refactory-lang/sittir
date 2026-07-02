@@ -587,14 +587,22 @@ export function makeDefaultCtx(): SimplifyCtx {
  */
 export function simplifyRule(rule: AnyRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	switch (rule.type) {
+		// Per-type handlers below are typed against the wrapper-free (optimize)
+		// view — matching `ctx: SimplifyCtx extends BaseCtx<RenderRule>` and the
+		// invariant documented above the `default` branch (all wrapper types
+		// must already be gone by simplify-time). `rule` here is still typed as
+		// its `AnyRule`/`PhaseName`-parameterized union member from the switch
+		// on `.type`; SEQ/CHOICE/GROUP/VARIANT's `members`/`content` shape is
+		// identical across phases, so this cast is a type-view narrowing only,
+		// not a runtime behavior change.
 		case SEQ:
-			return simplifySeqRule(rule, ctx);
+			return simplifySeqRule(rule as SeqRule, ctx);
 		case CHOICE:
-			return simplifyChoiceRule(rule, ctx);
+			return simplifyChoiceRule(rule as ChoiceRule, ctx);
 		case GROUP:
-			return simplifyGroupRule(rule, ctx);
+			return simplifyGroupRule(rule as GroupRule, ctx);
 		case VARIANT:
-			return simplifyVariantRule(rule, ctx);
+			return simplifyVariantRule(rule as VariantRule, ctx);
 		// Leaf / terminal types — pass through as-is (no structural transformation).
 		case SYMBOL:
 		case STRING:
@@ -643,7 +651,10 @@ function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx(
 	if (members.length === 1) return withAttrsFrom(rule, members[0]!);
 	const merged = mergeBranchesForChoice(b.choice(members) as ChoiceRule, ctx);
 	if (merged.type !== CHOICE) return withAttrsFrom(rule, merged);
-	return withAttrsFrom(rule, hoistSharedFieldFromBranchesForChoice(merged, ctx));
+	// Structurally still a ChoiceRule at this point (only `.type` was checked
+	// above); `mergeBranchesForChoice`'s AnyRule return type is wider than what
+	// it actually produces for a CHOICE-shaped input.
+	return withAttrsFrom(rule, hoistSharedFieldFromBranchesForChoice(merged as ChoiceRule, ctx));
 }
 
 /** GROUP: recurse into content (structural wrapper preserved). */
@@ -822,26 +833,25 @@ export function hoistInnerFieldsForTemplate(rule: AnyRule): AnyRule {
  * absent-only (`withAttrsFrom`). See glossary (Phase 3.5).
  */
 function simplifySeqRule(rule: SeqRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
-	const members = rule.members
-		.map((m) => simplifyRule(m, ctx))
-		.filter((m) => {
-			// Strip bare string delimiters (not slot-promoted) + empty-seq sentinels.
-			if (m.type === STRING && !isSlotPromotedLiteral(m)) return false;
-			if (m.type === SEQ && m.members.length === 0) return false;
-			return true;
-		})
-		.flatMap((m) => {
-			if (m.type !== SEQ) return [m];
-			// Keep a nested seq that carries its OWN cardinality as one member:
-			// splicing would lose that cardinality and hoist an inner choice to
-			// the parent's seq position (a non-canonical choice-at-seq). A bare
-			// seq (no own attrs) is spliced/flattened.
-			const sm = m as SeqRule & { multiplicity?: LeafMultiplicity; separator?: unknown; fieldName?: string };
-			if (sm.multiplicity !== undefined || sm.separator !== undefined || sm.fieldName !== undefined) {
-				return [m];
-			}
-			return sm.members;
-		});
+	const mapped: AnyRule[] = rule.members.map((m) => simplifyRule(m, ctx));
+	const filtered: AnyRule[] = mapped.filter((m) => {
+		// Strip bare string delimiters (not slot-promoted) + empty-seq sentinels.
+		if (m.type === STRING && !isSlotPromotedLiteral(m)) return false;
+		if (m.type === SEQ && m.members.length === 0) return false;
+		return true;
+	});
+	const members: AnyRule[] = filtered.flatMap((m): AnyRule[] => {
+		if (m.type !== SEQ) return [m];
+		// Keep a nested seq that carries its OWN cardinality as one member:
+		// splicing would lose that cardinality and hoist an inner choice to
+		// the parent's seq position (a non-canonical choice-at-seq). A bare
+		// seq (no own attrs) is spliced/flattened.
+		const sm = m as SeqRule & { multiplicity?: LeafMultiplicity; separator?: unknown; fieldName?: string };
+		if (sm.multiplicity !== undefined || sm.separator !== undefined || sm.fieldName !== undefined) {
+			return [m];
+		}
+		return sm.members;
+	});
 	if (members.length === 0) return withAttrsFrom(rule, { type: SEQ, members: [] });
 	if (members.length === 1) {
 		const survivor = members[0]!;

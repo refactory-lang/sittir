@@ -7,7 +7,7 @@ import type { Rule, SymbolRef } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { createEmptyRuleCatalog } from '../rule-catalog.ts';
 
-function makeRaw(rules: Record<string, Rule>, overrides?: Partial<RawGrammar>): RawGrammar {
+function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
 		name: 'test',
 		rules,
@@ -62,7 +62,7 @@ describe('Link — reference resolution', () => {
 		});
 		const linked = link(raw);
 
-		function assertNoRefTypes(rule: Rule): void {
+		function assertNoRefTypes(rule: Rule<'link'>): void {
 			if ('type' in rule) {
 				expect(rule.type).not.toBe('alias');
 				expect(rule.type).not.toBe('token');
@@ -71,7 +71,7 @@ describe('Link — reference resolution', () => {
 				// stamp `nonEmpty: true` on the resulting slot and the
 				// types emitter can render a non-empty tuple type.
 			}
-			if ('content' in rule && rule.content) assertNoRefTypes(rule.content as Rule);
+			if ('content' in rule && rule.content) assertNoRefTypes(rule.content as Rule<'link'>);
 			if ('members' in rule && Array.isArray((rule as any).members)) {
 				for (const m of (rule as any).members) assertNoRefTypes(m);
 			}
@@ -424,7 +424,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// Called directly to isolate the push-down behavior from Link's
 		// other passes (tagVariants, hidden-rule classification) that
 		// would otherwise restructure this fixture.
-		const rules: Record<string, Rule> = {
+		const rules: Record<string, Rule<'link'>> = {
 			visibility_modifier: {
 				type: CHOICE,
 				members: [

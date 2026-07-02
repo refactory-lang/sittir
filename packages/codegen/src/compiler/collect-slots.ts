@@ -309,13 +309,13 @@ function buildSlot(
 	// `SingleNonterminalView` while the template joins → build error). Lift the
 	// strongest arm multiplicity onto the choice before deriving values.
 	const armLifted =
-		rule.type === CHOICE && rule.multiplicity === undefined
+		rule.type === CHOICE && (rule as { multiplicity?: Multiplicity }).multiplicity === undefined
 			? strongestArmMultiplicity(rule)
 			: undefined;
 	const mult = armLifted ?? slotMultiplicity(rule, inherited);
 
 	// --- Determine the slot name ---
-	let baseName: string | undefined = rule.fieldName;
+	let baseName: string | undefined = (rule as { fieldName?: string }).fieldName;
 	let source: AssembledNonterminal['source'] = (rule as { source?: RuleSource }).source ?? 'grammar';
 
 	if (baseName === undefined) {
@@ -411,7 +411,10 @@ function buildSlot(
 	// choices rebuilt by `fanOutSeqChoices`/`factorChoiceBranches` (which carry
 	// only the rule id, not the separator) still inherit the separator from the
 	// arm that has it (e.g. the inlined `_import_list` arm with `sep=",trailing"`).
-	const sep = rule.separator ?? inheritedSeparator ?? (isMultiSlot ? findNestedSeparator(rule) : undefined);
+	const sep =
+		(rule as { separator?: RuleBase<'optimize'>['separator'] }).separator ??
+		inheritedSeparator ??
+		(isMultiSlot ? findNestedSeparator(rule) : undefined);
 	const sepIsObject = typeof sep === 'object' && !Array.isArray(sep) && sep !== null;
 	const hasTrailing =
 		isMultiSlot &&
@@ -429,7 +432,7 @@ function buildSlot(
 
 	return new AssembledNonterminal({
 		values,
-		fieldName: rule.fieldName,
+		fieldName: (rule as { fieldName?: string }).fieldName,
 		hasTrailing,
 		hasLeading,
 		source,
@@ -458,7 +461,7 @@ export function collectSlots(
 			// down by wrapper-deletion's seq case via combineMultiplicity), so
 			// no inheritance from the seq node is needed — the seq carries no
 			// multiplicity after deleteWrapper. Pass `inherited` unchanged.
-			const seqSep = rule.separator ?? inheritedSeparator;
+			const seqSep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator ?? inheritedSeparator;
 			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, inherited, seqSep));
 		}
 
@@ -470,8 +473,8 @@ export function collectSlots(
 				rule.content,
 				kindForName,
 				kindEntries,
-				rule.multiplicity ?? inherited,
-				rule.separator ?? inheritedSeparator
+				(rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited,
+				(rule as { separator?: RuleBase<'optimize'>['separator'] }).separator ?? inheritedSeparator
 			);
 
 		case CHOICE: {
@@ -490,10 +493,18 @@ export function collectSlots(
 			// slot named by the field — do NOT distribute its arms. Distribution
 			// drops the field name and splits the choice into per-arm slots (the
 			// arms all alias to `block`, so the body slot mis-derives to `block`).
-			if (rule.fieldName === undefined && isStructuralChoice(rule)) {
-				const armMult = rule.multiplicity ?? inherited;
+			if ((rule as { fieldName?: string }).fieldName === undefined && isStructuralChoice(rule)) {
+				const armMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 				const armSlots = rule.members.map((m) =>
-					mergeByName(collectSlots(m, kindForName, kindEntries, armMult, rule.separator ?? inheritedSeparator))
+					mergeByName(
+						collectSlots(
+							m,
+							kindForName,
+							kindEntries,
+							armMult,
+							(rule as { separator?: RuleBase<'optimize'>['separator'] }).separator ?? inheritedSeparator
+						)
+					)
 				);
 				return mergeChoiceArms(armSlots);
 			}

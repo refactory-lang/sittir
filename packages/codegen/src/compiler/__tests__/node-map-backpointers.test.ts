@@ -5,6 +5,7 @@ import { buildRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
+import type { AssembledBranch } from '../model/node-map.ts';
 import type { RawGrammar } from '../types.ts';
 import type { ChoiceRule, FieldRule, RenderRule, Rule } from '../../types/rule.ts';
 
@@ -54,7 +55,7 @@ describe('NodeMap back-pointer maps', () => {
 	}
 
 	function buildNodeMap(
-		rules: Record<string, Rule>
+		rules: Record<string, Rule<'evaluate'>>
 	): ReturnType<typeof normalizeGrammar> & { nodeMap: ReturnType<typeof assemble> } {
 		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules);
 		const raw: RawGrammar = {
@@ -122,7 +123,7 @@ describe('NodeMap back-pointer maps', () => {
 			number: { type: PATTERN, value: '[0-9]+' }
 		});
 
-		const slot = nodeMap.nodes.get('test')?.slots.parameter;
+		const slot = (nodeMap.nodes.get('test') as AssembledBranch | undefined)?.slots.parameter;
 		expect(slot).toBeDefined();
 
 		const simplifiedIds = ((simplifiedRules.test as { members: readonly { id?: string }[] }).members)
@@ -148,7 +149,7 @@ describe('NodeMap back-pointer maps', () => {
 			number: { type: PATTERN, value: '[0-9]+' }
 		});
 
-		const slot = nodeMap.nodes.get('test')?.slots.rhs;
+		const slot = (nodeMap.nodes.get('test') as AssembledBranch | undefined)?.slots.rhs;
 		expect(slot).toBeDefined();
 
 		const simplifiedChoiceId = (simplifiedRules.test as { members: readonly { id?: string }[] }).members[1]?.id;
