@@ -254,10 +254,23 @@ live writer at `dsl/enrich.ts:418`.)
 
 ## 3. KEEP (verified live)
 
-### 3.1 `FieldRule.source` (seed 1) — KEEP
+### 3.1 `FieldRule.source` (seed 1) — VERDICT REVISED (user, 2026-07-02): FIX-READERS-THEN-REMOVE
 
-Live, and **behavior-driving** (which the metadata rule permits for *structural
-provenance that gates override semantics*, though it sails close to the line):
+Original verdict was KEEP-because-read; the user's correction: a behavior-driving
+reader of a provenance field is itself the cleanup. Each reader below gets a
+structural replacement, after which the field becomes diagnostics-only or removable:
+
+- transform.ts patch-transparency reads (754/785/823/848): structural signatures
+  exist — enrich pass 1 emits `field(name, SYMBOL(name))` (fieldName === symbol
+  name); keyword passes emit `field(…, SYMBOL(_kw_*))` (reserved prefix). DESIGN
+  QUESTION to settle first: user-authored `field('kind', $.kind)` is shape-identical
+  to pass-1 output — going structural makes identical wrappers transparent regardless
+  of author (arguably more consistent; decide in the design discussion).
+- collect-slots → node-model → generated `if (desc.source === "override")`
+  (emitters/wrap.ts:1386): the CLEAR violation — generated RUNTIME code branching on
+  provenance; needs slot-level structural derivation. Highest priority of the set.
+
+Original KEEP evidence (reader inventory), retained for the fix work:
 
 - `dsl/transform/transform.ts:754,785,823,848` — patch resolution treats
   enriched/inferred fields as transparent wrappers when applying user overrides.
