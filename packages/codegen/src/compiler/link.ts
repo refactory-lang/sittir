@@ -53,6 +53,7 @@ import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
+import { RuleWalker } from '../dsl/rule-walker.ts';
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -547,13 +548,14 @@ function markSupertypeRefsNonInline(rules: Record<string, Rule<'link'>>): void {
 	for (const name of Object.keys(rules)) rules[name] = walk(rules[name]!);
 }
 
-/** True when `rule`'s tree contains a SYMBOL ref back to its own kind `self`. */
+const selfRefWalker = new RuleWalker<Rule<'link'>>();
+
+/** True when `rule`'s tree contains a SYMBOL ref back to its own kind `self`.
+ *  Shallow (no separator-rule descent needed here in practice, but `find`
+ *  intentionally does NOT deref symbol refs — a direct self-reference only,
+ *  matching the original hand-rolled walk's members/content-only descent). */
 function referencesSelf(rule: Rule<'link'>, self: string): boolean {
-	if (rule.type === SYMBOL) return rule.name === self;
-	const xs = rule as { members?: readonly Rule<'link'>[]; content?: Rule<'link'> };
-	if (xs.members) return xs.members.some((m) => referencesSelf(m, self));
-	if (xs.content) return referencesSelf(xs.content, self);
-	return false;
+	return selfRefWalker.find(rule, (r) => r.type === SYMBOL && r.name === self) !== undefined;
 }
 
 /**
