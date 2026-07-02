@@ -40,10 +40,29 @@ var base = import_grammar.default;
 var base_default = base;
 
 // packages/codegen/src/types/runtime-shapes.ts
+function extractSymbolName(v) {
+  if (!v || typeof v !== "object") return void 0;
+  const r = v;
+  const t = r.type;
+  if (isSymbolType(t)) return typeof r.name === "string" ? r.name : void 0;
+  if (r.symbol && typeof r.symbol === "object") {
+    return extractSymbolName(r.symbol);
+  }
+  return void 0;
+}
 function isFieldLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
   return (t === "field" || t === "FIELD") && typeof v.name === "string";
+}
+function isEnrichShapedFieldWrapper(v) {
+  if (!isFieldLike(v)) return false;
+  const symName = extractSymbolName(v.content);
+  if (symName === void 0) return false;
+  if (symName.startsWith("_kw_")) return true;
+  const baseName = v.name.replace(/[0-9]+$/, "");
+  const strippedSym = symName.replace(/^_/, "");
+  return baseName === symName || baseName === strippedSym;
 }
 function isContainerType(t) {
   return t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE";
@@ -752,7 +771,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
   if (isSittirOptional) {
     const inner = r.content;
     if (!inner || typeof inner !== "object") return null;
-    if (isFieldLike(inner) && (inner.source === "inferred" || inner.source === "enriched")) {
+    if (isEnrichShapedFieldWrapper(inner)) {
       return {
         found: inner,
         reconstruct: (newInner) => ({ ...r, content: newInner })
@@ -778,7 +797,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
     const contentIdx = 1 - blankIdx;
     const inner = members[contentIdx];
     if (!inner || typeof inner !== "object") return null;
-    if (isFieldLike(inner) && (inner.source === "inferred" || inner.source === "enriched")) {
+    if (isEnrichShapedFieldWrapper(inner)) {
       return {
         found: inner,
         reconstruct: (newInner) => {
@@ -805,7 +824,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
   if (isPrecWrapper2) {
     const inner = r.content;
     if (!inner || typeof inner !== "object") return null;
-    if (isFieldLike(inner) && (inner.source === "inferred" || inner.source === "enriched")) {
+    if (isEnrichShapedFieldWrapper(inner)) {
       return {
         found: inner,
         reconstruct: (newInner) => ({ ...r, content: newInner })
@@ -824,7 +843,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
 }
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
-  if (isFieldLike(content) && (content.source === "enriched" || content.source === "inferred")) {
+  if (isEnrichShapedFieldWrapper(content)) {
     const overrideName = patch.name;
     const enrichName = content.name ?? "(unknown)";
     if (overrideName === enrichName && !process.env.SITTIR_QUIET) {

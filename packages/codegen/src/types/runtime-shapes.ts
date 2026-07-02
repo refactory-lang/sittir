@@ -97,6 +97,51 @@ export function isFieldLike(v: unknown): v is FieldLike {
 }
 
 /**
+ * True for a FIELD wrapper whose SHAPE matches what `dsl/enrich.ts`'s
+ * mechanical passes produce — independent of the `source` provenance tag.
+ * Per the 2026-07-02 user decision (lingering-debt-inventory-research.md
+ * §3.1, "DESIGN QUESTION — RESOLVED"): a user-authored wrapper that is
+ * shape-identical to enrich's output IS patch-transparent — structural
+ * semantics win unconditionally, provenance is not required. This predicate
+ * is `transform.ts`'s structural replacement for the former
+ * `inner.source === 'inferred' || inner.source === 'enriched'` checks.
+ *
+ * Covers the two FIELD(SYMBOL) shapes enrich actually emits
+ * (`dsl/enrich.ts` passes 1 and 2 — see that file's header comment; the
+ * "bare leading-keyword" pass is disabled and never fires):
+ *
+ *   1. Symbol-to-field promotion (`applySymbolToField` and its
+ *      repeat-seq variants) — `field(NAME, SYMBOL(SYM))` where NAME is
+ *      derived from SYM's name: `NAME === SYM`, the supertype-stripped
+ *      form `NAME === SYM.replace(/^_/, '')` (e.g. `field('expression',
+ *      $._expression)`), or either of those with a 1-based numbered
+ *      suffix for duplicate-kind positions (`NAME === base + N`, e.g.
+ *      `field('expression1', $.expression)` / `field('expression2',
+ *      $.expression)` — see `enrich.test.ts` "numbers duplicate
+ *      references").
+ *   2. Optional keyword-prefix promotion (`tryPromoteInnerKeyword`) —
+ *      `field(*, SYMBOL(_kw_*))`: the referenced symbol's reserved
+ *      `_kw_` prefix is itself the signal (the field's own name follows
+ *      the `<token>_marker` convention but that's not load-bearing here —
+ *      the hidden-symbol prefix is enrich's exclusive namespace, so any
+ *      FIELD wrapping a `_kw_*` SYMBOL is enrich-shaped).
+ */
+export function isEnrichShapedFieldWrapper(v: unknown): v is FieldLike {
+	if (!isFieldLike(v)) return false;
+	const symName = extractSymbolName(v.content);
+	if (symName === undefined) return false;
+	// Shape 2: reserved `_kw_` prefix — enrich's exclusive namespace.
+	if (symName.startsWith('_kw_')) return true;
+	// Shape 1: NAME === SYM, or the supertype-stripped / numbered-duplicate
+	// variants of that. Strip a trailing digit run (numbered duplicates)
+	// before comparing against the symbol name (with or without its
+	// leading underscore stripped).
+	const baseName = v.name.replace(/[0-9]+$/, '');
+	const strippedSym = symName.replace(/^_/, '');
+	return baseName === symName || baseName === strippedSym;
+}
+
+/**
  * True for `seq` / `SEQ` / `choice` / `CHOICE` — rules with a
  * `members: Rule[]` payload.
  */
