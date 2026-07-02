@@ -1,10 +1,12 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { wire, getCurrentWireContext } from '../wire/wire.ts';
+import type { WireConfig } from '../wire/wire.ts';
 import { variant } from '../primitives/variant.ts';
 import { transform } from '../transform/transform.ts';
 import { field } from '../primitives/field.ts';
 import { alias } from '../primitives/alias.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import type { AuthoringRule, GrammarJson } from '../../grammar-shapes/grammar-json.ts';
 
 // ---------------------------------------------------------------------------
 // Wire helpers — simulate what tree-sitter's grammar() / sittir's
@@ -293,7 +295,7 @@ describe('wire()', () => {
 			polymorphs: { assignment: { '0': 'eq', '1': 'type' } },
 			conflicts: ($, _prev) => {
 				const p = $ as Record<string, unknown>;
-				return [[p.user_conflict_a, p.user_conflict_b]] as unknown[][];
+				return [[p.user_conflict_a, p.user_conflict_b]] as readonly (readonly AuthoringRule[])[];
 			}
 		});
 		// Drive assignment to populate deposits AND register hoist-conflicts.
@@ -328,7 +330,7 @@ describe('wire()', () => {
 				{ type: 'symbol', name: 'c' }
 			]
 		};
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
 			transforms: {
@@ -355,7 +357,7 @@ describe('wire()', () => {
 		// wire's transform appends field('x') at path '0/0' — i.e. inside
 		// the user's output.
 		const origSeq = { type: 'seq', members: [{ type: 'symbol', name: 'a' }] };
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {
 				r: ($, original) => ({
@@ -387,7 +389,7 @@ describe('wire()', () => {
 				{ type: 'symbol', name: 'b' }
 			]
 		};
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
 			transforms: {
@@ -403,7 +405,7 @@ describe('wire()', () => {
 	});
 
 	it('transforms: pre-registers _kw_<fieldname> for each field() placeholder', () => {
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
 			transforms: {
@@ -423,7 +425,7 @@ describe('wire()', () => {
 			type: 'seq',
 			members: [{ type: 'string', value: 'async' }]
 		};
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
 			transforms: {
@@ -446,13 +448,13 @@ describe('wire()', () => {
 			type: 'seq',
 			members: [{ type: 'string', value: 'async' }]
 		};
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
 			transforms: {
 				r: { 0: field('async') }
 			},
-			inline: ($, previous) => [...(previous ?? []), ($ as Record<string, unknown>)._kw_async]
+			inline: (($, previous) => [...(previous ?? []), ($ as Record<string, unknown>)._kw_async]) as WireConfig<GrammarJson>['inline']
 		});
 		wired.rules.r!.call({}, {}, origSeq);
 		const $ = new Proxy(
@@ -470,7 +472,7 @@ describe('wire()', () => {
 			type: 'seq',
 			members: [{ type: 'string', value: 'async' }]
 		};
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
 			transforms: {
@@ -483,7 +485,7 @@ describe('wire()', () => {
 	});
 
 	it('transforms: pre-registers _<name> for alias() placeholders', () => {
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
 			transforms: {
@@ -494,7 +496,7 @@ describe('wire()', () => {
 	});
 
 	it('transforms: pre-registers _<parent>_<suffix> for variant() placeholders in transforms', () => {
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
 			transforms: {
@@ -510,7 +512,7 @@ describe('wire()', () => {
 		// leave that entry alone even if a transforms entry's field('async')
 		// would otherwise trigger a deferred _kw_async injection.
 		const userFn: RuleFn = () => ({ type: 'string', value: 'custom' });
-		const wired = wire({
+		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: { _kw_async: userFn },
 			transforms: {

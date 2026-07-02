@@ -31,7 +31,7 @@ import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 // ---------------------------------------------------------------------------
 
 function makeRefineRaw(forms: RefineForm[]): RawGrammar {
-	const ifaceBodyRule: Rule = {
+	const ifaceBodyRule: Rule<'evaluate'> = {
 		type: SEQ,
 		members: [
 			{
@@ -76,7 +76,7 @@ function makeRefineRaw(forms: RefineForm[]): RawGrammar {
 }
 
 function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
-	const stringRule: Rule = {
+	const stringRule: Rule<'evaluate'> = {
 		type: SEQ,
 		members: [
 			{
@@ -146,7 +146,7 @@ function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 }
 
 function makeRefineSymbolRaw(forms: RefineForm[], wrapOptional = false): RawGrammar {
-	const enumRef = (name: string): Rule =>
+	const enumRef = (name: string): Rule<'evaluate'> =>
 		wrapOptional
 			? { type: OPTIONAL, content: { type: SYMBOL, name } }
 			: { type: SYMBOL, name };

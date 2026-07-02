@@ -36,15 +36,15 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 	for (const k of DSL_KEYS) saved[k] = g[k];
 	savedGlobals = saved;
 
-	g.seq = (...members: Rule[]): Rule => ({ type: 'seq', members }) as Rule;
-	g.choice = (...members: Rule[]): Rule => ({ type: 'choice', members }) as Rule;
-	g.optional = (content: Rule): Rule => ({ type: 'optional', content }) as Rule;
-	g.repeat = (content: Rule): Rule => ({ type: 'repeat', content }) as Rule;
-	g.repeat1 = (content: Rule): Rule => ({ type: 'repeat1', content }) as Rule;
-	g.field = (name: string, content: Rule): Rule => ({ type: 'field', name, content }) as Rule;
-	g.alias = (rule: unknown, value: unknown): Rule => {
+	g.seq = (...members: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'seq', members }) as Rule<'evaluate'>;
+	g.choice = (...members: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'choice', members }) as Rule<'evaluate'>;
+	g.optional = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'optional', content }) as Rule<'evaluate'>;
+	g.repeat = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'repeat', content }) as Rule<'evaluate'>;
+	g.repeat1 = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'repeat1', content }) as Rule<'evaluate'>;
+	g.field = (name: string, content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'field', name, content }) as Rule<'evaluate'>;
+	g.alias = (rule: unknown, value: unknown): Rule<'evaluate'> => {
 		if (typeof value === 'string') {
-			return { type: 'alias', content: rule, named: false, value } as Rule;
+			return { type: 'alias', content: rule, named: false, value } as Rule<'evaluate'>;
 		}
 		const sym = value as { type?: string; name?: string };
 		if (sym && (sym.type === 'symbol' || sym.type === 'SYMBOL')) {
@@ -53,21 +53,21 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 				content: rule,
 				named: true,
 				value: sym.name
-			} as Rule;
+			} as Rule<'evaluate'>;
 		}
 		throw new Error('fake alias: invalid value');
 	};
-	g.sym = (name: string): Rule => ({ type: 'symbol', name, hidden: name.startsWith('_'), inline: name.startsWith('_') }) as Rule;
+	g.sym = (name: string): Rule<'evaluate'> => ({ type: 'symbol', name, hidden: name.startsWith('_'), inline: name.startsWith('_') }) as Rule<'evaluate'>;
 	// prec/prec.left/prec.right/prec.dynamic all preserve the value
 	// on the returned rule so tests can assert precedence round-trip.
 	const makePrec =
 		(variant: 'prec' | 'prec_left' | 'prec_right' | 'prec_dynamic') =>
-		(value: number, content: Rule): Rule =>
-			({ type: variant, value, content }) as unknown as Rule;
-	const precFn = makePrec('prec') as ((value: number, content: Rule) => Rule) & {
-		left: (value: number, content: Rule) => Rule;
-		right: (value: number, content: Rule) => Rule;
-		dynamic: (value: number, content: Rule) => Rule;
+		(value: number, content: Rule<'evaluate'>): Rule<'evaluate'> =>
+			({ type: variant, value, content }) as unknown as Rule<'evaluate'>;
+	const precFn = makePrec('prec') as ((value: number, content: Rule<'evaluate'>) => Rule<'evaluate'>) & {
+		left: (value: number, content: Rule<'evaluate'>) => Rule<'evaluate'>;
+		right: (value: number, content: Rule<'evaluate'>) => Rule<'evaluate'>;
+		dynamic: (value: number, content: Rule<'evaluate'>) => Rule<'evaluate'>;
 	};
 	precFn.left = makePrec('prec_left');
 	precFn.right = makePrec('prec_right');

@@ -5,20 +5,21 @@ import type { SeqRule } from '../../types/rule.ts';
 import { buildFactoryMap } from '../../emitters/factory-map.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { FactorySlotMeta } from '../../emitters/factory-map.ts';
+import { deleteWrapper } from '../wrapper-deletion.ts';
 
 function makeSlotArityNodeMap() {
-	const singleChildRule: SeqRule = {
+	const singleChildRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
-	const multiSingularChildRule: SeqRule = {
+	const multiSingularChildRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{ type: SYMBOL, name: 'identifier' },
 			{ type: SYMBOL, name: 'number_literal' }
 		]
 	};
-	const repeatFieldRule: SeqRule = {
+	const repeatFieldRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -31,7 +32,7 @@ function makeSlotArityNodeMap() {
 			}
 		]
 	};
-	const optionalThenRequiredChildRule: SeqRule = {
+	const optionalThenRequiredChildRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -41,7 +42,7 @@ function makeSlotArityNodeMap() {
 			{ type: SYMBOL, name: 'number_literal' }
 		]
 	};
-	const multiSiblingFieldRule: SeqRule = {
+	const multiSiblingFieldRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -66,14 +67,14 @@ function makeSlotArityNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('single_parent', new AssembledBranch('single_parent', singleChildRule, singleChildRule));
-	nodes.set('multi_parent', new AssembledBranch('multi_parent', multiSingularChildRule, multiSingularChildRule));
-	nodes.set('repeat_parent', new AssembledBranch('repeat_parent', repeatFieldRule, repeatFieldRule));
+	nodes.set('single_parent', new AssembledBranch('single_parent', singleChildRule, singleChildRule, deleteWrapper(singleChildRule)));
+	nodes.set('multi_parent', new AssembledBranch('multi_parent', multiSingularChildRule, multiSingularChildRule, deleteWrapper(multiSingularChildRule)));
+	nodes.set('repeat_parent', new AssembledBranch('repeat_parent', repeatFieldRule, repeatFieldRule, deleteWrapper(repeatFieldRule)));
 	nodes.set(
 		'optional_then_required_parent',
-		new AssembledBranch('optional_then_required_parent', optionalThenRequiredChildRule, optionalThenRequiredChildRule)
+		new AssembledBranch('optional_then_required_parent', optionalThenRequiredChildRule, optionalThenRequiredChildRule, deleteWrapper(optionalThenRequiredChildRule))
 	);
-	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', multiSiblingFieldRule, multiSiblingFieldRule));
+	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', multiSiblingFieldRule, multiSiblingFieldRule, deleteWrapper(multiSiblingFieldRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('number_literal', new AssembledPattern('number_literal', { type: PATTERN, value: '[0-9]+' }));
 	nodes.set('property_identifier', new AssembledPattern('property_identifier', { type: PATTERN, value: '[a-z]+' }));

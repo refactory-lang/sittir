@@ -309,11 +309,11 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 				name: 'inferred_name',
 				content: sym('expr'),
 				source: 'inferred'
-			} as Rule,
+			} as Rule<'evaluate'>,
 			sym('rhs')
 		);
 		// One-arg field placeholder + flat positional transform.
-		const result = transform(rule, { 0: oneArgField('override_name') as Rule });
+		const result = transform(rule, { 0: oneArgField('override_name') as Rule<'evaluate'> });
 		const r = result as any;
 		expect(r.members[0]).toMatchObject({
 			type: 'field',
@@ -333,7 +333,7 @@ describe('applyPath() — kind-match + negative index', () => {
 		// seq(expr, ',', seq(expr, ',', expr)) — three _expression refs.
 		const rule = seq(sym('_expression'), str(','), seq(sym('_expression'), str(','), sym('_expression')));
 		const result = transform(rule, {
-			'(_expression)': oneArgField('elements') as Rule
+			'(_expression)': oneArgField('elements') as Rule<'evaluate'>
 		});
 		const r = result as any;
 		expect(r.members[0]).toMatchObject({ type: 'field', name: 'elements' });
@@ -359,11 +359,11 @@ describe('applyPath() — kind-match + negative index', () => {
 			type: 'field',
 			name: 'length',
 			content: sym('_expression')
-		} as Rule);
+		} as Rule<'evaluate'>);
 		// Kind-match from root: `(_expression)` finds all bare occurrences,
 		// skips any already inside a named field wrapper.
 		const result = transform(rule, {
-			'(_expression)': oneArgField('elements') as Rule
+			'(_expression)': oneArgField('elements') as Rule<'evaluate'>
 		});
 		const r = result as any;
 		expect(r.members[0]).toMatchObject({ type: 'field', name: 'elements' });
@@ -381,7 +381,7 @@ describe('applyPath() — kind-match + negative index', () => {
 		// result isn't routed through maybeKeywordSymbol's bare-STRING
 		// synthesis path — we just want to verify the index resolution.
 		const rule = seq(str('struct'), sym('name'), sym('body'));
-		const result = transform(rule, { '-1': oneArgField('body_field') as Rule });
+		const result = transform(rule, { '-1': oneArgField('body_field') as Rule<'evaluate'> });
 		const r = result as any;
 		expect(r.members[2]).toMatchObject({
 			type: 'field',

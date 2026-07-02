@@ -195,13 +195,16 @@ describe('emitGroupTemplate', () => {
 describe('emitMultiTemplate', () => {
 	it('emits a list slot when the inner is a field', () => {
 		const innerSym: SymbolRule = { type: SYMBOL, name: 'item', id: 'rm1' };
-		const innerField: FieldRule = {
+		// Synthetic fixture: a FieldRule wrapper carrying post-optimize stamped
+		// attrs (multiplicity) simultaneously — not a shape the real pipeline
+		// produces, but what emitMultiTemplate's structural read expects here.
+		const innerField = {
 			type: FIELD,
 			name: 'items',
 			content: innerSym,
 			id: 'fm1',
 			multiplicity: 'array'
-		};
+		} as unknown as FieldRule;
 		const rule: RepeatRule = { type: REPEAT, content: innerField };
 		const slot = makeSlot({ name: 'items', propertyName: 'items', storageName: 'items' });
 		const ctx = makeCtx({
@@ -216,14 +219,14 @@ describe('emitMultiTemplate', () => {
 
 	it('honours the repeat separator for repeat1', () => {
 		const innerSym: SymbolRule = { type: SYMBOL, name: 'item', id: 'rm2' };
-		const innerField: FieldRule = {
+		const innerField = {
 			type: FIELD,
 			name: 'items',
 			content: innerSym,
 			id: 'fm2',
 			multiplicity: 'array',
 			separator: ','
-		};
+		} as unknown as FieldRule;
 		const rule: Repeat1Rule = { type: REPEAT1, content: innerField, separator: ',' };
 		const slot = makeSlot({ name: 'items', propertyName: 'items', storageName: 'items' });
 		const ctx = makeCtx({

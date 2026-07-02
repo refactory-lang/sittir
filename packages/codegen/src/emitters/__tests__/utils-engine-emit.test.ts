@@ -7,6 +7,7 @@ import { AssembledBranch, AssembledPattern } from '../../compiler/model/node-map
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { makeMinimalNodeMap, makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 
 describe('utils engine facade emission', () => {
 	it('emits a grammar-local methodsEngine plus explicit withMethods(node, engine)', () => {
@@ -33,12 +34,12 @@ describe('utils engine facade emission', () => {
 	});
 
 	it('emits a deprecated no-op native transport seam', () => {
-		const wrapperRule: SeqRule = {
+		const wrapperRule: SeqRule<'link'> = {
 			type: SEQ,
 			members: [{ type: SYMBOL, name: 'identifier' }]
 		};
 		const nodes = new Map<string, AssembledNode>();
-		nodes.set('wrapper', new AssembledBranch('wrapper', wrapperRule, wrapperRule));
+		nodes.set('wrapper', new AssembledBranch('wrapper', wrapperRule, wrapperRule, deleteWrapper(wrapperRule)));
 		nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 		const contents = emitClientUtils({ nodeMap: makeNodeMapWith(nodes) });
 

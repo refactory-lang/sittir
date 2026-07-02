@@ -6,14 +6,14 @@ import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
 // Minimal helper: build a tree-sitter grammar result in the shape our
 // grammarFn produces — `{ grammar: { name, rules } }`.
-function mkGrammar(rules: Record<string, Rule>) {
+function mkGrammar(rules: Record<string, Rule<'evaluate'>>) {
 	return { grammar: { name: 'test', rules } };
 }
 
 // enrich() returns a new grammar with enriched rules in place.
 function runEnrich(input: ReturnType<typeof mkGrammar>) {
 	return enrich(input) as unknown as {
-		grammar: { name: string; rules: Record<string, Rule> };
+		grammar: { name: string; rules: Record<string, Rule<'evaluate'>> };
 	};
 }
 

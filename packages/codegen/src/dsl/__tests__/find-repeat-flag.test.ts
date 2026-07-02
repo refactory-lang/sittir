@@ -7,31 +7,35 @@
 
 import { CHOICE, FIELD, OPTIONAL, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import type { Rule } from '../../types/rule.ts';
+import type { AnyRule } from '../../types/rule.ts';
 import { findRepeatFlag } from '../rule-transforms.ts';
 
 // ---------------------------------------------------------------------------
 // Tiny Rule-tree builders — keep tests readable.
 // ---------------------------------------------------------------------------
 
-const str = (value: string): Rule => ({ type: STRING, value });
-const sym = (name: string): Rule => ({ type: SYMBOL, name });
-const field = (name: string, content: Rule): Rule => ({
+const str = (value: string): AnyRule => ({ type: STRING, value });
+const sym = (name: string): AnyRule => ({ type: SYMBOL, name });
+const field = (name: string, content: AnyRule): AnyRule => ({
 	type: FIELD,
 	name,
 	content
 });
-const seq = (...members: Rule[]): Rule => ({ type: SEQ, members });
-const choice = (...members: Rule[]): Rule => ({ type: CHOICE, members });
-const optional = (content: Rule): Rule => ({ type: OPTIONAL, content });
+const seq = (...members: AnyRule[]): AnyRule => ({ type: SEQ, members });
+const choice = (...members: AnyRule[]): AnyRule => ({ type: CHOICE, members });
+const optional = (content: AnyRule): AnyRule => ({ type: OPTIONAL, content });
 
 describe('findRepeatFlag', () => {
 	// Direct unit coverage for the metadata walker that feeds the
 	// joinByTrailing / joinByLeading template hints. Previously only
 	// observable via templates.yaml diffs — a refactor that breaks
 	// the nested-wrapper traversal would silently drop the hint.
-	const repeatWith = (extras: Partial<Rule>): Rule =>
-		({ type: 'repeat', content: sym('X'), separator: ',', ...extras }) as Rule;
+	// `trailing` / `leading` are the legacy top-level repeat flags
+	// findRepeatFlag's structural cast still checks (alongside the
+	// modern `separator.trailing/leading` shape) — not a real Rule
+	// property, hence the loose extras bag.
+	const repeatWith = (extras: { trailing?: boolean; leading?: boolean }): AnyRule =>
+		({ type: 'repeat', content: sym('X'), separator: ',', ...extras }) as AnyRule;
 
 	it('returns true for `repeat.trailing = true`', () => {
 		expect(findRepeatFlag(repeatWith({ trailing: true }), 'trailing')).toBe(true);
