@@ -433,7 +433,7 @@ function rightmostBoundary(rule: Rule<'link'>): BoundaryEnd {
 	// `for await(`) — so report it as slot-like (word-like) rather than
 	// walking into its first/last literal. (Strategic render-time spacing
 	// supersedes this — see the deferred follow-up in the plan.)
-	if (rule.type === SEQ && (rule as { splicedBody?: boolean }).splicedBody === true) return SLOT_END;
+	if (rule.type === SEQ && rule.splicedBody === true) return SLOT_END;
 	switch (rule.type) {
 		case STRING:
 			// Named field-wrapped string — it becomes a slot, not a literal.
@@ -492,7 +492,7 @@ function leftmostBoundary(rule: Rule<'link'>): BoundaryEnd {
 	// §D-2a spacing stopgap (symmetric to rightmostBoundary): a spliced-body
 	// seq (declared `splicedBody` flag) keeps opaque-symbol spacing at its
 	// outer boundaries.
-	if (rule.type === SEQ && (rule as { splicedBody?: boolean }).splicedBody === true) return SLOT_END;
+	if (rule.type === SEQ && rule.splicedBody === true) return SLOT_END;
 	switch (rule.type) {
 		case STRING:
 			if ((rule as { fieldName?: string }).fieldName !== undefined) return SLOT_END;
