@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { role, withRoleScope } from '../primitives/role.ts';
 import type { Rule } from '../../types/rule.ts';
 
-const sym = (name: string): Rule => ({ type: 'symbol', name }) as Rule;
+const sym = (name: string): Rule => ({ type: 'SYMBOL', name }) as Rule;
 
 describe('role()', () => {
 	it('returns the symbol reference unchanged', () => {
@@ -37,7 +37,7 @@ describe('role()', () => {
 	it('throws when first arg is not a symbol reference', () => {
 		withRoleScope(() => {
 			expect(() => role('_indent' as unknown as Rule, 'indent')).toThrow(/symbol reference/);
-			expect(() => role({ type: 'string', value: '_indent' } as Rule, 'indent')).toThrow(/symbol reference/);
+			expect(() => role({ type: 'STRING', value: '_indent' } as Rule, 'indent')).toThrow(/symbol reference/);
 		});
 	});
 

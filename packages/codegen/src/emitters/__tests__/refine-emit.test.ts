@@ -235,7 +235,7 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 		const rule = raw.rules.iface_body!;
 		const res = resolveRefinePath('iface_body', 'curly', 'opening:', rule);
 		expect(res.fieldName).toBe('opening');
-		expect(res.choice.type).toBe('choice');
+		expect(res.choice.type).toBe('CHOICE');
 		expect(res.choice.members).toHaveLength(2);
 	});
 

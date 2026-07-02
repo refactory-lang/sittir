@@ -42,7 +42,7 @@
  * and console during regen so the author can act.
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, SimplifiedRule } from '../../types/rule.ts';
 import { isAllTextShape } from '../assemble.ts';
 import { isNonterminalRuleType } from '../rule-catalog.ts';
@@ -233,7 +233,7 @@ function walkRule(
 // ---------------------------------------------------------------------------
 
 function checkSeq(
-	rule: Extract<Rule<'link'>, { type: 'seq' }>,
+	rule: Extract<Rule<'link'>, { type: 'SEQ' }>,
 	ownerKind: string,
 	records: SlotGroupingDiagnostic[],
 	inChoiceArm: boolean
@@ -267,15 +267,15 @@ function checkSeq(
 // ---------------------------------------------------------------------------
 
 function checkRepeat(
-	rule: Extract<Rule<'link'>, { type: 'repeat' | 'repeat1' }>,
+	rule: Extract<Rule<'link'>, { type: 'REPEAT' | 'REPEAT1' }>,
 	ownerKind: string,
 	records: SlotGroupingDiagnostic[]
 ): void {
 	const content = rule.content;
 
 	// Shape ③: repeat(choice(..., literal, ...)) — heterogeneous; flag as ambiguous.
-	if (content.type === 'choice') {
-		const hasLiteral = content.members.some((m) => m.type === 'string');
+	if (content.type === CHOICE) {
+		const hasLiteral = content.members.some((m) => m.type === STRING);
 		if (hasLiteral) {
 			records.push({
 				code: 'repeat-choice-with-literal',
@@ -301,7 +301,7 @@ function checkRepeat(
 }
 
 function checkRepeatOfSymbol(
-	_repeatRule: Extract<Rule<'link'>, { type: 'repeat' | 'repeat1' }>,
+	_repeatRule: Extract<Rule<'link'>, { type: 'REPEAT' | 'REPEAT1' }>,
 	content: Rule<'link'>,
 	ownerKind: string,
 	records: SlotGroupingDiagnostic[]
@@ -311,7 +311,7 @@ function checkRepeatOfSymbol(
 	const isChoiceOfSymbols =
 		content.type === CHOICE &&
 		content.members.length > 0 &&
-		content.members.every((m) => m.type === 'symbol' || m.type === 'supertype');
+		content.members.every((m) => m.type === SYMBOL || m.type === SUPERTYPE);
 
 	if (!isSymbolLike && !isChoiceOfSymbols) return;
 

@@ -91,11 +91,11 @@ describe('Optimize — variant construction', () => {
 			]
 		};
 		const result = wrapVariants(choice);
-		expect(result.type).toBe('choice');
+		expect(result.type).toBe('CHOICE');
 		const members = (result as any).members;
 		expect(members).toHaveLength(2);
-		expect(members[0].type).toBe('variant');
-		expect(members[1].type).toBe('variant');
+		expect(members[0].type).toBe('VARIANT');
+		expect(members[1].type).toBe('VARIANT');
 	});
 
 	it('deduplicateVariants removes structurally identical variants', () => {
@@ -158,7 +158,7 @@ describe('Optimize — optimize()', () => {
 		expect(optimized.rules['item']).toBeDefined();
 		// Field metadata must be preserved
 		const item = optimized.rules['item'] as any;
-		const fieldMember = item.members?.find((m: any) => m.type === 'field') ?? (item.type === 'field' ? item : null);
+		const fieldMember = item.members?.find((m: any) => m.type === FIELD) ?? (item.type === FIELD ? item : null);
 		if (fieldMember) {
 			expect(fieldMember.name).toBe('body');
 		}
@@ -191,10 +191,10 @@ describe('Optimize — fanOutSeqChoices (T060)', () => {
 			]
 		};
 		const out = fanOutSeqChoices(rule);
-		expect(out.type).toBe('choice');
+		expect(out.type).toBe('CHOICE');
 		const branches = (out as any).members;
 		expect(branches).toHaveLength(2);
-		expect(branches[0].type).toBe('seq');
+		expect(branches[0].type).toBe('SEQ');
 		expect(branches[0].members.map((m: any) => m.value)).toEqual(['a', 'b', 'd']);
 		expect(branches[1].members.map((m: any) => m.value)).toEqual(['a', 'c', 'd']);
 	});
@@ -221,7 +221,7 @@ describe('Optimize — fanOutSeqChoices (T060)', () => {
 			]
 		};
 		const out = fanOutSeqChoices(rule);
-		expect(out.type).toBe('seq');
+		expect(out.type).toBe('SEQ');
 	});
 
 	it('preserves variant labels when distributing', () => {
@@ -248,8 +248,8 @@ describe('Optimize — fanOutSeqChoices (T060)', () => {
 			]
 		};
 		const out = fanOutSeqChoices(rule) as any;
-		expect(out.type).toBe('choice');
-		expect(out.members[0].type).toBe('variant');
+		expect(out.type).toBe('CHOICE');
+		expect(out.members[0].type).toBe('VARIANT');
 		expect(out.members[0].name).toBe('plus');
 		expect(out.members[1].name).toBe('minus');
 	});
@@ -288,9 +288,9 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 			]
 		};
 		const out = factorChoiceBranches(rule) as any;
-		expect(out.type).toBe('seq');
-		expect(out.members[0]).toEqual({ type: 'string', value: 'a' });
-		expect(out.members[1].type).toBe('choice');
+		expect(out.type).toBe('SEQ');
+		expect(out.members[0]).toEqual({ type: 'STRING', value: 'a' });
+		expect(out.members[1].type).toBe('CHOICE');
 		expect(out.members[1].members.map((m: any) => m.value)).toEqual(['x', 'y', 'z']);
 	});
 
@@ -315,9 +315,9 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 			]
 		};
 		const out = factorChoiceBranches(rule) as any;
-		expect(out.type).toBe('seq');
-		expect(out.members[0].type).toBe('choice');
-		expect(out.members[1]).toEqual({ type: 'string', value: ';' });
+		expect(out.type).toBe('SEQ');
+		expect(out.members[0].type).toBe('CHOICE');
+		expect(out.members[1]).toEqual({ type: 'STRING', value: ';' });
 	});
 
 	it('factors bare atom against seq(atom, tail) into seq(atom, optional(tail))', () => {
@@ -339,11 +339,11 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 			]
 		};
 		const out = factorChoiceBranches(rule) as any;
-		expect(out.type).toBe('seq');
+		expect(out.type).toBe('SEQ');
 		expect(out.members).toHaveLength(2);
-		expect(out.members[0]).toEqual({ type: 'string', value: 'a' });
-		expect(out.members[1].type).toBe('optional');
-		expect(out.members[1].content).toEqual({ type: 'string', value: 'b' });
+		expect(out.members[0]).toEqual({ type: 'STRING', value: 'a' });
+		expect(out.members[1].type).toBe('OPTIONAL');
+		expect(out.members[1].content).toEqual({ type: 'STRING', value: 'b' });
 	});
 
 	it('leaves choice-of-unrelated-atoms alone', () => {
@@ -358,7 +358,7 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 			]
 		};
 		const out = factorChoiceBranches(rule);
-		expect(out.type).toBe('choice');
+		expect(out.type).toBe('CHOICE');
 	});
 
 	it('wraps the differing middle in optional when one branch omits it', () => {
@@ -388,12 +388,12 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 			]
 		};
 		const out = factorChoiceBranches(rule) as any;
-		expect(out.type).toBe('seq');
+		expect(out.type).toBe('SEQ');
 		expect(out.members).toHaveLength(3);
-		expect(out.members[0]).toEqual({ type: 'string', value: 'a' });
-		expect(out.members[1].type).toBe('optional');
-		expect(out.members[1].content).toEqual({ type: 'string', value: 'b' });
-		expect(out.members[2]).toEqual({ type: 'string', value: 'c' });
+		expect(out.members[0]).toEqual({ type: 'STRING', value: 'a' });
+		expect(out.members[1].type).toBe('OPTIONAL');
+		expect(out.members[1].content).toEqual({ type: 'STRING', value: 'b' });
+		expect(out.members[2]).toEqual({ type: 'STRING', value: 'c' });
 	});
 
 	it('wraps a choice in optional when one branch is empty and others differ', () => {
@@ -429,9 +429,9 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 			]
 		};
 		const out = factorChoiceBranches(rule) as any;
-		expect(out.type).toBe('seq');
-		expect(out.members[1].type).toBe('optional');
-		expect(out.members[1].content.type).toBe('choice');
+		expect(out.type).toBe('SEQ');
+		expect(out.members[1].type).toBe('OPTIONAL');
+		expect(out.members[1].content.type).toBe('CHOICE');
 		expect(out.members[1].content.members.map((m: any) => m.value)).toEqual(['b', 'd']);
 	});
 });
@@ -447,8 +447,8 @@ describe('Optimize — collapseWrappers (T062)', () => {
 			content: { type: OPTIONAL, content: { type: STRING, value: 'a' } }
 		};
 		const out = collapseWrappers(rule) as any;
-		expect(out.type).toBe('optional');
-		expect(out.content.type).toBe('string');
+		expect(out.type).toBe('OPTIONAL');
+		expect(out.content.type).toBe('STRING');
 	});
 
 	it('collapses repeat(repeat(x)) → repeat(x)', () => {
@@ -457,8 +457,8 @@ describe('Optimize — collapseWrappers (T062)', () => {
 			content: { type: REPEAT, content: { type: STRING, value: 'a' } }
 		};
 		const out = collapseWrappers(rule) as any;
-		expect(out.type).toBe('repeat');
-		expect(out.content.type).toBe('string');
+		expect(out.type).toBe('REPEAT');
+		expect(out.content.type).toBe('STRING');
 	});
 
 	it('collapses optional(repeat(x)) → repeat(x)', () => {
@@ -467,7 +467,7 @@ describe('Optimize — collapseWrappers (T062)', () => {
 			content: { type: REPEAT, content: { type: STRING, value: 'a' } }
 		};
 		const out = collapseWrappers(rule) as any;
-		expect(out.type).toBe('repeat');
+		expect(out.type).toBe('REPEAT');
 	});
 
 	it('collapses single-member seq/choice', () => {
@@ -479,8 +479,8 @@ describe('Optimize — collapseWrappers (T062)', () => {
 			type: CHOICE,
 			members: [{ type: STRING, value: 'a' }]
 		};
-		expect(collapseWrappers(seq).type).toBe('string');
-		expect(collapseWrappers(choice).type).toBe('string');
+		expect(collapseWrappers(seq).type).toBe('STRING');
+		expect(collapseWrappers(choice).type).toBe('STRING');
 	});
 });
 

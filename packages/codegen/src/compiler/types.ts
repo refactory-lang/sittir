@@ -189,7 +189,7 @@ export interface RawGrammar {
 	 *
 	 * Record keys are the external symbol names (e.g.
 	 * `_outer_block_doc_comment_marker`); values are the sittir-side Rule
-	 * bodies (e.g. `{ type: 'string', value: '!' }`).
+	 * bodies (e.g. `{ type: 'STRING', value: '!' }`).
 	 */
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 }

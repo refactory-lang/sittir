@@ -390,7 +390,7 @@ function stripResolvedRoleRules(rules: Record<string, Rule<'link'>>): void {
 function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, externals: readonly string[]): void {
 	for (const ext of externals) {
 		if (!rules[ext]) {
-			rules[ext] = { type: 'pattern', value: '' } as Rule<'link'>;
+			rules[ext] = { type: PATTERN, value: '' } as Rule<'link'>;
 		}
 	}
 }
@@ -620,7 +620,7 @@ function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule
 		if (
 			rule.type === CHOICE &&
 			rule.members.length > 0 &&
-			rule.members.every((m) => m.type === 'alias' && m.named)
+			rule.members.every((m) => m.type === ALIAS && m.named)
 		) {
 			out.add(name);
 		}
@@ -656,7 +656,7 @@ function collectAliasedByParents(rawRules: Record<string, Rule<'link'>>): {
 	const visibleAliasTargets = new Map<string, string[]>();
 	function walk(rule: Rule<'link'>): void {
 		if (rule.type === ALIAS) {
-			if (rule.named && rule.content.type === 'symbol') {
+			if (rule.named && rule.content.type === SYMBOL) {
 				const source = rule.content.name;
 				if (source.startsWith('_')) {
 					parentAliasedKinds.add(source);
@@ -969,7 +969,7 @@ export function wrapVariants(choice: Rule<'link'>): Rule<'link'> {
 	const members = choice.members.map((member, i) => {
 		const variantName = nameVariant(member, i, choice.members);
 		return {
-			type: 'variant' as const,
+			type: VARIANT,
 			name: variantName,
 			content: member
 		} satisfies VariantRule<'link'>;
@@ -1010,7 +1010,7 @@ function findDetectToken(rule: Rule<'link'>): string | null {
 	if (rule.type === STRING) return rule.value;
 	if (rule.type === SEQ && rule.members.length > 0) {
 		for (const m of rule.members) {
-			if (m.type === 'string') return m.value;
+			if (m.type === STRING) return m.value;
 		}
 	}
 	return null;
@@ -1125,13 +1125,13 @@ export function applyOverridePolymorphs(
 		// as a direct member or nested inside choice/seq arms at any shallow depth.
 		const symbolInNames = (r: Rule<'link'>): boolean => {
 			const inner = r.type === VARIANT ? r.content : r;
-			return inner.type === 'symbol' && variantChildSymbolNames.has(inner.name);
+			return inner.type === SYMBOL && variantChildSymbolNames.has(inner.name);
 		};
 		const symbolInRule = (r: Rule<'link'>): boolean => {
 			if (symbolInNames(r)) return true;
 			const inner = r.type === VARIANT ? r.content : r;
-			if (inner.type === 'choice') return inner.members.some(symbolInNames);
-			if (inner.type === 'seq') return inner.members.some((m) => symbolInNames(m) || (m.type === 'choice' && m.members.some(symbolInNames)));
+			if (inner.type === CHOICE) return inner.members.some(symbolInNames);
+			if (inner.type === SEQ) return inner.members.some((m) => symbolInNames(m) || (m.type === CHOICE && m.members.some(symbolInNames)));
 			return false;
 		};
 		const anyChildMemberInFoundChoice = found.choice.members.some(symbolInRule);
@@ -1284,9 +1284,9 @@ function rewriteSeqWithVariantAliasChoice(
 function isAllAliasChoice(rule: Rule<'link'>, variantChildVisibleNames: Set<string>): boolean {
 	if (rule.type !== CHOICE || rule.members.length === 0) return false;
 	return rule.members.every((m) => {
-		const core = m.type === 'variant' ? m.content : m;
-		if (core.type === 'alias') return variantChildVisibleNames.has(core.value);
-		if (core.type === 'symbol') return variantChildVisibleNames.has(core.name);
+		const core = m.type === VARIANT ? m.content : m;
+		if (core.type === ALIAS) return variantChildVisibleNames.has(core.value);
+		if (core.type === SYMBOL) return variantChildVisibleNames.has(core.name);
 		return false;
 	});
 }
@@ -1305,9 +1305,9 @@ function applyVariantScaffoldPushDown(seq: SeqRule<'link'>, choiceIdx: number, r
 	for (const member of choice.members) {
 		const core = member.type === VARIANT ? member.content : member;
 		let visibleName: string | null = null;
-		if (core.type === 'alias') {
+		if (core.type === ALIAS) {
 			visibleName = core.value;
-		} else if (core.type === 'symbol') {
+		} else if (core.type === SYMBOL) {
 			// Link already collapsed the alias wrapper; the symbol's
 			// name IS the visible variant-child kind name.
 			visibleName = core.name;
@@ -1341,10 +1341,10 @@ export function findVariantChoice(rule: Rule<'link'>): VariantChoiceLocation | n
 		return { choice: rule, prefix: [], suffix: [] };
 	}
 	if (rule.type === SEQ) {
-		const choiceIdx = rule.members.findIndex((m) => m.type === 'choice');
+		const choiceIdx = rule.members.findIndex((m) => m.type === CHOICE);
 		if (choiceIdx !== -1) {
 			// More than one choice in the seq is ambiguous — bail.
-			const more = rule.members.findIndex((m, i) => i !== choiceIdx && m.type === 'choice');
+			const more = rule.members.findIndex((m, i) => i !== choiceIdx && m.type === CHOICE);
 			if (more !== -1) return null;
 			return {
 				choice: rule.members[choiceIdx] as ChoiceRule<'link'>,
@@ -1363,7 +1363,7 @@ export function findVariantChoice(rule: Rule<'link'>): VariantChoiceLocation | n
 		if (innerSeqIdx === -1) return null;
 		// Make sure there is no other member that is also a seq with a choice in it,
 		// and no choices at all elsewhere in the outer seq.
-		const outerChoiceCount = rule.members.filter((m) => m.type === 'choice').length;
+		const outerChoiceCount = rule.members.filter((m) => m.type === CHOICE).length;
 		if (outerChoiceCount > 0) return null; // would have been caught above, defensive
 		const innerSeq = rule.members[innerSeqIdx] as SeqRule<'link'>;
 		const innerChoiceIdx = innerSeq.members.findIndex((m) => m.type === CHOICE);
@@ -1371,7 +1371,7 @@ export function findVariantChoice(rule: Rule<'link'>): VariantChoiceLocation | n
 		// Ensure there is only ONE choice total across outer + inner levels.
 		const innerChoiceCount = innerSeq.members.filter((m) => m.type === CHOICE).length;
 		const otherSeqChoiceCount = rule.members
-			.filter((m, i) => i !== innerSeqIdx && m.type === 'seq')
+			.filter((m, i) => i !== innerSeqIdx && m.type === SEQ)
 			.reduce((acc, m) => acc + (m as SeqRule<'link'>).members.filter((mm) => mm.type === CHOICE).length, 0);
 		if (innerChoiceCount !== 1 || otherSeqChoiceCount > 0) return null;
 		// Merge outer prefix/suffix with the inner seq's non-choice members.
@@ -1689,7 +1689,7 @@ function resolveRule(
 				// `mintContentAliasKinds` registers the body. (Symbol content
 				// that does NOT satisfy the structural mint condition is an
 				// authored relabel, handled below via `aliasedFrom`.)
-				return { type: 'symbol', name: rule.value, inline: false } as Rule<'link'>;
+				return { type: SYMBOL, name: rule.value, inline: false } as Rule<'link'>;
 			}
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
 				return resolveNamedAliasWithProvenance(rule.content, ctx, rule.value);
@@ -1774,8 +1774,8 @@ function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, curre
 function resolveNamedAliasWithProvenance(content: Rule<'link'>, ctx: LinkCtx, targetName: string): Rule<'link'> {
 	const aliasedFrom = extractAliasedFromName(content, ctx.supertypes);
 	const sym: SymbolRule<'link'> = aliasedFrom
-		? { type: 'symbol', name: targetName, aliasedFrom, inline: false }
-		: { type: 'symbol', name: targetName, inline: false };
+		? { type: SYMBOL, name: targetName, aliasedFrom, inline: false }
+		: { type: SYMBOL, name: targetName, inline: false };
 	return sym as unknown as Rule<'link'>;
 }
 
@@ -1799,15 +1799,26 @@ function resolveNamedAliasWithProvenance(content: Rule<'link'>, ctx: LinkCtx, ta
  *     downstream consumers.
  *   Visible symbols that don't match either path are returned unchanged.
  */
+const ROLE_TO_RULE_TYPE = {
+	indent: INDENT,
+	dedent: DEDENT,
+	newline: NEWLINE,
+} as const;
+const RULE_TYPE_TO_ROLE = {
+	[INDENT]: 'indent',
+	[DEDENT]: 'dedent',
+	[NEWLINE]: 'newline',
+} as const;
+
 function resolveSymbolRoleOrPass(rule: SymbolRule<'link'>, ctx: LinkCtx): Rule<'link'> {
 	const { rules: allRules, externalRoles } = ctx;
 	const preBound = externalRoles.get(rule.name);
 	if (preBound) {
-		return { type: preBound.role } as Rule<'link'>;
+		return { type: ROLE_TO_RULE_TYPE[preBound.role] } as Rule<'link'>;
 	}
 	const target = allRules[rule.name];
 	if (target && (target.type === INDENT || target.type === DEDENT || target.type === NEWLINE)) {
-		externalRoles.set(rule.name, { role: target.type });
+		externalRoles.set(rule.name, { role: RULE_TYPE_TO_ROLE[target.type] });
 		return target;
 	}
 	return rule;
@@ -1965,7 +1976,7 @@ function collectSubtypeNames(rule: Rule<'link'>, ctx: LinkCtx): string[] {
 				return;
 			case ALIAS:
 				if (!current.named) return;
-				if (current.content.type === 'symbol') {
+				if (current.content.type === SYMBOL) {
 					names.push(current.content.name);
 				} else {
 					visit(current.content);
@@ -2011,7 +2022,7 @@ export function enrichPositions(rules: Record<string, Rule<'link'>>, refs: Symbo
 	for (const ref of refs) {
 		const rule = rules[ref.from];
 		if (!rule || rule.type !== SEQ) continue;
-		const idx = rule.members.findIndex((m) => m.type === 'symbol' && m.name === ref.to);
+		const idx = rule.members.findIndex((m) => m.type === SYMBOL && m.name === ref.to);
 		if (idx >= 0) ref.position = idx;
 	}
 }
@@ -2062,10 +2073,10 @@ function walkForIndentHoist(rule: Rule<'link'>, rules: Record<string, Rule<'link
 			// Find every `indent` member; for each, promote the nearest
 			// following repeat-bearing member by setting its separator.
 			for (let i = 0; i < rule.members.length; i++) {
-				if (rule.members[i]!.type !== 'indent') continue;
+				if (rule.members[i]!.type !== INDENT) continue;
 				for (let j = i + 1; j < rule.members.length; j++) {
 					if (assignRepeatSeparator(rule.members[j]!, rules, new Set())) break;
-					if (rule.members[j]!.type === 'dedent') break;
+					if (rule.members[j]!.type === DEDENT) break;
 				}
 			}
 			for (const m of rule.members) walkForIndentHoist(m, rules);
@@ -2811,17 +2822,17 @@ function liftRule(target: Rule<'link'>, synName: string, _discriminator: string)
         case OPTIONAL:
             return {
                 liftedBody: target.content,
-                replacement: { type: 'optional', content: synSym } as Rule<'link'>
+                replacement: { type: OPTIONAL, content: synSym } as Rule<'link'>
             };
         case REPEAT:
             return {
                 liftedBody: target.content,
-                replacement: { type: 'repeat', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule<'link'>
+                replacement: { type: REPEAT, content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule<'link'>
             };
         case REPEAT1:
             return {
                 liftedBody: target.content,
-                replacement: { type: 'repeat1', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule<'link'>
+                replacement: { type: REPEAT1, content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule<'link'>
             };
         default:
             return { liftedBody: target, replacement: synSym };
@@ -2866,7 +2877,7 @@ export function stampStaticRenderAs(
     // that are single string() bodies.
     const renderStamps: Record<string, string> = {};
     // Blank-bodied renderAs entries: zero-width-equivalent. References
-    // get replaced with `{ type: 'choice', members: [] }` (the blank
+    // get replaced with `{ type: 'CHOICE', members: [] }` (the blank
     // sentinel), which the choice() collapse in `rewriteRuleForStamp`
     // lowers to `optional(other)` when paired with another member. Use
     // case: tree-sitter externals that fire invisibly at runtime (e.g.
@@ -2922,7 +2933,7 @@ export function stampStaticRenderAs(
     return out;
 }
 /**
- * `blank()` produces `{ type: 'choice', members: [] }` (see evaluate.ts).
+ * `blank()` produces `{ type: 'CHOICE', members: [] }` (see evaluate.ts).
  * Same shape detection used by choice()'s optional-collapse pass.
  */
 function isBlankRule(rule: Rule<'link'>): boolean {

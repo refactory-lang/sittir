@@ -35,7 +35,7 @@ describe('findRepeatFlag', () => {
 	// modern `separator.trailing/leading` shape) — not a real Rule
 	// property, hence the loose extras bag.
 	const repeatWith = (extras: { trailing?: boolean; leading?: boolean }): AnyRule =>
-		({ type: 'repeat', content: sym('X'), separator: ',', ...extras }) as AnyRule;
+		({ type: 'REPEAT', content: sym('X'), separator: ',', ...extras }) as AnyRule;
 
 	it('returns true for `repeat.trailing = true`', () => {
 		expect(findRepeatFlag(repeatWith({ trailing: true }), 'trailing')).toBe(true);

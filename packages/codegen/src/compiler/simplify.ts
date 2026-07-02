@@ -170,10 +170,10 @@ export function isSlotPromotedLiteral(rule: AnyRule): boolean {
 function hasNamedSiblingOfInnerField(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case SEQ: {
-			const containsField = rule.members.some((m) => m.type === 'field');
+			const containsField = rule.members.some((m) => m.type === FIELD);
 			if (containsField) {
 				for (const m of rule.members) {
-					if (m.type === 'field') continue;
+					if (m.type === FIELD) continue;
 					if (isNamedReference(m)) return true;
 				}
 			}
@@ -238,7 +238,7 @@ function hasInnerFieldAtExposableDepth(rule: AnyRule): boolean {
 export function hoistInnerFieldFromWrapperForField(rule: AnyRule): AnyRule {
 	if (rule.type !== FIELD) return rule;
 	const content = rule.content;
-	if (content.type === 'field') return rule; // direct nesting handled elsewhere
+	if (content.type === FIELD) return rule; // direct nesting handled elsewhere
 	if (!hasInnerFieldAtExposableDepth(content)) return rule;
 	// Bail if a named-symbol sibling would lose its outer-field label.
 	if (hasNamedSiblingOfInnerField(content)) return rule;
@@ -305,22 +305,22 @@ function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string,
 		if (!extracted)
 			return {
 				type: CHOICE,
-				members: perBranch.map((br) => (br.length === 1 ? br[0]! : { type: 'seq', members: br }))
+				members: perBranch.map((br) => (br.length === 1 ? br[0]! : { type: SEQ, members: br }))
 			};
 		hoistedFieldTemplate = hoistedFieldTemplate ?? extracted;
 		hoistedContents.push(extracted.content);
 		residuals.push(
-			rest.length === 0 ? { type: 'seq', members: [] } : rest.length === 1 ? rest[0]! : { type: 'seq', members: rest }
+			rest.length === 0 ? { type: SEQ, members: [] } : rest.length === 1 ? rest[0]! : { type: SEQ, members: rest }
 		);
 	}
 	const unionedContent: AnyRule =
-		hoistedContents.length === 1 ? hoistedContents[0]! : { type: 'choice', members: hoistedContents };
+		hoistedContents.length === 1 ? hoistedContents[0]! : { type: CHOICE, members: hoistedContents };
 	const hoisted: AnyRule = b.field(hoistedFieldTemplate!.name, unionedContent);
 	const hasEmptyResidual = residuals.some((r) => r.type === SEQ && r.members.length === 0);
 	const nonEmptyResiduals = residuals.filter((r) => !(r.type === SEQ && r.members.length === 0));
 	if (nonEmptyResiduals.length === 0) return hoisted;
 	const residualCore: AnyRule =
-		nonEmptyResiduals.length === 1 ? nonEmptyResiduals[0]! : { type: 'choice', members: nonEmptyResiduals };
+		nonEmptyResiduals.length === 1 ? nonEmptyResiduals[0]! : { type: CHOICE, members: nonEmptyResiduals };
 	const residualPart: AnyRule = hasEmptyResidual ? b.optional(residualCore) : residualCore;
 	return { type: SEQ, members: [hoisted, residualPart] };
 }
@@ -398,7 +398,7 @@ function mergePositionForChoice(position: readonly AnyRule[], ctx?: SimplifyCtx)
 	if (first.type === FIELD) {
 		const fields = position.filter((p): p is FieldRule => p.type === FIELD);
 		const contents = dedupeByJson(fields.map((f) => f.content));
-		const mergedContent: AnyRule = contents.length === 1 ? contents[0]! : { type: 'choice', members: contents };
+		const mergedContent: AnyRule = contents.length === 1 ? contents[0]! : { type: CHOICE, members: contents };
 		return b.field(first.name, mergedContent);
 	}
 	return first;

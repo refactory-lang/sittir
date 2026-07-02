@@ -26,7 +26,7 @@ export { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts
  *     pre-simplification id rather than degrading to fragile name fallbacks.
  *
  * Non-overriding: a passed-through inner node keeps its own id; only a
- * freshly-rebuilt structural node (`{ type:'choice', members }`) gets the
+ * freshly-rebuilt structural node (`{ type:'CHOICE', members }`) gets the
  * source id stamped.
  */
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {

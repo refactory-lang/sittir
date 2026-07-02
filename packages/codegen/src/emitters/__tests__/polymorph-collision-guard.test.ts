@@ -33,11 +33,11 @@ import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 // ---------------------------------------------------------------------------
 
 function mkSymbol(name: string): Rule<'link'> {
-	return { type: 'symbol', name } as Rule<'link'>;
+	return { type: 'SYMBOL', name } as Rule<'link'>;
 }
 
 function mkField(name: string, content: Rule<'link'>): Rule<'link'> {
-	return { type: 'field', name, content, source: 'grammar' } as Rule<'link'>;
+	return { type: 'FIELD', name, content, source: 'grammar' } as Rule<'link'>;
 }
 
 function mkSeq(members: Rule<'link'>[]): SeqRule<'link'> {

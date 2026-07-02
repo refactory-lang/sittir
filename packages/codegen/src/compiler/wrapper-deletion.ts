@@ -63,7 +63,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			// key correction is repeat1: optional(repeat1(X)) must be array, not
 			// nonEmptyArray. This mirrors the original deriveSlotsRaw `case 'optional'`
 			// special-case and collectChildFromMember behavior.
-			const innerIsRepeatVariant = rule.content.type === 'repeat' || rule.content.type === 'repeat1';
+			const innerIsRepeatVariant = rule.content.type === REPEAT || rule.content.type === REPEAT1;
 			const next: WrapperAttrs = {
 				...attrs,
 				multiplicity: attrs.multiplicity ?? (innerIsRepeatVariant ? 'array' : 'optional'),
@@ -100,7 +100,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			if (sep === undefined && rule.separator !== undefined) {
 				if (rule.trailing !== undefined || rule.leading !== undefined) {
 					sep = {
-						rules: [{ type: 'string', value: rule.separator }],
+						rules: [{ type: 'STRING', value: rule.separator }],
 						trailing: rule.trailing,
 						leading: rule.leading,
 					};
@@ -127,7 +127,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			if (sep === undefined && rule.separator !== undefined) {
 				if (rule.trailing !== undefined || rule.leading !== undefined) {
 					sep = {
-						rules: [{ type: 'string', value: rule.separator }],
+						rules: [{ type: 'STRING', value: rule.separator }],
 						trailing: rule.trailing,
 						leading: rule.leading,
 					};
@@ -165,16 +165,16 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 				// nonterminal rule types). String/pattern literals carry no slot; pushing
 				// would cause the template emitter to drop co-optional keywords.
 				const isSlotBearingShape =
-					m.type === 'field' ||
-					m.type === 'optional' ||
-					m.type === 'repeat' ||
-					m.type === 'repeat1' ||
-					m.type === 'symbol' ||
-					m.type === 'supertype' ||
-					m.type === 'choice' ||
-					m.type === 'seq' ||
-					m.type === 'group' ||
-					m.type === 'variant';
+					m.type === FIELD ||
+					m.type === OPTIONAL ||
+					m.type === REPEAT ||
+					m.type === REPEAT1 ||
+					m.type === 'SYMBOL' ||
+					m.type === 'SUPERTYPE' ||
+					m.type === CHOICE ||
+					m.type === SEQ ||
+					m.type === GROUP ||
+					m.type === VARIANT;
 				const memberAttrs: WrapperAttrs =
 					multToPush !== undefined && isSlotBearingShape ? { multiplicity: multToPush } : {};
 				return deleteWrapperWith(m, memberAttrs);
@@ -189,7 +189,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			// SEQ NODE too, so the template emitter's co-optional-unit guard gates the
 			// whole sequence on its internal slot. (Enrich's seq-stamp masked this
 			// until it was removed — see project_nonterminal_authoritative_slot_signal.)
-			const hasBareLiteral = rule.members.some((m) => m.type === 'string' || m.type === 'pattern');
+			const hasBareLiteral = rule.members.some((m) => m.type === 'STRING' || m.type === 'PATTERN');
 			const seqAttrs: WrapperAttrs = {
 				fieldName: attrs.fieldName,
 				separator: attrs.separator,

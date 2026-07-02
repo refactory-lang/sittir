@@ -43,8 +43,8 @@ function setSlotSource(slot: AssembledNonterminal, source: AssembledNonterminal[
 describe('slot structural signals', () => {
 	it('treats fieldless slots as unnamed without consulting origin', () => {
 		const nodeMap = buildNodeMap({
-			box: seq({ type: 'symbol', name: 'identifier' }),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+			box: seq({ type: 'SYMBOL', name: 'identifier' }),
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
 		expect(slot?.fieldName).toBeUndefined();
@@ -54,13 +54,13 @@ describe('slot structural signals', () => {
 	it('projects unnamed-slot parseNames from per-value parseKind, not slot aliasSources', () => {
 		const nodeMap = buildNodeMap({
 			box: seq({
-				type: 'alias',
-				content: { type: 'symbol', name: 'interface_body' },
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: 'interface_body' },
 				named: true,
 				value: 'object_type',
 			}),
-			interface_body: seq({ type: 'symbol', name: 'identifier' }),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+			interface_body: seq({ type: 'SYMBOL', name: 'identifier' }),
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
 		expect(slot?.isUnnamed).toBe(true);
@@ -70,8 +70,8 @@ describe('slot structural signals', () => {
 
 	it('behavior-facing emitters honor isUnnamed even if source drifts', () => {
 		const nodeMap = buildNodeMap({
-			box: seq({ type: 'symbol', name: 'identifier' }),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+			box: seq({ type: 'SYMBOL', name: 'identifier' }),
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
 		});
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
@@ -86,8 +86,8 @@ describe('slot structural signals', () => {
 
 	it('shared factory classifiers key unnamed-child direct surfaces off isUnnamed', () => {
 		const nodeMap = buildNodeMap({
-			box: seq({ type: 'symbol', name: 'identifier' }),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+			box: seq({ type: 'SYMBOL', name: 'identifier' }),
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
 		});
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
@@ -104,10 +104,10 @@ describe('slot structural signals', () => {
 	it('shared factory classifiers key unnamed-child spread surfaces off isUnnamed', () => {
 		const nodeMap = buildNodeMap({
 			box: seq({
-				type: 'repeat1',
-				content: { type: 'symbol', name: 'identifier' },
+				type: 'REPEAT1',
+				content: { type: 'SYMBOL', name: 'identifier' },
 			}),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
 		});
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
@@ -124,13 +124,13 @@ describe('slot structural signals', () => {
 	it('template preservation treats unnamed alias-carried helper slots structurally', () => {
 		const nodeMap = buildNodeMap({
 			box: seq({
-				type: 'alias',
-				content: { type: 'symbol', name: '_helper' },
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: '_helper' },
 				named: true,
 				value: 'obj',
 			}),
-			_helper: seq({ type: 'symbol', name: 'identifier' }),
-			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+			_helper: seq({ type: 'SYMBOL', name: 'identifier' }),
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
 		expect(slot?.isUnnamed).toBe(true);

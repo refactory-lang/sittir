@@ -68,7 +68,7 @@ describe('Assemble — simplifyRule', () => {
 		const rule = applyWrapperDeletion({ x: rawRule }).x!;
 		const simplified = simplifyRule(rule as Rule);
 		// After stripping { and }, only the symbol (with fieldName attr) remains
-		expect(simplified.type).toBe('symbol');
+		expect(simplified.type).toBe('SYMBOL');
 		expect((simplified as any).fieldName).toBe('body');
 		expect((simplified as any).nonterminal).toBe(true);
 	});
@@ -82,14 +82,14 @@ describe('Assemble — simplifyRule', () => {
 		const rule = applyWrapperDeletion({ x: rawRule }).x!;
 		const simplified = simplifyRule(rule as Rule);
 		// seq of one symbol (with attr) collapses to that symbol
-		expect(simplified.type).toBe('symbol');
+		expect(simplified.type).toBe('SYMBOL');
 		expect((simplified as any).fieldName).toBe('x');
 	});
 
 	it('keeps alphanumeric strings', () => {
 		const rule: Rule<'link'> = { type: STRING, value: 'pub' };
 		const simplified = simplifyRule(rule);
-		expect(simplified).toEqual({ type: 'string', value: 'pub' });
+		expect(simplified).toEqual({ type: 'STRING', value: 'pub' });
 	});
 });
 

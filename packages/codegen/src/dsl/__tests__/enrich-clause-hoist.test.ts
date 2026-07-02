@@ -19,7 +19,7 @@ import { readRuleMetadata } from '../rule-metadata.ts';
 
 // enrich's builders call the runtime-injected DSL constructors
 // (globalThis.field/symbol/alias); install the fakes for these raw enrich()
-// calls so construction resolves to the sittir-lowercase shapes.
+// calls so construction resolves to sittir's IR shapes.
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 
@@ -43,16 +43,16 @@ describe('enrich clause-hoist pass — basic optional(seq(STRING, FIELD))', () =
 	it('hoists optional(seq(string, field)) into _parent_optional1', () => {
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'field', name: 'name', content: { type: 'symbol', name: 'identifier' } },
+					{ type: 'FIELD', name: 'name', content: { type: 'SYMBOL', name: 'identifier' } },
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
-								{ type: 'string', value: 'for' },
-								{ type: 'field', name: 'x', content: { type: 'symbol', name: 'expr' } }
+								{ type: 'STRING', value: 'for' },
+								{ type: 'FIELD', name: 'x', content: { type: 'SYMBOL', name: 'expr' } }
 							]
 						}
 					}
@@ -65,7 +65,7 @@ describe('enrich clause-hoist pass — basic optional(seq(STRING, FIELD))', () =
 		// The hidden group must have been injected
 		expect(rules['_parent_optional1']).toBeDefined();
 		const hoisted = rules['_parent_optional1'] as { type: string; members?: unknown[] };
-		expect(hoisted.type).toBe('seq');
+		expect(hoisted.type).toBe('SEQ');
 		expect(hoisted.members!.length).toBe(2);
 
 		// The parent's optional member must now reference the symbol
@@ -74,8 +74,8 @@ describe('enrich clause-hoist pass — basic optional(seq(STRING, FIELD))', () =
 			type: string;
 			content: { type: string; name: string; metadata?: unknown };
 		};
-		expect(optMember.type).toBe('optional');
-		expect(optMember.content.type).toBe('symbol');
+		expect(optMember.type).toBe('OPTIONAL');
+		expect(optMember.content.type).toBe('SYMBOL');
 		expect(optMember.content.name).toBe('_parent_optional1');
 		// (debt PR-P1) `SymbolRule.source` is deleted; the fact relocated into
 		// the opaque `metadata` bag as `symbolSource`.
@@ -85,20 +85,20 @@ describe('enrich clause-hoist pass — basic optional(seq(STRING, FIELD))', () =
 	it('slot-count preservation: parent top-level member count unchanged', () => {
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'field', name: 'a', content: { type: 'symbol', name: 'A' } },
+					{ type: 'FIELD', name: 'a', content: { type: 'SYMBOL', name: 'A' } },
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
-								{ type: 'string', value: '=' },
-								{ type: 'field', name: 'b', content: { type: 'symbol', name: 'B' } }
+								{ type: 'STRING', value: '=' },
+								{ type: 'FIELD', name: 'b', content: { type: 'SYMBOL', name: 'B' } }
 							]
 						}
 					},
-					{ type: 'string', value: ';' }
+					{ type: 'STRING', value: ';' }
 				]
 			}
 		});
@@ -116,17 +116,17 @@ describe('enrich clause-hoist pass — basic optional(seq(STRING, FIELD))', () =
 describe('enrich clause-hoist pass — CHOICE[seq, BLANK] form', () => {
 	it('hoists CHOICE[seq(string, field), BLANK] into _parent_optional1', () => {
 		const seqBody = {
-			type: 'seq',
+			type: 'SEQ',
 			members: [
-				{ type: 'string', value: 'impl' },
-				{ type: 'field', name: 'trait', content: { type: 'symbol', name: 'trait_type' } }
+				{ type: 'STRING', value: 'impl' },
+				{ type: 'FIELD', name: 'trait', content: { type: 'SYMBOL', name: 'trait_type' } }
 			]
 		};
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'string', value: 'abstract' },
+					{ type: 'STRING', value: 'abstract' },
 					{
 						type: 'CHOICE',
 						members: [
@@ -159,22 +159,22 @@ describe('enrich clause-hoist pass — CHOICE[seq, BLANK] form', () => {
 		expect(readRuleMetadata(nonBlank!.metadata)?.symbolSource).toBe('group-lift');
 	});
 
-	it('lowercase choice[seq, blank] form also descends', () => {
+	it('CHOICE[seq, BLANK] as the sole parent member (no leading literal) also descends', () => {
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
 					{
-						type: 'choice',
+						type: 'CHOICE',
 						members: [
 							{
-								type: 'seq',
+								type: 'SEQ',
 								members: [
-									{ type: 'string', value: 'for' },
-									{ type: 'field', name: 'iter', content: { type: 'symbol', name: 'expr' } }
+									{ type: 'STRING', value: 'for' },
+									{ type: 'FIELD', name: 'iter', content: { type: 'SYMBOL', name: 'expr' } }
 								]
 							},
-							{ type: 'blank' }
+							{ type: 'BLANK' }
 						]
 					}
 				]
@@ -197,16 +197,16 @@ describe('enrich clause-hoist pass — predicate exactness', () => {
 		// isInlineSafe requires exactly 1 slot; 2 slots → inline-unsafe → not hoisted by enrich.
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
-								{ type: 'string', value: 'trait' },
-								{ type: 'field', name: 'trait_name', content: { type: 'symbol', name: 'trait_type' } },
-								{ type: 'field', name: 'bounds', content: { type: 'symbol', name: 'type_bounds' } }
+								{ type: 'STRING', value: 'trait' },
+								{ type: 'FIELD', name: 'trait_name', content: { type: 'SYMBOL', name: 'trait_type' } },
+								{ type: 'FIELD', name: 'bounds', content: { type: 'SYMBOL', name: 'type_bounds' } }
 							]
 						}
 					}
@@ -222,14 +222,14 @@ describe('enrich clause-hoist pass — predicate exactness', () => {
 	it('does NOT fire on optional(field(X)) — no seq inside', () => {
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'field',
+							type: 'FIELD',
 							name: 'x',
-							content: { type: 'symbol', name: 'expr' }
+							content: { type: 'SYMBOL', name: 'expr' }
 						}
 					}
 				]
@@ -245,15 +245,15 @@ describe('enrich clause-hoist pass — predicate exactness', () => {
 		// isInlineSafe requires exactly 1 slot; 2 slots → inline-unsafe → not hoisted by enrich.
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
-								{ type: 'field', name: 'a', content: { type: 'symbol', name: 'A' } },
-								{ type: 'field', name: 'b', content: { type: 'symbol', name: 'B' } }
+								{ type: 'FIELD', name: 'a', content: { type: 'SYMBOL', name: 'A' } },
+								{ type: 'FIELD', name: 'b', content: { type: 'SYMBOL', name: 'B' } }
 							]
 						}
 					}
@@ -270,15 +270,15 @@ describe('enrich clause-hoist pass — predicate exactness', () => {
 		// isInlineSafe requires exactly 1 slot; 2 slots → inline-unsafe → not hoisted by enrich.
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
-								{ type: 'symbol', name: 'A' },
-								{ type: 'symbol', name: 'B' }
+								{ type: 'SYMBOL', name: 'A' },
+								{ type: 'SYMBOL', name: 'B' }
 							]
 						}
 					}
@@ -293,15 +293,15 @@ describe('enrich clause-hoist pass — predicate exactness', () => {
 	it('fires when string comes after field in the seq (any order)', () => {
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
-								{ type: 'field', name: 'value', content: { type: 'symbol', name: 'expr' } },
-								{ type: 'string', value: ';' }
+								{ type: 'FIELD', name: 'value', content: { type: 'SYMBOL', name: 'expr' } },
+								{ type: 'STRING', value: ';' }
 							]
 						}
 					}
@@ -322,25 +322,25 @@ describe('enrich clause-hoist pass — naming and dedupe', () => {
 	it('per-parent counter increments for distinct clause seqs within the same parent', () => {
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
-								{ type: 'string', value: 'for' },
-								{ type: 'field', name: 'a', content: { type: 'symbol', name: 'A' } }
+								{ type: 'STRING', value: 'for' },
+								{ type: 'FIELD', name: 'a', content: { type: 'SYMBOL', name: 'A' } }
 							]
 						}
 					},
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
-								{ type: 'string', value: 'where' },
-								{ type: 'field', name: 'b', content: { type: 'symbol', name: 'B' } }
+								{ type: 'STRING', value: 'where' },
+								{ type: 'FIELD', name: 'b', content: { type: 'SYMBOL', name: 'B' } }
 							]
 						}
 					}
@@ -356,26 +356,26 @@ describe('enrich clause-hoist pass — naming and dedupe', () => {
 	it('collision: does not overwrite an existing rule with the synthesized name', () => {
 		const input = mkGrammar({
 			parent: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
 					{
-						type: 'optional',
+						type: 'OPTIONAL',
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
-								{ type: 'string', value: 'for' },
-								{ type: 'field', name: 'x', content: { type: 'symbol', name: 'A' } }
+								{ type: 'STRING', value: 'for' },
+								{ type: 'FIELD', name: 'x', content: { type: 'SYMBOL', name: 'A' } }
 							]
 						}
 					}
 				]
 			},
-			_parent_optional1: { type: 'string', value: 'PRESERVED' }
+			_parent_optional1: { type: 'STRING', value: 'PRESERVED' }
 		});
 		const result = runEnrich(input);
 		// The pre-existing rule must not be overwritten
 		const preserved = result.grammar.rules['_parent_optional1'] as { type: string; value?: string };
-		expect(preserved.type).toBe('string');
+		expect(preserved.type).toBe('STRING');
 		expect(preserved.value).toBe('PRESERVED');
 	});
 });

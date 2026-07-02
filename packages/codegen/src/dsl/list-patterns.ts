@@ -8,11 +8,13 @@
  * separator LIFT, link (future) likewise. Keeping detection pure lets every
  * stage share one source of truth for "what a separated list looks like".
  *
- * **Case-agnostic by design.** DSL-layer code runs under two runtimes
- * (sittir lowercase `'seq'`/`'string'`…, tree-sitter CLI uppercase
- * `'SEQ'`/`'STRING'`…); enrich in particular sees both. Every type check
- * goes through `typeEq` so the same detector works in either runtime. See
- * `runtime-shapes.ts` for the dual-case predicate rationale.
+ * **Runtime-agnostic by design.** DSL-layer code runs under two runtimes
+ * (sittir, tree-sitter CLI) that now agree on UPPERCASE discriminants;
+ * enrich in particular sees both. Every type check goes through `typeEq`
+ * (kept as the single spelling for a type-tag comparison, even though it
+ * is now a plain equality check) so the same detector reads uniformly
+ * across call sites. See `runtime-shapes.ts` for the boundary module's
+ * remaining job (shape, not case, normalization).
  *
  * **Pre-pushdown only.** List/separator/trailing shapes are reconstructable
  * only while the wrappers (`optional`/`repeat`/`repeat1`/`field`) are intact
@@ -24,10 +26,13 @@
 import { typeEq, type RuntimeRule } from '../types/runtime-shapes.ts';
 
 /**
- * Structural equality for rule trees, across both runtime casings. Limited to
- * the rule shapes that exist pre-link (no polymorph/supertype/terminal — those
- * appear only after Link). Used by the commaSep1 lift to verify a seq's
- * standalone element matches the repeat's content.
+ * Structural equality for rule trees. Limited to the rule shapes that exist
+ * pre-link (no polymorph/supertype/terminal — those appear only after
+ * Link). Used by the commaSep1 lift to verify a seq's standalone element
+ * matches the repeat's content. Lowers both sides' `type` before comparing
+ * so this stays correct regardless of case (both runtimes agree on
+ * UPPERCASE today, but the lower-both-sides comparison needs no update if
+ * that ever changes).
  */
 export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
 	const ta = a.type.toLowerCase();
@@ -72,9 +77,9 @@ export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
  * canonical render-side separator; parse still accepts either form.
  */
 export function firstStringOfChoice(r: RuntimeRule): string | null {
-	if (!typeEq(r.type, 'choice')) return null;
+	if (!typeEq(r.type, 'CHOICE')) return null;
 	const members = ((r as { members?: RuntimeRule[] }).members ?? []) as RuntimeRule[];
-	const lit = members.find((m) => typeEq(m.type, 'string'));
+	const lit = members.find((m) => typeEq(m.type, 'STRING'));
 	return lit ? ((lit as { value?: unknown }).value as string) : null;
 }
 
@@ -91,21 +96,21 @@ export function firstStringOfChoice(r: RuntimeRule): string | null {
 export function detectRepeatSeparator<R extends RuntimeRule>(
 	resolved: R
 ): { content: R; separator: string; trailing?: boolean } | null {
-	if (!typeEq(resolved.type, 'seq')) return null;
+	if (!typeEq(resolved.type, 'SEQ')) return null;
 	const members = (resolved as { members?: R[] }).members;
 	if (!members || members.length !== 2) return null;
 	const [first, second] = members as [R, R];
 
-	const firstStr = typeEq(first.type, 'string') ? ((first as { value?: unknown }).value as string) : null;
-	const secondStr = typeEq(second.type, 'string') ? ((second as { value?: unknown }).value as string) : null;
+	const firstStr = typeEq(first.type, 'STRING') ? ((first as { value?: unknown }).value as string) : null;
+	const secondStr = typeEq(second.type, 'STRING') ? ((second as { value?: unknown }).value as string) : null;
 
 	// Canonical: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing).
 	if (firstStr !== null && secondStr === null) return { content: second, separator: firstStr };
 	if (secondStr !== null && firstStr === null) return { content: first, separator: secondStr, trailing: true };
 
 	// Choice-of-separators in the separator position.
-	const firstSepChoice = typeEq(first.type, 'choice') ? firstStringOfChoice(first) : null;
-	const secondSepChoice = typeEq(second.type, 'choice') ? firstStringOfChoice(second) : null;
+	const firstSepChoice = typeEq(first.type, 'CHOICE') ? firstStringOfChoice(first) : null;
+	const secondSepChoice = typeEq(second.type, 'CHOICE') ? firstStringOfChoice(second) : null;
 	if (firstSepChoice !== null && secondStr === null) return { content: second, separator: firstSepChoice };
 	if (secondSepChoice !== null && firstStr === null) return { content: first, separator: secondSepChoice, trailing: true };
 

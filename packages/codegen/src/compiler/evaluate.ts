@@ -198,7 +198,7 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): R
 	// Downstream (Link's `promotePolymorph`, walker, assemble) consumes
 	// variants as polymorph-form markers when they appear at the top level.
 	const retyped: Rule<'evaluate'>[] = fieldMembers.map((f) => ({
-		type: 'variant' as const,
+		type: VARIANT,
 		name: f.name,
 		content: f.content
 	}));
@@ -445,10 +445,10 @@ export function field(name: string, content?: Input): FieldRule<'evaluate'> {
 function collapseOptionalRepeatInField(resolved: Rule<'evaluate'>): Rule<'evaluate'> {
 	if (resolved.type !== OPTIONAL) return resolved;
 	const inner = resolved.content;
-	if (inner.type === 'repeat') {
+	if (inner.type === REPEAT) {
 		return inner;
 	}
-	if (inner.type === 'repeat1') {
+	if (inner.type === REPEAT1) {
 		return {
 			type: REPEAT,
 			content: inner.content,
@@ -528,14 +528,13 @@ export function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<
 	if (typeof value === 'string') {
 		return { type: ALIAS, content, named: false, value };
 	}
-	// Accept both sittir-lowercase ('symbol') and tree-sitter-uppercase ('SYMBOL')
-	// so this works whether the $ proxy comes from evaluate's own runtime or
-	// wire's makeSimpleDollarProxy (which returns uppercase types).
+	// Both evaluate's own runtime and wire's makeSimpleDollarProxy produce
+	// uppercase SYMBOL $ references, so this is a plain equality check.
 	if (
 		typeof value === 'object' &&
 		'type' in value &&
 		typeof (value as { type: unknown }).type === 'string' &&
-		(value as { type: string }).type.toLowerCase() === SYMBOL
+		(value as { type: string }).type === SYMBOL
 	) {
 		return {
 			type: ALIAS,
@@ -558,7 +557,7 @@ export function blank(): Rule<'evaluate'> {
  * Tree-sitter's grammar.js API accepts plain JS strings wherever string
  * rules are needed (e.g. `seq('(', $._expr, ')')`) AND also provides an
  * explicit `string(value)` form. Sittir's `normalize()` already handles
- * both: bare strings normalize to `{ type: 'string', value }`.
+ * both: bare strings normalize to `{ type: 'STRING', value }`.
  *
  * This explicit form is injected as a DSL global so that `renderAs`
  * bodies can use `string('x')` syntax (as specified) without relying on
@@ -819,7 +818,7 @@ function rewriteInlineAliases(
 				// would synthesize the fictitious hidden kind `_doc_comment`
 				// because `_line_doc_content` is external (not in `rules`).
 				const isBareSymbolToKnownSource =
-					inner.type === 'symbol' && (rules[inner.name] !== undefined || externals.has(inner.name));
+					inner.type === SYMBOL && (rules[inner.name] !== undefined || externals.has(inner.name));
 				// Also skip when the alias TARGET is already a declared
 				// kind: `alias(inlineBody, $.existingKind)` just relabels
 				// the inline body as that existing kind. Tree-sitter
@@ -1508,7 +1507,7 @@ function resolveToEnumMembersOneLevelDeep(target: Rule<'evaluate'>): StringRule<
 			// After PR-P, normalizeEnumMembers emits type: CHOICE for enum sets.
 			// The ENUM case (type: 'enum') is also handled here for safety.
 			if (target.members.length === 0) return null;
-			const allStrings = target.members.every((m): m is StringRule<'evaluate'> => m.type === 'string');
+			const allStrings = target.members.every((m): m is StringRule<'evaluate'> => m.type === STRING);
 			return allStrings ? target.members : null;
 		}
 		default:
@@ -2011,13 +2010,13 @@ export function isOptionalOrBlankChoice(rule: AnyRule | undefined): boolean {
 	if (rule.type === OPTIONAL) return true;
 	if (rule.type === CHOICE) {
 		// `members` is loosely typed here (not `AnyRule[]`): a raw evaluated
-		// CHOICE member can be tree-sitter's uppercase `BLANK` leaf, which has
-		// no counterpart in sittir's lowercase `AnyRule` union (§0 of the SSOT
-		// research doc — BLANK does not exist IR-side). Compare the raw `type`
-		// string directly rather than importing `runtime-shapes.ts`'s
-		// `isBlankType` (its header forbids import from `compiler/`).
+		// CHOICE member can be tree-sitter's `BLANK` leaf, which has no
+		// counterpart in sittir's `AnyRule` union (§0 of the SSOT research doc
+		// — BLANK does not exist IR-side). Compare the raw `type` string
+		// directly rather than importing `runtime-shapes.ts`'s `isBlankType`
+		// (its header forbids import from `compiler/`).
 		const members = (rule as { members?: readonly { type?: string }[] }).members;
-		return Array.isArray(members) && members.length === 2 && members.some((m) => m?.type === 'blank' || m?.type === 'BLANK');
+		return Array.isArray(members) && members.length === 2 && members.some((m) => m?.type === 'BLANK');
 	}
 	return false;
 }
@@ -2049,7 +2048,7 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): 
 	for (const rule of Object.values(rules)) {
 		walker.fold(rule, candidates, (acc, r) => {
 			// Pre-link form: alias(symbol(_X), $visible)
-			if (r.type === ALIAS && r.named && r.content.type === 'symbol' && r.content.name.startsWith('_')) {
+			if (r.type === ALIAS && r.named && r.content.type === SYMBOL && r.content.name.startsWith('_')) {
 				acc.add(r.content.name);
 			}
 			// Post-link form: symbol(visible, aliasedFrom='_X')
@@ -2383,7 +2382,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 				// Accept BOTH shapes — the callback's `previous` param
 				// carries already-normalized string names from the base
 				// grammar, while `$.foo` references added in the override
-				// normalize to `{ type: 'symbol', name: 'foo' }`. An
+				// normalize to `{ type: 'SYMBOL', name: 'foo' }`. An
 				// override body like `previous.concat([$.foo])` produces
 				// a mixed array; without the string branch the base-
 				// inherited supertypes silently drop.

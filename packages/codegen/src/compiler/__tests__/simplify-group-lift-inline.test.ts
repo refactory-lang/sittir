@@ -15,7 +15,7 @@
  *
  * Test nomenclature matches the real cases:
  *   - parent rule: const_item (simplified: seq with _const_item_optional1 ref)
- *   - helper rule: _const_item_optional1 (type:'group', content: seq('=', field(value,_expression)))
+ *   - helper rule: _const_item_optional1 (type: 'GROUP', content: seq('=', field(value,_expression)))
  *   - expected post-fix: the ref is replaced by the seq members carrying multiplicity:'optional'
  */
 
@@ -77,11 +77,11 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 			// synthesizer (auto-groups.ts) does not stamp hidden. The fix must handle
 			// both hidden and non-hidden refs; omitting hidden here matches reality.
 			const_item: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'string', value: 'const' } as Rule,
+					{ type: 'STRING', value: 'const' } as Rule,
 					{
-						type: 'symbol',
+						type: 'SYMBOL',
 						name: '_const_item_optional1',
 						// No hidden:true — matches synthesizeOptionalGroups behavior
 						source: 'group-lift',
@@ -89,19 +89,19 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 						multiplicity: 'optional',
 						nonterminal: true,
 					} as unknown as Rule,
-					{ type: 'string', value: ';' } as Rule,
+					{ type: 'STRING', value: ';' } as Rule,
 				],
 			} as Rule,
 			// Helper rule: group with seq content
 			_const_item_optional1: {
-				type: 'group',
+				type: 'GROUP',
 				name: '_const_item_optional1',
 				content: {
-					type: 'seq',
+					type: 'SEQ',
 					members: [
-						{ type: 'string', value: '=' },
+						{ type: 'STRING', value: '=' },
 						{
-							type: 'symbol',
+							type: 'SYMBOL',
 							name: '_expression',
 							hidden: true,
 							fieldName: 'value',
@@ -111,7 +111,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 				},
 			} as unknown as Rule,
 			// Content kind leaf
-			_expression: { type: 'symbol', name: '_expression' } as Rule,
+			_expression: { type: 'SYMBOL', name: '_expression' } as Rule,
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
@@ -137,32 +137,32 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 
 		const inputRules: Record<string, Rule> = {
 			type_arguments: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'string', value: '<' } as Rule,
+					{ type: 'STRING', value: '<' } as Rule,
 					{
-						type: 'symbol',
+						type: 'SYMBOL',
 						name: '_type_arguments_repeat1',
 						hidden: true,
 						source: 'group-lift',
 						multiplicity: 'nonEmptyArray',
 						nonterminal: true,
 					} as unknown as Rule,
-					{ type: 'string', value: '>' } as Rule,
+					{ type: 'STRING', value: '>' } as Rule,
 				],
 			} as Rule,
 			// Helper: group with seq content (but it's a repeat context)
 			_type_arguments_repeat1: {
-				type: 'group',
+				type: 'GROUP',
 				name: '_type_arguments_repeat1',
 				content: {
-					type: 'seq',
+					type: 'SEQ',
 					members: [
-						{ type: 'symbol', name: '_type', hidden: true, nonterminal: true } as unknown as Rule,
+						{ type: 'SYMBOL', name: '_type', hidden: true, nonterminal: true } as unknown as Rule,
 					],
 				},
 			} as unknown as Rule,
-			_type: { type: 'symbol', name: '_type' } as Rule,
+			_type: { type: 'SYMBOL', name: '_type' } as Rule,
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
@@ -184,10 +184,10 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 
 		const inputRules: Record<string, Rule> = {
 			parent_rule: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
 					{
-						type: 'symbol',
+						type: 'SYMBOL',
 						name: '_parent_group1',
 						hidden: true,
 						source: 'group-lift',
@@ -197,14 +197,14 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 				],
 			} as Rule,
 			_parent_group1: {
-				type: 'group',
+				type: 'GROUP',
 				name: '_parent_group1',
 				content: {
-					type: 'seq',
-					members: [{ type: 'symbol', name: 'some_kind', nonterminal: true } as unknown as Rule],
+					type: 'SEQ',
+					members: [{ type: 'SYMBOL', name: 'some_kind', nonterminal: true } as unknown as Rule],
 				},
 			} as unknown as Rule,
-			some_kind: { type: 'symbol', name: 'some_kind' } as Rule,
+			some_kind: { type: 'SYMBOL', name: 'some_kind' } as Rule,
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);
@@ -226,11 +226,11 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		// must continue to work after the PR-D2 fix.
 		const inputRules: Record<string, Rule> = {
 			let_declaration: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'string', value: 'let' } as Rule,
+					{ type: 'STRING', value: 'let' } as Rule,
 					{
-						type: 'symbol',
+						type: 'SYMBOL',
 						name: '_let_declaration_optional1',
 						hidden: true,
 						source: 'group-lift',
@@ -240,14 +240,14 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 				],
 			} as Rule,
 			_let_declaration_optional1: {
-				type: 'group',
+				type: 'GROUP',
 				name: '_let_declaration_optional1',
 				content: {
-					type: 'seq',
+					type: 'SEQ',
 					members: [
-						{ type: 'string', value: ':' },
+						{ type: 'STRING', value: ':' },
 						{
-							type: 'symbol',
+							type: 'SYMBOL',
 							name: '_type',
 							hidden: true,
 							fieldName: 'type',
@@ -256,7 +256,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 					],
 				},
 			} as unknown as Rule,
-			_type: { type: 'symbol', name: '_type' } as Rule,
+			_type: { type: 'SYMBOL', name: '_type' } as Rule,
 		};
 
 		const renderRules = applyWrapperDeletion(inputRules);

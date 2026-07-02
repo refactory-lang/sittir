@@ -3,7 +3,7 @@ import { alias } from '../primitives/alias.ts';
 import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
-const sym = (name: string): Rule => ({ type: 'symbol', name }) as Rule;
+const sym = (name: string): Rule => ({ type: 'SYMBOL', name }) as Rule;
 
 beforeAll(() => {
 	installFakeDsl();
@@ -17,15 +17,15 @@ describe('alias()', () => {
 		it('expands alias($.name) to the named-self form', () => {
 			const result = alias(sym('expression'));
 			expect(result).toEqual({
-				type: 'alias',
-				content: { type: 'symbol', name: 'expression' },
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: 'expression' },
 				named: true,
 				value: 'expression'
 			});
 		});
 
 		it('throws when the single argument is not a symbol reference', () => {
-			expect(() => alias({ type: 'string', value: 'foo' } as Rule)).toThrow();
+			expect(() => alias({ type: 'STRING', value: 'foo' } as Rule)).toThrow();
 		});
 	});
 
@@ -33,8 +33,8 @@ describe('alias()', () => {
 		it('handles string second arg as anonymous alias', () => {
 			const result = alias(sym('foo'), 'bar');
 			expect(result).toEqual({
-				type: 'alias',
-				content: { type: 'symbol', name: 'foo' },
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: 'foo' },
 				named: false,
 				value: 'bar'
 			});
@@ -43,8 +43,8 @@ describe('alias()', () => {
 		it('handles symbol second arg as named alias', () => {
 			const result = alias(sym('foo'), sym('renamed'));
 			expect(result).toEqual({
-				type: 'alias',
-				content: { type: 'symbol', name: 'foo' },
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: 'foo' },
 				named: true,
 				value: 'renamed'
 			});

@@ -86,9 +86,9 @@ describe('canonicalizeSeqOfLeaves', () => {
 			content: { type: SEQ, members: [{ type: STRING, value: '+' }] },
 		};
 		expect(canonicalizeSeqOfLeaves(rule)).toEqual({
-			type: 'field',
+			type: 'FIELD',
 			name: 'op',
-			content: { type: 'string', value: '+' },
+			content: { type: 'STRING', value: '+' },
 		});
 	});
 });
@@ -166,7 +166,7 @@ describe('assertUniversalShape', () => {
 			],
 		};
 		const node = new AssembledGroup('_choice_wrap', body, body, body as unknown as RenderRule);
-		expect(() => assertUniversalShape(node)).toThrow(/choice/);
+		expect(() => assertUniversalShape(node)).toThrow(/CHOICE/);
 	});
 
 	it('throws for non-seq, non-leaf body (e.g. bare choice)', () => {

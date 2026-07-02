@@ -30,21 +30,21 @@ describe('grammar diagnostics preflight', () => {
 		const result = collectGrammarDiagnosticsForGrammar({
 			rawGrammar: buildRawGrammar({
 				host: choice(
-					alias({ type: 'symbol', name: 'left' }, { type: 'symbol', name: 'shared' }),
-					{ type: 'symbol', name: 'shared' },
-					alias({ type: 'symbol', name: 'right' }, { type: 'symbol', name: 'shared' })
+					alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+					{ type: 'SYMBOL', name: 'shared' },
+					alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
 				),
-				left: { type: 'pattern', value: '[a-z]+' },
+				left: { type: 'PATTERN', value: '[a-z]+' },
 				shared: {
-					type: 'seq',
+					type: 'SEQ',
 					members: [
-						{ type: 'symbol', name: 'identifier', fieldName: 'body' },
-						{ type: 'symbol', name: 'identifier2', fieldName: 'tail' }
+						{ type: 'SYMBOL', name: 'identifier', fieldName: 'body' },
+						{ type: 'SYMBOL', name: 'identifier2', fieldName: 'tail' }
 					]
 				},
-				right: { type: 'pattern', value: '[0-9]+' },
-				identifier: { type: 'pattern', value: '[a-z_]\\w*' },
-				identifier2: { type: 'pattern', value: '[A-Z_]\\w*' }
+				right: { type: 'PATTERN', value: '[0-9]+' },
+				identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
+				identifier2: { type: 'PATTERN', value: '[A-Z_]\\w*' }
 			})
 		});
 
@@ -72,13 +72,13 @@ describe('grammar diagnostics preflight', () => {
 		const result = collectGrammarDiagnosticsForGrammar({
 			rawGrammar: buildRawGrammar({
 				host: choice(
-					alias({ type: 'symbol', name: 'left' }, { type: 'symbol', name: 'shared' }),
-					{ type: 'symbol', name: 'shared' },
-					alias({ type: 'symbol', name: 'right' }, { type: 'symbol', name: 'shared' })
+					alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+					{ type: 'SYMBOL', name: 'shared' },
+					alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
 				),
-				left: { type: 'pattern', value: '[a-z]+' },
-				shared: { type: 'pattern', value: '[a-z]+' },
-				right: { type: 'pattern', value: '[a-z]+' }
+				left: { type: 'PATTERN', value: '[a-z]+' },
+				shared: { type: 'PATTERN', value: '[a-z]+' },
+				right: { type: 'PATTERN', value: '[a-z]+' }
 			})
 		});
 

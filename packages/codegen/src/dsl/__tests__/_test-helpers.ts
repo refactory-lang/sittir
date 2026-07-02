@@ -12,8 +12,8 @@
  * fake globals themselves.
  *
  * Use `installFakeDsl()` in a `beforeAll` and `restoreFakeDsl()` in
- * the corresponding `afterAll`. The fakes mirror sittir's
- * lowercase-type Rule shape so assertions in the tests can use the
+ * the corresponding `afterAll`. The fakes mirror sittir's Rule shape
+ * (UPPERCASE discriminants) so assertions in the tests can use the
  * standard `Rule` union.
  */
 
@@ -36,20 +36,20 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 	for (const k of DSL_KEYS) saved[k] = g[k];
 	savedGlobals = saved;
 
-	g.seq = (...members: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'seq', members }) as Rule<'evaluate'>;
-	g.choice = (...members: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'choice', members }) as Rule<'evaluate'>;
-	g.optional = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'optional', content }) as Rule<'evaluate'>;
-	g.repeat = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'repeat', content }) as Rule<'evaluate'>;
-	g.repeat1 = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'repeat1', content }) as Rule<'evaluate'>;
-	g.field = (name: string, content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'field', name, content }) as Rule<'evaluate'>;
+	g.seq = (...members: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'SEQ', members }) as Rule<'evaluate'>;
+	g.choice = (...members: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'CHOICE', members }) as Rule<'evaluate'>;
+	g.optional = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'OPTIONAL', content }) as Rule<'evaluate'>;
+	g.repeat = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'REPEAT', content }) as Rule<'evaluate'>;
+	g.repeat1 = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'REPEAT1', content }) as Rule<'evaluate'>;
+	g.field = (name: string, content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'FIELD', name, content }) as Rule<'evaluate'>;
 	g.alias = (rule: unknown, value: unknown): Rule<'evaluate'> => {
 		if (typeof value === 'string') {
-			return { type: 'alias', content: rule, named: false, value } as Rule<'evaluate'>;
+			return { type: 'ALIAS', content: rule, named: false, value } as Rule<'evaluate'>;
 		}
 		const sym = value as { type?: string; name?: string };
-		if (sym && (sym.type === 'symbol' || sym.type === 'SYMBOL')) {
+		if (sym && sym.type === 'SYMBOL') {
 			return {
-				type: 'alias',
+				type: 'ALIAS',
 				content: rule,
 				named: true,
 				value: sym.name
@@ -57,21 +57,26 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 		}
 		throw new Error('fake alias: invalid value');
 	};
-	g.sym = (name: string): Rule<'evaluate'> => ({ type: 'symbol', name, hidden: name.startsWith('_'), inline: name.startsWith('_') }) as Rule<'evaluate'>;
+	g.sym = (name: string): Rule<'evaluate'> => ({ type: 'SYMBOL', name, hidden: name.startsWith('_'), inline: name.startsWith('_') }) as Rule<'evaluate'>;
 	// prec/prec.left/prec.right/prec.dynamic all preserve the value
 	// on the returned rule so tests can assert precedence round-trip.
+	// Sittir's real `prec()` strips the wrapper entirely (see
+	// `evaluate.ts::prec`), so any PREC-typed rule that reaches the
+	// pipeline is a tree-sitter-native shape — always UPPERCASE
+	// (`PREC`/`PREC_LEFT`/`PREC_RIGHT`/`PREC_DYNAMIC`), matching what
+	// `runtime-shapes.ts::isPrecWrapper` and `transform-path.ts` expect.
 	const makePrec =
-		(variant: 'prec' | 'prec_left' | 'prec_right' | 'prec_dynamic') =>
+		(variant: 'PREC' | 'PREC_LEFT' | 'PREC_RIGHT' | 'PREC_DYNAMIC') =>
 		(value: number, content: Rule<'evaluate'>): Rule<'evaluate'> =>
 			({ type: variant, value, content }) as unknown as Rule<'evaluate'>;
-	const precFn = makePrec('prec') as ((value: number, content: Rule<'evaluate'>) => Rule<'evaluate'>) & {
+	const precFn = makePrec('PREC') as ((value: number, content: Rule<'evaluate'>) => Rule<'evaluate'>) & {
 		left: (value: number, content: Rule<'evaluate'>) => Rule<'evaluate'>;
 		right: (value: number, content: Rule<'evaluate'>) => Rule<'evaluate'>;
 		dynamic: (value: number, content: Rule<'evaluate'>) => Rule<'evaluate'>;
 	};
-	precFn.left = makePrec('prec_left');
-	precFn.right = makePrec('prec_right');
-	precFn.dynamic = makePrec('prec_dynamic');
+	precFn.left = makePrec('PREC_LEFT');
+	precFn.right = makePrec('PREC_RIGHT');
+	precFn.dynamic = makePrec('PREC_DYNAMIC');
 	g.prec = precFn;
 
 	if (overrides) {

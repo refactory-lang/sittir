@@ -71,7 +71,7 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 			seq(field('left', sym('expr')), field('op', str('+')), field('right', sym('expr')))
 		) as ChoiceRule;
 		const result = mergeBranchesForChoice(input, makeDefaultCtx());
-		expect(result.type).toBe('seq');
+		expect(result.type).toBe('SEQ');
 		const members = (result as { members: Rule[] }).members;
 		expect(members).toHaveLength(3);
 		// Position 0: left field — attrs pushed onto sym('expr')
@@ -104,7 +104,7 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 			seq(sym('expr'), field('op', str('-')), sym('expr'))
 		) as ChoiceRule;
 		const result = mergeBranchesForChoice(input, makeDefaultCtx());
-		expect(result.type).toBe('seq');
+		expect(result.type).toBe('SEQ');
 		const members = (result as { members: Rule[] }).members;
 		expect(members).toHaveLength(3);
 		expect(members[0]).toEqual(sym('expr'));
@@ -122,7 +122,7 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 		) as ChoiceRule;
 		const result = mergeBranchesForChoice(input);
 		// liftSharedArmAttrs fires but branches stay as-is (no seq structure to merge).
-		expect(result.type).toBe('choice');
+		expect(result.type).toBe('CHOICE');
 		expect((result as { members: Rule[] }).members.length).toBe(3);
 	});
 
@@ -130,7 +130,7 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 		// One branch has field, another has symbol at same position.
 		const input = choice(seq(field('op', str('='))), seq(sym('assignment_expression'))) as ChoiceRule;
 		const result = mergeBranchesForChoice(input);
-		expect(result.type).toBe('choice');
+		expect(result.type).toBe('CHOICE');
 	});
 
 	it('does NOT merge variant-wrapped branches — variants preserve identity', () => {
@@ -143,11 +143,11 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 			variant('b', seq(field('op', str('-')), field('r', sym('expr'))))
 		) as ChoiceRule;
 		const result = mergeBranchesForChoice(input);
-		expect(result.type).toBe('choice');
+		expect(result.type).toBe('CHOICE');
 		const members = (result as { members: Rule[] }).members;
 		expect(members).toHaveLength(2);
-		expect(members[0]!.type).toBe('variant');
-		expect(members[1]!.type).toBe('variant');
+		expect(members[0]!.type).toBe('VARIANT');
+		expect(members[1]!.type).toBe('VARIANT');
 	});
 
 	it('dedupes identical contents across branches', () => {
@@ -159,7 +159,7 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 			seq(field('op', str('-')), field('r', sym('expr')))
 		) as ChoiceRule;
 		const result = mergeBranchesForChoice(input, makeDefaultCtx());
-		expect(result.type).toBe('seq');
+		expect(result.type).toBe('SEQ');
 		const members = (result as { members: Rule[] }).members;
 		// op: deduplicated choice of '+' and '-' (not '+', '+', '-')
 		// attributeBuilder pushes fieldName+nonterminal onto the choice node.
@@ -175,7 +175,7 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 		// No seq structure to merge — stays as a choice. Supertype /
 		// enum classification handles this kind downstream.
 		const result = mergeBranchesForChoice(input);
-		expect(result.type).toBe('choice');
+		expect(result.type).toBe('CHOICE');
 		expect((result as { members: Rule[] }).members).toHaveLength(3);
 	});
 });
@@ -200,7 +200,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 		const raw = choice(sym('a'));
 		const fieldFree = applyWrapperDeletion({ x: raw }).x!;
 		const result = simplifyRule(fieldFree as Rule);
-		expect(result.type).toBe('symbol');
+		expect(result.type).toBe('SYMBOL');
 	});
 
 	it('simplifyRule throws on a raw OPTIONAL node (deleted handler — use attributeBuilder instead)', () => {
@@ -210,7 +210,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 		// simplify (e.g. the empty-match fold in simplifyChoiceRule). A raw OPTIONAL
 		// hitting simplifyRule is a bug and now throws immediately.
 		const raw = optional(str(','));
-		expect(() => simplifyRule(raw as Rule)).toThrow(/unexpected rule type 'optional'/);
+		expect(() => simplifyRule(raw as Rule)).toThrow(/unexpected rule type 'OPTIONAL'/);
 	});
 
 	it('attributeBuilder.optional strips bare anonymous string delimiters (replaces simplifyOptionalRule)', () => {
@@ -221,7 +221,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 		// produces empty-seq (no leaves carry multiplicity when the content is stripped).
 		// The STRING is bare (no nonterminal), so the content is treated as a delimiter.
 		// Result: {type:SEQ, members:[]} sentinel.
-		expect(result.type).toBe('seq');
+		expect(result.type).toBe('SEQ');
 		expect((result as { members: Rule[] }).members).toHaveLength(0);
 	});
 
@@ -234,7 +234,7 @@ describe('simplifyRule — field-free input (wrapper-deleted)', () => {
 		const fieldFree = applyWrapperDeletion(wrapped).x!;
 		const result = simplifyRule(fieldFree as Rule);
 		// The optional wraps a nonterminal string → stays as optional (not stripped)
-		expect(result.type).not.toBe('seq');
+		expect(result.type).not.toBe('SEQ');
 	});
 });
 
@@ -262,7 +262,7 @@ describe('simplifyRule — hoistInnerFieldFromWrapperForField', () => {
 			optional(repeat1(choice(field('name', sym('_property_name')), sym('enum_assignment')), ','))
 		);
 		const result = hoistInnerFieldFromWrapperForField(input);
-		expect(result.type).toBe('optional');
+		expect(result.type).toBe('OPTIONAL');
 	});
 
 	it('does NOT hoist when the inner field has a NAMED-symbol sibling in the enclosing seq', () => {
@@ -308,12 +308,12 @@ describe('simplifyRule — hoistInnerFieldFromWrapperForField', () => {
 		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
 		const result = hoistInnerFieldFromWrapperForField(input);
 		// Walk into the optional → seq → first member: the literal.
-		expect(result.type).toBe('optional');
-		const optInner = (result as { type: 'optional'; content: Rule }).content;
-		expect(optInner.type).toBe('seq');
+		expect(result.type).toBe('OPTIONAL');
+		const optInner = (result as { type: 'OPTIONAL'; content: Rule }).content;
+		expect(optInner.type).toBe('SEQ');
 		const seqMembers = (optInner as { members: Rule[] }).members;
 		expect(seqMembers[0]).toEqual(str('extends'));
-		expect(seqMembers[1]?.type).toBe('field');
+		expect(seqMembers[1]?.type).toBe('FIELD');
 	});
 
 	it('integration: a NAMED supertype sibling also blocks the hoist', () => {

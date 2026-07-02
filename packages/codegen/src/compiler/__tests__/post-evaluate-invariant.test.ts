@@ -3,8 +3,9 @@
  *
  * After `evaluate()` runs on each grammar's overrides.ts, the resulting
  * RawGrammar must contain ONLY tree-sitter-native rule constructs (in
- * sittir's lowercase spelling, since evaluate runs the sittir-injected
- * grammarFn). Sittir-only metadata that the DSL extensions produce
+ * sittir's UPPERCASE discriminant spelling — see debt PR-U — since
+ * evaluate runs the sittir-injected grammarFn). Sittir-only metadata
+ * that the DSL extensions produce
  * (FieldPlaceholder markers from one-arg `field()` calls, raw
  * `__sittirPlaceholder` objects, etc.) MUST NOT survive into the rule
  * tree — they are interim values that resolvePatch swaps out before
@@ -27,30 +28,30 @@ import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers
 
 const KNOWN_RULE_TYPES = new Set([
 	// Structural grouping
-	'seq',
-	'optional',
-	'choice',
-	'repeat',
-	'repeat1',
+	'SEQ',
+	'OPTIONAL',
+	'CHOICE',
+	'REPEAT',
+	'REPEAT1',
 	// Named patterns
-	'field',
-	'variant',
-	'enum',
-	'supertype',
-	'group',
-	'terminal',
-	'polymorph',
+	'FIELD',
+	'VARIANT',
+	'ENUM',
+	'SUPERTYPE',
+	'GROUP',
+	'TERMINAL',
+	'POLYMORPH',
 	// Terminals
-	'string',
-	'pattern',
+	'STRING',
+	'PATTERN',
 	// Structural whitespace
-	'indent',
-	'dedent',
-	'newline',
+	'INDENT',
+	'DEDENT',
+	'NEWLINE',
 	// References (Link resolves these)
-	'symbol',
-	'alias',
-	'token'
+	'SYMBOL',
+	'ALIAS',
+	'TOKEN'
 ]);
 
 const GRAMMARS = ['python', 'rust', 'typescript'] as const;

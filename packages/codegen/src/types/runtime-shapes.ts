@@ -1,29 +1,37 @@
 /**
  * dsl/runtime-shapes.ts — cross-runtime rule shape utilities.
  *
- * **Scope: DSL layer only.** The predicates here are dual-case aware
+ * **Scope: DSL layer only.** The predicates here are dual-RUNTIME aware
  * because DSL code runs under two different runtimes:
  *
  *   1. **Sittir runtime** — `evaluate.ts` injects `grammarFn` as the
- *      global `grammar()`. Rules use lowercase type discriminators
- *      (`'seq'`, `'choice'`, `'symbol'`, `'field'`, ...) matching
- *      sittir's `Rule` union in `compiler/rule.ts`.
+ *      global `grammar()`. Rules use sittir's `Rule` union in
+ *      `compiler/rule.ts` (UPPERCASE type discriminators, matching
+ *      tree-sitter's own — see decision item 2 in
+ *      `docs/superpowers/specs/2026-07-02-rule-type-model-ssot-research.md`).
  *
  *   2. **Tree-sitter CLI runtime** — the transpiled `.sittir/grammar.js`
  *      is loaded by tree-sitter's parser generator. Rules use
- *      uppercase type discriminators (`'SEQ'`, `'CHOICE'`, `'SYMBOL'`,
- *      `'FIELD'`, ...) per tree-sitter-cli's `dsl.d.ts`.
+ *      tree-sitter-cli's own `dsl.d.ts` natives — same UPPERCASE
+ *      discriminators, but different SHAPES for some nodes (nested `$`
+ *      refs, `PREC_LEFT` carrying `value`, `optional` lowered to
+ *      `CHOICE(x, BLANK)`, etc. — see the SSOT research doc §0's
+ *      divergence table).
  *
  * DSL helpers (`transform`, `applyPath`, `enrich`, `field`, `alias`,
- * `role`) run in both runtimes, so they must accept both shapes.
- * Rather than scatter `t === 'seq' || t === 'SEQ'` ladders through
- * every file, consolidate the predicates + type guards here.
+ * `role`) run in both runtimes, so they must accept both shapes. The
+ * case split that used to motivate `typeEq`'s lower/upper ladders is
+ * GONE (both runtimes now agree on UPPERCASE) — what remains here is
+ * SHAPE normalization: symbol refs sometimes nested (`{symbol:{...}}`),
+ * FIELD `content` typed as `unknown` rather than `Rule`, etc. Consolidate
+ * those predicates + type guards here rather than scattering per-file
+ * shape checks.
  *
- * **Do NOT import from here in `compiler/` or `validate/`.** Code
- * past the evaluate.ts boundary operates on the sittir-internal
- * `Rule` union — single-case by construction. Use the `isSeq` /
- * `isChoice` / etc. guards in `compiler/rule.ts` instead. Mixing
- * the two sets is a cross-pipeline-leak signal (see MEMORY.md
+ * **Do NOT import from here in `compiler/` or `validate/`.** Code past
+ * the evaluate.ts boundary operates on the sittir-internal `Rule` union
+ * exclusively. Use the `isSeq` / `isChoice` / etc. guards in
+ * `compiler/rule.ts` instead. Importing this module from `compiler/` is
+ * a cross-pipeline-leak signal (see MEMORY.md
  * `feedback_rule_case_as_origin_signal`).
  */
 
@@ -53,14 +61,14 @@
  * at property-access sites (e.g. `(r as SeqRule).members`).
  */
 
-import type { ChoiceRule, FieldRule, OptionalRule, Rule, SeqRule, StringRule, SymbolRule } from './rule.ts';
+import type { ChoiceRule, FieldRule, OptionalRule, SeqRule, StringRule, SymbolRule } from './rule.ts';
 
 export type RuntimeRule = { readonly type: string };
 
-type SymbolLike = { type: 'symbol' | 'SYMBOL'; name: string };
+type SymbolLike = { type: 'SYMBOL'; name: string };
 
 export type FieldLike = {
-	type: 'field' | 'FIELD';
+	type: 'FIELD';
 	name: string;
 	content: unknown;
 	/** Opaque (debt PR-P1): the former `source?: string` provenance tag is
@@ -74,7 +82,7 @@ export type FieldLike = {
 export function isSymbolLike(v: unknown): v is SymbolLike {
 	if (!v || typeof v !== 'object') return false;
 	const t = (v as { type?: unknown }).type;
-	if ((t === 'symbol' || t === 'SYMBOL') && typeof (v as { name?: unknown }).name === 'string') return true;
+	if (t === 'SYMBOL' && typeof (v as { name?: unknown }).name === 'string') return true;
 	return extractSymbolName(v) !== undefined;
 }
 
@@ -98,7 +106,7 @@ function extractSymbolName(v: unknown): string | undefined {
 export function isFieldLike(v: unknown): v is FieldLike {
 	if (!v || typeof v !== 'object') return false;
 	const t = (v as { type?: unknown }).type;
-	return (t === 'field' || t === 'FIELD') && typeof (v as { name?: unknown }).name === 'string';
+	return t === 'FIELD' && typeof (v as { name?: unknown }).name === 'string';
 }
 
 /**
@@ -151,26 +159,22 @@ export function isEnrichShapedFieldWrapper(v: unknown): v is FieldLike {
 }
 
 /**
- * True for `seq` / `SEQ` / `choice` / `CHOICE` — rules with a
- * `members: Rule[]` payload.
+ * True for `SEQ` / `CHOICE` — rules with a `members: Rule[]` payload.
  */
 export function isContainerType(t: string): boolean {
-	return t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE';
+	return t === 'SEQ' || t === 'CHOICE';
 }
 
 /**
- * True for single-content wrapper types — `optional`, `repeat`,
- * `repeat1`, `field`, plus the token-wrapper variants tree-sitter
+ * True for single-content wrapper types — `OPTIONAL`, `REPEAT`,
+ * `REPEAT1`, `FIELD`, plus the token-wrapper variants tree-sitter
  * uses internally.
  */
 export function isWrapperType(t: string): boolean {
 	return (
-		t === 'optional' ||
-		t === 'repeat' ||
+		t === 'OPTIONAL' ||
 		t === 'REPEAT' ||
-		t === 'repeat1' ||
 		t === 'REPEAT1' ||
-		t === 'field' ||
 		t === 'FIELD' ||
 		t === 'TOKEN' ||
 		t === 'IMMEDIATE_TOKEN' ||
@@ -179,61 +183,39 @@ export function isWrapperType(t: string): boolean {
 }
 
 /**
- * True for precedence wrappers — `prec`, `PREC`, `PREC_LEFT`,
- * `PREC_RIGHT`, `PREC_DYNAMIC`. Sittir's runtime strips these
- * (see `evaluate.ts::prec`); tree-sitter preserves them. Path
- * addressing treats them as transparent.
+ * True for precedence wrappers — `PREC`, `PREC_LEFT`, `PREC_RIGHT`,
+ * `PREC_DYNAMIC`. Sittir's runtime strips these (see
+ * `evaluate.ts::prec`); tree-sitter preserves them. Path addressing
+ * treats them as transparent.
  */
 export function isPrecWrapper(rule: { type: string }): boolean {
 	const t = rule.type;
-	return (
-		t === 'prec' ||
-		t === 'PREC' ||
-		t === 'prec_left' ||
-		t === 'PREC_LEFT' ||
-		t === 'prec_right' ||
-		t === 'PREC_RIGHT' ||
-		t === 'prec_dynamic' ||
-		t === 'PREC_DYNAMIC'
-	);
+	return t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC';
 }
 
 // ---------------------------------------------------------------------------
-// Per-type discriminators — accept both sittir-lowercase and tree-sitter
-// uppercase shapes. Consolidated here so every caller goes through a
-// single predicate instead of scattering `typeEq(t, 'seq')` helpers or
-// inline `t === 'seq' || t === 'SEQ'` ladders across the codebase.
+// Per-type discriminators. Both runtimes agree on UPPERCASE discriminants
+// (the case split is dissolved — see the module header), so these are plain
+// equality checks; they're consolidated here (rather than inline `t ===
+// 'SEQ'` scattered per file) because callers frequently hold `t: unknown`
+// and want a typed narrowing guard, not because of any remaining case
+// ambiguity.
 // ---------------------------------------------------------------------------
 
-/** True if `t` equals `lower` or its uppercase form (`'seq'` or `'SEQ'`). */
-export function typeEq(t: unknown, lower: string): boolean {
-	return typeof t === 'string' && (t === lower || t === lower.toUpperCase());
+/** True if `t` equals `upper` (both runtimes now agree on the discriminant case). */
+export function typeEq(t: unknown, upper: string): boolean {
+	return t === upper;
 }
 
-type IsRuntimeRule<T> = T extends { type: infer U } ? (U extends Uppercase<string> ? false : true) : false;
-
-export const isSeqType = <T>(
-	t: T
-): t is T & (IsRuntimeRule<T> extends true ? SeqRule : { type: 'SEQ'; content: Rule }) => typeEq(t, 'seq');
-export const isChoiceType = <T>(
-	t: T
-): t is T & (IsRuntimeRule<T> extends true ? ChoiceRule : { type: 'CHOICE'; content: Rule }) => typeEq(t, 'choice');
-export const isOptionalType = <T>(
-	t: T
-): t is T & (IsRuntimeRule<T> extends true ? OptionalRule : { type: 'OPTIONAL'; content: Rule }) =>
-	typeEq(t, 'optional');
-export const isFieldType = <T>(
-	t: T
-): t is T & (IsRuntimeRule<T> extends true ? FieldRule : { type: 'FIELD'; content: Rule }) => typeEq(t, 'field');
-export const isSymbolType = <T>(
-	t: T
-): t is T & (IsRuntimeRule<T> extends true ? SymbolRule : { type: 'SYMBOL'; content: Rule }) => typeEq(t, 'symbol');
-export const isStringType = <T>(
-	t: T
-): t is T & (IsRuntimeRule<T> extends true ? StringRule : { type: 'STRING'; content: Rule }) => typeEq(t, 'string');
+export const isSeqType = <T>(t: T): t is T & { type: 'SEQ' } & SeqRule => typeEq(t, 'SEQ');
+export const isChoiceType = <T>(t: T): t is T & { type: 'CHOICE' } & ChoiceRule => typeEq(t, 'CHOICE');
+export const isOptionalType = <T>(t: T): t is T & { type: 'OPTIONAL' } & OptionalRule => typeEq(t, 'OPTIONAL');
+export const isFieldType = <T>(t: T): t is T & { type: 'FIELD' } & FieldRule => typeEq(t, 'FIELD');
+export const isSymbolType = <T>(t: T): t is T & { type: 'SYMBOL' } & SymbolRule => typeEq(t, 'SYMBOL');
+export const isStringType = <T>(t: T): t is T & { type: 'STRING' } & StringRule => typeEq(t, 'STRING');
 /** Plain repeat (zero-or-more). Excludes repeat1. Callers that need
  *  either should use {@link isRepeatType}. */
-export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'repeat');
+export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT');
 /** Either repeat variant — true for both `repeat` and `repeat1`. */
-export const isRepeatType = (t: unknown): boolean => typeEq(t, 'repeat') || typeEq(t, 'repeat1');
-export const isBlankType = (t: unknown): boolean => typeEq(t, 'blank');
+export const isRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT') || typeEq(t, 'REPEAT1');
+export const isBlankType = (t: unknown): boolean => typeEq(t, 'BLANK');

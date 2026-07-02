@@ -5,8 +5,8 @@ import { withWireContext } from '../wire/wire.ts';
 import type { Rule } from '../../types/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
-const sym = (name: string): Rule => ({ type: 'symbol', name }) as Rule;
-const str = (value: string): Rule => ({ type: 'string', value }) as Rule;
+const sym = (name: string): Rule => ({ type: 'SYMBOL', name }) as Rule;
+const str = (value: string): Rule => ({ type: 'STRING', value }) as Rule;
 
 beforeAll(() => {
 	installFakeDsl();
@@ -18,14 +18,14 @@ afterAll(() => {
 describe('polymorph metadata registration', () => {
 	it('registers variant when alias placeholder is resolved in transform', () => {
 		const original = {
-			type: 'seq',
+			type: 'SEQ',
 			members: [
 				sym('left'),
 				{
-					type: 'choice',
+					type: 'CHOICE',
 					members: [
-						{ type: 'seq', members: [str('='), sym('right')] },
-						{ type: 'seq', members: [str(':'), sym('type')] }
+						{ type: 'SEQ', members: [str('='), sym('right')] },
+						{ type: 'SEQ', members: [str(':'), sym('type')] }
 					]
 				}
 			]
@@ -47,8 +47,8 @@ describe('polymorph metadata registration', () => {
 
 	it('throws when variant() is used without a current rule kind', () => {
 		const original = {
-			type: 'seq',
-			members: [sym('a'), { type: 'choice', members: [sym('b'), sym('c')] }]
+			type: 'SEQ',
+			members: [sym('a'), { type: 'CHOICE', members: [sym('b'), sym('c')] }]
 		} as Rule;
 
 		expect(() => {
@@ -63,8 +63,8 @@ describe('polymorph metadata registration', () => {
 	it('accumulates variants from multiple rules', () => {
 		const makeChoice = () =>
 			({
-				type: 'seq',
-				members: [{ type: 'choice', members: [sym('a'), sym('b')] }]
+				type: 'SEQ',
+				members: [{ type: 'CHOICE', members: [sym('a'), sym('b')] }]
 			}) as Rule;
 
 		const { ctx: ctx1 } = withWireContext('rule_one', () => {

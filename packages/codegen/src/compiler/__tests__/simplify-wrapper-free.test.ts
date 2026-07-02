@@ -87,7 +87,7 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 	it('repeat/optional of a field does not produce field/repeat nodes in output', () => {
 		// A seq containing repeat(field('items', symbol('x'))) — after wrapper
 		// deletion the repeat and field are gone; simplify should not re-introduce them.
-		// After applyWrapperDeletion: { type: 'symbol', name: 'x', fieldName: 'items', multiplicity: 'array' }
+		// After applyWrapperDeletion: { type: 'SYMBOL', name: 'x', fieldName: 'items', multiplicity: 'array' }
 		// computeSimplifiedRules must preserve these leaf-level attributes, not re-wrap.
 		const input: Record<string, Rule<'link'>> = {
 			r1: {

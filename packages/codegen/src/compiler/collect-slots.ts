@@ -181,12 +181,12 @@ function carriesNamedField(rule: AnyRule): boolean {
  * slots rather than forming a single value union. Such a choice must be
  * distributed into its arms (and merged by name), not collapsed to one slot.
  */
-function isStructuralChoice(rule: Extract<AnyRule, { type: 'choice' }>): boolean {
+function isStructuralChoice(rule: Extract<AnyRule, { type: 'CHOICE' }>): boolean {
 	// All arms field-named with the SAME name → operator-enum style; that is a
 	// single slot recovered by `sharedArmFieldName`, NOT structural.
 	if (sharedArmFieldName(rule) !== undefined) return false;
 	return rule.members.some(
-		(m) => (m.type === 'seq' && m.members.length > 1) || carriesNamedField(m)
+		(m) => (m.type === SEQ && m.members.length > 1) || carriesNamedField(m)
 	);
 }
 

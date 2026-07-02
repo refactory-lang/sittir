@@ -531,7 +531,7 @@ export type TokenRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 // ---------------------------------------------------------------------------
 // Per-variant type guards
 //
-// Prefer these over inline `r.type === 'seq'` checks in `.filter()`,
+// Prefer these over inline `r.type === 'SEQ'` checks in `.filter()`,
 // `.find()`, `.some()`, `.every()`, and standalone predicates — they
 // narrow the rule type through the callback (no `as SeqRule` casts
 // downstream). Inside a `switch (rule.type)` stay with literal case

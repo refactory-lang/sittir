@@ -15,7 +15,7 @@ function makeMinimalFixture(): {
 	generatedIdTables: GeneratedIdTables;
 } {
 	const { rules, ruleCatalog } = buildRuleCatalog({
-		call_expression: seq(field('function', { type: 'symbol', name: 'identifier' })),
+		call_expression: seq(field('function', { type: 'SYMBOL', name: 'identifier' })),
 		identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 	});
 
@@ -139,7 +139,7 @@ describe('emitKindIdRust', () => {
 		// kind with a leading `_` in the generatedIdTables). This validates the
 		// constant-name mapping path for a kind whose `rawKind` starts with `_`.
 		const { rules, ruleCatalog } = buildRuleCatalog({
-			call_expression: seq(field('function', { type: 'symbol', name: 'identifier' })),
+			call_expression: seq(field('function', { type: 'SYMBOL', name: 'identifier' })),
 			identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 		});
 

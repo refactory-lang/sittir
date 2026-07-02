@@ -15,7 +15,7 @@ function makeMinimalFixture(): {
 	generatedIdTables: GeneratedIdTables;
 } {
 	const { rules, ruleCatalog } = buildRuleCatalog({
-		call_expression: seq(field('function', { type: 'symbol', name: 'identifier' })),
+		call_expression: seq(field('function', { type: 'SYMBOL', name: 'identifier' })),
 		identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 	});
 

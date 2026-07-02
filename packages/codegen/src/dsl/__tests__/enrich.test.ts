@@ -79,22 +79,22 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
-			const rule = out.grammar.rules.call as { type: 'seq'; members: Rule[] };
+			const rule = out.grammar.rules.call as { type: 'SEQ'; members: Rule[] };
 			expect(rule.members[0]).toMatchObject({
-				type: 'field',
+				type: 'FIELD',
 				name: 'function',
-				content: { type: 'symbol', name: 'function' }
+				content: { type: 'SYMBOL', name: 'function' }
 			});
 			expect(readRuleMetadata((rule.members[0] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 			expect(rule.members[2]).toMatchObject({
-				type: 'field',
+				type: 'FIELD',
 				name: 'arguments',
-				content: { type: 'symbol', name: 'arguments' }
+				content: { type: 'SYMBOL', name: 'arguments' }
 			});
 			expect(readRuleMetadata((rule.members[2] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 			// String delimiters untouched
-			expect(rule.members[1]).toMatchObject({ type: 'string', value: '(' });
-			expect(rule.members[3]).toMatchObject({ type: 'string', value: ')' });
+			expect(rule.members[1]).toMatchObject({ type: 'STRING', value: '(' });
+			expect(rule.members[3]).toMatchObject({ type: 'STRING', value: ')' });
 		});
 
 		it('skips when a field with the same name already exists', () => {
@@ -116,10 +116,10 @@ describe('enrich()', () => {
 					}
 				});
 				const out = runEnrich(input);
-				const rule = out.grammar.rules.foo as { type: 'seq'; members: Rule[] };
+				const rule = out.grammar.rules.foo as { type: 'SEQ'; members: Rule[] };
 				// Second member (bare symbol) stays bare — already-taken name
 				expect(rule.members[1]).toMatchObject({
-					type: 'symbol',
+					type: 'SYMBOL',
 					name: 'expression'
 				});
 				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
@@ -149,19 +149,19 @@ describe('enrich()', () => {
 			});
 			const out = runEnrich(input);
 			const rule = out.grammar.rules.binary_expr as {
-				type: 'seq';
+				type: 'SEQ';
 				members: Rule[];
 			};
 			expect(rule.members[0]).toMatchObject({
-				type: 'field',
+				type: 'FIELD',
 				name: 'expression1',
-				content: { type: 'symbol', name: 'expression' }
+				content: { type: 'SYMBOL', name: 'expression' }
 			});
 			expect(readRuleMetadata((rule.members[0] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 			expect(rule.members[2]).toMatchObject({
-				type: 'field',
+				type: 'FIELD',
 				name: 'expression2',
-				content: { type: 'symbol', name: 'expression' }
+				content: { type: 'SYMBOL', name: 'expression' }
 			});
 			expect(readRuleMetadata((rule.members[2] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
 		});
@@ -197,12 +197,12 @@ describe('enrich()', () => {
 			});
 			const out = runEnrich(input);
 			const rule = out.grammar.rules.dotted_name as {
-				type: 'seq';
+				type: 'SEQ';
 				members: Rule[];
 			};
 			// Top-level identifier MUST stay bare (no enrich-added field)
 			expect(rule.members[0]).toMatchObject({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: 'identifier'
 			});
 		});
@@ -218,10 +218,10 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
-			const rule = out.grammar.rules.foo as { type: 'seq'; members: Rule[] };
+			const rule = out.grammar.rules.foo as { type: 'SEQ'; members: Rule[] };
 			// Hidden kind stays bare — sittir Link handles alias resolution
 			expect(rule.members[0]).toMatchObject({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: '_statement'
 			});
 		});
@@ -242,12 +242,12 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
-			const rule = out.grammar.rules.assign as { type: 'seq'; members: Rule[] };
+			const rule = out.grammar.rules.assign as { type: 'SEQ'; members: Rule[] };
 			// Existing field preserved
-			expect(rule.members[0]).toMatchObject({ type: 'field', name: 'left' });
+			expect(rule.members[0]).toMatchObject({ type: 'FIELD', name: 'left' });
 			// rhs promoted
 			expect(rule.members[2]).toMatchObject({
-				type: 'field',
+				type: 'FIELD',
 				name: 'rhs'
 			});
 			expect(readRuleMetadata((rule.members[2] as { metadata?: unknown }).metadata)?.fieldSource).toBe('enriched');
@@ -268,7 +268,7 @@ describe('enrich()', () => {
 			});
 			const out = runEnrich(input);
 			const rule = out.grammar.rules.function_definition as {
-				type: 'seq';
+				type: 'SEQ';
 				members: Rule[];
 			};
 			// optional(field('<kw>_marker', SYMBOL(_kw_<kw>_marker))) —
@@ -277,11 +277,11 @@ describe('enrich()', () => {
 			// is the canonical semantic name (avoids JS-reserved-keyword
 			// collisions like `async` / `static` / `const`).
 			expect(rule.members[0]).toMatchObject({
-				type: 'optional',
+				type: 'OPTIONAL',
 				content: {
-					type: 'field',
+					type: 'FIELD',
 					name: 'async_marker',
-					content: { type: 'symbol', name: '_kw_async_marker' }
+					content: { type: 'SYMBOL', name: '_kw_async_marker' }
 				}
 			});
 			expect(
@@ -291,7 +291,7 @@ describe('enrich()', () => {
 			).toBe('enriched');
 			// 'def' is NOT promoted — bare leading literal, only the
 			// optional variant is handled (spec 006 restriction).
-			expect(rule.members[1]).toMatchObject({ type: 'string', value: 'def' });
+			expect(rule.members[1]).toMatchObject({ type: 'STRING', value: 'def' });
 		});
 
 		it('does not promote non-identifier-shaped literals', () => {
@@ -306,13 +306,13 @@ describe('enrich()', () => {
 			});
 			const out = runEnrich(input);
 			const rule = out.grammar.rules.conditional as {
-				type: 'seq';
+				type: 'SEQ';
 				members: Rule[];
 			};
 			// '::' is punctuation — untouched
 			expect(rule.members[0]).toMatchObject({
-				type: 'optional',
-				content: { type: 'string', value: '::' }
+				type: 'OPTIONAL',
+				content: { type: 'STRING', value: '::' }
 			});
 		});
 
@@ -336,14 +336,14 @@ describe('enrich()', () => {
 				});
 				const out = runEnrich(input);
 				const rule = out.grammar.rules.decorated_fn as {
-					type: 'seq';
+					type: 'SEQ';
 					members: Rule[];
 				};
 				// Second member stays unpromoted — `async_marker` collides
 				// with the existing FIELD on member 0.
 				expect(rule.members[1]).toMatchObject({
-					type: 'optional',
-					content: { type: 'string', value: 'async' }
+					type: 'OPTIONAL',
+					content: { type: 'STRING', value: 'async' }
 				});
 				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
 				expect(calls.some((c) => c.includes('skipped optional-keyword-prefix on decorated_fn'))).toBe(true);
@@ -379,20 +379,20 @@ describe('enrich()', () => {
 			});
 			const out = runEnrich(input);
 			const rule = out.grammar.rules.stmt as {
-				type: 'choice';
-				members: Array<{ type: 'seq'; members: Rule[] }>;
+				type: 'CHOICE';
+				members: Array<{ type: 'SEQ'; members: Rule[] }>;
 			};
 			// Both choice branches get the optional-keyword promotion
 			// (named `<token>_marker`).
 			const branch0 = rule.members[0]!;
 			const branch1 = rule.members[1]!;
 			expect(branch0.members[0]).toMatchObject({
-				type: 'optional',
-				content: { type: 'field', name: 'let_marker' }
+				type: 'OPTIONAL',
+				content: { type: 'FIELD', name: 'let_marker' }
 			});
 			expect(branch1.members[0]).toMatchObject({
-				type: 'optional',
-				content: { type: 'field', name: 'const_marker' }
+				type: 'OPTIONAL',
+				content: { type: 'FIELD', name: 'const_marker' }
 			});
 		});
 
@@ -418,13 +418,13 @@ describe('enrich()', () => {
 			// optional-keyword promotion still wraps the 'pub' string as
 			// FIELD(SYMBOL(_kw_pub)).
 			const rule = out.grammar.rules.block as {
-				type: 'repeat';
-				content: { type: 'seq'; members: Rule[] };
+				type: 'REPEAT';
+				content: { type: 'SEQ'; members: Rule[] };
 			};
-			expect(rule.content.type).toBe('seq');
+			expect(rule.content.type).toBe('SEQ');
 			expect(rule.content.members[0]).toMatchObject({
-				type: 'optional',
-				content: { type: 'field', name: 'pub_marker' }
+				type: 'OPTIONAL',
+				content: { type: 'FIELD', name: 'pub_marker' }
 			});
 		});
 
@@ -436,43 +436,43 @@ describe('enrich()', () => {
 			// seq would NOT be auto-promoted at the codegen surface.
 			const input = mkGrammar({
 				closure_expression: {
-					type: 'prec',
+					type: 'PREC',
 					value: 1,
 					content: {
-						type: 'seq',
+						type: 'SEQ',
 						members: [
 							{
-								type: 'optional',
-								content: { type: 'string', value: 'static' }
+								type: 'OPTIONAL',
+								content: { type: 'STRING', value: 'static' }
 							},
-							{ type: 'optional', content: { type: 'string', value: 'async' } },
-							{ type: 'optional', content: { type: 'string', value: 'move' } },
-							{ type: 'symbol', name: 'parameters' }
+							{ type: 'OPTIONAL', content: { type: 'STRING', value: 'async' } },
+							{ type: 'OPTIONAL', content: { type: 'STRING', value: 'move' } },
+							{ type: 'SYMBOL', name: 'parameters' }
 						]
 					}
 				} as unknown as Rule
 			});
 			const out = runEnrich(input);
 			const rule = out.grammar.rules.closure_expression as unknown as {
-				type: 'prec';
+				type: 'PREC';
 				value: number;
-				content: { type: 'seq'; members: Rule[] };
+				content: { type: 'SEQ'; members: Rule[] };
 			};
 			// prec wrapper preserved (we ride the wrapper back on top, not strip it).
-			expect(rule.type).toBe('prec');
+			expect(rule.type).toBe('PREC');
 			expect(rule.value).toBe(1);
 			// Each optional-keyword promoted as `<token>_marker`.
 			expect(rule.content.members[0]).toMatchObject({
-				type: 'optional',
-				content: { type: 'field', name: 'static_marker' }
+				type: 'OPTIONAL',
+				content: { type: 'FIELD', name: 'static_marker' }
 			});
 			expect(rule.content.members[1]).toMatchObject({
-				type: 'optional',
-				content: { type: 'field', name: 'async_marker' }
+				type: 'OPTIONAL',
+				content: { type: 'FIELD', name: 'async_marker' }
 			});
 			expect(rule.content.members[2]).toMatchObject({
-				type: 'optional',
-				content: { type: 'field', name: 'move_marker' }
+				type: 'OPTIONAL',
+				content: { type: 'FIELD', name: 'move_marker' }
 			});
 		});
 
@@ -480,28 +480,28 @@ describe('enrich()', () => {
 			// for_in_clause: prec.left(seq(optional('async'), 'for', ...)).
 			const input = mkGrammar({
 				for_in_clause: {
-					type: 'prec_left',
+					type: 'PREC_LEFT',
 					value: 1,
 					content: {
-						type: 'seq',
+						type: 'SEQ',
 						members: [
-							{ type: 'optional', content: { type: 'string', value: 'async' } },
-							{ type: 'string', value: 'for' },
-							{ type: 'symbol', name: 'pattern' }
+							{ type: 'OPTIONAL', content: { type: 'STRING', value: 'async' } },
+							{ type: 'STRING', value: 'for' },
+							{ type: 'SYMBOL', name: 'pattern' }
 						]
 					}
 				} as unknown as Rule
 			});
 			const out = runEnrich(input);
 			const rule = out.grammar.rules.for_in_clause as unknown as {
-				type: 'prec_left';
+				type: 'PREC_LEFT';
 				value: number;
-				content: { type: 'seq'; members: Rule[] };
+				content: { type: 'SEQ'; members: Rule[] };
 			};
-			expect(rule.type).toBe('prec_left');
+			expect(rule.type).toBe('PREC_LEFT');
 			expect(rule.content.members[0]).toMatchObject({
-				type: 'optional',
-				content: { type: 'field', name: 'async_marker' }
+				type: 'OPTIONAL',
+				content: { type: 'FIELD', name: 'async_marker' }
 			});
 		});
 
@@ -510,22 +510,22 @@ describe('enrich()', () => {
 			//   optional('using'), field('left', ...), '=', field('right', ...)))
 			const input = mkGrammar({
 				assignment_expression: {
-					type: 'prec_right',
+					type: 'PREC_RIGHT',
 					value: 'assign',
 					content: {
-						type: 'seq',
+						type: 'SEQ',
 						members: [
-							{ type: 'optional', content: { type: 'string', value: 'using' } },
+							{ type: 'OPTIONAL', content: { type: 'STRING', value: 'using' } },
 							{
-								type: 'field',
+								type: 'FIELD',
 								name: 'left',
-								content: { type: 'symbol', name: 'expression' }
+								content: { type: 'SYMBOL', name: 'expression' }
 							},
-							{ type: 'string', value: '=' },
+							{ type: 'STRING', value: '=' },
 							{
-								type: 'field',
+								type: 'FIELD',
 								name: 'right',
-								content: { type: 'symbol', name: 'expression' }
+								content: { type: 'SYMBOL', name: 'expression' }
 							}
 						]
 					}
@@ -533,22 +533,22 @@ describe('enrich()', () => {
 			});
 			const out = runEnrich(input);
 			const rule = out.grammar.rules.assignment_expression as unknown as {
-				type: 'prec_right';
+				type: 'PREC_RIGHT';
 				value: string;
-				content: { type: 'seq'; members: Rule[] };
+				content: { type: 'SEQ'; members: Rule[] };
 			};
-			expect(rule.type).toBe('prec_right');
+			expect(rule.type).toBe('PREC_RIGHT');
 			expect(rule.content.members[0]).toMatchObject({
-				type: 'optional',
-				content: { type: 'field', name: 'using_marker' }
+				type: 'OPTIONAL',
+				content: { type: 'FIELD', name: 'using_marker' }
 			});
 			// Existing `field('left', ...)` and `field('right', ...)` untouched.
 			expect(rule.content.members[1]).toMatchObject({
-				type: 'field',
+				type: 'FIELD',
 				name: 'left'
 			});
 			expect(rule.content.members[3]).toMatchObject({
-				type: 'field',
+				type: 'FIELD',
 				name: 'right'
 			});
 		});
@@ -556,30 +556,30 @@ describe('enrich()', () => {
 		it('descends through prec.dynamic(...) wrappers', () => {
 			const input = mkGrammar({
 				dyn_rule: {
-					type: 'prec_dynamic',
+					type: 'PREC_DYNAMIC',
 					value: 5,
 					content: {
-						type: 'seq',
+						type: 'SEQ',
 						members: [
 							{
-								type: 'optional',
-								content: { type: 'string', value: 'extern' }
+								type: 'OPTIONAL',
+								content: { type: 'STRING', value: 'extern' }
 							},
-							{ type: 'symbol', name: 'body' }
+							{ type: 'SYMBOL', name: 'body' }
 						]
 					}
 				} as unknown as Rule
 			});
 			const out = runEnrich(input);
 			const rule = out.grammar.rules.dyn_rule as unknown as {
-				type: 'prec_dynamic';
+				type: 'PREC_DYNAMIC';
 				value: number;
-				content: { type: 'seq'; members: Rule[] };
+				content: { type: 'SEQ'; members: Rule[] };
 			};
-			expect(rule.type).toBe('prec_dynamic');
+			expect(rule.type).toBe('PREC_DYNAMIC');
 			expect(rule.content.members[0]).toMatchObject({
-				type: 'optional',
-				content: { type: 'field', name: 'extern_marker' }
+				type: 'OPTIONAL',
+				content: { type: 'FIELD', name: 'extern_marker' }
 			});
 		});
 
@@ -593,30 +593,30 @@ describe('enrich()', () => {
 				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					wrapped: {
-						type: 'prec',
+						type: 'PREC',
 						value: 1,
 						content: {
-							type: 'seq',
+							type: 'SEQ',
 							members: [
 								{
-									type: 'field',
+									type: 'FIELD',
 									name: 'async_marker',
-									content: { type: 'string', value: 'async' }
+									content: { type: 'STRING', value: 'async' }
 								},
-								{ type: 'optional', content: { type: 'string', value: 'async' } }
+								{ type: 'OPTIONAL', content: { type: 'STRING', value: 'async' } }
 							]
 						}
 					} as unknown as Rule
 				});
 				const out = runEnrich(input);
 				const rule = out.grammar.rules.wrapped as unknown as {
-					type: 'prec';
-					content: { type: 'seq'; members: Rule[] };
+					type: 'PREC';
+					content: { type: 'SEQ'; members: Rule[] };
 				};
 				// Second member stays unpromoted — collision with member 0.
 				expect(rule.content.members[1]).toMatchObject({
-					type: 'optional',
-					content: { type: 'string', value: 'async' }
+					type: 'OPTIONAL',
+					content: { type: 'STRING', value: 'async' }
 				});
 				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
 				expect(calls.some((c) => c.includes('skipped optional-keyword-prefix on wrapped'))).toBe(true);

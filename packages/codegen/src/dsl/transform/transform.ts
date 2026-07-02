@@ -387,7 +387,6 @@ function buildHoistedVariants(
 	precStack: ReadonlyArray<RuntimeRule>
 ): { rule: RuntimeRule; consumed: Set<string> } {
 	const refs: RuntimeRule[] = [];
-	const isUpperCase = core.type === core.type.toUpperCase();
 	for (const p of parsed) {
 		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
 		const altContent = choiceMembers[resolvedAlt]!;
@@ -422,8 +421,8 @@ function buildHoistedVariants(
 		// Mirrors `registerAliasedVariant`'s output shape used by the
 		// non-hoisted variant placeholder path.
 		refs.push({
-			type: isUpperCase ? 'ALIAS' : 'alias',
-			content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
+			type: 'ALIAS',
+			content: { type: 'SYMBOL', name: hiddenName },
 			named: true,
 			value: visibleName
 		} as unknown as RuntimeRule);
@@ -476,10 +475,10 @@ const contentOf = (r: RuntimeRule): RuntimeRule => (r as unknown as { content: R
  * (field/optional/repeat/prec/alias) descend into `content`.
  */
 function countBodyAnchors(rule: RuntimeRule): { tokens: number; named: number } {
-	const t = rule.type.toLowerCase();
-	if (t === 'string' || t === 'pattern' || t === 'token') return { tokens: 1, named: 0 };
-	if (t === 'symbol') return { tokens: 0, named: 1 };
-	if (t === 'blank') return { tokens: 0, named: 0 };
+	const t = rule.type;
+	if (t === 'STRING' || t === 'PATTERN' || t === 'TOKEN') return { tokens: 1, named: 0 };
+	if (t === 'SYMBOL') return { tokens: 0, named: 1 };
+	if (t === 'BLANK') return { tokens: 0, named: 0 };
 	if (isSeqType(rule.type) || isChoiceType(rule.type)) {
 		return membersOf(rule).reduce(
 			(acc, m) => {
@@ -583,8 +582,8 @@ function applyFlatPatchesThroughPrec(
  * Apply flat-positional patches to a seq rule's members by raw index.
  *
  * @remarks
- * Accepts both sittir lowercase `'seq'` and tree-sitter uppercase `'SEQ'`
- * so the same transform call works in both runtimes. Reconstructed via
+ * Accepts a `'SEQ'` rule from either runtime (both agree on the
+ * discriminant) so the same transform call works in both. Reconstructed via
  * native dsl so the result has the runtime-correct rule shape.
  *
  * Non-pure-numeric keys are rejected up front — `Number('foo')` is NaN
@@ -701,9 +700,8 @@ function resolvePatch(
  *
  * @remarks
  * One-arg `field('name')` placeholder — wrap the original member using
- * the runtime's native field() so the resulting rule's type case matches
- * whatever runtime is loading us (sittir lowercase `'field'` vs
- * tree-sitter uppercase `'FIELD'`).
+ * the runtime's native field() so the resulting rule shape matches
+ * whatever runtime is loading us.
  *
  * An enrich-inferred field on the original member is unwrapped to avoid
  * nested `field('override', field('enriched', inner))`.
@@ -734,7 +732,7 @@ function resolvePatch(
  * seq/general-choice/repeat/field.
  *
  * Handles two shapes of "optional" wrapper:
- *   - Sittir pipeline: `{ type: 'optional', content: ... }` (lowercase).
+ *   - Sittir pipeline: `{ type: 'OPTIONAL', content: ... }`.
  *   - Tree-sitter CLI pipeline: `{ type: 'CHOICE', members: [content, BLANK] }` —
  *     tree-sitter's `optional(x)` desugars to `choice(x, blank())`. The
  *     enrich pass uses `rebuildOptional` which preserves this CHOICE shape.
@@ -751,9 +749,8 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 	const t = r.type as string | undefined;
 	if (!t) return null;
 
-	// Shape A: sittir's lowercase optional { type: 'optional', content: ... }
-	// or tree-sitter uppercase { type: 'OPTIONAL', content: ... }.
-	const isSittirOptional = t === 'optional' || t === 'OPTIONAL';
+	// Shape A: the sittir/tree-sitter-native optional { type: 'OPTIONAL', content: ... }.
+	const isSittirOptional = t === 'OPTIONAL';
 	if (isSittirOptional) {
 		const inner = r.content as unknown;
 		if (!inner || typeof inner !== 'object') return null;
@@ -782,7 +779,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 		if (!Array.isArray(members) || members.length !== 2) return null;
 		const blankIdx = members.findIndex((m) => {
 			const mt = (m as Record<string, unknown>).type;
-			return mt === 'BLANK' || mt === 'blank';
+			return mt === 'BLANK';
 		});
 		if (blankIdx === -1) return null; // a real choice, not an optional
 		const contentIdx = 1 - blankIdx;
@@ -813,16 +810,11 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 	}
 
 	// Shape C: prec wrappers — transparent in path-addressing; content carries
-	// the actual rule (value is separate).
-	const isPrecWrapper2 =
-		t === 'prec' ||
-		t === 'PREC' ||
-		t === 'prec_left' ||
-		t === 'PREC_LEFT' ||
-		t === 'prec_right' ||
-		t === 'PREC_RIGHT' ||
-		t === 'prec_dynamic' ||
-		t === 'PREC_DYNAMIC';
+	// the actual rule (value is separate). PREC/PREC_LEFT/PREC_RIGHT/
+	// PREC_DYNAMIC are tree-sitter-native-only shapes (sittir's `prec()`
+	// strips the wrapper at evaluate — see `evaluate.ts::prec`), so only the
+	// uppercase spellings ever appear here.
+	const isPrecWrapper2 = t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC';
 	if (isPrecWrapper2) {
 		const inner = r.content as unknown;
 		if (!inner || typeof inner !== 'object') return null;
@@ -1028,7 +1020,6 @@ export function registerAliasedVariant(
 	originalMember: RuntimeRule,
 	bodyWrapper: (body: RuntimeRule) => RuntimeRule
 ): RuntimeRule {
-	const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
 	const wasEmpty = matchesEmpty(originalMember);
 	const factored = factorOutEmptiness(originalMember);
 	if (wasEmpty && !factored) {
@@ -1042,8 +1033,8 @@ export function registerAliasedVariant(
 		throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 	}
 	const aliasNode = {
-		type: isUpperCase ? 'ALIAS' : 'alias',
-		content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
+		type: 'ALIAS',
+		content: { type: 'SYMBOL', name: hiddenName },
 		named: true,
 		value: aliasValue
 	} as unknown as RuntimeRule;
@@ -1106,7 +1097,7 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 		const r = rule as unknown as Record<string, unknown>;
 		const nonEmpty: Record<string, unknown> = {
 			...r,
-			type: t === 'REPEAT' ? 'REPEAT1' : 'repeat1'
+			type: 'REPEAT1'
 		};
 		return { nonEmpty };
 	}

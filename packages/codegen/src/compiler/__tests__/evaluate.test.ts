@@ -51,16 +51,16 @@ describe('Evaluate — DSL functions', () => {
 	describe('normalize', () => {
 		it('converts a string to a StringRule', () => {
 			const rule = normalize('hello');
-			expect(rule).toEqual({ type: 'string', value: 'hello' });
+			expect(rule).toEqual({ type: 'STRING', value: 'hello' });
 		});
 
 		it('converts a RegExp to a PatternRule', () => {
 			const rule = normalize(/[a-z]+/);
-			expect(rule).toEqual({ type: 'pattern', value: '[a-z]+' });
+			expect(rule).toEqual({ type: 'PATTERN', value: '[a-z]+' });
 		});
 
 		it('passes through an existing Rule object', () => {
-			const existing = { type: 'string' as const, value: 'x' };
+			const existing = { type: 'STRING' as const, value: 'x' };
 			expect(normalize(existing)).toBe(existing);
 		});
 
@@ -73,11 +73,11 @@ describe('Evaluate — DSL functions', () => {
 		it('produces a SeqRule with normalized members', () => {
 			const rule = seq('a', 'b', 'c');
 			expect(rule).toEqual({
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'string', value: 'a' },
-					{ type: 'string', value: 'b' },
-					{ type: 'string', value: 'c' }
+					{ type: 'STRING', value: 'a' },
+					{ type: 'STRING', value: 'b' },
+					{ type: 'STRING', value: 'c' }
 				]
 			});
 		});
@@ -85,13 +85,13 @@ describe('Evaluate — DSL functions', () => {
 
 	describe('choice', () => {
 		it('produces a ChoiceRule with mixed members', () => {
-			const sym = { type: 'symbol' as const, name: 'x' };
+			const sym = { type: 'SYMBOL' as const, name: 'x' };
 			const rule = choice(sym, 'b');
 			expect(rule).toEqual({
-				type: 'choice',
+				type: 'CHOICE',
 				members: [
-					{ type: 'symbol', name: 'x' },
-					{ type: 'string', value: 'b' }
+					{ type: 'SYMBOL', name: 'x' },
+					{ type: 'STRING', value: 'b' }
 				]
 			});
 		});
@@ -100,20 +100,20 @@ describe('Evaluate — DSL functions', () => {
 			// PR-P: EnumRule = ChoiceRule; type is now 'choice', source moved to metadata.
 			const rule = choice('pub', 'crate', 'super');
 			expect(rule).toEqual({
-				type: 'choice',
+				type: 'CHOICE',
 				members: [
-					{ type: 'string', value: 'pub' },
-					{ type: 'string', value: 'crate' },
-					{ type: 'string', value: 'super' }
+					{ type: 'STRING', value: 'pub' },
+					{ type: 'STRING', value: 'crate' },
+					{ type: 'STRING', value: 'super' }
 				],
 				metadata: { source: 'grammar' }
 			});
 		});
 
 		it('does not produce enum when mixed with non-strings', () => {
-			const sym = { type: 'symbol' as const, name: 'x' };
+			const sym = { type: 'SYMBOL' as const, name: 'x' };
 			const rule = choice('a', sym);
-			expect(rule.type).toBe('choice');
+			expect(rule.type).toBe('CHOICE');
 		});
 	});
 
@@ -121,8 +121,8 @@ describe('Evaluate — DSL functions', () => {
 		it('produces an OptionalRule with normalized content', () => {
 			const rule = optional('x');
 			expect(rule).toEqual({
-				type: 'optional',
-				content: { type: 'string', value: 'x' }
+				type: 'OPTIONAL',
+				content: { type: 'STRING', value: 'x' }
 			});
 		});
 	});
@@ -131,27 +131,27 @@ describe('Evaluate — DSL functions', () => {
 		it('produces a RepeatRule with normalized content', () => {
 			const rule = repeat('x');
 			expect(rule).toEqual({
-				type: 'repeat',
-				content: { type: 'string', value: 'x' }
+				type: 'REPEAT',
+				content: { type: 'STRING', value: 'x' }
 			});
 		});
 
 		it('detects leading separator in seq(STRING, x)', () => {
-			const sym = { type: 'symbol' as const, name: 'item' };
+			const sym = { type: 'SYMBOL' as const, name: 'item' };
 			const rule = repeat(seq(',', sym));
 			expect(rule).toEqual({
-				type: 'repeat',
-				content: expect.objectContaining({ type: 'symbol', name: 'item' }),
+				type: 'REPEAT',
+				content: expect.objectContaining({ type: 'SYMBOL', name: 'item' }),
 				separator: ','
 			});
 		});
 
 		it('detects trailing separator in seq(x, STRING)', () => {
-			const sym = { type: 'symbol' as const, name: 'item' };
+			const sym = { type: 'SYMBOL' as const, name: 'item' };
 			const rule = repeat(seq(sym, ';'));
 			expect(rule).toEqual({
-				type: 'repeat',
-				content: expect.objectContaining({ type: 'symbol', name: 'item' }),
+				type: 'REPEAT',
+				content: expect.objectContaining({ type: 'SYMBOL', name: 'item' }),
 				separator: ';',
 				trailing: true
 			});
@@ -162,8 +162,8 @@ describe('Evaluate — DSL functions', () => {
 		it('produces a Repeat1Rule with normalized content', () => {
 			const rule = repeat1('x');
 			expect(rule).toEqual({
-				type: 'repeat1',
-				content: { type: 'string', value: 'x' }
+				type: 'REPEAT1',
+				content: { type: 'STRING', value: 'x' }
 			});
 		});
 	});
@@ -172,9 +172,9 @@ describe('Evaluate — DSL functions', () => {
 		it('produces a FieldRule with name and normalized content', () => {
 			const rule = field('body', 'x');
 			expect(rule).toEqual({
-				type: 'field',
+				type: 'FIELD',
 				name: 'body',
-				content: { type: 'string', value: 'x' }
+				content: { type: 'STRING', value: 'x' }
 			});
 		});
 	});
@@ -183,8 +183,8 @@ describe('Evaluate — DSL functions', () => {
 		it('produces a TokenRule with immediate=false', () => {
 			const rule = token('x');
 			expect(rule).toEqual({
-				type: 'token',
-				content: { type: 'string', value: 'x' },
+				type: 'TOKEN',
+				content: { type: 'STRING', value: 'x' },
 				immediate: false
 			});
 		});
@@ -192,8 +192,8 @@ describe('Evaluate — DSL functions', () => {
 		it('token.immediate produces a TokenRule with immediate=true', () => {
 			const rule = token.immediate('x');
 			expect(rule).toEqual({
-				type: 'token',
-				content: { type: 'string', value: 'x' },
+				type: 'TOKEN',
+				content: { type: 'STRING', value: 'x' },
 				immediate: true
 			});
 		});
@@ -206,7 +206,7 @@ describe('Evaluate — DSL functions', () => {
 			const sym = $.block;
 			expect(sym).toEqual(
 				expect.objectContaining({
-					type: 'symbol',
+					type: 'SYMBOL',
 					name: 'block'
 				})
 			);
@@ -218,7 +218,7 @@ describe('Evaluate — DSL functions', () => {
 			const sym = $._expression;
 			expect(sym).toEqual(
 				expect.objectContaining({
-					type: 'symbol',
+					type: 'SYMBOL',
 					name: '_expression',
 					hidden: true
 				})
@@ -271,28 +271,28 @@ describe('Evaluate — DSL functions', () => {
 		// and already-labeled field wrappers. The whole point is that the
 		// author can add a name to ANY position — named or unnamed.
 		const original: any = {
-			type: 'seq',
+			type: 'SEQ',
 			members: [
-				{ type: 'string', value: '{' },
-				{ type: 'symbol', name: 'block' },
-				{ type: 'symbol', name: 'params' },
-				{ type: 'string', value: '}' }
+				{ type: 'STRING', value: '{' },
+				{ type: 'SYMBOL', name: 'block' },
+				{ type: 'SYMBOL', name: 'params' },
+				{ type: 'STRING', value: '}' }
 			]
 		};
 
 		it('wraps a positional member with a field via numeric index', () => {
 			const result = transform(original, {
-				1: field('body', { type: 'symbol', name: 'block' })
+				1: field('body', { type: 'SYMBOL', name: 'block' })
 			});
-			expect(result.type).toBe('seq');
+			expect(result.type).toBe('SEQ');
 			const member = (result as any).members[1];
 			// (debt PR-P1) `source` moved into the opaque `metadata` bag as
 			// `fieldSource`; assert the structural shape + the metadata fact
 			// separately instead of a flat `.toEqual` including a raw `source`.
 			expect(member).toEqual({
-				type: 'field',
+				type: 'FIELD',
 				name: 'body',
-				content: { type: 'symbol', name: 'block' },
+				content: { type: 'SYMBOL', name: 'block' },
 				metadata: expect.anything()
 			});
 			expect(readRuleMetadata(member.metadata)?.fieldSource).toBe('override');
@@ -300,33 +300,33 @@ describe('Evaluate — DSL functions', () => {
 
 		it('preserves members not targeted by patches', () => {
 			const result = transform(original, {
-				1: field('body', { type: 'symbol', name: 'block' })
+				1: field('body', { type: 'SYMBOL', name: 'block' })
 			});
 			expect((result as any).members[0]).toEqual({
-				type: 'string',
+				type: 'STRING',
 				value: '{'
 			});
 			expect((result as any).members[2]).toEqual({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: 'params'
 			});
 			expect((result as any).members[3]).toEqual({
-				type: 'string',
+				type: 'STRING',
 				value: '}'
 			});
 		});
 
 		it('marks transformed fields with metadata.fieldSource override', () => {
 			const result = transform(original, {
-				1: field('body', { type: 'symbol', name: 'block' })
+				1: field('body', { type: 'SYMBOL', name: 'block' })
 			});
 			expect(readRuleMetadata((result as any).members[1].metadata)?.fieldSource).toBe('override');
 		});
 
 		it('supports multiple patches in one call', () => {
 			const result = transform(original, {
-				1: field('body', { type: 'symbol', name: 'block' }),
-				2: field('parameters', { type: 'symbol', name: 'params' })
+				1: field('body', { type: 'SYMBOL', name: 'block' }),
+				2: field('parameters', { type: 'SYMBOL', name: 'params' })
 			});
 			expect((result as any).members[1].name).toBe('body');
 			expect((result as any).members[2].name).toBe('parameters');
@@ -335,10 +335,10 @@ describe('Evaluate — DSL functions', () => {
 
 	describe('insert — wraps position preserving content', () => {
 		const original: any = {
-			type: 'seq',
+			type: 'SEQ',
 			members: [
-				{ type: 'string', value: 'fn' },
-				{ type: 'symbol', name: 'block' }
+				{ type: 'STRING', value: 'fn' },
+				{ type: 'SYMBOL', name: 'block' }
 			]
 		};
 
@@ -346,9 +346,9 @@ describe('Evaluate — DSL functions', () => {
 			const result = insert(original, 1, (content: any) => field('body', content));
 			const member = (result as any).members[1];
 			expect(member).toEqual({
-				type: 'field',
+				type: 'FIELD',
 				name: 'body',
-				content: { type: 'symbol', name: 'block' },
+				content: { type: 'SYMBOL', name: 'block' },
 				metadata: expect.anything()
 			});
 			expect(readRuleMetadata(member.metadata)?.fieldSource).toBe('override');
@@ -357,21 +357,21 @@ describe('Evaluate — DSL functions', () => {
 
 	describe('replace — substitutes at position', () => {
 		const original: any = {
-			type: 'seq',
+			type: 'SEQ',
 			members: [
-				{ type: 'string', value: 'fn' },
-				{ type: 'symbol', name: 'block' },
-				{ type: 'string', value: ';' }
+				{ type: 'STRING', value: 'fn' },
+				{ type: 'SYMBOL', name: 'block' },
+				{ type: 'STRING', value: ';' }
 			]
 		};
 
 		it('replaces content at a position', () => {
 			const result = replace(original, 2, {
-				type: 'string',
+				type: 'STRING',
 				value: '.'
 			} as any);
 			expect((result as any).members[2]).toEqual({
-				type: 'string',
+				type: 'STRING',
 				value: '.'
 			});
 		});
@@ -380,11 +380,11 @@ describe('Evaluate — DSL functions', () => {
 			const result = replace(original, 2, null);
 			expect((result as any).members).toHaveLength(2);
 			expect((result as any).members[0]).toEqual({
-				type: 'string',
+				type: 'STRING',
 				value: 'fn'
 			});
 			expect((result as any).members[1]).toEqual({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: 'block'
 			});
 		});
@@ -393,22 +393,22 @@ describe('Evaluate — DSL functions', () => {
 	describe('prec', () => {
 		it('strips precedence and returns the content Rule', () => {
 			const rule = prec(1, 'x');
-			expect(rule).toEqual({ type: 'string', value: 'x' });
+			expect(rule).toEqual({ type: 'STRING', value: 'x' });
 		});
 
 		it('prec.left strips precedence', () => {
 			const rule = prec.left(1, 'x');
-			expect(rule).toEqual({ type: 'string', value: 'x' });
+			expect(rule).toEqual({ type: 'STRING', value: 'x' });
 		});
 
 		it('prec.right strips precedence', () => {
 			const rule = prec.right(1, 'x');
-			expect(rule).toEqual({ type: 'string', value: 'x' });
+			expect(rule).toEqual({ type: 'STRING', value: 'x' });
 		});
 
 		it('prec.dynamic strips precedence', () => {
 			const rule = prec.dynamic(1, 'x');
-			expect(rule).toEqual({ type: 'string', value: 'x' });
+			expect(rule).toEqual({ type: 'STRING', value: 'x' });
 		});
 	});
 });
@@ -420,10 +420,10 @@ describe('Evaluate — edge cases', () => {
 			// which was a footgun when path mode throws. Now both
 			// modes throw so typos surface immediately.
 			const original: any = {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'string', value: 'a' },
-					{ type: 'string', value: 'b' }
+					{ type: 'STRING', value: 'a' },
+					{ type: 'STRING', value: 'b' }
 				]
 			};
 			expect(() => transform(original, { 99: field('x', 'y') })).toThrow(/index 99 out of bounds/);
@@ -431,8 +431,8 @@ describe('Evaluate — edge cases', () => {
 
 		it('throws on non-numeric flat keys', () => {
 			const original: any = {
-				type: 'seq',
-				members: [{ type: 'string', value: 'a' }]
+				type: 'SEQ',
+				members: [{ type: 'STRING', value: 'a' }]
 			};
 			// After kind-match was added to parsePath, keys that aren't
 			// pure integers route through the path parser, which catches
@@ -444,15 +444,15 @@ describe('Evaluate — edge cases', () => {
 	describe('T008b — conflicting transforms at same position', () => {
 		it('last patch wins when same position is specified twice', () => {
 			const original: any = {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'symbol', name: 'a' },
-					{ type: 'symbol', name: 'b' }
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
 				]
 			};
 			// JS object keys: later entries overwrite earlier for same key
 			const result = transform(original, {
-				1: field('first', { type: 'symbol', name: 'b' })
+				1: field('first', { type: 'SYMBOL', name: 'b' })
 				// @ts-ignore — intentional duplicate key test via Object.entries ordering
 			});
 			expect((result as any).members[1].name).toBe('first');
@@ -475,29 +475,29 @@ describe('Evaluate — edge cases', () => {
 
 	describe('T014a — insert/replace/suppress semantics', () => {
 		const original: any = {
-			type: 'seq',
+			type: 'SEQ',
 			members: [
-				{ type: 'string', value: 'fn' },
-				{ type: 'symbol', name: 'body' },
-				{ type: 'string', value: ';' }
+				{ type: 'STRING', value: 'fn' },
+				{ type: 'SYMBOL', name: 'body' },
+				{ type: 'STRING', value: ';' }
 			]
 		};
 
 		it('insert preserves original content inside the wrapper', () => {
 			const result = insert(original, 1, (content: any) => field('body', content));
 			expect((result as any).members[1].content).toEqual({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: 'body'
 			});
 		});
 
 		it('replace substitutes content entirely', () => {
 			const result = replace(original, 1, {
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: 'new_body'
 			} as any);
 			expect((result as any).members[1]).toEqual({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: 'new_body'
 			});
 		});
@@ -547,12 +547,12 @@ describe('Evaluate — evaluate()', () => {
 		// After synthesis, the field's content is replaced by a SymbolRule
 		// and a hidden rule `_binary_expression_operator` is added to raw.rules.
 		const binExpr = raw.rules['binary_expression'];
-		expect(binExpr!.type).toBe('seq');
-		const operatorField = (binExpr as any).members.find((m: any) => m.type === 'field' && m.name === 'operator');
+		expect(binExpr!.type).toBe('SEQ');
+		const operatorField = (binExpr as any).members.find((m: any) => m.type === 'FIELD' && m.name === 'operator');
 		// Field content is now a SymbolRule pointing to the synthesized kind.
 		expect(operatorField.content).toEqual(
 			expect.objectContaining({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: '_binary_expression_operator',
 				hidden: true
 			})
@@ -561,12 +561,12 @@ describe('Evaluate — evaluate()', () => {
 		// PR-P: type is now 'choice', source moved to metadata.
 		expect(raw.rules['_binary_expression_operator']).toEqual(
 			expect.objectContaining({
-				type: 'choice',
+				type: 'CHOICE',
 				members: [
-					expect.objectContaining({ type: 'string', value: '+' }),
-					expect.objectContaining({ type: 'string', value: '-' }),
-					expect.objectContaining({ type: 'string', value: '*' }),
-					expect.objectContaining({ type: 'string', value: '/' })
+					expect.objectContaining({ type: 'STRING', value: '+' }),
+					expect.objectContaining({ type: 'STRING', value: '-' }),
+					expect.objectContaining({ type: 'STRING', value: '*' }),
+					expect.objectContaining({ type: 'STRING', value: '/' })
 				],
 				metadata: { source: 'grammar' }
 			})
@@ -602,7 +602,7 @@ describe('Evaluate — evaluate()', () => {
 			const operatorKinds: string[] = [];
 			const walk = (rule: any): void => {
 				if (!rule || typeof rule !== 'object') return;
-				if (rule.type === 'field' && rule.name === 'operator') {
+				if (rule.type === 'FIELD' && rule.name === 'operator') {
 					operatorKinds.push(rule.content.type);
 				}
 				if (Array.isArray(rule.members)) {
@@ -611,8 +611,8 @@ describe('Evaluate — evaluate()', () => {
 				if ('content' in rule) walk(rule.content);
 			};
 			walk(raw.rules['binary_expression']);
-			// PR-P: enum-shaped choices are type 'choice' now.
-			expect(operatorKinds.sort()).toEqual(['choice', 'string', 'string']);
+			// PR-P: enum-shaped choices are type 'CHOICE' now.
+			expect(operatorKinds.sort()).toEqual(['CHOICE', 'STRING', 'STRING']);
 
 			const optimized = normalizeGrammar(link(raw));
 			const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
@@ -635,11 +635,11 @@ describe('Evaluate — evaluate()', () => {
 		const raw = await evaluate(fixture('test-grammar.js'));
 		expect(raw.rules['identifier']).toEqual(
 			expect.objectContaining({
-				type: 'pattern',
+				type: 'PATTERN',
 				value: '[a-z_]\\w*'
 			})
 		);
-		expect(raw.rules['number']).toEqual(expect.objectContaining({ type: 'pattern', value: '\\d+' }));
+		expect(raw.rules['number']).toEqual(expect.objectContaining({ type: 'PATTERN', value: '\\d+' }));
 	});
 
 	it('captures field names in reference graph', async () => {
@@ -677,9 +677,9 @@ describe('Evaluate — evaluate()', () => {
 			// The container rule's alias content still points to object_type.
 			expect(raw.rules['container']).toEqual(
 				expect.objectContaining({
-					type: 'alias',
+					type: 'ALIAS',
 					value: 'interface_body',
-					content: expect.objectContaining({ type: 'symbol', name: 'object_type' })
+					content: expect.objectContaining({ type: 'SYMBOL', name: 'object_type' })
 				})
 			);
 		} finally {

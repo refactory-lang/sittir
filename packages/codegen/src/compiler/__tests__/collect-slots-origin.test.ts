@@ -17,16 +17,16 @@ import type { Rule } from '../../types/rule.ts';
 // Suppress unnamed-choice warnings in tests
 setUnnamedChoiceWarner(() => {});
 
-type ChoiceRule = Extract<Rule, { type: 'choice' }>;
+type ChoiceRule = Extract<Rule, { type: 'CHOICE' }>;
 
 // Helper to build a choice of symbols with multiplicity + nonterminal:true
 function makeContentChoice(mult: 'array' | 'nonEmptyArray' | 'optional' | 'single' = 'array'): ChoiceRule {
 	return {
-		type: 'choice',
+		type: 'CHOICE',
 		members: [
-			{ type: 'symbol', name: '_expression' } as Rule,
-			{ type: 'symbol', name: 'list_splat' } as Rule,
-			{ type: 'symbol', name: 'dictionary_splat' } as Rule,
+			{ type: 'SYMBOL', name: '_expression' } as Rule,
+			{ type: 'SYMBOL', name: 'list_splat' } as Rule,
+			{ type: 'SYMBOL', name: 'dictionary_splat' } as Rule,
 		],
 		multiplicity: mult,
 		nonterminal: true,
@@ -51,7 +51,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		const choice = makeContentChoice('array');
 
 		const seq: Rule = {
-			type: 'seq',
+			type: 'SEQ',
 			members: [choice],
 		} as unknown as Rule;
 
@@ -67,11 +67,11 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		// mergeChoiceArms should preserve origin from the first occurrence.
 		const innerChoice1 = makeContentChoice('array');
 		const innerChoice2 = makeContentChoice('array');
-		const fieldA: Rule = { type: 'symbol', name: 'name', fieldName: 'name', nonterminal: true } as unknown as Rule;
-		const arm1: Rule = { type: 'seq', members: [fieldA, innerChoice1] } as unknown as Rule;
-		const arm2: Rule = { type: 'seq', members: [fieldA, innerChoice2] } as unknown as Rule;
+		const fieldA: Rule = { type: 'SYMBOL', name: 'name', fieldName: 'name', nonterminal: true } as unknown as Rule;
+		const arm1: Rule = { type: 'SEQ', members: [fieldA, innerChoice1] } as unknown as Rule;
+		const arm2: Rule = { type: 'SEQ', members: [fieldA, innerChoice2] } as unknown as Rule;
 		const structuralChoice: Rule = {
-			type: 'choice',
+			type: 'CHOICE',
 			members: [arm1, arm2],
 		} as unknown as Rule;
 
@@ -89,7 +89,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		// The inlinedRule (used for modelType classification) is a seq/choice —
 		// for this test, use the simplifiedRule directly as both.
 		const inlinedRule: Rule = {
-			type: 'choice',
+			type: 'CHOICE',
 			members: simplifiedRule.members,
 		} as unknown as Rule;
 		const renderRule = simplifiedRule as ReturnType<typeof deleteWrapper>;

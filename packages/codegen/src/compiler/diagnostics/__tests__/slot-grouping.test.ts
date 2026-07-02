@@ -18,12 +18,12 @@ import { diagnoseSlotGrouping } from '../slot-grouping.ts';
 import type { SlotGroupingDiagnostic } from '../slot-grouping.ts';
 
 // Rule helpers (simplified rules — no wrapper nodes in production path)
-const sym = (name: string) => ({ type: 'symbol', name }) as any;
-const str = (v: string) => ({ type: 'string', value: v }) as any;
-const seq = (...m: any[]) => ({ type: 'seq', members: m }) as any;
-const choice = (...m: any[]) => ({ type: 'choice', members: m }) as any;
-const repeat = (content: any) => ({ type: 'repeat', content }) as any;
-const repeat1 = (content: any) => ({ type: 'repeat1', content }) as any;
+const sym = (name: string) => ({ type: 'SYMBOL', name }) as any;
+const str = (v: string) => ({ type: 'STRING', value: v }) as any;
+const seq = (...m: any[]) => ({ type: 'SEQ', members: m }) as any;
+const choice = (...m: any[]) => ({ type: 'CHOICE', members: m }) as any;
+const repeat = (content: any) => ({ type: 'REPEAT', content }) as any;
+const repeat1 = (content: any) => ({ type: 'REPEAT1', content }) as any;
 
 describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 	it('repeat(seq(sym a, sym b)) → one multi-slot-nested-seq record', () => {
@@ -47,8 +47,8 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 		// A plain multi-field rule body is NOT a slot — it is the rule itself.
 		// Bug 1 regression: must not fire for normal grammar kinds.
 		const rule = seq(
-			{ type: 'symbol', name: 'left', fieldName: 'left' },
-			{ type: 'symbol', name: 'right', fieldName: 'right' }
+			{ type: 'SYMBOL', name: 'left', fieldName: 'left' },
+			{ type: 'SYMBOL', name: 'right', fieldName: 'right' }
 		);
 		const records = diagnoseSlotGrouping({ assignment_expression: rule as any });
 		expect(records).toHaveLength(0);
@@ -57,8 +57,8 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 	it('repeat(seq(field_a, field_b)) inside a rule → fires (slot position)', () => {
 		// The seq is inside a repeat's content → slot position → should fire.
 		const rule = repeat(seq(
-			{ type: 'symbol', name: 'a', fieldName: 'a' },
-			{ type: 'symbol', name: 'b', fieldName: 'b' }
+			{ type: 'SYMBOL', name: 'a', fieldName: 'a' },
+			{ type: 'SYMBOL', name: 'b', fieldName: 'b' }
 		));
 		const records = diagnoseSlotGrouping({ some_list: rule as any });
 		expect(records.filter((r) => r.code === 'multi-slot-nested-seq')).toHaveLength(1);
@@ -85,8 +85,8 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 		// Bug 2 regression: visible groups like _attributed_argument are not
 		// in inlineKinds → their top-level body must NOT fire.
 		const rule = seq(
-			{ type: 'symbol', name: 'attribute_item', multiplicity: 'array' },
-			{ type: 'symbol', name: '_expression' }
+			{ type: 'SYMBOL', name: 'attribute_item', multiplicity: 'array' },
+			{ type: 'SYMBOL', name: '_expression' }
 		);
 		// Not in inlineKinds → treated as normal grammar kind → silent.
 		const records = diagnoseSlotGrouping({ _attributed_argument: rule as any });
@@ -123,7 +123,7 @@ describe('diagnoseSlotGrouping — supertype-list', () => {
 
 	it('field-named repeat(sym) is SILENT (already named)', () => {
 		// When the symbol carries fieldName, it is already field-named → silent.
-		const rule = repeat({ type: 'symbol', name: '_type', fieldName: 'type' } as any);
+		const rule = repeat({ type: 'SYMBOL', name: '_type', fieldName: 'type' } as any);
 		const records = diagnoseSlotGrouping({ named: rule as any });
 		expect(records).toHaveLength(0);
 	});

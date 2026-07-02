@@ -21,7 +21,7 @@ describe('RuleWalker.childrenOf', () => {
 	it('empty for leaves (string/pattern/symbol/supertype/indent)', () => {
 		expect(w.childrenOf(str('a'))).toEqual([]);
 		expect(w.childrenOf(sym('x'))).toEqual([]);
-		expect(w.childrenOf({ type: 'supertype', name: 's', subtypes: ['a'] } as AnyRule)).toEqual([]);
+		expect(w.childrenOf({ type: 'SUPERTYPE', name: 's', subtypes: ['a'] } as AnyRule)).toEqual([]);
 	});
 	it('separator string form contributes no edges', () => {
 		const r = { type: REPEAT, content: sym('x'), separator: ',' } as AnyRule;
@@ -66,7 +66,7 @@ describe('RuleWalker.fold / find', () => {
 		expect(visits).toBe(2); // root seq, then str('a')
 	});
 	it('find returns undefined on no match', () => {
-		expect(w.find(tree, (r) => r.type === 'indent')).toBeUndefined();
+		expect(w.find(tree, (r) => r.type === 'INDENT')).toBeUndefined();
 	});
 });
 
@@ -91,7 +91,7 @@ describe('RuleWalker deref wing', () => {
 	});
 	it('findDeep finds through refs, cycle-safe', () => {
 		expect((w.findDeep(rules.a!, (r) => r.type === STRING && r.value === 'deep') as { value: string }).value).toBe('deep');
-		expect(w.findDeep(rules.a!, (r) => r.type === 'indent')).toBeUndefined();
+		expect(w.findDeep(rules.a!, (r) => r.type === 'INDENT')).toBeUndefined();
 	});
 	it('foldDeep visits a diamond-shared target only once', () => {
 		const diamondRules: Record<string, AnyRule> = {

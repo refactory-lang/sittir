@@ -373,7 +373,7 @@ export function inlineRefs<R extends AnyRule>(rule: R, ctx: InlineRefsCtx, visit
 /**
  * Return the rule to inline for a hidden symbol target, or `null` if the
  * target should not be inlined. Two target shapes are inlined:
- *  - Hidden GROUP rules (`target.type === 'group'`): inline the group's
+ *  - Hidden GROUP rules (`target.type === 'GROUP'`): inline the group's
  *    `content` (the seq-with-fields) so the referrer's field walker
  *    sees the fields directly.
  *  - Hidden MULTI helpers (body unwraps to a `repeat` / `repeat1`):
@@ -550,7 +550,7 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
 
     // Idiom B: [E, choice(sepString, E{array})]
     if (next.type === CHOICE && next.members.length === 2) {
-        const sepArm = next.members.find((m) => m.type === 'string');
+        const sepArm = next.members.find((m) => m.type === STRING);
         const repArm = next.members.find(
             (m) => isArrayMult((m as { multiplicity?: Mult; }).multiplicity) && sameSlotShape(head, m)
         );
@@ -561,7 +561,7 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
             const sepStr = (sepArm as { value: string; }).value;
             return {
                 ...repArm,
-                separator: { rules: [{ type: 'string', value: sepStr }], trailing: true }
+                separator: { rules: [{ type: STRING, value: sepStr }], trailing: true }
             } as AnyRule;
         }
     }
