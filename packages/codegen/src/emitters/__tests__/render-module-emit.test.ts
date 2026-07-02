@@ -44,7 +44,7 @@ it('regen-templates-rs uses the shared render-module runner', () => {
 		resolve(repoRoot, 'packages/codegen/src/scripts/regen-templates-rs.ts'),
 		'utf8'
 	);
-	expect(script).toContain("from '../render-module-runner.ts'");
+	expect(script).toContain("from '../emitters/render-module-runner.ts'");
 	expect(script).toContain('runRenderModuleEmitter(');
 	expect(script).not.toContain('emitRenderModuleBundle(');
 });
