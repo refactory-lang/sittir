@@ -30,6 +30,7 @@ import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
+import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
 import type { PolymorphVariant } from './types.ts';
 
@@ -1931,44 +1932,21 @@ export function isComplexBody(rule: Rule<'evaluate'>): boolean {
  * separator rule lists so aliases nested in any position are captured.
  */
 export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): ReadonlySet<string> {
+	const walker = new RuleWalker<AnyRule>();
 	const candidates = new Set<string>();
-
-	function walk(rule: AnyRule): void {
-		// Pre-link form: alias(symbol(_X), $visible)
-		if (rule.type === ALIAS) {
-			if (rule.named && rule.content.type === 'symbol' && rule.content.name.startsWith('_')) {
-				candidates.add(rule.content.name);
+	for (const rule of Object.values(rules)) {
+		walker.fold(rule, candidates, (acc, r) => {
+			// Pre-link form: alias(symbol(_X), $visible)
+			if (r.type === ALIAS && r.named && r.content.type === 'symbol' && r.content.name.startsWith('_')) {
+				acc.add(r.content.name);
 			}
-			walk(rule.content);
-			return;
-		}
-		// Post-link form: symbol(visible, aliasedFrom='_X')
-		if (rule.type === SYMBOL) {
-			if (rule.aliasedFrom?.startsWith('_')) candidates.add(rule.aliasedFrom);
-			return;
-		}
-		// Generic structural recursion via typed `in` narrowing (no Record cast).
-		if ('members' in rule && Array.isArray(rule.members)) {
-			for (const m of rule.members) walk(m);
-		}
-		if ('content' in rule && rule.content && typeof rule.content === 'object') {
-			walk(rule.content);
-		}
-		// `separator` may be a string (a literal delimiter — no nested rules),
-		// a readonly Rule[], OR `{ rules: Rule[] }` (post-optimize object form) —
-		// handle the rule-bearing forms
-		// so aliases nested in either are captured.
-		if ('separator' in rule && rule.separator) {
-			const sep = rule.separator;
-			if (Array.isArray(sep)) {
-				for (const r of sep) walk(r);
-			} else if (typeof sep === 'object' && 'rules' in sep) {
-				for (const r of sep.rules) walk(r);
+			// Post-link form: symbol(visible, aliasedFrom='_X')
+			if (r.type === SYMBOL && (r as { aliasedFrom?: string }).aliasedFrom?.startsWith('_')) {
+				acc.add((r as { aliasedFrom?: string }).aliasedFrom!);
 			}
-		}
+			return acc;
+		});
 	}
-
-	for (const rule of Object.values(rules)) walk(rule);
 
 	const out = new Set<string>();
 	for (const name of candidates) {

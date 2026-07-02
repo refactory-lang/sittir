@@ -1,6 +1,6 @@
 # R12 — Unified, generic per-phase context hierarchy
 
-**Status:** in progress (PR-1 landed: `BaseCtx<R>` + normalize). Byte-neutral throughout.
+**Status:** COMPLETE (2026-07-02) — all 6 items shipped. PR-1/2 → #108, PR-3 → #109, PR-4 → #110, PR-5 + the phase-parameterized `Rule<Phase>` IR → #111, PR-6 RuleWalker → #112 (see `2026-07-01-r12-rulewalker-design.md`). Byte-neutral throughout.
 **Descends from:** the Camp A / `compileWordMatcher` work — surfaced that the grammar
 word-matcher couldn't reach link/assemble because the per-phase contexts are fragmented.
 **Relation to the R-phase program:** a NEW phase, R12 (R0–R11 are the

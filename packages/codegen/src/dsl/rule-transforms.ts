@@ -6,6 +6,7 @@
  */
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RuleBase, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
+import { RuleWalker } from './rule-walker.ts';
 
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
 // missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
@@ -127,34 +128,18 @@ export function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMult
  *
  * Moved from template-walker.ts (origin: template-walker.ts:65).
  */
-export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boolean {
-	// RenderRule leaf-attribute path: applyWrapperDeletion stamps the
-	// separator info as an object `{ rules, trailing?, leading? }` onto the
-	// leaf when the repeat wrapper carries the flag. Check this FIRST so
-	// RenderRule input (no repeat/repeat1 wrappers) still returns correctly.
-	// (Structural read: `separator` only exists on the optimize-phase view,
-	// and this fn deliberately accepts any phase.)
-	const sep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator;
-	if (typeof sep === 'object' && !Array.isArray(sep) && sep !== null) {
-		if ((sep as { trailing?: boolean; leading?: boolean })[flag] === true) return true;
-	}
+const flagWalker = new RuleWalker();
 
-	switch (rule.type) {
-		case REPEAT:
-		case REPEAT1:
-			if (rule[flag]) return true;
-			return findRepeatFlag(rule.content, flag);
-		case SEQ:
-		case CHOICE:
-			return rule.members.some((m) => findRepeatFlag(m, flag));
-		case OPTIONAL:
-		case VARIANT:
-		case GROUP:
-		case FIELD:
-			return findRepeatFlag(rule.content, flag);
-		default:
-			return false;
-	}
+export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boolean {
+	return (
+		flagWalker.find(rule, (r) => {
+			const sep = (r as { separator?: RuleBase<'optimize'>['separator'] }).separator;
+			if (typeof sep === 'object' && !Array.isArray(sep) && sep !== null) {
+				if ((sep as { trailing?: boolean; leading?: boolean })[flag] === true) return true;
+			}
+			return (r.type === REPEAT || r.type === REPEAT1) && (r as { trailing?: boolean; leading?: boolean })[flag] === true;
+		}) !== undefined
+	);
 }
 
 /**
@@ -443,6 +428,25 @@ function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {
  *
  * Identity-preserving: returns the input rule unchanged when no child
  * was rewritten (`visit` returned the same reference for every child).
+ *
+ * @deprecated Superseded by `RuleWalker.map` (dsl/rule-walker.ts) for NEW
+ * walks — but the two are NOT drop-in equivalents, so migrating an existing
+ * caller requires rewriting its visitor:
+ *
+ *   - `recurseChildren` maps only the DIRECT children and expects the
+ *     visitor to drive deep recursion itself (callers like
+ *     `fuseHeadRepeatLists` / simplify's `canonicalizeSeqOfLeaves` pass
+ *     themselves as the visitor). `RuleWalker.map` recurses the whole
+ *     subtree internally and applies `visit` to every already-mapped node —
+ *     a blind swap therefore recurses twice. Migrated visitors must STOP
+ *     self-recursing.
+ *   - Edge sets also differ: both rebuild via structural edges
+ *     (members/content), but `RuleWalker.map` deliberately excludes
+ *     separator edges too — see its doc for the rebuild-vs-observation
+ *     asymmetry.
+ *
+ * Both are identity-preserving. New walks use `ctx.walker.map`; existing
+ * callers migrate opportunistically WITH the visitor rewrite above.
  */
 export function recurseChildren<R extends AnyRule>(rule: R, visit: (r: R) => R): R {
 	switch (rule.type) {
