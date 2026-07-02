@@ -387,6 +387,26 @@ scoped PR (gated on the overrides type-tests, since it touches the crown-jewel f
 pure renames, but that gate is non-negotiable there); the §5.2 normalize rename set is its
 own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
 
+## DECISIONS (user, 2026-07-02 — supersede parts of §3's recommendation)
+
+1. **Provenance's one home is `metadata`.** All provenance-ish top-level fields on rule
+   types (`FieldRule.source`/`nameFrom`-was, `SymbolRule.source`, …) consolidate into the
+   `RuleBase.metadata` bag — which is contractually diagnostics-only. Behavior-driving
+   readers get structural derivations FIRST (see the debt report §3.1 revised verdict:
+   the generated `desc.source === "override"` branch is the priority violation), then the
+   top-level fields retreat into metadata or delete. This also collapses most of §5.4's
+   five-way `source` homonym.
+2. **Kill the case split: UPPERCASE discriminants everywhere.** Rather than maintaining a
+   dual-case boundary forever (option iii's conversion module), sittir's IR adopts
+   tree-sitter's UPPERCASE discriminants. Feasibility (probed 2026-07-02): no lowercase
+   rule-type strings escape into emitted artifacts; the `@rule-type-consts` convention
+   means the flip is const-VALUES + ~91 raw literal sites + test fixtures; the dual-case
+   predicate/normalization machinery (runtime-shapes pairs, word-matcher case handling)
+   dissolves. The boundary module's remaining job = SHAPE conversion only (tuples,
+   member types), and §5.3's suffix conventions (Rule=IR / Node=grammar.json) still land.
+   Mechanical sweeps run via lspeasy (LSP-driven rename/replace) — previously avoided;
+   the accumulated debt now justifies it.
+
 ## 6. Open questions for the design discussion
 
 1. **Is "one boundary module" an acceptable answer to "there should be a SSOT"?** §0 argues
