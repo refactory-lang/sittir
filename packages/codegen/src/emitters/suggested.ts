@@ -21,19 +21,6 @@ import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry } fr
 import { AssembledSupertype } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
-import type { ChoiceRule } from '../types/rule.ts';
-
-/**
- * Structural shape consumed by `_armNamesFor` — a polymorph candidate
- * location's discovered top-level choice. `PolymorphCandidateLocation` (the
- * type this used to import from `compiler/link.ts`) no longer exists there;
- * `_armNamesFor` has no callers (dead per the leading-underscore convention),
- * so this is a minimal local type restoring the shape it actually reads
- * (`cand.choice.members`) rather than resurrecting a removed export.
- */
-interface PolymorphCandidateLocation {
-	readonly choice: ChoiceRule<'link'>;
-}
 
 /**
  * Derive a short, readable base label for a single choice arm.
@@ -94,20 +81,6 @@ function deduplicateArmNames(
 		counts.set(base, seen + 1);
 		return seen === 0 ? base : `${base}${seen + 1}`;
 	});
-}
-
-/**
- * Derive unique arm names for a polymorph candidate's choice.
- *
- * Thin wrapper around {@link deduplicateArmNames} that preserves the
- * previous entry point used by the findAllPolymorphCandidates code path.
- * Both `armNamesFor(cand)` and the `locateTopLevelChoice` walker now go
- * through the same base-naming function — the earlier duplication
- * (inline ladder in `armNamesFor` vs `deriveArmNameFromRule`) was two
- * derivations of the same facts that had to stay in sync.
- */
-function _armNamesFor(cand: PolymorphCandidateLocation): string[] {
-	return deduplicateArmNames(cand.choice.members);
 }
 
 /**

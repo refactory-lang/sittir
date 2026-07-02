@@ -26,7 +26,7 @@ import type {
 	RepeatRule,
 	VariantRule,
 } from '../types/rule.ts';
-import { isSeq, isChoice, normalizeEnumMembers, isEnumChoiceRule, sym, replaceAtPath, isSymbol, isString, isRepeat1, isRepeat, isOptional, isField, isEnum } from '../types/rule.ts';
+import { isSeq, isChoice, normalizeEnumMembers, isEnumChoiceRule, sym, replaceAtPath, isSymbol, isString, isRepeat1, isRepeat, isOptional, isField } from '../types/rule.ts';
 import {
 	collectGeneratedKindEntries,
 	findGeneratedKindEntry,
@@ -3114,7 +3114,6 @@ function unwrapToChoice(rule: Rule<'link'>, rules?: Readonly<Record<string, Rule
     const visitedSymbols = new Set<string>();
     for (; ;) {
         if (isChoice(cur)) return cur;
-        if (isEnum(cur)) return cur;
         if (isOptional(cur) || isRepeat(cur) || isRepeat1(cur)) {
             cur = cur.content;
             continue;

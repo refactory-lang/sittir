@@ -6,7 +6,7 @@
  * extension mechanism — each rule fn receives ($, original).
  */
 
-import { ALIAS, CHOICE, ENUM, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type {
 	Rule,
@@ -1310,7 +1310,6 @@ function rewriteFieldEnums(rule: Rule<'evaluate'>, ctx: EvaluateCtx, parentKind:
 					name: rule.name,
 					content: replacementContent,
 					source: rule.source,
-					nameFrom: rule.nameFrom,
 					blockBearer: rule.blockBearer
 				} satisfies FieldRule<'evaluate'>;
 			}
