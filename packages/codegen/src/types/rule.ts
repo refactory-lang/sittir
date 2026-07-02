@@ -88,7 +88,7 @@ export type AnyRule = Rule<PhaseName>;
 /**
  * Shared base every Rule type extends via the intersection on `Rule` below.
  *
- * - `id` is the existing identity tag (see RuleIdentity history).
+ * - `id` is the existing identity tag.
  * - `fieldName` / `multiplicity` / `nonterminal` / `separator` are modifier
  *   attributes populated by enrich passes when a rule was originally wrapped
  *   by `field` / `optional` / `repeat` / `repeat1`. The wrapper continues
@@ -114,9 +114,10 @@ export type RuleBase<Phase extends PhaseName = 'optimize'> = {
 	 * (`evaluate.ts symbol`/`createProxy`); flipped `false` by the `alias`
 	 * wrapper during push-down (`wrapper-deletion.ts` ALIAS case) because an
 	 * alias confers a real visible CST kind that must materialize, not
-	 * flatten. Read via `isInlineRef()` (with an `isHiddenKind` fallback for
-	 * link-synthesized symbols). Replaces the scattered re-derivations of the
-	 * inline decision (`name.startsWith('_')`, `source==='group-lift'`).
+	 * flatten. Read directly off the rule (with an `isHiddenKind` fallback
+	 * for link-synthesized symbols) — see `compiler/link.ts:539-540`,
+	 * `dsl/rule-transforms.ts:334`. Replaces the scattered re-derivations of
+	 * the inline decision (`name.startsWith('_')`, `source==='group-lift'`).
 	 */
 	readonly inline?: boolean;
 
@@ -165,13 +166,6 @@ export type RuleBase<Phase extends PhaseName = 'optimize'> = {
 			readonly aliasNamed?: boolean;
 	  }
 	: {});
-
-/**
- * @deprecated Renamed to {@link RuleBase} now that this interface carries
- * modifier attributes in addition to identity. Retained as an alias so any
- * external consumer keeps working through PR0; remove when callers migrate.
- */
-export type RuleIdentity = RuleBase;
 
 /**
  * Discriminated union of every Rule shape visible in the `Phase` view. Each
@@ -227,9 +221,11 @@ export type Rule<Phase extends PhaseName = 'optimize'> =
  * down to leaf attributes; structural rules (`seq` / `choice` / `variant` /
  * `group`) are preserved.
  *
- * Structurally a `Rule` minus the wrapper variants — typed as a brand so
- * mismatches between RawRule and RenderRule consumption surface at compile
- * time.
+ * Structurally a `Rule` minus the wrapper variants. Carries a phantom
+ * `__renderRule` marker for readability at call sites, but the marker is
+ * optional and never written, so it provides no assignability protection —
+ * `Rule<'optimize'>` values are still structurally assignable to
+ * `RenderRule` without going through `applyWrapperDeletion`.
  */
 export type RenderRule = Rule<'optimize'> & {
 	readonly __renderRule?: never;
@@ -244,8 +240,11 @@ export type RenderRule = Rule<'optimize'> & {
  * invariant: every branch/group/multi body is a `seq` /
  * `choice` / `repeat` / leaf-terminal (`enum` / `string` / `pattern`).
  *
- * Branded so SimplifiedRule consumers can't be silently called with a
- * pre-canonicalize RenderRule.
+ * Carries phantom `__renderRule` / `__simplifiedRule` markers for
+ * readability at call sites, but both are optional and never written, so
+ * they provide no assignability protection — `RenderRule` and
+ * `SimplifiedRule` are mutually assignable (both resolve to the same
+ * `OptimizedPhase` shape) despite the distinct brand names.
  */
 export type SimplifiedRule = Rule<'simplify'> & {
 	readonly __renderRule?: never;
@@ -304,7 +303,6 @@ export type FieldRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 			readonly name: string;
 			readonly content: Rule<T>;
 			readonly source?: 'grammar' | 'override' | 'enriched' | 'inferred';
-			readonly nameFrom?: 'grammar' | 'kind' | 'override' | 'usage';
 			/**
 			 * True if the field's value is rendered as an indented block — its
 			 * content resolves (through symbol refs) to a subtree containing an
@@ -457,7 +455,6 @@ export type SymbolRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
 	/** Original literal text when Link synthesized this ref from a string token. */
 	readonly literal?: string;
 	readonly hidden?: boolean;
-	readonly supertype?: boolean;
 	/**
 	 * Alias provenance: when this symbol was produced by resolving
 	 * `alias($.aliasedFrom, $.name)`, `aliasedFrom` is the source kind
@@ -507,7 +504,6 @@ export const isRepeat = <R extends AnyRule>(r: R): r is Extract<R, { type: typeo
 export const isRepeat1 = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof REPEAT1 }> => r.type === REPEAT1;
 export const isField = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof FIELD }> => r.type === FIELD;
 
-export const isEnum = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof CHOICE }> => isEnumChoiceRule(r);
 export const isGroup = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof GROUP }> => r.type === GROUP;
 // isTerminal removed (PR-P Task 2): TerminalRule deleted; terminals classify by shape
 export const isString = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof STRING }> => r.type === STRING;

@@ -427,10 +427,9 @@ function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {
 }
 
 /**
- * Generic post-order child recursion for the `AnyRule` IR. Mirrors
- * `dsl/enrich.ts:recurseChildren` but tightened to the canonical typed
- * AnyRule shape (no string-typed legacy variants like 'TOKEN' / 'ALIAS' /
- * 'IMMEDIATE_TOKEN' — those don't appear post-evaluate).
+ * Generic post-order child recursion for the `AnyRule` IR, tightened to
+ * the canonical typed AnyRule shape (no string-typed legacy variants like
+ * 'TOKEN' / 'ALIAS' / 'IMMEDIATE_TOKEN' — those don't appear post-evaluate).
  *
  * Identity-preserving: returns the input rule unchanged when no child
  * was rewritten (`visit` returned the same reference for every child).

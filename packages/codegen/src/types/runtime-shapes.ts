@@ -57,7 +57,7 @@ import type { ChoiceRule, FieldRule, OptionalRule, Rule, SeqRule, StringRule, Sy
 
 export type RuntimeRule = { readonly type: string };
 
-export type SymbolLike = { type: 'symbol' | 'SYMBOL'; name: string };
+type SymbolLike = { type: 'symbol' | 'SYMBOL'; name: string };
 
 export type FieldLike = {
 	type: 'field' | 'FIELD';
@@ -78,7 +78,7 @@ export function isSymbolLike(v: unknown): v is SymbolLike {
  * in any runtime shape. Tree-sitter CLI wraps `$` references as
  * nested objects; this unwraps to the name string if possible.
  */
-export function extractSymbolName(v: unknown): string | undefined {
+function extractSymbolName(v: unknown): string | undefined {
 	if (!v || typeof v !== 'object') return undefined;
 	const r = v as Record<string, unknown>;
 	const t = r.type;
@@ -156,7 +156,7 @@ export function typeEq(t: unknown, lower: string): boolean {
 	return typeof t === 'string' && (t === lower || t === lower.toUpperCase());
 }
 
-export type IsRuntimeRule<T> = T extends { type: infer U } ? (U extends Uppercase<string> ? false : true) : false;
+type IsRuntimeRule<T> = T extends { type: infer U } ? (U extends Uppercase<string> ? false : true) : false;
 
 export const isSeqType = <T>(
 	t: T
