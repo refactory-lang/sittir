@@ -429,9 +429,24 @@ function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {
  * Identity-preserving: returns the input rule unchanged when no child
  * was rewritten (`visit` returned the same reference for every child).
  *
- * @deprecated Superseded by `RuleWalker.map` (dsl/rule-walker.ts) — same
- * identity-preserving semantics plus the canonical childrenOf edge set.
- * Existing callers migrate opportunistically; new walks use ctx.walker.map.
+ * @deprecated Superseded by `RuleWalker.map` (dsl/rule-walker.ts) for NEW
+ * walks — but the two are NOT drop-in equivalents, so migrating an existing
+ * caller requires rewriting its visitor:
+ *
+ *   - `recurseChildren` maps only the DIRECT children and expects the
+ *     visitor to drive deep recursion itself (callers like
+ *     `fuseHeadRepeatLists` / simplify's `canonicalizeSeqOfLeaves` pass
+ *     themselves as the visitor). `RuleWalker.map` recurses the whole
+ *     subtree internally and applies `visit` to every already-mapped node —
+ *     a blind swap therefore recurses twice. Migrated visitors must STOP
+ *     self-recursing.
+ *   - Edge sets also differ: both rebuild via structural edges
+ *     (members/content), but `RuleWalker.map` deliberately excludes
+ *     separator edges too — see its doc for the rebuild-vs-observation
+ *     asymmetry.
+ *
+ * Both are identity-preserving. New walks use `ctx.walker.map`; existing
+ * callers migrate opportunistically WITH the visitor rewrite above.
  */
 export function recurseChildren<R extends AnyRule>(rule: R, visit: (r: R) => R): R {
 	switch (rule.type) {
