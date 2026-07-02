@@ -55,7 +55,7 @@ function makeKeyword(kind: string, text: string): AssembledKeyword {
 function makeEnum(kind: string, values: string[]): AssembledEnum {
 	return new AssembledEnum(kind, {
 		type: 'enum',
-		members: values.map((v) => ({ type: 'string', value: v }))
+		members: values.map((v) => ({ type: 'STRING', value: v }))
 	} as any);
 }
 

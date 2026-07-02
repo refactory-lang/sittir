@@ -65,8 +65,8 @@ describe('Link — reference resolution', () => {
 
 		function assertNoRefTypes(rule: Rule<'link'>): void {
 			if ('type' in rule) {
-				expect(rule.type).not.toBe('alias');
-				expect(rule.type).not.toBe('token');
+				expect(rule.type).not.toBe('ALIAS');
+				expect(rule.type).not.toBe('TOKEN');
 				// NOTE: `repeat1` is intentionally preserved through
 				// Link so the downstream field / child derivation can
 				// stamp `nonEmpty: true` on the resulting slot and the
@@ -92,7 +92,7 @@ describe('Link — reference resolution', () => {
 		// The rule arrives as its original REPEAT1 type directly; assemble's
 		// classifyTerminalFallback (via isAllTextShape) handles classification.
 		const rule = linked.rules['items'];
-		expect(rule!.type).toBe('repeat1');
+		expect(rule!.type).toBe('REPEAT1');
 	});
 
 	it('flattens token to its content', () => {
@@ -104,7 +104,7 @@ describe('Link — reference resolution', () => {
 			}
 		});
 		const linked = link(raw);
-		expect(linked.rules['comment']).toEqual({ type: 'string', value: '//' });
+		expect(linked.rules['comment']).toEqual({ type: 'STRING', value: '//' });
 	});
 });
 
@@ -129,7 +129,7 @@ describe('Link — hidden rule classification', () => {
 		// classifier now returns its classification/source via ClassifyResult
 		// instead of stamping it onto the rule).
 		expect(linked.rules['_expression']).toEqual({
-			type: 'supertype',
+			type: 'SUPERTYPE',
 			name: '_expression',
 			subtypes: ['binary_expression', 'identifier']
 		});
@@ -148,7 +148,7 @@ describe('Link — hidden rule classification', () => {
 		const linked = link(raw);
 		// PR-P: enum-shaped choices are type 'choice'; isEnumChoiceRule detects them.
 		// Hidden choice of strings → normalized to ChoiceRule (was EnumRule).
-		expect(linked.rules['_visibility']!.type).toBe('choice');
+		expect(linked.rules['_visibility']!.type).toBe('CHOICE');
 	});
 });
 
@@ -166,7 +166,7 @@ describe('Link — field provenance', () => {
 					{
 						type: FIELD,
 						name: 'body',
-						content: { type: 'symbol', name: 'block' },
+						content: { type: 'SYMBOL', name: 'block' },
 						metadata: makeRuleMetadata({ fieldSource: 'override' })
 					}
 				]
@@ -216,7 +216,7 @@ describe('Link — top-level alias bodies', () => {
 		});
 		const linked = link(raw);
 		expect(linked.topLevelAliasBodies?.get('_type_identifier')).toEqual({
-			type: 'pattern',
+			type: 'PATTERN',
 			value: '[A-Za-z_]\\w*'
 		});
 	});
@@ -251,7 +251,7 @@ describe('Link — top-level alias bodies', () => {
 		);
 		const linked = link(raw);
 		expect(linked.topLevelAliasBodies?.get('_as_pattern_target')).toEqual({
-			type: 'symbol',
+			type: 'SYMBOL',
 			name: '_expression'
 		});
 	});
@@ -333,7 +333,7 @@ describe('Link — T016a hidden choice classification', () => {
 		);
 		const linked = link(raw);
 		// All hidden choices → supertype (Link classifies, Assemble passes through)
-		expect(linked.rules['_helper']!.type).toBe('supertype');
+		expect(linked.rules['_helper']!.type).toBe('SUPERTYPE');
 	});
 });
 
@@ -372,8 +372,8 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		});
 		const linked = link(raw);
 		const stmt = linked.rules['statement'] as any;
-		expect(stmt.type).toBe('choice');
-		expect(stmt.members.every((m: any) => m.type === 'seq')).toBe(true);
+		expect(stmt.type).toBe('CHOICE');
+		expect(stmt.members.every((m: any) => m.type === 'SEQ')).toBe(true);
 	});
 
 	it('promotePolymorph detects heterogeneous-field choices (suggestion-only, no mutation)', () => {
@@ -507,15 +507,15 @@ describe('Link — variant tagging + polymorph promotion', () => {
 			derivations
 		);
 		// Parent rule stays as a choice (not replaced by flat polymorph).
-		expect(rules['visibility_modifier']!.type).toBe('choice');
+		expect(rules['visibility_modifier']!.type).toBe('CHOICE');
 		// Each variant-child hidden rule now has its body wrapped in the
 		// ambient `(` / `)` literals that used to flank the inner choice.
 		const selfBody = rules['_visibility_modifier_pub_self']!;
-		expect(selfBody.type).toBe('seq');
+		expect(selfBody.type).toBe('SEQ');
 		if (selfBody.type !== SEQ) throw new Error('unreachable');
-		expect(selfBody.members.map((m) => (m.type === 'string' ? m.value : m.type))).toEqual(['(', 'symbol', ')']);
+		expect(selfBody.members.map((m) => (m.type === 'STRING' ? m.value : m.type))).toEqual(['(', 'SYMBOL', ')']);
 		const superBody = rules['_visibility_modifier_pub_super']!;
-		expect(superBody.type).toBe('seq');
+		expect(superBody.type).toBe('SEQ');
 		// Variant-child derivations emitted for downstream use.
 		const derivedKinds = derivations.promotedRules
 			.filter((p) => p.kind === 'visibility_modifier_pub_self' || p.kind === 'visibility_modifier_pub_super')
@@ -582,7 +582,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		);
 		const linked = link(raw);
 		// Rule stays as choice (not replaced with polymorph) after de-polymorph.
-		expect(linked.rules['assignment']!.type).toBe('choice');
+		expect(linked.rules['assignment']!.type).toBe('CHOICE');
 	});
 
 	it('homogeneous-field choices stay as raw choice (not polymorph)', () => {
@@ -623,8 +623,8 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		});
 		const linked = link(raw);
 		const literal = linked.rules['literal'] as any;
-		expect(literal.type).toBe('choice');
+		expect(literal.type).toBe('CHOICE');
 		// No variant wrappers — branches travel as bare seqs through Link.
-		expect(literal.members.every((m: any) => m.type === 'seq')).toBe(true);
+		expect(literal.members.every((m: any) => m.type === 'SEQ')).toBe(true);
 	});
 });

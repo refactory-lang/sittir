@@ -41,7 +41,7 @@
  *    a compiled `CHOICE(STRING,BLANK)` is never seen as an optional. (The
  *    `*_marker` fields in the generated grammar are AUTHOR overrides, not
  *    enrich output.) So `Enrich<>` does NOT model it. NOTE: this is
- *    input-form-dependent — sittir's `{type:'optional'}` form WOULD fire
+ *    input-form-dependent — sittir's `{type:'OPTIONAL'}` form WOULD fire
  *    pass 3; correct here only because we type off compiled grammar.json.
  *
  * SOUNDNESS: field NAMES for numbered duplicates (e.g. index_expression's

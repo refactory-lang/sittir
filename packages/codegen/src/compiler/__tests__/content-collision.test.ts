@@ -14,11 +14,11 @@ import { describe, it, expect } from 'vitest';
 import { countContentSlots } from '../diagnostics/slot-grouping.ts';
 import type { Rule } from '../../types/rule.ts';
 
-const sym = (name: string): Rule => ({ type: 'symbol', name }) as unknown as Rule;
-const str = (value: string): Rule => ({ type: 'string', value }) as unknown as Rule;
-const choice = (...members: Rule[]): Rule => ({ type: 'choice', members }) as unknown as Rule;
+const sym = (name: string): Rule => ({ type: 'SYMBOL', name }) as unknown as Rule;
+const str = (value: string): Rule => ({ type: 'STRING', value }) as unknown as Rule;
+const choice = (...members: Rule[]): Rule => ({ type: 'CHOICE', members }) as unknown as Rule;
 const seq = (members: Rule[], fieldName?: string): Rule =>
-	({ type: 'seq', members, ...(fieldName !== undefined ? { fieldName } : {}) }) as unknown as Rule;
+	({ type: 'SEQ', members, ...(fieldName !== undefined ? { fieldName } : {}) }) as unknown as Rule;
 
 describe('countContentSlots — §4c content-collision', () => {
 	it('counts 2 for an unnamed seq of two unnamed multi-kind choices (_class_body_member shape)', () => {
@@ -44,7 +44,7 @@ describe('countContentSlots — §4c content-collision', () => {
 	});
 
 	it('a field-named choice is not content', () => {
-		const c = { type: 'choice', fieldName: 'operator', members: [sym('a'), sym('b')] } as unknown as Rule;
+		const c = { type: 'CHOICE', fieldName: 'operator', members: [sym('a'), sym('b')] } as unknown as Rule;
 		expect(countContentSlots(c)).toBe(0);
 	});
 });

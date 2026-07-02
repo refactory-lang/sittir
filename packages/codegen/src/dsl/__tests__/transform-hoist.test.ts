@@ -18,9 +18,9 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 			const original = g.prec.left(
 				2,
 				g.seq(
-					{ type: 'string', value: '[' } as any,
-					g.choice({ type: 'blank' } as any, g.repeat({ type: 'symbol', name: 'X' } as any)),
-					{ type: 'string', value: ']' } as any
+					{ type: 'STRING', value: '[' } as any,
+					g.choice({ type: 'BLANK' } as any, g.repeat({ type: 'SYMBOL', name: 'X' } as any)),
+					{ type: 'STRING', value: ']' } as any
 				)
 			);
 			return transform(original, {
@@ -29,11 +29,11 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 			}) as any;
 		});
 
-		expect(patched.type).toBe('choice');
+		expect(patched.type).toBe('CHOICE');
 		expect(patched.members).toHaveLength(2);
-		expect(patched.members[0].type).toBe('alias');
+		expect(patched.members[0].type).toBe('ALIAS');
 		expect(patched.members[0].value).toBe('demo_empty');
-		expect(patched.members[0].content.type).toBe('symbol');
+		expect(patched.members[0].content.type).toBe('SYMBOL');
 		expect(patched.members[0].content.name).toBe('_demo_empty');
 		expect(patched.members[1].value).toBe('demo_list');
 		expect(patched.members[1].content.name).toBe('_demo_list');
@@ -41,7 +41,7 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		expect(ctx.deposits.has('_demo_empty')).toBe(true);
 		expect(ctx.deposits.has('_demo_list')).toBe(true);
 		const emptyBody: any = ctx.deposits.get('_demo_empty');
-		expect(emptyBody.type).toBe('prec_left');
+		expect(emptyBody.type).toBe('PREC_LEFT');
 		expect(emptyBody.value).toBe(2);
 
 		expect(ctx.conflictGroups).toContainEqual(['_demo_empty', '_demo_list']);
@@ -62,9 +62,9 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		const { ctx } = withWireContext('nonempty', () => {
 			const g = globalThis as any;
 			const original = g.seq(
-				{ type: 'string', value: '(' } as any,
-				g.choice({ type: 'symbol', name: 'X' } as any, { type: 'symbol', name: 'Y' } as any),
-				{ type: 'string', value: ')' } as any
+				{ type: 'STRING', value: '(' } as any,
+				g.choice({ type: 'SYMBOL', name: 'X' } as any, { type: 'SYMBOL', name: 'Y' } as any),
+				{ type: 'STRING', value: ')' } as any
 			);
 			transform(original, {
 				'1/0': variant('x'),
@@ -78,9 +78,9 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		const { ctx } = withWireContext('mixed', () => {
 			const g = globalThis as any;
 			const original = g.seq(
-				g.choice({ type: 'symbol', name: 'A' } as any, { type: 'symbol', name: 'B' } as any),
-				{ type: 'string', value: '|' } as any,
-				g.choice({ type: 'symbol', name: 'C' } as any, { type: 'symbol', name: 'D' } as any)
+				g.choice({ type: 'SYMBOL', name: 'A' } as any, { type: 'SYMBOL', name: 'B' } as any),
+				{ type: 'STRING', value: '|' } as any,
+				g.choice({ type: 'SYMBOL', name: 'C' } as any, { type: 'SYMBOL', name: 'D' } as any)
 			);
 			transform(original, {
 				'0/0': variant('left_a'),

@@ -27,7 +27,7 @@ describe('Overrides integration', () => {
 
 		// Check for override-injected fields
 		if (augAssign?.type === SEQ) {
-			const fields = augAssign.members.filter((m: any) => m.type === 'field');
+			const fields = augAssign.members.filter((m: any) => m.type === 'FIELD');
 			console.log(
 				'augmented_assignment fields:',
 				fields.map((f: any) => `${f.name} (source: ${f.source ?? 'grammar'})`)
@@ -39,7 +39,7 @@ describe('Overrides integration', () => {
 		const block = raw.rules['block'];
 		console.log('block type:', block?.type);
 		if (block?.type === SEQ) {
-			const fields = block.members.filter((m: any) => m.type === 'field');
+			const fields = block.members.filter((m: any) => m.type === 'FIELD');
 			console.log(
 				'block fields:',
 				fields.map((f: any) => `${f.name} (source: ${f.source ?? 'grammar'})`)
@@ -57,7 +57,7 @@ describe('Overrides integration', () => {
 	});
 
 	function countOverrideFields(rule: any, cb: (n: number) => void) {
-		if (rule?.type === 'field' && rule.source === 'override') cb(1);
+		if (rule?.type === 'FIELD' && rule.source === 'override') cb(1);
 		if (rule?.members) for (const m of rule.members) countOverrideFields(m, cb);
 		if (rule?.content) countOverrideFields(rule.content, cb);
 	}

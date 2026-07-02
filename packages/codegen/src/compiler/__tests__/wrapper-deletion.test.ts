@@ -34,7 +34,7 @@ describe('deleteWrapper — optional', () => {
 	it('lifts optional → multiplicity: "optional" on inner symbol', () => {
 		const wrapped: OptionalRule = { type: OPTIONAL, content: sym('expression') };
 		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('symbol');
+		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('optional');
 		expect((out as SymbolRule).name).toBe('expression');
 	});
@@ -50,7 +50,7 @@ describe('deleteWrapper — field', () => {
 	it('lifts field → fieldName on inner symbol', () => {
 		const wrapped: FieldRule = { type: FIELD, name: 'value', content: sym('expression') };
 		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('symbol');
+		expect(out.type).toBe('SYMBOL');
 		expect(out.fieldName).toBe('value');
 		expect(out.multiplicity).toBeUndefined();
 	});
@@ -60,14 +60,14 @@ describe('deleteWrapper — repeat', () => {
 	it('lifts repeat → multiplicity: "array" on inner symbol', () => {
 		const wrapped: RepeatRule = { type: REPEAT, content: sym('item') };
 		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('symbol');
+		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
 	});
 
 	it('lifts repeat with separator string → preserves separator', () => {
 		const wrapped: RepeatRule = { type: REPEAT, content: sym('item'), separator: ',' };
 		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('symbol');
+		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
 		expect(out.separator).toBe(',');
 	});
@@ -81,11 +81,11 @@ describe('deleteWrapper — repeat', () => {
 			leading: false,
 		};
 		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('symbol');
+		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
 		// Object form because trailing/leading are set
 		expect(out.separator).toEqual({
-			rules: [{ type: 'string', value: ',' }],
+			rules: [{ type: 'STRING', value: ',' }],
 			trailing: true,
 			leading: false,
 		});
@@ -96,7 +96,7 @@ describe('deleteWrapper — repeat1', () => {
 	it('lifts repeat1 → multiplicity: "nonEmptyArray" on inner symbol', () => {
 		const wrapped: Repeat1Rule = { type: REPEAT1, content: sym('item') };
 		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('symbol');
+		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('nonEmptyArray');
 	});
 });
@@ -111,12 +111,12 @@ describe('deleteWrapper — seq recursion', () => {
 		const b: SymbolRule = sym('b');
 		const seq: SeqRule<'link'> = { type: SEQ, members: [a, b] };
 		const out = deleteWrapper(seq);
-		expect(out.type).toBe('seq');
+		expect(out.type).toBe('SEQ');
 		const members = (out as SeqRule).members;
 		expect(members).toHaveLength(2);
-		expect(members[0]!.type).toBe('symbol');
+		expect(members[0]!.type).toBe('SYMBOL');
 		expect(members[0]!.multiplicity).toBe('optional');
-		expect(members[1]!.type).toBe('symbol');
+		expect(members[1]!.type).toBe('SYMBOL');
 		expect(members[1]!.multiplicity).toBeUndefined();
 	});
 });
@@ -130,7 +130,7 @@ describe('deleteWrapper — stacked wrappers', () => {
 		const inner: OptionalRule = { type: OPTIONAL, content: sym('expr') };
 		const wrapped: FieldRule = { type: FIELD, name: 'value', content: inner };
 		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('symbol');
+		expect(out.type).toBe('SYMBOL');
 		expect(out.fieldName).toBe('value');
 		expect(out.multiplicity).toBe('optional');
 	});
@@ -139,7 +139,7 @@ describe('deleteWrapper — stacked wrappers', () => {
 		const inner: FieldRule = { type: FIELD, name: 'value', content: sym('expr') };
 		const wrapped: OptionalRule = { type: OPTIONAL, content: inner };
 		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('symbol');
+		expect(out.type).toBe('SYMBOL');
 		expect(out.fieldName).toBe('value');
 		expect(out.multiplicity).toBe('optional');
 	});
@@ -169,9 +169,9 @@ describe('applyWrapperDeletion — map form', () => {
 			baz: sym('qux'),
 		};
 		const result = applyWrapperDeletion(rules);
-		expect(result['foo']!.type).toBe('symbol');
+		expect(result['foo']!.type).toBe('SYMBOL');
 		expect(result['foo']!.multiplicity).toBe('optional');
-		expect(result['baz']!.type).toBe('symbol');
+		expect(result['baz']!.type).toBe('SYMBOL');
 		expect(result['baz']!.multiplicity).toBeUndefined();
 	});
 });

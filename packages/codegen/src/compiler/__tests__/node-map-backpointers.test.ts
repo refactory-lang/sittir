@@ -27,8 +27,8 @@ describe('NodeMap back-pointer maps', () => {
 		// for the third assertion.
 		const { rules, ruleCatalog } = buildRuleCatalog({
 			call_expression: seq(
-				field('function', { type: 'symbol', name: 'identifier' }),
-				field('args', { type: 'symbol', name: 'identifier' })
+				field('function', { type: 'SYMBOL', name: 'identifier' }),
+				field('args', { type: 'SYMBOL', name: 'identifier' })
 			),
 			identifier: { type: PATTERN, value: '[a-z_]\\w*' }
 		});
@@ -102,9 +102,9 @@ describe('NodeMap back-pointer maps', () => {
 		// Reach into the call_expression rule to find the inner field rule
 		// (the seq has one member: field('function', symbol('identifier'))).
 		const callRule = rules.call_expression;
-		expect(callRule?.type).toBe('seq');
+		expect(callRule?.type).toBe('SEQ');
 		const seqMembers = (callRule as { members: readonly { type: string }[] }).members;
-		const fieldRule = seqMembers.find((m) => m.type === 'field') as FieldRule | undefined;
+		const fieldRule = seqMembers.find((m) => m.type === 'FIELD') as FieldRule | undefined;
 		expect(fieldRule).toBeDefined();
 		expect(fieldRule!.id).toBeTruthy();
 
@@ -116,8 +116,8 @@ describe('NodeMap back-pointer maps', () => {
 	it('slot.sourceRuleIds accumulates merged simplified-rule contributors and maps each id back to the slot', () => {
 		const { simplifiedRules, nodeMap } = buildNodeMap({
 			test: seq(
-				field('parameter', { type: 'symbol', name: 'identifier' }),
-				field('parameter', { type: 'symbol', name: 'number' })
+				field('parameter', { type: 'SYMBOL', name: 'identifier' }),
+				field('parameter', { type: 'SYMBOL', name: 'number' })
 			),
 			identifier: { type: PATTERN, value: '[a-z_]\\w*' },
 			number: { type: PATTERN, value: '[0-9]+' }
@@ -139,10 +139,10 @@ describe('NodeMap back-pointer maps', () => {
 	it('slot.sourceRuleIds includes both simplified and render-view ids when the views diverge', () => {
 		const { simplifiedRules, renderRules, nodeMap } = buildNodeMap({
 			test: seq(
-				field('lhs', { type: 'symbol', name: 'identifier' }),
+				field('lhs', { type: 'SYMBOL', name: 'identifier' }),
 				choice(
-					seq({ type: 'string', value: '+' }, field('rhs', { type: 'symbol', name: 'identifier' })),
-					seq({ type: 'string', value: '-' }, field('rhs', { type: 'symbol', name: 'number' }))
+					seq({ type: 'STRING', value: '+' }, field('rhs', { type: 'SYMBOL', name: 'identifier' })),
+					seq({ type: 'STRING', value: '-' }, field('rhs', { type: 'SYMBOL', name: 'number' }))
 				)
 			),
 			identifier: { type: PATTERN, value: '[a-z_]\\w*' },

@@ -1081,7 +1081,7 @@ function collectInlineNames(entries: readonly unknown[]): Set<string> {
 	for (const entry of entries) {
 		if (!entry || typeof entry !== 'object') continue;
 		const symbol = entry as { type?: string; name?: string };
-		if ((symbol.type === 'symbol' || symbol.type === 'SYMBOL') && typeof symbol.name === 'string') {
+		if (symbol.type === 'SYMBOL' && typeof symbol.name === 'string') {
 			names.add(symbol.name);
 		}
 	}
@@ -1152,8 +1152,6 @@ const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, p
 interface WirePatternCandidate {
 	readonly name: string;
 	readonly body: RuntimeRule;
-	/** True when the body type uses uppercase (tree-sitter CLI runtime). */
-	readonly uppercase: boolean;
 	/** When set, every replacement site emits
 	 *  `alias($._<name>, $.<aliasAs>)` so tree-sitter produces a visible
 	 *  `aliasAs` CST node at each substitution. Set by `groups:` body-
@@ -1166,12 +1164,11 @@ interface WirePatternCandidate {
  * property lookup. Used to eagerly evaluate pattern-candidate rule fns so we
  * can inspect their bodies without requiring the full sittir evaluate pipeline.
  *
- * The proxy works in both the sittir runtime (where `createProxy` would emit
- * lowercase `{ type: 'symbol', name }`) and in tree-sitter's CLI runtime
- * (where `$.<name>` normally returns a CLI-native object). We pass an explicit
- * uppercase SYMBOL so that subsequent `typeEq()` comparisons are shape-agnostic.
+ * The proxy works in both the sittir runtime and tree-sitter's CLI runtime
+ * (where `$.<name>` normally returns a CLI-native object) — both now agree on
+ * UPPERCASE discriminants, so the explicit `SYMBOL` here matches either path.
  * Eagerly evaluated bodies are only compared structurally — they don't enter
- * the grammar itself — so the uppercase/lowercase mismatch is harmless here.
+ * the grammar itself.
  */
 function makeSimpleDollarProxy(): Record<string, unknown> {
 	return new Proxy({} as Record<string, unknown>, {
@@ -1185,9 +1182,10 @@ function makeSimpleDollarProxy(): Record<string, unknown> {
  * Returns true when a RuntimeRule body is complex enough to be a meaningful
  * structural pattern. Excludes trivial single-terminal bodies.
  *
- * Uses `typeEq` for dual-case awareness (sittir lowercase ↔ tree-sitter
- * uppercase). Mirrors the `isComplexBody` check in evaluate.ts but operates
- * on RuntimeRule (unknown shape) rather than the typed sittir Rule<'evaluate'>.
+ * Mirrors the `isComplexBody` check in evaluate.ts but operates on
+ * RuntimeRule (unknown shape) rather than the typed sittir Rule<'evaluate'>
+ * — both runtimes agree on UPPERCASE discriminants, so `typeEq` here is a
+ * plain equality check (kept for the typed narrowing it gives callers).
  *
  * Exclusions:
  * - Single STRING / string literal → would match every identical literal
@@ -1203,13 +1201,13 @@ function makeSimpleDollarProxy(): Record<string, unknown> {
 function isComplexBodyRt(rule: RuntimeRule): boolean {
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
 	const t = r.type;
-	if (typeEq(t, 'seq') || typeEq(t, 'choice')) {
+	if (typeEq(t, 'SEQ') || typeEq(t, 'CHOICE')) {
 		return Array.isArray(r.members) && r.members.length >= 2;
 	}
-	if (typeEq(t, 'repeat') || typeEq(t, 'repeat1')) {
+	if (typeEq(t, 'REPEAT') || typeEq(t, 'REPEAT1')) {
 		const c = r.content as { type?: string } | undefined;
 		if (!c || typeof c.type !== 'string') return false;
-		return !typeEq(c.type, 'string') && !typeEq(c.type, 'symbol') && !typeEq(c.type, 'pattern');
+		return !typeEq(c.type, 'STRING') && !typeEq(c.type, 'SYMBOL') && !typeEq(c.type, 'PATTERN');
 	}
 	return false;
 }
@@ -1217,9 +1215,9 @@ function isComplexBodyRt(rule: RuntimeRule): boolean {
 /**
  * Structural equality for two RuntimeRule bodies. Recursive.
  *
- * Uses `typeEq` for dual-case awareness so a candidate body evaluated in the
- * sittir runtime (lowercase) can still match a rule body evaluated in
- * tree-sitter's runtime (uppercase), or vice versa.
+ * A candidate body evaluated in the sittir runtime matches a rule body
+ * evaluated in tree-sitter's runtime because both agree on UPPERCASE
+ * discriminants — no case reconciliation needed.
  *
  * Edge cases:
  * - PREC/PREC_LEFT/PREC_RIGHT wrappers: sittir's `prec()` helper strips the
@@ -1242,13 +1240,12 @@ function isComplexBodyRt(rule: RuntimeRule): boolean {
 function unwrapOptionalChoiceRt(node: unknown): unknown {
 	if (!node || typeof node !== 'object') return node;
 	const r = node as { type?: string; members?: unknown[] };
-	// Shared dual-case detection (same `isChoiceType`/`isBlankType` that
-	// auto-groups.ts uses for its `CHOICE[seq, BLANK]` → optional handling),
-	// so the two wire passes recognize the tree-sitter-lowered optional form
-	// identically.
+	// Shared detection (same `isChoiceType`/`isBlankType` that auto-groups.ts
+	// uses for its `CHOICE[seq, BLANK]` → optional handling), so the two wire
+	// passes recognize the tree-sitter-lowered optional form identically.
 	if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
 		const blankIdx = r.members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
-		if (blankIdx !== -1) return { type: 'optional', content: r.members[1 - blankIdx] };
+		if (blankIdx !== -1) return { type: 'OPTIONAL', content: r.members[1 - blankIdx] };
 	}
 	return node;
 }
@@ -1260,26 +1257,26 @@ function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
 	if (!b || typeof b !== 'object') return false;
 	const ra = a as { type: string; members?: unknown[]; content?: unknown; name?: string; value?: string };
 	const rb = b as { type: string; members?: unknown[]; content?: unknown; name?: string; value?: string };
-	// Types must match (dual-case: 'seq' == 'SEQ')
-	if (!typeEq(ra.type, rb.type.toLowerCase())) return false;
-	const t = ra.type.toLowerCase();
-	if (t === 'string' || t === 'pattern') return ra.value === rb.value;
-	if (t === 'symbol') return ra.name === rb.name;
-	if (t === 'blank') return true; // BLANK is a singleton — type match is sufficient
-	if (t === 'seq' || t === 'choice') {
+	// Types must match.
+	if (ra.type !== rb.type) return false;
+	const t = ra.type;
+	if (t === 'STRING' || t === 'PATTERN') return ra.value === rb.value;
+	if (t === 'SYMBOL') return ra.name === rb.name;
+	if (t === 'BLANK') return true; // BLANK is a singleton — type match is sufficient
+	if (t === 'SEQ' || t === 'CHOICE') {
 		const ma = ra.members;
 		const mb = rb.members;
 		if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
 		if (ma.length !== mb.length) return false;
 		return ma.every((m, i) => patternBodyEqual(m, mb[i]));
 	}
-	if (t === 'optional' || t === 'repeat' || t === 'repeat1') {
+	if (t === 'OPTIONAL' || t === 'REPEAT' || t === 'REPEAT1') {
 		return patternBodyEqual(ra.content, rb.content);
 	}
-	if (t === 'field') {
+	if (t === 'FIELD') {
 		return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
 	}
-	if (t === 'alias') {
+	if (t === 'ALIAS') {
 		// ALIAS nodes carry `named` (bool) and `value` (the visible name string)
 		// in addition to `content`. Two aliases are structurally equal when all
 		// three match — e.g. `alias($._not_in, 'not in')` vs itself.
@@ -1295,26 +1292,15 @@ function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
  * matches a pattern candidate with a SYMBOL reference. Returns the original
  * object reference when nothing changed (cheap change-detection for the caller).
  *
+ * Always emits a bare tree-sitter-native `{type:'SYMBOL', name}` — this
+ * function (via `applyWirePatternReplacement`) only ever runs on the
+ * tree-sitter-CLI path (evaluate.ts's `applyPatternReplacement` is the
+ * separate sittir-pipeline counterpart), so there is no sittir-runtime
+ * `hidden`/`inline` stamping to preserve here.
+ *
  * @param rule - The rule body to search (RuntimeRule, any shape).
  * @param candidates - The list of detected pattern candidates.
  */
-/**
- * Resolve the active runtime's `sym()` symbol constructor from the injected DSL
- * globals. Both runtimes now inject it under the SAME name `sym` (sittir's
- * `evaluate.ts saveAndInjectDslGlobals` shadows tree-sitter's baseline `sym`),
- * so there's no name reconciliation — wire stays runtime-agnostic without
- * importing evaluate. Routing the IR-side ref through the constructor stamps
- * `hidden` + `inline = name.startsWith('_')`, matching every other ref; a raw
- * `{ type:'symbol', name, hidden:true }` literal would drop `inline`.
- */
-function nativeSymbolRt(name: string): unknown {
-	const fn = (globalThis as { sym?: (n: string) => unknown }).sym;
-	if (typeof fn !== 'function') {
-		throw new Error('wire: no global sym() — pattern replacement must run inside a DSL runtime');
-	}
-	return fn(name);
-}
-
 function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[]): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
@@ -1327,26 +1313,19 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 			// (otherwise tree-sitter inlines the hidden `_<name>` body and the
 			// kind never appears as a CST node).
 			if (c.aliasAs !== undefined) {
-				return c.uppercase
-					? {
-							type: 'ALIAS',
-							content: { type: 'SYMBOL', name: c.name },
-							named: true,
-							value: c.aliasAs
-						}
-					: {
-							type: 'alias',
-							content: nativeSymbolRt(c.name),
-							named: true,
-							value: c.aliasAs
-						};
+				return {
+					type: 'ALIAS',
+					content: { type: 'SYMBOL', name: c.name },
+					named: true,
+					value: c.aliasAs
+				};
 			}
-			return c.uppercase ? { type: 'SYMBOL', name: c.name } : nativeSymbolRt(c.name);
+			return { type: 'SYMBOL', name: c.name };
 		}
 	}
 	// Recurse into children.
-	const t = r.type.toLowerCase();
-	if (t === 'seq' || t === 'choice') {
+	const t = r.type;
+	if (t === 'SEQ' || t === 'CHOICE') {
 		const members = r.members;
 		if (!Array.isArray(members)) return rule;
 		let changed = false;
@@ -1357,7 +1336,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 		});
 		return changed ? { ...r, members: newMembers } : rule;
 	}
-	if (t === 'optional' || t === 'repeat' || t === 'repeat1' || t === 'field' || t === 'prec' || t === 'prec_left' || t === 'prec_right' || t === 'prec_dynamic' || t === 'token') {
+	if (t === 'OPTIONAL' || t === 'REPEAT' || t === 'REPEAT1' || t === 'FIELD' || t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC' || t === 'TOKEN') {
 		const newContent = replaceInBodyRt(r.content, candidates);
 		return newContent !== r.content ? { ...r, content: newContent } : rule;
 	}
@@ -1422,12 +1401,7 @@ function applyWirePatternReplacement(
 			continue;
 		}
 		if (!isComplexBodyRt(body)) continue;
-		// Detect whether the body uses uppercase types (tree-sitter CLI) or
-		// lowercase (sittir). The proxy always returns SYMBOL (uppercase), so
-		// sub-nodes will be SYMBOL. Top-level seq/choice/repeat type case
-		// reflects which runtime's DSL globals produced them.
-		const uppercase = body.type === body.type.toUpperCase();
-		candidates.push({ name, body, uppercase });
+		candidates.push({ name, body });
 	}
 
 	// New body-pattern groups path: each `groups:` entry whose value is a
@@ -1459,8 +1433,7 @@ function applyWirePatternReplacement(
 					`groups['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
 				);
 			}
-			const uppercase = body.type === body.type.toUpperCase();
-			candidates.push({ name: hiddenName, body, uppercase, aliasAs: key });
+			candidates.push({ name: hiddenName, body, aliasAs: key });
 			// Register the hidden rule body so tree-sitter has a definition
 			// for the symbol the alias() wrappers will reference. Wrap via
 			// wrapOneRuleFn directly (this fn runs after wrapAllRuleFns) so

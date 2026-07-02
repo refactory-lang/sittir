@@ -7,11 +7,10 @@
  *     transform(original, { 0: field('expression') })
  *
  * Two-arg calls delegate to whichever `field` is provided as a global
- * by the runtime — sittir's grammarFn-injected field (lowercase
- * `{type:'field'}`) in sittir's pipeline, tree-sitter's native field
- * (uppercase `{type:'FIELD'}`) when the transpiled grammar.js is
- * loaded by tree-sitter's CLI. This keeps the same call site valid
- * for both consumers without case-conversion shims.
+ * by the runtime — sittir's grammarFn-injected field (`{type:'FIELD'}`)
+ * in sittir's pipeline, or tree-sitter's native field (same shape) when
+ * the transpiled grammar.js is loaded by tree-sitter's CLI. This keeps
+ * the same call site valid for both consumers.
  *
  * One-arg calls return a sittir-only placeholder marker that
  * `transform()`'s resolvePatch swaps out before the result reaches
@@ -51,9 +50,8 @@ import { makeRuleMetadata } from '../rule-metadata.ts';
  *     `field('lifetime', optional('&'))`. Tree-sitter would strip the
  *     FIELD if the inner were bare STRING reachable through the
  *     optional; routing through a SYMBOL preserves the label. Both
- *     the sittir lowercase `optional` shape and the tree-sitter
- *     uppercase `CHOICE(STRING, BLANK)` representation of optional
- *     are handled.
+ *     the `OPTIONAL` shape and tree-sitter's `CHOICE(STRING, BLANK)`
+ *     representation of optional are handled.
  *
  * Used by:
  *   - transform.ts resolvePatch (one-arg field() placeholder path)
@@ -90,7 +88,7 @@ export function maybeKeywordSymbol(
 	if (isChoiceType(c.type)) {
 		const members = (content as { members?: Array<{ type?: string }> }).members;
 		if (Array.isArray(members) && members.length === 2) {
-			const blankIdx = members.findIndex((m) => m?.type === 'BLANK' || m?.type === 'blank');
+			const blankIdx = members.findIndex((m) => m?.type === 'BLANK');
 			if (blankIdx !== -1) {
 				return descendOptional(fieldName, content, wrapSyntheticBody, 'choice-blank');
 			}
@@ -103,17 +101,13 @@ export function maybeKeywordSymbol(
 
 /**
  * Create the `_kw_<fieldName>` hidden rule, register it for wire-managed
- * `inline:`, and return a SYMBOL reference to it, preserving the
- * runtime's case convention (uppercase when the input STRING is
- * uppercase, lowercase otherwise).
+ * `inline:`, and return a SYMBOL reference to it.
  */
 function synthesizeKwSymbol(
 	fieldName: string,
 	content: unknown,
 	wrapSyntheticBody: ((body: RuntimeRule) => RuntimeRule) | undefined
 ): unknown {
-	const c = content as { type: string };
-	const isUpperCase = c.type === 'STRING';
 	const hiddenName = `_kw_${fieldName}`;
 	let body = content as RuntimeRule;
 	if (wrapSyntheticBody) body = wrapSyntheticBody(body);
@@ -124,7 +118,7 @@ function synthesizeKwSymbol(
 	}
 	wireRegisterSyntheticInline(hiddenName);
 	return {
-		type: isUpperCase ? 'SYMBOL' : 'symbol',
+		type: 'SYMBOL',
 		name: hiddenName
 	};
 }
@@ -136,9 +130,8 @@ function synthesizeKwSymbol(
  * are preserved while the inner STRING is routed through a hidden rule.
  *
  * `wrapperKind`:
- *   - `'optional'` — sittir lowercase `{ type: 'optional', content }`
- *     (or tree-sitter's uppercase `{ type: 'OPTIONAL', content }` —
- *     both use a `content` field).
+ *   - `'optional'` — `{ type: 'OPTIONAL', content }` (both runtimes
+ *     agree on this shape).
  *   - `'choice-blank'` — tree-sitter's `CHOICE` of `[content, BLANK]`
  *     normalized form of `optional(content)`.
  *
@@ -155,7 +148,7 @@ function descendOptional(
 		inner = (content as { content?: unknown }).content;
 	} else {
 		const members = (content as { members: Array<{ type?: string }> }).members;
-		const nonBlank = members.find((m) => m.type !== 'BLANK' && m.type !== 'blank');
+		const nonBlank = members.find((m) => m.type !== 'BLANK');
 		inner = nonBlank;
 	}
 
@@ -170,7 +163,7 @@ function descendOptional(
 	}
 	// choice-blank: reconstruct the CHOICE preserving the BLANK position.
 	const c = content as { type: string; members: Array<{ type?: string }> };
-	const newMembers = c.members.map((m) => (m.type === 'BLANK' || m.type === 'blank' ? m : (rewritten as typeof m)));
+	const newMembers = c.members.map((m) => (m.type === 'BLANK' ? m : (rewritten as typeof m)));
 	return { ...c, members: newMembers };
 }
 
@@ -199,8 +192,8 @@ export function isFieldPlaceholder(v: unknown): v is FieldPlaceholder {
  *
  * Return type is a discriminated union: the one-arg placeholder has
  * a readable `__sittirPlaceholder` brand; the two-arg result matches
- * whatever shape the runtime-injected `field()` produces (sittir
- * lowercase `type: 'field'` or tree-sitter uppercase `type: 'FIELD'`).
+ * whatever shape the runtime-injected `field()` produces (`type: 'FIELD'`
+ * in both the sittir and tree-sitter-CLI runtimes).
  */
 export function field(name: string, content?: Input): FieldPlaceholder | FieldLike {
 	if (content === undefined) {

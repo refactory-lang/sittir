@@ -9,13 +9,13 @@ import { makeRuleMetadata, readRuleMetadata } from '../rule-metadata.ts';
 // transform path-helpers, which operate on the `RuntimeRule` supertype
 // (narrower than sittir's `Rule`). Casting here avoids `as any`
 // boilerplate at every call site.
-const sym = (name: string): any => ({ type: 'symbol', name });
-const str = (value: string): any => ({ type: 'string', value });
-const seq = (...members: any[]): any => ({ type: 'seq', members });
-const choice = (...members: any[]): any => ({ type: 'choice', members });
-const optional = (content: any): any => ({ type: 'optional', content });
+const sym = (name: string): any => ({ type: 'SYMBOL', name });
+const str = (value: string): any => ({ type: 'STRING', value });
+const seq = (...members: any[]): any => ({ type: 'SEQ', members });
+const choice = (...members: any[]): any => ({ type: 'CHOICE', members });
+const optional = (content: any): any => ({ type: 'OPTIONAL', content });
 const fld = (name: string, content: any): any => ({
-	type: 'field',
+	type: 'FIELD',
 	name,
 	content
 });
@@ -109,7 +109,7 @@ describe('applyPath()', () => {
 		const rule = seq(str('('), sym('expr'), str(')'));
 		const result = applyPath(rule, [{ kind: 'index', value: 1 }], fld('content', sym('expr')));
 		expect((result as any).members[1]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'content'
 		});
 	});
@@ -125,10 +125,10 @@ describe('applyPath()', () => {
 			fld('middle', sym('b'))
 		);
 		const inner = (result as any).members[1];
-		expect(inner.members[1]).toMatchObject({ type: 'field', name: 'middle' });
+		expect(inner.members[1]).toMatchObject({ type: 'FIELD', name: 'middle' });
 		// Other positions untouched
-		expect(inner.members[0]).toMatchObject({ type: 'symbol', name: 'a' });
-		expect(inner.members[2]).toMatchObject({ type: 'symbol', name: 'c' });
+		expect(inner.members[0]).toMatchObject({ type: 'SYMBOL', name: 'a' });
+		expect(inner.members[2]).toMatchObject({ type: 'SYMBOL', name: 'c' });
 	});
 
 	it('descends into optional wrapper at index 0', () => {
@@ -142,21 +142,21 @@ describe('applyPath()', () => {
 			fld('opt', sym('inner'))
 		);
 		const opt = (result as any).members[0];
-		expect(opt).toMatchObject({ type: 'optional' });
-		expect(opt.content).toMatchObject({ type: 'field', name: 'opt' });
+		expect(opt).toMatchObject({ type: 'OPTIONAL' });
+		expect(opt.content).toMatchObject({ type: 'FIELD', name: 'opt' });
 	});
 
 	it('throws on out-of-bounds index', () => {
 		const rule = seq(sym('a'), sym('b'));
 		expect(() => applyPath(rule, [{ kind: 'index', value: 5 }], fld('x', sym('a')))).toThrow(
-			/index 5 out of bounds in seq of length 2/
+			/index 5 out of bounds in SEQ of length 2/
 		);
 	});
 
 	it('throws on out-of-bounds in wrapper', () => {
 		const rule = optional(sym('inner'));
 		expect(() => applyPath(rule, [{ kind: 'index', value: 1 }], fld('x', sym('inner')))).toThrow(
-			/index 1 out of bounds.*optional.*single content/
+			/index 1 out of bounds.*OPTIONAL.*single content/
 		);
 	});
 
@@ -166,20 +166,20 @@ describe('applyPath()', () => {
 			const result = applyPath(rule, [{ kind: 'wildcard' }, { kind: 'index', value: 0 }], (m) => fld('first', m));
 			const branches = (result as any).members;
 			expect(branches[0].members[0]).toMatchObject({
-				type: 'field',
+				type: 'FIELD',
 				name: 'first'
 			});
 			expect(branches[1].members[0]).toMatchObject({
-				type: 'field',
+				type: 'FIELD',
 				name: 'first'
 			});
 			// Second position untouched in both branches
 			expect(branches[0].members[1]).toMatchObject({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: 'b'
 			});
 			expect(branches[1].members[1]).toMatchObject({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: 'd'
 			});
 		});
@@ -206,9 +206,9 @@ describe('applyPath()', () => {
 				sym('new_block')
 			);
 			const bodyField = (result as any).members[1];
-			expect(bodyField).toMatchObject({ type: 'field', name: 'body' });
+			expect(bodyField).toMatchObject({ type: 'FIELD', name: 'body' });
 			expect(bodyField.content).toMatchObject({
-				type: 'symbol',
+				type: 'SYMBOL',
 				name: 'new_block'
 			});
 		});
@@ -224,7 +224,7 @@ describe('applyPath()', () => {
 					],
 					sym('new_body')
 				)
-			).toThrow(/path segment 'body:' at this level expects a field\('body', \.\.\.\) wrapper; got type 'symbol'/);
+			).toThrow(/path segment 'body:' at this level expects a field\('body', \.\.\.\) wrapper; got type 'SYMBOL'/);
 		});
 
 		it('throws when the field name at that position does not match', () => {
@@ -244,12 +244,12 @@ describe('transform() — object form with path keys', () => {
 		const flat = transform(rule, { _: fld('any', sym('a')) } as Record<string, Rule>);
 		const r = flat as any;
 		expect(r.members[0]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'any'
 		});
 		expect(readRuleMetadata(r.members[0].metadata)?.fieldSource).toBe('override');
 		expect(r.members[1]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'any'
 		});
 		expect(readRuleMetadata(r.members[1].metadata)?.fieldSource).toBe('override');
@@ -262,7 +262,7 @@ describe('transform() — object form with path keys', () => {
 		} as Record<string, Rule>);
 		const r = result as any;
 		expect(r.members[0].members[1]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'inner_b'
 		});
 	});
@@ -275,10 +275,10 @@ describe('transform() — object form with path keys', () => {
 		} as Record<string, Rule>);
 		const r = result as any;
 		expect(r.members[0].members[0]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'first'
 		});
-		expect(r.members[1]).toMatchObject({ type: 'field', name: 'outer' });
+		expect(r.members[1]).toMatchObject({ type: 'FIELD', name: 'outer' });
 	});
 });
 
@@ -288,7 +288,7 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 		const result = transform(rule, { 0: fld('first', sym('a')) });
 		const r = result as any;
 		expect(r.members[0]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'first'
 		});
 		expect(readRuleMetadata(r.members[0].metadata)?.fieldSource).toBe('override');
@@ -312,7 +312,7 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 		const rule = seq(
 			// Simulate enrich's symbol-to-field wrapper on position 0.
 			{
-				type: 'field',
+				type: 'FIELD',
 				name: 'expr',
 				content: sym('expr'),
 				metadata: makeRuleMetadata({ fieldSource: 'enriched' })
@@ -323,14 +323,14 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 		const result = transform(rule, { 0: oneArgField('override_name') as Rule<'evaluate'> });
 		const r = result as any;
 		expect(r.members[0]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'override_name',
 			// Inner content is the original symbol, NOT a nested field.
-			content: { type: 'symbol', name: 'expr' }
+			content: { type: 'SYMBOL', name: 'expr' }
 		});
 		expect(readRuleMetadata(r.members[0].metadata)?.fieldSource).toBe('override');
 		// Belt-and-suspenders: the inner content must not itself be a field.
-		expect(r.members[0].content.type).not.toBe('field');
+		expect(r.members[0].content.type).not.toBe('FIELD');
 	});
 });
 
@@ -343,17 +343,17 @@ describe('applyPath() — kind-match + negative index', () => {
 			'(_expression)': oneArgField('elements') as Rule<'evaluate'>
 		});
 		const r = result as any;
-		expect(r.members[0]).toMatchObject({ type: 'field', name: 'elements' });
+		expect(r.members[0]).toMatchObject({ type: 'FIELD', name: 'elements' });
 		expect(r.members[2].members[0]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'elements'
 		});
 		expect(r.members[2].members[2]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'elements'
 		});
 		// The literal `,` tokens stay untouched.
-		expect(r.members[1]).toMatchObject({ type: 'string', value: ',' });
+		expect(r.members[1]).toMatchObject({ type: 'STRING', value: ',' });
 	});
 
 	it('kind-match skips occurrences already inside a named field (new (name) syntax)', async () => {
@@ -363,7 +363,7 @@ describe('applyPath() — kind-match + negative index', () => {
 		// kind-match on `_expression` must label the bare one as
 		// `elements` but leave the pre-fielded `length` intact.
 		const rule = seq(sym('_expression'), str(';'), {
-			type: 'field',
+			type: 'FIELD',
 			name: 'length',
 			content: sym('_expression')
 		} as Rule<'evaluate'>);
@@ -373,12 +373,12 @@ describe('applyPath() — kind-match + negative index', () => {
 			'(_expression)': oneArgField('elements') as Rule<'evaluate'>
 		});
 		const r = result as any;
-		expect(r.members[0]).toMatchObject({ type: 'field', name: 'elements' });
+		expect(r.members[0]).toMatchObject({ type: 'FIELD', name: 'elements' });
 		// The pre-fielded `length` slot survives unchanged.
 		expect(r.members[2]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'length',
-			content: { type: 'symbol', name: '_expression' }
+			content: { type: 'SYMBOL', name: '_expression' }
 		});
 	});
 
@@ -391,11 +391,11 @@ describe('applyPath() — kind-match + negative index', () => {
 		const result = transform(rule, { '-1': oneArgField('body_field') as Rule<'evaluate'> });
 		const r = result as any;
 		expect(r.members[2]).toMatchObject({
-			type: 'field',
+			type: 'FIELD',
 			name: 'body_field',
-			content: { type: 'symbol', name: 'body' }
+			content: { type: 'SYMBOL', name: 'body' }
 		});
 		// Other positions untouched.
-		expect(r.members[0]).toMatchObject({ type: 'string', value: 'struct' });
+		expect(r.members[0]).toMatchObject({ type: 'STRING', value: 'struct' });
 	});
 });

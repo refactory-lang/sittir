@@ -306,7 +306,7 @@ function spliceFoldableRefs(
  * render emitter gates the whole sequence on its single internal slot.
  */
 function materializeInlinedBody(
-	ref: Extract<Rule<'link'>, { type: 'symbol' }>,
+	ref: Extract<Rule<'link'>, { type: 'SYMBOL' }>,
 	body: Rule<'link'>,
 	inlinedFrom: string
 ): Rule<'link'> {
@@ -340,7 +340,7 @@ function materializeInlinedBody(
 		return { ...body, ...carry, metadata: meta, splicedBody: true } as Rule<'link'>;
 	}
 	return {
-		type: 'seq',
+		type: SEQ,
 		members: [body],
 		...carry,
 		metadata: meta,
@@ -503,7 +503,7 @@ export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 			// separator/multiplicity/etc. attrs (so comma-separated lists keep
 			// their separator), then override id with the seq's id so downstream
 			// slot resolution (slotByRuleId) still finds it. A fresh
-			// `{ type: 'choice', ... }` here drops both the id and the separator
+			// `{ type: 'CHOICE', ... }` here drops both the id and the separator
 			// (the source of the UNRESOLVED slotByRuleId misses AND the
 			// space-join regression on type_arguments / future_import_statement).
 			return { ...choice, type: CHOICE, members: branches, ...(rule.id !== undefined ? { id: rule.id } : {}) };
@@ -593,7 +593,7 @@ function extractFactoredChoiceBody(
 			hasEmpty = true;
 			continue;
 		}
-		const bodyRule: Rule<'link'> = body.length === 1 ? body[0]! : { type: 'seq', members: body };
+		const bodyRule: Rule<'link'> = body.length === 1 ? body[0]! : { type: SEQ, members: body };
 		nonEmpty.push(m.type === VARIANT ? { type: VARIANT, name: m.name, content: bodyRule } : bodyRule);
 	}
 	return { prefix, suffix, nonEmpty, hasEmpty };
@@ -613,11 +613,11 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 	switch (rule.type) {
 		case CHOICE: {
 			const members = rule.members.map((m) => factorChoiceBranches(m));
-			const unwrapped = members.map((m) => (m.type === 'variant' ? m.content : m));
+			const unwrapped = members.map((m) => (m.type === VARIANT ? m.content : m));
 			// Bare atoms normalized to single-member seqs for uniform factoring.
-			const canFactor = unwrapped.length >= 2 && unwrapped.every((b) => b.type === 'seq' || isAtomForFactoring(b));
+			const canFactor = unwrapped.length >= 2 && unwrapped.every((b) => b.type === SEQ || isAtomForFactoring(b));
 			if (!canFactor) return { ...rule, members };
-			const seqs = unwrapped.map((b) => (b.type === 'seq' ? (b as SeqRule<'link'>).members : [b]));
+			const seqs = unwrapped.map((b) => (b.type === SEQ ? (b as SeqRule<'link'>).members : [b]));
 			const prefixLen = findCommonPrefix(seqs);
 			const suffixLen = findCommonSuffix(seqs, prefixLen);
 			if (prefixLen === 0 && suffixLen === 0) return { ...rule, members };
@@ -632,8 +632,8 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 			const core: Rule<'link'> =
 				nonEmpty.length === 1
 					? nonEmpty[0]!
-					: { ...rule, type: 'choice', members: nonEmpty };
-			const inner: Rule<'link'> = hasEmpty ? { type: 'optional', content: core } : core;
+					: { ...rule, type: CHOICE, members: nonEmpty };
+			const inner: Rule<'link'> = hasEmpty ? { type: OPTIONAL, content: core } : core;
 			const outerMembers: Rule<'link'>[] = [...prefix, inner, ...suffix];
 			return outerMembers.length === 1 ? outerMembers[0]! : { type: SEQ, members: outerMembers };
 		}

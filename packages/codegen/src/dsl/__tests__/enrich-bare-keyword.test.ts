@@ -47,7 +47,7 @@ describe('enrich — leading string literals (bare-keyword pass removed)', () =>
 			})
 		);
 		const seq = topSeq(g, 'async_fn');
-		expect(seq.members[0]).toMatchObject({ type: 'string', value: 'async' });
+		expect(seq.members[0]).toMatchObject({ type: 'STRING', value: 'async' });
 	});
 
 	it('leaves non-leading string literals as plain strings', () => {
@@ -64,7 +64,7 @@ describe('enrich — leading string literals (bare-keyword pass removed)', () =>
 			})
 		);
 		expect(topSeq(g, 'for_loop').members[1]).toMatchObject({
-			type: 'string',
+			type: 'STRING',
 			value: 'for'
 		});
 	});
@@ -83,7 +83,7 @@ describe('enrich — leading string literals (bare-keyword pass removed)', () =>
 			})
 		);
 		expect(topSeq(g, 'paren').members[0]).toMatchObject({
-			type: 'string',
+			type: 'STRING',
 			value: '('
 		});
 	});

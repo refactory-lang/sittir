@@ -243,14 +243,14 @@ export function applyPath(
 		case 'index':
 		case 'wildcard': {
 			// Containers we can descend into — predicates in runtime-shapes.ts
-			// accept both sittir lowercase and tree-sitter uppercase naming.
+			// work across both the sittir and tree-sitter-CLI runtimes.
 			if (isContainerType(t)) {
 				return applyToMembers(rule, head!, rest, patch, precStack);
 			}
 			if (isWrapperType(t)) {
 				return descendThroughSingleWrapper(rule, head!, rest, patch, precStack);
 			}
-			if (t === 'alias' || t === 'ALIAS') {
+			if (t === 'ALIAS') {
 				return descendThroughAlias(rule, head!, rest, patch, precStack);
 			}
 			throw new ApplyPathSkip(
@@ -308,7 +308,7 @@ function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
 	// type guard, an alias would match here and `descendThroughGroupLiftSymbol`
 	// would throw "group-lift symbol has no name" (an alias has no `.name`).
 	const t = (rule as { type?: string }).type;
-	if (t !== 'symbol' && t !== 'SYMBOL') return false;
+	if (t !== 'SYMBOL') return false;
 	const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
 	return meta?.source === 'enrich';
 }
@@ -372,7 +372,7 @@ function descendThroughGroupLiftSymbol(
 }
 
 /**
- * True when `rule` is an enrich-synthesized content-alias — an `alias`/`ALIAS`
+ * True when `rule` is an enrich-synthesized content-alias — an `ALIAS`
  * node tagged `metadata.source === 'enrich'`. enrich wraps an inline-unsafe
  * `optional(seq)` / bare `choice` in `alias(<content>, $.<name>)` to surface it
  * as a visible CST kind; path-descent travels THROUGH it (see
@@ -381,7 +381,7 @@ function descendThroughGroupLiftSymbol(
  */
 function isEnrichContentAlias(rule: RuntimeRule): boolean {
 	const t = (rule as { type?: string }).type;
-	if (t !== 'alias' && t !== 'ALIAS') return false;
+	if (t !== 'ALIAS') return false;
 	const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
 	return meta?.source === 'enrich';
 }
@@ -683,14 +683,14 @@ function walkKindMatch(
 		};
 	}
 
-	if (t === 'symbol' || t === 'SYMBOL') {
+	if (t === 'SYMBOL') {
 		return applyKindMatchToSymbol(rule, targetKind, rest, patch, precStack, insideNamedField);
 	}
 
 	// Field: descend into content but mark insideNamedField=true so nested
 	// `_expression` references inside already-fielded symbols don't get
 	// re-wrapped.
-	if (t === 'field' || t === 'FIELD') {
+	if (t === 'FIELD') {
 		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, true);
 		return {
 			rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
@@ -778,8 +778,8 @@ export function reconstructContainer(rule: RuntimeRule, members: RuntimeRule[]):
  */
 export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
 	const t = rule.type;
-	if (t === 'optional') return nativeRequired('optional')(newContent);
-	if (t === 'repeat' || t === 'REPEAT' || t === 'repeat1' || t === 'REPEAT1') {
+	if (t === 'OPTIONAL') return nativeRequired('optional')(newContent);
+	if (t === 'REPEAT' || t === 'REPEAT1') {
 		return reconstructRepeatWithMetadata(rule, newContent);
 	}
 	if (isFieldType(t)) {
@@ -816,7 +816,7 @@ function reconstructRepeatWithMetadata(rule: RuntimeRule, newContent: RuntimeRul
 		trailing?: unknown;
 	};
 	const t = r.type;
-	const baseNode = nativeRequired(t === 'repeat' || t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Record<
+	const baseNode = nativeRequired(t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Record<
 		string,
 		unknown
 	>;

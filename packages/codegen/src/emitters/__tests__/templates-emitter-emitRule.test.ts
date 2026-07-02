@@ -187,7 +187,7 @@ describe('emitRule — wrapper types throw (PR2 Task 3.B3)', () => {
 			name: 'name',
 			content: { type: SYMBOL, name: 'identifier' }
 		};
-		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'field'");
+		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'FIELD'");
 	});
 
 	it('throws when given an optional rule (wrapper removed in RenderRule)', () => {
@@ -195,7 +195,7 @@ describe('emitRule — wrapper types throw (PR2 Task 3.B3)', () => {
 			type: OPTIONAL,
 			content: { type: STRING, value: ';' }
 		};
-		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'optional'");
+		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'OPTIONAL'");
 	});
 
 	it('throws when given a repeat rule (wrapper removed in RenderRule)', () => {
@@ -203,7 +203,7 @@ describe('emitRule — wrapper types throw (PR2 Task 3.B3)', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'repeat'");
+		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'REPEAT'");
 	});
 
 	it('throws when given a repeat1 rule (wrapper removed in RenderRule)', () => {
@@ -211,7 +211,7 @@ describe('emitRule — wrapper types throw (PR2 Task 3.B3)', () => {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'repeat1'");
+		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'REPEAT1'");
 	});
 });
 
@@ -426,7 +426,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 			name: 'item',
 			id: 'r12',
 			multiplicity: 'array',
-			separator: { rules: [{ type: 'string', value: ',' }], trailing: true }
+			separator: { rules: [{ type: 'STRING', value: ',' }], trailing: true }
 		};
 		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({

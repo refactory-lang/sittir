@@ -49,7 +49,7 @@ function extractSymbolName(v) {
 function isFieldLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
-  return (t === "field" || t === "FIELD") && typeof v.name === "string";
+  return t === "FIELD" && typeof v.name === "string";
 }
 function isEnrichShapedFieldWrapper(v) {
   if (!isFieldLike(v)) return false;
@@ -62,27 +62,27 @@ function isEnrichShapedFieldWrapper(v) {
   return baseName !== v.name && (baseName === symName || baseName === strippedSym);
 }
 function isContainerType(t) {
-  return t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE";
+  return t === "SEQ" || t === "CHOICE";
 }
 function isWrapperType(t) {
-  return t === "optional" || t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1" || t === "field" || t === "FIELD" || t === "TOKEN" || t === "IMMEDIATE_TOKEN" || t === "BLANK";
+  return t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1" || t === "FIELD" || t === "TOKEN" || t === "IMMEDIATE_TOKEN" || t === "BLANK";
 }
 function isPrecWrapper(rule) {
   const t = rule.type;
-  return t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC";
+  return t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC";
 }
-function typeEq(t, lower) {
-  return typeof t === "string" && (t === lower || t === lower.toUpperCase());
+function typeEq(t, upper) {
+  return t === upper;
 }
-var isSeqType = (t) => typeEq(t, "seq");
-var isChoiceType = (t) => typeEq(t, "choice");
-var isOptionalType = (t) => typeEq(t, "optional");
-var isFieldType = (t) => typeEq(t, "field");
-var isSymbolType = (t) => typeEq(t, "symbol");
-var isStringType = (t) => typeEq(t, "string");
-var isPlainRepeatType = (t) => typeEq(t, "repeat");
-var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
-var isBlankType = (t) => typeEq(t, "blank");
+var isSeqType = (t) => typeEq(t, "SEQ");
+var isChoiceType = (t) => typeEq(t, "CHOICE");
+var isOptionalType = (t) => typeEq(t, "OPTIONAL");
+var isFieldType = (t) => typeEq(t, "FIELD");
+var isSymbolType = (t) => typeEq(t, "SYMBOL");
+var isStringType = (t) => typeEq(t, "STRING");
+var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
+var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
+var isBlankType = (t) => typeEq(t, "BLANK");
 
 // packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
@@ -165,7 +165,7 @@ function applyPath(rule, segments, patch, precStack) {
       if (isWrapperType(t)) {
         return descendThroughSingleWrapper(rule, head, rest, patch, precStack);
       }
-      if (t === "alias" || t === "ALIAS") {
+      if (t === "ALIAS") {
         return descendThroughAlias(rule, head, rest, patch, precStack);
       }
       throw new ApplyPathSkip(
@@ -185,7 +185,7 @@ function descendThroughPrecWrapper(rule, segments, patch, precStack) {
 }
 function isEnrichGroupLiftSymbol(rule) {
   const t = rule.type;
-  if (t !== "symbol" && t !== "SYMBOL") return false;
+  if (t !== "SYMBOL") return false;
   const meta = rule.metadata;
   return meta?.source === "enrich";
 }
@@ -210,7 +210,7 @@ function descendThroughGroupLiftSymbol(rule, segments, patch, precStack) {
 }
 function isEnrichContentAlias(rule) {
   const t = rule.type;
-  if (t !== "alias" && t !== "ALIAS") return false;
+  if (t !== "ALIAS") return false;
   const meta = rule.metadata;
   return meta?.source === "enrich";
 }
@@ -331,10 +331,10 @@ function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedFiel
       matched: inner.matched
     };
   }
-  if (t === "symbol" || t === "SYMBOL") {
+  if (t === "SYMBOL") {
     return applyKindMatchToSymbol(rule, targetKind, rest, patch, precStack, insideNamedField);
   }
-  if (t === "field" || t === "FIELD") {
+  if (t === "FIELD") {
     const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, true);
     return {
       rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
@@ -376,8 +376,8 @@ function reconstructContainer(rule, members) {
 }
 function reconstructWrapper(rule, newContent) {
   const t = rule.type;
-  if (t === "optional") return nativeRequired("optional")(newContent);
-  if (t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1") {
+  if (t === "OPTIONAL") return nativeRequired("optional")(newContent);
+  if (t === "REPEAT" || t === "REPEAT1") {
     return reconstructRepeatWithMetadata(rule, newContent);
   }
   if (isFieldType(t)) {
@@ -391,7 +391,7 @@ function reconstructWrapper(rule, newContent) {
 function reconstructRepeatWithMetadata(rule, newContent) {
   const r = rule;
   const t = r.type;
-  const baseNode = nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(newContent);
+  const baseNode = nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent);
   if (r.separator !== void 0) baseNode.separator = r.separator;
   if (r.leading !== void 0) baseNode.leading = r.leading;
   if (r.trailing !== void 0) baseNode.trailing = r.trailing;
@@ -503,20 +503,14 @@ function alias(rule, value) {
 }
 
 // packages/codegen/src/types/rule-types.ts
-var SEQ = "seq";
-var OPTIONAL = "optional";
-var CHOICE = "choice";
-var REPEAT = "repeat";
-var REPEAT1 = "repeat1";
-var STRING = "string";
-var PATTERN = "pattern";
-var SYMBOL = "symbol";
-var TOKEN = "token";
-
-// packages/codegen/src/types/rule.ts
-function sym(name) {
-  return { type: SYMBOL, name, hidden: name.startsWith("_"), inline: name.startsWith("_") };
-}
+var SEQ = "SEQ";
+var OPTIONAL = "OPTIONAL";
+var CHOICE = "CHOICE";
+var REPEAT = "REPEAT";
+var REPEAT1 = "REPEAT1";
+var STRING = "STRING";
+var PATTERN = "PATTERN";
+var TOKEN = "TOKEN";
 
 // packages/codegen/src/dsl/rule-metadata.ts
 function makeRuleMetadata(shape) {
@@ -525,22 +519,22 @@ function makeRuleMetadata(shape) {
 
 // packages/codegen/src/dsl/list-patterns.ts
 function firstStringOfChoice(r) {
-  if (!typeEq(r.type, "choice")) return null;
+  if (!typeEq(r.type, "CHOICE")) return null;
   const members = r.members ?? [];
-  const lit = members.find((m) => typeEq(m.type, "string"));
+  const lit = members.find((m) => typeEq(m.type, "STRING"));
   return lit ? lit.value : null;
 }
 function detectRepeatSeparator(resolved) {
-  if (!typeEq(resolved.type, "seq")) return null;
+  if (!typeEq(resolved.type, "SEQ")) return null;
   const members = resolved.members;
   if (!members || members.length !== 2) return null;
   const [first, second] = members;
-  const firstStr = typeEq(first.type, "string") ? first.value : null;
-  const secondStr = typeEq(second.type, "string") ? second.value : null;
+  const firstStr = typeEq(first.type, "STRING") ? first.value : null;
+  const secondStr = typeEq(second.type, "STRING") ? second.value : null;
   if (firstStr !== null && secondStr === null) return { content: second, separator: firstStr };
   if (secondStr !== null && firstStr === null) return { content: first, separator: secondStr, trailing: true };
-  const firstSepChoice = typeEq(first.type, "choice") ? firstStringOfChoice(first) : null;
-  const secondSepChoice = typeEq(second.type, "choice") ? firstStringOfChoice(second) : null;
+  const firstSepChoice = typeEq(first.type, "CHOICE") ? firstStringOfChoice(first) : null;
+  const secondSepChoice = typeEq(second.type, "CHOICE") ? firstStringOfChoice(second) : null;
   if (firstSepChoice !== null && secondStr === null) return { content: second, separator: firstSepChoice };
   if (secondSepChoice !== null && firstStr === null) return { content: first, separator: secondSepChoice, trailing: true };
   return null;
@@ -552,7 +546,7 @@ function ruleMatchesEmpty(rule) {
   const r = rule;
   const t = typeof r.type === "string" ? r.type : "";
   if (isOptionalType(t) || isPlainRepeatType2(t) || isBlankType(t)) return true;
-  if (typeEq(t, "repeat1")) {
+  if (typeEq(t, "REPEAT1")) {
     return ruleMatchesEmpty(r.content);
   }
   if (isSeqType(t)) {
@@ -560,7 +554,7 @@ function ruleMatchesEmpty(rule) {
     if (!Array.isArray(members) || members.length === 0) return true;
     return members.every((m) => ruleMatchesEmpty(m));
   }
-  if (typeEq(t, "choice")) {
+  if (typeEq(t, "CHOICE")) {
     const members = r.members;
     if (!Array.isArray(members)) return false;
     return members.some((m) => ruleMatchesEmpty(m));
@@ -568,11 +562,11 @@ function ruleMatchesEmpty(rule) {
   if (isFieldType(t) || isPrecWrapper(r)) {
     return ruleMatchesEmpty(r.content);
   }
-  if (isStringType(t) || isSymbolType(t) || typeEq(t, "token") || typeEq(t, "pattern")) return false;
+  if (isStringType(t) || isSymbolType(t) || typeEq(t, "TOKEN") || typeEq(t, "PATTERN")) return false;
   return false;
 }
 function isPlainRepeatType2(t) {
-  return t === "repeat" || t === "REPEAT";
+  return t === "REPEAT";
 }
 function collectSlots(members) {
   const slots = [];
@@ -580,7 +574,7 @@ function collectSlots(members) {
     if (!m || typeof m !== "object") continue;
     const r = m;
     const t = typeof r.type === "string" ? r.type : "";
-    if (isStringType(t) || typeEq(t, "token") || isBlankType(t)) continue;
+    if (isStringType(t) || typeEq(t, "TOKEN") || isBlankType(t)) continue;
     slots.push(m);
   }
   return slots;
@@ -598,7 +592,7 @@ function unwrapPrec(rule) {
   return cur;
 }
 function isRepeatLike(t) {
-  return isRepeatType(t) || typeEq(t, "repeat1");
+  return isRepeatType(t) || typeEq(t, "REPEAT1");
 }
 function flattenSeqMembers(members) {
   const out = [];
@@ -666,13 +660,12 @@ function matchesWordShape(value, wordMatcher) {
 }
 function ruleToRegexSource(rule) {
   const shaped = rule;
-  switch (String(rule.type).toLowerCase()) {
+  switch (rule.type) {
     case PATTERN:
       return shaped.value ?? null;
     case STRING:
       return shaped.value === void 0 ? null : escapeRegexLiteral(shaped.value);
     case TOKEN:
-    case "immediate_token":
       return shaped.content ? ruleToRegexSource(shaped.content) : null;
     case SEQ: {
       const parts = [];
@@ -904,7 +897,7 @@ function peelOptional(rule) {
   if (isChoiceType(rule.type)) {
     const members = rule.members;
     if (members.length === 2) {
-      const blankIdx = members.findIndex((m) => m.type === "BLANK" || m.type === "blank");
+      const blankIdx = members.findIndex((m) => m.type === "BLANK");
       if (blankIdx !== -1) {
         const inner = members[1 - blankIdx];
         return { inner, isOptional: true };
@@ -948,7 +941,7 @@ function detectSymbolTarget(member) {
     if (isSymbolType(sn2.type) && typeof sn2.name === "string") {
       if (symIdx !== -1) return null;
       symIdx = i;
-    } else if (!isStringType(sn2.type) && sn2.type !== "PATTERN" && sn2.type !== "pattern") {
+    } else if (!isStringType(sn2.type) && sn2.type !== "PATTERN") {
       return null;
     }
   }
@@ -972,7 +965,7 @@ function countSymbolsInRepeat(node, kindCounts, inRepeat = false) {
   const t = node.type;
   if (!t) return;
   if (isFieldType(t)) return;
-  if (t === "ALIAS" || t === "alias") return;
+  if (t === "ALIAS") return;
   if (isSymbolType(t)) {
     if (!inRepeat) return;
     const name = node.name;
@@ -1291,7 +1284,7 @@ function rebuildOptional(optionalRule, newInner) {
   const members = optionalRule.members;
   const newMembers = members.map((m) => {
     const t = m.type;
-    return t === "BLANK" || t === "blank" ? m : newInner;
+    return t === "BLANK" ? m : newInner;
   });
   return { ...optionalRule, members: newMembers };
 }
@@ -1518,10 +1511,9 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
   clauseGroupRules[hiddenName] = content;
   return { visibleName, hiddenName };
 }
-function makeGroupLiftSymbol(referenceRule, name) {
-  const t = referenceRule.type ?? "";
-  const isUpper = t.length > 0 && t === t.toUpperCase();
-  const base2 = isUpper ? { type: "SYMBOL", name } : sym(name);
+function makeGroupLiftSymbol(_referenceRule, name) {
+  const symbol = nativeRuleFn("symbol", "sym");
+  const base2 = symbol(name);
   return {
     ...base2,
     metadata: makeRuleMetadata({ source: "enrich", symbolSource: "group-lift" })
@@ -1770,7 +1762,7 @@ function collectInlineNames(entries) {
   for (const entry of entries) {
     if (!entry || typeof entry !== "object") continue;
     const symbol = entry;
-    if ((symbol.type === "symbol" || symbol.type === "SYMBOL") && typeof symbol.name === "string") {
+    if (symbol.type === "SYMBOL" && typeof symbol.name === "string") {
       names.add(symbol.name);
     }
   }
@@ -1803,13 +1795,13 @@ function makeSimpleDollarProxy() {
 function isComplexBodyRt(rule) {
   const r = rule;
   const t = r.type;
-  if (typeEq(t, "seq") || typeEq(t, "choice")) {
+  if (typeEq(t, "SEQ") || typeEq(t, "CHOICE")) {
     return Array.isArray(r.members) && r.members.length >= 2;
   }
-  if (typeEq(t, "repeat") || typeEq(t, "repeat1")) {
+  if (typeEq(t, "REPEAT") || typeEq(t, "REPEAT1")) {
     const c = r.content;
     if (!c || typeof c.type !== "string") return false;
-    return !typeEq(c.type, "string") && !typeEq(c.type, "symbol") && !typeEq(c.type, "pattern");
+    return !typeEq(c.type, "STRING") && !typeEq(c.type, "SYMBOL") && !typeEq(c.type, "PATTERN");
   }
   return false;
 }
@@ -1818,7 +1810,7 @@ function unwrapOptionalChoiceRt(node) {
   const r = node;
   if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
     const blankIdx = r.members.findIndex((m) => isBlankType(m?.type));
-    if (blankIdx !== -1) return { type: "optional", content: r.members[1 - blankIdx] };
+    if (blankIdx !== -1) return { type: "OPTIONAL", content: r.members[1 - blankIdx] };
   }
   return node;
 }
@@ -1829,37 +1821,30 @@ function patternBodyEqual(aIn, bIn) {
   if (!b || typeof b !== "object") return false;
   const ra = a;
   const rb = b;
-  if (!typeEq(ra.type, rb.type.toLowerCase())) return false;
-  const t = ra.type.toLowerCase();
-  if (t === "string" || t === "pattern") return ra.value === rb.value;
-  if (t === "symbol") return ra.name === rb.name;
-  if (t === "blank") return true;
-  if (t === "seq" || t === "choice") {
+  if (ra.type !== rb.type) return false;
+  const t = ra.type;
+  if (t === "STRING" || t === "PATTERN") return ra.value === rb.value;
+  if (t === "SYMBOL") return ra.name === rb.name;
+  if (t === "BLANK") return true;
+  if (t === "SEQ" || t === "CHOICE") {
     const ma = ra.members;
     const mb = rb.members;
     if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
     if (ma.length !== mb.length) return false;
     return ma.every((m, i) => patternBodyEqual(m, mb[i]));
   }
-  if (t === "optional" || t === "repeat" || t === "repeat1") {
+  if (t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1") {
     return patternBodyEqual(ra.content, rb.content);
   }
-  if (t === "field") {
+  if (t === "FIELD") {
     return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
   }
-  if (t === "alias") {
+  if (t === "ALIAS") {
     const raa = ra;
     const rba = rb;
     return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
   }
   return false;
-}
-function nativeSymbolRt(name) {
-  const fn = globalThis.sym;
-  if (typeof fn !== "function") {
-    throw new Error("wire: no global sym() \u2014 pattern replacement must run inside a DSL runtime");
-  }
-  return fn(name);
 }
 function replaceInBodyRt(rule, candidates) {
   if (!rule || typeof rule !== "object") return rule;
@@ -1867,23 +1852,18 @@ function replaceInBodyRt(rule, candidates) {
   for (const c of candidates) {
     if (patternBodyEqual(rule, c.body)) {
       if (c.aliasAs !== void 0) {
-        return c.uppercase ? {
+        return {
           type: "ALIAS",
           content: { type: "SYMBOL", name: c.name },
           named: true,
           value: c.aliasAs
-        } : {
-          type: "alias",
-          content: nativeSymbolRt(c.name),
-          named: true,
-          value: c.aliasAs
         };
       }
-      return c.uppercase ? { type: "SYMBOL", name: c.name } : nativeSymbolRt(c.name);
+      return { type: "SYMBOL", name: c.name };
     }
   }
-  const t = r.type.toLowerCase();
-  if (t === "seq" || t === "choice") {
+  const t = r.type;
+  if (t === "SEQ" || t === "CHOICE") {
     const members = r.members;
     if (!Array.isArray(members)) return rule;
     let changed = false;
@@ -1894,7 +1874,7 @@ function replaceInBodyRt(rule, candidates) {
     });
     return changed ? { ...r, members: newMembers } : rule;
   }
-  if (t === "optional" || t === "repeat" || t === "repeat1" || t === "field" || t === "prec" || t === "prec_left" || t === "prec_right" || t === "prec_dynamic" || t === "token") {
+  if (t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1" || t === "FIELD" || t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC" || t === "TOKEN") {
     const newContent = replaceInBodyRt(r.content, candidates);
     return newContent !== r.content ? { ...r, content: newContent } : rule;
   }
@@ -1922,8 +1902,7 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) 
       continue;
     }
     if (!isComplexBodyRt(body)) continue;
-    const uppercase = body.type === body.type.toUpperCase();
-    candidates.push({ name, body, uppercase });
+    candidates.push({ name, body });
   }
   if (groups) {
     for (const [key, value] of Object.entries(groups)) {
@@ -1949,8 +1928,7 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) 
           `groups['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
         );
       }
-      const uppercase = body.type === body.type.toUpperCase();
-      candidates.push({ name: hiddenName, body, uppercase, aliasAs: key });
+      candidates.push({ name: hiddenName, body, aliasAs: key });
       rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
     }
   }
@@ -1975,7 +1953,7 @@ function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   if (isChoiceType(c.type)) {
     const members = content.members;
     if (Array.isArray(members) && members.length === 2) {
-      const blankIdx = members.findIndex((m) => m?.type === "BLANK" || m?.type === "blank");
+      const blankIdx = members.findIndex((m) => m?.type === "BLANK");
       if (blankIdx !== -1) {
         return descendOptional(fieldName, content, wrapSyntheticBody, "choice-blank");
       }
@@ -1985,8 +1963,6 @@ function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   return content;
 }
 function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
-  const c = content;
-  const isUpperCase = c.type === "STRING";
   const hiddenName = `_kw_${fieldName}`;
   let body = content;
   if (wrapSyntheticBody) body = wrapSyntheticBody(body);
@@ -1997,7 +1973,7 @@ function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
   }
   wireRegisterSyntheticInline(hiddenName);
   return {
-    type: isUpperCase ? "SYMBOL" : "symbol",
+    type: "SYMBOL",
     name: hiddenName
   };
 }
@@ -2007,7 +1983,7 @@ function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
     inner = content.content;
   } else {
     const members = content.members;
-    const nonBlank = members.find((m) => m.type !== "BLANK" && m.type !== "blank");
+    const nonBlank = members.find((m) => m.type !== "BLANK");
     inner = nonBlank;
   }
   const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
@@ -2018,7 +1994,7 @@ function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
     return nativeOptional(rewritten);
   }
   const c = content;
-  const newMembers = c.members.map((m) => m.type === "BLANK" || m.type === "blank" ? m : rewritten);
+  const newMembers = c.members.map((m) => m.type === "BLANK" ? m : rewritten);
   return { ...c, members: newMembers };
 }
 function isFieldPlaceholder(v) {
@@ -2166,7 +2142,6 @@ function parseVariantPathsForHoist(variantEntries, bail) {
 }
 function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack) {
   const refs = [];
-  const isUpperCase = core.type === core.type.toUpperCase();
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altContent = choiceMembers[resolvedAlt];
@@ -2184,8 +2159,8 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
     refs.push({
-      type: isUpperCase ? "ALIAS" : "alias",
-      content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+      type: "ALIAS",
+      content: { type: "SYMBOL", name: hiddenName },
       named: true,
       value: visibleName
     });
@@ -2207,10 +2182,10 @@ function registerHoistedVariantConflicts(variantNames) {
 var membersOf2 = (r) => r.members;
 var contentOf2 = (r) => r.content;
 function countBodyAnchors(rule) {
-  const t = rule.type.toLowerCase();
-  if (t === "string" || t === "pattern" || t === "token") return { tokens: 1, named: 0 };
-  if (t === "symbol") return { tokens: 0, named: 1 };
-  if (t === "blank") return { tokens: 0, named: 0 };
+  const t = rule.type;
+  if (t === "STRING" || t === "PATTERN" || t === "TOKEN") return { tokens: 1, named: 0 };
+  if (t === "SYMBOL") return { tokens: 0, named: 1 };
+  if (t === "BLANK") return { tokens: 0, named: 0 };
   if (isSeqType(rule.type) || isChoiceType(rule.type)) {
     return membersOf2(rule).reduce(
       (acc, m) => {
@@ -2319,7 +2294,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(node) {
   if (!r || typeof r !== "object") return null;
   const t = r.type;
   if (!t) return null;
-  const isSittirOptional = t === "optional" || t === "OPTIONAL";
+  const isSittirOptional = t === "OPTIONAL";
   if (isSittirOptional) {
     const inner = r.content;
     if (!inner || typeof inner !== "object") return null;
@@ -2343,7 +2318,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(node) {
     if (!Array.isArray(members) || members.length !== 2) return null;
     const blankIdx = members.findIndex((m) => {
       const mt = m.type;
-      return mt === "BLANK" || mt === "blank";
+      return mt === "BLANK";
     });
     if (blankIdx === -1) return null;
     const contentIdx = 1 - blankIdx;
@@ -2372,7 +2347,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(node) {
     }
     return null;
   }
-  const isPrecWrapper2 = t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC";
+  const isPrecWrapper2 = t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC";
   if (isPrecWrapper2) {
     const inner = r.content;
     if (!inner || typeof inner !== "object") return null;
@@ -2437,7 +2412,6 @@ function resolveAliasPlaceholder(patch, originalMember, precStack) {
   return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
 function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
-  const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
   const wasEmpty = matchesEmpty(originalMember);
   const factored = factorOutEmptiness(originalMember);
   if (wasEmpty && !factored) {
@@ -2450,8 +2424,8 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
   }
   const aliasNode = {
-    type: isUpperCase ? "ALIAS" : "alias",
-    content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+    type: "ALIAS",
+    content: { type: "SYMBOL", name: hiddenName },
     named: true,
     value: aliasValue
   };
@@ -2491,7 +2465,7 @@ function extractNonEmpty(rule) {
     const r = rule;
     const nonEmpty = {
       ...r,
-      type: t === "REPEAT" ? "REPEAT1" : "repeat1"
+      type: "REPEAT1"
     };
     return { nonEmpty };
   }

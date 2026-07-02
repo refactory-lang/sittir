@@ -554,7 +554,7 @@ function isLeftmostTerminalImmediate(rule: Rule<'link'>): boolean {
 				// Only recurse into the first non-empty member.
 				const result = isLeftmostTerminalImmediate(m);
 				// A string member is not immediate (it's a bare literal, not token.immediate)
-				if (m.type === 'string' || m.type === 'pattern') return false;
+				if (m.type === STRING || m.type === PATTERN) return false;
 				return result;
 			}
 			return false;
@@ -1382,7 +1382,7 @@ function emitSymbolSlot(kindName: string, _ctx: EmitCtx): string {
  *  - 'optional'               → conditional scalar: `{% if name | isPresent %}{{ name }}{% endif %}`
  *  - undefined (required)     → scalar: `{{ name }}`
  */
-function emitSymbol(rule: Extract<Rule<'link'>, { type: 'symbol' }>, ctx: EmitCtx): string {
+function emitSymbol(rule: Extract<Rule<'link'>, { type: 'SYMBOL' }>, ctx: EmitCtx): string {
 	// Link-synthesized symbols carry their original literal text — render
 	// it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
 	// `foo` not as a slot reference.
@@ -1561,7 +1561,7 @@ function emitSymbol(rule: Extract<Rule<'link'>, { type: 'symbol' }>, ctx: EmitCt
 // gating-slot resolver is the SINGLE source of slot-count truth (DRY); the
 // inline hoist deliberately does not pre-count. Diagnostic only — never throws.
 const warnedMultiSlotGroups = new Set<string>();
-function warnMultiSlotMultiplicityGroup(rule: Extract<Rule<'link'>, { type: 'seq' }>, ctx: EmitCtx): void {
+function warnMultiSlotMultiplicityGroup(rule: Extract<Rule<'link'>, { type: 'SEQ' }>, ctx: EmitCtx): void {
 	const keys = new Set<string>();
 	for (const m of rule.members) {
 		const k = pickConditionalKey(m, ctx);
@@ -1634,7 +1634,7 @@ function pickConditionalKey(content: Rule<'link'>, ctx: EmitCtx): string | undef
 	}
 	// A symbol with a slot back-pointer — gate on its kind slot name.
 	if (content.type === SYMBOL) {
-		const sym = content as Extract<Rule<'link'>, { type: 'symbol' }>;
+		const sym = content as Extract<Rule<'link'>, { type: 'SYMBOL' }>;
 		return (sym.name.replace(/^_+/, '') || 'children').toLowerCase();
 	}
 	return undefined;
@@ -1644,7 +1644,7 @@ function pickConditionalKey(content: Rule<'link'>, ctx: EmitCtx): string | undef
 // Those wrapper types no longer appear in RenderRule; their slot facts are
 // now leaf attributes on the inner rule, consumed by emitSymbol directly.
 
-function emitChoice(rule: Extract<Rule<'link'>, { type: 'choice' }>, ctx: EmitCtx): string {
+function emitChoice(rule: Extract<Rule<'link'>, { type: 'CHOICE' }>, ctx: EmitCtx): string {
 	// Every choice that surfaces as data is a registered slot — there is no
 	// "positional choice" anymore (kind-named slots). Look the slot up by the
 	// choice's rule id (the deleteWrapper-stamped `fieldName` case resolves via

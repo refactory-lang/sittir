@@ -60,7 +60,6 @@
  */
 
 import type { Rule } from '../types/rule.ts';
-import { sym } from '../types/rule.ts';
 import { makeRuleMetadata } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
@@ -484,7 +483,7 @@ function collectFieldNamesRuntime(rule: Rule): Set<string> {
 
 /**
  * Detect `optional(content)` across both runtimes:
- * - sittir:      `{ type: 'optional', content }`
+ * - sittir:      `{ type: 'OPTIONAL', content }`
  * - tree-sitter: `{ type: 'CHOICE', members: [content, {BLANK}] }`
  */
 function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
@@ -497,7 +496,7 @@ function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
 	if (isChoiceType(rule.type)) {
 		const members = (rule as unknown as { members: Array<{ type: string }> }).members;
 		if (members.length === 2) {
-			const blankIdx = members.findIndex((m) => m.type === 'BLANK' || m.type === 'blank');
+			const blankIdx = members.findIndex((m) => m.type === 'BLANK');
 			if (blankIdx !== -1) {
 				const inner = members[1 - blankIdx] as unknown as Rule;
 				return { inner, isOptional: true };
@@ -577,7 +576,7 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 		if (isSymbolType(sn.type) && typeof sn.name === 'string') {
 			if (symIdx !== -1) return null; // >1 SYMBOL — too complex
 			symIdx = i;
-		} else if (!isStringType(sn.type) && sn.type !== 'PATTERN' && sn.type !== 'pattern') {
+		} else if (!isStringType(sn.type) && sn.type !== 'PATTERN') {
 			return null; // non-anonymous, non-symbol — too complex
 		}
 	}
@@ -611,7 +610,7 @@ function countSymbolsInRepeat(
 	const t = (node as { type?: string }).type;
 	if (!t) return;
 	if (isFieldType(t)) return;
-	if (t === 'ALIAS' || t === 'alias') return;
+	if (t === 'ALIAS') return;
 	if (isSymbolType(t)) {
 		if (!inRepeat) return;
 		const name = (node as unknown as { name?: string }).name;
@@ -1095,7 +1094,7 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
 	const members = (optionalRule as unknown as { members: Rule[] }).members;
 	const newMembers = members.map((m) => {
 		const t = (m as { type?: string }).type;
-		return t === 'BLANK' || t === 'blank' ? m : newInner;
+		return t === 'BLANK' ? m : newInner;
 	});
 	return { ...optionalRule, members: newMembers } as Rule;
 }
@@ -1583,7 +1582,12 @@ function visibleGroupSynthName(
 /**
  * @internal — build a SYMBOL reference for a synthesized enrich group-lift
  * (clause hoist today; all `optional(seq)`/`repeat(seq)` once the hoist
- * generalizes), case-matched to the optional/choice wrapper's type convention.
+ * generalizes). Built via the active runtime's injected symbol constructor
+ * (see `nativeRuleFn`) rather than any hand-rolled shape — `referenceRule`
+ * is unused by construction (both runtimes agree on the `SYMBOL`
+ * discriminant; the shape distinction lives in WHICH constructor is
+ * injected, not in the wrapper rule's own case) but kept in the signature
+ * for call-site symmetry with the other `make*` helpers.
  *
  * Provenance markers (both now live inside the opaque `metadata` bag — debt
  * PR-P1; the former top-level `SymbolRule.source` field is deleted):
@@ -1595,10 +1599,7 @@ function visibleGroupSynthName(
  *   - `metadata.symbolSource: 'group-lift'` — relocated legacy marker (was
  *     the top-level `SymbolRule.source`). Diagnostics only.
  */
-function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
-	const t = (referenceRule as { type?: string }).type ?? '';
-	// Upper-case wrapper (CHOICE, OPTIONAL) → SYMBOL; lower-case → symbol.
-	const isUpper = t.length > 0 && t === t.toUpperCase();
+function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
 	// Pure ref — NO inline body. Tree-sitter serializes any extra structural
 	// field on a SYMBOL into grammar.json (a `content` here leaks the seq into
 	// the parser), so the symbol stays a clean name-ref. `metadata.source` is
@@ -1612,14 +1613,17 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
 	// `rewriteInlineAliases`, now identify this population structurally via
 	// `isClauseHoistVisibleGroupAlias`. The write here stays load-bearing for
 	// transform-path only.)
-	// Route the lower-case (IR/render-side) ref through evaluate's `symbol()`
-	// so it carries the SAME construction stamps (`hidden`, `inline =
-	// name.startsWith('_')`) as every other ref — these `_<parent>_<kind>N`
-	// helpers are `_`-prefixed → inline=true. Keeping one constructor (revised at
-	// push-down / link) makes `inline` authoritative on the renderRules path, so
-	// normalize's fold can read it. The upper-case branch is the tree-sitter raw
+	// Route through the runtime-injected symbol constructor (`symbol` under
+	// sittir, `sym` under tree-sitter's CLI — see `nativeRuleFn`) so the ref
+	// carries the SAME construction stamps (`hidden`, `inline =
+	// name.startsWith('_')`) as every other ref under sittir's runtime —
+	// these `_<parent>_<kind>N` helpers are `_`-prefixed → inline=true.
+	// Keeping one constructor (revised at push-down / link) makes `inline`
+	// authoritative on the renderRules path, so normalize's fold can read it.
+	// Under tree-sitter's CLI runtime the injected constructor is the raw
 	// SYMBOL form (parser-side, never reaches the IR inline gate).
-	const base = isUpper ? { type: 'SYMBOL' as const, name } : sym(name);
+	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
+	const base = symbol(name);
 	return {
 		...base,
 		metadata: makeRuleMetadata({ source: 'enrich', symbolSource: 'group-lift' })
@@ -1631,7 +1635,7 @@ function makeGroupLiftSymbol(referenceRule: Rule, name: string): Rule {
  * TAGGED visible alias so the group surfaces as a single clean CST kind.
  *
  * Shape (confirmed against generated grammar.json ALIAS nodes):
- *   `{ type: 'ALIAS'|'alias', content: symbol($._<name>), named: true,
+ *   `{ type: 'ALIAS', content: symbol($._<name>), named: true,
  *      value: '<name>', metadata: { source: 'enrich' } }`
  *
  * - The aliased thing is a SYMBOL ref to the hidden `_<name>` rule (NOT the raw

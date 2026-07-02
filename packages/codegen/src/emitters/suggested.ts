@@ -16,7 +16,7 @@
  * curator can import either, or pull specific entries out by hand.
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry } from '../compiler/types.ts';
 import { AssembledSupertype } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
@@ -50,8 +50,8 @@ function deriveArmNameFromRule(node: Rule<'link'>, index: number): string {
 		// leading identifier-shaped string literal ('(' → 'paren', etc.
 		// the caller can rename).
 		for (const m of node.members) {
-			if (m.type === 'symbol' || m.type === 'supertype') return m.name;
-			if (m.type === 'string') {
+			if (m.type === SYMBOL || m.type === SUPERTYPE) return m.name;
+			if (m.type === STRING) {
 				const s = m.value;
 				if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(s)) return s;
 			}

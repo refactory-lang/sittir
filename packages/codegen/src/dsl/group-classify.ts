@@ -2,8 +2,9 @@
  * dsl/group-classify.ts — shared predicates for inline-safe vs inline-unsafe
  * group classification.
  *
- * **Scope: DSL layer only.** Uses dual-case `runtime-shapes.ts` predicates so
- * these work on both sittir-lowercase and tree-sitter-uppercase rule forms.
+ * **Scope: DSL layer only.** Uses `runtime-shapes.ts` predicates so these
+ * work on both sittir and tree-sitter-CLI rule forms (dual-RUNTIME, not
+ * dual-case — both runtimes agree on UPPERCASE discriminants).
  *
  * Two exported functions, used by enrich (hoist decision) and, later, the
  * wire pass:
@@ -55,7 +56,7 @@ export function ruleMatchesEmpty(rule: unknown): boolean {
 	if (isOptionalType(t) || isPlainRepeatType(t) || isBlankType(t)) return true;
 
 	// repeat1 — empty iff content is empty (unusual, but guard conservatively)
-	if (typeEq(t, 'repeat1')) {
+	if (typeEq(t, 'REPEAT1')) {
 		return ruleMatchesEmpty(r.content);
 	}
 
@@ -67,7 +68,7 @@ export function ruleMatchesEmpty(rule: unknown): boolean {
 	}
 
 	// choice — ANY member matches empty
-	if (typeEq(t, 'choice')) {
+	if (typeEq(t, 'CHOICE')) {
 		const members = r.members;
 		if (!Array.isArray(members)) return false;
 		return members.some((m) => ruleMatchesEmpty(m));
@@ -79,16 +80,16 @@ export function ruleMatchesEmpty(rule: unknown): boolean {
 	}
 
 	// string / symbol / token / pattern — conservatively non-empty
-	if (isStringType(t) || isSymbolType(t) || typeEq(t, 'token') || typeEq(t, 'pattern')) return false;
+	if (isStringType(t) || isSymbolType(t) || typeEq(t, 'TOKEN') || typeEq(t, 'PATTERN')) return false;
 
 	// Unknown rule type — conservatively non-empty
 	return false;
 }
 
-/** plain repeat (not repeat1) — duplicates the one in runtime-shapes but keeps
- *  this module self-contained for the dual-case check it needs internally. */
+/** plain repeat (not repeat1). Duplicates `isPlainRepeatType` in
+ *  runtime-shapes but keeps this module self-contained. */
 function isPlainRepeatType(t: string): boolean {
-	return t === 'repeat' || t === 'REPEAT';
+	return t === 'REPEAT';
 }
 
 // ---------------------------------------------------------------------------
@@ -112,7 +113,7 @@ function collectSlots(members: unknown[]): unknown[] {
 		const t = typeof r.type === 'string' ? r.type : '';
 
 		// Drop pure literals and blank
-		if (isStringType(t) || typeEq(t, 'token') || isBlankType(t)) continue;
+		if (isStringType(t) || typeEq(t, 'TOKEN') || isBlankType(t)) continue;
 
 		// Everything else is a slot
 		slots.push(m);
@@ -144,7 +145,7 @@ function unwrapPrec(rule: unknown): unknown {
 }
 
 function isRepeatLike(t: string): boolean {
-	return isRepeatType(t) || typeEq(t, 'repeat1');
+	return isRepeatType(t) || typeEq(t, 'REPEAT1');
 }
 
 /**

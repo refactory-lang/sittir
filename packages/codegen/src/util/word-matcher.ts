@@ -77,14 +77,13 @@ export function matchesWordShape(value: string, wordMatcher: RegExp | undefined)
  * symbol references (which would need another rule lookup) and
  * anything outside the supported text-terminal shapes.
  *
- * DUAL-CASE discriminants: this walker runs in BOTH the sittir pipeline
- * (lowercase rule types) and the tree-sitter CLI path, where enrich() sees
- * the native DSL objects with UPPERCASE discriminants (`'PATTERN'`,
- * `'TOKEN'`, `'IMMEDIATE_TOKEN'`, …). Case-normalize before dispatching so
- * both paths compile the same word regex — previously the CLI path silently
- * fell back to `/^\w+$/` while the sittir path used the real grammar word
- * rule, letting keyword-promotion diverge between parser and IR (PR #111
- * review finding).
+ * This walker runs in BOTH the sittir pipeline and the tree-sitter CLI path
+ * (where enrich() sees the native DSL objects), but both now agree on
+ * UPPERCASE discriminants (`'PATTERN'`, `'TOKEN'`, `'IMMEDIATE_TOKEN'`, …) —
+ * no case normalization needed. (Previously the CLI path silently fell back
+ * to `/^\w+$/` while the sittir path used the real grammar word rule,
+ * letting keyword-promotion diverge between parser and IR — PR #111 review
+ * finding; the dual-case boundary that caused that is now dissolved.)
  */
 function ruleToRegexSource(rule: AnyRule): string | null {
 	const shaped = rule as {
@@ -92,14 +91,15 @@ function ruleToRegexSource(rule: AnyRule): string | null {
 		content?: AnyRule;
 		members?: readonly AnyRule[];
 	};
-	switch (String(rule.type).toLowerCase()) {
+	switch (rule.type) {
 		case PATTERN:
 			return shaped.value ?? null;
 		case STRING:
 			return shaped.value === undefined ? null : escapeRegexLiteral(shaped.value);
 		case TOKEN:
-		case 'immediate_token':
 			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
+			// (IMMEDIATE_TOKEN is a tree-sitter-native shape that never appears in
+			// sittir's AnyRule union, so no case is needed for it here.)
 			return shaped.content ? ruleToRegexSource(shaped.content) : null;
 		case SEQ: {
 			const parts: string[] = [];

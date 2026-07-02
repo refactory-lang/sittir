@@ -29,10 +29,10 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 		// of an inlined repeat — slot position via inlineKinds.
 		const renderRules: Record<string, RenderRule> = {
 			_parent_repeat1: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'symbol', name: '_a' },
-					{ type: 'symbol', name: '_b' },
+					{ type: 'SYMBOL', name: '_a' },
+					{ type: 'SYMBOL', name: '_b' },
 				],
 			} as any,
 		};
@@ -50,11 +50,11 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 		// must NOT fire — the rule body is not in slot position.
 		const renderRules: Record<string, RenderRule> = {
 			assignment_expression: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'symbol', name: 'left', fieldName: 'left' } as any,
-					{ type: 'string', value: '=' } as any,
-					{ type: 'symbol', name: 'right', fieldName: 'right' } as any,
+					{ type: 'SYMBOL', name: 'left', fieldName: 'left' } as any,
+					{ type: 'STRING', value: '=' } as any,
+					{ type: 'SYMBOL', name: 'right', fieldName: 'right' } as any,
 				],
 			} as any,
 		};
@@ -66,10 +66,10 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 	it('a rule with no multi-slot substructure produces no diagnostics', () => {
 		const renderRules: Record<string, RenderRule> = {
 			simple: {
-				type: 'seq',
+				type: 'SEQ',
 				members: [
-					{ type: 'string', value: 'fn' },
-					{ type: 'symbol', name: 'name' },
+					{ type: 'STRING', value: 'fn' },
+					{ type: 'SYMBOL', name: 'name' },
 				],
 			} as any,
 		};

@@ -18,12 +18,12 @@ import { deleteWrapper } from '../../wrapper-deletion.ts';
 import type { Rule } from '../../../types/rule.ts';
 import { afterEach } from 'vitest';
 
-const sym = (name: string) => ({ type: 'symbol', name }) as any;
-const str = (v: string) => ({ type: 'string', value: v }) as any;
-const seq = (...m: any[]) => ({ type: 'seq', members: m }) as any;
-const choice = (...m: any[]) => ({ type: 'choice', members: m }) as any;
-const repeat = (content: any) => ({ type: 'repeat', content }) as any;
-const field = (fieldName: string, content: any) => ({ type: 'field', fieldName, content }) as any;
+const sym = (name: string) => ({ type: 'SYMBOL', name }) as any;
+const str = (v: string) => ({ type: 'STRING', value: v }) as any;
+const seq = (...m: any[]) => ({ type: 'SEQ', members: m }) as any;
+const choice = (...m: any[]) => ({ type: 'CHOICE', members: m }) as any;
+const repeat = (content: any) => ({ type: 'REPEAT', content }) as any;
+const field = (fieldName: string, content: any) => ({ type: 'FIELD', fieldName, content }) as any;
 
 describe('countSlots — Table 1 distribution', () => {
 	it('symbol = 1', () => expect(countSlots(sym('x'))).toBe(1));
@@ -82,7 +82,7 @@ describe('countSlots ≡ collectSlots.length (convergence)', () => {
 		// repeat pushed down to a symbol leaf with multiplicity='array' by
 		// deleteWrapper. Both sides count it as 1 array slot.
 		const rule: Rule = {
-			type: 'symbol',
+			type: 'SYMBOL',
 			name: '_type',
 			multiplicity: 'array',
 		} as any;

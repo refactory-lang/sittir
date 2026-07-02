@@ -720,7 +720,7 @@ function classifyTopLevelShape(rule: Rule<'link'>): string {
 	switch (rule.type) {
 		case SEQ: {
 			for (const m of rule.members) {
-				if (m.type === 'seq') {
+				if (m.type === SEQ) {
 					// A nested seq that carries its OWN cardinality
 					// (multiplicity / separator) is a canonical repeated /
 					// optional GROUP, not a flattening gap. simplify deliberately
@@ -786,7 +786,7 @@ function classifyTopLevelShape(rule: Rule<'link'>): string {
 			// "one-of-these-fields" shape, NOT a polymorph. The walker's
 			// choice case enumerates each branch and downgrades every
 			// field to `optional` multiplicity; that's correct behavior.
-			const allFieldOrToken = rule.members.every((m) => m.type === 'field' || isTokenLikeChoiceMember(m));
+			const allFieldOrToken = rule.members.every((m) => m.type === FIELD || isTokenLikeChoiceMember(m));
 			if (allFieldOrToken) return 'canonical';
 			// Polymorph surface: every branch wraps its content in a
 			// `variant()` tag (from override-declared variant() adoption).
@@ -795,7 +795,7 @@ function classifyTopLevelShape(rule: Rule<'link'>): string {
 			// into each independently and dispatches via `$variant`.
 			// Canonical even when the inner content is a structural seq
 			// with fields.
-			if (rule.members.every((m) => m.type === 'variant')) return 'canonical';
+			if (rule.members.every((m) => m.type === VARIANT)) return 'canonical';
 			return 'choice-needs-variant-or-merge';
 		}
 		case OPTIONAL: {
@@ -1343,7 +1343,7 @@ export function deriveValuesForRule(
 			// valid. Downgrade to 'array' when the inner is repeat1, so
 			// the outer-optional semantics survive. Mirrors the
 			// `collectChildFromMember` rule for child slots.
-			if (rule.content.type === 'repeat1') {
+			if (rule.content.type === REPEAT1) {
 				return deriveValuesForRule(rule.content.content, ctx, 'array');
 			}
 			// For `optional(seq(..., repeat1(...), ...))` and similar nested
@@ -2711,14 +2711,14 @@ function isVerbatimTokenStream(rule: Rule<'link'>): boolean {
 	if (rule.type !== CHOICE) return false;
 	if (rule.members.length === 0) return false;
 	return rule.members.every((m) => {
-		const core = m.type === 'variant' ? m.content : m;
-		if (core.type !== 'seq' || core.members.length !== 3) return false;
+		const core = m.type === VARIANT ? m.content : m;
+		if (core.type !== SEQ || core.members.length !== 3) return false;
 		const [start, mid, end] = core.members;
 		if (!start || !mid || !end) return false;
-		if (start.type !== 'string' || end.type !== 'string') return false;
-		if (mid.type !== 'repeat' && mid.type !== 'repeat1') return false;
+		if (start.type !== STRING || end.type !== STRING) return false;
+		if (mid.type !== REPEAT && mid.type !== REPEAT1) return false;
 		const inner = mid.content;
-		return inner.type === 'symbol' && inner.hidden === true;
+		return inner.type === SYMBOL && inner.hidden === true;
 	});
 }
 
@@ -2739,7 +2739,7 @@ function isVerbatimTokenStream(rule: Rule<'link'>): boolean {
 function hasOptionalPunctPrefix(rule: Rule<'link'>): boolean {
 	if (rule.type !== SEQ || rule.members.length < 2) return false;
 	const first = rule.members[0]!;
-	if (first.type !== 'optional') return false;
+	if (first.type !== OPTIONAL) return false;
 	// The optional's content must be purely punctuation (no symbols/fields).
 	return isAllPunct(first.content);
 }
@@ -2971,8 +2971,8 @@ function collectFixedLiteral(rule: Rule<'link'>): string | undefined {
 			let found: string | undefined;
 			for (const m of rule.members) {
 				const isBlank =
-					(m.type === 'choice' && m.members.length === 0) ||
-					(m.type === 'seq' && m.members.length === 0);
+					(m.type === CHOICE && m.members.length === 0) ||
+					(m.type === SEQ && m.members.length === 0);
 				if (isBlank) continue; // blank arm — ignore
 				const v = collectFixedLiteral(m);
 				if (v === undefined) return undefined; // non-literal or divergent branch
@@ -2987,8 +2987,8 @@ function collectFixedLiteral(rule: Rule<'link'>): string | undefined {
 			// fixed single literals (they'd produce concatenated output).
 			const nonBlanks = rule.members.filter(
 				m =>
-					!((m.type === 'choice' && m.members.length === 0) ||
-					  (m.type === 'seq' && m.members.length === 0))
+					!((m.type === CHOICE && m.members.length === 0) ||
+					  (m.type === SEQ && m.members.length === 0))
 			);
 			if (nonBlanks.length !== 1) return undefined;
 			const [only] = nonBlanks;

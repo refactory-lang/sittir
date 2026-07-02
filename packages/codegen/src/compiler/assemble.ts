@@ -469,8 +469,8 @@ function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[
 		subtypes = rule.subtypes;
 	} else if (rule.type === CHOICE) {
 		subtypes = rule.members
-			.map((m) => (m.type === 'variant' ? m.content : m))
-			.filter((m): m is SymbolRule<'link'> => m.type === 'symbol')
+			.map((m) => (m.type === VARIANT ? m.content : m))
+			.filter((m): m is SymbolRule<'link'> => m.type === SYMBOL)
 			.map((m) => m.name);
 	} else {
 		subtypes = [];
@@ -508,7 +508,7 @@ function unwrapGroupRuleAndSimplified(
 	renderRule: RenderRule
 ): { groupRule: Rule<'link'>; groupSimplified: Rule<'link'>; groupRenderRule: RenderRule } {
 	const groupRule = rule.type === GROUP ? rule.content : rule;
-	// applyWrapperDeletion preserves group structure: renderRule.type === 'group'
+	// applyWrapperDeletion preserves group structure: renderRule.type === GROUP
 	// when the source rule was a group, with renderRule.content being the
 	// wrapper-deleted inner content. Same for simplifiedRule (simplifyRule recurses
 	// through group wrappers preserving the outer group node).
@@ -666,7 +666,7 @@ function resolveHiddenRuleContent(rule: Rule<'link'>, seen: Set<string>, ctx: As
 			// every named alias has a bare-symbol source that's a
 			// real rule. Fall back to the value when that invariant
 			// doesn't hold (pre-evaluate / test fixtures).
-			if (rule.named && rule.content.type === 'symbol') {
+			if (rule.named && rule.content.type === SYMBOL) {
 				return [rule.content.name];
 			}
 			return [rule.value];
