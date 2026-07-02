@@ -24,6 +24,7 @@
 import type { AnyRule, Rule } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import type { RuleBuilder } from '../dsl/rule-transforms.ts';
+import { RuleWalker } from '../dsl/rule-walker.ts';
 
 /**
  * Construction inputs shared by every phase ctx.
@@ -64,11 +65,15 @@ export abstract class BaseCtx<R extends AnyRule = Rule> {
 	readonly wordMatcher?: (s: string) => boolean;
 	readonly diagnostics: DiagnosticSink;
 	readonly builder?: RuleBuilder;
+	/** Traversal engine bound to this phase's rules map + diagnostics (R12 PR-6).
+	 *  Derived in the ctor — not a BaseCtxInit field; nothing to configure. */
+	readonly walker: RuleWalker<R>;
 
 	constructor(init: BaseCtxInit<R>) {
 		this.rules = init.rules;
 		this.diagnostics = init.diagnostics;
 		this.wordMatcher = init.wordMatcher;
 		this.builder = init.builder;
+		this.walker = new RuleWalker(init.rules, init.diagnostics);
 	}
 }
