@@ -171,7 +171,14 @@ export namespace wrap {
 	 */
 	export function polymorph(
 		output: string[],
-		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
+		// `AssembledPolymorph` has NO `modelType` override — it inherits
+		// `'branch'` from `AssembledBranch` (see node-map.ts), so
+		// `Extract<AssembledNode, {modelType: 'polymorph'}>` matches nothing
+		// (collapses to `never`). No `AssembledNode` member ever reports
+		// `modelType === 'polymorph'`; the concrete class is the correct
+		// discriminator here (see emitters/types.ts:1432's `instanceof
+		// AssembledPolymorph` for the established pattern).
+		node: AssembledPolymorph,
 		kindEntries: readonly KindEnumEntry[] | undefined,
 		nodeMap: NodeMap
 	): void {
@@ -944,7 +951,13 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
-	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
+	// See `wrap.polymorph`'s doc comment: `AssembledPolymorph.modelType` is
+	// `'branch'`, so this method has no live caller — `dispatchNode`'s switch
+	// on `node.modelType` routes polymorphs through `emitBranch` instead.
+	// Retained (dead) as the established entry point in case a future caller
+	// wants to special-case polymorph wraps explicitly; typed against the
+	// concrete class since the modelType-based Extract can't select it.
+	emitPolymorph(node: AssembledPolymorph): void {
 		wrap.polymorph(this.#output, node, this.#kindEntries, this.#nodeMap);
 		this.#emittedStructuralKinds.add(node.kind);
 	}

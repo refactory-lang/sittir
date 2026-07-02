@@ -45,7 +45,7 @@ import type {
 	AssembledPolymorph,
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
-import type { Rule } from '../types/rule.ts';
+import type { Rule, RuleBase, Multiplicity, RepeatRule, Repeat1Rule } from '../types/rule.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import { compileWordMatcher } from '../util/word-matcher.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -113,7 +113,7 @@ const SLOT_MISS_LOG: SlotLookupMiss[] = [];
 function dumpSlotMissLog(grammar: string): void {
 	if (!DBG_SLOT_MISS || SLOT_MISS_LOG.length === 0) return;
 	const tally = { fieldName: 0, 'symbol-name': 0, none: 0 } as Record<string, number>;
-	for (const m of SLOT_MISS_LOG) tally[m.recoveredBy]++;
+	for (const m of SLOT_MISS_LOG) tally[m.recoveredBy] = (tally[m.recoveredBy] ?? 0) + 1;
 	process.stderr.write(
 		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total ` +
 			`(recovered fieldName=${tally.fieldName} symbol-name=${tally['symbol-name']} UNRESOLVED=${tally.none}) ===\n`
@@ -300,7 +300,16 @@ export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
 	// node.rule is RepeatRule | Repeat1Rule. We cannot call emitRule on it
 	// directly (emitRule now throws on wrapper types). Instead, emit the
 	// list-slot form for the repeat's inner content directly.
-	const repeat = node.rule;
+	//
+	// `.rule` is `protected` on AssembledNodeBase (compile-time only — no
+	// runtime enforcement) — a structural cast reads the same underlying
+	// field a real instance carries, and (unlike adding a new public getter)
+	// keeps working against existing plain-object test mocks that set `.rule`
+	// directly without going through the class's prototype/getters
+	// (`{ modelType: 'multi', rule } as unknown as AssembledMulti` in
+	// templates-emitter-modelType.test.ts — a getter-based accessor returns
+	// undefined on those mocks since they have no prototype getters at all).
+	const repeat = (node as unknown as { rule: RepeatRule | Repeat1Rule }).rule;
 	const inner = repeat.content;
 	// Look through transparent wrappers to find the field or symbol name.
 	let unwrapped = inner;
@@ -426,7 +435,7 @@ function rightmostBoundary(rule: Rule<'link'>): BoundaryEnd {
 	switch (rule.type) {
 		case STRING:
 			// Named field-wrapped string — it becomes a slot, not a literal.
-			if (rule.fieldName !== undefined) return SLOT_END;
+			if ((rule as { fieldName?: string }).fieldName !== undefined) return SLOT_END;
 			return literalEnd(rule.value);
 		case SEQ: {
 			for (let i = rule.members.length - 1; i >= 0; i--) {
@@ -483,7 +492,7 @@ function leftmostBoundary(rule: Rule<'link'>): BoundaryEnd {
 	if (rule.type === SEQ && rule.metadata?.inlinedFrom !== undefined) return SLOT_END;
 	switch (rule.type) {
 		case STRING:
-			if (rule.fieldName !== undefined) return SLOT_END;
+			if ((rule as { fieldName?: string }).fieldName !== undefined) return SLOT_END;
 			return literalEnd(rule.value);
 		case SEQ: {
 			for (let i = 0; i < rule.members.length; i++) {
@@ -888,15 +897,16 @@ export function emitRule(rule: Rule<'link'>, ctx: EmitCtx): string {
 			// `fieldName` on a string can only come from deleteWrapper peeling a
 			// `field()` wrapper, the `nonterminal` check is redundant and
 			// incorrect — the presence of `fieldName` is sufficient.
-			if (rule.fieldName !== undefined) {
-				return emitScalarSlot(rule.fieldName.toLowerCase());
+			const stringFieldName = (rule as { fieldName?: string }).fieldName;
+			if (stringFieldName !== undefined) {
+				return emitScalarSlot(stringFieldName.toLowerCase());
 			}
 			// An optional anonymous separator literal (e.g. the trailing
 			// `optional(',')` in a comma-list, stamped `multiplicity:'optional'`
 			// by deleteWrapper) has no slot to gate on. Canonical render omits
 			// it — emitting it unconditionally produces a spurious trailing
 			// token (`f(a,b,)` instead of `f(a,b)`).
-			if (rule.multiplicity === 'optional') {
+			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return '';
 			}
 			return escapeLiteral(rule.value);
@@ -910,7 +920,8 @@ export function emitRule(rule: Rule<'link'>, ctx: EmitCtx): string {
 			// `content` fallback). emitSlotReference handles multiplicity.
 			const slot = lookupSlot(rule, ctx);
 			if (slot !== undefined) return emitSlotReference(rule, slot);
-			if (rule.fieldName !== undefined) return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
+			const patternFieldName = (rule as { fieldName?: string }).fieldName;
+			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName.toLowerCase(), rule);
 			return emitScalarSlot('content');
 		}
 		// PR-P: ENUM handled as CHOICE below via isEnumChoiceRule guard.
@@ -1023,7 +1034,7 @@ export function emitRule(rule: Rule<'link'>, ctx: EmitCtx): string {
 			// internal slot rather than being individually leaf-stamped (the BLOCKED
 			// v2 regression). Gate the whole body on the seq's gating slot, reusing
 			// the EXISTING optional-group machinery (`pickConditionalKey`).
-			if (rule.multiplicity === 'optional' && seqBody !== '') {
+			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional' && seqBody !== '') {
 				// DRY: the gating-slot resolver is the single source of slot-count
 				// truth (the inline hoist does NOT pre-count). A seq-unit multiplicity
 				// group with >1 internal slot cannot be gated on one slot — it should
@@ -1128,8 +1139,9 @@ function lookupSlot(rule: Rule<'link'>, ctx: EmitCtx): AssembledNonterminal | un
 		// FieldRule ID doesn't match the renderRule symbol's ID (because
 		// simplifyRule created new objects without preserving the original ID),
 		// look up the slot by the field name the symbol carries.
-		if (rule.fieldName !== undefined) {
-			const byFieldName = ctx.ownerSlots[rule.fieldName.toLowerCase()];
+		const boundaryFieldName = (rule as { fieldName?: string }).fieldName;
+		if (boundaryFieldName !== undefined) {
+			const byFieldName = ctx.ownerSlots[boundaryFieldName.toLowerCase()];
 			if (byFieldName) {
 				recovered = byFieldName;
 				recoveredBy = 'fieldName';
@@ -1142,7 +1154,7 @@ function lookupSlot(rule: Rule<'link'>, ctx: EmitCtx): AssembledNonterminal | un
 		// map it. Only fires for symbols without fieldName (fieldName symbols are
 		// handled by Fallback A). Uses the EXACT name (no leading-_ stripping) to
 		// avoid false positives where `_hidden_rule` would match slot `hidden_rule`.
-		if (recovered === undefined && rule.type === SYMBOL && rule.fieldName === undefined && !rule.name.startsWith('_')) {
+		if (recovered === undefined && rule.type === SYMBOL && (rule as { fieldName?: string }).fieldName === undefined && !rule.name.startsWith('_')) {
 			const exactName = rule.name.toLowerCase();
 			const byExactName = ctx.ownerSlots[exactName];
 			if (byExactName) {
@@ -1157,7 +1169,7 @@ function lookupSlot(rule: Rule<'link'>, ctx: EmitCtx): AssembledNonterminal | un
 			ruleType: rule.type,
 			ruleId: rule.id,
 			name: (rule as { name?: string }).name,
-			fieldName: rule.fieldName,
+			fieldName: (rule as { fieldName?: string }).fieldName,
 			recoveredBy
 		});
 	}
@@ -1172,7 +1184,7 @@ function lookupSlot(rule: Rule<'link'>, ctx: EmitCtx): AssembledNonterminal | un
  * resulting join filter still represents the source text faithfully.
  */
 function separatorToString(rule: Rule<'link'>): string | undefined {
-	const sep = rule.separator;
+	const sep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator;
 	if (sep === undefined) return undefined;
 	if (typeof sep === 'string') return sep;
 	if (Array.isArray(sep)) return sep.map(stringifyRule).join('');
@@ -1202,7 +1214,7 @@ function selectJoinFilter(rule: Rule<'link'>, slot?: AssembledNonterminal): 'joi
 	if (leading) return 'joinWithLeading';
 	// Also honour the structured-separator object form when carrying
 	// the flank flags directly.
-	const sep = rule.separator;
+	const sep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator;
 	if (sep && typeof sep === 'object' && !Array.isArray(sep)) {
 		const obj = sep as { trailing?: boolean; leading?: boolean };
 		const t = obj.trailing === true;
@@ -1383,21 +1395,22 @@ function emitSymbol(rule: Extract<Rule<'link'>, { type: 'symbol' }>, ctx: EmitCt
 	// `fieldName: 'operator'` across arms with different literals.) Emitting the
 	// literal here would render `a < b` as the first arm's operator regardless
 	// of the parsed operator and leave read unable to populate the slot.
-	if (rule.source === 'link' && rule.fieldName === undefined) {
+	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
+	if (rule.source === 'link' && symbolFieldName === undefined) {
 		return rule.literal !== undefined ? escapeLiteral(rule.literal) : '';
 	}
 
 	// PR2 Task 3.B3: check leaf-level attributes pushed down from wrapper
 	// rules. fieldName is set when the symbol was formerly inside a FieldRule;
 	// multiplicity when inside a RepeatRule or OptionalRule.
-	if (rule.fieldName !== undefined) {
+	if (symbolFieldName !== undefined) {
 		// Prefer the registered slot (single source); fall back to the field
 		// name + leaf multiplicity only when no slot is registered.
 		const slot = lookupSlot(rule, ctx);
 		if (slot) {
 			return emitSlotReference(rule, slot);
 		}
-		return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
+		return emitFieldNameSlot(symbolFieldName.toLowerCase(), rule);
 	}
 
 	// Slot back-pointer: when assembly registered a slot for this rule
@@ -1452,7 +1465,7 @@ function emitSymbol(rule: Extract<Rule<'link'>, { type: 'symbol' }>, ctx: EmitCt
 			try {
 				const helperRenderRule = (targetNode as { renderRule: Rule<'link'> }).renderRule;
 				const helperBody = emitRule(helperRenderRule, ctx);
-				const multiplicity = rule.multiplicity;
+				const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 				// Multiplicity is applied at the inlined SEQ UNIT (never the leaves —
 				// pushing past the seq distributes optional onto bare literals which
 				// the render walker drops). The inlined body is a seq with one
@@ -1501,7 +1514,7 @@ function emitSymbol(rule: Extract<Rule<'link'>, { type: 'symbol' }>, ctx: EmitCt
 		try {
 			const target = deleteWrapper(ctx.rules[rule.name]!);
 			const helperBody = emitRule(target, ctx);
-			const multiplicity = rule.multiplicity;
+			const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 			// Seq-unit multiplicity (mirrors the renderRule path above): array →
 			// seq-level join on the single slot; optional → gate the inlined body.
 			if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
@@ -1565,8 +1578,9 @@ function pickConditionalKey(content: Rule<'link'>, ctx: EmitCtx): string | undef
 	// PR2 Task 3.B3: field wrappers no longer appear in RenderRule. Check
 	// the leaf-level fieldName attribute instead (pushed down from FieldRule
 	// by the enrich / push-down pass).
-	if (content.fieldName !== undefined) {
-		return content.fieldName.toLowerCase();
+	const contentFieldName = (content as { fieldName?: string }).fieldName;
+	if (contentFieldName !== undefined) {
+		return contentFieldName.toLowerCase();
 	}
 	// Legacy path for RawRule still-in-flight: direct field wrapper.
 	if (content.type === FIELD) {
@@ -1631,8 +1645,9 @@ function emitChoice(rule: Extract<Rule<'link'>, { type: 'choice' }>, ctx: EmitCt
 	// No back-pointer slot but a deleteWrapper-stamped fieldName (a `field()`
 	// around a choice whose members carry no fieldName): emit by the field
 	// name directly.
-	if (rule.fieldName !== undefined) {
-		return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
+	const choiceFieldName = (rule as { fieldName?: string }).fieldName;
+	if (choiceFieldName !== undefined) {
+		return emitFieldNameSlot(choiceFieldName.toLowerCase(), rule);
 	}
 	// No slot, no fieldName. Two sub-cases:
 	//

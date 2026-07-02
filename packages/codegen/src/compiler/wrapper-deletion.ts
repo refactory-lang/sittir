@@ -23,7 +23,7 @@
  */
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, RenderRule } from '../types/rule.ts';
+import type { Rule, RuleBase, RenderRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import { combineMultiplicity } from '../dsl/rule-attrs.ts';
@@ -35,7 +35,7 @@ import { combineMultiplicity } from '../dsl/rule-attrs.ts';
 interface WrapperAttrs {
 	fieldName?: string;
 	multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
-	separator?: Rule<'link'>['separator'];
+	separator?: RuleBase<'optimize'>['separator'];
 	aliasedFrom?: string;
 	aliasNamed?: boolean;
 	inline?: boolean;
@@ -90,7 +90,11 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			// Combine outer (pushed-down) multiplicity with repeat's native 'array'.
 			// combineMultiplicity('optional','array')='array'; ('nonEmptyArray','array')='array'.
 			// repeat's zero-or-more semantics always dominate an enclosing optional/nonEmptyArray.
-			const mult = combineMultiplicity(attrs.multiplicity, 'array') ?? 'array';
+			// The second arg is always the 'array' collection literal here, so
+			// `combineMultiplicity`'s `isCollection(inner)` branch always applies —
+			// the result can only be 'array' | 'nonEmptyArray' (never 'single'),
+			// narrower than the function's general LeafMultiplicity return type.
+			const mult = (combineMultiplicity(attrs.multiplicity, 'array') ?? 'array') as 'array' | 'nonEmptyArray';
 			// Build separator: if trailing or leading is set, use object form
 			let sep = attrs.separator;
 			if (sep === undefined && rule.separator !== undefined) {
@@ -113,7 +117,12 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			// Same as repeat but nonEmptyArray as native.
 			// combineMultiplicity('optional','nonEmptyArray')='array' — outer optional
 			// makes the empty case valid (same as the optional case's innerIsRepeatVariant check).
-			const mult = combineMultiplicity(attrs.multiplicity, 'nonEmptyArray') ?? 'nonEmptyArray';
+			// The second arg is always the 'nonEmptyArray' collection literal here,
+			// so the result can only be 'array' | 'nonEmptyArray' (never 'single') —
+			// see the REPEAT case above for the same narrowing rationale.
+			const mult = (combineMultiplicity(attrs.multiplicity, 'nonEmptyArray') ?? 'nonEmptyArray') as
+				| 'array'
+				| 'nonEmptyArray';
 			let sep = attrs.separator;
 			if (sep === undefined && rule.separator !== undefined) {
 				if (rule.trailing !== undefined || rule.leading !== undefined) {

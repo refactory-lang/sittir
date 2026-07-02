@@ -360,8 +360,22 @@ export type EnumRule<T extends PhaseName = 'optimize'> = ChoiceRule<T>;
  * at least 2 members). Matches the pre-link form; post-link use literalTextOf.
  *
  * This is the canonical replacement for `rule.type === ENUM`.
+ *
+ * @remarks
+ * The guard type is `Extract<R, {type: CHOICE}> & {readonly __enumShaped?:
+ * never}` rather than plain `Extract<R, {type: CHOICE}>`. Without the brand,
+ * TS treats a `false` result as "not CHOICE at all" (since the predicate
+ * type is structurally indistinguishable from a plain `rule.type === CHOICE`
+ * check), which wrongly excludes non-enum CHOICE rules from the false
+ * branch — including collapsing it to `never` when `R` was already narrowed
+ * to a CHOICE-only type (e.g. inside `switch (rule.type) case CHOICE:`). The
+ * phantom brand makes the true-branch type a distinct (enum-shaped) subtype
+ * of CHOICE, so the false branch correctly keeps every non-enum-shaped
+ * member of `R`, CHOICE included.
  */
-export function isEnumChoiceRule<R extends AnyRule>(rule: R): rule is Extract<R, { type: typeof CHOICE }> {
+export function isEnumChoiceRule<R extends AnyRule>(
+	rule: R
+): rule is Extract<R, { type: typeof CHOICE }> & { readonly __enumShaped?: never } {
 	return rule.type === CHOICE && rule.members.length >= 2 && rule.members.every((m) => m.type === STRING);
 }
 

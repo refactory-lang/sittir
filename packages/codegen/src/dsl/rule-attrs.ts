@@ -12,7 +12,7 @@
  */
 
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Rule, Multiplicity } from '../types/rule.ts';
+import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
 // `combineMultiplicity` and `LeafMultiplicity` moved to transforms.ts (PR-O M1 de-scatter);
 // re-exported here so existing importers keep resolving.
 export { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts';
@@ -29,8 +29,16 @@ export { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts
  * freshly-rebuilt structural node (`{ type:'choice', members }`) gets the
  * source id stamped.
  */
-export function withAttrsFrom(original: Rule, result: Rule): Rule {
-	const { fieldName, multiplicity, separator, id } = original;
+export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
+	// `original` may be a wrapper-bearing (evaluate/link) rule where these
+	// stamped leaf attrs aren't part of the type yet (they're populated by
+	// `applyWrapperDeletion` during Optimize) — but `collapseWrappers`
+	// (normalize.ts, pre-Optimize) legitimately calls this with `Rule<'link'>`
+	// wrapper nodes that already carry link-lifted attrs defensively. Read
+	// structurally rather than narrowing the param type, matching the
+	// established pattern (see `findRepeatFlag` in dsl/rule-transforms.ts).
+	const src = original as StampedAttrs & { id?: string };
+	const { fieldName, multiplicity, separator, id } = src;
 	const patch: Record<string, unknown> = {};
 	if (fieldName !== undefined && !Object.prototype.hasOwnProperty.call(result, 'fieldName'))
 		patch['fieldName'] = fieldName;
@@ -73,30 +81,42 @@ export interface SharedArmAttrs {
 
 const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1, array: 2, nonEmptyArray: 3 };
 
+/**
+ * Structural-read shape for the stamped leaf attributes. These only exist
+ * on `RuleBase<'optimize' | 'simplify'>` per the type, but `sharedArmAttrs`
+ * is called from `collect-slots.ts` with `AnyRule` values that are, at
+ * runtime, always post-wrapper-deletion (optimize-phase) rules — the
+ * wrapper-bearing 'evaluate'/'link' views just don't carry these fields.
+ * Matches the established structural-read-cast pattern (see
+ * `findRepeatFlag` in dsl/rule-transforms.ts).
+ */
+type StampedAttrs = Pick<RuleBase<'optimize'>, 'fieldName' | 'multiplicity' | 'nonterminal' | 'separator'>;
+
 /** The arms of a choice (`members`); `[]` otherwise. */
-function armsOf(rule: Rule): readonly Rule[] {
+function armsOf(rule: AnyRule): readonly AnyRule[] {
 	if (rule.type === CHOICE) return rule.members;
 	return [];
 }
 
-export function sharedArmAttrs(rule: Rule): SharedArmAttrs {
+export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 	const arms = armsOf(rule);
 	if (arms.length === 0) return {};
-	const a0 = arms[0]!;
+	const a0 = arms[0]! as StampedAttrs;
+	const stamped = (r: AnyRule): StampedAttrs => r as StampedAttrs;
 	// A primitive attr is unanimous when present on a0 and === on every arm.
-	const unanimous = <T>(get: (r: Rule) => T): T | undefined => {
+	const unanimous = <T>(get: (r: StampedAttrs) => T): T | undefined => {
 		const v = get(a0);
-		return v !== undefined && arms.every((m) => get(m) === v) ? v : undefined;
+		return v !== undefined && arms.every((m) => get(stamped(m)) === v) ? v : undefined;
 	};
 	// separator may be a string | Rule[] | { rules } object — compare by structure.
 	const sep0 = a0.separator;
 	const separator =
-		sep0 !== undefined && arms.every((m) => JSON.stringify(m.separator) === JSON.stringify(sep0))
+		sep0 !== undefined && arms.every((m) => JSON.stringify(stamped(m).separator) === JSON.stringify(sep0))
 			? sep0
 			: undefined;
 	let strongestMultiplicity: Multiplicity | undefined;
 	for (const arm of arms) {
-		const m = arm.multiplicity;
+		const m = stamped(arm).multiplicity;
 		if (m === undefined || m === 'single') continue;
 		if (strongestMultiplicity === undefined || MULTIPLICITY_RANK[m] > MULTIPLICITY_RANK[strongestMultiplicity])
 			strongestMultiplicity = m;

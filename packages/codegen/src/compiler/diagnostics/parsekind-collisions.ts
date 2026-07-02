@@ -82,7 +82,11 @@ export function diagnoseParseKindCollisions<T>(
 	const values: T[] = [];
 	for (const value of input.values) {
 		const parseKind = value.parseKind;
-		const merged = parseKind !== undefined ? mergedByParseKind.get(parseKind) : undefined;
+		if (parseKind === undefined) {
+			values.push(value.original);
+			continue;
+		}
+		const merged = mergedByParseKind.get(parseKind);
 		if (!merged) {
 			values.push(value.original);
 			continue;

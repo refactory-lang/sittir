@@ -613,7 +613,13 @@ export function wire<B extends GrammarJson = any> (
 
 	const polymorphs = cfg.polymorphs ?? {};
 	const transforms = cfg.transforms ?? {};
-	const outRules: Record<string, Rule<'evaluate'>> = { ...cfg.rules } as Record<string, Rule<'evaluate'>>;
+	// `outRules` holds rule-authoring FUNCTIONS (tree-sitter invokes each with
+	// `$`/`previous` to produce the rule body at grammar-compile time), not
+	// `Rule<'evaluate'>` data nodes — see the SittirRuleFn "LOOSE-INTERNAL /
+	// NARROW-PUBLIC" note above. The R12 sweep over-annotated this as
+	// `Record<string, Rule<'evaluate'>>`, which doesn't structurally overlap
+	// with the function-map shape `cfg.rules` actually has.
+	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	// Transforms first, polymorphs second — transforms wrap the user
 	// fn innermost and see the base-shape rule tree; polymorphs wrap
@@ -680,15 +686,29 @@ export function wire<B extends GrammarJson = any> (
 		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
 	}
 
-	const conflicts = wrapConflictsCallback(cfg.conflicts, context);
-	const inline = wrapInlineCallback(cfg.inline, context);
+	// Boundary casts to the internal loose (`unknown`-$, mutable-array)
+	// callback shapes — same LOOSE-INTERNAL / NARROW-PUBLIC split as `cfg`
+	// itself (see the block comment above `wire()`): the public config's
+	// `conflicts`/`inline` callbacks are typed against the precise
+	// `ShapedSymbols<B>` $ and readonly-array shapes for author ergonomics;
+	// `wrapConflictsCallback`/`wrapInlineCallback` are internal machinery
+	// that only ever calls them positionally, so the wider internal param
+	// types are a safe narrowing-away, not a behavior change.
+	const conflicts = wrapConflictsCallback(cfg.conflicts as ConflictsFn | undefined, context);
+	const inline = wrapInlineCallback(cfg.inline as DollarFn<unknown[]> | undefined, context);
 
-	const wired: WiredOpts = {
+	// `...cfg` carries `cfg`'s own (narrow, public) `conflicts` field into the
+	// inferred object-literal type even though the later spreads unconditionally
+	// override it with the internal-shape `conflicts`/`inline` computed above;
+	// TS still unions both possible shapes when inferring the literal's type,
+	// so an explicit `WiredOpts` boundary cast is needed here (same pattern as
+	// `cfg = config as unknown as WireConfig<any>` above).
+	const wired = {
 		...cfg,
 		rules: outRules,
 		...(conflicts === undefined ? {} : { conflicts }),
 		...(inline === undefined ? {} : { inline })
-	};
+	} as unknown as WiredOpts;
 	Object.defineProperty(wired, '__wireContext__', {
 		value: context,
 		enumerable: false,

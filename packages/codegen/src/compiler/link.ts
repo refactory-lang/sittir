@@ -24,6 +24,7 @@ import type {
 	SymbolRule,
 	StringRule,
 	RepeatRule,
+	VariantRule,
 } from '../types/rule.ts';
 import { isSeq, isChoice, normalizeEnumMembers, isEnumChoiceRule, sym, replaceAtPath, isSymbol, isString, isRepeat1, isRepeat, isOptional, isField, isEnum } from '../types/rule.ts';
 import {
@@ -875,7 +876,7 @@ function dereferenceTopLevelAliasBody(
  *   this slot, label the result `as_pattern_target`". Using the supertype as
  *   canonical would strip the concrete kind the runtime actually produces.
  */
-function extractAliasedFromName(content: Rule<'link'>, supertypes: Set<string>): string | undefined {
+function extractAliasedFromName(content: Rule<'link'>, supertypes: ReadonlySet<string>): string | undefined {
 	if (content.type === SYMBOL) {
 		// Record the alias SOURCE as provenance even when it is a supertype.
 		// `alias($.expression, $.as_pattern_target)` aliases the `expression`

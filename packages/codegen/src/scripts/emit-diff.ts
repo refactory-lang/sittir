@@ -103,31 +103,36 @@ const HUNK_RE = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/;
 const NEW_PATH_RE = /^\+\+\+ b\/(.+)$/;
 const OLD_PATH_RE = /^--- a\/(.+)$/;
 
+/** Build a fresh `FileChange` record for a newly-seen `diff --git` section. */
+function beginFileChange(rel: string): FileChange {
+	return {
+		path: rel,
+		emitter: emitterFor(rel),
+		added: 0,
+		removed: 0,
+		ranges: [],
+		collapsed: isCollapsed(rel),
+		binary: false
+	};
+}
+
 /** Parse `git diff --unified=0` output into per-file change records. */
 function parseDiff(diff: string): FileChange[] {
 	const files: FileChange[] = [];
 	let cur: FileChange | null = null;
-
-	const begin = (rel: string): void => {
-		cur = {
-			path: rel,
-			emitter: emitterFor(rel),
-			added: 0,
-			removed: 0,
-			ranges: [],
-			collapsed: isCollapsed(rel),
-			binary: false
-		};
-		files.push(cur);
-	};
 
 	for (const line of diff.split('\n')) {
 		if (line.startsWith('diff --git ')) {
 			// New file section. The authoritative path comes from the +++/---
 			// lines below; seed from `b/<path>` here so deletions (which have
 			// `+++ /dev/null`) still attribute to the removed file.
+			// `cur` is reassigned directly here (not via a closure over `cur`,
+			// which — confirmed in isolation — breaks the `if (!cur) continue`
+			// narrowing below back to `never`) so `beginFileChange` stays a pure
+			// factory function.
 			const m = line.match(/ b\/(.+)$/);
-			begin(m ? m[1]! : line.slice('diff --git '.length));
+			cur = beginFileChange(m ? m[1]! : line.slice('diff --git '.length));
+			files.push(cur);
 			continue;
 		}
 		if (!cur) continue;
