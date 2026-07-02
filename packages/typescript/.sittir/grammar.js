@@ -36,10 +36,30 @@ module.exports = __toCommonJS(overrides_exports);
 var import_grammar = __toESM(require("tree-sitter-typescript/typescript/grammar.js"), 1);
 
 // packages/codegen/src/types/runtime-shapes.ts
+function extractSymbolName(v) {
+  if (!v || typeof v !== "object") return void 0;
+  const r = v;
+  const t = r.type;
+  if (isSymbolType(t)) return typeof r.name === "string" ? r.name : void 0;
+  if (r.symbol && typeof r.symbol === "object") {
+    return extractSymbolName(r.symbol);
+  }
+  return void 0;
+}
 function isFieldLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
   return (t === "field" || t === "FIELD") && typeof v.name === "string";
+}
+function isEnrichShapedFieldWrapper(v) {
+  if (!isFieldLike(v)) return false;
+  const symName = extractSymbolName(v.content);
+  if (symName === void 0) return false;
+  if (symName.startsWith("_kw_")) return true;
+  const strippedSym = symName.replace(/^_/, "");
+  if (v.name === symName || v.name === strippedSym) return true;
+  const baseName = v.name.replace(/[0-9]+$/, "");
+  return baseName !== v.name && (baseName === symName || baseName === strippedSym);
 }
 function isContainerType(t) {
   return t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE";
@@ -2286,7 +2306,7 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   return patch;
 }
-function findInferredFieldThroughTransparentWrappers(node) {
+function findEnrichShapedFieldThroughTransparentWrappers(node) {
   const r = node;
   if (!r || typeof r !== "object") return null;
   const t = r.type;
@@ -2295,13 +2315,13 @@ function findInferredFieldThroughTransparentWrappers(node) {
   if (isSittirOptional) {
     const inner = r.content;
     if (!inner || typeof inner !== "object") return null;
-    if (isFieldLike(inner) && (inner.source === "inferred" || inner.source === "enriched")) {
+    if (isEnrichShapedFieldWrapper(inner)) {
       return {
         found: inner,
         reconstruct: (newInner) => ({ ...r, content: newInner })
       };
     }
-    const deeper = findInferredFieldThroughTransparentWrappers(inner);
+    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
     if (deeper) {
       return {
         found: deeper.found,
@@ -2321,7 +2341,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
     const contentIdx = 1 - blankIdx;
     const inner = members[contentIdx];
     if (!inner || typeof inner !== "object") return null;
-    if (isFieldLike(inner) && (inner.source === "inferred" || inner.source === "enriched")) {
+    if (isEnrichShapedFieldWrapper(inner)) {
       return {
         found: inner,
         reconstruct: (newInner) => {
@@ -2331,7 +2351,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
         }
       };
     }
-    const deeper = findInferredFieldThroughTransparentWrappers(inner);
+    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
     if (deeper) {
       return {
         found: deeper.found,
@@ -2348,13 +2368,13 @@ function findInferredFieldThroughTransparentWrappers(node) {
   if (isPrecWrapper2) {
     const inner = r.content;
     if (!inner || typeof inner !== "object") return null;
-    if (isFieldLike(inner) && (inner.source === "inferred" || inner.source === "enriched")) {
+    if (isEnrichShapedFieldWrapper(inner)) {
       return {
         found: inner,
         reconstruct: (newInner) => ({ ...r, content: newInner })
       };
     }
-    const deeper = findInferredFieldThroughTransparentWrappers(inner);
+    const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
     if (deeper) {
       return {
         found: deeper.found,
@@ -2367,7 +2387,7 @@ function findInferredFieldThroughTransparentWrappers(node) {
 }
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
-  if (isFieldLike(content) && (content.source === "enriched" || content.source === "inferred")) {
+  if (isEnrichShapedFieldWrapper(content)) {
     const overrideName = patch.name;
     const enrichName = content.name ?? "(unknown)";
     if (overrideName === enrichName && !process.env.SITTIR_QUIET) {
@@ -2379,7 +2399,7 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
     }
     content = content.content;
   } else {
-    const nested = findInferredFieldThroughTransparentWrappers(originalMember);
+    const nested = findEnrichShapedFieldThroughTransparentWrappers(originalMember);
     if (nested !== null) {
       const overrideName = patch.name;
       const renamedField = { ...nested.found, name: overrideName, source: "override" };

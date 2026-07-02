@@ -45,6 +45,7 @@ import {
 } from '../wire/wire.ts';
 import {
 	isFieldLike,
+	isEnrichShapedFieldWrapper,
 	isPrecWrapper,
 	isWrapperType,
 	isSeqType,
@@ -723,9 +724,10 @@ function resolvePatch(
  */
 /**
  * Descend through field-transparent wrappers (optional, prec/*) to find
- * the first inferred/enriched field inside. Returns a reconstruction
- * function that rebuilds the wrapper chain with a new inner value, plus
- * the found field (if any). Does NOT descend into seq/general-choice/repeat/field.
+ * the first enrich-shaped field inside (see `isEnrichShapedFieldWrapper`).
+ * Returns a reconstruction function that rebuilds the wrapper chain with
+ * a new inner value, plus the found field (if any). Does NOT descend into
+ * seq/general-choice/repeat/field.
  *
  * Handles two shapes of "optional" wrapper:
  *   - Sittir pipeline: `{ type: 'optional', content: ... }` (lowercase).
@@ -735,9 +737,9 @@ function resolvePatch(
  *     We treat 2-member CHOICE-with-BLANK as transparent so the rename
  *     reaches the field inside.
  *
- * Only used by resolveFieldPlaceholder for the nested-inferred-field case.
+ * Only used by resolveFieldPlaceholder for the nested-enrich-shaped-field case.
  */
-function findInferredFieldThroughTransparentWrappers(
+function findEnrichShapedFieldThroughTransparentWrappers(
 	node: unknown
 ): { found: FieldLike; reconstruct: (newInner: unknown) => unknown } | null {
 	const r = node as Record<string, unknown>;
@@ -751,13 +753,13 @@ function findInferredFieldThroughTransparentWrappers(
 	if (isSittirOptional) {
 		const inner = r.content as unknown;
 		if (!inner || typeof inner !== 'object') return null;
-		if (isFieldLike(inner) && (inner.source === 'inferred' || inner.source === 'enriched')) {
+		if (isEnrichShapedFieldWrapper(inner)) {
 			return {
 				found: inner,
 				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
 			};
 		}
-		const deeper = findInferredFieldThroughTransparentWrappers(inner);
+		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
 		if (deeper) {
 			return {
 				found: deeper.found,
@@ -782,7 +784,7 @@ function findInferredFieldThroughTransparentWrappers(
 		const contentIdx = 1 - blankIdx;
 		const inner = members[contentIdx] as unknown;
 		if (!inner || typeof inner !== 'object') return null;
-		if (isFieldLike(inner) && (inner.source === 'inferred' || inner.source === 'enriched')) {
+		if (isEnrichShapedFieldWrapper(inner)) {
 			return {
 				found: inner,
 				reconstruct: (newInner: unknown) => {
@@ -792,7 +794,7 @@ function findInferredFieldThroughTransparentWrappers(
 				}
 			};
 		}
-		const deeper = findInferredFieldThroughTransparentWrappers(inner);
+		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
 		if (deeper) {
 			return {
 				found: deeper.found,
@@ -820,13 +822,13 @@ function findInferredFieldThroughTransparentWrappers(
 	if (isPrecWrapper2) {
 		const inner = r.content as unknown;
 		if (!inner || typeof inner !== 'object') return null;
-		if (isFieldLike(inner) && (inner.source === 'inferred' || inner.source === 'enriched')) {
+		if (isEnrichShapedFieldWrapper(inner)) {
 			return {
 				found: inner,
 				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
 			};
 		}
-		const deeper = findInferredFieldThroughTransparentWrappers(inner);
+		const deeper = findEnrichShapedFieldThroughTransparentWrappers(inner);
 		if (deeper) {
 			return {
 				found: deeper.found,
@@ -845,14 +847,16 @@ function resolveFieldPlaceholder(
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
 	let content: unknown = originalMember;
-	if (isFieldLike(content) && (content.source === 'enriched' || content.source === 'inferred')) {
-		// Override landing on an already-enriched/inferred position is
-		// redundant — the one-line entry could be deleted and the
-		// enrich/link auto-inference pass would produce the same FIELD
-		// automatically. Warn so the author can clean it up on the next
-		// cycle. Gated on SITTIR_QUIET like the enrich reportSkip helper.
-		// Both 'enriched' (dsl/enrich.ts) and 'inferred' (compiler/link.ts)
-		// mark fields we synthesized — neither should leak into the override
+	if (isEnrichShapedFieldWrapper(content)) {
+		// Override landing on a position that is already structurally
+		// enrich-shaped (see `isEnrichShapedFieldWrapper`) is redundant —
+		// the one-line entry could be deleted and enrich's auto-inference
+		// pass would produce the same FIELD automatically. Warn so the
+		// author can clean it up on the next cycle. Gated on SITTIR_QUIET
+		// like the enrich reportSkip helper. Per the 2026-07-02 user
+		// decision, transparency is structural: a user-authored wrapper
+		// shape-identical to enrich's output is treated the same as one
+		// enrich actually produced — neither should leak into the override
 		// result as a nested wrapper.
 		const overrideName = patch.name;
 		const enrichName = (content as { name?: string }).name ?? '(unknown)';
@@ -869,7 +873,7 @@ function resolveFieldPlaceholder(
 		}
 		content = content.content;
 	} else {
-		// Not a direct inferred field — check for inferred field nested inside
+		// Not a direct enrich-shaped field — check for one nested inside
 		// field-transparent wrappers (optional, prec/*). This handles the case
 		// where enrich placed an auto-numbered field INSIDE an optional:
 		//   optional(field('where_clause1', $.where_clause))
@@ -879,11 +883,11 @@ function resolveFieldPlaceholder(
 		//   field('where_clause', optional(field('where_clause1', ...)))
 		// tree-sitter collapses nested field wrappers to the innermost name,
 		// so the intended rename never reaches the parser.
-		const nested = findInferredFieldThroughTransparentWrappers(originalMember);
+		const nested = findEnrichShapedFieldThroughTransparentWrappers(originalMember);
 		if (nested !== null) {
 			const overrideName = patch.name;
-			// findInferredFieldThroughTransparentWrappers only returns for
-			// inferred/enriched fields, so this is always a safe rename.
+			// findEnrichShapedFieldThroughTransparentWrappers only returns for
+			// structurally enrich-shaped fields, so this is always a safe rename.
 			// Rename the inferred field in place and reconstruct the wrappers.
 			// Result: optional(field('trailing_where_clause', $.where_clause))
 			// instead of: field('trailing_where_clause', optional(field('where_clause2', ...)))
