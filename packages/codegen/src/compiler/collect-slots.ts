@@ -321,12 +321,14 @@ function buildSlot(
 	// longer exist as top-level fields; the fact lives in the opaque
 	// `metadata` bag, carried blindly below via `slot.metadata`, never
 	// branched on here). A named (fieldName-bearing) slot defaults to
-	// 'grammar'; a positional (no-fieldName) slot defaults to 'inferred' —
-	// matching the old `deriveSlotsRaw` walker's behavior exactly, since
-	// every prior rule-level `.source` read here was already unreachable
-	// dead code for any FieldRule/SymbolRule (those never had a `.source`
-	// value that could survive to this point through a live production
-	// path — see debt PR-P1 item 4 in the governing doctrine).
+	// 'grammar'; a positional (no-fieldName) slot defaults to 'inferred'.
+	// This matches the old `deriveSlotsRaw` walker with ONE intentional
+	// reclassification: a named slot whose rule carried a link-stamped
+	// `.source` previously surfaced that tag — the single live case was
+	// ts `binary_expression.operator` (node-model source 'link' →
+	// 'grammar' in debt PR-P1's diff). Under the provenance doctrine the
+	// slot's source is a structural classification (named vs positional),
+	// not carried provenance — see PR-P1 item 4 in the governing doctrine.
 	let baseName: string | undefined = (rule as { fieldName?: string }).fieldName;
 	let source: AssembledNonterminal['source'] = 'grammar';
 
