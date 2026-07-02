@@ -83,7 +83,9 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	childrenOf(rule: R): readonly R[];
 
 	/** Bottom-up rebuild. Returns the SAME reference when nothing changed —
-	 *  load-bearing for fixpoint loops (enrich compares `r === before`). */
+	 *  load-bearing for fixpoint loops (enrich compares `r === before`).
+	 *  Bottom-up rebuild over structural edges (members/content); separator
+	 *  edges are observation-only territory (fold/find). */
 	map(rule: R, visit: (r: R) => R): R;
 
 	/** Pre-order accumulate. */

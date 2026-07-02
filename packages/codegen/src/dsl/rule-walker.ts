@@ -33,6 +33,9 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	 * form; string form carries no nested rules). Leaves return [].
 	 * Walks needing a narrower set early-return on those types in their own
 	 * lambda; this relation never grows per-walk options.
+	 * NOTE: map deliberately uses a narrower structural-edge traversal
+	 * (members/content) than this relation — see its doc; fold/find/foldDeep/
+	 * findDeep use childrenOf in full.
 	 */
 	childrenOf(rule: R): readonly R[] {
 		const out: R[] = [];
@@ -49,9 +52,11 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	 * Bottom-up rebuild. Applies `visit` to each child's mapped result, then
 	 * rebuilds this node ONLY if a child changed. Returns the SAME reference
 	 * when nothing changed — load-bearing for fixpoint loops that compare
-	 * `r === before` (enrich). Rebuild covers members/content edges; stamped
-	 * separator rules are visited but never rebuilt (they are leaf literals
-	 * in practice; rebuilding stamped attrs is transform-pass territory).
+	 * `r === before` (enrich). Rebuilds via STRUCTURAL edges (members/content)
+	 * only — separator-rule edges are neither visited nor rebuilt by map; to
+	 * OBSERVE separator rules use fold/find, which traverse the full
+	 * childrenOf edge set. Rebuilding stamped separator attributes is
+	 * transform-pass territory, deliberately outside map's contract.
 	 */
 	map(rule: R, visit: (r: R) => R): R {
 		const bag = rule as { members?: readonly R[]; content?: R };
@@ -62,11 +67,11 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 				if (out !== m) changed = true;
 				return out;
 			});
-			return changed ? ({ ...(rule as object), members: next } as R) : rule;
+			return changed ? ({ ...(rule as object), members: next } as unknown as R) : rule;
 		}
 		if (bag.content && typeof bag.content === 'object') {
 			const out = visit(this.map(bag.content, visit));
-			return out === bag.content ? rule : ({ ...(rule as object), content: out } as R);
+			return out === bag.content ? rule : ({ ...(rule as object), content: out } as unknown as R);
 		}
 		return rule;
 	}
