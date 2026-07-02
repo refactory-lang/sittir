@@ -6,7 +6,7 @@
  *
  * - Evaluate  produces {@link RawGrammar}.
  * - Link      produces {@link LinkedGrammar} plus a {@link DerivationLog}.
- * - Optimize  produces {@link OptimizedGrammar}.
+ * - Normalize produces {@link NormalizedGrammar}.
  * - Assemble  produces {@link NodeMap}.
  *
  * Diagnostic / suggester-input types live here too ({@link DerivationLog}
@@ -270,10 +270,10 @@ export interface PromotedRuleEntry {
 	/** True if Link kept the promotion; false if held back by `include`. */
 	readonly applied: boolean;
 	/**
-	 * For `polymorph` classifications: pre-Optimize candidates suitable
+	 * For `polymorph` classifications: pre-Normalize candidates suitable
 	 * for emitting a copy-pasteable `variant()` snippet. Computed at
-	 * Link time because Optimize's `fanOutSeqChoices` pass flattens
-	 * nested `seq(_, seq(choice, _))` shapes — post-Optimize the choice
+	 * Link time because Normalize's `fanOutSeqChoices` pass flattens
+	 * nested `seq(_, seq(choice, _))` shapes — post-Normalize the choice
 	 * moves up a level, so paths computed then don't match what
 	 * `transform()`'s `applyPath` sees at evaluate time on the base
 	 * grammar. Captured here once, referenced by the suggester.
@@ -384,10 +384,10 @@ export interface IncludeFilter {
 }
 
 // ---------------------------------------------------------------------------
-// Optimize output
+// Normalize output
 // ---------------------------------------------------------------------------
 
-export interface OptimizedGrammar {
+export interface NormalizedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'link'>>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
@@ -398,7 +398,7 @@ export interface OptimizedGrammar {
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	/**
 	 * Derivation-only view of every rule in `rules`, produced by
-	 * `simplifyRule` as the final pass in `optimize()`. Downstream
+	 * `simplifyRule` as the final pass in `normalizeGrammar()`. Downstream
 	 * consumers (`assemble` → `AssembledBranch/Container/Group`) read
 	 * from this map instead of re-simplifying per-node. Raw
 	 * templates still read `rules` because they need anonymous
@@ -407,7 +407,7 @@ export interface OptimizedGrammar {
 	readonly simplifiedRules: Record<string, SimplifiedRule>;
 	/**
 	 * Wrapper-deleted view of every rule in `rules`, produced by
-	 * `applyWrapperDeletion` as the new last pass in `optimize()`.
+	 * `applyWrapperDeletion` as the new last pass in `normalizeGrammar()`.
 	 * Modifier wrappers (optional / field / repeat / repeat1) have been
 	 * pushed down to leaf attributes (fieldName / multiplicity / separator)
 	 * on RuleBase. Structural rules (seq / choice / variant / group /
@@ -466,7 +466,7 @@ export interface NodeMap {
 	 */
 	readonly derivations: DerivationLog;
 	/**
-	 * Post-Optimize rule map — the template walker needs this so its
+	 * Post-Normalize rule map — the template walker needs this so its
 	 * `symbol` case can inline hidden helper rules (e.g. python's
 	 * `_import_list`) directly into the emitted template. Without it
 	 * the walker falls back to `$$$CHILDREN` which is wrong for hidden
@@ -474,11 +474,11 @@ export interface NodeMap {
 	 */
 	readonly rules?: Record<string, Rule<'link'>>;
 	/**
-	 * Pre-Optimize rules (from Link). The suggester needs these for
+	 * Pre-Normalize rules (from Link). The suggester needs these for
 	 * polymorph-path computation: `findAllPolymorphCandidates` paths
 	 * must match what the override author's `transform()` call would
 	 * see at evaluate time — BEFORE `fanOutSeqChoices` flattens nested
-	 * seq(choice) into top-level seq[choice]. Using post-Optimize
+	 * seq(choice) into top-level seq[choice]. Using post-Normalize
 	 * rules collapses `seq(_, seq(choice, _))` into `seq(_, choice, _)`,
 	 * shifting the choice's logical path from `1/0` to `1`, and the
 	 * emitted `variant()` keys then fail when applied to the base

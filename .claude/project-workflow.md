@@ -20,7 +20,7 @@ Developer diagnostics live behind the unified `sittir` CLI (`@sittir/cli`). Pref
 - `diff-failures` — per-kind validator failure listing
 - `dump-ast-mismatches` — read-render-parse AST gap diagnostic with `--mode diff`, `--cluster` (bug-class histogram), `--filter`, `--all-grammars`, `--format json`
 - `probe-kind` — parse → read → render → reparse trace for a single source string
-- `probe-stages` — rule shape at every compiler phase (wire/evaluate/link/optimize/assemble)
+- `probe-stages` — rule shape at every compiler phase (wire/evaluate/link/normalize/assemble)
 - `probe-parity` — template coverage for one kind
 - `profile` — unified failure aggregation across validators
 - `check-baseline` / `check-perf` / `check-jinja` — regression gates and invariant checks

@@ -5,7 +5,7 @@
 
 /**
  * One entry in the `polymorphVariants` lists carried by LinkedGrammar /
- * OptimizedGrammar / NodeMap — records that a `variant('x')` override inside
+ * NormalizedGrammar / NodeMap — records that a `variant('x')` override inside
  * rule `parent` produced a visible child kind `parent_x` in the parse tree.
  *
  * Emitted by the DSL (`dsl/wire`'s `registerPolymorphVariant` path) and

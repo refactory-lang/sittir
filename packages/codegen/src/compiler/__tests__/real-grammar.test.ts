@@ -71,12 +71,12 @@ describe('Evaluate — TypeScript grammar.js', () => {
 	});
 });
 
-describe('Full pipeline — evaluate → link → optimize → assemble', () => {
+describe('Full pipeline — evaluate → link → normalize → assemble', () => {
 	it('processes Python through all 4 phases', async () => {
 		const raw = await evaluate(pythonGrammar);
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 
 		expect(nodeMap.name).toBe('python');
 		expect(nodeMap.nodes.size).toBeGreaterThan(50);
@@ -93,8 +93,8 @@ describe('Full pipeline — evaluate → link → optimize → assemble', () => 
 	it('processes Rust through all 4 phases', async () => {
 		const raw = await evaluate(rustGrammar);
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 
 		expect(nodeMap.name).toBe('rust');
 		expect(nodeMap.nodes.size).toBeGreaterThan(100);

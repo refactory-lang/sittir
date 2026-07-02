@@ -80,7 +80,7 @@ describe('mintContentAliasKinds — link pass', () => {
 		expect((linked.rules.parens as { type: string }).type).toBe('SEQ');
 		// The parent reference resolved to a SYMBOL ref to the minted kind
 		// (through the optional wrapper, pushed down to leaf attributes by
-		// wrapper-deletion at the Optimize phase — at Link the optional wrapper
+		// wrapper-deletion at the Normalize phase — at Link the optional wrapper
 		// itself still holds the resolved alias content).
 		const vm = linked.rules.visibility_modifier as { type: string; members: Rule[] };
 		const opt = vm.members[1] as { type: string; content?: { type: string; name?: string } };

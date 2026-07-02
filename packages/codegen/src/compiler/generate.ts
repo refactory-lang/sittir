@@ -1,7 +1,7 @@
 /**
  * compiler/generate.ts — pipeline entry point.
  *
- * Pipeline: evaluate → link → optimize → assemble → emitters.
+ * Pipeline: evaluate → link → normalize → assemble → emitters.
  */
 
 import { existsSync, readFileSync } from 'node:fs';
@@ -74,7 +74,7 @@ export interface GeneratedFiles {
 	/** Grammar-owned Rust render-module outputs, when requested by the caller. */
 	renderModule?: RenderModuleBundle;
 	/**
-	 * Slot-grouping diagnostics accumulated during the optimize phase.
+	 * Slot-grouping diagnostics accumulated during the normalize phase.
 	 * Surfaced by runCodegen() via stderr so propose-promotion suggestions
 	 * print during `sittir gen --all` without requiring a separate preflight run.
 	 */
@@ -132,7 +132,7 @@ export interface GenerateConfig {
 /**
  * Generate typed factory code using the new five-phase pipeline.
  *
- * evaluate(grammar.js) → link → optimize → assemble → adapter → emitters
+ * evaluate(grammar.js) → link → normalize → assemble → adapter → emitters
  */
 export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// PR-G: Diagnostics accumulator for the Assemble→Project gate.
@@ -174,7 +174,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// by evaluate's normalize() pass (which only handles symbol-ref objects).
 	// Reading grammar.json directly gives us the full merged inline list that
 	// tree-sitter itself used when compiling the parser.
-	// Loaded BEFORE optimize so inlineRefs in computeSimplifiedRules can inline
+	// Loaded BEFORE normalize so inlineRefs in computeSimplifiedRules can inline
 	// auto-synthesized helpers (e.g., _type_arguments_repeat1) that tree-sitter
 	// expands at parse time.
 	const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
@@ -225,22 +225,22 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		}
 	}
 
-	// Phase 3: Optimize — build a NormalizeCtx carrying the inline-decision set
-	// and polymorph skip-set; pass it to optimize so the simplify phase can read
-	// them off ctx (PR-H ctx threading).
+	// Phase 3: Normalize — build a NormalizeCtx carrying the inline-decision set
+	// and polymorph skip-set; pass it to normalizeGrammar so the simplify phase
+	// can read them off ctx (PR-H ctx threading).
 	const normalizeCtx = new NormalizeCtx({
 		rules: linked.rules,
 		inlineKinds: inlinableKinds,
 		diagnostics,
 		polymorphSkip: polymorphsConfigSkip,
 	});
-	const optimized = normalizeGrammar(linked, normalizeCtx);
-	tracePhaseRules('optimize', optimized.rules);
-	tracePhaseRules('simplify', optimized.simplifiedRules);
+	const normalized = normalizeGrammar(linked, normalizeCtx);
+	tracePhaseRules('normalize', normalized.rules);
+	tracePhaseRules('simplify', normalized.simplifiedRules);
 
-	// Phase 4: Assemble — caller-owned ctx (R12): built from `optimized` via
+	// Phase 4: Assemble — caller-owned ctx (R12): built from `normalized` via
 	// the canonical factory, threading the pipeline's live DiagnosticSink.
-	const nodeMap = assemble(optimized, AssembleCtx.from(optimized, generatedIdTables, diagnostics));
+	const nodeMap = assemble(normalized, AssembleCtx.from(normalized, generatedIdTables, diagnostics));
 	traceAssembleNodes('assemble', nodeMap.nodes);
 
 	// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so
@@ -333,7 +333,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		nodeMap,
 		generatedIdTables,
 		renderModule: emitted.renderModule,
-		// drain slot-grouping diagnostics accumulated during the optimize phase
+		// drain slot-grouping diagnostics accumulated during the normalize phase
 		slotGroupingDiagnostics: drainSlotGroupingDiagnostics()
 	};
 	// Clean up the unnamed-choice listener to avoid double-forwarding on

@@ -133,7 +133,7 @@ const flagWalker = new RuleWalker();
 export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boolean {
 	return (
 		flagWalker.find(rule, (r) => {
-			const sep = (r as { separator?: RuleBase<'optimize'>['separator'] }).separator;
+			const sep = (r as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 			if (typeof sep === 'object' && !Array.isArray(sep) && sep !== null) {
 				if ((sep as { trailing?: boolean; leading?: boolean })[flag] === true) return true;
 			}
@@ -555,7 +555,7 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
             (m) => isArrayMult((m as { multiplicity?: Mult; }).multiplicity) && sameSlotShape(head, m)
         );
         if (sepArm && repArm) {
-            const repSep = (repArm as { separator?: RuleBase<'optimize'>['separator']; }).separator;
+            const repSep = (repArm as { separator?: RuleBase<'normalize'>['separator']; }).separator;
             if (repSep !== undefined) return repArm;
             // Fall back to the choice's separator-string arm, marking trailing.
             const sepStr = (sepArm as { value: string; }).value;

@@ -45,15 +45,15 @@ for (const g of grammarsToRegen) {
 async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	console.log(`\n=== Regenerating templates.rs for ${grammar} ===`);
 
-	// Phases 1–4: evaluate → link → optimize → assemble
+	// Phases 1–4: evaluate → link → normalize → assemble
 	const grammarJsPath = resolveGrammarJsPath(grammar);
 	const overridesPath = resolveOverridesPath(grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
-	const optimized = normalizeGrammar(linked);
-	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+	const normalized = normalizeGrammar(linked);
+	const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 	hydrateSlotRefs(nodeMap);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 

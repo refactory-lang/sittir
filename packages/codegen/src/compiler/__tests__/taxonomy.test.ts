@@ -26,8 +26,8 @@ beforeAll(async () => {
 	const grammar = resolveGrammarJsPath('rust');
 	const raw = await evaluate(grammar);
 	const linked = link(raw);
-	const optimized = normalizeGrammar(linked);
-	nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+	const normalized = normalizeGrammar(linked);
+	nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 });
 
 describe('classifyBranchSlots', () => {

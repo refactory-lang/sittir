@@ -18,7 +18,7 @@
  *
  * **Pre-pushdown only.** List/separator/trailing shapes are reconstructable
  * only while the wrappers (`optional`/`repeat`/`repeat1`/`field`) are intact
- * — i.e. enrich/wire/evaluate/link/optimize. Do NOT call these after
+ * — i.e. enrich/wire/evaluate/link/normalize. Do NOT call these after
  * wrapper-deletion (simplify/assemble/emit), where the wrappers have already
  * been flattened to `nonterminal`/`multiplicity`/`separator` attributes.
  */

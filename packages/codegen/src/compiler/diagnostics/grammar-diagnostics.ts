@@ -132,9 +132,9 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
 }): { nodeMap: AssembledNodeMap; diagnostics: readonly GrammarDiagnostic[] } {
 	const linked = link(input.rawGrammar);
-	const optimized = normalizeGrammar(linked);
-	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
-	// drain slot-grouping diagnostics populated during the optimize() pass
+	const normalized = normalizeGrammar(linked);
+	const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+	// drain slot-grouping diagnostics populated during the normalizeGrammar() pass
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	// §D-2c content-alias injectivity — sole consumer of the diagnostic-only
 	// contentAliasedTo map (empty today; guards a future violation).

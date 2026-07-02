@@ -6,7 +6,7 @@ import { computeSimplifiedRules, SimplifyCtx } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule } from '../../types/rule.ts';
-import type { OptimizedGrammar } from '../types.ts';
+import type { NormalizedGrammar } from '../types.ts';
 import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../model/node-map.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
@@ -19,7 +19,7 @@ function deriveFields(rule: Rule<'link'>) {
 	return deriveSlots(deleteWrapper(rule)).filter((s) => s.source !== 'inferred');
 }
 
-function makeOptimized(rules: Record<string, Rule<'link'>>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
+function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial<NormalizedGrammar>): NormalizedGrammar {
 	const renderRules = applyWrapperDeletion(rules);
 	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
@@ -244,7 +244,7 @@ describe('Assemble — classifyNode', () => {
 	});
 
 	it('assembles hidden alias sources from their captured leaf body', () => {
-		const optimized = makeOptimized(
+		const normalized = makeNormalized(
 			{
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				_type_identifier: {
@@ -259,12 +259,12 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(optimized, AssembleCtx.from(optimized)).nodes.get('_type_identifier');
+		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_type_identifier');
 		expect(node?.modelType).toBe('pattern');
 	});
 
 	it('assembles hidden alias sources from their captured structural body', () => {
-		const optimized = makeOptimized(
+		const normalized = makeNormalized(
 			{
 				expr: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				_pair_alias: {
@@ -297,13 +297,13 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(optimized, AssembleCtx.from(optimized)).nodes.get('_pair_alias');
+		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_pair_alias');
 		expect(node?.modelType).toBe('branch');
 		expect(allSlotsOf(node!).map((slot) => slot.name)).toEqual(['left', 'right']);
 	});
 
 	it('includes alias-member hidden kinds in supertype subtype expansion', () => {
-		const optimized = makeOptimized(
+		const normalized = makeNormalized(
 			{
 				_property_name: {
 					type: SUPERTYPE,
@@ -327,13 +327,13 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(optimized, AssembleCtx.from(optimized)).nodes.get('_property_name');
+		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
 		expect((node as any).subtypes).toEqual(['identifier', 'string', '_property_identifier']);
 	});
 
 	it('includes nested alias-member hidden kinds in supertype subtype expansion', () => {
-		const optimized = makeOptimized(
+		const normalized = makeNormalized(
 			{
 				_property_name: {
 					type: SUPERTYPE,
@@ -375,7 +375,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(optimized, AssembleCtx.from(optimized)).nodes.get('_property_name');
+		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
 		expect((node as any).subtypes).toEqual([
 			'identifier',
@@ -521,7 +521,7 @@ describe('Assemble — naming', () => {
 
 describe('Assemble — assemble()', () => {
 	it('produces a NodeMap with classified nodes', () => {
-		const optimized = makeOptimized({
+		const normalized = makeNormalized({
 			function_item: {
 				type: SEQ,
 				members: [
@@ -535,14 +535,14 @@ describe('Assemble — assemble()', () => {
 			},
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 		expect(nodeMap.name).toBe('test');
 		expect(nodeMap.nodes.get('function_item')?.modelType).toBe('branch');
 		expect(nodeMap.nodes.get('identifier')?.modelType).toBe('pattern');
 	});
 
 	it('assigns typeName and factoryName to nodes', () => {
-		const optimized = makeOptimized({
+		const normalized = makeNormalized({
 			function_item: {
 				type: SEQ,
 				members: [
@@ -555,7 +555,7 @@ describe('Assemble — assemble()', () => {
 			},
 			id: { type: PATTERN, value: '[a-z]+' }
 		});
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 		const fnNode = nodeMap.nodes.get('function_item')!;
 		expect(fnNode.typeName).toBe('FunctionItem');
 		expect(fnNode.factoryName).toBe('functionItem');

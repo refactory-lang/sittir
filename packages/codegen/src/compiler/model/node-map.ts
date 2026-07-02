@@ -572,7 +572,7 @@ export function safeParamName(name: string): string {
 
 /**
  * Cheap existence predicate: does this rule's tree contain any field()?
- * Used by pre-assembly phases (classifier, optimizer) that only need to
+ * Used by pre-assembly phases (classifier, normalizer) that only need to
  * know IF fields exist — not the full list. Shorter-circuits than
  * deriveFields.
  */
@@ -1102,14 +1102,14 @@ function normalizeRuleForSignature(value: unknown): unknown {
 }
 
 /**
- * Extract a separator string from a `RuleBase<'optimize'>['separator']`
+ * Extract a separator string from a `RuleBase<'normalize'>['separator']`
  * value (the stamped leaf form `applyWrapperDeletion` produces — this
- * function only ever sees post-Optimize separators, never the `link`-phase
+ * function only ever sees post-Normalize separators, never the `link`-phase
  * `RepeatRule.separator?: string`).
  * Returns undefined when the separator is absent or empty.
  * Handles string, Rule[], and the object form { rules, trailing?, leading? }.
  */
-export function extractSeparatorString(sep: RuleBase<'optimize'>['separator']): string | undefined {
+export function extractSeparatorString(sep: RuleBase<'normalize'>['separator']): string | undefined {
 	if (sep === undefined) return undefined;
 	if (typeof sep === 'string') return sep || undefined;
 	if (Array.isArray(sep)) {
@@ -2479,7 +2479,7 @@ export class AssembledBranch<
 	readonly simplifiedRule: Rule<'link'>;
 	/**
 	 * Wrapper-deleted view of the rule, sourced from
-	 * `optimized.renderRules[kind]` at assemble time. Optional / field /
+	 * `normalized.renderRules[kind]` at assemble time. Optional / field /
 	 * repeat / repeat1 wrappers are pushed down to leaf attributes;
 	 * structural rules (seq / choice / variant / group / polymorph) are
 	 * preserved. Populated alongside `simplifiedRule`; consumed by PR1
@@ -3091,7 +3091,7 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 	 */
 	/**
 	 * The literal text this token produces when its rule body is a
-	 * single string (post-optimize inline of `token(string)` or
+	 * single string (post-normalize inline of `token(string)` or
 	 * `prec(n, string)` wrappers around a bare literal). Returns
 	 * `undefined` when the body is a `TokenRule` wrapping pattern-based
 	 * content — those don't have a single user-visible string.
@@ -3270,7 +3270,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	// any Rule<'link'> type).
 	/** See `AssembledBranch.simplifiedRule`. */
 	readonly simplifiedRule: Rule<'link'>;
-	/** See `AssembledBranch.renderRule`. Sourced from `optimized.renderRules[kind]` at assemble time. */
+	/** See `AssembledBranch.renderRule`. Sourced from `normalized.renderRules[kind]` at assemble time. */
 	readonly renderRule: RenderRule;
 	readonly detectToken?: string;
 	/** Short label (e.g., variant name like 'pub' or 'tuple'). Defaults to kind. */

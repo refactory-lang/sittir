@@ -25,14 +25,14 @@ beforeAll(async () => {
 	const rustGrammar = resolveGrammarJsPath('rust');
 	const rustRaw = await evaluate(rustGrammar);
 	const rustLinked = link(rustRaw);
-	const rustOptimized = normalizeGrammar(rustLinked);
-	nodeMap = assemble(rustOptimized, AssembleCtx.from(rustOptimized));
+	const rustNormalized = normalizeGrammar(rustLinked);
+	nodeMap = assemble(rustNormalized, AssembleCtx.from(rustNormalized));
 
 	const typescriptGrammar = resolveGrammarJsPath('typescript');
 	const typescriptRaw = await evaluate(typescriptGrammar);
 	const typescriptLinked = link(typescriptRaw);
-	const typescriptOptimized = normalizeGrammar(typescriptLinked);
-	typescriptNodeMap = assemble(typescriptOptimized, AssembleCtx.from(typescriptOptimized));
+	const typescriptNormalized = normalizeGrammar(typescriptLinked);
+	typescriptNodeMap = assemble(typescriptNormalized, AssembleCtx.from(typescriptNormalized));
 
 });
 

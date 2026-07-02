@@ -542,9 +542,9 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	// ---------------------------------------------------------------
 	// suggestedGroups — nested-seq candidates for group synthesis
 	// ---------------------------------------------------------------
-	// Use linkedRules (post-Link, pre-Optimize) so the detector sees
+	// Use linkedRules (post-Link, pre-Normalize) so the detector sees
 	// the natural grammar shape with nested seqs intact. Fall back to
-	// post-Optimize rules when linkedRules is absent.
+	// post-Normalize rules when linkedRules is absent.
 	const groupRules = nodeMap.linkedRules ?? nodeMap.rules ?? {};
 	const groupCandidates = detectGroupCandidates(groupRules);
 	lines.push(emitSuggestedGroupsBlock(groupCandidates));

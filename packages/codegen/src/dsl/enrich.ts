@@ -979,7 +979,7 @@ function tryPromoteInRepeatSeq(
 
 
 // Multiplicity / nonterminal are NOT stamped here — they are derived later by
-// `applyWrapperDeletion` (optimize) from the OPTIONAL/REPEAT/REPEAT1/FIELD
+// `applyWrapperDeletion` (normalize) from the OPTIONAL/REPEAT/REPEAT1/FIELD
 // wrapper structure, the single source of truth. Stamping them in enrich was
 // premature (nothing reads them before wrapper-deletion) and polluted the
 // `nonterminal` slot signal — enrich marked bare `optional(',')` delimiters

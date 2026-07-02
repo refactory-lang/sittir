@@ -22,8 +22,8 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		word: null,
 		references: []
 	};
-	const optimized = normalizeGrammar(link(raw));
-	return assemble(optimized, AssembleCtx.from(optimized));
+	const normalized = normalizeGrammar(link(raw));
+	return assemble(normalized, AssembleCtx.from(normalized));
 }
 
 describe('diagnoseParseKindCollisions', () => {

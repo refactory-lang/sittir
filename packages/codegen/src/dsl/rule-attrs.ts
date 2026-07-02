@@ -4,7 +4,7 @@
  * `withAttrsFrom` and `combineMultiplicity` are used by every collapse site
  * that discards a structural wrapper (seq / choice) in favour of a single
  * survivor. Both were originally local to simplify.ts; they now live here so
- * optimize.ts's `collapseWrappers` and simplify.ts's `canonicalizeSeqOfLeaves`
+ * normalize.ts's `collapseWrappers` and simplify.ts's `canonicalizeSeqOfLeaves`
  * use the SAME implementation, and future collapse sites can't drift apart.
  *
  * `combineMultiplicity` has moved to transforms.ts (PR-O M1 de-scatter);
@@ -32,8 +32,8 @@ export { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
 	// `original` may be a wrapper-bearing (evaluate/link) rule where these
 	// stamped leaf attrs aren't part of the type yet (they're populated by
-	// `applyWrapperDeletion` during Optimize) — but `collapseWrappers`
-	// (normalize.ts, pre-Optimize) legitimately calls this with `Rule<'link'>`
+	// `applyWrapperDeletion` during Normalize) — but `collapseWrappers`
+	// (normalize.ts, pre-Normalize) legitimately calls this with `Rule<'link'>`
 	// wrapper nodes that already carry link-lifted attrs defensively. Read
 	// structurally rather than narrowing the param type, matching the
 	// established pattern (see `findRepeatFlag` in dsl/rule-transforms.ts).
@@ -83,14 +83,14 @@ const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1
 
 /**
  * Structural-read shape for the stamped leaf attributes. These only exist
- * on `RuleBase<'optimize' | 'simplify'>` per the type, but `sharedArmAttrs`
+ * on `RuleBase<'normalize' | 'simplify'>` per the type, but `sharedArmAttrs`
  * is called from `collect-slots.ts` with `AnyRule` values that are, at
- * runtime, always post-wrapper-deletion (optimize-phase) rules — the
+ * runtime, always post-wrapper-deletion (normalize-phase) rules — the
  * wrapper-bearing 'evaluate'/'link' views just don't carry these fields.
  * Matches the established structural-read-cast pattern (see
  * `findRepeatFlag` in dsl/rule-transforms.ts).
  */
-type StampedAttrs = Pick<RuleBase<'optimize'>, 'fieldName' | 'multiplicity' | 'nonterminal' | 'separator'>;
+type StampedAttrs = Pick<RuleBase<'normalize'>, 'fieldName' | 'multiplicity' | 'nonterminal' | 'separator'>;
 
 /** The arms of a choice (`members`); `[]` otherwise. */
 function armsOf(rule: AnyRule): readonly AnyRule[] {

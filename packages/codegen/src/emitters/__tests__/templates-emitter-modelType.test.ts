@@ -195,7 +195,7 @@ describe('emitGroupTemplate', () => {
 describe('emitMultiTemplate', () => {
 	it('emits a list slot when the inner is a field', () => {
 		const innerSym: SymbolRule = { type: SYMBOL, name: 'item', id: 'rm1' };
-		// Synthetic fixture: a FieldRule wrapper carrying post-optimize stamped
+		// Synthetic fixture: a FieldRule wrapper carrying post-normalize stamped
 		// attrs (multiplicity) simultaneously — not a shape the real pipeline
 		// produces, but what emitMultiTemplate's structural read expects here.
 		const innerField = {

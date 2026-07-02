@@ -68,7 +68,7 @@ function bucketOf(params: FnRecord['params']): Exclude<Principle14Bucket, 'dead'
 	if (params.length === 0) return 'zero-param';
 	if (params.length === 1) return 'getter-candidate';
 	// A conforming pipeline fn is `(target, ctx: *Ctx, <recursion-local>...)` —
-	// the ctx param isn't always SECOND: entry points like `assemble(optimized,
+	// the ctx param isn't always SECOND: entry points like `assemble(normalized,
 	// generatedIdTables?, ctx?: AssembleCtx)` carry extra optional args before
 	// it. Scan every param after the first (the target) for either a type
 	// ending in `Ctx`, or the param literally named `ctx` (the convention every

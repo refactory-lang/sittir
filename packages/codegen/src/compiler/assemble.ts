@@ -22,7 +22,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { isLinkSymbol, isEnumChoiceRule } from '../types/rule.ts';
-import type { OptimizedGrammar, NodeMap, SignaturePool } from './types.ts';
+import type { NormalizedGrammar, NodeMap, SignaturePool } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
 import {
@@ -72,7 +72,7 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
  * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies`, + `rawRules` for the
  * supertype-subtype resolution family — R4 / #14; `seen` cycle-guards and the
  * per-call subtypeSet stay explicit pass-local params, CW6). `rawRules` is
- * `optimized.rules` (the pre-simplify view: hidden-rule resolution needs to see
+ * `normalized.rules` (the pre-simplify view: hidden-rule resolution needs to see
  * ALIAS/GROUP/TOKEN/VARIANT wrapper shapes that `BaseCtx.rules` — the
  * `SimplifiedRule` view — has already collapsed), so it's a distinct field, not
  * a reuse of the inherited `rules`.
@@ -113,24 +113,24 @@ export class AssembleCtx extends BaseCtx<SimplifiedRule> {
 	}
 
 	/**
-	 * Canonical construction from an OptimizedGrammar — the ONE derivation of
+	 * Canonical construction from a NormalizedGrammar — the ONE derivation of
 	 * the assemble view (simplified rules on `rules`, raw rules on `rawRules`,
 	 * the grammar word-matcher, alias bodies). Callers own the ctx (R12):
 	 * generate.ts passes its live DiagnosticSink; tests take the default.
 	 */
 	static from(
-		optimized: OptimizedGrammar,
+		normalized: NormalizedGrammar,
 		generatedIdTables?: GeneratedIdTables,
 		diagnostics: DiagnosticSink = new DiagnosticSink()
 	): AssembleCtx {
-		const wordMatcherRegex = compileWordMatcher(optimized.word, optimized.rules);
+		const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.rules);
 		return new AssembleCtx({
-			rules: optimized.simplifiedRules,
-			rawRules: optimized.rules,
+			rules: normalized.simplifiedRules,
+			rawRules: normalized.rules,
 			diagnostics,
 			wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
 			generatedIdTables,
-			topLevelAliasBodies: optimized.topLevelAliasBodies ?? new Map()
+			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map()
 		});
 	}
 }
@@ -144,8 +144,8 @@ export interface AssembledNodeMap extends NodeMap {
 // ---------------------------------------------------------------------------
 // assemble() — main entry point
 // ---------------------------------------------------------------------------
-export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): AssembledNodeMap {
-	const wordMatcherRegex = compileWordMatcher(optimized.word, optimized.rules);
+export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): AssembledNodeMap {
+	const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.rules);
 	const nodes = ctx.nodes;
 	// collectGeneratedKindEntries(undefined) is []; keep the non-optional
 	// entries array downstream constructors expect.
@@ -155,9 +155,9 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
 	// Parents that went through Link's variant() push-down keep their
 	// original rule shape but should NOT auto-promote to polymorph —
 	// each variant child renders via its own kind-template.
-	const variantParents = new Set(optimized.polymorphVariants?.map((v) => v.parent) ?? []);
+	const variantParents = new Set(normalized.polymorphVariants?.map((v) => v.parent) ?? []);
 	const variantChildrenByParent = new Map<string, string[]>();
-	for (const v of optimized.polymorphVariants ?? []) {
+	for (const v of normalized.polymorphVariants ?? []) {
 		const existing = variantChildrenByParent.get(v.parent) ?? [];
 		existing.push(`${v.parent}_${v.child}`);
 		variantChildrenByParent.set(v.parent, existing);
@@ -170,15 +170,15 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
 	// body that's `optional(...)` or `choice(blank, ...)` qualifies. Set
 	// on a module-level pointer in node-map.ts for the slot-value
 	// constructors to consult during the rule walk below.
-	const optionalBodyKinds = collectOptionalBodyKinds(optimized.rules);
+	const optionalBodyKinds = collectOptionalBodyKinds(normalized.rules);
 	setOptionalBodyKinds(optionalBodyKinds);
 	const parseKindCollisionContext = {
-		ruleSignatures: buildParseKindRuleSignatures(optimized.renderRules!)
+		ruleSignatures: buildParseKindRuleSignatures(normalized.renderRules!)
 	} as const;
 
 	try {
-		for (const [kind, rule] of Object.entries(optimized.rules)) {
-			const assemblyRule = optimized.topLevelAliasBodies?.get(kind) ?? rule;
+		for (const [kind, rule] of Object.entries(normalized.rules)) {
+			const assemblyRule = normalized.topLevelAliasBodies?.get(kind) ?? rule;
 			// `inlinedRule` still uses inlineRefs here because the
 			// RAW rule path (for template emission + classification) isn't
 			// run through simplify. Only `simplifiedRule` (derivation view)
@@ -193,17 +193,17 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
 			// …) to surface as template text. See
 			// `project_simplify_template_walker_divergence.md`.
 			const inlinedRule = hoistInnerFieldsForTemplate(
-				inlineRefs(assemblyRule, { rules: optimized.rules })
+				inlineRefs(assemblyRule, { rules: normalized.rules })
 			);
 			const modelType = classifyNode(kind, inlinedRule, {
 				variantParents,
-				parentAliasedKinds: optimized.parentAliasedKinds,
+				parentAliasedKinds: normalized.parentAliasedKinds,
 				wordMatcher: wordMatcherRegex
 			});
 			// `simplifiedRules[kind]` and `renderRules[kind]` are both pre-computed
-			// by optimize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
-			const simplifiedRule = optimized.simplifiedRules[kind]!;
-			const renderRule: RenderRule = optimized.renderRules![kind]!;
+			// by normalize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
+			const simplifiedRule = normalized.simplifiedRules[kind]!;
+			const renderRule: RenderRule = normalized.renderRules![kind]!;
 			const variantChildKinds = variantChildrenByParent.get(kind);
 
 			switch (modelType) {
@@ -219,8 +219,8 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
 								variantChildKinds,
 								kindEntries,
 								parseKindCollisionContext,
-								visibleAliasTargets: optimized.visibleAliasTargets,
-								simplifiedRules: optimized.simplifiedRules
+								visibleAliasTargets: normalized.visibleAliasTargets,
+								simplifiedRules: normalized.simplifiedRules
 							}
 						)
 					);
@@ -283,7 +283,7 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
 			}
 		}
 
-		collectAnonymousNodes(optimized.rules, nodes, wordMatcherRegex, kindEntries);
+		collectAnonymousNodes(normalized.rules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
 		// Pre-compute the two cross-node sets once, then run the merged
@@ -300,7 +300,7 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
 			}
 		}
 		const variantChildKindsSet = new Set<string>(
-			(optimized.polymorphVariants ?? []).map((pv) => `${pv.parent}_${pv.child}`)
+			(normalized.polymorphVariants ?? []).map((pv) => `${pv.parent}_${pv.child}`)
 		);
 		const userFacingCtx: _UserFacingCtx = {
 			aliasSourceKinds,
@@ -333,7 +333,7 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
 		// feedback_ruleid_backpointer.
 		const nodeByRuleId = new Map<RuleId, AssembledNode>();
 		const slotByRuleId = new Map<RuleId, AssembledNonterminal>();
-		for (const [kind, rule] of Object.entries(optimized.rules)) {
+		for (const [kind, rule] of Object.entries(normalized.rules)) {
 			const node = nodes.get(kind);
 			if (!node) continue;
 			if (rule.id) nodeByRuleId.set(rule.id, node);
@@ -344,14 +344,14 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
 			}
 		}
 
-		// Back-compat: also index raw FieldRule ids from `optimized.rules` so that
+		// Back-compat: also index raw FieldRule ids from `normalized.rules` so that
 		// consumers holding a reference to the original field-wrapper rule (before
 		// applyWrapperDeletion stripped it) can still resolve the slot. The leaf's
 		// sourceRuleIds may differ from the FieldRule's id after wrapper-deletion
 		// pushes modifier attrs down; walking the raw rules and name-matching
 		// against the assembled slots bridges the gap without requiring the
 		// pipeline to thread the FieldRule id through to the RenderRule leaf.
-		for (const [kind, rawRule] of Object.entries(optimized.rules)) {
+		for (const [kind, rawRule] of Object.entries(normalized.rules)) {
 			const node = nodes.get(kind);
 			if (!node) continue;
 			const slotsByName = new Map<string, AssembledNonterminal>();
@@ -373,17 +373,17 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
 		}
 
 		return {
-			name: optimized.name,
+			name: normalized.name,
 			nodes,
 			nodeByRuleId,
 			slotByRuleId,
 			signatures: computeSignatures(nodes),
-			derivations: optimized.derivations,
-			rules: optimized.rules,
-			word: optimized.word,
-			externals: optimized.externals ? new Set(optimized.externals) : undefined,
+			derivations: normalized.derivations,
+			rules: normalized.rules,
+			word: normalized.word,
+			externals: normalized.externals ? new Set(normalized.externals) : undefined,
 			polymorphFormKinds: computePolymorphFormKinds(nodes),
-			refineForms: optimized.refineForms,
+			refineForms: normalized.refineForms,
 			parseKindCollisions: drainParseKindCollisionDiagnostics(),
 			deriveShapeDiagnostics: drainDeriveShapeDiagnostics(),
 			assembleWarnings: drainAssembleWarnings()
@@ -413,7 +413,7 @@ export function assemble(optimized: OptimizedGrammar, ctx: AssembleCtx): Assembl
  *     might use this shape directly.
  *
  * Sittir's `terminal` wrapper appears in promoted rules (e.g.
- * `_semicolon` becomes `terminal(optional(';'))` after the optimize
+ * `_semicolon` becomes `terminal(optional(';'))` after the normalize
  * fixpoint). Without stripping it, the optionality would be hidden one
  * layer deep and the slot model would still treat references as
  * required-single.
@@ -486,10 +486,10 @@ function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[
  * Unwrap a `GroupRule<'link'>` to obtain the inner content rule, its simplified view,
  * and its wrapper-deleted RenderRule.
  *
- * @param rule - The raw rule from `optimized.rules`.
+ * @param rule - The raw rule from `normalized.rules`.
  * @param simplifiedRule - The pre-computed simplified rule for the same kind.
  * @param renderRule - The wrapper-deleted RenderRule for the same kind (from
- *   `optimized.renderRules[kind]` or a per-call `deleteWrapper` fallback).
+ *   `normalized.renderRules[kind]` or a per-call `deleteWrapper` fallback).
  * @returns `groupRule` — the inner seq-with-fields content; `groupSimplified` —
  *   the simplified view of that inner content; `groupRenderRule` — the
  *   wrapper-deleted view of the inner content.
@@ -1244,14 +1244,14 @@ type ModelType = AssembledNode['modelType'];
 /**
  * Classify a rule into a model type by pure rule.type dispatch.
  *
- * By the time rules reach Assemble, Link and Optimize have already
+ * By the time rules reach Assemble, Link and Normalize have already
  * pre-classified the interesting cases via dedicated rule types:
  *
  *   EnumRule<'link'>       — Link: choice-of-strings
  *   SupertypeRule<'link'>  — Link: hidden choice-of-symbols (grammar or promoted)
  *   GroupRule<'link'>      — Link: hidden seq with fields
  *   TerminalRule   — Link: subtree with no fields and no symbol refs
- *   PolymorphRule  — Optimize: choice-of-variants with heterogeneous fields
+ *   PolymorphRule  — Normalize: choice-of-variants with heterogeneous fields
  *
  * Assemble just dispatches on rule.type. The only structural inspection
  * left is distinguishing branch (has fields) from container (has children
@@ -1402,7 +1402,7 @@ export function isAllTextShape(rule: Rule<'link'>): boolean {
 
 // ---------------------------------------------------------------------------
 // simplifyRule lives in compiler/simplify.ts and now runs as a
-// dedicated pipeline stage at the end of `optimize()`. Re-exported
+// dedicated pipeline stage at the end of `normalizeGrammar()`. Re-exported
 // here so the existing assemble.test.ts import site keeps working.
 // ---------------------------------------------------------------------------
 
@@ -1412,7 +1412,7 @@ export { simplifyRule };
 // extractFields — walk rule tree, collect fields with derived metadata
 // ---------------------------------------------------------------------------
 
-// extractForms — deleted. PolymorphRule.forms is built by Optimize's
+// extractForms — deleted. PolymorphRule.forms is built by Normalize's
 // promotePolymorph pass; assemble builds AssembledGroup instances from
 // those forms directly (see the 'polymorph' case of the switch above).
 

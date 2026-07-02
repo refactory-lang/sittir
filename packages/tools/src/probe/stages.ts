@@ -13,8 +13,8 @@
  *                         redundancies surface as nested same-name FIELDs.
  *   - `link`            — after `link()` (symbol-reference inference,
  *                         promoted rules).
- *   - `optimize`        — after `optimize()` (rule canonicalisation).
- *   - `simplify`        — `optimized.simplifiedRules[kind]`, the
+ *   - `normalize`       — after `normalizeGrammar()` (rule canonicalisation).
+ *   - `simplify`        — `normalized.simplifiedRules[kind]`, the
  *                         template-walker's view of the same rule with
  *                         decorative wrappers stripped.
  *   - `assemble`        — the `AssembledNode` for this kind (fields,
@@ -89,11 +89,11 @@ stages.evaluate = raw.rules[kind] ?? null;
 const linked = link(raw, undefined);
 stages.link = linked.rules[kind] ?? null;
 
-const optimized = normalizeGrammar(linked);
-stages.optimize = optimized.rules[kind] ?? null;
-stages.simplify = optimized.simplifiedRules?.[kind] ?? null;
+const normalized = normalizeGrammar(linked);
+stages.normalize = normalized.rules[kind] ?? null;
+stages.simplify = normalized.simplifiedRules?.[kind] ?? null;
 
-const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 const node = nodeMap.nodes.get(kind) ?? null;
 stages.assemble = node ? summarizeAssembled(node) : null;
 const generatedIdTables = await loadGeneratedIdTables(grammar);

@@ -22,8 +22,8 @@ describe('polymorph golden inventory — Task 0 guard (retired)', () => {
 			const overridePath = resolveOverridesPath(grammar);
 			const raw = await evaluate(overridePath);
 			const linked = link(raw);
-			const optimized = normalizeGrammar(linked);
-			const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+			const normalized = normalizeGrammar(linked);
+			const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 
 			let polymorphCount = 0;
 			for (const [, node] of nodeMap.nodes) {

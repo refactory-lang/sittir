@@ -17,12 +17,12 @@ does), and output (what changes).
 > enrich (author wraps grammar(enrich(base), …))   ← module-load, pre-tree-sitter
 >   → evaluate (compiler/evaluate.ts: runs DSL, wire(), auto-groups)
 >     → link (compiler/link.ts)
->       → optimize (compiler/optimize.ts: + applyWrapperDeletion + computeSimplifiedRules)
+>       → normalize (compiler/normalize.ts: + applyWrapperDeletion + computeSimplifiedRules)
 >         → assemble (compiler/assemble.ts + node-map.ts + collect-slots.ts)
 >           → emit (emitters/*.ts)
 > ```
 >
-> **Three Rule shapes flow through `optimize()` and are attached per node in
+> **Three Rule shapes flow through `normalizeGrammar()` and are attached per node in
 > `assemble()`** (see [Rule data model](#rule-ir-compilerrulets)):
 >
 > | Snapshot | Produced by | Attached as | Consumed by |
@@ -34,10 +34,10 @@ does), and output (what changes).
 > **What's shipped (PR0 + PR1 + PR2):**
 > - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` / `aliasedFrom` / `aliasNamed` on every Rule via the shared `RuleBase` interface (`types/rule.ts` — R11 moved the Rule IR layer to `codegen/src/types/`).
 > - **enrich attribute passes** (PR0): `enrichFieldWrappers` ships in `dsl/enrich.ts`. `enrichMultiplicityWrappers` was REMOVED — `multiplicity`/`nonterminal` are derived solely by `applyWrapperDeletion` from wrapper structure (enrich stamping them was premature + polluted the `nonterminal` slot signal by marking bare `optional(',')` delimiters). The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`).
-> - **`applyWrapperDeletion`** (PR1, `compiler/wrapper-deletion.ts`): new last pass of `optimize()`; pushes modifier wrappers (optional / field / repeat / repeat1 / alias) down to leaf `RuleBase` attributes. Output: `RenderRule` (wrapper-free) snapshot.
+> - **`applyWrapperDeletion`** (PR1, `compiler/wrapper-deletion.ts`): new last pass of `normalizeGrammar()`; pushes modifier wrappers (optional / field / repeat / repeat1 / alias) down to leaf `RuleBase` attributes. Output: `RenderRule` (wrapper-free) snapshot.
 > - **RenderRule + SimplifiedRule branded types** (PR1/PR2, `types/rule.ts`).
 > - **`computeSimplifiedRules`** (relocated PR1 to `compiler/simplify.ts`): takes RenderRule, runs `inlineRefs` + `simplifyRules` + `canonicalizeSeqOfLeaves` + `deleteWrapper` (post-fixpoint wrapper-free guard) + `fuseHeadRepeatLists`. Output: `Record<string, SimplifiedRule>`.
-> - **Alias-body + polymorph-form snapshots** (PR2): `optimize()` threads top-level alias-bodies and polymorph-form contents through `applyWrapperDeletion` + `computeSimplifiedRules` and merges them into `renderRules` / `simplifiedRules`. `assemble.ts` reads snapshots directly; per-call `simplifyRule(...)` / `deleteWrapper(...)` fallbacks deleted.
+> - **Alias-body + polymorph-form snapshots** (PR2): `normalizeGrammar()` threads top-level alias-bodies and polymorph-form contents through `applyWrapperDeletion` + `computeSimplifiedRules` and merges them into `renderRules` / `simplifiedRules`. `assemble.ts` reads snapshots directly; per-call `simplifyRule(...)` / `deleteWrapper(...)` fallbacks deleted.
 > - **`applyAutoGroups` re-enabled** (PR2): `dsl/wire/wire.ts` invokes it; synthesized helpers (`_<parent>_optional<N>` / `_<parent>_repeat<N>`) are registered in `grammar.inline` via `WireContext.syntheticInline`.
 > - **`inlineRefs`** (PR2, renamed from `inlineGroupRefs`): inlines (a) hidden GROUP / MULTI refs and (b) any ref whose target is in `grammar.inline`. Matches tree-sitter's parse-time inlining. R3: lives in `dsl/rule-transforms.ts` as a shared op — `inlineRefs(rule, ctx: InlineRefsCtx, visited?)`.
 > - **R3 (#14 sweep + M1 closure):** `compiler/transforms.ts` and `compiler/rule-attrs.ts` moved to **`dsl/rule-transforms.ts`** / **`dsl/rule-attrs.ts`** (named to avoid the existing `dsl/transform/` override-transform module). `SimplifyCtx` is now a real interface (`extends TransformCtx`, adds `polymorphSkipExtra?`). Entry points: `simplifyRules(rules, ctx?)`, `computeSimplifiedRules(renderRules, ctx?)`, `normalizeToFixpoint(rule, ctx, rules)`, `applyNormalizationPasses(rawRules, ctx?, preserveKinds?)`, `inlineHiddenSeqRefs(rules, ctx, keepRef)`. The `inlineRefs` / `canonicalizeSeqOfLeaves` clusters moved to `dsl/rule-transforms.ts`; **`simplifySeqRule` (formerly `collapseSeq`) stays in simplify** (mutually recursive with `simplifyRule` — phase-internal, not a shareable op) and **`deleteWrapper`/wrapper-deletion.ts stays compiler-side** (depends on list-fusion / rule-catalog — moving it would invert the dsl→compiler direction).
@@ -48,7 +48,7 @@ does), and output (what changes).
 > - Delete `compiler/template-walker.ts` (~66 KB) + the `node-map.ts` translation pipeline + `AssembledXxx.renderTemplate()` methods. **These all still exist** and are still referenced from `render-module.ts:2324`, the legacy `emitBodyForNode` (`templates.ts:1615`), and `node-map.ts:2343/2364`.
 > - Delete `ClauseRule` + `detectClause` + sweep `'clause'` case sites. **Still present.**
 > - Delete wrapper rule types (`OptionalRule` / `FieldRule` / `RepeatRule` / `Repeat1Rule`). **Still present** (wrapper-deletion still needs them as input).
-> - Delete the RawRule snapshot from `optimize()`.
+> - Delete the RawRule snapshot from `normalizeGrammar()`.
 > - Replace `deriveSlotsRaw`'s recursive contract entirely (already done — `collectSlots` is the replacement; the `clause` branch in `collectSlots` is the remaining ClauseRule dependency).
 > - Wire `assertUniversalShapeRule` as a production fail-fast gate (currently `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`-gated).
 > - Migrate render-module per-slot separator stamping to all kinds; drop the node-wide `meta.separators` fallback.
@@ -62,7 +62,7 @@ does), and output (what changes).
 One discriminated union (`Rule`) throughout the pipeline. Presence varies by
 phase: after Evaluate `symbol`/`alias`/`token`/`repeat1` are present; after
 Link `alias`/`token` are gone and `clause`/`group`/`indent`/`dedent`/`newline`
-are added; after Optimize `variant`/`polymorph` are present. `repeat1` is
+are added; after Normalize `variant`/`polymorph` are present. `repeat1` is
 preserved end-to-end so downstream slot derivation can stamp the `nonEmpty`
 flag.
 
@@ -296,19 +296,19 @@ preserved (no restructuring).
 
 ---
 
-## Phase 3: Optimize (`compiler/optimize.ts`)
+## Phase 3: Normalize (`compiler/normalize.ts`)
 
 Restructures seq/choice/optional/repeat for simplification (non-lossy on named
 content), then produces the RenderRule + SimplifiedRule snapshots.
 
-### `optimize(linked, inlineKinds?)`
+### `normalizeGrammar(linked, ctx?)`
 **Pattern:** Called with a `LinkedGrammar`.
 **Action:**
 1. `applyNormalizationPasses(rawRules, …)` — collapse → fan-out → factor → dedupe → inline → re-collapse. Produces the **RawRule** map.
 2. `applyWrapperDeletion(rules)` — pushes modifier wrappers to leaf attributes. Produces the **RenderRule** snapshot.
 3. `computeSimplifiedRules(renderRules, word, inlineKinds)` — produces the **SimplifiedRule** snapshot.
 4. Threads top-level **alias bodies** and **polymorph-form** contents through the same `applyNormalizationPasses` → `applyWrapperDeletion` → `computeSimplifiedRules` pipeline and merges them into `renderRules` / `simplifiedRules` (so `assemble.ts` reads snapshots, never re-simplifies per call).
-**Output:** `OptimizedGrammar` with `rules` (RawRule), `renderRules` (RenderRule), `simplifiedRules` (SimplifiedRule).
+**Output:** `NormalizedGrammar` with `rules` (RawRule), `renderRules` (RenderRule), `simplifiedRules` (SimplifiedRule).
 
 ### Normalization passes
 - `fanOutSeqChoices(rule)` — `seq(a, choice(b,c), d)` → `choice(seq(a,b,d), seq(a,c,d))` (single inner choice; preserves variant labels).
@@ -350,7 +350,7 @@ caught loudly. (A full regen of all three grammars hits the throw zero times.)
 **Output:** A `Rule` — node or attribute-stamped per the active builder.
 
 ### `computeSimplifiedRules(renderRules, ctx?)`
-**Pattern:** Called from `optimize()`/`normalize()` with the RenderRule map; ctx carries `builder: attributeBuilder`.
+**Pattern:** Called from `normalizeGrammar()` with the RenderRule map; ctx carries `builder: attributeBuilder`.
 **Action:** `simplifyRules` (fixpoint of `inlineRefs` + `simplifyRule`) → per-rule `canonicalizeSeqOfLeaves` → `deleteWrapper` (final wrapper-free guard) → `fuseHeadRepeatLists` (re-fuse head-single + tail-array pairs an inline exposed). Optionally runs `assertUniversalShapeRule` per kind when `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`.
 **Output:** `Record<string, SimplifiedRule>`.
 
@@ -435,8 +435,8 @@ caught loudly. (A full regen of all three grammars hits the throw zero times.)
 
 First time nodes appear. All metadata derived from the rule snapshots.
 
-### `assemble(optimized)`
-**Pattern:** Called with an `OptimizedGrammar`.
+### `assemble(normalized)`
+**Pattern:** Called with a `NormalizedGrammar`.
 **Action:** Classifies each rule into a model type, constructs `AssembledNode` instances (attaching `.rule` / `.renderRule` / `.simplifiedRule`), collects anonymous tokens/keywords, resolves colliding names, assigns ir keys, marks parameterless/user-facing kinds. Slot-ref hydration is deferred to `hydrateSlotRefs`.
 **Output:** `NodeMap` with `nodes`, `signatures`, `derivations`, `rules`, `externals`.
 

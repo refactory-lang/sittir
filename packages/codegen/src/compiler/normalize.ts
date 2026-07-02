@@ -16,7 +16,7 @@ import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEA
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice, isEnumChoiceRule } from '../types/rule.ts';
 import { isTerminalShape } from './link.ts';
-import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
+import type { LinkedGrammar, NormalizedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, attributeBuilder, SimplifyCtx } from './simplify.ts';
 import { resolveGroupOrMultiInlineTarget } from '../dsl/rule-transforms.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
@@ -26,14 +26,14 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 
 /**
- * Normalize/optimize phase context — a class extending the shared compiler
+ * Normalize phase context — a class extending the shared compiler
  * BaseCtx (was an interface extending the dsl `TransformCtx`). Adds the
  * inline-decision set and the polymorph skip-set the slot-grouping diagnostic
  * consults, on top of BaseCtx's grammar facts (rules / diagnostics / wordMatcher
  * / builder). See compiler/ctx.ts.
  */
 export class NormalizeCtx extends BaseCtx<Rule<'link'>> {
-	/** Inline-decision set (kinds emitters skip / optimize preserves). */
+	/** Inline-decision set (kinds emitters skip / normalize preserves). */
 	readonly inlineKinds: ReadonlySet<string>;
 	/** Kinds to exclude from the slot-grouping "propose-promotion" diagnostic. */
 	readonly polymorphSkip?: ReadonlySet<string>;
@@ -208,7 +208,7 @@ export function inlineHiddenSeqRefs(
 		}
 	}
 	// NOTE: we deliberately do NOT delete the folded `_x` entry from the map.
-	// `assemble` iterates the RAW `optimized.rules` keys and looks up the matching
+	// `assemble` iterates the RAW `normalized.rules` keys and looks up the matching
 	// `renderRules[kind]` / `simplifiedRules[kind]` for EACH — deleting `_x` from
 	// renderRules only would desync the maps and crash assemble. The folded `_x`
 	// survives as a standalone entry (its parents simply no longer reference it);
@@ -312,12 +312,12 @@ function materializeInlinedBody(
 ): Rule<'link'> {
 	const r = ref as {
 		multiplicity?: LeafMultiplicity;
-		separator?: RuleBase<'optimize'>['separator'];
+		separator?: RuleBase<'normalize'>['separator'];
 		fieldName?: string;
 	};
 	const carry: {
 		multiplicity?: LeafMultiplicity;
-		separator?: RuleBase<'optimize'>['separator'];
+		separator?: RuleBase<'normalize'>['separator'];
 		fieldName?: string;
 	} = {};
 	if (r.multiplicity !== undefined) carry.multiplicity = r.multiplicity;
@@ -382,7 +382,7 @@ function applyNormalizationPasses(
 export function normalizeGrammar(
 	linked: LinkedGrammar,
 	ctx?: NormalizeCtx
-): OptimizedGrammar {
+): NormalizedGrammar {
 	// Read phase-shared state from ctx; fall back to empty defaults when called
 	// without ctx (e.g. existing tests that only pass `linked`).
 	const inlineKinds: ReadonlySet<string> = ctx?.inlineKinds ?? new Set();

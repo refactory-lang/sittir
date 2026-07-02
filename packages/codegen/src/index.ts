@@ -1,7 +1,7 @@
 /**
  * @sittir/codegen — public surface.
  *
- * The five-phase pipeline (evaluate → link → optimize → assemble → emit)
+ * The five-phase pipeline (evaluate → link → normalize → assemble → emit)
  * is exposed as `generate`.
  */
 
