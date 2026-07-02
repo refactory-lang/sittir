@@ -19,7 +19,7 @@ import { readRuleMetadata } from '../rule-metadata.ts';
 
 // enrich's builders call the runtime-injected DSL constructors
 // (globalThis.field/symbol/alias); install the fakes for these raw enrich()
-// calls so construction resolves to the sittir-lowercase shapes.
+// calls so construction resolves to sittir's IR shapes.
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 
@@ -159,7 +159,7 @@ describe('enrich clause-hoist pass — CHOICE[seq, BLANK] form', () => {
 		expect(readRuleMetadata(nonBlank!.metadata)?.symbolSource).toBe('group-lift');
 	});
 
-	it('lowercase choice[seq, blank] form also descends', () => {
+	it('CHOICE[seq, BLANK] as the sole parent member (no leading literal) also descends', () => {
 		const input = mkGrammar({
 			parent: {
 				type: 'SEQ',
