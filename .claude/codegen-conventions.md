@@ -63,3 +63,7 @@ For DSL runtime-shape bridging, use the dual-case helpers in `packages/codegen/s
 ## Function-structure rule
 
 When a TS function body grows a 3+ line inline comment block explaining the next chunk, extract that chunk into a named private helper with JSDoc (`@param`, `@returns`, `@throws`, `@remarks`, `@see`) instead of keeping a long narrated body.
+
+## Test layout
+
+- Tests: unit tests live module-adjacent (`<module>/__tests__/*.test.ts`); `src/__tests__/` is reserved for cross-module integration tests. No co-located `*.test.ts` next to source.
