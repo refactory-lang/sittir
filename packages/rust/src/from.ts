@@ -467,14 +467,6 @@ function _applyFactory<F extends (...args: never[]) => unknown>(fn: F, ...args: 
   return Reflect.apply(fn, undefined, args);
 }
 
-/** @internal — treat a bare child input like `{ children: ... }` when polymorph forms allow it. */
-function _childrenInput(input: _FromFieldInput): _FromFieldInput {
-  if (input !== null && input !== undefined && typeof input === "object" && !Array.isArray(input) && !isNodeData(input) && "children" in input) {
-    return (input as { readonly children?: _FromFieldInput }).children;
-  }
-  return input;
-}
-
 // Interned resolver kind lists (dedup)
 const _K0: readonly string[] = ["identifier"];
 const _K1: readonly string[] = ["scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"];

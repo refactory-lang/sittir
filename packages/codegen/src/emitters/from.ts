@@ -219,19 +219,6 @@ function emitPolymorphApplyHelper(lines: string[]): void {
 	lines.push('');
 }
 
-function emitChildrenInputHelper(lines: string[]): void {
-	lines.push('/** @internal — treat a bare child input like `{ children: ... }` when polymorph forms allow it. */');
-	lines.push('function _childrenInput(input: _FromFieldInput): _FromFieldInput {');
-	lines.push(
-		'  if (input !== null && input !== undefined && typeof input === "object" && !Array.isArray(input) && !isNodeData(input) && "children" in input) {'
-	);
-	lines.push('    return (input as { readonly children?: _FromFieldInput }).children;');
-	lines.push('  }');
-	lines.push('  return input;');
-	lines.push('}');
-	lines.push('');
-}
-
 /**
  * Emits the `_fromMap` runtime dispatch table and `_FromMap` type alias into
  * generated from.ts.
@@ -1923,7 +1910,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 		emitResolverHelpers(lines, this.#nodeMap, this.#kindEntries);
 		lines.push('');
 		emitPolymorphApplyHelper(lines);
-		emitChildrenInputHelper(lines);
 		emitInternedKindTable(lines, this.#namedEntries, this.#kindTableLiterals);
 		for (const block of this.#output) {
 			lines.push(block);
