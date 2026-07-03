@@ -12,7 +12,7 @@ import type { AnyRule, RuleBase } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 
-type StampedSeparator = RuleBase<'optimize'>['separator'];
+type StampedSeparator = RuleBase<'normalize'>['separator'];
 
 export class RuleWalker<R extends AnyRule = AnyRule> {
 	readonly #rules?: Readonly<Record<string, R>>;

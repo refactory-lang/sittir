@@ -31,7 +31,7 @@ import { RuleWalker } from '../dsl/rule-walker.ts';
  *
  * `R` is the rule-view this phase operates on — `Rule<'evaluate'>` /
  * `Rule<'link'>` (pre-wrapper-deletion), `RenderRule` (wrapper-free /
- * "optimized"), or `SimplifiedRule`. The pipeline refines it in order:
+ * "normalized"), or `SimplifiedRule`. The pipeline refines it in order:
  * `BaseCtx<Rule<'evaluate'>>` (link) → `BaseCtx<Rule<'link'>>` (normalize) →
  * `BaseCtx<RenderRule>` (simplify) → `BaseCtx<SimplifiedRule>` (assemble).
  * Constrained by `AnyRule` (the union over all phase views) so any phase's

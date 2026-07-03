@@ -1187,7 +1187,7 @@ function lookupSlot(rule: Rule<'link'>, ctx: EmitCtx): AssembledNonterminal | un
  * resulting join filter still represents the source text faithfully.
  */
 function separatorToString(rule: Rule<'link'>): string | undefined {
-	const sep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator;
+	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 	if (sep === undefined) return undefined;
 	if (typeof sep === 'string') return sep;
 	if (Array.isArray(sep)) return sep.map(stringifyRule).join('');
@@ -1217,7 +1217,7 @@ function selectJoinFilter(rule: Rule<'link'>, slot?: AssembledNonterminal): 'joi
 	if (leading) return 'joinWithLeading';
 	// Also honour the structured-separator object form when carrying
 	// the flank flags directly.
-	const sep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator;
+	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 	if (sep && typeof sep === 'object' && !Array.isArray(sep)) {
 		const obj = sep as { trailing?: boolean; leading?: boolean };
 		const t = obj.trailing === true;

@@ -7,7 +7,7 @@
  *
  * A string member is "anonymous" (stripped) iff it is NOT slot-promoted — see
  * `isSlotPromotedLiteral`; slot-valued keyword markers survive. Runs as the
- * final stage of `optimize()`, producing `simplifiedRules` on OptimizedGrammar.
+ * final stage of `normalizeGrammar()`, producing `simplifiedRules` on NormalizedGrammar.
  * Per-function rationale: docs/compiler-phase-glossary.md (Phase 3.5: Simplify).
  */
 
@@ -92,7 +92,7 @@ export const attributeBuilder: RuleBuilder = {
  *   - Recursively canonicalize children.
  *   - Flatten degenerate single-member seqs (`seq([X])` → `X`).
  *
- * Does NOT perform attribute push-down — applyWrapperDeletion in optimize
+ * Does NOT perform attribute push-down — applyWrapperDeletion in normalize
  * already did that. Does NOT synthesize groups — applyAutoGroups (wire
  * phase) already did that.
  *
@@ -513,9 +513,9 @@ export function assertUniversalShapeRule(rule: AnyRule, kind: string): void {
 // Slot-grouping diagnostic accumulator (propose-promotion only).
 //
 // `computeSimplifiedRules` is invoked multiple times per grammar (main rules,
-// alias bodies, polymorph forms — see optimize.ts), so records are deduped by
+// alias bodies, polymorph forms — see normalize.ts), so records are deduped by
 // (ownerKind, shape) as they accumulate, and the whole accumulator is reset
-// once per `optimize()` run via `resetSlotGroupingDiagnostics()`. That keeps
+// once per `normalizeGrammar()` run via `resetSlotGroupingDiagnostics()`. That keeps
 // `drain` honest (one run's unique records) and bounds memory in long-lived
 // processes. They NEVER drive codegen behavior (feedback_metadata_not_behavior).
 // ---------------------------------------------------------------------------
@@ -538,7 +538,7 @@ function recordSlotGroupingDiagnostic(rec: SlotGroupingDiagnostic): boolean {
 }
 
 /**
- * Clear the accumulator. Called once at the start of each `optimize()` run so
+ * Clear the accumulator. Called once at the start of each `normalizeGrammar()` run so
  * diagnostics from one grammar never leak into the next (the multiple
  * `computeSimplifiedRules` calls within a run still accumulate into one batch).
  */
@@ -549,7 +549,7 @@ export function resetSlotGroupingDiagnostics(): void {
 
 /**
  * Return + clear the slot-grouping diagnostics accumulated during the current
- * `optimize()` run. The codegen CLI calls this after regen to print
+ * `normalizeGrammar()` run. The codegen CLI calls this after regen to print
  * propose-promotion suggestions; tests call it to verify the wiring.
  */
 export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
@@ -587,7 +587,7 @@ export function makeDefaultCtx(): SimplifyCtx {
  */
 export function simplifyRule(rule: AnyRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	switch (rule.type) {
-		// Per-type handlers below are typed against the wrapper-free (optimize)
+		// Per-type handlers below are typed against the wrapper-free (normalize)
 		// view — matching `ctx: SimplifyCtx extends BaseCtx<RenderRule>` and the
 		// invariant documented above the `default` branch (all wrapper types
 		// must already be gone by simplify-time). `rule` here is still typed as
@@ -679,9 +679,9 @@ export function simplifyRules(rules: Record<string, AnyRule>, ctx?: SimplifyCtx)
 /**
  * Compute the derivation-only simplified view of every rule in the map.
  *
- * Relocated from optimize.ts as part of PR1 — all simplification logic lives
+ * Relocated from normalize.ts as part of PR1 — all simplification logic lives
  * in simplify.ts. Input type widened to RenderRule: applyWrapperDeletion in
- * optimize.ts produces a wrapper-less map, and simplify operates on that.
+ * normalize.ts produces a wrapper-less map, and simplify operates on that.
  *
  * @param renderRules - Wrapper-less rule map (output of applyWrapperDeletion).
  * @returns A new map containing the simplified form of each rule.

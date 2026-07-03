@@ -312,7 +312,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		emitRenderModule: all
 	});
 
-	// Surface slot-grouping diagnostics from the optimize phase. These are
+	// Surface slot-grouping diagnostics from the normalize phase. These are
 	// non-blocking propose-promotion suggestions; printing them here (after
 	// generate()) ensures they appear during `sittir gen --all` even when
 	// the preflight and generate() pipelines are separate.

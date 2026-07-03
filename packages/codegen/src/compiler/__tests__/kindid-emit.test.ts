@@ -66,8 +66,8 @@ describe('KindId emission', () => {
 	it('emits numeric runtime discriminants and lookup helpers', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 		const contents = emitTypes({
 			grammar: 'synth',
 			nodeMap,

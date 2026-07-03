@@ -2031,11 +2031,11 @@ export function isOptionalOrBlankChoice(rule: AnyRule | undefined): boolean {
  * This is the on-demand structural replacement for `patternReplacementKinds`.
  * Both consumers receive different rule-map shapes:
  *   - `link.ts` calls this on `raw.rules` (pre-link; alias nodes present).
- *   - `optimize.ts` calls this on `linked.rules` (post-link; aliasedFrom present).
+ *   - `normalize.ts` calls this on `linked.rules` (post-link; aliasedFrom present).
  *
  * The predicate is intentionally conservative (the derived set may be a
  * strict superset of the old `patternReplacementKinds` cache). Probe-verified
- * byte-identical for rust/typescript/python across optimize's rules,
+ * byte-identical for rust/typescript/python across normalize's rules,
  * renderRules, and simplifiedRules outputs.
  *
  * @remarks

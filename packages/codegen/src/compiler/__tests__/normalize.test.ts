@@ -29,7 +29,7 @@ function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<Lin
 	};
 }
 
-describe('Optimize — rulesEqual', () => {
+describe('Normalize — rulesEqual', () => {
 	it('compares string rules', () => {
 		expect(rulesEqual({ type: STRING, value: 'a' }, { type: STRING, value: 'a' })).toBe(true);
 		expect(rulesEqual({ type: STRING, value: 'a' }, { type: STRING, value: 'b' })).toBe(false);
@@ -48,7 +48,7 @@ describe('Optimize — rulesEqual', () => {
 	});
 });
 
-describe('Optimize — factorSeqChoice', () => {
+describe('Normalize — factorSeqChoice', () => {
 	it('extracts common prefix from seq branches', () => {
 		const branches: Rule[] = [
 			{
@@ -81,7 +81,7 @@ describe('Optimize — factorSeqChoice', () => {
 	});
 });
 
-describe('Optimize — variant construction', () => {
+describe('Normalize — variant construction', () => {
 	it('wrapVariants wraps choice members in variant nodes', () => {
 		const choice: Rule = {
 			type: CHOICE,
@@ -121,7 +121,7 @@ describe('Optimize — variant construction', () => {
 	});
 });
 
-describe('Optimize — tokenToName', () => {
+describe('Normalize — tokenToName', () => {
 	it('maps punctuation to readable names', () => {
 		expect(tokenToName(';')).toBe('semi');
 		expect(tokenToName('{')).toBe('brace');
@@ -137,8 +137,8 @@ describe('Optimize — tokenToName', () => {
 	});
 });
 
-describe('Optimize — optimize()', () => {
-	it('produces an OptimizedGrammar preserving named content', () => {
+describe('Normalize — normalizeGrammar()', () => {
+	it('produces a NormalizedGrammar preserving named content', () => {
 		const linked = makeLinked({
 			item: {
 				type: SEQ,
@@ -153,18 +153,18 @@ describe('Optimize — optimize()', () => {
 			},
 			block: { type: STRING, value: '{}' }
 		});
-		const optimized = normalizeGrammar(linked);
-		expect(optimized.name).toBe('test');
-		expect(optimized.rules['item']).toBeDefined();
+		const normalized = normalizeGrammar(linked);
+		expect(normalized.name).toBe('test');
+		expect(normalized.rules['item']).toBeDefined();
 		// Field metadata must be preserved
-		const item = optimized.rules['item'] as any;
+		const item = normalized.rules['item'] as any;
 		const fieldMember = item.members?.find((m: any) => m.type === FIELD) ?? (item.type === FIELD ? item : null);
 		if (fieldMember) {
 			expect(fieldMember.name).toBe('body');
 		}
 	});
 
-	// Note: the test that asserted "optimize wraps visible choice members
+	// Note: the test that asserted "normalize wraps visible choice members
 	// in variants" moved to link.test.ts after variant tagging was
 	// relocated to Link in commit (Phase 2 classification cleanup).
 	// See `link.test.ts → 'tagVariants wraps visible choice members'`.
@@ -174,7 +174,7 @@ describe('Optimize — optimize()', () => {
 // T060 — fanOutSeqChoices
 // ---------------------------------------------------------------------------
 
-describe('Optimize — fanOutSeqChoices (T060)', () => {
+describe('Normalize — fanOutSeqChoices (T060)', () => {
 	it('distributes a seq over an inner choice', () => {
 		const rule: Rule = {
 			type: SEQ,
@@ -259,7 +259,7 @@ describe('Optimize — fanOutSeqChoices (T060)', () => {
 // T061 — factorChoiceBranches
 // ---------------------------------------------------------------------------
 
-describe('Optimize — factorChoiceBranches (T061)', () => {
+describe('Normalize — factorChoiceBranches (T061)', () => {
 	it('extracts a common prefix across seq branches', () => {
 		const rule: Rule = {
 			type: CHOICE,
@@ -437,10 +437,10 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 });
 
 // ---------------------------------------------------------------------------
-// T062 — collapseWrappers (already wired into optimize())
+// T062 — collapseWrappers (already wired into normalizeGrammar())
 // ---------------------------------------------------------------------------
 
-describe('Optimize — collapseWrappers (T062)', () => {
+describe('Normalize — collapseWrappers (T062)', () => {
 	it('collapses optional(optional(x)) → optional(x)', () => {
 		const rule: Rule<'link'> = {
 			type: OPTIONAL,
@@ -488,7 +488,7 @@ describe('Optimize — collapseWrappers (T062)', () => {
 // T064 — dedupeSeqMembers
 // ---------------------------------------------------------------------------
 
-describe('Optimize — dedupeSeqMembers (T064)', () => {
+describe('Normalize — dedupeSeqMembers (T064)', () => {
 	it('collapses adjacent duplicates inside a seq', () => {
 		const rule: Rule = {
 			type: SEQ,

@@ -66,8 +66,8 @@ describe('emitKindIdRust', () => {
 	it('emits per-kind KindId constants in SCREAMING_SNAKE_CASE', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth',
@@ -83,8 +83,8 @@ describe('emitKindIdRust', () => {
 	it('emits generated header comment referencing the grammar', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth',
@@ -99,8 +99,8 @@ describe('emitKindIdRust', () => {
 	it('entries are sorted by numeric id', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth',
@@ -202,8 +202,8 @@ describe('emitKindIdRust', () => {
 		};
 
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth2',

@@ -6,7 +6,7 @@
  * - Phase 1: single-concrete-kind field and children slots emit typed Rust types
  * - Phase 1: render functions call typed `render_<kind>`, not `render_transport_dispatch`
  *
- * These tests use the REAL rust grammar pipeline (evaluate → link → optimize → assemble →
+ * These tests use the REAL rust grammar pipeline (evaluate → link → normalize → assemble →
  * emitRenderModule) so they exercise the full codegen path including the emitter.
  */
 
@@ -151,8 +151,8 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
-	const optimized = normalizeGrammar(linked);
-	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+	const normalized = normalizeGrammar(linked);
+	const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
 	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
@@ -295,8 +295,8 @@ async function buildRustFixtureForParity() {
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
-	const optimized = normalizeGrammar(linked);
-	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+	const normalized = normalizeGrammar(linked);
+	const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 
 	// loadGeneratedIdTables uses process.cwd() which is packages/codegen when vitest runs.
 	// Use the repo root (anchored to this file) to reliably locate parser.c.

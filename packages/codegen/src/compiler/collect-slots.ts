@@ -58,8 +58,8 @@ import { findRepeatFlag } from '../dsl/rule-transforms.ts';
  * separator), but an inner arm carries the structured separator object set by
  * `applyWrapperDeletion`.
  */
-function findNestedSeparator(rule: AnyRule): RuleBase<'optimize'>['separator'] {
-	const sep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator;
+function findNestedSeparator(rule: AnyRule): RuleBase<'normalize'>['separator'] {
+	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 	if (sep !== undefined) return sep;
 	switch (rule.type) {
 		case SEQ:
@@ -297,7 +297,7 @@ function buildSlot(
 	kindForName: string | undefined,
 	kindEntries: readonly GeneratedKindEntry[] | undefined,
 	inherited: Multiplicity,
-	inheritedSeparator: RuleBase<'optimize'>['separator']
+	inheritedSeparator: RuleBase<'normalize'>['separator']
 ): AssembledNonterminal | null {
 	// A choice that carries no multiplicity of its own may still be an array
 	// slot: simplify folds `choice(commaSep1(X), X)` into a nested
@@ -420,7 +420,7 @@ function buildSlot(
 	// only the rule id, not the separator) still inherit the separator from the
 	// arm that has it (e.g. the inlined `_import_list` arm with `sep=",trailing"`).
 	const sep =
-		(rule as { separator?: RuleBase<'optimize'>['separator'] }).separator ??
+		(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ??
 		inheritedSeparator ??
 		(isMultiSlot ? findNestedSeparator(rule) : undefined);
 	const sepIsObject = typeof sep === 'object' && !Array.isArray(sep) && sep !== null;
@@ -464,7 +464,7 @@ export function collectSlots(
 	kindForName?: string,
 	kindEntries?: readonly GeneratedKindEntry[],
 	inherited: Multiplicity = 'single',
-	inheritedSeparator: RuleBase<'optimize'>['separator'] = undefined
+	inheritedSeparator: RuleBase<'normalize'>['separator'] = undefined
 ): AssembledNonterminal[] {
 	switch (rule.type) {
 		case SEQ: {
@@ -473,7 +473,7 @@ export function collectSlots(
 			// down by wrapper-deletion's seq case via combineMultiplicity), so
 			// no inheritance from the seq node is needed — the seq carries no
 			// multiplicity after deleteWrapper. Pass `inherited` unchanged.
-			const seqSep = (rule as { separator?: RuleBase<'optimize'>['separator'] }).separator ?? inheritedSeparator;
+			const seqSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
 			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, inherited, seqSep));
 		}
 
@@ -486,7 +486,7 @@ export function collectSlots(
 				kindForName,
 				kindEntries,
 				(rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited,
-				(rule as { separator?: RuleBase<'optimize'>['separator'] }).separator ?? inheritedSeparator
+				(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator
 			);
 
 		case CHOICE: {
@@ -514,7 +514,7 @@ export function collectSlots(
 							kindForName,
 							kindEntries,
 							armMult,
-							(rule as { separator?: RuleBase<'optimize'>['separator'] }).separator ?? inheritedSeparator
+							(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator
 						)
 					)
 				);

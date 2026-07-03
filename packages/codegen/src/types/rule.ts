@@ -27,7 +27,7 @@ import type { RuleMetadata } from './rule-metadata-brand.ts';
  *   - After Link: symbol, alias, token gone; group, indent/dedent/newline added.
  *     `repeat1` is preserved so downstream field/child derivation can stamp the
  *     `nonEmpty` flag on the resulting slot for emitter tuple-type rendering.
- *   - After Optimize: variant added; structural grouping may be restructured
+ *   - After Normalize: variant added; structural grouping may be restructured
  *
  * @generated — do not add derived metadata (required, multiple, contentTypes, etc.)
  *              Those are derived from tree context at Assemble time.
@@ -65,17 +65,17 @@ export type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray';
  *   'evaluate' — raw post-evaluate: all variants incl. alias/token/wrappers.
  *   'link'     — references resolved (alias/token survive only defensively);
  *                separator strings lifted onto repeat nodes.
- *   'optimize' — wrapper-free (applyWrapperDeletion ran): optional/field/
- *                repeat/repeat1/alias/token GONE; their meaning lives in the
- *                stamped leaf attributes (fieldName/multiplicity/separator/
- *                aliasedFrom). This is the RenderRule shape.
- *   'simplify' — same structure as 'optimize' plus the universal
- *                seq-of-leaves invariant (see SimplifiedRule brand).
+ *   'normalize' — wrapper-free (applyWrapperDeletion ran): optional/field/
+ *                 repeat/repeat1/alias/token GONE; their meaning lives in the
+ *                 stamped leaf attributes (fieldName/multiplicity/separator/
+ *                 aliasedFrom). This is the RenderRule shape.
+ *   'simplify'  — same structure as 'normalize' plus the universal
+ *                 seq-of-leaves invariant (see SimplifiedRule brand).
  */
-export type PhaseName = 'evaluate' | 'link' | 'optimize' | 'simplify';
+export type PhaseName = 'evaluate' | 'link' | 'normalize' | 'simplify';
 
 /** Phases whose views are wrapper-free (at-or-after wrapper-deletion). */
-type OptimizedPhase = 'optimize' | 'simplify';
+type NormalizedPhase = 'normalize' | 'simplify';
 /** Phases where modifier wrappers + reference nodes still exist. */
 type WrapperPhase = 'evaluate' | 'link';
 
@@ -106,7 +106,7 @@ export type AnyRule = Rule<PhaseName>;
  * placement (`trailing`/`leading` booleans) lives ON the structured
  * `separator` object below.
  */
-export type RuleBase<Phase extends PhaseName = 'optimize'> = {
+export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly id?: RuleId;
 
 	/**
@@ -156,10 +156,10 @@ export type RuleBase<Phase extends PhaseName = 'optimize'> = {
 	 * comment above.
 	 */
 	readonly splicedBody?: boolean;
-} & (Phase extends OptimizedPhase
+} & (Phase extends NormalizedPhase
 	? {
 			// All six stamped attributes below are populated by
-			// `applyWrapperDeletion` (Optimize) — the structured `separator`
+			// `applyWrapperDeletion` (Normalize) — the structured `separator`
 			// object included: wrapper-deletion converts the repeat node's own
 			// link-lifted `separator?: string` into this leaf object form as
 			// it deletes the repeat wrapper. None of them exist on
@@ -198,14 +198,14 @@ export type RuleBase<Phase extends PhaseName = 'optimize'> = {
  * member intersects {@link RuleBase}, so the phase-gated modifier attributes
  * are reachable on every variant without an intersection here.
  *
- * The bare-`Rule` default is `'optimize'` — the most permissive
+ * The bare-`Rule` default is `'normalize'` — the most permissive
  * attribute-wise (all stamped leaf attributes readable) and the strictest
- * variant-wise (no wrappers, no alias/token). Pre-optimize modules annotate
+ * variant-wise (no wrappers, no alias/token). Pre-normalize modules annotate
  * `Rule<'evaluate'>` / `Rule<'link'>` explicitly; phase-agnostic utilities
  * take {@link AnyRule}.
  */
-export type Rule<Phase extends PhaseName = 'optimize'> =
-	// Structural grouping — Optimize restructures these
+export type Rule<Phase extends PhaseName = 'normalize'> =
+	// Structural grouping — Normalize restructures these
 	| SeqRule<Phase>
 	| ChoiceRule<Phase>
 
@@ -232,7 +232,7 @@ export type Rule<Phase extends PhaseName = 'optimize'> =
 	// Bounded-lifetime nodes — each collapses to `never` outside its phase
 	// window (see the per-type conditionals): alias/token are consumed by
 	// Link (surviving into the 'link' view only defensively);
-	// optional/field/repeat/repeat1 are consumed by Optimize's
+	// optional/field/repeat/repeat1 are consumed by Normalize's
 	// applyWrapperDeletion. None appear in the wrapper-free views.
 	| OptionalRule<Phase>
 	| FieldRule<Phase>
@@ -242,7 +242,7 @@ export type Rule<Phase extends PhaseName = 'optimize'> =
 	| TokenRule<Phase>;
 
 /**
- * A Rule shape produced by `applyWrapperDeletion` in optimize.ts. Modifier
+ * A Rule shape produced by `applyWrapperDeletion` in normalize.ts. Modifier
  * wrappers (`optional` / `field` / `repeat` / `repeat1`) have been pushed
  * down to leaf attributes; structural rules (`seq` / `choice` / `variant` /
  * `group`) are preserved.
@@ -250,10 +250,10 @@ export type Rule<Phase extends PhaseName = 'optimize'> =
  * Structurally a `Rule` minus the wrapper variants. Carries a phantom
  * `__renderRule` marker for readability at call sites, but the marker is
  * optional and never written, so it provides no assignability protection —
- * `Rule<'optimize'>` values are still structurally assignable to
+ * `Rule<'normalize'>` values are still structurally assignable to
  * `RenderRule` without going through `applyWrapperDeletion`.
  */
-export type RenderRule = Rule<'optimize'> & {
+export type RenderRule = Rule<'normalize'> & {
 	readonly __renderRule?: never;
 };
 
@@ -270,7 +270,7 @@ export type RenderRule = Rule<'optimize'> & {
  * readability at call sites, but both are optional and never written, so
  * they provide no assignability protection — `RenderRule` and
  * `SimplifiedRule` are mutually assignable (both resolve to the same
- * `OptimizedPhase` shape) despite the distinct brand names.
+ * `NormalizedPhase` shape) despite the distinct brand names.
  */
 export type SimplifiedRule = Rule<'simplify'> & {
 	readonly __renderRule?: never;
@@ -281,7 +281,7 @@ export type SimplifiedRule = Rule<'simplify'> & {
 // Structural grouping
 // ---------------------------------------------------------------------------
 
-export type SeqRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type SeqRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SEQ;
 	readonly members: Rule<T>[];
 }
@@ -293,7 +293,7 @@ export type OptionalRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 	  }
 	: never;
 
-export type ChoiceRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type ChoiceRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof CHOICE;
 	readonly members: Rule<T>[];
 }
@@ -357,7 +357,7 @@ export type FieldRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 	  }
 	: never;
 
-export type VariantRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type VariantRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof VARIANT;
 	readonly name: string;
 	readonly content: Rule<T>;
@@ -387,7 +387,7 @@ export type RuleSource = 'grammar' | 'promoted' | 'override';
  * Shape-compatible with ChoiceRule (both expose `members`); every member
  * is a StringRule. The `source` provenance moves to `metadata.source`.
  */
-export type EnumRule<T extends PhaseName = 'optimize'> = ChoiceRule<T>;
+export type EnumRule<T extends PhaseName = 'normalize'> = ChoiceRule<T>;
 
 /**
  * Predicate: rule is an enum-shaped ChoiceRule (flat, all-STRING members,
@@ -435,13 +435,13 @@ export function isEnumChoiceRule<R extends AnyRule>(
  * structural discriminant of a tagged union), this was pure carried
  * provenance with no structural role.
  */
-export type SupertypeRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SUPERTYPE;
 	readonly name: string;
 	readonly subtypes: string[];
 }
 
-export type GroupRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof GROUP;
 	readonly name: string;
 	readonly content: Rule<T>;
@@ -451,12 +451,12 @@ export type GroupRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
 // Terminals
 // ---------------------------------------------------------------------------
 
-export type StringRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof STRING;
 	readonly value: string;
 }
 
-export type PatternRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type PatternRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof PATTERN;
 	readonly value: string;
 }
@@ -465,15 +465,15 @@ export type PatternRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
 // Structural whitespace
 // ---------------------------------------------------------------------------
 
-export type IndentRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type IndentRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof INDENT;
 }
 
-export type DedentRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type DedentRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof DEDENT;
 }
 
-export type NewlineRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type NewlineRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof NEWLINE;
 }
 
@@ -494,7 +494,7 @@ export type NewlineRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
  * (present iff link synthesized the ref from a string token) instead —
  * see templates.ts.
  */
-export type SymbolRule<T extends PhaseName = 'optimize'> = RuleBase<T> & {
+export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SYMBOL;
 	readonly name: string;
 	/** Original literal text when Link synthesized this ref from a string token. */
@@ -540,7 +540,7 @@ export type TokenRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 // ---------------------------------------------------------------------------
 
 // Phase-generic: each guard narrows WITHIN the caller's phase view (for a
-// view where the variant cannot exist — e.g. isOptional on Rule<'optimize'>
+// view where the variant cannot exist — e.g. isOptional on Rule<'normalize'>
 // — the narrowed type is `never`, surfacing the dead check at compile time).
 export const isSeq = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof SEQ }> => r.type === SEQ;
 export const isChoice = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof CHOICE }> => r.type === CHOICE;

@@ -305,8 +305,8 @@ function runPipeline(forms: RefineForm[]) {
 
 function runPipelineRaw(raw: RawGrammar) {
 	const linked = link(raw);
-	const optimized = normalizeGrammar(linked);
-	const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+	const normalized = normalizeGrammar(linked);
+	const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 	const generatedIdTables = makeGeneratedIdTables();
 	return {
 		nodeMap,
@@ -394,8 +394,8 @@ describe('types emitter — per-form namespace sugar', () => {
 		// Drop the refineForms map entry to simulate the no-refine path.
 		const noRefine: RawGrammar = { ...raw, refineForms: undefined };
 		const linked = link(noRefine);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 		const src = emitTypes({
 			grammar: 'synth',
 			nodeMap,
@@ -453,8 +453,8 @@ describe('factories emitter — per-form factory emission', () => {
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
 		const { factories } = emitAll({ grammar: 'synth', nodeMap });
 		expect(factories).toMatch(/export function ifaceBodyCurly\(/);
 		expect(factories).toMatch(/export function ifaceBodyFlow\(/);

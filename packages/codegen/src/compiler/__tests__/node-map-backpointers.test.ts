@@ -45,13 +45,13 @@ describe('NodeMap back-pointer maps', () => {
 			references: []
 		};
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		const nodeMap = assemble(optimized, AssembleCtx.from(optimized));
-		// Return the post-optimize rules — that's what assemble walks, so
+		const normalized = normalizeGrammar(linked);
+		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		// Return the post-normalize rules — that's what assemble walks, so
 		// the ids on these rules are what nodeByRuleId / slotByRuleId key
-		// off. The raw input rules may have stale ids after link/optimize
+		// off. The raw input rules may have stale ids after link/normalize
 		// shape rewrites.
-		return { rules: optimized.rules, nodeMap };
+		return { rules: normalized.rules, nodeMap };
 	}
 
 	function buildNodeMap(
@@ -71,8 +71,8 @@ describe('NodeMap back-pointer maps', () => {
 			references: []
 		};
 		const linked = link(raw);
-		const optimized = normalizeGrammar(linked);
-		return { ...optimized, nodeMap: assemble(optimized, AssembleCtx.from(optimized)) };
+		const normalized = normalizeGrammar(linked);
+		return { ...normalized, nodeMap: assemble(normalized, AssembleCtx.from(normalized)) };
 	}
 
 	it('nodeMap.nodeByRuleId is populated with kind roots when ids survive the pipeline', () => {
@@ -80,7 +80,7 @@ describe('NodeMap back-pointer maps', () => {
 		expect(nodeMap.nodeByRuleId).toBeInstanceOf(Map);
 		// `identifier` is a pattern rule — pass-through case in `resolveRule`
 		// (`...rule, content: ...` shape via the `pattern` arm), so the root
-		// id survives link/optimize and registers in nodeByRuleId. Branch-
+		// id survives link/normalize and registers in nodeByRuleId. Branch-
 		// shaped roots (top-level seq/choice) currently lose their id in
 		// link's resolveRule rebuild — that's a pre-existing pipeline gap
 		// outside Task 1.3's scope.

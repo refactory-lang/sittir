@@ -247,7 +247,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		}
 		Object.assign(rules, lifted.rules);
 		// Force-classify synthesized kinds as GroupRule<'link'> so downstream
-		// optimize.inlineSingleUseHidden skips them (it preserves 'group'
+		// normalize.inlineSingleUseHidden skips them (it preserves 'group'
 		// type rules) and assemble sees them as AssembledGroup candidates.
 		for (const synthKind of lifted.synthesizedKinds) {
 			const body = rules[synthKind];

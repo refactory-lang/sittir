@@ -68,7 +68,7 @@ describe('propose-14 signature classification', () => {
 		// Mirrors assemble()'s real shape: optimized, generatedIdTables?, assembleCtx?.
 		const recs = classifySource(
 			'compiler/assemble.ts',
-			'export function assemble(optimized: OptimizedGrammar, generatedIdTables: GeneratedIdTables, ctx: AssembleCtx) { return ctx; }',
+			'export function assemble(normalized: NormalizedGrammar, generatedIdTables: GeneratedIdTables, ctx: AssembleCtx) { return ctx; }',
 		);
 		expect(recs[0].bucket).toBe('conforming');
 	});

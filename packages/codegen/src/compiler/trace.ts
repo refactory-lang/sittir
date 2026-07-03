@@ -3,7 +3,7 @@
  *
  * Enable by setting `SITTIR_TRACE=<kind1>,<kind2>,...` in the environment.
  * Each listed kind is emitted as structured JSON after every pipeline
- * phase (Evaluate, Link, Optimize, Assemble), letting authors see exactly
+ * phase (Evaluate, Link, Normalize, Assemble), letting authors see exactly
  * where a rule changes shape — or fails to.
  *
  *   SITTIR_TRACE=import_statement,_import_list npx tsx cli.ts --grammar python --all
@@ -29,7 +29,7 @@ function tracedKinds(): readonly string[] {
  * phase. Rules listed in `SITTIR_TRACE` that don't exist in the current
  * map are silently skipped — the same rule set won't necessarily exist
  * in every phase (Link may classify a kind into a synthetic type;
- * Optimize may inline single-use hidden rules, removing the entry).
+ * Normalize may inline single-use hidden rules, removing the entry).
  */
 export function tracePhaseRules(phase: string, rules: Record<string, AnyRule> | undefined | null): void {
 	const kinds = tracedKinds();
