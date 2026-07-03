@@ -450,7 +450,8 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
    `NodeMap`, node-model) — a grammar body expression is a RULE, whatever vocabulary
    it belongs to. Scope: FULL trio collapse (user-confirmed 2026-07-03) — the
    authoring shape definitions themselves rename (`Seq`→`SeqRule`, `Choice`→
-   `ChoiceRule`, `Str`→`StrRule`, `Sym`→`SymRule`, …) along with the derived family
+   `ChoiceRule`, and abbreviated stems expand to full words: `Str`→`StringRule`,
+   `Sym`→`SymbolRule`, …) along with the derived family
    (`GrammarNode`→`GrammarRule`, `ContainerNode`→`ContainerRule`, `NodeAtPath`→
    `RuleAtPath`, `PrecNodeUnion`→`PrecRuleUnion`, `AuthoringRuleToNode`→
    `ToGrammarRule`); the `SeqNode`/`ChoiceNode` import-alias respellings are deleted.
