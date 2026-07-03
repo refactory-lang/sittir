@@ -3,7 +3,7 @@
  * insertion, for one rule body.
  *
  * WHY this is the linchpin: enrich is NOT path-transparent — it INSERTS
- * `FIELD(...)` nodes into the rule tree. A transform path that crosses a
+ * `FIELD(...)` rules into the rule tree. A transform path that crosses a
  * wrapped position gains a level. So `Enrich<>` must reproduce enrich's
  * insertion sites exactly, or every typed path is confidently wrong.
  *
@@ -26,7 +26,7 @@
  *      Shape 1: bare `SYMBOL`                          -> FIELD wraps it
  *      Shape 2: `CHOICE(SYMBOL, BLANK)` (= optional)   -> FIELD wraps inner SYMBOL
  *      Shape 3: `CHOICE(SEQ(SYMBOL, anon...), BLANK)`  -> FIELD wraps the SYMBOL in the seq
- *    (compiled grammar.json has NO OPTIONAL node; optionals are
+ *    (compiled grammar.json has NO OPTIONAL rule; optionals are
  *    CHOICE(_, BLANK).)
  *
  *  - The `_`-prefix gate (mirroring applySymbolToField): a symbol whose
@@ -53,17 +53,7 @@
  * affects only `type_item` and `index_expression`.)
  */
 
-import type {
-	GrammarNode,
-	Seq as SeqNode,
-	Choice as ChoiceNode,
-	Sym as SymbolNode,
-	Blank as BlankNode,
-	Field as FieldNode,
-	Repeat as RepeatNode,
-	Repeat1 as Repeat1Node,
-	PrecNodeUnion
-} from './grammar-json.ts';
+import type { GrammarRule, SeqRule, ChoiceRule, SymbolRule, BlankRule, FieldRule, RepeatRule, Repeat1Rule, PrecRuleUnion } from './grammar-json.ts';
 
 /** tree-sitter-rust declared supertypes (from grammar.json `supertypes`). */
 export type RustSupertypes =
@@ -78,21 +68,21 @@ export type RustSupertypes =
 // PREC transparency — peel/rebuild a single layer at a time.
 // ---------------------------------------------------------------------------
 
-type IsPrec<N> = N extends PrecNodeUnion ? true : false;
+type IsPrec<N> = N extends PrecRuleUnion ? true : false;
 
-/** Wrap `Inner` back in the prec node `P`'s shape (preserve value+type). */
-type RewrapPrec<P extends PrecNodeUnion, Inner extends GrammarNode> = Omit<P, 'content'> & { content: Inner };
+/** Wrap `Inner` back in the prec rule `P`'s shape (preserve value+type). */
+type RewrapPrec<P extends PrecRuleUnion, Inner extends GrammarRule> = Omit<P, 'content'> & { content: Inner };
 
 // ---------------------------------------------------------------------------
 // optional detection: CHOICE(X, BLANK) (order-insensitive, exactly 2 members)
 // ---------------------------------------------------------------------------
 
-type IsBlank<N> = N extends BlankNode ? true : false;
+type IsBlank<N> = N extends BlankRule ? true : false;
 
 /** If `C` is `CHOICE(X, BLANK)`, yields `X`; else `never`. */
-type OptionalInner<C extends ChoiceNode> = C['members'] extends readonly [infer A, infer B]
-	? A extends GrammarNode
-		? B extends GrammarNode
+type OptionalInner<C extends ChoiceRule> = C['members'] extends readonly [infer A, infer B]
+	? A extends GrammarRule
+		? B extends GrammarRule
 			? IsBlank<B> extends true
 				? A
 				: IsBlank<A> extends true
@@ -124,20 +114,20 @@ type BaseFieldName<Name extends string> = Name extends RustSupertypes ? StripUnd
 // ---------------------------------------------------------------------------
 
 /** Shape 3: SEQ whose members are exactly one SYMBOL + anon (STRING/PATTERN). */
-type Shape3Symbol<S extends SeqNode> = ExtractLoneSymbol<S['members']>;
+type Shape3Symbol<S extends SeqRule> = ExtractLoneSymbol<S['members']>;
 
-type ExtractLoneSymbol<M extends readonly GrammarNode[], Found extends string | 'none' = 'none'> = M extends readonly [
+type ExtractLoneSymbol<M extends readonly GrammarRule[], Found extends string | 'none' = 'none'> = M extends readonly [
 	infer Head,
 	...infer Tail
 ]
-	? Head extends SymbolNode
+	? Head extends SymbolRule
 		? Found extends 'none'
-			? Tail extends readonly GrammarNode[]
+			? Tail extends readonly GrammarRule[]
 				? ExtractLoneSymbol<Tail, Head['name']>
 				: never
 			: never // >1 SYMBOL -> too complex
 		: Head extends { type: 'STRING' } | { type: 'PATTERN' }
-			? Tail extends readonly GrammarNode[]
+			? Tail extends readonly GrammarRule[]
 				? ExtractLoneSymbol<Tail, Found>
 				: never
 			: never // non-anon, non-symbol -> too complex
@@ -149,21 +139,21 @@ type ExtractLoneSymbol<M extends readonly GrammarNode[], Found extends string | 
  * The symbol NAME a member would wrap (eligibility), or `never`.
  * `_`-prefixed names: only Shape 1 + supertype (else never).
  */
-type MemberWrapName<N extends GrammarNode> = N extends SymbolNode
+type MemberWrapName<N extends GrammarRule> = N extends SymbolRule
 	? // Shape 1 (bare symbol): `_`-names only if supertype.
 		N['name'] extends `_${string}`
 		? N['name'] extends RustSupertypes
 			? N['name']
 			: never
 		: N['name']
-	: N extends ChoiceNode
+	: N extends ChoiceRule
 		? OptionalInner<N> extends infer Inner
-			? Inner extends SymbolNode
+			? Inner extends SymbolRule
 				? // Shape 2 (optional symbol): `_`-names NEVER (gate).
 					Inner['name'] extends `_${string}`
 					? never
 					: Inner['name']
-				: Inner extends SeqNode
+				: Inner extends SeqRule
 					? // Shape 3 (optional seq with lone symbol): `_`-names NEVER.
 						Shape3Symbol<Inner> extends infer SymName
 						? SymName extends `_${string}`
@@ -178,12 +168,12 @@ type MemberWrapName<N extends GrammarNode> = N extends SymbolNode
 
 // Count how many members share a given base field name (for uniqueness).
 type CountBase<
-	M extends readonly GrammarNode[],
+	M extends readonly GrammarRule[],
 	Target extends string,
 	Acc extends unknown[] = []
 > = M extends readonly [infer Head, ...infer Tail]
-	? Head extends GrammarNode
-		? Tail extends readonly GrammarNode[]
+	? Head extends GrammarRule
+		? Tail extends readonly GrammarRule[]
 			? MemberWrapName<Head> extends infer WName
 				? WName extends string
 					? BaseFieldName<WName> extends Target
@@ -198,41 +188,41 @@ type CountBase<
 /** Field name to emit: base name if unique among siblings, else `string`. */
 type FieldNameFor<
 	WName extends string,
-	AllMembers extends readonly GrammarNode[]
+	AllMembers extends readonly GrammarRule[]
 > = CountBase<AllMembers, BaseFieldName<WName>> extends 1 ? BaseFieldName<WName> : string;
 
 // ---------------------------------------------------------------------------
 // Member rewrite: insert FIELD at the wrap site, preserving structure.
 // ---------------------------------------------------------------------------
 
-type WrapShape1<Name extends string, Sym extends SymbolNode> = FieldNode & {
+type WrapShape1<Name extends string, SymLeaf extends SymbolRule> = FieldRule & {
 	type: 'FIELD';
 	name: Name;
-	content: Sym;
+	content: SymLeaf;
 };
 
 /**
  * Rebuild a CHOICE(X,BLANK) members tuple with the non-BLANK member replaced
  * by NewX. Maps over a CLEAN tuple param `M` (not an intersection's indexed
  * access) so classic TS keeps tuple-ness — an intersection-sourced
- * `[K in keyof (C & ChoiceNode)['members']]` collapses to a numeric-keyed
+ * `[K in keyof (C & ChoiceRule)['members']]` collapses to a numeric-keyed
  * object under tsserver/vue-tsc (the engine editors run) and breaks the
  * downstream constraints, cascading every EnrichRule<> result to `never`.
  */
-type ReplaceOptionalMembers<M extends readonly GrammarNode[], NewX extends GrammarNode> = {
-	[K in keyof M]: M[K] extends BlankNode ? M[K] : NewX;
+type ReplaceOptionalMembers<M extends readonly GrammarRule[], NewX extends GrammarRule> = {
+	[K in keyof M]: M[K] extends BlankRule ? M[K] : NewX;
 };
 
 /** Rebuild a Shape-3 SEQ members tuple with its lone SYMBOL FIELD-wrapped. */
-type WrapShape3Members<M extends readonly GrammarNode[], Name extends string> = {
-	[K in keyof M]: M[K] extends SymbolNode ? WrapShape1<Name, M[K]> : M[K];
+type WrapShape3Members<M extends readonly GrammarRule[], Name extends string> = {
+	[K in keyof M]: M[K] extends SymbolRule ? WrapShape1<Name, M[K]> : M[K];
 };
 
 /**
  * Rewrite a single seq member, inserting a FIELD if it is a wrap target.
  * `AllMembers` is the sibling tuple (for the uniqueness/name decision).
  */
-type EnrichMember<N extends GrammarNode, AllMembers extends readonly GrammarNode[]> = MemberWrapName<N> extends infer WName
+type EnrichMember<N extends GrammarRule, AllMembers extends readonly GrammarRule[]> = MemberWrapName<N> extends infer WName
 	? // never-guard FIRST: a non-wrap member yields `WName = never`, and a
 		// bare `WName extends string` DISTRIBUTES over never -> never (the
 		// `: N` fallback is unreachable), collapsing every non-wrapped member.
@@ -242,18 +232,18 @@ type EnrichMember<N extends GrammarNode, AllMembers extends readonly GrammarNode
 		: WName extends string
 			? FieldNameFor<WName, AllMembers> extends infer FName
 				? FName extends string
-				? N extends SymbolNode
+				? N extends SymbolRule
 					? WrapShape1<FName, N> // Shape 1
-					: N extends ChoiceNode
-						? N['members'] extends infer CM extends readonly GrammarNode[]
+					: N extends ChoiceRule
+						? N['members'] extends infer CM extends readonly GrammarRule[]
 							? OptionalInner<N> extends infer Inner
-								? Inner extends SymbolNode
-									? ChoiceNode & { type: 'CHOICE'; members: ReplaceOptionalMembers<CM, WrapShape1<FName, Inner>> } // Shape 2
-									: Inner extends SeqNode
-										? Inner['members'] extends infer SM extends readonly GrammarNode[]
-											? ChoiceNode & {
+								? Inner extends SymbolRule
+									? ChoiceRule & { type: 'CHOICE'; members: ReplaceOptionalMembers<CM, WrapShape1<FName, Inner>> } // Shape 2
+									: Inner extends SeqRule
+										? Inner['members'] extends infer SM extends readonly GrammarRule[]
+											? ChoiceRule & {
 													type: 'CHOICE';
-													members: ReplaceOptionalMembers<CM, SeqNode & { type: 'SEQ'; members: WrapShape3Members<SM, FName> }>;
+													members: ReplaceOptionalMembers<CM, SeqRule & { type: 'SEQ'; members: WrapShape3Members<SM, FName> }>;
 												} // Shape 3
 											: N
 										: N
@@ -266,8 +256,8 @@ type EnrichMember<N extends GrammarNode, AllMembers extends readonly GrammarNode
 	: N;
 
 /** Map every member of a top-level seq through EnrichMember. */
-type EnrichSeqMembers<M extends readonly GrammarNode[]> = {
-	[K in keyof M]: M[K] extends GrammarNode ? EnrichMember<M[K], M> : M[K];
+type EnrichSeqMembers<M extends readonly GrammarRule[]> = {
+	[K in keyof M]: M[K] extends GrammarRule ? EnrichMember<M[K], M> : M[K];
 };
 
 // ---------------------------------------------------------------------------
@@ -276,7 +266,7 @@ type EnrichSeqMembers<M extends readonly GrammarNode[]> = {
 // REPEAT/REPEAT1 whose content is a SEQ, at one level only.
 // ---------------------------------------------------------------------------
 
-type EnrichRepeatContent<C extends GrammarNode> = C extends SeqNode
+type EnrichRepeatContent<C extends GrammarRule> = C extends SeqRule
 	? { type: 'SEQ'; members: EnrichSeqMembers<C['members']> }
 	: C;
 
@@ -289,17 +279,17 @@ type EnrichRepeatContent<C extends GrammarNode> = C extends SeqNode
 //     unchanged (enrich only wraps within a top-level SEQ context).
 // ---------------------------------------------------------------------------
 
-export type EnrichRule<N extends GrammarNode> = IsPrec<N> extends true
-	? N extends PrecNodeUnion
+export type EnrichRule<N extends GrammarRule> = IsPrec<N> extends true
+	? N extends PrecRuleUnion
 		? RewrapPrec<N, EnrichRule<N['content']>>
 		: N
-	: N extends SeqNode
+	: N extends SeqRule
 		? { type: 'SEQ'; members: EnrichSeqMembers<N['members']> }
-		: N extends RepeatNode
+		: N extends RepeatRule
 			? { type: 'REPEAT'; content: EnrichRepeatContent<N['content']> }
-			: N extends Repeat1Node
+			: N extends Repeat1Rule
 				? { type: 'REPEAT1'; content: EnrichRepeatContent<N['content']> }
 				: N;
 
 // Re-exports for consumers.
-export type { GrammarNode, SeqNode, ChoiceNode, SymbolNode, FieldNode };
+export type { GrammarRule, SeqRule, ChoiceRule, SymbolRule, FieldRule };

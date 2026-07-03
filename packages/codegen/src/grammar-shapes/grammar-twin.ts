@@ -13,24 +13,24 @@
  * `$` is tree-sitter's own `GrammarSymbols<keyof S['rules'] & string>` — i.e.
  * `$.r` returns `SymbolRule<r>` (a leaf that composes in seq()/choice()), with
  * rule-name autocomplete + typo protection. We do NOT make `$.r` return the
- * recursive shape: a readonly recursive node is not `RuleOrLiteral` (wouldn't
+ * recursive shape: a readonly recursive rule is not `RuleOrLiteral` (wouldn't
  * compose), and `$.foo` IS a symbol reference at tree-sitter runtime anyway.
  *
  * SYMBOL RESOLUTION is a SEPARATE, OPT-IN, DEPTH-BOUNDED op (`Resolve`), never
- * baked into `Sym` or `$` — grammars are mutually recursive
+ * baked into `SymbolRule` or `$` — grammars are mutually recursive
  * (expression→binary_expression→expression…), so eager resolution is infinite
  * ("excessively deep"). `Resolve` expands one symbol to its rule body with a
  * tuple-length depth counter, capped small.
  */
 
-import type { GrammarJson, GrammarNode, Sym } from './grammar-json.ts';
+import type { GrammarJson, GrammarRule, SymbolRule } from './grammar-json.ts';
 import type { EnrichRule } from './enrich-type.ts';
 
 // ---------------------------------------------------------------------------
-// Depth-bounded symbol resolution. `Resolve<S, Node, Depth>`:
-//   - Node is `Sym<Name>` and Depth > 0 → `S['rules'][Name]` (one expansion),
+// Depth-bounded symbol resolution. `Resolve<S, R, Depth>`:
+//   - R is `SymbolRule<Name>` and Depth > 0 → `S['rules'][Name]` (one expansion),
 //     decrementing Depth.
-//   - Depth exhausted, or Node not a symbol, or Name not in rules → Node
+//   - Depth exhausted, or R not a symbol, or Name not in rules → R
 //     unchanged (the symbol stays a finite leaf).
 // Depth is a tuple-length counter (type-fest style); cap small (default 1).
 // ---------------------------------------------------------------------------
@@ -38,22 +38,22 @@ import type { EnrichRule } from './enrich-type.ts';
 type _Decr<N extends readonly unknown[]> = N extends readonly [unknown, ...infer Rest] ? Rest : [];
 
 /**
- * Expand a SYMBOL node to its rule body, bounded by `DepthTuple` length.
+ * Expand a SYMBOL rule to its rule body, bounded by `DepthTuple` length.
  * Default depth 1 (single hop). Pass `[]` to disable (leaf-only).
  */
 export type Resolve<
 	S extends GrammarJson,
-	Node extends GrammarNode,
+	R extends GrammarRule,
 	DepthTuple extends readonly unknown[] = [unknown]
 > = DepthTuple extends readonly [unknown, ...unknown[]]
-	? Node extends Sym<infer Name>
+	? R extends SymbolRule<infer Name>
 		? Name extends keyof S['rules']
-			? S['rules'][Name] extends GrammarNode
+			? S['rules'][Name] extends GrammarRule
 				? S['rules'][Name]
-				: Node
-			: Node
-		: Node
-	: Node;
+				: R
+			: R
+		: R
+	: R;
 
 // ---------------------------------------------------------------------------
 // Recursive RuleBuilder twin — narrows `previous` to the rule's post-Enrich

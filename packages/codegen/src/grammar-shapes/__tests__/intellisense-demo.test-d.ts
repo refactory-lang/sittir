@@ -7,7 +7,7 @@
  *           structure) — `EnrichRule<RawShape['rule']>` is a fully-resolved,
  *           navigable type with literal discriminants + field names.
  *
- *   A-half: transform path-addressing — `NodeAtPath<Shape, '4/0'>` validates
+ *   A-half: transform path-addressing — `RuleAtPath<Shape, '4/0'>` validates
  *           a path against the rule structure; out-of-bounds resolves to
  *           `never` (caught at compile time), and `PathKey<Shape>` gives
  *           first-segment autocomplete.
@@ -20,7 +20,7 @@
 import { describe, it, expectTypeOf, assertType } from 'vitest';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';
 import type { EnrichRule } from '../enrich-type.ts';
-import type { NodeAtPath, PathKey, TopLevelKeys } from '../path-type.ts';
+import type { RuleAtPath, PathKey, TopLevelKeys } from '../path-type.ts';
 
 type Rules = typeof rustGrammarShape['rules'];
 
@@ -55,34 +55,34 @@ describe('A-half: transform path-addressing validated against rule shape', () =>
 	it('or_pattern: authored paths 0/0 resolves (lifted from overrides.ts)', () => {
 		// '0/0' -> choice arm 0, seq pos 0 = SYMBOL _pattern (PREC transparent).
 		// The resolved node is the bare _pattern symbol authors wrap with field().
-		type N00 = NodeAtPath<OrPattern, '0/0'>;
+		type N00 = RuleAtPath<OrPattern, '0/0'>;
 		expectTypeOf<(N00 & { type: string })['type']>().toEqualTypeOf<'SYMBOL'>();
 		expectTypeOf<(N00 & { name: string })['name']>().toEqualTypeOf<'_pattern'>();
 	});
 
 	it('range_expression: nested CHOICE at 0/1', () => {
 		// '0/1' is the inner CHOICE('..','...','..=') (operator position).
-		type Op = NodeAtPath<RangeExpr, '0/1'>;
+		type Op = RuleAtPath<RangeExpr, '0/1'>;
 		expectTypeOf<(Op & { type: string })['type']>().toEqualTypeOf<'CHOICE'>();
 	});
 
 	it('PREC transparency: await_expression path 0 reaches INTO the seq, not the prec', () => {
 		// await_expression is PREC>SEQ. Path '0' skips PREC, lands on seq member 0 (the FIELD).
-		type N0 = NodeAtPath<AwaitExpr, '0'>;
+		type N0 = RuleAtPath<AwaitExpr, '0'>;
 		expectTypeOf<(N0 & { type: string })['type']>().toEqualTypeOf<'FIELD'>();
 	});
 
 	it('FIELD opacity: descending into a field consumes a segment (path gained a level)', () => {
 		// await_expression '0' = FIELD; '0/0' = the field CONTENT (the symbol).
-		type N00 = NodeAtPath<AwaitExpr, '0/0'>;
+		type N00 = RuleAtPath<AwaitExpr, '0/0'>;
 		expectTypeOf<(N00 & { type: string })['type']>().toEqualTypeOf<'SYMBOL'>();
 		expectTypeOf<(N00 & { name: string })['name']>().toEqualTypeOf<'_expression'>();
 	});
 
 	it('out-of-bounds paths are caught at compile time (resolve to never)', () => {
-		// @ts-expect-error — NodeAtPath<_, '5/0'> is `never`; assigning a real
+		// @ts-expect-error — RuleAtPath<_, '5/0'> is `never`; assigning a real
 		// node value to `never` is a compile error, proving the bad path is rejected.
-		const _bad: NodeAtPath<OrPattern, '5/0'> = { type: 'SYMBOL', name: 'x' } as const;
+		const _bad: RuleAtPath<OrPattern, '5/0'> = { type: 'SYMBOL', name: 'x' } as const;
 		void _bad;
 	});
 

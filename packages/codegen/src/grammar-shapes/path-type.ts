@@ -18,7 +18,7 @@
  * them precisely is future work and degrading to `string` is sound.
  *
  * DEPTH / PERF (the stated risk): this resolves a CONCRETE path string to
- * the node at that position (`NodeAtPath`) — depth bounded by the path
+ * the rule at that position (`RuleAtPath`) — depth bounded by the path
  * length, NOT by enumerating all paths (no `type-fest` `Paths` over the
  * 182-rule registry, which would blow up). SYMBOL stays a lazy name-tagged
  * leaf: we do NOT follow symbols cross-rule (authored paths address within
@@ -26,7 +26,7 @@
  * a cheap hand-rolled union over the top-level members tuple.
  */
 
-import type { GrammarNode, Seq as SeqNode, Choice as ChoiceNode, PrecNodeUnion, SingleContentWrapper } from './grammar-json.ts';
+import type { GrammarRule, SeqRule, ChoiceRule, PrecRuleUnion, SingleContentWrapper } from './grammar-json.ts';
 // Type-only imports of the DSL primitive return interfaces (DRY value-axis;
 // no runtime cycle — primitives don't import grammar-shapes).
 import type { FieldPlaceholder } from '../dsl/primitives/field.ts';
@@ -41,26 +41,26 @@ import type { FieldLike } from '../types/runtime-shapes.ts';
 type Split<S extends string> = S extends `${infer Head}/${infer Tail}` ? [Head, ...Split<Tail>] : [S];
 
 // ---------------------------------------------------------------------------
-// Resolve a single positional index against a node's children, after
+// Resolve a single positional index against a rule's children, after
 // transparently peeling PREC wrappers.
 // ---------------------------------------------------------------------------
 
-/** Peel all leading PREC wrappers (transparent) to the structural node. */
-type PeelPrec<N extends GrammarNode> = N extends PrecNodeUnion ? PeelPrec<N['content']> : N;
+/** Peel all leading PREC wrappers (transparent) to the structural rule. */
+type PeelPrec<N extends GrammarRule> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
 
 /** Parse a numeric-literal segment into a number; else never. */
 type ToIndex<S extends string> = S extends `${infer N extends number}` ? N : never;
 
 /**
- * The child node reached by index `I` at node `N` (after PREC peel):
+ * The child rule reached by index `I` at rule `N` (after PREC peel):
  *   - container: members[I]
  *   - single-content wrapper: content (I must be 0 / -1; we accept any
  *     numeric for ergonomics since wrappers have one slot)
  */
-type ChildAt<N extends GrammarNode, I extends number> = PeelPrec<N> extends infer P
-	? P extends SeqNode | ChoiceNode
+type ChildAt<N extends GrammarRule, I extends number> = PeelPrec<N> extends infer P
+	? P extends SeqRule | ChoiceRule
 		? I extends keyof P['members']
-			? P['members'][I] extends GrammarNode
+			? P['members'][I] extends GrammarRule
 				? P['members'][I]
 				: never
 			: never
@@ -70,18 +70,18 @@ type ChildAt<N extends GrammarNode, I extends number> = PeelPrec<N> extends infe
 	: never;
 
 /**
- * Walk a tuple of (string) segments down the node tree. Each segment is a
- * numeric index. Returns the node at the addressed position, or `never` if
+ * Walk a tuple of (string) segments down the rule tree. Each segment is a
+ * numeric index. Returns the rule at the addressed position, or `never` if
  * the path runs off a leaf / out of bounds.
  */
-type WalkSegments<N extends GrammarNode, Segs extends readonly string[]> = Segs extends readonly [
+type WalkSegments<N extends GrammarRule, Segs extends readonly string[]> = Segs extends readonly [
 	infer Head extends string,
 	...infer Rest extends string[]
 ]
 	? ToIndex<Head> extends infer I
 		? I extends number
 			? ChildAt<N, I> extends infer Child
-				? Child extends GrammarNode
+				? Child extends GrammarRule
 					? Rest extends readonly []
 						? Child
 						: WalkSegments<Child, Rest>
@@ -91,8 +91,8 @@ type WalkSegments<N extends GrammarNode, Segs extends readonly string[]> = Segs 
 		: never
 	: N;
 
-/** The node a concrete path string resolves to within rule node `N`. */
-export type NodeAtPath<N extends GrammarNode, P extends string> = WalkSegments<N, Split<P>>;
+/** The rule a concrete path string resolves to within rule `N`. */
+export type RuleAtPath<N extends GrammarRule, P extends string> = WalkSegments<N, Split<P>>;
 
 // ---------------------------------------------------------------------------
 // First-segment autocomplete (shallow). The cheap, perf-safe layer: the
@@ -102,9 +102,9 @@ export type NodeAtPath<N extends GrammarNode, P extends string> = WalkSegments<N
 
 type IndicesOf<M extends readonly unknown[]> = Extract<keyof M, `${number}`>;
 
-/** Valid first-segment index strings for rule node `N` (top-level). */
-export type TopLevelKeys<N extends GrammarNode> = PeelPrec<N> extends infer P
-	? P extends SeqNode | ChoiceNode
+/** Valid first-segment index strings for rule `N` (top-level). */
+export type TopLevelKeys<N extends GrammarRule> = PeelPrec<N> extends infer P
+	? P extends SeqRule | ChoiceRule
 		? IndicesOf<P['members']>
 		: P extends SingleContentWrapper
 			? '0'
@@ -136,7 +136,7 @@ export type TopLevelKeys<N extends GrammarNode> = PeelPrec<N> extends infer P
  *  `'5:'` — TS can't cheaply require a letter-initial; permissive is fine.) */
 type NonNumericFirstSegment = '_' | `(${string})` | `${string}:` | `-${number}`;
 
-export type PathKey<N extends GrammarNode> =
+export type PathKey<N extends GrammarRule> =
 	| TopLevelKeys<N>
 	| NonNumericFirstSegment
 	| `${TopLevelKeys<N>}/${string}`
@@ -145,16 +145,16 @@ export type PathKey<N extends GrammarNode> =
 // ---------------------------------------------------------------------------
 // Per-rule transform patch-map types (Phase-2 TransformsConfig upgrade).
 //
-// `TransformPatchMap<RuleNode>` keys each patch entry by `PathKey<RuleNode>`
+// `TransformPatchMap<R>` keys each patch entry by `PathKey<R>`
 // (segment-1-precise) and values by the patch-value union. `TransformsFor<S>`
 // maps EVERY rule kind in a schema to its `original`-shape's patch-map — this
 // is the 182-rule mapped type whose PERF is the stated risk, so it's
-// parameterized over `KeyOf<RuleNode>` (swap the key strategy without
+// parameterized over `KeyOf<R>` (swap the key strategy without
 // touching the value/mapping machinery):
 //
-//   - PRECISE keys: `PathKey<EnrichRule<RuleNode>>` — instantiates EnrichRule
+//   - PRECISE keys: `PathKey<EnrichRule<R>>` — instantiates EnrichRule
 //     per rule (the cost driver).
-//   - FAST keys: `PathKey<RuleNode>` on the RAW node — top-level member count
+//   - FAST keys: `PathKey<R>` on the RAW rule — top-level member count
 //     is enrich-INVARIANT (enrich wraps in-place, never adds/removes a
 //     top-level member), so segment-1 autocomplete is identical without
 //     instantiating EnrichRule. Used as the perf fallback if PRECISE degrades
@@ -187,4 +187,4 @@ export type TransformPatchMap<Keys extends string> = Partial<Record<Keys, Transf
 
 /** FAST key strategy: segment-1 keys from the RAW shape (enrich-invariant for
  *  top-level member count). */
-export type FastKeys<RuleNode extends GrammarNode> = PathKey<RuleNode>;
+export type FastKeys<R extends GrammarRule> = PathKey<R>;

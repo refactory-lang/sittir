@@ -44,7 +44,7 @@ import { isVariantPlaceholder } from '../primitives/variant.ts';
 import { getEnrichClauseGroups } from '../enrich.ts';
 import type { Rule } from '../../types/rule.ts';
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
-import type { GrammarJson, GrammarNode, Sym, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
+import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 
 
@@ -378,9 +378,9 @@ export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
  * resolution deposits captured content into wire's context; the
  * deferred fns read deposits.
  */
-export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarNode] extends [Base['rules'][keyof Base['rules']]]
+export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [Base['rules'][keyof Base['rules']]]
 	? // Loose default (`Base = GrammarJson`, rule values are the open
-		// `GrammarNode` union): use the plain `PatchMap` form. Mapping
+		// `GrammarRule` union): use the plain `PatchMap` form. Mapping
 		// `PathKey<…>` over the OPEN union recurses unboundedly (TS2589); the
 		// per-rule precise form is only meaningful — and only safe — when
 		// `Base` is a CONCRETE `as const` schema (tuple rule bodies). The
@@ -389,7 +389,7 @@ export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarN
 	: Base extends { readonly rules: infer R }
 		? {
 				// Concrete `Base` (e.g. `RustGrammarShape`): per rule K, keys are
-				// segment-1-precise path strings. We derive them from the RAW node
+				// segment-1-precise path strings. We derive them from the RAW rule
 				// (`FastKeys` = PathKey<R[K]>) rather than the post-Enrich shape:
 				// `PathKey` only consumes the FIRST segment (`TopLevelKeys`), and
 				// enrich wraps top-level members IN PLACE (never adds/removes one),
@@ -397,7 +397,7 @@ export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarN
 				// wire-transforms.test-d.ts). FastKeys is therefore LOSSLESS for
 				// keys and avoids instantiating EnrichRule over the loose union
 				// (which is the TS2589 source). Array form = multi-patchset rules.
-				readonly [K in keyof R]?: R[K] extends GrammarNode
+				readonly [K in keyof R]?: R[K] extends GrammarRule
 					? TransformPatchMap<FastKeys<R[K]>> | TransformPatchMap<FastKeys<R[K]>>[]
 					: PatchMap | PatchMap[];
 			}
@@ -427,13 +427,13 @@ export type PatchMap = Record<string, unknown>;
  * composition (`undefined ⊄ AuthoringRule`) in overrides.ts authoring.
  */
 export type ShapedSymbols<B extends GrammarJson> = {
-	readonly [R in keyof B['rules'] & string]: Sym<R>;
+	readonly [R in keyof B['rules'] & string]: SymbolRule<R>;
 } & {
 	// Permissive fallback for alias-target / synthesized names not in the base
 	// grammar.json (e.g. `$.wildcard_pattern`). Known rules resolve via the
-	// mapped member above (precise `Sym<R>`, no `undefined`); only unknown names
+	// mapped member above (precise `SymbolRule<R>`, no `undefined`); only unknown names
 	// hit this index.
-	readonly [name: string]: Sym<string>;
+	readonly [name: string]: SymbolRule<string>;
 };
 
 export type WireConfig< B extends GrammarJson, NewRules extends string = string> = Omit<Grammar<NewRules, keyof B['rules'] & string>, 'rules' | 'conflicts'> & {
@@ -473,7 +473,7 @@ export type WireConfig< B extends GrammarJson, NewRules extends string = string>
 	 * builders (`($: ShapedSymbols<B>) => unknown`), not the untyped `RuleFn`.
 	 */
 	readonly groups?: Partial<
-		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarNode) => unknown)>
+		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarRule) => unknown)>
 	>;
 	readonly transforms?: TransformsConfig<B>;
 	/** Side-channel from `enrich()` — preserved unchanged. */

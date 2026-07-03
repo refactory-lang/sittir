@@ -7,7 +7,7 @@ import type { EnrichRule } from '../enrich-type.ts';
 // `wire` receives the ENRICHED schema (`enrich(base)` emits `EnrichedGrammar<…>`),
 // and `WireConfig` reads its schema's rules directly. So a rule callback's
 // `previous`/`original` is the rule's POST-ENRICH shape — preserved precisely,
-// not flattened to `any`/`GrammarNode`.
+// not flattened to `any`/`GrammarRule`.
 type Rules = NonNullable<WireConfig<EnrichedGrammar<RustGrammarShape>>['rules']>;
 type BinPrev = Rules['binary_expression'] extends ((($: any, p: infer P) => any) | undefined) ? P : never;
 

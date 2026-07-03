@@ -4,8 +4,8 @@
  *  1. FastKeys ≡ PreciseKeys: `PathKey<EnrichRule<X>> ≡ PathKey<X>` for the
  *     transform key surface. `PathKey` only consumes the FIRST path segment
  *     (`TopLevelKeys`), and enrich wraps top-level members IN PLACE (never
- *     adds/removes one), so deriving keys from the RAW node is LOSSLESS —
- *     and avoids instantiating `EnrichRule` over the loose `GrammarNode`
+ *     adds/removes one), so deriving keys from the RAW rule is LOSSLESS —
+ *     and avoids instantiating `EnrichRule` over the loose `GrammarRule`
  *     union (the TS2589 source). This is why TransformsConfig uses FastKeys.
  *
  *  2. The per-rule transform patch-map autocompletes real segment-1 keys and
