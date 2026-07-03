@@ -2,7 +2,7 @@ import { PATTERN, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-
 import { describe, expect, it } from 'vitest';
 import { emitClientUtils } from '../client-utils.ts';
 import { emitFactories } from '../factories.ts';
-import { emitWrap } from '../wrap.ts';
+import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import { AssembledBranch, AssembledPattern } from '../../compiler/model/node-map.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';

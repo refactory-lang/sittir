@@ -118,7 +118,7 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	 * flatten. Read directly off the rule (with an `isHiddenKind` fallback
 	 * for link-synthesized symbols) — see `compiler/link.ts:539-540`,
 	 * `dsl/rule-transforms.ts:334`. Replaces the scattered re-derivations of
-	 * the inline decision (`name.startsWith('_')`, `source==='group-lift'`).
+	 * the inline decision (`name.startsWith('_')` combined with ad hoc alias checks).
 	 */
 	readonly inline?: boolean;
 

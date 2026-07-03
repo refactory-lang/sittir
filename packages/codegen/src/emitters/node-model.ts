@@ -279,7 +279,7 @@ function serializeNode(node: AssembledNode): SerializedNode {
 		irKey: node.irKey,
 		hidden: node.hidden,
 		source: node.source,
-		...(node.isParameterless ? { isParameterless: true } : {}),
+		...(node.parameterless ? { isParameterless: true } : {}),
 		...(node.stampExpression !== undefined ? { stampExpression: node.stampExpression } : {})
 	};
 	switch (node.modelType) {

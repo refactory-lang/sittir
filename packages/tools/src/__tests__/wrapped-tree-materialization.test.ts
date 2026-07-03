@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import type { TreeHandle } from '@sittir/common';
 import { AssembledBranch, AssembledNonterminal, AssembledPattern, type AssembledNode } from '../../../codegen/src/compiler/model/node-map.ts';
 import type { SeqRule } from '../../../codegen/src/types/rule.ts';
-import { emitWrap } from '../../../codegen/src/emitters/wrap.ts';
+import { emitWrap } from '../../../codegen/src/__tests__/helpers/emit-wrap.ts';
 import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated-manifest.ts';
 import {
 	buildReadHandle,

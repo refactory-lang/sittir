@@ -6,16 +6,10 @@
  * survivor. Both were originally local to simplify.ts; they now live here so
  * normalize.ts's `collapseWrappers` and simplify.ts's `canonicalizeSeqOfLeaves`
  * use the SAME implementation, and future collapse sites can't drift apart.
- *
- * `combineMultiplicity` has moved to transforms.ts (PR-O M1 de-scatter);
- * it is re-exported here so existing importers keep resolving.
  */
 
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
-// `combineMultiplicity` and `LeafMultiplicity` moved to transforms.ts (PR-O M1 de-scatter);
-// re-exported here so existing importers keep resolving.
-export { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts';
 
 /**
  * Transfer slot-identity attributes from a discarded wrapper node onto the

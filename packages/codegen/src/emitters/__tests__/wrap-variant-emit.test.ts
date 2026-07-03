@@ -1,7 +1,7 @@
 import { CHOICE, FIELD, PATTERN, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { emitWrap } from '../wrap.ts';
+import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import {
 	AssembledGroup,
 	AssembledPattern,

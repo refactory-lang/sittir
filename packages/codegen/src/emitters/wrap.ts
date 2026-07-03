@@ -84,19 +84,6 @@ export interface EmitWrapConfig {
 	kindEntries?: readonly KindEnumEntry[];
 }
 
-/**
- * Standalone entry point — preserved for backwards compatibility (tests
- * only; production goes through `new WrapEmitter(...)` directly, see
- * `emitters/emit.ts`). Delegates to the emitter protocol (init → loop →
- * finalize).
- */
-export function emitWrap(config: EmitWrapConfig): string {
-	const wrapEmitter = new WrapEmitter(config);
-	for (const [kind, node] of config.nodeMap.nodes) {
-		wrapEmitter.dispatchNode(kind, node);
-	}
-	return wrapEmitter.finalize();
-}
 
 // ---------------------------------------------------------------------------
 // Helpers
