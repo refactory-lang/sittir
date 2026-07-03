@@ -5,7 +5,7 @@
  */
 import { describe, it, expectTypeOf } from 'vitest';
 import type { RustGrammarShape } from '../grammar-shape.rust.ts';
-import type { GrammarJson, MutableDeep } from '../grammar-json.ts';
+import type { GrammarJson, MutableDeep, SymbolRule as AuthoringSymbolRule } from '../grammar-json.ts';
 
 describe('grammar-shape emit literal/tuple preservation', () => {
 	type Rules = RustGrammarShape['rules'];
@@ -46,12 +46,28 @@ describe('grammar-shape emit literal/tuple preservation', () => {
 		expectTypeOf<MutableDeep<RustGrammarShape>>().toExtend<GrammarSchema<string>>();
 	});
 
-	it('SYMBOL leaf reuses tree-sitter SymbolRule (single vocabulary)', () => {
+	it('SYMBOL leaf mirrors tree-sitter SymbolRule structurally (single vocabulary)', () => {
 		// reference_type member 3 = field('type', $._type); its content is a
-		// SYMBOL that IS tree-sitter's SymbolRule<'_type'> (composes in seq()).
+		// SYMBOL that IS STRUCTURALLY tree-sitter's SymbolRule<'_type'>
+		// (composes in seq()). Since decision 5's trio collapse, sittir's
+		// authoring `SymbolRule` (grammar-json.ts) is its own interface
+		// literal rather than an alias of the ambient type (aliasing would
+		// self-shadow — see grammar-json.ts's file-scoped doc comment), so
+		// this is a structural match, not a type-identity reuse.
 		type RefMembers = (Rules['reference_type'] & { members: readonly unknown[] })['members'];
 		type TypeField = RefMembers[3];
 		type Content = (TypeField & { content: unknown })['content'];
 		expectTypeOf<Content>().toExtend<SymbolRule<string>>();
+	});
+
+	it('authoring SymbolRule ⇔ ambient tree-sitter SymbolRule stay mutually assignable', () => {
+		// DRY CHECK (not an alias): grammar-json.ts's `SymbolRule` is a local
+		// interface literal that must keep mirroring tree-sitter's ambient
+		// `SymbolRule<Name>` shape (`{ type: 'SYMBOL'; name: Name }`) byte-for-
+		// byte. If dsl.d.ts's shape ever drifts, this assertion fails instead
+		// of silently diverging (the two can no longer be an alias post-rename
+		// — see grammar-json.ts's `SymbolRule` doc comment).
+		expectTypeOf<AuthoringSymbolRule<'x'>>().toExtend<SymbolRule<'x'>>();
+		expectTypeOf<SymbolRule<'x'>>().toExtend<AuthoringSymbolRule<'x'>>();
 	});
 });

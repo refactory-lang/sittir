@@ -8,7 +8,7 @@
 import { field as fieldImpl, type FieldPlaceholder } from './primitives/field.ts';
 import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts';
 import { transform as transformImpl } from './transform/transform.ts';
-import type { Field, Alias, GrammarNode, AuthoringRule } from '../grammar-shapes/grammar-json.ts';
+import type { FieldRule, AliasRule, GrammarRule, AuthoringRule } from '../grammar-shapes/grammar-json.ts';
 
 // Pass-throughs (no authoring-specific return shape to tighten).
 export { variant } from './primitives/variant.ts';
@@ -16,17 +16,17 @@ export { enrich } from './enrich.ts';
 export { wire } from './wire/wire.ts';
 export type { WireConfig } from './wire/wire.ts';
 
-/** 1-arg → transform placeholder; 2-arg → a grammar-shapes `Field` (rule body). */
+/** 1-arg → transform placeholder; 2-arg → a grammar-shapes `FieldRule` (rule body). */
 interface AuthoringField {
 	(name: string): FieldPlaceholder;
-	<const N extends string>(name: N, content: AuthoringRule): Field<N, GrammarNode>;
+	<const N extends string>(name: N, content: AuthoringRule): FieldRule<N, GrammarRule>;
 }
 export const field = fieldImpl as unknown as AuthoringField;
 
-/** 1-arg string → transform placeholder; 1/2-arg rule → a grammar-shapes `Alias`. */
+/** 1-arg string → transform placeholder; 1/2-arg rule → a grammar-shapes `AliasRule`. */
 interface AuthoringAlias {
 	(name: string): AliasPlaceholder;
-	(rule: AuthoringRule, value?: string | AuthoringRule): Alias<string, GrammarNode>;
+	(rule: AuthoringRule, value?: string | AuthoringRule): AliasRule<string, GrammarRule>;
 }
 export const alias = aliasImpl as unknown as AuthoringAlias;
 

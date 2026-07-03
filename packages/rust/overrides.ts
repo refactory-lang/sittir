@@ -72,7 +72,7 @@ const enrichedBase = enrich(base);
 // its static type doesn't match tree-sitter's flat `GrammarSchema` — so
 // `grammar(enrichedBase, …)`'s first arg is rejected. The directive keeps
 // this honest (it fails if the mismatch ever resolves) rather than a
-// silent cast. (The separate `conflicts`/`Sym` errors inside the wire
+// silent cast. (The separate `conflicts`/`SymbolRule` errors inside the wire
 // payload are pre-existing and unrelated to this seam.)
 // @ts-expect-error — GrammarResult ({grammar:{rules}}) vs tree-sitter's flat GrammarSchema; runtime-handled by wire's base extraction.
 export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({

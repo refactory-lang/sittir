@@ -22,7 +22,7 @@ import { createRequire } from 'node:module';
 import { enrich } from '../../dsl/enrich.ts';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';
 import type { EnrichRule } from '../enrich-type.ts';
-import type { GrammarNode } from '../grammar-json.ts';
+import type { GrammarRule } from '../grammar-json.ts';
 import { installFakeDsl, restoreFakeDsl } from '../../dsl/__tests__/_test-helpers.ts';
 
 // enrich's builders call the runtime-injected DSL constructors
@@ -87,7 +87,7 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		});
 		// Type-level: PREC peeled, member 0 becomes FIELD('expression').
 		type E = EnrichRule<Rules['await_expression']>;
-		type M0 = (E & { content: { members: readonly GrammarNode[] } })['content']['members'][0];
+		type M0 = (E & { content: { members: readonly GrammarRule[] } })['content']['members'][0];
 		expectTypeOf<M0['type']>().toEqualTypeOf<'FIELD'>();
 		expectTypeOf<(M0 & { name: string })['name']>().toEqualTypeOf<'expression'>();
 	});
@@ -108,7 +108,7 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		// Type-level: STRUCTURE = FIELD at positions 0 and 2 (paths stay
 		// correct); NAME degrades to `string` (we don't model numbering).
 		type E = EnrichRule<Rules['index_expression']>;
-		type M = (E & { content: { members: readonly GrammarNode[] } })['content']['members'];
+		type M = (E & { content: { members: readonly GrammarRule[] } })['content']['members'];
 		expectTypeOf<M[0]['type']>().toEqualTypeOf<'FIELD'>();
 		expectTypeOf<M[2]['type']>().toEqualTypeOf<'FIELD'>();
 		// NAME degrades to `string` (not a literal). Asserted via stable
@@ -143,9 +143,9 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		// becomes a FIELD — the path '1/0' now reaches the FIELD, not the
 		// bare symbol (path GAINED a level).
 		type E = EnrichRule<Rules['reference_type']>;
-		type M1 = (E & { members: readonly GrammarNode[] })['members'][1];
+		type M1 = (E & { members: readonly GrammarRule[] })['members'][1];
 		expectTypeOf<M1['type']>().toEqualTypeOf<'CHOICE'>();
-		type M1Inner0 = (M1 & { members: readonly GrammarNode[] })['members'][0];
+		type M1Inner0 = (M1 & { members: readonly GrammarRule[] })['members'][0];
 		expectTypeOf<M1Inner0['type']>().toEqualTypeOf<'FIELD'>();
 		expectTypeOf<(M1Inner0 & { name: string })['name']>().toEqualTypeOf<'lifetime'>();
 	});
@@ -161,9 +161,9 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 			]
 		});
 		type E = EnrichRule<Rules['for_expression']>;
-		type M0 = (E & { members: readonly GrammarNode[] })['members'][0];
-		type Inner = (M0 & { members: readonly GrammarNode[] })['members'][0]; // the SEQ
-		type SeqM0 = (Inner & { members: readonly GrammarNode[] })['members'][0]; // FIELD(label)
+		type M0 = (E & { members: readonly GrammarRule[] })['members'][0];
+		type Inner = (M0 & { members: readonly GrammarRule[] })['members'][0]; // the SEQ
+		type SeqM0 = (Inner & { members: readonly GrammarRule[] })['members'][0]; // FIELD(label)
 		expectTypeOf<SeqM0['type']>().toEqualTypeOf<'FIELD'>();
 		expectTypeOf<(SeqM0 & { name: string })['name']>().toEqualTypeOf<'label'>();
 	});
@@ -173,14 +173,14 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		// member 1 (label) wraps; member 2 (optional _expression) stays raw SYMBOL.
 		expect(sk.c.m[2]).toEqual({ t: 'CHOICE', m: [{ t: 'SYMBOL', name: '_expression' }, { t: 'BLANK' }] });
 		type E = EnrichRule<Rules['break_expression']>;
-		type Inner = (E & { content: { members: readonly GrammarNode[] } })['content']['members'];
+		type Inner = (E & { content: { members: readonly GrammarRule[] } })['content']['members'];
 		type M2 = Inner[2]; // CHOICE(_expression, BLANK)
-		type M2Inner0 = (M2 & { members: readonly GrammarNode[] })['members'][0];
+		type M2Inner0 = (M2 & { members: readonly GrammarRule[] })['members'][0];
 		// Stays a SYMBOL (NOT a FIELD) — the _-prefix Shape-2 gate.
 		expectTypeOf<M2Inner0['type']>().toEqualTypeOf<'SYMBOL'>();
 		// And the label position DID wrap.
 		type M1 = Inner[1];
-		type M1Inner0 = (M1 & { members: readonly GrammarNode[] })['members'][0];
+		type M1Inner0 = (M1 & { members: readonly GrammarRule[] })['members'][0];
 		expectTypeOf<M1Inner0['type']>().toEqualTypeOf<'FIELD'>();
 	});
 
@@ -189,8 +189,8 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		// members 0/1/2 are CHOICE(STRING 'static'|'async'|'move', BLANK) — unchanged.
 		expect(sk.c.m[0]).toEqual({ t: 'CHOICE', m: [{ t: 'STRING', v: 'static' }, { t: 'BLANK' }] });
 		type E = EnrichRule<Rules['closure_expression']>;
-		type M0 = (E & { content: { members: readonly GrammarNode[] } })['content']['members'][0];
-		type M0Inner0 = (M0 & { members: readonly GrammarNode[] })['members'][0];
+		type M0 = (E & { content: { members: readonly GrammarRule[] } })['content']['members'][0];
+		type M0Inner0 = (M0 & { members: readonly GrammarRule[] })['members'][0];
 		expectTypeOf<M0Inner0['type']>().toEqualTypeOf<'STRING'>();
 	});
 
