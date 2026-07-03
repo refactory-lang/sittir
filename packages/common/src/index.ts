@@ -8,8 +8,6 @@ export { withMetrics, recordFfi, dumpMetrics, metricsEnabled } from './metrics.t
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
 export {
 	assertRenderableNodeData,
-	isRenderableNodeData,
-	assertNativeNodeData,
-	isNativeNodeData
+	isRenderableNodeData
 } from './native-boundary.ts';
 export { normalizeNativeReadNode } from './native-read.ts';

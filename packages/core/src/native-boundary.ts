@@ -1,1 +1,1 @@
-export { assertRenderableNodeData, isRenderableNodeData, assertNativeNodeData, isNativeNodeData } from '@sittir/common';
+export { assertRenderableNodeData, isRenderableNodeData } from '@sittir/common';

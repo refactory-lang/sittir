@@ -8,7 +8,7 @@ import {
 	type AssembledNode
 } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, EnumRule, SeqRule } from '../../types/rule.ts';
-import { emitWrap } from '../wrap.ts';
+import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 

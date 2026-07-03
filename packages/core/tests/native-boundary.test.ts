@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-	assertNativeNodeData,
-	assertRenderableNodeData,
-	isNativeNodeData,
-	isRenderableNodeData
-} from '../src/native-boundary.ts';
+import { assertRenderableNodeData, isRenderableNodeData } from '../src/native-boundary.ts';
 import type { AnyNodeData, FormatRecord } from '../src/types.ts';
 
 // Use a numeric $type (Phase D: parser.c-derived KindId). Any finite integer
@@ -26,9 +21,6 @@ describe('native render boundary', () => {
 
 		expect(() => assertRenderableNodeData(withFormat)).toThrow(/\$format/);
 		expect(isRenderableNodeData(withFormat)).toBe(false);
-		// Backward-compat aliases behave identically.
-		expect(() => assertNativeNodeData(withFormat)).toThrow(/\$format/);
-		expect(isNativeNodeData(withFormat)).toBe(false);
 	});
 
 	it('still accepts other TS-only metadata the native renderer recomputes', () => {
@@ -36,9 +28,6 @@ describe('native render boundary', () => {
 
 		expect(() => assertRenderableNodeData(withVariant)).not.toThrow();
 		expect(isRenderableNodeData(withVariant)).toBe(true);
-		// Backward-compat aliases behave identically.
-		expect(() => assertNativeNodeData(withVariant)).not.toThrow();
-		expect(isNativeNodeData(withVariant)).toBe(true);
 	});
 
 	it('accepts boolean keyword-presence field storage', () => {
@@ -46,8 +35,6 @@ describe('native render boundary', () => {
 
 		expect(() => assertRenderableNodeData(withBooleanMarker)).not.toThrow();
 		expect(isRenderableNodeData(withBooleanMarker)).toBe(true);
-		expect(() => assertNativeNodeData(withBooleanMarker)).not.toThrow();
-		expect(isNativeNodeData(withBooleanMarker)).toBe(true);
 	});
 
 	it('rejects non-data values at the native transport boundary', async () => {
@@ -60,7 +47,6 @@ describe('native render boundary', () => {
 		} as const;
 
 		expect(() => assertRenderableNodeData(invalidNode as never)).toThrow(/render/);
-		expect(() => assertNativeNodeData(invalidNode as never)).toThrow(/render/);
 	});
 
 	it('rejects string $type (must be numeric Phase D)', () => {

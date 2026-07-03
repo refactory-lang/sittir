@@ -1,21 +1,16 @@
 /**
  * compiler/rule-attrs.ts — shared attr-preservation helpers.
  *
- * `withAttrsFrom` and `combineMultiplicity` are used by every collapse site
- * that discards a structural wrapper (seq / choice) in favour of a single
- * survivor. Both were originally local to simplify.ts; they now live here so
- * normalize.ts's `collapseWrappers` and simplify.ts's `canonicalizeSeqOfLeaves`
- * use the SAME implementation, and future collapse sites can't drift apart.
- *
- * `combineMultiplicity` has moved to transforms.ts (PR-O M1 de-scatter);
- * it is re-exported here so existing importers keep resolving.
+ * `withAttrsFrom` is used by every collapse site that discards a structural
+ * wrapper (seq / choice) in favour of a single survivor. Originally local to
+ * simplify.ts; it lives here so normalize.ts's `collapseWrappers` and
+ * simplify.ts's `canonicalizeSeqOfLeaves` use the SAME implementation, and
+ * future collapse sites can't drift apart. (`combineMultiplicity`, its usual
+ * companion at those sites, lives in `dsl/rule-transforms.ts`.)
  */
 
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
-// `combineMultiplicity` and `LeafMultiplicity` moved to transforms.ts (PR-O M1 de-scatter);
-// re-exported here so existing importers keep resolving.
-export { combineMultiplicity, type LeafMultiplicity } from './rule-transforms.ts';
 
 /**
  * Transfer slot-identity attributes from a discarded wrapper node onto the

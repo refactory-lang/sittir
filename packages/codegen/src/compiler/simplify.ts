@@ -15,7 +15,7 @@ import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN
 import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, GroupRule, VariantRule } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
-import { withAttrsFrom, sharedArmAttrs, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-attrs.ts';
+import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { RuleBuilder } from '../dsl/rule-transforms.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -41,7 +41,7 @@ export class SimplifyCtx extends BaseCtx<RenderRule> {
 		this.polymorphSkipExtra = init.polymorphSkipExtra;
 	}
 }
-import { structuralBuilder, inlineRefs, recurseChildren, fuseHeadRepeatLists, type InlineRefsCtx } from '../dsl/rule-transforms.ts';
+import { structuralBuilder, inlineRefs, recurseChildren, fuseHeadRepeatLists, combineMultiplicity, type InlineRefsCtx, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import type { AssembledNode } from './model/node-map.ts';
 
 // ---------------------------------------------------------------------------

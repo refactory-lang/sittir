@@ -166,15 +166,3 @@ export function assertRenderableNodeData(node: AnyNodeData): asserts node is Any
 	if (!ASSERT_ENABLED) return;
 	assertNativeNodeDataInternal(node, 'node');
 }
-
-// ---------------------------------------------------------------------------
-// Backward-compatible aliases — kept so grammar packages compiled against the
-// old names continue to link without regeneration. Deprecated: prefer the
-// `isRenderableNodeData` / `assertRenderableNodeData` names.
-// ---------------------------------------------------------------------------
-
-/** @deprecated Use {@link isRenderableNodeData} instead. */
-export const isNativeNodeData = isRenderableNodeData;
-
-/** @deprecated Use {@link assertRenderableNodeData} instead. */
-export const assertNativeNodeData = assertRenderableNodeData;

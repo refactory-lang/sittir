@@ -301,7 +301,7 @@ function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
  *   block parameterless classification of the parent compound.
  * - Required, non-repeated, and its content is fixed:
  *   (a) Inline literal: exactly one TerminalValue in values.
- *   (b) Single NodeRef that is itself marked `isParameterless` on its
+ *   (b) Single NodeRef that is itself marked `parameterless` on its
  *       AssembledNode (populated by the `markParameterlessKinds` pass in
  *       `assemble.ts`).
  *
@@ -310,7 +310,7 @@ function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
  *
  * @remarks
  * This function works on any `AssembledNonterminal`, applying equally to
- * named-field slots and inferred-positional slots. The `isParameterless`
+ * named-field slots and inferred-positional slots. The `parameterless`
  * property on `AssembledNodeBase` must already be populated before calling.
  */
 export function isAutoStampSlot(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
@@ -330,7 +330,7 @@ export function isAutoStampSlot(slot: AssembledNonterminal, nodeMap: NodeMap): b
 		const ref = nodeMap.nodes.get(kindName);
 
 		// Source C: parameterless compound (set by fixpoint pass)
-		if (ref?.isParameterless) return true;
+		if (ref?.parameterless) return true;
 
 		// Legacy Source B fallback: hidden single-literal kind
 		// (keyword OR token — the classifier split doesn't affect
@@ -396,7 +396,7 @@ export function stampExpressionFor(
 	if (isNodeRef(v)) {
 		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
 		const ref = nodeMap.nodes.get(kindName);
-		if (ref?.isParameterless) {
+		if (ref?.parameterless) {
 			return context === 'child' ? ref.stampChildExpression : ref.stampExpression;
 		}
 	}
@@ -1066,7 +1066,7 @@ function hasOptionalUserContentChildren(children: readonly AssembledNonterminal[
 			if (!isNodeRef(v)) return false;
 			const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
 			const ref = nodeMap.nodes.get(kindName);
-			if (ref?.isParameterless) return false;
+			if (ref?.parameterless) return false;
 			if (kindName.startsWith('_') && (ref instanceof AssembledKeyword || ref instanceof AssembledToken)) return false;
 			return true; // user-facing named content
 		});

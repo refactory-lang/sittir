@@ -1597,11 +1597,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 		return false;
 	}
 
-	/** @deprecated Use `parameterless` getter instead. Kept for emitter back-compat. */
-	get isParameterless(): boolean {
-		return this.parameterless;
-	}
-
 	/**
 	 * Code-gen stamp expression for this parameterless kind — **field
 	 * context**. Used when a parent stamps this kind into its
