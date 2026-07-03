@@ -2674,14 +2674,6 @@ export class AssembledBranch<
 	get fields(): readonly AssembledNonterminal[] {
 		return Object.values(this.slots);
 	}
-
-	/**
-	 * Retired post-unification — no longer a separate slot category.
-	 * Kept as empty-returning getter for back-compat with un-migrated callers.
-	 */
-	get children(): readonly AssembledNonterminal[] {
-		return [];
-	}
 }
 
 /**
@@ -2874,7 +2866,6 @@ export class AssembledPolymorph extends AssembledBranch<ChoiceRule<'link'>> {
 	get structuralFields(): readonly AssembledNonterminal[] { return this.fields; }
 	get structuralSlots(): readonly AssembledNonterminal[] { return Object.values(this.slots); }
 	override get fields(): readonly AssembledNonterminal[] { return Object.values(this.slots); }
-	override get children(): readonly AssembledNonterminal[] { return []; }
 }
 
 /**
@@ -3290,7 +3281,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	 * matches the order produced by `deriveSlots`. Frozen at construction.
 	 *
 	 * Mirrors `AssembledBranch.slots` — group consumers use this instead
-	 * of `.fields`/`.children` directly.
+	 * of `.fields` directly.
 	 */
 	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
 
@@ -3391,14 +3382,6 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	get fields(): readonly AssembledNonterminal[] {
 		return Object.values(this.slots);
 	}
-
-	/**
-	 * Retired post-unification — no longer a separate slot category.
-	 * Kept as empty-returning getter for back-compat with un-migrated callers.
-	 */
-	get children(): readonly AssembledNonterminal[] {
-		return [];
-	}
 }
 
 export type AssembledNode =
@@ -3416,10 +3399,10 @@ export type AssembledNode =
 // 5. Canonical structural-view helpers
 // ============================================================================
 //
-// Branch and Group expose `.fields` / `.children` directly; non-
-// structural kinds (leaf/keyword/token/enum/supertype/multi) have no
-// structural surface. These helpers narrow over `AssembledNode` and
-// give consumers one canonical entry point per fact.
+// Branch and Group expose `.fields` directly; non-structural kinds
+// (leaf/keyword/token/enum/supertype/multi) have no structural surface.
+// These helpers narrow over `AssembledNode` and give consumers one
+// canonical entry point per fact.
 
 /**
  * Dedup'd structural fields for a node — Branch/Group return their `.fields`;
@@ -3434,15 +3417,6 @@ export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonte
 }
 
 /**
- * Structural children for a node — Branch/Group return their `.children`;
- * non-structural kinds return `[]`.
- */
-export function structuralChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group') return node.children;
-	return [];
-}
-
-/**
  * Raw cross-form flatten of fields — Branch/Group return their `.fields`;
  * non-structural kinds return `[]`.
  *
@@ -3450,15 +3424,6 @@ export function structuralChildrenOf(node: AssembledNode): readonly AssembledNon
  */
 export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
 	if (node.modelType === 'branch' || node.modelType === 'group') return node.fields;
-	return [];
-}
-
-/**
- * Raw cross-form flatten of children — Branch/Group return their `.children`;
- * non-structural kinds return `[]`.
- */
-export function allFormChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group') return node.children;
 	return [];
 }
 

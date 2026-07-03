@@ -16,7 +16,6 @@ import {
 	AssembledToken,
 	AssembledEnum,
 	AssembledSupertype,
-	AssembledBranch,
 	AssembledGroup,
 	isNodeRef,
 	isTerminalValue,
@@ -511,151 +510,9 @@ export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMa
 	return out;
 }
 
-// ---------------------------------------------------------------------------
-// Polymorph UForm Config hoisting
-// ---------------------------------------------------------------------------
-
-/**
- * Describes a single-required-child polymorph form whose inner child's
- * `$fields` should be hoisted up into the form's Config surface.
- *
- * @remarks
- * Many polymorph forms (e.g. rust's `range_expression__form_binary`) have
- * `$fields: []` at the form level and a single required structural child
- * that itself carries the real fields (e.g. `RangeExpressionBinary` with
- * `start / operator / end`). Forcing callers to construct the inner child
- * manually (`rangeExpression({ $variant: 'binary', children: [rangeExpressionBinary({...})] })`)
- * is clunky. Hoisting flattens the inner child's fields into the form's
- * Config so callers can write
- * `rangeExpression({ $variant: 'binary', start, operator, end })`.
- *
- * The NodeData output shape is unchanged — the factory reconstructs the
- * inner child from the hoisted fields before emitting `$children: [inner]`.
- */
-export interface HoistedForm {
-	readonly innerKind: string;
-	readonly innerNode: AssembledNode;
-	readonly innerTypeName: string;
-	/**
-	 * Factory name for the inner kind when one was emitted. Undefined
-	 * for hidden groups that carry fields but didn't get a factory
-	 * (hidden=true at construction time). The emitter's hoisted path
-	 * handles `undefined` by inlining the NodeData construction from
-	 * the form-level `config.<field>` inputs instead of calling a
-	 * factory.
-	 */
-	readonly innerFactoryName: string | undefined;
-	readonly innerFields: readonly AssembledNonterminal[];
-}
-
-/**
- * Determine whether a polymorph form qualifies for inner-child field
- * hoisting into its Config surface.
- *
- * @param form - The polymorph form descriptor (AssembledGroup).
- * @param nodeMap - Assembled node map (needed to resolve the inner child
- *   kind to its AssembledNode for fields inspection).
- * @returns A {@link HoistedForm} descriptor when the form qualifies,
- *   `undefined` otherwise.
- *
- * @remarks
- * Qualification criteria:
- * - Exactly one child slot.
- * - That slot is required AND not multiple.
- * - That slot's `values` resolve to exactly one kind (no choice / union).
- * - The inner kind resolves to a field-carrying node (AssembledBranch,
- *   or AssembledGroup) whose `fields.length > 0`.
- * - The inner node has a `rawFactoryName` (we need a factory call to
- *   reconstruct the child).
- * - Form-level and inner-level field names must not collide (same property
- *   name on both sides would be ambiguous on the hoisted surface).
- *
- * Forms with their own fields are allowed — they get the merged surface
- * where form-level `$fields` are stamped on the parent and inner-level
- * fields surface via the hoist. Disambiguation is the collision check.
- *
- * Forms that fail any criterion keep the existing `$children`-based Config
- * shape.
- */
-export function resolveHoistedForm(form: AssembledGroup, nodeMap: NodeMap): HoistedForm | undefined {
-	if (form.overridePassthrough) return undefined;
-	// Exactly one child slot.
-	const children = form.children;
-	if (children.length !== 1) return undefined;
-	const slot = children[0]!;
-
-	// Required, non-repeated.
-	if (!isRequired(slot)) return undefined;
-	if (isMultiple(slot)) return undefined;
-
-	// Exactly one inner kind (no choice / union).
-	const kinds = slotKindNames(slot);
-	if (kinds.length !== 1) return undefined;
-	const innerKind = kinds[0]!;
-
-	// Resolve the inner kind to a field-carrying node.
-	const inner = nodeMap.nodes.get(innerKind);
-	if (!inner) return undefined;
-
-	// Phase 1d.vii (spec 022): `AssembledBranch` now covers both the
-	// former branch (has fields) and former container (children-only)
-	// shapes. The hoisted-path emitter still distinguishes them via the
-	// inner-fields count below.
-	const isFieldCarrier = inner instanceof AssembledBranch || inner instanceof AssembledGroup;
-	if (!isFieldCarrier) return undefined;
-
-	// Inner fields (Branch / Group with fields). Container-shape branches
-	// have no fields — their Config surface is `{ children?: [...] }`
-	// which is picked up via ChildSlotsOf hoisting. `innerFields` is empty
-	// in that case; the hoisted-path emitter detects it and emits a
-	// `config.children`-based inner construction call instead of a
-	// Config-forwarding one.
-	const innerFields = inner.fields;
-
-	// Collision check: a property name on the form AND the inner child
-	// would produce an ambiguous hoisted Config surface. Bail out —
-	// caller keeps the non-hoisted shape.
-	if (form.fields.length > 0) {
-		const formNames = new Set(form.fields.map((f) => f.configKey));
-		for (const f of innerFields) {
-			if (formNames.has(f.configKey)) {
-				console.warn(
-					`[resolveHoistedForm] name collision on form '${form.kind}': inner field '${f.configKey}' shadows form-level field; falling back to non-hoisted Config shape.`
-				);
-				return undefined;
-			}
-		}
-	}
-
-	return {
-		innerKind,
-		innerNode: inner,
-		innerTypeName: inner.typeName,
-		innerFactoryName: inner.rawFactoryName,
-		innerFields
-	};
-}
-
 export interface PolymorphLiteralDispatchCase {
 	readonly literal: string;
 	readonly formFromFn: string;
-}
-
-function resolvePolymorphLiteralKind(kindName: string, nodeMap: NodeMap, seen = new Set<string>()): string | undefined {
-	if (seen.has(kindName)) return undefined;
-	seen.add(kindName);
-	const direct = resolveHiddenKeywordLiteral(kindName, nodeMap);
-	if (direct !== undefined) return direct;
-	const node = nodeMap.nodes.get(kindName);
-	if (!(node instanceof AssembledGroup) || node.fields.length > 0 || node.children.length !== 1) return undefined;
-	const child = node.children[0]!;
-	const literals = new Set<string>();
-	for (const lit of slotLiteralValues(child)) literals.add(lit);
-	for (const childKind of slotKindNames(child)) {
-		const lit = resolvePolymorphLiteralKind(childKind, nodeMap, seen);
-		if (lit !== undefined) literals.add(lit);
-	}
-	return literals.size === 1 ? [...literals][0]! : undefined;
 }
 
 export function collectPolymorphLiteralDispatchCases(
@@ -668,21 +525,7 @@ export function collectPolymorphLiteralDispatchCases(
 		if (!form.fromFunctionName) continue;
 		const configurableFields = form.fields.filter((field) => !isAutoStampField(field, nodeMap));
 		if (configurableFields.some((field) => isRequired(field))) continue;
-		const configurableChildren = form.children.filter((child) => !isAutoStampSlot(child, nodeMap));
-		if (configurableChildren.some((child) => isRequired(child) && !(isMultiple(child) && !isNonEmpty(child)))) {
-			continue;
-		}
-		const literals = new Set<string>();
-		literals.add(form.name);
-		for (const child of form.children) {
-			for (const lit of slotLiteralValues(child)) literals.add(lit);
-			for (const kind of slotKindNames(child)) {
-				const lit = resolvePolymorphLiteralKind(kind, nodeMap);
-				if (lit !== undefined) literals.add(lit);
-			}
-		}
-		if (literals.size !== 1) continue;
-		const literal = [...literals][0]!;
+		const literal = form.name;
 		if (ambiguous.has(literal)) continue;
 		const existing = formByLiteral.get(literal);
 		if (existing !== undefined && existing !== form.fromFunctionName) {
@@ -949,7 +792,6 @@ export type ChildFactorySurface = 'direct' | 'spread';
  * - Auto-stamp fields (constant-valued, stamped by factory)
  * - Hidden-infra fields (all-hidden-kind slots, parser infrastructure)
  * - Keyword-presence fields (boolean / bitflag keyword toggles)
- * - Auto-stamp children (constant-valued or parameterless children)
  *
  * Returns `multiSlot` when 0 or 2+ user-facing slots remain (0 maps to
  * the parameterless factory path, which is a multi-slot degenerate).
@@ -979,11 +821,6 @@ export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): Bran
 		if (isHiddenInfraSlot(f, nodeMap)) continue;
 		if (keywordPresenceKind(f, nodeMap) !== null) continue;
 		userSlots.push(f);
-	}
-
-	for (const c of node.children) {
-		if (isAutoStampSlot(c, nodeMap)) continue;
-		userSlots.push(c);
 	}
 
 	if (userSlots.length !== 1) return { tag: 'multiSlot' };
@@ -1043,44 +880,14 @@ function configurableFactoryFields(fields: readonly AssembledNonterminal[], node
 	);
 }
 
-function hasUserFacingFactoryChildren(children: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
-	return children.some((child) => !isAutoStampSlot(child, nodeMap));
-}
-
-/**
- * Returns true when any child slot is optional but carries user-facing named
- * content types (i.e. not terminal literals, not parameterless compounds, not
- * hidden keyword/token kinds). Such children are invisible to `isAutoStampSlot`
- * (which skips all optional slots) but must still appear in the factory config
- * surface — so a node with these children cannot be classified as `'direct'`.
- *
- * Example: `struct_pattern` has an optional repeating `field_pattern` children
- * slot. `isAutoStampSlot` skips it (optional), but the user needs to be able
- * to supply those children through the factory config.
- */
-function hasOptionalUserContentChildren(children: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
-	return children.some((child) => {
-		if (isRequired(child)) return false; // only optional slots are missed by isAutoStampSlot
-		return child.values.some((v) => {
-			if (isTerminalValue(v)) return false;
-			if (!isNodeRef(v)) return false;
-			const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-			const ref = nodeMap.nodes.get(kindName);
-			if (ref?.parameterless) return false;
-			if (kindName.startsWith('_') && (ref instanceof AssembledKeyword || ref instanceof AssembledToken)) return false;
-			return true; // user-facing named content
-		});
-	});
-}
-
 /**
  * Resolve the raw field names visible on a kind's factory surface.
  *
  * @remarks
  * Validator metadata uses this to decide when orphan `$children` should be
  * promoted back into named config slots. The field list must match the actual
- * factory surface, so auto-stamped fields, keyword-presence toggles, hidden
- * infra, and any kind with user-facing children are excluded.
+ * factory surface, so auto-stamped fields, keyword-presence toggles, and
+ * hidden infra are excluded.
  */
 export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap): readonly string[] | undefined {
 	switch (node.modelType) {
@@ -1088,7 +895,6 @@ export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap):
 		case 'group': {
 			const fields = configurableFactoryFields(node.fields, nodeMap);
 			if (fields.length === 0) return undefined;
-			if (hasUserFacingFactoryChildren(node.children, nodeMap)) return undefined;
 			return fields.map((field) => field.name);
 		}
 		default:
@@ -1138,19 +944,11 @@ export function classifyFactoryShape(
 		case 'branch': {
 			const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 			if (slotClass.tag === 'singleSlot') {
-				// Guard: if optional user-content children exist the factory needs a
-				// config bag to expose them — 'direct' (single-arg) is insufficient.
-				if (
-					!node.kind.startsWith('_') &&
-					slotClass.arity === 'singular' &&
-					!hasOptionalUserContentChildren(node.children, nodeMap)
-				)
-					return 'direct';
+				if (!node.kind.startsWith('_') && slotClass.arity === 'singular') return 'direct';
 				if (slotClass.slot.isUnnamed) return 'spread';
 				return 'config';
 			}
-			const fields = configurableFactoryFields(node.fields, nodeMap);
-			return fields.length === 0 && hasUserFacingFactoryChildren(node.children, nodeMap) ? 'spread' : 'config';
+			return 'config';
 		}
 		case 'group':
 			return resolveSingleFieldFactorySlot(node, nodeMap) ? 'direct' : 'config';

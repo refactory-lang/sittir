@@ -4,7 +4,7 @@ import * as F from './factories.js';
 import type * as T from './types.js';
 import { TSKindId, kindIdFromName } from './types.js';
 import type { AnyNodeData, ConfigOf } from '@sittir/types';
-import { coerceKindEnumStorage, hasKind, isNodeData } from './utils.js';
+import { coerceKindEnumStorage, isNodeData } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _FromFieldInput = unknown;

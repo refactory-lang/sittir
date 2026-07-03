@@ -147,7 +147,7 @@ export namespace wrap {
 				childSurface: classifyChildFactorySurface(node, nodeMap)
 			},
 			node.fields,
-			node.children,
+			[],
 			kindEntries,
 			nodeMap
 		);
@@ -181,10 +181,10 @@ export namespace wrap {
 				rawFactoryName: node.rawFactoryName,
 				childSurface: classifyChildFactorySurface(node, nodeMap),
 				isPolymorph: true,
-				optionalChildren: node.forms.some((form) => form.children.length === 0)
+				optionalChildren: node.forms.length > 0
 			},
 			node.fields,
-			node.children,
+			[],
 			kindEntries,
 			nodeMap
 		);
@@ -201,21 +201,6 @@ export namespace wrap {
 		kindEntries: readonly KindEnumEntry[] | undefined,
 		nodeMap: NodeMap
 	): void {
-		if (!node.parentKind && node.fields.length === 0 && node.children.length === 1) {
-			output.push(
-				emitTransparentGroupWrap(
-					{
-						kind: node.kind,
-						typeName: node.typeName,
-						rawFactoryName: node.rawFactoryName,
-						childSurface: classifyChildFactorySurface(node, nodeMap)
-					},
-					node.children,
-					nodeMap
-				)
-			);
-			return;
-		}
 		const result = emitFieldCarryingWrap(
 			{
 				kind: node.kind,
@@ -224,7 +209,7 @@ export namespace wrap {
 				childSurface: classifyChildFactorySurface(node, nodeMap)
 			},
 			node.fields,
-			node.children,
+			[],
 			kindEntries,
 			nodeMap
 		);
@@ -547,31 +532,6 @@ function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
 		return `return drillInAll<${valueType}>(this.${slot.storageKey} as readonly ${arrayElemType}[] | undefined, tree)`;
 	}
 	return `return drillIn<${valueType}>(this.${slot.storageKey}, tree)`;
-}
-
-function emitTransparentGroupWrap(
-	node: WrapNode,
-	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap
-): string {
-	const fn = `wrap${node.typeName}`;
-	const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
-	const { storeExpr } = resolveSlotDrillExprs(childrenConfig.slot, {
-		dataExpr: 'data',
-		elemType: childrenConfig.elemType,
-		required: childrenConfig.required,
-		nonEmpty: childrenConfig.nonEmpty,
-		allowedKinds: childrenConfig.allowedKinds
-	});
-	const arrayElemType =
-		childrenConfig.elemType.includes(' | ') ? `(${childrenConfig.elemType})` : childrenConfig.elemType;
-	const returnExpr =
-		childrenConfig.slot.arity === 'many'
-			? `drillInAll<${childrenConfig.elemType}>(${storeExpr} as readonly ${arrayElemType}[] | undefined, tree)`
-			: `drillIn<${childrenConfig.required ? childrenConfig.elemType : `${childrenConfig.elemType} | undefined`}>(${storeExpr}, tree)`;
-	return [`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`, `  return ${returnExpr};`, `}`].join(
-		'\n'
-	);
 }
 
 function emitTransparentSupertypeWrap(node: AssembledSupertype): string {

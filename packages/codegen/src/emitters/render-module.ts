@@ -44,13 +44,7 @@ import { computeTemplateBundleHash } from './template-hash.ts';
 import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-paths.ts';
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import {
-	acceptedTransportKinds,
-	buildSupertypeTransportSet,
-	classifySlot,
-	deriveChildrenKinds,
-	type SlotClass
-} from './transport-common.ts';
+import { acceptedTransportKinds, buildSupertypeTransportSet, classifySlot, type SlotClass } from './transport-common.ts';
 import { keywordPresenceValue, slotLiteralValues } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -336,38 +330,11 @@ function collectEffectiveSupertypeTransportShape(
 			continue;
 		}
 		appendSubtype(subKind, subNode);
-		for (const nested of collectTransparentRuntimeTransportSubtypes(subNode, nodeMap)) {
-			appendSubtype(nested.subKind, nested.subNode);
-		}
 	}
 	return {
 		subtypes: state.subtypes,
 		suppressedKinds: [...state.suppressedKinds]
 	};
-}
-
-function collectTransparentRuntimeTransportSubtypes(
-	node: AssembledNode,
-	nodeMap: NodeMap
-): readonly EffectiveSupertypeTransportSubtype[] {
-	if (node.modelType !== 'branch' || !node.kind.startsWith('_') || node.fields.length > 0 || node.children.length === 0) {
-		return [];
-	}
-	const nested = new Map<string, EffectiveSupertypeTransportSubtype>();
-	for (const child of node.children) {
-		const kinds = deriveChildrenKinds(child, nodeMap, new Set([node.kind]));
-		const cls = classifySlotForEmit(kinds, nodeMap);
-		if (cls.tag === 'heterogeneous') continue;
-		const subNode =
-			cls.tag === 'concrete'
-				? nodeMap.nodes.get(cls.kind)
-				: [...nodeMap.nodes.values()].find(
-						(candidate) => candidate.modelType === 'supertype' && candidate.typeName === cls.supertypeName
-					);
-		if (!subNode) continue;
-		nested.set(subNode.kind, { subKind: subNode.kind, subNode });
-	}
-	return [...nested.values()];
 }
 
 /** Rust field identifier mapping for generated render/transport structs.
@@ -887,11 +854,8 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 		// separator lives on the simplified rule rather than slot values.
 		if (node instanceof AssembledBranch || node instanceof AssembledGroup) {
 			let sep: string | undefined;
-			// 1. Check named/unnamed slot values for a stamped separator.
-			const allSlots =
-				node instanceof AssembledBranch
-					? [...node.fields, ...node.children]
-					: [...node.fields, ...node.children];
+			// 1. Check field slot values for a stamped separator.
+			const allSlots = node.fields;
 			outer: for (const slot of allSlots) {
 				for (const v of slot.values) {
 					if ((v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray') && v.separator) {

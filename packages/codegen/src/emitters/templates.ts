@@ -39,13 +39,12 @@ import {
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledBranch,
-	AssembledMulti,
 	AssembledNode,
 	AssembledNonterminal,
 	AssembledPolymorph,
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
-import type { Rule, RuleBase, Multiplicity, RepeatRule, Repeat1Rule } from '../types/rule.ts';
+import type { Rule, RuleBase, Multiplicity } from '../types/rule.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import { compileWordMatcher } from '../util/word-matcher.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -67,10 +66,9 @@ export interface EmitCtx {
 	readonly externals: readonly string[];
 	readonly rules: Record<string, Rule<'link'>>;
 	/**
-	 * Cycle guard for hidden-helper recursion in `emitSymbol`. The legacy
-	 * walker tracks visited helper names via the per-walk `seen` set keyed
-	 * by `@${name}`; the new emitter uses a flat mutable Set passed down
-	 * via this field. Each call to `emitOne()` resets it.
+	 * Cycle guard for hidden-helper recursion in `emitSymbol`. A flat mutable
+	 * Set tracks visited helper names, keyed by `@${name}`, passed down via
+	 * this field. Each call to `emitOne()` resets it.
 	 */
 	readonly visitingHelpers: Set<string>;
 	/**
@@ -169,11 +167,10 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	constructor(config: EmitTemplatesConfig) {
 		this.#config = config;
 		this.#wordMatcher = compileWordMatcher(config.nodeMap.word, config.nodeMap.rules ?? {}) ?? /\w/;
-		// EmitCtx for the new modelType-dispatching emitter. Same inputs
-		// the legacy walker reads — `rules` (for hidden-helper inlining),
-		// `wordMatcher` (currently unused by emitRule but kept for parity),
-		// `externals` (token-shape detection), and `nodeMap` (slot back-
-		// pointer lookup via `slotByRuleId`).
+		// EmitCtx for the modelType-dispatching emitter: `rules` (for
+		// hidden-helper inlining), `wordMatcher` (currently unused by emitRule
+		// but kept for parity), `externals` (token-shape detection), and
+		// `nodeMap` (slot back-pointer lookup via `slotByRuleId`).
 		this.#ctx = {
 			nodeMap: config.nodeMap,
 			wordMatcher: this.#wordMatcher,
@@ -205,23 +202,19 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	}
 
 	#emitNode(node: AssembledNode): void {
-		// PR3 step 0: skip-emit gate now uses classifyTemplateEmission (the
-		// new-side equivalent) instead of the legacy emitBodyForNode call.
-		// classifyTemplateEmission is now a strict superset of the legacy gate:
-		// it skips non-user-facing nodes, polymorph-form groups, and all
-		// leaf modelTypes (pattern/keyword/token/supertype/enum/multi) that
-		// emitBodyForNode returned null for unconditionally.
-		// emitBodyForNode is no longer called here; it will be deleted in the
-		// next step once no callers remain.
+		// Skip-emit gate: classifyTemplateEmission skips non-user-facing
+		// nodes, polymorph-form groups, and all leaf modelTypes
+		// (pattern/keyword/token/supertype/enum/multi), none of which get a
+		// template file.
 		if (classifyTemplateEmission(node) !== 'emit') return;
 
 		this.#ctx.visitingHelpers.clear();
 		const newBody = emitOne(node, this.#ctx);
 
 		if (newBody === undefined) {
-			// emitOne returned undefined for modelTypes that don't get templates
-			// (supertype / pattern / keyword / token / enum) — but legacyBody
-			// wasn't null, so emit an empty body to preserve file presence.
+			// emitOne returns undefined for modelTypes that don't get templates
+			// (supertype / pattern / keyword / token / enum); emit an empty body
+			// to preserve file presence.
 			this.#bodies.set(node.kind, `${GENERATED_HEADER}\n`);
 			return;
 		}
@@ -242,14 +235,16 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 			return emitBranchTemplate(node, ctxK);
 		case 'group':
 			return emitGroupTemplate(node, ctxK);
-		case 'multi':
-			return emitMultiTemplate(node, ctxK);
 		case 'supertype':
 		case 'pattern':
 		case 'keyword':
 		case 'token':
 		case 'enum':
 			return undefined;
+		case 'multi':
+			// classifyTemplateEmission always skips 'multi' nodes before emitOne
+			// is reached — this arm is an unreachable safety fallback.
+			throw new Error(`emitOne: 'multi' node reached emitOne (should be skipped by classifyTemplateEmission): ${node.kind}`);
 		default: {
 			const _exhaustive: never = node;
 			throw new Error(`emitOne: unhandled modelType ${(_exhaustive as AssembledNode).modelType}`);
@@ -291,55 +286,10 @@ export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
 	return emitRule(node.renderRule, ctxWithSlots);
 }
 
-export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
-	// AssembledMulti has no renderRule (multi nodes are always hidden repeat
-	// helpers and emitBodyForNode returns null for them). This function is
-	// called from emitOne but its output is never written — the legacy skip-
-	// emit null-gate fires first. PR3 deletes this entirely.
-	//
-	// node.rule is RepeatRule | Repeat1Rule. We cannot call emitRule on it
-	// directly (emitRule now throws on wrapper types). Instead, emit the
-	// list-slot form for the repeat's inner content directly.
-	//
-	// `.rule` is `protected` on AssembledNodeBase (compile-time only — no
-	// runtime enforcement) — a structural cast reads the same underlying
-	// field a real instance carries, and (unlike adding a new public getter)
-	// keeps working against existing plain-object test mocks that set `.rule`
-	// directly without going through the class's prototype/getters
-	// (`{ modelType: 'multi', rule } as unknown as AssembledMulti` in
-	// templates-emitter-modelType.test.ts — a getter-based accessor returns
-	// undefined on those mocks since they have no prototype getters at all).
-	const repeat = (node as unknown as { rule: RepeatRule | Repeat1Rule }).rule;
-	const inner = repeat.content;
-	// Look through transparent wrappers to find the field or symbol name.
-	let unwrapped = inner;
-	while (
-		unwrapped.type === VARIANT ||
-		unwrapped.type === GROUP ||
-		unwrapped.type === TOKEN ||
-		(unwrapped.type === ALIAS && !unwrapped.named)
-	) {
-		unwrapped = (unwrapped as Extract<typeof unwrapped, { content: Rule<'link'> }>).content;
-	}
-	// Field inner: use the field name.
-	if (unwrapped.type === FIELD) {
-		return emitListSlot(unwrapped.name.toLowerCase(), repeat);
-	}
-	// Symbol inner: use the symbol kind name.
-	if (unwrapped.type === SYMBOL) {
-		const slotName = (unwrapped.name.replace(/^_+/, '') || 'children').toLowerCase();
-		return emitListSlot(slotName, repeat);
-	}
-	// Generic fallback — recurse into the inner content (non-wrapper).
-	return emitRule(inner, ctx);
-}
-
 // ---------------------------------------------------------------------------
 // emitRule — Rule<'link'>.type dispatcher
 //
-// Walks a Rule<'link'> subtree producing Jinja directly. Replaces the legacy
-// `template-walker.ts` + `translateToJinja` two-pass pipeline (the legacy
-// node-map.ts half was deleted in R1 once this dispatcher fully took over).
+// Walks a Rule<'link'> subtree producing Jinja directly, in a single pass.
 //
 // Per PR1 design:
 // - Reads PR0-enriched attributes (`fieldName`, `multiplicity`, `nonterminal`,
@@ -887,12 +837,11 @@ function _insertBeforeTopLevelEndifTags(str: string, insert: string): string {
 export function emitRule(rule: Rule<'link'>, ctx: EmitCtx): string {
 	switch (rule.type) {
 		case STRING:
-			// Bug 3 fix: if a string literal carries `fieldName` (stamped by
-			// deleteWrapper when peeling a field() wrapper), emit it as a slot
-			// reference rather than the literal value. This makes
+			// If a string literal carries `fieldName` (stamped by deleteWrapper
+			// when peeling a field() wrapper), emit it as a slot reference rather
+			// than the literal value. This makes
 			// `field('operator', string('&&'))` emit `{{ operator }}` instead of
-			// `&&`, matching the legacy walker's behavior for field-wrapped
-			// operator strings.
+			// `&&` for field-wrapped operator strings.
 			//
 			// The original code also required `nonterminal: true`, but that
 			// attribute is only stamped by the DSL enrich pass (dsl/enrich.ts)
@@ -1197,10 +1146,8 @@ function separatorToString(rule: Rule<'link'>): string | undefined {
 }
 
 /**
- * Pick the join-filter name based on a rule's flank metadata. Matches
- * the legacy `filterForFlanks` decision tree (deleted with the
- * `translateToJinja` path in R1) but reads attributes off the rule
- * directly.
+ * Pick the join-filter name based on a rule's flank metadata, reading
+ * trailing/leading attributes directly off the rule.
  *
  * When the rule itself carries no trailing/leading flags (e.g. the outer
  * choice in `fanOutSeqChoices`/`factorChoiceBranches` rebuilds), falls back
@@ -1250,9 +1197,8 @@ function selectJoinFilter(rule: Rule<'link'>, slot?: AssembledNonterminal): 'joi
 }
 
 /**
- * Default join separator. Mirrors the legacy walker's default of a
- * single space between elements when the grammar didn't capture an
- * explicit separator literal.
+ * Default join separator: a single space between elements when the
+ * grammar didn't capture an explicit separator literal.
  */
 const DEFAULT_JOIN_SEPARATOR = ' ';
 
@@ -1261,12 +1207,11 @@ const DEFAULT_JOIN_SEPARATOR = ' ';
  * of the trailing/leading/flanks variants). Reads the separator from
  * the supplied rule's attributes.
  *
- * The slot name is the RAW (snake_case, singular) field/symbol name
- * lowercased — matching the legacy walker's `$NAME` → `{{ name }}`
- * translation (the deleted `translateToJinja`). We deliberately do NOT use
- * `slot.propertyName` (camelCase + pluralized) because the walker's
- * template output is byte-compared against the new emitter and any
- * naming divergence breaks the diff gate.
+ * The slot name is the RAW (snake_case, singular) field/symbol name,
+ * lowercased. We deliberately do NOT use `slot.propertyName` (camelCase +
+ * pluralized) — templates reference slots by their raw storage name, and
+ * the render-side transport struct fields use that same raw name, so the
+ * two must match.
  *
  * When the optional `slot` back-pointer is supplied, the separator is
  * overridden to `""` (empty concatenation) when ALL values in the slot
@@ -1353,8 +1298,8 @@ function emitFieldNameSlot(slotName: string, rule: Rule<'link'>): string {
 /**
  * Emit a kind-named scalar slot for a named alias reference. In RenderRule
  * input, a named alias represents a single visible kind — always scalar.
- * (The legacy walker emitted list form here via `$$$SLOT` → join; the new
- * emitter uses multiplicity-aware dispatch in `emitSymbol` instead.)
+ * List-shaped slots are handled separately via multiplicity-aware dispatch
+ * in `emitSymbol`.
  */
 function emitSymbolSlot(kindName: string, _ctx: EmitCtx): string {
 	const slotName = (kindName.replace(/^_+/, '') || 'children').toLowerCase();
@@ -1694,12 +1639,11 @@ function emitChoice(rule: Extract<Rule<'link'>, { type: 'CHOICE' }>, ctx: EmitCt
 }
 
 // ---------------------------------------------------------------------------
-// Slot-preservation gate (PR2 Task 3.B4)
+// Slot-preservation gate
 //
-// Replaces the byte-equivalence diff gate deleted in PR2 Task 3.B3 (commit
-// fb889165). The new emitter intentionally produces different bytes than the
-// legacy walker; the actual correctness invariant is structural: each
-// declared slot for a kind must appear at least once in the emitter's output.
+// The correctness invariant for emitted templates is structural, not
+// byte-level: each declared slot for a kind must appear at least once in
+// the emitter's output.
 //
 // Set SITTIR_SLOT_PRESERVATION=0 to bypass for survey / iteration mode.
 // ---------------------------------------------------------------------------
@@ -1711,12 +1655,9 @@ function escapeRegex(s: string): string {
 /**
  * Verify each declared slot for `node` appears at least once in `body`.
  * Throws on missing slots — the gate that ensures the emitter's structural
- * rewrite didn't drop a slot reference.
- *
- * Replaces the byte-equivalence diff gate deleted in PR2 Task 3.B3 (commit
- * fb889165). The new emitter intentionally produces different bytes than
- * the legacy walker; structural slot-preservation is the actual correctness
- * invariant.
+ * rewrite didn't drop a slot reference. This is a structural check, not a
+ * byte-equivalence one: the emitter is free to choose its own Jinja
+ * formatting as long as every slot is referenced somewhere in the output.
  *
  * Uses word-boundary regex (`\bname\b`) on each slot's `storageName`
  * (snake_case, matches what the emitter writes into templates) so references
@@ -1808,13 +1749,13 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 }
 
 /**
- * Run the new TemplateEmitter over an entire NodeMap. Convenience wrapper
- * around the per-modelType dispatch in emit.ts so test fixtures and
- * diagnostic tools don't have to duplicate the loop.
+ * Run TemplateEmitter over an entire NodeMap. Convenience wrapper around
+ * the per-modelType dispatch in emit.ts so test fixtures and diagnostic
+ * tools don't have to duplicate the loop.
  *
  * Dispatches each node by its modelType, calling the appropriate per-type
  * emitter method (emitLeaf, emitBranch, emitPolymorph, emitGroup), and
- * honors the legacy skip-emit gate via classifyTemplateEmission.
+ * applies the skip-emit gate via classifyTemplateEmission.
  *
  * @param config Grammar, NodeMap, and optional grammar SHA
  * @returns EmittedTemplates with bodies keyed by kind
