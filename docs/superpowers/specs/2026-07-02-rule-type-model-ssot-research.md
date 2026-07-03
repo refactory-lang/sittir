@@ -443,6 +443,23 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
    `metadata.source === 'enrich'` reads left by PR-P1's scoping note; each gets a
    diagnosed structural condition, byte-neutral gated.
 
+5. **"Node" is banned from grammar-description vocabulary; the canonical form is
+   `<X>Rule`** (user, 2026-07-03 — SUPERSEDES §5.1's `GrammarJsonNode` proposal and
+   §5.3's `<X>Node` standardization, both of which pointed the other way). "Node" is
+   reserved for parse-tree/CST entities (`AssembledNode`, `TreeNode`, `NodeKind`,
+   `NodeMap`, node-model) — a grammar body expression is a RULE, whatever vocabulary
+   it belongs to. Scope: FULL trio collapse (user-confirmed 2026-07-03) — the
+   authoring shape definitions themselves rename (`Seq`→`SeqRule`, `Choice`→
+   `ChoiceRule`, `Str`→`StrRule`, `Sym`→`SymRule`, …) along with the derived family
+   (`GrammarNode`→`GrammarRule`, `ContainerNode`→`ContainerRule`, `NodeAtPath`→
+   `RuleAtPath`, `PrecNodeUnion`→`PrecRuleUnion`, `AuthoringRuleToNode`→
+   `ToGrammarRule`); the `SeqNode`/`ChoiceNode` import-alias respellings are deleted.
+   Same-name pairs with the IR (`SeqRule<Phase>` in types/rule.ts vs authoring
+   `SeqRule` in grammar-shapes) are disambiguated by MODULE SCOPE — the vocabulary
+   boundary is the module, matching the ambient tree-sitter `<X>Rule` family this
+   vocabulary refines; the rare file importing both uses an import alias. The
+   companion lintable guideline stands: overrides-scoped files never import IR types.
+
 ## 6. Open questions for the design discussion
 
 1. **Is "one boundary module" an acceptable answer to "there should be a SSOT"?** §0 argues
