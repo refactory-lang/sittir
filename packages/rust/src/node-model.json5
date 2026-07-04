@@ -81,6 +81,15 @@
         "function_type_fn_form": "fn_form"
       }
     },
+    "impl_item": {
+      "definedBy": "override",
+      "childKind": {
+        "impl_item_positive_clause": "positive_clause",
+        "impl_item_negative_clause": "negative_clause",
+        "impl_item_body": "body",
+        "impl_item_semi": "semi"
+      }
+    },
     "line_comment": {
       "definedBy": "override",
       "childKind": {
@@ -133,9 +142,16 @@
     "range_pattern": {
       "definedBy": "override",
       "childKind": {
+        "range_pattern_prefix": "prefix",
         "range_pattern_left_with_right": "left_with_right",
-        "range_pattern_left_bare": "left_bare",
-        "range_pattern_prefix": "prefix"
+        "range_pattern_left_bare": "left_bare"
+      }
+    },
+    "reference_expression": {
+      "definedBy": "override",
+      "childKind": {
+        "reference_expression_raw_const": "raw_const",
+        "reference_expression_raw_mut": "raw_mut"
       }
     },
     "struct_item": {
@@ -165,7 +181,6 @@
     "visibility_modifier": {
       "definedBy": "override",
       "childKind": {
-        "visibility_modifier_in_path": "in_path",
         "visibility_modifier_pub": "pub"
       }
     }

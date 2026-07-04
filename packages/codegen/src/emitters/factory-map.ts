@@ -27,6 +27,7 @@ import {
 import { classifyFactoryShape, collectAliasSourceKinds, resolveFactoryFieldNames } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
+import { prefixNamedSuffix } from '../compiler/variant-structural.ts';
 
 export type { FactoryShape } from './shared.ts';
 
@@ -114,7 +115,15 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 			if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 			const childKind: Record<string, string> = {};
 			for (const visibleName of node.variantChildKinds) {
-				const suffix = visibleName.startsWith(`${kind}_`) ? visibleName.slice(kind.length + 1) : visibleName;
+				// `prefixNamedSuffix` (compiler/variant-structural.ts) — NOT a
+				// raw `${kind}_` slice, which is unsound when `kind` is hidden
+				// (a hidden parent's visible target strips its OWN leading `_`
+				// independently of the parent's, per `polymorphVisibleName`'s
+				// convention; e.g. `_match_block` → `match_block_block`, not
+				// `_match_block_block`). Falls back to the full name only for
+				// the (currently unobserved) shape where the target doesn't
+				// prefix-match at all.
+				const suffix = prefixNamedSuffix(kind, visibleName) ?? visibleName;
 				childKind[visibleName] = suffix;
 			}
 			polymorphVariants[kind] = { definedBy: 'override', childKind };

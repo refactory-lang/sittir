@@ -25,6 +25,7 @@ import { probeValidate } from './probe-validate.ts';
 import { profile } from './profile.ts';
 import { profileFactory } from './profile-factory.ts';
 import { propose14 } from './propose-14.ts';
+import { variantDerivationProbe } from './variant-derivation-probe.ts';
 import { walk } from './walk.ts';
 
 /** All developer-diagnostic tool CommandModules, registered under `sittir tool`. */
@@ -52,6 +53,7 @@ export const toolModules: readonly CommandModule[] = [
 	profile,
 	profileFactory,
 	propose14,
+	variantDerivationProbe,
 	walk
 ];
 

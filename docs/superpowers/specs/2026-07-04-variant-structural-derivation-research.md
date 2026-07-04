@@ -580,3 +580,118 @@ All six recommendations ACCEPTED, with two clarifications:
   change; strictly distinct from variant() (which mints parser-visible
   kinds for anonymous arms). Sequencing: lands with V4's per-slot form
   surfaces (decision 2), not before; V0–V3 are unaffected.
+
+## V1 OUTCOME (2026-07-04, REVIEWED-ADDITIVE per the revised contract)
+
+V1 flips `assemble.ts` to consume `deriveStructuralVariantChildren`
+(`compiler/variant-structural.ts`) directly; the wire channel
+(`normalized.polymorphVariants`) now feeds ONLY `tool
+variant-derivation-probe`'s comparison. Byte gates held exactly: grammar.json
+identical across a ×3 regen, `read-render-parseAstMatchPass` = rust 117 / ts
+75 / py 102 (unchanged), codegen vitest 89/814/1 (unchanged), oxlint 57
+(unchanged), propose-14 19/19, glossary test pre-existing failure (build/dist
+resolution, present on the base commit too — not touched by this work).
+
+### Predicate refinement (kills the 2 false positives)
+
+**Before:** the V0 predicate treated ANY prefix-named CHOICE arm (bare
+ALIAS/SYMBOL ref, or SEQ-first-member ref) as a variant child, with no test
+for whether the target name was actually alias-minted. This produced 2
+coincidental prefix-name false positives: python `dictionary` (matched its
+own independently-authored `dictionary_splat` rule) and python `string`
+(matched its own independently-authored `string_content` rule).
+
+**After:** added `isAliasMintedRef` (`variant-structural.ts`) — an arm only
+qualifies when its target is a bare `ALIAS` node, OR a `SYMBOL` whose name has
+NO independent rule body in the grammar's `rules` map. This is the exact
+PR-0c mint-site condition (`mintContentAliasKinds` /
+`isClauseHoistVisibleGroupAlias`, link.ts/evaluate.ts — "the alias value has
+no independent rule body elsewhere in `rules`, exactly the fact tree-sitter's
+own grammar compiler keys on"), reapplied at the CHOICE-arm level instead of
+re-derived. Verified via the probe: **exactly** `dictionary` and `string`
+(python) dropped out of the mismatch table post-refinement, and nothing else
+changed — no currently-MATCHing parent was affected. A THIRD python false
+positive surfaced by the same class was also caught during adjudication: ts
+`object_type_content` (two independently-authored sibling rules
+`object_type_content_comma`/`_semi`, referenced by plain `SYMBOL` with no
+`alias()` call at all) — the task's V0 framing had misclassified this as a
+"hand-authored alias() arm" (correct EXTRA); rule-tree inspection showed it
+is structurally IDENTICAL to `dictionary`/`string` (no `aliasedFrom`
+provenance, both targets independently defined) and the refined predicate
+correctly excludes it too. A duplicate-arm artifact (ts `string`'s
+`string_fragment`, aliased twice — once per quote-style branch of a
+`refine()`-correlated form) was also de-duplicated in
+`deriveStructuralVariantChildren`'s output, matching
+`wireRegisterPolymorphVariant`'s documented idempotency.
+
+### Per-case adjudication (5 originally-scoped cases, 6 in practice)
+
+| Case | Grammar | Type | Verdict | Reasoning |
+|---|---|---|---|---|
+| `dictionary`/`dictionary_splat` | python | false-positive EXTRA | **FIXED by predicate** | Independent rule body under the visible name → excluded by `isAliasMintedRef`. |
+| `string`/`string_content` | python | false-positive EXTRA | **FIXED by predicate** | Same. |
+| `object_type_content`/`_comma`+`_semi` | typescript | false-positive EXTRA (V0 misclassified as correct) | **FIXED by predicate** | Both arms are plain `SYMBOL` refs (no `aliasedFrom`) to independently-authored sibling rules — structurally identical to the two false positives above, not a hand-authored `alias()` arm. |
+| `impl_item` (4 arms), `reference_expression` (2 arms) | rust | correct EXTRA | **JOINS the form set** | Genuine hand-authored `alias($._hidden, $.visible)` calls in a full `rules:` replacement, no `polymorphs:`/`variant()` registration. Both arm targets have NO independent body — passes `isAliasMintedRef`. Additive node-model entries. |
+| `string_fragment` | typescript | correct EXTRA | **JOINS the form set** | Same shape — `alias($.unescaped_{double,single}_string_fragment, $.string_fragment)` inside a `refine()`-correlated form. De-duplicated to one child entry. |
+| `visibility_modifier`/`in_path` | rust | MISSING | **KNOWN EXCEPTION (enumerated, not fixed)** | Diagnosed: the wire pair is stale — a SEPARATE `groups: { in_path: seq('in', $._path) }` body-pattern mechanism mints the REAL, bare `in_path` kind (confirmed live in the rule tree, `aliasedFrom: '_in_path'`, no independent body). That real kind has **zero node-model/dispatch coverage today** (`rg '"in_path"'` in types.ts/consts.ts/node-model.json5 returns nothing) — a pre-existing gap, not something V1 introduces. Retiring the phantom `visibility_modifier_in_path` wire pair AND adding proper coverage for the real `in_path` kind is a separate follow-up (out of scope: fixing it would be a net-new feature, not a derivation refactor). |
+| `dict_pattern`/`kv` | python | MISSING | **KNOWN EXCEPTION (enumerated)** | The alias-minted `dict_pattern_kv` sits as the FIRST member of a bare `seq(SYMBOL, REPEAT(...))`, never wrapped in any `CHOICE` — `optional(seq(seq(dict_pattern_kv, repeat(...)), optional(',')))`. The predicate is deliberately CHOICE-centric (matches `isAllAliasChoice`/`findVariantChoice`'s own scope per RESOLUTIONS); there is no "choice of named kinds" here to match against by design, not a bug. |
+| `_simple_pattern`/`negative` | python | MISSING | **KNOWN EXCEPTION + narrow supplement in assemble.ts** | `_simple_pattern`'s ORIGINAL choice (with a `negative` alias arm, `arm 11`) auto-classifies to a `SupertypeRule` (`classifyHiddenChoiceRule`, link.ts — every member was alias/symbol/enum-compatible) BEFORE `normalized.rules` is built, flattening the CHOICE into a bare `subtypes: string[]` and destroying the alias-mint linkage the CHOICE predicate needs. Investigated whether a body-presence test on `subtypes` strings could recover this cleanly: **NO** — ts `type`'s `_type_query_member_expression_in_type_annotation` subtype is a structurally IDENTICAL-looking coincidental collision (its own visible-stripped form also has no independent body, for an entirely unrelated reason: it's an alias TARGET of a *different* parent, `_type_query_call_expression_in_type_annotation`, resolving to `member_expression` — nothing to do with `type` at all) — a generic "no independent body under the stripped subtype name" rule would readmit this as a false positive. No clean structural rule distinguishes the two using only post-link `normalized.rules` data. **Resolution:** `assemble.ts`'s `variantChildKindsSet` (which feeds `markUserFacing`'s supertype-only promotion path) keeps a narrow, RULE-TYPE-gated (not kind-NAME-gated) read of the wire channel: `for (const pv of normalized.polymorphVariants) if (rules[pv.parent]?.type === SUPERTYPE) variantChildKindsSet.add(...)`. Exactly one wire pair across all 3 grammars has a SUPERTYPE parent, so this is a narrow, auditable exception — not a general fallback. Without it, `_simple_pattern_negative` loses its render path entirely (`validate-renderable`'s "no NodeMap render path" regression, caught during this work before it shipped). |
+
+### Additional fix: `factory-map.ts`'s suffix derivation had the same
+naming bug
+
+`buildFactoryMap`'s `polymorphVariants[kind].childKind` suffix computation
+used a raw `visibleName.startsWith(\`${kind}_\`)` slice — unsound for the
+SAME reason the wire-channel reconstructions were (a hidden parent's visible
+target strips its OWN leading `_` independently of the parent's). This
+produced a wrong childKind KEY for hidden-parent cases even before V1 (e.g.
+python's `_match_block` emitted `"_match_block_block": "block"` instead of
+the correct `"match_block_block": "block"` — the real, materializing kind
+name). Fixed alongside the flip by reusing `variant-structural.ts`'s own
+`prefixNamedSuffix` (now exported) instead of re-deriving the slice
+ad hoc — one source for the naming convention, matching
+`polymorphVisibleName`'s own stripping rules exactly.
+
+### The additive surface (enumerated)
+
+**node-model.json5** (`polymorphVariants` map — the only content-level
+change on all 3 grammars):
+- rust: `impl_item` (`positive_clause`, `negative_clause`, `body`, `semi`),
+  `reference_expression` (`raw_const`, `raw_mut`) — NEW entries.
+  `visibility_modifier`'s stale `in_path` phantom pair REMOVED (never
+  materialized; harmless key removal, not a behavior change — the descriptor
+  never resolved to a real kind).
+- typescript: `string` (`fragment`) — NEW entry.
+  `_export_statement_default`/`_export_statement_default_from_arm`'s
+  childKind KEYS corrected (dropped a spurious leading `_` that never matched
+  any real kind — a latent bug in the old reconstruction, not a behavior
+  change to the actual variant classification, since factory-map's OWN
+  suffix-stripping already re-derived the suffix from the (buggy) key).
+- python: `_match_block`'s childKind KEY corrected (`match_block_block`
+  instead of `_match_block_block`, matching the real materializing kind
+  name). `dict_pattern` entry REMOVED (adjudicated known exception — its
+  wire pair was never structurally reproducible; the map now reflects only
+  reproduce-or-explicitly-kept surfaces).
+
+**Generated code (factories/from/wrap/types/templates/tests):** NO changes
+on any of the 3 grammars beyond `node-model.json5` + the manifest — verified
+via `Regen diff vs HEAD` output on every regen pass (`(no change: factory,
+from, wrap, types, consts, grammar, render, native, templates, runtime)`).
+The 3 new form surfaces (`impl_item`, `reference_expression`,
+`string_fragment`) were ALREADY fully-generated, independently-classified
+`branch` kinds before V1 (they parse, render, and factory correctly on their
+own) — what V1 adds is their `polymorphVariants` metadata registration
+(`.from()`-dispatch discriminator + validator introspection), not new
+generated surface area. No new `nodes.test.ts` entries were added for this
+reason; package suite counts held EXACTLY at their baseline floor (ts 302,
+rust 257, python 188 — verified identical pass/fail sets against the
+pre-V1 commit).
+
+### Probe's final assertion state
+
+The probe (`packages/tools/src/probe/variant-derivation.ts`) now encodes a
+`KNOWN_EXCEPTIONS` table (7 reviewed-additive `extra` entries + 3
+known-exception `missing` entries = 10 total) and asserts EXACT equality
+modulo that table — any mismatch NOT in the table still fails with exit 1.
+Current state: exit 0, "structural == wire (modulo 10 reviewed known-diffs)
+on all 3 grammar(s)".

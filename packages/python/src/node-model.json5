@@ -38,7 +38,7 @@
     "_match_block": {
       "definedBy": "override",
       "childKind": {
-        "_match_block_block": "block"
+        "match_block_block": "block"
       }
     },
     "assignment": {
@@ -47,12 +47,6 @@
         "assignment_eq": "eq",
         "assignment_type": "type",
         "assignment_typed": "typed"
-      }
-    },
-    "dict_pattern": {
-      "definedBy": "override",
-      "childKind": {
-        "dict_pattern_kv": "kv"
       }
     },
     "except_clause": {
