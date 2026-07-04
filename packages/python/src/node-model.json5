@@ -36,13 +36,13 @@
   "polymorphFormKinds": [],
   "polymorphVariants": {
     "_match_block": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "_match_block_block": "block"
       }
     },
     "assignment": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "assignment_eq": "eq",
         "assignment_type": "type",
@@ -50,26 +50,26 @@
       }
     },
     "dict_pattern": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "dict_pattern_kv": "kv"
       }
     },
     "except_clause": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "except_clause_as": "as",
         "except_clause_list": "list"
       }
     },
     "expression_statement": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "expression_statement_tuple": "tuple"
       }
     },
     "with_clause": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "with_clause_bare": "bare",
         "with_clause_paren": "paren"

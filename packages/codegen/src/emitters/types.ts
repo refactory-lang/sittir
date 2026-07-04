@@ -58,7 +58,6 @@ import type {
 } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
-	AssembledPolymorph,
 	AssembledGroup,
 	AssembledEnum,
 	snakeToCamel,
@@ -79,14 +78,13 @@ import {
 	referencedKinds,
 	fieldTypeComponents,
 	isValidIdent,
-	resolveFieldStorageInfo,
-	collectPolymorphLiteralDispatchCases
+	resolveFieldStorageInfo
 } from './shared.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 
-type StructuralNode = AssembledBranch | AssembledPolymorph | AssembledGroup;
+type StructuralNode = AssembledBranch | AssembledGroup;
 
 export interface EmitTypesConfig {
 	grammar: string;
@@ -192,7 +190,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	// 3. Concrete interfaces
 	lines.push('// Node types — concrete interfaces');
-	const polymorphTypeNames = new Map<string, string[]>();
 
 	const lookupUnion: LookupUnion = makeInliningLookupUnion();
 
@@ -233,8 +230,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		nodeKinds,
 		leafKinds,
 		nodeMap,
-		grammarKeys,
-		polymorphTypeNames
+		grammarKeys
 	);
 
 	// refine() per-form Tree aliases — one per form per refined kind.
@@ -595,27 +591,6 @@ function makeInliningLookupUnion(): LookupUnion {
 }
 
 // ---------------------------------------------------------------------------
-// Polymorph form type-name resolution
-// ---------------------------------------------------------------------------
-
-/**
- * Resolve the canonical `typeName` for a single polymorph form.
- *
- * @remarks
- * Uses the form's own `typeName` as already computed by `assemble.ts` via
- * `nameNode`, so the `_U_` double-underscore disambiguator lands consistently
- * with what `factories.ts` and `from.ts` import. Reconstructing the name from
- * `node.typeName + toPascal(form.name)` loses the disambiguator and produces
- * dangling imports.
- *
- * @param form - The assembled form whose type name to resolve.
- * @returns The canonical `typeName` string for the form.
- */
-function resolvePolymorphFormTypeName(form: AssembledGroup): string {
-	return form.typeName;
-}
-
-// ---------------------------------------------------------------------------
 // Enum member discriminant resolution
 // ---------------------------------------------------------------------------
 
@@ -741,7 +716,6 @@ function emitLeafTerminalAliases(
  * @param leafKinds - Leaf kind strings.
  * @param nodeMap - The assembled node map.
  * @param grammarKeys - Set of kind keys present in grammar.ts / node-types.json.
- * @param polymorphTypeNames - Map from polymorph kind to its list of form type names.
  * @returns The set of type names for which a Tree interface was emitted.
  */
 function emitTreeInterfaceDeclarations(
@@ -749,8 +723,7 @@ function emitTreeInterfaceDeclarations(
 	nodeKinds: string[],
 	leafKinds: string[],
 	nodeMap: NodeMap,
-	grammarKeys: Set<string>,
-	polymorphTypeNames: Map<string, string[]>
+	grammarKeys: Set<string>
 ): Set<string> {
 	lines.push('// Tree types');
 	const treeEmitted = new Set<string>();
@@ -775,19 +748,6 @@ function emitTreeInterfaceDeclarations(
 			lines.push(
 				`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`
 			);
-		}
-		// Per-form Tree aliases — forms are synthetic, no namespace sugar.
-		const ptn = polymorphTypeNames.get(kind);
-		if (ptn) {
-			for (const ftn of ptn) {
-				if (treeEmitted.has(ftn)) continue;
-				treeEmitted.add(ftn);
-				if (grammarKey) {
-					lines.push(`export interface ${ftn}Tree extends TreeNode<'${grammarKey}'> {}`);
-				} else {
-					lines.push(`export interface ${ftn}Tree extends AnyTreeNode {}`);
-				}
-			}
 		}
 	}
 	lines.push('');
@@ -1280,8 +1240,7 @@ function fieldInputHintTypeExpr(
 	f: AssembledNonterminal,
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	typeExpr: string
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind === 'boolean') {
@@ -1294,18 +1253,6 @@ function fieldInputHintTypeExpr(
 	}
 	if (storageInfo.kind === 'kindEnum') {
 		return `KindEnum<${stringUnion(storageInfo.texts)}, ${enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries)}>`;
-	}
-	if (!isMultiple(f)) {
-		const kinds = slotKindNames(f);
-		if (kinds.length === 1) {
-			const target = nodeMap.nodes.get(kinds[0]!);
-			if (target instanceof AssembledPolymorph) {
-				const literals = collectPolymorphLiteralDispatchCases(target.forms, nodeMap).map((entry) => entry.literal);
-				if (literals.length > 0) {
-					return `${typeExpr} | ${stringUnion(literals)}`;
-				}
-			}
-		}
 	}
 	return undefined;
 }
@@ -1323,8 +1270,7 @@ function emitFieldInputHints(
 				field,
 				kind,
 				nodeMap,
-				kindEntries,
-				fieldTypeExpr(field, nodeMap)
+				kindEntries
 			);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';

@@ -35,21 +35,21 @@
   "polymorphFormKinds": [],
   "polymorphVariants": {
     "array_expression": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "array_expression_semi": "semi",
         "array_expression_list": "list"
       }
     },
     "closure_expression": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "closure_expression_block": "block",
         "closure_expression_expr": "expr"
       }
     },
     "delim_token_tree": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "delim_token_tree_paren": "paren",
         "delim_token_tree_bracket": "bracket",
@@ -57,32 +57,32 @@
       }
     },
     "expression_statement": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "expression_statement_with_semi": "with_semi"
       }
     },
     "field_pattern": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "field_pattern_named": "named"
       }
     },
     "foreign_mod_item": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "foreign_mod_item_semi": "semi"
       }
     },
     "function_type": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "function_type_trait_form": "trait_form",
         "function_type_fn_form": "fn_form"
       }
     },
     "line_comment": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "line_comment_regular_dslash": "regular_dslash",
         "line_comment_doc": "doc",
@@ -90,7 +90,7 @@
       }
     },
     "macro_definition": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "macro_definition_paren": "paren",
         "macro_definition_bracket": "bracket",
@@ -98,32 +98,32 @@
       }
     },
     "match_arm": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "match_arm_with_comma": "with_comma"
       }
     },
     "mod_item": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "mod_item_external": "external"
       }
     },
     "or_pattern": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "or_pattern_binary": "binary",
         "or_pattern_prefix": "prefix"
       }
     },
     "pointer_type": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "pointer_type_const": "const"
       }
     },
     "range_expression": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "range_expression_binary": "binary",
         "range_expression_postfix": "postfix",
@@ -131,7 +131,7 @@
       }
     },
     "range_pattern": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "range_pattern_left_with_right": "left_with_right",
         "range_pattern_left_bare": "left_bare",
@@ -139,7 +139,7 @@
       }
     },
     "struct_item": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "struct_item_brace": "brace",
         "struct_item_tuple": "tuple",
@@ -147,7 +147,7 @@
       }
     },
     "token_tree": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "token_tree_paren": "paren",
         "token_tree_bracket": "bracket",
@@ -155,7 +155,7 @@
       }
     },
     "token_tree_pattern": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "token_tree_pattern_paren": "paren",
         "token_tree_pattern_bracket": "bracket",
@@ -163,7 +163,7 @@
       }
     },
     "visibility_modifier": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "visibility_modifier_in_path": "in_path",
         "visibility_modifier_pub": "pub"

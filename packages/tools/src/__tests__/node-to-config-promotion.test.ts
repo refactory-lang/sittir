@@ -533,7 +533,7 @@ describe('nodeToConfig field promotion', () => {
 				},
 				polymorphVariants: {
 					closure_expression: {
-						source: 'override',
+						definedBy: 'override',
 						childKind: {
 							closure_expression_block: 'block',
 							closure_expression_expr: 'expr'
@@ -580,7 +580,7 @@ describe('nodeToConfig field promotion', () => {
 				},
 				polymorphVariants: {
 					closure_expression: {
-						source: 'override',
+						definedBy: 'override',
 						childKind: {
 							closure_expression_block: 'block',
 							closure_expression_expr: 'expr'
@@ -635,7 +635,7 @@ describe('nodeToConfig field promotion', () => {
 				},
 				polymorphVariants: {
 					assignment: {
-						source: 'override',
+						definedBy: 'override',
 						childKind: {
 							assignment_eq: 'eq',
 							assignment_typed: 'typed'
@@ -713,7 +713,7 @@ describe('nodeToConfig field promotion', () => {
 				},
 				polymorphVariants: {
 					index_signature: {
-						source: 'override',
+						definedBy: 'override',
 						childKind: {
 							index_signature_colon: 'colon'
 						},

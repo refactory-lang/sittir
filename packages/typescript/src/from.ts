@@ -461,11 +461,6 @@ function _assertNonEmpty<T>(
   }
 }
 
-/** @internal — call an overloaded factory bypassing overload resolution. */
-function _applyFactory<F extends (...args: never[]) => unknown>(fn: F, ...args: unknown[]): ReturnType<F> {
-  return Reflect.apply(fn, undefined, args);
-}
-
 // Interned resolver kind lists (dedup)
 const _super_identifier: readonly string[] = ["undefined","identifier"];
 const _super_property_identifier: readonly string[] = ["_reserved_identifier","identifier"];

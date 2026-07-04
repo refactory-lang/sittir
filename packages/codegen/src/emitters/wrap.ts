@@ -20,7 +20,6 @@ import type {
 	AssembledEnum,
 	AssembledNonterminal,
 	AssembledNode,
-	AssembledPolymorph,
 	AssembledSupertype
 } from '../compiler/model/node-map.ts';
 import { aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/model/node-map.ts';
@@ -155,43 +154,6 @@ export namespace wrap {
 	}
 
 	/**
-	 * Emit a polymorph wrap function — merges all form fields/children
-	 * into a unified superset, then emits a field-carrying wrap.
-	 */
-	export function polymorph(
-		output: string[],
-		// `AssembledPolymorph` has NO `modelType` override — it inherits
-		// `'branch'` from `AssembledBranch` (see node-map.ts), so
-		// `Extract<AssembledNode, {modelType: 'polymorph'}>` matches nothing
-		// (collapses to `never`). No `AssembledNode` member ever reports
-		// `modelType === 'polymorph'`; the concrete class is the correct
-		// discriminator here (see emitters/types.ts:1432's `instanceof
-		// AssembledPolymorph` for the established pattern).
-		node: AssembledPolymorph,
-		kindEntries: readonly KindEnumEntry[] | undefined,
-		nodeMap: NodeMap
-	): void {
-		if (!node.rawFactoryName) return;
-		// Polymorph wraps reuse the branch-style structural slot surface; the
-		// form-specific shell remains only in the variant descriptor metadata.
-		const result = emitFieldCarryingWrap(
-			{
-				kind: node.kind,
-				typeName: node.typeName,
-				rawFactoryName: node.rawFactoryName,
-				childSurface: classifyChildFactorySurface(node, nodeMap),
-				isPolymorph: true,
-				optionalChildren: node.forms.length > 0
-			},
-			node.fields,
-			[],
-			kindEntries,
-			nodeMap
-		);
-		output.push(result);
-	}
-
-	/**
 	 * Emit a group wrap function — hidden structural helpers still need lazy
 	 * accessors so native read payloads can drill through their child stubs.
 	 */
@@ -236,14 +198,6 @@ interface WrapNode {
 	readonly rawFactoryName?: string;
 	/** Child-factory surface when the node exposes positional child factories. */
 	readonly childSurface?: 'direct' | 'spread' | null;
-	readonly optionalChildren?: boolean;
-	/**
-	 * True when the node is a polymorph — the parent type is a union of UForm
-	 * interfaces where not all members may declare `$children`. Callers use
-	 * this to emit casts at boundaries where the union type is too narrow for
-	 * the runtime shape (e.g., `data.$children` and children setter spreads).
-	 */
-	readonly isPolymorph?: boolean;
 }
 
 /**
@@ -397,18 +351,17 @@ interface UnnamedChildrenSlotConfig {
 
 function resolveUnnamedSlotConfig(
 	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
-	options?: { optional?: boolean; forceSingular?: boolean }
+	nodeMap: NodeMap
 ): UnnamedChildrenSlotConfig {
 	const cardinality = deriveUnnamedChildrenCardinality(children);
 	return {
 		slot: {
 			name: 'children',
 			storageKey: '$other',
-			arity: options?.forceSingular ? 'one' : children.length === 1 && !cardinality.multiple ? 'one' : 'many'
+			arity: children.length === 1 && !cardinality.multiple ? 'one' : 'many'
 		} satisfies SlotModel,
 		elemType: childElementType({ children }, nodeMap),
-		required: options?.optional ? false : cardinality.required,
+		required: cardinality.required,
 		nonEmpty: cardinality.nonEmpty,
 		allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child, nodeMap)))]
 	};
@@ -628,9 +581,6 @@ function emitFieldCarryingWrap(
 		}
 	}
 	// Named fields -> `_<name>` storage (enumerable).
-	// Polymorph parent types are unions of UForm interfaces — not all members
-	// declare every field, but merged fields are a superset. Cast through
-	// `(data as any)` to access fields that may not exist on all union members.
 	//
 	// Option-B reclamation guard (pre-pass): each kindEnum slot reclaims its
 	// member tokens from `$other` by kindId. If two kindEnum slots on THIS kind
@@ -666,7 +616,7 @@ function emitFieldCarryingWrap(
 					})()
 				: undefined;
 		const { storeExpr } = resolveSlotDrillExprs(f, {
-			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
+			dataExpr: 'data',
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
@@ -682,16 +632,10 @@ function emitFieldCarryingWrap(
 	// $other is a $-prefixed metadata key, not a _<name> storage key, so
 	// $other doesn't have the `_` prefix convention — access via data.$other
 	// which AnyNodeData declares as `readonly NodeMemberValue[] | undefined`.
-	// Polymorph parent types are unions of UForm interfaces — not all members
-	// may declare `$other`, but it is always present at runtime. Cast
-	// through `(data as any)` to access the property without type errors.
 	if (children.length > 0) {
-		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
-			optional: node.optionalChildren,
-			forceSingular: node.isPolymorph
-		});
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const { storeExpr } = resolveSlotDrillExprs(childrenConfig.slot, {
-			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
+			dataExpr: 'data',
 			elemType: childrenConfig.elemType,
 			required: childrenConfig.required,
 			nonEmpty: childrenConfig.nonEmpty,
@@ -713,7 +657,7 @@ function emitFieldCarryingWrap(
 				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
 				: undefined;
 		const { accessorBody } = resolveSlotDrillExprs(f, {
-			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
+			dataExpr: 'data',
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
@@ -724,12 +668,9 @@ function emitFieldCarryingWrap(
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
 	if (children.length > 0) {
-		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
-			optional: node.optionalChildren,
-			forceSingular: node.isPolymorph
-		});
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const { accessorBody } = resolveSlotDrillExprs(childrenConfig.slot, {
-			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
+			dataExpr: 'data',
 			elemType: childrenConfig.elemType,
 			required: childrenConfig.required,
 			nonEmpty: childrenConfig.nonEmpty,
@@ -773,19 +714,10 @@ function emitInlineWithProperty(
 
 	const wrapFn = `wrap${node.typeName}`;
 
-	// Polymorph parent types are unions of UForm interfaces. Spread-and-
-	// override (`{ ...data, $other: items }`) does not distribute over
-	// union types — TypeScript rejects the assignment. Cast `data` to `any`
-	// in the spread expression so the setter compiles. The cast is sound:
-	// the runtime object always has the right shape (dispatcher matches
-	// `$type` before calling the wrap function).
-	const spreadData = node.isPolymorph ? '...(data as any)' : '...data';
+	const spreadData = '...data';
 
 	if (node.childSurface === 'spread' || node.childSurface === 'direct') {
-		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
-			optional: node.optionalChildren,
-			forceSingular: node.isPolymorph
-		});
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		if (childrenConfig.slot.arity === 'one') {
@@ -812,28 +744,18 @@ function emitInlineWithProperty(
 	for (const f of fields) {
 		const method = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		const polymorphSetterType =
-			storageInfo.kind === 'boolean'
-				? 'boolean'
-				: storageInfo.kind === 'bitflag' || storageInfo.kind === 'kindEnum'
-					? 'number'
-					: fieldElementType(f, nodeMap);
 		if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-			const setterValueType = node.isPolymorph
-				? polymorphSetterType
-				: `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
+			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
 			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
 			lines.push(`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);
 		} else {
-			const setterValueType = node.isPolymorph ? polymorphSetterType : `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
+			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
 			lines.push(`      ${method}: (v: ${setterValueType}) => ${wrapFn}({ ${spreadData}, ${f.storageKey}: v }, tree),`);
 		}
 	}
 	if (children.length > 0) {
-		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
-			optional: node.optionalChildren
-		});
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		if (childrenConfig.slot.arity === 'one') {
@@ -882,17 +804,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 
 	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
 		wrap.branch(this.#output, node, this.#kindEntries, this.#nodeMap);
-		this.#emittedStructuralKinds.add(node.kind);
-	}
-
-	// See `wrap.polymorph`'s doc comment: `AssembledPolymorph.modelType` is
-	// `'branch'`, so this method has no live caller — `dispatchNode`'s switch
-	// on `node.modelType` routes polymorphs through `emitBranch` instead.
-	// Retained (dead) as the established entry point in case a future caller
-	// wants to special-case polymorph wraps explicitly; typed against the
-	// concrete class since the modelType-based Extract can't select it.
-	emitPolymorph(node: AssembledPolymorph): void {
-		wrap.polymorph(this.#output, node, this.#kindEntries, this.#nodeMap);
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 

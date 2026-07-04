@@ -420,11 +420,6 @@ function _assertNonEmpty<T>(
   }
 }
 
-/** @internal — call an overloaded factory bypassing overload resolution. */
-function _applyFactory<F extends (...args: never[]) => unknown>(fn: F, ...args: unknown[]): ReturnType<F> {
-  return Reflect.apply(fn, undefined, args);
-}
-
 // Interned resolver kind lists (dedup)
 const _super_dict_pattern_kv: readonly string[] = ["_key_value_pattern","splat_pattern"];
 const _K0: readonly string[] = ["identifier","integer","float","true","false","none"];

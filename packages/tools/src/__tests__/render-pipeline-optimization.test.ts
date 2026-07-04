@@ -7,10 +7,8 @@ import { describe, expect, it } from 'vitest';
 
 import {
 	AssembledBranch,
-	AssembledGroup,
 	AssembledKeyword,
-	AssembledPattern,
-	AssembledPolymorph
+	AssembledPattern
 } from '../../../codegen/src/compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
 import type { ChoiceRule, SeqRule } from '../../../codegen/src/types/rule.ts';
@@ -157,36 +155,23 @@ function makeTokenOnlyChildrenNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
-function makePolymorphSingularChildrenNodeMap(): NodeMap {
-	const identifierRule: SeqRule = {
-		type: SEQ,
-		members: [{ type: SYMBOL, name: 'identifier' }]
-	};
-	const integerRule: SeqRule = {
-		type: SEQ,
-		members: [{ type: SYMBOL, name: 'integer' }]
-	};
+function makeChoiceParentSingularChildrenNodeMap(): NodeMap {
+	// Formerly an AssembledPolymorph fixture — the retired class merged its
+	// forms into a single singular unnamed children slot, which a plain
+	// branch over a choice of the two leaf kinds reproduces directly.
 	const parentRule: ChoiceRule = {
 		type: CHOICE,
 		members: [
-			{ type: SYMBOL, name: 'expression__form_identifier' },
-			{ type: SYMBOL, name: 'expression__form_integer' }
+			{ type: SYMBOL, name: 'identifier' },
+			{ type: SYMBOL, name: 'integer' }
 		]
 	};
-	const identifierForm = new AssembledGroup('expression__form_identifier', identifierRule, identifierRule, {
-		name: 'identifier',
-		parentKind: 'expression'
-	});
-	const integerForm = new AssembledGroup('expression__form_integer', integerRule, integerRule, {
-		name: 'integer',
-		parentKind: 'expression'
-	});
-	const nodes = new Map<string, AssembledPolymorph | AssembledPattern>([
-		['expression', new AssembledPolymorph('expression', parentRule, [identifierForm, integerForm])],
+	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
+		['expression', new AssembledBranch('expression', parentRule, parentRule)],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
 		['integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' })]
 	]);
-	return makeNodeMapWith(nodes, new Set(['expression__form_identifier', 'expression__form_integer']));
+	return makeNodeMapWith(nodes, new Set());
 }
 
 function makeTokenOnlyGeneratedIdTables(): GeneratedIdTables {
@@ -344,7 +329,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		assertRustRenderRuntimeBehavior();
 	}, 20_000);
 
-	it('keeps polymorph singular unnamed children on direct transport views', () => {
+	it('keeps choice-parent singular unnamed children on direct transport views', () => {
 		const emitted = emitRenderModule(
 			'rust',
 			[
@@ -353,7 +338,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 					content: '{{ children }}'
 				}
 			],
-			makePolymorphSingularChildrenNodeMap()
+			makeChoiceParentSingularChildrenNodeMap()
 		);
 		const renderStart = emitted.transportRs.contents.indexOf('fn render_expression(');
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
@@ -401,7 +386,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(renderBody).not.toContain('if let Some(children) = &node.children {');
 	});
 
-	it('renders polymorphs through the parent helper without per-form typed helpers', () => {
+	it('renders choice parents through the parent helper without per-form typed helpers', () => {
 		const emitted = emitRenderModule(
 			'rust',
 			[
@@ -410,7 +395,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 					content: '{{ children }}'
 				}
 			],
-			makePolymorphSingularChildrenNodeMap()
+			makeChoiceParentSingularChildrenNodeMap()
 		);
 		const source = readFileSync(resolve(repoRoot, 'packages/codegen/src/emitters/render-module.ts'), 'utf8');
 

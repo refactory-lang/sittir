@@ -43,7 +43,7 @@ const kindNameFromId = (id: number): string | undefined => kindNames.get(id);
 describe('nodeToConfig — polymorph $variant (override source)', () => {
 	const makeOpts = (childKind: Record<string, string>): NodeToConfigOpts => ({
 		polymorphVariants: {
-			assignment: { source: 'override', childKind }
+			assignment: { definedBy: 'override', childKind }
 		},
 		kindNameFromId
 	});
@@ -98,7 +98,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				token_tree: {
-					source: 'override',
+					definedBy: 'override',
 					childKind: {
 						token_tree_paren: 'paren',
 						token_tree_bracket: 'bracket',
@@ -119,7 +119,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				token_tree: {
-					source: 'override',
+					definedBy: 'override',
 					childKind: {
 						token_tree_paren: 'paren',
 						token_tree_tree_paren: 'tree_paren'
@@ -139,7 +139,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				token_tree: {
-					source: 'override',
+					definedBy: 'override',
 					childKind: {
 						token_tree_paren: 'paren',
 						token_tree_bracket: 'bracket'
@@ -160,7 +160,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				token_tree: {
-					source: 'override',
+					definedBy: 'override',
 					childKind: {
 						token_tree_paren: 'paren',
 						token_tree_bracket: 'bracket'
@@ -183,7 +183,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				assignment: {
-					source: 'override',
+					definedBy: 'override',
 					childKind: {
 						assignment_eq: 'eq',
 						assignment_type: 'type'
@@ -206,7 +206,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				assignment: {
-					source: 'override',
+					definedBy: 'override',
 					childKind: {
 						assignment_with_comma: 'with_comma',
 						assignment_block_ending: 'block_ending'
@@ -227,7 +227,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				token_tree: {
-					source: 'override',
+					definedBy: 'override',
 					childKind: {
 						token_tree_call: 'call',
 						token_tree_template_call: 'template_call',
@@ -250,7 +250,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				token_tree: {
-					source: 'override',
+					definedBy: 'override',
 					childKind: {
 						token_tree_typed: 'typed',
 						token_tree_sequence: 'sequence'
@@ -272,7 +272,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 	const makeOpts = (fields: Record<string, readonly string[]>): NodeToConfigOpts => ({
 		polymorphVariants: {
-			range_expression: { source: 'promoted', fields }
+			range_expression: { definedBy: 'promoted', fields }
 		},
 		kindNameFromId
 	});
@@ -364,7 +364,7 @@ describe('nodeToConfig — polymorph $variant (no descriptor)', () => {
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
 				// different kind — should not fire
-				assignment: { source: 'override', childKind: { assignment_eq: 'eq' } }
+				assignment: { definedBy: 'override', childKind: { assignment_eq: 'eq' } }
 			},
 			kindNameFromId
 		});

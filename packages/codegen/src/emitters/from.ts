@@ -18,7 +18,7 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
-import { AssembledBranch, AssembledGroup } from '../compiler/model/node-map.ts';
+import { AssembledBranch } from '../compiler/model/node-map.ts';
 import type { PolymorphVariant } from '../compiler/types.ts';
 import {
 	isAutoStampField,
@@ -26,13 +26,10 @@ import {
 	isMultiple,
 	isNonEmpty,
 	slotKindNames,
-	slotLiteralValues,
 	keywordPresenceKind,
-	resolveHiddenKeywordLiteral,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
 	resolveEffectiveLiteral,
-	collectPolymorphLiteralDispatchCases,
 	stampExpressionFor,
 	isHiddenInfraSlot,
 	type BranchSlotClass,
@@ -193,33 +190,6 @@ function emitFromFieldInputType(lines: string[]): void {
 }
 
 /**
- * Emits the `_applyFactory` helper that bypasses overload resolution for
- * polymorph factory calls.
- *
- * @remarks
- * Polymorph from-dispatchers receive `Loose` input (which lacks `$variant`)
- * but need to call an overloaded factory whose every overload requires
- * `$variant`. `Parameters<typeof factory>[0]` picks the last overload,
- * and the overlap check (TS2352) fails when the Loose type diverges
- * too far from that specific overload's config (missing `$variant` +
- * mismatched hoisted-child field types).
- *
- * `_applyFactory` uses `Reflect.apply` to call the factory without
- * overload resolution. The return type is preserved via `ReturnType<F>`.
- * Callers still need to pass a shape the runtime factory can dispatch;
- * this helper does not infer `$variant` for loose object bags.
- */
-function emitPolymorphApplyHelper(lines: string[]): void {
-	lines.push('/** @internal — call an overloaded factory bypassing overload resolution. */');
-	lines.push(
-		'function _applyFactory<F extends (...args: never[]) => unknown>(fn: F, ...args: unknown[]): ReturnType<F> {'
-	);
-	lines.push('  return Reflect.apply(fn, undefined, args);');
-	lines.push('}');
-	lines.push('');
-}
-
-/**
  * Emits the `_fromMap` runtime dispatch table and `_FromMap` type alias into
  * generated from.ts.
  *
@@ -359,18 +329,6 @@ export namespace from {
 		output.push(result);
 	}
 
-	/**
-	 * Emit a polymorph from() resolver — dispatcher + per-form resolvers.
-	 */
-	export function polymorph(
-		output: string[],
-		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
-		nodeMap: NodeMap,
-		intern: KindInterner
-	): void {
-		const result = emitPolymorphFrom(node, nodeMap, intern);
-		output.push(result);
-	}
 }
 
 // ---------------------------------------------------------------------------
@@ -859,168 +817,6 @@ function containerSlotElementType(slot: AssembledNonterminal, nodeMap: NodeMap):
 }
 
 // ---------------------------------------------------------------------------
-// Polymorph from() — dispatcher + inline per-form resolvers
-// ---------------------------------------------------------------------------
-
-interface PolymorphFromNode {
-	readonly kind: string;
-	readonly typeName: string;
-	readonly fromInputTypeName: string;
-	readonly rawFactoryName?: string;
-	readonly fromFunctionName?: string;
-	readonly forms: AssembledGroup[];
-	/** Variant-child kind names for override-defined polymorph variants,
-	 *  index-aligned with `forms` (populated by `assemble.ts` when the
-	 *  variant config declares per-child kinds; absent otherwise). */
-	readonly variantChildKinds?: readonly string[];
-}
-
-/**
- * Emits the top-level polymorph dispatcher function that accepts a loose
- * input and delegates to the factory via `_applyFactory`.
- *
- * @remarks
- * The polymorph factory takes the strict config-union (with required
- * `$variant`) but `input` is a `FromInputOf` (loose widening) that
- * lacks `$variant`. Direct calls to the overloaded factory fail:
- * `Parameters<typeof F.xxx>[0]` picks the last overload, whose
- * `$variant` literal doesn't overlap with the absent field (TS2352).
- * Primitive shortcut forms (for example hidden-literal variants like
- * `visibility_modifier: 'pub'`) are matched explicitly before falling
- * back to `_applyFactory`.
- *
- * @param fn - The `fromX` function name to emit.
- * @param factory - The `F.<factoryName>` reference string.
- * @param typeName - The node's type name.
- * @param forms - The polymorph form descriptors.
- * @param nodeMap - Grammar-wide node map for hidden-literal detection.
- * @returns The emitted dispatcher function source string.
- */
-function emitPolymorphDispatcher(
-	fn: string,
-	factory: string,
-	kind: string,
-	typeName: string,
-	forms: AssembledGroup[],
-	nodeMap: NodeMap
-): string {
-	// Input union includes both Loose config + per-kind NodeData so the
-	// `isNodeData` generic overload narrows soundly in the pass-through branch.
-	const inputType = `T.${typeName}.Loose`;
-	const lines: string[] = [];
-	const literalCases = collectPolymorphLiteralDispatchCases(forms, nodeMap);
-	const returnType = factoryReturnTypeExpr(factory);
-	lines.push(`export function ${fn}(input?: ${inputType}): ${returnType} {`);
-	lines.push(`  if (input !== undefined && isNodeData(input)) {`);
-	lines.push(
-		`    if ((input.$type as string | number) === kindIdFromName(${JSON.stringify(kind)})) return input as unknown as ${returnType};`
-	);
-	lines.push('  }');
-	if (literalCases.length > 0) {
-		lines.push(`  if (typeof input === "string") {`);
-		lines.push('    switch (input) {');
-		for (const { literal, formFromFn } of literalCases) {
-			lines.push(`      case ${JSON.stringify(literal)}: return ${formFromFn}() as unknown as ${returnType};`);
-		}
-		lines.push('    }');
-		lines.push('  }');
-	}
-	// Bypass overload resolution via `_applyFactory`. The Loose input
-	// lacks `$variant` (FromInputOf doesn't project it), so direct
-	// `factory(input)` hits TS2352 / TS2769 — `Parameters<>` picks
-	// the last overload whose `$variant` literal doesn't overlap with
-	// the absent field. `_applyFactory` calls via `Reflect.apply`,
-	// preserving `ReturnType<F>` for already-discriminated runtime
-	// inputs that the factory can dispatch.
-	lines.push(`  return _applyFactory(${factory}, input);`);
-	lines.push('}');
-	return lines.join('\n');
-}
-
-/**
-/**
- * Determines whether a polymorph form's `input` parameter should be optional
- * or required, and emits the per-form from() function.
- *
- * @remarks
- * Matches the form factory's parameter optionality: the factory declares
- * `config:` (required) when any field OR child slot is required. Inlining
- * can push a required child onto a form that previously had only optional
- * fields. Passing an optional `input?` where the factory wants a required arg
- * fails the type check.
- *
- * Typed direct reads — `input` is the strict form-config alias, every field
- * property is already typed correctly.
- *
- * @param form - The polymorph form descriptor.
- * @param nodeMap - The assembled node map.
- * @param intern - Kind-list interner.
- * @returns The emitted per-form from() function source string.
- */
-function emitPolymorphFormFrom(form: AssembledGroup, nodeMap: NodeMap, intern: KindInterner): string {
-	const formFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`;
-	const formFactory = `F.${form.rawFactoryName!}`;
-	// Auto-stamp fields are always `required` but have no Config slot — exclude them.
-	const formNonStampFields = form.fields.filter((fd) => !isAutoStampField(fd, nodeMap));
-	const formOpt = formNonStampFields.some((fd) => isRequired(fd)) ? '' : '?';
-	const fLines: string[] = [];
-	const formInputOptional = formOpt === '?';
-	// Form `.from()` input omits `$variant` — see resolveConfigType
-	// in emitters/factories.ts for the rationale (forms stamp, they
-	// don't accept).
-	fLines.push(
-		`export function ${formFn}(input${formOpt}: Omit<ConfigOf<T.${form.typeName}>, '$variant'>): ${factoryReturnTypeExpr(formFactory)} {`
-	);
-	const hasFormFields = form.fields.length > 0;
-	if (hasFormFields) {
-		fLines.push(`  return ${formFactory}({`);
-		// Form-level fields (always Config keys at the form's surface).
-		for (const f of form.fields) {
-			const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
-			if (stampedExpr !== null) {
-				fLines.push(`    ${f.configKey}: ${stampedExpr},`);
-				continue;
-			}
-			if (isAutoStampField(f, nodeMap)) continue;
-			fLines.push(
-				`    ${f.configKey}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
-			);
-		}
-		fLines.push('  });');
-	} else {
-		fLines.push(`  return ${formFactory}(input);`);
-	}
-	fLines.push('}');
-	// Rename unused `input` to `_input` for `no-unused-vars` (lint
-	// exempts `_`-prefixed names). Type signature stays stable so
-	// the polymorph From dispatcher's forwarding call still type-checks.
-	const header = fLines[0]!;
-	const body = fLines.slice(1).join('\n');
-	if (!/\binput\b/.test(body)) {
-		fLines[0] = header.replace(/\binput(\??:)/, '_input$1');
-	}
-	return fLines.join('\n');
-}
-
-function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: KindInterner): string {
-	const fn = node.fromFunctionName!;
-	const factory = `F.${node.rawFactoryName!}`;
-	const dispatcher = emitPolymorphDispatcher(
-		fn,
-		factory,
-		node.kind,
-		node.typeName,
-		node.forms,
-		nodeMap
-	);
-	const parts = [dispatcher];
-	for (const form of node.forms) {
-		parts.push(emitPolymorphFormFrom(form, nodeMap, intern));
-	}
-	return parts.join('\n\n');
-}
-
-// ---------------------------------------------------------------------------
 // Leaf / enum from() — `string | NodeData` passthrough
 // ---------------------------------------------------------------------------
 
@@ -1078,8 +874,8 @@ type KindInterner = (kinds: readonly string[]) => string;
  * directly off a typed FromInput bag (`input?.fieldName`). Typed
  * access flows the FromInput's per-field type into the resolver's
  * generic slot — no `_f` normalize, no index-signature widening. Used
- * by branch / polymorph-form `fromX` bodies after the top-level kind
- * discriminator has already handed back any pre-built node.
+ * by branch `fromX` bodies after the top-level kind discriminator has
+ * already handed back any pre-built node.
  */
 function resolveFieldFromTypedInput(
 	field: AssembledNonterminal,
@@ -1087,17 +883,14 @@ function resolveFieldFromTypedInput(
 	parentTypeName: string,
 	intern: KindInterner,
 	sourceVar: string,
-	inputOptional: boolean,
-	/** Polymorph forms use `<TypeName>Config` legacy alias. */
-	isPolymorphForm = false
+	inputOptional: boolean
 ): string {
-	// parentTypeName / isPolymorphForm are retained for signature stability
-	// with callers; prior implementation used them to build an explicit
+	// parentTypeName is retained for signature stability with callers;
+	// the prior implementation used it to build an explicit
 	// `<NonNullable<T.X.Config['y']>>` type arg on the resolver call. Those
 	// type args were stripped in a follow-up to the from-cleanup pass —
 	// TS now infers the slot type from parameters / call context.
 	void parentTypeName;
-	void isPolymorphForm;
 	/**
 	 * Single-access camelCase read on the bag
 	 * branch. After the isNodeData identity quick-return at resolver entry,
@@ -1870,10 +1663,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 		from.branch(this.#output, node, this.#nodeMap, this.#internKinds, this.#kindEntries);
 	}
 
-	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
-		from.polymorph(this.#output, node, this.#nodeMap, this.#internKinds);
-	}
-
 	dispatchNode(kind: string, node: AssembledNode): void {
 		if (
 			classifyFromEmission(kind, node, {
@@ -1902,7 +1691,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 		emitFromMapDeclaration(lines, this.#nodeMap, this.#kindEntries);
 		emitResolverHelpers(lines, this.#nodeMap, this.#kindEntries);
 		lines.push('');
-		emitPolymorphApplyHelper(lines);
 		emitInternedKindTable(lines, this.#namedEntries, this.#kindTableLiterals);
 		for (const block of this.#output) {
 			lines.push(block);

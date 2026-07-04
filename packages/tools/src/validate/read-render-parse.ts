@@ -56,13 +56,13 @@ type KindMembership = { has(value: number): boolean };
  */
 async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
 	// PR-K: read the typed `polymorphVariants` map directly instead of
-	// regex-scanning raw JSON. Only `source: 'override'` descriptors carry a
+	// regex-scanning raw JSON. Only `definedBy: 'override'` descriptors carry a
 	// `childKind` map (the first-named-child dispatch table); each such parent
 	// and every child kind it dispatches to participates in variant() adoption.
 	const { polymorphVariants } = await loadNodeModel(grammar);
 	const kinds = new Set<string>();
 	for (const [parent, desc] of Object.entries(polymorphVariants)) {
-		if (desc.source !== 'override') continue;
+		if (desc.definedBy !== 'override') continue;
 		kinds.add(parent);
 		for (const childKind of Object.keys(desc.childKind)) kinds.add(childKind);
 	}

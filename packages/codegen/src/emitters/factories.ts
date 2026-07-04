@@ -102,26 +102,6 @@ function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
 	return [...nodeMap.nodes.values()].some((n) => allSlotsOf(n).some((f) => isNonEmpty(f)));
 }
 
-/**
- * Does any polymorph in this grammar have a form that qualifies for the
- * hoisted Config shape (inner-child fields surfaced at the parent's
- * Config)? The unified hoisted factory types its `config` parameter as
- * `ConfigOf<T.<FormTypeName>>` which pulls the `ConfigOf` generic in
- * from `@sittir/types`; gate the import on whether any factory actually
- * uses it.
- */
-function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
-	// Any polymorph parent triggers `ConfigOf` usage — both the
-	// dispatcher overloads (`ConfigOf<T.FooUFormX>`) and the per-form
-	// signatures (`Omit<ConfigOf<T.FooUFormX>, '$variant'>`) reference
-	// it regardless of whether `resolveHoistedForm` fires. The earlier
-	// hoisted-only check missed grammars whose polymorph forms are all
-	// non-hoisted (e.g. python, whose polymorph forms have no inner
-	// field-carrying kind with a factory), leaving `ConfigOf`
-	// unimported in the emitted factories.ts.
-	return false;
-}
-
 function collectStorageCoercionImports(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -304,7 +284,7 @@ function factoryTypeDiscriminant(
  * @param lines - Output line buffer; factory declarations are appended here.
  * @remarks
  *   Dispatch is on `modelType`. Polymorph form groups are skipped at the top
- *   level because the polymorph dispatcher emits its forms inline.
+ *   level (`classifyFactoryEmission` → `skip-polymorph-form-group`).
  */
 /**
  * Build the map entries list for `_factoryMap` and `FluentKindMap`.
@@ -313,10 +293,10 @@ function factoryTypeDiscriminant(
  * @param aliasSourceKinds - Set of kinds that are alias sources (included even if hidden).
  * @returns Ordered array of map entry descriptors.
  * @remarks
- *   Every kind with a factory lands here — branches, containers, polymorphs, leaves,
+ *   Every kind with a factory lands here — branches, containers, leaves,
  *   keywords, enums — because each entry's type is `typeof <factory>`, so the map
- *   slot uses the factory's own signature directly. Polymorph forms are reached
- *   through the parent polymorph dispatcher and are not registered separately.
+ *   slot uses the factory's own signature directly. Polymorph form kinds are
+ *   excluded (`polymorphFormKinds`) and are not registered separately.
  */
 function buildFactoryMapEntries(
 	nodeMap: NodeMap,
@@ -486,21 +466,8 @@ export namespace factory {
 				kindEntries
 			);
 		} else {
-			result = emitFieldCarryingFactory(node, node.fields, nodeMap, false, kindEntries);
+			result = emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries);
 		}
-		output.push(result);
-	}
-
-	/**
-	 * Emit a polymorph factory — dispatcher + per-form inline factories.
-	 */
-	export function polymorph(
-		output: string[],
-		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
-		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined
-	): void {
-		const result = emitPolymorphFactory(node, nodeMap, kindEntries);
 		output.push(result);
 	}
 
@@ -514,7 +481,7 @@ export namespace factory {
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		const result = emitFieldCarryingFactory(node, node.fields, nodeMap, false, kindEntries);
+		const result = emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries);
 		output.push(result);
 	}
 }
@@ -578,7 +545,7 @@ function buildEnumLiteralUnion(node: { values: readonly string[] }): string {
 // Field-carrying factory (branches, groups, polymorph forms)
 // ---------------------------------------------------------------------------
 
-type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' | 'polymorph' }>;
+type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' }>;
 
 /** Resolve a container node's children element type to a concrete TS type expression. */
 export function childElementType(node: { children: readonly AssembledNonterminal[] }, nodeMap: NodeMap): string {
@@ -759,14 +726,13 @@ function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	fields: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
-	isPolymorphForm = false,
 	kindEntries: readonly KindEnumEntry[] | undefined = undefined
 ): string {
 	const fn = node.rawFactoryName!;
 	fields = fields ?? [];
 	const opt = resolveConfigOptional(fields, nodeMap);
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
-	const configType = resolveConfigType(node, isPolymorphForm, nodeMap.refineForms?.has(typeKind) ?? false);
+	const configType = resolveConfigType(node, nodeMap.refineForms?.has(typeKind) ?? false);
 
 	// Gap 5: Single-field-no-children factories take the value directly
 	// instead of a config object. Uses the pre-computed slotClass
@@ -781,7 +747,6 @@ function emitFieldCarryingFactory(
 	const sc = typeof node === 'object' && node !== null && 'slotClass' in node ? node.slotClass : undefined;
 	if (
 		nonStampFields.length === 1 &&
-		!isPolymorphForm &&
 		!node.kind.startsWith('_') &&
 		sc?.tag === 'singleSlot' &&
 		sc.arity === 'singular'
@@ -1134,34 +1099,22 @@ function resolveConfigOptional(fields: readonly AssembledNonterminal[], nodeMap:
  * Resolve the config type reference for a field-carrying factory parameter.
  *
  * @param node - The node descriptor (provides `typeName` and `parentKind`).
- * @param isPolymorphForm - Whether the factory is emitting a polymorph form (not the dispatcher).
- * @returns A TS source string like `T.FunctionItem.Config` or `ConfigOf<T.FunctionItemBodyForm>`.
+ * @param hasRefineForms - Whether the node's kind carries refine() forms.
+ * @returns A TS source string like `T.FunctionItem.Config` or `ConfigOf<T.FunctionItem>`.
  * @remarks
- *   Polymorph forms use `ConfigOf<T.${typeName}>` directly — synthetic UForm
- *   kinds have no declaration-merged namespace, and the generic projection
- *   picks up the polymorph-variant hoist automatically. Base kinds use the
- *   `T.${typeName}.Config` namespace alias, which resolves to the same
- *   `ConfigOf<T.${typeName}>` shape under the hood.
+ *   Refined base kinds alias their parent `T.<TypeName>.Config` to the
+ *   first-declared form's narrowed Config (per emitRefineFormSubNamespaces),
+ *   dropping the narrowed-out fields. The base factory still references
+ *   every field directly, so it must bypass that narrowed alias and use the
+ *   full generic projection instead.
+ *
+ *   Hygiene rule 5 — prefer concrete per-kind namespace alias over the
+ *   `ConfigOf<T>` generic indirection. `T.${typeName}.Config` is emitted
+ *   by the types.ts namespace-sugar pass and resolves to the same
+ *   `ConfigFor<kind>` shape, so this is a pure typing-surface improvement
+ *   with no runtime change.
  */
-function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean, hasRefineForms: boolean): string {
-	// Polymorph FORM factories omit `$variant` from their input Config —
-	// the form itself stamps `$variant` on the output, so accepting it
-	// as input would be redundant. Parent (dispatcher) factories use
-	// `T.${parent}.Config` which resolves to `ConfigOf<union>` and
-	// REQUIRES `$variant` (discriminated-union narrowing).
-	//
-	// Refined base kinds alias their parent `T.<TypeName>.Config` to the
-	// first-declared form's narrowed Config (per emitRefineFormSubNamespaces),
-	// dropping the narrowed-out fields. The base factory still references
-	// every field directly, so it must bypass that narrowed alias and use the
-	// full generic projection instead.
-	// Hygiene rule 5 — prefer concrete per-kind namespace alias over the
-	// `ConfigOf<T>` generic indirection. `T.${typeName}.Config` is emitted
-	// by the types.ts namespace-sugar pass and resolves to the same
-	// `ConfigFor<kind>` shape, so this is a pure typing-surface improvement
-	// with no runtime change. Polymorph forms keep `ConfigOf<T.X>` because
-	// synthetic UForm names don't carry a `.Config` namespace member.
-	if (isPolymorphForm) return `Omit<ConfigOf<T.${node.typeName}>, '$variant'>`;
+function resolveConfigType(node: FieldCarryingNode, hasRefineForms: boolean): string {
 	if (hasRefineForms) return `ConfigOf<T.${node.typeName}>`;
 	return `T.${node.typeName}.Config`;
 }
@@ -1273,173 +1226,6 @@ function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): str
 	// The unnamed-child slot lives in `node.fields`; derive the element type
 	// from it directly.
 	return childElementType({ children: node.fields }, nodeMap);
-}
-
-// ---------------------------------------------------------------------------
-// Polymorph factory — dispatcher + inline form factories
-// ---------------------------------------------------------------------------
-
-interface PolymorphNode {
-	readonly kind: string;
-	readonly typeName: string;
-	readonly treeTypeName: string;
-	readonly rawFactoryName?: string;
-	readonly forms: AssembledGroup[];
-	readonly variantChildKinds?: readonly string[];
-}
-
-function emitPolymorphFactory(
-	node: PolymorphNode,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined = undefined
-): string {
-	const fn = node.rawFactoryName!;
-	const forms = node.forms ?? [];
-
-	if (forms.length === 0) {
-		// Defensive stub — shouldn't happen after classifier fix.
-		// Inline literal + withMethods<T> wrap.
-		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
-		return [
-			`export function ${fn}(_config?: unknown) {`,
-			`  return withMethods({`,
-			`    $type: ${typeExpr},`,
-			`    $source: 2 as const,`,
-			`    $named: true as const,`,
-			`    $with: {},`,
-			`  }, methodsEngine);`,
-			`}`
-		].join('\n');
-	}
-
-	const parts: string[] = [];
-	parts.push(emitPolymorphDispatcher(node, forms));
-
-	// Emit each form factory inline after the dispatcher.
-	// `isPolymorphForm=true` routes the form factory's config parameter
-	// through the legacy flat alias instead of namespace sugar — synthetic
-	// UForm kinds aren't in `NamespaceMap`.
-	for (const form of forms) {
-		parts.push(emitFieldCarryingFactory(form, form.fields, nodeMap, true, kindEntries));
-	}
-	return parts.join('\n');
-}
-
-/**
- * Emit the polymorph dispatcher function: overloaded signatures (one per
- * variant, return type narrowed via `ReturnType<typeof formFactory>`) followed
- * by an implementation signature accepting the discriminated union.
- *
- * The body is a single `switch (config.$variant)` over the form names,
- * throwing on unknown. Callers that don't stamp `$variant` route through
- * `.from()` which normalizes the shape (see `emitters/from.ts`).
- */
-function emitPolymorphDispatcher(node: PolymorphNode, forms: AssembledGroup[]): string {
-	const fn = node.rawFactoryName!;
-	const lines: string[] = [];
-
-	if (forms.length > 1) {
-		// One overload per variant so call-site `config.$variant === 'binary'`
-		// narrows the return type to the binary form factory's output. The
-		// `$variant: '<name>'` literal is already baked into ConfigOf<T> for
-		// polymorph variants (@sittir/types), so each overload's arm
-		// self-discriminates — no extra intersection wrapper needed.
-		for (const form of forms) {
-			lines.push(
-				`export function ${fn}(config: ConfigOf<T.${form.typeName}>): ReturnType<typeof ${form.rawFactoryName!}>;`
-			);
-		}
-	}
-
-	const polyOpt = resolvePolymorphConfigOptional(forms);
-	const configUnion = buildPolymorphConfigUnion(forms);
-	// Implementation signature — the untyped union accepted at the dispatch
-	// boundary. The overloads above govern what callers see.
-	lines.push(`export function ${fn}(config${polyOpt}: ${configUnion}) {`);
-	lines.push(...emitPolymorphDispatch(node, forms));
-	lines.push('}');
-	return lines.join('\n');
-}
-
-/**
- * Build the config parameter union type string for a polymorph dispatcher.
- *
- * @param forms - The polymorph form descriptors.
- * @returns A TS source string like `ConfigOf<T.StructItemBodyForm> | ConfigOf<T.StructItemSemiForm>`.
- * @remarks
- *   `ConfigOf<T>` applied per-form (rather than `ConfigOf<Parent>` over the
- *   parent-union type) preserves TypeScript's `'field' in config` narrowing
- *   at the call site — distributive `ConfigOf` over a union doesn't narrow
- *   the same way.
- */
-function buildPolymorphConfigUnion(forms: AssembledGroup[]): string {
-	// Single-form polymorphs have no actual variant choice — the dispatcher
-	// always routes to the single form factory, which stamps `$variant`
-	// itself. Strip `$variant` from the dispatcher's accepted Config so
-	// callers can `factoryFn({})` without supplying a tag the form fills
-	// in. Multi-form dispatchers preserve `$variant` on the input — the
-	// discriminator drives the switch.
-	if (forms.length === 1) {
-		return `Omit<ConfigOf<T.${forms[0]!.typeName}>, '$variant'>`;
-	}
-	return forms.map((f) => `ConfigOf<T.${f.typeName}>`).join(' | ');
-}
-
-/**
- * Determine whether the polymorph dispatcher's `config` parameter should be optional.
- *
- * @param forms - The polymorph form descriptors.
- * @returns `''` when any form has a required field or child, `'?'` otherwise.
- */
-function resolvePolymorphConfigOptional(forms: AssembledGroup[]): string {
-	const anyFormHasRequired = forms.some((f) => Object.values(f.slots).some((s) => isRequired(s)));
-	return anyFormHasRequired ? '' : '?';
-}
-
-/**
- * Emit the dispatch body lines for a polymorph factory.
- *
- * @param node - The polymorph node descriptor.
- * @param forms - The polymorph form descriptors.
- * @returns Array of source lines for the dispatch body (without the surrounding `{ }`).
- * @remarks
- *   Shape: non-object guard → `$variant` inference preamble → `switch` → throw.
- *
- *   `$variant` is the authoritative discriminator, but Loose input flowing
- *   through `.from()` wrappers and readNode-derived shapes don't carry it.
- *   The preamble infers `variant` from parse-tree truth (first child's kind
- *   for `source='override'`) or field-presence (for `source='promoted'`),
- *   feeding the same single-dispatch switch. The final `throw` fires only
- *   when BOTH caller-supplied `$variant` and inference yield nothing.
- *
- *   Single-form polymorphs (`forms.length === 1`) skip the switch entirely.
- */
-function emitPolymorphDispatch(node: PolymorphNode, forms: AssembledGroup[]): string[] {
-	const lines: string[] = [];
-	if (forms.length === 1) {
-		// Single-form polymorph: form factory's input type omits `$variant`.
-		// The parent's Config still carries it (discriminated union arm),
-		// so cast when delegating.
-		lines.push(`  return ${forms[0]!.rawFactoryName!}(config as Parameters<typeof ${forms[0]!.rawFactoryName!}>[0]);`);
-		return lines;
-	}
-
-	// `$variant` is the authoritative discriminator — `ConfigOf<T>` carries
-	// it in the type for polymorph variants, so the switch narrows the
-	// union arm-by-arm. Form factories accept `Omit<ConfigOf<T.FormN>, '$variant'>`
-	// (the variant tag is factory-output, not input) — cast when delegating.
-	lines.push(`  switch (config.$variant) {`);
-	for (const form of forms) {
-		lines.push(
-			`    case '${form.name}': return ${form.rawFactoryName!}(config as Parameters<typeof ${form.rawFactoryName!}>[0]);`
-		);
-	}
-	lines.push(`  }`);
-	const formNames = forms.map((f) => `'${f.name}'`).join(' | ');
-	lines.push(
-		`  throw new Error(\`${node.rawFactoryName!}: unknown $variant '\${(config as { $variant?: string }).$variant}' — expected one of ${formNames}.\`);`
-	);
-	return lines;
 }
 
 // ---------------------------------------------------------------------------
@@ -1614,10 +1400,8 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			lines.push(`import { ${kindIdImports.join(', ')} } from './types.js';`);
 		}
 		const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
-		const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap);
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		const utilImports = ['FluentNode'];
-		if (usesConfigOf) utilImports.push('ConfigOf');
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
 		lines.push(`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`);
@@ -1651,10 +1435,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
 		factory.branch(this.#output, node, this.#nodeMap, this.#kindEntries);
-	}
-
-	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
-		factory.polymorph(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
 	emitGroup(node: Extract<AssembledNode, { modelType: 'group' }>): void {

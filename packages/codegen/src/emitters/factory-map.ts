@@ -117,7 +117,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 				const suffix = visibleName.startsWith(`${kind}_`) ? visibleName.slice(kind.length + 1) : visibleName;
 				childKind[visibleName] = suffix;
 			}
-			polymorphVariants[kind] = { source: 'override', childKind };
+			polymorphVariants[kind] = { definedBy: 'override', childKind };
 			continue;
 		}
 	}

@@ -3,15 +3,13 @@
  * (Task 2.4 of PR1 — rule-attributes-and-template-emitter refactor;
  *  updated Task 3.B3 of PR2 — authority flip + renderRule consumption).
  *
- * Each emit function (branch / group / polymorph) is exercised with a
+ * Each emit function (branch / group) is exercised with a
  * minimal in-memory fixture:
  *
  * - Branch and Group: mocks carry `renderRule` (RenderRule, wrapper-free)
  *   since emitBranchTemplate / emitGroupTemplate now consume renderRule.
  *   Fixtures use leaf-attribute symbols (fieldName / multiplicity) instead
  *   of FieldRule / OptionalRule / RepeatRule wrappers.
- *
- * - Polymorph: mocks carry `forms` with `.kind` + `.name`.
  *
  * `multi` nodes never reach the emitter (classifyTemplateEmission always
  * skips them), so there is no emit function to exercise for that modelType.
@@ -24,7 +22,6 @@ import type {
 	AssembledBranch,
 	AssembledGroup,
 	AssembledNonterminal,
-	AssembledPolymorph,
 	NodeOrTerminal
 } from '../../compiler/model/node-map.ts';
 import { emitBranchTemplate, emitGroupTemplate, type EmitCtx } from '../templates.ts';
@@ -74,17 +71,12 @@ function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNontermina
 //
 // Branch / Group: emitBranchTemplate / emitGroupTemplate consume `renderRule`
 // (PR2 Task 3.B3). Mocks supply `renderRule` (RenderRule, wrapper-free shape).
-// Polymorph: emitPolymorphTemplate reads `form.kind` and `form.name` per form.
 function mockBranch(renderRule: Rule): AssembledBranch {
 	return { modelType: 'branch', renderRule } as unknown as AssembledBranch;
 }
 
 function mockGroup(renderRule: Rule, name = 'g', kind = name): AssembledGroup {
 	return { modelType: 'group', renderRule, name, kind } as unknown as AssembledGroup;
-}
-
-function mockPolymorph(forms: AssembledGroup[]): AssembledPolymorph {
-	return { modelType: 'polymorph', forms } as unknown as AssembledPolymorph;
 }
 
 describe('emitBranchTemplate', () => {
