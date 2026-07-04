@@ -157,18 +157,22 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 	// rule shape but should NOT auto-promote to polymorph — each variant
 	// child renders via its own kind-template.
 	//
-	// R12/decision-7 V1: derived STRUCTURALLY from the post-link rule tree
-	// (`deriveStructuralVariantChildren`, compiler/variant-structural.ts) —
-	// the drop-in replacement for the former wire-metadata channel
+	// R12/decision-7 V1/V2: derived STRUCTURALLY from the post-link rule
+	// tree (`deriveStructuralVariantChildren`, compiler/variant-structural.ts).
+	// V1 flipped this call site off the former wire-metadata channel
 	// (`normalized.polymorphVariants`, populated by
-	// `wireRegisterPolymorphVariant`). The wire channel now feeds ONLY
-	// `tool variant-derivation-probe`'s equality assertion (see that
-	// module's + the probe's docs, and the research doc's V1 OUTCOME
-	// section for the reviewed-additive delta this flip introduces: 3
-	// hand-authored `alias()`-arm surfaces with no wire pair — rust
-	// `impl_item`/`reference_expression`, ts `string`'s `string_fragment` —
-	// join the form set; 3 wire-only pairs the structural predicate can't
-	// reproduce by design are enumerated there as known exceptions).
+	// `wireRegisterPolymorphVariant`); V2 deletes that channel entirely —
+	// see variant-structural.ts's top-of-file STATUS comment for the full
+	// deletion inventory and `tool variant-derivation-probe`'s doc for its
+	// new cross-commit drift-detector contract (compares this derivation's
+	// live output against committed node-model.json5, not a wire channel).
+	// See the research doc's V1/V2 OUTCOME sections for the reviewed-
+	// additive delta this flip introduced (hand-authored `alias()`-arm
+	// surfaces with no former wire pair — rust `impl_item`/
+	// `reference_expression`, ts `string`'s `string_fragment` — joined the
+	// form set) and the enumerated known exceptions (parents that
+	// structurally qualify but can never appear in node-model.json5 because
+	// they classify to SupertypeRule/AssembledGroup, not AssembledBranch).
 	const variantChildrenByParent = deriveStructuralVariantChildren(normalized.rules);
 	const variantParents = new Set(variantChildrenByParent.keys());
 
@@ -314,41 +318,40 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 		// drifting (and no repeat of the former reconstruction's hidden-
 		// parent naming bug; see the `variantChildrenByParent` comment).
 		const variantChildKindsSet = new Set<string>([...variantChildrenByParent.values()].flat());
-		// SUPERTYPE-parent EXCEPTION (V1 OUTCOME, adjudicated case 2 of 3 —
-		// see the research doc's V1 OUTCOME section): a wire pair whose
-		// parent classified to `SupertypeRule` (python's `_simple_pattern` /
-		// `negative`) has NO reproduction in `deriveStructuralVariantChildren`
-		// — link's `classifyHiddenChoiceRule` flattens the original CHOICE's
-		// alias/symbol arms into a bare `subtypes: string[]` BEFORE
-		// `normalized.rules` is built, destroying the alias-mint linkage
-		// `isAliasMintedRef`'s "no independent body" test needs. Verified NOT
-		// a clean structural rule: the coincidental-collision arm this
+		// SUPERTYPE-parent EXCEPTION (V2 Task 1: now reads the DECLARED fact,
+		// not the wire channel — see the research doc's "V2 OUTCOME" section
+		// and `RuleBase.variantArms`'s doc comment, types/rule.ts): a
+		// SUPERTYPE-classified parent (python's `_simple_pattern` / its
+		// `negative` arm) has NO reproduction in
+		// `deriveStructuralVariantChildren` — link's `classifyHiddenChoiceRule`
+		// flattens the original CHOICE's alias/symbol arms into a bare
+		// `subtypes: string[]` BEFORE `normalized.rules` is built, destroying
+		// the alias-mint linkage `isAliasMintedRef`'s "no independent body"
+		// test needs. Verified NOT a clean structural rule DERIVABLE from
+		// `normalized.rules` alone: the coincidental-collision arm this
 		// module's predicate excludes for CHOICE parents (`dictionary`/
 		// `dictionary_splat`) has an EXACT analogue here (ts `type`'s
 		// `_type_query_member_expression_in_type_annotation` subtype — its
 		// own visible-stripped form ALSO has no independent body, making it
 		// structurally indistinguishable from the true positive using only
 		// post-link `normalized.rules` data). Rather than risk that false
-		// positive, this reads the wire channel ONLY for SUPERTYPE-classified
-		// parents — a narrow, rule-TYPE-discriminated (not kind-NAME-
-		// discriminated) supplement, gated structurally on `normalized.rules[
-		// pv.parent]?.type === SUPERTYPE` so it can never silently expand
-		// beyond this one shape.
-		//
-		// `${pv.parent}_${pv.child}` (raw concat, NOT `polymorphVisibleName`'s
-		// stripped form) is intentional here: `nodes` is keyed by the HIDDEN
-		// helper-body kind classifyHiddenChoiceRule's `collectSubtypeNames`
-		// records in `subtypes` (`_simple_pattern_negative`, still carrying
-		// `_simple_pattern`'s own leading `_`) — the alias-mint's VISIBLE
-		// target (`simple_pattern_negative`, what `variantChildrenByParent`'s
-		// values hold for CHOICE parents) is never assembled into its own
-		// node at all for this shape, so promoting IT would be a no-op.
-		// `markUserFacing`'s own doc already documents this as case (d) —
-		// "hidden variant-child kinds from `polymorphVariants` that the slot
-		// walker never reaches when the parent is a supertype."
-		for (const pv of normalized.polymorphVariants ?? []) {
-			if (normalized.rules[pv.parent]?.type !== SUPERTYPE) continue;
-			variantChildKindsSet.add(`${pv.parent}_${pv.child}`);
+		// positive, `classifyHiddenChoiceRule` stamps `variantArms` on the
+		// `SupertypeRule` AT THE MOMENT of flatten (when the pre-flatten
+		// CHOICE's per-arm shape is still available) — a declared structural
+		// fact read directly here, gated structurally on `rule.type ===
+		// SUPERTYPE` (not kind-NAME-gated) so it can never silently expand
+		// beyond this one shape. `variantArms` entries are already the HIDDEN
+		// helper-body kind name (`_simple_pattern_negative`, matching
+		// `subtypes`'s own per-arm naming) — `nodes` is keyed by that hidden
+		// name; the alias-mint's VISIBLE target (`simple_pattern_negative`,
+		// what `variantChildrenByParent`'s values hold for CHOICE parents) is
+		// never assembled into its own node at all for this shape, so
+		// promoting IT would be a no-op. `markUserFacing`'s own doc already
+		// documents this as case (d) — "hidden variant-child kinds ... the
+		// slot walker never reaches when the parent is a supertype."
+		for (const rule of Object.values(normalized.rules)) {
+			if (rule.type !== SUPERTYPE || !rule.variantArms) continue;
+			for (const arm of rule.variantArms) variantChildKindsSet.add(arm);
 		}
 		const userFacingCtx: _UserFacingCtx = {
 			aliasSourceKinds,

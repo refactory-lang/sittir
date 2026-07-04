@@ -233,49 +233,71 @@ describe('wire()', () => {
 		expect(depositsB.has('_assignment_ne')).toBe(false);
 	});
 
-	it('polymorph registration is idempotent — calling the parent rule twice does not duplicate', () => {
+	// R12/decision-7 V2 Task 2: `WireContext.polymorphVariants` (the wire
+	// pair channel) is deleted — variant-adoption pairs are discovered
+	// STRUCTURALLY downstream instead (`deriveStructuralVariantChildren`,
+	// compiler/variant-structural.ts). These two tests are rekeyed to
+	// assert the SURVIVING per-call registration this file's `polymorphs:`
+	// config still drives: each arm deposits its hidden-rule body under
+	// `_<parent>_<child>` (idempotently — `Map.set` by key — across
+	// repeated rule-fn invocation, matching the legacy dry-run/real-pass
+	// double-call behavior the original tests guarded against). A bare
+	// `SYMBOL` arm (no anonymous token) is unmaterializable and deposits
+	// nothing (`variantBranchIsUnmaterializable`) — these fixtures use a
+	// SEQ-with-literal arm shape (`= right` / `: typ`) so the mint actually
+	// fires, matching the deposit-bearing case these tests exist to guard.
+	it('variant deposit registration is idempotent — calling the parent rule twice does not duplicate', () => {
 		// Legacy installGrammarWrapper runs rule callbacks twice (pass-1
 		// + pass-2). wire's registrations must absorb that benignly.
 		const origSeq = {
 			type: 'SEQ',
 			members: [
-				{ type: 'SYMBOL', name: 'a' },
-				{ type: 'SYMBOL', name: 'b' }
+				{ type: 'SYMBOL', name: 'left' },
+				{
+					type: 'CHOICE',
+					members: [
+						{ type: 'SEQ', members: [{ type: 'STRING', value: '=' }, { type: 'SYMBOL', name: 'right' }] },
+						{ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'typ' }] }
+					]
+				}
 			]
 		};
 		const wired = wire({
 			name: 'test',
 			rules: {},
-			polymorphs: { assignment: { '0': 'eq', '1': 'type' } }
+			polymorphs: { assignment: { '1/0': 'eq', '1/1': 'type' } }
 		});
 		const assignmentFn = wired.rules.assignment!;
 		assignmentFn.call({}, {}, origSeq);
 		assignmentFn.call({}, {}, origSeq);
-		const ctx = (wired as unknown as { __wireContext__: { polymorphVariants: unknown[] } }).__wireContext__;
-		expect(ctx.polymorphVariants).toHaveLength(2); // not 4
+		const ctx = (wired as unknown as { __wireContext__: { deposits: Map<string, unknown> } }).__wireContext__;
+		expect([...ctx.deposits.keys()].sort()).toEqual(['_assignment_eq', '_assignment_type']);
 	});
 
-	it('polymorphVariants metadata accumulates on wire context', () => {
+	it('variant deposits accumulate on wire context', () => {
 		const wired = wire({
 			name: 'test',
 			rules: {},
 			polymorphs: {
-				assignment: { '0': 'eq', '1': 'type' }
+				assignment: { '1/0': 'eq', '1/1': 'type' }
 			}
 		});
 		const origSeq = {
 			type: 'SEQ',
 			members: [
-				{ type: 'SYMBOL', name: 'a' },
-				{ type: 'SYMBOL', name: 'b' }
+				{ type: 'SYMBOL', name: 'left' },
+				{
+					type: 'CHOICE',
+					members: [
+						{ type: 'SEQ', members: [{ type: 'STRING', value: '=' }, { type: 'SYMBOL', name: 'right' }] },
+						{ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'typ' }] }
+					]
+				}
 			]
 		};
 		wired.rules.assignment!.call({}, {}, origSeq);
-		const ctx = (wired as unknown as { __wireContext__: { polymorphVariants: unknown[] } }).__wireContext__;
-		expect(ctx.polymorphVariants).toEqual([
-			{ parent: 'assignment', child: 'eq' },
-			{ parent: 'assignment', child: 'type' }
-		]);
+		const ctx = (wired as unknown as { __wireContext__: { deposits: Map<string, unknown> } }).__wireContext__;
+		expect([...ctx.deposits.keys()].sort()).toEqual(['_assignment_eq', '_assignment_type']);
 	});
 
 	it('wrapped conflicts callback appends variant-registered groups', () => {

@@ -1,8 +1,8 @@
 {
   "grammar": "python",
-  "source_hash": "ce1e7654e864683dbcd2291244bf3dc1e2468b87cbb9cf6d7cef3a0dcfa2dfa2",
+  "source_hash": "157d365ddceaca95f43cdd00f008e141f3e3e8302eb4615ceae033e0926b5514",
   "files": {
-    "packages/python/.sittir/grammar.js": "43fc5aa24108f2057ec7e1330162926877a4354c07442773a8c113b1842836a4",
+    "packages/python/.sittir/grammar.js": "a707d377bd129696a6ee6e02bca7f07d197dab42e34d6cd8d7afdfd5f2a4ee4a",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "d9d9cca8a811a769943bf8bea7ff1cd1196d8c145f580841359052861228742e",
     "packages/python/.sittir/src/grammar.json": "94e88fcabda38d91b00477b1f3a45894790e4c423411d51a499e40ca754db015",
@@ -149,7 +149,7 @@
     "packages/python/templates/with_item.jinja": "6de9ebfb84be05c1bf693a55855a5f65d4b30745e7bf7e94405ab675b3bcef8f",
     "packages/python/templates/with_statement.jinja": "892f9897b8713eda534bd82a88d4687b73dbd9c834be164af7753a27a77120b3",
     "packages/python/templates/yield.jinja": "864c1b6eaf2e8558413c893cc1fb8e4cef6dc75000675a62d374a4c454685de4",
-    "rust/crates/sittir-python/index.d.ts": "5878aaa36d84ae949fb4349f8cf130cbd2f900d148f2f5015fc43fa801641f41",
+    "rust/crates/sittir-python/index.d.ts": "5de64d1db275dffb6fb240b6e720e00c7cefde730bb4e4a75bc49ed092e9adc1",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",
     "rust/crates/sittir-python/src/lib.rs": "80862cbfa8e90bce4cdd9494b383e58d1427f499b6930f00539aea2dbe3a05d2",
     "rust/crates/sittir-python/src/render/hash.rs": "9bc8d9a878a861081c9bfbbc4405ec0d885f1b2da95b99bab81d2fe843f6b1fb",

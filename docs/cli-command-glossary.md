@@ -507,7 +507,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool propose-14 [options]
 
 ### `tool variant-derivation-probe`
 
-Assert structural variantChildKinds derivation equals the wire-derived channel
+Assert the live structural variantChildKinds derivation equals committed node-model.json5 (cross-commit drift detector)
 
 **Options**
 

@@ -48,14 +48,11 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		expect(ctx.conflictGroups).toContainEqual(['_demo_empty']);
 		expect(ctx.conflictGroups).toContainEqual(['_demo_list']);
 
-		expect(ctx.polymorphVariants).toContainEqual({
-			parent: 'demo',
-			child: 'empty'
-		});
-		expect(ctx.polymorphVariants).toContainEqual({
-			parent: 'demo',
-			child: 'list'
-		});
+		// R12/decision-7 V2 Task 2: `ctx.polymorphVariants` (the wire pair
+		// channel) is deleted — the surviving facts are the deposited hidden
+		// rules + named ALIAS arms already asserted above (lines 34-42),
+		// which is exactly what downstream `deriveStructuralVariantChildren`
+		// keys on instead of a registered pair.
 	});
 
 	it('skips hoist when no variant alternative matches empty (non-empty alts go per-patch)', () => {
@@ -77,10 +74,20 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 	it('bails on mixed choice positions (variants at different choicePos)', () => {
 		const { ctx } = withWireContext('mixed', () => {
 			const g = globalThis as any;
+			// Bare `SYMBOL` arms (no anonymous token) are unmaterializable
+			// (`variantBranchIsUnmaterializable`) and deposit nothing; use a
+			// SEQ-with-literal arm shape at each targeted position so the
+			// mint actually fires.
 			const original = g.seq(
-				g.choice({ type: 'SYMBOL', name: 'A' } as any, { type: 'SYMBOL', name: 'B' } as any),
+				g.choice(
+					{ type: 'SEQ', members: [{ type: 'STRING', value: '=' }, { type: 'SYMBOL', name: 'A' }] } as any,
+					{ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'B' }] } as any
+				),
 				{ type: 'STRING', value: '|' } as any,
-				g.choice({ type: 'SYMBOL', name: 'C' } as any, { type: 'SYMBOL', name: 'D' } as any)
+				g.choice(
+					{ type: 'SEQ', members: [{ type: 'STRING', value: '+' }, { type: 'SYMBOL', name: 'C' }] } as any,
+					{ type: 'SEQ', members: [{ type: 'STRING', value: '-' }, { type: 'SYMBOL', name: 'D' }] } as any
+				)
 			);
 			transform(original, {
 				'0/0': variant('left_a'),
@@ -88,6 +95,9 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 			});
 		});
 		expect(ctx.conflictGroups).toEqual([]);
-		expect(ctx.polymorphVariants.map((v) => v.child).sort()).toEqual(['left_a', 'right_c']);
+		// R12/decision-7 V2 Task 2: assert the per-patch (non-hoist)
+		// resolution's deposited hidden rules instead of the deleted
+		// `ctx.polymorphVariants` pair channel.
+		expect([...ctx.deposits.keys()].sort()).toEqual(['_mixed_left_a', '_mixed_right_c']);
 	});
 });

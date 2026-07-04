@@ -4266,6 +4266,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'object_type_opening': '_object_type_opening',
   'operator': '_operator',
   'parenthesized_expression_typed': '_parenthesized_expression_typed',
+  'property_identifier': '_property_identifier',
   'property_name': '_property_name',
   'public_field_definition_abstract_first': '_public_field_definition_abstract_first',
   'public_field_definition_access_first': '_public_field_definition_access_first',

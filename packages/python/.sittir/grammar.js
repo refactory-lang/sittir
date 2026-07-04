@@ -1546,14 +1546,6 @@ function wireRegisterSyntheticInline(name) {
   currentContext.syntheticInline.add(name);
   return true;
 }
-function wireRegisterPolymorphVariant(parent, child) {
-  if (!currentContext) return false;
-  const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
-  if (!exists) {
-    currentContext.polymorphVariants.push({ parent, child });
-  }
-  return true;
-}
 function wireRegisterConflict(names) {
   if (!currentContext) return false;
   if (names.length === 0) return true;
@@ -1573,7 +1565,6 @@ function wire(config, base2) {
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
-    polymorphVariants: [],
     conflictGroups: [],
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
@@ -2151,11 +2142,6 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
     const visibleName = polymorphVisibleName(parentKind, p.v.name);
     const hiddenName = polymorphHiddenName(parentKind, p.v.name);
-    if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
-      throw new Error(
-        `variant('${p.v.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`
-      );
-    }
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
@@ -2275,11 +2261,6 @@ function resolvePatch(patch, originalMember, precStack) {
         ...deField(originalMember),
         metadata: makeRuleMetadata({ fieldSource: "override" })
       };
-    }
-    if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
-      throw new Error(
-        `variant('${patch.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`
-      );
     }
     const visibleName = polymorphVisibleName(parentKind, patch.name);
     const hiddenName = polymorphHiddenName(parentKind, patch.name);

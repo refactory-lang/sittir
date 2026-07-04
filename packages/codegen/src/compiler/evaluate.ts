@@ -33,7 +33,6 @@ import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
-import type { PolymorphVariant } from './types.ts';
 
 // ---------------------------------------------------------------------------
 // Input type — anything the DSL functions accept
@@ -685,7 +684,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
 	inheritBaseGrammarMetadata(opts, ctx);
 
-	const polymorphVariants = drainPolymorphMetadata(opts);
 	const refineForms = drainRefineMetadata(opts);
 	const groups = drainGroupsMetadata(opts);
 	const polymorphsConfig = drainPolymorphsConfigMetadata(opts);
@@ -727,7 +725,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 			// calls inside externals/rules. Empty when the grammar
 			// declares no roles.
 			externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
-			polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
 			refineForms,
 			groups,
 			polymorphsConfig,
@@ -1513,23 +1510,6 @@ function resolveToEnumMembersOneLevelDeep(target: Rule<'evaluate'>): StringRule<
 		default:
 			return null;
 	}
-}
-
-/**
- * Read the polymorph-variant metadata produced by the DSL during rule
- * evaluation.
- *
- * @param opts - The options object passed to `grammar()`. When wrapped
- *   by `wire()`, opts carries a non-enumerable `__wireContext__`
- *   property whose `polymorphVariants` list is the canonical source.
- * @returns Flat `PolymorphVariant[]` for `RawGrammar.polymorphVariants`.
- * @remarks
- * All grammars now use wire() — the authoritative list is always the
- * wire context's `polymorphVariants` array.
- */
-function drainPolymorphMetadata(opts: GrammarOptions): PolymorphVariant[] {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
-	return wireCtx ? [...wireCtx.polymorphVariants] : [];
 }
 
 /**

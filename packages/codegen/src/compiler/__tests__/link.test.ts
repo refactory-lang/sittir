@@ -150,6 +150,121 @@ describe('Link — hidden rule classification', () => {
 		// Hidden choice of strings → normalized to ChoiceRule (was EnumRule).
 		expect(linked.rules['_visibility']!.type).toBe('CHOICE');
 	});
+
+	// R12/decision-7 V2 Task 1: `classifyHiddenChoiceRule` stamps `variantArms`
+	// on the `SupertypeRule` it produces — the declared structural fact that
+	// replaces the former narrow wire-metadata read in assemble.ts (see
+	// `RuleBase.variantArms`'s doc comment, types/rule.ts, and
+	// assemble.ts's `variantChildKindsSet` construction).
+	describe('classifyHiddenChoiceRule — variantArms stamp', () => {
+		it('stamps variantArms for a genuinely alias-minted SYMBOL arm (aliasedFrom present)', () => {
+			// Matches python's `_simple_pattern` shape: one arm is a SYMBOL
+			// whose `.name` is the ALIAS TARGET (visible) and `.aliasedFrom`
+			// is the hidden source — the post-link form of an
+			// `alias($._simple_pattern_negative, $.simple_pattern_negative)`
+			// construct. `identifier` is an ordinary symbol ref with no
+			// `aliasedFrom` — ordinary supertype-compatible, not alias-minted.
+			const raw = makeRaw(
+				{
+					_simple_pattern: {
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'identifier' },
+							{ type: SYMBOL, name: 'simple_pattern_negative', aliasedFrom: '_simple_pattern_negative' }
+						]
+					},
+					identifier: { type: PATTERN, value: '[a-z]+' }
+					// `simple_pattern_negative` (visible) and
+					// `_simple_pattern_negative` (hidden) intentionally have
+					// NO independent rule entries here — matching the real
+					// alias-mint shape (no separate top-level body).
+				},
+				{ supertypes: ['_simple_pattern'] }
+			);
+			const linked = link(raw);
+			expect(linked.rules['_simple_pattern']).toEqual({
+				type: 'SUPERTYPE',
+				name: '_simple_pattern',
+				subtypes: ['identifier', '_simple_pattern_negative'],
+				variantArms: ['_simple_pattern_negative']
+			});
+		});
+
+		it('omits variantArms entirely when NO arm is alias-minted (ordinary supertype — matches the pre-existing _expression test above)', () => {
+			const raw = makeRaw(
+				{
+					_expression: {
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'binary_expression' },
+							{ type: SYMBOL, name: 'identifier' }
+						]
+					},
+					binary_expression: { type: STRING, value: 'binexpr' },
+					identifier: { type: PATTERN, value: '[a-z]+' }
+				},
+				{ supertypes: ['_expression'] }
+			);
+			const linked = link(raw);
+			const rule = linked.rules['_expression'] as { variantArms?: readonly string[] };
+			expect(rule.variantArms).toBeUndefined();
+		});
+
+		it('collects ALL alias-minted arms — not just the first — while excluding ordinary sibling refs (mixed case)', () => {
+			const raw = makeRaw(
+				{
+					_pattern: {
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'identifier' },
+							{ type: SYMBOL, name: 'wildcard_pattern', aliasedFrom: '_wildcard_pattern' },
+							{ type: SYMBOL, name: 'tuple_pattern' },
+							{ type: SYMBOL, name: 'rest_pattern', aliasedFrom: '_rest_pattern' }
+						]
+					},
+					identifier: { type: PATTERN, value: '[a-z]+' },
+					tuple_pattern: { type: STRING, value: 'tuple' }
+				},
+				{ supertypes: ['_pattern'] }
+			);
+			const linked = link(raw);
+			const rule = linked.rules['_pattern'] as { variantArms?: readonly string[] };
+			expect(rule.variantArms).toEqual(['_wildcard_pattern', '_rest_pattern']);
+		});
+
+		it('a raw ALIAS member authored pre-link is alias-minted (resolveRule collapses it to SYMBOL+aliasedFrom before classification runs, matching subtypes’ own naming)', () => {
+			// `link()`'s `resolveRule` pass runs BEFORE `classifyHiddenChoiceRule`
+			// — a raw ALIAS authored in `raw.rules` (this fixture) is already a
+			// SYMBOL with `aliasedFrom` by classification time (verified: rust's
+			// real `alias($._wildcard_pattern, $.wildcard_pattern)` construct
+			// takes this exact path). `variantArms` records the SAME name
+			// `subtypes` does for this arm shape (`aliasedFrom`, the hidden
+			// source) — `isAliasMintedRef`'s bare-ALIAS branch only fires for a
+			// rule shape that survives raw INTO classification unresolved,
+			// which link's own resolve pass never produces.
+			const raw = makeRaw(
+				{
+					_pattern: {
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'identifier' },
+							{
+								type: ALIAS,
+								named: true,
+								value: 'wildcard_pattern',
+								content: { type: SYMBOL, name: '_wildcard_pattern' }
+							}
+						]
+					},
+					identifier: { type: PATTERN, value: '[a-z]+' }
+				},
+				{ supertypes: ['_pattern'] }
+			);
+			const linked = link(raw);
+			const rule = linked.rules['_pattern'] as { variantArms?: readonly string[] };
+			expect(rule.variantArms).toEqual(['_wildcard_pattern']);
+		});
+	});
 });
 
 describe('Link — field provenance', () => {
@@ -498,14 +613,13 @@ describe('Link — variant tagging + polymorph promotion', () => {
 			promotedRules: [],
 			repeatedShapes: []
 		};
-		applyOverridePolymorphs(
-			rules,
-			[
-				{ parent: 'visibility_modifier', child: 'pub_self' },
-				{ parent: 'visibility_modifier', child: 'pub_super' }
-			],
-			derivations
-		);
+		// R12/decision-7 V2 Task 2: pairs are discovered STRUCTURALLY from
+		// `rules` (`deriveStructuralVariantChildren`) — the fixture's inner
+		// choice (2 named ALIAS members targeting
+		// `visibility_modifier_pub_self`/`_super`) is alias-minted and
+		// prefix-named against `visibility_modifier`, so it's found without
+		// an explicit pairs argument.
+		applyOverridePolymorphs(rules, derivations);
 		// Parent rule stays as a choice (not replaced by flat polymorph).
 		expect(rules['visibility_modifier']!.type).toBe('CHOICE');
 		// Each variant-child hidden rule now has its body wrapped in the
@@ -528,58 +642,71 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// DE-POLYMORPH (2026-06-01): applyOverridePolymorphs no longer rewrites
 		// the parent rule into a PolymorphRule. The rule stays as the
 		// wire-produced choice so it flows through as a plain BRANCH with
-		// faithful order-preserving rendering. variant() / polymorphVariants
-		// metadata is still retained for factory submethod sugar.
-		const raw = makeRaw(
-			{
-				assignment: {
-					type: CHOICE,
-					members: [
-						{ type: SYMBOL, name: 'assignment_eq' },
-						{ type: SYMBOL, name: 'assignment_type' }
-					]
-				},
-				assignment_eq: {
-					type: SEQ,
-					members: [
-						{
-							type: FIELD,
-							name: 'left',
-							content: { type: SYMBOL, name: 'expr' }
-						},
-						{ type: STRING, value: '=' },
-						{
-							type: FIELD,
-							name: 'right',
-							content: { type: SYMBOL, name: 'expr' }
-						}
-					]
-				},
-				assignment_type: {
-					type: SEQ,
-					members: [
-						{
-							type: FIELD,
-							name: 'left',
-							content: { type: SYMBOL, name: 'expr' }
-						},
-						{ type: STRING, value: ':' },
-						{
-							type: FIELD,
-							name: 'typ',
-							content: { type: SYMBOL, name: 'expr' }
-						}
-					]
-				},
-				expr: { type: PATTERN, value: '.*' }
-			},
-			{
-				polymorphVariants: [
-					{ parent: 'assignment', child: 'eq' },
-					{ parent: 'assignment', child: 'type' }
+		// faithful order-preserving rendering. variant() metadata is still
+		// retained for factory submethod sugar.
+		//
+		// R12/decision-7 V2 Task 2: (parent, children) pairs are discovered
+		// STRUCTURALLY now (`deriveStructuralVariantChildren`), not from a
+		// `polymorphVariants` pairs argument — this fixture's choice arms
+		// must be genuinely alias-minted (named ALIAS nodes targeting
+		// `assignment_eq`/`assignment_type`, whose bodies live ONLY under
+		// the hidden `_assignment_eq`/`_assignment_type` names, matching
+		// real wire-injected shape) rather than bare SYMBOL refs to
+		// independently-authored top-level rules — the latter would fail
+		// `isAliasMintedRef` (the same coincidental-collision exclusion
+		// documented in variant-structural.ts) and never be discovered.
+		const raw = makeRaw({
+			assignment: {
+				type: CHOICE,
+				members: [
+					{
+						type: ALIAS,
+						named: true,
+						value: 'assignment_eq',
+						content: { type: SYMBOL, name: '_assignment_eq' }
+					},
+					{
+						type: ALIAS,
+						named: true,
+						value: 'assignment_type',
+						content: { type: SYMBOL, name: '_assignment_type' }
+					}
 				]
-			}
-		);
+			},
+			_assignment_eq: {
+				type: SEQ,
+				members: [
+					{
+						type: FIELD,
+						name: 'left',
+						content: { type: SYMBOL, name: 'expr' }
+					},
+					{ type: STRING, value: '=' },
+					{
+						type: FIELD,
+						name: 'right',
+						content: { type: SYMBOL, name: 'expr' }
+					}
+				]
+			},
+			_assignment_type: {
+				type: SEQ,
+				members: [
+					{
+						type: FIELD,
+						name: 'left',
+						content: { type: SYMBOL, name: 'expr' }
+					},
+					{ type: STRING, value: ':' },
+					{
+						type: FIELD,
+						name: 'typ',
+						content: { type: SYMBOL, name: 'expr' }
+					}
+				]
+			},
+			expr: { type: PATTERN, value: '.*' }
+		});
 		const linked = link(raw);
 		// Rule stays as choice (not replaced with polymorph) after de-polymorph.
 		expect(linked.rules['assignment']!.type).toBe('CHOICE');
