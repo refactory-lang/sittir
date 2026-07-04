@@ -28,7 +28,6 @@ describe('node-model emitter', () => {
 						],
 						hasTrailing: false,
 						hasLeading: false,
-						source: 'grammar',
 						sourceRuleIds: []
 					})
 				})

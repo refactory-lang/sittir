@@ -193,7 +193,7 @@ function isEnrichGroupLiftSymbol(rule) {
   const t = rule.type;
   if (t !== "SYMBOL") return false;
   const meta = rule.metadata;
-  return meta?.source === "enrich";
+  return meta?.author === "enrich";
 }
 var groupLiftRuleMap;
 function setGroupLiftRuleMap(map) {
@@ -218,7 +218,7 @@ function isEnrichContentAlias(rule) {
   const t = rule.type;
   if (t !== "ALIAS") return false;
   const meta = rule.metadata;
-  return meta?.source === "enrich";
+  return meta?.author === "enrich";
 }
 function descendThroughEnrichContentAlias(rule, segments, patch, precStack) {
   const body = rule.content;
@@ -1522,14 +1522,14 @@ function makeGroupLiftSymbol(_referenceRule, name) {
   const base2 = symbol(name);
   return {
     ...base2,
-    metadata: makeRuleMetadata({ source: "enrich", symbolSource: "group-lift" })
+    metadata: makeRuleMetadata({ author: "enrich", symbolSource: "group-lift" })
   };
 }
 function makeVisibleGroupAlias(symbolRef, name) {
   const aliasFn = nativeRuleFn("alias");
   const symbol = nativeRuleFn("symbol", "sym");
   const node = aliasFn(symbolRef, symbol(name));
-  node.metadata = makeRuleMetadata({ source: "enrich" });
+  node.metadata = makeRuleMetadata({ author: "enrich" });
   return node;
 }
 

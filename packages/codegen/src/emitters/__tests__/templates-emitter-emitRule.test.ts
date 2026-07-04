@@ -71,7 +71,6 @@ function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNontermina
 		paramName: 'value',
 		hasTrailing: false,
 		hasLeading: false,
-		source: 'grammar',
 		...overrides
 	} as AssembledNonterminal;
 }

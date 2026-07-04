@@ -39,7 +39,6 @@ import type {
 	Rule,
 	RuleBase,
 	RenderRule,
-	RuleSource,
 	SeqRule,
 	ChoiceRule,
 	RepeatRule,
@@ -1561,15 +1560,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	 * effectively immutable.
 	 */
 	irKey?: string;
-	/**
-	 * Rule<'link'>-level provenance. Mirrors the `source` field on the
-	 * underlying Rule<'link'> (EnumRule<'link'>, SupertypeRule<'link'>, PolymorphRule).
-	 * PR-P Task 2: TerminalRule removed from the list — deleted. Undefined for branches/containers/groups, which
-	 * don't have a rule-level classification. The suggested.ts emitter
-	 * surfaces nodes whose source is `'promoted'` as rule-level
-	 * override candidates.
-	 */
-	readonly source?: RuleSource;
 	abstract readonly modelType: string;
 
 	/**
@@ -1650,6 +1640,20 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	protected readonly rule: R;
 
 	/**
+	 * (debt: source-homonym resolution, decision 6) Blind opaque passthrough
+	 * of the owning rule's `RuleMetadata` bag — mirrors
+	 * `AssembledNonterminal.ruleMetadata` (PR-P1's established carry
+	 * pattern). Never read/branched on here or by any compiler consumer;
+	 * only a dsl-sanctioned reader (`dsl/rule-metadata.ts`'s
+	 * `readRuleMetadata`, from enrich/wire/diagnostics code) may open it —
+	 * e.g. node-model serialization or validator diagnostics surfacing a
+	 * link-classified ('promoted') kind as an override candidate.
+	 */
+	get ruleMetadata(): RuleMetadata | undefined {
+		return this.rule.metadata;
+	}
+
+	/**
 	 * User-facing eligibility: set at assemble time after alias-source
 	 * analysis completes. Determines whether template, factory, type,
 	 * and IR emitters should produce output for this node.
@@ -1676,7 +1680,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
-			source?: RuleSource;
 			hidden?: boolean;
 		}
 	) {
@@ -1689,7 +1692,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 		// Default: use the derived factoryName.
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
-		this.source = opts?.source;
 	}
 
 	/** A node is hidden when it has no factory (supertype, group, token). */
@@ -1762,7 +1764,6 @@ export interface AssembledNonterminalInit {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
-	readonly source: 'grammar' | 'override' | 'promoted' | 'enriched' | 'inferred';
 	/**
 	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot —
 	 * see `AssembledNonterminal.sourceRuleIds`.
@@ -1811,7 +1812,6 @@ export class AssembledNonterminal {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
-	readonly source: 'grammar' | 'override' | 'promoted' | 'enriched' | 'inferred';
 	/**
 	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot.
 	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
@@ -1835,6 +1835,15 @@ export class AssembledNonterminal {
 	get propertyName(): string { return projectSlotNaming(this).propertyName; }
 	get paramName(): string { return projectSlotNaming(this).paramName; }
 	get parseNames(): readonly string[] { return projectSlotNaming(this).parseNames; }
+	/**
+	 * True when the slot has no declared grammar `fieldName` (a positional
+	 * slot named from structure — e.g. a bare symbol ref or an unnamed
+	 * choice's `content` catch-all). This is the ONLY source of the former
+	 * `source: 'grammar' | 'inferred'` distinction (debt: source-homonym
+	 * resolution, decision 6) — `source` was a stored copy of exactly this
+	 * derivation and has been deleted. Named vs positional: derive from
+	 * `fieldName` presence directly, here or via this getter.
+	 */
 	get isUnnamed(): boolean { return this.fieldName === undefined; }
 	/** Multiplicity: 'many' when any value has array/nonEmptyArray multiplicity, 'one' otherwise. */
 	get arity(): 'one' | 'many' { return isMultiple(this) ? 'many' : 'one'; }
@@ -1846,7 +1855,6 @@ export class AssembledNonterminal {
 		this.fieldName = init.fieldName;
 		this.hasTrailing = init.hasTrailing;
 		this.hasLeading = init.hasLeading;
-		this.source = init.source;
 		this.sourceRuleIds = init.sourceRuleIds;
 		this.metadata = init.metadata ?? opaqueFacts({});
 		this.ruleMetadata = init.ruleMetadata;
@@ -1860,7 +1868,6 @@ export class AssembledNonterminal {
 			fieldName: this.fieldName,
 			hasTrailing: this.hasTrailing,
 			hasLeading: this.hasLeading,
-			source: this.source,
 			sourceRuleIds: this.sourceRuleIds,
 			metadata: this.metadata,
 			ruleMetadata: this.ruleMetadata,
@@ -2307,7 +2314,8 @@ function buildSlotsRecord(
 								: '?'
 				);
 				const mult = s.values.length > 0 ? s.values[0]!.multiplicity : 'single';
-				return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
+				const named = s.isUnnamed ? 'positional' : 'named';
+				return `    ${s.name} (${named}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
 			});
 			recordAssembleWarning({
 				code: 'storagename-collision',
@@ -2510,9 +2518,9 @@ export class AssembledBranch<
 	 * below are convenience views.
 	 *
 	 * Two pieces of the locked design are NOT yet enforced here:
-	 *   - Key remap to `'child'` / `'children'` for `source === 'inferred'`
+	 *   - Key remap to `'child'` / `'children'` for unnamed (`isUnnamed`)
 	 *     slots is deferred until grammar overrides explicitly name every
-	 *     unnamed positional position (Owner A migration). Today, inferred
+	 *     unnamed positional position (Owner A migration). Today, unnamed
 	 *     slots keep their kind-derived name to preserve byte-identity.
 	 *   - Eager validation (collision throw, >1 unnamed throw, mixed-arity
 	 *     warn) is deferred to the same future sub-phase. With kind-derived
@@ -2529,7 +2537,6 @@ export class AssembledBranch<
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
-			source?: RuleSource;
 			variantChildKinds?: readonly string[];
 			kindEntries?: readonly GeneratedKindEntry[];
 			parseKindCollisionContext?: ParseKindCollisionContext;
@@ -2833,7 +2840,13 @@ export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
 export class AssembledPolymorph extends AssembledBranch<ChoiceRule<'link'>> {
 	// No modelType override — inherits 'branch' from AssembledBranch.
 	// Resolves the P1 @ts-expect-error TS2416 that existed in the old class.
-	override readonly source: 'promoted' | 'override';
+	// (debt: source-homonym resolution, decision 6) The `source` field this
+	// class used to override was eliminated from `AssembledNodeBase` — it was
+	// dead in the live pipeline (no grammar rule ever constructs
+	// `AssembledPolymorph`; see class header) and its would-be consumer
+	// (`emitPolymorphFactory`/`emitPolymorphFrom`) never actually read it
+	// (the `_source` param name in `emitPolymorphDispatcher` was already
+	// unused). Dropped here too rather than carried as a dead field.
 	readonly #forms: AssembledGroup[];
 
 	constructor(
@@ -2841,7 +2854,6 @@ export class AssembledPolymorph extends AssembledBranch<ChoiceRule<'link'>> {
 		rule: ChoiceRule<'link'>,
 		forms: AssembledGroup[],
 		opts?: {
-			source?: 'promoted' | 'override';
 			variantChildKinds?: readonly string[];
 			factoryName?: string;
 			irKey?: string;
@@ -2856,7 +2868,6 @@ export class AssembledPolymorph extends AssembledBranch<ChoiceRule<'link'>> {
 			slotRecord
 		});
 		this.#forms = forms;
-		this.source = opts?.source ?? 'promoted';
 	}
 
 	get forms(): AssembledGroup[] { return this.#forms; }

@@ -5,7 +5,7 @@ import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
-import type { AssembledBranch, AssembledNonterminal } from '../model/node-map.ts';
+import type { AssembledBranch } from '../model/node-map.ts';
 import { classifyChildFactorySurface, classifyFactoryShape, resolveSingleFieldFactorySlot } from '../../emitters/shared.ts';
 import { runTemplateEmitter } from '../../emitters/templates.ts';
 
@@ -36,10 +36,6 @@ function getBranch(nodeMap: ReturnType<typeof buildNodeMap>, kind: string): Asse
 	return node;
 }
 
-function setSlotSource(slot: AssembledNonterminal, source: AssembledNonterminal['source']): void {
-	(slot as unknown as { source: AssembledNonterminal['source'] }).source = source;
-}
-
 describe('slot structural signals', () => {
 	it('treats fieldless slots as unnamed without consulting origin', () => {
 		const nodeMap = buildNodeMap({
@@ -68,18 +64,13 @@ describe('slot structural signals', () => {
 		expect(slot?.parseNames).toEqual(['object_type']);
 	});
 
-	it('behavior-facing emitters honor isUnnamed even if source drifts', () => {
+	it('behavior-facing emitters honor isUnnamed', () => {
 		const nodeMap = buildNodeMap({
 			box: seq({ type: 'SYMBOL', name: 'identifier' }),
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
 		});
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
-		expect(slot?.isUnnamed).toBe(true);
-		expect(resolveSingleFieldFactorySlot(box, nodeMap)).toBeUndefined();
-
-		setSlotSource(slot!, 'grammar');
-
 		expect(slot?.isUnnamed).toBe(true);
 		expect(resolveSingleFieldFactorySlot(box, nodeMap)).toBeUndefined();
 	});
@@ -92,11 +83,6 @@ describe('slot structural signals', () => {
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
 		expect(slot?.isUnnamed).toBe(true);
-		expect(classifyFactoryShape(box, nodeMap)).toBe('direct');
-		expect(classifyChildFactorySurface(box, nodeMap)).toBe('direct');
-
-		setSlotSource(slot!, 'grammar');
-
 		expect(classifyFactoryShape(box, nodeMap)).toBe('direct');
 		expect(classifyChildFactorySurface(box, nodeMap)).toBe('direct');
 	});
@@ -114,11 +100,6 @@ describe('slot structural signals', () => {
 		expect(slot?.isUnnamed).toBe(true);
 		expect(classifyFactoryShape(box, nodeMap)).toBe('spread');
 		expect(classifyChildFactorySurface(box, nodeMap)).toBe('spread');
-
-		setSlotSource(slot!, 'grammar');
-
-		expect(classifyFactoryShape(box, nodeMap)).toBe('spread');
-		expect(classifyChildFactorySurface(box, nodeMap)).toBe('spread');
 	});
 
 	it('template preservation treats unnamed alias-carried helper slots structurally', () => {
@@ -134,8 +115,6 @@ describe('slot structural signals', () => {
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
 		expect(slot?.isUnnamed).toBe(true);
-
-		setSlotSource(slot!, 'grammar');
 
 		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap });
 		expect(templates.bodies.get('box')).toContain('{{ obj }}');

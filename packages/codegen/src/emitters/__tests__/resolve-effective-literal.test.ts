@@ -30,7 +30,6 @@ function makeField(
 		propertyName: 'field',
 		configKey: 'field',
 		paramName: 'field',
-		source: 'grammar',
 		hasTrailing: false,
 		hasLeading: false,
 		...overrides

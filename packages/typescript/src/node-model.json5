@@ -4485,7 +4485,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4525,7 +4524,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4549,7 +4547,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4573,7 +4570,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4621,7 +4617,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4717,7 +4712,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4742,7 +4736,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4766,7 +4759,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4808,7 +4800,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4832,7 +4823,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4856,7 +4846,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4905,7 +4894,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4930,7 +4918,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4971,7 +4958,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4995,7 +4981,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5033,7 +5018,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5078,7 +5062,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5103,7 +5086,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5160,7 +5142,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5193,7 +5174,6 @@
               "parseKind": "comma"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5234,7 +5214,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5258,7 +5237,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5282,7 +5260,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5323,7 +5300,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5362,7 +5338,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5386,7 +5361,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5450,7 +5424,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5474,7 +5447,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5523,7 +5495,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5565,7 +5536,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5606,7 +5576,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5630,7 +5599,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5654,7 +5622,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5696,7 +5663,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5720,7 +5686,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5761,7 +5726,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5785,7 +5749,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5846,7 +5809,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5873,7 +5835,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5913,7 +5874,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5937,7 +5897,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5977,7 +5936,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6001,7 +5959,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6041,7 +5998,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6080,7 +6036,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6104,7 +6059,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6144,7 +6098,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6168,7 +6121,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6208,7 +6160,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6232,7 +6183,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6256,7 +6206,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6309,7 +6258,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6333,7 +6281,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6383,7 +6330,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6409,7 +6355,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6433,7 +6378,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6469,7 +6413,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6500,7 +6443,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6583,7 +6525,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6628,7 +6569,6 @@
               "parseKind": "var"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -6657,7 +6597,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6682,7 +6621,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6734,7 +6672,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6793,7 +6730,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6817,7 +6753,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6864,7 +6799,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6918,7 +6852,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6943,7 +6876,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6991,7 +6923,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7016,7 +6947,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7062,7 +6992,6 @@
               "parseKind": "plus"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -7096,7 +7025,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7132,7 +7060,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7278,7 +7205,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7305,7 +7231,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7329,7 +7254,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7370,7 +7294,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7419,7 +7342,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7633,7 +7555,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7674,7 +7595,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7724,7 +7644,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7750,7 +7669,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7797,7 +7715,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7821,7 +7738,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7934,7 +7850,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7969,7 +7884,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8050,7 +7964,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8074,7 +7987,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8098,7 +8010,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8122,7 +8033,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8153,7 +8063,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8190,7 +8099,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8214,7 +8122,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8283,7 +8190,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8307,7 +8213,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8344,7 +8249,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8367,7 +8271,6 @@
               "parseKind": "declare"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -8404,7 +8307,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8459,7 +8361,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8483,7 +8384,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8522,7 +8422,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8546,7 +8445,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8570,7 +8468,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8756,7 +8653,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8783,7 +8679,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8831,7 +8726,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8856,7 +8750,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8918,7 +8811,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8945,7 +8837,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9014,7 +8905,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9047,7 +8937,6 @@
               "parseKind": "qmark_dot"
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -9076,7 +8965,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9133,7 +9021,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9166,7 +9053,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9236,7 +9122,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9278,7 +9163,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9339,7 +9223,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9363,7 +9246,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9404,7 +9286,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9428,7 +9309,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9489,7 +9369,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9513,7 +9392,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9537,7 +9415,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9561,7 +9438,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9585,7 +9461,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9628,7 +9503,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9652,7 +9526,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9676,7 +9549,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9700,7 +9572,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9724,7 +9595,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9748,7 +9618,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9772,7 +9641,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9810,7 +9678,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9881,7 +9748,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9934,7 +9800,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10002,7 +9867,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10049,7 +9913,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10096,7 +9959,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10136,7 +9998,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10175,7 +10036,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10199,7 +10059,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10223,7 +10082,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10247,7 +10105,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10285,7 +10142,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10318,7 +10174,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10373,7 +10228,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10403,7 +10257,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10457,7 +10310,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10505,7 +10357,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10544,7 +10395,6 @@
               "parseKind": "using"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -10608,7 +10458,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10638,7 +10487,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10678,7 +10526,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10702,7 +10549,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10788,7 +10634,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10817,7 +10662,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10841,7 +10685,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10893,7 +10736,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10959,7 +10801,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11127,7 +10968,6 @@
               "parseKind": "in"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -11149,7 +10989,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11201,7 +11040,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11225,7 +11063,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11279,7 +11116,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11320,7 +11156,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11344,7 +11179,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11382,7 +11216,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11457,7 +11290,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11481,7 +11313,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11528,7 +11359,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11553,7 +11383,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11593,7 +11422,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11617,7 +11445,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11641,7 +11468,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11665,7 +11491,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11689,7 +11514,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11759,7 +11583,6 @@
               "parseKind": "semi"
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11801,7 +11624,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11825,7 +11647,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11849,7 +11670,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11873,7 +11693,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11897,7 +11716,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11947,7 +11765,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11987,7 +11804,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12045,7 +11861,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12084,7 +11899,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12108,7 +11922,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12132,7 +11945,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12156,7 +11968,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12214,7 +12025,6 @@
               "parseKind": "colon"
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -12236,7 +12046,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12276,7 +12085,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12300,7 +12108,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12324,7 +12131,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12348,7 +12154,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12389,7 +12194,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12413,7 +12217,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12437,7 +12240,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12461,7 +12263,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12513,7 +12314,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12537,7 +12337,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12598,7 +12397,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12692,7 +12490,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12741,7 +12538,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12766,7 +12562,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12790,7 +12585,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12838,7 +12632,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12863,7 +12656,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12917,7 +12709,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12969,7 +12760,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13019,7 +12809,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13043,7 +12832,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13067,7 +12855,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13119,7 +12906,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13179,7 +12965,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13203,7 +12988,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13243,7 +13027,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13267,7 +13050,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13307,7 +13089,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13331,7 +13112,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13355,7 +13135,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13445,7 +13224,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13484,7 +13262,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13508,7 +13285,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13532,7 +13308,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13594,7 +13369,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13660,7 +13434,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13684,7 +13457,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13735,7 +13507,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13759,7 +13530,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13813,7 +13583,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13866,7 +13635,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13890,7 +13658,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13914,7 +13681,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13938,7 +13704,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13990,7 +13755,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14029,7 +13793,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14078,7 +13841,6 @@
               "parseKind": "await"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -14114,7 +13876,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14140,7 +13901,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14164,7 +13924,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14188,7 +13947,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14250,7 +14008,6 @@
               "parseKind": "semi"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14283,7 +14040,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14308,7 +14064,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14332,7 +14087,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14374,7 +14128,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14435,7 +14188,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14459,7 +14211,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14483,7 +14234,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14507,7 +14257,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14545,7 +14294,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14571,7 +14319,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14614,7 +14361,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14638,7 +14384,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14662,7 +14407,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14686,7 +14430,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14724,7 +14467,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14750,7 +14492,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14793,7 +14534,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14817,7 +14557,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14841,7 +14580,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14865,7 +14603,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14903,7 +14640,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14929,7 +14665,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14972,7 +14707,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14996,7 +14730,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15034,7 +14767,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15077,7 +14809,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15101,7 +14832,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15125,7 +14855,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15149,7 +14878,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15187,7 +14915,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15213,7 +14940,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15256,7 +14982,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15280,7 +15005,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15304,7 +15028,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15328,7 +15051,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15366,7 +15088,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15392,7 +15113,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15442,7 +15162,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15467,7 +15186,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15607,7 +15325,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15631,7 +15348,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15655,7 +15371,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15707,7 +15422,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15758,7 +15472,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15789,7 +15502,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15814,7 +15526,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15862,7 +15573,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15916,7 +15626,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15964,7 +15673,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16004,7 +15712,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16028,7 +15735,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16068,7 +15774,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16099,7 +15804,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16145,7 +15849,6 @@
               "parseKind": "typeof"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -16181,7 +15884,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16207,7 +15909,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16231,7 +15932,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16289,7 +15989,6 @@
               "parseKind": "plus"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -16318,7 +16017,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16364,7 +16062,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16408,7 +16105,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16458,7 +16154,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16482,7 +16177,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16533,7 +16227,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16557,7 +16250,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16608,7 +16300,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16632,7 +16323,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16656,7 +16346,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16680,7 +16369,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16736,7 +16424,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16762,7 +16449,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16802,7 +16488,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16826,7 +16511,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16877,7 +16561,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16901,7 +16584,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16941,7 +16623,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16980,7 +16661,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17004,7 +16684,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17028,7 +16707,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17083,7 +16761,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17134,7 +16811,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17173,7 +16849,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17212,7 +16887,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17271,7 +16945,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17295,7 +16968,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17335,7 +17007,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17359,7 +17030,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17383,7 +17053,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17466,7 +17135,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17511,7 +17179,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17535,7 +17202,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17605,7 +17271,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17629,7 +17294,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17653,7 +17317,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17708,7 +17371,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17734,7 +17396,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17765,7 +17426,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17815,7 +17475,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17839,7 +17498,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17863,7 +17521,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17887,7 +17544,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17911,7 +17567,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17935,7 +17590,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17959,7 +17613,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17983,7 +17636,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18007,7 +17659,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18031,7 +17682,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18069,7 +17719,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18095,7 +17744,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18140,7 +17788,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18164,7 +17811,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18188,7 +17834,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18212,7 +17857,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18236,7 +17880,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18260,7 +17903,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18284,7 +17926,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18308,7 +17949,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18332,7 +17972,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18356,7 +17995,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18394,7 +18032,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18454,7 +18091,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18480,7 +18116,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18520,7 +18155,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18570,7 +18204,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18609,7 +18242,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18655,7 +18287,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18680,7 +18311,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18727,7 +18357,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18752,7 +18381,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18803,7 +18431,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18827,7 +18454,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18851,7 +18477,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18892,7 +18517,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -18973,7 +18597,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19022,7 +18645,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19047,7 +18669,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19108,7 +18729,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19150,7 +18770,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19174,7 +18793,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19198,7 +18816,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19246,7 +18863,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19321,7 +18937,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19400,7 +19015,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19444,7 +19058,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19483,7 +19096,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19532,7 +19144,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19556,7 +19167,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19580,7 +19190,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19604,7 +19213,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19635,7 +19243,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19660,7 +19267,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19684,7 +19290,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19727,7 +19332,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19751,7 +19355,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19791,7 +19394,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19853,7 +19455,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19877,7 +19478,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19917,7 +19517,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -19948,7 +19547,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20017,7 +19615,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20060,7 +19657,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20248,7 +19844,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20272,7 +19867,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20312,7 +19906,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20336,7 +19929,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20360,7 +19952,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20384,7 +19975,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20408,7 +19998,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20432,7 +20021,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20456,7 +20044,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20497,7 +20084,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20528,7 +20114,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20553,7 +20138,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20577,7 +20161,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20601,7 +20184,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20624,7 +20206,6 @@
               "parseKind": "accessor"
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -20646,7 +20227,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20670,7 +20250,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20694,7 +20273,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20718,7 +20296,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20786,7 +20363,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20825,7 +20401,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20849,7 +20424,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20919,7 +20493,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20943,7 +20516,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20967,7 +20539,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -20991,7 +20562,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21022,7 +20592,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21047,7 +20616,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21071,7 +20639,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21149,7 +20716,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21193,7 +20759,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21243,7 +20808,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21267,7 +20831,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21318,7 +20881,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21342,7 +20904,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21382,7 +20943,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21431,7 +20991,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21519,7 +21078,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21569,7 +21127,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21607,7 +21164,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21633,7 +21189,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21681,7 +21236,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21706,7 +21260,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21730,7 +21283,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21800,7 +21352,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21840,7 +21391,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21864,7 +21414,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21904,7 +21453,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21943,7 +21491,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -21967,7 +21514,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22014,7 +21560,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22068,7 +21613,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22109,7 +21653,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22155,7 +21698,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22195,7 +21737,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22219,7 +21760,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22243,7 +21783,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22307,7 +21846,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22331,7 +21869,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22394,7 +21931,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22418,7 +21954,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22442,7 +21977,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22490,7 +22024,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22515,7 +22048,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22555,7 +22087,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22610,7 +22141,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22634,7 +22164,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22658,7 +22187,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22682,7 +22210,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22724,7 +22251,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22763,7 +22289,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22802,7 +22327,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22826,7 +22350,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22866,7 +22389,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22890,7 +22412,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22914,7 +22435,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22938,7 +22458,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -22979,7 +22498,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23032,7 +22550,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23058,7 +22575,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23105,7 +22621,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23180,7 +22695,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23235,7 +22749,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23259,7 +22772,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23351,7 +22863,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23375,7 +22886,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23422,7 +22932,6 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23484,7 +22993,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23508,7 +23016,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23555,7 +23062,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23587,7 +23093,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23611,7 +23116,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23663,7 +23167,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23687,7 +23190,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23738,7 +23240,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23762,7 +23263,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -23813,7 +23313,6 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [

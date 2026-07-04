@@ -152,16 +152,16 @@ describe('dsl/rule-metadata.ts layering gate (debt PR-P1, item 5)', () => {
 	});
 
 	it('RuleMetadata is genuinely opaque — no readable property without the dsl accessor', () => {
-		const meta: RuleMetadata = makeRuleMetadata({ source: 'grammar' });
+		const meta: RuleMetadata = makeRuleMetadata({ author: 'grammar' });
 		// @ts-expect-error — RuleMetadata exposes no readable keys; the ONLY
 		// way to read a fact is `readRuleMetadata`. If this line ever stops
 		// erroring, the brand has been weakened and decision 3 (opaque
 		// metadata) is no longer type-enforced. Mirrors
 		// compiler/__tests__/opaque-facts.test.ts's identical proof for
 		// `OpaqueFacts`.
-		const leak = meta.source;
+		const leak = meta.author;
 		void leak;
 		const shape: RuleMetadataShape | undefined = readRuleMetadata(meta);
-		expect(shape?.source).toBe('grammar');
+		expect(shape?.author).toBe('grammar');
 	});
 });

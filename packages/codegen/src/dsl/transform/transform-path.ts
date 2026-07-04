@@ -206,8 +206,9 @@ export function applyPath(
 
 	// Enrich group-lift symbols are transparent to path addressing, like prec
 	// wrappers. enrich hoists `optional(seq)` / `repeat(seq)` into a SYMBOL ref
-	// tagged `metadata.source === 'enrich'` that carries the hoisted seq body on
-	// `content`. An authored patch whose path was written against the pre-hoist
+	// tagged `metadata.author === 'enrich'` (debt: source-homonym resolution,
+	// decision 6 — was `metadata.source === 'enrich'`) that carries the hoisted
+	// seq body on `content`. An authored patch whose path was written against the pre-hoist
 	// seq must travel THROUGH the symbol into that body. We descend without
 	// consuming a segment (transparent) and rebuild the symbol around the patched
 	// body. Works in both runtimes (sittir evaluate + tree-sitter generate)
@@ -219,7 +220,8 @@ export function applyPath(
 	// Enrich content-aliases are ALSO transparent to path addressing. enrich
 	// wraps an inline-unsafe `optional(seq)` / bare `choice` in
 	// `alias(<content>, $.<name>)` (the visible-kind form) tagged
-	// `metadata.source === 'enrich'`. enrich runs BEFORE the authored
+	// `metadata.author === 'enrich'` (was `metadata.source === 'enrich'`,
+	// decision 6). enrich runs BEFORE the authored
 	// transform()/variant()/groups path-patches, so a patch whose path was
 	// written against the pre-alias content must travel THROUGH the alias into
 	// that content. Without this, `descendThroughAlias` (single-content, index 0
@@ -295,22 +297,23 @@ function descendThroughPrecWrapper(
 
 /**
  * True when `rule` is an enrich-synthesized group-lift symbol — a SYMBOL ref
- * tagged `metadata.source === 'enrich'`. enrich hoists `optional(seq)` /
- * `repeat(seq)` into such a symbol and carries the original seq body inline on
- * `content` so path-descent can travel THROUGH it (see
- * `descendThroughGroupLiftSymbol`). The tag is the new canonical provenance
- * marker (the legacy top-level `source: 'group-lift'` field is being retired).
+ * tagged `metadata.author === 'enrich'` (debt: source-homonym resolution,
+ * decision 6 — was `metadata.source === 'enrich'`). enrich hoists
+ * `optional(seq)` / `repeat(seq)` into such a symbol and carries the original
+ * seq body inline on `content` so path-descent can travel THROUGH it (see
+ * `descendThroughGroupLiftSymbol`). The tag is the canonical provenance
+ * marker (the legacy top-level `source: 'group-lift'` field is retired).
  */
 function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
 	// MUST be a SYMBOL — an enrich content-alias (`alias(<content>, $.<name>)`)
-	// also carries `metadata.source === 'enrich'` but is handled separately by
+	// also carries `metadata.author === 'enrich'` but is handled separately by
 	// `isEnrichContentAlias` / `descendThroughEnrichContentAlias`. Without the
 	// type guard, an alias would match here and `descendThroughGroupLiftSymbol`
 	// would throw "group-lift symbol has no name" (an alias has no `.name`).
 	const t = (rule as { type?: string }).type;
 	if (t !== 'SYMBOL') return false;
-	const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
-	return meta?.source === 'enrich';
+	const meta = (rule as unknown as { metadata?: { author?: string } }).metadata;
+	return meta?.author === 'enrich';
 }
 
 /**
@@ -373,17 +376,19 @@ function descendThroughGroupLiftSymbol(
 
 /**
  * True when `rule` is an enrich-synthesized content-alias — an `ALIAS`
- * node tagged `metadata.source === 'enrich'`. enrich wraps an inline-unsafe
- * `optional(seq)` / bare `choice` in `alias(<content>, $.<name>)` to surface it
- * as a visible CST kind; path-descent travels THROUGH it (see
- * `descendThroughEnrichContentAlias`), unlike a normal aliased symbol (which
- * keeps `descendThroughAlias`'s single-content / index-0 behaviour).
+ * node tagged `metadata.author === 'enrich'` (debt: source-homonym
+ * resolution, decision 6 — was `metadata.source === 'enrich'`). enrich wraps
+ * an inline-unsafe `optional(seq)` / bare `choice` in `alias(<content>,
+ * $.<name>)` to surface it as a visible CST kind; path-descent travels
+ * THROUGH it (see `descendThroughEnrichContentAlias`), unlike a normal
+ * aliased symbol (which keeps `descendThroughAlias`'s single-content /
+ * index-0 behaviour).
  */
 function isEnrichContentAlias(rule: RuntimeRule): boolean {
 	const t = (rule as { type?: string }).type;
 	if (t !== 'ALIAS') return false;
-	const meta = (rule as unknown as { metadata?: { source?: string } }).metadata;
-	return meta?.source === 'enrich';
+	const meta = (rule as unknown as { metadata?: { author?: string } }).metadata;
+	return meta?.author === 'enrich';
 }
 
 /**

@@ -1285,7 +1285,6 @@ interface PolymorphNode {
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
 	readonly forms: AssembledGroup[];
-	readonly source?: 'promoted' | 'override';
 	readonly variantChildKinds?: readonly string[];
 }
 

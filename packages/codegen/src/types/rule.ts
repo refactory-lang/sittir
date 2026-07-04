@@ -365,19 +365,15 @@ export type VariantRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 
 
 /**
- * Rule-level provenance vocabulary.
- *
- *   'grammar'  — the user wrote this classification explicitly in grammar.js
- *                (e.g. `supertypes: [$._expression]` or a literal enum rule).
- *   'override' — an overrides.ts patch produced this rule.
- *   'promoted' — Link derived this classification from rule shape (hidden
- *                choice-of-strings → enum, hidden choice-of-symbols →
- *                supertype, field-free symbol-free subtree → terminal).
- *
- * Suggestion check is uniform across all rule-level sources:
- *    isSuggestion = source !== 'grammar' && source !== 'override'
+ * (debt: source-homonym resolution, decision 6) `RuleSource` ('grammar' |
+ * 'promoted' | 'override') is DELETED. It wore two different facts under
+ * one name: WHO authored a rule's text (grammar / override — now
+ * `RuleMetadataShape.author`, which also covers 'enrich' and 'evaluate'),
+ * and WHETHER a classification was declared or inferred by link's
+ * structural classifier (the former 'promoted' value — now
+ * `RuleMetadataShape.classifiedBy: 'grammar' | 'link'`, a separate axis,
+ * not an authorship fact). See `dsl/rule-metadata.ts`.
  */
-export type RuleSource = 'grammar' | 'promoted' | 'override';
 
 /**
  * EnumRule — a normalized choice-of-strings.
@@ -385,7 +381,8 @@ export type RuleSource = 'grammar' | 'promoted' | 'override';
  * PR-P: EnumRule is now a type alias for ChoiceRule. The ENUM discriminant
  * is retired; enum-ness is detected structurally via isEnumChoiceRule().
  * Shape-compatible with ChoiceRule (both expose `members`); every member
- * is a StringRule. The `source` provenance moves to `metadata.source`.
+ * is a StringRule. The provenance moves to `metadata.author`/`metadata.classifiedBy`
+ * (debt: source-homonym resolution, decision 6).
  */
 export type EnumRule<T extends PhaseName = 'normalize'> = ChoiceRule<T>;
 

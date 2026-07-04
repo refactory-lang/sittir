@@ -118,7 +118,7 @@
               "type": "SYMBOL",
               "name": "_export_clause_optional1",
               "metadata": {
-                "source": "enrich",
+                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -182,7 +182,7 @@
                   "type": "SYMBOL",
                   "name": "_export_specifier_optional1",
                   "metadata": {
-                    "source": "enrich",
+                    "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
@@ -472,7 +472,7 @@
               "type": "SYMBOL",
               "name": "_named_imports_optional1",
               "metadata": {
-                "source": "enrich",
+                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -1704,14 +1704,14 @@
                 "type": "SYMBOL",
                 "name": "_catch_clause_group1",
                 "metadata": {
-                  "source": "enrich",
+                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
               "value": "catch_clause_group1",
               "metadata": {
-                "source": "enrich"
+                "author": "enrich"
               }
             },
             {
@@ -2860,7 +2860,7 @@
               "type": "SYMBOL",
               "name": "_jsx_attribute_optional1",
               "metadata": {
-                "source": "enrich",
+                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -6417,7 +6417,7 @@
               "type": "SYMBOL",
               "name": "_formal_parameters_optional1",
               "metadata": {
-                "source": "enrich",
+                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -7109,7 +7109,7 @@
               "type": "SYMBOL",
               "name": "__jsx_start_opening_element_optional1",
               "metadata": {
-                "source": "enrich",
+                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -8260,7 +8260,7 @@
               "type": "SYMBOL",
               "name": "_enum_body_optional1",
               "metadata": {
-                "source": "enrich",
+                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -9174,7 +9174,7 @@
                   "type": "SYMBOL",
                   "name": "_infer_type_optional1",
                   "metadata": {
-                    "source": "enrich",
+                    "author": "enrich",
                     "symbolSource": "group-lift"
                   }
                 },
@@ -9762,7 +9762,7 @@
               "type": "SYMBOL",
               "name": "_mapped_type_clause_optional1",
               "metadata": {
-                "source": "enrich",
+                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -10422,7 +10422,7 @@
               "type": "SYMBOL",
               "name": "_index_signature_optional1",
               "metadata": {
-                "source": "enrich",
+                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -10525,7 +10525,7 @@
               "type": "SYMBOL",
               "name": "_tuple_type_optional1",
               "metadata": {
-                "source": "enrich",
+                "author": "enrich",
                 "symbolSource": "group-lift"
               }
             },
@@ -11767,14 +11767,14 @@
                 "type": "SYMBOL",
                 "name": "_import_clause_group1",
                 "metadata": {
-                  "source": "enrich",
+                  "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
               "value": "import_clause_group1",
               "metadata": {
-                "source": "enrich"
+                "author": "enrich"
               }
             },
             {

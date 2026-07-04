@@ -1739,7 +1739,8 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 		// Include slot details for debugging
 		const slotDetails = missing.map((m) => {
 			const s = slots.find((sl) => sl.storageName === m);
-			return s ? `${m}(src=${s.source},mult=${s.values.map((v) => v.multiplicity).join('|')},kinds=${kindsOf(s).join(',')})` : m;
+			const named = s?.isUnnamed ? 'positional' : 'named';
+			return s ? `${m}(${named},mult=${s.values.map((v) => v.multiplicity).join('|')},kinds=${kindsOf(s).join(',')})` : m;
 		});
 		throw new Error(
 			`TemplateEmitter slot-preservation violation on kind '${node.kind}' (${node.modelType}): ` +

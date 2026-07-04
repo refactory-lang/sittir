@@ -32,6 +32,32 @@ export type { PolymorphVariant, ExternalRole };
 // Evaluate rule occurrence identity and classification
 // ---------------------------------------------------------------------------
 
+/**
+ * (debt: source-homonym resolution, decision 6 — STOP, NOT migrated) Decision
+ * 6 asks for `RuleProvenance`'s three values to fold into `RuleMetadataShape`'s
+ * unified `author` field ('grammar-authored'→'grammar',
+ * 'override-authored-or-replaced'→'override', 'evaluate-synthesized'→
+ * 'evaluate'). That migration is NOT done here: `compiler/generate.ts`'s
+ * `collectEvaluateSynthesizedKinds` reads
+ * `RuleCatalogEntry.provenance === 'evaluate-synthesized'` and BRANCHES ON IT
+ * to decide which kinds get factory/wrap emission skipped
+ * (`emitters/shared.ts`'s `synthesizedKinds?.has(kind)` skip-gate) — a
+ * genuine compiler-behavior read. `generate.ts` is not a sanctioned reader of
+ * the opaque `RuleMetadata` bag (sanctioned set: dsl/enrich, dsl/wire incl.
+ * transform machinery, diagnostics-emission code — see
+ * `dsl/rule-metadata.ts`'s header). Moving this fact into `metadata.author`
+ * would force that read through the restricted `readRuleMetadata` from a
+ * non-sanctioned compiler file, which is exactly the doctrine violation
+ * decision 3 forbids. Per decision 6's own instruction ("if a compiler-side
+ * consumer BRANCHES ON IT for behavior, STOP and report"): `RuleProvenance`
+ * stays a separate, already-well-layered, non-opaque, structurally-typed
+ * field on `RuleCatalogEntry` (set once at rule-catalog construction time,
+ * never stamped-then-reread) — it is a DIFFERENT, correctly-single-sourced
+ * mechanism from the `metadata.source` / `FieldRule.source` / `SymbolRule.
+ * source` homonym family decision 6 actually targets (see this research
+ * doc's §1b table, which already marks "Rule catalog/provenance" as
+ * "single" — not one of §5.4's five broken homonyms).
+ */
 export type RuleProvenance = 'grammar-authored' | 'override-authored-or-replaced' | 'evaluate-synthesized';
 
 export type RulePathSegment =
@@ -372,13 +398,19 @@ export interface LinkedGrammar {
  * Derived source tags that can be toggled via GenerateConfig.include.
  * `grammar` and `override` are always-on — user-authored content cannot
  * be filtered out.
+ *
+ * (debt: source-homonym resolution, decision 6) `DerivedRuleSource` (the
+ * type alias formerly here, `= 'promoted'`) is deleted — a single-literal
+ * alias adds nothing, and the name invited confusion with the unrelated
+ * `RuleSource`/`author` authorship vocabulary. This `IncludeFilter.rules`
+ * knob is a different axis (an opt-in include/exclude filter for link's
+ * INFERRED classifications, declared by the caller), not a provenance fact.
  */
-type DerivedRuleSource = 'promoted';
 type DerivedFieldSource = 'enriched' | 'inferred';
 
 export interface IncludeFilter {
 	/** Derived rule classifications to KEEP. Defaults to all. */
-	readonly rules?: readonly DerivedRuleSource[];
+	readonly rules?: readonly 'promoted'[];
 	/** Derived field provenances to KEEP. Defaults to all. */
 	readonly fields?: readonly DerivedFieldSource[];
 }

@@ -1,11 +1,11 @@
 {
   "grammar": "python",
-  "source_hash": "b5642581eee2250d3d12ad2bd0d6f06babbf80d0496aba7692cc6501c3ecba5c",
+  "source_hash": "200cbb52ee75bb5745bf54b490b4e2a1ad29a3a0d543446ae7eaeee3c4c15c9b",
   "files": {
-    "packages/python/.sittir/grammar.js": "8b9e7b3d4faaf6305cc562d16469f1f55202e551ed45ed94aea0588dd5d1e0ee",
+    "packages/python/.sittir/grammar.js": "43fc5aa24108f2057ec7e1330162926877a4354c07442773a8c113b1842836a4",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "d9d9cca8a811a769943bf8bea7ff1cd1196d8c145f580841359052861228742e",
-    "packages/python/.sittir/src/grammar.json": "fb0a08a7ef32bef0906b5694e47a2830adb555a76508e97d3cbf0199a0e2667b",
+    "packages/python/.sittir/src/grammar.json": "94e88fcabda38d91b00477b1f3a45894790e4c423411d51a499e40ca754db015",
     "packages/python/.sittir/src/node-types.json": "121c3b6df07c259bf2ccc0b0959a9064d5f9e063ea97711d239cde175cac0a9d",
     "packages/python/.sittir/src/parser.c": "7500ae66d387a9958e69c5c028a637519add1218af6bf2093132ac8ff97e9d7e",
     "packages/python/.sittir/src/scanner.c": "6db82134ac2d4c90a1a1475487a625cface02662ebda9b7478cad9c7147e9afe",
@@ -25,7 +25,7 @@
     "packages/python/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/python/src/ir.ts": "ff3ab1f767d35d3720a0dd957598dbd9169f41a3c01ca8b840f6329176e12fec",
     "packages/python/src/is.ts": "3bb675d2a1bc92f15ced31755d77a9744f357b6b9df03c9b642c6f6dab5aec5b",
-    "packages/python/src/node-model.json5": "e1c14536f45e43b83151f22503056a1237cf4840a9c1156462de1cda12ed3eb5",
+    "packages/python/src/node-model.json5": "1fa98a0a5b5c3999f323488a9cc3552d00445810cf5080aaace2b622589050bf",
     "packages/python/src/type-test.ts": "161d1501d5f521b705f586f46154cfec9ff974f6b3054a4d0075e749e0641662",
     "packages/python/src/types.ts": "2b340c18b07acd16536af53801b5a0140842cd17125333f39484d25a3846397d",
     "packages/python/src/utils.ts": "b6265835f7a8605008a7d0d0188362d6ebe5a73876c19a94c0193d52b5532c9c",

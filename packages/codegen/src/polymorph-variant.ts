@@ -10,6 +10,22 @@
  * see it.
  */
 
+/**
+ * (debt: source-homonym resolution, decision 6 — W4, STOP, NOT removed)
+ * Decision 6 asks node-model's `polymorphVariants.<kind>.source` to be
+ * dropped from the schema unless a consumer reads it for more than
+ * diagnostics. Verified: `packages/tools/src/validate/common.ts`'s
+ * `inferOverrideHelperVariant`/`inferPolymorphVariant` (`switch (desc.source)`)
+ * and `read-render-parse.ts`'s `if (desc.source !== 'override') continue`
+ * both branch runtime behavior on this field. It is NOT the authorship/
+ * provenance homonym decision 6 targets — `source` here is this type's OWN
+ * discriminant tag (structurally identical in role to `rule.type`), not a
+ * "who authored this" fact; its two values name which of the two shapes
+ * below is present, exactly like any other discriminated union. Removing it
+ * would break `nodeToConfig`'s runtime variant dispatch (the JSON is this
+ * union's wire format — there is no compile-time narrowing once round-
+ * tripped through node-model.json5). Left untouched.
+ */
 export type PolymorphVariantDescriptor =
 	| {
 			readonly source: 'override';
