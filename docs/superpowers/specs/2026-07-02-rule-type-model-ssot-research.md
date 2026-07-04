@@ -511,6 +511,19 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
    agree; resolving placeholders pre-bundle means emitting post-wire RESOLVED
    rules instead of bundling the transform machinery — a research-first item
    (it touches the dual-runtime boundary itself), not a mechanical sweep.
+   REFINEMENT (user, 2026-07-04): the end-state is stronger than placeholder
+   removal — the variant/form surface is DERIVED STRUCTURALLY AT ASSEMBLE
+   TIME: any choice of named kinds (branch/group kinds, or a leaf nested
+   under a branch node) automatically gets the variant/form surface, named
+   by the child kind (e.g. `binaryExpression.plus`). Authored `variant()`
+   tagging stops being the source of the classification (fact-taxonomy
+   alignment: polymorph/variant are node facts derived from structure);
+   with nothing variant-specific authored grammar-side, the placeholder
+   protocol has nothing to carry and dissolves by construction. The
+   research item scopes: what structural predicate defines the surface,
+   how the 43 authored variant() calls' information content (names,
+   groupings) maps or retires, and what the bundle still needs at CLI-time
+   once variant() is out of the wire path.
    Related small cleanups identified alongside (independent, dispatchable):
    (a) dead `emitPolymorph` dispatch arms for the retired `modelType:
    'polymorph'`; (b) `PolymorphVariantDescriptor.source` → `definedBy`
