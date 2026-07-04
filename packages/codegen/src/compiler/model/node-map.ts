@@ -713,9 +713,9 @@ function classifyTopLevelShape(rule: Rule<'link'>): string {
 	//     branches hoisted / merged.
 	//  - `group` / `alias` / `token` wrappers mid-tree: simplify should
 	//     peel them.
-	//  - `polymorph` anywhere: polymorphs have their own assemble path
-	//     (AssembledPolymorph). Reaching derivation means classification
-	//     missed it.
+	//  - `polymorph` anywhere: the PolymorphRule IR type (and its
+	//     AssembledPolymorph node class) are retired. Reaching derivation
+	//     with one means a legacy/synthetic rule object leaked in.
 	switch (rule.type) {
 		case SEQ: {
 			for (const m of rule.members) {
@@ -1154,8 +1154,8 @@ export function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: s
  * canonical unit and recursing through wrappers/choices/nested-seqs
  * when the structure demands it. What it rejects:
  *
- *   - `alias` / `group` / `polymorph` — simplify strips the first two,
- *     assemble classifies the third into its own AssembledPolymorph.
+ *   - `alias` / `group` / `polymorph` — simplify strips the first two;
+ *     the third is a retired IR type that no longer exists at runtime.
  *     Reaching them here is a real canonicalization gap.
  *
  *   - `variant` / `clause` — post-variant-adoption these should be
@@ -2331,77 +2331,6 @@ function buildSlotsRecord(
 	return Object.freeze(out);
 }
 
-function freezeSlotRecord(slots: readonly AssembledNonterminal[]): Readonly<Record<string, AssembledNonterminal>> {
-	const out: Record<string, AssembledNonterminal> = {};
-	for (const slot of slots) {
-		out[slot.name] = slot;
-	}
-	return Object.freeze(out);
-}
-
-/**
- * Relax a multiplicity so a slot that is ABSENT in some polymorph forms is
- * not over-asserted as always-present: `single` → `optional`, `nonEmptyArray`
- * → `array`. Used by polymorph cross-form slot merging
- * (`structuralSlotRecordFromForms`).
- */
-function relaxMultiplicityForCrossFormAbsence(multiplicity: Multiplicity): Multiplicity {
-	switch (multiplicity) {
-		case 'single':
-			return 'optional';
-		case 'nonEmptyArray':
-			return 'array';
-		case 'optional':
-		case 'array':
-			return multiplicity;
-		default:
-			return assertNever(multiplicity);
-	}
-}
-
-function relaxSlotForCrossFormAbsence(slot: AssembledNonterminal): AssembledNonterminal {
-	return slot.with({
-		values: dedupeValues(
-			slot.values.map((value) => ({
-				...value,
-				multiplicity: relaxMultiplicityForCrossFormAbsence(value.multiplicity)
-			}))
-		)
-	});
-}
-
-function structuralSlotRecordFromForms(
-	forms: readonly AssembledGroup[],
-	ctx?: DeriveCtx
-): Readonly<Record<string, AssembledNonterminal>> {
-	const slots = new Map<string, AssembledNonterminal>();
-	const slotPresence = new Map<string, number>();
-	for (const form of forms) {
-		for (const slot of Object.values(form.slots)) {
-			slotPresence.set(slot.name, (slotPresence.get(slot.name) ?? 0) + 1);
-			const existing = slots.get(slot.name);
-			if (!existing) {
-				slots.set(slot.name, slot);
-				continue;
-			}
-			slots.set(slot.name, existing.with({
-				values: dedupeValues([...existing.values, ...slot.values]),
-				hasTrailing: existing.hasTrailing || slot.hasTrailing,
-				hasLeading: existing.hasLeading || slot.hasLeading,
-				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, slot.sourceRuleIds),
-			}));
-		}
-	}
-	const relaxedSlots = [...slots.values()].map((slot) =>
-		(slotPresence.get(slot.name) ?? 0) < forms.length ? relaxSlotForCrossFormAbsence(slot) : slot
-	);
-	const resolvedSlots =
-		ctx?.kindName === undefined
-			? relaxedSlots
-			: resolveParseKindCollisions(relaxedSlots, { ...ctx, kindName: ctx.kindName });
-	return freezeSlotRecord(resolvedSlots);
-}
-
 /**
  * Determine whether a single slot is auto-stamp-eligible for the purposes
  * of the `parameterless` getter on compounds (AssembledBranch / AssembledGroup).
@@ -2821,62 +2750,6 @@ export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
 				return assertNever(r);
 		}
 	}
-}
-
-/**
- * AssembledPolymorph — dead-class shell retained for import-compat after PR-M-φ2.
- *
- * No grammar rule ever produces `modelType:'polymorph'` at runtime — the
- * PolymorphRule IR type was removed. Every `instanceof AssembledPolymorph` or
- * `node.modelType === 'polymorph'` branch in emitter code is unreachable dead
- * code. This class exists only so those import sites compile without changes;
- * they will be purged in PR-I.
- *
- * The `@ts-expect-error TS2416` suppression that previously appeared on the
- * `modelType` override (the Codex P1) is resolved here: the override is gone
- * entirely — `modelType` is inherited as `'branch'` from `AssembledBranch`.
- * Callers comparing `node.modelType === 'polymorph'` will simply never match.
- */
-export class AssembledPolymorph extends AssembledBranch<ChoiceRule<'link'>> {
-	// No modelType override — inherits 'branch' from AssembledBranch.
-	// Resolves the P1 @ts-expect-error TS2416 that existed in the old class.
-	// (debt: source-homonym resolution, decision 6) The `source` field this
-	// class used to override was eliminated from `AssembledNodeBase` — it was
-	// dead in the live pipeline (no grammar rule ever constructs
-	// `AssembledPolymorph`; see class header) and its would-be consumer
-	// (`emitPolymorphFactory`/`emitPolymorphFrom`) never actually read it
-	// (the `_source` param name in `emitPolymorphDispatcher` was already
-	// unused). Dropped here too rather than carried as a dead field.
-	readonly #forms: AssembledGroup[];
-
-	constructor(
-		kind: string,
-		rule: ChoiceRule<'link'>,
-		forms: AssembledGroup[],
-		opts?: {
-			variantChildKinds?: readonly string[];
-			factoryName?: string;
-			irKey?: string;
-			parseKindCollisionContext?: ParseKindCollisionContext;
-		}
-	) {
-		const slotRecord = structuralSlotRecordFromForms(forms, { kindName: kind, collision: opts?.parseKindCollisionContext });
-		super(kind, rule, rule as Rule<'link'>, rule as RenderRule, {
-			factoryName: opts?.factoryName,
-			irKey: opts?.irKey,
-			variantChildKinds: opts?.variantChildKinds,
-			slotRecord
-		});
-		this.#forms = forms;
-	}
-
-	get forms(): AssembledGroup[] { return this.#forms; }
-	/** Always empty — no PolymorphForm IR type exists anymore. */
-	get formRules(): readonly never[] { return []; }
-	get allFormFields(): readonly AssembledNonterminal[] { return this.#forms.flatMap((f) => f.fields); }
-	get structuralFields(): readonly AssembledNonterminal[] { return this.fields; }
-	get structuralSlots(): readonly AssembledNonterminal[] { return Object.values(this.slots); }
-	override get fields(): readonly AssembledNonterminal[] { return Object.values(this.slots); }
 }
 
 /**
@@ -3397,7 +3270,6 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 
 export type AssembledNode =
 	| AssembledBranch
-	| AssembledPolymorph
 	| AssembledPattern
 	| AssembledKeyword
 	| AssembledToken

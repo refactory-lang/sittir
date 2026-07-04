@@ -1411,9 +1411,9 @@ export { simplifyRule };
 // extractFields — walk rule tree, collect fields with derived metadata
 // ---------------------------------------------------------------------------
 
-// extractForms — deleted. PolymorphRule.forms is built by Normalize's
-// promotePolymorph pass; assemble builds AssembledGroup instances from
-// those forms directly (see the 'polymorph' case of the switch above).
+// extractForms — deleted along with the PolymorphRule IR type and its
+// AssembledPolymorph node class; no 'polymorph' classification exists in
+// assemble's dispatch anymore.
 
 // ---------------------------------------------------------------------------
 // Naming

@@ -4,10 +4,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
 	AssembledEnum,
-	AssembledGroup,
 	AssembledKeyword,
 	AssembledPattern,
-	AssembledPolymorph,
 	AssembledSupertype
 } from '../../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
@@ -184,43 +182,6 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, ['string_literal']));
 	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['_literal', 'identifier']));
 	return nodeMapWith(nodes);
-}
-
-function makePolymorphSingularChildrenNodeMap(): NodeMap {
-	const identRule: SeqRule<'link'> = {
-		type: SEQ,
-		members: [{ type: SYMBOL, name: 'identifier' }]
-	};
-	const integerRule: SeqRule<'link'> = {
-		type: SEQ,
-		members: [{ type: SYMBOL, name: 'integer' }]
-	};
-	const parentRule: ChoiceRule<'link'> = {
-		type: CHOICE,
-		members: [
-			{ type: SYMBOL, name: 'expression__form_identifier' },
-			{ type: SYMBOL, name: 'expression__form_integer' }
-		]
-	};
-	const identifierForm = new AssembledGroup('expression__form_identifier', identRule, identRule, deleteWrapper(identRule), {
-		name: 'identifier',
-		parentKind: 'expression'
-	});
-	const integerForm = new AssembledGroup('expression__form_integer', integerRule, integerRule, deleteWrapper(integerRule), {
-		name: 'integer',
-		parentKind: 'expression'
-	});
-	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'expression',
-		new AssembledPolymorph('expression', parentRule, [identifierForm, integerForm])
-	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
-	return nodeMapWith(
-		nodes,
-		new Set(['expression__form_identifier', 'expression__form_integer'])
-	);
 }
 
 function makeSupertypeAndSubtypeChildrenNodeMap(): NodeMap {
@@ -471,28 +432,6 @@ describe('native transport emission', () => {
 		expect(structBody).not.toContain('pub children: Option<');
 		expect(structBody).not.toContain('pub children: Vec<');
 		expect(structBody).not.toContain('OneOrMany<');
-	});
-
-	it('emits polymorph singular unnamed children as bare transport values', () => {
-		const emitted = emitRenderModule(
-			'rust',
-			[
-				{
-					filename: 'expression.jinja',
-					content: '{# @generated #}\n{{ children }}'
-				}
-			],
-			makePolymorphSingularChildrenNodeMap()
-		);
-		const start = emitted.transportRs.contents.indexOf('pub struct ExpressionTransport');
-		const end = emitted.transportRs.contents.indexOf('}', start);
-		const structBody = emitted.transportRs.contents.slice(start, end);
-
-		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: ExpressionChildTransportSlot,'
-		);
-		expect(structBody).not.toContain('pub children: Option<');
-		expect(structBody).not.toContain('pub children: Vec<');
 	});
 
 	it('collapses supertype-plus-subtype unnamed children to the supertype transport directly', () => {

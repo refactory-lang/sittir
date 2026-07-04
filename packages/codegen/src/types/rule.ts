@@ -428,9 +428,10 @@ export function isEnumChoiceRule<R extends AnyRule>(
  * only prior reader was link.ts's own stamp-then-reread
  * (`classifyAndLogHiddenRules`), converted to return-value dataflow (see
  * `classifyHiddenChoiceRule`'s new return shape). Unlike
- * `PolymorphVariantDescriptor.source` (polymorph-variant.ts — a genuine
- * structural discriminant of a tagged union), this was pure carried
- * provenance with no structural role.
+ * `PolymorphVariantDescriptor.definedBy` (polymorph-variant.ts — a genuine
+ * structural discriminant of a tagged union, renamed from `source` per
+ * decision 7 cleanup b), this was pure carried provenance with no
+ * structural role.
  */
 export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SUPERTYPE;

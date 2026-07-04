@@ -11,30 +11,28 @@
  */
 
 /**
- * (debt: source-homonym resolution, decision 6 — W4, STOP, NOT removed)
- * Decision 6 asks node-model's `polymorphVariants.<kind>.source` to be
- * dropped from the schema unless a consumer reads it for more than
- * diagnostics. Verified: `packages/tools/src/validate/common.ts`'s
- * `inferOverrideHelperVariant`/`inferPolymorphVariant` (`switch (desc.source)`)
- * and `read-render-parse.ts`'s `if (desc.source !== 'override') continue`
- * both branch runtime behavior on this field. It is NOT the authorship/
- * provenance homonym decision 6 targets — `source` here is this type's OWN
- * discriminant tag (structurally identical in role to `rule.type`), not a
- * "who authored this" fact; its two values name which of the two shapes
- * below is present, exactly like any other discriminated union. Removing it
- * would break `nodeToConfig`'s runtime variant dispatch (the JSON is this
- * union's wire format — there is no compile-time narrowing once round-
- * tripped through node-model.json5). Left untouched.
+ * (source-homonym resolution, decision 6 outcome revision — renamed, not
+ * removed.) This field is the descriptor's OWN discriminated-union tag
+ * (structurally identical in role to `rule.type`), not the authorship/
+ * provenance homonym decision 6 targets: its two values name which of the
+ * two shapes below is present. It drives live variant dispatch —
+ * `packages/tools/src/validate/common.ts`'s `inferOverrideHelperVariant` /
+ * `inferPolymorphVariant` (`switch (desc.definedBy)`) and
+ * `read-render-parse.ts`'s `if (desc.definedBy !== 'override') continue` —
+ * and the JSON serialized into node-model.json5 is this union's wire
+ * format, so there is no compile-time narrowing once round-tripped.
+ * Renamed from `source` → `definedBy` (decision 7 small cleanup b) so the
+ * stem no longer collides with the provenance vocabulary.
  */
 export type PolymorphVariantDescriptor =
 	| {
-			readonly source: 'override';
+			readonly definedBy: 'override';
 			readonly childKind: Readonly<Record<string, string>>;
 			readonly helperKind?: Readonly<Record<string, string>>;
 			readonly helperChildKind?: Readonly<Record<string, readonly string[]>>;
 	  }
 	| {
-			readonly source: 'promoted';
+			readonly definedBy: 'promoted';
 			readonly fields: Readonly<Record<string, readonly string[]>>;
 	  };
 

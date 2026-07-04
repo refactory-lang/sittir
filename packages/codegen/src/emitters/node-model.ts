@@ -23,7 +23,6 @@ import type { Rule } from '../types/rule.ts';
 import type {
 	AssembledNode,
 	AssembledNonterminal,
-	AssembledGroup,
 	NodeOrTerminal,
 	UnresolvedRef
 } from '../compiler/model/node-map.ts';
@@ -62,18 +61,6 @@ interface SerializedSlot {
 interface SerializedField extends SerializedSlot {
 	paramName: string;
 	projection: { typeName: string; kinds: string[] };
-}
-
-interface SerializedForm {
-	kind: string;
-	name: string;
-	typeName: string;
-	factoryName?: string;
-	irKey?: string;
-	detectToken?: string;
-	parentKind?: string;
-	fields: SerializedField[];
-	children: SerializedSlot[];
 }
 
 interface SerializedNodeBase {
@@ -121,13 +108,6 @@ interface SerializedGroupNode extends SerializedNodeBase {
 	children: SerializedSlot[];
 }
 
-interface SerializedPolymorph extends SerializedNodeBase {
-	modelType: 'polymorph';
-	polymorphSource: 'promoted' | 'override';
-	variantChildKinds: string[];
-	forms: SerializedForm[];
-}
-
 interface SerializedLeaf extends SerializedNodeBase {
 	modelType: 'pattern';
 	pattern?: string;
@@ -172,7 +152,6 @@ interface SerializedMulti extends SerializedNodeBase {
 type SerializedNode =
 	| SerializedBranch
 	| SerializedGroupNode
-	| SerializedPolymorph
 	| SerializedLeaf
 	| SerializedKeyword
 	| SerializedToken
@@ -349,20 +328,6 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				elementKinds: extractElementKinds(node.elementRule)
 			};
 	}
-}
-
-function serializeForm(form: AssembledGroup): SerializedForm {
-	return {
-		kind: form.kind,
-		name: form.name,
-		typeName: form.typeName,
-		factoryName: form.factoryName,
-		irKey: form.irKey,
-		detectToken: form.detectToken,
-		parentKind: form.parentKind,
-		fields: form.fields.map(serializeField),
-		children: []
-	};
 }
 
 function serializeField(field: AssembledNonterminal): SerializedField {

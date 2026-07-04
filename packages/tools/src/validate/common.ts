@@ -2085,7 +2085,7 @@ function inferOverrideHelperVariant(
 ): { variant: string; helperKind: string } | undefined {
 	if (!parentKind) return undefined;
 	const desc = opts.polymorphVariants?.[parentKind];
-	if (!desc || desc.source !== 'override') return undefined;
+	if (!desc || desc.definedBy !== 'override') return undefined;
 	const variant = inferPolymorphVariant(
 		desc,
 		data,
@@ -2182,7 +2182,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 			);
 			if (v !== undefined) {
 				out.$variant = v;
-				if (desc.source === 'override') {
+				if (desc.definedBy === 'override') {
 					promoteOverrideVariantChildSurface(data, desc.childKind, desc.helperKind?.[v], v, opts, out);
 				}
 			}
@@ -2210,7 +2210,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
  * whose base form legitimately matches no specialized variant), but the
  * resolver runs once per NODE — so an un-guarded `console.warn` floods
  * the validator output with hundreds of identical lines. Key by
- * `${source}:${parentKind}` and warn once per process; the first
+ * `${definedBy}:${parentKind}` and warn once per process; the first
  * occurrence still carries the full structural detail. Authoritative
  * diagnosis of genuinely-unresolvable polymorphs belongs at codegen
  * (dispatch is by child kind only — no runtime structural recovery),
@@ -2228,7 +2228,7 @@ function inferPolymorphVariant(
 	firstNamedChildKindHint?: string,
 	namedChildKindHints?: readonly string[]
 ): string | undefined {
-	switch (desc.source) {
+	switch (desc.definedBy) {
 		case 'override':
 			return inferFromChildKind(
 				desc.childKind,
@@ -2251,7 +2251,7 @@ function inferPolymorphVariant(
 /**
  * Resolve a variant tag by looking up the first named child's kind in
  * the `childKind` map. Used for polymorphs where each form is a
- * distinct child node kind (source='override').
+ * distinct child node kind (definedBy='override').
  */
 function inferFromChildKind(
 	childKind: Readonly<Record<string, string>>,
@@ -2344,7 +2344,7 @@ function inferFromChildKind(
 	if (!seenPolymorphResolveWarnings.has(warnKey)) {
 		seenPolymorphResolveWarnings.add(warnKey);
 		console.warn(
-			`[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
+			`[nodeToConfig] polymorph '${parentKind}' (definedBy=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
 				(cstNodeKindHint && cstNodeKindHint !== kind ? `CST node '${cstNodeKindHint}'. ` : '') +
 				(distinctHints.length > 0 ? `CST named children [${distinctHints.join(', ')}]. ` : '') +
 				(firstNamedChildKindHint && firstNamedChildKindHint !== kind ? `CST hint '${firstNamedChildKindHint}'. ` : '') +
@@ -2528,7 +2528,7 @@ function inferFromFieldPresence(
 	if (!seenPolymorphResolveWarnings.has(warnKey)) {
 		seenPolymorphResolveWarnings.add(warnKey);
 		console.warn(
-			`[nodeToConfig] polymorph '${parentKind}' (source=promoted): no variant matched derived-config keys [${Object.keys(derivedConfig).join(', ')}]. ` +
+			`[nodeToConfig] polymorph '${parentKind}' (definedBy=promoted): no variant matched derived-config keys [${Object.keys(derivedConfig).join(', ')}]. ` +
 				`Forms: ${entries.map(([n, f]) => `${n}=[${f.join(',')}]`).join('; ')} (further occurrences suppressed)`
 		);
 	}
