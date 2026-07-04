@@ -75,23 +75,30 @@ The ctx takes ONE phase parameter driving everything (replacing
 
 ## 3. Link builds up, never mutates phase in place (user, 2026-07-04)
 
-Today link mutates the rules record in place, migrating values
-evaluate→link mid-pass — untypeable, and the source of both the classifier
-pre-resolve-snapshot bug (fixed in V2) and PR #136's LinkCtx finding.
-End-state:
+CORRECTED DIAGNOSIS (2026-07-04, verified per-phase): EVERY phase already
+builds its output in a fresh accumulator — link included (`const rules:
+Record<string, Rule<'link'>> = {}` filled by `resolveRule`; `raw.rules` is
+never phase-mutated). Evaluate/normalize perform same-phase in-place
+rewrites on their OWN accumulators (fixpoints) — acceptable precedent,
+unchanged. The real smear is CTX-VIEW ALIASING, not mutation: `LinkCtx.rules`
+is wired to `raw.rules` (evaluate-phase input) while typed `Rule<'link'>`,
+and the same ctx instance then serves post-resolve passes that conceptually
+operate on the accumulator — one mislabeled field serving two views across
+the phase's lifetime (the source of both the V2 classifier-snapshot bug and
+PR #136's finding). End-state:
 
-- Link reads `ctx.grammar.rules` (immutable `Rule<'evaluate'>` view) and
-  ACCUMULATES resolved rules into a fresh `Record<string, Rule<'link'>>`,
-  cloned into the `LinkedGrammar` it constructs. No value changes phase in
-  place.
-- Every intra-link read site chooses EXPLICITLY: the raw input view (e.g.
-  `mintContentAliasKinds`, `isClauseHoistVisibleGroupAlias` — pre-resolve
-  facts) or the accumulator (post-resolve facts, e.g. classification of
-  already-resolved targets). The two-map dataflow makes resolution-order
-  dependencies visible instead of implicit in mutation order.
-- Passes that are order-dependent on the accumulator must either (a) run
-  after the accumulation loop completes (preferred — phase-internal
-  staging), or (b) document the ordering invariant at the read site.
+- `LinkCtx = BaseCtx<'evaluate'>`: `ctx.grammar` is the honest raw view;
+  the `Rule<'link'>` mislabel is unrepresentable.
+- The accumulator is handed EXPLICITLY to the post-resolve passes
+  (classification, mintContentAliasKinds' mint loop, liftSeparators, …) —
+  each read site names which view it consults: `ctx.grammar.rules`
+  (pre-resolve facts, e.g. `isClauseHoistVisibleGroupAlias`) vs the
+  accumulator parameter (post-resolve facts). No dataflow restructure —
+  only view-plumbing honesty; same-phase in-place rewrites on the
+  accumulator stay.
+- Passes order-dependent on the accumulator run after the resolve loop
+  (already true today) with the ordering invariant documented at the read
+  site.
 
 ## 4. Out of scope / preserved
 
