@@ -524,6 +524,15 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
    how the 43 authored variant() calls' information content (names,
    groupings) maps or retires, and what the bundle still needs at CLI-time
    once variant() is out of the wire path.
+   CLARIFICATION (user, 2026-07-04): `variant()` in overrides.ts is JUST
+   SYNTACTIC SUGAR for giving grammar kinds to nested (otherwise-anonymous)
+   choice arms — its entire information content is a kind name for a branch
+   that has none. Consequently: arms that are ALREADY named kinds need no
+   authoring at all (their form surface derives from structure); variant()'s
+   only residual job is kind-minting for anonymous arms (equivalent to the
+   author writing an explicit alias), and everything downstream ($variant,
+   polymorphVariants, validator inference) derives from the resulting
+   named-kind structure — never from variant() as a classification signal.
    Related small cleanups identified alongside (independent, dispatchable):
    (a) dead `emitPolymorph` dispatch arms for the retired `modelType:
    'polymorph'`; (b) `PolymorphVariantDescriptor.source` → `definedBy`
