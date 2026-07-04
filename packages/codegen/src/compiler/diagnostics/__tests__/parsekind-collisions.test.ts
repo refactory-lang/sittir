@@ -5,7 +5,6 @@ import { link } from '../../link.ts';
 import { normalizeGrammar } from '../../normalize.ts';
 import { assemble, AssembleCtx } from '../../assemble.ts';
 import type { RawGrammar } from '../../types.ts';
-import { AssembledNonterminal, AssembledPolymorph } from '../../model/node-map.ts';
 import { diagnoseParseKindCollisions } from '../parsekind-collisions.ts';
 
 function buildNodeMap(rules: Record<string, unknown>) {
@@ -156,72 +155,6 @@ describe('diagnoseParseKindCollisions', () => {
 		const host = nodeMap.nodes.get('host');
 		expect(host?.modelType).toBe('branch');
 		const slot = Object.values((host as { slots: Record<string, { values: readonly unknown[] }> }).slots)[0];
-		expect(slot?.values).toHaveLength(3);
-	});
-
-	it('assemble preserves polymorph slots when a parent introduces a non-injective merged slot', () => {
-		const mkSlot = (storageKind: string) =>
-			new AssembledNonterminal({
-				fieldName: 'value',
-				values: [
-					{
-						node: { kind: 'unresolved-ref', name: storageKind },
-						parseKind: { kind: 'unresolved-ref', name: 'shared' },
-						multiplicity: 'single',
-					},
-				],
-				hasTrailing: false,
-				hasLeading: false,
-				sourceRuleIds: [],
-			});
-
-		const forms = [
-			{ slots: { shared: mkSlot('left') } },
-			{ slots: { shared: mkSlot('shared') } },
-			{ slots: { shared: mkSlot('right') } },
-		] as any;
-
-		expect(
-			() =>
-				new AssembledPolymorph(
-					'host',
-					{
-						type: 'polymorph',
-						source: 'promoted',
-						forms: [],
-					} as any,
-					forms,
-					{
-						parseKindCollisionContext: {
-							ruleSignatures: {
-								left: 'pattern:[a-z]+',
-								shared: 'seq(field:body)',
-								right: 'pattern:[0-9]+'
-							}
-						}
-					}
-				)
-		).not.toThrow();
-
-		const polymorph = new AssembledPolymorph(
-			'host',
-			{
-				type: 'polymorph',
-				source: 'promoted',
-				forms: [],
-			} as any,
-			forms,
-			{
-				parseKindCollisionContext: {
-					ruleSignatures: {
-						left: 'pattern:[a-z]+',
-						shared: 'seq(field:body)',
-						right: 'pattern:[0-9]+'
-					}
-				}
-			}
-		);
-		const slot = Object.values(polymorph.slots)[0];
 		expect(slot?.values).toHaveLength(3);
 	});
 });

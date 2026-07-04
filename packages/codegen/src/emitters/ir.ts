@@ -260,11 +260,9 @@ export function emitIr(config: EmitIrConfig): string {
 
 /**
  * Factory+from bundle expression, shared by flat and grouped emission.
- * Polymorphs with >1 form also carry per-variant form bundles. Kinds
- * with refine() metadata carry per-form bundles keyed by the form's
- * camelCase short name (e.g. `ir.interfaceBody.curly`). Branches and
- * polymorphs call the loose `from()` path by default and expose the raw
- * factory as `.strict`.
+ * Kinds with refine() metadata carry per-form bundles keyed by the form's
+ * camelCase short name (e.g. `ir.interfaceBody.curly`). Branches call the
+ * loose `from()` path by default and expose the raw factory as `.strict`.
  */
 function bundleExpr(node: AssembledNode, refineInfo?: RefineKindInfo): string {
 	if (node.modelType === 'branch') {

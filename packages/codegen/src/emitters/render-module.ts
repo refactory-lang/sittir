@@ -133,8 +133,6 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 
 	emitBranch(_node: Extract<AssembledNode, { modelType: 'branch' }>): void {}
 
-	emitPolymorph(_node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {}
-
 	emitGroup(_node: Extract<AssembledNode, { modelType: 'group' }>): void {}
 
 	finalize(templates: EmittedTemplates): RenderModuleBundle {
@@ -1929,13 +1927,6 @@ function filtersModule(): string {
  * field or children slot types across all assembled nodes. Only these
  * supertypes need per-supertype transport enum emission.
  *
- * Covers both `projection.nodes` (concrete transport nodes) and the forms
- * of any polymorph nodes within them. Polymorph form kinds are excluded from
- * `projection.nodes` by `isConcreteTransportNode`, but their transport structs
- * are still emitted by `renderPolymorphTransportDefs` — any supertype used in a
- * form's children slot must also be included here so the enum is declared
- * before the form struct references it.
- *
  * @param nodes - assembled nodes (transport projection)
  * @param nodeMap - for classification
  */
@@ -3201,14 +3192,6 @@ function renderTransportStruct(
 		// Enum modelType: emit a Rust enum type with FromNapiValue / Display / RenderableTransport.
 		return renderEnumType(node, hasNapi, kindEntries);
 	}
-	const slotModel = renderSlotModelOf(node);
-	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap);
-}
-
-function renderPolymorphTransportDefs(
-	node: Extract<AssembledNode, { modelType: 'polymorph' }>,
-	nodeMap: NodeMap
-): string[] {
 	const slotModel = renderSlotModelOf(node);
 	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap);
 }

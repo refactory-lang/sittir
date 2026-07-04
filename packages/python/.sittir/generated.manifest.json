@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "3d05601400738d505d9d8d7715f3b99bd646f09e7cc38f92483ca8a77d7026e3",
+  "source_hash": "4c3c2b2c6709a1afa5bcb7c1e0fd7654b4e1418aa44dbe1641f0c85381758f4c",
   "files": {
     "packages/python/.sittir/grammar.js": "43fc5aa24108f2057ec7e1330162926877a4354c07442773a8c113b1842836a4",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
@@ -19,13 +19,13 @@
     "packages/python/src/consts.ts": "364607fe79a4a85fa752ad42c6b5089b2cdf160cd81386f7012aacda09c95e25",
     "packages/python/src/engine.ts": "33c3032a1e1ae0697bb95aaf11e1827cdbdc152946aff9e630b30c90c5163594",
     "packages/python/src/factories.ts": "2f7f5090acaa57af65116e89f43675411be8cc8c46475262039219eebd2a7098",
-    "packages/python/src/from.ts": "c06b687841ab82a62776a5b8cb9f566c0b256589f9aa2a551be0104e8a980d2b",
+    "packages/python/src/from.ts": "806698fcdf592a5d860c541857d5ac7184c7a850a6219c23598ee39a744091e1",
     "packages/python/src/grammar.ts": "b2df57c7e9a7c7318514dbf36268ee3bb9543f972793b33d98f2ae3541595dcc",
     "packages/python/src/hash.ts": "7fb273845dbb1cf1a853092d4146f0817ea803b2ee96749420b4910939be1233",
     "packages/python/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/python/src/ir.ts": "ff3ab1f767d35d3720a0dd957598dbd9169f41a3c01ca8b840f6329176e12fec",
     "packages/python/src/is.ts": "3bb675d2a1bc92f15ced31755d77a9744f357b6b9df03c9b642c6f6dab5aec5b",
-    "packages/python/src/node-model.json5": "1fa98a0a5b5c3999f323488a9cc3552d00445810cf5080aaace2b622589050bf",
+    "packages/python/src/node-model.json5": "a4f4c69f9e6c1aeb2be3a9d15212811985a86884002e1e7ca07d43585b75bfa2",
     "packages/python/src/type-test.ts": "161d1501d5f521b705f586f46154cfec9ff974f6b3054a4d0075e749e0641662",
     "packages/python/src/types.ts": "2b340c18b07acd16536af53801b5a0140842cd17125333f39484d25a3846397d",
     "packages/python/src/utils.ts": "b6265835f7a8605008a7d0d0188362d6ebe5a73876c19a94c0193d52b5532c9c",

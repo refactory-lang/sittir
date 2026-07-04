@@ -16,7 +16,6 @@ import {
 	AssembledToken,
 	AssembledEnum,
 	AssembledSupertype,
-	AssembledGroup,
 	isNodeRef,
 	isTerminalValue,
 	isUnresolvedRef,
@@ -508,34 +507,6 @@ export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMa
 		out.push({ kind: 'nodeKind', value: node.typeName, rawKind });
 	}
 	return out;
-}
-
-export interface PolymorphLiteralDispatchCase {
-	readonly literal: string;
-	readonly formFromFn: string;
-}
-
-export function collectPolymorphLiteralDispatchCases(
-	forms: readonly AssembledGroup[],
-	nodeMap: NodeMap
-): PolymorphLiteralDispatchCase[] {
-	const formByLiteral = new Map<string, string>();
-	const ambiguous = new Set<string>();
-	for (const form of forms) {
-		if (!form.fromFunctionName) continue;
-		const configurableFields = form.fields.filter((field) => !isAutoStampField(field, nodeMap));
-		if (configurableFields.some((field) => isRequired(field))) continue;
-		const literal = form.name;
-		if (ambiguous.has(literal)) continue;
-		const existing = formByLiteral.get(literal);
-		if (existing !== undefined && existing !== form.fromFunctionName) {
-			formByLiteral.delete(literal);
-			ambiguous.add(literal);
-			continue;
-		}
-		formByLiteral.set(literal, form.fromFunctionName);
-	}
-	return [...formByLiteral.entries()].map(([literal, formFromFn]) => ({ literal, formFromFn }));
 }
 
 // ---------------------------------------------------------------------------

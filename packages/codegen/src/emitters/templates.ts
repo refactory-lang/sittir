@@ -41,7 +41,6 @@ import type {
 	AssembledBranch,
 	AssembledNode,
 	AssembledNonterminal,
-	AssembledPolymorph,
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, Multiplicity } from '../types/rule.ts';
@@ -188,10 +187,6 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		this.#emitNode(node);
 	}
 
-	emitPolymorph(node: AssembledNode): void {
-		this.#emitNode(node);
-	}
-
 	emitGroup(node: AssembledNode): void {
 		this.#emitNode(node);
 	}
@@ -255,12 +250,8 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 // ---------------------------------------------------------------------------
 // Per-modelType emit functions
 //
-// Three of the four modelTypes (`branch`, `group`, `multi`) carry a single
-// `rule` whose Jinja shape is fully captured by `emitRule`. The polymorph
-// case is the outlier: each form is a synthesized `AssembledGroup` with its
-// own `rule` + `name`, and the emitted template wraps each form's body in a
-// `{%- if $variant == "X" -%}...{%- endif -%}` guard so the renderer can
-// dispatch per-form at runtime.
+// Each structural modelType (`branch`, `group`, `multi`) carries a single
+// `rule` whose Jinja shape is fully captured by `emitRule`.
 //
 // Exported so the modelType-emit test suite can exercise each function in
 // isolation against minimal in-memory fixtures (no NodeMap construction
@@ -1755,7 +1746,7 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
  * tools don't have to duplicate the loop.
  *
  * Dispatches each node by its modelType, calling the appropriate per-type
- * emitter method (emitLeaf, emitBranch, emitPolymorph, emitGroup), and
+ * emitter method (emitLeaf, emitBranch, emitGroup), and
  * applies the skip-emit gate via classifyTemplateEmission.
  *
  * @param config Grammar, NodeMap, and optional grammar SHA

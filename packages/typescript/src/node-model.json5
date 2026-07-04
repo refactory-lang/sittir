@@ -45,14 +45,14 @@
   "polymorphFormKinds": [],
   "polymorphVariants": {
     "_export_statement_default": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "_export_statement_default_from_arm": "from_arm",
         "_export_statement_default_decl_arm": "decl_arm"
       }
     },
     "_export_statement_default_from_arm": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "_export_statement_default_from_arm_star_from": "star_from",
         "_export_statement_default_from_arm_ns_from": "ns_from",
@@ -60,20 +60,20 @@
       }
     },
     "ambient_declaration": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "ambient_declaration_global": "global",
         "ambient_declaration_module": "module"
       }
     },
     "arrow_function": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "arrow_function_parameter": "parameter"
       }
     },
     "call_expression": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "call_expression_call": "call",
         "call_expression_template_call": "template_call",
@@ -81,7 +81,7 @@
       }
     },
     "class_body": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "class_body_method": "method",
         "class_body_method_sig": "method_sig",
@@ -89,13 +89,13 @@
       }
     },
     "class_heritage": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "class_heritage_extends_clause": "extends_clause"
       }
     },
     "export_statement": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "export_statement_default": "default",
         "export_statement_type_export": "type_export",
@@ -104,31 +104,31 @@
       }
     },
     "import_clause": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "import_clause_default_import": "default_import"
       }
     },
     "import_specifier": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "import_specifier_as": "as"
       }
     },
     "index_signature": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "index_signature_colon": "colon"
       }
     },
     "parenthesized_expression": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "parenthesized_expression_typed": "typed"
       }
     },
     "public_field_definition": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "public_field_definition_declare_first": "declare_first",
         "public_field_definition_access_first": "access_first",
@@ -138,7 +138,7 @@
       }
     },
     "update_expression": {
-      "source": "override",
+      "definedBy": "override",
       "childKind": {
         "update_expression_postfix": "postfix",
         "update_expression_prefix": "prefix"
