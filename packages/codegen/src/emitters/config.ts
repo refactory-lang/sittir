@@ -14,12 +14,13 @@ export function emitConfig(_config: EmitConfigConfig): string {
 	lines.push('export default defineConfig({');
 	lines.push('  test: {');
 	lines.push("    include: ['tests/**/*.test.ts'],");
-	// Force the JS (Nunjucks) render backend for factory/render tests.
-	// The nodes.test.ts stubs use minimal `{ $type, $text }` placeholders
-	// that satisfy the JS render templates but not the native transport
-	// validator's recursive structure checks. The native-path integration
-	// tests live in separate test files and are not affected.
-	lines.push("    env: { SITTIR_BACKEND: 'js' },");
+	// Force the native (Rust napi) render backend. Production consumers run
+	// `--backend native`; the JS dispatch engine is deprecated (see
+	// CLAUDE.md). `SITTIR_BACKEND=native` also disables the silent
+	// native->JS fallback (backend.ts computeBackend), so a missing/stale
+	// native binary fails the suite loudly instead of quietly exercising
+	// the deprecated engine.
+	lines.push("    env: { SITTIR_BACKEND: 'native' },");
 	lines.push('  },');
 	lines.push('});');
 	lines.push('');
