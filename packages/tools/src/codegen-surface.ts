@@ -48,6 +48,7 @@ const MODULES = {
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
 	suggested: '../../codegen/src/emitters/suggested.ts',
+	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -69,6 +70,7 @@ export interface CodegenSurface {
 	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
 	suggested: typeof import('../../codegen/src/emitters/suggested.ts');
+	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -152,11 +154,16 @@ export async function resolveEntryPath(grammar: string): Promise<string> {
 	return existsSync(overrides) ? overrides : grammarJs;
 }
 
-/** Run evaluate → link → normalize → assemble for one grammar, returning its NodeMap. */
-export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
+/** Run evaluate → link → normalize for one grammar, returning its NormalizedGrammar. */
+export async function buildNormalizedGrammar(grammar: string): Promise<NormalizedGrammar> {
 	const entryPath = await resolveEntryPath(grammar);
 	const raw = await invoke('evaluate', 'evaluate', entryPath);
 	const linked = await invoke('link', 'link', raw);
-	const normalized = await invoke('normalize', 'normalizeGrammar', linked);
+	return invoke('normalize', 'normalizeGrammar', linked);
+}
+
+/** Run evaluate → link → normalize → assemble for one grammar, returning its NodeMap. */
+export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
+	const normalized = await buildNormalizedGrammar(grammar);
 	return invoke('assemble', 'assemble', normalized);
 }

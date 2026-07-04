@@ -505,6 +505,21 @@ Principle #14 signature-conformance ratchet (classify pipeline fns; fail on base
 pnpm exec tsx packages/cli/src/cli.ts tool propose-14 [options]
 ```
 
+### `tool variant-derivation-probe`
+
+Assert structural variantChildKinds derivation equals the wire-derived channel
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+- `--all-grammars` — Run every grammar (rust, typescript, python)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool variant-derivation-probe [options]
+```
+
 ### `tool walk`
 
 Walk a parsed tree and print kind counts
