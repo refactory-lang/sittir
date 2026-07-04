@@ -25,7 +25,7 @@ describe('arguments', () => {
 
 describe('array_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.arrayExpression();
+    const node = ir.arrayExpression({ type: "_array_expression_semi" } as never);
     expect(node.$type).toBe(TSKindId.ArrayExpression);
     expect(node.$source).toBe(2);
   });
@@ -185,7 +185,7 @@ describe('bounded_type', () => {
 
 describe('bracketed_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.bracketedType();
+    const node = ir.bracketedType({ type: "_type" } as never);
     expect(node.$type).toBe(TSKindId.BracketedType);
     expect(node.$source).toBe(2);
   });
@@ -339,7 +339,7 @@ describe('declaration_list', () => {
 
 describe('delim_token_tree', () => {
   it('factory produces correct type', () => {
-    const node = ir.delimTokenTree();
+    const node = ir.delimTokenTree({ type: "_delim_token_tree_paren" } as never);
     expect(node.$type).toBe(TSKindId.DelimTokenTree);
     expect(node.$source).toBe(2);
   });
@@ -359,7 +359,7 @@ describe('dynamic_type', () => {
 
 describe('else_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.elseClause();
+    const node = ir.elseClause({ type: "block" } as never);
     expect(node.$type).toBe(TSKindId.ElseClause);
     expect(node.$source).toBe(2);
   });
@@ -408,7 +408,7 @@ describe('escape_sequence', () => {
 
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionStatement();
+    const node = ir.expressionStatement({ type: "_expression_statement_with_semi" } as never);
     expect(node.$type).toBe(TSKindId.ExpressionStatement);
     expect(node.$source).toBe(2);
   });
@@ -516,7 +516,7 @@ describe('for_expression', () => {
 
 describe('for_lifetimes', () => {
   it('factory produces correct type', () => {
-    const node = ir.forLifetimes();
+    const node = ir.forLifetimes({ type: "lifetime" } as never);
     expect(node.$type).toBe(TSKindId.ForLifetimes);
     expect(node.$source).toBe(2);
   });
@@ -802,7 +802,7 @@ describe('lifetime_parameter', () => {
 
 describe('line_comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.lineComment();
+    const node = ir.lineComment({ type: "_line_comment_regular_dslash" } as never);
     expect(node.$type).toBe(TSKindId.LineComment);
     expect(node.$source).toBe(2);
   });
@@ -956,7 +956,7 @@ describe('negative_literal', () => {
 
 describe('or_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.orPattern();
+    const node = ir.orPattern({ type: "_or_pattern_binary" } as never);
     expect(node.$type).toBe(TSKindId.OrPattern);
     expect(node.$source).toBe(2);
   });
@@ -1032,7 +1032,7 @@ describe('qualified_type', () => {
 
 describe('range_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.rangeExpression();
+    const node = ir.rangeExpression({ type: "_range_expression_binary" } as never);
     expect(node.$type).toBe(TSKindId.RangeExpression);
     expect(node.$source).toBe(2);
   });
@@ -1334,7 +1334,7 @@ describe('token_repetition_pattern', () => {
 
 describe('token_tree', () => {
   it('factory produces correct type', () => {
-    const node = ir.tokenTree();
+    const node = ir.tokenTree({ type: "_token_tree_paren" } as never);
     expect(node.$type).toBe(TSKindId.TokenTree);
     expect(node.$source).toBe(2);
   });
@@ -1342,7 +1342,7 @@ describe('token_tree', () => {
 
 describe('token_tree_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.tokenTreePattern();
+    const node = ir.tokenTreePattern({ type: "_token_tree_pattern_paren" } as never);
     expect(node.$type).toBe(TSKindId.TokenTreePattern);
     expect(node.$source).toBe(2);
   });
@@ -1446,7 +1446,7 @@ describe('tuple_type', () => {
 
 describe('type_arguments', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeArguments();
+    const node = ir.typeArguments({ type: "_type_argument" } as never);
     expect(node.$type).toBe(TSKindId.TypeArguments);
     expect(node.$source).toBe(2);
   });
@@ -1502,7 +1502,7 @@ describe('type_parameter', () => {
 
 describe('type_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeParameters();
+    const node = ir.typeParameters({ type: "_attributed_type_parameter" } as never);
     expect(node.$type).toBe(TSKindId.TypeParameters);
     expect(node.$source).toBe(2);
   });
@@ -1632,7 +1632,7 @@ describe('variadic_parameter', () => {
 
 describe('visibility_modifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.visibilityModifier();
+    const node = ir.visibilityModifier({ type: "crate" } as never);
     expect(node.$type).toBe(TSKindId.VisibilityModifier);
     expect(node.$source).toBe(2);
   });
@@ -1680,7 +1680,7 @@ describe('yield_expression', () => {
 
 describe('visibility_modifier_group1', () => {
   it('factory produces correct type', () => {
-    const node = ir.visibilityModifierGroup1();
+    const node = ir.visibilityModifierGroup1({ type: "self" } as never);
     expect(node.$type).toBe(TSKindId._VisibilityModifierGroup1);
     expect(node.$source).toBe(2);
   });

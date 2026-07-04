@@ -226,24 +226,20 @@ function emitContainerTest(
 	// child containers require one `child?` and repeated containers take
 	// `...children` rest args. We need a placeholder element when:
 	//   - the singular child is required, OR
-	//   - any multi children slot is `nonEmpty` (repeat1-sourced)
+	//   - the multi children slot is `nonEmpty` (repeat1-sourced)
 	//     — the factory's `_assertNonEmpty` helper throws on empty
 	//     input, so the no-arg form `ir.kind()` would fail at
 	//     runtime even though it type-checks.
 	//
-	// NOTE: the unnamed slot backing a container factory now lives in
-	// `node.fields` (post-unification), never `node.children` (always `[]`,
-	// see AssembledBranch/AssembledGroup). This placeholder derivation was
-	// not migrated when that happened, so `placeholder` has been
-	// unconditionally `''` since — every container-kind test invokes
-	// `ir.<key>()` with no args. Preserved as-is here: fixing the derivation
-	// to read `node.fields` would change generated test output, which is out
-	// of scope for this dead-getter removal pass.
-	const children: readonly AssembledNonterminal[] = [];
-	const first = children[0];
-	const requiredSingular = first && !isMultiple(first) && isRequired(first);
-	const anyNonEmpty = children.some((c) => isNonEmpty(c));
-	const firstKindName = first ? slotKindNames(first)[0] : undefined;
+	// The unnamed slot backing a container factory lives at `node.fields[0]`
+	// (post-unification) — the same fact `emitContainerFactory` in
+	// factories.ts keys off (`const slot = node.fields[0]`) to decide
+	// `anyMultiple`/`anyNonEmpty`/required. Read it here too, so the test
+	// placeholder matches what the factory actually requires.
+	const slot = node.fields[0];
+	const requiredSingular = slot && !isMultiple(slot) && isRequired(slot);
+	const anyNonEmpty = slot ? isNonEmpty(slot) : false;
+	const firstKindName = slot ? slotKindNames(slot)[0] : undefined;
 	const placeholder =
 		(requiredSingular || anyNonEmpty) && firstKindName ? `{ type: ${JSON.stringify(firstKindName)} } as never` : '';
 

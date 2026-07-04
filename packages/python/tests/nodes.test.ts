@@ -41,7 +41,7 @@ describe('as_pattern', () => {
 
 describe('assert_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.assertStatement();
+    const node = ir.assertStatement({ type: "expression" } as never);
     expect(node.$type).toBe(TSKindId.AssertStatement);
     expect(node.$source).toBe(2);
   });
@@ -162,7 +162,7 @@ describe('case_clause', () => {
 
 describe('case_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.casePattern();
+    const node = ir.casePattern({ type: "_as_pattern" } as never);
     expect(node.$type).toBe(TSKindId.CasePattern);
     expect(node.$source).toBe(2);
   });
@@ -239,7 +239,7 @@ describe('complex_pattern', () => {
 
 describe('concatenated_string', () => {
   it('factory produces correct type', () => {
-    const node = ir.concatenatedString();
+    const node = ir.concatenatedString({ type: "string" } as never);
     expect(node.$type).toBe(TSKindId.ConcatenatedString);
     expect(node.$source).toBe(2);
   });
@@ -316,7 +316,7 @@ describe('default_parameter', () => {
 
 describe('delete_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.deleteStatement();
+    const node = ir.deleteStatement({ type: "_expressions" } as never);
     expect(node.$type).toBe(TSKindId.DeleteStatement);
     expect(node.$source).toBe(2);
   });
@@ -372,7 +372,7 @@ describe('dictionary_splat', () => {
 
 describe('dictionary_splat_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictionarySplatPattern();
+    const node = ir.dictionarySplatPattern({ type: "identifier" } as never);
     expect(node.$type).toBe(TSKindId.DictionarySplatPattern);
     expect(node.$source).toBe(2);
   });
@@ -380,7 +380,7 @@ describe('dictionary_splat_pattern', () => {
 
 describe('dotted_name', () => {
   it('factory produces correct type', () => {
-    const node = ir.dottedName();
+    const node = ir.dottedName({ type: "identifier" } as never);
     expect(node.$type).toBe(TSKindId.DottedName);
     expect(node.$source).toBe(2);
   });
@@ -445,7 +445,7 @@ describe('exec_statement', () => {
 
 describe('expression_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionList();
+    const node = ir.expressionList({ type: "expression" } as never);
     expect(node.$type).toBe(TSKindId.ExpressionList);
     expect(node.$source).toBe(2);
   });
@@ -453,7 +453,7 @@ describe('expression_list', () => {
 
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionStatement();
+    const node = ir.expressionStatement({ type: "expression" } as never);
     expect(node.$type).toBe(TSKindId.ExpressionStatement);
     expect(node.$source).toBe(2);
   });
@@ -571,7 +571,7 @@ describe('generic_type', () => {
 
 describe('global_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.globalStatement();
+    const node = ir.globalStatement({ type: "identifier" } as never);
     expect(node.$type).toBe(TSKindId.GlobalStatement);
     expect(node.$source).toBe(2);
   });
@@ -702,7 +702,7 @@ describe('lambda', () => {
 
 describe('lambda_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.lambdaParameters();
+    const node = ir.lambdaParameters({ type: "_parameters" } as never);
     expect(node.$type).toBe(TSKindId.LambdaParameters);
     expect(node.$source).toBe(2);
   });
@@ -771,7 +771,7 @@ describe('list_splat', () => {
 
 describe('list_splat_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.listSplatPattern();
+    const node = ir.listSplatPattern({ type: "identifier" } as never);
     expect(node.$type).toBe(TSKindId.ListSplatPattern);
     expect(node.$source).toBe(2);
   });
@@ -832,7 +832,7 @@ describe("none", () => {
 
 describe('nonlocal_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.nonlocalStatement();
+    const node = ir.nonlocalStatement({ type: "identifier" } as never);
     expect(node.$type).toBe(TSKindId.NonlocalStatement);
     expect(node.$source).toBe(2);
   });
@@ -872,7 +872,7 @@ describe('parameters', () => {
 
 describe('parenthesized_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesizedExpression();
+    const node = ir.parenthesizedExpression({ type: "expression" } as never);
     expect(node.$type).toBe(TSKindId.ParenthesizedExpression);
     expect(node.$source).toBe(2);
   });
@@ -880,7 +880,7 @@ describe('parenthesized_expression', () => {
 
 describe('parenthesized_list_splat', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesizedListSplat();
+    const node = ir.parenthesizedListSplat({ type: "parenthesized_list_splat" } as never);
     expect(node.$type).toBe(TSKindId.ParenthesizedListSplat);
     expect(node.$source).toBe(2);
   });
@@ -897,7 +897,7 @@ describe("pass_statement", () => {
 
 describe('pattern_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.patternList();
+    const node = ir.patternList({ type: "pattern" } as never);
     expect(node.$type).toBe(TSKindId.PatternList);
     expect(node.$source).toBe(2);
   });
@@ -949,7 +949,7 @@ describe('return_statement', () => {
 
 describe('set', () => {
   it('factory produces correct type', () => {
-    const node = ir.set();
+    const node = ir.set({ type: "_collection_elements" } as never);
     expect(node.$type).toBe(TSKindId.Set);
     expect(node.$source).toBe(2);
   });
@@ -1074,7 +1074,7 @@ describe('tuple_pattern', () => {
 
 describe('type', () => {
   it('factory produces correct type', () => {
-    const node = ir.type();
+    const node = ir.type({ type: "expression" } as never);
     expect(node.$type).toBe(TSKindId.Type);
     expect(node.$source).toBe(2);
   });
@@ -1094,7 +1094,7 @@ describe('type_alias_statement', () => {
 
 describe('type_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeParameter();
+    const node = ir.typeParameter({ type: "type" } as never);
     expect(node.$type).toBe(TSKindId.TypeParameter);
     expect(node.$source).toBe(2);
   });
@@ -1138,7 +1138,7 @@ describe('unary_operator', () => {
 
 describe('union_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.unionPattern();
+    const node = ir.unionPattern({ type: "_simple_pattern" } as never);
     expect(node.$type).toBe(TSKindId.UnionPattern);
     expect(node.$source).toBe(2);
   });
@@ -1170,7 +1170,7 @@ describe('while_statement', () => {
 
 describe('with_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.withClause();
+    const node = ir.withClause({ type: "_with_clause_bare" } as never);
     expect(node.$type).toBe(TSKindId.WithClause);
     expect(node.$source).toBe(2);
   });
