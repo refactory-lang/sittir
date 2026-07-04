@@ -547,3 +547,28 @@ packages/*/.sittir/src/grammar.json packages/*/.sittir/src/parser.c` +
    completion or special-case operator tokens earlier. **Recommendation: block
    on per-slot enums; the example then falls out of decision 1(c)+2 with no
    token-specific machinery.**
+
+## RESOLUTIONS (user, 2026-07-04)
+
+All six recommendations ACCEPTED, with two clarifications:
+
+- **Decision 1 (predicate scope), clarified:** the V4 widening (option c)
+  applies only when the kind has EXACTLY ONE choice slot — assessed at
+  whatever level the choice appears when traveling DOWNWARD through the rule
+  tree (not top-level-body-only; a single choice nested under wrappers/seq
+  positions qualifies; two-plus choice slots anywhere on the walk
+  disqualifies). The qualifying choice's arms may be HIDDEN or VISIBLE
+  kinds. Additionally: emit a DIAGNOSTIC when a form-surface arm kind is
+  enrich-created (per the retained `author: 'enrich'` metadata, a sanctioned
+  diagnostics read) — enrich-minted names (`_parent_optional1`-style) yield
+  user-unfriendly form names, so the diagnostic proposes an authored rename.
+- **Decision 5 (variant() role), extended then narrowed:** a candidate
+  SECOND residual purpose was considered — variant() as a VISIBLE-ALIAS
+  applier (making a hidden kind visible, or renaming for factory DX, e.g.
+  `binaryExpression.plus` → `binaryExpression.add`). USER LEANING (accepted
+  as the working position): do NOT use variant() for renaming — it has no
+  parse-time benefit (even when it makes a hidden kind visible) and is
+  principally factory-side DX, so if form-name ergonomics ever demand it,
+  the mechanism belongs on the factory/naming side (an overrides naming
+  table), not as a grammar-side authored signal. variant()'s sole surviving
+  job remains kind-minting for anonymous arms.
