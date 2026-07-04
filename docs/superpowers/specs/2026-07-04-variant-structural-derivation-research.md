@@ -572,6 +572,14 @@ All six recommendations ACCEPTED, with two clarifications:
   the mechanism belongs on the factory/naming side (an overrides naming
   table), not as a grammar-side authored signal. variant()'s sole surviving
   job remains kind-minting for anonymous arms.
+  AMENDMENT (user, 2026-07-04): the factory-side naming mechanism is
+  APPROVED in principle as a dedicated overrides.ts construct — working
+  shape `label(...)` or `form('1/0', 'add')` (positional patch-map key →
+  DX-friendly form name). Semantics: pure naming metadata for the DERIVED
+  form surface — no grammar/parse effect, no kind minting, no visibility
+  change; strictly distinct from variant() (which mints parser-visible
+  kinds for anonymous arms). Sequencing: lands with V4's per-slot form
+  surfaces (decision 2), not before; V0–V3 are unaffected.
 
 ## V1 OUTCOME (2026-07-04, REVIEWED-ADDITIVE per the revised contract)
 
