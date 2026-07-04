@@ -5,6 +5,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { allSlotsOf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -22,7 +23,8 @@ import {
 	isMultiple,
 	isNonEmpty,
 	slotKindNames,
-	keywordPresenceKind
+	keywordPresenceKind,
+	resolveFieldStorageInfo
 } from './shared.ts';
 
 export interface EmitTestsConfig {
@@ -375,54 +377,46 @@ function emitEnumTest(
 }
 
 /**
- * Resolve a slot kind name to the first concrete (parser-symbol-bearing)
- * kind, expanding supertypes recursively.
+ * Resolve a slot's candidate kind names to the first one reachable that has
+ * a plain leaf/keyword/enum/token shape (safe as a `$text`-only stub),
+ * expanding supertypes recursively. Falls back to the first concrete
+ * candidate (leaf or not) when no leaf-shaped descendant exists anywhere in
+ * `candidates`.
  *
  * @remarks
- * Test stubs that construct `{ $type: '<kind>', ... }` children need the
- * kind to have a numeric TSKindId so `assertTransportValue` can match it.
- * Supertype kinds (e.g. `_expression`) and TSGrammar-only inlined rules
- * have no parser symbol — passing them as `$type` strings will fail the
- * transport validator. This function descends into subtypes until it
- * finds a concrete kind that has a factory and (when kindEntries is
- * provided) a parser symbol. Falls back to the input kind when no
- * concrete descendant is found.
+ * PR (gen-tests-native-backend): this used to fall back to a
+ * grammar-global "safe leaf" (`identifier`) whenever no leaf was found
+ * among a *single* starting kind's supertype expansion. That is unsound:
+ * `identifier` is frequently not a member of the target field's transport
+ * slot at all (e.g. a `MatchPatternTransport` field, or a
+ * `UnaryExpressionOperatorEnum` field), so native's strict transport
+ * `FromNapiValue` rejects it ("unknown kind id 1 in ..."). The native JS
+ * render engine tolerated this because it does not validate structural/enum
+ * conformance — only the native transport layer does — so the bug was
+ * invisible under `SITTIR_BACKEND=js`.
  *
- * @param kind - Starting kind name (may be a supertype or TSGrammar-only kind).
- * @param nodeMap - Assembled node map for subtype lookup.
+ * The fix: only resolve *within* the field's own candidate kinds (plus
+ * their supertype expansions), never substitute an unrelated kind from
+ * elsewhere in the grammar. When every candidate is itself a branch
+ * requiring nested structure, the caller ({@link buildDummyStub}) descends
+ * into it recursively instead of stubbing it as a flat leaf.
+ *
+ * @param candidates - Kind names offered by the field (a supertype expands
+ *   to multiple; a concrete kind is a single-element list).
+ * @param nodeMap - Assembled node map for supertype/kind lookup.
  * @param kindEntries - Parser-symbol catalog; when provided, skips kinds
  *   that lack a parser symbol.
- * @returns A concrete kind name suitable for use as a `$type` string in
- *   a test dummy node, or the input kind if no concrete alternative exists.
- */
-/**
- * Resolve a slot kind to a safe leaf stub kind for test dummy nodes.
- *
- * @remarks
- * The native transport layer expects branch stubs to satisfy all required
- * fields/children. Only leaf/keyword/enum/token kinds accept a plain
- * `{ $type, $text, $source }` stub without further structure.
- *
- * Priority (BFS over supertype subtypes):
- * 1. A leaf/keyword/enum/token that has a parser symbol — safe as `$text`-only stub.
- * 2. A branch/container/polymorph with a parser symbol and NO required fields/children —
- *    safe with an empty `$fields: {}` stub (not currently used, but future-proof).
- * 3. If the kind itself is concrete and has no parser symbol (TSGrammar-only virtual
- *    supertype like `comment`), fall back to the grammar-level safe leaf kind
- *    (`identifier` if present, else the input kind).
- *
- * Falls back to `identifier` when no suitable leaf is reachable from the kind.
- * `identifier` is present in every grammar and has a transport validator that
- * only requires `$text`.
+ * @returns A concrete kind name — prefers a leaf-shaped one, else the first
+ *   concrete candidate found, else the first raw candidate.
  */
 function resolveConcreteKind(
-	kind: string,
+	candidates: readonly string[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	const seen = new Set<string>();
 	const nonLeafCandidates: string[] = [];
-	const queue = [kind];
+	const queue = [...candidates];
 	while (queue.length > 0) {
 		const current = queue.shift()!;
 		if (seen.has(current)) continue;
@@ -447,14 +441,137 @@ function resolveConcreteKind(
 		}
 		nonLeafCandidates.push(current);
 	}
-	// Use a known-safe fallback: `identifier` only requires `$text` in the
-	// transport validator and is present in every tree-sitter grammar. When
-	// `identifier` is not in the nodeMap (unusual), use the first non-leaf
-	// concrete kind we found; as a last resort return the input.
-	if (nodeMap.nodes.has('identifier') && (!kindEntries || hasCatalogEntry(kindEntries, 'identifier'))) {
-		return 'identifier';
+	// No leaf-shaped candidate anywhere in the field's own kind set: use the
+	// first concrete (branch-shaped) candidate — the caller will recurse
+	// into it — or fall back to the raw input when nothing resolved at all
+	// (e.g. an entirely TSGrammar-only candidate set).
+	return nonLeafCandidates[0] ?? candidates[0] ?? '';
+}
+
+/** Maximum branch-recursion depth for synthesized dummy stubs. Bounds
+ * self-referential grammars (e.g. `expression` containing `expression`);
+ * beyond this depth `buildDummyStub` falls back to a minimal `$children: []`
+ * stub for the remaining required fields rather than looping forever. */
+const MAX_DUMMY_DEPTH = 6;
+
+/**
+ * Build a dummy expression for a single dummy value of the given field, for
+ * use inside a larger stub literal (config-object value or array element).
+ *
+ * @remarks
+ * Dispatches on the field's actual storage classification
+ * ({@link resolveFieldStorageInfo}) before falling back to node-ref
+ * resolution:
+ *  - `boolean` / `bitflag` / `kindEnum` fields are terminal *text* fields at
+ *    the factory Config surface (coerced via `coerceKindEnumStorage` et al.)
+ *    — the dummy is the bare literal text, never a `{ $type, $text }` stub.
+ *  - Node-ref fields resolve to a concrete kind within the field's own
+ *    candidate set ({@link resolveConcreteKind}) and, when that kind is
+ *    branch-shaped, recurse via {@link buildDummyStub} to satisfy its own
+ *    required fields instead of emitting an under-structured leaf stub.
+ */
+function dummyValueForField(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	depth: number,
+	visiting: ReadonlySet<string>
+): string {
+	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+	// `boolean` / `bitflag` / `kindEnum` bare-literal shortcuts are only valid
+	// at depth 0 (the top-level Config object passed to `ir.<kind>(...)`) —
+	// the FACTORY's `coerceBooleanKeywordStorage` / `coerceBitflagStorage` /
+	// `coerceKindEnumStorage` calls are what turn those literals into the
+	// numeric/transport shape the native wire expects. At depth > 0 we are
+	// splicing a RAW object literal directly (see {@link buildDummyStub}) —
+	// there is no factory call to do that coercion, so a bare string/`0`
+	// reaches native's `AnyTransport::from_napi_value` as-is and is rejected
+	// ("expected u16 kind_id or object with $type"). Emit the pre-coerced
+	// numeric discriminant instead in that position.
+	if (depth === 0) {
+		if (storageInfo.kind === 'boolean') return 'true';
+		if (storageInfo.kind === 'bitflag') return '0 as never';
+		if (storageInfo.kind === 'kindEnum') {
+			const text = storageInfo.texts[0];
+			return text !== undefined ? JSON.stringify(text) : "'test' as any";
+		}
+	} else {
+		if (storageInfo.kind === 'boolean') return 'true as never';
+		if (storageInfo.kind === 'bitflag') return '0 as never';
+		if (storageInfo.kind === 'kindEnum') {
+			const enumKind = storageInfo.enumKinds[0];
+			if (enumKind !== undefined && kindEntries && hasCatalogEntry(kindEntries, enumKind)) {
+				return `${kindDiscriminantExpr(enumKind, nodeMap, kindEntries)} as never`;
+			}
+			const text = storageInfo.texts[0];
+			return text !== undefined ? JSON.stringify(text) : "'test' as any";
+		}
 	}
-	return nonLeafCandidates[0] ?? kind;
+
+	const kinds = slotKindNames(field);
+	if (kinds.length === 0) return "'test' as any";
+	const concrete = resolveConcreteKind(kinds, nodeMap, kindEntries);
+	return buildDummyStub(concrete, nodeMap, kindEntries, depth, visiting);
+}
+
+/**
+ * Build a complete dummy stub literal for `kind`, recursing into required
+ * fields when `kind` is branch- or group-shaped.
+ *
+ * @remarks
+ * Leaf/keyword/enum/token kinds are safe as flat `{ $type, $text, $source,
+ * $named }` stubs (this is what native's transport `FromNapiValue` expects
+ * for those shapes). Branch AND group kinds additionally require every
+ * required field to be present and correctly shaped — a flat stub is
+ * rejected with "Missing field `_x`" by the native transport. Groups
+ * (`AssembledGroup`, `modelType === 'group'`) are the synthesized hidden
+ * single-field wrapper kinds (e.g. `_match_arm_with_comma`) — structurally
+ * a one-field record like a branch, just keyed via `.slots` instead of
+ * `.fields` (see {@link allSlotsOf}). This function fills required fields
+ * recursively for both shapes, bounded by {@link MAX_DUMMY_DEPTH} and a
+ * per-branch `visiting` set (cycle guard for self-referential grammars).
+ *
+ * When recursion bottoms out (depth limit or cycle) the stub still declares
+ * `$type`/`$text`/`$source`/`$named` but omits nested required fields —
+ * this may still fail construction for pathological kinds, matching the
+ * existing "skip when no safe sample found" precedent elsewhere in this
+ * emitter (see {@link pickSampleForPattern}) rather than guessing further.
+ */
+function buildDummyStub(
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	depth: number,
+	visiting: ReadonlySet<string>
+): string {
+	const node = nodeMap.nodes.get(kind);
+	const dummyText = node ? dummyTextForKind(kind, nodeMap) : 'test';
+	const base = dummyNodeLiteral(kind, dummyText, nodeMap, kindEntries);
+	if (!node || (node.modelType !== 'branch' && node.modelType !== 'group')) return base;
+	if (depth >= MAX_DUMMY_DEPTH || visiting.has(kind)) return base;
+
+	const nextVisiting = new Set(visiting);
+	nextVisiting.add(kind);
+	const fieldParts: string[] = [];
+	for (const f of allSlotsOf(node)) {
+		if (!isRequired(f) || isAutoStampField(f, nodeMap)) continue;
+		const value = isMultiple(f)
+			? `[${dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting)}]`
+			: dummyValueForField(f, nodeMap, kindEntries, depth + 1, nextVisiting);
+		// Nested stubs are raw object literals passed directly as
+		// `NodeData` — NOT routed through the field's factory (which is
+		// what translates a Config's `configKey` into `_<storageKey>` at
+		// runtime). Native's transport `FromNapiValue` reads the storage
+		// key straight off the object (`napi(js_name = "_pattern")`), so
+		// the literal must use `storageKey` here, unlike the top-level
+		// `emitBranchTest` config object (which legitimately uses
+		// `configKey` because it IS passed through `ir.<kind>(...)`).
+		fieldParts.push(`${f.storageKey}: ${value}`);
+	}
+	if (fieldParts.length === 0) return base;
+	// Splice the recursively-built required fields into the base literal —
+	// `base` always ends in `} as any`; insert before the closing brace.
+	return base.replace(/\}\s*as any$/, `, ${fieldParts.join(', ')} } as any`);
 }
 
 function dummyValue(field: AssembledNonterminal, nodeMap?: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {
@@ -470,21 +587,17 @@ function dummyValue(field: AssembledNonterminal, nodeMap?: NodeMap, kindEntries?
 	// `$FIELD`/`joinBy` produce non-empty output; otherwise the generated
 	// `render produces non-empty string` test fails for kinds where
 	// every required field is multiple.
-	const kinds = slotKindNames(field);
-	if (isMultiple(field)) {
-		if (kinds.length > 0) {
-			const concrete = nodeMap ? resolveConcreteKind(kinds[0]!, nodeMap, kindEntries) : kinds[0]!;
-			const dummyText = nodeMap ? dummyTextForKind(concrete, nodeMap) : 'test';
-			return `[${dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries)}]`;
+	if (!nodeMap) {
+		const kinds = slotKindNames(field);
+		if (isMultiple(field)) {
+			return kinds.length > 0 ? `[${dummyNodeLiteral(kinds[0]!, 'test', undefined, kindEntries)}]` : `['test' as any]`;
 		}
-		return `['test' as any]`;
+		return kinds.length > 0 ? dummyNodeLiteral(kinds[0]!, 'test', undefined, kindEntries) : "'test' as any";
 	}
-	if (kinds.length > 0) {
-		const concrete = nodeMap ? resolveConcreteKind(kinds[0]!, nodeMap, kindEntries) : kinds[0]!;
-		const dummyText = nodeMap ? dummyTextForKind(concrete, nodeMap) : 'test';
-		return dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries);
+	if (isMultiple(field)) {
+		return `[${dummyValueForField(field, nodeMap, kindEntries, 0, new Set())}]`;
 	}
-	return "'test' as any";
+	return dummyValueForField(field, nodeMap, kindEntries, 0, new Set());
 }
 
 /**
