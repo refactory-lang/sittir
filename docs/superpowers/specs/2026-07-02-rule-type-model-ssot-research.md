@@ -498,6 +498,24 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
      (constructor origin, public API), `sourceRuleIds` (structural
      back-pointers), `DerivedRuleSource` follows `RuleSource` into deletion.
 
+7. **Variant machinery stays; the placeholder protocol must not ship grammar-side**
+   (user, 2026-07-04). The `variant()` override construct, its minted
+   `<parent>_<variantName>` alias-kind naming, the `$variant` factory config
+   key, and the node-model→validator inference channel all REMAIN. What must
+   go: the `__sittirPlaceholder: "variant"` marker protocol (and the bundled
+   `variant()` resolver) inside the transpiled `.sittir/grammar.js` — the
+   grammar tree-sitter consumes should contain only plain tree-sitter
+   constructs, with variant() fully resolved at authoring/wire time before
+   the bundle is emitted. NOTE (coordinator): today the bundle re-runs the
+   wire/enrich pipeline under tree-sitter's runtime precisely so both parsers
+   agree; resolving placeholders pre-bundle means emitting post-wire RESOLVED
+   rules instead of bundling the transform machinery — a research-first item
+   (it touches the dual-runtime boundary itself), not a mechanical sweep.
+   Related small cleanups identified alongside (independent, dispatchable):
+   (a) dead `emitPolymorph` dispatch arms for the retired `modelType:
+   'polymorph'`; (b) `PolymorphVariantDescriptor.source` → `definedBy`
+   rename (validation-side only — see decision 6's outcome revision).
+
 ## 6. Open questions for the design discussion
 
 1. **Is "one boundary module" an acceptable answer to "there should be a SSOT"?** §0 argues
