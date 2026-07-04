@@ -4,7 +4,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode, AssembledNonterminal, AssembledPolymorph } from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -16,14 +16,12 @@ import {
 import {
 	isValidIdent,
 	isAutoStampField,
-	isAutoStampSlot,
 	resolveSingleFieldFactorySlot,
 	classifyChildFactorySurface,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
 	slotKindNames,
-	resolveHoistedForm,
 	keywordPresenceKind
 } from './shared.ts';
 
@@ -110,11 +108,7 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		switch (node.modelType) {
 			case 'branch':
-				if (
-					classifyChildFactorySurface(node, nodeMap) !== null ||
-					((node.fields.length === 0 || node.fields.every((field) => isAutoStampField(field, nodeMap))) &&
-						node.children.length > 0)
-				) {
+				if (classifyChildFactorySurface(node, nodeMap) !== null) {
 					emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
 				} else {
 					emitBranchTest(lines, node, kind, key, nodeMap, kindEntries);
@@ -164,28 +158,7 @@ function emitBranchTest(
 			typeConfigParts.push(`${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
 		}
 	}
-	if (node.children && node.children.length > 0) {
-		const hasNonAutoStampRequired = node.children.some((c) => isRequired(c) && !isAutoStampSlot(c, nodeMap));
-		if (hasNonAutoStampRequired) {
-			const firstKind = slotKindNames(node.children[0]!)[0];
-			const concrete = firstKind ? resolveConcreteKind(firstKind, nodeMap, kindEntries) : undefined;
-			const dummyText = concrete ? dummyTextForKind(concrete, nodeMap) : 'test';
-			const dummy = concrete
-				? dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries)
-				: `'test' as any`;
-			typeConfigParts.push(`children: [${dummy}] as any`);
-		}
-	}
 	const renderConfigParts = [...typeConfigParts];
-	if (node.children && node.children.length > 0 && !renderConfigParts.some((p) => p.startsWith('children'))) {
-		const firstKind = slotKindNames(node.children[0]!)[0];
-		const concrete = firstKind ? resolveConcreteKind(firstKind, nodeMap, kindEntries) : undefined;
-		const dummyText = concrete ? dummyTextForKind(concrete, nodeMap) : 'test';
-		const dummy = concrete
-			? dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries)
-			: `'test' as any`;
-		renderConfigParts.push(`children: [${dummy}] as any`);
-	}
 
 	// Gap 5: single-field-no-children factories take the value directly.
 	// Detect and emit a direct-value call instead of a config-object.
@@ -257,7 +230,16 @@ function emitContainerTest(
 	//     — the factory's `_assertNonEmpty` helper throws on empty
 	//     input, so the no-arg form `ir.kind()` would fail at
 	//     runtime even though it type-checks.
-	const children = node.children;
+	//
+	// NOTE: the unnamed slot backing a container factory now lives in
+	// `node.fields` (post-unification), never `node.children` (always `[]`,
+	// see AssembledBranch/AssembledGroup). This placeholder derivation was
+	// not migrated when that happened, so `placeholder` has been
+	// unconditionally `''` since — every container-kind test invokes
+	// `ir.<key>()` with no args. Preserved as-is here: fixing the derivation
+	// to read `node.fields` would change generated test output, which is out
+	// of scope for this dead-getter removal pass.
+	const children: readonly AssembledNonterminal[] = [];
 	const first = children[0];
 	const requiredSingular = first && !isMultiple(first) && isRequired(first);
 	const anyNonEmpty = children.some((c) => isNonEmpty(c));
@@ -271,65 +253,6 @@ function emitContainerTest(
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
-	lines.push('});');
-	lines.push('');
-}
-
-// NOTE: dead code — the dispatch switch above (`node.modelType`) has no
-// 'polymorph' arm; AssembledPolymorph reports modelType 'branch' (inherited
-// from AssembledBranch) and routes through emitBranchTest/emitContainerTest
-// instead. Retyped against the concrete class (not deleted) — same pattern
-// as wrap.polymorph / WrapEmitter.emitPolymorph in emitters/wrap.ts.
-function emitPolymorphTest(
-	lines: string[],
-	node: AssembledPolymorph,
-	kind: string,
-	key: string,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): void {
-	// Single-form polymorphs emit ir.<key> as a direct function (no
-	// `.formName` namespace) — the ir bundleExpr only attaches variant
-	// accessors when forms.length > 1. Generate a single direct test
-	// instead of per-form variant tests.
-	const useDirectCall = node.forms.length <= 1;
-	lines.push(`describe('${kind}', () => {`);
-	for (const form of node.forms) {
-		const itLabel = useDirectCall ? 'factory produces correct type' : `${form.name} form produces correct type`;
-		lines.push(`  it('${itLabel}', () => {`);
-		// Hoisted forms surface the inner child's fields at the top level
-		// — combine those with the form's own fields. A form can have BOTH
-		// direct fields (e.g. `name` on `MacroDefinitionUFormParen`) AND
-		// hoisted inner fields (e.g. `body` from the inner container). The
-		// earlier "either-or" branch dropped form-level fields whenever
-		// hoisting fired and produced `ir.macro.paren({})` even though the
-		// factory required `name`.
-		const hoist = resolveHoistedForm(form, nodeMap);
-		const allFields: AssembledNonterminal[] = [...form.fields];
-		if (hoist) allFields.push(...hoist.innerFields);
-		const configParts = allFields
-			.filter((f) => isRequired(f) && !isAutoStampField(f, nodeMap))
-			.map((f) => `${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
-		// Container-shaped hoist targets: inner factory accepts `...children`
-		// via the form's `children` surface. The inner container may assert
-		// non-empty so supply a single dummy child of the slot's first kind.
-		if (hoist && hoist.innerFields.length === 0) {
-			const innerChildNonEmpty = resolveInnerContainerNonEmptyChild(hoist.innerNode, nodeMap, kindEntries);
-			if (innerChildNonEmpty) configParts.push(`children: [${innerChildNonEmpty}]`);
-		}
-		if (!configParts.some((part) => part.startsWith('children:'))) {
-			const requiredFormChild = resolveRequiredFormChildDummy(form.children, nodeMap, kindEntries);
-			if (requiredFormChild) configParts.push(`children: [${requiredFormChild}]`);
-		}
-		const hasChildrenConfig = configParts.some((part) => part.startsWith('children:'));
-		const configArg =
-			configParts.length > 0 ? `{ ${configParts.join(', ')} }${hasChildrenConfig ? ' as any' : ''}` : '{}';
-		const callExpr = useDirectCall ? `ir.${key}(${configArg})` : `ir.${key}.${form.name}(${configArg})`;
-		lines.push(`    const node = ${callExpr};`);
-		lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-		lines.push(`    expect(node.$source).toBe(2);`);
-		lines.push('  });');
-	}
 	lines.push('});');
 	lines.push('');
 }
@@ -536,53 +459,6 @@ function resolveConcreteKind(
 		return 'identifier';
 	}
 	return nonLeafCandidates[0] ?? kind;
-}
-
-/**
- * Synthesize a dummy-child expression for a container-shaped hoisted
- * polymorph-form inner node whose first child slot is required and
- * non-empty, so the auto-generated polymorph form test doesn't fail
- * the inner factory's `_assertNonEmpty` check.
- *
- * @remarks
- * Containers have no fields so `innerFields` in the hoist target is
- * empty — the test emitter would otherwise pass `{}` to the form
- * factory, spread zero children into the inner factory, and trip the
- * assertion. Returns `null` when the container has no required
- * non-empty child slot (one dummy isn't needed) or when no content
- * kind is available.
- */
-function resolveInnerContainerNonEmptyChild(
-	innerNode: AssembledNode,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string | null {
-	// Only positional-child branch factories go through this path — others
-	// surface their data via fields/config.
-	if (innerNode.modelType !== 'branch' || classifyChildFactorySurface(innerNode, nodeMap) === null) return null;
-	const childSlots = innerNode.children;
-	if (!childSlots || childSlots.length === 0) return null;
-	const firstRequired = childSlots.find((c) => isRequired(c) && isNonEmpty(c));
-	if (!firstRequired) return null;
-	const kinds = slotKindNames(firstRequired);
-	if (kinds.length === 0) return null;
-	const concrete = resolveConcreteKind(kinds[0]!, nodeMap, kindEntries);
-	const dummyText = dummyTextForKind(concrete, nodeMap);
-	return dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries);
-}
-
-function resolveRequiredFormChildDummy(
-	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string | null {
-	const requiredChild = children.find((child) => isRequired(child));
-	if (!requiredChild) return null;
-	const kinds = slotKindNames(requiredChild);
-	if (kinds.length === 0) return null;
-	const concrete = resolveConcreteKind(kinds[0]!, nodeMap, kindEntries);
-	const dummyText = dummyTextForKind(concrete, nodeMap);
-	return dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries);
 }
 
 function dummyValue(field: AssembledNonterminal, nodeMap?: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {

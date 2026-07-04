@@ -1,47 +1,33 @@
 /**
- * Per-modelType emit tests for the new template emitter
+ * Per-modelType emit tests for the template emitter
  * (Task 2.4 of PR1 — rule-attributes-and-template-emitter refactor;
  *  updated Task 3.B3 of PR2 — authority flip + renderRule consumption).
  *
- * Each emit function (branch / group / multi / polymorph) is exercised
- * with a minimal in-memory fixture:
+ * Each emit function (branch / group / polymorph) is exercised with a
+ * minimal in-memory fixture:
  *
  * - Branch and Group: mocks carry `renderRule` (RenderRule, wrapper-free)
  *   since emitBranchTemplate / emitGroupTemplate now consume renderRule.
  *   Fixtures use leaf-attribute symbols (fieldName / multiplicity) instead
  *   of FieldRule / OptionalRule / RepeatRule wrappers.
  *
- * - Multi: mocks carry `rule` (RepeatRule | Repeat1Rule) since AssembledMulti
- *   has no renderRule; emitMultiTemplate handles the repeat directly.
- *
  * - Polymorph: mocks carry `forms` with `.kind` + `.name`.
+ *
+ * `multi` nodes never reach the emitter (classifyTemplateEmission always
+ * skips them), so there is no emit function to exercise for that modelType.
  */
 
-import { FIELD, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import type {
-	FieldRule,
-	Repeat1Rule,
-	RepeatRule,
-	Rule,
-	SeqRule,
-	StringRule,
-	SymbolRule
-} from '../../types/rule.ts';
+import type { Rule, SeqRule, StringRule, SymbolRule } from '../../types/rule.ts';
 import type {
 	AssembledBranch,
 	AssembledGroup,
-	AssembledMulti,
 	AssembledNonterminal,
 	AssembledPolymorph,
 	NodeOrTerminal
 } from '../../compiler/model/node-map.ts';
-import {
-	emitBranchTemplate,
-	emitGroupTemplate,
-	emitMultiTemplate,
-	type EmitCtx
-} from '../templates.ts';
+import { emitBranchTemplate, emitGroupTemplate, type EmitCtx } from '../templates.ts';
 
 function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 	return {
@@ -89,8 +75,6 @@ function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNontermina
 //
 // Branch / Group: emitBranchTemplate / emitGroupTemplate consume `renderRule`
 // (PR2 Task 3.B3). Mocks supply `renderRule` (RenderRule, wrapper-free shape).
-// Multi: AssembledMulti has no renderRule; emitMultiTemplate reads `node.rule`
-//   (RepeatRule | Repeat1Rule) and handles it directly without calling emitRule.
 // Polymorph: emitPolymorphTemplate reads `form.kind` and `form.name` per form.
 function mockBranch(renderRule: Rule): AssembledBranch {
 	return { modelType: 'branch', renderRule } as unknown as AssembledBranch;
@@ -98,10 +82,6 @@ function mockBranch(renderRule: Rule): AssembledBranch {
 
 function mockGroup(renderRule: Rule, name = 'g', kind = name): AssembledGroup {
 	return { modelType: 'group', renderRule, name, kind } as unknown as AssembledGroup;
-}
-
-function mockMulti(rule: RepeatRule | Repeat1Rule): AssembledMulti {
-	return { modelType: 'multi', rule } as unknown as AssembledMulti;
 }
 
 function mockPolymorph(forms: AssembledGroup[]): AssembledPolymorph {
@@ -192,51 +172,4 @@ describe('emitGroupTemplate', () => {
 	});
 });
 
-describe('emitMultiTemplate', () => {
-	it('emits a list slot when the inner is a field', () => {
-		const innerSym: SymbolRule = { type: SYMBOL, name: 'item', id: 'rm1' };
-		// Synthetic fixture: a FieldRule wrapper carrying post-normalize stamped
-		// attrs (multiplicity) simultaneously — not a shape the real pipeline
-		// produces, but what emitMultiTemplate's structural read expects here.
-		const innerField = {
-			type: FIELD,
-			name: 'items',
-			content: innerSym,
-			id: 'fm1',
-			multiplicity: 'array'
-		} as unknown as FieldRule;
-		const rule: RepeatRule = { type: REPEAT, content: innerField };
-		const slot = makeSlot({ name: 'items', propertyName: 'items', storageName: 'items' });
-		const ctx = makeCtx({
-			nodeMap: {
-				slotByRuleId: new Map([['fm1', slot]]),
-				nodeByRuleId: new Map(),
-				nodes: new Map()
-			} as unknown as EmitCtx['nodeMap']
-		});
-		expect(emitMultiTemplate(mockMulti(rule), ctx)).toBe('{{ items | join(" ") }}');
-	});
-
-	it('honours the repeat separator for repeat1', () => {
-		const innerSym: SymbolRule = { type: SYMBOL, name: 'item', id: 'rm2' };
-		const innerField = {
-			type: FIELD,
-			name: 'items',
-			content: innerSym,
-			id: 'fm2',
-			multiplicity: 'array',
-			separator: ','
-		} as unknown as FieldRule;
-		const rule: Repeat1Rule = { type: REPEAT1, content: innerField, separator: ',' };
-		const slot = makeSlot({ name: 'items', propertyName: 'items', storageName: 'items' });
-		const ctx = makeCtx({
-			nodeMap: {
-				slotByRuleId: new Map([['fm2', slot]]),
-				nodeByRuleId: new Map(),
-				nodes: new Map()
-			} as unknown as EmitCtx['nodeMap']
-		});
-		expect(emitMultiTemplate(mockMulti(rule), ctx)).toBe('{{ items | join(",") }}');
-	});
-});
 

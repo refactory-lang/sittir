@@ -1335,8 +1335,7 @@ function isHiddenRepeatHelper(
  *   or `null` when neither applies.
  * @remarks
  *   Only existence checks are performed — not full extraction. The class
- *   getters (`AssembledBranch.fields`, `AssembledBranch.children`) do
- *   the full walk later, once.
+ *   getter (`AssembledBranch.fields`) does the full walk later, once.
  */
 function classifyBranchOrContainer(rule: Rule<'link'>): ModelType | null {
 	if (hasAnyField(rule) || hasAnyChild(rule)) return 'branch';

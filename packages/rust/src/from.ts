@@ -4,7 +4,7 @@ import * as F from './factories.js';
 import type * as T from './types.js';
 import { TSKindId, kindIdFromName } from './types.js';
 import type { AnyNodeData, ConfigOf } from '@sittir/types';
-import { coerceKindEnumStorage, hasKind, isNodeData } from './utils.js';
+import { coerceKindEnumStorage, isNodeData } from './utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _FromFieldInput = unknown;
@@ -465,14 +465,6 @@ function _assertNonEmpty<T>(
 /** @internal — call an overloaded factory bypassing overload resolution. */
 function _applyFactory<F extends (...args: never[]) => unknown>(fn: F, ...args: unknown[]): ReturnType<F> {
   return Reflect.apply(fn, undefined, args);
-}
-
-/** @internal — treat a bare child input like `{ children: ... }` when polymorph forms allow it. */
-function _childrenInput(input: _FromFieldInput): _FromFieldInput {
-  if (input !== null && input !== undefined && typeof input === "object" && !Array.isArray(input) && !isNodeData(input) && "children" in input) {
-    return (input as { readonly children?: _FromFieldInput }).children;
-  }
-  return input;
 }
 
 // Interned resolver kind lists (dedup)

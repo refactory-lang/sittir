@@ -22,15 +22,12 @@ import { AssembledBranch, AssembledGroup } from '../compiler/model/node-map.ts';
 import type { PolymorphVariant } from '../compiler/types.ts';
 import {
 	isAutoStampField,
-	isAutoStampSlot,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
 	slotKindNames,
 	slotLiteralValues,
-	isValidIdent,
 	keywordPresenceKind,
-	resolveHoistedForm,
 	resolveHiddenKeywordLiteral,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
@@ -165,7 +162,7 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 		lines.push(`import { kindIdFromName } from './types.js';`);
 	}
 	lines.push("import type { AnyNodeData, ConfigOf } from '@sittir/types';");
-	lines.push("import { coerceKindEnumStorage, hasKind, isNodeData } from './utils.js';");
+	lines.push("import { coerceKindEnumStorage, isNodeData } from './utils.js';");
 	lines.push('');
 }
 
@@ -218,19 +215,6 @@ function emitPolymorphApplyHelper(lines: string[]): void {
 		'function _applyFactory<F extends (...args: never[]) => unknown>(fn: F, ...args: unknown[]): ReturnType<F> {'
 	);
 	lines.push('  return Reflect.apply(fn, undefined, args);');
-	lines.push('}');
-	lines.push('');
-}
-
-function emitChildrenInputHelper(lines: string[]): void {
-	lines.push('/** @internal — treat a bare child input like `{ children: ... }` when polymorph forms allow it. */');
-	lines.push('function _childrenInput(input: _FromFieldInput): _FromFieldInput {');
-	lines.push(
-		'  if (input !== null && input !== undefined && typeof input === "object" && !Array.isArray(input) && !isNodeData(input) && "children" in input) {'
-	);
-	lines.push('    return (input as { readonly children?: _FromFieldInput }).children;');
-	lines.push('  }');
-	lines.push('  return input;');
 	lines.push('}');
 	lines.push('');
 }
@@ -364,7 +348,6 @@ export namespace from {
 					typeName: node.typeName,
 					rawFactoryName: node.rawFactoryName,
 					fromFunctionName: node.fromFunctionName,
-					children: node.children,
 					fields: node.fields
 				},
 				kindEntries,
@@ -402,7 +385,6 @@ interface BranchLikeNode {
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
 	readonly fields: readonly AssembledNonterminal[];
-	readonly children: readonly AssembledNonterminal[];
 	readonly slotClass?: BranchSlotClass;
 }
 
@@ -502,112 +484,6 @@ function emitBranchNodeDataPassthrough(lines: string[], inputOptional: boolean, 
 	lines.push(`  if (${passGuard}isNodeData(input)) return input as unknown as ${returnType};`);
 }
 
-/**
- * Emits the non-empty children hoisting block for a branch from() body.
- *
- * @remarks
- * Non-empty children hoist to a local binding so `_assertNonEmpty` can
- * narrow the resolved `readonly T[]` to `[T, ...T[]]` before the factory
- * call — same pattern as non-empty fields.
- *
- * @param lines - Per-function lines array to push into.
- * @param childSlots - The child slots for the node.
- * @param nodeMap - The assembled node map (forwarded to resolver).
- * @param typeName - Parent node's type name.
- * @param intern - Kind-list interner.
- * @param inputOptional - Whether the input parameter is optional.
- * @param kind - Grammar kind name, used in the assertion label.
- */
-function emitNonEmptyChildrenHoist(
-	lines: string[],
-	childSlots: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
-	typeName: string,
-	intern: KindInterner,
-	inputOptional: boolean,
-	kind: string,
-	allowDirectInputFallback = false
-): void {
-	const call = resolveChildrenFromTypedInput(
-		childSlots,
-		nodeMap,
-		typeName,
-		intern,
-		'input',
-		inputOptional,
-		allowDirectInputFallback
-	);
-	// Annotate the hoist with the resolved element type so the slot
-	// assignment downstream sees a `readonly T[]` (TS would otherwise
-	// infer `unknown` when the `_resolveMany*<T>` call's `T` has no
-	// contextual type — the result flows into a `const`, not a typed
-	// slot). `_assertNonEmpty` then narrows it to the non-empty tuple.
-	const elementType = childrenSlotElementType(childSlots, nodeMap);
-	const annotation = elementType ? `: readonly (${elementType})[]` : '';
-	lines.push(`  const _ne_children${annotation} = ${call};`);
-	lines.push(`  _assertNonEmpty(_ne_children, '${kind}.children');`);
-}
-
-/**
- * Compute the element type expression for a children-slot resolver hoist.
- *
- * Produces a `T.X | T.Y | ...` union over the resolved kinds in the merged
- * children-slot values list. Mirrors the `factories.ts::childElementType`
- * walker but lives here to keep the from-emitter standalone.
- */
-function childrenSlotElementType(childSlots: readonly AssembledNonterminal[], nodeMap: NodeMap): string | undefined {
-	const parts = new Set<string>();
-	for (const c of childSlots) {
-		for (const v of c.values) {
-			if (isTerminalValue(v)) {
-				parts.add(JSON.stringify(v.value));
-				continue;
-			}
-			if (!isNodeRef(v)) continue;
-			const t = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-			const node = nodeMap.nodes.get(t);
-			if (!node) continue;
-			const name = node.typeName;
-			parts.add(isValidIdent(name) ? `T.${name}` : JSON.stringify(t));
-		}
-	}
-	if (parts.size === 0) return undefined;
-	return [...parts].join(' | ');
-}
-
-/**
- * Emits the children call inside the factory config object for a branch from().
- *
- * @remarks
- * Children coerce through the same resolver pipeline as field values —
- * `_resolveMany` turns loose strings, `{kind,...}` bags, and nested configs
- * into typed NodeData at runtime, which keeps the compile-time type
- * (`readonly [T, ...]`) honest. No sideways cast.
- *
- * @param lines - Per-function lines array to push into.
- * @param childSlots - The child slots for the node.
- * @param nodeMap - The assembled node map.
- * @param typeName - Parent node's type name.
- * @param intern - Kind-list interner.
- * @param inputOptional - Whether the input parameter is optional.
- * @param childrenNonEmpty - Whether children require at least one element.
- */
-function emitBranchChildrenEntry(
-	lines: string[],
-	childSlots: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
-	typeName: string,
-	intern: KindInterner,
-	inputOptional: boolean,
-	childrenNonEmpty: boolean
-): void {
-	if (childrenNonEmpty) {
-		lines.push(`    children: _ne_children,`);
-	} else {
-		const call = resolveChildrenFromTypedInput(childSlots, nodeMap, typeName, intern, 'input', inputOptional);
-		lines.push(`    children: ${call},`);
-	}
-}
 
 /**
  * Returns the target factory name when a required field can default to an
@@ -640,19 +516,13 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	const childSurface = branchTarget?.modelType === 'branch'
 		? classifyChildFactorySurface(branchTarget, nodeMap)
 		: null;
-	// Positional-child factories: `spread` is callable with zero args only
-	// when no child is nonEmpty; `direct` is callable when the sole child is
-	// optional.
+	// Positional-child factories (`direct`/`spread`): the sole slot backing
+	// them always lives in `.fields` now, so there is no separate child slot
+	// to check for requiredness — the factory is always callable with zero
+	// args on this path.
 	if (childSurface !== null) {
 		if (branchTarget === null) return null;
-		const anyMultiple = branchTarget.children.some((c) => isMultiple(c));
-		const anyNonEmpty = branchTarget.children.some((c) => isNonEmpty(c));
-		const firstChild = branchTarget.children[0];
-		if (childSurface === 'spread' && anyMultiple && !anyNonEmpty) {
-			return targetNode.rawFactoryName;
-		}
-		if (!firstChild || !isRequired(firstChild)) return targetNode.rawFactoryName;
-		return null;
+		return targetNode.rawFactoryName;
 	}
 
 	// Branch / group with fields: check if the factory config is all-optional.
@@ -660,13 +530,8 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 		return null;
 	}
 	const targetFields = targetNode.fields;
-	const targetChildren = targetNode.children;
 	const hasBlockingField = targetFields.some((f) => isRequired(f) && stampExpressionFor(f, nodeMap) === undefined);
 	if (hasBlockingField) return null;
-	const hasBlockingChild = targetChildren.some(
-		(c) => isRequired(c) && !isAutoStampSlot(c, nodeMap) && !(isMultiple(c) && !isNonEmpty(c))
-	);
-	if (hasBlockingChild) return null;
 	return targetNode.rawFactoryName;
 }
 
@@ -678,16 +543,10 @@ function emitBranchFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const fields = node.fields;
-	const childSlots = node.children;
 	// Auto-stamp fields are always `required` but they have no slot in Config —
 	// exclude them from the optionality check so the input `?` marker is correct.
-	// Auto-stamp-eligible children likewise: the factory stamps them directly from
-	// parameterless sub-factories, so they don't force the input to be required.
 	const nonStampFields = fields.filter((f) => !isAutoStampField(f, nodeMap));
-	const opt =
-		nonStampFields.some((f) => isRequired(f)) || childSlots.some((c) => isRequired(c) && !isAutoStampSlot(c, nodeMap))
-			? ''
-			: '?';
+	const opt = nonStampFields.some((f) => isRequired(f)) ? '' : '?';
 	const typeName = node.typeName;
 	const lines: string[] = [];
 	const { inputType, inputOptional } = buildBranchSignatureParts(node, factory, opt);
@@ -698,9 +557,7 @@ function emitBranchFrom(
 	const canDirectFactoryCall =
 		soleField &&
 		classifyFactoryShape(node, nodeMap) === 'direct' &&
-		node.children.length === 0 &&
-		!node.fields.some((field) => keywordPresenceKind(field, nodeMap) !== null) &&
-		!node.children.some((child) => !isAutoStampSlot(child, nodeMap));
+		!node.fields.some((field) => keywordPresenceKind(field, nodeMap) !== null);
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
 	if (fields.length > 0) {
 		if (canDirectFactoryCall) {
@@ -727,12 +584,8 @@ function emitBranchFrom(
 				lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`);
 			}
 		}
-		const childrenNonEmpty = childSlots.some((c) => isNonEmpty(c));
-		if (childSlots.length > 0 && childrenNonEmpty) {
-			emitNonEmptyChildrenHoist(lines, childSlots, nodeMap, typeName, intern, inputOptional, node.kind);
-		}
-		// Gap 5: single-field-no-children factories take the value directly.
-		// Emit `return F.label(resolved)` instead of `F.label({ identifier: resolved })`.
+		// Gap 5: single-field factories take the value directly. Emit
+		// `return F.label(resolved)` instead of `F.label({ identifier: resolved })`.
 		// Uses pre-computed slotClass for the sole-slot reference.
 		// Excluded: hidden kinds (inner polymorph children), keyword-presence,
 		// and multiple (array) fields.
@@ -761,9 +614,6 @@ function emitBranchFrom(
 					}
 				}
 			}
-			if (childSlots.length > 0) {
-				emitBranchChildrenEntry(lines, childSlots, nodeMap, typeName, intern, inputOptional, childrenNonEmpty);
-			}
 			lines.push('  });');
 		}
 	} else {
@@ -786,7 +636,6 @@ interface ContainerFromNode {
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	readonly children: readonly { readonly values: readonly NodeOrTerminal[] }[];
 	// Post-unification: the unnamed-child slot is exposed via `fields[0]`. Its
 	// `storageName` drives the `_<name>` data key we read here.
 	readonly fields?: readonly AssembledNonterminal[];
@@ -974,7 +823,7 @@ function emitContainerFrom(
 	const elementType = slot
 		? containerSlotElementType(slot, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
-	const childrenMultiple = slot ? isMultiple(slot) : node.children.some((c) => isMultiple(c));
+	const childrenMultiple = slot ? isMultiple(slot) : false;
 	const storageKey = slot ? slot.storageKey : '$other';
 	if (childrenMultiple) {
 		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
@@ -1050,51 +899,6 @@ interface PolymorphFromNode {
  * @param nodeMap - Grammar-wide node map for hidden-literal detection.
  * @returns The emitted dispatcher function source string.
  */
-interface PolymorphKindDispatchCase {
-	readonly kind: string;
-	readonly formFromFn: string;
-}
-
-function usesHoistedConfigSurface(form: AssembledGroup, nodeMap: NodeMap): boolean {
-	if (form.children.length !== 1) return false;
-	const child = form.children[0]!;
-	if (!isRequired(child) || isMultiple(child)) return false;
-	const childKinds = slotKindNames(child);
-	if (childKinds.length !== 1) return false;
-	const inner = nodeMap.nodes.get(childKinds[0]!);
-	if (!(inner instanceof AssembledBranch || inner instanceof AssembledGroup)) return false;
-	if (!inner.rawFactoryName) return false;
-	return inner.fields.length > 0 || inner.children.some((slot) => !isAutoStampSlot(slot, nodeMap));
-}
-
-function collectPolymorphKindDispatchCases(
-	forms: readonly AssembledGroup[],
-	nodeMap: NodeMap
-): PolymorphKindDispatchCase[] {
-	const formByKind = new Map<string, string>();
-	const ambiguous = new Set<string>();
-	for (const form of forms) {
-		if (!form.fromFunctionName) continue;
-		if (usesHoistedConfigSurface(form, nodeMap)) continue;
-		const configurableFields = form.fields.filter((field) => !isAutoStampField(field, nodeMap));
-		if (configurableFields.length > 0) continue;
-		const configurableChildren = form.children.filter((child) => !isAutoStampSlot(child, nodeMap));
-		if (configurableChildren.length !== 1) continue;
-		const child = configurableChildren[0]!;
-		for (const kind of expandAndDedupeContentTypes(slotKindNames(child), nodeMap)) {
-			if (ambiguous.has(kind)) continue;
-			const existing = formByKind.get(kind);
-			if (existing !== undefined && existing !== form.fromFunctionName) {
-				formByKind.delete(kind);
-				ambiguous.add(kind);
-				continue;
-			}
-			formByKind.set(kind, form.fromFunctionName);
-		}
-	}
-	return [...formByKind.entries()].map(([kind, formFromFn]) => ({ kind, formFromFn }));
-}
-
 function emitPolymorphDispatcher(
 	fn: string,
 	factory: string,
@@ -1110,39 +914,18 @@ function emitPolymorphDispatcher(
 	const inputType = `T.${typeName}.Loose`;
 	const lines: string[] = [];
 	const literalCases = collectPolymorphLiteralDispatchCases(forms, nodeMap);
-	const kindCases = collectPolymorphKindDispatchCases(forms, nodeMap);
 	const returnType = factoryReturnTypeExpr(factory);
 	lines.push(`export function ${fn}(input?: ${inputType}): ${returnType} {`);
 	lines.push(`  if (input !== undefined && isNodeData(input)) {`);
 	lines.push(
 		`    if ((input.$type as string | number) === kindIdFromName(${JSON.stringify(kind)})) return input as unknown as ${returnType};`
 	);
-	if (kindCases.length > 0) {
-		lines.push('    switch (input.$type as string | number) {');
-		for (const { kind: childKind, formFromFn } of kindCases) {
-			lines.push(
-				`      case kindIdFromName(${JSON.stringify(childKind)}): return ${formFromFn}(input as unknown as Parameters<typeof ${formFromFn}>[0]) as unknown as ${returnType};`
-			);
-		}
-		lines.push('    }');
-	}
 	lines.push('  }');
 	if (literalCases.length > 0) {
 		lines.push(`  if (typeof input === "string") {`);
 		lines.push('    switch (input) {');
 		for (const { literal, formFromFn } of literalCases) {
 			lines.push(`      case ${JSON.stringify(literal)}: return ${formFromFn}() as unknown as ${returnType};`);
-		}
-		lines.push('    }');
-		lines.push('  }');
-	}
-	if (kindCases.length > 0) {
-		lines.push('  if (input !== undefined && input !== null && typeof input === "object" && hasKind(input)) {');
-		lines.push('    switch (input.kind) {');
-		for (const { kind: childKind, formFromFn } of kindCases) {
-			lines.push(
-				`      case ${JSON.stringify(childKind)}: return ${formFromFn}(input as unknown as Parameters<typeof ${formFromFn}>[0]) as unknown as ${returnType};`
-			);
 		}
 		lines.push('    }');
 		lines.push('  }');
@@ -1183,18 +966,8 @@ function emitPolymorphFormFrom(form: AssembledGroup, nodeMap: NodeMap, intern: K
 	const formFn = `${form.typeName.charAt(0).toLowerCase()}${form.typeName.slice(1)}From`;
 	const formFactory = `F.${form.rawFactoryName!}`;
 	// Auto-stamp fields are always `required` but have no Config slot — exclude them.
-	// Auto-stamp-eligible children also excluded: factory stamps them directly.
 	const formNonStampFields = form.fields.filter((fd) => !isAutoStampField(fd, nodeMap));
-	const formNonStampChildren = form.children.filter((child) => !isAutoStampSlot(child, nodeMap));
-	const hoist = resolveHoistedForm(form, nodeMap);
-	const hoistedConfigSurface = usesHoistedConfigSurface(form, nodeMap);
-	const hoistedNonStampFields = hoist ? hoist.innerFields.filter((fd) => !isAutoStampField(fd, nodeMap)) : [];
-	const formOpt =
-		formNonStampFields.some((fd) => isRequired(fd)) ||
-		hoistedNonStampFields.some((fd) => isRequired(fd)) ||
-		form.children.some((c) => isRequired(c) && !isAutoStampSlot(c, nodeMap))
-			? ''
-			: '?';
+	const formOpt = formNonStampFields.some((fd) => isRequired(fd)) ? '' : '?';
 	const fLines: string[] = [];
 	const formInputOptional = formOpt === '?';
 	// Form `.from()` input omits `$variant` — see resolveConfigType
@@ -1204,23 +977,7 @@ function emitPolymorphFormFrom(form: AssembledGroup, nodeMap: NodeMap, intern: K
 		`export function ${formFn}(input${formOpt}: Omit<ConfigOf<T.${form.typeName}>, '$variant'>): ${factoryReturnTypeExpr(formFactory)} {`
 	);
 	const hasFormFields = form.fields.length > 0;
-	const hasHoistedFields = hoist && hoist.innerFields.length > 0;
-	const hasFormChildren = formNonStampChildren.length > 0 && !hoistedConfigSurface;
-	const childrenNonEmpty = formNonStampChildren.some((child) => isNonEmpty(child));
-	const allowDirectChildrenInput = hasFormChildren && !hasFormFields && !hasHoistedFields;
-	if (hasFormFields || hasHoistedFields || hasFormChildren) {
-		if (hasFormChildren && childrenNonEmpty) {
-			emitNonEmptyChildrenHoist(
-				fLines,
-				form.children,
-				nodeMap,
-				form.typeName,
-				intern,
-				formInputOptional,
-				form.kind,
-				allowDirectChildrenInput
-			);
-		}
+	if (hasFormFields) {
 		fLines.push(`  return ${formFactory}({`);
 		// Form-level fields (always Config keys at the form's surface).
 		for (const f of form.fields) {
@@ -1233,31 +990,6 @@ function emitPolymorphFormFrom(form: AssembledGroup, nodeMap: NodeMap, intern: K
 			fLines.push(
 				`    ${f.configKey}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
 			);
-		}
-		// Hoisted inner-child fields surface flat on the form's Config —
-		// mirror what factories.ts does. Resolution uses the inner field's
-		// shape so node-ref / leaf / many semantics still apply.
-		if (hoist) {
-			for (const f of hoist.innerFields) {
-				const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
-				if (stampedExpr !== null) {
-					fLines.push(`    ${f.configKey}: ${stampedExpr},`);
-					continue;
-				}
-				if (isAutoStampField(f, nodeMap)) continue;
-				fLines.push(
-					`    ${f.configKey}: ${resolveFieldFromTypedInput(f, nodeMap, hoist.innerTypeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
-				);
-			}
-		}
-		if (hasFormChildren) {
-			if (childrenNonEmpty) {
-				fLines.push('    children: _ne_children,');
-			} else {
-				fLines.push(
-					`    children: ${resolveChildrenFromTypedInput(form.children, nodeMap, form.typeName, intern, 'input', formInputOptional, allowDirectChildrenInput)},`
-				);
-			}
 		}
 		fLines.push('  });');
 	} else {
@@ -1384,68 +1116,6 @@ function resolveFieldFromTypedInput(
 	const optChain = inputOptional ? '?' : '';
 	const access = `${sourceVar}${optChain}.${field.configKey}`;
 	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern);
-}
-
-/**
- * Build a resolver call for a branch's `children` slot. Each loose
- * child element is pushed through the same `_resolveMany` /
- * `_resolveOne` pipeline as field values — strings get factoried,
- * `{kind,...}` objects get dispatched, nested config bags get
- * reconstructed. Produces a typed `readonly T[]` that the factory
- * can accept directly, no sideways cast.
- */
-function resolveChildrenFromTypedInput(
-	childSlots: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
-	parentTypeName: string,
-	intern: KindInterner,
-	sourceVar: string,
-	inputOptional: boolean,
-	allowDirectInputFallback = false
-): string {
-	// parentTypeName retained for signature stability with callers; prior
-	// implementation used it to build an explicit
-	// `<NonNullable<T.X.Config['children']>>` type arg on the resolver call.
-	// Call-site type args were stripped — TS infers from parameters.
-	void parentTypeName;
-	const seenTypes = new Set<string>();
-	const mergedValues: NodeOrTerminal[] = [];
-	let anyMultiple = false;
-	for (const c of childSlots) {
-		if (isMultiple(c)) anyMultiple = true;
-		for (const v of c.values) {
-			if (!isNodeRef(v)) continue;
-			const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-			if (!seenTypes.has(kindName)) {
-				seenTypes.add(kindName);
-				mergedValues.push(v);
-			}
-		}
-	}
-	/**
-	 * `resolveFieldCall` reads `values` and uses `isMultiple()` on the
-	 * passed slot shape — construct a minimal shape that satisfies that
-	 * contract rather than wiring a parallel children-resolver.
-	 */
-	const pseudo = { values: mergedValues } as {
-		values: readonly NodeOrTerminal[];
-	};
-	// Children bag access mirrors field reads, but must guard for inputs whose
-	// Loose surface omits `children` entirely (for example scalar single-child
-	// surfaces that accept the child directly).
-	const guardedChildrenAccess = `(${sourceVar} !== null && typeof ${sourceVar} === 'object' && !Array.isArray(${sourceVar}) && !isNodeData(${sourceVar}) && "children" in ${sourceVar} ? ${sourceVar}.children : undefined)`;
-	const access = allowDirectInputFallback ? `_childrenInput(${sourceVar})` : guardedChildrenAccess;
-	// Children slots never adopt the boolean-keyword /
-	// bitflag surface — the Config key is `children`, not the keyword
-	// name. Skip the short-circuit here.
-	//
-	// Element-type override is intentionally omitted: children slots are
-	// typed as tuples `readonly [X]` or arrays `readonly X[]` at the
-	// factory's Config surface, while a per-element override forces the
-	// resolver's `T` to the singular `X` — TS then complains about the
-	// tuple slot. Letting TS infer `T` from the assignment context
-	// propagates the correct tuple/array shape through.
-	return resolveFieldCall(access, pseudo, anyMultiple, nodeMap, intern, /* applyKeywordPresence */ false);
 }
 
 /**
@@ -2240,7 +1910,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 		emitResolverHelpers(lines, this.#nodeMap, this.#kindEntries);
 		lines.push('');
 		emitPolymorphApplyHelper(lines);
-		emitChildrenInputHelper(lines);
 		emitInternedKindTable(lines, this.#namedEntries, this.#kindTableLiterals);
 		for (const block of this.#output) {
 			lines.push(block);

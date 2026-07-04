@@ -1,7 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import type { AssembledNonterminal, AssembledNode, NodeOrTerminal } from '../compiler/model/node-map.ts';
-import { isTerminalValue, allFormFieldsOf, allFormChildrenOf } from '../compiler/model/node-map.ts';
+import type { AssembledNonterminal, AssembledNode } from '../compiler/model/node-map.ts';
+import { allFormFieldsOf } from '../compiler/model/node-map.ts';
 import { fieldTypeComponents, resolveHiddenKeywordLiteral } from './shared.ts';
 
 export interface TransportLiteral {
@@ -71,9 +71,6 @@ function collectTransportLiterals(
 		for (const field of allFormFieldsOf(node)) {
 			for (const literal of fieldTransportLiterals(field, nodeMap)) add(literal);
 		}
-		for (const child of allFormChildrenOf(node)) {
-			for (const literal of childTransportLiterals(child)) add(literal);
-		}
 	}
 	return literals;
 }
@@ -86,20 +83,6 @@ function fieldTransportLiterals(field: AssembledNonterminal, nodeMap: NodeMap): 
 		const literal = terminalTransportLiteralForKind(component.rawKind, nodeMap);
 		return literal === undefined ? [] : [literal];
 	});
-}
-
-function childTransportLiterals(child: AssembledNonterminal): TransportLiteral[] {
-	return child.values.flatMap((value) => {
-		const literal = literalForSlotValue(value);
-		return literal === undefined ? [] : [literal];
-	});
-}
-
-function literalForSlotValue(value: NodeOrTerminal): TransportLiteral | undefined {
-	if (isTerminalValue(value)) {
-		return { kind: value.value, text: value.value };
-	}
-	return undefined;
 }
 
 function supertypeTransportTypeNames(nodeMap: NodeMap): Set<string> {

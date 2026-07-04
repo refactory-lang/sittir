@@ -295,7 +295,7 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				...base,
 				modelType: 'branch',
 				fields: node.fields.map(serializeField),
-				children: node.children.map(serializeChild)
+				children: []
 			};
 			if (node.separator !== undefined) out.separator = node.separator;
 			return out;
@@ -308,7 +308,7 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				detectToken: node.detectToken,
 				parentKind: node.parentKind,
 				fields: node.fields.map(serializeField),
-				children: node.children.map(serializeChild)
+				children: []
 			};
 		case 'pattern':
 			return {
@@ -364,7 +364,7 @@ function serializeForm(form: AssembledGroup): SerializedForm {
 		detectToken: form.detectToken,
 		parentKind: form.parentKind,
 		fields: form.fields.map(serializeField),
-		children: form.children.map(serializeChild)
+		children: []
 	};
 }
 
@@ -388,17 +388,6 @@ function serializeField(field: AssembledNonterminal): SerializedField {
 		}
 	};
 	return out;
-}
-
-function serializeChild(child: AssembledNonterminal): SerializedSlot {
-	return {
-		name: child.name,
-		propertyName: child.propertyName,
-		required: isRequired(child),
-		multiple: isMultiple(child),
-		nonEmpty: isNonEmpty(child),
-		values: child.values.map(serializeValue)
-	};
 }
 
 function serializeValue(v: NodeOrTerminal): SerializedValue {

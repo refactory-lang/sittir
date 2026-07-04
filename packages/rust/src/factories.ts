@@ -5,11 +5,6 @@ import { TSKindId } from './types.js';
 import type { FluentNode, NonEmptyArray } from '@sittir/types';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';
 
-function _configChildren<T>(config: unknown, fallback: T): T {
-  if (config === null || config === undefined || typeof config !== 'object') return fallback;
-  if (!('children' in config)) return fallback;
-  return ((config as { readonly children?: T }).children ?? fallback);
-}
 function _assertNonEmpty<T>(
   arr: readonly T[],
   label: string,

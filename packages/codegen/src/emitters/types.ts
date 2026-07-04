@@ -65,9 +65,7 @@ import {
 	isNodeRef,
 	isTerminalValue,
 	isUnresolvedRef,
-	deriveSlotCardinality,
-	structuralFieldsOf,
-	structuralChildrenOf
+	structuralFieldsOf
 } from '../compiler/model/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
 import {
@@ -80,7 +78,6 @@ import {
 	resolveHiddenKeywordLiteral,
 	referencedKinds,
 	fieldTypeComponents,
-	childTypeComponents,
 	isValidIdent,
 	resolveFieldStorageInfo,
 	collectPolymorphLiteralDispatchCases
@@ -1012,7 +1009,6 @@ function emitInterface(
 	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const fields = structuralFieldsOf(node);
-	const children = structuralChildrenOf(node);
 	lines.push(`export interface ${node.typeName} {`);
 	// Canonical-hidden architecture (Option Y): hidden alias-source kinds
 	// (`_foo`) keep the leading underscore in the declared `$type`.
@@ -1056,8 +1052,6 @@ function emitInterface(
 			}
 		}
 	}
-
-	if (children && children.length > 0) emitChildrenSlotDeclaration(lines, children, nodeMap, lookupUnion);
 
 	lines.push('}');
 	lines.push('');
@@ -1121,66 +1115,6 @@ function _fieldTypeParts(field: AssembledNonterminal, nodeMap?: NodeMap): string
 	});
 }
 
-function childContentParts(child: AssembledNonterminal, nodeMap: NodeMap): string[] {
-	const parts: string[] = [];
-	for (const component of childTypeComponents(child, nodeMap)) {
-		if (component.kind === 'literal') {
-			parts.push(JSON.stringify(component.value));
-			continue;
-		}
-		if (component.kind === 'missing') {
-			missingKindTypes.set(component.rawKind, component.value);
-			parts.push(component.value);
-			continue;
-		}
-		parts.push(isValidIdent(component.value) ? component.value : JSON.stringify(component.rawKind));
-	}
-	return parts;
-}
-
-function emitChildrenSlotDeclaration(
-	lines: string[],
-	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
-	lookupUnion?: LookupUnion
-): void {
-	const perChildParts = children.map((c) => childContentParts(c, nodeMap));
-	const allPartsFlat = perChildParts.flat();
-	const aliased = lookupUnion?.(allPartsFlat);
-	const childTypes = perChildParts.map((parts) => parts.join(' | ')).filter(Boolean);
-	if (childTypes.length === 0) return;
-	const union = aliased ?? childTypes.join(' | ');
-	if (children.length === 1) {
-		const cardinality = deriveSlotCardinality(children[0]!);
-		if (cardinality.multiple) {
-			if (cardinality.nonEmpty) {
-				lines.push(`  readonly $other: NonEmptyArray<${union}>;`);
-			} else {
-				lines.push(`  readonly $other: readonly (${union})[];`);
-			}
-		} else if (cardinality.required) {
-			lines.push(`  readonly $other: ${union};`);
-		} else {
-			lines.push(`  readonly $other?: ${union};`);
-		}
-		return;
-	}
-	const anyMultiple = children.some((c) => isMultiple(c));
-	const anyNonEmpty = children.some((c) => isNonEmpty(c));
-	if (anyMultiple) {
-		if (anyNonEmpty) {
-			lines.push(`  readonly $other: NonEmptyArray<${union}>;`);
-		} else {
-			lines.push(`  readonly $other: readonly (${union})[];`);
-		}
-	} else {
-		lines.push(`  readonly $other: readonly [${union}];`);
-	}
-}
-
-// `childrenOf` → `nodeChildren(node)` (getter on AssembledNodeBase +
-// subclass overrides). Each class owns its own children semantics.
-
 function emitFormInterface(
 	lines: string[],
 	node: AssembledNode,
@@ -1235,72 +1169,8 @@ function emitFormInterface(
 		}
 	}
 
-	emitFormChildrenSlot(lines, form, nodeMap, lookupUnion);
-
 	lines.push('}');
 	lines.push('');
-}
-
-// ---------------------------------------------------------------------------
-// Polymorph form children slot emission
-// ---------------------------------------------------------------------------
-
-/**
- * Emit the `readonly $other` slot for a polymorph form interface, if the
- * form contains children.
- *
- * @remarks
- * T063 inlining can introduce children slots on polymorph forms that were not
- * present in the original grammar rule. This mirrors the branch emitter so
- * that factories can reach `config?.children` without tripping the type
- * checker.
- *
- * @param lines - Output line buffer to append to.
- * @param form - The polymorph form being emitted.
- * @param nodeMap - The assembled node map, used to look up child type names.
- * @param lookupUnion - Optional union alias resolver.
- */
-function emitFormChildrenSlot(
-	lines: string[],
-	form: AssembledGroup,
-	nodeMap: NodeMap,
-	lookupUnion?: LookupUnion
-): void {
-	if (!form.children || form.children.length === 0) return;
-	// Filter slots whose refs ALL resolve to non-constructible kinds.
-	// A kind is non-constructible when there's nothing for a caller to
-	// supply — the UForm's `$variant` discriminator already captures
-	// the only semantic distinction. Three flavours:
-	//
-	//   1. Tokens / non-userFacing hidden helpers (e.g. `_impl_item_semi`
-	//      — a bare `;` marker; token modelType, userFacing=false).
-	//   2. Hidden single-literal keywords (e.g. `_pointer_type_const` —
-	//      inlined at every reference via `resolveHiddenKeywordLiteral`).
-	//   3. Empty branches / groups — interface exists but has no
-	//      `$fields` and no `$other` (e.g. `_range_expression_postfix`
-	//      — a pure marker for the `postfix` variant).
-	//
-	// Leaving any of these in `$other` emits a dangling reference
-	// (the interface is skipped by `emitLeafTerminalAliases` / still
-	// produced as empty) and forces the factory to accept a caller
-	// value that carries no information beyond its kind.
-	const isEmittableRef = (t: string): boolean => {
-		const n = nodeMap.nodes.get(t);
-		if (!n) return false;
-		// T046: hidden non-token groups have fragment factories and interfaces —
-		// include them in child slots. Token modelType hidden kinds stay excluded.
-		const isHiddenGroup = t.startsWith('_') && n.modelType !== 'token' && n.modelType !== 'multi';
-		if (!n.userFacing && !isHiddenGroup) return false;
-		if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false;
-		// Empty branch / group — no fields and no children to construct.
-		if (n.modelType === 'branch' || n.modelType === 'group') {
-			if (n.fields.length === 0 && n.children.length === 0) return false;
-		}
-		return true;
-	};
-	const emittableChildren = form.children.filter((c) => slotKindNames(c).some(isEmittableRef));
-	if (emittableChildren.length === 0) return;
-	emitChildrenSlotDeclaration(lines, emittableChildren, nodeMap, lookupUnion);
 }
 
 /**

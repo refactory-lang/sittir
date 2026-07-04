@@ -19,16 +19,12 @@ import {
 import { type AssembledNode, type AssembledNonterminal, AssembledGroup } from '../compiler/model/node-map.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef, allSlotsOf } from '../compiler/model/node-map.ts';
 import {
-	resolveEffectiveLiteral,
-	isAutoStampSlot,
 	stampExpressionFor,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
 	slotKindNames,
 	slotLiteralValues,
-	resolveHoistedForm,
-	type HoistedForm,
 	fieldTypeComponents,
 	childTypeComponents,
 	isValidIdent,
@@ -203,15 +199,6 @@ function emitNonEmptyAssertHelper(): string[] {
 	];
 }
 
-function emitConfigChildrenHelper(): string[] {
-	return [
-		'function _configChildren<T>(config: unknown, fallback: T): T {',
-		"  if (config === null || config === undefined || typeof config !== 'object') return fallback;",
-		"  if (!('children' in config)) return fallback;",
-		'  return ((config as { readonly children?: T }).children ?? fallback);',
-		'}'
-	];
-}
 
 /**
  * Compile leaf-pattern `RegExp` constants and push their declarations into `lines`.
@@ -493,14 +480,13 @@ export namespace factory {
 					typeName: node.typeName,
 					treeTypeName: node.treeTypeName,
 					rawFactoryName: node.rawFactoryName,
-					children: node.children,
 					fields: node.fields
 				},
 				nodeMap,
 				kindEntries
 			);
 		} else {
-			result = emitFieldCarryingFactory(node, node.fields, node.children, nodeMap, false, kindEntries);
+			result = emitFieldCarryingFactory(node, node.fields, nodeMap, false, kindEntries);
 		}
 		output.push(result);
 	}
@@ -528,7 +514,7 @@ export namespace factory {
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		const result = emitFieldCarryingFactory(node, node.fields, node.children, nodeMap, false, kindEntries);
+		const result = emitFieldCarryingFactory(node, node.fields, nodeMap, false, kindEntries);
 		output.push(result);
 	}
 }
@@ -772,39 +758,13 @@ export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): str
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	fields: readonly AssembledNonterminal[],
-	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	isPolymorphForm = false,
 	kindEntries: readonly KindEnumEntry[] | undefined = undefined
 ): string {
 	const fn = node.rawFactoryName!;
 	fields = fields ?? [];
-	// Filter child slots whose refs all resolve to non-constructible
-	// kinds — see `emitFormChildrenSlot` in types.ts for the same
-	// predicate. Three flavours rejected:
-	//   - Tokens / non-userFacing hidden helpers (`_impl_item_semi`).
-	//   - Hidden single-literal keywords (`_pointer_type_const`) — the
-	//     `T.Kw*` stub was dropped with the `_bk` removal.
-	//   - Empty branches / groups (`_range_expression_postfix`) — no
-	//     fields, no children — the `$variant` discriminator already
-	//     captures the semantic distinction.
-	children = (children ?? []).filter((c) =>
-		slotKindNames(c).some((t) => {
-			const n = nodeMap.nodes.get(t);
-			if (!n) return false;
-			// Hidden non-token groups have fragment factories and are constructible —
-			// include them. Token modelType hidden kinds (bare anon tokens) stay excluded.
-			const isHiddenGroup = t.startsWith('_') && n.modelType !== 'token' && n.modelType !== 'multi';
-			if (!n.userFacing && !isHiddenGroup) return false;
-			if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false;
-			if (n.modelType === 'branch' || n.modelType === 'group') {
-				if (Object.values(n.slots).length === 0) return false;
-			}
-			return true;
-		})
-	);
-	const hasChildren = children.length > 0;
-	const opt = resolveConfigOptional(fields, children, nodeMap);
+	const opt = resolveConfigOptional(fields, nodeMap);
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
 	const configType = resolveConfigType(node, isPolymorphForm, nodeMap.refineForms?.has(typeKind) ?? false);
 
@@ -821,7 +781,6 @@ function emitFieldCarryingFactory(
 	const sc = typeof node === 'object' && node !== null && 'slotClass' in node ? node.slotClass : undefined;
 	if (
 		nonStampFields.length === 1 &&
-		!hasChildren &&
 		!isPolymorphForm &&
 		!node.kind.startsWith('_') &&
 		sc?.tag === 'singleSlot' &&
@@ -1072,8 +1031,7 @@ function emitRefineFormFactory(
 	const narrowed = new Map<string, string>();
 	for (const n of form.narrowedFields) narrowed.set(n.fieldName, n.literal);
 	const fields = node.fields;
-	const children = node.children;
-	const opt = resolveRefineFormConfigOptional(fields, children, nodeMap, narrowed);
+	const opt = resolveRefineFormConfigOptional(fields, nodeMap, narrowed);
 	const formTypeName = refineFormTypeName(info.typeName, form.name);
 	const formShortName = formTypeName.slice(info.typeName.length);
 	const lines: string[] = [];
@@ -1145,13 +1103,12 @@ function emitRefineFormFactory(
  */
 function resolveRefineFormConfigOptional(
 	fields: readonly AssembledNonterminal[],
-	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	narrowed: ReadonlyMap<string, string>
 ): '' | '?' {
-	const hasRequired =
-		fields.some((f) => isRequired(f) && autoStampExpression(f, nodeMap) === undefined && !narrowed.has(f.name)) ||
-		children.some((c) => isRequired(c) && !isAutoStampSlot(c, nodeMap));
+	const hasRequired = fields.some(
+		(f) => isRequired(f) && autoStampExpression(f, nodeMap) === undefined && !narrowed.has(f.name)
+	);
 	return hasRequired ? '' : '?';
 }
 
@@ -1159,32 +1116,17 @@ function resolveRefineFormConfigOptional(
  * Determine whether the `config` parameter should be optional (`?`).
  *
  * @param fields - The assembled field descriptors for the node.
- * @param children - The assembled child descriptors for the node.
  * @param nodeMap - The assembled node map (used for auto-stamp detection).
- * @returns The option marker — `'?'` when every non-auto-stamped field and
- *   child is optional, `''` otherwise.
+ * @returns The option marker — `'?'` when every non-auto-stamped field is
+ *   optional, `''` otherwise.
  * @remarks
  *   Auto-stamp-eligible fields are excluded from the "required" check because
  *   they are never present in Config — the factory stamps them directly.
  *   Only fields that remain in Config can make config required.
  */
-function resolveConfigOptional(
-	fields: readonly AssembledNonterminal[],
-	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap
-): '' | '?' {
+function resolveConfigOptional(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): '' | '?' {
 	fields = fields ?? [];
-	children = children ?? [];
-	// Auto-stamp-eligible fields are excluded from the "required" check —
-	// they never appear in Config. Auto-stamp-eligible children are also
-	// excluded: when all required children are parameterless, they are
-	// stamped directly in the factory body rather than read from config.
-	// Repeat-0+ children (isMultiple && !isNonEmpty) are also excluded:
-	// the factory body defaults them to `[]` via `config.children ?? []`,
-	// so they never require user input at the Config surface.
-	const hasRequired =
-		fields.some((f) => isRequired(f) && autoStampExpression(f, nodeMap) === undefined) ||
-		children.some((c) => isRequired(c) && !isAutoStampSlot(c, nodeMap) && !(isMultiple(c) && !isNonEmpty(c)));
+	const hasRequired = fields.some((f) => isRequired(f) && autoStampExpression(f, nodeMap) === undefined);
 	return hasRequired ? '' : '?';
 }
 
@@ -1256,7 +1198,6 @@ interface ContainerNode {
 	readonly typeName: string;
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
-	readonly children: readonly AssembledNonterminal[];
 	readonly fields: readonly AssembledNonterminal[];
 }
 
@@ -1273,8 +1214,8 @@ function emitContainerFactory(
 	// Surface argument naming (`child` / `...children`) is preserved for
 	// caller-side ergonomics; the slot drives where the data is stored.
 	const slot = node.fields[0];
-	const anyMultiple = slot ? isMultiple(slot) : resolveContainerMultiple(node);
-	const anyNonEmpty = slot ? isNonEmpty(slot) : node.children.some((c) => isNonEmpty(c));
+	const anyMultiple = slot ? isMultiple(slot) : false;
+	const anyNonEmpty = slot ? isNonEmpty(slot) : false;
 	const elementType = resolveContainerElementType(node, nodeMap);
 	// Storage key + property name for the single unnamed slot. Falls back to the
 	// legacy `$children` / `children` shape only if no slot exists (defensive —
@@ -1288,7 +1229,7 @@ function emitContainerFactory(
 		}
 		lines.push(`  const ${storageKey} = children;`);
 	} else {
-		const required = slot ? isRequired(slot) : (node.children[0] ? isRequired(node.children[0]) : false);
+		const required = slot ? isRequired(slot) : false;
 		const optMark = required ? '' : '?';
 		lines.push(`export function ${fn}(child${optMark}: ${elementType}) {`);
 		// Required: store the value directly. Optional: store undefined when absent.
@@ -1318,20 +1259,6 @@ function emitContainerFactory(
 }
 
 /**
- * Determine whether a container node uses a rest-params (multiple-children) signature.
- *
- * @param node - The container node descriptor.
- * @returns `true` when any child entry is repeated.
- * @remarks
- *   Containers are "multiple-shaped" when ANY child entry is repeated. Inlining
- *   Inlining can flatten a choice of hidden helpers into a mixed list of single +
- *   repeated entries, so checking only `children[0]` misses the repeated signal.
- */
-function resolveContainerMultiple(node: ContainerNode): boolean {
-	return node.children.some((c) => isMultiple(c));
-}
-
-/**
  * Resolve the element type for a container node's children parameter.
  *
  * @param node - The container node descriptor.
@@ -1343,13 +1270,9 @@ function resolveContainerMultiple(node: ContainerNode): boolean {
  *   hover/autocomplete with no indirection.
  */
 function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): string {
-	// Post-unification: when the unnamed-child slot is in `node.fields`, derive
-	// the element type from it. Fall back to `node.children` for any legacy
-	// caller that still threads the old shape.
-	if (node.fields.length > 0) {
-		return childElementType({ children: node.fields }, nodeMap);
-	}
-	return childElementType(node, nodeMap);
+	// The unnamed-child slot lives in `node.fields`; derive the element type
+	// from it directly.
+	return childElementType({ children: node.fields }, nodeMap);
 }
 
 // ---------------------------------------------------------------------------
@@ -1398,275 +1321,9 @@ function emitPolymorphFactory(
 	// through the legacy flat alias instead of namespace sugar — synthetic
 	// UForm kinds aren't in `NamespaceMap`.
 	for (const form of forms) {
-		const hoist = resolveHoistedForm(form, nodeMap);
-		if (hoist) {
-			parts.push(emitHoistedPolymorphFormFactory(form, hoist, nodeMap, kindEntries));
-		} else {
-			parts.push(emitFieldCarryingFactory(form, form.fields, form.children, nodeMap, true, kindEntries));
-		}
+		parts.push(emitFieldCarryingFactory(form, form.fields, nodeMap, true, kindEntries));
 	}
 	return parts.join('\n');
-}
-
-/**
- * Build the inline rebuild expression used by a hoisted polymorph form's
- * fluent setter. Projects BOTH the form-level fields (from
- * `config.<propName>`) and the hoisted inner fields (from
- * `inner.$fields.<name>`) back into a camelCase Config literal, then
- * overlays the patched key at the tail so it shadows the original value.
- *
- * Replaces the previous runtime `_rebuildHoist` helper — the field set is
- * known at emit time, so the whole projection is a static object literal
- * rather than a generic loop in the generated output. Fewer indirections
- * in the factory, and the field inventory is visible in the generated
- * source (not reconstructed at runtime from `Object.keys`).
- *
- * @param formFields - Form-level fields (surfaced directly on Config).
- * @param innerFields - Hoisted inner fields (flattened onto Config).
- * @param patchKey - The camelCase property name being overridden by the setter.
- * @param patchVar - The setter parameter expression (e.g. `'value'`, `'values'`).
- * @param patchSource - Which group the patched field lives in — `'form'` skips
- *   the form-level copy of `patchKey`, `'inner'` skips the inner-level copy.
- * @returns A string like
- *   - form-level patch:  `{ left: value, right: inner.$fields.right }`
- *   - inner-level patch: `{ left: config.left, right: value }`.
- */
-function buildHoistedRebuildExpr(
-	_formFields: readonly AssembledNonterminal[],
-	_innerFields: readonly AssembledNonterminal[],
-	patchKey: string,
-	patchVar: string,
-	_patchSource: 'form' | 'inner',
-	_nodeMap: NodeMap
-): string {
-	// Hoisted-form Config flattens BOTH form-level fields AND the inner
-	// child's Config fields onto the surface (see `ConfigOf` in
-	// `@sittir/types`). Spreading `...config` carries every preserved
-	// field — form-level (`refMarker`) and inner-hoisted (`name`) alike —
-	// in a single token. Patched key shadows the original.
-	return `{ ...config, ${patchKey}: ${patchVar} }`;
-}
-
-/**
- * Emit a polymorph form factory whose inner child's fields have been
- * hoisted up into the Config surface.
- *
- * @remarks
- * The emitted factory accepts the hoisted Config (flat camelCase fields from
- * the inner child), constructs the inner child via its factory, then returns
- * a NodeData object with `$children: [inner]`. Runtime shape matches the
- * non-hoisted version — this is purely an input-side ergonomic.
- *
- * Fluent getter/setter surface is the inner child's field methods applied
- * at the top level. No `getChild` / `setChild` is emitted — the child slot
- * is hidden from consumers since they never construct it directly.
- *
- * @see {@link resolveHoistedForm}
- */
-function emitHoistedPolymorphFormFactory(
-	form: AssembledGroup,
-	hoist: HoistedForm,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined = undefined
-): string {
-	const fn = form.rawFactoryName!;
-	// Polymorph form factories OMIT `$variant` from their input Config
-	// — the factory stamps the variant on output. See resolveConfigType.
-	const configType = `Omit<ConfigOf<T.${form.typeName}>, '$variant'>`;
-	const variantName = form.name;
-	const parentKind = form.parentKind ?? form.kind;
-	const formFields = form.fields;
-
-	// Required if ANY form-level OR inner-level required field is present
-	// (modulo auto-stamp / literal-resolved — those don't participate in the
-	// Config surface). Also required when the inner is a container whose
-	// children DON'T all auto-stamp — the inner factory needs `config
-	// .children[0]` and the form can't honour that with `config?:`.
-	const formRequired = formFields.some((f) => isRequired(f) && autoStampExpression(f, nodeMap) === undefined);
-	const innerRequired = hoist.innerFields.some(
-		(f) => isRequired(f) && resolveEffectiveLiteral(f, nodeMap) === undefined
-	);
-	const opt = formRequired || innerRequired ? '' : '?';
-
-	const lines: string[] = [];
-	lines.push(`export function ${fn}(config${opt}: ${configType}) {`);
-
-	// Inner child construction. Three paths:
-	//
-	//   - **Field-carrier + factory available** (branches/groups with
-	//     fields that also have a factory): delegate to
-	//     `innerFactory(config)`. The inner factory picks out
-	//     `config.<its own fields>` and ignores the form-level keys.
-	//     Structural subtyping + `resolveHoistedForm`'s name-collision
-	//     gate keep this safe.
-	//
-	//   - **Container inner** (modelType='container', has children
-	//     but no fields): the inner factory takes positional children
-	//     (`containerFactory(child)` for single-child, `(...children)`
-	//     for multi). ConfigOf hoists the container's `Partial<{
-	//     children }>` up, so the form's Config has `config.children`
-	//     typed as the inner's children slot. Extract from config
-	//     and pass positionally. Example:
-	//     `expression_statement__form_with_semi` → inner container
-	//     `_expression_statement_with_semi`.
-	//
-	//   - **No factory** (hidden group with fields): inline the
-	//     NodeData construction — unblocks polymorph forms whose
-	//     inner kind is a hidden field-carrying group without
-	//     retrofitting factory emission onto every hidden group.
-	//     Example: python's `_assignment_eq`.
-	const innerIsContainer =
-		hoist.innerNode.modelType === 'branch' &&
-		classifyChildFactorySurface(hoist.innerNode, nodeMap) !== null &&
-		hoist.innerFields.length === 0;
-	if (innerIsContainer && hoist.innerFactoryName !== undefined) {
-		// innerNode is a positional-child branch factory
-		const innerNode = hoist.innerNode as { slots: Readonly<Record<string, AssembledNonterminal>> };
-		const innerChildren = Object.values(innerNode.slots);
-		const anyMultiple = innerChildren.some((c) => isMultiple(c));
-		if (anyMultiple) {
-			// Spread coalesces missing children to an empty list — varargs
-			// inner factory accepts the empty case.
-			lines.push(
-				`  const inner = ${hoist.innerFactoryName}(..._configChildren<Parameters<typeof ${hoist.innerFactoryName}>>(config, [] as unknown as Parameters<typeof ${hoist.innerFactoryName}>));`
-			);
-		} else {
-			// Single-child inner factory takes one required NodeData. Tests
-			// and lenient consumers pass `{}` to form factories; we preserve
-			// that tolerance by reading defensively (returns undefined when
-			// either config or children is missing) and casting to the inner
-			// factory's required-arg type. Replaces the structurally absurd
-			// `config?.children?.[0]!` (which said "may be undefined" then
-			// asserted not). The cast is now the single honest statement of
-			// "trust the caller to provide this — runtime will see undefined
-			// if they didn't, same as before."
-			lines.push(
-				`  const _innerChildren = _configChildren<readonly [Parameters<typeof ${hoist.innerFactoryName}>[0]] | []>(config, []);`
-			);
-			lines.push(
-				`  const inner = ${hoist.innerFactoryName}(_innerChildren[0] as Parameters<typeof ${hoist.innerFactoryName}>[0]);`
-			);
-		}
-	} else if (hoist.innerFactoryName !== undefined) {
-		// When the outer config is optional (no required fields anywhere
-		// in the hoisted surface), TS sees `config` as `Config | undefined`
-		// and the inner factory's required-Config parameter rejects it.
-		// Pass through with the boundary cast — the inner factory's own
-		// optional-field handling treats undefined fields as missing.
-		const innerArg = opt === '?' ? `config as Parameters<typeof ${hoist.innerFactoryName}>[0]` : `config`;
-		lines.push(`  const inner = ${hoist.innerFactoryName}(${innerArg});`);
-	} else {
-		const innerKind = hoist.innerKind;
-		// Canonical-hidden architecture (Option Y): the inner $type
-		// retains its `_` prefix when the inner is a hidden alias-source
-		// kind. Templates, interfaces, factories all key on the same
-		// hidden name; wrap canonicalizes parser output (visible →
-		// hidden) so consumers always see the canonical hidden form.
-		// Inner node — local consts + property shorthand +
-		// pure getters + withMethods<T> wrap. No freeze on the inner —
-		// the outer does the rebuild.
-		for (const f of hoist.innerFields) {
-			const stamp = autoStampExpression(f, nodeMap);
-			if (stamp !== undefined) {
-				lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
-				continue;
-			}
-			lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
-		}
-		lines.push('  const inner = withMethods({');
-		lines.push(`    $type: ${factoryTypeDiscriminant(innerKind, nodeMap, kindEntries)},`);
-		lines.push(`    $source: 2 as const,`);
-		lines.push('    $named: true as const,');
-		for (const f of hoist.innerFields) {
-			lines.push(`    ${f.storageKey},`);
-		}
-		for (const f of hoist.innerFields) {
-			const propName = f.propertyName;
-			lines.push(`    ${propName}() { return ${f.storageKey}; },`);
-		}
-		lines.push('  }, methodsEngine);');
-	}
-	lines.push(`  const children = [inner] as const;`);
-
-	// Form-level node — form-field locals + property
-	// shorthand + form-field getters from local consts. Inner-field getters
-	// close over the `inner` reference and read its storage via property
-	// access (not readRawField; the closure has the typed reference).
-	for (const f of formFields) {
-		const stamp = autoStampExpression(f, nodeMap);
-		if (stamp !== undefined) {
-			lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
-			continue;
-		}
-		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
-	}
-	lines.push('  return withMethods({');
-	lines.push(`    $type: ${factoryTypeDiscriminant(parentKind, nodeMap, kindEntries)},`);
-	lines.push(`    $source: 2 as const,`);
-	lines.push('    $named: true as const,');
-	lines.push(`    $variant: '${variantName}' as const,`);
-	for (const f of formFields) {
-		lines.push(`    ${f.storageKey},`);
-	}
-	lines.push('    $other: children,');
-	// Form-field getters: read the local const directly.
-	for (const f of formFields) {
-		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
-	}
-	// Inner-field getters: close over `inner` and read via the inner node's
-	// own getter (which delegates to inner's local const). `inner` is the
-	// withMethods<T>-wrapped object literal, so `inner.<propName>()`
-	// resolves through the getter method emitted on inner.
-	for (const f of hoist.innerFields) {
-		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return inner.${propName}(); },`);
-	}
-
-	// $with: updater namespace for hoisted form. Build a custom $with that
-	// handles both form-level and inner-level field updates via rebuild expr.
-	// Each entry calls fn(rebuildConfig) which returns a new wrapped node.
-	// Setter parameter types match the field's required/optional/multi shape
-	// — same rules as non-hoisted setters (rule 3, consistent across paths).
-	const withEntries: string[] = [];
-	const buildHoistedSetter = (f: AssembledNonterminal, patchSource: 'form' | 'inner'): string => {
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		const fMultiple = isMultiple(f) && storageInfo.kind === 'verbatim';
-		const rawElem = fieldElementType(f, nodeMap);
-		const elemType = setterElemType(f, rawElem, fn, nodeMap);
-		const param = fMultiple
-			? `...values: ${
-					isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`
-				}`
-			: setterValueSignature(f, elemType);
-		const rebuild = buildHoistedRebuildExpr(
-			formFields,
-			hoist.innerFields,
-			f.configKey,
-			fMultiple ? 'values' : 'value',
-			patchSource,
-			nodeMap
-		);
-		return `      ${f.propertyName}: (${param}) => ${fn}(${rebuild} as Parameters<typeof ${fn}>[0]),`;
-	};
-	for (const f of formFields) {
-		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		withEntries.push(buildHoistedSetter(f, 'form'));
-	}
-	for (const f of hoist.innerFields) {
-		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		withEntries.push(buildHoistedSetter(f, 'inner'));
-	}
-	if (withEntries.length > 0) {
-		lines.push(`    $with: {`);
-		lines.push(...withEntries);
-		lines.push(`    },`);
-	} else {
-		lines.push(`    $with: {},`);
-	}
-	lines.push('  }, methodsEngine);');
-	lines.push('}');
-	return renameUnusedConfigParam(lines);
 }
 
 /**
@@ -1967,7 +1624,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
-		lines.push(...emitConfigChildrenHelper());
 		lines.push(...emitNonEmptyAssertHelper());
 		lines.push('');
 
