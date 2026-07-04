@@ -1986,7 +1986,16 @@ function classifyHiddenChoiceRule(
 				.map((m): string | null => {
 					const core = m.type === VARIANT ? m.content : m;
 					if (!isAliasMintedRef(core, rules)) return null;
-					if (core.type === ALIAS) return core.named ? core.value : null;
+					// Named ALIAS arm: record the HIDDEN symbol name (content.name),
+					// matching collectSubtypeNames' per-arm naming — variantArms
+					// entries must stay a subset of `subtypes`, and assemble's
+					// lookup keys on the hidden name. (Effectively unreachable
+					// today — resolveRule collapses raw alias arms to
+					// SYMBOL+aliasedFrom first — but the visible `value` here
+					// would silently no-op if an unresolved ALIAS ever arrived.)
+					if (core.type === ALIAS) {
+						return core.named && core.content.type === SYMBOL ? core.content.name : null;
+					}
 					if (core.type === SYMBOL) return core.aliasedFrom ?? core.name;
 					return null;
 				})
