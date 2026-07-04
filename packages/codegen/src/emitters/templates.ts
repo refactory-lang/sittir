@@ -474,16 +474,18 @@ function leftmostBoundary(rule: RenderRule): BoundaryEnd {
  */
 function isLeftmostTerminalImmediate(rule: RenderRule): boolean {
 	switch (rule.type) {
-		// NOTE (phase-visibility-tightening finding, see project_preserve_token_wrappers):
-		// TOKEN nodes never survive into RenderRule — `applyWrapperDeletion`'s
-		// TOKEN case discards the wrapper and does NOT stamp `immediate` onto a
-		// leaf attribute, so `token.immediate(...)` provenance is lost by the
-		// time this walker runs. The former `case TOKEN: return rule.immediate`
-		// arm was therefore ALREADY dead code under the true (wrapper-free)
-		// input this function has always received in production — deleted here
-		// because `TokenRule` collapses to `never` under `RenderRule`. Left as a
-		// reported finding, not fixed: restoring `token.immediate` fidelity is a
-		// wrapper-deletion change, out of scope for this type-only pass.
+		// NOTE (phase-visibility-tightening finding, see project_preserve_token_wrappers;
+		// wording corrected per PR-136 review): `applyWrapperDeletion`'s TOKEN
+		// case PRESERVES the node (`{...rule, content}` — `immediate` included,
+		// NOT lost), so TokenRule→never under `RenderRule` is a type-level
+		// assertion backed only by the EMPIRICAL fact that no top-level
+		// token(...) rule survives into renderRules on any current grammar
+		// (0 hits ×3). The former `case TOKEN: return rule.immediate` arm was
+		// deleted on that basis; if a surviving TOKEN ever appears, the type
+		// lies and this walker silently loses its `immediate` signal — that
+		// reconciliation (either wrapper-deletion stamps an `immediate` leaf
+		// attribute, or Rule<'normalize'> admits TokenRule) is the
+		// preserve-token-wrappers debt, out of scope for this type-only pass.
 		case SEQ: {
 			for (const m of rule.members) {
 				// Only recurse into the first non-empty member.
@@ -981,15 +983,19 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 		// template-level surface of their own; the inner rule's emission is
 		// what the renderer sees.
 		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from RenderRule union.
-		// phase-visibility-tightening: TOKEN and ALIAS cases deleted — both are
-		// WrapperPhase-only (types/rule.ts) and collapse to `never` under
-		// RenderRule. `applyWrapperDeletion` unconditionally eliminates TOKEN
-		// (unwraps to content) and ALIAS (pushes aliasedFrom/aliasNamed onto a
-		// leaf attribute, returns content) before normalize-phase output
-		// exists, so no RenderRule value can ever carry one — confirmed
-		// empirically (0 hits walking every AssembledNode.renderRule and every
+		// phase-visibility-tightening: TOKEN and ALIAS cases deleted — both
+		// collapse to `never` under RenderRule (WrapperPhase-only,
+		// types/rule.ts). ALIAS is genuinely eliminated by
+		// `applyWrapperDeletion` (pushes aliasedFrom/aliasNamed onto a leaf
+		// attribute, returns content). TOKEN is NOT mechanically eliminated —
+		// wrapper-deletion's TOKEN case PRESERVES the node (`{...rule,
+		// content}`, wrapper-deletion.ts) — so the TokenRule→never assertion
+		// is type-level + EMPIRICAL, not a code guarantee: 0 TOKEN hits
+		// walking every AssembledNode.renderRule and every
 		// deleteWrapper(linkRules[name]) hidden-helper target across all 3
-		// grammars). Post-normalize aliasing is fully represented via the
+		// grammars. If a top-level token(...) rule ever survives into
+		// renderRules, the type lies — tracked with the preserve-token-
+		// wrappers debt. Post-normalize aliasing is fully represented via the
 		// `fieldName`/`aliasedFrom` leaf attributes other cases here already
 		// read (see `pickConditionalKey`'s `contentFieldName` check).
 		case VARIANT:

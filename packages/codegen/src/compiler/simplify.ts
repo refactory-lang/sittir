@@ -617,10 +617,14 @@ export function makeDefaultCtx(): SimplifyCtx {
  * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 / ALIAS / TOKEN nodes
  * must never appear in the input:
  *  - `applyWrapperDeletion` (which runs before this in the production pipeline)
- *    converts all wrapper nodes to `fieldName` / `multiplicity` attributes
- *    (FIELD/OPTIONAL/REPEAT/REPEAT1) or transparently unwraps to content
- *    (TOKEN) / pushes `aliasedFrom`+`aliasNamed` to a leaf attribute (ALIAS).
- *    All six collapse to `never` under `RenderRule` (types/rule.ts).
+ *    converts FIELD/OPTIONAL/REPEAT/REPEAT1 to `fieldName` / `multiplicity`
+ *    attributes and pushes ALIAS down to `aliasedFrom`+`aliasNamed` leaf
+ *    attributes. TOKEN is the exception: wrapper-deletion PRESERVES the node
+ *    (`{...rule, content}`, wrapper-deletion.ts) — its absence here is a
+ *    type-level assertion (`TokenRule` → `never` under `RenderRule`) backed
+ *    empirically (0 surviving top-level token rules across all 3 grammars),
+ *    not a mechanism guarantee; see the preserve-token-wrappers debt. All
+ *    six still collapse to `never` under `RenderRule` (types/rule.ts).
  *  - Construction sites inside `mergePositionForChoice` / `extractFieldFromBranchesForChoice`
  *    and the empty-match fold in `simplifyChoiceRule` now delegate to
  *    `ctx.builder` (= `attributeBuilder` in production) which pushes attributes
