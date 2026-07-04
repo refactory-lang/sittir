@@ -461,6 +461,34 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
    vocabulary refines; the rare file importing both uses an import alias. The
    companion lintable guideline stands: overrides-scoped files never import IR types.
 
+6. **`source`-homonym resolution** (user, 2026-07-04 — resolves §5.4's five-way
+   homonym row; supersedes both of its proposals):
+   - **Slot-level `AssembledNonterminal.source` ('grammar'|'inferred') is ELIMINATED**,
+     not renamed. Since PR-P1 it is a pure derivation of `fieldName` presence —
+     a stored copy of a derivable fact is a DRY violation. Consumers derive
+     named-vs-positional from `fieldName !== undefined` directly; the
+     node-model.json5 `source` key on slots is dropped from the schema.
+   - **Kind-level `AssembledNode.source: RuleSource` moves into the node's
+     metadata bag** (carried/copied from the rule's metadata bag, blind to the
+     compiler). Its consumer (suggested.ts's promoted-kind override candidates —
+     a sanctioned propose-diagnostic) reads it via the sanctioned accessor.
+   - **One unified authorship vocabulary: `author`** — `RuleProvenance`
+     ('grammar-authored'|'override-authored-or-replaced'|'evaluate-synthesized')
+     and the opaque shape's `source: 'enrich'` tag are the SAME fact wearing
+     two names. They merge into a single `author: 'grammar' | 'override' |
+     'enrich' | 'evaluate'` field in the RuleMetadata shape; `RuleProvenance`
+     and `RuleSource` types die. NUANCE (coordinator, standing unless vetoed):
+     link's `'promoted'` is NOT an author — it records that a classification
+     was inferred rather than declared. It becomes its own metadata key
+     (`classifiedBy: 'grammar' | 'link'`) instead of polluting `author`.
+     The dsl-side transform-path descent keying (formerly `source==='enrich'`)
+     re-keys on `author==='enrich'` — same sanctioned reader, same semantics.
+   - **node-model `polymorphVariants.<kind>.source` is REMOVED** from the
+     schema (verify consumers first; STOP if load-bearing beyond diagnostics).
+   - Untouched (different axes, honest names): runtime `$source` 0|1|2
+     (constructor origin, public API), `sourceRuleIds` (structural
+     back-pointers), `DerivedRuleSource` follows `RuleSource` into deletion.
+
 ## 6. Open questions for the design discussion
 
 1. **Is "one boundary module" an acceptable answer to "there should be a SSOT"?** §0 argues
