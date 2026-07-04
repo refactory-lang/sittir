@@ -47,16 +47,16 @@
     "_export_statement_default": {
       "definedBy": "override",
       "childKind": {
-        "_export_statement_default_from_arm": "from_arm",
-        "_export_statement_default_decl_arm": "decl_arm"
+        "export_statement_default_from_arm": "from_arm",
+        "export_statement_default_decl_arm": "decl_arm"
       }
     },
     "_export_statement_default_from_arm": {
       "definedBy": "override",
       "childKind": {
-        "_export_statement_default_from_arm_star_from": "star_from",
-        "_export_statement_default_from_arm_ns_from": "ns_from",
-        "_export_statement_default_from_arm_clause_from": "clause_from"
+        "export_statement_default_from_arm_star_from": "star_from",
+        "export_statement_default_from_arm_ns_from": "ns_from",
+        "export_statement_default_from_arm_clause_from": "clause_from"
       }
     },
     "ambient_declaration": {
@@ -135,6 +135,12 @@
         "public_field_definition_static_mods": "static_mods",
         "public_field_definition_abstract_first": "abstract_first",
         "public_field_definition_readonly_first": "readonly_first"
+      }
+    },
+    "string": {
+      "definedBy": "override",
+      "childKind": {
+        "string_fragment": "fragment"
       }
     },
     "update_expression": {
