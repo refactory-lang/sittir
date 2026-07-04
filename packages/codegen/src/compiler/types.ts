@@ -23,10 +23,11 @@ import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
 
-// PolymorphVariant + ExternalRole live in the IR type layer (R11) — re-exported
-// here so existing compiler-side importers keep working.
-import type { PolymorphVariant, ExternalRole } from '../types/ir.ts';
-export type { PolymorphVariant, ExternalRole };
+// ExternalRole lives in the IR type layer (R11) — re-exported here so
+// existing compiler-side importers keep working. (R12/decision-7 V2 Task 2:
+// PolymorphVariant, formerly re-exported alongside it, is deleted.)
+import type { ExternalRole } from '../types/ir.ts';
+export type { ExternalRole };
 
 // ---------------------------------------------------------------------------
 // Evaluate rule occurrence identity and classification
@@ -178,13 +179,6 @@ export interface RawGrammar {
 	 * match on external names.
 	 */
 	readonly externalRoles?: Map<string, ExternalRole>;
-	/**
-	 * Nested-alias polymorph metadata: each entry pairs a parent kind
-	 * with a short variant suffix. The full alias name is
-	 * `${parent}_${child}`. Populated by alias() placeholders in
-	 * transform patches during evaluate.
-	 */
-	readonly polymorphVariants?: PolymorphVariant[];
 	/**
 	 * Per-rule form declarations registered by `refine()` in the
 	 * override layer — authoring-only metadata that codegen reads to
@@ -352,7 +346,6 @@ export interface LinkedGrammar {
 	 * Optional so hand-constructed test fixtures can omit it.
 	 */
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
-	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
 	/**
 	 * Set of hidden (`_`-prefixed) kind names that appear as the CONTENT of a
@@ -455,7 +448,6 @@ export interface NormalizedGrammar {
 	readonly word: string | null;
 	readonly externals?: readonly string[];
 	readonly derivations: DerivationLog;
-	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
 

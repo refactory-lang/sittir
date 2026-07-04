@@ -37,7 +37,6 @@ import { isVariantPlaceholder } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import {
 	wireRegisterSyntheticRule,
-	wireRegisterPolymorphVariant,
 	wireRegisterConflict,
 	wireGetCurrentRuleKind,
 	polymorphVisibleName,
@@ -408,11 +407,6 @@ function buildHoistedVariants(
 		// the variant's contribution.
 		const visibleName = polymorphVisibleName(parentKind, p.v.name);
 		const hiddenName = polymorphHiddenName(parentKind, p.v.name);
-		if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
-			throw new Error(
-				`variant('${p.v.name}'): no active wire() context — variant() must run inside a rule callback under wire()`
-			);
-		}
 		if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
 			throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 		}
@@ -678,11 +672,6 @@ function resolvePatch(
 				...(deField(originalMember) as object),
 				metadata: makeRuleMetadata({ fieldSource: 'override' })
 			} as unknown as RuntimeRule;
-		}
-		if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
-			throw new Error(
-				`variant('${patch.name}'): no active wire() context — variant() must run inside a rule callback under wire()`
-			);
 		}
 		const visibleName = polymorphVisibleName(parentKind, patch.name);
 		const hiddenName = polymorphHiddenName(parentKind, patch.name);

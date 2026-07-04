@@ -687,7 +687,7 @@ reason; package suite counts held EXACTLY at their baseline floor (ts 302,
 rust 257, python 188 — verified identical pass/fail sets against the
 pre-V1 commit).
 
-### Probe's final assertion state
+### Probe's final assertion state (V1)
 
 The probe (`packages/tools/src/probe/variant-derivation.ts`) now encodes a
 `KNOWN_EXCEPTIONS` table (7 reviewed-additive `extra` entries + 3
@@ -695,3 +695,255 @@ known-exception `missing` entries = 10 total) and asserts EXACT equality
 modulo that table — any mismatch NOT in the table still fails with exit 1.
 Current state: exit 0, "structural == wire (modulo 10 reviewed known-diffs)
 on all 3 grammar(s)".
+
+## V2 OUTCOME (2026-07-04, user-directed upgrade — eliminates the V1
+surviving wire read + deletes the wire metadata channel entirely)
+
+### Task 1 — declared fact replaces the surviving wire read
+
+**Design.** `classifyHiddenChoiceRule` (link.ts) is the exact site where the
+CHOICE→`SupertypeRule` flatten destroys the alias-mint linkage
+(`collectSubtypeNames` flattens each arm into a bare string in
+`subtypes: string[]`, before `normalized.rules` is even built). Per the
+`splicedBody` precedent (types/rule.ts, doctrine decision 3's corollary):
+the pass that destroys the structure declares the fact it erased, AT THE
+MOMENT it acts, as a top-level structural attribute — named for what it
+means, read directly, never re-derived through the opaque `metadata` bag.
+
+- **Attribute**: `RuleBase.variantArms?: readonly string[]` (types/rule.ts).
+  Ungated across phases (same pattern as `splicedBody` — a top-level
+  `RuleBase` field, not inside the `Phase extends NormalizedPhase`
+  conditional), since `SupertypeRule` is born at 'link' and the attribute
+  only needs to survive from link through normalize (where `assemble.ts`
+  reads `normalized.rules`).
+- **Stamp site**: `classifyHiddenChoiceRule`'s SUPERTYPE-classification
+  branch (link.ts), computed from the PRE-flatten CHOICE's own members —
+  each arm that is alias-minted (`isAliasMintedRef`, exported from
+  `variant-structural.ts` and imported by link.ts — SHARED, not
+  re-derived) contributes its subtype-list name (`aliasedFrom ?? name` for
+  SYMBOL, matching `collectSubtypeNames`'s own per-arm naming exactly, so
+  `variantArms` is always a subset of `subtypes`; a bare ALIAS node's
+  `.value` when named). `classifyHiddenRule`/`classifyHiddenChoiceRule`
+  thread the resolved `rules` map as an explicit parameter (previously only
+  `ctx.rules`, which is `raw.rules` — the WRONG, pre-resolve snapshot — was
+  in scope) so `isAliasMintedRef`'s independent-body test runs against the
+  same map `variant-structural.ts`'s own predicate uses.
+- **Read site**: `assemble.ts`'s `variantChildKindsSet` construction now
+  iterates `normalized.rules`, filters `rule.type === SUPERTYPE &&
+  rule.variantArms`, and unions in the arms — replacing the narrow
+  `for (const pv of normalized.polymorphVariants ?? []) if
+  (normalized.rules[pv.parent]?.type === SUPERTYPE) ...` wire read.
+
+**Scope-widening discovery (important, not a bug).** `isAliasMintedRef`
+applied bare to a SUPERTYPE's arms surfaces MORE alias-minted arms than the
+wire channel ever tracked for this shape — every `alias($.hidden,
+$.visible)` construct inside ANY supertype's choice qualifies, whether
+hand-authored in an override or inherited from the upstream base grammar.
+Verified during development: rust's `_pattern`/`wildcard_pattern`,
+`_condition`/`let_chain`, `_type`/`primitive_type`; ts's
+`_jsx_attribute_name`/`property_identifier`, `_property_name`/
+`property_identifier`, `primary_type`/`this` are all GENUINE
+`alias(...)` constructs (confirmed against tree-sitter-rust's and
+tree-sitter-typescript's own vendored `grammar.js`), not false positives —
+the exact same REVIEWED-ADDITIVE class V1 already accepted for
+CHOICE-classified parents (`impl_item`, `reference_expression`,
+`string_fragment`). This widening feeds `markUserFacing` (giving these
+hidden kinds a render path) and therefore `wrap.ts`'s
+`_aliasTargetToSource` remap table gains 2 new entries (rust
+`wildcard_pattern`↔`_wildcard_pattern`; ts `property_identifier`↔
+`_property_identifier` — the OTHER 4 discovered arms already had an
+existing remap entry or independent visibility route). Verified SAFE: the
+decisive gate (`read-render-parseAstMatchPass` = rust 117 / ts 75 / py
+102) holds EXACTLY, and `node-model.json5` is byte-identical across all 3
+grammars (this widening never reaches `buildFactoryMap`'s
+`polymorphVariants` derivation, since it only touches SUPERTYPE, not
+BRANCH, parents — see Task 3).
+
+**Byte-identity proof**: `packages/{rust,typescript,python}/src/node-model.json5`
+empty `git diff` after the flip (verified standalone before Task 2's
+deletions, and again after the full ×3 regen at the end). The ONLY
+observable side effect anywhere in generated output is the 2-line
+`wrap.ts` `_aliasTargetToSource` addition described above.
+
+### Task 2 — wire metadata channel deletion inventory
+
+**Deleted, zero remaining callers (verified via `rg` sweep before each
+deletion):**
+
+| Symbol | File | Notes |
+|---|---|---|
+| `wireRegisterPolymorphVariant` | dsl/wire/wire.ts | Function deleted. Its 2 call sites in transform.ts (`buildHoistedVariants`, `resolvePatch`) each had a redundant null-context throw-guard — PROVABLY unreachable (both call sites are gated by an earlier `wireGetCurrentRuleKind()` null-check backed by the SAME `currentContext` variable) — guards deleted, no replacement needed. |
+| `WireContext.polymorphVariants` | dsl/wire/wire.ts | Field deleted from the interface + both construction sites (`withWireContext`, `wire()`'s production context). |
+| `drainPolymorphMetadata` | compiler/evaluate.ts | Function + call site + `RawGrammar.polymorphVariants` field construction deleted. |
+| `RawGrammar.polymorphVariants` | compiler/types.ts | Field deleted. |
+| `LinkedGrammar.polymorphVariants` | compiler/types.ts | Field deleted; link.ts's `raw.polymorphVariants` propagation site deleted. |
+| `NormalizedGrammar.polymorphVariants` | compiler/types.ts | Field deleted; normalize.ts's `linked.polymorphVariants` propagation site deleted. |
+| `PolymorphVariant` (the pair type) | types/ir.ts | Interface deleted (doc-comment marker left at the deletion site per repo convention for historical grep-ability). Re-export in compiler/types.ts deleted. |
+| `_emitVariantFrom` | emitters/from.ts | Dead code (zero callers even before this PR) referencing the pair type — deleted alongside its now-dangling `PolymorphVariant` import. |
+
+**Re-keyed onto the structural predicate (kept, not deleted — logic
+survives, input source changes):**
+
+- `link.ts`'s `applyOverridePolymorphs(rules, derivations)` — dropped its
+  `variants: PolymorphVariant[]` parameter; now calls
+  `deriveStructuralVariantChildren(rules)` internally and recovers each
+  parent's short child suffixes via `prefixNamedSuffix` (the exact inverse
+  of `polymorphVisibleName`) for `emitVariantChildDerivations`'s log format
+  and the `variantChildSymbolNames` set. Verified byte-neutral: the ONE
+  parent that reaches the real structural mutation
+  (`pushAmbientScaffoldIntoVariantChildren`, gated on
+  `!anyChildMemberInFoundChoice`) across all 3 grammars is typescript's
+  `public_field_definition` — confirmed via an instrumented run BEFORE
+  re-keying that this is the only parent to ever take that branch, and
+  `deriveStructuralVariantChildren` reproduces its exact 5-child set (same
+  full names, same order) both mid-link (the exact `rules` snapshot
+  `applyOverridePolymorphs` receives) and post-link. The OTHER branch
+  (`anyChildMemberInFoundChoice === true`, the common case) is a
+  derivation-log-only no-op post the 2026-06-01 DE-POLYMORPH change — its
+  reads (`isAllAliasChoice`, `findVariantChoice`) were ALREADY structural,
+  confirming the plan's premise.
+- `normalize.ts`'s `variantSkip` diagnostic skip-set (feeds
+  `diagnoseSlotGrouping`'s propose-promotion false-positive suppression) —
+  re-derived from `deriveStructuralVariantChildren(linked.rules)` instead
+  of `linked.polymorphVariants` pairs, preserving the exact
+  two-string-per-child shape the old code added (parent kind name + short
+  suffix, recovered via `prefixNamedSuffix`).
+
+**Untouched (out of scope, per the task's explicit boundary):** `variant()`
+placeholder RESOLUTION (`dsl/primitives/variant.ts`, `dsl/transform/
+transform.ts`'s `resolveAliasPlaceholder`/`registerAliasedVariant`/hoist
+machinery), GLR-conflict registration (`registerHoistedVariantConflicts`),
+`refine()` forms, `PolymorphVariantDescriptor`/`PolymorphVariantMap`
+(polymorph-variant.ts — the SURVIVING node-model.json5 output shape, a
+different type from the deleted wire pair despite the name collision),
+`inferPolymorphVariant` (validate/common.ts — reads the surviving
+descriptor map, unrelated to the deleted channel).
+
+**Bundle-diff inspection**: `packages/{rust,typescript,python}/.sittir/
+grammar.js` each show an IDENTICAL, minimal diff (−19 lines) across all 3
+grammars: the deleted `wireRegisterPolymorphVariant` function body, its 2
+call-site guards in `buildHoistedVariants`/`resolvePatch`, and its 2
+`polymorphVariants: []` context-literal entries — confirmed this is
+EXACTLY the channel deletion (no unrelated reordering, no rule-shape
+changes) via `git diff` inspection; `.sittir/src/grammar.json` and
+`parser.c` are BYTE-IDENTICAL across all 3 grammars regardless (verified
+via empty `git diff --stat`).
+
+### Task 3 — probe redefinition
+
+**New contract**: `tool variant-derivation-probe` is no longer a
+structural-vs-wire equality check (the wire side no longer exists) — it is
+now a cross-commit DRIFT DETECTOR, same spirit as the generated-manifest
+guard: does `deriveStructuralVariantChildren`, computed LIVE from the
+current pipeline, still equal what's COMMITTED in each grammar's
+`node-model.json5` `polymorphVariants` section?
+
+**The comparison restriction (discovered during Task 3, not anticipated by
+the task framing)**: `deriveStructuralVariantChildren` returns every
+qualifying parent regardless of Assemble-time classification, but
+`node-model.json5`'s `polymorphVariants` section is populated EXCLUSIVELY
+for `modelType==='branch'` parents (`emitters/factory-map.ts`'s
+`buildFactoryMap`: `AssembledGroup`/`AssembledSupertype` have no
+`variantChildKinds` field at all, so `buildFactoryMap` never visits them
+for this purpose). The committed artifact therefore can NEVER reflect a
+non-branch parent's variant children — independent of whether they were
+ever discovered via wire pairs (historically) or the structural derivation
+(now). The probe's comparison restricts to `modelType==='branch'` parents
+on BOTH sides before diffing (built via a real `assemble()` call —
+`AssembleCtx.from(normalized)` + `assemble(normalized, ctx)`, loaded
+through `codegen-surface.ts`'s `load('assemble')`) rather than reporting
+non-branch qualifying parents as mismatches. Verified: this restriction
+produces EXACTLY ZERO drift across all 3 grammars.
+
+**Exceptions adjudication (the 3 originally-scoped candidates)**:
+
+| Case | Grammar | Outcome | Reasoning |
+|---|---|---|---|
+| `_simple_pattern`/`negative` | python | **OFF the exceptions list** — now derives via the Task 1 declared fact. `assemble.ts` reads `SupertypeRule.variantArms` directly; no wire read survives anywhere. It is EXCLUDED from the probe's comparison not because it's an exception, but because `_simple_pattern` classifies to `SupertypeRule`, and SUPERTYPE parents structurally can never have a `node-model.json5` entry (same boundary as the GROUP cases below) — this is the `modelType==='branch'` restriction doing its job, not a special-cased workaround. |
+| `in_path` (rust `visibility_modifier`) | rust | **Reconciled — zero drift, nothing to fix.** With the wire pair gone, there is nothing left asserting `visibility_modifier_in_path` should exist. Rust's committed `node-model.json5` already carries only `{"visibility_modifier_pub": "pub"}` for this parent (verified: the phantom pair was already excised from the committed artifact during V1, per that OUTCOME's "additive surface" section — "`visibility_modifier`'s stale `in_path` phantom pair REMOVED"). The real, bare `in_path` kind (minted by a SEPARATE `groups:` body-pattern mechanism, unrelated to variant() adoption) still has zero node-model/dispatch coverage — a PRE-EXISTING gap, confirmed unrelated to this derivation and explicitly out of scope for a derivation-channel refactor (would be a net-new feature). |
+| `dict_pattern`/`kv` | python | **Entry does not exist post-V1 — reconciled, zero drift.** Confirmed via direct inspection of python's committed `node-model.json5`: `dict_pattern` has no `polymorphVariants` entry at all (removed during V1 per that OUTCOME's adjudication — "`dict_pattern` entry REMOVED"). `deriveStructuralVariantChildren` also does not find it (the lone-aliased-SEQ-member shape is out of the CHOICE-centric predicate's scope by design, unchanged from V1). Both sides agree on absence — not a drift-detector failure requiring resolution; there was never a live entry to reconcile against. |
+
+**Final exceptions list**: the probe's `KNOWN_NON_BRANCH_PARENTS` table (4
+entries: python `_simple_pattern` [SUPERTYPE], typescript
+`_export_statement_default_decl_arm` + `_export_statement_default_decl_arm_default_kw`
++ `_for_header` [all GROUP]) is DOCUMENTATION ONLY — the `modelType===
+'branch'` restriction already excludes these from the comparison
+structurally; the table exists purely for traceability (explaining WHY
+each parent is excluded), and is not consulted by the diff logic. The
+2 ts GROUP-classified cascade intermediates (`_export_statement_default_
+decl_arm` family) and `_for_header` were NOT part of the original V0/V1
+adjudication (they were invisible under the old wire-vs-structural
+framing, since the wire channel also never fed non-branch parents) —
+discovered during Task 3's development when the naive structural-vs-
+committed-node-model diff (before the modelType restriction) surfaced them
+as 3 apparent "extra" entries; investigation confirmed they are the SAME
+class of structural boundary as the SUPERTYPE case (a non-`AssembledBranch`
+modelType with no `variantChildKinds` field), not a new category of drift.
+
+**Verification**: `pnpm exec tsx packages/cli/src/cli.ts tool
+variant-derivation-probe --all-grammars` → exit 0, "structural derivation
+== committed node-model.json5 on all 3 grammar(s)" — rust 21/21 MATCH,
+typescript 15/15 MATCH (+ 3 non-branch parents excluded), python 5/5 MATCH
+(+ 1 non-branch parent excluded), 0 DRIFT total.
+
+**Test suite**: the pre-existing 18-test `variant-structural.test.ts` suite
+is unaffected (all exports it covers — `prefixNamedSuffix`,
+`findStructuralVariantChoices`, `deriveStructuralVariantChildren` — kept
+their existing behavior; only NEW exports were added: `isAliasMintedRef`).
+New coverage for the declared-fact stamp lives in `link.test.ts` (the
+natural home, since `classifyHiddenChoiceRule` is where the stamp is
+produced): 4 new tests — a genuinely alias-minted SYMBOL arm gets
+`variantArms` stamped; an ordinary supertype with no alias-minted arms
+omits `variantArms` entirely (regression guard against the pre-existing
+`_expression` test); a mixed choice (some arms alias-minted, some
+ordinary) collects only the alias-minted ones; a raw ALIAS node authored
+pre-link is alias-minted (resolved to SYMBOL+`aliasedFrom` by
+`resolveRule` before classification runs — verified this is link's actual
+behavior, not the naively-expected "unresolved ALIAS survives to
+classification").
+
+### Gate results (final, post ×3 regen)
+
+1. **Type-check**: codegen 0 errors; tools 27 errors (baseline ceiling is
+   ≤27 — exact match, zero new).
+2. **codegen vitest**: 85 failed / 840 passed / 1 skipped (926 total) vs
+   baseline 89 failed / 832 passed / 1 skipped (922 total). Delta: −4
+   failed, +8 passed, +4 total — reconciled exactly: 4 NEW tests (the
+   `variantArms` coverage in link.test.ts, all passing) + 4 REPAIRED test
+   fixtures across `polymorph-metadata.test.ts`/`transform-hoist.test.ts`/
+   `wire.test.ts` that were asserting the deleted wire channel and now
+   assert the surviving deposit/alias-emission behavior instead (all now
+   passing, where they previously failed on base too — confirmed via a
+   direct base-commit vitest run: `comm` diff of the two failure lists
+   shows ONLY these 4 tests flipped status; zero new failures anywhere
+   else).
+3. **Package suites (native)**: ts 302/302, rust 257/268, python 188/189 —
+   EXACT match to baseline (verified via `tests/nodes.test.ts` directly;
+   the lone rust/python failures are pre-existing, unrelated render/from
+   issues, e.g. python's `type_alias_statement` `_content` transport gap).
+4. **Regen ×3**: `.sittir/src/grammar.json`/`parser.c` byte-identical
+   (empty `git diff --stat`) across all 3 grammars; `node-model.json5`
+   byte-identical across all 3 grammars. The channel-deletion's ONLY
+   generated-output footprint is the 2-line `wrap.ts` addition (Task 1's
+   scope-widening discovery, verified safe).
+5. **DECISIVE** — `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native` →
+   `read-render-parseAstMatchPass`: rust=117, typescript=75, python=102 —
+   EXACT match.
+6. **propose-14**: "ratchet OK (no module exceeds its baseline)". **oxlint**:
+   57 errors (baseline exact match, 0 new). **Probe**: exits 0 under its
+   new drift-detector contract.
+
+### Final exceptions/deletion summary
+
+- **Declared fact** (Task 1): `RuleBase.variantArms?: readonly string[]`,
+  stamped by `classifyHiddenChoiceRule` at the CHOICE→SUPERTYPE flatten
+  site, read by `assemble.ts`. Zero wire reads remain anywhere in the
+  pipeline.
+- **Deletion inventory** (Task 2): 8 symbols deleted outright (see table
+  above); 2 call sites re-keyed onto `deriveStructuralVariantChildren`
+  (`applyOverridePolymorphs`, `variantSkip`); `refine()`/hoist/
+  conflict/`PolymorphVariantDescriptor` machinery untouched.
+- **Probe contract** (Task 3): cross-commit drift detector,
+  `modelType==='branch'`-restricted comparison against committed
+  `node-model.json5`; 4-entry documentation-only non-branch-parent table
+  (SUPERTYPE ×1, GROUP ×3); 0 DRIFT on all 3 grammars.

@@ -22,6 +22,7 @@ import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultipli
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
 import { withAttrsFrom } from '../dsl/rule-attrs.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
+import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 
@@ -415,14 +416,25 @@ export function normalizeGrammar(
 		if (!changed) break;
 	}
 
-	// Build a base variant skip-set from polymorphVariants metadata.
-	// `polymorphVariants` records every `variant('x')` override as
-	// `{parent, child}` — these kinds are already resolved by variant dispatch;
-	// flagging them as multi-slot seqs in the diagnostic would be a false positive.
+	// Build a base variant skip-set STRUCTURALLY (R12/decision-7 V2 Task 2):
+	// every variant-adoption parent/child is already resolved by variant
+	// dispatch; flagging them as multi-slot seqs in the diagnostic would be
+	// a false positive. Formerly derived from the wire-metadata channel's
+	// `{parent, child}` pairs (`linked.polymorphVariants`); now derived from
+	// `deriveStructuralVariantChildren(linked.rules)` — the SAME derivation
+	// assemble.ts and link.ts's `applyOverridePolymorphs` consume, so this
+	// skip-set can never drift from what actually adopted. Preserves the
+	// exact two-string-per-child shape the old code added (`pv.parent` +
+	// `pv.child`, the SHORT suffix): the short suffix is recovered from
+	// each structural target's full name via `prefixNamedSuffix` (the
+	// inverse of `polymorphVisibleName`, shared not re-derived).
 	const variantSkip = extraPolymorphSkip.size === 0 ? new Set<string>() : new Set<string>(extraPolymorphSkip);
-	for (const pv of linked.polymorphVariants ?? []) {
-		variantSkip.add(pv.parent);
-		variantSkip.add(pv.child);
+	for (const [parentKind, targetNames] of deriveStructuralVariantChildren(linked.rules)) {
+		variantSkip.add(parentKind);
+		for (const targetName of targetNames) {
+			const suffix = prefixNamedSuffix(parentKind, targetName);
+			if (suffix !== null) variantSkip.add(suffix);
+		}
 	}
 
 	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
@@ -454,7 +466,6 @@ export function normalizeGrammar(
 		derivations: linked.derivations,
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
-		polymorphVariants: linked.polymorphVariants,
 		refineForms: linked.refineForms,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets

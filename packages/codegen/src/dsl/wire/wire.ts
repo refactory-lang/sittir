@@ -33,7 +33,6 @@
  * migrate independently.
  */
 
-import type { PolymorphVariant } from '../../types/ir.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
 import { variant as variantPlaceholder } from '../primitives/variant.ts';
@@ -88,9 +87,6 @@ export interface WireContext {
 	/** Hidden `_kw_*` helper names that should be appended to the
 	 *  grammar's inline list after rule evaluation deposits their body. */
 	readonly syntheticInline: Set<string>;
-	/** `{parent, child}` pairs registered by variant(). Sittir's Link
-	 *  reads these to classify polymorphs — tree-sitter ignores them. */
-	readonly polymorphVariants: PolymorphVariant[];
 	/** Conflict groups (rule-name arrays) registered by variant() for
 	 *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
 	 *  callback when tree-sitter invokes it. */
@@ -173,30 +169,6 @@ export function wireRegisterSyntheticInline(name: string): boolean {
 }
 
 /**
- * Register a `{parent, child}` polymorph pair against the active wire
- * context. Idempotent — re-registering the same pair is a no-op.
- *
- * @remarks
- * Idempotence matters because the rule callbacks can fire more than
- * once per grammar invocation during migration (e.g. under the legacy
- * `installGrammarWrapper`'s pass-1 dry-run + pass-2 real evaluation).
- * Each call would register the same pair; rejecting duplicates would
- * trip on benign retries. The semantic invariant "one parent never
- * has two DIFFERENT arms with the same suffix" is still upheld by the
- * declarative `polymorphs` config — the author can't write the same
- * suffix twice for one parent without the second entry overwriting
- * the first at JS object-literal level.
- */
-export function wireRegisterPolymorphVariant(parent: string, child: string): boolean {
-	if (!currentContext) return false;
-	const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
-	if (!exists) {
-		currentContext.polymorphVariants.push({ parent, child });
-	}
-	return true;
-}
-
-/**
  * Register a conflict group against the active wire context. Dedupes
  * by exact group membership (same names in same order).
  */
@@ -253,7 +225,6 @@ export function withWireContext<T>(
 	const ctx: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
-		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
 		groups: undefined,
@@ -601,7 +572,6 @@ export function wire<B extends GrammarJson = any> (
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
-		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
 		groups: cfg.groups,
@@ -873,8 +843,7 @@ function buildTransformParentFn(patchSets: readonly PatchMap[], userFn: SittirRu
  * - `field('x')` (one-arg) → potentially `_kw_x` (only if captured
  *   content is a bare string at runtime; pre-register regardless — an
  *   unused deferred fn is harmless).
- * - `variant('y')` under rule kind `K` → `_K_y` (plus polymorph
- *   metadata captured at runtime via `registerPolymorphVariant`).
+ * - `variant('y')` under rule kind `K` → `_K_y`.
  * - `alias('z')` (one-arg) → `_z`.
  *
  * Two-arg `field(name, content)` calls are already resolved to native

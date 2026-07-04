@@ -55,8 +55,8 @@ import {
 	isClauseHoistVisibleGroupAlias,
 	isOptionalOrBlankChoice
 } from './evaluate.ts';
-import type { PolymorphVariant } from './types.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
+import { deriveStructuralVariantChildren, isAliasMintedRef, prefixNamedSuffix } from './variant-structural.ts';
 import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
@@ -290,10 +290,13 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// E0392). Runs post-classification so promoted supertypes are included.
 	markSupertypeRefsNonInline(rules);
 
-	// Apply wire-produced variant alias push-down (ambient scaffolding into variant children).
-	if (raw.polymorphVariants?.length) {
-		applyOverridePolymorphs(rules, raw.polymorphVariants, derivations);
-	}
+	// Apply wire-produced variant alias push-down (ambient scaffolding into
+	// variant children). R12/decision-7 V2 Task 2: `applyOverridePolymorphs`
+	// discovers its own (parent, children) pairs structurally from `rules`
+	// now (`deriveStructuralVariantChildren`) instead of the deleted wire
+	// metadata channel — see that function's own comment for the byte-gate
+	// verification this re-keying was checked against.
+	applyOverridePolymorphs(rules, derivations);
 
 	hoistIndentIntoRepeat(rules);
 	annotateBlockBearerFields(rules);
@@ -331,7 +334,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		derivations,
 		aliasedHiddenKinds,
 		topLevelAliasBodies,
-		polymorphVariants: raw.polymorphVariants,
 		refineForms: raw.refineForms,
 		parentAliasedKinds,
 		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
@@ -490,7 +492,7 @@ function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: Lin
 		if (isHiddenKind(name, inline) || supertypes.has(name)) {
 			// (debt PR-P1, item 3) Branch on the RETURNED classification only —
 			// never re-read a stamp off `classified.rule`. See ClassifyResult.
-			const { rule: classified, classification } = classifyHiddenRule(rule, ctx, name);
+			const { rule: classified, classification } = classifyHiddenRule(rule, ctx, name, rules);
 			if (classified !== rule && classification !== undefined) {
 				derivations.promotedRules.push({
 					kind: name,
@@ -1086,28 +1088,39 @@ export interface VariantChoiceLocation {
 }
 
 // ---------------------------------------------------------------------------
-// applyOverridePolymorphs — variant() metadata → PolymorphRule(source:'override')
+// applyOverridePolymorphs — variant-adoption choice → ambient-scaffold push-down
 // ---------------------------------------------------------------------------
 //
-// variant() in transform patches registers (parent, child) entries during
-// evaluate. Here we look up the parent rule, find the choice with
-// alias-symbol members matching `${parentKind}_${child}`, and wrap as
-// PolymorphRule with `source: 'override'`.
+// R12/decision-7 V2 Task 2: (parent, children) pairs are now discovered
+// STRUCTURALLY from `rules` (`deriveStructuralVariantChildren`,
+// variant-structural.ts) instead of the deleted wire-metadata channel
+// (formerly `variants: PolymorphVariant[]`, populated by
+// `wireRegisterPolymorphVariant`). Verified byte-neutral: the ONE parent
+// that reaches this function's real structural mutation
+// (`pushAmbientScaffoldIntoVariantChildren` — the `!anyChildMemberInFoundChoice`
+// branch; the OTHER branch below is a no-op derivation-log-only path since
+// the 2026-06-01 DE-POLYMORPH change) is typescript's
+// `public_field_definition`; `deriveStructuralVariantChildren` reproduces
+// its exact 5-child set (same full names, same order) both mid-link (the
+// `rules` snapshot this function receives, already past wire's alias
+// injection + `resolveRule`) and post-link — confirmed empirically during
+// V2 development. Short suffixes (needed by `emitVariantChildDerivations`'s
+// `${parentKind}_${child}` log format and `polymorphVisibleName`) are
+// recovered from the derivation's full target names via `prefixNamedSuffix`
+// (the exact inverse of `polymorphVisibleName`, shared not re-derived).
 //
 // Form names use the SHORT child suffix from variant() — not the
 // tagVariants-derived names — so generated factories/types align with
 // what the user wrote. Mutates `rules` in place; logs to derivations.
 
-export function applyOverridePolymorphs(
-	rules: Record<string, Rule<'link'>>,
-	variants: PolymorphVariant[],
-	derivations: DerivationLog
-): void {
+export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, derivations: DerivationLog): void {
+	const structural = deriveStructuralVariantChildren(rules);
 	const parentToChildren = new Map<string, string[]>();
-	for (const pv of variants) {
-		const existing = parentToChildren.get(pv.parent) ?? [];
-		existing.push(pv.child);
-		parentToChildren.set(pv.parent, existing);
+	for (const [parentKind, targetNames] of structural) {
+		const suffixes = targetNames
+			.map((t) => prefixNamedSuffix(parentKind, t))
+			.filter((s): s is string => s !== null);
+		if (suffixes.length > 0) parentToChildren.set(parentKind, suffixes);
 	}
 
 	for (const [parentKind, children] of parentToChildren) {
@@ -1854,7 +1867,12 @@ interface ClassifyResult {
 	readonly classifiedBy?: 'grammar' | 'link';
 }
 
-function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): ClassifyResult {
+function classifyHiddenRule(
+	rule: Rule<'link'>,
+	ctx: LinkCtx,
+	name: string,
+	rules: Record<string, Rule<'link'>>
+): ClassifyResult {
 	// Already classified (e.g., enum from Evaluate)
 	// PR-P: ENUM type retired — isEnumChoiceRule detects enum-shaped ChoiceRules.
 	if (isEnumChoiceRule(rule) || rule.type === SUPERTYPE || rule.type === GROUP) {
@@ -1862,7 +1880,7 @@ function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Cla
 	}
 
 	if (rule.type === CHOICE) {
-		return classifyHiddenChoiceRule(rule, ctx, name);
+		return classifyHiddenChoiceRule(rule, ctx, name, rules);
 	}
 
 	if (isSeq(rule)) {
@@ -1880,6 +1898,10 @@ function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Cla
  * @param ctx - Link phase context; `ctx.supertypes` are kind names explicitly
  *   declared in `grammar.supertypes`.
  * @param name - The grammar kind name (used to check `ctx.supertypes`).
+ * @param rules - The resolved rules map under construction (same map
+ *   `classifyAndLogHiddenRules` iterates) — needed to compute `variantArms`
+ *   via `isAliasMintedRef`'s independent-body test. See `RuleBase.variantArms`
+ *   doc comment (types/rule.ts).
  * @returns A {@link ClassifyResult}: `rule` is an `EnumRule<'link'>`,
  *   `SupertypeRule<'link'>`, or the original rule unchanged; `classification`
  *   / `classifiedBy` are set only when a new classification was made.
@@ -1899,7 +1921,12 @@ function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Cla
  *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
  *   structural members (seq, field, nested choice/optional/repeat) disqualify.
  */
-function classifyHiddenChoiceRule(rule: ChoiceRule<'link'>, ctx: LinkCtx, name: string): ClassifyResult {
+function classifyHiddenChoiceRule(
+	rule: ChoiceRule<'link'>,
+	ctx: LinkCtx,
+	name: string,
+	rules: Record<string, Rule<'link'>>
+): ClassifyResult {
 	const { supertypes, hiddenChoicesWithNamedAliasMembers } = ctx;
 	if (rule.members.every((m): m is StringRule<'link'> => m.type === STRING)) {
 		return {
@@ -1928,8 +1955,49 @@ function classifyHiddenChoiceRule(rule: ChoiceRule<'link'>, ctx: LinkCtx, name: 
 		// can't project a union — fall through to leave-as-is.
 		if (subtypes.length > 0) {
 			const classifiedBy = supertypes.has(name) ? 'grammar' : 'link';
+			// R12/decision-7 V2 Task 1: stamp the variant-arm linkage THIS
+			// flatten is about to erase — see `RuleBase.variantArms`'s doc
+			// comment. Computed from the PRE-flatten CHOICE's own members
+			// (not `subtypes`, which already lost per-arm rule-shape info): a
+			// bare SYMBOL/ALIAS arm that is alias-minted (the exact
+			// `isAliasMintedRef` condition `variant-structural.ts`'s
+			// CHOICE-arm predicate uses, shared not re-derived) names its
+			// subtype-list entry (`aliasedFrom ?? name` for SYMBOL, matching
+			// `collectSubtypeNames`'s own per-arm naming exactly, so
+			// `variantArms` entries are always a subset of `subtypes`).
+			//
+			// This surfaces MORE alias-minted arms than the wire channel ever
+			// registered for SUPERTYPE parents: every `alias($.hidden,
+			// $.visible)` construct inside a supertype's choice qualifies,
+			// whether hand-authored in an override `rules:` replacement OR
+			// inherited from the upstream base grammar (verified during Task
+			// 1 development: rust's `_pattern`/`wildcard_pattern`,
+			// `_condition`/`let_chain`, `_type`/`primitive_type` are all
+			// genuine upstream `alias(...)` calls in tree-sitter-rust's own
+			// grammar.js, not false positives). This is the SAME
+			// reviewed-additive widening V1 already accepted for
+			// CHOICE-classified parents (rust's
+			// `impl_item`/`reference_expression`, ts `string`'s
+			// `string_fragment` — hand-authored `alias()` calls with no
+			// `polymorphs:`/`variant()` registration); Task 3's probe
+			// exceptions table enumerates the SUPERTYPE-parent instances the
+			// same way.
+			const variantArms = rule.members
+				.map((m): string | null => {
+					const core = m.type === VARIANT ? m.content : m;
+					if (!isAliasMintedRef(core, rules)) return null;
+					if (core.type === ALIAS) return core.named ? core.value : null;
+					if (core.type === SYMBOL) return core.aliasedFrom ?? core.name;
+					return null;
+				})
+				.filter((n): n is string => n !== null);
 			return {
-				rule: { type: SUPERTYPE, name, subtypes } satisfies SupertypeRule<'link'>,
+				rule: {
+					type: SUPERTYPE,
+					name,
+					subtypes,
+					...(variantArms.length > 0 ? { variantArms } : {})
+				} satisfies SupertypeRule<'link'>,
 				classification: 'supertype',
 				classifiedBy
 			};

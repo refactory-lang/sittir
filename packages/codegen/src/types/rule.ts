@@ -156,6 +156,33 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	 * comment above.
 	 */
 	readonly splicedBody?: boolean;
+
+	/**
+	 * Declared structural fact (R12/decision-7 V2, doctrine decision 3's
+	 * corollary): the variant-adoption CHOICE arms `classifyHiddenChoiceRule`
+	 * (compiler/link.ts) ERASES when it flattens a hidden CHOICE into this
+	 * `SupertypeRule`'s `subtypes: string[]`. Before the flatten, each
+	 * qualifying arm is a bare ALIAS/SYMBOL ref that is alias-minted (no
+	 * independent rule body elsewhere in the grammar — the same
+	 * `isAliasMintedRef` test `compiler/variant-structural.ts`'s CHOICE-arm
+	 * predicate uses, reapplied here at the exact moment the flatten
+	 * destroys the linkage that predicate needs downstream). `variantArms`
+	 * holds those arms' target kind names (the SAME name
+	 * `collectSubtypeNames` records into `subtypes` for that arm — the
+	 * hidden alias-mint name when present, else the visible name), in
+	 * member order. Only ever set on a `SupertypeRule` produced by
+	 * `classifyHiddenChoiceRule`; every other rule variant leaves it
+	 * `undefined`. Not provenance — it names a present-tense fact about
+	 * what this rule's pre-flatten CHOICE arms structurally were, stamped
+	 * ONCE by the pass that performs the flatten, read directly (no
+	 * re-derivation, no stamp-then-reread through the opaque `metadata`
+	 * bag). Consumed by `compiler/assemble.ts`'s `variantChildKindsSet`
+	 * construction in place of the former narrow wire-metadata read — see
+	 * that call site's comment. Mirrors `splicedBody`'s pattern (a
+	 * declared, once-stamped structural fact replacing a destroyed-then-
+	 * reconstructed read) — see that field's doc comment above.
+	 */
+	readonly variantArms?: readonly string[];
 } & (Phase extends NormalizedPhase
 	? {
 			// All six stamped attributes below are populated by

@@ -4,18 +4,13 @@
  */
 
 /**
- * One entry in the `polymorphVariants` lists carried by LinkedGrammar /
- * NormalizedGrammar / NodeMap — records that a `variant('x')` override inside
- * rule `parent` produced a visible child kind `parent_x` in the parse tree.
- *
- * Emitted by the DSL (`dsl/wire`'s `registerPolymorphVariant` path) and
- * propagated through the pipeline so Link, Assemble, and the factory/from
- * emitters can expose `parent_x` as a discriminable variant form.
+ * (R12/decision-7 V2 Task 2) `PolymorphVariant` — the wire-registered
+ * `{parent, child}` pair type — is DELETED. Variant-adoption pairs are now
+ * discovered structurally from the post-link rule tree
+ * (`deriveStructuralVariantChildren`, compiler/variant-structural.ts)
+ * instead of a metadata channel. This comment marks the historical
+ * deletion site; do not resurrect the type.
  */
-export interface PolymorphVariant {
-	readonly parent: string;
-	readonly child: string;
-}
 
 /** External-scanner role binding (indent / dedent / newline tokens). */
 export type ExternalRole = { role: 'indent' | 'dedent' | 'newline' };

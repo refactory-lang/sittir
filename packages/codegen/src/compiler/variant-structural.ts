@@ -1,36 +1,47 @@
 /**
  * compiler/variant-structural.ts — structural derivation of variant()
- * adoption (R12 / decision-7 V0-V1).
+ * adoption (R12 / decision-7 V0-V2).
  *
- * `assemble.ts` historically consumed `variantChildKinds` from the WIRE
+ * `assemble.ts` historically consumed `variantChildKinds` from a WIRE
  * metadata channel (`normalized.polymorphVariants`, populated by
- * `wireRegisterPolymorphVariant` during evaluate — see wire.ts:190). That
- * channel is *authored intent*: it records what a `polymorphs:`/`variant()`
- * override SAID it wanted, not what actually materialized in the post-link
- * rule tree. `link.ts`'s own `isAllAliasChoice` (used by
- * `pushAmbientScaffoldIntoVariantChildren`) already proves the alias-choice
+ * `wireRegisterPolymorphVariant` during evaluate). That channel recorded
+ * *authored intent*: what a `polymorphs:`/`variant()` override SAID it
+ * wanted, not what actually materialized in the post-link rule tree.
+ * `link.ts`'s own `isAllAliasChoice` (used by
+ * `pushAmbientScaffoldIntoVariantChildren`) already proved the alias-choice
  * shape wire injects is a STRUCTURAL fact, matchable with no metadata at
  * all — see docs/superpowers/specs/2026-07-04-variant-structural-derivation-research.md
- * §2 and §4.3.
+ * §2, §4.3, and the "V2 OUTCOME" section.
  *
  * This module derives the same `{parent -> childFullName[]}` shape the wire
- * channel produces, straight from the tree, given only a grammar's rule map
- * (`normalized.rules`, the same snapshot `assemble()` already iterates).
+ * channel used to produce, straight from the tree, given only a grammar's
+ * rule map (`normalized.rules`, the same snapshot `assemble()` already
+ * iterates).
  *
- * STATUS (V1, 2026-07-04): `assemble.ts:158-164` (the "V1 flip") now
- * consumes `deriveStructuralVariantChildren` DIRECTLY as the source of
- * `variantChildrenByParent`/`variantChildKindsSet` — this is no longer a
- * derivation-in-waiting. The wire channel (`normalized.polymorphVariants`)
- * feeds ONLY `tool variant-derivation-probe`'s comparison assertion (which
- * the module's predicate is verified equal to, modulo an enumerated
- * exceptions table — see that probe's own doc and the research doc's "V1
- * OUTCOME" section for the full per-case adjudication). ONE narrow
- * exception survives in `assemble.ts` itself: a SUPERTYPE-classified parent
- * (python's `_simple_pattern`) reads the wire channel directly for its ONE
- * variant child (`negative`), gated on `normalized.rules[pv.parent]?.type
- * === SUPERTYPE` (rule-TYPE-discriminated, not kind-name-discriminated) —
- * see "Known non-reproductions" below and `assemble.ts`'s own comment at
- * that site for why this predicate cannot cleanly cover the SUPERTYPE shape.
+ * STATUS (V2, 2026-07-04): the wire metadata channel is DELETED —
+ * `wireRegisterPolymorphVariant`, `WireContext.polymorphVariants`,
+ * `drainPolymorphMetadata`, and the `polymorphVariants` fields on
+ * RawGrammar/LinkedGrammar/NormalizedGrammar are all gone. Every former
+ * consumer now reads this module's structural derivation directly:
+ * `assemble.ts:158-164` (variantChildrenByParent/variantChildKindsSet — the
+ * "V1 flip", unchanged in V2), `link.ts`'s `applyOverridePolymorphs` (its
+ * (parent, children) pairs, formerly wire-pair-driven, now discovered
+ * structurally too), and `normalize.ts`'s `variantSkip` diagnostic
+ * skip-set. The ONE case that used to need a narrow wire-channel
+ * supplement — a SUPERTYPE-classified parent (python's `_simple_pattern`)
+ * whose CHOICE-flatten (`classifyHiddenChoiceRule`, link.ts) destroys the
+ * alias-mint linkage before this module ever sees the rule — is now
+ * covered by a DECLARED structural fact instead: `classifyHiddenChoiceRule`
+ * stamps `SupertypeRule.variantArms` (see `RuleBase.variantArms`'s doc
+ * comment, types/rule.ts) at the exact moment of flatten, using this
+ * module's OWN `isAliasMintedRef` helper (exported, shared, not
+ * re-derived) applied to the pre-flatten CHOICE's members.
+ * `tool variant-derivation-probe` (packages/tools) is no longer a
+ * structural-vs-wire equality check — it's now a cross-commit DRIFT
+ * DETECTOR comparing this module's live output against the COMMITTED
+ * `node-model.json5` `polymorphVariants` section per grammar (see that
+ * probe's own doc for the modelType==='branch' restriction its comparison
+ * requires).
  *
  * ## The predicate (reproduce-only scope, decisions 1a + 3 accepted)
  *
@@ -68,56 +79,77 @@
  * 1 (a).
  *
  * ## Known non-reproductions (expected, not bugs — see the research doc's
- * "V1 OUTCOME" section for the full adjudication table)
+ * "V1 OUTCOME" and "V2 OUTCOME" sections for the full adjudication table)
  *
- * MISSING (wire has a pair; structural search can't reproduce it — all 3
- * enumerated as KNOWN_EXCEPTIONS in the probe):
+ * These were originally framed as "wire has a pair; structural search can't
+ * reproduce it" (V0/V1, when the wire channel still existed as the
+ * comparison target). With the channel deleted (V2), the SAME structural
+ * facts below now explain why these parents structurally do NOT appear in
+ * `deriveStructuralVariantChildren`'s output at all, full stop — there is
+ * no wire side to compare against anymore, only the reasoning for the gap:
  *
- * - **Naming collision with a separate alias mechanism.** A wire pair can
- *   name a child that never structurally materializes with that name at
- *   all, when a SEPARATE naming mechanism (e.g. rust's `groups: { in_path:
- *   ... }` body-pattern alias) wins the actual visible kind name.
- *   `visibility_modifier`'s `in_path` child is registered by the wire pair
- *   as `visibility_modifier_in_path`, but the grammar's real alias-minted
- *   kind is bare `in_path` — a pre-existing naming collision between two
- *   independent alias mechanisms, unrelated to this derivation. That real
- *   `in_path` kind has ZERO node-model/dispatch coverage today (a
- *   pre-existing gap, not a V1 regression); retiring the phantom pair is a
- *   separate follow-up.
- * - **No CHOICE node at all.** Some wire pairs target a lone aliased SEQ
- *   member with no sibling alternation (python's `dict_pattern`'s `kv`
- *   child: `seq(SYMBOL dict_pattern_kv, REPEAT(...))`, not inside any
- *   CHOICE) — there is no "choice of named kinds" for the predicate to
- *   match against at all, by design (the predicate is CHOICE-centric,
- *   matching `isAllAliasChoice`/`findVariantChoice`'s own scope).
- * - **Supertype union, not a CHOICE rule.** Python's `_simple_pattern`
- *   wire pair (`negative`) targets what auto-classifies to a `SupertypeRule`
- *   (`subtypes: string[]`) BEFORE `normalized.rules` is built
- *   (`classifyHiddenChoiceRule`, link.ts) — a structurally different rule
- *   shape than `ChoiceRule`, and the classification destroys the
- *   alias-mint linkage entirely (the original CHOICE's alias/symbol members
- *   flatten into bare strings). Investigated and rejected a body-presence
- *   heuristic on `subtypes` strings: ts `type`'s
- *   `_type_query_member_expression_in_type_annotation` subtype looks
- *   structurally identical (no independent body under its own
- *   stripped-visible name either) but is an UNRELATED alias target of a
- *   different parent — a generic rule would readmit it as a false
- *   positive. `assemble.ts` keeps a narrow, rule-TYPE-gated wire read for
- *   this one case instead (see that file's `variantChildKindsSet` comment).
+ * - **Naming collision with a separate alias mechanism.** A child kind can
+ *   fail to structurally materialize with the "expected" `${parent}_
+ *   ${suffix}` name at all, when a SEPARATE naming mechanism (e.g. rust's
+ *   `groups: { in_path: ... }` body-pattern alias) wins the actual visible
+ *   kind name. `visibility_modifier`'s intended `in_path` child would be
+ *   named `visibility_modifier_in_path`, but the grammar's real
+ *   alias-minted kind is bare `in_path` — a pre-existing naming collision
+ *   between two independent alias mechanisms, unrelated to this
+ *   derivation. That real `in_path` kind has ZERO node-model/dispatch
+ *   coverage today (a pre-existing gap); fixing it is a separate follow-up
+ *   (rust's committed node-model.json5 confirms zero drift on this front —
+ *   `visibility_modifier`'s only committed child is `pub`).
+ * - **No CHOICE node at all.** Some variant() registrations target a lone
+ *   aliased SEQ member with no sibling alternation (python's
+ *   `dict_pattern`'s `kv` child: `seq(SYMBOL dict_pattern_kv, REPEAT(...))`,
+ *   not inside any CHOICE) — there is no "choice of named kinds" for the
+ *   predicate to match against at all, by design (the predicate is
+ *   CHOICE-centric, matching `isAllAliasChoice`/`findVariantChoice`'s own
+ *   scope). `dict_pattern` has no committed node-model.json5 entry either —
+ *   zero drift.
+ * - **Supertype/Group union, not (only) a plain BRANCH.** Some
+ *   variant-adoption parents classify to `SupertypeRule` (python's
+ *   `_simple_pattern`) or `AssembledGroup` (ts's
+ *   `_export_statement_default_decl_arm` family, `_for_header`) rather than
+ *   `AssembledBranch`. `_simple_pattern`'s original CHOICE flattens into a
+ *   bare `subtypes: string[]` BEFORE this module ever sees the rule
+ *   (`classifyHiddenChoiceRule`, link.ts) — the alias-mint linkage would be
+ *   destroyed if not for the declared `variantArms` fact that flatten
+ *   stamps (see `RuleBase.variantArms`'s doc comment); this module still
+ *   can't reproduce it from `normalized.rules` alone (verified: ts `type`'s
+ *   `_type_query_member_expression_in_type_annotation` subtype is a
+ *   structurally-identical-looking coincidental collision that a generic
+ *   body-presence heuristic would readmit as a false positive). GROUP
+ *   parents have no `variantChildKinds` field at all on `AssembledGroup` —
+ *   `buildFactoryMap` (emitters/factory-map.ts) only ever visits
+ *   `modelType==='branch'` nodes, so neither shape can EVER produce a
+ *   `node-model.json5` `polymorphVariants` entry regardless of how the
+ *   children were discovered. `tool variant-derivation-probe`'s comparison
+ *   restricts to `modelType==='branch'` parents on both sides for exactly
+ *   this reason — see that probe's own doc.
  *
- * EXTRA (structural finds a prefix-named, alias-minted choice; no wire pair
- * exists — REVIEWED-ADDITIVE, these join the form set):
+ * EXTRA (structural finds a prefix-named, alias-minted choice that has no
+ * historical wire-pair equivalent — REVIEWED-ADDITIVE, these joined the
+ * form set during V1 and are now simply part of the baseline):
  *
  * - **Hand-authored `alias()` calls with no `polymorphs:`/`variant()`
  *   registration.** Several kinds are full `rules:` replacements that call
- *   `alias(...)` directly in the override body (rust's `impl_item`,
- *   `reference_expression`; typescript's `string`'s `string_fragment`
- *   inside a `refine()`-correlated form) — the structural shape is
- *   identical to wire-injected adoption (both arm targets have NO
- *   independent rule body, passing `isAliasMintedRef`), but
- *   `wireRegisterPolymorphVariant` was never invoked, so no wire pair
- *   exists. This is the derivation being MORE complete than the wire
- *   channel, not a false positive on the grammar.
+ *   `alias(...)` directly in the override body, or inherit one from the
+ *   upstream base grammar (rust's `impl_item`, `reference_expression`,
+ *   `_pattern`'s `wildcard_pattern` arm, `_condition`'s `let_chain` arm,
+ *   `_type`'s `primitive_type` arm; typescript's `string`'s
+ *   `string_fragment` inside a `refine()`-correlated form,
+ *   `_jsx_attribute_name`'s `property_identifier` arm, `primary_type`'s
+ *   `this` arm) — the structural shape is identical to wire-injected
+ *   adoption (arm targets have NO independent rule body, passing
+ *   `isAliasMintedRef`), regardless of whether a `polymorphs:`/`variant()`
+ *   override ever registered it. This is the derivation being MORE
+ *   complete than the old wire channel ever was, not a false positive on
+ *   the grammar — the ones that materialize into their own `AssembledBranch`
+ *   (not a supertype/group parent's ordinary subtype-union arm) are
+ *   reflected in the committed node-model.json5 today (rust's `impl_item`/
+ *   `reference_expression`, ts's `string`).
  *
  * Coincidental prefix-name collisions with an ordinary, independently-
  * authored grammar symbol (python's `dictionary`/`dictionary_splat`,
@@ -132,12 +164,12 @@ import { ALIAS, CHOICE, OPTIONAL, SEQ, SYMBOL, VARIANT } from '../types/rule-typ
 import type { AliasRule, ChoiceRule, Rule, SeqRule, SymbolRule } from '../types/rule.ts';
 
 /**
- * Re-exported for `tool variant-derivation-probe` (`packages/tools`, which
- * cannot statically import codegen internals — see `codegen-surface.ts`'s
- * `invoke` indirection): the probe needs the SAME `${parent}_${child}`
- * full-name convention this module uses (`prefixNamedSuffix`) to reconstruct
- * the wire channel's full target names for comparison, rather than a naive
- * `${pv.parent}_${pv.child}` concatenation (unsound for hidden parents — see
+ * Re-exported so callers that only know a parent kind + short suffix (e.g.
+ * `polymorph-metadata-e2e.test.ts`, reconstructing the FULL target name a
+ * `polymorphs:` override arm mints) use the SAME `${parent}_${suffix}`
+ * naming convention this module's own predicate matches against
+ * (`prefixNamedSuffix` is the inverse), rather than a naive
+ * `${parent}_${suffix}` concatenation (unsound for hidden parents — see
  * `deriveStructuralVariantChildren`'s doc).
  */
 export { polymorphVisibleName };
@@ -167,8 +199,14 @@ function stripHiddenPrefix(name: string): string {
  * phase; link resolves aliases to `SYMBOL` before `normalized.rules` is
  * built) is unconditionally alias-minted — there is no "independent body" to
  * check because the arm IS the alias construct itself.
+ *
+ * Exported (R12/decision-7 V2 Task 1) so `compiler/link.ts`'s
+ * `classifyHiddenChoiceRule` can reapply the SAME test at its own CHOICE-arm
+ * flatten site (stamping `SupertypeRule.variantArms` before the flatten
+ * destroys the linkage) — one predicate, shared, never re-derived. See
+ * `types/rule.ts`'s `RuleBase.variantArms` doc comment.
  */
-function isAliasMintedRef(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): boolean {
+export function isAliasMintedRef(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): boolean {
 	if (rule.type === ALIAS) return true;
 	if (rule.type === SYMBOL) return !(rule.name in rules);
 	return false;
@@ -355,13 +393,13 @@ export function findStructuralVariantChoices(
 
 /**
  * Derive `{parent -> childTargetName[]}` for every kind in `rules`, purely
- * structurally — the drop-in replacement for the wire-derived
- * `variantChildrenByParent` map `assemble.ts` builds from
- * `normalized.polymorphVariants` (V1: `assemble.ts` consumes this directly).
- * Values are the arm's FULL target kind name (`arm.targetName`), matching
- * `variantChildrenByParent`'s `${v.parent}_${v.child}` shape exactly —
- * NOT a `${kind}_${suffix}` reconstruction, which is unsound when a hidden
- * (`_`-prefixed) parent has a VISIBLE target (ts's
+ * structurally — the SOLE source `assemble.ts`'s `variantChildrenByParent`,
+ * `link.ts`'s `applyOverridePolymorphs`, and `normalize.ts`'s `variantSkip`
+ * all consume (V2: the former wire-metadata channel this replaced,
+ * `normalized.polymorphVariants`, is deleted entirely — see this module's
+ * top-of-file STATUS comment). Values are the arm's FULL target kind name
+ * (`arm.targetName`) — NOT a `${kind}_${suffix}` reconstruction, which is
+ * unsound when a hidden (`_`-prefixed) parent has a VISIBLE target (ts's
  * `_export_statement_default` → `export_statement_default_from_arm`; the
  * target strips its own leading `_` independently of the parent's, per
  * RESOLUTION 3 — see `prefixNamedSuffix`). Target names are ordered by
@@ -372,10 +410,10 @@ export function findStructuralVariantChoices(
  * preserved): the same alias-minted target can appear as more than one
  * choice arm within a kind's body (ts's `string_fragment`, aliased once for
  * the double-quote branch and once for the single-quote branch of a
- * `refine()`-correlated form — one child kind, two mint sites), and the wire
- * channel's own registration (`wireRegisterPolymorphVariant`) is documented
- * idempotent for the same reason — structural parity requires the same
- * one-entry-per-child-kind shape.
+ * `refine()`-correlated form — one child kind, two mint sites) — the
+ * former wire channel's registration was documented idempotent for the
+ * same reason; this derivation preserves the same one-entry-per-child-kind
+ * shape structurally.
  */
 export function deriveStructuralVariantChildren(
 	rules: Record<string, Rule<'link'>>

@@ -3744,6 +3744,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'unsafe_marker': '_unsafe_marker',
   'use_clause': '_use_clause',
   'visibility_modifier_pub': '_visibility_modifier_pub',
+  'wildcard_pattern': '_wildcard_pattern',
 };
 
 /** Wrap a NodeData into its lazy read-only view. */

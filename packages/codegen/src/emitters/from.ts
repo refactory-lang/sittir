@@ -19,7 +19,6 @@ import {
 } from './kind-discriminant.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { AssembledBranch } from '../compiler/model/node-map.ts';
-import type { PolymorphVariant } from '../compiler/types.ts';
 import {
 	isAutoStampField,
 	isRequired,
@@ -346,66 +345,6 @@ interface BranchLikeNode {
 	readonly slotClass?: BranchSlotClass;
 }
 
-function _emitVariantFrom(
-	node: AssembledNode,
-	polymorphVariants: PolymorphVariant[],
-	nodeMap: NodeMap,
-	intern: KindInterner
-): string {
-	const fn = node.fromFunctionName!;
-	const factory = `F.${node.rawFactoryName!}`;
-	const typeName = node.typeName;
-	// Input union includes both Loose config + per-kind NodeData so the
-	// `isNodeData` generic overload narrows soundly in the pass-through branch.
-	const inputType = `T.${typeName}.Loose`;
-	// Return type unions the factory output with the bare data interface so
-	// the `if (isNodeData(input)) return input;` passthrough — input narrows
-	// to `T.<TypeName>` after the predicate, which lacks `$source` / `$named`
-	// / fluent methods — type-checks without forcing a re-construction.
-	const lines: string[] = [];
-	lines.push(`export function ${fn}(input: ${inputType}) {`);
-	lines.push(`  if (isNodeData(input)) return input;`);
-
-	const parentFields = 'fields' in node ? (node as { fields: readonly AssembledNonterminal[] }).fields : [];
-	const configParts: string[] = [];
-	for (const f of parentFields) {
-		const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
-		if (stampedExpr !== null) {
-			configParts.push(`    ${f.configKey}: ${stampedExpr},`);
-			continue;
-		}
-		if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
-		const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', false);
-		configParts.push(`    ${f.configKey}: ${call},`);
-	}
-
-	// Collect all variant field names for the config
-	const seenProps = new Set(parentFields.map((f) => f.configKey));
-	for (const pv of polymorphVariants) {
-		const fullName = `${pv.parent}_${pv.child}`;
-		const vNode = nodeMap.nodes.get(fullName);
-		if (!vNode) continue;
-		const vFields = 'fields' in vNode ? (vNode as { fields: readonly AssembledNonterminal[] }).fields : [];
-		for (const vf of vFields) {
-			if (seenProps.has(vf.configKey)) continue;
-			seenProps.add(vf.configKey);
-			const stampedExpr = stampedConfigFieldExpr(vf, nodeMap, intern);
-			if (stampedExpr !== null) {
-				configParts.push(`    ${vf.configKey}: ${stampedExpr},`);
-				continue;
-			}
-			if (isAutoStampField(vf, nodeMap)) continue; // factory stamps these; no Config slot
-			const call = resolveFieldFromTypedInput(vf, nodeMap, typeName, intern, 'input', true);
-			configParts.push(`    ${vf.configKey}: ${call},`);
-		}
-	}
-
-	lines.push(`  return ${factory}({`);
-	lines.push(...configParts);
-	lines.push('  });');
-	lines.push('}');
-	return lines.join('\n');
-}
 
 /**
  * Builds the input signature parts for a branch from() function.
