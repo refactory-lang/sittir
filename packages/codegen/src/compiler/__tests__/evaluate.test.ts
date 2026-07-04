@@ -98,6 +98,7 @@ describe('Evaluate — DSL functions', () => {
 
 		it('detects all-string choice as EnumRule', () => {
 			// PR-P: EnumRule = ChoiceRule; type is now 'choice', source moved to metadata.
+			// (debt: source-homonym resolution, decision 6) metadata.source → metadata.author.
 			const rule = choice('pub', 'crate', 'super');
 			expect(rule).toEqual({
 				type: 'CHOICE',
@@ -106,7 +107,7 @@ describe('Evaluate — DSL functions', () => {
 					{ type: 'STRING', value: 'crate' },
 					{ type: 'STRING', value: 'super' }
 				],
-				metadata: { source: 'grammar' }
+				metadata: { author: 'grammar' }
 			});
 		});
 
@@ -559,6 +560,7 @@ describe('Evaluate — evaluate()', () => {
 		);
 		// The synthesized enum rule exists in raw.rules.
 		// PR-P: type is now 'choice', source moved to metadata.
+		// (debt: source-homonym resolution, decision 6) metadata.source → metadata.author.
 		expect(raw.rules['_binary_expression_operator']).toEqual(
 			expect.objectContaining({
 				type: 'CHOICE',
@@ -568,7 +570,7 @@ describe('Evaluate — evaluate()', () => {
 					expect.objectContaining({ type: 'STRING', value: '*' }),
 					expect.objectContaining({ type: 'STRING', value: '/' })
 				],
-				metadata: { source: 'grammar' }
+				metadata: { author: 'grammar' }
 			})
 		);
 	});

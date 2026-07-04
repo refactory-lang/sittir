@@ -172,7 +172,6 @@ describe('diagnoseParseKindCollisions', () => {
 				],
 				hasTrailing: false,
 				hasLeading: false,
-				source: 'grammar',
 				sourceRuleIds: [],
 			});
 
@@ -193,7 +192,6 @@ describe('diagnoseParseKindCollisions', () => {
 					} as any,
 					forms,
 					{
-						source: 'promoted',
 						parseKindCollisionContext: {
 							ruleSignatures: {
 								left: 'pattern:[a-z]+',
@@ -214,7 +212,6 @@ describe('diagnoseParseKindCollisions', () => {
 			} as any,
 			forms,
 			{
-				source: 'promoted',
 				parseKindCollisionContext: {
 					ruleSignatures: {
 						left: 'pattern:[a-z]+',

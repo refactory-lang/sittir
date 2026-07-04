@@ -1837,15 +1837,21 @@ function resolveSymbolRoleOrPass(rule: SymbolRule<'link'>, ctx: LinkCtx): Rule<'
  * stamp off the rule to decide whether to log a derivation + mutate the rule
  * map. Per decision 3's corollary, that "stamp then re-inspect the rule"
  * pattern must become direct return-value dataflow: the classifier now
- * returns its classification/source ALONGSIDE the rule, and the caller reads
- * ONLY the return value — never re-reads a tag off `rule`.
+ * returns its classification/classifiedBy ALONGSIDE the rule, and the caller
+ * reads ONLY the return value — never re-reads a tag off `rule`.
  */
 interface ClassifyResult {
 	readonly rule: Rule<'link'>;
 	/** Set only when `rule` was newly classified this call (enum or supertype). */
 	readonly classification?: 'enum' | 'supertype';
-	/** Provenance of the classification, for the derivation log (diagnostics only). */
-	readonly source?: 'grammar' | 'promoted';
+	/**
+	 * Whether this classification was declared in the grammar (`'grammar'`,
+	 * e.g. present in `grammar.supertypes`) or inferred by this structural
+	 * classifier (`'link'`). For the derivation log (diagnostics only) — NOT
+	 * an authorship fact (decision 6: `'promoted'` is not an `author` value;
+	 * it lives on its own `classifiedBy` axis in `RuleMetadataShape`).
+	 */
+	readonly classifiedBy?: 'grammar' | 'link';
 }
 
 function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): ClassifyResult {
@@ -1876,7 +1882,7 @@ function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Cla
  * @param name - The grammar kind name (used to check `ctx.supertypes`).
  * @returns A {@link ClassifyResult}: `rule` is an `EnumRule<'link'>`,
  *   `SupertypeRule<'link'>`, or the original rule unchanged; `classification`
- *   / `source` are set only when a new classification was made.
+ *   / `classifiedBy` are set only when a new classification was made.
  * @remarks
  *   Classification:
  *   - All-string members → `EnumRule<'link'>` (promoted).
@@ -1896,7 +1902,11 @@ function classifyHiddenRule(rule: Rule<'link'>, ctx: LinkCtx, name: string): Cla
 function classifyHiddenChoiceRule(rule: ChoiceRule<'link'>, ctx: LinkCtx, name: string): ClassifyResult {
 	const { supertypes, hiddenChoicesWithNamedAliasMembers } = ctx;
 	if (rule.members.every((m): m is StringRule<'link'> => m.type === STRING)) {
-		return { rule: normalizeEnumMembers(rule.members, 'promoted'), classification: 'enum', source: 'promoted' };
+		return {
+			rule: normalizeEnumMembers(rule.members, { classifiedBy: 'link' }),
+			classification: 'enum',
+			classifiedBy: 'link'
+		};
 	}
 
 	// If this hidden choice's ORIGINAL (pre-resolveRule) rule body contained
@@ -1917,11 +1927,11 @@ function classifyHiddenChoiceRule(rule: ChoiceRule<'link'>, ctx: LinkCtx, name: 
 		// subtypes list means the choice members aren't symbols and we
 		// can't project a union — fall through to leave-as-is.
 		if (subtypes.length > 0) {
-			const source = supertypes.has(name) ? 'grammar' : 'promoted';
+			const classifiedBy = supertypes.has(name) ? 'grammar' : 'link';
 			return {
 				rule: { type: SUPERTYPE, name, subtypes } satisfies SupertypeRule<'link'>,
 				classification: 'supertype',
-				source
+				classifiedBy
 			};
 		}
 	}

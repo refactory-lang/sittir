@@ -41,7 +41,6 @@ function cleanSlot(): AssembledNonterminal {
 		values: [nodeRefValue('expression')],
 		hasTrailing: false,
 		hasLeading: false,
-		source: 'inferred',
 		fieldName: undefined,
 	} as unknown as AssembledNonterminal;
 }

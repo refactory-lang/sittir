@@ -1401,7 +1401,7 @@ function applyClauseHoist(
 				// Pass 1: symbol ref to the hidden rule (mirrors makeGroupLiftSymbol).
 				const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
 				// Pass 2: wrap in a visible alias so the inline-unsafe group surfaces
-				// as a clean CST node (`<name>`). The alias carries metadata.source so
+				// as a clean CST node (`<name>`). The alias carries metadata.author so
 				// transform-path travels through it and link mints the kind.
 				const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
 				if (peeled.form === 'optional') {
@@ -1591,18 +1591,19 @@ function visibleGroupSynthName(
  *
  * Provenance markers (both now live inside the opaque `metadata` bag — debt
  * PR-P1; the former top-level `SymbolRule.source` field is deleted):
- *   - `metadata.source: 'enrich'` — the canonical marker. Path-descent
- *     (transform-path.ts) reads this to recognize an enrich-synthesized
- *     group-lift symbol and travel THROUGH it into the hoisted body, so
- *     authored `transform()`/`groups:` path patches that address into a
- *     now-hoisted seq still resolve.
+ *   - `metadata.author: 'enrich'` — the canonical marker (debt: source-
+ *     homonym resolution, decision 6 — was `metadata.source: 'enrich'`).
+ *     Path-descent (transform-path.ts) reads this to recognize an
+ *     enrich-synthesized group-lift symbol and travel THROUGH it into the
+ *     hoisted body, so authored `transform()`/`groups:` path patches that
+ *     address into a now-hoisted seq still resolve.
  *   - `metadata.symbolSource: 'group-lift'` — relocated legacy marker (was
  *     the top-level `SymbolRule.source`). Diagnostics only.
  */
 function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
 	// Pure ref — NO inline body. Tree-sitter serializes any extra structural
 	// field on a SYMBOL into grammar.json (a `content` here leaks the seq into
-	// the parser), so the symbol stays a clean name-ref. `metadata.source` is
+	// the parser), so the symbol stays a clean name-ref. `metadata.author` is
 	// the only added marker: `dsl/transform/transform-path.ts`'s path-descent
 	// (the sanctioned dsl-side reader — doctrine decision 3) reads it and
 	// LOOKS UP the referenced `_<parent>_<kind><N>` rule body by name to travel
@@ -1626,7 +1627,7 @@ function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
 	const base = symbol(name);
 	return {
 		...base,
-		metadata: makeRuleMetadata({ source: 'enrich', symbolSource: 'group-lift' })
+		metadata: makeRuleMetadata({ author: 'enrich', symbolSource: 'group-lift' })
 	} as unknown as Rule;
 }
 
@@ -1636,14 +1637,15 @@ function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
  *
  * Shape (confirmed against generated grammar.json ALIAS nodes):
  *   `{ type: 'ALIAS', content: symbol($._<name>), named: true,
- *      value: '<name>', metadata: { source: 'enrich' } }`
+ *      value: '<name>', metadata: { author: 'enrich' } }`
  *
  * - The aliased thing is a SYMBOL ref to the hidden `_<name>` rule (NOT the raw
  *   multi-member seq). tree-sitter renames that ONE symbol-node into ONE visible
  *   CST node for `<name>` (a real kindId in parser.c). Aliasing the raw seq
  *   instead made tree-sitter DISTRIBUTE the alias name across the seq members.
- * - `metadata.source === 'enrich'` is REQUIRED for transform-path: it travels
- *   THROUGH this tag for authored path-patches
+ * - `metadata.author === 'enrich'` (debt: source-homonym resolution, decision
+ *   6 — was `metadata.source === 'enrich'`) is REQUIRED for transform-path: it
+ *   travels THROUGH this tag for authored path-patches
  *   (`dsl/transform/transform-path.ts`'s `isEnrichContentAlias` /
  *   `descendThroughEnrichContentAlias` — the sanctioned dsl-side reader,
  *   doctrine decision 3). (Debt PR-0c: `compiler/link.ts`'s
@@ -1660,10 +1662,10 @@ function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	const aliasFn = nativeRuleFn<(r: unknown, v: unknown) => Rule>('alias');
 	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');
 	// Pass a SYMBOL value so the runtime constructor sets named:true, value=name
-	// (a bare-string value would yield named:false). `metadata.source: 'enrich'`
+	// (a bare-string value would yield named:false). `metadata.author: 'enrich'`
 	// is REQUIRED for transform-path's path-descent (see doc comment above) —
 	// the runtime alias() doesn't add it, so stamp it on the cased result.
 	const node = aliasFn(symbolRef, symbol(name));
-	(node as { metadata?: unknown }).metadata = makeRuleMetadata({ source: 'enrich' });
+	(node as { metadata?: unknown }).metadata = makeRuleMetadata({ author: 'enrich' });
 	return node;
 }

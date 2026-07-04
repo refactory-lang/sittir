@@ -133,7 +133,7 @@ export function choice(...members: Input[]): Rule<'evaluate'> {
 
 	// Detect all-string choice → EnumRule<'evaluate'>
 	if (normalized.length > 0 && normalized.every((m) => m.type === STRING)) {
-		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[], 'grammar');
+		return normalizeEnumMembers(normalized as StringRule<'evaluate'>[], { author: 'grammar' });
 	}
 
 	if (normalized.length >= 2 && normalized.every((m) => m.type === FIELD)) {
@@ -1424,7 +1424,7 @@ function tryExtractFieldEnum(
 	const enumKindName = memberKeyToCanonicalName.get(memberKey);
 	if (enumKindName === undefined) return null;
 
-	const synthesizedRule = normalizeEnumMembers(members, 'grammar');
+	const synthesizedRule = normalizeEnumMembers(members, { author: 'grammar' });
 
 	const symRule: SymbolRule<'evaluate'> = { type: SYMBOL, name: enumKindName, hidden: true };
 	const replacementContent: Rule<'evaluate'> =

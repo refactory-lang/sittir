@@ -11,12 +11,12 @@ import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../model/node-m
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
 // from a grammar `field(name, ...)` wrapper (excludes kind-derived
-// positional children, which carry source='inferred').
+// positional children, which are unnamed).
 // Pre-process raw rules through deleteWrapper so deriveSlotsRaw receives
 // canonical (wrapper-free) input — mirrors how the production pipeline
 // applies applyWrapperDeletion before assembling.
 function deriveFields(rule: Rule<'link'>) {
-	return deriveSlots(deleteWrapper(rule)).filter((s) => s.source !== 'inferred');
+	return deriveSlots(deleteWrapper(rule)).filter((s) => !s.isUnnamed);
 }
 
 function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial<NormalizedGrammar>): NormalizedGrammar {
@@ -498,7 +498,7 @@ describe('Rule — deriveFields', () => {
 			['declaration', 'export_statement_default_decl_arm_default_kw_value'].sort()
 		);
 		const declSlot = slots.find((s) => s.name === 'declaration')!;
-		expect(declSlot.source).toBe('grammar');
+		expect(declSlot.isUnnamed).toBe(false);
 		const declValueNames = declSlot.values.map((value) =>
 			'node' in value ? (value.node as { name?: string }).name : value.value
 		);

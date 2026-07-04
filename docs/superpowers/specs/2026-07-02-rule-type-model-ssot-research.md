@@ -461,6 +461,83 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
    vocabulary refines; the rare file importing both uses an import alias. The
    companion lintable guideline stands: overrides-scoped files never import IR types.
 
+6. **`source`-homonym resolution** (user, 2026-07-04 — resolves §5.4's five-way
+   homonym row; supersedes both of its proposals):
+   - **Slot-level `AssembledNonterminal.source` ('grammar'|'inferred') is ELIMINATED**,
+     not renamed. Since PR-P1 it is a pure derivation of `fieldName` presence —
+     a stored copy of a derivable fact is a DRY violation. Consumers derive
+     named-vs-positional from `fieldName !== undefined` directly; the
+     node-model.json5 `source` key on slots is dropped from the schema.
+   - **Kind-level `AssembledNode.source: RuleSource` moves into the node's
+     metadata bag** (carried/copied from the rule's metadata bag, blind to the
+     compiler). Its consumer (suggested.ts's promoted-kind override candidates —
+     a sanctioned propose-diagnostic) reads it via the sanctioned accessor.
+   - **One unified authorship vocabulary: `author`** — the opaque shape's
+     `source` field becomes `author: 'grammar' | 'override' | 'enrich'`;
+     `RuleSource` and `DerivedRuleSource` types die. NUANCE (coordinator,
+     standing): link's `'promoted'` is NOT an author — it records that a
+     classification was inferred rather than declared. It becomes its own
+     metadata key (`classifiedBy: 'grammar' | 'link'`) instead of polluting
+     `author`. The dsl-side transform-path descent keying (formerly
+     `source==='enrich'`) re-keys on `author==='enrich'` — same sanctioned
+     reader, same semantics. OUTCOME REVISION (verification, 2026-07-04):
+     `RuleProvenance` was originally slated to merge into `author` but
+     SURVIVES as a separate behavior-facing axis — `generate.ts`'s
+     `collectEvaluateSynthesizedKinds` branches real emit behavior on
+     `'evaluate-synthesized'`, and generate.ts is not a sanctioned metadata
+     reader, so bagging the fact would itself violate decision 3. Open
+     follow-up: re-key that branch on a declared construction fact (the
+     `splicedBody` pattern) and then retire `RuleProvenance`.
+   - **node-model `polymorphVariants.<kind>.source`** — OUTCOME REVISION
+     (verification, 2026-07-04): NOT removable. It is
+     `PolymorphVariantDescriptor`'s discriminated-union tag (a `rule.type`
+     analogue) driving live variant dispatch in `validate/common.ts` and
+     `read-render-parse.ts` — a structural discriminant that merely shares
+     the stem. Future work is a RENAME (e.g. `definedBy`), never removal.
+   - Untouched (different axes, honest names): runtime `$source` 0|1|2
+     (constructor origin, public API), `sourceRuleIds` (structural
+     back-pointers), `DerivedRuleSource` follows `RuleSource` into deletion.
+
+7. **Variant machinery stays; the placeholder protocol must not ship grammar-side**
+   (user, 2026-07-04). The `variant()` override construct, its minted
+   `<parent>_<variantName>` alias-kind naming, the `$variant` factory config
+   key, and the node-model→validator inference channel all REMAIN. What must
+   go: the `__sittirPlaceholder: "variant"` marker protocol (and the bundled
+   `variant()` resolver) inside the transpiled `.sittir/grammar.js` — the
+   grammar tree-sitter consumes should contain only plain tree-sitter
+   constructs, with variant() fully resolved at authoring/wire time before
+   the bundle is emitted. NOTE (coordinator): today the bundle re-runs the
+   wire/enrich pipeline under tree-sitter's runtime precisely so both parsers
+   agree; resolving placeholders pre-bundle means emitting post-wire RESOLVED
+   rules instead of bundling the transform machinery — a research-first item
+   (it touches the dual-runtime boundary itself), not a mechanical sweep.
+   REFINEMENT (user, 2026-07-04): the end-state is stronger than placeholder
+   removal — the variant/form surface is DERIVED STRUCTURALLY AT ASSEMBLE
+   TIME: any choice of named kinds (branch/group kinds, or a leaf nested
+   under a branch node) automatically gets the variant/form surface, named
+   by the child kind (e.g. `binaryExpression.plus`). Authored `variant()`
+   tagging stops being the source of the classification (fact-taxonomy
+   alignment: polymorph/variant are node facts derived from structure);
+   with nothing variant-specific authored grammar-side, the placeholder
+   protocol has nothing to carry and dissolves by construction. The
+   research item scopes: what structural predicate defines the surface,
+   how the 43 authored variant() calls' information content (names,
+   groupings) maps or retires, and what the bundle still needs at CLI-time
+   once variant() is out of the wire path.
+   CLARIFICATION (user, 2026-07-04): `variant()` in overrides.ts is JUST
+   SYNTACTIC SUGAR for giving grammar kinds to nested (otherwise-anonymous)
+   choice arms — its entire information content is a kind name for a branch
+   that has none. Consequently: arms that are ALREADY named kinds need no
+   authoring at all (their form surface derives from structure); variant()'s
+   only residual job is kind-minting for anonymous arms (equivalent to the
+   author writing an explicit alias), and everything downstream ($variant,
+   polymorphVariants, validator inference) derives from the resulting
+   named-kind structure — never from variant() as a classification signal.
+   Related small cleanups identified alongside (independent, dispatchable):
+   (a) dead `emitPolymorph` dispatch arms for the retired `modelType:
+   'polymorph'`; (b) `PolymorphVariantDescriptor.source` → `definedBy`
+   rename (validation-side only — see decision 6's outcome revision).
+
 ## 6. Open questions for the design discussion
 
 1. **Is "one boundary module" an acceptable answer to "there should be a SSOT"?** §0 argues

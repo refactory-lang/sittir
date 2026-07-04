@@ -869,12 +869,9 @@ interface PolymorphFromNode {
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
 	readonly forms: AssembledGroup[];
-	/** Polymorph source — drives `$variant` inference when callers pass
-	 *  Loose input without stamping the discriminator. */
-	readonly source: 'override' | 'promoted';
-	/** For `source='override'` only: the variant-child kind names, index-
-	 *  aligned with `forms` (via `assemble.ts`). Zipped into the
-	 *  generated `childKind → formName` switch in the from dispatcher. */
+	/** Variant-child kind names for override-defined polymorph variants,
+	 *  index-aligned with `forms` (populated by `assemble.ts` when the
+	 *  variant config declares per-child kinds; absent otherwise). */
 	readonly variantChildKinds?: readonly string[];
 }
 
@@ -905,9 +902,7 @@ function emitPolymorphDispatcher(
 	kind: string,
 	typeName: string,
 	forms: AssembledGroup[],
-	nodeMap: NodeMap,
-	_source: 'override' | 'promoted',
-	_variantChildKinds: readonly string[] | undefined
+	nodeMap: NodeMap
 ): string {
 	// Input union includes both Loose config + per-kind NodeData so the
 	// `isNodeData` generic overload narrows soundly in the pass-through branch.
@@ -1016,9 +1011,7 @@ function emitPolymorphFrom(node: PolymorphFromNode, nodeMap: NodeMap, intern: Ki
 		node.kind,
 		node.typeName,
 		node.forms,
-		nodeMap,
-		node.source,
-		node.variantChildKinds
+		nodeMap
 	);
 	const parts = [dispatcher];
 	for (const form of node.forms) {

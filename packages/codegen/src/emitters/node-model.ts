@@ -61,7 +61,6 @@ interface SerializedSlot {
 
 interface SerializedField extends SerializedSlot {
 	paramName: string;
-	source: 'grammar' | 'override' | 'promoted' | 'enriched' | 'inferred';
 	projection: { typeName: string; kinds: string[] };
 }
 
@@ -84,7 +83,6 @@ interface SerializedNodeBase {
 	factoryName?: string;
 	irKey?: string;
 	hidden: boolean;
-	source?: string;
 	isParameterless?: boolean;
 	stampExpression?: string;
 	/**
@@ -278,7 +276,6 @@ function serializeNode(node: AssembledNode): SerializedNode {
 		factoryName: node.factoryName,
 		irKey: node.irKey,
 		hidden: node.hidden,
-		source: node.source,
 		...(node.parameterless ? { isParameterless: true } : {}),
 		...(node.stampExpression !== undefined ? { stampExpression: node.stampExpression } : {})
 	};
@@ -377,7 +374,6 @@ function serializeField(field: AssembledNonterminal): SerializedField {
 		multiple: isMultiple(field),
 		nonEmpty: isNonEmpty(field),
 		values: field.values.map(serializeValue),
-		source: field.source,
 		// projection: derived from values via kindsOf() instead of read from
 		// a stored cache (eliminated in spec 022 Phase 1d.i). The serialized
 		// JSON shape is preserved (typeName: '', kinds: [...]) for byte-

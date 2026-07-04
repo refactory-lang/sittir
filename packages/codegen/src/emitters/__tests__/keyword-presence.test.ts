@@ -32,7 +32,6 @@ function makeField(values: readonly NodeOrTerminal[]): AssembledNonterminal {
 		propertyName: 'field',
 		configKey: 'field',
 		paramName: 'field',
-		source: 'grammar',
 		values,
 		hasTrailing: false,
 		hasLeading: false
