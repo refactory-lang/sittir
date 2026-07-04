@@ -31,6 +31,12 @@ does), and output (what changes).
 > | **RenderRule** | `applyWrapperDeletion` | `node.renderRule` | the authoritative `TemplateEmitter` |
 > | **SimplifiedRule** | `computeSimplifiedRules` | `node.simplifiedRule` | slot derivation (`collectSlots`), factories/wrap/from |
 >
+> (phase-visibility-tightening: `AssembledBranch.simplifiedRule` / `AssembledGroup.simplifiedRule`
+> were previously typed `Rule<'link'>` — a stale annotation predating PR1/PR2's SimplifiedRule
+> snapshot — despite always holding a genuine `SimplifiedRule` value per this table; retyped to
+> match. `emitRule` and its templates.ts walker family were similarly retyped `Rule<'link'>` →
+> `RenderRule`, matching the `node.renderRule` row above.)
+>
 > **What's shipped (PR0 + PR1 + PR2):**
 > - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` / `aliasedFrom` / `aliasNamed` on every Rule via the shared `RuleBase` interface (`types/rule.ts` — R11 moved the Rule IR layer to `codegen/src/types/`).
 > - **enrich attribute passes** (PR0): `enrichFieldWrappers` ships in `dsl/enrich.ts`. `enrichMultiplicityWrappers` was REMOVED — `multiplicity`/`nonterminal` are derived solely by `applyWrapperDeletion` from wrapper structure (enrich stamping them was premature + polluted the `nonterminal` slot signal by marking bare `optional(',')` delimiters). The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`).
@@ -308,7 +314,7 @@ content), then produces the RenderRule + SimplifiedRule snapshots.
 2. `applyWrapperDeletion(rules)` — pushes modifier wrappers to leaf attributes. Produces the **RenderRule** snapshot.
 3. `computeSimplifiedRules(renderRules, word, inlineKinds)` — produces the **SimplifiedRule** snapshot.
 4. Threads top-level **alias bodies** and **polymorph-form** contents through the same `applyNormalizationPasses` → `applyWrapperDeletion` → `computeSimplifiedRules` pipeline and merges them into `renderRules` / `simplifiedRules` (so `assemble.ts` reads snapshots, never re-simplifies per call).
-**Output:** `NormalizedGrammar` with `rules` (RawRule), `renderRules` (RenderRule), `simplifiedRules` (SimplifiedRule).
+**Output:** `NormalizedGrammar` with `linkRules` (RawRule — renamed from `rules` in the phase-visibility-tightening pass; the pre-simplify, post-normalization-passes/pre-wrapper-deletion view), `renderRules` (RenderRule), `simplifiedRules` (SimplifiedRule).
 
 ### Normalization passes
 - `fanOutSeqChoices(rule)` — `seq(a, choice(b,c), d)` → `choice(seq(a,b,d), seq(a,c,d))` (single inner choice; preserves variant labels).
@@ -438,7 +444,7 @@ First time nodes appear. All metadata derived from the rule snapshots.
 ### `assemble(normalized)`
 **Pattern:** Called with a `NormalizedGrammar`.
 **Action:** Classifies each rule into a model type, constructs `AssembledNode` instances (attaching `.rule` / `.renderRule` / `.simplifiedRule`), collects anonymous tokens/keywords, resolves colliding names, assigns ir keys, marks parameterless/user-facing kinds. Slot-ref hydration is deferred to `hydrateSlotRefs`.
-**Output:** `NodeMap` with `nodes`, `signatures`, `derivations`, `rules`, `externals`.
+**Output:** `NodeMap` with `nodes`, `signatures`, `derivations`, `linkRules` (renamed from `rules` in the phase-visibility-tightening pass — same pre-simplify `Rule<'link'>` view as `NormalizedGrammar.linkRules`), `externals`.
 
 ### `classifyNode(kind, rule, opts?)`
 **Pattern:** Each rule.

@@ -67,14 +67,14 @@ function makeSlotArityNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('single_parent', new AssembledBranch('single_parent', singleChildRule, singleChildRule, deleteWrapper(singleChildRule)));
-	nodes.set('multi_parent', new AssembledBranch('multi_parent', multiSingularChildRule, multiSingularChildRule, deleteWrapper(multiSingularChildRule)));
-	nodes.set('repeat_parent', new AssembledBranch('repeat_parent', repeatFieldRule, repeatFieldRule, deleteWrapper(repeatFieldRule)));
+	nodes.set('single_parent', new AssembledBranch('single_parent', singleChildRule, deleteWrapper(singleChildRule), deleteWrapper(singleChildRule)));
+	nodes.set('multi_parent', new AssembledBranch('multi_parent', multiSingularChildRule, deleteWrapper(multiSingularChildRule), deleteWrapper(multiSingularChildRule)));
+	nodes.set('repeat_parent', new AssembledBranch('repeat_parent', repeatFieldRule, deleteWrapper(repeatFieldRule), deleteWrapper(repeatFieldRule)));
 	nodes.set(
 		'optional_then_required_parent',
-		new AssembledBranch('optional_then_required_parent', optionalThenRequiredChildRule, optionalThenRequiredChildRule, deleteWrapper(optionalThenRequiredChildRule))
+		new AssembledBranch('optional_then_required_parent', optionalThenRequiredChildRule, deleteWrapper(optionalThenRequiredChildRule), deleteWrapper(optionalThenRequiredChildRule))
 	);
-	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', multiSiblingFieldRule, multiSiblingFieldRule, deleteWrapper(multiSiblingFieldRule)));
+	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', multiSiblingFieldRule, deleteWrapper(multiSiblingFieldRule), deleteWrapper(multiSiblingFieldRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('number_literal', new AssembledPattern('number_literal', { type: PATTERN, value: '[0-9]+' }));
 	nodes.set('property_identifier', new AssembledPattern('property_identifier', { type: PATTERN, value: '[a-z]+' }));

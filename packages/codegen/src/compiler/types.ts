@@ -414,7 +414,7 @@ export interface IncludeFilter {
 
 export interface NormalizedGrammar {
 	readonly name: string;
-	readonly rules: Record<string, Rule<'link'>>;
+	readonly linkRules: Record<string, Rule<'link'>>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
 	/** Propagated from {@link LinkedGrammar.parentAliasedKinds}. */
@@ -490,23 +490,30 @@ export interface NodeMap {
 	 */
 	readonly derivations: DerivationLog;
 	/**
-	 * Post-Normalize rule map — the template walker needs this so its
-	 * `symbol` case can inline hidden helper rules (e.g. python's
-	 * `_import_list`) directly into the emitted template. Without it
-	 * the walker falls back to `$$$CHILDREN` which is wrong for hidden
-	 * helpers whose fields get promoted onto the parent node.
+	 * `NormalizedGrammar.linkRules` carried through assemble — the
+	 * pre-simplify, wrapper-bearing view (`applyNormalizationPasses`'
+	 * output, BEFORE `applyWrapperDeletion` strips modifier wrappers). The
+	 * template walker needs this so its `symbol` case can inline hidden
+	 * helper rules (e.g. python's `_import_list`) directly into the
+	 * emitted template. Without it the walker falls back to `$$$CHILDREN`
+	 * which is wrong for hidden helpers whose fields get promoted onto the
+	 * parent node.
 	 */
-	readonly rules?: Record<string, Rule<'link'>>;
+	readonly linkRules?: Record<string, Rule<'link'>>;
 	/**
-	 * Pre-Normalize rules (from Link). The suggester needs these for
-	 * polymorph-path computation: `findAllPolymorphCandidates` paths
+	 * Rules from `LinkedGrammar` (pre-Normalize — before
+	 * `applyNormalizationPasses` runs), as distinct from `linkRules` above
+	 * (post-normalization-passes). The suggester needs THIS earlier view
+	 * for polymorph-path computation: `findAllPolymorphCandidates` paths
 	 * must match what the override author's `transform()` call would
 	 * see at evaluate time — BEFORE `fanOutSeqChoices` flattens nested
-	 * seq(choice) into top-level seq[choice]. Using post-Normalize
-	 * rules collapses `seq(_, seq(choice, _))` into `seq(_, choice, _)`,
-	 * shifting the choice's logical path from `1/0` to `1`, and the
-	 * emitted `variant()` keys then fail when applied to the base
-	 * grammar's prec-wrapped-seq-of-choice shape.
+	 * seq(choice) into top-level seq[choice]. Using the post-normalization-
+	 * passes view collapses `seq(_, seq(choice, _))` into
+	 * `seq(_, choice, _)`, shifting the choice's logical path from `1/0`
+	 * to `1`, and the emitted `variant()` keys then fail when applied to
+	 * the base grammar's prec-wrapped-seq-of-choice shape. Currently never
+	 * populated by `assemble()` — `suggested.ts` falls back to `linkRules`
+	 * whenever this is absent, which today is always.
 	 */
 	readonly linkedRules?: Record<string, Rule<'link'>>;
 	/**

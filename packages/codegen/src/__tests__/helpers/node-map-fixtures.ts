@@ -28,7 +28,7 @@ export function makeNodeMapWith(nodes: Map<string, AssembledNode>, polymorphForm
 			promotedRules: [],
 			repeatedShapes: []
 		},
-		rules: {},
+		linkRules: {},
 		externals: new Set(),
 		word: undefined,
 		polymorphFormKinds

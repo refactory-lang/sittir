@@ -26,7 +26,7 @@ import {
 	AssembledGroup,
 	AssembledPattern,
 } from '../model/node-map.ts';
-import type { RenderRule, Rule, SeqRule } from '../../types/rule.ts';
+import type { RenderRule, Rule, SeqRule, SimplifiedRule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
 // canonicalizeSeqOfLeaves
@@ -106,7 +106,7 @@ describe('assertUniversalShape', () => {
 				{ type: SYMBOL, name: 'name' },
 			],
 		};
-		const node = new AssembledBranch('function_decl', body, body, body as unknown as RenderRule);
+		const node = new AssembledBranch('function_decl', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -118,7 +118,7 @@ describe('assertUniversalShape', () => {
 				{ type: STRING, value: 'static' },
 			],
 		};
-		const node = new AssembledGroup('_modifiers', body, body, body as unknown as RenderRule);
+		const node = new AssembledGroup('_modifiers', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -128,7 +128,7 @@ describe('assertUniversalShape', () => {
 		// However AssembledBranch's R generic doesn't permit a bare symbol,
 		// so we test the case via AssembledGroup which accepts any Rule.
 		const body: Rule<'link'> = { type: SYMBOL, name: 'X' };
-		const node = new AssembledGroup('_passthrough', body, body, body as unknown as RenderRule);
+		const node = new AssembledGroup('_passthrough', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -146,7 +146,7 @@ describe('assertUniversalShape', () => {
 				},
 			],
 		};
-		const node = new AssembledGroup('function_decl', body, body, body as unknown as RenderRule);
+		const node = new AssembledGroup('function_decl', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).toThrow(
 			/Universal-shape violation in kind 'function_decl'/
 		);
@@ -165,7 +165,7 @@ describe('assertUniversalShape', () => {
 				},
 			],
 		};
-		const node = new AssembledGroup('_choice_wrap', body, body, body as unknown as RenderRule);
+		const node = new AssembledGroup('_choice_wrap', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).toThrow(/CHOICE/);
 	});
 
@@ -177,7 +177,7 @@ describe('assertUniversalShape', () => {
 				{ type: SYMBOL, name: 'b' },
 			],
 		};
-		const node = new AssembledGroup('_choice_kind', body, body, body as unknown as RenderRule);
+		const node = new AssembledGroup('_choice_kind', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
 		expect(() => assertUniversalShape(node)).toThrow(
 			/Universal-shape violation/
 		);

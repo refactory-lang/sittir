@@ -235,7 +235,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		polymorphSkip: polymorphsConfigSkip,
 	});
 	const normalized = normalizeGrammar(linked, normalizeCtx);
-	tracePhaseRules('normalize', normalized.rules);
+	tracePhaseRules('normalize', normalized.linkRules);
 	tracePhaseRules('simplify', normalized.simplifiedRules);
 
 	// Phase 4: Assemble — caller-owned ctx (R12): built from `normalized` via

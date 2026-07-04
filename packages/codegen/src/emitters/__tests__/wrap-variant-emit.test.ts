@@ -30,7 +30,7 @@ function makeHiddenGroupNodeMap() {
 		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, helperRule, deleteWrapper(helperRule)));
+	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -49,7 +49,7 @@ function makeTransparentHiddenGroupNodeMap() {
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_export_statement_default', new AssembledGroup('_export_statement_default', helperRule, helperRule, deleteWrapper(helperRule)));
+	nodes.set('_export_statement_default', new AssembledGroup('_export_statement_default', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }

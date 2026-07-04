@@ -51,7 +51,7 @@ describe('NodeMap back-pointer maps', () => {
 		// the ids on these rules are what nodeByRuleId / slotByRuleId key
 		// off. The raw input rules may have stale ids after link/normalize
 		// shape rewrites.
-		return { rules: normalized.rules, nodeMap };
+		return { rules: normalized.linkRules, nodeMap };
 	}
 
 	function buildNodeMap(

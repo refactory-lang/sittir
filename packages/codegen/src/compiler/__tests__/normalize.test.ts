@@ -155,9 +155,9 @@ describe('Normalize — normalizeGrammar()', () => {
 		});
 		const normalized = normalizeGrammar(linked);
 		expect(normalized.name).toBe('test');
-		expect(normalized.rules['item']).toBeDefined();
+		expect(normalized.linkRules['item']).toBeDefined();
 		// Field metadata must be preserved
-		const item = normalized.rules['item'] as any;
+		const item = normalized.linkRules['item'] as any;
 		const fieldMember = item.members?.find((m: any) => m.type === FIELD) ?? (item.type === FIELD ? item : null);
 		if (fieldMember) {
 			expect(fieldMember.name).toBe('body');

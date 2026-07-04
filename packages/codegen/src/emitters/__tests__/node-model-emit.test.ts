@@ -15,7 +15,7 @@ describe('node-model emitter', () => {
 		const nodes = new Map<string, AssembledNode>();
 		nodes.set(
 			'alias_host',
-			new AssembledBranch('alias_host', rule, rule, deleteWrapper(rule), {
+			new AssembledBranch('alias_host', rule, deleteWrapper(rule), deleteWrapper(rule), {
 				slotRecord: Object.freeze({
 					value: new AssembledNonterminal({
 						fieldName: 'value',

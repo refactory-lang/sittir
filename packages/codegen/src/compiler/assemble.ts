@@ -124,10 +124,10 @@ export class AssembleCtx extends BaseCtx<SimplifiedRule> {
 		generatedIdTables?: GeneratedIdTables,
 		diagnostics: DiagnosticSink = new DiagnosticSink()
 	): AssembleCtx {
-		const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.rules);
+		const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.linkRules);
 		return new AssembleCtx({
 			rules: normalized.simplifiedRules,
-			rawRules: normalized.rules,
+			rawRules: normalized.linkRules,
 			diagnostics,
 			wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
 			generatedIdTables,
@@ -146,7 +146,7 @@ export interface AssembledNodeMap extends NodeMap {
 // assemble() — main entry point
 // ---------------------------------------------------------------------------
 export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): AssembledNodeMap {
-	const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.rules);
+	const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.linkRules);
 	const nodes = ctx.nodes;
 	// collectGeneratedKindEntries(undefined) is []; keep the non-optional
 	// entries array downstream constructors expect.
@@ -173,7 +173,7 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 	// form set) and the enumerated known exceptions (parents that
 	// structurally qualify but can never appear in node-model.json5 because
 	// they classify to SupertypeRule/AssembledGroup, not AssembledBranch).
-	const variantChildrenByParent = deriveStructuralVariantChildren(normalized.rules);
+	const variantChildrenByParent = deriveStructuralVariantChildren(normalized.linkRules);
 	const variantParents = new Set(variantChildrenByParent.keys());
 
 	// Identify rule kinds whose resolved body is wholly optional. This
@@ -183,14 +183,14 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 	// body that's `optional(...)` or `choice(blank, ...)` qualifies. Set
 	// on a module-level pointer in node-map.ts for the slot-value
 	// constructors to consult during the rule walk below.
-	const optionalBodyKinds = collectOptionalBodyKinds(normalized.rules);
+	const optionalBodyKinds = collectOptionalBodyKinds(normalized.linkRules);
 	setOptionalBodyKinds(optionalBodyKinds);
 	const parseKindCollisionContext = {
 		ruleSignatures: buildParseKindRuleSignatures(normalized.renderRules!)
 	} as const;
 
 	try {
-		for (const [kind, rule] of Object.entries(normalized.rules)) {
+		for (const [kind, rule] of Object.entries(normalized.linkRules)) {
 			const assemblyRule = normalized.topLevelAliasBodies?.get(kind) ?? rule;
 			// `inlinedRule` still uses inlineRefs here because the
 			// RAW rule path (for template emission + classification) isn't
@@ -206,7 +206,7 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 			// …) to surface as template text. See
 			// `project_simplify_template_walker_divergence.md`.
 			const inlinedRule = hoistInnerFieldsForTemplate(
-				inlineRefs(assemblyRule, { rules: normalized.rules })
+				inlineRefs(assemblyRule, { rules: normalized.linkRules })
 			);
 			const modelType = classifyNode(kind, inlinedRule, {
 				variantParents,
@@ -296,7 +296,7 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 			}
 		}
 
-		collectAnonymousNodes(normalized.rules, nodes, wordMatcherRegex, kindEntries);
+		collectAnonymousNodes(normalized.linkRules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
 		// Pre-compute the two cross-node sets once, then run the merged
@@ -349,7 +349,7 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 		// promoting IT would be a no-op. `markUserFacing`'s own doc already
 		// documents this as case (d) — "hidden variant-child kinds ... the
 		// slot walker never reaches when the parent is a supertype."
-		for (const rule of Object.values(normalized.rules)) {
+		for (const rule of Object.values(normalized.linkRules)) {
 			if (rule.type !== SUPERTYPE || !rule.variantArms) continue;
 			for (const arm of rule.variantArms) variantChildKindsSet.add(arm);
 		}
@@ -384,7 +384,7 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 		// feedback_ruleid_backpointer.
 		const nodeByRuleId = new Map<RuleId, AssembledNode>();
 		const slotByRuleId = new Map<RuleId, AssembledNonterminal>();
-		for (const [kind, rule] of Object.entries(normalized.rules)) {
+		for (const [kind, rule] of Object.entries(normalized.linkRules)) {
 			const node = nodes.get(kind);
 			if (!node) continue;
 			if (rule.id) nodeByRuleId.set(rule.id, node);
@@ -402,7 +402,7 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 		// pushes modifier attrs down; walking the raw rules and name-matching
 		// against the assembled slots bridges the gap without requiring the
 		// pipeline to thread the FieldRule id through to the RenderRule leaf.
-		for (const [kind, rawRule] of Object.entries(normalized.rules)) {
+		for (const [kind, rawRule] of Object.entries(normalized.linkRules)) {
 			const node = nodes.get(kind);
 			if (!node) continue;
 			const slotsByName = new Map<string, AssembledNonterminal>();
@@ -430,7 +430,7 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 			slotByRuleId,
 			signatures: computeSignatures(nodes),
 			derivations: normalized.derivations,
-			rules: normalized.rules,
+			linkRules: normalized.linkRules,
 			word: normalized.word,
 			externals: normalized.externals ? new Set(normalized.externals) : undefined,
 			polymorphFormKinds: computePolymorphFormKinds(nodes),
@@ -555,17 +555,17 @@ function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[
  */
 function unwrapGroupRuleAndSimplified(
 	rule: Rule<'link'>,
-	simplifiedRule: Rule<'link'>,
+	simplifiedRule: SimplifiedRule,
 	renderRule: RenderRule
-): { groupRule: Rule<'link'>; groupSimplified: Rule<'link'>; groupRenderRule: RenderRule } {
+): { groupRule: Rule<'link'>; groupSimplified: SimplifiedRule; groupRenderRule: RenderRule } {
 	const groupRule = rule.type === GROUP ? rule.content : rule;
 	// applyWrapperDeletion preserves group structure: renderRule.type === GROUP
 	// when the source rule was a group, with renderRule.content being the
 	// wrapper-deleted inner content. Same for simplifiedRule (simplifyRule recurses
 	// through group wrappers preserving the outer group node).
-	const groupSimplified = rule.type === GROUP ? (simplifiedRule as GroupRule<'link'>).content : simplifiedRule;
+	const groupSimplified = rule.type === GROUP ? (simplifiedRule as GroupRule<'simplify'>).content : simplifiedRule;
 	const groupRenderRule: RenderRule =
-		rule.type === GROUP ? ((renderRule as GroupRule<'link'>).content as RenderRule) : renderRule;
+		rule.type === GROUP ? ((renderRule as GroupRule<'normalize'>).content as RenderRule) : renderRule;
 	return { groupRule, groupSimplified, groupRenderRule };
 }
 

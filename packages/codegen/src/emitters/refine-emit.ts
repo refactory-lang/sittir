@@ -57,10 +57,10 @@ export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | und
 	for (const [kind, kindForms] of forms) {
 		const node = nodeMap.nodes.get(kind);
 		if (!node) continue;
-		const rule = nodeMap.rules?.[kind];
+		const rule = nodeMap.linkRules?.[kind];
 		const infos: RefineFormInfo[] = [];
 		for (const form of kindForms) {
-			const narrowed = rule ? narrowedFieldLiteralsForForm(rule, form, nodeMap.rules) : [];
+			const narrowed = rule ? narrowedFieldLiteralsForForm(rule, form, nodeMap.linkRules) : [];
 			infos.push({ name: form.name, form, narrowedFields: narrowed });
 		}
 		out.push({ kind, typeName: node.typeName, node, forms: infos });

@@ -9,26 +9,20 @@
  * field emissions. Other cases keep an empty map.
  */
 
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, GROUP, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type {
-	AliasRule,
 	ChoiceRule,
 	DedentRule,
 	EnumRule,
-	FieldRule,
 	GroupRule,
 	IndentRule,
 	NewlineRule,
-	OptionalRule,
 	PatternRule,
-	Repeat1Rule,
-	RepeatRule,
 	Rule,
 	SeqRule,
 	StringRule,
 	SymbolRule,
-	TokenRule,
 	VariantRule
 } from '../../types/rule.ts';
 import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/model/node-map.ts';
@@ -146,21 +140,17 @@ describe('emitRule — seq', () => {
 });
 
 describe('emitRule — transparent wrappers', () => {
-	it('recurses into token content', () => {
-		const inner: StringRule = { type: STRING, value: 'foo' };
-		const rule: TokenRule = { type: TOKEN, content: inner, immediate: false };
-		expect(emitRule(rule, makeCtx())).toBe('foo');
-	});
-
 	// PR-P Task 2: TerminalRule deleted — no 'recurses into terminal content' test needed.
 	// Terminal-shape rules now classify by shape at Assemble; they have no 'terminal' wrapper
 	// in the rule tree, so emitRule never sees a TERMINAL node.
 
-	it('recurses into unnamed alias content', () => {
-		const inner: StringRule = { type: STRING, value: 'baz' };
-		const rule: AliasRule = { type: ALIAS, content: inner, named: false, value: 'baz' };
-		expect(emitRule(rule, makeCtx())).toBe('baz');
-	});
+	// phase-visibility-tightening: 'recurses into token content' / 'recurses
+	// into unnamed alias content' tests deleted — TOKEN and ALIAS are
+	// WrapperPhase-only (types/rule.ts) and collapse to `never` under
+	// RenderRule; `emitRule`'s TOKEN/ALIAS switch arms were deleted as
+	// unreachable (empirically confirmed dead across all 3 grammars — see
+	// templates.ts's emitRule comment). TokenRule/AliasRule values no longer
+	// typecheck as emitRule arguments at all.
 
 	it('recurses into variant content', () => {
 		const inner: StringRule = { type: STRING, value: 'qux' };
@@ -175,44 +165,14 @@ describe('emitRule — transparent wrappers', () => {
 	});
 });
 
-// PR2 Task 3.B3: field / optional / repeat / repeat1 are wrapper rule types
-// that must NOT appear in RenderRule input. emitRule throws defensively if
-// it encounters them. Wrapper attributes (fieldName / multiplicity /
-// separator) are now on the leaf symbol instead.
-describe('emitRule — wrapper types throw (PR2 Task 3.B3)', () => {
-	it('throws when given a field rule (wrapper removed in RenderRule)', () => {
-		const rule: FieldRule = {
-			type: FIELD,
-			name: 'name',
-			content: { type: SYMBOL, name: 'identifier' }
-		};
-		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'FIELD'");
-	});
-
-	it('throws when given an optional rule (wrapper removed in RenderRule)', () => {
-		const rule: OptionalRule = {
-			type: OPTIONAL,
-			content: { type: STRING, value: ';' }
-		};
-		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'OPTIONAL'");
-	});
-
-	it('throws when given a repeat rule (wrapper removed in RenderRule)', () => {
-		const rule: RepeatRule = {
-			type: REPEAT,
-			content: { type: SYMBOL, name: 'item' }
-		};
-		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'REPEAT'");
-	});
-
-	it('throws when given a repeat1 rule (wrapper removed in RenderRule)', () => {
-		const rule: Repeat1Rule = {
-			type: REPEAT1,
-			content: { type: SYMBOL, name: 'item' }
-		};
-		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'REPEAT1'");
-	});
-});
+// PR2 Task 3.B3 / phase-visibility-tightening: field / optional / repeat /
+// repeat1 are WrapperPhase-only rule variants (types/rule.ts) that collapse
+// to `never` under RenderRule — `emitRule` is now typed `(rule: RenderRule)`,
+// so these shapes are unconstructible as arguments and the switch's former
+// defensive throw arms were deleted as genuinely unreachable code. The
+// wrapper-throw regression tests these used to cover are superseded by the
+// type system itself (a FieldRule/OptionalRule/RepeatRule/Repeat1Rule value
+// no longer typechecks as an emitRule argument at all).
 
 // In RenderRule, field facts are leaf attributes on the inner symbol.
 // emitRule dispatches to emitSymbol which reads fieldName / multiplicity.

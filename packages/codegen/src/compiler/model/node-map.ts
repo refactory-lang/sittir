@@ -39,6 +39,7 @@ import type {
 	Rule,
 	RuleBase,
 	RenderRule,
+	SimplifiedRule,
 	SeqRule,
 	ChoiceRule,
 	RepeatRule,
@@ -994,7 +995,7 @@ export interface DeriveCtx {
 	/** Visible alias target → source kinds (alias-source slot expansion). */
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	/** Post-simplify rules, for alias-source value derivation. */
-	readonly simplifiedRules?: Record<string, Rule<'link'>>;
+	readonly simplifiedRules?: Record<string, SimplifiedRule>;
 	/** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
 	readonly nodes?: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>;
 }
@@ -2400,15 +2401,15 @@ export class AssembledBranch<
 	// Emitter behavior should key off `slotClass` / slot facts rather than a
 	// separate branch-global shape discriminator.
 	/**
-	 * Rule<'link'> with anonymous tokens / structural wrappers stripped.
-	 * Computed once by assemble() via `simplifyRule(init.rule)` and
-	 * stored here so derivation walks (`deriveFields`, `deriveChildren`,
+	 * SimplifiedRule with anonymous tokens / structural wrappers stripped
+	 * (`normalized.simplifiedRules[kind]`, sourced from `computeSimplifiedRules`).
+	 * Stored here so derivation walks (`deriveFields`, `deriveChildren`,
 	 * separator discovery) don't have to re-navigate past delimiter
 	 * literals on every call. Template emission still reads the raw
 	 * `rule` because templates need the literals to surface as
 	 * template text. Stage 1: populated but not yet read.
 	 */
-	readonly simplifiedRule: Rule<'link'>;
+	readonly simplifiedRule: SimplifiedRule;
 	/**
 	 * Wrapper-deleted view of the rule, sourced from
 	 * `normalized.renderRules[kind]` at assemble time. Optional / field /
@@ -2461,7 +2462,7 @@ export class AssembledBranch<
 	constructor(
 		kind: string,
 		rule: R,
-		simplifiedRule: Rule<'link'>,
+		simplifiedRule: SimplifiedRule,
 		renderRule: RenderRule,
 		opts?: {
 			factoryName?: string;
@@ -2471,7 +2472,7 @@ export class AssembledBranch<
 			parseKindCollisionContext?: ParseKindCollisionContext;
 			slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
 			visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
-			simplifiedRules?: Record<string, Rule<'link'>>;
+			simplifiedRules?: Record<string, SimplifiedRule>;
 		}
 	) {
 		super(kind, rule, opts);
@@ -2505,16 +2506,20 @@ export class AssembledBranch<
 	}
 
 	/**
-	 * Repeat-list separator (when the simplified rule is a `repeat` or
-	 * `repeat1` carrying a separator captured by Evaluate). Branches
-	 * derived from non-repeat shapes return `undefined`. Absorbed from
-	 * the former `AssembledContainer.separator` getter.
+	 * Repeat-list separator fallback for `render-module.ts`'s `collectMetaData`.
+	 * Historically read `this.simplifiedRule.type === REPEAT/REPEAT1` (the
+	 * former `AssembledContainer.separator` getter), but `simplifiedRule` is
+	 * the post-`applyWrapperDeletion` view (see `SimplifiedRule`) where
+	 * REPEAT/REPEAT1 wrapper nodes never survive — they're converted to a
+	 * `multiplicity`/`separator` leaf attribute before storage. Verified
+	 * empirically (phase-visibility-tightening investigation): 0 of 468
+	 * AssembledBranch nodes across rust/typescript/python ever had a
+	 * REPEAT-shaped `simplifiedRule`, confirming the branch was always dead.
+	 * Always returns `undefined` now; kept as a documented no-op rather than
+	 * deleted outright so `render-module.ts`'s fallback-chain comment (and its
+	 * call site) don't need to change in this pass.
 	 */
 	get separator(): string | undefined {
-		const r = this.simplifiedRule;
-		if (r.type === REPEAT || r.type === REPEAT1) {
-			return r.separator;
-		}
 		return undefined;
 	}
 
@@ -3139,7 +3144,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	// Rule<'link'> when constructed as polymorph forms (form.content can be
 	// any Rule<'link'> type).
 	/** See `AssembledBranch.simplifiedRule`. */
-	readonly simplifiedRule: Rule<'link'>;
+	readonly simplifiedRule: SimplifiedRule;
 	/** See `AssembledBranch.renderRule`. Sourced from `normalized.renderRules[kind]` at assemble time. */
 	readonly renderRule: RenderRule;
 	readonly detectToken?: string;
@@ -3172,7 +3177,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	constructor(
 		kind: string,
 		rule: Rule<'link'>,
-		simplifiedRule: Rule<'link'>,
+		simplifiedRule: SimplifiedRule,
 		renderRule: RenderRule,
 		opts?: {
 			factoryName?: string;
