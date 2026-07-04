@@ -450,8 +450,9 @@ function resolveConcreteKind(
 
 /** Maximum branch-recursion depth for synthesized dummy stubs. Bounds
  * self-referential grammars (e.g. `expression` containing `expression`);
- * beyond this depth `buildDummyStub` falls back to a minimal `$children: []`
- * stub for the remaining required fields rather than looping forever. */
+ * beyond this depth `buildDummyStub` falls back to the flat base literal
+ * (`$type`/`$text`/`$source`/`$named`, omitting nested required fields —
+ * see its docstring) rather than looping forever. */
 const MAX_DUMMY_DEPTH = 6;
 
 /**
