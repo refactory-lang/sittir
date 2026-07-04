@@ -472,19 +472,28 @@ own mechanical PR; `EnumRule` deletion joins the rule-types codemod track.
      metadata bag** (carried/copied from the rule's metadata bag, blind to the
      compiler). Its consumer (suggested.ts's promoted-kind override candidates —
      a sanctioned propose-diagnostic) reads it via the sanctioned accessor.
-   - **One unified authorship vocabulary: `author`** — `RuleProvenance`
-     ('grammar-authored'|'override-authored-or-replaced'|'evaluate-synthesized')
-     and the opaque shape's `source: 'enrich'` tag are the SAME fact wearing
-     two names. They merge into a single `author: 'grammar' | 'override' |
-     'enrich' | 'evaluate'` field in the RuleMetadata shape; `RuleProvenance`
-     and `RuleSource` types die. NUANCE (coordinator, standing unless vetoed):
-     link's `'promoted'` is NOT an author — it records that a classification
-     was inferred rather than declared. It becomes its own metadata key
-     (`classifiedBy: 'grammar' | 'link'`) instead of polluting `author`.
-     The dsl-side transform-path descent keying (formerly `source==='enrich'`)
-     re-keys on `author==='enrich'` — same sanctioned reader, same semantics.
-   - **node-model `polymorphVariants.<kind>.source` is REMOVED** from the
-     schema (verify consumers first; STOP if load-bearing beyond diagnostics).
+   - **One unified authorship vocabulary: `author`** — the opaque shape's
+     `source` field becomes `author: 'grammar' | 'override' | 'enrich'`;
+     `RuleSource` and `DerivedRuleSource` types die. NUANCE (coordinator,
+     standing): link's `'promoted'` is NOT an author — it records that a
+     classification was inferred rather than declared. It becomes its own
+     metadata key (`classifiedBy: 'grammar' | 'link'`) instead of polluting
+     `author`. The dsl-side transform-path descent keying (formerly
+     `source==='enrich'`) re-keys on `author==='enrich'` — same sanctioned
+     reader, same semantics. OUTCOME REVISION (verification, 2026-07-04):
+     `RuleProvenance` was originally slated to merge into `author` but
+     SURVIVES as a separate behavior-facing axis — `generate.ts`'s
+     `collectEvaluateSynthesizedKinds` branches real emit behavior on
+     `'evaluate-synthesized'`, and generate.ts is not a sanctioned metadata
+     reader, so bagging the fact would itself violate decision 3. Open
+     follow-up: re-key that branch on a declared construction fact (the
+     `splicedBody` pattern) and then retire `RuleProvenance`.
+   - **node-model `polymorphVariants.<kind>.source`** — OUTCOME REVISION
+     (verification, 2026-07-04): NOT removable. It is
+     `PolymorphVariantDescriptor`'s discriminated-union tag (a `rule.type`
+     analogue) driving live variant dispatch in `validate/common.ts` and
+     `read-render-parse.ts` — a structural discriminant that merely shares
+     the stem. Future work is a RENAME (e.g. `definedBy`), never removal.
    - Untouched (different axes, honest names): runtime `$source` 0|1|2
      (constructor origin, public API), `sourceRuleIds` (structural
      back-pointers), `DerivedRuleSource` follows `RuleSource` into deletion.

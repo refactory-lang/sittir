@@ -869,9 +869,9 @@ interface PolymorphFromNode {
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
 	readonly forms: AssembledGroup[];
-	/** For `source='override'` only: the variant-child kind names, index-
-	 *  aligned with `forms` (via `assemble.ts`). Zipped into the
-	 *  generated `childKind → formName` switch in the from dispatcher. */
+	/** Variant-child kind names for override-defined polymorph variants,
+	 *  index-aligned with `forms` (populated by `assemble.ts` when the
+	 *  variant config declares per-child kinds; absent otherwise). */
 	readonly variantChildKinds?: readonly string[];
 }
 
