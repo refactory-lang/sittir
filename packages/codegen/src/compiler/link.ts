@@ -89,8 +89,7 @@ export interface LinkOptions {
  * `BaseCtx<Rule<'link'>>` (R12 PR-4) — a mislabel: the ctx was always
  * constructed from `raw.rules` (`Rule<'evaluate'>`-shaped), never the
  * `Rule<'link'>` resolve-loop accumulator (PR #136's finding, closed here —
- * `ctx.rules`/`ctx.grammar.rules` is now honestly the RAW pre-resolve view;
- * see S3 for the accumulator's explicit threading to the post-resolve passes).
+ * `ctx.rules`/`ctx.grammar.rules` is now honestly the RAW pre-resolve view).
  *
  * Merges the former `ResolveCtx` (rule-resolution walk: `rules` — inherited
  * from `BaseCtx`, was `allRules` — `supertypes`, `externalRoles`) and
@@ -104,6 +103,41 @@ export interface LinkOptions {
  * during the resolve/classify walks (role-lookup memoization and the
  * promoted-rules log, respectively) — kept as plain mutable fields rather
  * than wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
+ *
+ * S3 raw-vs-accumulator audit (per
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §3): every
+ * `ctx.rules` / `ctx.grammar.rules` read site inside this file was checked
+ * against what it factually needs. All FOUR consult the RAW pre-resolve view
+ * (correctly — none needed the post-resolve accumulator, which is already
+ * threaded explicitly as a plain parameter everywhere it IS needed):
+ *   - `resolveRule`'s ALIAS case / `isClauseHoistVisibleGroupAlias` guard —
+ *     runs DURING the resolve loop itself, so only the raw view exists yet;
+ *     the mint condition structurally requires "no independent rule body
+ *     exists" (`ctx.rules[rule.value] === undefined`), a fact only the raw
+ *     grammar can answer.
+ *   - `resolveSymbolRoleOrPass` (legacy structural role detection) — same
+ *     reason: called from `resolveRule` during the resolve loop, checking the
+ *     RAW target's shape (`_foo: () => role('indent')` dummy declarations,
+ *     which never survive into any resolved view).
+ *   - `mintContentAliasKinds`'s walk (`for (const [name, rule] of
+ *     Object.entries(ctx.rules))`) and its `ctx.rules[hiddenBody]` lookup —
+ *     both explicitly walk the RAW tree because `resolveRule` (run earlier,
+ *     over the SAME raw source) already collapsed the ALIAS nodes this pass
+ *     is looking for into plain SYMBOL refs; walking the post-resolve
+ *     accumulator would find nothing to mint. The minted body is then run
+ *     through `resolveRule` fresh, so the pre-resolve (unresolved) form is
+ *     exactly what's wanted.
+ *   - `collectTopLevelAliasBodies`'s `rawRules = ctx.rules` walk — same
+ *     rationale (finds ALIAS nodes the resolve loop already collapsed); its
+ *     sibling `dereferenceTopLevelAliasBody` call correctly takes the
+ *     ACCUMULATOR as an explicit `resolvedRules` parameter (not `ctx.rules`)
+ *     to follow already-resolved SYMBOL chains.
+ * `classifyAndLogHiddenRules` / `classifyHiddenRule` / `classifyHiddenChoiceRule`
+ * already take the accumulator as an explicit `rules` parameter (V2 fixed
+ * this pre-S3 — kept as-is). `applyOverridePolymorphs` /
+ * `deriveStructuralVariantChildren` callers in this file, normalize.ts, and
+ * assemble.ts each pass an explicit accumulator/carried-view parameter, never
+ * an ambient ctx field. No STOP-worthy wrong-phase value flow found.
  */
 export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly supertypes: ReadonlySet<string>;
@@ -793,6 +827,10 @@ function mintContentAliasKinds(
 					let body: Rule<'link'> = content;
 					if (content.type === SYMBOL) {
 						const hiddenBody = (content as SymbolRule<'link'>).name;
+						// S3 raw-vs-accumulator: RAW view (`ctx.rules` / `ctx.grammar.rules`) —
+						// `body` is fed to `resolveRule` fresh below, so the UNRESOLVED
+						// hidden body is what's wanted here, not whatever the accumulator's
+						// entry (if any) already resolved to.
 						const target = ctx.rules[hiddenBody];
 						if (target) body = target;
 						// DIAGNOSTIC-ONLY provenance: visible twin → hidden body kind.
