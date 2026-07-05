@@ -165,5 +165,10 @@ export async function buildSimplifiedGrammar(grammar: string): Promise<Simplifie
 /** Run evaluate → link → normalize → assemble for one grammar, returning its NodeMap. */
 export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
 	const normalized = await buildSimplifiedGrammar(grammar);
-	return invoke('assemble', 'assemble', normalized);
+	// `assemble()` takes the caller-owned AssembleCtx (§2: the grammar container
+	// folds into the ctx) — `load` (not `invoke`) because we need BOTH `assemble`
+	// and `AssembleCtx` from the module, matching the pattern in
+	// tools/src/probe/variant-derivation.ts.
+	const { assemble, AssembleCtx } = await load('assemble');
+	return assemble(AssembleCtx.from(normalized));
 }

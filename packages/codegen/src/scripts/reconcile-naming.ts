@@ -148,7 +148,7 @@ function resolveEntryPath(grammar: Grammar, repoRoot: string): string {
 async function probeGrammar(grammar: Grammar, repoRoot: string): Promise<Divergence[]> {
 	const raw = await evaluate(resolveEntryPath(grammar, repoRoot));
 	const normalized = normalizeGrammar(link(raw, undefined));
-	const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+	const nodeMap = assemble(AssembleCtx.from(normalized));
 	const divergences: Divergence[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		for (const slot of allStructuralSlotsOf(node)) {

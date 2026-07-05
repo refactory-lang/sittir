@@ -46,7 +46,7 @@ describe('NodeMap back-pointer maps', () => {
 		};
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 		// Return the post-normalize rules — that's what assemble walks, so
 		// the ids on these rules are what nodeByRuleId / slotByRuleId key
 		// off. The raw input rules may have stale ids after link/normalize
@@ -72,7 +72,7 @@ describe('NodeMap back-pointer maps', () => {
 		};
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		return { ...normalized, nodeMap: assemble(normalized, AssembleCtx.from(normalized)) };
+		return { ...normalized, nodeMap: assemble(AssembleCtx.from(normalized)) };
 	}
 
 	it('nodeMap.nodeByRuleId is populated with kind roots when ids survive the pipeline', () => {

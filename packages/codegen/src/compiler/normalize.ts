@@ -16,7 +16,7 @@ import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEA
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice, isEnumChoiceRule } from '../types/rule.ts';
 import { isTerminalShape } from './link.ts';
-import type { LinkedGrammar, SimplifiedGrammar } from './types.ts';
+import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, attributeBuilder, SimplifyCtx } from './simplify.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
@@ -27,21 +27,26 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 
 /**
- * Normalize phase context — a class extending the shared compiler
- * BaseCtx (was an interface extending the dsl `TransformCtx`). Adds the
+ * Normalize phase context (S2, `BaseCtx<'link'>` — Normalize READS
+ * `Grammar<'link'>` = {@link LinkedGrammar}; see
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). Adds the
  * inline-decision set and the polymorph skip-set the slot-grouping diagnostic
  * consults, on top of BaseCtx's grammar facts (rules / diagnostics / wordMatcher
  * / builder). See compiler/ctx.ts.
  */
-export class NormalizeCtx extends BaseCtx<Rule<'link'>> {
+export class NormalizeCtx extends BaseCtx<'link'> {
 	/** Inline-decision set (kinds emitters skip / normalize preserves). */
 	readonly inlineKinds: ReadonlySet<string>;
 	/** Kinds to exclude from the slot-grouping "propose-promotion" diagnostic. */
 	readonly polymorphSkip?: ReadonlySet<string>;
-	constructor(init: BaseCtxInit<Rule<'link'>> & { inlineKinds?: ReadonlySet<string>; polymorphSkip?: ReadonlySet<string> }) {
+	constructor(init: BaseCtxInit<'link'> & { inlineKinds?: ReadonlySet<string>; polymorphSkip?: ReadonlySet<string> }) {
 		super(init);
 		this.inlineKinds = init.inlineKinds ?? new Set();
 		this.polymorphSkip = init.polymorphSkip;
+	}
+
+	get rules(): Record<string, Rule<'link'>> {
+		return this.grammar.rules;
 	}
 }
 
@@ -437,7 +442,26 @@ export function normalizeGrammar(
 		}
 	}
 
-	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
+	// S2: build the honest Grammar<'normalize'> view SimplifyCtx reads (§2 —
+	// SimplifyCtx = BaseCtx<'normalize'>). `rules` (mid-normalize, wrapper-intact
+	// link view) becomes NormalizedGrammar.linkRules; `normalizedRules`
+	// (wrapper-deleted) is NormalizedGrammar.rules — the phase's own product.
+	// Phase-invariant fields carry straight from `linked`.
+	const normalizedGrammarView: NormalizedGrammar = {
+		name: linked.name,
+		rules: normalizedRules,
+		linkRules: rules,
+		supertypes: linked.supertypes,
+		word: linked.word,
+		externals: linked.externals,
+		derivations: linked.derivations,
+		aliasedHiddenKinds: linked.aliasedHiddenKinds,
+		topLevelAliasBodies: linked.topLevelAliasBodies,
+		parentAliasedKinds: linked.parentAliasedKinds,
+		visibleAliasTargets: linked.visibleAliasTargets,
+		refineForms: linked.refineForms
+	};
+	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ grammar: normalizedGrammarView, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
 
 	// Alias-body kinds: thread the alias-target bodies through the same pipeline
 	// so normalizedRules / simplifiedRules cover them too. Eliminates the
@@ -446,7 +470,12 @@ export function normalizeGrammar(
 		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(linked.topLevelAliasBodies);
 		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
-		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ rules: aliasBodiesRender, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
+		const aliasBodiesGrammarView: NormalizedGrammar = {
+			...normalizedGrammarView,
+			rules: aliasBodiesRender,
+			linkRules: aliasBodiesNormalized
+		};
+		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ grammar: aliasBodiesGrammarView, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			normalizedRules[kind] = rule;
 		}

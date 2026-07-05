@@ -93,7 +93,7 @@ const normalized = normalizeGrammar(linked);
 stages.normalize = normalized.linkRules[kind] ?? null;
 stages.simplify = normalized.simplifiedRules?.[kind] ?? null;
 
-const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+const nodeMap = assemble(AssembleCtx.from(normalized));
 const node = nodeMap.nodes.get(kind) ?? null;
 stages.assemble = node ? summarizeAssembled(node) : null;
 const generatedIdTables = await loadGeneratedIdTables(grammar);

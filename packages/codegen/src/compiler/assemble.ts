@@ -68,15 +68,24 @@ import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
 /**
- * Phase context for the Assemble phase (R12 PR-3, extends `BaseCtx<SimplifiedRule>`).
+ * Phase context for the Assemble phase (S2, `BaseCtx<'simplify'>` — Assemble
+ * READS `Grammar<'simplify'>` = {@link SimplifiedGrammar}; see
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). The
+ * grammar container itself now lives on `ctx.grammar` — `assemble()`'s former
+ * `(normalized, ctx)` two-param signature folds into just `(ctx)` (§2: "the
+ * whole input container moves INTO the ctx").
  *
  * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies`, + `rawRules` for the
  * supertype-subtype resolution family — R4 / #14; `seen` cycle-guards and the
  * per-call subtypeSet stay explicit pass-local params, CW6). `rawRules` is
- * `normalized.rules` (the pre-simplify view: hidden-rule resolution needs to see
+ * `grammar.linkRules` (the pre-simplify view: hidden-rule resolution needs to see
  * ALIAS/GROUP/TOKEN/VARIANT wrapper shapes that `BaseCtx.rules` — the
  * `SimplifiedRule` view — has already collapsed), so it's a distinct field, not
  * a reuse of the inherited `rules`.
+ *
+ * `rules` overrides the base accessor to read `grammar.simplifiedRules` —
+ * `SimplifiedGrammar` has no `rules` field; its phase product lives in
+ * `simplifiedRules` (see `Grammar<P>`'s doc comment in types.ts).
  *
  * `nodes` is the cross-node store the post-passes need for `markUserFacing` /
  * resolveColliding / resolveIrKeys / collectAnonymous — a live `Map` so the
@@ -84,16 +93,14 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
  * surface) rather than a bare public field. `kindEntries` feeds the same
  * per-node constructors that previously received it positionally.
  */
-export class AssembleCtx extends BaseCtx<SimplifiedRule> {
+export class AssembleCtx extends BaseCtx<'simplify'> {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly generatedIdTables?: GeneratedIdTables;
-	readonly rawRules: Record<string, Rule<'link'>>;
 	readonly topLevelAliasBodies: ReadonlyMap<string, Rule<'link'>>;
 	private readonly _nodes: Map<string, AssembledNode>;
 
 	constructor(
-		init: BaseCtxInit<SimplifiedRule> & {
-			rawRules: Record<string, Rule<'link'>>;
+		init: BaseCtxInit<'simplify'> & {
 			generatedIdTables?: GeneratedIdTables;
 			kindEntries?: readonly GeneratedKindEntry[];
 			topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
@@ -103,9 +110,18 @@ export class AssembleCtx extends BaseCtx<SimplifiedRule> {
 		super(init);
 		this.kindEntries = init.kindEntries;
 		this.generatedIdTables = init.generatedIdTables;
-		this.rawRules = init.rawRules;
 		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
 		this._nodes = init.nodes ?? new Map();
+	}
+
+	/** `SimplifiedGrammar` has no `rules` field — its phase product is `simplifiedRules`. */
+	get rules(): Record<string, SimplifiedRule> {
+		return this.grammar.simplifiedRules;
+	}
+
+	/** `grammar.linkRules` — the pre-simplify, wrapper-bearing view. See class doc comment. */
+	get rawRules(): Record<string, Rule<'link'>> {
+		return this.grammar.linkRules;
 	}
 
 	/** Live node-map accumulator built during assemble(); post-passes read peers from it. */
@@ -115,9 +131,9 @@ export class AssembleCtx extends BaseCtx<SimplifiedRule> {
 
 	/**
 	 * Canonical construction from a SimplifiedGrammar — the ONE derivation of
-	 * the assemble view (simplified rules on `rules`, raw rules on `rawRules`,
-	 * the grammar word-matcher, alias bodies). Callers own the ctx (R12):
-	 * generate.ts passes its live DiagnosticSink; tests take the default.
+	 * the assemble view (the grammar container, the grammar word-matcher,
+	 * alias bodies). Callers own the ctx (R12): generate.ts passes its live
+	 * DiagnosticSink; tests take the default.
 	 */
 	static from(
 		normalized: SimplifiedGrammar,
@@ -126,8 +142,7 @@ export class AssembleCtx extends BaseCtx<SimplifiedRule> {
 	): AssembleCtx {
 		const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.linkRules);
 		return new AssembleCtx({
-			rules: normalized.simplifiedRules,
-			rawRules: normalized.linkRules,
+			grammar: normalized,
 			diagnostics,
 			wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
 			generatedIdTables,
@@ -145,7 +160,13 @@ export interface AssembledNodeMap extends NodeMap {
 // ---------------------------------------------------------------------------
 // assemble() — main entry point
 // ---------------------------------------------------------------------------
-export function assemble(normalized: SimplifiedGrammar, ctx: AssembleCtx): AssembledNodeMap {
+/**
+ * @param ctx - The Assemble phase context; `ctx.grammar` (`Grammar<'simplify'>`
+ *   = {@link SimplifiedGrammar}) is the input container — folded in per §2
+ *   (formerly a separate `normalized` positional param).
+ */
+export function assemble(ctx: AssembleCtx): AssembledNodeMap {
+	const normalized = ctx.grammar;
 	const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.linkRules);
 	const nodes = ctx.nodes;
 	// collectGeneratedKindEntries(undefined) is []; keep the non-optional

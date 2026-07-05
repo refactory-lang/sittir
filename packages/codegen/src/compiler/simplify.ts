@@ -19,20 +19,24 @@ import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { RuleBuilder } from '../dsl/rule-transforms.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
+import type { NormalizedGrammar } from './types.ts';
 
 /**
- * Simplify phase context (R12) — a class extending `BaseCtx<RenderRule>`:
- * simplify operates on the wrapper-free render view, so its `ctx.rules` holds
- * `Record<string, RenderRule>` (the map being simplified — option 2). Adds the
- * inline-decision set and the variant-resolved polymorph skip-set the
- * slot-grouping diagnostic consults. (Was an interface extending the dsl
- * `TransformCtx`; now a compiler-layer class — see compiler/ctx.ts.)
+ * Simplify phase context (S2, `BaseCtx<'normalize'>` — Simplify READS
+ * `Grammar<'normalize'>` = {@link NormalizedGrammar}; see
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2): simplify
+ * operates on the wrapper-free render view, so its `ctx.rules` holds
+ * `Record<string, RenderRule>` (`NormalizedGrammar.rules` — the map being
+ * simplified). Adds the inline-decision set and the variant-resolved
+ * polymorph skip-set the slot-grouping diagnostic consults. (Was an
+ * interface extending the dsl `TransformCtx`; now a compiler-layer class —
+ * see compiler/ctx.ts.)
  */
-export class SimplifyCtx extends BaseCtx<RenderRule> {
+export class SimplifyCtx extends BaseCtx<'normalize'> {
 	readonly inlineKinds: ReadonlySet<string>;
 	/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
 	readonly polymorphSkipExtra?: ReadonlySet<string>;
-	constructor(init: BaseCtxInit<RenderRule> & { inlineKinds?: ReadonlySet<string>; polymorphSkipExtra?: ReadonlySet<string> }) {
+	constructor(init: BaseCtxInit<'normalize'> & { inlineKinds?: ReadonlySet<string>; polymorphSkipExtra?: ReadonlySet<string> }) {
 		// Default builder to attributeBuilder — simplify's wrapper-free output is
 		// realized by the attribute-push strategy. Callers may override via
 		// init.builder; the construction sites read ctx.builder, never a direct ref.
@@ -40,6 +44,34 @@ export class SimplifyCtx extends BaseCtx<RenderRule> {
 		this.inlineKinds = init.inlineKinds ?? new Set();
 		this.polymorphSkipExtra = init.polymorphSkipExtra;
 	}
+
+	get rules(): Record<string, RenderRule> {
+		return this.grammar.rules;
+	}
+}
+
+/**
+ * Build a minimal `Grammar<'normalize'>` (= {@link NormalizedGrammar}) from a
+ * bare wrapper-deleted rules map, defaulting every other phase-invariant
+ * field to an empty/absent value. For call sites (tests, `makeDefaultCtx`)
+ * that only have a rules map in hand — not a full linked-grammar bundle —
+ * and need a `SimplifyCtx` (S2: `SimplifyCtx` now requires a full
+ * `Grammar<'normalize'>` container, not a bare `rules` field). `linkRules`
+ * is left empty: these callers have no distinct mid-normalize link-phase
+ * view to carry (only that of a real `normalizeGrammar()` run), and only
+ * `simplify`'s own `ctx.rules` read (→ `grammar.rules`) is exercised by
+ * `computeSimplifiedRules` — the carried `linkRules` view is consumed
+ * downstream by assemble, not by simplify itself.
+ */
+export function makeNormalizedGrammar(rules: Record<string, RenderRule>): NormalizedGrammar {
+	return {
+		name: '',
+		rules,
+		linkRules: {},
+		supertypes: new Set(),
+		word: null,
+		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] }
+	};
 }
 import { structuralBuilder, inlineRefs, recurseChildren, fuseHeadRepeatLists, combineMultiplicity, type InlineRefsCtx, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import type { AssembledNode } from './model/node-map.ts';
@@ -604,7 +636,7 @@ export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
  * attribute-push strategy.
  */
 export function makeDefaultCtx(): SimplifyCtx {
-	return new SimplifyCtx({ rules: {}, diagnostics: new DiagnosticSink(), builder: attributeBuilder });
+	return new SimplifyCtx({ grammar: makeNormalizedGrammar({}), diagnostics: new DiagnosticSink(), builder: attributeBuilder });
 }
 
 /**

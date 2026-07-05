@@ -83,7 +83,14 @@ export interface LinkOptions {
 }
 
 /**
- * Phase context for the Link phase (R12 PR-4, extends `BaseCtx<Rule<'link'>>`).
+ * Phase context for the Link phase (S2, `BaseCtx<'evaluate'>` — Link READS
+ * `Grammar<'evaluate'>` = {@link RawGrammar}; see
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). Was
+ * `BaseCtx<Rule<'link'>>` (R12 PR-4) — a mislabel: the ctx was always
+ * constructed from `raw.rules` (`Rule<'evaluate'>`-shaped), never the
+ * `Rule<'link'>` resolve-loop accumulator (PR #136's finding, closed here —
+ * `ctx.rules`/`ctx.grammar.rules` is now honestly the RAW pre-resolve view;
+ * see S3 for the accumulator's explicit threading to the post-resolve passes).
  *
  * Merges the former `ResolveCtx` (rule-resolution walk: `rules` — inherited
  * from `BaseCtx`, was `allRules` — `supertypes`, `externalRoles`) and
@@ -98,7 +105,7 @@ export interface LinkOptions {
  * promoted-rules log, respectively) — kept as plain mutable fields rather
  * than wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
  */
-export class LinkCtx extends BaseCtx<Rule<'link'>> {
+export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly supertypes: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly inline?: readonly string[];
@@ -107,7 +114,7 @@ export class LinkCtx extends BaseCtx<Rule<'link'>> {
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
 
 	constructor(
-		init: BaseCtxInit<Rule<'link'>> & {
+		init: BaseCtxInit<'evaluate'> & {
 			supertypes: ReadonlySet<string>;
 			externalRoles: Map<string, ExternalRole>;
 			inline?: readonly string[];
@@ -124,6 +131,30 @@ export class LinkCtx extends BaseCtx<Rule<'link'>> {
 		this.applyPromotedRules = init.applyPromotedRules;
 		this.hiddenChoicesWithNamedAliasMembers = init.hiddenChoicesWithNamedAliasMembers;
 	}
+
+	get rules(): Record<string, Rule<'evaluate'>> {
+		return this.grammar.rules;
+	}
+}
+
+/**
+ * Build a minimal `Grammar<'link'>` (= {@link LinkedGrammar}) from a bare
+ * resolved rules map, defaulting every other phase-invariant field to an
+ * empty/absent value. For call sites (tests) that only have a rules map in
+ * hand — not a full `link()` output — and need a `NormalizeCtx` (S2:
+ * `NormalizeCtx` now requires a full `Grammar<'link'>` container, not a bare
+ * `rules` field).
+ */
+export function makeLinkedGrammar(rules: Record<string, Rule<'link'>>): LinkedGrammar {
+	return {
+		name: '',
+		rules,
+		supertypes: new Set(),
+		externalRoles: new Map(),
+		word: null,
+		references: [],
+		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] }
+	};
 }
 
 export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
@@ -164,7 +195,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// BaseCtx-extending phase context threaded through the resolve/classify
 	// walks below, a distinct object from the public options bag.
 	const linkCtx = new LinkCtx({
-		rules: raw.rules,
+		grammar: raw,
 		diagnostics: new DiagnosticSink(),
 		wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
 		supertypes,

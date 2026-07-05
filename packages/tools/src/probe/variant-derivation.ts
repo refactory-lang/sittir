@@ -144,7 +144,7 @@ async function runForGrammar(grammar: string): Promise<GrammarResult> {
 
 	const { assemble, AssembleCtx } = await load('assemble');
 	const ctx = AssembleCtx.from(normalized);
-	const nodeMap = assemble(normalized, ctx);
+	const nodeMap = assemble(ctx);
 
 	const nodeModel = await loadNodeModel(grammar);
 	const committedMap = new Map<string, string[]>();

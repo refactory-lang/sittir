@@ -22,7 +22,7 @@
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it, afterEach } from 'vitest';
-import { computeSimplifiedRules, drainSlotGroupingDiagnostics, SimplifyCtx } from '../simplify.ts';
+import { computeSimplifiedRules, drainSlotGroupingDiagnostics, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
 import type { Rule, RenderRule } from '../../types/rule.ts';
 
@@ -115,7 +115,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		};
 
 		const normalizedRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
 
 		const constItemSimplified = simplified['const_item']!;
 
@@ -166,7 +166,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		};
 
 		const normalizedRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
 
 		const typeArgsSimplified = simplified['type_arguments']!;
 
@@ -208,7 +208,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		};
 
 		const normalizedRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
 
 		const parentSimplified = simplified['parent_rule']!;
 
@@ -262,7 +262,7 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 		const normalizedRules = applyWrapperDeletion(inputRules);
 		// Pass _let_declaration_optional1 in inlineKinds (as in the real pipeline).
 		const inlineKinds = new Set(['_let_declaration_optional1']);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, inlineKinds, diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), inlineKinds, diagnostics: new DiagnosticSink() }));
 
 		const letDeclSimplified = simplified['let_declaration']!;
 

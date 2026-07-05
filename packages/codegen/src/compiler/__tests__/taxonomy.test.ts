@@ -27,7 +27,7 @@ beforeAll(async () => {
 	const raw = await evaluate(grammar);
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
-	nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+	nodeMap = assemble(AssembleCtx.from(normalized));
 });
 
 describe('classifyBranchSlots', () => {

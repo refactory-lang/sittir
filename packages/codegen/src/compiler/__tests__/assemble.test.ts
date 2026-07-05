@@ -2,7 +2,7 @@ import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../assemble.ts';
-import { computeSimplifiedRules, SimplifyCtx } from '../simplify.ts';
+import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule } from '../../types/rule.ts';
@@ -21,13 +21,13 @@ function deriveFields(rule: Rule<'link'>) {
 
 function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial<SimplifiedGrammar>): SimplifiedGrammar {
 	const normalizedRules = applyWrapperDeletion(rules);
-	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, diagnostics: new DiagnosticSink() }));
+	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(overrides.topLevelAliasBodies);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
-		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ rules: aliasBodiesRender, diagnostics: new DiagnosticSink() }));
+		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(aliasBodiesRender), diagnostics: new DiagnosticSink() }));
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			normalizedRules[kind] = rule;
 		}
@@ -259,7 +259,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_type_identifier');
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_type_identifier');
 		expect(node?.modelType).toBe('pattern');
 	});
 
@@ -297,7 +297,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_pair_alias');
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_pair_alias');
 		expect(node?.modelType).toBe('branch');
 		expect(allSlotsOf(node!).map((slot) => slot.name)).toEqual(['left', 'right']);
 	});
@@ -327,7 +327,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_property_name');
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
 		expect((node as any).subtypes).toEqual(['identifier', 'string', '_property_identifier']);
 	});
@@ -375,7 +375,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_property_name');
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
 		expect((node as any).subtypes).toEqual([
 			'identifier',
@@ -535,7 +535,7 @@ describe('Assemble — assemble()', () => {
 			},
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 		expect(nodeMap.name).toBe('test');
 		expect(nodeMap.nodes.get('function_item')?.modelType).toBe('branch');
 		expect(nodeMap.nodes.get('identifier')?.modelType).toBe('pattern');
@@ -555,7 +555,7 @@ describe('Assemble — assemble()', () => {
 			},
 			id: { type: PATTERN, value: '[a-z]+' }
 		});
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 		const fnNode = nodeMap.nodes.get('function_item')!;
 		expect(fnNode.typeName).toBe('FunctionItem');
 		expect(fnNode.factoryName).toBe('functionItem');
