@@ -479,7 +479,7 @@ function isLeftmostTerminalImmediate(rule: RenderRule): boolean {
 		// case PRESERVES the node (`{...rule, content}` — `immediate` included,
 		// NOT lost), so TokenRule→never under `RenderRule` is a type-level
 		// assertion backed only by the EMPIRICAL fact that no top-level
-		// token(...) rule survives into renderRules on any current grammar
+		// token(...) rule survives into normalizedRules on any current grammar
 		// (0 hits ×3). The former `case TOKEN: return rule.immediate` arm was
 		// deleted on that basis; if a surviving TOKEN ever appears, the type
 		// lies and this walker silently loses its `immediate` signal — that
@@ -994,7 +994,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 		// walking every AssembledNode.renderRule and every
 		// deleteWrapper(linkRules[name]) hidden-helper target across all 3
 		// grammars. If a top-level token(...) rule ever survives into
-		// renderRules, the type lies — tracked with the preserve-token-
+		// normalizedRules, the type lies — tracked with the preserve-token-
 		// wrappers debt. Post-normalize aliasing is fully represented via the
 		// `fieldName`/`aliasedFrom` leaf attributes other cases here already
 		// read (see `pickConditionalKey`'s `contentFieldName` check).
@@ -1429,7 +1429,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	// we treat the symbol like an opaque scalar slot reference instead of
 	// inlining, matching the walker's `seen.has('@'+name)` short-circuit.
 	//
-	// ctx.rules contains RAW rules (not renderRules), so we must apply
+	// ctx.rules contains RAW rules (not normalizedRules), so we must apply
 	// deleteWrapper before passing to emitRule which now expects RenderRule.
 	if (rule.type === SYMBOL && rule.inline === true && ctx.rules[rule.name]) {
 		if (ctx.visitingHelpers.has(rule.name)) {

@@ -22,7 +22,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { isLinkSymbol, isEnumChoiceRule } from '../types/rule.ts';
-import type { NormalizedGrammar, NodeMap, SignaturePool } from './types.ts';
+import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
 import {
@@ -114,13 +114,13 @@ export class AssembleCtx extends BaseCtx<SimplifiedRule> {
 	}
 
 	/**
-	 * Canonical construction from a NormalizedGrammar — the ONE derivation of
+	 * Canonical construction from a SimplifiedGrammar — the ONE derivation of
 	 * the assemble view (simplified rules on `rules`, raw rules on `rawRules`,
 	 * the grammar word-matcher, alias bodies). Callers own the ctx (R12):
 	 * generate.ts passes its live DiagnosticSink; tests take the default.
 	 */
 	static from(
-		normalized: NormalizedGrammar,
+		normalized: SimplifiedGrammar,
 		generatedIdTables?: GeneratedIdTables,
 		diagnostics: DiagnosticSink = new DiagnosticSink()
 	): AssembleCtx {
@@ -145,7 +145,7 @@ export interface AssembledNodeMap extends NodeMap {
 // ---------------------------------------------------------------------------
 // assemble() — main entry point
 // ---------------------------------------------------------------------------
-export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): AssembledNodeMap {
+export function assemble(normalized: SimplifiedGrammar, ctx: AssembleCtx): AssembledNodeMap {
 	const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.linkRules);
 	const nodes = ctx.nodes;
 	// collectGeneratedKindEntries(undefined) is []; keep the non-optional
@@ -186,7 +186,7 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 	const optionalBodyKinds = collectOptionalBodyKinds(normalized.linkRules);
 	setOptionalBodyKinds(optionalBodyKinds);
 	const parseKindCollisionContext = {
-		ruleSignatures: buildParseKindRuleSignatures(normalized.renderRules!)
+		ruleSignatures: buildParseKindRuleSignatures(normalized.normalizedRules!)
 	} as const;
 
 	try {
@@ -213,10 +213,10 @@ export function assemble(normalized: NormalizedGrammar, ctx: AssembleCtx): Assem
 				parentAliasedKinds: normalized.parentAliasedKinds,
 				wordMatcher: wordMatcherRegex
 			});
-			// `simplifiedRules[kind]` and `renderRules[kind]` are both pre-computed
+			// `simplifiedRules[kind]` and `normalizedRules[kind]` are both pre-computed
 			// by normalize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
 			const simplifiedRule = normalized.simplifiedRules[kind]!;
-			const renderRule: RenderRule = normalized.renderRules![kind]!;
+			const renderRule: RenderRule = normalized.normalizedRules![kind]!;
 			const variantChildKinds = variantChildrenByParent.get(kind);
 
 			switch (modelType) {
@@ -540,7 +540,7 @@ function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[
  * @param rule - The raw rule from `normalized.rules`.
  * @param simplifiedRule - The pre-computed simplified rule for the same kind.
  * @param renderRule - The wrapper-deleted RenderRule for the same kind (from
- *   `normalized.renderRules[kind]` or a per-call `deleteWrapper` fallback).
+ *   `normalized.normalizedRules[kind]` or a per-call `deleteWrapper` fallback).
  * @returns `groupRule` — the inner seq-with-fields content; `groupSimplified` —
  *   the simplified view of that inner content; `groupRenderRule` — the
  *   wrapper-deleted view of the inner content.

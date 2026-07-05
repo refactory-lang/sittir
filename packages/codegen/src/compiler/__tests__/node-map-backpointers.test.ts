@@ -137,7 +137,7 @@ describe('NodeMap back-pointer maps', () => {
 	});
 
 	it('slot.sourceRuleIds includes both simplified and render-view ids when the views diverge', () => {
-		const { simplifiedRules, renderRules, nodeMap } = buildNodeMap({
+		const { simplifiedRules, normalizedRules, nodeMap } = buildNodeMap({
 			test: seq(
 				field('lhs', { type: 'SYMBOL', name: 'identifier' }),
 				choice(
@@ -153,7 +153,7 @@ describe('NodeMap back-pointer maps', () => {
 		expect(slot).toBeDefined();
 
 		const simplifiedChoiceId = (simplifiedRules.test as { members: readonly { id?: string }[] }).members[1]?.id;
-		const renderChoice = ((renderRules.test as RenderRule & { members: readonly Rule[] }).members[1] as ChoiceRule);
+		const renderChoice = ((normalizedRules.test as RenderRule & { members: readonly Rule[] }).members[1] as ChoiceRule);
 		const renderIds = renderChoice.members
 			.map((member) => (member as { members?: readonly { id?: string }[] }).members?.[1]?.id)
 			.filter((id): id is string => Boolean(id));

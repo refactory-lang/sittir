@@ -825,7 +825,7 @@ function collectTopLevelAliasBodies(
 		// `deriveComplexAliasTargetHidden`). The alias' content is a symbol ref
 		// to the hidden rule (`_type_argument` etc.), but the render template
 		// must reference the VISIBLE kind (e.g. `type_argument`) — not inline
-		// the hidden rule's body. Skip these entries so `renderRules[name]`
+		// the hidden rule's body. Skip these entries so `normalizedRules[name]`
 		// keeps the wrapper-deleted `SYMBOL(visible, aliasedFrom='_hidden')` form
 		// set by the main normalization path, rather than being overwritten with
 		// the hidden rule's body.
@@ -2900,7 +2900,7 @@ function liftRule(target: Rule<'link'>, synName: string, _discriminator: string)
     // construction-time stamps (`hidden`, `inline = name.startsWith('_')`) as any
     // other ref — group-lift helpers are `_`-prefixed → inline=true. Stamping at
     // the one constructor (then revised at wrapper push-down / link supertype pass)
-    // keeps `inline` authoritative on the renderRules path, so normalize's fold
+    // keeps `inline` authoritative on the normalizedRules path, so normalize's fold
     // can read it instead of re-deriving hiddenness structurally.
     const synSym = { ...sym(synName), metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) };
     // (_discriminator kept for future use; the current implementation does not use it.

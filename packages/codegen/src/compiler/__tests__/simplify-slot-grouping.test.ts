@@ -27,7 +27,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 		// A helper kind whose body is seq(sym_a, sym_b) and is listed in inlineKinds
 		// (simulates _parent_repeat1 style auto-group). Its body is the seq content
 		// of an inlined repeat — slot position via inlineKinds.
-		const renderRules: Record<string, RenderRule> = {
+		const normalizedRules: Record<string, RenderRule> = {
 			_parent_repeat1: {
 				type: 'SEQ',
 				members: [
@@ -37,7 +37,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 			} as any,
 		};
 		const inlineKinds = new Set(['_parent_repeat1']);
-		computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, inlineKinds, diagnostics: new DiagnosticSink() }));
+		computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, inlineKinds, diagnostics: new DiagnosticSink() }));
 		const diagnostics = drainSlotGroupingDiagnostics();
 		const multiSlot = diagnostics.filter((d) => d.code === 'multi-slot-nested-seq');
 		expect(multiSlot.length).toBeGreaterThanOrEqual(1);
@@ -48,7 +48,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 	it('normal multi-field rule body → SILENT (not in inlineKinds, not in slot position)', () => {
 		// A normal rule like assignment_expression with seq(left, '=', right)
 		// must NOT fire — the rule body is not in slot position.
-		const renderRules: Record<string, RenderRule> = {
+		const normalizedRules: Record<string, RenderRule> = {
 			assignment_expression: {
 				type: 'SEQ',
 				members: [
@@ -58,13 +58,13 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				],
 			} as any,
 		};
-		computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
+		computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, diagnostics: new DiagnosticSink() }));
 		const diagnostics = drainSlotGroupingDiagnostics();
 		expect(diagnostics.filter((d) => d.code === 'multi-slot-nested-seq')).toHaveLength(0);
 	});
 
 	it('a rule with no multi-slot substructure produces no diagnostics', () => {
-		const renderRules: Record<string, RenderRule> = {
+		const normalizedRules: Record<string, RenderRule> = {
 			simple: {
 				type: 'SEQ',
 				members: [
@@ -73,7 +73,7 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				],
 			} as any,
 		};
-		computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
+		computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, diagnostics: new DiagnosticSink() }));
 		const diagnostics = drainSlotGroupingDiagnostics();
 		expect(diagnostics).toHaveLength(0);
 	});

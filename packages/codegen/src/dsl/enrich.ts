@@ -1620,7 +1620,7 @@ function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
 	// name.startsWith('_')`) as every other ref under sittir's runtime —
 	// these `_<parent>_<kind>N` helpers are `_`-prefixed → inline=true.
 	// Keeping one constructor (revised at push-down / link) makes `inline`
-	// authoritative on the renderRules path, so normalize's fold can read it.
+	// authoritative on the normalizedRules path, so normalize's fold can read it.
 	// Under tree-sitter's CLI runtime the injected constructor is the raw
 	// SYMBOL form (parser-side, never reaches the IR inline gate).
 	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');

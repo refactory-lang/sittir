@@ -7,7 +7,7 @@
  *
  * A string member is "anonymous" (stripped) iff it is NOT slot-promoted — see
  * `isSlotPromotedLiteral`; slot-valued keyword markers survive. Runs as the
- * final stage of `normalizeGrammar()`, producing `simplifiedRules` on NormalizedGrammar.
+ * final stage of `normalizeGrammar()`, producing `simplifiedRules` on SimplifiedGrammar.
  * Per-function rationale: docs/compiler-phase-glossary.md (Phase 3.5: Simplify).
  */
 
@@ -740,7 +740,7 @@ export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyC
  * in simplify.ts. Input type widened to RenderRule: applyWrapperDeletion in
  * normalize.ts produces a wrapper-less map, and simplify operates on that.
  *
- * @param renderRules - Wrapper-less rule map (output of applyWrapperDeletion).
+ * @param normalizedRules - Wrapper-less rule map (output of applyWrapperDeletion).
  * @returns A new map containing the simplified form of each rule.
  */
 export function computeSimplifiedRules(
@@ -750,10 +750,10 @@ export function computeSimplifiedRules(
 	// Construction sites delegate wrapper-vs-attribute to ctx.builder (SimplifyCtx
 	// defaults it to attributeBuilder — simplify's wrapper-free strategy); we
 	// never reach for a builder directly here.
-	const renderRules = ctx.rules;
+	const normalizedRules = ctx.rules;
 	const inlineKinds = ctx.inlineKinds;
 	const polymorphSkipExtra = ctx.polymorphSkipExtra ?? new Set<string>();
-	const simplified = simplifyRules(renderRules, ctx);
+	const simplified = simplifyRules(normalizedRules, ctx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
 		// Final wrapper-free pass: simplify's hoists + choice-folding can

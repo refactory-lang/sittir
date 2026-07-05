@@ -21,7 +21,7 @@
  * STATUS (V2, 2026-07-04): the wire metadata channel is DELETED —
  * `wireRegisterPolymorphVariant`, `WireContext.polymorphVariants`,
  * `drainPolymorphMetadata`, and the `polymorphVariants` fields on
- * RawGrammar/LinkedGrammar/NormalizedGrammar are all gone. Every former
+ * RawGrammar/LinkedGrammar/SimplifiedGrammar are all gone. Every former
  * consumer now reads this module's structural derivation directly:
  * `assemble.ts:158-164` (variantChildrenByParent/variantChildKindsSet — the
  * "V1 flip", unchanged in V2), `link.ts`'s `applyOverridePolymorphs` (its

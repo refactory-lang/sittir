@@ -16,7 +16,7 @@ import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEA
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice, isEnumChoiceRule } from '../types/rule.ts';
 import { isTerminalShape } from './link.ts';
-import type { LinkedGrammar, NormalizedGrammar } from './types.ts';
+import type { LinkedGrammar, SimplifiedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, attributeBuilder, SimplifyCtx } from './simplify.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
@@ -210,8 +210,8 @@ export function inlineHiddenSeqRefs(
 	}
 	// NOTE: we deliberately do NOT delete the folded `_x` entry from the map.
 	// `assemble` iterates the RAW `normalized.rules` keys and looks up the matching
-	// `renderRules[kind]` / `simplifiedRules[kind]` for EACH — deleting `_x` from
-	// renderRules only would desync the maps and crash assemble. The folded `_x`
+	// `normalizedRules[kind]` / `simplifiedRules[kind]` for EACH — deleting `_x` from
+	// normalizedRules only would desync the maps and crash assemble. The folded `_x`
 	// survives as a standalone entry (its parents simply no longer reference it);
 	// emitters already skip it via `inlineKinds`. Dead-duplicate cleanup of the
 	// orphaned `_x` kind + its transport is a separate concern (§D-2b), not here.
@@ -383,7 +383,7 @@ function applyNormalizationPasses(
 export function normalizeGrammar(
 	linked: LinkedGrammar,
 	ctx?: NormalizeCtx
-): NormalizedGrammar {
+): SimplifiedGrammar {
 	// Read phase-shared state from ctx; fall back to empty defaults when called
 	// without ctx (e.g. existing tests that only pass `linked`).
 	const inlineKinds: ReadonlySet<string> = ctx?.inlineKinds ?? new Set();
@@ -409,10 +409,10 @@ export function normalizeGrammar(
 	// EXPOSE a fresh hidden-seq ref (a hidden parent inlines, surfacing its own
 	// group ref); `keepRef` is re-derived each pass (cheap; invariant under
 	// folding — splices conserve refcounts).
-	const renderRules = applyWrapperDeletion(rules);
+	const normalizedRules = applyWrapperDeletion(rules);
 	for (let pass = 0; pass < 8; pass++) {
-		const keepRef = computeKeepRef(renderRules);
-		const changed = inlineHiddenSeqRefs(renderRules, ctx, keepRef);
+		const keepRef = computeKeepRef(normalizedRules);
+		const changed = inlineHiddenSeqRefs(normalizedRules, ctx, keepRef);
 		if (!changed) break;
 	}
 
@@ -437,10 +437,10 @@ export function normalizeGrammar(
 		}
 	}
 
-	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
+	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
 
 	// Alias-body kinds: thread the alias-target bodies through the same pipeline
-	// so renderRules / simplifiedRules cover them too. Eliminates the
+	// so normalizedRules / simplifiedRules cover them too. Eliminates the
 	// assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
 	if (linked.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(linked.topLevelAliasBodies);
@@ -448,7 +448,7 @@ export function normalizeGrammar(
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
 		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ rules: aliasBodiesRender, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
-			renderRules[kind] = rule;
+			normalizedRules[kind] = rule;
 		}
 		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
 			simplifiedRules[kind] = rule;
@@ -458,7 +458,7 @@ export function normalizeGrammar(
 	return {
 		name: linked.name,
 		linkRules: rules,
-		renderRules,
+		normalizedRules,
 		simplifiedRules,
 		supertypes: linked.supertypes,
 		word: linked.word,

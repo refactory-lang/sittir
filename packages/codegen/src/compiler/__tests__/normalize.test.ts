@@ -138,7 +138,7 @@ describe('Normalize — tokenToName', () => {
 });
 
 describe('Normalize — normalizeGrammar()', () => {
-	it('produces a NormalizedGrammar preserving named content', () => {
+	it('produces a SimplifiedGrammar preserving named content', () => {
 		const linked = makeLinked({
 			item: {
 				type: SEQ,

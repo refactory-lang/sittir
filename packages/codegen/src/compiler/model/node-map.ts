@@ -2412,7 +2412,7 @@ export class AssembledBranch<
 	readonly simplifiedRule: SimplifiedRule;
 	/**
 	 * Wrapper-deleted view of the rule, sourced from
-	 * `normalized.renderRules[kind]` at assemble time. Optional / field /
+	 * `normalized.normalizedRules[kind]` at assemble time. Optional / field /
 	 * repeat / repeat1 wrappers are pushed down to leaf attributes;
 	 * structural rules (seq / choice / variant / group / polymorph) are
 	 * preserved. Populated alongside `simplifiedRule`; consumed by PR1
@@ -3145,7 +3145,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	// any Rule<'link'> type).
 	/** See `AssembledBranch.simplifiedRule`. */
 	readonly simplifiedRule: SimplifiedRule;
-	/** See `AssembledBranch.renderRule`. Sourced from `normalized.renderRules[kind]` at assemble time. */
+	/** See `AssembledBranch.renderRule`. Sourced from `normalized.normalizedRules[kind]` at assemble time. */
 	readonly renderRule: RenderRule;
 	readonly detectToken?: string;
 	/** Short label (e.g., variant name like 'pub' or 'tuple'). Defaults to kind. */

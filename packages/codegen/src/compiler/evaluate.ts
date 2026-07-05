@@ -2016,7 +2016,7 @@ export function isOptionalOrBlankChoice(rule: AnyRule | undefined): boolean {
  * The predicate is intentionally conservative (the derived set may be a
  * strict superset of the old `patternReplacementKinds` cache). Probe-verified
  * byte-identical for rust/typescript/python across normalize's rules,
- * renderRules, and simplifiedRules outputs.
+ * normalizedRules, and simplifiedRules outputs.
  *
  * @remarks
  * The walk covers seq/choice members, content, polymorph forms, and

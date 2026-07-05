@@ -6,7 +6,7 @@
  *
  * - Evaluate  produces {@link RawGrammar}.
  * - Link      produces {@link LinkedGrammar} plus a {@link DerivationLog}.
- * - Normalize produces {@link NormalizedGrammar}.
+ * - Normalize produces {@link SimplifiedGrammar}.
  * - Assemble  produces {@link NodeMap}.
  *
  * Diagnostic / suggester-input types live here too ({@link DerivationLog}
@@ -18,7 +18,7 @@
  * too; splitting it into `./node-map.ts` is a later step.
  */
 
-import type { AnyRule, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
+import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
@@ -412,7 +412,39 @@ export interface IncludeFilter {
 // Normalize output
 // ---------------------------------------------------------------------------
 
+/**
+ * Normalize-phase view of the grammar (`Grammar<'normalize'>`): `rules` IS
+ * the wrapper-deleted set (`applyWrapperDeletion` output + the §D-2a inline
+ * hoist), i.e. what the phase PRODUCES — per the 2026-07-04 design decision
+ * that "normalize's output rules are the normalized rules" (the map formerly
+ * known as `renderRules`). `linkRules` is the carried mid-normalize
+ * link-phase view (post-`applyNormalizationPasses`, pre-wrapper-deletion —
+ * wrappers intact) that hidden-rule resolution in assemble still needs.
+ *
+ * Today this view exists as locals inside `normalizeGrammar()` (which runs
+ * simplify as its final stage and returns the {@link SimplifiedGrammar}
+ * bundle directly); it is reified here so `SimplifyCtx` (S2) can be
+ * `BaseCtx<'normalize'>` reading exactly this shape. See
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md.
+ */
 export interface NormalizedGrammar {
+	readonly name: string;
+	/** The normalize-phase rules — wrapper-free, attribute-stamped. */
+	readonly rules: Record<string, RenderRule>;
+	/** Carried mid-normalize link-phase view (wrappers intact). */
+	readonly linkRules: Record<string, Rule<'link'>>;
+	readonly supertypes: Set<string>;
+	readonly word: string | null;
+	readonly externals?: readonly string[];
+	readonly derivations: DerivationLog;
+	readonly aliasedHiddenKinds?: Map<string, string>;
+	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
+	readonly parentAliasedKinds?: ReadonlySet<string>;
+	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly refineForms?: Map<string, RefineForm[]>;
+}
+
+export interface SimplifiedGrammar {
 	readonly name: string;
 	readonly linkRules: Record<string, Rule<'link'>>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
@@ -438,18 +470,62 @@ export interface NormalizedGrammar {
 	 * on RuleBase. Structural rules (seq / choice / variant / group /
 	 * polymorph) are preserved and recursed into.
 	 *
-	 * The new template emitter (PR1) reads from `renderRules` instead of
+	 * The new template emitter (PR1) reads from `normalizedRules` instead of
 	 * `rules` so it never has to look through a wrapper to get modifier
 	 * metadata. Task 2.A3 switches `computeSimplifiedRules` to use this
 	 * map as input.
 	 */
-	readonly renderRules: Record<string, RenderRule>;
+	readonly normalizedRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
 	readonly word: string | null;
 	readonly externals?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
+
+// ---------------------------------------------------------------------------
+// The Grammar<Phase> family (2026-07-04 design)
+// ---------------------------------------------------------------------------
+
+/**
+ * The rule value type each phase's `rules` map carries. Mirrors
+ * `Rule<Phase>`'s phase progression, adding the two brands where the
+ * pipeline stores branded maps ({@link RenderRule}, {@link SimplifiedRule}).
+ */
+export type PhaseRuleOf<P extends PhaseName> = P extends 'simplify'
+	? SimplifiedRule
+	: P extends 'normalize'
+		? RenderRule
+		: Rule<P>;
+
+/**
+ * Phase-parameterized grammar container — the single lookup point for
+ * "which container does a phase read", mirroring `Rule<Phase>`:
+ *
+ *   link      reads Grammar<'evaluate'>  (= {@link RawGrammar})
+ *   normalize reads Grammar<'link'>      (= {@link LinkedGrammar})
+ *   simplify  reads Grammar<'normalize'> (= {@link NormalizedGrammar})
+ *   assemble  reads Grammar<'simplify'>  (= {@link SimplifiedGrammar})
+ *
+ * Deliberately a conditional ALIAS over the per-phase interfaces rather
+ * than one interface with conditional fields: the per-phase interfaces
+ * remain the SSOT for their field sets (they diverge well beyond `rules` —
+ * e.g. `supertypes: string[]` on Raw vs `Set<string>` on Linked), and this
+ * type gives `BaseCtx<P>` (S2) one parameter that keys grammar, rules,
+ * walker, and builder together. Invariant each alias must satisfy:
+ * `Grammar<P>['rules'] extends Record<string, PhaseRuleOf<P>>` — except
+ * `SimplifiedGrammar`, whose phase product lives in `simplifiedRules`
+ * (its `rules`-equivalent) alongside the carried `normalizedRules` /
+ * `linkRules` views. See
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §1.
+ */
+export type Grammar<P extends PhaseName> = P extends 'evaluate'
+	? RawGrammar
+	: P extends 'link'
+		? LinkedGrammar
+		: P extends 'normalize'
+			? NormalizedGrammar
+			: SimplifiedGrammar;
 
 // ---------------------------------------------------------------------------
 // Assemble output
@@ -490,7 +566,7 @@ export interface NodeMap {
 	 */
 	readonly derivations: DerivationLog;
 	/**
-	 * `NormalizedGrammar.linkRules` carried through assemble — the
+	 * `SimplifiedGrammar.linkRules` carried through assemble — the
 	 * pre-simplify, wrapper-bearing view (`applyNormalizationPasses`'
 	 * output, BEFORE `applyWrapperDeletion` strips modifier wrappers). The
 	 * template walker needs this so its `symbol` case can inline hidden

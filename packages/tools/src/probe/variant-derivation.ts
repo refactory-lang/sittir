@@ -55,7 +55,7 @@
  *   1  at least one DRIFT found (stale commit or predicate regression)
  */
 
-import { load, buildNormalizedGrammar } from '../codegen-surface.ts';
+import { load, buildSimplifiedGrammar } from '../codegen-surface.ts';
 import { loadNodeModel } from '../validate/common.ts';
 
 const ALL_GRAMMARS = ['rust', 'typescript', 'python'] as const;
@@ -139,7 +139,7 @@ function diffSets(a: readonly string[], b: readonly string[]): { extra: string[]
 }
 
 async function runForGrammar(grammar: string): Promise<GrammarResult> {
-	const normalized = await buildNormalizedGrammar(grammar);
+	const normalized = await buildSimplifiedGrammar(grammar);
 	const structuralMap = await load('variantStructural').then((m) => m.deriveStructuralVariantChildren(normalized.linkRules));
 
 	const { assemble, AssembleCtx } = await load('assemble');

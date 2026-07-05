@@ -6,7 +6,7 @@ import { computeSimplifiedRules, SimplifyCtx } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule } from '../../types/rule.ts';
-import type { NormalizedGrammar } from '../types.ts';
+import type { SimplifiedGrammar } from '../types.ts';
 import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../model/node-map.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
@@ -19,9 +19,9 @@ function deriveFields(rule: Rule<'link'>) {
 	return deriveSlots(deleteWrapper(rule)).filter((s) => !s.isUnnamed);
 }
 
-function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial<NormalizedGrammar>): NormalizedGrammar {
-	const renderRules = applyWrapperDeletion(rules);
-	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
+function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial<SimplifiedGrammar>): SimplifiedGrammar {
+	const normalizedRules = applyWrapperDeletion(rules);
+	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: normalizedRules, diagnostics: new DiagnosticSink() }));
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
@@ -29,7 +29,7 @@ function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
 		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ rules: aliasBodiesRender, diagnostics: new DiagnosticSink() }));
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
-			renderRules[kind] = rule;
+			normalizedRules[kind] = rule;
 		}
 		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
 			simplifiedRules[kind] = rule;
@@ -38,7 +38,7 @@ function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial
 	return {
 		name: 'test',
 		linkRules: rules,
-		renderRules,
+		normalizedRules,
 		simplifiedRules,
 		supertypes: new Set(),
 		word: null,
