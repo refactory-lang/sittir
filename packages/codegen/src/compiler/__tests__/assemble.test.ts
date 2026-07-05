@@ -37,7 +37,7 @@ function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial
 	}
 	return {
 		name: 'test',
-		rules,
+		linkRules: rules,
 		renderRules,
 		simplifiedRules,
 		supertypes: new Set(),

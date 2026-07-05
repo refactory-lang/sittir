@@ -18,7 +18,7 @@ function makeRequiredSingleChildNodeMap() {
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('single_parent', new AssembledBranch('single_parent', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('single_parent', new AssembledBranch('single_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -29,7 +29,7 @@ function makeRequiredSingleFieldNodeMap() {
 		members: [{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('single_field_parent', new AssembledBranch('single_field_parent', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('single_field_parent', new AssembledBranch('single_field_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -49,7 +49,7 @@ function makeRepeatFieldNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('repeat_field_parent', new AssembledBranch('repeat_field_parent', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('repeat_field_parent', new AssembledBranch('repeat_field_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -76,7 +76,7 @@ function makeHiddenSupertypeChildrenNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('tuple_type', new AssembledBranch('tuple_type', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('tuple_type', new AssembledBranch('tuple_type', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('_type', new AssembledSupertype('_type', typeRule, ['_primitive_type']));
 	nodes.set(
 		'_primitive_type',
@@ -102,7 +102,7 @@ function makeVisibleSupertypeChildrenNodeMap() {
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('typed_value', new AssembledBranch('typed_value', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('typed_value', new AssembledBranch('typed_value', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('expression', new AssembledSupertype('expression', expressionRule, ['identifier']));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
@@ -122,7 +122,7 @@ function makeOptionalThenRequiredChildNodeMap() {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'optional_then_required_parent',
-		new AssembledBranch('optional_then_required_parent', parentRule, parentRule, deleteWrapper(parentRule))
+		new AssembledBranch('optional_then_required_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('number_literal', new AssembledPattern('number_literal', { type: PATTERN, value: '[0-9]+' }));
@@ -155,7 +155,7 @@ function makeMultiSiblingFieldNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('property_identifier', new AssembledPattern('property_identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('object_type', new AssembledPattern('object_type', { type: PATTERN, value: '\\{\\}' }));
@@ -175,8 +175,8 @@ function makeHiddenWrapperChildNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('except_like_parent', new AssembledBranch('except_like_parent', parentRule, parentRule, deleteWrapper(parentRule)));
-	nodes.set('_suite', new AssembledBranch('_suite', suiteRule, suiteRule, deleteWrapper(suiteRule)));
+	nodes.set('except_like_parent', new AssembledBranch('except_like_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set('_suite', new AssembledBranch('_suite', suiteRule, deleteWrapper(suiteRule), deleteWrapper(suiteRule)));
 	nodes.set('block', new AssembledPattern('block', { type: PATTERN, value: 'block' }));
 	nodes.set('_newline', new AssembledPattern('_newline', { type: PATTERN, value: '\\n' }));
 	return makeNodeMapWith(nodes);

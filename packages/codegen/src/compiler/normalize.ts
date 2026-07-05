@@ -457,7 +457,7 @@ export function normalizeGrammar(
 
 	return {
 		name: linked.name,
-		rules,
+		linkRules: rules,
 		renderRules,
 		simplifiedRules,
 		supertypes: linked.supertypes,

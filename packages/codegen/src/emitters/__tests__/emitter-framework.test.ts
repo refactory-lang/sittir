@@ -31,7 +31,7 @@ function makeBranch(kind: string, label: string): AssembledBranch {
 		type: SEQ,
 		members: [{ type: STRING, value: label }]
 	};
-	return new AssembledBranch(kind, rule, rule, deleteWrapper(rule));
+	return new AssembledBranch(kind, rule, deleteWrapper(rule), deleteWrapper(rule));
 }
 
 function makeHiddenHelperNodeMap(): NodeMap {
@@ -40,7 +40,7 @@ function makeHiddenHelperNodeMap(): NodeMap {
 		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, helperRule, deleteWrapper(helperRule)));
+	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return {
 		...makeNodeMap(),

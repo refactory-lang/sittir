@@ -27,7 +27,7 @@ function makeRequiredSingleChildNodeMap(): NodeMap {
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('single_parent', new AssembledBranch('single_parent', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('single_parent', new AssembledBranch('single_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -38,7 +38,7 @@ function makeOptionalSingleChildNodeMap(): NodeMap {
 		members: [{ type: OPTIONAL, content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('optional_parent', new AssembledBranch('optional_parent', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('optional_parent', new AssembledBranch('optional_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -52,7 +52,7 @@ function makeMultiSingularChildNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('multi_parent', new AssembledBranch('multi_parent', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('multi_parent', new AssembledBranch('multi_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('number_literal', new AssembledPattern('number_literal', { type: PATTERN, value: '[0-9]+' }));
 	return nodeMapWith(nodes);
@@ -82,7 +82,7 @@ function makeOptionalKeywordChildNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('yield', new AssembledBranch('yield', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('yield', new AssembledBranch('yield', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('expression', new AssembledPattern('expression', { type: PATTERN, value: '.+' }));
 	nodes.set('expression_list', new AssembledPattern('expression_list', { type: PATTERN, value: '.+' }));
 	return nodeMapWith(nodes);

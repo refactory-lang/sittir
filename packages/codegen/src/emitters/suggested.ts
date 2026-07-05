@@ -332,7 +332,7 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	for (const kind of allTransformKinds) {
 		const inferred = inferredByKind.get(kind);
 		const polymorph = polymorphByKind.get(kind);
-		const parentRule = nodeMap.rules?.[kind];
+		const parentRule = nodeMap.linkRules?.[kind];
 
 		const fieldPatches: Array<{
 			pos: number;
@@ -542,10 +542,11 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	// ---------------------------------------------------------------
 	// suggestedGroups — nested-seq candidates for group synthesis
 	// ---------------------------------------------------------------
-	// Use linkedRules (post-Link, pre-Normalize) so the detector sees
-	// the natural grammar shape with nested seqs intact. Fall back to
-	// post-Normalize rules when linkedRules is absent.
-	const groupRules = nodeMap.linkedRules ?? nodeMap.rules ?? {};
+	// Use linkedRules (pre-Normalize, straight from Link) so the detector
+	// sees the natural grammar shape with nested seqs intact. Fall back to
+	// linkRules (post-normalization-passes, pre-wrapper-deletion) when
+	// linkedRules is absent — which is always today (nothing populates it).
+	const groupRules = nodeMap.linkedRules ?? nodeMap.linkRules ?? {};
 	const groupCandidates = detectGroupCandidates(groupRules);
 	lines.push(emitSuggestedGroupsBlock(groupCandidates));
 

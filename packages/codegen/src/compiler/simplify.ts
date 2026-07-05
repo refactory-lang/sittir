@@ -11,7 +11,7 @@
  * Per-function rationale: docs/compiler-phase-glossary.md (Phase 3.5: Simplify).
  */
 
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, GroupRule, VariantRule } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
@@ -99,6 +99,19 @@ export const attributeBuilder: RuleBuilder = {
  * This is the final structural cleanup pass that absorbs the trivial
  * `seq([X])` → `X` shapes left behind by upstream transformations.
  * Idempotent — running it twice produces the same result as running once.
+ *
+ * Stays AnyRule-typed (phase-visibility-tightening finding): it delegates
+ * recursion to `recurseChildren`, a genuinely phase-agnostic dsl utility that
+ * still passes through wrapper nodes (FIELD/OPTIONAL/REPEAT/REPEAT1/TOKEN/
+ * ALIAS) structurally — confirmed load-bearing by
+ * `simplify-universal-shape.test.ts`'s "preserves leaf content inside
+ * wrappers (does not push down attributes)" case, which feeds a FIELD-wrapped
+ * rule directly and asserts the wrapper survives untouched. Every PRODUCTION
+ * call (`computeSimplifiedRules`) passes RenderRule-shaped input (simplifyRule
+ * already guarantees no wrapper nodes reach this point), but the function
+ * itself is not restricted to that — narrowing the signature would make the
+ * type dishonest in the other direction (claiming it can't handle a shape it
+ * demonstrably does).
  */
 export function canonicalizeSeqOfLeaves(rule: AnyRule): AnyRule {
 	const recursed = recurseChildren(rule, canonicalizeSeqOfLeaves);
@@ -126,14 +139,17 @@ export function canonicalizeSeqOfLeaves(rule: AnyRule): AnyRule {
  * Leaf classification: a rule that contributes a single slot value (or a
  * literal) with no further structural content underneath. Used by
  * `assertUniversalShape` to validate seq members.
+ *
+ * ALIAS/TOKEN cases deleted (phase-visibility-tightening): both are
+ * WrapperPhase-only (types/rule.ts) and collapse to `never` under the
+ * RenderRule/SimplifiedRule values this function actually receives (always
+ * post-`applyWrapperDeletion`) — `default: false` already covers them.
  */
-function isLeaf(rule: AnyRule): boolean {
+function isLeaf(rule: RenderRule): boolean {
 	switch (rule.type) {
 		case SYMBOL:
-		case ALIAS:
 		case STRING:
 		case PATTERN:
-		case TOKEN:
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
@@ -148,7 +164,7 @@ function isLeaf(rule: AnyRule): boolean {
  * signal for "this branch contributes nothing" so the enclosing choice
  * can be simplified to `optional(non-empty-branches)`.
  */
-export function isEmptyMatchMember(rule: AnyRule): boolean {
+export function isEmptyMatchMember(rule: RenderRule): boolean {
 	if (rule.type === PATTERN && rule.value === '') return true;
 	if (rule.type === SEQ && rule.members.length === 0) return true;
 	return false;
@@ -159,7 +175,7 @@ export function isEmptyMatchMember(rule: AnyRule): boolean {
  * than a bare render-only delimiter (`else`/`->`/`,`)? Slot data survives
  * simplify; bare delimiters are stripped.
  */
-export function isSlotPromotedLiteral(rule: AnyRule): boolean {
+export function isSlotPromotedLiteral(rule: RenderRule): boolean {
 	return (rule as { nonterminal?: boolean }).nonterminal === true;
 }
 
@@ -286,6 +302,17 @@ function firstFieldNameSharedExactlyOncePerBranch(perBranchCounts: Map<string, n
  * into a single hoisted field, and keep branch-specific residuals as
  * a side choice wrapped in optional when any branch has nothing left.
  *
+ * Stays AnyRule-typed (phase-visibility-tightening finding): its
+ * `m.type === FIELD` check is production-dead (0 hits, all 3 grammars,
+ * instrumented regen) — every production caller reaches this only through
+ * `simplifyRule`'s FIELD-free guarantee — but `simplify-canonical.test.ts`
+ * calls the exported `hoistSharedFieldFromBranchesForChoice` (and therefore
+ * this) directly with FIELD-bearing fixtures, bypassing that guarantee by
+ * design (its header comment documents the intent: exercise this function
+ * on pre-wrapper-deleted input). Narrowing to RenderRule would break a
+ * genuine, intentional test surface, not just a dead branch — same
+ * classification as the sibling `mergeBranchesForChoice`/
+ * `mergePositionForChoice`/`liftSharedArmAttrs` family.
  */
 function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string, ctx?: SimplifyCtx): AnyRule {
 	const b = ctx?.builder ?? structuralBuilder;
@@ -329,6 +356,7 @@ function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string,
  * Lift a field name shared by every choice branch into an enclosing seq,
  * unioning field contents across branches. Residuals become optional choice.
  *
+ * AnyRule-typed for the same reason as {@link extractFieldFromBranchesForChoice}.
  */
 export function hoistSharedFieldFromBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): AnyRule {
 	if (rule.members.length < 2) return rule;
@@ -429,6 +457,14 @@ export function rulesStructurallyEqual(a: AnyRule, b: AnyRule): boolean {
  * per-position unioned field contents. Bails (→ `liftSharedArmAttrs`) when
  * branches aren't same-length mergeable seqs; NEVER unwraps `variant()`.
  *
+ * AnyRule-typed (phase-visibility-tightening finding, verified empirically):
+ * its `br.type === FIELD` check is production-dead (0 hits across all 3
+ * grammars, instrumented regen), but `simplify-canonical.test.ts` calls this
+ * exported function directly with FIELD-bearing fixtures, bypassing
+ * `simplifyRule`'s FIELD-free guarantee by design — a genuine, intentional
+ * test surface (not just dead code), so narrowing to RenderRule would break
+ * it. `mergePositionForChoice` (called from here) and `liftSharedArmAttrs`
+ * (the bail-out path) share this classification.
  */
 export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): AnyRule {
 	if (rule.members.length === 0) return rule;
@@ -488,10 +524,12 @@ export function assertUniversalShape(node: AssembledNode): void {
 }
 
 /**
- * AnyRule-level mirror of {@link assertUniversalShape}, operating on a AnyRule directly
- * so `computeSimplifiedRules` can fail-fast at the simplify boundary.
+ * SimplifiedRule-level mirror of {@link assertUniversalShape}, operating on
+ * a rule directly so `computeSimplifiedRules` can fail-fast at the simplify
+ * boundary (called on `canonicalized[kind]`, the final SimplifiedRule map
+ * entry, before it's returned).
  */
-export function assertUniversalShapeRule(rule: AnyRule, kind: string): void {
+export function assertUniversalShapeRule(rule: SimplifiedRule, kind: string): void {
 	if (rule.type !== SEQ) {
 		if (!isLeaf(rule)) {
 			throw new Error(
@@ -570,45 +608,50 @@ export function makeDefaultCtx(): SimplifyCtx {
 }
 
 /**
- * Dispatch a rule to its per-type simplify handler. Thin switch over the AnyRule
- * union. The public entry keeps `ctx?` optional (normalized via `makeDefaultCtx`)
- * so direct callers needn't build a ctx; each handler takes `(rule: <Type>Rule,
- * ctx: SimplifyCtx)`.
+ * Dispatch a rule to its per-type simplify handler. Thin switch over the
+ * RenderRule union (the wrapper-free view `applyWrapperDeletion` produces —
+ * see `SimplifyCtx extends BaseCtx<RenderRule>`). The public entry keeps
+ * `ctx?` optional (normalized via `makeDefaultCtx`) so direct callers needn't
+ * build a ctx; each handler takes `(rule: <Type>Rule, ctx: SimplifyCtx)`.
  *
- * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 nodes must never appear
- * in the input:
+ * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 / ALIAS / TOKEN nodes
+ * must never appear in the input:
  *  - `applyWrapperDeletion` (which runs before this in the production pipeline)
- *    converts all wrapper nodes to `fieldName` / `multiplicity` attributes.
+ *    converts FIELD/OPTIONAL/REPEAT/REPEAT1 to `fieldName` / `multiplicity`
+ *    attributes and pushes ALIAS down to `aliasedFrom`+`aliasNamed` leaf
+ *    attributes. TOKEN is the exception: wrapper-deletion PRESERVES the node
+ *    (`{...rule, content}`, wrapper-deletion.ts) — its absence here is a
+ *    type-level assertion (`TokenRule` → `never` under `RenderRule`) backed
+ *    empirically (0 surviving top-level token rules across all 3 grammars),
+ *    not a mechanism guarantee; see the preserve-token-wrappers debt. All
+ *    six still collapse to `never` under `RenderRule` (types/rule.ts).
  *  - Construction sites inside `mergePositionForChoice` / `extractFieldFromBranchesForChoice`
  *    and the empty-match fold in `simplifyChoiceRule` now delegate to
  *    `ctx.builder` (= `attributeBuilder` in production) which pushes attributes
  *    instead of building wrapper nodes.
  * The `default` branch throws so any stray wrapper node is caught immediately.
  */
-export function simplifyRule(rule: AnyRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
+export function simplifyRule(rule: RenderRule, ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
 	switch (rule.type) {
-		// Per-type handlers below are typed against the wrapper-free (normalize)
-		// view — matching `ctx: SimplifyCtx extends BaseCtx<RenderRule>` and the
-		// invariant documented above the `default` branch (all wrapper types
-		// must already be gone by simplify-time). `rule` here is still typed as
-		// its `AnyRule`/`PhaseName`-parameterized union member from the switch
-		// on `.type`; SEQ/CHOICE/GROUP/VARIANT's `members`/`content` shape is
-		// identical across phases, so this cast is a type-view narrowing only,
-		// not a runtime behavior change.
+		// simplifySeqRule/simplifyChoiceRule/simplifyGroupRule/simplifyVariantRule
+		// are typed AnyRule-out (see the comment on simplifyChoiceRule) because
+		// they route construction through the AnyRule-generic RuleBuilder — but
+		// every production call passes RenderRule-shaped input through
+		// attributeBuilder, which never emits a wrapper node, so the AnyRule
+		// return is always ACTUALLY RenderRule-shaped; the cast bridges that
+		// real (not type-provable) invariant rather than laundering past it.
 		case SEQ:
-			return simplifySeqRule(rule as SeqRule, ctx);
+			return simplifySeqRule(rule, ctx) as RenderRule;
 		case CHOICE:
-			return simplifyChoiceRule(rule as ChoiceRule, ctx);
+			return simplifyChoiceRule(rule, ctx) as RenderRule;
 		case GROUP:
-			return simplifyGroupRule(rule as GroupRule, ctx);
+			return simplifyGroupRule(rule, ctx) as RenderRule;
 		case VARIANT:
-			return simplifyVariantRule(rule as VariantRule, ctx);
+			return simplifyVariantRule(rule, ctx) as RenderRule;
 		// Leaf / terminal types — pass through as-is (no structural transformation).
 		case SYMBOL:
 		case STRING:
 		case PATTERN:
-		case ALIAS:
-		case TOKEN:
 		case SUPERTYPE:
 		case INDENT:
 		case DEDENT:
@@ -621,7 +664,7 @@ export function simplifyRule(rule: AnyRule, ctx: SimplifyCtx = makeDefaultCtx())
 			// construction sites within simplify use ctx.builder (attributeBuilder)
 			// which pushes attributes rather than creating wrapper nodes.
 			throw new Error(
-				`simplifyRule: unexpected rule type '${(rule as AnyRule).type}' — ` +
+				`simplifyRule: unexpected rule type '${(rule as RenderRule).type}' — ` +
 					`field/optional/repeat/repeat1 nodes must be converted to attributes ` +
 					`by applyWrapperDeletion before reaching simplify`
 			);
@@ -639,6 +682,20 @@ export function simplifyRule(rule: AnyRule, ctx: SimplifyCtx = makeDefaultCtx())
  * → nodes). The empty-match fold no longer routes through `simplifyRule` for the
  * optional wrapper — `b.optional` applies the same semantics directly.
  */
+// simplifyChoiceRule / simplifyGroupRule / simplifyVariantRule stay AnyRule-in
+// AnyRule-out (not narrowed to RenderRule) — phase-visibility-tightening
+// finding: narrowing them forces new `as RenderRule` casts at their
+// `withAttrsFrom(rule, b.choice(...))` / `b.optional(...)` call sites, because
+// `RuleBuilder` (dsl/rule-transforms.ts) is DELIBERATELY AnyRule-generic (one
+// interface serving both `structuralBuilder`, which legitimately builds
+// WrapperPhase wrapper nodes, and `attributeBuilder`, which never does).
+// Forcing these three call sites to a narrower phase would launder past the
+// checker rather than reflect a real invariant the builder abstraction
+// enforces — left generic per the "no new cast to satisfy the checker" rule.
+// `simplifyRule` (the public dispatcher immediately above) is still the
+// honest RenderRule-in/RenderRule-out boundary; these three are its
+// AnyRule-typed internal helpers, called only with RenderRule-shaped values
+// in production.
 function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	const b = ctx.builder ?? structuralBuilder;
 	const members = rule.members.map((m) => simplifyRule(m, ctx));
@@ -668,8 +725,8 @@ function simplifyVariantRule(rule: VariantRule, ctx: SimplifyCtx = makeDefaultCt
 }
 
 /** Simplify every rule in the map, each run to fixpoint (see `normalizeToFixpoint`). */
-export function simplifyRules(rules: Record<string, AnyRule>, ctx?: SimplifyCtx): Record<string, AnyRule> {
-	const out: Record<string, AnyRule> = {};
+export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyCtx): Record<string, RenderRule> {
+	const out: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		out[name] = normalizeToFixpoint(rule, ctx, rules);
 	}
@@ -696,7 +753,7 @@ export function computeSimplifiedRules(
 	const renderRules = ctx.rules;
 	const inlineKinds = ctx.inlineKinds;
 	const polymorphSkipExtra = ctx.polymorphSkipExtra ?? new Set<string>();
-	const simplified = simplifyRules(renderRules as Record<string, AnyRule>, ctx);
+	const simplified = simplifyRules(renderRules, ctx);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
 		// Final wrapper-free pass: simplify's hoists + choice-folding can
@@ -755,10 +812,10 @@ export function computeSimplifiedRules(
  * grammars in 2-3 iters; the 16-iter cap guards a non-converging shape.
  */
 function normalizeToFixpoint(
-	rule: AnyRule,
+	rule: RenderRule,
 	ctx: SimplifyCtx | undefined,
-	rules: Readonly<Record<string, AnyRule>>
-): AnyRule {
+	rules: Readonly<Record<string, RenderRule>>
+): RenderRule {
 	const ictx: InlineRefsCtx = { rules, inlineKinds: ctx?.inlineKinds };
 	const MAX_ITERS = 16;
 	let current = rule;

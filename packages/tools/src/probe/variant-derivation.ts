@@ -140,7 +140,7 @@ function diffSets(a: readonly string[], b: readonly string[]): { extra: string[]
 
 async function runForGrammar(grammar: string): Promise<GrammarResult> {
 	const normalized = await buildNormalizedGrammar(grammar);
-	const structuralMap = await load('variantStructural').then((m) => m.deriveStructuralVariantChildren(normalized.rules));
+	const structuralMap = await load('variantStructural').then((m) => m.deriveStructuralVariantChildren(normalized.linkRules));
 
 	const { assemble, AssembleCtx } = await load('assemble');
 	const ctx = AssembleCtx.from(normalized);

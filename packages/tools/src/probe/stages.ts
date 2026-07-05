@@ -90,7 +90,7 @@ const linked = link(raw, undefined);
 stages.link = linked.rules[kind] ?? null;
 
 const normalized = normalizeGrammar(linked);
-stages.normalize = normalized.rules[kind] ?? null;
+stages.normalize = normalized.linkRules[kind] ?? null;
 stages.simplify = normalized.simplifiedRules?.[kind] ?? null;
 
 const nodeMap = assemble(normalized, AssembleCtx.from(normalized));

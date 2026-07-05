@@ -25,7 +25,7 @@ function makeRepeatedUnnamedChoiceNodeMap(): NodeMap {
 		],
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('mixed_parent', new AssembledBranch('mixed_parent', parentRule, parentRule, deleteWrapper(parentRule)));
+	nodes.set('mixed_parent', new AssembledBranch('mixed_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
@@ -53,8 +53,8 @@ function makeOptionalUnnamedHelperNodeMap(): NodeMap {
 		],
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('parent_helper', new AssembledBranch('parent_helper', parentRule, parentRule, deleteWrapper(parentRule)));
-	nodes.set('_helper', new AssembledBranch('_helper', helperRule, helperRule, deleteWrapper(helperRule)));
+	nodes.set('parent_helper', new AssembledBranch('parent_helper', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set('_helper', new AssembledBranch('_helper', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule)));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
