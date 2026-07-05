@@ -54,7 +54,7 @@ export class NormalizeCtx extends BaseCtx<'link'> {
  * Run the full ordered pipeline of non-lossy normalization passes over the
  * raw rule map from the linked grammar.
  *
- * @param rawRules - The rule map produced by the Link phase.
+ * @param linkRules - The rule map produced by the Link phase.
  * @returns A new rule map after all normalization passes have been applied.
  * @remarks
  * Order matters: collapse wrappers first (smallest trees → cleaner
@@ -355,12 +355,12 @@ function materializeInlinedBody(
 }
 
 function applyNormalizationPasses(
-	rawRules: Record<string, Rule<'link'>>,
+	linkRules: Record<string, Rule<'link'>>,
 	ctx?: NormalizeCtx,
 	preserveKinds?: ReadonlySet<string>
 ): Record<string, Rule<'link'>> {
 	let rules: Record<string, Rule<'link'>> = {};
-	for (const [name, rule] of Object.entries(rawRules)) {
+	for (const [name, rule] of Object.entries(linkRules)) {
 		rules[name] = collapseWrappers(rule, ctx);
 	}
 	dbgChoiceId('after collapseWrappers#1', rules);

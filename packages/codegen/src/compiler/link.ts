@@ -636,7 +636,7 @@ function referencesSelf(rule: Rule<'link'>, self: string): boolean {
  * Link's alias-collapse would leave downstream passes thinking the
  * hidden rule still produces the original kind.
  */
-function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'link'>>): Map<string, string> {
+function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): Map<string, string> {
 	const out = new Map<string, string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
@@ -679,7 +679,7 @@ function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {
  * @param rawRules - The EVALUATED (pre-link/pre-resolveRule) rules map.
  *   Must be called before `resolveRule` flattens alias nodes to symbols.
  */
-function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule<'link'>>): ReadonlySet<string> {
+function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule<'evaluate'>>): ReadonlySet<string> {
 	const out = new Set<string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;

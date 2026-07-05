@@ -75,9 +75,9 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
  * `(normalized, ctx)` two-param signature folds into just `(ctx)` (§2: "the
  * whole input container moves INTO the ctx").
  *
- * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies`, + `rawRules` for the
+ * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies`, + `linkRules` for the
  * supertype-subtype resolution family — R4 / #14; `seen` cycle-guards and the
- * per-call subtypeSet stay explicit pass-local params, CW6). `rawRules` is
+ * per-call subtypeSet stay explicit pass-local params, CW6). `linkRules` is
  * `grammar.linkRules` (the pre-simplify view: hidden-rule resolution needs to see
  * ALIAS/GROUP/TOKEN/VARIANT wrapper shapes that `BaseCtx.rules` — the
  * `SimplifiedRule` view — has already collapsed), so it's a distinct field, not
@@ -120,7 +120,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 	}
 
 	/** `grammar.linkRules` — the pre-simplify, wrapper-bearing view. See class doc comment. */
-	get rawRules(): Record<string, Rule<'link'>> {
+	get linkRules(): Record<string, Rule<'link'>> {
 		return this.grammar.linkRules;
 	}
 
@@ -522,7 +522,7 @@ function collectOptionalBodyKinds(rules: Record<string, Rule<'link'>>): Readonly
 /**
  * Resolve the subtype kind list for a supertype node from its rule.
  *
- * @param rule - The rule as it appears in `ctx.rawRules` (pre-inlining).
+ * @param rule - The rule as it appears in `ctx.linkRules` (pre-inlining).
  * @param ctx - The Assemble phase context, used for hidden-rule resolution.
  * @returns The ordered list of concrete kind names that are members of this
  *   supertype union after resolving any hidden-rule indirections.
@@ -621,7 +621,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  * concrete kinds that actually appear in the parse tree.
  *
  * @param names - Raw subtype names from the rule tree (may include `_`-prefixed hidden names).
- * @param ctx - Assemble phase context; `ctx.rawRules`/`ctx.topLevelAliasBodies` resolve hidden rule bodies.
+ * @param ctx - Assemble phase context; `ctx.linkRules`/`ctx.topLevelAliasBodies` resolve hidden rule bodies.
  * @returns The resolved list of concrete kind names, deduplicated and in visitation order.
  * @remarks
  *   Tree-sitter inlines hidden rules at parse time — a `_type_identifier` defined as
@@ -638,7 +638,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  *   Non-hidden names pass through unchanged.
  */
 function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, ownerName?: string): string[] {
-	const { rawRules: rules, topLevelAliasBodies } = ctx;
+	const { linkRules: rules, topLevelAliasBodies } = ctx;
 	// Post-synthesis-removal: the rules map is keyed by SOURCE kinds
 	// only (hidden `_X`). Subtype names surface as source kinds; we
 	// no longer redirect through the aliasedHiddenKinds table (which
@@ -683,7 +683,7 @@ function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, owner
 }
 
 function includeAliasMemberKinds(subtypes: readonly string[], ctx: AssembleCtx, ownerName?: string): string[] {
-	const { rawRules: rules } = ctx;
+	const { linkRules: rules } = ctx;
 	const out = [...subtypes];
 	const subtypeSet = new Set(subtypes);
 	let changed = true;
@@ -714,7 +714,7 @@ function isAliasMemberKind(rule: Rule<'link'>, ctx: AssembleCtx, name: string, s
 }
 
 function isCompatibleSubtypeMember(name: string, ctx: AssembleCtx, subtypeSet: ReadonlySet<string>, seen: Set<string>): boolean {
-	const { rawRules: rules, topLevelAliasBodies } = ctx;
+	const { linkRules: rules, topLevelAliasBodies } = ctx;
 	if (subtypeSet.has(name)) return true;
 	if (!name.startsWith('_')) return false;
 	if (seen.has(name)) return false;
@@ -730,7 +730,7 @@ function isCompatibleSubtypeMember(name: string, ctx: AssembleCtx, subtypeSet: R
 }
 
 function resolveHiddenRuleContent(rule: Rule<'link'>, seen: Set<string>, ctx: AssembleCtx): string[] {
-	const rules = ctx.rawRules;
+	const rules = ctx.linkRules;
 	switch (rule.type) {
 		case ALIAS:
 			// Resolve to the SOURCE kind (what's in the rules map).
