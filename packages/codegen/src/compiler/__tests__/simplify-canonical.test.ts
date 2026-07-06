@@ -17,7 +17,7 @@
 
 import { CHOICE, FIELD, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import type { AnyRule, Rule } from '../../types/rule.ts';
+import type { AnyRule, Rule, RenderRule } from '../../types/rule.ts';
 import type { ChoiceRule } from '../../types/rule.ts';
 import { simplifyRule, attributeBuilder, makeDefaultCtx } from '../simplify.ts';
 import { hoistInnerFieldFromWrapperForField, mergeBranchesForChoice } from '../simplify.ts';
@@ -328,5 +328,23 @@ describe('simplifyRule — hoistInnerFieldFromWrapperForField', () => {
 		const once = hoistInnerFieldFromWrapperForField(input);
 		const twice = hoistInnerFieldFromWrapperForField(once);
 		expect(twice).toEqual(once);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// separator sub-rule recursion (PR-S task 4)
+// ---------------------------------------------------------------------------
+
+describe('separator sub-rules go through the same simplification as ordinary content', () => {
+	it('collapses a single-member choice inside a separator down to that member', () => {
+		const rule = {
+			type: SYMBOL,
+			name: 'item',
+			separator: {
+				value: { type: CHOICE, members: [{ type: STRING, value: ',' }] }
+			}
+		} as unknown as RenderRule;
+		const out = simplifyRule(rule) as unknown as { separator: { value: { type: string; value?: string } } };
+		expect(out.separator.value).toEqual({ type: STRING, value: ',' });
 	});
 });

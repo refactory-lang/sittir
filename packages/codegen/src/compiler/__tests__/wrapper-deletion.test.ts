@@ -7,7 +7,7 @@
  * are recursed into so all wrappers are eliminated throughout the tree.
  */
 
-import { FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deleteWrapper, applyWrapperDeletion } from '../wrapper-deletion.ts';
 import type {
@@ -200,5 +200,32 @@ describe('applyWrapperDeletion — map form', () => {
 		expect(result['foo']!.multiplicity).toBe('optional');
 		expect(result['baz']!.type).toBe('SYMBOL');
 		expect(result['baz']!.multiplicity).toBeUndefined();
+	});
+});
+
+// ---------------------------------------------------------------------------
+// deleteWrapper — separator sub-rule recursion (PR-S task 4)
+// ---------------------------------------------------------------------------
+
+describe('separator sub-rules get the same push-down as ordinary content', () => {
+	it('pushes a FIELD wrapper inside a choice-shaped separator down to a leaf attribute', () => {
+		const rule = {
+			type: REPEAT,
+			content: sym('item'),
+			separator: {
+				value: {
+					type: CHOICE,
+					members: [
+						{ type: FIELD, name: 'sep_kind', content: { type: STRING, value: ',' } },
+						{ type: STRING, value: ';' },
+					],
+				},
+			},
+		} as unknown as Rule<'link'>;
+		const out = deleteWrapper(rule) as unknown as {
+			separator: { value: { members: { fieldName?: string; type: string }[] } };
+		};
+		expect(out.separator.value.members[0]!.fieldName).toBe('sep_kind');
+		expect(out.separator.value.members[0]!.type).toBe('STRING');
 	});
 });

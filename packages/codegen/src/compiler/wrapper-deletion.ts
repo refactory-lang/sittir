@@ -105,7 +105,18 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			// `rule.separator` is `Rule<'link'>`-phase-parameterized; WrapperAttrs.separator
 			// is normalize-phase. Structurally identical fact carried across the phase
 			// boundary unchanged (the "rides along for free" design) — cast the phase view.
-			const sep = attrs.separator ?? (rule.separator as RuleBase<'normalize'>['separator']);
+			const rawSep = attrs.separator ?? (rule.separator as RuleBase<'normalize'>['separator']);
+			// The separator's inner rule can itself contain wrapper nodes (a
+			// synthetic/future non-literal separator, e.g. a CHOICE containing a
+			// FIELD) that need the same push-down as any other rule position.
+			// Only recurse when carrying it forward for the first time (i.e. it
+			// came from `rule.separator`, not an already-processed `attrs.separator`
+			// from an outer wrapper) — reprocessing an already-deleted separator
+			// would be wasted work, not incorrect, but this keeps it to exactly once.
+			const sep =
+				attrs.separator === undefined && rawSep !== undefined
+					? { ...rawSep, value: deleteWrapperWith(rawSep.value as Rule<'link'>, {}) }
+					: rawSep;
 			// repeat forces an array slot (Table 2), incl. terminal content.
 			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);
@@ -125,7 +136,18 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			// `rule.separator` is `Rule<'link'>`-phase-parameterized; WrapperAttrs.separator
 			// is normalize-phase. Structurally identical fact carried across the phase
 			// boundary unchanged (the "rides along for free" design) — cast the phase view.
-			const sep = attrs.separator ?? (rule.separator as RuleBase<'normalize'>['separator']);
+			const rawSep = attrs.separator ?? (rule.separator as RuleBase<'normalize'>['separator']);
+			// The separator's inner rule can itself contain wrapper nodes (a
+			// synthetic/future non-literal separator, e.g. a CHOICE containing a
+			// FIELD) that need the same push-down as any other rule position.
+			// Only recurse when carrying it forward for the first time (i.e. it
+			// came from `rule.separator`, not an already-processed `attrs.separator`
+			// from an outer wrapper) — reprocessing an already-deleted separator
+			// would be wasted work, not incorrect, but this keeps it to exactly once.
+			const sep =
+				attrs.separator === undefined && rawSep !== undefined
+					? { ...rawSep, value: deleteWrapperWith(rawSep.value as Rule<'link'>, {}) }
+					: rawSep;
 			// repeat1 forces a nonEmptyArray slot (Table 2), incl. terminal content.
 			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);

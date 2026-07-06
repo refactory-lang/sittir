@@ -12,7 +12,7 @@
  */
 
 import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, GroupRule, VariantRule } from '../types/rule.ts';
+import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
@@ -640,11 +640,20 @@ export function makeDefaultCtx(): SimplifyCtx {
 }
 
 /**
- * Dispatch a rule to its per-type simplify handler. Thin switch over the
- * RenderRule union (the wrapper-free view `applyWrapperDeletion` produces —
- * see `SimplifyCtx extends BaseCtx<RenderRule>`). The public entry keeps
- * `ctx?` optional (normalized via `makeDefaultCtx`) so direct callers needn't
- * build a ctx; each handler takes `(rule: <Type>Rule, ctx: SimplifyCtx)`.
+ * Dispatch a rule to its per-type simplify handler. Recurses ONCE via
+ * `ctx.walker.map` (RuleWalker's canonical `members`/`content`/`separator.value`
+ * child-edge relation, R12 PR-6) — bottom-up over every child edge, INCLUDING
+ * a rule's `.separator.value` (a real Rule, PR-S) — then dispatches on the
+ * already-recursed node. This replaces five places (this switch plus
+ * `simplifySeqRule`/`simplifyChoiceRule`/`simplifyGroupRule`/`simplifyVariantRule`,
+ * each previously recursing into its own subset of children directly) with one
+ * walker-driven recursion, so a rule carrying a non-literal separator gets its
+ * `.separator.value` simplified exactly like any other rule position instead
+ * of being skipped by all five (PR-S task 4). The public entry keeps `ctx?`
+ * optional (normalized via `makeDefaultCtx`) so direct callers needn't build a
+ * ctx; each per-type handler still takes `(rule: <Type>Rule, ctx: SimplifyCtx)`
+ * but no longer recurses into its own children — it receives them already
+ * simplified.
  *
  * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 / ALIAS / TOKEN nodes
  * must never appear in the input:
@@ -664,22 +673,25 @@ export function makeDefaultCtx(): SimplifyCtx {
  * The `default` branch throws so any stray wrapper node is caught immediately.
  */
 export function simplifyRule(rule: RenderRule, ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
-	switch (rule.type) {
-		// simplifySeqRule/simplifyChoiceRule/simplifyGroupRule/simplifyVariantRule
-		// are typed AnyRule-out (see the comment on simplifyChoiceRule) because
-		// they route construction through the AnyRule-generic RuleBuilder — but
-		// every production call passes RenderRule-shaped input through
-		// attributeBuilder, which never emits a wrapper node, so the AnyRule
-		// return is always ACTUALLY RenderRule-shaped; the cast bridges that
-		// real (not type-provable) invariant rather than laundering past it.
+	const recursed = ctx.walker.map(rule, (r) => simplifyRule(r as RenderRule, ctx)) as RenderRule;
+	switch (recursed.type) {
+		// simplifySeqRule/simplifyChoiceRule are typed AnyRule-out (see the
+		// comment on simplifyChoiceRule) because they route construction
+		// through the AnyRule-generic RuleBuilder — but every production call
+		// passes RenderRule-shaped input through attributeBuilder, which never
+		// emits a wrapper node, so the AnyRule return is always ACTUALLY
+		// RenderRule-shaped; the cast bridges that real (not type-provable)
+		// invariant rather than laundering past it.
 		case SEQ:
-			return simplifySeqRule(rule, ctx) as RenderRule;
+			return simplifySeqRule(recursed, ctx) as RenderRule;
 		case CHOICE:
-			return simplifyChoiceRule(rule, ctx) as RenderRule;
+			return simplifyChoiceRule(recursed, ctx) as RenderRule;
+		// GROUP / VARIANT: structural wrapper preserved, no case-specific
+		// logic remains once recursion moved onto ctx.walker.map (their
+		// former bodies were pure `{ ...rule, content: simplifyRule(rule.content, ctx) }`
+		// recursions — now redundant with the walker.map call above).
 		case GROUP:
-			return simplifyGroupRule(rule, ctx) as RenderRule;
 		case VARIANT:
-			return simplifyVariantRule(rule, ctx) as RenderRule;
 		// Leaf / terminal types — pass through as-is (no structural transformation).
 		case SYMBOL:
 		case STRING:
@@ -688,7 +700,7 @@ export function simplifyRule(rule: RenderRule, ctx: SimplifyCtx = makeDefaultCtx
 		case INDENT:
 		case DEDENT:
 		case NEWLINE:
-			return rule;
+			return recursed;
 		default:
 			// FIELD / OPTIONAL / REPEAT / REPEAT1 and any unknown type hitting this
 			// branch is a bug: all wrappers must be converted to fieldName/multiplicity
@@ -696,7 +708,7 @@ export function simplifyRule(rule: RenderRule, ctx: SimplifyCtx = makeDefaultCtx
 			// construction sites within simplify use ctx.builder (attributeBuilder)
 			// which pushes attributes rather than creating wrapper nodes.
 			throw new Error(
-				`simplifyRule: unexpected rule type '${(rule as RenderRule).type}' — ` +
+				`simplifyRule: unexpected rule type '${(recursed as RenderRule).type}' — ` +
 					`field/optional/repeat/repeat1 nodes must be converted to attributes ` +
 					`by applyWrapperDeletion before reaching simplify`
 			);
@@ -714,23 +726,27 @@ export function simplifyRule(rule: RenderRule, ctx: SimplifyCtx = makeDefaultCtx
  * → nodes). The empty-match fold no longer routes through `simplifyRule` for the
  * optional wrapper — `b.optional` applies the same semantics directly.
  */
-// simplifyChoiceRule / simplifyGroupRule / simplifyVariantRule stay AnyRule-in
-// AnyRule-out (not narrowed to RenderRule) — phase-visibility-tightening
-// finding: narrowing them forces new `as RenderRule` casts at their
+// simplifyChoiceRule (and simplifySeqRule below) stay AnyRule-in AnyRule-out
+// (not narrowed to RenderRule) — phase-visibility-tightening finding:
+// narrowing them forces new `as RenderRule` casts at their
 // `withAttrsFrom(rule, b.choice(...))` / `b.optional(...)` call sites, because
 // `RuleBuilder` (dsl/rule-transforms.ts) is DELIBERATELY AnyRule-generic (one
 // interface serving both `structuralBuilder`, which legitimately builds
 // WrapperPhase wrapper nodes, and `attributeBuilder`, which never does).
-// Forcing these three call sites to a narrower phase would launder past the
+// Forcing these call sites to a narrower phase would launder past the
 // checker rather than reflect a real invariant the builder abstraction
 // enforces — left generic per the "no new cast to satisfy the checker" rule.
 // `simplifyRule` (the public dispatcher immediately above) is still the
-// honest RenderRule-in/RenderRule-out boundary; these three are its
-// AnyRule-typed internal helpers, called only with RenderRule-shaped values
-// in production.
+// honest RenderRule-in/RenderRule-out boundary; these are its AnyRule-typed
+// internal helpers, called only with RenderRule-shaped values in production.
+// (GROUP/VARIANT no longer have dedicated handlers — recursion into their
+// `.content` now happens once, via simplifyRule's ctx.walker.map call, and
+// they had no case-specific logic beyond that recursion.)
 function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	const b = ctx.builder ?? structuralBuilder;
-	const members = rule.members.map((m) => simplifyRule(m, ctx));
+	// Members already simplified by simplifyRule's ctx.walker.map recursion —
+	// this function no longer recurses into its own children (PR-S task 4).
+	const members = rule.members;
 	const empty = members.findIndex(isEmptyMatchMember);
 	if (empty >= 0 && members.length > 1) {
 		const nonEmpty = members.filter((_, i) => i !== empty);
@@ -744,16 +760,6 @@ function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx(
 	// above); `mergeBranchesForChoice`'s AnyRule return type is wider than what
 	// it actually produces for a CHOICE-shaped input.
 	return withAttrsFrom(rule, hoistSharedFieldFromBranchesForChoice(merged as ChoiceRule, ctx));
-}
-
-/** GROUP: recurse into content (structural wrapper preserved). */
-function simplifyGroupRule(rule: GroupRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
-	return { ...rule, content: simplifyRule(rule.content, ctx) };
-}
-
-/** VARIANT: recurse into content (polymorph surface preserved). */
-function simplifyVariantRule(rule: VariantRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
-	return { ...rule, content: simplifyRule(rule.content, ctx) };
 }
 
 /** Simplify every rule in the map, each run to fixpoint (see `normalizeToFixpoint`). */
@@ -922,7 +928,9 @@ export function hoistInnerFieldsForTemplate(rule: AnyRule): AnyRule {
  * absent-only (`withAttrsFrom`). See glossary (Phase 3.5).
  */
 function simplifySeqRule(rule: SeqRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
-	const mapped: AnyRule[] = rule.members.map((m) => simplifyRule(m, ctx));
+	// Members already simplified by simplifyRule's ctx.walker.map recursion —
+	// this function no longer recurses into its own children (PR-S task 4).
+	const mapped: AnyRule[] = rule.members;
 	const filtered: AnyRule[] = mapped.filter((m) => {
 		// Strip bare string delimiters (not slot-promoted) + empty-seq sentinels.
 		if (m.type === STRING && !isSlotPromotedLiteral(m)) return false;
