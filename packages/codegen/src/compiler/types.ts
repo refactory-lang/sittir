@@ -469,6 +469,20 @@ export interface NormalizedGrammar {
 
 export interface SimplifiedGrammar {
 	readonly name: string;
+	/**
+	 * Carried mid-normalize link-phase view (wrappers intact) — see
+	 * {@link NormalizedGrammar.linkRules}'s doc comment for the pipeline
+	 * provenance. Carried through assemble onto {@link NodeMap.linkRules};
+	 * see THAT field's doc comment for the current (2026-07-05, post-PR-137-
+	 * follow-on-3) consumer list — now exclusively the two by-design
+	 * authoring-shape diagnostics (`emitters/suggested.ts`,
+	 * `emitters/refine-emit.ts` via `compiler/link.ts`'s refine-path
+	 * resolution). `compiler/assemble.ts`'s hidden-body/subtype-resolution
+	 * family migrated off this view onto `normalizedRules` (below); this
+	 * field's sole remaining purpose is feeding `NodeMap.linkRules` for those
+	 * two diagnostics — a candidate for a diagnostics-scoped carry in a future
+	 * pass (not restructured here; see PR-137 follow-on-3 notes).
+	 */
 	readonly linkRules: Record<string, Rule<'link'>>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
@@ -600,31 +614,32 @@ export interface NodeMap {
 	 * pre-simplify, wrapper-bearing view (`applyNormalizationPasses`'
 	 * output, BEFORE `applyWrapperDeletion` strips modifier wrappers).
 	 *
-	 * PR-137 narrowed this to its JUSTIFIED-EXCEPTION consumers — every
-	 * other former reader migrated to `normalizedRules` (below) or a
-	 * structural fact already on `RenderRule`/`SimplifiedRule`. The
-	 * word-matcher consumer came OFF this list in the PR-137 follow-on: it no
-	 * longer compiles from `linkRules` (or any post-link view) at all — it's
-	 * pinned once at Link time from `raw.rules` and carried on `wordMatcher`
-	 * (below) instead. Remaining consumers are exclusively the
-	 * hidden-body/subtype-resolution family, each verified wrapper-dependent
-	 * (empirically, not just by inspection — see
-	 * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md PR-137
-	 * notes for the falsifying probes):
-	 *   - `compiler/assemble.ts`'s hidden-body/subtype-resolution family
-	 *     (`resolveHiddenSubtypes` / `includeAliasMemberKinds` /
-	 *     `isAliasMemberKind` / `isCompatibleSubtypeMember` /
-	 *     `resolveHiddenRuleContent`, via `AssembleCtx.linkRules`): the
-	 *     switch's absence of a `REPEAT1` case is load-bearing (a
-	 *     `REPEAT1(CHOICE(...))` repeated-punctuation group must stay
-	 *     opaque, not recurse into its arms as if each were a subtype).
-	 *     On `normalizedRules` the same position becomes a bare `CHOICE`
-	 *     with `multiplicity: 'nonEmptyArray'` stamped — which DOES have a
-	 *     case, so the function wrongly recurses. Confirmed regression:
-	 *     rust's `_delim_tokens` supertype chain resolves the punctuation
-	 *     literal `%` as a bogus subtype name, crashing
-	 *     `emitSupertypeUnionDeclarations` (`types.ts`'s "references
-	 *     subtype '%' which is not in NodeMap").
+	 * PR-137 narrowed this to its JUSTIFIED-EXCEPTION consumers; the PR-137
+	 * follow-on-3 migration (2026-07-05) closed out the LAST render/derivation
+	 * consumer — `compiler/assemble.ts`'s hidden-body/subtype-resolution
+	 * family (`resolveHiddenSubtypes` / `includeAliasMemberKinds` /
+	 * `isAliasMemberKind` / `isCompatibleSubtypeMember` /
+	 * `resolveHiddenRuleContent`) now reads `AssembleCtx.normalizedRules`
+	 * instead, with the former "no REPEAT1 case = opaque" switch behavior
+	 * translated into explicit `multiplicity`/`fieldName`/`aliasedFrom`
+	 * attribute checks run BEFORE the type switch (see
+	 * `resolveHiddenRuleContent`'s doc comment in assemble.ts for the full
+	 * translation table and the regression fixture this closes — rust's
+	 * `_delim_tokens` supertype chain resolving `%` as a bogus subtype and
+	 * crashing `emitSupertypeUnionDeclarations`). `AssembleCtx.linkRules` (the
+	 * getter this family used to read) is DELETED — zero assemble consumers
+	 * remain. `topLevelAliasBodies` stays a distinct field (its presence test
+	 * — "is this hidden kind an alias-mint target" — has no rule-attribute
+	 * equivalent; its VALUES are redundant with `normalizedRules[name]` and no
+	 * longer read directly).
+	 *
+	 * The word-matcher consumer came OFF this list in the PR-137 follow-on: it
+	 * no longer compiles from `linkRules` (or any post-link view) at all —
+	 * it's pinned once at Link time from `raw.rules` and carried on
+	 * `wordMatcher` (below) instead. Remaining consumers are exclusively the
+	 * two BY-DESIGN authoring-shape diagnostics (not render/derivation paths —
+	 * see docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md's
+	 * end-state table, row "emitters"):
 	 *   - `emitters/suggested.ts`'s `findSymbolPosition` (via `parentRule`)
 	 *     and `detectGroupCandidates`/`walkBodyForGroups` (via `groupRules`):
 	 *     both explicitly pattern-match `FIELD`/`OPTIONAL`/`REPEAT`/

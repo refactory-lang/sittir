@@ -75,15 +75,24 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
  * `(normalized, ctx)` two-param signature folds into just `(ctx)` (§2: "the
  * whole input container moves INTO the ctx").
  *
- * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies`, + `linkRules` for the
- * supertype-subtype resolution family — R4 / #14; `seen` cycle-guards and the
- * per-call subtypeSet stay explicit pass-local params, CW6). `linkRules` is
- * `grammar.linkRules` (the pre-simplify view: hidden-rule resolution needs to see
- * REPEAT1/OPTIONAL/ALIAS/GROUP/TOKEN/VARIANT wrapper shapes that `BaseCtx.rules` —
- * the `SimplifiedRule` view — has already collapsed; PR-137 confirmed this
- * empirically — see `NodeMap.linkRules`'s doc comment in types.ts for the
- * falsifying probes), so it's a distinct field, not a reuse of the inherited
- * `rules`.
+ * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies` — R4 / #14; `seen`
+ * cycle-guards and the per-call subtypeSet stay explicit pass-local params,
+ * CW6). The hidden-body/subtype-resolution family (`resolveHiddenSubtypes` /
+ * `includeAliasMemberKinds` / `isAliasMemberKind` / `isCompatibleSubtypeMember`
+ * / `resolveHiddenRuleContent`) migrated OFF `linkRules` onto `normalizedRules`
+ * (2026-07-05, PR-137 follow-on-3): the wrapper shapes that switch used to
+ * pattern-match (REPEAT/REPEAT1/OPTIONAL/ALIAS/TOKEN) don't exist post-
+ * wrapper-deletion — their meaning is stamped as leaf attributes
+ * (`multiplicity`/`aliasedFrom`/`aliasNamed`/`fieldName`) — so the family now
+ * checks those attributes BEFORE dispatching on `rule.type`. See each
+ * function's doc comment for its specific translation. `topLevelAliasBodies`
+ * stays as a distinct field: it isn't a body cache (its VALUES are fully
+ * reproducible from `normalizedRules[name]` — verified empirically, every
+ * alias-body kind across all 3 grammars satisfies `normalizedRules[name] ===
+ * applyWrapperDeletion(topLevelAliasBodies.get(name))`), it's a *presence*
+ * table (which hidden kinds are alias-mint targets at all) with no rule-level
+ * attribute equivalent — a hidden kind's own rule body carries no trace of
+ * being aliased-TO by some other rule elsewhere in the grammar.
  *
  * `rules` reads `grammar.rules` — same one-liner as every other phase ctx
  * (2026-07-05: `SimplifiedGrammar`'s phase product field was renamed from
@@ -122,9 +131,18 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		return this.grammar.rules;
 	}
 
-	/** `grammar.linkRules` — the pre-simplify, wrapper-bearing view. See class doc comment. */
-	get linkRules(): Record<string, Rule<'link'>> {
-		return this.grammar.linkRules;
+	/**
+	 * `grammar.normalizedRules` — the wrapper-deleted `RenderRule` view (2026-07-05
+	 * migration: the hidden-body/subtype-resolution family's map source of
+	 * choice — see `resolveHiddenRuleContent`'s doc comment). Modifier wrappers
+	 * (optional/field/repeat/repeat1/alias/token) are pushed down to leaf
+	 * attributes (`multiplicity`/`fieldName`/`separator`/`aliasedFrom`/
+	 * `aliasNamed`); structural rules (seq/choice/variant/group/supertype) are
+	 * preserved and recursed into — the honest post-normalize equivalent of
+	 * `linkRules` for callers that read attributes instead of wrapper shape.
+	 */
+	get normalizedRules(): Record<string, RenderRule> {
+		return this.grammar.normalizedRules;
 	}
 
 	/** Live node-map accumulator built during assemble(); post-passes read peers from it. */
@@ -535,7 +553,11 @@ function collectOptionalBodyKinds(rules: Record<string, Rule<'link'>>): Readonly
 /**
  * Resolve the subtype kind list for a supertype node from its rule.
  *
- * @param rule - The rule as it appears in `ctx.linkRules` (pre-inlining).
+ * @param rule - The rule as it appears in `normalized.linkRules` (pre-inlining;
+ *   fed by the caller's main assemble loop — see `assemble()`'s own iteration
+ *   over `normalized.linkRules`, out of scope for the `ctx.normalizedRules`
+ *   migration below since this parameter is dictated by that caller, not by
+ *   this function's own map reads).
  * @param ctx - The Assemble phase context, used for hidden-rule resolution.
  * @returns The ordered list of concrete kind names that are members of this
  *   supertype union after resolving any hidden-rule indirections.
@@ -634,7 +656,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  * concrete kinds that actually appear in the parse tree.
  *
  * @param names - Raw subtype names from the rule tree (may include `_`-prefixed hidden names).
- * @param ctx - Assemble phase context; `ctx.linkRules`/`ctx.topLevelAliasBodies` resolve hidden rule bodies.
+ * @param ctx - Assemble phase context; `ctx.normalizedRules`/`ctx.topLevelAliasBodies` resolve hidden rule bodies.
  * @returns The resolved list of concrete kind names, deduplicated and in visitation order.
  * @remarks
  *   Tree-sitter inlines hidden rules at parse time — a `_type_identifier` defined as
@@ -649,9 +671,27 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  *   - everything else → keep the hidden name as-is (best-effort)
  *
  *   Non-hidden names pass through unchanged.
+ *
+ *   2026-07-05 (PR-137 follow-on-3): body lookups migrated from
+ *   `ctx.linkRules` to `ctx.normalizedRules` (see `AssembleCtx.normalizedRules`
+ *   / `resolveHiddenRuleContent`'s doc comments for the attribute-aware
+ *   rationale). `ctx.topLevelAliasBodies` is UNCHANGED — its `.has(name)` test
+ *   is a presence fact ("is this hidden kind an alias-mint target elsewhere in
+ *   the grammar") with no rule-attribute equivalent (a hidden kind's own rule
+ *   body carries no trace of being aliased-TO by another rule), so it can't be
+ *   derived from `normalizedRules[name]`'s attributes the way the wrapper
+ *   shapes could. Its VALUES, however, are now redundant with
+ *   `normalizedRules[name]` (verified empirically: every alias-body kind
+ *   across all 3 grammars satisfies `normalizedRules[name] ===
+ *   applyWrapperDeletion(topLevelAliasBodies.get(name))`, since
+ *   `normalizeGrammar` already threads alias-target bodies through the same
+ *   wrapper-deletion pipeline and merges them into `normalizedRules` under the
+ *   identical hidden-kind key) — so the `body` lookup below reads
+ *   `rules[name]` uniformly instead of `topLevelAliasBodies.get(name) ??
+ *   rules[name]`.
  */
 function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, ownerName?: string): string[] {
-	const { linkRules: rules, topLevelAliasBodies } = ctx;
+	const { normalizedRules: rules, topLevelAliasBodies } = ctx;
 	// Post-synthesis-removal: the rules map is keyed by SOURCE kinds
 	// only (hidden `_X`). Subtype names surface as source kinds; we
 	// no longer redirect through the aliasedHiddenKinds table (which
@@ -672,9 +712,8 @@ function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, owner
 			out.push(name);
 			return;
 		}
-		const body = topLevelAliasBodies.get(name) ?? rule;
 		if (rule.type === SUPERTYPE || topLevelAliasBodies.has(name)) out.push(name);
-		const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx);
+		const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx);
 		if (resolved.length === 0) {
 			if (!out.includes(name)) out.push(name);
 			return;
@@ -696,17 +735,17 @@ function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, owner
 }
 
 function includeAliasMemberKinds(subtypes: readonly string[], ctx: AssembleCtx, ownerName?: string): string[] {
-	const { linkRules: rules } = ctx;
+	const { normalizedRules: rules } = ctx;
 	const out = [...subtypes];
 	const subtypeSet = new Set(subtypes);
 	let changed = true;
 	while (changed) {
 		changed = false;
-		for (const [name, rule] of Object.entries(rules)) {
+		for (const name of Object.keys(rules)) {
 			if (!name.startsWith('_')) continue;
 			if (name === ownerName) continue;
 			if (subtypeSet.has(name)) continue;
-			if (!isAliasMemberKind(rule, ctx, name, subtypeSet)) continue;
+			if (!isAliasMemberKind(name, ctx, subtypeSet)) continue;
 			out.push(name);
 			subtypeSet.add(name);
 			changed = true;
@@ -715,10 +754,11 @@ function includeAliasMemberKinds(subtypes: readonly string[], ctx: AssembleCtx, 
 	return out;
 }
 
-function isAliasMemberKind(rule: Rule<'link'>, ctx: AssembleCtx, name: string, subtypeSet: ReadonlySet<string>): boolean {
-	const { topLevelAliasBodies } = ctx;
+function isAliasMemberKind(name: string, ctx: AssembleCtx, subtypeSet: ReadonlySet<string>): boolean {
+	const { normalizedRules: rules, topLevelAliasBodies } = ctx;
 	if (!topLevelAliasBodies.has(name)) return false;
-	const body = topLevelAliasBodies.get(name) ?? rule;
+	const body = rules[name];
+	if (!body) return false;
 	const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx);
 	if (resolved.length === 0) return false;
 	return resolved.every((member) =>
@@ -727,38 +767,107 @@ function isAliasMemberKind(rule: Rule<'link'>, ctx: AssembleCtx, name: string, s
 }
 
 function isCompatibleSubtypeMember(name: string, ctx: AssembleCtx, subtypeSet: ReadonlySet<string>, seen: Set<string>): boolean {
-	const { linkRules: rules, topLevelAliasBodies } = ctx;
+	const { normalizedRules: rules } = ctx;
 	if (subtypeSet.has(name)) return true;
 	if (!name.startsWith('_')) return false;
 	if (seen.has(name)) return false;
 	const rule = rules[name];
 	if (!rule) return false;
 	seen.add(name);
-	const body = topLevelAliasBodies.get(name) ?? rule;
-	const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx);
+	const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx);
 	if (resolved.length === 0) return false;
 	return resolved.every((member) =>
 		isCompatibleSubtypeMember(member, ctx, subtypeSet, seen)
 	);
 }
 
-function resolveHiddenRuleContent(rule: Rule<'link'>, seen: Set<string>, ctx: AssembleCtx): string[] {
-	const rules = ctx.linkRules;
+/**
+ * Attribute-aware hidden-body walker (2026-07-05, PR-137 follow-on-3 —
+ * migrated OFF `ctx.linkRules` onto `ctx.normalizedRules`; see
+ * `AssembleCtx.normalizedRules`'s doc comment). `rule` is now a `RenderRule`
+ * (wrapper-free): `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers don't
+ * exist as `rule.type` values on this view — their meaning is stamped onto
+ * whatever leaf they used to wrap, as `multiplicity`/`fieldName`/`aliasedFrom`/
+ * `aliasNamed`. The link-view switch enforced wrapper opacity by SIMPLY HAVING
+ * NO CASE for REPEAT/REPEAT1/OPTIONAL/FIELD (falling to `default: []`); the
+ * equivalent here is an explicit attribute check BEFORE the type switch,
+ * covering every rule type uniformly (a repeat/optional can wrap ANY rule
+ * shape, not just the ones the old switch happened to dispatch):
+ *
+ *   - `multiplicity === 'array' | 'nonEmptyArray'` — was `repeat`/`repeat1`.
+ *     LOAD-BEARING: this is the crash fix (regression fixture:
+ *     `assemble.test.ts` "keeps a REPEAT1(CHOICE(...)) punctuation-literal
+ *     group opaque..."). A `REPEAT1(CHOICE('%','+',...))` (rust's
+ *     `_non_special_token`'s TOKEN_TREE_NON_SPECIAL_PUNCTUATION arm, reached
+ *     through `_delim_tokens`'s supertype chain) collapses post-wrapper-
+ *     deletion to a bare `CHOICE(...)` stamped `multiplicity: 'nonEmptyArray'`
+ *     — structurally indistinguishable from an unwrapped CHOICE without this
+ *     check, so the old switch's CHOICE case would wrongly recurse into the
+ *     punctuation arms and surface `%` as a bogus subtype name (crashing
+ *     `emitSupertypeUnionDeclarations`).
+ *   - `multiplicity === 'optional'` — was `optional`. The link-view switch had
+ *     no OPTIONAL case either (same opacity), so this mirrors it exactly.
+ *   - `fieldName !== undefined` — was `field`. Kept for parity though no
+ *     caller in this family is expected to hand a field-wrapped position
+ *     (callers only pass hidden-kind top-level bodies and supertype/choice
+ *     arms, never seq-internal field slots).
+ *
+ * `ALIAS` is dropped as a switch case (not translated): unlike `token`,
+ * `alias` is fully consumed by `applyWrapperDeletion` (it never survives as
+ * its own node — the wrapper disappears and `aliasedFrom`/`aliasNamed` land on
+ * its content), so `RenderRule` can never have `type === 'ALIAS'` at runtime,
+ * not just by static type (`AliasRule<'normalize'> = never`). Its resolution
+ * ("resolve to the alias's source kind": `rule.named && content.type ===
+ * SYMBOL` → the inner symbol's OWN name — the SOURCE kind, not the alias's
+ * `value` target; else → `rule.value`) is subsumed by two reads: the SYMBOL
+ * case's existing `aliasedFrom ?? name` (unchanged — that fact predates this
+ * migration; see `SymbolRule.aliasedFrom`'s doc comment, a link-time
+ * stamping distinct from wrapper-deletion's but carrying the same source-kind
+ * meaning and never conflicting, since wrapper-deletion's outer-alias-wins
+ * merge only overwrites when an ENCLOSING alias exists) for the
+ * `content.type === SYMBOL` case; and a NEW generic non-SYMBOL fallback below
+ * (`rule.aliasedFrom` on any other leaf type) for the `else` branch — the old
+ * switch never had to handle "alias-of-non-symbol" as its own case because
+ * the link-view ALIAS node caught it structurally; post-wrapper-deletion the
+ * content's own type dispatches instead, so the fallback re-surfaces exactly
+ * that one fact (`rule.value`, preserved as `aliasedFrom`) the SYMBOL-only
+ * read would otherwise miss.
+ *
+ * `TOKEN` is dropped as a switch case (matching `emitters/templates.ts`'s
+ * `isLeftmostTerminalImmediate` precedent — see its NOTE comment,
+ * `project_preserve_token_wrappers`): `applyWrapperDeletion`'s TOKEN case
+ * technically PRESERVES the node (`{...rule, content}`, not deleted like
+ * ALIAS), so `RenderRule`'s `never` for TOKEN is a type-level assertion, not a
+ * runtime guarantee — but it's backed by the same EMPIRICAL fact that
+ * consumer already relies on (0 top-level `token(...)` survivors into
+ * `normalizedRules` across all 3 grammars). Adding a defensive case here would
+ * require an `as`-cast the gates forbid for a shape that doesn't occur;
+ * `default: []` is honest (a hidden supertype/choice chain reaching a
+ * TOKEN-wrapped position would be opaque anyway, since opacity is the safe
+ * fallback) and matches the recorded preserve-token-wrappers debt rather than
+ * papering over it per-callsite.
+ */
+function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: AssembleCtx): string[] {
+	const rules = ctx.normalizedRules;
+	// Wrapper-opacity attribute checks — see doc comment. Must run BEFORE the
+	// type switch: a repeat/repeat1/optional can wrap ANY rule shape, and the
+	// collapsed leaf's `rule.type` is otherwise indistinguishable from an
+	// unwrapped occurrence of that same type.
+	if (rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray' || rule.multiplicity === 'optional') {
+		return [];
+	}
+	if (rule.fieldName !== undefined) {
+		return [];
+	}
+	// Generic alias-of-non-symbol fallback (the `else` branch of the former
+	// ALIAS case — see doc comment). SYMBOL has its own `aliasedFrom` read
+	// below (unchanged, predates this migration) so it's excluded here to
+	// avoid short-circuiting its hidden-prefix/recursion logic.
+	if (rule.aliasedFrom !== undefined && rule.type !== SYMBOL) {
+		return [rule.aliasedFrom];
+	}
 	switch (rule.type) {
-		case ALIAS:
-			// Resolve to the SOURCE kind (what's in the rules map).
-			// Evaluate's `synthesizeInlineAliasSources` pass ensures
-			// every named alias has a bare-symbol source that's a
-			// real rule. Fall back to the value when that invariant
-			// doesn't hold (pre-evaluate / test fixtures).
-			if (rule.named && rule.content.type === SYMBOL) {
-				return [rule.content.name];
-			}
-			return [rule.value];
 		case SYMBOL: {
-			// Post-synthesis-removal: resolve visible-via-alias symbols
-			// (`aliasedFrom` set) to their SOURCE kind name, which is
-			// what's in the rules map and nodeMap.
 			const refName = rule.aliasedFrom ?? rule.name;
 			if (!refName.startsWith('_')) return [refName];
 			if (seen.has(refName)) return [];
@@ -788,8 +897,7 @@ function resolveHiddenRuleContent(rule: Rule<'link'>, seen: Set<string>, ctx: As
 		}
 		case VARIANT:
 		case GROUP:
-		case TOKEN:
-			return resolveHiddenRuleContent((rule as { content: Rule<'link'> }).content, seen, ctx);
+			return resolveHiddenRuleContent(rule.content, seen, ctx);
 		default:
 			return [];
 	}

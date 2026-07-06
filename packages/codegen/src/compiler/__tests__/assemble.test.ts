@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../assemble.ts';
@@ -383,6 +383,65 @@ describe('Assemble — classifyNode', () => {
 			'_type_identifier',
 			'_property_identifier'
 		]);
+	});
+
+	// PR-137 grammar-phase-ctx regression fixture (2026-07-05): reproduces
+	// rust's `_delim_tokens` supertype chain, whose subtype resolution walks
+	// through `_non_special_token`'s `REPEAT1(CHOICE('%', '+', ...))` arm
+	// (tree-sitter-rust's TOKEN_TREE_NON_SPECIAL_PUNCTUATION). On the LINK
+	// view `resolveHiddenRuleContent`'s switch has no REPEAT1 case, so it
+	// falls to `default: return []` — opaque, correctly excluding the bare
+	// punctuation literals from the subtype list. A naive migration to the
+	// post-normalize view collapses `REPEAT1(CHOICE(...))` into a bare
+	// `CHOICE(...)` leaf stamped `multiplicity: 'nonEmptyArray'`, which DOES
+	// have a CHOICE case — the resolver would wrongly recurse into the
+	// punctuation arms and emit `%` as a bogus subtype name, crashing
+	// `emitSupertypeUnionDeclarations` downstream ("references subtype '%'
+	// which is not in NodeMap"). This test locks in opacity for the
+	// nonEmptyArray/array-multiplicity shape regardless of which view the
+	// resolver reads.
+	it('keeps a REPEAT1(CHOICE(...)) punctuation-literal group opaque in supertype subtype resolution', () => {
+		const normalized = makeNormalized({
+			_delim_tokens: {
+				type: SUPERTYPE,
+				name: '_delim_tokens',
+				subtypes: ['_non_delim_token', 'identifier']
+			},
+			_non_delim_token: {
+				type: CHOICE,
+				members: [{ type: SYMBOL, name: '_non_special_token' }]
+			},
+			_non_special_token: {
+				type: CHOICE,
+				members: [
+					{ type: SYMBOL, name: 'identifier' },
+					{
+						type: REPEAT1,
+						content: {
+							type: CHOICE,
+							members: [
+								{ type: STRING, value: '%' },
+								{ type: STRING, value: '+' }
+							]
+						}
+					}
+				]
+			},
+			identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' }
+		});
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_delim_tokens');
+		expect(node?.modelType).toBe('supertype');
+		const subtypes = (node as any).subtypes as string[];
+		expect(subtypes).not.toContain('%');
+		expect(subtypes).not.toContain('+');
+		// `_non_delim_token` and `_non_special_token` are transparent CHOICE
+		// wrappers with no independent alias-mint body — they resolve straight
+		// through to `identifier` and never surface as their own subtype
+		// entries. The REPEAT1(CHOICE('%','+')) arm resolves to nothing
+		// (opaque), so it contributes no entries at all — not even a hidden
+		// placeholder — confirming the resolver treats it as inert rather
+		// than as a source of bogus subtype names.
+		expect(subtypes).toEqual(['identifier']);
 	});
 });
 
