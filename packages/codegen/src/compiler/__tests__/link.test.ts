@@ -1,12 +1,13 @@
 import { ALIAS, CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
-import { link, enrichPositions, computeParentSets, applyOverridePolymorphs } from '../link.ts';
+import { link, enrichPositions, computeParentSets, applyOverridePolymorphs, liftSeparators, LinkCtx } from '../link.ts';
 import type { DerivationLog } from '../types.ts';
 import type { Rule, SymbolRef } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { createEmptyRuleCatalog } from '../rule-catalog.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
+import { DiagnosticSink } from '../../types/diagnostics.ts';
 
 function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
@@ -753,5 +754,61 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		expect(literal.type).toBe('CHOICE');
 		// No variant wrappers — branches travel as bare seqs through Link.
 		expect(literal.members.every((m: any) => m.type === 'SEQ')).toBe(true);
+	});
+});
+
+describe('liftSeparators emits a warning for a non-literal separator', () => {
+	function makeCtx(diagnostics: DiagnosticSink): LinkCtx {
+		return new LinkCtx({
+			grammar: makeRaw({}),
+			diagnostics,
+			supertypes: new Set(),
+			externalRoles: new Map(),
+			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
+			applyPromotedRules: true,
+			hiddenChoicesWithNamedAliasMembers: new Set()
+		});
+	}
+
+	it('records a compiler warning diagnostic when the detected separator is not a StringRule', () => {
+		const diagnostics = new DiagnosticSink();
+		const ctx = makeCtx(diagnostics);
+		const rule: Rule<'link'> = {
+			type: REPEAT,
+			content: {
+				type: SEQ,
+				members: [
+					{
+						type: CHOICE,
+						members: [
+							{ type: STRING, value: ',' },
+							{ type: STRING, value: ';' }
+						]
+					},
+					{ type: SYMBOL, name: 'item' }
+				]
+			}
+		};
+		liftSeparators(rule, ctx);
+		const warnings = diagnostics.all().filter((d) => d.severity === 'warning');
+		expect(warnings).toHaveLength(1);
+		expect(warnings[0]!.code).toBe('non-literal-separator');
+	});
+
+	it('does NOT warn for the ordinary plain-literal separator case', () => {
+		const diagnostics = new DiagnosticSink();
+		const ctx = makeCtx(diagnostics);
+		const rule: Rule<'link'> = {
+			type: REPEAT,
+			content: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: ',' },
+					{ type: SYMBOL, name: 'item' }
+				]
+			}
+		};
+		liftSeparators(rule, ctx);
+		expect(diagnostics.all().filter((d) => d.severity === 'warning')).toHaveLength(0);
 	});
 });
