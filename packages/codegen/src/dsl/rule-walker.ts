@@ -51,49 +51,49 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	 * Bottom-up rebuild. Applies `visit` to each child's mapped result, then
 	 * rebuilds this node ONLY if a child changed. Returns the SAME reference
 	 * when nothing changed — load-bearing for fixpoint loops that compare
-	 * `r === before` (enrich). Rebuilds via the SAME `childrenOf` edge
-	 * relation `fold`/`find` use — `members`/`content` AND separator-array/
-	 * object-form edges. (Widened 2026-07 as part of PR-S: separator can now
-	 * hold a real sub-`Rule` that needs the same transforms as any other
-	 * rule position; `fold`/`find` were already separator-aware via
-	 * `childrenOf`, `map` was the one exception — no longer.)
+	 * `r === before` (enrich). Each edge (`members`, `content`, separator-
+	 * array/object-form) tracks its own change independently, so an untouched
+	 * sibling edge keeps its exact input reference even when another edge on
+	 * the same node is rebuilt. Rebuilds via the SAME `childrenOf` edge
+	 * relation `fold`/`find` use.
 	 */
 	map(rule: R, visit: (r: R) => R): R {
 		const bag = rule as { members?: readonly R[]; content?: R; separator?: StampedSeparator };
-		let changed = false;
 		const patch: { members?: readonly R[]; content?: R; separator?: StampedSeparator } = {};
 
 		if (Array.isArray(bag.members)) {
+			let membersChanged = false;
 			const next = bag.members.map((m) => {
 				const out = visit(this.map(m, visit));
-				if (out !== m) changed = true;
+				if (out !== m) membersChanged = true;
 				return out;
 			});
-			patch.members = next;
+			if (membersChanged) patch.members = next;
 		} else if (bag.content && typeof bag.content === 'object') {
 			const out = visit(this.map(bag.content, visit));
-			if (out !== bag.content) changed = true;
-			patch.content = out;
+			if (out !== bag.content) patch.content = out;
 		}
 
 		const sep = bag.separator;
 		if (Array.isArray(sep)) {
+			let sepChanged = false;
 			const next = (sep as readonly R[]).map((m) => {
 				const out = visit(this.map(m, visit));
-				if (out !== m) changed = true;
+				if (out !== m) sepChanged = true;
 				return out;
 			});
-			patch.separator = next as StampedSeparator;
+			if (sepChanged) patch.separator = next as StampedSeparator;
 		} else if (typeof sep === 'object' && sep !== null && 'rules' in sep) {
+			let sepChanged = false;
 			const next = (sep.rules as readonly R[]).map((m) => {
 				const out = visit(this.map(m, visit));
-				if (out !== m) changed = true;
+				if (out !== m) sepChanged = true;
 				return out;
 			});
-			patch.separator = { ...sep, rules: next } as StampedSeparator;
+			if (sepChanged) patch.separator = { ...sep, rules: next } as StampedSeparator;
 		}
 
-		return changed ? ({ ...(rule as object), ...patch } as unknown as R) : rule;
+		return Object.keys(patch).length > 0 ? ({ ...(rule as object), ...patch } as unknown as R) : rule;
 	}
 
 	/** Pre-order accumulate: visits `rule` itself, then descends childrenOf. */

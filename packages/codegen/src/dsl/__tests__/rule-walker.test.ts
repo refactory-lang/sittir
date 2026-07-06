@@ -53,10 +53,14 @@ describe('RuleWalker.map', () => {
 });
 
 describe('map rebuilds through separator edges', () => {
+	// REPEAT's typed `separator` field is a lifted string (RepeatRule<'link'>); the
+	// array/object stamped-leaf forms only exist on the leaf shape at later phases
+	// (RuleBase<'normalize'>['separator']), so these fixtures don't correspond to any
+	// single real `Rule<T>` variant — hence the double cast through `unknown`.
 	it('rebuilds a separator-array edge when a child changes', () => {
 		const w = new RuleWalker();
 		const tree = {
-			type: 'REPEAT',
+			type: REPEAT,
 			content: sym('item'),
 			separator: [sym('old')]
 		} as unknown as AnyRule;
@@ -67,7 +71,7 @@ describe('map rebuilds through separator edges', () => {
 	it('rebuilds a separator {rules} edge when a child changes', () => {
 		const w = new RuleWalker();
 		const tree = {
-			type: 'REPEAT',
+			type: REPEAT,
 			content: sym('item'),
 			separator: { rules: [sym('old')], trailing: true }
 		} as unknown as AnyRule;
@@ -78,11 +82,39 @@ describe('map rebuilds through separator edges', () => {
 	it('returns the same reference when nothing changes, including inside separator edges', () => {
 		const w = new RuleWalker();
 		const tree = {
-			type: 'REPEAT',
+			type: REPEAT,
 			content: sym('item'),
 			separator: [sym('comma')]
 		} as unknown as AnyRule;
 		expect(w.map(tree, (r) => r)).toBe(tree);
+	});
+
+	it('preserves the members reference when only the separator edge changes (SEQ with both edges)', () => {
+		const w = new RuleWalker();
+		const members = [str('a'), str('b')];
+		const tree = { type: SEQ, members, separator: [sym('old')] } as unknown as AnyRule;
+		const out = w.map(tree, (r) => (r.type === SYMBOL && (r as { name: string }).name === 'old' ? sym('new') : r)) as unknown as { members: AnyRule[]; separator: AnyRule[] };
+		expect(out.members).toBe(members);
+		expect(out.separator[0]).toEqual(sym('new'));
+	});
+
+	it('preserves the separator reference when only content changes (REPEAT with both edges)', () => {
+		const w = new RuleWalker();
+		const separator = [sym('comma')];
+		const tree = { type: REPEAT, content: sym('old'), separator } as unknown as AnyRule;
+		const out = w.map(tree, (r) => (r.type === SYMBOL && (r as { name: string }).name === 'old' ? sym('new') : r)) as unknown as { content: AnyRule; separator: AnyRule[] };
+		expect(out.separator).toBe(separator);
+		expect((out.content as { name: string }).name).toBe('new');
+	});
+
+	it('preserves trailing/leading flags on an untouched separator {rules} edge', () => {
+		const w = new RuleWalker();
+		const separator = { rules: [sym('comma')], trailing: true, leading: false };
+		const tree = { type: SEQ, members: [str('old')], separator } as unknown as AnyRule;
+		const out = w.map(tree, (r) => (r.type === STRING && r.value === 'old' ? str('new') : r)) as unknown as { separator: { rules: AnyRule[]; trailing: boolean; leading: boolean } };
+		expect(out.separator).toBe(separator);
+		expect(out.separator.trailing).toBe(true);
+		expect(out.separator.leading).toBe(false);
 	});
 });
 
