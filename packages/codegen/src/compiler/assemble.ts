@@ -85,19 +85,69 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
  * wrapper-deletion — their meaning is stamped as leaf attributes
  * (`multiplicity`/`aliasedFrom`/`aliasNamed`/`fieldName`) — so the family now
  * checks those attributes BEFORE dispatching on `rule.type`. See each
- * function's doc comment for its specific translation. `topLevelAliasBodies`
- * stays as a distinct field: it isn't a body cache (its VALUES are fully
- * reproducible from `normalizedRules[name]` — verified empirically, every
- * alias-body kind across all 3 grammars satisfies `normalizedRules[name] ===
- * applyWrapperDeletion(topLevelAliasBodies.get(name))`), it's a *presence*
- * table (which hidden kinds are alias-mint targets at all) with no rule-level
- * attribute equivalent — a hidden kind's own rule body carries no trace of
- * being aliased-TO by some other rule elsewhere in the grammar.
+ * function's doc comment for its specific translation.
+ *
+ * PR-137 follow-on-4 (same day) re-examined that choice: follow-on-3's own
+ * justification ("wrapper shapes don't exist here") is EQUALLY true of
+ * `ctx.rules` (`SimplifiedRule` — also wrapper-free, `SimplifiedGrammar`'s own
+ * phase product, the map `assemble()`'s input container is actually named
+ * for) — so it never actually established why `normalizedRules` beat `rules`.
+ * Migrating the family to `ctx.rules` was tried and EMPIRICALLY REJECTED: it
+ * changes real output. Across all 3 grammars' hidden supertype/alias-mint
+ * chains, exactly one diverges — python's `_simple_pattern` supertype loses
+ * its `_simple_pattern_negative` subtype entry (the polymorph-variant-adopted
+ * `-1`/`-1.0` match-pattern arm, `overrides.ts`'s `_simple_pattern: { '11':
+ * 'negative' }`) and gains bogus `integer`/`float` entries instead — verified
+ * via `pnpm exec tsx packages/cli/src/cli.ts gen --grammar python …`: the
+ * regen diff shows `node-model.json5`'s `_simple_pattern.subtypes` changing,
+ * cascading into `types.ts`'s `SimplePattern` union (dropping
+ * `SimplePatternNegative`) and `transport.rs`'s dispatch table (deleting the
+ * kind_id-250 arm entirely) — a real runtime dispatch break for `-1` literal
+ * match patterns, not a cosmetic difference. rust (16 supertypes) and
+ * typescript (26 supertypes) showed zero divergence; python showed this one.
+ *
+ * Root cause: `_simple_pattern_negative`'s body is `SEQ[OPTIONAL('-'),
+ * CHOICE(integer, float)]`. On `normalizedRules` (wrapper-deletion only) this
+ * stays a top-level SEQ — a shape `resolveHiddenRuleContent`'s switch has NO
+ * case for, so it falls to `default: []` (opaque), and the caller's "opaque →
+ * keep the hidden name as-is" fallback correctly preserves
+ * `_simple_pattern_negative` as its own subtype entry. On `rules`,
+ * `simplifySeqRule`'s anonymous-literal stripping deletes the bare `-` (not
+ * slot-promoted) and the resulting single-member seq collapses to the inner
+ * `CHOICE(integer, float)` — a shape the switch DOES handle, so it wrongly
+ * expands to `integer`/`float` directly, discarding the variant-adopted
+ * kind's own name. This is the SAME bug class the `_delim_tokens` regression
+ * fixture below already guards (an opaque wrapper shape being unmasked into a
+ * dispatchable one), but triggered by simplify's SEQ-collapse rather than by
+ * wrapper-deletion's multiplicity stamping — and there is no leaf attribute
+ * (analogous to `multiplicity`/`fieldName`) that survives simplify's
+ * canonicalization to flag "this used to be an opaque multi-member SEQ",
+ * so an attribute check can't neutralize it the way the multiplicity/
+ * fieldName checks neutralize the wrapper-deletion case. The family's
+ * opacity-via-shape fallback depends on the input NOT having gone through
+ * simplify's independent structural canonicalization (anon-literal SEQ
+ * stripping, single-member collapse, branch-merging) — `normalizedRules`
+ * (wrapper-deletion only) is the correct, and only correct, source for that
+ * reason, not merely a leftover choice. Since `resolveHiddenRuleContent` is
+ * one shared primitive reachable from any hidden kind via mutual recursion
+ * across all five family functions, this can't be split per-function or
+ * per-kind — the whole family reads the same map uniformly.
+ *
+ * `topLevelAliasBodies` stays as a distinct field: it isn't a body cache (its
+ * VALUES are fully reproducible from `normalizedRules[name]` — verified
+ * empirically, every alias-body kind across all 3 grammars satisfies
+ * `normalizedRules[name] === applyWrapperDeletion(topLevelAliasBodies.get(name))`),
+ * it's a *presence* table (which hidden kinds are alias-mint targets at all)
+ * with no rule-level attribute equivalent — a hidden kind's own rule body
+ * carries no trace of being aliased-TO by some other rule elsewhere in the
+ * grammar.
  *
  * `rules` reads `grammar.rules` — same one-liner as every other phase ctx
  * (2026-07-05: `SimplifiedGrammar`'s phase product field was renamed from
  * `simplifiedRules` to `rules`, closing the one exception this class used to
- * need; see `Grammar<P>`'s doc comment in types.ts).
+ * need; see `Grammar<P>`'s doc comment in types.ts). `normalizedRules` stays
+ * exposed as its own getter below — the resolver family (and no one else on
+ * this ctx) reads it directly, per the correction above.
  *
  * `nodes` is the cross-node store the post-passes need for `markUserFacing` /
  * resolveColliding / resolveIrKeys / collectAnonymous — a live `Map` so the
@@ -132,11 +182,15 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 	}
 
 	/**
-	 * `grammar.normalizedRules` — the wrapper-deleted `RenderRule` view (2026-07-05
-	 * migration: the hidden-body/subtype-resolution family's map source of
-	 * choice — see `resolveHiddenRuleContent`'s doc comment). Modifier wrappers
-	 * (optional/field/repeat/repeat1/alias/token) are pushed down to leaf
-	 * attributes (`multiplicity`/`fieldName`/`separator`/`aliasedFrom`/
+	 * `grammar.normalizedRules` — the wrapper-deleted `RenderRule` view. The
+	 * hidden-body/subtype-resolution family's map source (see class doc
+	 * comment's PR-137 follow-on-4 correction for why `rules`/`SimplifiedRule`
+	 * is NOT safe here: simplify's independent structural canonicalization —
+	 * beyond wrapper-deletion — can unmask an intentionally opaque SEQ shape
+	 * into a dispatchable one, corrupting the family's "unresolvable → keep
+	 * the hidden name" fallback for polymorph-variant-adopted arms). Modifier
+	 * wrappers (optional/field/repeat/repeat1/alias/token) are pushed down to
+	 * leaf attributes (`multiplicity`/`fieldName`/`separator`/`aliasedFrom`/
 	 * `aliasNamed`); structural rules (seq/choice/variant/group/supertype) are
 	 * preserved and recursed into — the honest post-normalize equivalent of
 	 * `linkRules` for callers that read attributes instead of wrapper shape.
@@ -556,8 +610,8 @@ function collectOptionalBodyKinds(rules: Record<string, Rule<'link'>>): Readonly
  * @param rule - The rule as it appears in `normalized.linkRules` (pre-inlining;
  *   fed by the caller's main assemble loop — see `assemble()`'s own iteration
  *   over `normalized.linkRules`, out of scope for the `ctx.normalizedRules`
- *   migration below since this parameter is dictated by that caller, not by
- *   this function's own map reads).
+ *   read below since this parameter is dictated by that caller, not by this
+ *   function's own map reads).
  * @param ctx - The Assemble phase context, used for hidden-rule resolution.
  * @returns The ordered list of concrete kind names that are members of this
  *   supertype union after resolving any hidden-rule indirections.
@@ -675,14 +729,17 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  *   2026-07-05 (PR-137 follow-on-3): body lookups migrated from
  *   `ctx.linkRules` to `ctx.normalizedRules` (see `AssembleCtx.normalizedRules`
  *   / `resolveHiddenRuleContent`'s doc comments for the attribute-aware
- *   rationale). `ctx.topLevelAliasBodies` is UNCHANGED — its `.has(name)` test
- *   is a presence fact ("is this hidden kind an alias-mint target elsewhere in
- *   the grammar") with no rule-attribute equivalent (a hidden kind's own rule
- *   body carries no trace of being aliased-TO by another rule), so it can't be
- *   derived from `normalizedRules[name]`'s attributes the way the wrapper
- *   shapes could. Its VALUES, however, are now redundant with
- *   `normalizedRules[name]` (verified empirically: every alias-body kind
- *   across all 3 grammars satisfies `normalizedRules[name] ===
+ *   rationale). follow-on-4 (same day) re-examined `normalizedRules` vs
+ *   `ctx.rules` and confirmed empirically that `normalizedRules` must stay —
+ *   see `AssembleCtx`'s class doc comment for the `_simple_pattern_negative`
+ *   finding that settled it. `ctx.topLevelAliasBodies` is UNCHANGED — its
+ *   `.has(name)` test is a presence fact ("is this hidden kind an alias-mint
+ *   target elsewhere in the grammar") with no rule-attribute equivalent (a
+ *   hidden kind's own rule body carries no trace of being aliased-TO by
+ *   another rule), so it can't be derived from `normalizedRules[name]`'s
+ *   attributes the way the wrapper shapes could. Its VALUES, however, are now
+ *   redundant with `normalizedRules[name]` (verified empirically: every
+ *   alias-body kind across all 3 grammars satisfies `normalizedRules[name] ===
  *   applyWrapperDeletion(topLevelAliasBodies.get(name))`, since
  *   `normalizeGrammar` already threads alias-target bodies through the same
  *   wrapper-deletion pipeline and merges them into `normalizedRules` under the
@@ -784,7 +841,7 @@ function isCompatibleSubtypeMember(name: string, ctx: AssembleCtx, subtypeSet: R
 /**
  * Attribute-aware hidden-body walker (2026-07-05, PR-137 follow-on-3 —
  * migrated OFF `ctx.linkRules` onto `ctx.normalizedRules`; see
- * `AssembleCtx.normalizedRules`'s doc comment). `rule` is now a `RenderRule`
+ * `AssembleCtx.normalizedRules`'s doc comment). `rule` is a `RenderRule`
  * (wrapper-free): `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers don't
  * exist as `rule.type` values on this view — their meaning is stamped onto
  * whatever leaf they used to wrap, as `multiplicity`/`fieldName`/`aliasedFrom`/
@@ -804,7 +861,16 @@ function isCompatibleSubtypeMember(name: string, ctx: AssembleCtx, subtypeSet: R
  *     — structurally indistinguishable from an unwrapped CHOICE without this
  *     check, so the old switch's CHOICE case would wrongly recurse into the
  *     punctuation arms and surface `%` as a bogus subtype name (crashing
- *     `emitSupertypeUnionDeclarations`).
+ *     `emitSupertypeUnionDeclarations`). PR-137 follow-on-4 confirmed this
+ *     particular shape actually survives `computeSimplifiedRules` unchanged
+ *     too (`simplifyChoiceRule` bails to a no-op `liftSharedArmAttrs` for two
+ *     bare STRING branches; `simplifySeqRule`'s anonymous-literal stripping
+ *     only fires on SEQ members, never CHOICE members) — but a SIBLING shape
+ *     (a SEQ, not a CHOICE, wrapping one anonymous literal + one nonterminal)
+ *     does NOT survive unchanged, which is why the family stays on
+ *     `normalizedRules` rather than migrating to `ctx.rules` — see the `case
+ *     SEQ` branch below and `AssembleCtx`'s class doc comment for that
+ *     finding (python's `_simple_pattern_negative`).
  *   - `multiplicity === 'optional'` — was `optional`. The link-view switch had
  *     no OPTIONAL case either (same opacity), so this mirrors it exactly.
  *   - `fieldName !== undefined` — was `field`. Kept for parity though no
@@ -898,6 +964,28 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
 		case VARIANT:
 		case GROUP:
 			return resolveHiddenRuleContent(rule.content, seen, ctx);
+		case SEQ:
+			// DECLARED opaque (not a `default:` fallthrough) — a bare multi-member
+			// SEQ is a real structural body, not a wrapper collapse, most commonly
+			// a polymorph-variant-adopted arm materialized as its own hidden kind
+			// (e.g. python's `_simple_pattern_negative`, `SEQ[OPTIONAL('-'),
+			// CHOICE(integer, float)]` — `overrides.ts`'s `_simple_pattern: { '11':
+			// 'negative' }`). Recursing into a SEQ's members here would be WRONG:
+			// the caller's "opaque → keep the hidden name as-is" fallback
+			// (`resolveHiddenSubtypes`'s `resolved.length === 0` branch) is what
+			// correctly preserves such a kind's OWN name as its subtype/alias-
+			// member entry, instead of flattening it into its inner leaf types.
+			// This was the exact PR-137 follow-on-4 finding: on `ctx.rules`
+			// (SimplifiedRule), `simplifySeqRule`'s anonymous-literal stripping +
+			// single-member-seq collapse turns this same SEQ into a bare
+			// `CHOICE(integer, float)` — a shape the CHOICE case above DOES
+			// handle — silently discarding `_simple_pattern_negative` and
+			// resolving to `integer`/`float` instead (see `AssembleCtx`'s class
+			// doc comment). Declaring this case explicitly (rather than relying
+			// on `default:`) means a future switch-arm addition can't
+			// accidentally start recursing into SEQ members without a reviewer
+			// noticing the case is gone.
+			return [];
 		default:
 			return [];
 	}

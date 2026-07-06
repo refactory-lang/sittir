@@ -443,6 +443,63 @@ describe('Assemble — classifyNode', () => {
 		// than as a source of bogus subtype names.
 		expect(subtypes).toEqual(['identifier']);
 	});
+
+	// PR-137 follow-on-4 regression fixture (2026-07-05): reproduces python's
+	// `_simple_pattern` supertype chain, whose subtype resolution reaches
+	// `_simple_pattern_negative` (the polymorph-variant-adopted `-1`/`-1.0`
+	// match-pattern arm — `overrides.ts`'s `_simple_pattern: { '11':
+	// 'negative' }`), a SEQ containing one anonymous optional literal ('-')
+	// plus one nonterminal (a CHOICE of `integer`/`float`). On the
+	// `normalizedRules` view (wrapper-deletion only) this stays a top-level
+	// SEQ — a shape `resolveHiddenRuleContent`'s switch has NO case for, so
+	// it falls to `default: return []` (opaque), and the "opaque → keep the
+	// hidden name as-is" fallback correctly preserves `_simple_pattern_negative`
+	// as its own subtype entry. A migration to `ctx.rules` (SimplifiedRule)
+	// was tried and rejected because `simplifySeqRule`'s anonymous-literal
+	// stripping deletes the bare '-' and the resulting single-member seq
+	// collapses to the inner `CHOICE(integer, float)` — a shape the CHOICE
+	// case DOES handle — wrongly expanding to `integer`/`float` directly and
+	// discarding `_simple_pattern_negative`'s own name. This is the SEQ-shape
+	// sibling of the REPEAT1(CHOICE(...)) fixture above: same bug class
+	// (opaque wrapper shape unmasked into a dispatchable one), different
+	// trigger (simplify's SEQ-collapse rather than wrapper-deletion's
+	// multiplicity stamping) — see `resolveHiddenRuleContent`'s explicit
+	// `case SEQ` and `AssembleCtx`'s class doc comment for the full
+	// root-cause writeup.
+	it('keeps a SEQ(OPTIONAL(literal), CHOICE(...)) polymorph-variant arm opaque in supertype subtype resolution', () => {
+		const normalized = makeNormalized({
+			_simple_pattern: {
+				type: SUPERTYPE,
+				name: '_simple_pattern',
+				subtypes: ['identifier', '_simple_pattern_negative']
+			},
+			_simple_pattern_negative: {
+				type: SEQ,
+				members: [
+					{ type: OPTIONAL, content: { type: STRING, value: '-' } },
+					{
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'integer' },
+							{ type: SYMBOL, name: 'float' }
+						]
+					}
+				]
+			},
+			identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
+			integer: { type: PATTERN, value: '[0-9]+' },
+			float: { type: PATTERN, value: '[0-9]+\\.[0-9]+' }
+		});
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_simple_pattern');
+		expect(node?.modelType).toBe('supertype');
+		const subtypes = (node as any).subtypes as string[];
+		expect(subtypes).not.toContain('integer');
+		expect(subtypes).not.toContain('float');
+		// The SEQ arm resolves to nothing (opaque), so the "keep the hidden
+		// name as-is" fallback preserves `_simple_pattern_negative` itself as
+		// the subtype entry — never its inner integer/float leaf types.
+		expect(subtypes).toEqual(['identifier', '_simple_pattern_negative']);
+	});
 });
 
 describe('Assemble — T027a empty seq after stripping', () => {

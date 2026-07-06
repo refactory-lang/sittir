@@ -628,10 +628,20 @@ export interface NodeMap {
 	 * `_delim_tokens` supertype chain resolving `%` as a bogus subtype and
 	 * crashing `emitSupertypeUnionDeclarations`). `AssembleCtx.linkRules` (the
 	 * getter this family used to read) is DELETED — zero assemble consumers
-	 * remain. `topLevelAliasBodies` stays a distinct field (its presence test
-	 * — "is this hidden kind an alias-mint target" — has no rule-attribute
-	 * equivalent; its VALUES are redundant with `normalizedRules[name]` and no
-	 * longer read directly).
+	 * remain. The PR-137 follow-on-4 investigation (same day) tried migrating
+	 * this family from `AssembleCtx.normalizedRules` to `AssembleCtx.rules`
+	 * (`SimplifiedGrammar`'s own phase product — the map `assemble()`'s input
+	 * container is actually named for, so `normalizedRules` wasn't obviously
+	 * justified over it) and found it EMPIRICALLY UNSAFE: python's
+	 * `_simple_pattern` supertype loses its `_simple_pattern_negative` subtype
+	 * entry under `rules` (simplify's SEQ-collapse unmasks an intentionally
+	 * opaque SEQ shape into a dispatchable CHOICE, discarding the variant-
+	 * adopted kind's own name) — see `AssembleCtx`'s class doc comment for the
+	 * full root-cause. The family stays on `normalizedRules`; the getter is
+	 * NOT deleted. `topLevelAliasBodies` stays a distinct field (its presence
+	 * test — "is this hidden kind an alias-mint target" — has no rule-
+	 * attribute equivalent; its VALUES are redundant with `normalizedRules[name]`
+	 * and no longer read directly).
 	 *
 	 * The word-matcher consumer came OFF this list in the PR-137 follow-on: it
 	 * no longer compiles from `linkRules` (or any post-link view) at all —
