@@ -838,13 +838,13 @@ function reconstructRepeatWithMetadata(rule: RuntimeRule, newContent: RuntimeRul
  * same way as the base grammar.
  */
 const PREC_VARIANT_MAP = {
-	prec_left: 'left',
-	prec_right: 'right',
-	prec_dynamic: 'dynamic'
+	PREC_LEFT: 'left',
+	PREC_RIGHT: 'right',
+	PREC_DYNAMIC: 'dynamic'
 } as const;
 
 export function reconstructPrec(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
-	const t = rule.type.toLowerCase();
+	const t = rule.type;
 	const value = (rule as { value?: number }).value ?? 0;
 	const prec = nativeRequired('prec');
 	const variant = PREC_VARIANT_MAP[t as keyof typeof PREC_VARIANT_MAP];

@@ -415,9 +415,7 @@ function nativeRuleFn<F>(...names: string[]): F {
  *  than author-written. */
 function makeField(name: string, content: unknown): Rule {
 	const field = nativeRuleFn<(n: string, c: unknown) => Rule>('field');
-	const node = field(name, content);
-	(node as { metadata?: unknown }).metadata = makeRuleMetadata({ fieldSource: 'enriched' });
-	return node;
+	return { ...field(name, content), metadata: makeRuleMetadata({ fieldSource: 'enriched' }) };
 }
 
 function makeSymbol(name: string): Rule {
@@ -1665,7 +1663,5 @@ function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	// (a bare-string value would yield named:false). `metadata.author: 'enrich'`
 	// is REQUIRED for transform-path's path-descent (see doc comment above) —
 	// the runtime alias() doesn't add it, so stamp it on the cased result.
-	const node = aliasFn(symbolRef, symbol(name));
-	(node as { metadata?: unknown }).metadata = makeRuleMetadata({ author: 'enrich' });
-	return node;
+	return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: 'enrich' }) };
 }

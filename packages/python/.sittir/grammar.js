@@ -404,12 +404,12 @@ function reconstructRepeatWithMetadata(rule, newContent) {
   return baseNode;
 }
 var PREC_VARIANT_MAP = {
-  prec_left: "left",
-  prec_right: "right",
-  prec_dynamic: "dynamic"
+  PREC_LEFT: "left",
+  PREC_RIGHT: "right",
+  PREC_DYNAMIC: "dynamic"
 };
 function reconstructPrec(rule, newContent) {
-  const t = rule.type.toLowerCase();
+  const t = rule.type;
   const value = rule.value ?? 0;
   const prec = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
@@ -853,9 +853,7 @@ function nativeRuleFn(...names) {
 }
 function makeField(name, content) {
   const field2 = nativeRuleFn("field");
-  const node = field2(name, content);
-  node.metadata = makeRuleMetadata({ fieldSource: "enriched" });
-  return node;
+  return { ...field2(name, content), metadata: makeRuleMetadata({ fieldSource: "enriched" }) };
 }
 function makeSymbol(name) {
   const symFn = nativeRuleFn("sym");
@@ -1528,9 +1526,7 @@ function makeGroupLiftSymbol(_referenceRule, name) {
 function makeVisibleGroupAlias(symbolRef, name) {
   const aliasFn = nativeRuleFn("alias");
   const symbol = nativeRuleFn("symbol", "sym");
-  const node = aliasFn(symbolRef, symbol(name));
-  node.metadata = makeRuleMetadata({ author: "enrich" });
-  return node;
+  return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: "enrich" }) };
 }
 
 // packages/codegen/src/dsl/wire/wire.ts
@@ -2329,8 +2325,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(node) {
     }
     return null;
   }
-  const isPrecWrapper2 = t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC";
-  if (isPrecWrapper2) {
+  if (isPrecWrapper(r)) {
     const inner = r.content;
     if (!inner || typeof inner !== "object") return null;
     if (isEnrichShapedFieldWrapper(inner)) {

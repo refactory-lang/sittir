@@ -803,8 +803,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 	// PREC_DYNAMIC are tree-sitter-native-only shapes (sittir's `prec()`
 	// strips the wrapper at evaluate — see `evaluate.ts::prec`), so only the
 	// uppercase spellings ever appear here.
-	const isPrecWrapper2 = t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC';
-	if (isPrecWrapper2) {
+	if (isPrecWrapper(r as { type: string })) {
 		const inner = r.content as unknown;
 		if (!inner || typeof inner !== 'object') return null;
 		if (isEnrichShapedFieldWrapper(inner)) {

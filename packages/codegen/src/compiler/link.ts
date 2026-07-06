@@ -725,7 +725,7 @@ function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule
  *
  * @param rawRules - The EVALUATED (pre-resolveRule) rules map, alias nodes present.
  */
-function collectAliasedByParents(rawRules: Record<string, Rule<'link'>>): {
+function collectAliasedByParents(rawRules: Record<string, Rule<'evaluate'>>): {
 	parentAliasedKinds: ReadonlySet<string>;
 	visibleAliasTargets: ReadonlyMap<string, readonly string[]>;
 } {

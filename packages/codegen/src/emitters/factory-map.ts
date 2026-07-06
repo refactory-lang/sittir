@@ -64,11 +64,10 @@ export interface FactoryMapData {
 
 export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const aliasSet = collectAliasSourceKinds(nodeMap);
-	const overrideHelperKinds = collectOverridePolymorphHelperKinds(nodeMap);
 
 	const factoryShapes: Record<string, FactoryShape> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind) && !overrideHelperKinds.has(kind)) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
@@ -85,14 +84,14 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const factoryFields: Record<string, readonly string[]> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind) && !overrideHelperKinds.has(kind)) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		const fieldNames = resolveFactoryFieldNames(node, nodeMap);
 		if (fieldNames) factoryFields[kind] = fieldNames;
 	}
 
 	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind) && !overrideHelperKinds.has(kind)) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
 		for (const field of structuralFieldsOf(node)) {
@@ -132,11 +131,6 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	}
 
 	return { factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
-}
-
-function collectOverridePolymorphHelperKinds(_nodeMap: NodeMap): Set<string> {
-	// No grammar rule produces modelType 'polymorph' at runtime (excised in #59 A1).
-	return new Set<string>();
 }
 
 function collectHelperChildKinds(kind: string, nodeMap: NodeMap): string[] {
