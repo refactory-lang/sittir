@@ -82,6 +82,10 @@ modifier attributes pushed down from wrappers. Vocabulary deliberately mirrors
 ```ts
 interface RuleBase {
   readonly id?: RuleId;
+  readonly inline?: boolean;               // per-ref inline decision: hidden && !aliased
+  readonly metadata?: RuleMetadata;        // opaque provenance brand — see below
+  readonly splicedBody?: boolean;          // declared: this seq occupies a group-splice site
+  readonly variantArms?: readonly string[]; // declared: pre-flatten CHOICE arms a SupertypeRule erased
   readonly fieldName?: string;
   readonly multiplicity?: Multiplicity;   // 'optional' | 'single' | 'array' | 'nonEmptyArray'
   readonly nonterminal?: boolean;          // explicit slottiness; promotes terminals to slots
@@ -101,6 +105,62 @@ interface RuleBase {
 - **Wrapper rule types** (`OptionalRule` / `FieldRule` / `RepeatRule` /
   `Repeat1Rule`) and `ClauseRule` still exist. They are `applyWrapperDeletion`'s
   *input*; PR3 deletes them once nothing consumes the wrapped shape.
+- **`inline`** — per-ref decision, `inline = hidden && !aliased`. Default
+  `hidden` (`name.startsWith('_')`) stamped at construction (`evaluate.ts`
+  `symbol`/`createProxy`); flipped `false` by the `alias` wrapper during
+  push-down (`wrapper-deletion.ts` ALIAS case) — an alias confers a real
+  visible CST kind that must materialize, not flatten. Read directly off the
+  rule (`isHiddenKind` fallback for link-synthesized symbols).
+- **`splicedBody`** — declared once by `compiler/normalize.ts`'s
+  `materializeInlinedBody` at the moment it splices a hidden group's body
+  into a parent at a former `symbol(_x)` ref position. Not provenance: it
+  names a present-tense structural fact ("this seq occupies a splice site"),
+  read directly with no re-derivation. Consumed by `emitters/templates.ts`'s
+  boundary walkers (`rightmostBoundary`/`leftmostBoundary`) so a spliced seq
+  keeps the spacing of the opaque unit it replaced (`for await (`, not
+  `for await(`).
+- **`variantArms`** — declared once by `link.ts`'s `classifyHiddenChoiceRule`
+  at the exact moment it flattens a hidden CHOICE into a `SupertypeRule`'s
+  `subtypes: string[]` — an operation that otherwise erases which pre-flatten
+  arms were variant-adoption children. Holds those arms' target kind names,
+  in member order. Only ever set on a `SupertypeRule`; every other variant
+  leaves it `undefined`. Consumed by `assemble.ts`'s `variantChildKindsSet`
+  construction as the one narrow supplement to `deriveStructuralVariantChildren`'s
+  structural derivation (`compiler/variant-structural.ts`, Phase 4: Assemble
+  below). Same pattern as `splicedBody`: a declared, once-stamped fact replacing what
+  would otherwise be a destroyed-then-reconstructed read.
+
+### Metadata provenance (`RuleMetadata` opaque brand)
+
+`RuleBase.metadata` is an OPAQUE brand (`types/rule-metadata-brand.ts`) over
+the real shape in `dsl/rule-metadata.ts` (`RuleMetadataShape` — `author`,
+`classifiedBy`, `fieldSource`, `symbolSource`; absorbs what used to be
+scattered `source?`/`inlinedFrom?` fields on several rule types). Two-seam
+access, mirroring `compiler/opaque-facts.ts`'s slot-level pattern:
+
+- **`makeRuleMetadata`** (write) — unrestricted. Any phase may record a
+  provenance fact; recording is not the same as branching on it.
+- **`readRuleMetadata`** / **`RuleMetadataShape`** (read) — restricted to
+  `dsl/enrich.ts`, `dsl/wire/*` (incl. `dsl/transform/transform-path.ts`'s
+  `author === 'enrich'` descent keying), and diagnostics-emission code
+  (`packages/tools/src/validate/*`, `emitters/node-model.ts` serialization).
+  Enforced by `dsl/__tests__/rule-metadata-layering.test.ts`, which walks
+  every `.ts` file and asserts any import of the restricted read names is
+  sanctioned-or-allowlisted (currently: allowlist EMPTY — any new entry needs
+  individual justification).
+
+Everything else — compiler phases and emitters driving codegen DECISIONS
+(as opposed to serializing a diagnostic dump) — must treat `RuleMetadata` as
+opaque: construct-and-forget or blind-carry only
+(`feedback_metadata_not_behavior`). The governing rule: the compiler must
+neither read a provenance tag NOR reconstruct authorship structurally.
+Stamp-then-reread (a phase stamps a tag, a LATER phase re-reads the same
+rule to decide behavior) must become return-value dataflow instead — see
+`link.ts`'s `classifyHiddenRule`/`classifyHiddenChoiceRule` for the converted
+example. `splicedBody` and `variantArms` above are the declared-fact pattern
+this doctrine prefers over metadata reads: a structural attribute stamped
+once by the pass that creates the fact, read directly, never round-tripped
+through the opaque bag.
 
 ### `RenderRule` / `SimplifiedRule` (branded types)
 
@@ -270,6 +330,22 @@ preserved (no restructuring).
 **Action:** Resolves all rules, classifies hidden rules, promotes terminals, infers field names, detects polymorphs, applies override polymorphs + `applyGroupOverrides` (user `groups:`), hoists indent into repeats, annotates block-bearer fields, collects repeated shapes. Auto-synthesized hidden groups from `applyAutoGroups` are already in the rules map and classify through the normal hidden-rule path.
 **Output:** `LinkedGrammar` (resolved rules, derivation log, alias map, top-level alias bodies, word, pattern-replacement kinds).
 
+> **Word-matcher pin-at-link invariant.** `LinkedGrammar.wordMatcher` (a
+> `RegExp | undefined`) is compiled ONCE by `compileWordMatcher(raw.word,
+> raw.rules)` from the EVALUATE-view rule tree, where the `word` rule's
+> authored wrappers (notably a trailing `REPEAT`) are still intact. Every
+> later phase (`NormalizedGrammar` → `SimplifiedGrammar` → `NodeMap`) CARRIES
+> this value forward rather than recompiling from its own `rules`/`linkRules`
+> view — compiling post-normalize is unsound in general, because
+> wrapper-deletion collapses `REPEAT`/`OPTIONAL` into leaf `multiplicity`
+> attributes that `ruleToRegexSource`'s walker doesn't consult, silently
+> undercounting the regex (confirmed regression: typescript's `identifier`
+> word rule lost its trailing `REPEAT` under a post-link recompile). Consumers
+> read the carried value (`ctx.wordMatcher` in Link's `resolveRule`;
+> `matchesWordShape(s, normalized.wordMatcher)` in `AssembleCtx.from`) — never
+> recompile it themselves. See `docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md`
+> (PR-137 follow-on) for the falsifying probe.
+
 ### `resolveRule(rule, currentName, allRules, supertypes, externalRoles)`
 **Pattern:** Every rule, recursively.
 **Action:** Resolves aliases (named → symbol with `aliasedFrom`; unnamed non-word → string literal), flattens token wrappers, inlines role symbols, detects clauses (`detectClause`).
@@ -315,6 +391,23 @@ content), then produces the RenderRule + SimplifiedRule snapshots.
 3. `computeSimplifiedRules(normalizedRules, word, inlineKinds)` — produces the **SimplifiedRule** snapshot.
 4. Threads top-level **alias bodies** and **polymorph-form** contents through the same `applyNormalizationPasses` → `applyWrapperDeletion` → `computeSimplifiedRules` pipeline and merges them into `normalizedRules` / `rules` (so `assemble.ts` reads snapshots, never re-simplifies per call).
 **Output:** `SimplifiedGrammar` with `linkRules` (RawRule — renamed from `rules` in the phase-visibility-tightening pass; the pre-simplify, post-normalization-passes/pre-wrapper-deletion view), `normalizedRules` (RenderRule), `rules` (SimplifiedRule — the phase product; renamed from `simplifiedRules` 2026-07-05/PR-137 so every `Grammar<P>` names its phase product `rules` uniformly).
+
+> **`normalizedRules` vs `rules` — the opacity invariant.** Three snapshots
+> coexist on `SimplifiedGrammar` (and, carried, on `NodeMap`) because each is
+> a genuinely different SHAPE, not a naming convenience: `linkRules` still has
+> wrapper nodes (`optional`/`field`/`repeat`/`alias`), `normalizedRules` is
+> wrapper-free (attributes pushed to leaves) but pre-fixpoint, `rules` is the
+> post-fixpoint SimplifiedRule phase product. **Default to `rules`** — it's
+> what every phase-product consumer (slot derivation, factories/wrap/from)
+> reads. Reach for `linkRules` or `normalizedRules` ONLY when a consumer
+> genuinely needs a wrapper-node shape or a pre-fixpoint view that `rules`
+> has already collapsed away — each such exception is enumerated on
+> `NodeMap.linkRules`'s doc comment (`compiler/types.ts`), e.g.
+> `templates.ts`'s hidden-helper inlining reads `normalizedRules` because it
+> doesn't need wrapper shapes but does need the pre-simplify structure. A new
+> consumer reaching past `rules` without landing in that enumerated list is a
+> signal the phase-visibility boundary is being punched through, not a
+> routine implementation choice.
 
 ### Normalization passes
 - `fanOutSeqChoices(rule)` — `seq(a, choice(b,c), d)` → `choice(seq(a,b,d), seq(a,c,d))` (single inner choice; preserves variant labels).
@@ -445,6 +538,11 @@ First time nodes appear. All metadata derived from the rule snapshots.
 **Pattern:** Called with a `SimplifiedGrammar`.
 **Action:** Classifies each rule into a model type, constructs `AssembledNode` instances (attaching `.rule` / `.renderRule` / `.simplifiedRule`), collects anonymous tokens/keywords, resolves colliding names, assigns ir keys, marks parameterless/user-facing kinds. Slot-ref hydration is deferred to `hydrateSlotRefs`.
 **Output:** `NodeMap` with `nodes`, `signatures`, `derivations`, `linkRules` (renamed from `rules` in the phase-visibility-tightening pass — same pre-simplify `Rule<'link'>` view as `SimplifiedGrammar.linkRules`; PR-137 narrowed its consumers to justified wrapper-shape-dependent exceptions, enumerated on `NodeMap.linkRules`'s doc comment in `compiler/types.ts`), `normalizedRules` (PR-137: the wrapper-deleted `RenderRule` view, for consumers that don't need wrapper shapes — e.g. `templates.ts`'s hidden-helper inlining), `externals`.
+
+### `deriveStructuralVariantChildren(rules)` (`compiler/variant-structural.ts`)
+**Pattern:** Any CHOICE node found anywhere in a kind `K`'s post-link rule body (recursive descent, e.g. rust's `function_type`/`range_pattern` nested-choice case).
+**Action:** A CHOICE qualifies as a variant-adoption site when at least one member is a "named-kind arm" (a bare ALIAS/SYMBOL ref, through a VARIANT wrapper if present, or a SEQ whose first member is such a ref) whose target is BOTH **prefix-named** against `K` (`${K-without-leading-_}_<suffix>`, target's own leading `_` stripped first) AND **alias-minted** (`isAliasMintedRef` — a bare ALIAS, or a SYMBOL whose target has no independent rule body elsewhere in the grammar; the PR-0c mint-site condition, reapplied here to exclude coincidental prefix-name collisions with ordinary sibling rules). Only qualifying arms contribute a child; this deliberately does NOT implement the "any choice of named kinds" widening — zero qualifying arms means zero variant children, full stop.
+**Output:** `{parent -> childFullName[]}`, replacing the deleted `WireContext.polymorphVariants` channel (decision-7 V2) — this module derives the SAME shape structurally, straight from the tree. The one case needing a supplement — a SUPERTYPE-classified parent whose CHOICE-flatten destroys the alias-mint linkage before this module sees it (python's `_simple_pattern`) — is covered by `RuleBase.variantArms`, a declared fact `classifyHiddenChoiceRule` stamps at flatten time using this module's own `isAliasMintedRef`. `tool variant-derivation-probe` is a cross-commit drift detector comparing this derivation's live output against the committed `node-model.json5`, not a structural-vs-wire equality check (the wire side no longer exists).
 
 ### `classifyNode(kind, rule, opts?)`
 **Pattern:** Each rule.
