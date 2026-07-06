@@ -259,15 +259,18 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	//
 	// Deliberately scoped to `severity === 'warning'` AND `scope ===
 	// 'compiler'` — NOT "every non-`fail` diagnostic". Empirically (all 3
-	// real grammars), the sink already carries plenty of pre-existing
-	// `info`-severity entries (slot-grouping's `content-collision`,
-	// `unnamed-choice-slot`) that have their OWN dedicated surfacing paths
-	// (run-codegen.ts's slot-grouping formatter + its `unnamed-choice-slot`
-	// console.warn drain). Reprinting those here via a blanket
-	// `!== 'fail'` filter would duplicate that output on every real-grammar
-	// run — not silent, contrary to this diagnostic's design. `warning` +
-	// `scope: 'compiler'` is the exact vocabulary this task introduces;
-	// nothing else emits at that severity/scope pair today.
+	// real grammars), the sink already carries a pre-existing `info`-severity
+	// `unnamed-choice-slot` entry, forwarded into this SAME shared sink and
+	// already drained by its own `console.warn` path (`addUnnamedChoiceListener`
+	// below). Reprinting it here via a blanket `!== 'fail'` filter would
+	// duplicate that output on every real-grammar run — not silent, contrary
+	// to this diagnostic's design. (`content-collision` is a separate case:
+	// `warning`-severity, but it never reaches this sink at all — it lives in
+	// `simplify.ts`'s own `_slotGroupingDiagnostics` accumulator, drained
+	// independently into `GeneratedFiles.slotGroupingDiagnostics` below, so it
+	// isn't part of this filter's job to begin with.) `warning` + `scope:
+	// 'compiler'` is the exact vocabulary this task introduces; nothing else
+	// emits at that severity/scope pair today.
 	const compilerWarnings = diagnostics
 		.all()
 		.filter(
