@@ -76,7 +76,7 @@ describe('Full pipeline — evaluate → link → normalize → assemble', () =>
 		const raw = await evaluate(pythonGrammar);
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 
 		expect(nodeMap.name).toBe('python');
 		expect(nodeMap.nodes.size).toBeGreaterThan(50);
@@ -94,7 +94,7 @@ describe('Full pipeline — evaluate → link → normalize → assemble', () =>
 		const raw = await evaluate(rustGrammar);
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 
 		expect(nodeMap.name).toBe('rust');
 		expect(nodeMap.nodes.size).toBeGreaterThan(100);

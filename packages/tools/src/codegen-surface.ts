@@ -131,7 +131,7 @@ export type NodeMap = import('../../codegen/src/compiler/types.ts').NodeMap;
 export type AssembledNode = import('../../codegen/src/compiler/model/node-map.ts').AssembledNode;
 export type RawGrammar = Awaited<ReturnType<CodegenSurface['evaluate']['evaluate']>>;
 export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
-export type NormalizedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;
+export type SimplifiedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;
 export type AssembledNodeMap = ReturnType<CodegenSurface['assemble']['assemble']>;
 export type GrammarDiagnostic = import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts').GrammarDiagnostic;
 export type PolymorphVariantDescriptor = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantDescriptor;
@@ -154,8 +154,8 @@ export async function resolveEntryPath(grammar: string): Promise<string> {
 	return existsSync(overrides) ? overrides : grammarJs;
 }
 
-/** Run evaluate → link → normalize for one grammar, returning its NormalizedGrammar. */
-export async function buildNormalizedGrammar(grammar: string): Promise<NormalizedGrammar> {
+/** Run evaluate → link → normalize for one grammar, returning its SimplifiedGrammar. */
+export async function buildSimplifiedGrammar(grammar: string): Promise<SimplifiedGrammar> {
 	const entryPath = await resolveEntryPath(grammar);
 	const raw = await invoke('evaluate', 'evaluate', entryPath);
 	const linked = await invoke('link', 'link', raw);
@@ -164,6 +164,11 @@ export async function buildNormalizedGrammar(grammar: string): Promise<Normalize
 
 /** Run evaluate → link → normalize → assemble for one grammar, returning its NodeMap. */
 export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
-	const normalized = await buildNormalizedGrammar(grammar);
-	return invoke('assemble', 'assemble', normalized);
+	const normalized = await buildSimplifiedGrammar(grammar);
+	// `assemble()` takes the caller-owned AssembleCtx (§2: the grammar container
+	// folds into the ctx) — `load` (not `invoke`) because we need BOTH `assemble`
+	// and `AssembleCtx` from the module, matching the pattern in
+	// tools/src/probe/variant-derivation.ts.
+	const { assemble, AssembleCtx } = await load('assemble');
+	return assemble(AssembleCtx.from(normalized));
 }

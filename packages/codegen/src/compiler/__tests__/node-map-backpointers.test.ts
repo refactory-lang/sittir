@@ -46,7 +46,7 @@ describe('NodeMap back-pointer maps', () => {
 		};
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 		// Return the post-normalize rules — that's what assemble walks, so
 		// the ids on these rules are what nodeByRuleId / slotByRuleId key
 		// off. The raw input rules may have stale ids after link/normalize
@@ -72,7 +72,7 @@ describe('NodeMap back-pointer maps', () => {
 		};
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		return { ...normalized, nodeMap: assemble(normalized, AssembleCtx.from(normalized)) };
+		return { ...normalized, nodeMap: assemble(AssembleCtx.from(normalized)) };
 	}
 
 	it('nodeMap.nodeByRuleId is populated with kind roots when ids survive the pipeline', () => {
@@ -114,7 +114,7 @@ describe('NodeMap back-pointer maps', () => {
 	});
 
 	it('slot.sourceRuleIds accumulates merged simplified-rule contributors and maps each id back to the slot', () => {
-		const { simplifiedRules, nodeMap } = buildNodeMap({
+		const { rules: simplifiedRules, nodeMap } = buildNodeMap({
 			test: seq(
 				field('parameter', { type: 'SYMBOL', name: 'identifier' }),
 				field('parameter', { type: 'SYMBOL', name: 'number' })
@@ -137,7 +137,7 @@ describe('NodeMap back-pointer maps', () => {
 	});
 
 	it('slot.sourceRuleIds includes both simplified and render-view ids when the views diverge', () => {
-		const { simplifiedRules, renderRules, nodeMap } = buildNodeMap({
+		const { rules: simplifiedRules, normalizedRules, nodeMap } = buildNodeMap({
 			test: seq(
 				field('lhs', { type: 'SYMBOL', name: 'identifier' }),
 				choice(
@@ -153,7 +153,7 @@ describe('NodeMap back-pointer maps', () => {
 		expect(slot).toBeDefined();
 
 		const simplifiedChoiceId = (simplifiedRules.test as { members: readonly { id?: string }[] }).members[1]?.id;
-		const renderChoice = ((renderRules.test as RenderRule & { members: readonly Rule[] }).members[1] as ChoiceRule);
+		const renderChoice = ((normalizedRules.test as RenderRule & { members: readonly Rule[] }).members[1] as ChoiceRule);
 		const renderIds = renderChoice.members
 			.map((member) => (member as { members?: readonly { id?: string }[] }).members?.[1]?.id)
 			.filter((id): id is string => Boolean(id));

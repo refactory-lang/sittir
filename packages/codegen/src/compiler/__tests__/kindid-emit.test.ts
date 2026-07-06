@@ -67,7 +67,7 @@ describe('KindId emission', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 		const contents = emitTypes({
 			grammar: 'synth',
 			nodeMap,

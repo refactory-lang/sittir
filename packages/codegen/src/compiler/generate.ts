@@ -229,18 +229,18 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// and polymorph skip-set; pass it to normalizeGrammar so the simplify phase
 	// can read them off ctx (PR-H ctx threading).
 	const normalizeCtx = new NormalizeCtx({
-		rules: linked.rules,
+		grammar: linked,
 		inlineKinds: inlinableKinds,
 		diagnostics,
 		polymorphSkip: polymorphsConfigSkip,
 	});
 	const normalized = normalizeGrammar(linked, normalizeCtx);
 	tracePhaseRules('normalize', normalized.linkRules);
-	tracePhaseRules('simplify', normalized.simplifiedRules);
+	tracePhaseRules('simplify', normalized.rules);
 
 	// Phase 4: Assemble — caller-owned ctx (R12): built from `normalized` via
 	// the canonical factory, threading the pipeline's live DiagnosticSink.
-	const nodeMap = assemble(normalized, AssembleCtx.from(normalized, generatedIdTables, diagnostics));
+	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, diagnostics));
 	traceAssembleNodes('assemble', nodeMap.nodes);
 
 	// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so

@@ -542,11 +542,13 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	// ---------------------------------------------------------------
 	// suggestedGroups — nested-seq candidates for group synthesis
 	// ---------------------------------------------------------------
-	// Use linkedRules (pre-Normalize, straight from Link) so the detector
-	// sees the natural grammar shape with nested seqs intact. Fall back to
-	// linkRules (post-normalization-passes, pre-wrapper-deletion) when
-	// linkedRules is absent — which is always today (nothing populates it).
-	const groupRules = nodeMap.linkedRules ?? nodeMap.linkRules ?? {};
+	// Use linkRules (post-normalization-passes, pre-wrapper-deletion) —
+	// the detector's OPTIONAL/REPEAT/REPEAT1/FIELD/ALIAS/TOKEN/VARIANT/GROUP
+	// case matching is genuinely wrapper-shape-dependent (justified
+	// exception, PR-137 — see `NodeMap.linkRules`'s doc comment). The
+	// former `nodeMap.linkedRules` fallback-preferred field was dead
+	// surface (nothing ever populated it) and is deleted.
+	const groupRules = nodeMap.linkRules ?? {};
 	const groupCandidates = detectGroupCandidates(groupRules);
 	lines.push(emitSuggestedGroupsBlock(groupCandidates));
 

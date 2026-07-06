@@ -617,7 +617,7 @@ describe('Evaluate — evaluate()', () => {
 			expect(operatorKinds.sort()).toEqual(['CHOICE', 'STRING', 'STRING']);
 
 			const normalized = normalizeGrammar(link(raw));
-			const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+			const nodeMap = assemble(AssembleCtx.from(normalized));
 			const node = nodeMap.nodes.get('binary_expression');
 			expect(node && 'slots' in node).toBe(true);
 			const operatorSlot = node && 'slots' in node ? node.slots.operator : undefined;

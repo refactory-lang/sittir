@@ -6,7 +6,7 @@
  *
  * - Evaluate  produces {@link RawGrammar}.
  * - Link      produces {@link LinkedGrammar} plus a {@link DerivationLog}.
- * - Normalize produces {@link NormalizedGrammar}.
+ * - Normalize produces {@link SimplifiedGrammar}.
  * - Assemble  produces {@link NodeMap}.
  *
  * Diagnostic / suggester-input types live here too ({@link DerivationLog}
@@ -18,7 +18,7 @@
  * too; splitting it into `./node-map.ts` is a later step.
  */
 
-import type { AnyRule, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
+import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
@@ -385,6 +385,27 @@ export interface LinkedGrammar {
 	 */
 	readonly contentAliasedFrom?: ReadonlyMap<string, string>;
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
+	/**
+	 * Link-time-pinned word-shape matcher, compiled ONCE from `raw.rules` (the
+	 * evaluate-view rule tree, where the `word` rule's authored wrappers —
+	 * notably a trailing `REPEAT` — are still intact). `undefined` when the
+	 * grammar declares no `word` rule, or the rule's shape isn't expressible as
+	 * a single regex (see `util/word-matcher.ts`'s `compileWordMatcher`).
+	 *
+	 * Every later phase CARRIES this value forward (`NormalizedGrammar` →
+	 * `SimplifiedGrammar` → `NodeMap`) rather than recompiling from its own
+	 * `rules`/`linkRules` view: compiling from a post-normalize view is
+	 * unsound in general — normalize's wrapper-deletion collapses
+	 * `REPEAT`/`OPTIONAL` wrappers into leaf `multiplicity` attributes that
+	 * `ruleToRegexSource`'s walker doesn't consult, so a post-link recompile
+	 * can silently undercount the regex (confirmed regression: typescript's
+	 * `identifier` word rule loses its trailing `REPEAT`). Pinning at link
+	 * time — where the wrapper is still a real node — and carrying the single
+	 * compiled result is the fix; see
+	 * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md (PR-137
+	 * follow-on) for the falsifying probe.
+	 */
+	readonly wordMatcher?: RegExp;
 }
 
 /**
@@ -412,8 +433,56 @@ export interface IncludeFilter {
 // Normalize output
 // ---------------------------------------------------------------------------
 
+/**
+ * Normalize-phase view of the grammar (`Grammar<'normalize'>`): `rules` IS
+ * the wrapper-deleted set (`applyWrapperDeletion` output + the §D-2a inline
+ * hoist), i.e. what the phase PRODUCES — per the 2026-07-04 design decision
+ * that "normalize's output rules are the normalized rules" (the map formerly
+ * known as `renderRules`). `linkRules` is the carried mid-normalize
+ * link-phase view (post-`applyNormalizationPasses`, pre-wrapper-deletion —
+ * wrappers intact) that hidden-rule resolution in assemble still needs.
+ *
+ * Today this view exists as locals inside `normalizeGrammar()` (which runs
+ * simplify as its final stage and returns the {@link SimplifiedGrammar}
+ * bundle directly); it is reified here so `SimplifyCtx` (S2) can be
+ * `BaseCtx<'normalize'>` reading exactly this shape. See
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md.
+ */
 export interface NormalizedGrammar {
 	readonly name: string;
+	/** The normalize-phase rules — wrapper-free, attribute-stamped. */
+	readonly rules: Record<string, RenderRule>;
+	/** Carried mid-normalize link-phase view (wrappers intact). */
+	readonly linkRules: Record<string, Rule<'link'>>;
+	readonly supertypes: Set<string>;
+	readonly word: string | null;
+	/** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
+	readonly wordMatcher?: RegExp;
+	readonly externals?: readonly string[];
+	readonly derivations: DerivationLog;
+	readonly aliasedHiddenKinds?: Map<string, string>;
+	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
+	readonly parentAliasedKinds?: ReadonlySet<string>;
+	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
+	readonly refineForms?: Map<string, RefineForm[]>;
+}
+
+export interface SimplifiedGrammar {
+	readonly name: string;
+	/**
+	 * Carried mid-normalize link-phase view (wrappers intact) — see
+	 * {@link NormalizedGrammar.linkRules}'s doc comment for the pipeline
+	 * provenance. Carried through assemble onto {@link NodeMap.linkRules};
+	 * see THAT field's doc comment for the current (2026-07-05, post-PR-137-
+	 * follow-on-3) consumer list — now exclusively the two by-design
+	 * authoring-shape diagnostics (`emitters/suggested.ts`,
+	 * `emitters/refine-emit.ts` via `compiler/link.ts`'s refine-path
+	 * resolution). `compiler/assemble.ts`'s hidden-body/subtype-resolution
+	 * family migrated off this view onto `normalizedRules` (below); this
+	 * field's sole remaining purpose is feeding `NodeMap.linkRules` for those
+	 * two diagnostics — a candidate for a diagnostics-scoped carry in a future
+	 * pass (not restructured here; see PR-137 follow-on-3 notes).
+	 */
 	readonly linkRules: Record<string, Rule<'link'>>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
@@ -422,14 +491,18 @@ export interface NormalizedGrammar {
 	/** Propagated from {@link LinkedGrammar.visibleAliasTargets}. */
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	/**
-	 * Derivation-only view of every rule in `rules`, produced by
-	 * `simplifyRule` as the final pass in `normalizeGrammar()`. Downstream
-	 * consumers (`assemble` → `AssembledBranch/Container/Group`) read
-	 * from this map instead of re-simplifying per-node. Raw
-	 * templates still read `rules` because they need anonymous
-	 * delimiters to surface as template literals.
+	 * `SimplifiedGrammar`'s phase product — uniformly named `rules` like
+	 * every other `Grammar<P>` member (2026-07-05: SimplifiedGrammar's
+	 * former `simplifiedRules` field name was the one exception to the
+	 * family's `rules` convention; renamed to close it). Derivation-only
+	 * view of every rule, produced by `simplifyRule` as the final pass in
+	 * `normalizeGrammar()`. Downstream consumers (`assemble` →
+	 * `AssembledBranch/Container/Group`) read from this map instead of
+	 * re-simplifying per-node. Raw templates still read `normalizedRules` /
+	 * `linkRules` because they need anonymous delimiters to surface as
+	 * template literals.
 	 */
-	readonly simplifiedRules: Record<string, SimplifiedRule>;
+	readonly rules: Record<string, SimplifiedRule>;
 	/**
 	 * Wrapper-deleted view of every rule in `rules`, produced by
 	 * `applyWrapperDeletion` as the new last pass in `normalizeGrammar()`.
@@ -438,18 +511,65 @@ export interface NormalizedGrammar {
 	 * on RuleBase. Structural rules (seq / choice / variant / group /
 	 * polymorph) are preserved and recursed into.
 	 *
-	 * The new template emitter (PR1) reads from `renderRules` instead of
+	 * The new template emitter (PR1) reads from `normalizedRules` instead of
 	 * `rules` so it never has to look through a wrapper to get modifier
 	 * metadata. Task 2.A3 switches `computeSimplifiedRules` to use this
 	 * map as input.
 	 */
-	readonly renderRules: Record<string, RenderRule>;
+	readonly normalizedRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
 	readonly word: string | null;
+	/** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
+	readonly wordMatcher?: RegExp;
 	readonly externals?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
+
+// ---------------------------------------------------------------------------
+// The Grammar<Phase> family (2026-07-04 design)
+// ---------------------------------------------------------------------------
+
+/**
+ * The rule value type each phase's `rules` map carries. Mirrors
+ * `Rule<Phase>`'s phase progression, adding the two brands where the
+ * pipeline stores branded maps ({@link RenderRule}, {@link SimplifiedRule}).
+ */
+export type PhaseRuleOf<P extends PhaseName> = P extends 'simplify'
+	? SimplifiedRule
+	: P extends 'normalize'
+		? RenderRule
+		: Rule<P>;
+
+/**
+ * Phase-parameterized grammar container — the single lookup point for
+ * "which container does a phase read", mirroring `Rule<Phase>`:
+ *
+ *   link      reads Grammar<'evaluate'>  (= {@link RawGrammar})
+ *   normalize reads Grammar<'link'>      (= {@link LinkedGrammar})
+ *   simplify  reads Grammar<'normalize'> (= {@link NormalizedGrammar})
+ *   assemble  reads Grammar<'simplify'>  (= {@link SimplifiedGrammar})
+ *
+ * Deliberately a conditional ALIAS over the per-phase interfaces rather
+ * than one interface with conditional fields: the per-phase interfaces
+ * remain the SSOT for their field sets (they diverge well beyond `rules` —
+ * e.g. `supertypes: string[]` on Raw vs `Set<string>` on Linked), and this
+ * type gives `BaseCtx<P>` (S2) one parameter that keys grammar, rules,
+ * walker, and builder together. Uniform invariant every alias satisfies
+ * (2026-07-05: closed the former `SimplifiedGrammar` exception — its phase
+ * product field is named `rules` like every other family member now):
+ * `Grammar<P>['rules'] extends Record<string, PhaseRuleOf<P>>` for ALL `P`.
+ * `SimplifiedGrammar` additionally carries `normalizedRules` / `linkRules`
+ * as extra (non-`rules`) views alongside its `rules` product. See
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §1.
+ */
+export type Grammar<P extends PhaseName> = P extends 'evaluate'
+	? RawGrammar
+	: P extends 'link'
+		? LinkedGrammar
+		: P extends 'normalize'
+			? NormalizedGrammar
+			: SimplifiedGrammar;
 
 // ---------------------------------------------------------------------------
 // Assemble output
@@ -490,32 +610,70 @@ export interface NodeMap {
 	 */
 	readonly derivations: DerivationLog;
 	/**
-	 * `NormalizedGrammar.linkRules` carried through assemble — the
+	 * `SimplifiedGrammar.linkRules` carried through assemble — the
 	 * pre-simplify, wrapper-bearing view (`applyNormalizationPasses`'
-	 * output, BEFORE `applyWrapperDeletion` strips modifier wrappers). The
-	 * template walker needs this so its `symbol` case can inline hidden
-	 * helper rules (e.g. python's `_import_list`) directly into the
-	 * emitted template. Without it the walker falls back to `$$$CHILDREN`
-	 * which is wrong for hidden helpers whose fields get promoted onto the
-	 * parent node.
+	 * output, BEFORE `applyWrapperDeletion` strips modifier wrappers).
+	 *
+	 * PR-137 narrowed this to its JUSTIFIED-EXCEPTION consumers; the PR-137
+	 * follow-on-3 migration (2026-07-05) closed out the LAST render/derivation
+	 * consumer — `compiler/assemble.ts`'s hidden-body/subtype-resolution
+	 * family (`resolveHiddenSubtypes` / `includeAliasMemberKinds` /
+	 * `isAliasMemberKind` / `isCompatibleSubtypeMember` /
+	 * `resolveHiddenRuleContent`) now reads `AssembleCtx.normalizedRules`
+	 * instead, with the former "no REPEAT1 case = opaque" switch behavior
+	 * translated into explicit `multiplicity`/`fieldName`/`aliasedFrom`
+	 * attribute checks run BEFORE the type switch (see
+	 * `resolveHiddenRuleContent`'s doc comment in assemble.ts for the full
+	 * translation table and the regression fixture this closes — rust's
+	 * `_delim_tokens` supertype chain resolving `%` as a bogus subtype and
+	 * crashing `emitSupertypeUnionDeclarations`). `AssembleCtx.linkRules` (the
+	 * getter this family used to read) is DELETED — zero assemble consumers
+	 * remain. The PR-137 follow-on-4 investigation (same day) tried migrating
+	 * this family from `AssembleCtx.normalizedRules` to `AssembleCtx.rules`
+	 * (`SimplifiedGrammar`'s own phase product — the map `assemble()`'s input
+	 * container is actually named for, so `normalizedRules` wasn't obviously
+	 * justified over it) and found it EMPIRICALLY UNSAFE: python's
+	 * `_simple_pattern` supertype loses its `_simple_pattern_negative` subtype
+	 * entry under `rules` (simplify's SEQ-collapse unmasks an intentionally
+	 * opaque SEQ shape into a dispatchable CHOICE, discarding the variant-
+	 * adopted kind's own name) — see `AssembleCtx`'s class doc comment for the
+	 * full root-cause. The family stays on `normalizedRules`; the getter is
+	 * NOT deleted. `topLevelAliasBodies` stays a distinct field (its presence
+	 * test — "is this hidden kind an alias-mint target" — has no rule-
+	 * attribute equivalent; its VALUES are redundant with `normalizedRules[name]`
+	 * and no longer read directly).
+	 *
+	 * The word-matcher consumer came OFF this list in the PR-137 follow-on: it
+	 * no longer compiles from `linkRules` (or any post-link view) at all —
+	 * it's pinned once at Link time from `raw.rules` and carried on
+	 * `wordMatcher` (below) instead. Remaining consumers are exclusively the
+	 * two BY-DESIGN authoring-shape diagnostics (not render/derivation paths —
+	 * see docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md's
+	 * end-state table, row "emitters"):
+	 *   - `emitters/suggested.ts`'s `findSymbolPosition` (via `parentRule`)
+	 *     and `detectGroupCandidates`/`walkBodyForGroups` (via `groupRules`):
+	 *     both explicitly pattern-match `FIELD`/`OPTIONAL`/`REPEAT`/
+	 *     `REPEAT1`/`ALIAS`/`TOKEN`/`VARIANT`/`GROUP` wrapper shapes by
+	 *     design — these are propose-diagnostics over the grammar's
+	 *     natural (pre-wrapper-deletion) authoring shape, not render
+	 *     consumers.
+	 *   - `compiler/link.ts`'s `resolveRefinePath`/`narrowedFieldLiteralsForForm`
+	 *     (via `emitters/refine-emit.ts`'s `collectRefineKindInfos`):
+	 *     `refine()` selection paths are authored against the pre-normalize
+	 *     tree, so path resolution must walk the same wrapper shapes.
 	 */
 	readonly linkRules?: Record<string, Rule<'link'>>;
 	/**
-	 * Rules from `LinkedGrammar` (pre-Normalize — before
-	 * `applyNormalizationPasses` runs), as distinct from `linkRules` above
-	 * (post-normalization-passes). The suggester needs THIS earlier view
-	 * for polymorph-path computation: `findAllPolymorphCandidates` paths
-	 * must match what the override author's `transform()` call would
-	 * see at evaluate time — BEFORE `fanOutSeqChoices` flattens nested
-	 * seq(choice) into top-level seq[choice]. Using the post-normalization-
-	 * passes view collapses `seq(_, seq(choice, _))` into
-	 * `seq(_, choice, _)`, shifting the choice's logical path from `1/0`
-	 * to `1`, and the emitted `variant()` keys then fail when applied to
-	 * the base grammar's prec-wrapped-seq-of-choice shape. Currently never
-	 * populated by `assemble()` — `suggested.ts` falls back to `linkRules`
-	 * whenever this is absent, which today is always.
+	 * `SimplifiedGrammar.normalizedRules` carried through assemble — the
+	 * wrapper-deleted `RenderRule` view (modifier wrappers pushed down to
+	 * leaf attributes). PR-137: added so `emitters/templates.ts`'s
+	 * `EmitCtx.rules` (hidden-helper inlining fallback in `emitSymbol`) can
+	 * read the honest post-normalize view directly instead of bridging
+	 * through `deleteWrapper(linkRules[name])` per call — verified
+	 * byte-identical to the former bridge for every hidden ref the
+	 * fallback actually reaches, across all 3 grammars.
 	 */
-	readonly linkedRules?: Record<string, Rule<'link'>>;
+	readonly normalizedRules?: Record<string, RenderRule>;
 	/**
 	 * Grammar's `word` rule kind — the lexer's word-recognition
 	 * production. Tree-sitter uses this to disambiguate keywords
@@ -526,6 +684,15 @@ export interface NodeMap {
 	 * round-trip back to the keyword and lose the kind.
 	 */
 	readonly word?: string | null;
+	/**
+	 * Link-time-pinned word-shape matcher, carried from
+	 * `SimplifiedGrammar.wordMatcher` (itself carried from
+	 * `LinkedGrammar.wordMatcher`) — see that field's doc comment for the
+	 * pin-at-link rationale. `undefined` when the grammar declares no `word`
+	 * rule; consumers fall back to `matchesWordShape`'s `/^\w+$/` heuristic
+	 * in that case, same as before.
+	 */
+	readonly wordMatcher?: RegExp;
 	readonly polymorphFormKinds: ReadonlySet<string>;
 	/**
 	 * External-token symbols declared by the grammar (`externals: $ =>

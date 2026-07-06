@@ -67,7 +67,7 @@ describe('emitKindIdRust', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth',
@@ -84,7 +84,7 @@ describe('emitKindIdRust', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth',
@@ -100,7 +100,7 @@ describe('emitKindIdRust', () => {
 		const { raw, generatedIdTables } = makeMinimalFixture();
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth',
@@ -203,7 +203,7 @@ describe('emitKindIdRust', () => {
 
 		const linked = link(raw);
 		const normalized = normalizeGrammar(linked);
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 
 		const out = emitKindIdRust({
 			grammar: 'synth2',

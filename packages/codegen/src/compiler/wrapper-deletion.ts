@@ -300,7 +300,7 @@ export function deleteWrapper(rule: Rule<'link'>): RenderRule {
  * Apply `deleteWrapper` to every entry in a rule map, returning a new map
  * typed as `Record<string, RenderRule>`.
  *
- * This is the map-form used by `normalizeGrammar()` to produce the `renderRules`
+ * This is the map-form used by `normalizeGrammar()` to produce the `normalizedRules`
  * snapshot.
  */
 export function applyWrapperDeletion(rules: Record<string, Rule<'link'>>): Record<string, RenderRule> {

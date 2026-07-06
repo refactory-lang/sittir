@@ -43,9 +43,7 @@ import type {
 	AssembledNonterminal,
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
-import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
-import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
-import { compileWordMatcher } from '../util/word-matcher.ts';
+import type { RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission } from './shared.ts';
 
@@ -63,7 +61,15 @@ export interface EmitCtx {
 	readonly nodeMap: NodeMap;
 	readonly wordMatcher: RegExp;
 	readonly externals: readonly string[];
-	readonly rules: Record<string, Rule<'link'>>;
+	/**
+	 * PR-137: `normalizedRules` (wrapper-deleted `RenderRule` view), not
+	 * `linkRules` — `emitSymbol`'s hidden-helper fallback (the only
+	 * consumer) used to bridge `linkRules[name]` through a per-call
+	 * `deleteWrapper()`; verified byte-identical to reading
+	 * `normalizedRules[name]` directly for every hidden ref the fallback
+	 * actually reaches, across all 3 grammars, so the bridge is gone.
+	 */
+	readonly rules: Record<string, RenderRule>;
 	/**
 	 * Cycle guard for hidden-helper recursion in `emitSymbol`. A flat mutable
 	 * Set tracks visited helper names, keyed by `@${name}`, passed down via
@@ -165,16 +171,22 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 
 	constructor(config: EmitTemplatesConfig) {
 		this.#config = config;
-		this.#wordMatcher = compileWordMatcher(config.nodeMap.word, config.nodeMap.linkRules ?? {}) ?? /\w/;
+		// Link-time-pinned, carried on `nodeMap.wordMatcher` — NOT recompiled
+		// here. See `LinkedGrammar.wordMatcher`'s doc comment (compiler/types.ts)
+		// for why a post-link recompile (this used to compile from
+		// `config.nodeMap.linkRules`, the wrapper-bearing view) is unsound in
+		// general. `?? /\w/` preserves the pre-existing no-word-rule fallback.
+		this.#wordMatcher = config.nodeMap.wordMatcher ?? /\w/;
 		// EmitCtx for the modelType-dispatching emitter: `rules` (for
-		// hidden-helper inlining), `wordMatcher` (currently unused by emitRule
-		// but kept for parity), `externals` (token-shape detection), and
-		// `nodeMap` (slot back-pointer lookup via `slotByRuleId`).
+		// hidden-helper inlining — the normalized/wrapper-deleted view, PR-137),
+		// `wordMatcher` (currently unused by emitRule but kept for parity),
+		// `externals` (token-shape detection), and `nodeMap` (slot
+		// back-pointer lookup via `slotByRuleId`).
 		this.#ctx = {
 			nodeMap: config.nodeMap,
 			wordMatcher: this.#wordMatcher,
 			externals: [...(config.nodeMap.externals ?? [])],
-			rules: config.nodeMap.linkRules ?? {},
+			rules: config.nodeMap.normalizedRules ?? {},
 			visitingHelpers: new Set<string>()
 		};
 	}
@@ -479,7 +491,7 @@ function isLeftmostTerminalImmediate(rule: RenderRule): boolean {
 		// case PRESERVES the node (`{...rule, content}` — `immediate` included,
 		// NOT lost), so TokenRule→never under `RenderRule` is a type-level
 		// assertion backed only by the EMPIRICAL fact that no top-level
-		// token(...) rule survives into renderRules on any current grammar
+		// token(...) rule survives into normalizedRules on any current grammar
 		// (0 hits ×3). The former `case TOKEN: return rule.immediate` arm was
 		// deleted on that basis; if a surviving TOKEN ever appears, the type
 		// lies and this walker silently loses its `immediate` signal — that
@@ -994,7 +1006,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 		// walking every AssembledNode.renderRule and every
 		// deleteWrapper(linkRules[name]) hidden-helper target across all 3
 		// grammars. If a top-level token(...) rule ever survives into
-		// renderRules, the type lies — tracked with the preserve-token-
+		// normalizedRules, the type lies — tracked with the preserve-token-
 		// wrappers debt. Post-normalize aliasing is fully represented via the
 		// `fieldName`/`aliasedFrom` leaf attributes other cases here already
 		// read (see `pickConditionalKey`'s `contentFieldName` check).
@@ -1429,8 +1441,11 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	// we treat the symbol like an opaque scalar slot reference instead of
 	// inlining, matching the walker's `seen.has('@'+name)` short-circuit.
 	//
-	// ctx.rules contains RAW rules (not renderRules), so we must apply
-	// deleteWrapper before passing to emitRule which now expects RenderRule.
+	// ctx.rules is the normalizedRules view (PR-137) — already RenderRule,
+	// no deleteWrapper bridge needed. This is a fallback for the rare
+	// hidden-without-renderRule case (the primary path above handles every
+	// branch/group target); reached e.g. for hidden `pattern`/`multi`
+	// modelType targets that never got an AssembledBranch/Group `renderRule`.
 	if (rule.type === SYMBOL && rule.inline === true && ctx.rules[rule.name]) {
 		if (ctx.visitingHelpers.has(rule.name)) {
 			const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
@@ -1438,7 +1453,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		}
 		ctx.visitingHelpers.add(rule.name);
 		try {
-			const target = deleteWrapper(ctx.rules[rule.name]!);
+			const target = ctx.rules[rule.name]!;
 			const helperBody = emitRule(target, ctx);
 			const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 			// Seq-unit multiplicity (mirrors the renderRule path above): array →

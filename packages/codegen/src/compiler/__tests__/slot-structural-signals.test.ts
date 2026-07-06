@@ -24,7 +24,7 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		references: [],
 	};
 	const normalized = normalizeGrammar(link(raw));
-	return assemble(normalized, AssembleCtx.from(normalized));
+	return assemble(AssembleCtx.from(normalized));
 }
 
 function getBranch(nodeMap: ReturnType<typeof buildNodeMap>, kind: string): AssembledBranch {

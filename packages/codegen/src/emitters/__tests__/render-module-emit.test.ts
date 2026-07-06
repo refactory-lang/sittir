@@ -152,7 +152,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+	const nodeMap = assemble(AssembleCtx.from(normalized));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
 	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
@@ -296,7 +296,7 @@ async function buildRustFixtureForParity() {
 	const raw = await evaluate(entryPath);
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+	const nodeMap = assemble(AssembleCtx.from(normalized));
 
 	// loadGeneratedIdTables uses process.cwd() which is packages/codegen when vitest runs.
 	// Use the repo root (anchored to this file) to reliably locate parser.c.

@@ -83,7 +83,13 @@ export interface LinkOptions {
 }
 
 /**
- * Phase context for the Link phase (R12 PR-4, extends `BaseCtx<Rule<'link'>>`).
+ * Phase context for the Link phase (S2, `BaseCtx<'evaluate'>` — Link READS
+ * `Grammar<'evaluate'>` = {@link RawGrammar}; see
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). Was
+ * `BaseCtx<Rule<'link'>>` (R12 PR-4) — a mislabel: the ctx was always
+ * constructed from `raw.rules` (`Rule<'evaluate'>`-shaped), never the
+ * `Rule<'link'>` resolve-loop accumulator (PR #136's finding, closed here —
+ * `ctx.rules`/`ctx.grammar.rules` is now honestly the RAW pre-resolve view).
  *
  * Merges the former `ResolveCtx` (rule-resolution walk: `rules` — inherited
  * from `BaseCtx`, was `allRules` — `supertypes`, `externalRoles`) and
@@ -97,8 +103,43 @@ export interface LinkOptions {
  * during the resolve/classify walks (role-lookup memoization and the
  * promoted-rules log, respectively) — kept as plain mutable fields rather
  * than wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
+ *
+ * S3 raw-vs-accumulator audit (per
+ * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §3): every
+ * `ctx.rules` / `ctx.grammar.rules` read site inside this file was checked
+ * against what it factually needs. All FOUR consult the RAW pre-resolve view
+ * (correctly — none needed the post-resolve accumulator, which is already
+ * threaded explicitly as a plain parameter everywhere it IS needed):
+ *   - `resolveRule`'s ALIAS case / `isClauseHoistVisibleGroupAlias` guard —
+ *     runs DURING the resolve loop itself, so only the raw view exists yet;
+ *     the mint condition structurally requires "no independent rule body
+ *     exists" (`ctx.rules[rule.value] === undefined`), a fact only the raw
+ *     grammar can answer.
+ *   - `resolveSymbolRoleOrPass` (legacy structural role detection) — same
+ *     reason: called from `resolveRule` during the resolve loop, checking the
+ *     RAW target's shape (`_foo: () => role('indent')` dummy declarations,
+ *     which never survive into any resolved view).
+ *   - `mintContentAliasKinds`'s walk (`for (const [name, rule] of
+ *     Object.entries(ctx.rules))`) and its `ctx.rules[hiddenBody]` lookup —
+ *     both explicitly walk the RAW tree because `resolveRule` (run earlier,
+ *     over the SAME raw source) already collapsed the ALIAS nodes this pass
+ *     is looking for into plain SYMBOL refs; walking the post-resolve
+ *     accumulator would find nothing to mint. The minted body is then run
+ *     through `resolveRule` fresh, so the pre-resolve (unresolved) form is
+ *     exactly what's wanted.
+ *   - `collectTopLevelAliasBodies`'s `rawRules = ctx.rules` walk — same
+ *     rationale (finds ALIAS nodes the resolve loop already collapsed); its
+ *     sibling `dereferenceTopLevelAliasBody` call correctly takes the
+ *     ACCUMULATOR as an explicit `resolvedRules` parameter (not `ctx.rules`)
+ *     to follow already-resolved SYMBOL chains.
+ * `classifyAndLogHiddenRules` / `classifyHiddenRule` / `classifyHiddenChoiceRule`
+ * already take the accumulator as an explicit `rules` parameter (V2 fixed
+ * this pre-S3 — kept as-is). `applyOverridePolymorphs` /
+ * `deriveStructuralVariantChildren` callers in this file, normalize.ts, and
+ * assemble.ts each pass an explicit accumulator/carried-view parameter, never
+ * an ambient ctx field. No STOP-worthy wrong-phase value flow found.
  */
-export class LinkCtx extends BaseCtx<Rule<'link'>> {
+export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly supertypes: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
 	readonly inline?: readonly string[];
@@ -107,7 +148,7 @@ export class LinkCtx extends BaseCtx<Rule<'link'>> {
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
 
 	constructor(
-		init: BaseCtxInit<Rule<'link'>> & {
+		init: BaseCtxInit<'evaluate'> & {
 			supertypes: ReadonlySet<string>;
 			externalRoles: Map<string, ExternalRole>;
 			inline?: readonly string[];
@@ -124,6 +165,30 @@ export class LinkCtx extends BaseCtx<Rule<'link'>> {
 		this.applyPromotedRules = init.applyPromotedRules;
 		this.hiddenChoicesWithNamedAliasMembers = init.hiddenChoicesWithNamedAliasMembers;
 	}
+
+	get rules(): Record<string, Rule<'evaluate'>> {
+		return this.grammar.rules;
+	}
+}
+
+/**
+ * Build a minimal `Grammar<'link'>` (= {@link LinkedGrammar}) from a bare
+ * resolved rules map, defaulting every other phase-invariant field to an
+ * empty/absent value. For call sites (tests) that only have a rules map in
+ * hand — not a full `link()` output — and need a `NormalizeCtx` (S2:
+ * `NormalizeCtx` now requires a full `Grammar<'link'>` container, not a bare
+ * `rules` field).
+ */
+export function makeLinkedGrammar(rules: Record<string, Rule<'link'>>): LinkedGrammar {
+	return {
+		name: '',
+		rules,
+		supertypes: new Set(),
+		externalRoles: new Map(),
+		word: null,
+		references: [],
+		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] }
+	};
 }
 
 export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
@@ -157,6 +222,15 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// hiddenChoicesWithNamedAliasMembers: hidden choice kinds whose own body
 	// has named-alias members → must NOT be promoted to supertype.
 	const hiddenChoicesWithNamedAliasMembers = collectHiddenChoicesWithNamedAliasMembers(raw.rules);
+	// PIN POINT (2026-07-05 design): compiled exactly ONCE here, from
+	// `raw.rules` — the evaluate-view rule tree, where the `word` rule's
+	// authored wrappers (notably a trailing REPEAT) are still intact. This is
+	// the grammar's single word-matcher compilation for the entire pipeline;
+	// every later phase CARRIES `wordMatcherRegex` forward on its
+	// `LinkedGrammar`/`NormalizedGrammar`/`SimplifiedGrammar`/`NodeMap`
+	// container rather than recompiling from its own post-link rules view
+	// (see `LinkedGrammar.wordMatcher`'s doc comment for why recompiling from
+	// a post-normalize view is unsound).
 	const wordMatcherRegex = compileWordMatcher(raw.word, raw.rules);
 
 	// Resolve all rules. Named `linkCtx` (not `ctx`) to avoid shadowing the
@@ -164,7 +238,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// BaseCtx-extending phase context threaded through the resolve/classify
 	// walks below, a distinct object from the public options bag.
 	const linkCtx = new LinkCtx({
-		rules: raw.rules,
+		grammar: raw,
 		diagnostics: new DiagnosticSink(),
 		wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
 		supertypes,
@@ -330,6 +404,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		externalRoles,
 		externals: raw.externals,
 		word: raw.word,
+		wordMatcher: wordMatcherRegex,
 		references,
 		derivations,
 		aliasedHiddenKinds,
@@ -571,7 +646,7 @@ function referencesSelf(rule: Rule<'link'>, self: string): boolean {
  * Link's alias-collapse would leave downstream passes thinking the
  * hidden rule still produces the original kind.
  */
-function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'link'>>): Map<string, string> {
+function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): Map<string, string> {
 	const out = new Map<string, string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
@@ -614,7 +689,7 @@ function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {
  * @param rawRules - The EVALUATED (pre-link/pre-resolveRule) rules map.
  *   Must be called before `resolveRule` flattens alias nodes to symbols.
  */
-function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule<'link'>>): ReadonlySet<string> {
+function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule<'evaluate'>>): ReadonlySet<string> {
 	const out = new Set<string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
@@ -762,6 +837,10 @@ function mintContentAliasKinds(
 					let body: Rule<'link'> = content;
 					if (content.type === SYMBOL) {
 						const hiddenBody = (content as SymbolRule<'link'>).name;
+						// S3 raw-vs-accumulator: RAW view (`ctx.rules` / `ctx.grammar.rules`) —
+						// `body` is fed to `resolveRule` fresh below, so the UNRESOLVED
+						// hidden body is what's wanted here, not whatever the accumulator's
+						// entry (if any) already resolved to.
 						const target = ctx.rules[hiddenBody];
 						if (target) body = target;
 						// DIAGNOSTIC-ONLY provenance: visible twin → hidden body kind.
@@ -825,7 +904,7 @@ function collectTopLevelAliasBodies(
 		// `deriveComplexAliasTargetHidden`). The alias' content is a symbol ref
 		// to the hidden rule (`_type_argument` etc.), but the render template
 		// must reference the VISIBLE kind (e.g. `type_argument`) — not inline
-		// the hidden rule's body. Skip these entries so `renderRules[name]`
+		// the hidden rule's body. Skip these entries so `normalizedRules[name]`
 		// keeps the wrapper-deleted `SYMBOL(visible, aliasedFrom='_hidden')` form
 		// set by the main normalization path, rather than being overwritten with
 		// the hidden rule's body.
@@ -2900,7 +2979,7 @@ function liftRule(target: Rule<'link'>, synName: string, _discriminator: string)
     // construction-time stamps (`hidden`, `inline = name.startsWith('_')`) as any
     // other ref — group-lift helpers are `_`-prefixed → inline=true. Stamping at
     // the one constructor (then revised at wrapper push-down / link supertype pass)
-    // keeps `inline` authoritative on the renderRules path, so normalize's fold
+    // keeps `inline` authoritative on the normalizedRules path, so normalize's fold
     // can read it instead of re-deriving hiddenness structurally.
     const synSym = { ...sym(synName), metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) };
     // (_discriminator kept for future use; the current implementation does not use it.

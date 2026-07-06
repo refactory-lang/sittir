@@ -11,7 +11,7 @@
 
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { computeSimplifiedRules, SimplifyCtx } from '../simplify.ts';
+import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
 import type { AnyRule, Rule } from '../../types/rule.ts';
@@ -75,8 +75,8 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				],
 			},
 		};
-		const renderRules = applyWrapperDeletion(input);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
+		const normalizedRules = applyWrapperDeletion(input);
+		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
 		expect(
 			wrappers,
@@ -105,8 +105,8 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				],
 			},
 		};
-		const renderRules = applyWrapperDeletion(input);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
+		const normalizedRules = applyWrapperDeletion(input);
+		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
 		expect(
 			wrappers,
@@ -133,8 +133,8 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				],
 			},
 		};
-		const renderRules = applyWrapperDeletion(input);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
+		const normalizedRules = applyWrapperDeletion(input);
+		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
 		expect(
 			wrappers,
@@ -218,8 +218,8 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 			expr: { type: SYMBOL, name: 'identifier' },
 		};
 
-		const renderRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
+		const normalizedRules = applyWrapperDeletion(inputRules);
+		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
 
 		expect(

@@ -1,12 +1,12 @@
-import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../assemble.ts';
-import { computeSimplifiedRules, SimplifyCtx } from '../simplify.ts';
+import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule } from '../../types/rule.ts';
-import type { NormalizedGrammar } from '../types.ts';
+import type { SimplifiedGrammar } from '../types.ts';
 import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../model/node-map.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
@@ -19,17 +19,17 @@ function deriveFields(rule: Rule<'link'>) {
 	return deriveSlots(deleteWrapper(rule)).filter((s) => !s.isUnnamed);
 }
 
-function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial<NormalizedGrammar>): NormalizedGrammar {
-	const renderRules = applyWrapperDeletion(rules);
-	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ rules: renderRules, diagnostics: new DiagnosticSink() }));
+function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial<SimplifiedGrammar>): SimplifiedGrammar {
+	const normalizedRules = applyWrapperDeletion(rules);
+	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(overrides.topLevelAliasBodies);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
-		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ rules: aliasBodiesRender, diagnostics: new DiagnosticSink() }));
+		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(aliasBodiesRender), diagnostics: new DiagnosticSink() }));
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
-			renderRules[kind] = rule;
+			normalizedRules[kind] = rule;
 		}
 		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
 			simplifiedRules[kind] = rule;
@@ -38,8 +38,8 @@ function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial
 	return {
 		name: 'test',
 		linkRules: rules,
-		renderRules,
-		simplifiedRules,
+		normalizedRules,
+		rules: simplifiedRules,
 		supertypes: new Set(),
 		word: null,
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
@@ -259,7 +259,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_type_identifier');
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_type_identifier');
 		expect(node?.modelType).toBe('pattern');
 	});
 
@@ -297,7 +297,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_pair_alias');
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_pair_alias');
 		expect(node?.modelType).toBe('branch');
 		expect(allSlotsOf(node!).map((slot) => slot.name)).toEqual(['left', 'right']);
 	});
@@ -327,7 +327,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_property_name');
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
 		expect((node as any).subtypes).toEqual(['identifier', 'string', '_property_identifier']);
 	});
@@ -375,7 +375,7 @@ describe('Assemble — classifyNode', () => {
 				])
 			}
 		);
-		const node = assemble(normalized, AssembleCtx.from(normalized)).nodes.get('_property_name');
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
 		expect((node as any).subtypes).toEqual([
 			'identifier',
@@ -383,6 +383,122 @@ describe('Assemble — classifyNode', () => {
 			'_type_identifier',
 			'_property_identifier'
 		]);
+	});
+
+	// PR-137 grammar-phase-ctx regression fixture (2026-07-05): reproduces
+	// rust's `_delim_tokens` supertype chain, whose subtype resolution walks
+	// through `_non_special_token`'s `REPEAT1(CHOICE('%', '+', ...))` arm
+	// (tree-sitter-rust's TOKEN_TREE_NON_SPECIAL_PUNCTUATION). On the LINK
+	// view `resolveHiddenRuleContent`'s switch has no REPEAT1 case, so it
+	// falls to `default: return []` — opaque, correctly excluding the bare
+	// punctuation literals from the subtype list. A naive migration to the
+	// post-normalize view collapses `REPEAT1(CHOICE(...))` into a bare
+	// `CHOICE(...)` leaf stamped `multiplicity: 'nonEmptyArray'`, which DOES
+	// have a CHOICE case — the resolver would wrongly recurse into the
+	// punctuation arms and emit `%` as a bogus subtype name, crashing
+	// `emitSupertypeUnionDeclarations` downstream ("references subtype '%'
+	// which is not in NodeMap"). This test locks in opacity for the
+	// nonEmptyArray/array-multiplicity shape regardless of which view the
+	// resolver reads.
+	it('keeps a REPEAT1(CHOICE(...)) punctuation-literal group opaque in supertype subtype resolution', () => {
+		const normalized = makeNormalized({
+			_delim_tokens: {
+				type: SUPERTYPE,
+				name: '_delim_tokens',
+				subtypes: ['_non_delim_token', 'identifier']
+			},
+			_non_delim_token: {
+				type: CHOICE,
+				members: [{ type: SYMBOL, name: '_non_special_token' }]
+			},
+			_non_special_token: {
+				type: CHOICE,
+				members: [
+					{ type: SYMBOL, name: 'identifier' },
+					{
+						type: REPEAT1,
+						content: {
+							type: CHOICE,
+							members: [
+								{ type: STRING, value: '%' },
+								{ type: STRING, value: '+' }
+							]
+						}
+					}
+				]
+			},
+			identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' }
+		});
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_delim_tokens');
+		expect(node?.modelType).toBe('supertype');
+		const subtypes = (node as any).subtypes as string[];
+		expect(subtypes).not.toContain('%');
+		expect(subtypes).not.toContain('+');
+		// `_non_delim_token` and `_non_special_token` are transparent CHOICE
+		// wrappers with no independent alias-mint body — they resolve straight
+		// through to `identifier` and never surface as their own subtype
+		// entries. The REPEAT1(CHOICE('%','+')) arm resolves to nothing
+		// (opaque), so it contributes no entries at all — not even a hidden
+		// placeholder — confirming the resolver treats it as inert rather
+		// than as a source of bogus subtype names.
+		expect(subtypes).toEqual(['identifier']);
+	});
+
+	// PR-137 follow-on-4 regression fixture (2026-07-05): reproduces python's
+	// `_simple_pattern` supertype chain, whose subtype resolution reaches
+	// `_simple_pattern_negative` (the polymorph-variant-adopted `-1`/`-1.0`
+	// match-pattern arm — `overrides.ts`'s `_simple_pattern: { '11':
+	// 'negative' }`), a SEQ containing one anonymous optional literal ('-')
+	// plus one nonterminal (a CHOICE of `integer`/`float`). On the
+	// `normalizedRules` view (wrapper-deletion only) this stays a top-level
+	// SEQ — a shape `resolveHiddenRuleContent`'s switch has NO case for, so
+	// it falls to `default: return []` (opaque), and the "opaque → keep the
+	// hidden name as-is" fallback correctly preserves `_simple_pattern_negative`
+	// as its own subtype entry. A migration to `ctx.rules` (SimplifiedRule)
+	// was tried and rejected because `simplifySeqRule`'s anonymous-literal
+	// stripping deletes the bare '-' and the resulting single-member seq
+	// collapses to the inner `CHOICE(integer, float)` — a shape the CHOICE
+	// case DOES handle — wrongly expanding to `integer`/`float` directly and
+	// discarding `_simple_pattern_negative`'s own name. This is the SEQ-shape
+	// sibling of the REPEAT1(CHOICE(...)) fixture above: same bug class
+	// (opaque wrapper shape unmasked into a dispatchable one), different
+	// trigger (simplify's SEQ-collapse rather than wrapper-deletion's
+	// multiplicity stamping) — see `resolveHiddenRuleContent`'s explicit
+	// `case SEQ` and `AssembleCtx`'s class doc comment for the full
+	// root-cause writeup.
+	it('keeps a SEQ(OPTIONAL(literal), CHOICE(...)) polymorph-variant arm opaque in supertype subtype resolution', () => {
+		const normalized = makeNormalized({
+			_simple_pattern: {
+				type: SUPERTYPE,
+				name: '_simple_pattern',
+				subtypes: ['identifier', '_simple_pattern_negative']
+			},
+			_simple_pattern_negative: {
+				type: SEQ,
+				members: [
+					{ type: OPTIONAL, content: { type: STRING, value: '-' } },
+					{
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'integer' },
+							{ type: SYMBOL, name: 'float' }
+						]
+					}
+				]
+			},
+			identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
+			integer: { type: PATTERN, value: '[0-9]+' },
+			float: { type: PATTERN, value: '[0-9]+\\.[0-9]+' }
+		});
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_simple_pattern');
+		expect(node?.modelType).toBe('supertype');
+		const subtypes = (node as any).subtypes as string[];
+		expect(subtypes).not.toContain('integer');
+		expect(subtypes).not.toContain('float');
+		// The SEQ arm resolves to nothing (opaque), so the "keep the hidden
+		// name as-is" fallback preserves `_simple_pattern_negative` itself as
+		// the subtype entry — never its inner integer/float leaf types.
+		expect(subtypes).toEqual(['identifier', '_simple_pattern_negative']);
 	});
 });
 
@@ -535,7 +651,7 @@ describe('Assemble — assemble()', () => {
 			},
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 		expect(nodeMap.name).toBe('test');
 		expect(nodeMap.nodes.get('function_item')?.modelType).toBe('branch');
 		expect(nodeMap.nodes.get('identifier')?.modelType).toBe('pattern');
@@ -555,7 +671,7 @@ describe('Assemble — assemble()', () => {
 			},
 			id: { type: PATTERN, value: '[a-z]+' }
 		});
-		const nodeMap = assemble(normalized, AssembleCtx.from(normalized));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
 		const fnNode = nodeMap.nodes.get('function_item')!;
 		expect(fnNode.typeName).toBe('FunctionItem');
 		expect(fnNode.factoryName).toBe('functionItem');
