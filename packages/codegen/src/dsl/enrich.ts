@@ -1307,20 +1307,22 @@ function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
 }
 
 /**
- * @internal — walk `rule` and hoist any `optional(seq(STRING,FIELD…))` /
- * `CHOICE[seq(STRING,FIELD…),BLANK]` positions into hidden group rules.
- * Returns a (possibly rewritten) rule; never mutates the input.
+ * @internal — walk `rule` and hoist EVERY `optional(seq)` / `repeat(seq)` /
+ * `repeat1(seq)` position (clause-shaped — `seq(STRING,FIELD…)` — and
+ * non-clause alike) into hidden group rules. Returns a (possibly rewritten)
+ * rule; never mutates the input.
  *
- * COUNTER DISCIPLINE: the `counter.opt` increments for EVERY `optional(seq)`
- * shape encountered in traversal order — both clause-seqs (which this pass
- * hoists) and non-clause-seqs (which applyAutoGroups hoists later). This
- * keeps the numbering in sync so the two passes never assign the same number
- * to different bodies within the same parent. applyAutoGroups resets its
- * own counter per-parent to 0 and counts from 1; after enrich, any position
- * where enrich hoisted is now `optional(SYMBOL)` — applyAutoGroups skips
- * those (not a seq) so its counter only increments for the non-clause
- * positions, which are the ones enrich skipped and left with their counter
- * slots intact.
+ * The former two-pass division (this function for clause-seqs, the separate
+ * `applyAutoGroups` for everything else) is gone — `applyAutoGroups` and
+ * `dsl/wire/auto-groups.ts` were physically deleted; enrich now owns all
+ * `optional/repeat(seq)` hoisting itself (inline-safe → hidden
+ * `_<parent>_optional<N>` symbol; inline-unsafe → visible content-alias that
+ * `link.ts`'s `mintContentAliasKinds` registers as a real IR kind — see
+ * `dsl/wire/wire.ts`'s `getEnrichClauseGroups` call site for why the old
+ * wire-time pass had to go: it ran BEFORE link and pre-consumed inline-unsafe
+ * seqs link must see as inline content). `counter.opt` increments for every
+ * such shape in traversal order; there is no second pass to stay in sync with
+ * anymore.
  */
 function applyClauseHoist(
 	parentKind: string,

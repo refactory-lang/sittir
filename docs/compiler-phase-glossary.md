@@ -15,7 +15,7 @@ does), and output (what changes).
 >
 > ```
 > enrich (author wraps grammar(enrich(base), …))   ← module-load, pre-tree-sitter
->   → evaluate (compiler/evaluate.ts: runs DSL, wire(), auto-groups)
+>   → evaluate (compiler/evaluate.ts: runs DSL, wire())
 >     → link (compiler/link.ts)
 >       → normalize (compiler/normalize.ts: + applyWrapperDeletion + computeSimplifiedRules)
 >         → assemble (compiler/assemble.ts + node-map.ts + collect-slots.ts)
@@ -39,12 +39,12 @@ does), and output (what changes).
 >
 > **What's shipped (PR0 + PR1 + PR2):**
 > - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` / `aliasedFrom` / `aliasNamed` on every Rule via the shared `RuleBase` interface (`types/rule.ts` — R11 moved the Rule IR layer to `codegen/src/types/`).
-> - **enrich attribute passes** (PR0): `enrichFieldWrappers` ships in `dsl/enrich.ts`. `enrichMultiplicityWrappers` was REMOVED — `multiplicity`/`nonterminal` are derived solely by `applyWrapperDeletion` from wrapper structure (enrich stamping them was premature + polluted the `nonterminal` slot signal by marking bare `optional(',')` delimiters). The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`).
+> - **enrich attribute passes** (PR0): `enrichFieldWrappers` ships in `dsl/enrich.ts`. `enrichMultiplicityWrappers` was REMOVED — `multiplicity`/`nonterminal` are derived solely by `applyWrapperDeletion` from wrapper structure (enrich stamping them was premature + polluted the `nonterminal` slot signal by marking bare `optional(',')` delimiters). The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`) at the time, **but that pass was later retired** (see the updated Phase 1 note below): enrich's `applyClauseHoist` now hoists every `optional(seq)`/`repeat(seq)`/`repeat1(seq)` itself, clause-shaped or not.
 > - **`applyWrapperDeletion`** (PR1, `compiler/wrapper-deletion.ts`): new last pass of `normalizeGrammar()`; pushes modifier wrappers (optional / field / repeat / repeat1 / alias) down to leaf `RuleBase` attributes. Output: `RenderRule` (wrapper-free) snapshot.
 > - **RenderRule + SimplifiedRule branded types** (PR1/PR2, `types/rule.ts`).
 > - **`computeSimplifiedRules`** (relocated PR1 to `compiler/simplify.ts`): takes RenderRule, runs `inlineRefs` + `simplifyRules` + `canonicalizeSeqOfLeaves` + `deleteWrapper` (post-fixpoint wrapper-free guard) + `fuseHeadRepeatLists`. Output: `Record<string, SimplifiedRule>`.
 > - **Alias-body + polymorph-form snapshots** (PR2): `normalizeGrammar()` threads top-level alias-bodies and polymorph-form contents through `applyWrapperDeletion` + `computeSimplifiedRules` and merges them into `normalizedRules` / `rules` (`SimplifiedGrammar`'s phase-product field — renamed from `simplifiedRules` 2026-07-05, PR-137). `assemble.ts` reads snapshots directly; per-call `simplifyRule(...)` / `deleteWrapper(...)` fallbacks deleted.
-> - **`applyAutoGroups` re-enabled** (PR2): `dsl/wire/wire.ts` invokes it; synthesized helpers (`_<parent>_optional<N>` / `_<parent>_repeat<N>`) are registered in `grammar.inline` via `WireContext.syntheticInline`.
+> - **`applyAutoGroups` re-enabled (PR2), then RETIRED (`51b0347d8`):** `dsl/wire/auto-groups.ts` is physically deleted. Enrich now owns ALL `optional/repeat(seq)` hoisting itself — inline-safe into a hidden `_<parent>_optional<N>` symbol, inline-unsafe into a visible content-alias that `link.ts`'s `mintContentAliasKinds` registers as a real IR kind. The old wire-time pass had to go because it ran BEFORE link and pre-consumed inline-unsafe seqs link must see as inline content. See `dsl/enrich.ts`'s `applyClauseHoist` and Phase 0 below.
 > - **`inlineRefs`** (PR2, renamed from `inlineGroupRefs`): inlines (a) hidden GROUP / MULTI refs and (b) any ref whose target is in `grammar.inline`. Matches tree-sitter's parse-time inlining. R3: lives in `dsl/rule-transforms.ts` as a shared op — `inlineRefs(rule, ctx: InlineRefsCtx, visited?)`.
 > - **R3 (#14 sweep + M1 closure):** `compiler/transforms.ts` and `compiler/rule-attrs.ts` moved to **`dsl/rule-transforms.ts`** / **`dsl/rule-attrs.ts`** (named to avoid the existing `dsl/transform/` override-transform module). `SimplifyCtx` is now a real interface (`extends TransformCtx`, adds `polymorphSkipExtra?`). Entry points: `simplifyRules(rules, ctx?)`, `computeSimplifiedRules(normalizedRules, ctx?)`, `normalizeToFixpoint(rule, ctx, rules)`, `applyNormalizationPasses(rawRules, ctx?, preserveKinds?)`, `inlineHiddenSeqRefs(rules, ctx, keepRef)`. The `inlineRefs` / `canonicalizeSeqOfLeaves` clusters moved to `dsl/rule-transforms.ts`; **`simplifySeqRule` (formerly `collapseSeq`) stays in simplify** (mutually recursive with `simplifyRule` — phase-internal, not a shareable op) and **`deleteWrapper`/wrapper-deletion.ts stays compiler-side** (depends on list-fusion / rule-catalog — moving it would invert the dsl→compiler direction).
 > - **`collectSlots`** (PR2/post-PR2, NEW file `compiler/collect-slots.ts`): the `deriveSlotsRaw` fold/merge/`effectiveMultiplicity` walker is **deleted**. `_deriveSlotsInternal` now delegates to `collectSlots` ("a slot IS a `nonterminal`-flagged node"). `deriveSlots` keeps its signature.
@@ -247,10 +247,19 @@ not the parse table.)
 > slot-presence check everywhere (collect-slots, simplify's strip decision).
 
 > **Reconciliation:** the spec's planned `decomposeOptional` / `decomposeRepeat`
-> enrich passes were NOT implemented. Group synthesis for structural
-> optional/repeat content moved to `dsl/wire/auto-groups.ts` (it must reach
-> tree-sitter), and separator-lift / attribute push-down live in
-> `applyWrapperDeletion`. Enrich only ships the two attribute passes above.
+> enrich passes were NOT implemented under those names. Group synthesis for
+> structural optional/repeat content initially moved to `dsl/wire/auto-groups.ts`
+> (a wire-time pass, so it would reach tree-sitter) but that pass has SINCE
+> been retired (`51b0347d8`, the file is deleted) — enrich's `applyClauseHoist`
+> (below) now performs this hoisting itself, pre-tree-sitter, for BOTH
+> clause-shaped and non-clause `optional(seq)`/`repeat(seq)`/`repeat1(seq)`
+> content. Separator-lift / attribute push-down still live in
+> `applyWrapperDeletion`.
+
+### `applyClauseHoist(parentKind, rule, rulesBag, ...)`
+**Pattern:** Any `optional(seq(...))` / `CHOICE[seq(...), BLANK]` position, clause-shaped (`seq(STRING, FIELD, …)`) or not.
+**Action:** Hoists the matched seq into a hidden group rule — inline-safe content becomes a hidden `_<parent>_optional<N>` symbol; inline-unsafe content becomes a visible content-alias that `link.ts`'s `mintContentAliasKinds` registers as a real IR kind. Runs pre-tree-sitter (enrich phase), so both shapes reach the parser correctly — the superseded `applyAutoGroups` ran at wire-time (post-enrich, pre-tree-sitter-consumption) and pre-consumed inline-unsafe seqs that link needed to see as inline content; that ordering bug is why the wire-time pass was retired in favor of doing this in enrich instead.
+**Output:** Rewritten rule with clause/group positions hoisted to hidden rules; `rulesBag` gains the synthesized entries.
 
 ---
 
@@ -265,8 +274,7 @@ Executes the grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
 > `CHOICE[x, BLANK]` (uppercase). `runtime-shapes.ts` exposes dual-case
 > predicates (`isChoiceType`, `isBlankType`, `isSeqType`, `isOptionalType`,
 > `isPrecWrapper`, `typeEq`) so wire-side passes recognize both forms — see
-> `auto-groups.ts`'s `CHOICE[seq, BLANK]` → optional handling and `wire.ts`'s
-> `unwrapOptionalChoiceRt`.
+> `wire.ts`'s `unwrapOptionalChoiceRt`.
 
 ### `evaluate(entryPath)`
 **Pattern:** CLI invocation with a grammar.js or overrides.ts path.
@@ -295,7 +303,7 @@ Executes the grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
 
 ### `wire(config, base?)` (`dsl/wire/wire.ts`)
 **Pattern:** Author wraps `grammar(enrich(base), wire({ rules, polymorphs, transforms, groups, renderAs, … }))`.
-**Action:** Folds declarative override config into the options object before tree-sitter sees it. Composes/synthesizes polymorph + transform parent fns; injects deferred-content fns for `_<parent>_<suffix>` / `_kw_<field>` / `_<alias>` hidden rules; wraps every rule fn so a per-invocation `WireContext` (and `currentRuleKind`) is active; drains accumulated conflict groups and synthetic-inline names into the `conflicts` / `inline` callbacks; runs `applyWirePatternReplacement` (the tree-sitter-runtime counterpart of evaluate's pattern replacement) for body-pattern `groups:`; then runs `applyAutoGroups`.
+**Action:** Folds declarative override config into the options object before tree-sitter sees it. Composes/synthesizes polymorph + transform parent fns; injects deferred-content fns for `_<parent>_<suffix>` / `_kw_<field>` / `_<alias>` hidden rules; wraps every rule fn so a per-invocation `WireContext` (and `currentRuleKind`) is active; drains accumulated conflict groups and synthetic-inline names into the `conflicts` / `inline` callbacks; runs `applyWirePatternReplacement` (the tree-sitter-runtime counterpart of evaluate's pattern replacement) for body-pattern `groups:`. (No longer runs `applyAutoGroups` — retired, see Phase 0's `applyClauseHoist`.)
 **Output:** `WiredOpts` with a non-enumerable `__wireContext__` attached for the compiler pipeline (`evaluate` → `link`) to read polymorph/group metadata.
 
 Key wire internals: `composeOrSynthesize{Polymorph,Transform}Parents`,
@@ -306,16 +314,25 @@ Key wire internals: `composeOrSynthesize{Polymorph,Transform}Parents`,
 `applyWirePatternReplacement` + `replaceInBodyRt` / `patternBodyEqual` /
 `isComplexBodyRt`.
 
-### `applyAutoGroups(base, outRules, context, authoredSynthesisKinds)` (`dsl/wire/auto-groups.ts`) **(SHIPPED — re-enabled PR2)**
-**Pattern:** A parent rule body containing `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))` (STRICT seq content only — `field`/`choice`/leaf content passes through). Recognizes both sittir lowercase and tree-sitter `CHOICE[seq, BLANK]` forms.
-**Action:** SYNTHESIS ONLY. For each match, synthesizes a hidden helper `_<parent>_optional<N>` / `_<parent>_repeat<N>` (cross-parent dedupe by canonical-stringified body) holding the inner seq, and rewrites the parent body's content to a `group-lift`-sourced SYMBOL ref. **Writes into `outRules`, not the base seed** (tree-sitter calls each `outRules` fn and overwrites the seeded entry). Registers each helper in `context.syntheticInline` so the wired `inline:` callback adds it to `grammar.inline` → tree-sitter inlines it → flat runtime. Skips author-overridden rules and `authoredSynthesisKinds` (kinds opted into `transforms:` / `polymorphs:` / path-mode `groups:`).
-**Output:** Mutated `outRules` (synthesized helper fns + rewritten parent fns); populated `syntheticInline`.
+### `applyAutoGroups(base, outRules, context, authoredSynthesisKinds)` (`dsl/wire/auto-groups.ts`) **(RETIRED — file deleted, `51b0347d8`)**
+Kept here for historical/naming-convention context only — the `group-lift` source tag this pass minted lives on (`inlineRefs`'s `source==='group-lift'` handling, Phase 3.5), even though this function and its file no longer exist. Superseded by enrich's `applyClauseHoist` (Phase 0), which does the same synthesis earlier in the pipeline (pre-tree-sitter, not wire-time) for both clause and non-clause shapes.
 
-> **Explicitly NOT decomposition:** auto-groups never touches
-> `separator`/`trailing`/`leading` metadata. Separator-lift and attribute
-> stamping are a separate concern handled in `applyWrapperDeletion` /
-> simplify, keeping the two passes from re-introducing the
-> renderer-reads-separator-on-all-repeats regression.
+**Pattern (as it worked before retirement):** A parent rule body containing `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))` (STRICT seq content only — `field`/`choice`/leaf content passes through). Recognized both sittir lowercase and tree-sitter `CHOICE[seq, BLANK]` forms.
+**Action:** SYNTHESIS ONLY. For each match, synthesized a hidden helper `_<parent>_optional<N>` / `_<parent>_repeat<N>` (cross-parent dedupe by canonical-stringified body) holding the inner seq, and rewrote the parent body's content to a `group-lift`-sourced SYMBOL ref. Wrote into `outRules`, not the base seed. Registered each helper in `context.syntheticInline` so the wired `inline:` callback added it to `grammar.inline` → tree-sitter inlined it → flat runtime. Skipped author-overridden rules and `authoredSynthesisKinds` (kinds opted into `transforms:` / `polymorphs:` / path-mode `groups:`).
+**Output (historical):** Mutated `outRules` (synthesized helper fns + rewritten parent fns); populated `syntheticInline`.
+
+> **Why it was retired:** running at wire-time (after enrich, but still
+> before tree-sitter consumes the grammar) meant auto-groups pre-consumed
+> inline-unsafe seqs that `link.ts` needed to see intact as inline content —
+> an ordering bug. Moving the same synthesis into enrich (`applyClauseHoist`,
+> which now runs pre-tree-sitter for both clause and non-clause shapes)
+> resolved it structurally rather than patching the ordering.
+>
+> **Explicitly NOT decomposition (still true of `applyClauseHoist` today):**
+> this pass never touches `separator`/`trailing`/`leading` metadata.
+> Separator-lift and attribute stamping are a separate concern handled in
+> `applyWrapperDeletion` / simplify, keeping the two passes from
+> re-introducing the renderer-reads-separator-on-all-repeats regression.
 
 ---
 
@@ -327,7 +344,7 @@ preserved (no restructuring).
 
 ### `link(raw, include?)`
 **Pattern:** Called with a `RawGrammar`.
-**Action:** Resolves all rules, classifies hidden rules, promotes terminals, infers field names, detects polymorphs, applies override polymorphs + `applyGroupOverrides` (user `groups:`), hoists indent into repeats, annotates block-bearer fields, collects repeated shapes. Auto-synthesized hidden groups from `applyAutoGroups` are already in the rules map and classify through the normal hidden-rule path.
+**Action:** Resolves all rules, classifies hidden rules, promotes terminals, infers field names, detects polymorphs, applies override polymorphs + `applyGroupOverrides` (user `groups:`), hoists indent into repeats, annotates block-bearer fields, collects repeated shapes. Auto-synthesized hidden groups from enrich's `applyClauseHoist` are already in the rules map and classify through the normal hidden-rule path.
 **Output:** `LinkedGrammar` (resolved rules, derivation log, alias map, top-level alias bodies, word, pattern-replacement kinds).
 
 > **Word-matcher pin-at-link invariant.** `LinkedGrammar.wordMatcher` (a
