@@ -79,13 +79,16 @@ import { BaseCtx, type BaseCtxInit } from './ctx.ts';
  * supertype-subtype resolution family — R4 / #14; `seen` cycle-guards and the
  * per-call subtypeSet stay explicit pass-local params, CW6). `linkRules` is
  * `grammar.linkRules` (the pre-simplify view: hidden-rule resolution needs to see
- * ALIAS/GROUP/TOKEN/VARIANT wrapper shapes that `BaseCtx.rules` — the
- * `SimplifiedRule` view — has already collapsed), so it's a distinct field, not
- * a reuse of the inherited `rules`.
+ * REPEAT1/OPTIONAL/ALIAS/GROUP/TOKEN/VARIANT wrapper shapes that `BaseCtx.rules` —
+ * the `SimplifiedRule` view — has already collapsed; PR-137 confirmed this
+ * empirically — see `NodeMap.linkRules`'s doc comment in types.ts for the
+ * falsifying probes), so it's a distinct field, not a reuse of the inherited
+ * `rules`.
  *
- * `rules` overrides the base accessor to read `grammar.simplifiedRules` —
- * `SimplifiedGrammar` has no `rules` field; its phase product lives in
- * `simplifiedRules` (see `Grammar<P>`'s doc comment in types.ts).
+ * `rules` reads `grammar.rules` — same one-liner as every other phase ctx
+ * (2026-07-05: `SimplifiedGrammar`'s phase product field was renamed from
+ * `simplifiedRules` to `rules`, closing the one exception this class used to
+ * need; see `Grammar<P>`'s doc comment in types.ts).
  *
  * `nodes` is the cross-node store the post-passes need for `markUserFacing` /
  * resolveColliding / resolveIrKeys / collectAnonymous — a live `Map` so the
@@ -114,9 +117,9 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		this._nodes = init.nodes ?? new Map();
 	}
 
-	/** `SimplifiedGrammar` has no `rules` field — its phase product is `simplifiedRules`. */
+	/** `grammar.rules` — `SimplifiedGrammar`'s phase product (see class doc comment). */
 	get rules(): Record<string, SimplifiedRule> {
-		return this.grammar.simplifiedRules;
+		return this.grammar.rules;
 	}
 
 	/** `grammar.linkRules` — the pre-simplify, wrapper-bearing view. See class doc comment. */
@@ -234,9 +237,10 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				parentAliasedKinds: normalized.parentAliasedKinds,
 				wordMatcher: wordMatcherRegex
 			});
-			// `simplifiedRules[kind]` and `normalizedRules[kind]` are both pre-computed
-			// by normalize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
-			const simplifiedRule = normalized.simplifiedRules[kind]!;
+			// `rules[kind]` (SimplifiedGrammar's phase product) and `normalizedRules[kind]`
+			// are both pre-computed by normalize — alias-body kinds are now also
+			// snapshotted there (PR2 Task 3.B-prereq-alias).
+			const simplifiedRule = normalized.rules[kind]!;
 			const renderRule: RenderRule = normalized.normalizedRules![kind]!;
 			const variantChildKinds = variantChildrenByParent.get(kind);
 
@@ -254,7 +258,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 								kindEntries,
 								parseKindCollisionContext,
 								visibleAliasTargets: normalized.visibleAliasTargets,
-								simplifiedRules: normalized.simplifiedRules
+								simplifiedRules: normalized.rules
 							}
 						)
 					);
@@ -452,6 +456,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			signatures: computeSignatures(nodes),
 			derivations: normalized.derivations,
 			linkRules: normalized.linkRules,
+			normalizedRules: normalized.normalizedRules,
 			word: normalized.word,
 			externals: normalized.externals ? new Set(normalized.externals) : undefined,
 			polymorphFormKinds: computePolymorphFormKinds(nodes),

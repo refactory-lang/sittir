@@ -214,12 +214,13 @@ export function inlineHiddenSeqRefs(
 		}
 	}
 	// NOTE: we deliberately do NOT delete the folded `_x` entry from the map.
-	// `assemble` iterates the RAW `normalized.rules` keys and looks up the matching
-	// `normalizedRules[kind]` / `simplifiedRules[kind]` for EACH — deleting `_x` from
-	// normalizedRules only would desync the maps and crash assemble. The folded `_x`
-	// survives as a standalone entry (its parents simply no longer reference it);
-	// emitters already skip it via `inlineKinds`. Dead-duplicate cleanup of the
-	// orphaned `_x` kind + its transport is a separate concern (§D-2b), not here.
+	// `assemble` iterates the RAW `normalized.linkRules` keys and looks up the matching
+	// `normalizedRules[kind]` / `rules[kind]` (SimplifiedGrammar's phase product) for
+	// EACH — deleting `_x` from normalizedRules only would desync the maps and crash
+	// assemble. The folded `_x` survives as a standalone entry (its parents simply no
+	// longer reference it); emitters already skip it via `inlineKinds`. Dead-duplicate
+	// cleanup of the orphaned `_x` kind + its transport is a separate concern (§D-2b),
+	// not here.
 	return changed;
 }
 
@@ -488,7 +489,7 @@ export function normalizeGrammar(
 		name: linked.name,
 		linkRules: rules,
 		normalizedRules,
-		simplifiedRules,
+		rules: simplifiedRules,
 		supertypes: linked.supertypes,
 		word: linked.word,
 		externals: linked.externals,

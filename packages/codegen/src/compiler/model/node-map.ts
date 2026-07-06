@@ -2402,12 +2402,12 @@ export class AssembledBranch<
 	// separate branch-global shape discriminator.
 	/**
 	 * SimplifiedRule with anonymous tokens / structural wrappers stripped
-	 * (`normalized.simplifiedRules[kind]`, sourced from `computeSimplifiedRules`).
-	 * Stored here so derivation walks (`deriveFields`, `deriveChildren`,
-	 * separator discovery) don't have to re-navigate past delimiter
-	 * literals on every call. Template emission still reads the raw
-	 * `rule` because templates need the literals to surface as
-	 * template text. Stage 1: populated but not yet read.
+	 * (`normalized.rules[kind]` — SimplifiedGrammar's phase product, sourced
+	 * from `computeSimplifiedRules`). Stored here so derivation walks
+	 * (`deriveFields`, `deriveChildren`, separator discovery) don't have to
+	 * re-navigate past delimiter literals on every call. Template emission
+	 * still reads the raw `rule` because templates need the literals to
+	 * surface as template text. Stage 1: populated but not yet read.
 	 */
 	readonly simplifiedRule: SimplifiedRule;
 	/**

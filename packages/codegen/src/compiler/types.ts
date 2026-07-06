@@ -454,14 +454,18 @@ export interface SimplifiedGrammar {
 	/** Propagated from {@link LinkedGrammar.visibleAliasTargets}. */
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	/**
-	 * Derivation-only view of every rule in `rules`, produced by
-	 * `simplifyRule` as the final pass in `normalizeGrammar()`. Downstream
-	 * consumers (`assemble` → `AssembledBranch/Container/Group`) read
-	 * from this map instead of re-simplifying per-node. Raw
-	 * templates still read `rules` because they need anonymous
-	 * delimiters to surface as template literals.
+	 * `SimplifiedGrammar`'s phase product — uniformly named `rules` like
+	 * every other `Grammar<P>` member (2026-07-05: SimplifiedGrammar's
+	 * former `simplifiedRules` field name was the one exception to the
+	 * family's `rules` convention; renamed to close it). Derivation-only
+	 * view of every rule, produced by `simplifyRule` as the final pass in
+	 * `normalizeGrammar()`. Downstream consumers (`assemble` →
+	 * `AssembledBranch/Container/Group`) read from this map instead of
+	 * re-simplifying per-node. Raw templates still read `normalizedRules` /
+	 * `linkRules` because they need anonymous delimiters to surface as
+	 * template literals.
 	 */
-	readonly simplifiedRules: Record<string, SimplifiedRule>;
+	readonly rules: Record<string, SimplifiedRule>;
 	/**
 	 * Wrapper-deleted view of every rule in `rules`, produced by
 	 * `applyWrapperDeletion` as the new last pass in `normalizeGrammar()`.
@@ -512,11 +516,12 @@ export type PhaseRuleOf<P extends PhaseName> = P extends 'simplify'
  * remain the SSOT for their field sets (they diverge well beyond `rules` —
  * e.g. `supertypes: string[]` on Raw vs `Set<string>` on Linked), and this
  * type gives `BaseCtx<P>` (S2) one parameter that keys grammar, rules,
- * walker, and builder together. Invariant each alias must satisfy:
- * `Grammar<P>['rules'] extends Record<string, PhaseRuleOf<P>>` — except
- * `SimplifiedGrammar`, whose phase product lives in `simplifiedRules`
- * (its `rules`-equivalent) alongside the carried `normalizedRules` /
- * `linkRules` views. See
+ * walker, and builder together. Uniform invariant every alias satisfies
+ * (2026-07-05: closed the former `SimplifiedGrammar` exception — its phase
+ * product field is named `rules` like every other family member now):
+ * `Grammar<P>['rules'] extends Record<string, PhaseRuleOf<P>>` for ALL `P`.
+ * `SimplifiedGrammar` additionally carries `normalizedRules` / `linkRules`
+ * as extra (non-`rules`) views alongside its `rules` product. See
  * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §1.
  */
 export type Grammar<P extends PhaseName> = P extends 'evaluate'
@@ -568,30 +573,59 @@ export interface NodeMap {
 	/**
 	 * `SimplifiedGrammar.linkRules` carried through assemble — the
 	 * pre-simplify, wrapper-bearing view (`applyNormalizationPasses`'
-	 * output, BEFORE `applyWrapperDeletion` strips modifier wrappers). The
-	 * template walker needs this so its `symbol` case can inline hidden
-	 * helper rules (e.g. python's `_import_list`) directly into the
-	 * emitted template. Without it the walker falls back to `$$$CHILDREN`
-	 * which is wrong for hidden helpers whose fields get promoted onto the
-	 * parent node.
+	 * output, BEFORE `applyWrapperDeletion` strips modifier wrappers).
+	 *
+	 * PR-137 narrowed this to its JUSTIFIED-EXCEPTION consumers — every
+	 * other former reader migrated to `normalizedRules` (below) or a
+	 * structural fact already on `RenderRule`/`SimplifiedRule`. Surviving
+	 * consumers, each verified wrapper-dependent (empirically, not just by
+	 * inspection — see docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md
+	 * PR-137 notes for the falsifying probes):
+	 *   - `util/word-matcher.ts`'s `compileWordMatcher`, called from
+	 *     `AssembleCtx.from` / `assemble()` / `TemplateEmitter`'s
+	 *     constructor: `ruleToRegexSource`'s OPTIONAL/REPEAT/REPEAT1 cases
+	 *     read the wrapper node directly. On `normalizedRules` those
+	 *     wrappers collapse to a `multiplicity` leaf attribute the walker
+	 *     doesn't consult — confirmed regression on typescript's `identifier`
+	 *     word rule (loses its trailing `REPEAT`, undercounting the regex).
+	 *   - `compiler/assemble.ts`'s hidden-body/subtype-resolution family
+	 *     (`resolveHiddenSubtypes` / `includeAliasMemberKinds` /
+	 *     `isAliasMemberKind` / `isCompatibleSubtypeMember` /
+	 *     `resolveHiddenRuleContent`, via `AssembleCtx.linkRules`): the
+	 *     switch's absence of a `REPEAT1` case is load-bearing (a
+	 *     `REPEAT1(CHOICE(...))` repeated-punctuation group must stay
+	 *     opaque, not recurse into its arms as if each were a subtype).
+	 *     On `normalizedRules` the same position becomes a bare `CHOICE`
+	 *     with `multiplicity: 'nonEmptyArray'` stamped — which DOES have a
+	 *     case, so the function wrongly recurses. Confirmed regression:
+	 *     rust's `_delim_tokens` supertype chain resolves the punctuation
+	 *     literal `%` as a bogus subtype name, crashing
+	 *     `emitSupertypeUnionDeclarations` (`types.ts`'s "references
+	 *     subtype '%' which is not in NodeMap").
+	 *   - `emitters/suggested.ts`'s `findSymbolPosition` (via `parentRule`)
+	 *     and `detectGroupCandidates`/`walkBodyForGroups` (via `groupRules`):
+	 *     both explicitly pattern-match `FIELD`/`OPTIONAL`/`REPEAT`/
+	 *     `REPEAT1`/`ALIAS`/`TOKEN`/`VARIANT`/`GROUP` wrapper shapes by
+	 *     design — these are propose-diagnostics over the grammar's
+	 *     natural (pre-wrapper-deletion) authoring shape, not render
+	 *     consumers.
+	 *   - `compiler/link.ts`'s `resolveRefinePath`/`narrowedFieldLiteralsForForm`
+	 *     (via `emitters/refine-emit.ts`'s `collectRefineKindInfos`):
+	 *     `refine()` selection paths are authored against the pre-normalize
+	 *     tree, so path resolution must walk the same wrapper shapes.
 	 */
 	readonly linkRules?: Record<string, Rule<'link'>>;
 	/**
-	 * Rules from `LinkedGrammar` (pre-Normalize — before
-	 * `applyNormalizationPasses` runs), as distinct from `linkRules` above
-	 * (post-normalization-passes). The suggester needs THIS earlier view
-	 * for polymorph-path computation: `findAllPolymorphCandidates` paths
-	 * must match what the override author's `transform()` call would
-	 * see at evaluate time — BEFORE `fanOutSeqChoices` flattens nested
-	 * seq(choice) into top-level seq[choice]. Using the post-normalization-
-	 * passes view collapses `seq(_, seq(choice, _))` into
-	 * `seq(_, choice, _)`, shifting the choice's logical path from `1/0`
-	 * to `1`, and the emitted `variant()` keys then fail when applied to
-	 * the base grammar's prec-wrapped-seq-of-choice shape. Currently never
-	 * populated by `assemble()` — `suggested.ts` falls back to `linkRules`
-	 * whenever this is absent, which today is always.
+	 * `SimplifiedGrammar.normalizedRules` carried through assemble — the
+	 * wrapper-deleted `RenderRule` view (modifier wrappers pushed down to
+	 * leaf attributes). PR-137: added so `emitters/templates.ts`'s
+	 * `EmitCtx.rules` (hidden-helper inlining fallback in `emitSymbol`) can
+	 * read the honest post-normalize view directly instead of bridging
+	 * through `deleteWrapper(linkRules[name])` per call — verified
+	 * byte-identical to the former bridge for every hidden ref the
+	 * fallback actually reaches, across all 3 grammars.
 	 */
-	readonly linkedRules?: Record<string, Rule<'link'>>;
+	readonly normalizedRules?: Record<string, RenderRule>;
 	/**
 	 * Grammar's `word` rule kind — the lexer's word-recognition
 	 * production. Tree-sitter uses this to disambiguate keywords

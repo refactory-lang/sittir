@@ -7,7 +7,7 @@
  *
  * A string member is "anonymous" (stripped) iff it is NOT slot-promoted — see
  * `isSlotPromotedLiteral`; slot-valued keyword markers survive. Runs as the
- * final stage of `normalizeGrammar()`, producing `simplifiedRules` on SimplifiedGrammar.
+ * final stage of `normalizeGrammar()`, producing `SimplifiedGrammar.rules`.
  * Per-function rationale: docs/compiler-phase-glossary.md (Phase 3.5: Simplify).
  */
 

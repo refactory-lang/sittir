@@ -114,7 +114,7 @@ describe('NodeMap back-pointer maps', () => {
 	});
 
 	it('slot.sourceRuleIds accumulates merged simplified-rule contributors and maps each id back to the slot', () => {
-		const { simplifiedRules, nodeMap } = buildNodeMap({
+		const { rules: simplifiedRules, nodeMap } = buildNodeMap({
 			test: seq(
 				field('parameter', { type: 'SYMBOL', name: 'identifier' }),
 				field('parameter', { type: 'SYMBOL', name: 'number' })
@@ -137,7 +137,7 @@ describe('NodeMap back-pointer maps', () => {
 	});
 
 	it('slot.sourceRuleIds includes both simplified and render-view ids when the views diverge', () => {
-		const { simplifiedRules, normalizedRules, nodeMap } = buildNodeMap({
+		const { rules: simplifiedRules, normalizedRules, nodeMap } = buildNodeMap({
 			test: seq(
 				field('lhs', { type: 'SYMBOL', name: 'identifier' }),
 				choice(

@@ -14,9 +14,9 @@
  *   - `link`            — after `link()` (symbol-reference inference,
  *                         promoted rules).
  *   - `normalize`       — after `normalizeGrammar()` (rule canonicalisation).
- *   - `simplify`        — `normalized.simplifiedRules[kind]`, the
- *                         template-walker's view of the same rule with
- *                         decorative wrappers stripped.
+ *   - `simplify`        — `normalized.rules[kind]` (SimplifiedGrammar's
+ *                         phase product), the template-walker's view of
+ *                         the same rule with decorative wrappers stripped.
  *   - `assemble`        — the `AssembledNode` for this kind (fields,
  *                         children, polymorph forms, irKey, etc.).
  *   - `emit.interface`  — emitted TypeScript interface shape for the
@@ -91,7 +91,7 @@ stages.link = linked.rules[kind] ?? null;
 
 const normalized = normalizeGrammar(linked);
 stages.normalize = normalized.linkRules[kind] ?? null;
-stages.simplify = normalized.simplifiedRules?.[kind] ?? null;
+stages.simplify = normalized.rules?.[kind] ?? null;
 
 const nodeMap = assemble(AssembleCtx.from(normalized));
 const node = nodeMap.nodes.get(kind) ?? null;

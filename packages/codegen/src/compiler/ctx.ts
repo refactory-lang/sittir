@@ -68,11 +68,11 @@ export interface BaseCtxInit<P extends PhaseName> {
  * an unresolved `Grammar<P>` inside the base class body without an unsafe
  * cast. Each concrete subclass implements the one-liner at its OWN concrete
  * `P`, where the projection type-checks honestly — `LinkCtx`/`NormalizeCtx`/
- * `SimplifyCtx` return `this.grammar.rules` (their `Grammar<P>` all declare a
- * `rules` field matching `PhaseRuleOf<P>`); `AssembleCtx` (reading
- * `Grammar<'simplify'>` = `SimplifiedGrammar`, which has no `rules` field —
- * its phase product lives in `simplifiedRules`) returns
- * `this.grammar.simplifiedRules` instead, matching what it factually receives.
+ * `SimplifyCtx`/`AssembleCtx` all return `this.grammar.rules` (every
+ * `Grammar<P>`, including `SimplifiedGrammar` since the 2026-07-05 rename of
+ * its phase-product field from `simplifiedRules` to `rules`, declares a
+ * `rules` field matching `PhaseRuleOf<P>`) — the uniform one-liner every
+ * subclass implements.
  *
  * Deliberately minimal — only what EVERY phase carries. The "inline kinds" set
  * is NOT here: phases represent it differently (link as a `readonly string[]`,

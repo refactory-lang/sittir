@@ -39,7 +39,7 @@ function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial
 		name: 'test',
 		linkRules: rules,
 		normalizedRules,
-		simplifiedRules,
+		rules: simplifiedRules,
 		supertypes: new Set(),
 		word: null,
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },

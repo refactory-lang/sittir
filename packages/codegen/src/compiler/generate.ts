@@ -236,7 +236,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	});
 	const normalized = normalizeGrammar(linked, normalizeCtx);
 	tracePhaseRules('normalize', normalized.linkRules);
-	tracePhaseRules('simplify', normalized.simplifiedRules);
+	tracePhaseRules('simplify', normalized.rules);
 
 	// Phase 4: Assemble — caller-owned ctx (R12): built from `normalized` via
 	// the canonical factory, threading the pipeline's live DiagnosticSink.
