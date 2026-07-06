@@ -52,6 +52,40 @@ describe('RuleWalker.map', () => {
 	});
 });
 
+describe('map rebuilds through separator edges', () => {
+	it('rebuilds a separator-array edge when a child changes', () => {
+		const w = new RuleWalker();
+		const tree = {
+			type: 'REPEAT',
+			content: sym('item'),
+			separator: [sym('old')]
+		} as unknown as AnyRule;
+		const out = w.map(tree, (r) => (r.type === SYMBOL && (r as { name: string }).name === 'old' ? sym('new') : r));
+		expect((out as unknown as { separator: AnyRule[] }).separator[0]).toEqual(sym('new'));
+	});
+
+	it('rebuilds a separator {rules} edge when a child changes', () => {
+		const w = new RuleWalker();
+		const tree = {
+			type: 'REPEAT',
+			content: sym('item'),
+			separator: { rules: [sym('old')], trailing: true }
+		} as unknown as AnyRule;
+		const out = w.map(tree, (r) => (r.type === SYMBOL && (r as { name: string }).name === 'old' ? sym('new') : r));
+		expect((out as unknown as { separator: { rules: AnyRule[] } }).separator.rules[0]).toEqual(sym('new'));
+	});
+
+	it('returns the same reference when nothing changes, including inside separator edges', () => {
+		const w = new RuleWalker();
+		const tree = {
+			type: 'REPEAT',
+			content: sym('item'),
+			separator: [sym('comma')]
+		} as unknown as AnyRule;
+		expect(w.map(tree, (r) => r)).toBe(tree);
+	});
+});
+
 describe('RuleWalker.fold / find', () => {
 	const w = new RuleWalker();
 	const tree = { type: SEQ, members: [str('a'), { type: CHOICE, members: [sym('x'), str('b')] }] } as AnyRule;

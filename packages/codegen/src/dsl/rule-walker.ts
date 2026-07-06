@@ -33,9 +33,8 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	 * form; string form carries no nested rules). Leaves return [].
 	 * Walks needing a narrower set early-return on those types in their own
 	 * lambda; this relation never grows per-walk options.
-	 * NOTE: map deliberately uses a narrower structural-edge traversal
-	 * (members/content) than this relation — see its doc; fold/find/foldDeep/
-	 * findDeep use childrenOf in full.
+	 * map, fold, find, foldDeep, and findDeep all use this relation
+	 * identically — no narrower traversal exists.
 	 */
 	childrenOf(rule: R): readonly R[] {
 		const out: R[] = [];
@@ -52,28 +51,49 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	 * Bottom-up rebuild. Applies `visit` to each child's mapped result, then
 	 * rebuilds this node ONLY if a child changed. Returns the SAME reference
 	 * when nothing changed — load-bearing for fixpoint loops that compare
-	 * `r === before` (enrich). Rebuilds via STRUCTURAL edges (members/content)
-	 * only — separator-rule edges are neither visited nor rebuilt by map; to
-	 * OBSERVE separator rules use fold/find, which traverse the full
-	 * childrenOf edge set. Rebuilding stamped separator attributes is
-	 * transform-pass territory, deliberately outside map's contract.
+	 * `r === before` (enrich). Rebuilds via the SAME `childrenOf` edge
+	 * relation `fold`/`find` use — `members`/`content` AND separator-array/
+	 * object-form edges. (Widened 2026-07 as part of PR-S: separator can now
+	 * hold a real sub-`Rule` that needs the same transforms as any other
+	 * rule position; `fold`/`find` were already separator-aware via
+	 * `childrenOf`, `map` was the one exception — no longer.)
 	 */
 	map(rule: R, visit: (r: R) => R): R {
-		const bag = rule as { members?: readonly R[]; content?: R };
+		const bag = rule as { members?: readonly R[]; content?: R; separator?: StampedSeparator };
+		let changed = false;
+		const patch: { members?: readonly R[]; content?: R; separator?: StampedSeparator } = {};
+
 		if (Array.isArray(bag.members)) {
-			let changed = false;
 			const next = bag.members.map((m) => {
 				const out = visit(this.map(m, visit));
 				if (out !== m) changed = true;
 				return out;
 			});
-			return changed ? ({ ...(rule as object), members: next } as unknown as R) : rule;
-		}
-		if (bag.content && typeof bag.content === 'object') {
+			patch.members = next;
+		} else if (bag.content && typeof bag.content === 'object') {
 			const out = visit(this.map(bag.content, visit));
-			return out === bag.content ? rule : ({ ...(rule as object), content: out } as unknown as R);
+			if (out !== bag.content) changed = true;
+			patch.content = out;
 		}
-		return rule;
+
+		const sep = bag.separator;
+		if (Array.isArray(sep)) {
+			const next = (sep as readonly R[]).map((m) => {
+				const out = visit(this.map(m, visit));
+				if (out !== m) changed = true;
+				return out;
+			});
+			patch.separator = next as StampedSeparator;
+		} else if (typeof sep === 'object' && sep !== null && 'rules' in sep) {
+			const next = (sep.rules as readonly R[]).map((m) => {
+				const out = visit(this.map(m, visit));
+				if (out !== m) changed = true;
+				return out;
+			});
+			patch.separator = { ...sep, rules: next } as StampedSeparator;
+		}
+
+		return changed ? ({ ...(rule as object), ...patch } as unknown as R) : rule;
 	}
 
 	/** Pre-order accumulate: visits `rule` itself, then descends childrenOf. */
