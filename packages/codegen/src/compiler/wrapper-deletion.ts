@@ -1,25 +1,10 @@
 /**
- * compiler/wrapper-deletion.ts — PR1 Task 2.A2
+ * compiler/wrapper-deletion.ts — see the glossary's Phase 3: Normalize section
+ * (`applyWrapperDeletion`) for the general pass description.
  *
- * Pushes modifier wrappers (optional / field / repeat / repeat1) down to
- * leaf attributes (fieldName, multiplicity, separator) on RuleBase.
- * The result type is RenderRule: the Rule<'link'> union minus the four wrapper
- * variants, so consumers that only see RenderRule cannot accidentally
- * re-wrap a leaf.
- *
- * Design notes:
- * - Stacked wrappers are handled outside-in: the outermost wrapper's
- *   contribution is stamped first, then inner wrappers add their own.
- *   Outer multiplicity wins over inner (field-of-optional: outer=field
- *   stamps fieldName, inner=optional stamps multiplicity).
- * - Default multiplicity ('single') is NOT stamped — only non-default
- *   values are written to avoid polluting leaf rule objects.
- * - Structural rules (seq / choice / group / clause / variant / terminal /
- *   token) are recursed into so ALL wrappers in the tree are eliminated.
- * - Leaf terminals (string / pattern / symbol / enum / supertype /
- *   indent / dedent / newline / alias / token — anything not structural and
- *   not a wrapper) are returned with the accumulated modifier attributes
- *   spread onto them.
+ * Local note: stacked wrappers are handled outside-in (outermost stamps
+ * first), so a field-of-optional stamps fieldName from the outer wrapper and
+ * multiplicity from the inner one on the same leaf.
  */
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
