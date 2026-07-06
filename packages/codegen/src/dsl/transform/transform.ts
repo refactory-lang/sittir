@@ -106,8 +106,8 @@ function makePolymorphAliasNode(hiddenName: string, visibleName: string): Runtim
  *    transparent so the same paths work in both sittir and tree-sitter
  *    runtimes.
  *
- * Field patches are marked `metadata.fieldSource: 'override'` (debt PR-P1)
- * for diagnostics. One-arg `field('name')` placeholders are filled in
+ * Field patches are marked `metadata.fieldSource: 'override'` for
+ * diagnostics. One-arg `field('name')` placeholders are filled in
  * from the original member at the target position; an enrich-inferred
  * field wrapper on the original is unwrapped before re-wrapping to
  * avoid nested fields.
@@ -665,8 +665,8 @@ function resolvePatch(
 		return resolveFieldPlaceholder(patch, originalMember, precStack);
 	}
 	// Two-arg field passed through directly — accept either case.
-	// Tag `metadata.fieldSource: 'override'` (debt PR-P1) so diagnostics
-	// recognize it as user-authored.
+	// Tag `metadata.fieldSource: 'override'` so diagnostics recognize it as
+	// user-authored.
 	if (isFieldLike(patch)) {
 		return { ...patch, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule;
 	}
@@ -858,11 +858,10 @@ function resolveFieldPlaceholder(
 		// the one-line entry could be deleted and enrich's auto-inference
 		// pass would produce the same FIELD automatically. Warn so the
 		// author can clean it up on the next cycle. Gated on SITTIR_QUIET
-		// like the enrich reportSkip helper. Per the 2026-07-02 user
-		// decision, transparency is structural: a user-authored wrapper
-		// shape-identical to enrich's output is treated the same as one
-		// enrich actually produced — neither should leak into the override
-		// result as a nested wrapper.
+		// like the enrich reportSkip helper. Transparency here is structural:
+		// a user-authored wrapper shape-identical to enrich's output is
+		// treated the same as one enrich actually produced — neither should
+		// leak into the override result as a nested wrapper.
 		const overrideName = patch.name;
 		const enrichName = (content as { name?: string }).name ?? '(unknown)';
 		// Only warn for the redundant-duplicate case (override matches enrich's

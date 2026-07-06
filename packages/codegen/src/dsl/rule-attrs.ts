@@ -1,12 +1,12 @@
 /**
- * compiler/rule-attrs.ts — shared attr-preservation helpers.
+ * dsl/rule-attrs.ts — shared attr-preservation helpers.
  *
  * `withAttrsFrom` is used by every collapse site that discards a structural
- * wrapper (seq / choice) in favour of a single survivor. Originally local to
- * simplify.ts; it lives here so normalize.ts's `collapseWrappers` and
- * simplify.ts's `canonicalizeSeqOfLeaves` use the SAME implementation, and
- * future collapse sites can't drift apart. (`combineMultiplicity`, its usual
- * companion at those sites, lives in `dsl/rule-transforms.ts`.)
+ * wrapper (seq / choice) in favour of a single survivor. It lives here so
+ * normalize.ts's `collapseWrappers` and simplify.ts's `canonicalizeSeqOfLeaves`
+ * use the SAME implementation, and future collapse sites can't drift apart.
+ * (`combineMultiplicity`, its usual companion at those sites, lives in
+ * `dsl/rule-transforms.ts`.)
  */
 
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts

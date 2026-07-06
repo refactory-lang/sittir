@@ -123,8 +123,6 @@ describe('enrich()', () => {
 					name: 'expression'
 				});
 				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
-				// Pass was renamed kind-to-name → symbol-to-field in 80ee7ad9
-				// (passes 1+3 merged into one symbol-to-field pass + fixed-point loop).
 				expect(calls.some((c) => c.includes('skipped symbol-to-field on foo'))).toBe(true);
 			} finally {
 				if (savedQuiet !== undefined) process.env.SITTIR_QUIET = savedQuiet;
