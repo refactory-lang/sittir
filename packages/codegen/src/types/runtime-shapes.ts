@@ -1,61 +1,27 @@
 /**
  * dsl/runtime-shapes.ts — cross-runtime rule shape utilities.
  *
- * **Scope: DSL layer only.** The predicates here are dual-RUNTIME aware
- * because DSL code runs under two different runtimes:
+ * **Scope: DSL layer only.** See docs/compiler-phase-glossary.md "Phase 1:
+ * Evaluate" § two-compiler-shape divergence for why DSL code must accept
+ * both the sittir runtime's `Rule` union and the tree-sitter CLI runtime's
+ * shapes. This module consolidates the shape-normalization predicates
+ * (`isContainerType`/`isWrapperType`/`isPrecWrapper`/`isFieldLike`/
+ * `isSymbolLike`) rather than scattering per-file shape checks.
  *
- *   1. **Sittir runtime** — `evaluate.ts` injects `grammarFn` as the
- *      global `grammar()`. Rules use sittir's `Rule` union in
- *      `compiler/rule.ts` (UPPERCASE type discriminators, matching
- *      tree-sitter's own — see decision item 2 in
- *      `docs/superpowers/specs/2026-07-02-rule-type-model-ssot-research.md`).
- *
- *   2. **Tree-sitter CLI runtime** — the transpiled `.sittir/grammar.js`
- *      is loaded by tree-sitter's parser generator. Rules use
- *      tree-sitter-cli's own `dsl.d.ts` natives — same UPPERCASE
- *      discriminators, but different SHAPES for some nodes (nested `$`
- *      refs, `PREC_LEFT` carrying `value`, `optional` lowered to
- *      `CHOICE(x, BLANK)`, etc. — see the SSOT research doc §0's
- *      divergence table).
- *
- * DSL helpers (`transform`, `applyPath`, `enrich`, `field`, `alias`,
- * `role`) run in both runtimes, so they must accept both shapes. The
- * case split that used to motivate `typeEq`'s lower/upper ladders is
- * GONE (both runtimes now agree on UPPERCASE) — what remains here is
- * SHAPE normalization: symbol refs sometimes nested (`{symbol:{...}}`),
- * FIELD `content` typed as `unknown` rather than `Rule`, etc. Consolidate
- * those predicates + type guards here rather than scattering per-file
- * shape checks.
- *
- * **Do NOT import from here in `compiler/` or `validate/`.** Code past
- * the evaluate.ts boundary operates on the sittir-internal `Rule` union
- * exclusively. Use the `isSeq` / `isChoice` / etc. guards in
- * `compiler/rule.ts` instead. Importing this module from `compiler/` is
- * a cross-pipeline-leak signal (see MEMORY.md
- * `feedback_rule_case_as_origin_signal`).
+ * **Do NOT import from here in `compiler/` or `validate/`.** Code past the
+ * evaluate.ts boundary operates on the sittir-internal `Rule` union
+ * exclusively; use the `isSeq`/`isChoice`/etc. guards in `compiler/rule.ts`
+ * instead. Importing this module from `compiler/` is a cross-pipeline-leak
+ * signal (`feedback_rule_case_as_origin_signal`).
  */
 
 /**
- * The honest return/input type for DSL functions that accept or
- * produce rules without knowing which runtime they're running in.
- *
- * Broader than sittir's `Rule` union: any object with a string
- * `type` discriminator is a `RuntimeRule`. Consumers that need to
- * access runtime-specific fields (`members`, `content`, `name`,
- * ...) must narrow via the guards in this module (`isContainerType`,
- * `isWrapperType`, `isPrecWrapper`, `isFieldLike`, `isSymbolLike`)
- * or by pattern-matching on `type` literals.
- *
- * Why a supertype rather than a precise union? Both runtimes agree on
- * UPPERCASE type discriminators, but their SHAPES diverge for some nodes:
- * nested `$` symbol refs, `PREC_LEFT` carrying `value` as `number` (sittir's
- * `prec()` strips the wrapper entirely — see `evaluate.ts::prec` — so a
- * PREC-shaped rule only ever appears via the tree-sitter CLI runtime),
- * `content: unknown` rather than `Rule`, `optional` lowered to
- * `CHOICE(x, BLANK)`, etc. (see this file's header, and the SSOT research
- * doc §0's divergence table). Typing `transform()` as returning `Rule` would
- * lie to consumers about these shape differences; typing it as
- * `RuntimeRule` forces an honest narrowing at every inspection point.
+ * The honest return/input type for DSL functions that accept or produce
+ * rules without knowing which runtime they're running in — broader than
+ * sittir's `Rule` union since the two runtimes' shapes diverge (see the
+ * module header). Consumers narrow via this module's guards or by
+ * pattern-matching on `type` literals; typing `transform()` as `Rule`
+ * would lie about the shape differences.
  *
  * Intentionally shape-minimal (no index signature) so sittir's Rule
  * interfaces — which don't declare `[k: string]: unknown` — are

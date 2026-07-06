@@ -19,15 +19,9 @@ import {
 } from './rule-types.ts';
 import type { RuleMetadata } from './rule-metadata-brand.ts';
 /**
- * compiler/rule.ts — Shared IR
- *
- * One type throughout the pipeline. Defined once, never extended.
- * Rule type presence varies by phase:
- *   - After Evaluate: symbol, alias, token, repeat1 present
- *   - After Link: symbol, alias, token gone; group, indent/dedent/newline added.
- *     `repeat1` is preserved so downstream field/child derivation can stamp the
- *     `nonEmpty` flag on the resulting slot for emitter tuple-type rendering.
- *   - After Normalize: variant added; structural grouping may be restructured
+ * compiler/rule.ts — Shared IR. One `Rule` type throughout the pipeline,
+ * defined once, never extended; phase-by-phase variant presence is in
+ * docs/compiler-phase-glossary.md "Rule IR".
  *
  * @generated — do not add derived metadata (required, multiple, contentTypes, etc.)
  *              Those are derived from tree context at Assemble time.
@@ -109,79 +103,24 @@ export type AnyRule = Rule<PhaseName>;
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly id?: RuleId;
 
-	/**
-	 * Per-ref inline decision: `inline = hidden && !aliased`. Default
-	 * `hidden` (`name.startsWith('_')`) stamped at construction
-	 * (`evaluate.ts symbol`/`createProxy`); flipped `false` by the `alias`
-	 * wrapper during push-down (`wrapper-deletion.ts` ALIAS case) because an
-	 * alias confers a real visible CST kind that must materialize, not
-	 * flatten. Read directly off the rule (with an `isHiddenKind` fallback
-	 * for link-synthesized symbols) — see `compiler/link.ts:539-540`,
-	 * `dsl/rule-transforms.ts:334`. Replaces the scattered re-derivations of
-	 * the inline decision (`name.startsWith('_')` combined with ad hoc alias checks).
-	 */
+	/** Per-ref inline decision: `inline = hidden && !aliased`. See
+	 *  docs/compiler-phase-glossary.md "Rule IR" § RuleBase for the full
+	 *  stamp/flip provenance. */
 	readonly inline?: boolean;
 
-	/**
-	 * Inert, OPAQUE provenance bag (debt PR-P1: `RuleMetadata` replaces the
-	 * former structurally-typed `{ source?; inlinedFrom? }` shape). NEVER
-	 * drives compiler behavior beyond path-descent lookup keying
-	 * (`feedback_metadata_not_behavior`): structural facts decide
-	 * folding/slotting. The real shape (`source` / `inlinedFrom` / the
-	 * relocated `fieldSource` / `symbolSource` facts — see item 2 of debt
-	 * PR-P1) and its construct/read accessors live in
-	 * `dsl/rule-metadata.ts`, importable only by enrich, wire (incl. its
-	 * transform machinery), and diagnostics-emission code. `types/` cannot
-	 * import `dsl/` (layering: dsl → types ← compiler), so only the opaque
-	 * brand type lives here — see `types/rule-metadata-brand.ts` for why the
-	 * brand and the real shape are split across two files.
-	 */
+	/** Opaque provenance bag — see docs/compiler-phase-glossary.md
+	 *  "Metadata provenance" and `types/rule-metadata-brand.ts`. */
 	readonly metadata?: RuleMetadata;
 
-	/**
-	 * Declared structural flag (debt PR-0c / doctrine decision 3's corollary):
-	 * true when this `seq` is a hidden group's body SPLICED directly into a
-	 * parent at what used to be an opaque `symbol(_x)` ref position
-	 * (`compiler/normalize.ts`'s `materializeInlinedBody`, the fold-inline
-	 * pass). Not provenance — it names a present-tense fact about the tree
-	 * shape at this position ("this seq occupies a splice site"), set ONCE by
-	 * the pass that performs the splice, read directly (no re-derivation, no
-	 * stamp-then-reread through the opaque `metadata` bag). Consumed by
-	 * `emitters/templates.ts`'s boundary walkers
-	 * (`rightmostBoundary`/`leftmostBoundary`): a spliced seq must keep
-	 * spacing like the opaque unit it replaced (`for await (`, not
-	 * `for await(`) rather than exposing its own first/last literal at the
-	 * outer boundary. Mirrors `inline`'s pattern (a per-ref declared
-	 * construction stamp read directly off the rule) — see that field's doc
-	 * comment above.
-	 */
+	/** Declared structural flag: this `seq` is a hidden group's body spliced
+	 *  into a parent at a former `symbol(_x)` ref position. See
+	 *  docs/compiler-phase-glossary.md "Rule IR" § RuleBase. */
 	readonly splicedBody?: boolean;
 
-	/**
-	 * Declared structural fact (R12/decision-7 V2, doctrine decision 3's
-	 * corollary): the variant-adoption CHOICE arms `classifyHiddenChoiceRule`
-	 * (compiler/link.ts) ERASES when it flattens a hidden CHOICE into this
-	 * `SupertypeRule`'s `subtypes: string[]`. Before the flatten, each
-	 * qualifying arm is a bare ALIAS/SYMBOL ref that is alias-minted (no
-	 * independent rule body elsewhere in the grammar — the same
-	 * `isAliasMintedRef` test `compiler/variant-structural.ts`'s CHOICE-arm
-	 * predicate uses, reapplied here at the exact moment the flatten
-	 * destroys the linkage that predicate needs downstream). `variantArms`
-	 * holds those arms' target kind names (the SAME name
-	 * `collectSubtypeNames` records into `subtypes` for that arm — the
-	 * hidden alias-mint name when present, else the visible name), in
-	 * member order. Only ever set on a `SupertypeRule` produced by
-	 * `classifyHiddenChoiceRule`; every other rule variant leaves it
-	 * `undefined`. Not provenance — it names a present-tense fact about
-	 * what this rule's pre-flatten CHOICE arms structurally were, stamped
-	 * ONCE by the pass that performs the flatten, read directly (no
-	 * re-derivation, no stamp-then-reread through the opaque `metadata`
-	 * bag). Consumed by `compiler/assemble.ts`'s `variantChildKindsSet`
-	 * construction in place of the former narrow wire-metadata read — see
-	 * that call site's comment. Mirrors `splicedBody`'s pattern (a
-	 * declared, once-stamped structural fact replacing a destroyed-then-
-	 * reconstructed read) — see that field's doc comment above.
-	 */
+	/** Declared structural fact: pre-flatten CHOICE arm target names a
+	 *  `SupertypeRule` erased when `classifyHiddenChoiceRule` flattened them
+	 *  into `subtypes`. See docs/compiler-phase-glossary.md "Rule IR" §
+	 *  RuleBase. */
 	readonly variantArms?: readonly string[];
 } & (Phase extends NormalizedPhase
 	? {
@@ -350,17 +289,9 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends WrapperPhase
 // Named patterns
 // ---------------------------------------------------------------------------
 
-/**
- * (debt PR-P1, item 2) The former top-level `source?: 'grammar' | 'override' |
- * 'enriched' | 'inferred'` field is DELETED. The fact relocated into
- * `RuleBase.metadata` as `fieldSource` (`dsl/rule-metadata.ts`'s
- * `RuleMetadataShape.fieldSource`) — write via `makeRuleMetadata`, read via
- * `readRuleMetadata` (dsl/enrich/wire/diagnostics only). The `'inferred'` arm
- * was dropped entirely: confirmed zero production writer
- * (lingering-debt-inventory-research.md §2.6) — only `compiler/collect-slots.ts`
- * wrote it, and that was the unrelated SLOT-level `AssembledNonterminal.source`,
- * not this field.
- */
+/** Field authorship provenance lives in `RuleBase.metadata.fieldSource`, not
+ *  a field of its own — see docs/compiler-phase-glossary.md "Metadata
+ *  provenance". */
 export type FieldRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 	? RuleBase<T> & {
 			readonly type: typeof FIELD;
@@ -392,24 +323,12 @@ export type VariantRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 
 
 /**
- * (debt: source-homonym resolution, decision 6) `RuleSource` ('grammar' |
- * 'promoted' | 'override') is DELETED. It wore two different facts under
- * one name: WHO authored a rule's text (grammar / override — now
- * `RuleMetadataShape.author`, which also covers 'enrich' and 'evaluate'),
- * and WHETHER a classification was declared or inferred by link's
- * structural classifier (the former 'promoted' value — now
- * `RuleMetadataShape.classifiedBy: 'grammar' | 'link'`, a separate axis,
- * not an authorship fact). See `dsl/rule-metadata.ts`.
- */
-
-/**
- * EnumRule — a normalized choice-of-strings.
- *
- * PR-P: EnumRule is now a type alias for ChoiceRule. The ENUM discriminant
- * is retired; enum-ness is detected structurally via isEnumChoiceRule().
- * Shape-compatible with ChoiceRule (both expose `members`); every member
- * is a StringRule. The provenance moves to `metadata.author`/`metadata.classifiedBy`
- * (debt: source-homonym resolution, decision 6).
+ * EnumRule — a normalized choice-of-strings; a type alias for `ChoiceRule`
+ * (the ENUM discriminant is retired — enum-ness is detected structurally via
+ * `isEnumChoiceRule()`). Shape-compatible with ChoiceRule (both expose
+ * `members`); every member is a StringRule. Authorship/classification
+ * provenance lives in `metadata.author`/`metadata.classifiedBy` — see
+ * docs/compiler-phase-glossary.md "Metadata provenance".
  */
 export type EnumRule<T extends PhaseName = 'normalize'> = ChoiceRule<T>;
 
@@ -437,29 +356,13 @@ export function isEnumChoiceRule<R extends AnyRule>(
 	return rule.type === CHOICE && rule.members.length >= 2 && rule.members.every((m) => m.type === STRING);
 }
 
-/**
- * Normalize a closed literal set to the canonical rule shape.
- *
- * (debt PR-P1) Relocated to `dsl/rule-metadata.ts` — it constructs the
- * `metadata.source` bag, and `types/` cannot import the dsl-owned
- * `makeRuleMetadata` write seam (layering: dsl → types ← compiler). See that
- * module for the implementation; re-exported here is NOT done deliberately —
- * callers (compiler/link.ts, compiler/evaluate.ts) already import from
- * `dsl/`, so they import `normalizeEnumMembers` from its new home directly.
- */
+/** `normalizeEnumMembers` (closed-literal-set → canonical rule shape) lives
+ *  in `dsl/rule-metadata.ts`, not here — it constructs the `metadata.source`
+ *  bag, and `types/` cannot import the dsl-owned write seam. Callers already
+ *  importing from `dsl/` import it from its home directly. */
 
-/**
- * (debt PR-P1, item 3) `source` moved off this type into `metadata.source`
- * (`dsl/rule-metadata.ts`). Audited: no downstream consumer (assemble.ts,
- * emitters) reads `SupertypeRule.source` as a structural discriminant — the
- * only prior reader was link.ts's own stamp-then-reread
- * (`classifyAndLogHiddenRules`), converted to return-value dataflow (see
- * `classifyHiddenChoiceRule`'s new return shape). Unlike
- * `PolymorphVariantDescriptor.definedBy` (polymorph-variant.ts — a genuine
- * structural discriminant of a tagged union, renamed from `source` per
- * decision 7 cleanup b), this was pure carried provenance with no
- * structural role.
- */
+/** Rule-classification provenance lives in `metadata.source`
+ *  (`dsl/rule-metadata.ts`), not a field of this type. */
 export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SUPERTYPE;
 	readonly name: string;
@@ -509,16 +412,10 @@ export type NewlineRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 // exist in the WrapperPhase views.
 // ---------------------------------------------------------------------------
 
-/**
- * (debt PR-P1, item 2) The former top-level `source?: 'grammar' | 'link' |
- * 'group-lift'` field is DELETED. The fact relocated into `RuleBase.metadata`
- * as `symbolSource` (`dsl/rule-metadata.ts`'s `RuleMetadataShape.symbolSource`).
- * The one behavior-driving reader (`emitters/templates.ts`'s `emitSymbol` /
- * `assertSlotPreservation`, keying on `'link'` to inline a literal instead of
- * emitting a slot reference) now reads the STRUCTURAL `literal` field
- * (present iff link synthesized the ref from a string token) instead —
- * see templates.ts.
- */
+/** Symbol-ref provenance lives in `metadata.symbolSource`; the one
+ *  behavior-driving reader (`emitters/templates.ts`'s `emitSymbol` /
+ *  `assertSlotPreservation`) instead reads the STRUCTURAL `literal` field
+ *  below (present iff link synthesized the ref from a string token). */
 export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SYMBOL;
 	readonly name: string;

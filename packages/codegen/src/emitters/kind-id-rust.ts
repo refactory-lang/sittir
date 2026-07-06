@@ -1,20 +1,14 @@
 /**
- * Per-grammar Rust `KindId` constants emitter (Phase B prep, 2026-04-30).
- *
- * Outputs a single `kind_ids.rs` source that exports one `pub const`
- * per kind in `kindEntries`, matching the TS-side `TSKindId` enum values.
+ * Per-grammar Rust `KindId` constants emitter. Outputs a single
+ * `kind_ids.rs` source that exports one `pub const` per kind in
+ * `kindEntries`, matching the TS-side `TSKindId` enum values.
  *
  * Keys use SCREAMING_SNAKE_CASE derived from the PascalCase `typeName`
  * that `kindIdMemberName` returns. Leading underscores are preserved for
  * hidden-kind sources (e.g. `_FieldIdentifier` → `_FIELD_IDENTIFIER`).
  *
- * This emitter is intentionally **not wired into `generate.ts`** yet —
- * Phase A is still landing. Export-only; the CLI will wire it after Phase A
- * merges to avoid concurrent-edit conflicts on `generate.ts`.
- *
- * Reuses `collectKindEntries` + `kindIdMemberName` from `kind-discriminant.ts`.
- * No logic is duplicated — those two helpers are the single source of truth
- * for the kind-to-member mapping.
+ * Reuses `collectKindEntries` + `kindIdMemberName` from `kind-discriminant.ts`
+ * as the single source of truth for the kind-to-member mapping.
  */
 
 import type { NodeMap } from '../compiler/types.ts';
