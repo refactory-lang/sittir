@@ -97,19 +97,23 @@ export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
 		case 'optional':
 			return rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
 		case 'repeat':
-		case 'repeat1':
+		case 'repeat1': {
 			// `.separator` is either a plain string (evaluate-phase, unlifted) or
 			// the nested {value, trailing?, leading?} fact (link-phase, PR-S) — a
 			// freshly-allocated wrapper object per lift call, so `===` incorrectly
 			// treats two structurally-identical separators as unequal. Compare via
-			// separatorFactsEqual for the object form; `===` still handles the
-			// plain-string form (and the `undefined`/mixed cases) correctly since
-			// separatorFactsEqual only applies to the object shape.
-			return (
-				(typeof A.separator === 'object' && A.separator !== null
-					? separatorFactsEqual(A.separator as SeparatorFact, B.separator as SeparatorFact)
-					: A.separator === B.separator) && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule)
-			);
+			// separatorFactsEqual only when BOTH sides are the object form; a
+			// mixed object-vs-string comparison (one side already lifted, the
+			// other not) falls through to `===` (correctly `false`) instead of
+			// casting the string side to SeparatorFact and crashing inside
+			// separatorFactsEqual reading `.value`/`.trailing` off a string.
+			const aObj = typeof A.separator === 'object' && A.separator !== null;
+			const bObj = typeof B.separator === 'object' && B.separator !== null;
+			const sepEqual = aObj && bObj
+				? separatorFactsEqual(A.separator as SeparatorFact, B.separator as SeparatorFact)
+				: A.separator === B.separator;
+			return sepEqual && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
+		}
 		case 'field':
 			return A.name === B.name && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
 		default:

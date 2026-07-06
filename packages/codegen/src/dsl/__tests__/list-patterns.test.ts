@@ -1,5 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import { detectRepeatSeparator } from '../list-patterns.ts';
+import { detectRepeatSeparator, rulesEqual } from '../list-patterns.ts';
+
+describe('rulesEqual does not crash comparing mixed-phase repeat separators', () => {
+	it('returns false (not a throw) for an object-shaped separator vs a plain string', () => {
+		const linkPhase = {
+			type: 'repeat',
+			content: { type: 'symbol', name: 'item' },
+			separator: { value: { type: 'string', value: ',' } }
+		};
+		const evaluatePhase = {
+			type: 'repeat',
+			content: { type: 'symbol', name: 'item' },
+			separator: ','
+		};
+		expect(() => rulesEqual(linkPhase as never, evaluatePhase as never)).not.toThrow();
+		expect(rulesEqual(linkPhase as never, evaluatePhase as never)).toBe(false);
+	});
+});
 
 describe('detectRepeatSeparator preserves a choice-shaped separator', () => {
 	it('returns the full CHOICE rule, not just its first string arm', () => {
