@@ -1,23 +1,14 @@
 /**
- * Emits per-rule `.jinja` files for the render pipeline (feature 011).
+ * Emits per-rule `.jinja` files for the render pipeline. See
+ * docs/compiler-phase-glossary.md "Phase 5: Emit" § `emitters/templates.ts`
+ * for the authoritative `TemplateEmitter` design (dispatch, slot-preservation
+ * gate). This file owns the two entry points:
  *
- * The YAML template format (`templates directory`) was retired in favor of
- * per-rule `.jinja` files — see ADR-0013 / spec 011 for design notes.
- * This file owns the functions that drive that emission:
- *
- *   - `runTemplateEmitter(config)` — runs the authoritative TemplateEmitter
- *     class introduced in PR2. Walks the NodeMap, dispatches each node by
- *     its modelType, and returns a Map keyed by rule kind (values include
- *     the `@generated` header).
- *   - `writeJinjaTemplates(emitted, outputDir)` — writes the Map to
- *     disk and removes any stale `.jinja` files whose rule kinds are
- *     no longer present.
- *
- * All template generation happens inside the `AssembledNode` class
- * hierarchy in `compiler/node-map.ts`. Each `renderTemplate()` method
- * returns Jinja-shaped output directly — clause / variant inlining,
- * `$VAR` → `{{ var }}` translation, and separator-filter selection are
- * all collapsed into that one chokepoint.
+ *   - `runTemplateEmitter(config)` — walks the NodeMap, dispatches each node
+ *     by its modelType, returns a Map keyed by rule kind (values include the
+ *     `@generated` header).
+ *   - `writeJinjaTemplates(emitted, outputDir)` — writes the Map to disk and
+ *     removes any stale `.jinja` files whose rule kinds are no longer present.
  *
  * These emitted files are the canonical authored templates under
  * `packages/{lang}/templates/`. The native Askama copies under
@@ -61,14 +52,10 @@ export interface EmitCtx {
 	readonly nodeMap: NodeMap;
 	readonly wordMatcher: RegExp;
 	readonly externals: readonly string[];
-	/**
-	 * PR-137: `normalizedRules` (wrapper-deleted `RenderRule` view), not
-	 * `linkRules` — `emitSymbol`'s hidden-helper fallback (the only
-	 * consumer) used to bridge `linkRules[name]` through a per-call
-	 * `deleteWrapper()`; verified byte-identical to reading
-	 * `normalizedRules[name]` directly for every hidden ref the fallback
-	 * actually reaches, across all 3 grammars, so the bridge is gone.
-	 */
+	/** `normalizedRules` (wrapper-deleted `RenderRule` view) — `emitSymbol`'s
+	 *  hidden-helper fallback reads this directly rather than
+	 *  `deleteWrapper(linkRules[name])`. See docs/compiler-phase-glossary.md
+	 *  "Phase 3: Normalize" § normalizedRules vs rules. */
 	readonly rules: Record<string, RenderRule>;
 	/**
 	 * Cycle guard for hidden-helper recursion in `emitSymbol`. A flat mutable
@@ -271,10 +258,6 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 // ---------------------------------------------------------------------------
 
 export function emitBranchTemplate(node: AssembledBranch, ctx: EmitCtx): string {
-	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free) instead
-	// of rule (RawRule, wrapper-bearing). Wrapper attributes (fieldName,
-	// multiplicity, separator) are now on the leaf rules themselves.
-	//
 	// Populate ownerSlots so emitSymbol can fall back to name-based slot
 	// lookup when slotByRuleId lookup fails (gap: simplifyRule may create
 	// new rule objects without preserving IDs, breaking slotByRuleId).
@@ -283,7 +266,6 @@ export function emitBranchTemplate(node: AssembledBranch, ctx: EmitCtx): string 
 }
 
 export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
-	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free).
 	// Populate ownerSlots for the same reason as emitBranchTemplate.
 	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: node.slots };
 	return emitRule(node.renderRule, ctxWithSlots);
@@ -306,13 +288,9 @@ export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// Bug 6 (replaces Bug 1): seq inter-member spacing via grammar-derived
-// word-regex boundary check on rule-tree literals.
-//
-// The old Bug 1 approach used ad-hoc character classes on emitted Jinja
-// strings (seqEffectiveFirstChar / seqEffectiveLastChar). Bug 6 replaces
-// those helpers with rule-tree walkers that find the rightmost/leftmost
-// literal text at each adjacent boundary, then tests `leftText + rightFirstChar`
+// Seq inter-member spacing via grammar-derived word-regex boundary check on
+// rule-tree literals: rule-tree walkers find the rightmost/leftmost literal
+// text at each adjacent boundary, then test `leftText + rightFirstChar`
 // against the grammar's compiled word regex. This is authoritative because
 // the grammar's word rule governs how tree-sitter's lexer tokenises word
 // boundaries.
@@ -995,34 +973,21 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 		// template-level surface of their own; the inner rule's emission is
 		// what the renderer sees.
 		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from RenderRule union.
-		// phase-visibility-tightening: TOKEN and ALIAS cases deleted — both
-		// collapse to `never` under RenderRule (WrapperPhase-only,
-		// types/rule.ts). ALIAS is genuinely eliminated by
-		// `applyWrapperDeletion` (pushes aliasedFrom/aliasNamed onto a leaf
-		// attribute, returns content). TOKEN is NOT mechanically eliminated —
-		// wrapper-deletion's TOKEN case PRESERVES the node (`{...rule,
-		// content}`, wrapper-deletion.ts) — so the TokenRule→never assertion
-		// is type-level + EMPIRICAL, not a code guarantee: 0 TOKEN hits
-		// walking every AssembledNode.renderRule and every
-		// deleteWrapper(linkRules[name]) hidden-helper target across all 3
-		// grammars. If a top-level token(...) rule ever survives into
-		// normalizedRules, the type lies — tracked with the preserve-token-
-		// wrappers debt. Post-normalize aliasing is fully represented via the
-		// `fieldName`/`aliasedFrom` leaf attributes other cases here already
-		// read (see `pickConditionalKey`'s `contentFieldName` check).
+		// TOKEN and ALIAS both collapse to `never` under RenderRule
+		// (WrapperPhase-only, types/rule.ts). ALIAS is genuinely eliminated by
+		// `applyWrapperDeletion`; TOKEN is NOT mechanically eliminated —
+		// wrapper-deletion's TOKEN case preserves the node — so this is a
+		// type-level + empirically-verified (0 TOKEN hits across all 3
+		// grammars) assertion, not a code guarantee (preserve-token-wrappers
+		// debt tracks the gap).
 		case VARIANT:
 		case GROUP:
 			return emitRule(rule.content, ctx);
 
-		// PR2 Task 3.B3 / phase-visibility-tightening: wrapper rule types
-		// (field / optional / repeat / repeat1) must not appear in RenderRule
-		// input — they have been pushed down to leaf attributes.
-		// FieldRule/OptionalRule/RepeatRule/Repeat1Rule collapse to `never`
-		// under RenderRule (types/rule.ts), so the former defensive
-		// `case FIELD: case OPTIONAL: ...: throw` arms are unreachable at the
-		// type level and have been deleted — the exhaustiveness check in the
-		// `default` branch below still catches any future non-conforming Rule
-		// variant.
+		// Wrapper rule types (field/optional/repeat/repeat1) collapse to
+		// `never` under RenderRule — unreachable at the type level; the
+		// exhaustiveness check in the `default` branch below still catches
+		// any future non-conforming Rule variant.
 
 		case SYMBOL:
 			return emitSymbol(rule, ctx);
@@ -1294,11 +1259,10 @@ function emitFieldNameSlot(slotName: string, rule: RenderRule): string {
 // Per-RenderRule.type helpers
 // ---------------------------------------------------------------------------
 
-// emitField, emitOptional, and emitRepeat were deleted in PR2 Task 3.B3.
-// Those wrapper rule types (field / optional / repeat / repeat1) must not
-// appear in RenderRule input — the wrapper attributes (fieldName /
-// multiplicity / separator) are now on the leaf rules themselves and
-// emitSymbol reads them directly. emitRule throws defensively if they appear.
+// Wrapper rule types (field / optional / repeat / repeat1) must not appear
+// in RenderRule input — the wrapper attributes (fieldName / multiplicity /
+// separator) are on the leaf rules themselves and emitSymbol reads them
+// directly. emitRule throws defensively if they appear.
 
 /**
  * Derive the Jinja slot expression for a symbol ref, driven by the leaf
@@ -1316,30 +1280,25 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	// it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
 	// `foo` not as a slot reference.
 	//
-	// Chunk D2: a link-symbol renders its literal verbatim ONLY when it has no
+	// A link-symbol renders its literal verbatim ONLY when it has no
 	// `fieldName`. A field-wrapped link-operator literal (stamped by
 	// deleteWrapper from a surrounding field() wrapper, e.g.
 	// `field('operator', symbol(name='amp_amp', literal='&&'))`)
 	// is a SLOT — it must fall through to the standard slot path below so the
-	// renderer substitutes the actual operator from the parse tree (the now-
-	// separate operator slot, Chunk D1) instead of the first arm's hard-coded
-	// literal. (`binary_expression` / `comparison_operator` share one
-	// `fieldName: 'operator'` across arms with different literals.) Emitting the
-	// literal here would render `a < b` as the first arm's operator regardless
-	// of the parsed operator and leave read unable to populate the slot.
-	//
-	// (debt PR-P1) Was `rule.source === 'link'`; `literal` is set ONLY by
-	// link.ts's `canonicalizeRuleLiterals` alongside the deleted `source:
-	// 'link'` stamp (its only writer), so checking `literal !== undefined`
-	// directly is the exact same condition, structurally — not an inference,
-	// the same write site produced both facts together.
+	// renderer substitutes the actual operator from the parse tree instead of
+	// the first arm's hard-coded literal. (`binary_expression` /
+	// `comparison_operator` share one `fieldName: 'operator'` across arms with
+	// different literals.) Emitting the literal here would render `a < b` as
+	// the first arm's operator regardless of the parsed operator and leave
+	// read unable to populate the slot. `literal` is set only by link.ts's
+	// `canonicalizeRuleLiterals`.
 	const symbolFieldName = (rule as { fieldName?: string }).fieldName;
 	if (rule.literal !== undefined && symbolFieldName === undefined) {
 		return escapeLiteral(rule.literal);
 	}
 
-	// PR2 Task 3.B3: check leaf-level attributes pushed down from wrapper
-	// rules. fieldName is set when the symbol was formerly inside a FieldRule;
+	// Check leaf-level attributes pushed down from wrapper rules. fieldName
+	// is set when the symbol was formerly inside a FieldRule;
 	// multiplicity when inside a RepeatRule or OptionalRule.
 	if (symbolFieldName !== undefined) {
 		// Prefer the registered slot (single source); fall back to the field
@@ -1357,7 +1316,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	// required value → scalar. Array / optional shapes carry their
 	// multiplicity attribute from the push-down pass.
 	//
-	// Bug 2 fix: When the slot is UNNAMED (derived structurally from child
+	// When the slot is UNNAMED (derived structurally from child
 	// positions rather than a declared grammar field) AND the rule is a
 	// group-lift symbol, we must NOT emit the helper-derived slot name — it is not
 	// a real FROM/read-populated field. Instead, fall through to the
@@ -1369,7 +1328,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	if (slot && !(slot.isUnnamed && rule.type === SYMBOL && rule.inline === true)) {
 		return emitSlotReference(rule, slot);
 	}
-	// Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
+	// Group-lifted symbols that are auto-synthesized hidden helpers
 	// (e.g. `_function_item_optional1`, `_type_parameters_repeat1`) must be
 	// INLINED rather than emitted as opaque slot references. These helpers
 	// exist in `ctx.nodeMap.nodes` as AssembledGroup nodes with their own
@@ -1521,8 +1480,7 @@ function warnMultiSlotMultiplicityGroup(rule: Extract<RenderRule, { type: 'SEQ' 
  * first, then transparent wrappers, then symbol/seq fallbacks.
  */
 function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefined {
-	// PR2 Task 3.B3: field wrappers no longer appear in RenderRule. Check
-	// the leaf-level fieldName attribute instead (pushed down from FieldRule
+	// Check the leaf-level fieldName attribute (pushed down from FieldRule
 	// by the enrich / push-down pass).
 	const contentFieldName = (content as { fieldName?: string }).fieldName;
 	if (contentFieldName !== undefined) {
@@ -1533,7 +1491,6 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	// has already pushed their facts (fieldName / aliasedFrom+aliasNamed) onto
 	// leaf attributes or unwrapped them to content, so those cases are
 	// unreachable here and are not switch arms.
-	// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from RenderRule union.
 	if (
 		content.type === VARIANT ||
 		content.type === GROUP
@@ -1568,9 +1525,8 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	return undefined;
 }
 
-// emitOptional and emitRepeat were deleted in PR2 Task 3.B3.
-// Those wrapper types no longer appear in RenderRule; their slot facts are
-// now leaf attributes on the inner rule, consumed by emitSymbol directly.
+// Wrapper types (optional/repeat) no longer appear in RenderRule; their slot
+// facts are leaf attributes on the inner rule, consumed by emitSymbol directly.
 
 function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx): string {
 	// Every choice that surfaces as data is a registered slot — there is no
@@ -1667,26 +1623,6 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 		// correctly handles these via symbol inlining or literal emission rather
 		// than named slot references. Checking them would produce false positives.
 		if (slot.isUnnamed) continue;
-		// (debt PR-P1, item 4) REMOVED a former provenance-reading skip here:
-		// `(slot.source as string) === 'link' || 'group-lift'`. Per the
-		// doctrine, a compiler decision may not key on rule/slot provenance —
-		// this had to become either a structural check or a proven-redundant
-		// deletion. Verified EMPIRICALLY (not just by static reasoning) before
-		// deleting: generated `node-model.json5` for all three grammars at the
-		// pre-PR-P1 baseline (rust/typescript/python) has exactly ONE slot
-		// anywhere with `source: 'link'` or `'group-lift'` — typescript's
-		// `binary_expression.operator` (the exact case this comment used to
-		// cite) — and its `values[]` are ALL terminals (zero node-refs), i.e.
-		// `kindsOf(slot).length === 0`, which is ALREADY skipped by the check
-		// directly above. So the condition never once changed this function's
-		// outcome on any of the three grammars: it is provably redundant, not
-		// merely theoretically so. Deleting it is a genuine dead-condition
-		// removal — there is no structural fact to convert it to because it
-		// never selected anything the prior check hadn't already excluded.
-		// (Root cause: link-synthesized operator literals become terminal
-		// `.value` entries with no node-ref, per `deriveValuesForRule`'s
-		// SYMBOL case in node-map.ts — `kindsOf` is the exact structural
-		// signal this check was informally approximating via provenance.)
 		// Skip slots where no value is required (all are optional/array). These
 		// arise from `mergeChoiceArmSlots` cross-arm relaxation: a slot present
 		// in only some choice arms gets its values' multiplicities relaxed from

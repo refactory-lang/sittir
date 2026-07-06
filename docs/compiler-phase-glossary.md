@@ -669,6 +669,11 @@ classes expose data only (`feedback_emitter_pattern_consistency`).
 **Action:** Emits per-kind `wrap*` functions. **`collectConcreteStorageKeys(slot, nodeMap)`** is the `origin === 'kind'` arm-probe: for kind-named slots it expands runtime discriminator kinds, inverts the slot's `aliasSources` (`{target: source}`) to rewrite source→target storage keys, and returns the candidate `_<kind>` keys (or `undefined` when they collapse to the nominal `_<name>`). **`resolveSlotStoreExpr(slot, dataExpr, candidateKeys?)`** emits a `(_a ?? _b ?? _name)` multi-key probe over those candidates (the runtime data populates exactly one). This is the alias-target routing fix (`project_alias_target_routing`).
 **Output:** wrap function source.
 
+### `emitters/transport-common.ts` — `classifySlot(kinds, supertypeMap)`
+**Pattern:** Any multi-kind slot, classified against `buildSupertypeTransportSet(nodeMap)`.
+**Action:** Requires an EXACT-SET match (slot kinds === supertype's full resolved subtype set), not a subset match. A proper-subset match would collapse the slot onto a wider supertype transport than it ranges over — for a large self-recursive supertype (e.g. rust's `match_arm` field being a 2-of-21 subset of `declaration_statement`, which transitively references `match_arm` again) the generated `FromNapiValue` would recurse through the whole statement graph and overflow the native stack. Subset slots fall through to `heterogeneous` (a per-slot enum of exactly their kinds) instead.
+**Output:** `SlotClass` (`concrete` / `supertype` / `heterogeneous`).
+
 ### `emitters/factories.ts` / `from.ts` / `types.ts` / `render-module.ts` / `transport-common.ts`
 **Pattern:** Per node.
 **Action:** Iterate nodes, dispatch on modelType, consume the AssembledNode slot view. `render-module.ts` reads per-slot separator from the slot's NodeRef/TerminalValue stamp, falling back to the node-wide `meta.separators` for slots not yet stamped (PR3 drops the fallback once stamping covers all kinds). `from.ts` consumes `AssembledGroup` for synthesized-group projection.

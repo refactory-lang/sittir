@@ -723,14 +723,6 @@ function walkBodyForGroups(
 	ctx: { kind: string; isTopLevel: boolean },
 	out: GroupCandidate[]
 ): void {
-	// (debt PR-P1) The former `source === 'group-lift'` skip-guard here was
-	// PROVABLY DEAD: a bare SYMBOL rule never matches case 1 (OPTIONAL/REPEAT/
-	// REPEAT1) or case 2 (SEQ) below, and the dispatch switch at the bottom of
-	// this function has no SYMBOL case either — so a SYMBOL rule always
-	// no-ops through this function regardless of any guard. Deleting it is a
-	// pure no-op, not a provenance-to-structural conversion (there is no
-	// structural fact to convert to; the check never did anything).
-
 	// Case 1: A cardinality wrapper (optional/repeat/repeat1) whose content is a
 	// structural seq — suggest the wrapper's path. This way the user's groups
 	// entry points to the optional/repeat, and applyGroupOverrides's liftRule

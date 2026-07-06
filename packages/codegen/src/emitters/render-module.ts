@@ -1,19 +1,14 @@
 /**
  * Rust render-module emitter. Owns codegen output for
  * `rust/crates/sittir-{lang}/src/render/*.rs` and the companion
- * `packages/{lang}/src/hash.ts` that the TS backend shim imports.
+ * `packages/{lang}/src/hash.ts` that the TS backend shim imports:
+ * hash.rs/hash.ts, per-kind `#[derive(Template)]` structs + typed-transport
+ * render dispatch (`templates.rs`), and canonical `.jinja` copying into
+ * `rust/crates/sittir-{lang}/templates/`.
  *
- * Spec 012:
- *  - T016 (initial scaffold): hash.rs + hash.ts emission.
- *  - T027/T028/T029: per-kind `#[derive(Template)]` structs + direct
- *    typed-transport render dispatch in
- *    `rust/crates/sittir-{lang}/src/render/templates.rs`.
- *  - T030: canonical `.jinja` copying into
- *    `rust/crates/sittir-{lang}/templates/`.
- *
- * The emitter is pure — given a grammar's template bundle + node map,
- * it returns the string contents of each file it would write. The CLI
- * (T017) owns filesystem I/O and the template-directory copy.
+ * The emitter is pure — given a grammar's template bundle + node map, it
+ * returns the string contents of each file it would write. The CLI owns
+ * filesystem I/O and the template-directory copy.
  */
 
 import type { NodeMap } from '../compiler/types.ts';
