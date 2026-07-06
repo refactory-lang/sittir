@@ -395,8 +395,14 @@ function harvestSupertypeNames(result: unknown): Set<string> {
  *
  *  Accepts alternate names because the two runtimes don't agree on every
  *  constructor's name: the symbol constructor is `symbol` under sittir but
- *  `sym` under tree-sitter's CLI. The first name found wins. */
-function nativeRuleFn<F>(...names: string[]): F {
+ *  `sym` under tree-sitter's CLI. The first name found wins.
+ *
+ *  Exported so other DSL-phase modules (e.g. `dsl/transform/transform.ts`'s
+ *  polymorph alias-node mint sites) can route construction through the same
+ *  runtime-injected constructors instead of hand-rolling rule literals — see
+ *  `makeGroupLiftSymbol`/`makeVisibleGroupAlias` below for the canonical
+ *  call pattern. */
+export function nativeRuleFn<F>(...names: string[]): F {
 	const g = globalThis as Record<string, unknown>;
 	for (const name of names) {
 		if (typeof g[name] === 'function') return g[name] as F;
@@ -415,9 +421,7 @@ function nativeRuleFn<F>(...names: string[]): F {
  *  than author-written. */
 function makeField(name: string, content: unknown): Rule {
 	const field = nativeRuleFn<(n: string, c: unknown) => Rule>('field');
-	const node = field(name, content);
-	(node as { metadata?: unknown }).metadata = makeRuleMetadata({ fieldSource: 'enriched' });
-	return node;
+	return { ...field(name, content), metadata: makeRuleMetadata({ fieldSource: 'enriched' }) };
 }
 
 function makeSymbol(name: string): Rule {
@@ -1665,7 +1669,5 @@ function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	// (a bare-string value would yield named:false). `metadata.author: 'enrich'`
 	// is REQUIRED for transform-path's path-descent (see doc comment above) —
 	// the runtime alias() doesn't add it, so stamp it on the cased result.
-	const node = aliasFn(symbolRef, symbol(name));
-	(node as { metadata?: unknown }).metadata = makeRuleMetadata({ author: 'enrich' });
-	return node;
+	return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: 'enrich' }) };
 }

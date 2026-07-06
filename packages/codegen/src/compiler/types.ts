@@ -6,7 +6,8 @@
  *
  * - Evaluate  produces {@link RawGrammar}.
  * - Link      produces {@link LinkedGrammar} plus a {@link DerivationLog}.
- * - Normalize produces {@link SimplifiedGrammar}.
+ * - Normalize produces {@link NormalizedGrammar}.
+ * - Simplify  (a sub-stage of Normalize) produces {@link SimplifiedGrammar}.
  * - Assemble  produces {@link NodeMap}.
  *
  * Diagnostic / suggester-input types live here too ({@link DerivationLog}

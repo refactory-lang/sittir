@@ -54,10 +54,11 @@ const TOOLS_SRC = join(HERE, '..', '..', '..', '..', 'tools', 'src'); // package
 // listed — it is the unrestricted construct seam (see module header).
 const RESTRICTED_NAMES = ['readRuleMetadata', 'RuleMetadataShape'];
 
-/** Directories (relative to `packages/codegen/src`) sanctioned to import the
- *  restricted real-shape accessors: enrich, wire (incl. transform machinery
- *  — the DSL's override-patch resolver), and the module's own tests. */
-const SANCTIONED_CODEGEN_DIRS = ['dsl/']; // enrich.ts, wire/, transform/, primitives/, this __tests__ dir
+/** Directories/files (relative to `packages/codegen/src`) sanctioned to
+ *  import the restricted real-shape accessors: enrich, wire (incl. transform
+ *  machinery — the DSL's override-patch resolver). `.test.ts` files are
+ *  exempted separately above, so they don't need an entry here. */
+const SANCTIONED_CODEGEN_DIRS = ['dsl/enrich.ts', 'dsl/wire/', 'dsl/transform/'];
 
 /** Diagnostics-emission surface under packages/tools/src — validator +
  *  probe + discover modules read facts to REPORT, never to drive codegen. */

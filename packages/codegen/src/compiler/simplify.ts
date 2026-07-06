@@ -642,7 +642,7 @@ export function makeDefaultCtx(): SimplifyCtx {
 /**
  * Dispatch a rule to its per-type simplify handler. Thin switch over the
  * RenderRule union (the wrapper-free view `applyWrapperDeletion` produces —
- * see `SimplifyCtx extends BaseCtx<RenderRule>`). The public entry keeps
+ * see `SimplifyCtx extends BaseCtx<'normalize'>`). The public entry keeps
  * `ctx?` optional (normalized via `makeDefaultCtx`) so direct callers needn't
  * build a ctx; each handler takes `(rule: <Type>Rule, ctx: SimplifyCtx)`.
  *

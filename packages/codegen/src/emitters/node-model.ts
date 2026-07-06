@@ -179,11 +179,10 @@ interface SerializedNodeModel {
 	 * `fieldAliasMap` (top-level, keyed `"parentKind.fieldName"` →
 	 * `{ aliasTarget: sourceKind }`). The per-field `values[].parseKind`/`name`
 	 * carry the same facts, but the alias-source PAIRING + the
-	 * factory-emitting-kind FILTER (`collectAliasSourceKinds` /
-	 * `collectOverridePolymorphHelperKinds`) live only in `buildFactoryMap`.
-	 * Serializing the finished map keeps that filtering single-sourced — a
-	 * validator-side rebuild would have to re-derive it. Consumed by
-	 * `resolveAliasedKind`.
+	 * factory-emitting-kind FILTER (`collectAliasSourceKinds`) live only in
+	 * `buildFactoryMap`. Serializing the finished map keeps that filtering
+	 * single-sourced — a validator-side rebuild would have to re-derive it.
+	 * Consumed by `resolveAliasedKind`.
 	 */
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	/**

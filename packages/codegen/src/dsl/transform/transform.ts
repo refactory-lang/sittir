@@ -55,6 +55,32 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
+import { nativeRuleFn } from '../enrich.ts';
+
+/**
+ * Build the `alias($._<hiddenName>, $.<visibleName>)` node minted for a
+ * polymorph variant arm: tree-sitter matches the hidden synthetic rule but
+ * surfaces the visible kind name in parse trees. Shared by
+ * `buildHoistedVariants` (hoisted-choice path) and `registerAliasedVariant`
+ * (non-hoisted variant placeholder path) — both previously hand-rolled the
+ * same `{type:'ALIAS', content:{type:'SYMBOL',...}}` literal.
+ *
+ * Routed through the runtime-injected `alias`/`sym` constructors (mirrors
+ * `dsl/enrich.ts`'s `makeVisibleGroupAlias`/`makeGroupLiftSymbol`) per
+ * project convention: "always use the rule builder functions" rather than
+ * fabricate rule shapes by hand. `sym(hiddenName)` stamps
+ * `hidden`/`inline: true` on the inner SYMBOL (since `hiddenName` is
+ * `_`-prefixed) — this is provably inert for this call site:
+ * `compiler/link.ts`'s `resolveNamedAliasWithProvenance` (the ALIAS
+ * resolver that fires for this shape) discards the entire `content` node
+ * and reconstructs a fresh SYMBOL from just `content.name`, never reading
+ * `.hidden`/`.inline`.
+ */
+function makePolymorphAliasNode(hiddenName: string, visibleName: string): RuntimeRule {
+	const alias = nativeRuleFn<(content: unknown, value: unknown) => RuntimeRule>('alias');
+	const sym = nativeRuleFn<(name: string) => RuntimeRule>('sym', 'symbol');
+	return alias(sym(hiddenName), sym(visibleName));
+}
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys
@@ -414,12 +440,7 @@ function buildHoistedVariants(
 		// hidden rule but surfaces the visible kind name in parse trees.
 		// Mirrors `registerAliasedVariant`'s output shape used by the
 		// non-hoisted variant placeholder path.
-		refs.push({
-			type: 'ALIAS',
-			content: { type: 'SYMBOL', name: hiddenName },
-			named: true,
-			value: visibleName
-		} as unknown as RuntimeRule);
+		refs.push(makePolymorphAliasNode(hiddenName, visibleName));
 	}
 	// Conflicts MUST reference declared rules (tree-sitter rejects
 	// symbol references to alias targets in the conflicts array with
@@ -803,8 +824,7 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 	// PREC_DYNAMIC are tree-sitter-native-only shapes (sittir's `prec()`
 	// strips the wrapper at evaluate — see `evaluate.ts::prec`), so only the
 	// uppercase spellings ever appear here.
-	const isPrecWrapper2 = t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC';
-	if (isPrecWrapper2) {
+	if (isPrecWrapper(r as { type: string })) {
 		const inner = r.content as unknown;
 		if (!inner || typeof inner !== 'object') return null;
 		if (isEnrichShapedFieldWrapper(inner)) {
@@ -1021,12 +1041,7 @@ export function registerAliasedVariant(
 	if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))) {
 		throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
 	}
-	const aliasNode = {
-		type: 'ALIAS',
-		content: { type: 'SYMBOL', name: hiddenName },
-		named: true,
-		value: aliasValue
-	} as unknown as RuntimeRule;
+	const aliasNode = makePolymorphAliasNode(hiddenName, aliasValue);
 	if (factored) {
 		const optional = (globalThis as { optional?: (c: unknown) => unknown }).optional;
 		if (typeof optional !== 'function') {

@@ -49,9 +49,28 @@ describe('polymorph metadata registration', () => {
 
 		expect([...ctx.deposits.keys()].sort()).toEqual(['_assignment_eq', '_assignment_type']);
 		const choice = (result as unknown as { members: unknown[] }).members[1] as { members: unknown[] };
+		// `hidden`/`inline: true` on each inner SYMBOL come from the canonical
+		// `sym()` builder (transform.ts's `makePolymorphAliasNode` routes
+		// through it, per project convention — "always use the rule builder
+		// functions"), which stamps both from the `_`-prefixed hidden name.
+		// Provably inert downstream: `compiler/link.ts`'s
+		// `resolveNamedAliasWithProvenance` (the ALIAS resolver that fires
+		// for this shape) discards the whole `content` node and reconstructs
+		// a fresh SYMBOL from just `content.name`, never reading
+		// `.hidden`/`.inline`.
 		expect(choice.members).toEqual([
-			{ type: 'ALIAS', content: { type: 'SYMBOL', name: '_assignment_eq' }, named: true, value: 'assignment_eq' },
-			{ type: 'ALIAS', content: { type: 'SYMBOL', name: '_assignment_type' }, named: true, value: 'assignment_type' }
+			{
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: '_assignment_eq', hidden: true, inline: true },
+				named: true,
+				value: 'assignment_eq'
+			},
+			{
+				type: 'ALIAS',
+				content: { type: 'SYMBOL', name: '_assignment_type', hidden: true, inline: true },
+				named: true,
+				value: 'assignment_type'
+			}
 		]);
 	});
 
