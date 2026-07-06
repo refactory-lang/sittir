@@ -1233,7 +1233,15 @@ function listSeparatorOfOptionalSeq(rule: Rule): string | null {
 			if (detected) {
 				const sep = detected.separator;
 				if (typeEq(sep.type, 'STRING')) return (sep as { value?: unknown }).value as string;
-				if (typeEq(sep.type, 'CHOICE')) return firstStringOfChoice(sep);
+				if (typeEq(sep.type, 'CHOICE')) {
+					const lit = firstStringOfChoice(sep);
+					if (lit !== null) return lit;
+				}
+				// Falls through to the next seq member when the choice has no
+				// string arm (e.g. all-symbol/external-scanner separator position)
+				// — matches the pre-PR-S behavior, where `detectRepeatSeparator`
+				// itself returned null for a stringless choice and the loop kept
+				// scanning for a real separator elsewhere in the same seq.
 			}
 		}
 	}

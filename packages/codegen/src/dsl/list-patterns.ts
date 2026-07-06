@@ -134,12 +134,19 @@ export function firstStringOfChoice(r: RuntimeRule): string | null {
 
 /**
  * Detect the `seq(SEP, X)` / `seq(X, SEP)` separated-list shape inside a
- * repeat/repeat1 content body, where `SEP` is a string literal or a
- * choice-of-literals. Returns the non-separator content, the FULL detected
- * separator rule (a `StringRule` for the literal case, the whole `ChoiceRule`
- * for a choice-shaped one — no longer narrowed to its first arm, PR-S), and
- * whether the separator was trailing (`seq(X, SEP)`); or `null` when no
- * separator shape is present.
+ * repeat/repeat1 content body, where `SEP` is a string literal or a choice
+ * whose arms may include non-literal (symbol/external-scanner) members —
+ * not just a choice-of-literals. Returns the non-separator content, the FULL
+ * detected separator rule (a `StringRule` for the literal case, the whole
+ * `ChoiceRule` for a choice-shaped one — no longer narrowed to its first arm,
+ * PR-S, and no longer required to contain a string arm at all), and whether
+ * the separator was trailing (`seq(X, SEP)`); or `null` when no separator
+ * shape is present.
+ *
+ * Callers that need a literal string out of a returned CHOICE separator
+ * (e.g. `enrich.ts`'s `listSeparatorOfOptionalSeq`) must handle the
+ * no-string-arm case themselves — `firstStringOfChoice` returns `null` for
+ * an all-symbol choice, which is not the same as "no separator shape here".
  *
  * Pure: reports the shape; the caller decides whether to lift it onto a
  * `repeat` (link) or read it for group creation (enrich).
@@ -161,7 +168,10 @@ export function detectRepeatSeparator<R extends RuntimeRule>(
 
 	// Choice-of-separators in the separator position — preserve the FULL
 	// choice; the caller (and everything downstream, per PR-S) now knows how
-	// to handle a non-literal separator rule.
+	// to handle a non-literal separator rule. No literal-presence check here
+	// by design: a choice with zero STRING arms (all-symbol/external-scanner)
+	// still counts as a detected separator shape — it's up to the caller to
+	// decide what to do when it can't extract a literal from it.
 	const firstIsChoice = typeEq(first.type, 'CHOICE');
 	const secondIsChoice = typeEq(second.type, 'CHOICE');
 	if (firstIsChoice && !secondIsStr) return { content: second, separator: first };

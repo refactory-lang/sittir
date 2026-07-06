@@ -1344,7 +1344,10 @@ function listSeparatorOfOptionalSeq(rule) {
       if (detected) {
         const sep = detected.separator;
         if (typeEq(sep.type, "STRING")) return sep.value;
-        if (typeEq(sep.type, "CHOICE")) return firstStringOfChoice(sep);
+        if (typeEq(sep.type, "CHOICE")) {
+          const lit = firstStringOfChoice(sep);
+          if (lit !== null) return lit;
+        }
       }
     }
   }

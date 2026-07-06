@@ -30,4 +30,22 @@ describe('detectRepeatSeparator preserves a choice-shaped separator', () => {
 		expect(result!.trailing).toBe(true);
 		expect(result!.separator).toEqual({ type: 'STRING', value: ',' });
 	});
+
+	it('preserves a mixed literal/non-literal choice in full (tree-sitter-typescript sepBy1 shape)', () => {
+		// e.g. `sepBy1(choice(',', $._semicolon), X)` — the separator position is
+		// a choice of a literal and an external symbol. The FULL choice,
+		// including the non-string arm, must survive the detector unnarrowed.
+		const seq = {
+			type: 'SEQ',
+			members: [
+				{ type: 'CHOICE', members: [{ type: 'STRING', value: ',' }, { type: 'SYMBOL', name: '_semicolon' }] },
+				{ type: 'SYMBOL', name: 'item' }
+			]
+		};
+		const result = detectRepeatSeparator(seq);
+		expect(result!.separator).toEqual({
+			type: 'CHOICE',
+			members: [{ type: 'STRING', value: ',' }, { type: 'SYMBOL', name: '_semicolon' }]
+		});
+	});
 });
