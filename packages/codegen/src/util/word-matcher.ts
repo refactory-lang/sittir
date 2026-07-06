@@ -10,6 +10,25 @@
  * grammar's `word` rule?" — `compileWordMatcher` builds the grammar-derived
  * RegExp; `matchesWordShape` is the canonical predicate that bakes the
  * `/^\w+$/` fallback so call sites never re-spell it.
+ *
+ * PIN-AT-LINK CONTRACT (2026-07-05 design, PR-137 follow-on): within the main
+ * compiler pipeline, `compileWordMatcher` is called EXACTLY ONCE per grammar —
+ * in `compiler/link.ts`'s `link()`, over `raw.rules` (the evaluate-view rule
+ * tree, where the `word` rule's authored wrappers, notably a trailing
+ * `REPEAT`, are still intact). The result is carried forward unchanged as
+ * `wordMatcher` on `LinkedGrammar` → `NormalizedGrammar` → `SimplifiedGrammar`
+ * → `NodeMap`; every downstream consumer (`AssembleCtx.from`, `assemble()`,
+ * `TemplateEmitter`) reads the carried field — none may call
+ * `compileWordMatcher` again over a post-link rules view
+ * (`linkRules`/`normalizedRules`/`rules`). Recompiling from a post-normalize
+ * view is unsound in general: wrapper-deletion collapses `REPEAT`/`OPTIONAL`
+ * wrappers into leaf `multiplicity` attributes that `ruleToRegexSource`
+ * doesn't consult, so a post-link recompile can silently undercount the
+ * regex — confirmed regression on typescript's `identifier` word rule, which
+ * loses its trailing `REPEAT` under this hazard. (The separate `dsl/enrich.ts`
+ * caller predates Link entirely — it runs during Evaluate's DSL-authoring
+ * pass, over its own `rulesBag`, and is a distinct, earlier compilation; it is
+ * not part of the pin-and-carry chain described here.)
  */
 
 import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts

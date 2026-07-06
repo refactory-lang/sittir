@@ -222,6 +222,15 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// hiddenChoicesWithNamedAliasMembers: hidden choice kinds whose own body
 	// has named-alias members → must NOT be promoted to supertype.
 	const hiddenChoicesWithNamedAliasMembers = collectHiddenChoicesWithNamedAliasMembers(raw.rules);
+	// PIN POINT (2026-07-05 design): compiled exactly ONCE here, from
+	// `raw.rules` — the evaluate-view rule tree, where the `word` rule's
+	// authored wrappers (notably a trailing REPEAT) are still intact. This is
+	// the grammar's single word-matcher compilation for the entire pipeline;
+	// every later phase CARRIES `wordMatcherRegex` forward on its
+	// `LinkedGrammar`/`NormalizedGrammar`/`SimplifiedGrammar`/`NodeMap`
+	// container rather than recompiling from its own post-link rules view
+	// (see `LinkedGrammar.wordMatcher`'s doc comment for why recompiling from
+	// a post-normalize view is unsound).
 	const wordMatcherRegex = compileWordMatcher(raw.word, raw.rules);
 
 	// Resolve all rules. Named `linkCtx` (not `ctx`) to avoid shadowing the
@@ -395,6 +404,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		externalRoles,
 		externals: raw.externals,
 		word: raw.word,
+		wordMatcher: wordMatcherRegex,
 		references,
 		derivations,
 		aliasedHiddenKinds,

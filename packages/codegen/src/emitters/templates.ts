@@ -44,7 +44,6 @@ import type {
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import type { RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
-import { compileWordMatcher } from '../util/word-matcher.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission } from './shared.ts';
 
@@ -172,7 +171,12 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 
 	constructor(config: EmitTemplatesConfig) {
 		this.#config = config;
-		this.#wordMatcher = compileWordMatcher(config.nodeMap.word, config.nodeMap.linkRules ?? {}) ?? /\w/;
+		// Link-time-pinned, carried on `nodeMap.wordMatcher` — NOT recompiled
+		// here. See `LinkedGrammar.wordMatcher`'s doc comment (compiler/types.ts)
+		// for why a post-link recompile (this used to compile from
+		// `config.nodeMap.linkRules`, the wrapper-bearing view) is unsound in
+		// general. `?? /\w/` preserves the pre-existing no-word-rule fallback.
+		this.#wordMatcher = config.nodeMap.wordMatcher ?? /\w/;
 		// EmitCtx for the modelType-dispatching emitter: `rules` (for
 		// hidden-helper inlining — the normalized/wrapper-deleted view, PR-137),
 		// `wordMatcher` (currently unused by emitRule but kept for parity),

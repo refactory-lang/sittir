@@ -385,6 +385,27 @@ export interface LinkedGrammar {
 	 */
 	readonly contentAliasedFrom?: ReadonlyMap<string, string>;
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
+	/**
+	 * Link-time-pinned word-shape matcher, compiled ONCE from `raw.rules` (the
+	 * evaluate-view rule tree, where the `word` rule's authored wrappers —
+	 * notably a trailing `REPEAT` — are still intact). `undefined` when the
+	 * grammar declares no `word` rule, or the rule's shape isn't expressible as
+	 * a single regex (see `util/word-matcher.ts`'s `compileWordMatcher`).
+	 *
+	 * Every later phase CARRIES this value forward (`NormalizedGrammar` →
+	 * `SimplifiedGrammar` → `NodeMap`) rather than recompiling from its own
+	 * `rules`/`linkRules` view: compiling from a post-normalize view is
+	 * unsound in general — normalize's wrapper-deletion collapses
+	 * `REPEAT`/`OPTIONAL` wrappers into leaf `multiplicity` attributes that
+	 * `ruleToRegexSource`'s walker doesn't consult, so a post-link recompile
+	 * can silently undercount the regex (confirmed regression: typescript's
+	 * `identifier` word rule loses its trailing `REPEAT`). Pinning at link
+	 * time — where the wrapper is still a real node — and carrying the single
+	 * compiled result is the fix; see
+	 * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md (PR-137
+	 * follow-on) for the falsifying probe.
+	 */
+	readonly wordMatcher?: RegExp;
 }
 
 /**
@@ -435,6 +456,8 @@ export interface NormalizedGrammar {
 	readonly linkRules: Record<string, Rule<'link'>>;
 	readonly supertypes: Set<string>;
 	readonly word: string | null;
+	/** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
+	readonly wordMatcher?: RegExp;
 	readonly externals?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly aliasedHiddenKinds?: Map<string, string>;
@@ -482,6 +505,8 @@ export interface SimplifiedGrammar {
 	readonly normalizedRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
 	readonly word: string | null;
+	/** Carried from {@link LinkedGrammar.wordMatcher} — link-time-pinned, never recompiled. See that field's doc comment. */
+	readonly wordMatcher?: RegExp;
 	readonly externals?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly refineForms?: Map<string, RefineForm[]>;
@@ -577,17 +602,15 @@ export interface NodeMap {
 	 *
 	 * PR-137 narrowed this to its JUSTIFIED-EXCEPTION consumers — every
 	 * other former reader migrated to `normalizedRules` (below) or a
-	 * structural fact already on `RenderRule`/`SimplifiedRule`. Surviving
-	 * consumers, each verified wrapper-dependent (empirically, not just by
-	 * inspection — see docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md
-	 * PR-137 notes for the falsifying probes):
-	 *   - `util/word-matcher.ts`'s `compileWordMatcher`, called from
-	 *     `AssembleCtx.from` / `assemble()` / `TemplateEmitter`'s
-	 *     constructor: `ruleToRegexSource`'s OPTIONAL/REPEAT/REPEAT1 cases
-	 *     read the wrapper node directly. On `normalizedRules` those
-	 *     wrappers collapse to a `multiplicity` leaf attribute the walker
-	 *     doesn't consult — confirmed regression on typescript's `identifier`
-	 *     word rule (loses its trailing `REPEAT`, undercounting the regex).
+	 * structural fact already on `RenderRule`/`SimplifiedRule`. The
+	 * word-matcher consumer came OFF this list in the PR-137 follow-on: it no
+	 * longer compiles from `linkRules` (or any post-link view) at all — it's
+	 * pinned once at Link time from `raw.rules` and carried on `wordMatcher`
+	 * (below) instead. Remaining consumers are exclusively the
+	 * hidden-body/subtype-resolution family, each verified wrapper-dependent
+	 * (empirically, not just by inspection — see
+	 * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md PR-137
+	 * notes for the falsifying probes):
 	 *   - `compiler/assemble.ts`'s hidden-body/subtype-resolution family
 	 *     (`resolveHiddenSubtypes` / `includeAliasMemberKinds` /
 	 *     `isAliasMemberKind` / `isCompatibleSubtypeMember` /
@@ -636,6 +659,15 @@ export interface NodeMap {
 	 * round-trip back to the keyword and lose the kind.
 	 */
 	readonly word?: string | null;
+	/**
+	 * Link-time-pinned word-shape matcher, carried from
+	 * `SimplifiedGrammar.wordMatcher` (itself carried from
+	 * `LinkedGrammar.wordMatcher`) — see that field's doc comment for the
+	 * pin-at-link rationale. `undefined` when the grammar declares no `word`
+	 * rule; consumers fall back to `matchesWordShape`'s `/^\w+$/` heuristic
+	 * in that case, same as before.
+	 */
+	readonly wordMatcher?: RegExp;
 	readonly polymorphFormKinds: ReadonlySet<string>;
 	/**
 	 * External-token symbols declared by the grammar (`externals: $ =>

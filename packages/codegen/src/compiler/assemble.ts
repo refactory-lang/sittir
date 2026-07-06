@@ -61,7 +61,7 @@ import {
 import { simplifyRule, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { deriveStructuralVariantChildren } from './variant-structural.ts';
 import { inlineRefs, extractRepeatShape } from '../dsl/rule-transforms.ts';
-import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
+import { matchesWordShape } from '../util/word-matcher.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnostics/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
@@ -134,20 +134,23 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 
 	/**
 	 * Canonical construction from a SimplifiedGrammar — the ONE derivation of
-	 * the assemble view (the grammar container, the grammar word-matcher,
-	 * alias bodies). Callers own the ctx (R12): generate.ts passes its live
-	 * DiagnosticSink; tests take the default.
+	 * the assemble view (the grammar container, alias bodies). Callers own
+	 * the ctx (R12): generate.ts passes its live DiagnosticSink; tests take
+	 * the default.
+	 *
+	 * The grammar word-matcher is NOT derived here — it's pinned once at Link
+	 * time (`link.ts`, from `raw.rules`) and carried onto `normalized.wordMatcher`
+	 * unchanged; see `LinkedGrammar.wordMatcher`'s doc comment.
 	 */
 	static from(
 		normalized: SimplifiedGrammar,
 		generatedIdTables?: GeneratedIdTables,
 		diagnostics: DiagnosticSink = new DiagnosticSink()
 	): AssembleCtx {
-		const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.linkRules);
 		return new AssembleCtx({
 			grammar: normalized,
 			diagnostics,
-			wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
+			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
 			generatedIdTables,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map()
 		});
@@ -170,7 +173,11 @@ export interface AssembledNodeMap extends NodeMap {
  */
 export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const normalized = ctx.grammar;
-	const wordMatcherRegex = compileWordMatcher(normalized.word, normalized.linkRules);
+	// Link-time-pinned, carried — NOT recompiled here. See
+	// `LinkedGrammar.wordMatcher`'s doc comment for why a post-link recompile
+	// (from `normalized.linkRules`, the wrapper-bearing view this function used
+	// to compile from) is unsound in general.
+	const wordMatcherRegex = normalized.wordMatcher;
 	const nodes = ctx.nodes;
 	// collectGeneratedKindEntries(undefined) is []; keep the non-optional
 	// entries array downstream constructors expect.
@@ -458,6 +465,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			linkRules: normalized.linkRules,
 			normalizedRules: normalized.normalizedRules,
 			word: normalized.word,
+			wordMatcher: normalized.wordMatcher,
 			externals: normalized.externals ? new Set(normalized.externals) : undefined,
 			polymorphFormKinds: computePolymorphFormKinds(nodes),
 			refineForms: normalized.refineForms,
