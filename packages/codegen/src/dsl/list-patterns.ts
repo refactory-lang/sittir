@@ -26,6 +26,44 @@
 import { typeEq, type RuntimeRule } from '../types/runtime-shapes.ts';
 
 /**
+ * The nested separator fact's shape (`{value, trailing?, leading?}`, PR-S),
+ * phrased structurally over `RuntimeRule` (rather than a specific
+ * `RuleBase<Phase>['separator']`) so `separatorFactsEqual` accepts the fact
+ * at ANY phase view (`RuleBase<'normalize'>.separator`,
+ * `RepeatRule<'link'>.separator`, …) without a phase-widening cast at the
+ * call site — they all share this identical structural shape post-PR-S.
+ */
+interface SeparatorFact {
+	readonly value: RuntimeRule;
+	readonly trailing?: boolean;
+	readonly leading?: boolean;
+}
+
+/**
+ * Structural equality for the nested separator fact
+ * (`{value, trailing?, leading?}`, PR-S). The wrapper object itself has no
+ * `.type` discriminant, so `rulesEqual` can't be called on it directly —
+ * compare `trailing`/`leading` primitively and `value` (the inner Rule) via
+ * `rulesEqual`.
+ *
+ * SSOT for this comparison: both `rulesEqual` below (repeat/repeat1 case) and
+ * `normalize.ts`'s own `rulesEqual` (REPEAT case) delegate here instead of
+ * `===`, which — post-PR-S — would compare object identity on a freshly
+ * allocated wrapper per lift call rather than the separator's actual value.
+ *
+ * `rulesEqual(a.value, b.value)` runs on the separator's inner Rule, which is
+ * always a terminal/simple rule (a literal string or a small choice/seq of
+ * literals) even when this helper is reached post-wrapper-deletion (e.g. from
+ * `rule-attrs.ts`'s `sharedArmAttrs`) — so it's safe despite `rulesEqual`'s own
+ * "do NOT call after wrapper-deletion" doc note, which is about the STRUCTURAL
+ * rule being compared, not this always-simple nested value.
+ */
+export function separatorFactsEqual(a: SeparatorFact | undefined, b: SeparatorFact | undefined): boolean {
+	if (a === undefined || b === undefined) return a === b;
+	return a.trailing === b.trailing && a.leading === b.leading && rulesEqual(a.value, b.value);
+}
+
+/**
  * Structural equality for rule trees. Limited to the rule shapes that exist
  * pre-link (no polymorph/supertype/terminal — those appear only after
  * Link). Used by the commaSep1 lift to verify a seq's standalone element
@@ -60,7 +98,18 @@ export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
 			return rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
 		case 'repeat':
 		case 'repeat1':
-			return A.separator === B.separator && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
+			// `.separator` is either a plain string (evaluate-phase, unlifted) or
+			// the nested {value, trailing?, leading?} fact (link-phase, PR-S) — a
+			// freshly-allocated wrapper object per lift call, so `===` incorrectly
+			// treats two structurally-identical separators as unequal. Compare via
+			// separatorFactsEqual for the object form; `===` still handles the
+			// plain-string form (and the `undefined`/mixed cases) correctly since
+			// separatorFactsEqual only applies to the object shape.
+			return (
+				(typeof A.separator === 'object' && A.separator !== null
+					? separatorFactsEqual(A.separator as SeparatorFact, B.separator as SeparatorFact)
+					: A.separator === B.separator) && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule)
+			);
 		case 'field':
 			return A.name === B.name && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
 		default:

@@ -12,6 +12,7 @@ import { describe, it, expect } from 'vitest';
 import { deleteWrapper, applyWrapperDeletion } from '../wrapper-deletion.ts';
 import type {
 	Rule,
+	RuleBase,
 	OptionalRule,
 	RepeatRule,
 	Repeat1Rule,
@@ -98,11 +99,23 @@ describe('deleteWrapper — repeat', () => {
 	it('an orphan trailing/leading-without-a-separator state is structurally impossible', () => {
 		// There is no way to construct a RepeatRule with `trailing`/`leading` set
 		// but no `separator` — they only exist nested INSIDE `separator` now.
-		// This test documents the invariant rather than exercising deleteWrapper.
 		const wrapped: RepeatRule = { type: REPEAT, content: sym('item') };
 		expect(wrapped.separator).toBeUndefined();
 		const out = deleteWrapper(wrapped);
 		expect(out.separator).toBeUndefined();
+
+		// Compile-time pin: the invariant above is a TYPE guarantee, not just a
+		// runtime observation — `true` under the OLD sibling shape too (a bare
+		// symbol legitimately had no `trailing`/`leading` either). What actually
+		// changed is that the old orphan literal (top-level `trailing`/`leading`
+		// alongside `separator: undefined`) no longer type-checks at all: those
+		// fields only exist nested inside `separator` now. If a future change
+		// reintroduces unused top-level siblings on RuleBase<NormalizedPhase>,
+		// this assignment would stop erroring and `@ts-expect-error` itself would
+		// fail (checked by `tsgo --noEmit`, not by vitest's transform-only run).
+		// @ts-expect-error — trailing/leading are not top-level RuleBase siblings; they only exist nested inside `separator`.
+		const orphan: RuleBase<'normalize'> = { separator: undefined, trailing: true };
+		void orphan;
 	});
 });
 
