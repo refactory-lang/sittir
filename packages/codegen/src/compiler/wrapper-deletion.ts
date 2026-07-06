@@ -69,7 +69,12 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 				// optional stays recursive: it forces a slot only when its
 				// content is intrinsically nonterminal (Table 2). optional(',')
 				// → no slot; optional(symbol)/optional(repeat) → slot.
-				nonterminal: attrs.nonterminal ?? (isNonterminalRuleType(rule.content) || undefined),
+				// isNonterminalRuleType classifies by `.type` + child shape only —
+				// phase-agnostic in practice; widen structurally (post-PR-S,
+				// RepeatRule<'evaluate'>/<'link'> genuinely diverge in shape, so
+				// this is now an explicit phase-widening cast, not a structural
+				// coincidence — same pattern as collect-slots.ts's isSlotNode).
+				nonterminal: attrs.nonterminal ?? (isNonterminalRuleType(rule.content as Rule<'evaluate'>) || undefined),
 			};
 			return deleteWrapperWith(rule.content, next);
 		}
@@ -94,19 +99,13 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			// the result can only be 'array' | 'nonEmptyArray' (never 'single'),
 			// narrower than the function's general LeafMultiplicity return type.
 			const mult = (combineMultiplicity(attrs.multiplicity, 'array') ?? 'array') as 'array' | 'nonEmptyArray';
-			// Build separator: if trailing or leading is set, use object form
-			let sep = attrs.separator;
-			if (sep === undefined && rule.separator !== undefined) {
-				if (rule.trailing !== undefined || rule.leading !== undefined) {
-					sep = {
-						rules: [{ type: 'STRING', value: rule.separator }],
-						trailing: rule.trailing,
-						leading: rule.leading,
-					};
-				} else {
-					sep = rule.separator;
-				}
-			}
+			// rule.separator is already the nested {value, trailing?, leading?}
+			// shape (RepeatRule<'link'> shares RuleBase<'normalize'>.separator's
+			// shape) — carry it across unchanged instead of reconstructing it.
+			// `rule.separator` is `Rule<'link'>`-phase-parameterized; WrapperAttrs.separator
+			// is normalize-phase. Structurally identical fact carried across the phase
+			// boundary unchanged (the "rides along for free" design) — cast the phase view.
+			const sep = attrs.separator ?? (rule.separator as RuleBase<'normalize'>['separator']);
 			// repeat forces an array slot (Table 2), incl. terminal content.
 			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);
@@ -122,18 +121,11 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			const mult = (combineMultiplicity(attrs.multiplicity, 'nonEmptyArray') ?? 'nonEmptyArray') as
 				| 'array'
 				| 'nonEmptyArray';
-			let sep = attrs.separator;
-			if (sep === undefined && rule.separator !== undefined) {
-				if (rule.trailing !== undefined || rule.leading !== undefined) {
-					sep = {
-						rules: [{ type: 'STRING', value: rule.separator }],
-						trailing: rule.trailing,
-						leading: rule.leading,
-					};
-				} else {
-					sep = rule.separator;
-				}
-			}
+			// Same "rides along for free" carry as REPEAT above.
+			// `rule.separator` is `Rule<'link'>`-phase-parameterized; WrapperAttrs.separator
+			// is normalize-phase. Structurally identical fact carried across the phase
+			// boundary unchanged (the "rides along for free" design) — cast the phase view.
+			const sep = attrs.separator ?? (rule.separator as RuleBase<'normalize'>['separator']);
 			// repeat1 forces a nonEmptyArray slot (Table 2), incl. terminal content.
 			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);

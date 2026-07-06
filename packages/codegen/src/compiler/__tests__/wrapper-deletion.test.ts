@@ -64,31 +64,45 @@ describe('deleteWrapper — repeat', () => {
 		expect(out.multiplicity).toBe('array');
 	});
 
-	it('lifts repeat with separator string → preserves separator', () => {
-		const wrapped: RepeatRule = { type: REPEAT, content: sym('item'), separator: ',' };
-		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('SYMBOL');
-		expect(out.multiplicity).toBe('array');
-		expect(out.separator).toBe(',');
-	});
-
-	it('lifts repeat with separator + trailing/leading → object form', () => {
+	it('lifts repeat with nested separator → carries the object across unchanged', () => {
 		const wrapped: RepeatRule = {
 			type: REPEAT,
 			content: sym('item'),
-			separator: ',',
-			trailing: true,
-			leading: false,
+			separator: { value: { type: 'STRING', value: ',' } },
 		};
 		const out = deleteWrapper(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
-		// Object form because trailing/leading are set
+		expect(out.separator).toEqual({ value: { type: 'STRING', value: ',' } });
+	});
+
+	it('lifts repeat with separator + trailing/leading → nested object rides along for free', () => {
+		// wrapper-deletion's REPEAT case does NOT reconstruct trailing/leading
+		// from separate fields — it carries the whole `separator` object across
+		// unchanged, since RepeatRule<'link'> already nests them (PR-S).
+		const wrapped: RepeatRule = {
+			type: REPEAT,
+			content: sym('item'),
+			separator: { value: { type: 'STRING', value: ',' }, trailing: true, leading: false },
+		};
+		const out = deleteWrapper(wrapped);
+		expect(out.type).toBe('SYMBOL');
+		expect(out.multiplicity).toBe('array');
 		expect(out.separator).toEqual({
-			rules: [{ type: 'STRING', value: ',' }],
+			value: { type: 'STRING', value: ',' },
 			trailing: true,
 			leading: false,
 		});
+	});
+
+	it('an orphan trailing/leading-without-a-separator state is structurally impossible', () => {
+		// There is no way to construct a RepeatRule with `trailing`/`leading` set
+		// but no `separator` — they only exist nested INSIDE `separator` now.
+		// This test documents the invariant rather than exercising deleteWrapper.
+		const wrapped: RepeatRule = { type: REPEAT, content: sym('item') };
+		expect(wrapped.separator).toBeUndefined();
+		const out = deleteWrapper(wrapped);
+		expect(out.separator).toBeUndefined();
 	});
 });
 

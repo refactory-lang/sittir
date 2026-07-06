@@ -40,7 +40,9 @@ const variant = (name: string, content: Rule<'link'>): Rule<'link'> => ({
 });
 const optional = (content: Rule<'link'>): Rule<'link'> => ({ type: OPTIONAL, content });
 const repeat1 = (content: Rule<'link'>, separator?: string): Rule<'link'> =>
-	separator !== undefined ? { type: REPEAT1, content, separator } : { type: REPEAT1, content };
+	separator !== undefined
+		? { type: REPEAT1, content, separator: { value: { type: STRING, value: separator } } }
+		: { type: REPEAT1, content };
 
 /**
  * Helper: result of pushing a field wrapper down to its content as leaf attrs,

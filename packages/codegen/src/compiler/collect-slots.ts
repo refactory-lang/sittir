@@ -32,7 +32,7 @@
  */
 
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, RuleBase, Multiplicity } from '../types/rule.ts';
+import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
@@ -256,7 +256,13 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 /** True iff this node is a slot-bearing nonterminal (intrinsic or pushed-down). */
 function isSlotNode(rule: AnyRule): boolean {
 	if ((rule as { nonterminal?: boolean }).nonterminal === true) return true;
-	return isNonterminalRuleType(rule);
+	// isNonterminalRuleType classifies purely by `.type` + child shape — phase-
+	// agnostic in practice (evaluate/link/normalize rules share the type tags
+	// it switches on); widen structurally rather than narrow the caller's
+	// AnyRule param. (Post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely
+	// diverge in shape, so this cast is no longer a structural coincidence —
+	// it's an explicit phase-widening read, same pattern as `findRepeatFlag`.)
+	return isNonterminalRuleType(rule as Rule<'evaluate'>);
 }
 
 /**
@@ -372,7 +378,12 @@ function buildSlot(
 	}
 
 	// --- Build values for the slot from the node itself ---
-	const rawValues = deriveValuesForRule(rule, { kindEntries }, mult);
+	// buildSlot's `rule` param is AnyRule but is, at runtime, always the
+	// post-wrapper-deletion (link-derived) shape deriveValuesForRule expects —
+	// same phase-widening read as isSlotNode above (post-PR-S, RepeatRule's
+	// per-phase shapes genuinely diverge, so this is now an explicit cast
+	// rather than a structural coincidence).
+	const rawValues = deriveValuesForRule(rule as Rule<'link'>, { kindEntries }, mult);
 	let dedupedValues = dedupeValues(rawValues);
 	if (dedupedValues.length === 0) return null;
 
@@ -403,17 +414,12 @@ function buildSlot(
 		(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ??
 		inheritedSeparator ??
 		(isMultiSlot ? findNestedSeparator(rule) : undefined);
-	const sepIsObject = typeof sep === 'object' && !Array.isArray(sep) && sep !== null;
-	const hasTrailing =
-		isMultiSlot &&
-		(sepIsObject
-			? (sep as { trailing?: boolean }).trailing === true
-			: findRepeatFlag(rule, 'trailing'));
-	const hasLeading =
-		isMultiSlot &&
-		(sepIsObject
-			? (sep as { leading?: boolean }).leading === true
-			: findRepeatFlag(rule, 'leading'));
+	// `sep` is always the nested {value, trailing?, leading?} object (or
+	// undefined) post-PR-S — no more string/array shapes to type-dispatch on.
+	// OR with `findRepeatFlag`'s full-tree walk as a fallback for shapes `sep`
+	// (own separator ?? inheritedSeparator ?? nested-arm scan) didn't reach.
+	const hasTrailing = isMultiSlot && (sep?.trailing === true || findRepeatFlag(rule, 'trailing'));
+	const hasLeading = isMultiSlot && (sep?.leading === true || findRepeatFlag(rule, 'leading'));
 
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
 	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);
@@ -512,35 +518,6 @@ export function collectSlots(
 			return slot ? [slot] : [];
 		}
 	}
-}
-/**
- * Walk a rule tree looking for the first repeat-with-separator. Used by
- * structural nodes to propagate tree-sitter's `sepBy` / `repSeq`
- * separator hints onto their joinBy slot so `$$$CHILDREN` renders
- * with the right glue.
- */
-
-export function findRepeatSeparator(rule: AnyRule): string | undefined {
-    switch (rule.type) {
-        case REPEAT:
-        case REPEAT1:
-            if (rule.separator) return rule.separator;
-            return findRepeatSeparator(rule.content);
-        case SEQ:
-        case CHOICE:
-            for (const m of rule.members) {
-                const sep = findRepeatSeparator(m);
-                if (sep) return sep;
-            }
-            return undefined;
-        case OPTIONAL:
-        case VARIANT:
-        case GROUP:
-        case FIELD:
-            return findRepeatSeparator(rule.content);
-        default:
-            return undefined;
-    }
 }
 /**
  * Collect the names of named fields whose content contains a `repeat` /

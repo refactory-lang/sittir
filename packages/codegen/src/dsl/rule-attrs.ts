@@ -11,6 +11,8 @@
 
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
+import { rulesEqual } from './list-patterns.ts';
+import type { RuntimeRule } from '../types/runtime-shapes.ts';
 
 /**
  * Transfer slot-identity attributes from a discarded wrapper node onto the
@@ -77,6 +79,21 @@ export interface SharedArmAttrs {
 const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1, array: 2, nonEmptyArray: 3 };
 
 /**
+ * Structural equality for the nested separator fact
+ * (`{value, trailing?, leading?}`). The wrapper object itself has no `.type`
+ * discriminant, so `rulesEqual` can't be called on it directly — compare
+ * `trailing`/`leading` primitively and `value` (the inner Rule) via
+ * `rulesEqual`.
+ */
+function separatorFactsEqual(
+	a: RuleBase<'normalize'>['separator'],
+	b: RuleBase<'normalize'>['separator']
+): boolean {
+	if (a === undefined || b === undefined) return a === b;
+	return a.trailing === b.trailing && a.leading === b.leading && rulesEqual(a.value as RuntimeRule, b.value as RuntimeRule);
+}
+
+/**
  * Structural-read shape for the stamped leaf attributes. These only exist
  * on `RuleBase<'normalize' | 'simplify'>` per the type, but `sharedArmAttrs`
  * is called from `collect-slots.ts` with `AnyRule` values that are, at
@@ -103,12 +120,11 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 		const v = get(a0);
 		return v !== undefined && arms.every((m) => get(stamped(m)) === v) ? v : undefined;
 	};
-	// separator may be a string | Rule[] | { rules } object — compare by structure.
+	// separator is the nested {value, trailing?, leading?} fact — compare via
+	// separatorFactsEqual since the wrapper object has no `.type` discriminant.
 	const sep0 = a0.separator;
 	const separator =
-		sep0 !== undefined && arms.every((m) => JSON.stringify(stamped(m).separator) === JSON.stringify(sep0))
-			? sep0
-			: undefined;
+		sep0 !== undefined && arms.every((m) => separatorFactsEqual(stamped(m).separator, sep0)) ? sep0 : undefined;
 	let strongestMultiplicity: Multiplicity | undefined;
 	for (const arm of arms) {
 		const m = stamped(arm).multiplicity;

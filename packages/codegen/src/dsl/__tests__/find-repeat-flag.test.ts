@@ -16,14 +16,15 @@ import { findRepeatFlag } from '../rule-transforms.ts';
 
 const str = (value: string): AnyRule => ({ type: STRING, value });
 const sym = (name: string): AnyRule => ({ type: SYMBOL, name });
-const field = (name: string, content: AnyRule): AnyRule => ({
-	type: FIELD,
-	name,
-	content
-});
+const field = (name: string, content: AnyRule): AnyRule =>
+	({
+		type: FIELD,
+		name,
+		content
+	}) as AnyRule;
 const seq = (...members: AnyRule[]): AnyRule => ({ type: SEQ, members });
 const choice = (...members: AnyRule[]): AnyRule => ({ type: CHOICE, members });
-const optional = (content: AnyRule): AnyRule => ({ type: OPTIONAL, content });
+const optional = (content: AnyRule): AnyRule => ({ type: OPTIONAL, content }) as AnyRule;
 
 describe('findRepeatFlag', () => {
 	// Direct unit coverage for the metadata walker that feeds the

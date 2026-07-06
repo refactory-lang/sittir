@@ -8,11 +8,9 @@
  * instance over its rules map (+ diagnostics).
  * Spec: docs/superpowers/specs/2026-07-01-r12-rulewalker-design.md
  */
-import type { AnyRule, RuleBase } from '../types/rule.ts';
+import type { AnyRule } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
-
-type StampedSeparator = RuleBase<'normalize'>['separator'];
 
 export class RuleWalker<R extends AnyRule = AnyRule> {
 	readonly #rules?: Readonly<Record<string, R>>;
@@ -29,8 +27,10 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	/**
 	 * THE canonical child-edge relation — single source of truth for "what
 	 * are this rule's children": `members` (seq/choice), `content` (wrappers/
-	 * variant/group/token/alias), and stamped separator rules (array/object
-	 * form; string form carries no nested rules). Leaves return [].
+	 * variant/group/token/alias), and a stamped separator rule (the nested
+	 * `separator.value` — a single `Rule`, PR-S — `trailing`/`leading` live
+	 * alongside it on the wrapper object but aren't rule-tree edges). Leaves
+	 * return [].
 	 * Walks needing a narrower set early-return on those types in their own
 	 * lambda; this relation never grows per-walk options.
 	 * map, fold, find, foldDeep, and findDeep all use this relation
@@ -38,12 +38,10 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	 */
 	childrenOf(rule: R): readonly R[] {
 		const out: R[] = [];
-		const bag = rule as { members?: readonly R[]; content?: R; separator?: StampedSeparator };
+		const bag = rule as { members?: readonly R[]; content?: R; separator?: { value: R } };
 		if (Array.isArray(bag.members)) out.push(...bag.members);
 		else if (bag.content && typeof bag.content === 'object') out.push(bag.content);
-		const sep = bag.separator;
-		if (Array.isArray(sep)) out.push(...(sep as readonly R[]));
-		else if (typeof sep === 'object' && sep !== null && 'rules' in sep) out.push(...(sep.rules as readonly R[]));
+		if (bag.separator && typeof bag.separator === 'object' && 'value' in bag.separator) out.push(bag.separator.value as R);
 		return out;
 	}
 
@@ -51,15 +49,19 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	 * Bottom-up rebuild. Applies `visit` to each child's mapped result, then
 	 * rebuilds this node ONLY if a child changed. Returns the SAME reference
 	 * when nothing changed — load-bearing for fixpoint loops that compare
-	 * `r === before` (enrich). Each edge (`members`, `content`, separator-
-	 * array/object-form) tracks its own change independently, so an untouched
-	 * sibling edge keeps its exact input reference even when another edge on
-	 * the same node is rebuilt. Rebuilds via the SAME `childrenOf` edge
-	 * relation `fold`/`find` use.
+	 * `r === before` (enrich). Each edge (`members`, `content`, separator)
+	 * tracks its own change independently, so an untouched sibling edge keeps
+	 * its exact input reference even when another edge on the same node is
+	 * rebuilt. Rebuilds via the SAME `childrenOf` edge relation `fold`/`find`
+	 * use.
 	 */
 	map(rule: R, visit: (r: R) => R): R {
-		const bag = rule as { members?: readonly R[]; content?: R; separator?: StampedSeparator };
-		const patch: { members?: readonly R[]; content?: R; separator?: StampedSeparator } = {};
+		const bag = rule as { members?: readonly R[]; content?: R; separator?: { value: R; trailing?: boolean; leading?: boolean } };
+		const patch: {
+			members?: readonly R[];
+			content?: R;
+			separator?: { value: R; trailing?: boolean; leading?: boolean };
+		} = {};
 
 		if (Array.isArray(bag.members)) {
 			let membersChanged = false;
@@ -75,22 +77,9 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		}
 
 		const sep = bag.separator;
-		if (Array.isArray(sep)) {
-			let sepChanged = false;
-			const next = (sep as readonly R[]).map((m) => {
-				const out = visit(this.map(m, visit));
-				if (out !== m) sepChanged = true;
-				return out;
-			});
-			if (sepChanged) patch.separator = next as StampedSeparator;
-		} else if (typeof sep === 'object' && sep !== null && 'rules' in sep) {
-			let sepChanged = false;
-			const next = (sep.rules as readonly R[]).map((m) => {
-				const out = visit(this.map(m, visit));
-				if (out !== m) sepChanged = true;
-				return out;
-			});
-			if (sepChanged) patch.separator = { ...sep, rules: next } as StampedSeparator;
+		if (sep && typeof sep === 'object' && 'value' in sep) {
+			const out = visit(this.map(sep.value, visit));
+			if (out !== sep.value) patch.separator = { ...sep, value: out };
 		}
 
 		return Object.keys(patch).length > 0 ? ({ ...(rule as object), ...patch } as unknown as R) : rule;
