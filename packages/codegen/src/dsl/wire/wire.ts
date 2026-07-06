@@ -211,8 +211,7 @@ export function wireGetCurrentRuleKind(): string | null {
 /**
  * Install a fresh `WireContext` for the duration of `fn` and return
  * both the callback result and the context so tests can assert on
- * deposits / polymorphVariants / conflictGroups that were registered
- * during the call.
+ * deposits / conflictGroups that were registered during the call.
  *
  * Intended for unit tests of DSL helpers (variant/alias/transform/
  * hoist) that need a wire context without going through full wire()

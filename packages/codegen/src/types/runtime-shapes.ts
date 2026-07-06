@@ -46,14 +46,16 @@
  * `isWrapperType`, `isPrecWrapper`, `isFieldLike`, `isSymbolLike`)
  * or by pattern-matching on `type` literals.
  *
- * Why a supertype rather than a precise union? Sittir's `Rule` union
- * commits to lowercase literals and specific interface shapes. Under
- * tree-sitter's CLI runtime the same DSL code receives uppercase
- * tree-sitter natives with subtly different shapes (e.g. `PREC_LEFT`
- * carries `value` as `number`, sittir's `prec` is stripped entirely).
- * Typing `transform()` as returning `Rule` would lie to consumers;
- * typing it as `RuntimeRule` forces an honest narrowing at every
- * inspection point.
+ * Why a supertype rather than a precise union? Both runtimes agree on
+ * UPPERCASE type discriminators, but their SHAPES diverge for some nodes:
+ * nested `$` symbol refs, `PREC_LEFT` carrying `value` as `number` (sittir's
+ * `prec()` strips the wrapper entirely — see `evaluate.ts::prec` — so a
+ * PREC-shaped rule only ever appears via the tree-sitter CLI runtime),
+ * `content: unknown` rather than `Rule`, `optional` lowered to
+ * `CHOICE(x, BLANK)`, etc. (see this file's header, and the SSOT research
+ * doc §0's divergence table). Typing `transform()` as returning `Rule` would
+ * lie to consumers about these shape differences; typing it as
+ * `RuntimeRule` forces an honest narrowing at every inspection point.
  *
  * Intentionally shape-minimal (no index signature) so sittir's Rule
  * interfaces — which don't declare `[k: string]: unknown` — are

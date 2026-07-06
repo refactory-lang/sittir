@@ -671,7 +671,7 @@ export function simplifyRule(rule: RenderRule, ctx: SimplifyCtx = makeDefaultCtx
 /**
  * Dispatch a single, already-child-simplified rule to its per-type simplify
  * handler. Thin switch over the RenderRule union (the wrapper-free view
- * `applyWrapperDeletion` produces — see `SimplifyCtx extends BaseCtx<RenderRule>`).
+ * `applyWrapperDeletion` produces — see `SimplifyCtx extends BaseCtx<'normalize'>`).
  * This function is deliberately NON-RECURSIVE — it must never call
  * `ctx.walker.map` (or `simplifyRule`) itself. It is used two ways: as the
  * `visit` callback `simplifyRule` passes to `ctx.walker.map` (applied once per
