@@ -50,16 +50,8 @@ export function classifySlot(
 	const kindSet = new Set(kinds);
 	let bestMatch: { supertypeName: string; size: number } | undefined;
 	for (const [supertypeName, subtypes] of supertypeMap) {
-		// Exact-set match: the slot's kind set must EQUAL the supertype's full
-		// resolved subtype set, not merely be a subset. A proper subset would
-		// collapse the slot onto a wider supertype transport than it actually
-		// ranges over — and when that supertype is large and self-recursive
-		// (e.g. match_arm's `{attribute_item, inner_attribute_item}` is a
-		// 2-of-21 subset of `declaration_statement`, which transitively
-		// references match_arm again) the generated `FromNapiValue` recurses
-		// through the whole statement graph and overflows the native stack.
-		// Subset slots instead fall through to `heterogeneous`, which emits a
-		// per-slot enum of exactly their kinds.
+		// Exact-set match required, not subset — see glossary "Phase 5: Emit"
+		// § classifySlot for the native-stack-overflow rationale.
 		if (kindSet.size === subtypes.size && [...kindSet].every((k) => subtypes.has(k))) {
 			if (bestMatch === undefined || subtypes.size < bestMatch.size) {
 				bestMatch = { supertypeName, size: subtypes.size };

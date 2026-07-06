@@ -15,7 +15,7 @@ does), and output (what changes).
 >
 > ```
 > enrich (author wraps grammar(enrich(base), …))   ← module-load, pre-tree-sitter
->   → evaluate (compiler/evaluate.ts: runs DSL, wire(), auto-groups)
+>   → evaluate (compiler/evaluate.ts: runs DSL, wire())
 >     → link (compiler/link.ts)
 >       → normalize (compiler/normalize.ts: + applyWrapperDeletion + computeSimplifiedRules)
 >         → assemble (compiler/assemble.ts + node-map.ts + collect-slots.ts)
@@ -39,12 +39,12 @@ does), and output (what changes).
 >
 > **What's shipped (PR0 + PR1 + PR2):**
 > - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` / `aliasedFrom` / `aliasNamed` on every Rule via the shared `RuleBase` interface (`types/rule.ts` — R11 moved the Rule IR layer to `codegen/src/types/`).
-> - **enrich attribute passes** (PR0): `enrichFieldWrappers` ships in `dsl/enrich.ts`. `enrichMultiplicityWrappers` was REMOVED — `multiplicity`/`nonterminal` are derived solely by `applyWrapperDeletion` from wrapper structure (enrich stamping them was premature + polluted the `nonterminal` slot signal by marking bare `optional(',')` delimiters). The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`).
+> - **enrich attribute passes** (PR0): `enrichFieldWrappers` ships in `dsl/enrich.ts`. `enrichMultiplicityWrappers` was REMOVED — `multiplicity`/`nonterminal` are derived solely by `applyWrapperDeletion` from wrapper structure (enrich stamping them was premature + polluted the `nonterminal` slot signal by marking bare `optional(',')` delimiters). The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`) at the time, **but that pass was later retired** (see the updated Phase 1 note below): enrich's `applyClauseHoist` now hoists every `optional(seq)` / `CHOICE[seq, BLANK]` position itself, clause-shaped or not (it only descends through `repeat`/`repeat1` wrappers looking for nested hoistable content — it does not hoist a bare `repeat(seq)` as a unit).
 > - **`applyWrapperDeletion`** (PR1, `compiler/wrapper-deletion.ts`): new last pass of `normalizeGrammar()`; pushes modifier wrappers (optional / field / repeat / repeat1 / alias) down to leaf `RuleBase` attributes. Output: `RenderRule` (wrapper-free) snapshot.
 > - **RenderRule + SimplifiedRule branded types** (PR1/PR2, `types/rule.ts`).
 > - **`computeSimplifiedRules`** (relocated PR1 to `compiler/simplify.ts`): takes RenderRule, runs `inlineRefs` + `simplifyRules` + `canonicalizeSeqOfLeaves` + `deleteWrapper` (post-fixpoint wrapper-free guard) + `fuseHeadRepeatLists`. Output: `Record<string, SimplifiedRule>`.
 > - **Alias-body + polymorph-form snapshots** (PR2): `normalizeGrammar()` threads top-level alias-bodies and polymorph-form contents through `applyWrapperDeletion` + `computeSimplifiedRules` and merges them into `normalizedRules` / `rules` (`SimplifiedGrammar`'s phase-product field — renamed from `simplifiedRules` 2026-07-05, PR-137). `assemble.ts` reads snapshots directly; per-call `simplifyRule(...)` / `deleteWrapper(...)` fallbacks deleted.
-> - **`applyAutoGroups` re-enabled** (PR2): `dsl/wire/wire.ts` invokes it; synthesized helpers (`_<parent>_optional<N>` / `_<parent>_repeat<N>`) are registered in `grammar.inline` via `WireContext.syntheticInline`.
+> - **`applyAutoGroups` re-enabled (PR2), then RETIRED (`51b0347d8`):** `dsl/wire/auto-groups.ts` is physically deleted. Enrich now owns `optional(seq)` / `CHOICE[seq, BLANK]` hoisting itself (clause-shaped or not) — inline-safe into a hidden `_<parent>_optional<N>` symbol, inline-unsafe into a visible content-alias that `link.ts`'s `mintContentAliasKinds` registers as a real IR kind. `repeat`/`repeat1` wrappers are only descended through for nested hoistable content, not hoisted as a unit themselves. The old wire-time pass had to go because it ran BEFORE link and pre-consumed inline-unsafe seqs link must see as inline content. See `dsl/enrich.ts`'s `applyClauseHoist` and Phase 0 below.
 > - **`inlineRefs`** (PR2, renamed from `inlineGroupRefs`): inlines (a) hidden GROUP / MULTI refs and (b) any ref whose target is in `grammar.inline`. Matches tree-sitter's parse-time inlining. R3: lives in `dsl/rule-transforms.ts` as a shared op — `inlineRefs(rule, ctx: InlineRefsCtx, visited?)`.
 > - **R3 (#14 sweep + M1 closure):** `compiler/transforms.ts` and `compiler/rule-attrs.ts` moved to **`dsl/rule-transforms.ts`** / **`dsl/rule-attrs.ts`** (named to avoid the existing `dsl/transform/` override-transform module). `SimplifyCtx` is now a real interface (`extends TransformCtx`, adds `polymorphSkipExtra?`). Entry points: `simplifyRules(rules, ctx?)`, `computeSimplifiedRules(normalizedRules, ctx?)`, `normalizeToFixpoint(rule, ctx, rules)`, `applyNormalizationPasses(rawRules, ctx?, preserveKinds?)`, `inlineHiddenSeqRefs(rules, ctx, keepRef)`. The `inlineRefs` / `canonicalizeSeqOfLeaves` clusters moved to `dsl/rule-transforms.ts`; **`simplifySeqRule` (formerly `collapseSeq`) stays in simplify** (mutually recursive with `simplifyRule` — phase-internal, not a shareable op) and **`deleteWrapper`/wrapper-deletion.ts stays compiler-side** (depends on list-fusion / rule-catalog — moving it would invert the dsl→compiler direction).
 > - **`collectSlots`** (PR2/post-PR2, NEW file `compiler/collect-slots.ts`): the `deriveSlotsRaw` fold/merge/`effectiveMultiplicity` walker is **deleted**. `_deriveSlotsInternal` now delegates to `collectSlots` ("a slot IS a `nonterminal`-flagged node"). `deriveSlots` keeps its signature.
@@ -82,6 +82,10 @@ modifier attributes pushed down from wrappers. Vocabulary deliberately mirrors
 ```ts
 interface RuleBase {
   readonly id?: RuleId;
+  readonly inline?: boolean;               // per-ref inline decision: hidden && !aliased
+  readonly metadata?: RuleMetadata;        // opaque provenance brand — see below
+  readonly splicedBody?: boolean;          // declared: this seq occupies a group-splice site
+  readonly variantArms?: readonly string[]; // declared: pre-flatten CHOICE arms a SupertypeRule erased
   readonly fieldName?: string;
   readonly multiplicity?: Multiplicity;   // 'optional' | 'single' | 'array' | 'nonEmptyArray'
   readonly nonterminal?: boolean;          // explicit slottiness; promotes terminals to slots
@@ -101,6 +105,62 @@ interface RuleBase {
 - **Wrapper rule types** (`OptionalRule` / `FieldRule` / `RepeatRule` /
   `Repeat1Rule`) and `ClauseRule` still exist. They are `applyWrapperDeletion`'s
   *input*; PR3 deletes them once nothing consumes the wrapped shape.
+- **`inline`** — per-ref decision, `inline = hidden && !aliased`. Default
+  `hidden` (`name.startsWith('_')`) stamped at construction (`evaluate.ts`
+  `symbol`/`createProxy`); flipped `false` by the `alias` wrapper during
+  push-down (`wrapper-deletion.ts` ALIAS case) — an alias confers a real
+  visible CST kind that must materialize, not flatten. Read directly off the
+  rule (`isHiddenKind` fallback for link-synthesized symbols).
+- **`splicedBody`** — declared once by `compiler/normalize.ts`'s
+  `materializeInlinedBody` at the moment it splices a hidden group's body
+  into a parent at a former `symbol(_x)` ref position. Not provenance: it
+  names a present-tense structural fact ("this seq occupies a splice site"),
+  read directly with no re-derivation. Consumed by `emitters/templates.ts`'s
+  boundary walkers (`rightmostBoundary`/`leftmostBoundary`) so a spliced seq
+  keeps the spacing of the opaque unit it replaced (`for await (`, not
+  `for await(`).
+- **`variantArms`** — declared once by `link.ts`'s `classifyHiddenChoiceRule`
+  at the exact moment it flattens a hidden CHOICE into a `SupertypeRule`'s
+  `subtypes: string[]` — an operation that otherwise erases which pre-flatten
+  arms were variant-adoption children. Holds those arms' target kind names,
+  in member order. Only ever set on a `SupertypeRule`; every other variant
+  leaves it `undefined`. Consumed by `assemble.ts`'s `variantChildKindsSet`
+  construction as the one narrow supplement to `deriveStructuralVariantChildren`'s
+  structural derivation (`compiler/variant-structural.ts`, Phase 4: Assemble
+  below). Same pattern as `splicedBody`: a declared, once-stamped fact replacing what
+  would otherwise be a destroyed-then-reconstructed read.
+
+### Metadata provenance (`RuleMetadata` opaque brand)
+
+`RuleBase.metadata` is an OPAQUE brand (`types/rule-metadata-brand.ts`) over
+the real shape in `dsl/rule-metadata.ts` (`RuleMetadataShape` — `author`,
+`classifiedBy`, `fieldSource`, `symbolSource`; absorbs what used to be
+scattered `source?`/`inlinedFrom?` fields on several rule types). Two-seam
+access, mirroring `compiler/opaque-facts.ts`'s slot-level pattern:
+
+- **`makeRuleMetadata`** (write) — unrestricted. Any phase may record a
+  provenance fact; recording is not the same as branching on it.
+- **`readRuleMetadata`** / **`RuleMetadataShape`** (read) — restricted to
+  `dsl/enrich.ts`, `dsl/wire/*` (incl. `dsl/transform/transform-path.ts`'s
+  `author === 'enrich'` descent keying), and diagnostics-emission code
+  (`packages/tools/src/validate/*`, `emitters/node-model.ts` serialization).
+  Enforced by `dsl/__tests__/rule-metadata-layering.test.ts`, which walks
+  every `.ts` file and asserts any import of the restricted read names is
+  sanctioned-or-allowlisted (currently: allowlist EMPTY — any new entry needs
+  individual justification).
+
+Everything else — compiler phases and emitters driving codegen DECISIONS
+(as opposed to serializing a diagnostic dump) — must treat `RuleMetadata` as
+opaque: construct-and-forget or blind-carry only
+(`feedback_metadata_not_behavior`). The governing rule: the compiler must
+neither read a provenance tag NOR reconstruct authorship structurally.
+Stamp-then-reread (a phase stamps a tag, a LATER phase re-reads the same
+rule to decide behavior) must become return-value dataflow instead — see
+`link.ts`'s `classifyHiddenRule`/`classifyHiddenChoiceRule` for the converted
+example. `splicedBody` and `variantArms` above are the declared-fact pattern
+this doctrine prefers over metadata reads: a structural attribute stamped
+once by the pass that creates the fact, read directly, never round-tripped
+through the opaque bag.
 
 ### `RenderRule` / `SimplifiedRule` (branded types)
 
@@ -187,10 +247,20 @@ not the parse table.)
 > slot-presence check everywhere (collect-slots, simplify's strip decision).
 
 > **Reconciliation:** the spec's planned `decomposeOptional` / `decomposeRepeat`
-> enrich passes were NOT implemented. Group synthesis for structural
-> optional/repeat content moved to `dsl/wire/auto-groups.ts` (it must reach
-> tree-sitter), and separator-lift / attribute push-down live in
-> `applyWrapperDeletion`. Enrich only ships the two attribute passes above.
+> enrich passes were NOT implemented under those names. Group synthesis for
+> structural optional/repeat content initially moved to `dsl/wire/auto-groups.ts`
+> (a wire-time pass, so it would reach tree-sitter) but that pass has SINCE
+> been retired (`51b0347d8`, the file is deleted) — enrich's `applyClauseHoist`
+> (below) now performs this hoisting itself, pre-tree-sitter, for BOTH
+> clause-shaped and non-clause `optional(seq)` / `CHOICE[seq, BLANK]` content
+> (it only descends through `repeat`/`repeat1` wrappers to reach nested
+> hoistable content — a bare `repeat(seq)` is never hoisted as its own unit).
+> Separator-lift / attribute push-down still live in `applyWrapperDeletion`.
+
+### `applyClauseHoist(parentKind, rule, rulesBag, ...)`
+**Pattern:** Any `optional(seq(...))` / `CHOICE[seq(...), BLANK]` position, clause-shaped (`seq(STRING, FIELD, …)`) or not.
+**Action:** Hoists the matched seq into a hidden group rule — inline-safe content becomes a hidden `_<parent>_optional<N>` symbol; inline-unsafe content becomes a visible content-alias that `link.ts`'s `mintContentAliasKinds` registers as a real IR kind. Runs pre-tree-sitter (enrich phase), so both shapes reach the parser correctly — the superseded `applyAutoGroups` ran at wire-time (post-enrich, pre-tree-sitter-consumption) and pre-consumed inline-unsafe seqs that link needed to see as inline content; that ordering bug is why the wire-time pass was retired in favor of doing this in enrich instead.
+**Output:** Rewritten rule with clause/group positions hoisted to hidden rules; `rulesBag` gains the synthesized entries.
 
 ---
 
@@ -205,8 +275,7 @@ Executes the grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
 > `CHOICE[x, BLANK]` (uppercase). `runtime-shapes.ts` exposes dual-case
 > predicates (`isChoiceType`, `isBlankType`, `isSeqType`, `isOptionalType`,
 > `isPrecWrapper`, `typeEq`) so wire-side passes recognize both forms — see
-> `auto-groups.ts`'s `CHOICE[seq, BLANK]` → optional handling and `wire.ts`'s
-> `unwrapOptionalChoiceRt`.
+> `wire.ts`'s `unwrapOptionalChoiceRt`.
 
 ### `evaluate(entryPath)`
 **Pattern:** CLI invocation with a grammar.js or overrides.ts path.
@@ -235,7 +304,7 @@ Executes the grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
 
 ### `wire(config, base?)` (`dsl/wire/wire.ts`)
 **Pattern:** Author wraps `grammar(enrich(base), wire({ rules, polymorphs, transforms, groups, renderAs, … }))`.
-**Action:** Folds declarative override config into the options object before tree-sitter sees it. Composes/synthesizes polymorph + transform parent fns; injects deferred-content fns for `_<parent>_<suffix>` / `_kw_<field>` / `_<alias>` hidden rules; wraps every rule fn so a per-invocation `WireContext` (and `currentRuleKind`) is active; drains accumulated conflict groups and synthetic-inline names into the `conflicts` / `inline` callbacks; runs `applyWirePatternReplacement` (the tree-sitter-runtime counterpart of evaluate's pattern replacement) for body-pattern `groups:`; then runs `applyAutoGroups`.
+**Action:** Folds declarative override config into the options object before tree-sitter sees it. Composes/synthesizes polymorph + transform parent fns; injects deferred-content fns for `_<parent>_<suffix>` / `_kw_<field>` / `_<alias>` hidden rules; wraps every rule fn so a per-invocation `WireContext` (and `currentRuleKind`) is active; drains accumulated conflict groups and synthetic-inline names into the `conflicts` / `inline` callbacks; runs `applyWirePatternReplacement` (the tree-sitter-runtime counterpart of evaluate's pattern replacement) for body-pattern `groups:`. (No longer runs `applyAutoGroups` — retired, see Phase 0's `applyClauseHoist`.)
 **Output:** `WiredOpts` with a non-enumerable `__wireContext__` attached for the compiler pipeline (`evaluate` → `link`) to read polymorph/group metadata.
 
 Key wire internals: `composeOrSynthesize{Polymorph,Transform}Parents`,
@@ -246,16 +315,25 @@ Key wire internals: `composeOrSynthesize{Polymorph,Transform}Parents`,
 `applyWirePatternReplacement` + `replaceInBodyRt` / `patternBodyEqual` /
 `isComplexBodyRt`.
 
-### `applyAutoGroups(base, outRules, context, authoredSynthesisKinds)` (`dsl/wire/auto-groups.ts`) **(SHIPPED — re-enabled PR2)**
-**Pattern:** A parent rule body containing `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))` (STRICT seq content only — `field`/`choice`/leaf content passes through). Recognizes both sittir lowercase and tree-sitter `CHOICE[seq, BLANK]` forms.
-**Action:** SYNTHESIS ONLY. For each match, synthesizes a hidden helper `_<parent>_optional<N>` / `_<parent>_repeat<N>` (cross-parent dedupe by canonical-stringified body) holding the inner seq, and rewrites the parent body's content to a `group-lift`-sourced SYMBOL ref. **Writes into `outRules`, not the base seed** (tree-sitter calls each `outRules` fn and overwrites the seeded entry). Registers each helper in `context.syntheticInline` so the wired `inline:` callback adds it to `grammar.inline` → tree-sitter inlines it → flat runtime. Skips author-overridden rules and `authoredSynthesisKinds` (kinds opted into `transforms:` / `polymorphs:` / path-mode `groups:`).
-**Output:** Mutated `outRules` (synthesized helper fns + rewritten parent fns); populated `syntheticInline`.
+### `applyAutoGroups(base, outRules, context, authoredSynthesisKinds)` (`dsl/wire/auto-groups.ts`) **(RETIRED — file deleted, `51b0347d8`)**
+Kept here for historical/naming-convention context only — the `group-lift` source tag this pass minted lives on (`inlineRefs`'s `source==='group-lift'` handling, Phase 3.5), even though this function and its file no longer exist. Superseded by enrich's `applyClauseHoist` (Phase 0), which does the same synthesis earlier in the pipeline (pre-tree-sitter, not wire-time) for both clause and non-clause shapes.
 
-> **Explicitly NOT decomposition:** auto-groups never touches
-> `separator`/`trailing`/`leading` metadata. Separator-lift and attribute
-> stamping are a separate concern handled in `applyWrapperDeletion` /
-> simplify, keeping the two passes from re-introducing the
-> renderer-reads-separator-on-all-repeats regression.
+**Pattern (as it worked before retirement):** A parent rule body containing `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))` (STRICT seq content only — `field`/`choice`/leaf content passes through). Recognized both sittir lowercase and tree-sitter `CHOICE[seq, BLANK]` forms.
+**Action:** SYNTHESIS ONLY. For each match, synthesized a hidden helper `_<parent>_optional<N>` / `_<parent>_repeat<N>` (cross-parent dedupe by canonical-stringified body) holding the inner seq, and rewrote the parent body's content to a `group-lift`-sourced SYMBOL ref. Wrote into `outRules`, not the base seed. Registered each helper in `context.syntheticInline` so the wired `inline:` callback added it to `grammar.inline` → tree-sitter inlined it → flat runtime. Skipped author-overridden rules and `authoredSynthesisKinds` (kinds opted into `transforms:` / `polymorphs:` / path-mode `groups:`).
+**Output (historical):** Mutated `outRules` (synthesized helper fns + rewritten parent fns); populated `syntheticInline`.
+
+> **Why it was retired:** running at wire-time (after enrich, but still
+> before tree-sitter consumes the grammar) meant auto-groups pre-consumed
+> inline-unsafe seqs that `link.ts` needed to see intact as inline content —
+> an ordering bug. Moving the same synthesis into enrich (`applyClauseHoist`,
+> which now runs pre-tree-sitter for both clause and non-clause shapes)
+> resolved it structurally rather than patching the ordering.
+>
+> **Explicitly NOT decomposition (still true of `applyClauseHoist` today):**
+> this pass never touches `separator`/`trailing`/`leading` metadata.
+> Separator-lift and attribute stamping are a separate concern handled in
+> `applyWrapperDeletion` / simplify, keeping the two passes from
+> re-introducing the renderer-reads-separator-on-all-repeats regression.
 
 ---
 
@@ -267,8 +345,24 @@ preserved (no restructuring).
 
 ### `link(raw, include?)`
 **Pattern:** Called with a `RawGrammar`.
-**Action:** Resolves all rules, classifies hidden rules, promotes terminals, infers field names, detects polymorphs, applies override polymorphs + `applyGroupOverrides` (user `groups:`), hoists indent into repeats, annotates block-bearer fields, collects repeated shapes. Auto-synthesized hidden groups from `applyAutoGroups` are already in the rules map and classify through the normal hidden-rule path.
+**Action:** Resolves all rules, classifies hidden rules, promotes terminals, infers field names, detects polymorphs, applies override polymorphs + `applyGroupOverrides` (user `groups:`), hoists indent into repeats, annotates block-bearer fields, collects repeated shapes. Auto-synthesized hidden groups from enrich's `applyClauseHoist` are already in the rules map and classify through the normal hidden-rule path.
 **Output:** `LinkedGrammar` (resolved rules, derivation log, alias map, top-level alias bodies, word, pattern-replacement kinds).
+
+> **Word-matcher pin-at-link invariant.** `LinkedGrammar.wordMatcher` (a
+> `RegExp | undefined`) is compiled ONCE by `compileWordMatcher(raw.word,
+> raw.rules)` from the EVALUATE-view rule tree, where the `word` rule's
+> authored wrappers (notably a trailing `REPEAT`) are still intact. Every
+> later phase (`NormalizedGrammar` → `SimplifiedGrammar` → `NodeMap`) CARRIES
+> this value forward rather than recompiling from its own `rules`/`linkRules`
+> view — compiling post-normalize is unsound in general, because
+> wrapper-deletion collapses `REPEAT`/`OPTIONAL` into leaf `multiplicity`
+> attributes that `ruleToRegexSource`'s walker doesn't consult, silently
+> undercounting the regex (confirmed regression: typescript's `identifier`
+> word rule lost its trailing `REPEAT` under a post-link recompile). Consumers
+> read the carried value (`ctx.wordMatcher` in Link's `resolveRule`;
+> `matchesWordShape(s, normalized.wordMatcher)` in `AssembleCtx.from`) — never
+> recompile it themselves. See `docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md`
+> (PR-137 follow-on) for the falsifying probe.
 
 ### `resolveRule(rule, currentName, allRules, supertypes, externalRoles)`
 **Pattern:** Every rule, recursively.
@@ -315,6 +409,23 @@ content), then produces the RenderRule + SimplifiedRule snapshots.
 3. `computeSimplifiedRules(normalizedRules, word, inlineKinds)` — produces the **SimplifiedRule** snapshot.
 4. Threads top-level **alias bodies** and **polymorph-form** contents through the same `applyNormalizationPasses` → `applyWrapperDeletion` → `computeSimplifiedRules` pipeline and merges them into `normalizedRules` / `rules` (so `assemble.ts` reads snapshots, never re-simplifies per call).
 **Output:** `SimplifiedGrammar` with `linkRules` (RawRule — renamed from `rules` in the phase-visibility-tightening pass; the pre-simplify, post-normalization-passes/pre-wrapper-deletion view), `normalizedRules` (RenderRule), `rules` (SimplifiedRule — the phase product; renamed from `simplifiedRules` 2026-07-05/PR-137 so every `Grammar<P>` names its phase product `rules` uniformly).
+
+> **`normalizedRules` vs `rules` — the opacity invariant.** Three snapshots
+> coexist on `SimplifiedGrammar` (and, carried, on `NodeMap`) because each is
+> a genuinely different SHAPE, not a naming convenience: `linkRules` still has
+> wrapper nodes (`optional`/`field`/`repeat`/`alias`), `normalizedRules` is
+> wrapper-free (attributes pushed to leaves) but pre-fixpoint, `rules` is the
+> post-fixpoint SimplifiedRule phase product. **Default to `rules`** — it's
+> what every phase-product consumer (slot derivation, factories/wrap/from)
+> reads. Reach for `linkRules` or `normalizedRules` ONLY when a consumer
+> genuinely needs a wrapper-node shape or a pre-fixpoint view that `rules`
+> has already collapsed away — each such exception is enumerated on
+> `NodeMap.linkRules`'s doc comment (`compiler/types.ts`), e.g.
+> `templates.ts`'s hidden-helper inlining reads `normalizedRules` because it
+> doesn't need wrapper shapes but does need the pre-simplify structure. A new
+> consumer reaching past `rules` without landing in that enumerated list is a
+> signal the phase-visibility boundary is being punched through, not a
+> routine implementation choice.
 
 ### Normalization passes
 - `fanOutSeqChoices(rule)` — `seq(a, choice(b,c), d)` → `choice(seq(a,b,d), seq(a,c,d))` (single inner choice; preserves variant labels).
@@ -446,6 +557,13 @@ First time nodes appear. All metadata derived from the rule snapshots.
 **Action:** Classifies each rule into a model type, constructs `AssembledNode` instances (attaching `.rule` / `.renderRule` / `.simplifiedRule`), collects anonymous tokens/keywords, resolves colliding names, assigns ir keys, marks parameterless/user-facing kinds. Slot-ref hydration is deferred to `hydrateSlotRefs`.
 **Output:** `NodeMap` with `nodes`, `signatures`, `derivations`, `linkRules` (renamed from `rules` in the phase-visibility-tightening pass — same pre-simplify `Rule<'link'>` view as `SimplifiedGrammar.linkRules`; PR-137 narrowed its consumers to justified wrapper-shape-dependent exceptions, enumerated on `NodeMap.linkRules`'s doc comment in `compiler/types.ts`), `normalizedRules` (PR-137: the wrapper-deleted `RenderRule` view, for consumers that don't need wrapper shapes — e.g. `templates.ts`'s hidden-helper inlining), `externals`.
 
+### `deriveStructuralVariantChildren(rules)` (`compiler/variant-structural.ts`)
+**Pattern:** Any CHOICE node found anywhere in a kind `K`'s post-link rule body (recursive descent, e.g. rust's `function_type`/`range_pattern` nested-choice case).
+**Action:** A CHOICE qualifies as a variant-adoption site when at least one member is a "named-kind arm" (a bare ALIAS/SYMBOL ref, through a VARIANT wrapper if present, or a SEQ whose first member is such a ref) whose target is BOTH **prefix-named** against `K` (`${K-without-leading-_}_<suffix>`, target's own leading `_` stripped first) AND **alias-minted** (`isAliasMintedRef` — a bare ALIAS, or a SYMBOL whose target has no independent rule body elsewhere in the grammar; the PR-0c mint-site condition, reapplied here to exclude coincidental prefix-name collisions with ordinary sibling rules). Only qualifying arms contribute a child; this deliberately does NOT implement the "any choice of named kinds" widening — zero qualifying arms means zero variant children, full stop.
+**Output:** `{parent -> childFullName[]}`, replacing the deleted `WireContext.polymorphVariants` channel (decision-7 V2) — this module derives the SAME shape structurally, straight from the tree. The one case needing a supplement — a SUPERTYPE-classified parent whose CHOICE-flatten destroys the alias-mint linkage before this module sees it (python's `_simple_pattern`) — is covered by `RuleBase.variantArms`, a declared fact `classifyHiddenChoiceRule` stamps at flatten time using this module's own `isAliasMintedRef`. `tool variant-derivation-probe` is a cross-commit drift detector comparing this derivation's live output against the committed `node-model.json5`, not a structural-vs-wire equality check (the wire side no longer exists).
+
+**Known non-reproductions** (expected gaps vs the old wire channel, not bugs — see `docs/superpowers/specs/2026-07-04-variant-structural-derivation-research.md` for the full adjudication table): (1) a separate naming mechanism can win the visible kind name over the expected `${parent}_${suffix}` form (rust's `visibility_modifier`/`in_path`, via `groups:`), so the structural derivation never sees the expected name; (2) some `variant()` registrations target a lone aliased member with no sibling alternation at all — no CHOICE node for the predicate to match (python's `dict_pattern`'s `kv` child); (3) the supertype/group case covered by `variantArms` above. All three are pre-existing, zero-drift gaps confirmed against the committed `node-model.json5`, not derivation bugs.
+
 ### `classifyNode(kind, rule, opts?)`
 **Pattern:** Each rule.
 **Action:** Dispatches on `rule.type` for pre-classified rules (enum / supertype / group / terminal / polymorph / pattern / string); falls back to `hasAnyField` / `hasAnyChild` for branch detection and `isAllTextShape` for terminal fallback.
@@ -529,7 +647,9 @@ not a shared-arm-field operator-enum), `sharedArmFieldName`,
 
 ### R4 — link/assemble ctx families
 - **`ResolveCtx`** (`link.ts`): `{ allRules, supertypes, externalRoles }` — pass-constant state for the rule-resolution walk. `resolveRule(rule, ctx, currentName)`, `resolveRepeat1PreservingNonEmpty`, `resolveSymbolRoleOrPass(rule, ctx)`, `resolveNamedAliasWithProvenance(content, ctx, targetName)`, `dereferenceTopLevelAliasBody(rule, ctx, resolvedRules, seen)`, `mintContentAliasKinds(rules, ctx, from, to)`, `collectTopLevelAliasBodies(resolvedRules, ctx, complex?)`. `currentName` stays explicit — per-top-level-rule attribution (CW6); `seen` cycle guards stay explicit.
+- **`LinkCtx`** (`link.ts`, `BaseCtx<'evaluate'>`): merges the former `ResolveCtx` (rule-resolution walk) and `HiddenClassifyCtx` (hidden-rule classification: `inline`/`derivations`/`applyPromotedRules`/`hiddenChoicesWithNamedAliasMembers`) — both were pass-constant/pass-shared state for the same `link()` call. `externalRoles`/`derivations` are write-through accumulators, kept as plain mutable fields (mirroring `AssembleCtx.nodes`'s getter tradeoff). `ctx.rules` is honestly the RAW pre-resolve view (`Grammar<'evaluate'>`), never the `Rule<'link'>` resolve-loop accumulator — every read site inside `link.ts` that consults `ctx.rules` (the ALIAS-mint condition in `resolveRule`, `resolveSymbolRoleOrPass`'s legacy role detection, `mintContentAliasKinds`'s walk, `collectTopLevelAliasBodies`'s walk) genuinely needs the RAW view (finding ALIAS/dummy-role shapes the resolve loop has already collapsed); the post-resolve accumulator is threaded explicitly as a plain parameter everywhere it IS needed (e.g. `dereferenceTopLevelAliasBody`'s `resolvedRules` param), never read off the ctx.
 - **`SubtypeCtx`** (`assemble.ts`): `{ rules, topLevelAliasBodies }` — the supertype-subtype resolution family: `resolveHiddenSubtypes(names, ctx, ownerName?)`, `includeAliasMemberKinds(subtypes, ctx, ownerName?)`, `isAliasMemberKind(rule, ctx, name, subtypeSet)`, `isCompatibleSubtypeMember(name, ctx, subtypeSet, seen)`. The unused `_aliasedHiddenKinds` parameter was dropped.
+- **`AssembleCtx`** (`assemble.ts`, `BaseCtx<'simplify'>`): absorbs the former `SubtypeCtx`. Exposes both `rules` (`grammar.rules`, the `SimplifiedRule` phase product) and `normalizedRules` (`grammar.normalizedRules`, the wrapper-deleted `RenderRule` view) as separate getters — the hidden-body/subtype-resolution family (`resolveHiddenSubtypes` / `includeAliasMemberKinds` / `isAliasMemberKind` / `isCompatibleSubtypeMember` / `resolveHiddenRuleContent`) reads `normalizedRules` specifically, and **must not** be migrated to `rules`: verified empirically that `rules` (which has gone through simplify's SEQ-collapse, not just wrapper-deletion) unmasks an intentionally opaque multi-member SEQ into a dispatchable shape for python's `_simple_pattern_negative` (`SEQ[OPTIONAL('-'), CHOICE(integer, float)]` collapses to the bare inner `CHOICE`), corrupting the family's "unresolvable → keep the hidden name" fallback and silently dropping the polymorph-variant-adopted subtype entry from `_simple_pattern`'s dispatch. `normalizedRules` (wrapper-deletion only, no further structural canonicalization) is the only source where the family's opacity-via-shape fallback holds.
 - Honest non-conforming leaves are utilities/comparators (`setsEqual`, `rulesEqualForVariant`, `nameVariant`, rename helpers, classify leaf predicates) and single-grammar-wide-arg passes (the `kindEntries` canonicalize trio — folding ONE arg into a fabricated ctx adds indirection without navigability gain).
 
 ### `deriveSlots(rule, ctx?)` / `_deriveSlotsInternal(rule, ctx?)` / `mergeSlotsByName(slots)` / `buildSlotsRecord(rule, ctx, renderRule?)`
@@ -566,6 +686,11 @@ classes expose data only (`feedback_emitter_pattern_consistency`).
 **Pattern:** Per node; tree node → typed NodeData hydration.
 **Action:** Emits per-kind `wrap*` functions. **`collectConcreteStorageKeys(slot, nodeMap)`** is the `origin === 'kind'` arm-probe: for kind-named slots it expands runtime discriminator kinds, inverts the slot's `aliasSources` (`{target: source}`) to rewrite source→target storage keys, and returns the candidate `_<kind>` keys (or `undefined` when they collapse to the nominal `_<name>`). **`resolveSlotStoreExpr(slot, dataExpr, candidateKeys?)`** emits a `(_a ?? _b ?? _name)` multi-key probe over those candidates (the runtime data populates exactly one). This is the alias-target routing fix (`project_alias_target_routing`).
 **Output:** wrap function source.
+
+### `emitters/transport-common.ts` — `classifySlot(kinds, supertypeMap)`
+**Pattern:** Any multi-kind slot, classified against `buildSupertypeTransportSet(nodeMap)`.
+**Action:** Requires an EXACT-SET match (slot kinds === supertype's full resolved subtype set), not a subset match. A proper-subset match would collapse the slot onto a wider supertype transport than it ranges over — for a large self-recursive supertype (e.g. rust's `match_arm` field being a 2-of-21 subset of `declaration_statement`, which transitively references `match_arm` again) the generated `FromNapiValue` would recurse through the whole statement graph and overflow the native stack. Subset slots fall through to `heterogeneous` (a per-slot enum of exactly their kinds) instead.
+**Output:** `SlotClass` (`concrete` / `supertype` / `heterogeneous`).
 
 ### `emitters/factories.ts` / `from.ts` / `types.ts` / `render-module.ts` / `transport-common.ts`
 **Pattern:** Per node.

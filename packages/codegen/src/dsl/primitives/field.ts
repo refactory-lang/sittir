@@ -223,9 +223,8 @@ export function field(name: string, content?: Input): FieldPlaceholder | FieldLi
  * around it (the normalizer strips FIELD wrappers around bare STRING nodes).
  * wire() later auto-inlines the helper back into the parse state machine so
  * the parser still sees the original bare token at the call site.
- * Tagging `metadata.fieldSource: 'override'` (debt PR-P1: was the top-level
- * `source: 'override'`, now the opaque metadata bag) records that a
- * user-authored `field()` call produced this rule, for diagnostics only.
+ * Tagging `metadata.fieldSource: 'override'` records that a user-authored
+ * `field()` call produced this rule, for diagnostics only.
  *
  * @param native - The runtime-injected `field(name, content)` function.
  * @param name - The field name to assign.

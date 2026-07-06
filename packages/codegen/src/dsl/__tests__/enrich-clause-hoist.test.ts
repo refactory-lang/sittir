@@ -77,8 +77,6 @@ describe('enrich clause-hoist pass — basic optional(seq(STRING, FIELD))', () =
 		expect(optMember.type).toBe('OPTIONAL');
 		expect(optMember.content.type).toBe('SYMBOL');
 		expect(optMember.content.name).toBe('_parent_optional1');
-		// (debt PR-P1) `SymbolRule.source` is deleted; the fact relocated into
-		// the opaque `metadata` bag as `symbolSource`.
 		expect(readRuleMetadata(optMember.content.metadata)?.symbolSource).toBe('group-lift');
 	});
 
@@ -154,8 +152,6 @@ describe('enrich clause-hoist pass — CHOICE[seq, BLANK] form', () => {
 		expect(nonBlank).toBeDefined();
 		expect(nonBlank!.type).toBe('SYMBOL');
 		expect(nonBlank!.name).toBe('_parent_optional1');
-		// (debt PR-P1) `SymbolRule.source` is deleted; relocated to
-		// `metadata.symbolSource`.
 		expect(readRuleMetadata(nonBlank!.metadata)?.symbolSource).toBe('group-lift');
 	});
 

@@ -415,8 +415,7 @@ export function nativeRuleFn<F>(...names: string[]): F {
 
 /** Wrap `content` in a FIELD via the injected `field()` constructor. The
  *  runtime fn normalizes the content and stamps `fieldName` on inner symbol
- *  refs (subsuming the former hand-rolled `propagateFieldName`); we add
- *  enrich's `fieldSource` marker (opaque `metadata` bag — debt PR-P1) so
+ *  refs; we add enrich's `fieldSource` marker (opaque `metadata` bag) so
  *  downstream passes recognize the promotion as enrich-originated rather
  *  than author-written. */
 function makeField(name: string, content: unknown): Rule {
@@ -1308,20 +1307,24 @@ function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
 }
 
 /**
- * @internal — walk `rule` and hoist any `optional(seq(STRING,FIELD…))` /
- * `CHOICE[seq(STRING,FIELD…),BLANK]` positions into hidden group rules.
- * Returns a (possibly rewritten) rule; never mutates the input.
+ * @internal — walk `rule` and hoist EVERY `optional(seq)` / `CHOICE[seq,
+ * BLANK]` position (clause-shaped — `seq(STRING,FIELD…)` — and non-clause
+ * alike, via `peelOptionalSeq`) into hidden group rules. `repeat`/`repeat1`/
+ * prec wrappers are only DESCENDED THROUGH to reach nested hoistable content
+ * — a bare `repeat(seq)` is never hoisted as its own unit. Returns a
+ * (possibly rewritten) rule; never mutates the input.
  *
- * COUNTER DISCIPLINE: the `counter.opt` increments for EVERY `optional(seq)`
- * shape encountered in traversal order — both clause-seqs (which this pass
- * hoists) and non-clause-seqs (which applyAutoGroups hoists later). This
- * keeps the numbering in sync so the two passes never assign the same number
- * to different bodies within the same parent. applyAutoGroups resets its
- * own counter per-parent to 0 and counts from 1; after enrich, any position
- * where enrich hoisted is now `optional(SYMBOL)` — applyAutoGroups skips
- * those (not a seq) so its counter only increments for the non-clause
- * positions, which are the ones enrich skipped and left with their counter
- * slots intact.
+ * The former two-pass division (this function for clause-seqs, the separate
+ * `applyAutoGroups` for everything else) is gone — `applyAutoGroups` and
+ * `dsl/wire/auto-groups.ts` were physically deleted; enrich now owns all
+ * `optional(seq)` hoisting itself (inline-safe → hidden
+ * `_<parent>_optional<N>` symbol; inline-unsafe → visible content-alias that
+ * `link.ts`'s `mintContentAliasKinds` registers as a real IR kind — see
+ * `dsl/wire/wire.ts`'s `getEnrichClauseGroups` call site for why the old
+ * wire-time pass had to go: it ran BEFORE link and pre-consumed inline-unsafe
+ * seqs link must see as inline content). `counter.opt` increments for every
+ * such shape in traversal order; there is no second pass to stay in sync with
+ * anymore.
  */
 function applyClauseHoist(
 	parentKind: string,
@@ -1593,31 +1596,25 @@ function visibleGroupSynthName(
  * injected, not in the wrapper rule's own case) but kept in the signature
  * for call-site symmetry with the other `make*` helpers.
  *
- * Provenance markers (both now live inside the opaque `metadata` bag — debt
- * PR-P1; the former top-level `SymbolRule.source` field is deleted):
- *   - `metadata.author: 'enrich'` — the canonical marker (debt: source-
- *     homonym resolution, decision 6 — was `metadata.source: 'enrich'`).
- *     Path-descent (transform-path.ts) reads this to recognize an
- *     enrich-synthesized group-lift symbol and travel THROUGH it into the
- *     hoisted body, so authored `transform()`/`groups:` path patches that
- *     address into a now-hoisted seq still resolve.
- *   - `metadata.symbolSource: 'group-lift'` — relocated legacy marker (was
- *     the top-level `SymbolRule.source`). Diagnostics only.
+ * Provenance markers (both live inside the opaque `metadata` bag):
+ *   - `metadata.author: 'enrich'` — the canonical marker. Path-descent
+ *     (transform-path.ts) reads this to recognize an enrich-synthesized
+ *     group-lift symbol and travel THROUGH it into the hoisted body, so
+ *     authored `transform()`/`groups:` path patches that address into a
+ *     now-hoisted seq still resolve.
+ *   - `metadata.symbolSource: 'group-lift'` — diagnostics only.
  */
 function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
 	// Pure ref — NO inline body. Tree-sitter serializes any extra structural
 	// field on a SYMBOL into grammar.json (a `content` here leaks the seq into
 	// the parser), so the symbol stays a clean name-ref. `metadata.author` is
 	// the only added marker: `dsl/transform/transform-path.ts`'s path-descent
-	// (the sanctioned dsl-side reader — doctrine decision 3) reads it and
-	// LOOKS UP the referenced `_<parent>_<kind><N>` rule body by name to travel
-	// through (not by carrying the body here). `metadata` is inert to
-	// tree-sitter's parse tables. (Debt PR-0c: the compiler side no longer
-	// reads this tag — `compiler/link.ts`'s `mintContentAliasKinds` and
-	// `resolveRule`'s ALIAS case, and `compiler/evaluate.ts`'s
-	// `rewriteInlineAliases`, now identify this population structurally via
-	// `isClauseHoistVisibleGroupAlias`. The write here stays load-bearing for
-	// transform-path only.)
+	// (the sanctioned dsl-side reader) reads it and LOOKS UP the referenced
+	// `_<parent>_<kind><N>` rule body by name to travel through (not by
+	// carrying the body here). `metadata` is inert to tree-sitter's parse
+	// tables. The compiler side identifies this population structurally via
+	// `isClauseHoistVisibleGroupAlias` instead of reading this tag — the write
+	// here stays load-bearing for transform-path only.
 	// Route through the runtime-injected symbol constructor (`symbol` under
 	// sittir, `sym` under tree-sitter's CLI — see `nativeRuleFn`) so the ref
 	// carries the SAME construction stamps (`hidden`, `inline =
@@ -1647,18 +1644,16 @@ function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
  *   multi-member seq). tree-sitter renames that ONE symbol-node into ONE visible
  *   CST node for `<name>` (a real kindId in parser.c). Aliasing the raw seq
  *   instead made tree-sitter DISTRIBUTE the alias name across the seq members.
- * - `metadata.author === 'enrich'` (debt: source-homonym resolution, decision
- *   6 — was `metadata.source === 'enrich'`) is REQUIRED for transform-path: it
- *   travels THROUGH this tag for authored path-patches
+ * - `metadata.author === 'enrich'` is REQUIRED for transform-path: it travels
+ *   THROUGH this tag for authored path-patches
  *   (`dsl/transform/transform-path.ts`'s `isEnrichContentAlias` /
- *   `descendThroughEnrichContentAlias` — the sanctioned dsl-side reader,
- *   doctrine decision 3). (Debt PR-0c: `compiler/link.ts`'s
- *   `mintContentAliasKinds` no longer reads this tag — it identifies the
- *   same population structurally via `isClauseHoistVisibleGroupAlias`,
- *   keying on the alias's `optional`/`CHOICE[x,BLANK]` parent shape, the
- *   target name's absence from `rules`, and the hidden content symbol not
- *   being in the grammar's `inline:` list. The write here stays load-bearing
- *   for transform-path only.)
+ *   `descendThroughEnrichContentAlias` — the sanctioned dsl-side reader).
+ *   `compiler/link.ts`'s `mintContentAliasKinds` no longer reads this tag —
+ *   it identifies the same population structurally via
+ *   `isClauseHoistVisibleGroupAlias`, keying on the alias's
+ *   `optional`/`CHOICE[x,BLANK]` parent shape, the target name's absence from
+ *   `rules`, and the hidden content symbol not being in the grammar's
+ *   `inline:` list. The write here stays load-bearing for transform-path only.
  * - Case is the active runtime's: built via the injected `alias()`/`symbol()`
  *   constructors, so sittir evaluate yields lowercase, tree-sitter CLI uppercase.
  */
