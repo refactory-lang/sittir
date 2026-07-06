@@ -639,8 +639,10 @@ export function wire<B extends GrammarJson = any> (
 	// property that enrich() attaches to the grammar result.
 	//
 	// (Auto-group-synthesis — `applyAutoGroups` — has been retired: enrich now
-	// hoists every `optional(seq)`/`repeat(seq)`/`repeat1(seq)` itself:
-	// inline-SAFE into a hidden `_<parent>_optional<N>` symbol, inline-UNSAFE
+	// hoists every `optional(seq)` / `CHOICE[seq, BLANK]` position itself
+	// (repeat/repeat1 wrappers are only descended through for nested hoistable
+	// content, not hoisted as a unit): inline-SAFE into a hidden
+	// `_<parent>_optional<N>` symbol, inline-UNSAFE
 	// into a visible content-alias `alias(<content>, $._<parent>_group<N>)`
 	// that link's `mintContentAliasKinds` registers as a real IR kind. The old
 	// wire-time pass ran BEFORE link and pre-consumed the very inline-unsafe

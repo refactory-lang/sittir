@@ -1307,15 +1307,17 @@ function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
 }
 
 /**
- * @internal — walk `rule` and hoist EVERY `optional(seq)` / `repeat(seq)` /
- * `repeat1(seq)` position (clause-shaped — `seq(STRING,FIELD…)` — and
- * non-clause alike) into hidden group rules. Returns a (possibly rewritten)
- * rule; never mutates the input.
+ * @internal — walk `rule` and hoist EVERY `optional(seq)` / `CHOICE[seq,
+ * BLANK]` position (clause-shaped — `seq(STRING,FIELD…)` — and non-clause
+ * alike, via `peelOptionalSeq`) into hidden group rules. `repeat`/`repeat1`/
+ * prec wrappers are only DESCENDED THROUGH to reach nested hoistable content
+ * — a bare `repeat(seq)` is never hoisted as its own unit. Returns a
+ * (possibly rewritten) rule; never mutates the input.
  *
  * The former two-pass division (this function for clause-seqs, the separate
  * `applyAutoGroups` for everything else) is gone — `applyAutoGroups` and
  * `dsl/wire/auto-groups.ts` were physically deleted; enrich now owns all
- * `optional/repeat(seq)` hoisting itself (inline-safe → hidden
+ * `optional(seq)` hoisting itself (inline-safe → hidden
  * `_<parent>_optional<N>` symbol; inline-unsafe → visible content-alias that
  * `link.ts`'s `mintContentAliasKinds` registers as a real IR kind — see
  * `dsl/wire/wire.ts`'s `getEnrichClauseGroups` call site for why the old
