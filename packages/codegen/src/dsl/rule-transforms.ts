@@ -1,8 +1,7 @@
 /**
- * compiler/transforms.ts — shared, idempotent rule transforms (#13a) +
- * the phase-context base type (#14 / §7.7). The transform BODIES move in via
- * the copilot LSP pass (PR-H Task 5); this file is born holding only the ctx
- * contract so signatures across normalize/simplify can thread it.
+ * dsl/rule-transforms.ts — shared, idempotent rule transforms consumed by
+ * both `compiler/normalize.ts` and `compiler/simplify.ts`, plus the
+ * `RuleBuilder` construction strategy they thread through.
  */
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RuleBase, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
@@ -54,7 +53,7 @@ export const structuralBuilder: RuleBuilder = {
 	field: (name, content) => ({ type: FIELD, name, content }),
 };
 
-// Phase contexts moved to the compiler layer (R12): compiler/ctx.ts holds
+// Phase contexts live in the compiler layer: compiler/ctx.ts holds
 // `BaseCtx<R>`; per-phase classes (NormalizeCtx / SimplifyCtx / …) extend it in
 // their phase files. This dsl module keeps only the `RuleBuilder` strategy +
 // the shared transform utilities below. Helpers that need a builder take a
@@ -62,7 +61,7 @@ export const structuralBuilder: RuleBuilder = {
 // there is no dsl -> compiler cycle.
 
 // ---------------------------------------------------------------------------
-// Shared, idempotent rule transforms (PR-O M1 — de-scatter, not de-dup).
+// Shared, idempotent rule transforms.
 // Each body is moved verbatim from its origin file; no logic changes.
 // ---------------------------------------------------------------------------
 
@@ -234,9 +233,8 @@ export function pushAttrsToLeaves(
 
 
 /**
- * Ctx for the shared `inlineRefs` op (R3 / PR-O M1 closure). Self-contained
- * so non-phase callers (assemble's alias-body path) can construct it without
- * a full TransformCtx.
+ * Ctx for the shared `inlineRefs` op. Self-contained so non-phase callers
+ * (assemble's alias-body path) can construct it without a full TransformCtx.
  */
 export interface InlineRefsCtx {
 	readonly rules: Readonly<Record<string, AnyRule>>;
@@ -527,7 +525,7 @@ function sameSlotShape(a: AnyRule, b: AnyRule): boolean {
             const bm = (b as typeof a).members;
             return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
         }
-        // PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to default.
+        // No separate ENUM case — enum-shaped ChoiceRules fall through to default.
         default:
             return false;
     }
