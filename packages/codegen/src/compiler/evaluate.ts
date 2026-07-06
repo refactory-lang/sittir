@@ -2042,7 +2042,12 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): 
 	const out = new Set<string>();
 	for (const name of candidates) {
 		const body = rules[name];
-		if (body && isComplexBody(body)) out.add(name);
+		// `rules` is deliberately AnyRule (both pre-link and post-link callers,
+		// see doc comment above); isComplexBody only checks SEQ/CHOICE members +
+		// BLANK-arm shape, phase-agnostic in practice — widen the phase view
+		// (post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely diverge in shape,
+		// so AnyRule no longer coincidentally structurally matches Rule<'evaluate'>).
+		if (body && isComplexBody(body as Rule<'evaluate'>)) out.add(name);
 	}
 	return out;
 }

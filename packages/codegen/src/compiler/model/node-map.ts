@@ -53,6 +53,7 @@ import type {
 	RuleId
 } from '../../types/rule.ts';
 import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '../../types/rule.ts';
+import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import { findGeneratedKindEntry } from '../generated-metadata.ts';
@@ -1105,21 +1106,16 @@ function normalizeRuleForSignature(value: unknown): unknown {
  * Extract a separator string from a `RuleBase<'normalize'>['separator']`
  * value (the stamped leaf form `applyWrapperDeletion` produces — this
  * function only ever sees post-Normalize separators, never the `link`-phase
- * `RepeatRule.separator?: string`).
- * Returns undefined when the separator is absent or empty.
- * Handles string, Rule[], and the object form { rules, trailing?, leading? }.
+ * `RepeatRule.separator` — which, post-PR-S, shares this same nested shape).
+ * Returns undefined when the separator is absent, non-literal, or empty.
  */
 export function extractSeparatorString(sep: RuleBase<'normalize'>['separator']): string | undefined {
 	if (sep === undefined) return undefined;
-	if (typeof sep === 'string') return sep || undefined;
-	if (Array.isArray(sep)) {
-		const str = sep.map((r) => ('value' in r ? (r as { value: string }).value : '')).join('');
-		return str || undefined;
+	if (isStringType(sep.value.type)) {
+		const v = (sep.value as { value: string }).value;
+		return v || undefined;
 	}
-	// Object form { rules: Rule<'link'>[], trailing?, leading? }
-	const rules = (sep as { rules: readonly { value?: string }[] }).rules;
-	const str = rules.map((r) => r.value ?? '').join('');
-	return str || undefined;
+	return undefined;
 }
 
 /**
@@ -3123,17 +3119,21 @@ export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> 
 
 	/** Separator string from the repeat rule, if any. */
 	get separator(): string | undefined {
-		return this.rule.separator;
+		// this.rule.separator is Rule<'link'>-phase-parameterized;
+		// extractSeparatorString reads the structurally identical normalize-phase
+		// shape (RepeatRule<'link'> shares RuleBase<'normalize'>.separator's shape
+		// post-PR-S) — cast the phase view.
+		return extractSeparatorString(this.rule.separator as RuleBase<'normalize'>['separator']);
 	}
 
 	/** Whether a trailing separator is permitted. */
 	get trailing(): boolean | undefined {
-		return this.rule.trailing;
+		return this.rule.separator?.trailing;
 	}
 
 	/** Whether a leading separator is permitted. */
 	get leading(): boolean | undefined {
-		return this.rule.leading;
+		return this.rule.separator?.leading;
 	}
 }
 

@@ -221,7 +221,7 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 			id: 'r3',
 			fieldName: 'args',
 			multiplicity: 'array',
-			separator: ', '
+			separator: { value: { type: STRING, value: ', ' } }
 		};
 		const slot = makeSlot({ name: 'args', propertyName: 'args', storageName: 'args' });
 		const ctx = makeCtx({
@@ -366,7 +366,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 			name: 'item',
 			id: 'r11',
 			multiplicity: 'array',
-			separator: ','
+			separator: { value: { type: STRING, value: ',' } }
 		};
 		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({
@@ -385,7 +385,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 			name: 'item',
 			id: 'r12',
 			multiplicity: 'array',
-			separator: { rules: [{ type: 'STRING', value: ',' }], trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: true }
 		};
 		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({

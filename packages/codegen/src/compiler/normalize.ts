@@ -21,6 +21,7 @@ import { computeSimplifiedRules, resetSlotGroupingDiagnostics, attributeBuilder,
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
 import { withAttrsFrom } from '../dsl/rule-attrs.ts';
+import { separatorFactsEqual } from '../dsl/list-patterns.ts';
 import { deriveComplexAliasTargetHidden } from './evaluate.ts';
 import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-structural.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -1034,7 +1035,15 @@ export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {
 		case OPTIONAL:
 			return rulesEqual(a.content, (b as typeof a).content);
 		case REPEAT:
-			return rulesEqual(a.content, (b as typeof a).content) && a.separator === (b as typeof a).separator;
+			// `.separator` is the nested {value, trailing?, leading?} fact
+			// (PR-S) — a freshly-allocated wrapper object per lift call, so
+			// `===` incorrectly treats two structurally-identical separators
+			// (e.g. two `repeat(seq(X, ','))`-shaped occurrences) as unequal.
+			// Delegate to the shared SSOT comparator instead.
+			return (
+				rulesEqual(a.content, (b as typeof a).content) &&
+				separatorFactsEqual(a.separator, (b as typeof a).separator)
+			);
 		case FIELD:
 			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
 		case VARIANT:

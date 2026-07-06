@@ -11,6 +11,7 @@
 
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
+import { separatorFactsEqual } from './list-patterns.ts';
 
 /**
  * Transfer slot-identity attributes from a discarded wrapper node onto the
@@ -103,12 +104,17 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 		const v = get(a0);
 		return v !== undefined && arms.every((m) => get(stamped(m)) === v) ? v : undefined;
 	};
-	// separator may be a string | Rule[] | { rules } object — compare by structure.
+	// separator is the nested {value, trailing?, leading?} fact — compare via
+	// separatorFactsEqual since the wrapper object has no `.type` discriminant.
+	// (This replaces a prior JSON.stringify comparison, which was fully general;
+	// separatorFactsEqual narrows to whatever rulesEqual's switch explicitly
+	// handles, silently `false` for a `.value` shape rulesEqual doesn't
+	// recognize. Harmless in practice — a post-wrapper-deletion separator's
+	// `.value` is always a STRING literal here — but worth flagging if
+	// separators ever grow richer rule-shaped values.)
 	const sep0 = a0.separator;
 	const separator =
-		sep0 !== undefined && arms.every((m) => JSON.stringify(stamped(m).separator) === JSON.stringify(sep0))
-			? sep0
-			: undefined;
+		sep0 !== undefined && arms.every((m) => separatorFactsEqual(stamped(m).separator, sep0)) ? sep0 : undefined;
 	let strongestMultiplicity: Multiplicity | undefined;
 	for (const arm of arms) {
 		const m = stamped(arm).multiplicity;

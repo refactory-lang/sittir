@@ -535,14 +535,14 @@ function detectRepeatSeparator(resolved) {
   const members = resolved.members;
   if (!members || members.length !== 2) return null;
   const [first, second] = members;
-  const firstStr = typeEq(first.type, "STRING") ? first.value : null;
-  const secondStr = typeEq(second.type, "STRING") ? second.value : null;
-  if (firstStr !== null && secondStr === null) return { content: second, separator: firstStr };
-  if (secondStr !== null && firstStr === null) return { content: first, separator: secondStr, trailing: true };
-  const firstSepChoice = typeEq(first.type, "CHOICE") ? firstStringOfChoice(first) : null;
-  const secondSepChoice = typeEq(second.type, "CHOICE") ? firstStringOfChoice(second) : null;
-  if (firstSepChoice !== null && secondStr === null) return { content: second, separator: firstSepChoice };
-  if (secondSepChoice !== null && firstStr === null) return { content: first, separator: secondSepChoice, trailing: true };
+  const firstIsStr = typeEq(first.type, "STRING");
+  const secondIsStr = typeEq(second.type, "STRING");
+  if (firstIsStr && !secondIsStr) return { content: second, separator: first };
+  if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
+  const firstIsChoice = typeEq(first.type, "CHOICE");
+  const secondIsChoice = typeEq(second.type, "CHOICE");
+  if (firstIsChoice && !secondIsStr) return { content: second, separator: first };
+  if (secondIsChoice && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
 }
 
@@ -1339,7 +1339,14 @@ function listSeparatorOfOptionalSeq(rule) {
     const content = m.content;
     if (content) {
       const detected = detectRepeatSeparator(content);
-      if (detected) return detected.separator;
+      if (detected) {
+        const sep = detected.separator;
+        if (typeEq(sep.type, "STRING")) return sep.value;
+        if (typeEq(sep.type, "CHOICE")) {
+          const lit = firstStringOfChoice(sep);
+          if (lit !== null) return lit;
+        }
+      }
     }
   }
   return null;

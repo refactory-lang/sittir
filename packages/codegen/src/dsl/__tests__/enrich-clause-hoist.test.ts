@@ -379,3 +379,167 @@ describe('enrich clause-hoist pass — naming and dedupe', () => {
 		expect(preserved.value).toBe('PRESERVED');
 	});
 });
+
+// ---------------------------------------------------------------------------
+// listSeparatorOfOptionalSeq / absorbTrailingListSeparators (both @internal to
+// enrich.ts) fold a stranded trailing `optional(sep)` INTO the preceding
+// `optional(seq(item, repeat(seq(sep, item))))` — the python `argument_list`
+// shape `seq(optional(list), optional(sep))` — BEFORE the clause-hoist above
+// lifts the list into its own `_parent_optionalN` rule. These three cases
+// exercise `listSeparatorOfOptionalSeq`'s own separator-detection narrowing
+// (PR-S task 3 follow-up), which is otherwise untested: a plain STRING
+// separator (unchanged), a CHOICE-with-a-string-arm separator (the narrowing
+// path), and a CHOICE-with-NO-string-arm decoy (the fall-through-and-keep-
+// scanning fix for Important #1).
+// ---------------------------------------------------------------------------
+describe('enrich clause-hoist pass — trailing separator absorption (listSeparatorOfOptionalSeq)', () => {
+	it('absorbs a stranded trailing optional(STRING) into the list when the repeat separator is a plain STRING', () => {
+		const input = mkGrammar({
+			parent: {
+				type: 'SEQ',
+				members: [
+					{ type: 'STRING', value: '(' },
+					{
+						type: 'OPTIONAL',
+						content: {
+							type: 'SEQ',
+							members: [
+								{ type: 'FIELD', name: 'item', content: { type: 'SYMBOL', name: 'expr' } },
+								{
+									type: 'REPEAT',
+									content: {
+										type: 'SEQ',
+										members: [
+											{ type: 'STRING', value: ',' },
+											{ type: 'FIELD', name: 'item', content: { type: 'SYMBOL', name: 'expr' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ type: 'OPTIONAL', content: { type: 'STRING', value: ',' } },
+					{ type: 'STRING', value: ')' }
+				]
+			}
+		});
+		const result = runEnrich(input);
+		const rules = result.grammar.rules;
+
+		// The trailing optional(',') member is consumed — parent drops to 3 members.
+		const parent = rules.parent as { members: unknown[] };
+		expect(parent.members.length).toBe(3);
+
+		// It was folded into the hoisted list group as a 3rd (trailing) member.
+		const hoisted = rules['_parent_optional1'] as { members: Array<{ type: string; content?: { type: string; value?: string } }> };
+		expect(hoisted.members.length).toBe(3);
+		expect(hoisted.members[2]!.type).toBe('OPTIONAL');
+		expect(hoisted.members[2]!.content!.type).toBe('STRING');
+		expect(hoisted.members[2]!.content!.value).toBe(',');
+	});
+
+	it('absorbs the trailing separator when the repeat separator is a CHOICE with a string arm', () => {
+		const input = mkGrammar({
+			parent: {
+				type: 'SEQ',
+				members: [
+					{ type: 'STRING', value: '(' },
+					{
+						type: 'OPTIONAL',
+						content: {
+							type: 'SEQ',
+							members: [
+								{ type: 'FIELD', name: 'item', content: { type: 'SYMBOL', name: 'expr' } },
+								{
+									type: 'REPEAT',
+									content: {
+										type: 'SEQ',
+										members: [
+											{ type: 'CHOICE', members: [{ type: 'STRING', value: ',' }, { type: 'STRING', value: ';' }] },
+											{ type: 'FIELD', name: 'item', content: { type: 'SYMBOL', name: 'expr' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ type: 'OPTIONAL', content: { type: 'STRING', value: ',' } },
+					{ type: 'STRING', value: ')' }
+				]
+			}
+		});
+		const result = runEnrich(input);
+		const rules = result.grammar.rules;
+
+		const parent = rules.parent as { members: unknown[] };
+		expect(parent.members.length).toBe(3);
+
+		const hoisted = rules['_parent_optional1'] as { members: Array<{ type: string; content?: { type: string; value?: string } }> };
+		expect(hoisted.members.length).toBe(3);
+		expect(hoisted.members[2]!.type).toBe('OPTIONAL');
+		expect(hoisted.members[2]!.content!.value).toBe(',');
+	});
+
+	it('keeps scanning past a CHOICE decoy with no string arm to find the real separator later in the same seq (Important #1 regression)', () => {
+		// A CHOICE-shaped "separator" candidate that is all-symbol (no STRING
+		// arm at all — e.g. two external-scanner tokens) sits BEFORE the real,
+		// STRING-separated repeat in the same optional-seq body. Pre-fix,
+		// `listSeparatorOfOptionalSeq` returned `firstStringOfChoice(sep)` —
+		// `null` — directly from that CHOICE branch, ending the function early
+		// and never reaching the real separator later in the loop. Fixed, it
+		// falls through and keeps scanning, finding the real ',' and folding
+		// the trailing member as usual.
+		const input = mkGrammar({
+			parent: {
+				type: 'SEQ',
+				members: [
+					{ type: 'STRING', value: '(' },
+					{
+						type: 'OPTIONAL',
+						content: {
+							type: 'SEQ',
+							members: [
+								{ type: 'FIELD', name: 'item', content: { type: 'SYMBOL', name: 'expr' } },
+								{
+									type: 'REPEAT',
+									content: {
+										type: 'SEQ',
+										members: [
+											{ type: 'CHOICE', members: [{ type: 'SYMBOL', name: '_a' }, { type: 'SYMBOL', name: '_b' }] },
+											{ type: 'FIELD', name: 'decoy', content: { type: 'SYMBOL', name: 'expr' } }
+										]
+									}
+								},
+								{
+									type: 'REPEAT',
+									content: {
+										type: 'SEQ',
+										members: [
+											{ type: 'STRING', value: ',' },
+											{ type: 'FIELD', name: 'item', content: { type: 'SYMBOL', name: 'expr' } }
+										]
+									}
+								}
+							]
+						}
+					},
+					{ type: 'OPTIONAL', content: { type: 'STRING', value: ',' } },
+					{ type: 'STRING', value: ')' }
+				]
+			}
+		});
+		const result = runEnrich(input);
+		const rules = result.grammar.rules;
+
+		// Must NOT be left stranded: the trailing optional(',') is absorbed,
+		// so parent still drops to 3 members (not left at 4 with a dangling sep).
+		const parent = rules.parent as { members: unknown[] };
+		expect(parent.members.length).toBe(3);
+
+		const hoisted = rules['_parent_optional1'] as { members: Array<{ type: string; content?: { type: string; value?: string } }> };
+		expect(hoisted.members.length).toBe(4);
+		expect(hoisted.members[3]!.type).toBe('OPTIONAL');
+		expect(hoisted.members[3]!.content!.type).toBe('STRING');
+		expect(hoisted.members[3]!.content!.value).toBe(',');
+	});
+});

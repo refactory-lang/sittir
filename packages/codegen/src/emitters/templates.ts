@@ -44,6 +44,7 @@ import type {
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import type { RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
+import { isStringType } from '../types/runtime-shapes.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission } from './shared.ts';
 
@@ -1125,19 +1126,17 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 
 /**
  * Project a rule's separator metadata onto a primitive `string`. The
- * shared `RuleBase.separator` is a union of (string | RenderRule[] | object);
- * the rendering layer only needs the primitive textual separator. For
- * structured separators we stringify each rule and concatenate so the
- * resulting join filter still represents the source text faithfully.
+ * shared `RuleBase.separator` is the nested `{value, trailing?, leading?}`
+ * fact (PR-S); the rendering layer only needs the primitive textual
+ * separator. `value` is a StringRule for the common literal case;
+ * otherwise stringify the rule-shaped separator so the resulting join
+ * filter still represents the source text faithfully.
  */
 function separatorToString(rule: RenderRule): string | undefined {
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 	if (sep === undefined) return undefined;
-	if (typeof sep === 'string') return sep;
-	if (Array.isArray(sep)) return sep.map(stringifyRule).join('');
-	// object form: { rules, trailing?, leading? }
-	const obj = sep as { rules: readonly RenderRule[] };
-	return obj.rules.map(stringifyRule).join('');
+	if (isStringType(sep.value.type)) return (sep.value as { value: string }).value;
+	return stringifyRule(sep.value as RenderRule);
 }
 
 /**
@@ -1151,23 +1150,14 @@ function separatorToString(rule: RenderRule): string | undefined {
  * through wrapper-deletion onto the slot entries.
  */
 function selectJoinFilter(rule: RenderRule, slot?: AssembledNonterminal): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
-	const repeatLike = rule as { trailing?: boolean; leading?: boolean };
-	const trailing = repeatLike.trailing === true;
-	const leading = repeatLike.leading === true;
+	// trailing/leading now live NESTED inside `separator` (PR-S) — no more
+	// top-level siblings on the rule to check directly.
+	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
+	const trailing = sep?.trailing === true;
+	const leading = sep?.leading === true;
 	if (trailing && leading) return 'joinWithFlanks';
 	if (trailing) return 'joinWithTrailing';
 	if (leading) return 'joinWithLeading';
-	// Also honour the structured-separator object form when carrying
-	// the flank flags directly.
-	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
-	if (sep && typeof sep === 'object' && !Array.isArray(sep)) {
-		const obj = sep as { trailing?: boolean; leading?: boolean };
-		const t = obj.trailing === true;
-		const l = obj.leading === true;
-		if (t && l) return 'joinWithFlanks';
-		if (t) return 'joinWithTrailing';
-		if (l) return 'joinWithLeading';
-	}
 	// Fallback: read trailing/leading from the slot's per-value entries.
 	// This handles the case where the separator was stamped onto slot values
 	// by `stampSeparatorOnValues` but the rule itself (a rebuilt choice from

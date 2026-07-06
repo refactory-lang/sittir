@@ -27,7 +27,7 @@ describe('RuleBase attribute extensions', () => {
 		const r: SymbolRule = {
 			type: SYMBOL,
 			name: 'X',
-			separator: { rules: [{ type: 'STRING', value: ',' }], trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: true }
 		};
 		expect((r.separator as { trailing?: boolean }).trailing).toBe(true);
 	});

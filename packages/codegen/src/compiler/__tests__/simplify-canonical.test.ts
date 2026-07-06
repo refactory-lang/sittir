@@ -15,9 +15,9 @@
  * field-free members).
  */
 
-import { CHOICE, FIELD, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import type { AnyRule, Rule } from '../../types/rule.ts';
+import type { AnyRule, Rule, RenderRule } from '../../types/rule.ts';
 import type { ChoiceRule } from '../../types/rule.ts';
 import { simplifyRule, attributeBuilder, makeDefaultCtx } from '../simplify.ts';
 import { hoistInnerFieldFromWrapperForField, mergeBranchesForChoice } from '../simplify.ts';
@@ -40,7 +40,9 @@ const variant = (name: string, content: Rule<'link'>): Rule<'link'> => ({
 });
 const optional = (content: Rule<'link'>): Rule<'link'> => ({ type: OPTIONAL, content });
 const repeat1 = (content: Rule<'link'>, separator?: string): Rule<'link'> =>
-	separator !== undefined ? { type: REPEAT1, content, separator } : { type: REPEAT1, content };
+	separator !== undefined
+		? { type: REPEAT1, content, separator: { value: { type: STRING, value: separator } } }
+		: { type: REPEAT1, content };
 
 /**
  * Helper: result of pushing a field wrapper down to its content as leaf attrs,
@@ -326,5 +328,68 @@ describe('simplifyRule — hoistInnerFieldFromWrapperForField', () => {
 		const once = hoistInnerFieldFromWrapperForField(input);
 		const twice = hoistInnerFieldFromWrapperForField(once);
 		expect(twice).toEqual(once);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// separator sub-rule recursion (PR-S task 4)
+// ---------------------------------------------------------------------------
+
+describe('separator sub-rules go through the same simplification as ordinary content', () => {
+	it('collapses a single-member choice inside a separator down to that member', () => {
+		const rule = {
+			type: SYMBOL,
+			name: 'item',
+			separator: {
+				value: { type: CHOICE, members: [{ type: STRING, value: ',' }] }
+			}
+		} as unknown as RenderRule;
+		const out = simplifyRule(rule) as unknown as { separator: { value: { type: string; value?: string } } };
+		expect(out.separator.value).toEqual({ type: STRING, value: ',' });
+	});
+});
+
+// ---------------------------------------------------------------------------
+// simplifyRule recursion complexity (PR-S task 4 follow-up)
+// ---------------------------------------------------------------------------
+
+describe('simplifyRule recursion is linear, not exponential, in tree depth', () => {
+	it('completes quickly on a ~250-deep left-nested GROUP chain', () => {
+		// Regression test for a bug where an earlier revision passed
+		// `simplifyRule` itself as the `visit` callback to `ctx.walker.map` —
+		// since `simplifyRule` ALSO calls `ctx.walker.map` internally, every
+		// node's subtree was walked twice: once by `map`'s own internal
+		// recursion, once more when `visit` re-invoked `map` on the same
+		// already-recursed node. That compounds at every level of nesting
+		// (T(n) = 2*T(n-1)) — a depth-250 chain would never finish. The fix
+		// (`simplifyRule` calls `ctx.walker.map` exactly once with a
+		// non-recursive `simplifyDispatch` visitor, then dispatches the root
+		// once more) makes this O(n). A depth of 250 is chosen to be deep
+		// enough that O(2^n) would hang/time out while O(n) finishes
+		// effectively instantly — the wall-clock bound below is generous
+		// (well under the exponential case's cost at even depth ~30).
+		const DEPTH = 250;
+		let rule: Rule<'link'> = { type: SYMBOL, name: 'leaf' };
+		for (let i = 0; i < DEPTH; i++) {
+			rule = { type: GROUP, name: `_g${i}`, content: rule } as unknown as Rule<'link'>;
+		}
+
+		const start = performance.now();
+		const out = simplifyRule(rule as unknown as RenderRule);
+		const elapsedMs = performance.now() - start;
+
+		// Sanity: recursion actually reached the leaf.
+		let cursor: unknown = out;
+		let depth = 0;
+		while (cursor && typeof cursor === 'object' && (cursor as { type: string }).type === GROUP) {
+			cursor = (cursor as { content: unknown }).content;
+			depth++;
+		}
+		expect(depth).toBe(DEPTH);
+		expect((cursor as { type: string }).type).toBe(SYMBOL);
+
+		// Linear recursion completes near-instantly; exponential would blow
+		// well past this even at a fraction of DEPTH's nesting.
+		expect(elapsedMs).toBeLessThan(2000);
 	});
 });

@@ -7,11 +7,12 @@
  * are recursed into so all wrappers are eliminated throughout the tree.
  */
 
-import { FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import { deleteWrapper, applyWrapperDeletion } from '../wrapper-deletion.ts';
 import type {
 	Rule,
+	RuleBase,
 	OptionalRule,
 	RepeatRule,
 	Repeat1Rule,
@@ -64,31 +65,57 @@ describe('deleteWrapper — repeat', () => {
 		expect(out.multiplicity).toBe('array');
 	});
 
-	it('lifts repeat with separator string → preserves separator', () => {
-		const wrapped: RepeatRule = { type: REPEAT, content: sym('item'), separator: ',' };
-		const out = deleteWrapper(wrapped);
-		expect(out.type).toBe('SYMBOL');
-		expect(out.multiplicity).toBe('array');
-		expect(out.separator).toBe(',');
-	});
-
-	it('lifts repeat with separator + trailing/leading → object form', () => {
+	it('lifts repeat with nested separator → carries the object across unchanged', () => {
 		const wrapped: RepeatRule = {
 			type: REPEAT,
 			content: sym('item'),
-			separator: ',',
-			trailing: true,
-			leading: false,
+			separator: { value: { type: 'STRING', value: ',' } },
 		};
 		const out = deleteWrapper(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
-		// Object form because trailing/leading are set
+		expect(out.separator).toEqual({ value: { type: 'STRING', value: ',' } });
+	});
+
+	it('lifts repeat with separator + trailing/leading → nested object rides along for free', () => {
+		// wrapper-deletion's REPEAT case does NOT reconstruct trailing/leading
+		// from separate fields — it carries the whole `separator` object across
+		// unchanged, since RepeatRule<'link'> already nests them (PR-S).
+		const wrapped: RepeatRule = {
+			type: REPEAT,
+			content: sym('item'),
+			separator: { value: { type: 'STRING', value: ',' }, trailing: true, leading: false },
+		};
+		const out = deleteWrapper(wrapped);
+		expect(out.type).toBe('SYMBOL');
+		expect(out.multiplicity).toBe('array');
 		expect(out.separator).toEqual({
-			rules: [{ type: 'STRING', value: ',' }],
+			value: { type: 'STRING', value: ',' },
 			trailing: true,
 			leading: false,
 		});
+	});
+
+	it('an orphan trailing/leading-without-a-separator state is structurally impossible', () => {
+		// There is no way to construct a RepeatRule with `trailing`/`leading` set
+		// but no `separator` — they only exist nested INSIDE `separator` now.
+		const wrapped: RepeatRule = { type: REPEAT, content: sym('item') };
+		expect(wrapped.separator).toBeUndefined();
+		const out = deleteWrapper(wrapped);
+		expect(out.separator).toBeUndefined();
+
+		// Compile-time pin: the invariant above is a TYPE guarantee, not just a
+		// runtime observation — `true` under the OLD sibling shape too (a bare
+		// symbol legitimately had no `trailing`/`leading` either). What actually
+		// changed is that the old orphan literal (top-level `trailing`/`leading`
+		// alongside `separator: undefined`) no longer type-checks at all: those
+		// fields only exist nested inside `separator` now. If a future change
+		// reintroduces unused top-level siblings on RuleBase<NormalizedPhase>,
+		// this assignment would stop erroring and `@ts-expect-error` itself would
+		// fail (checked by `tsgo --noEmit`, not by vitest's transform-only run).
+		// @ts-expect-error — trailing/leading are not top-level RuleBase siblings; they only exist nested inside `separator`.
+		const orphan: RuleBase<'normalize'> = { separator: undefined, trailing: true };
+		void orphan;
 	});
 });
 
@@ -173,5 +200,32 @@ describe('applyWrapperDeletion — map form', () => {
 		expect(result['foo']!.multiplicity).toBe('optional');
 		expect(result['baz']!.type).toBe('SYMBOL');
 		expect(result['baz']!.multiplicity).toBeUndefined();
+	});
+});
+
+// ---------------------------------------------------------------------------
+// deleteWrapper — separator sub-rule recursion (PR-S task 4)
+// ---------------------------------------------------------------------------
+
+describe('separator sub-rules get the same push-down as ordinary content', () => {
+	it('pushes a FIELD wrapper inside a choice-shaped separator down to a leaf attribute', () => {
+		const rule = {
+			type: REPEAT,
+			content: sym('item'),
+			separator: {
+				value: {
+					type: CHOICE,
+					members: [
+						{ type: FIELD, name: 'sep_kind', content: { type: STRING, value: ',' } },
+						{ type: STRING, value: ';' },
+					],
+				},
+			},
+		} as unknown as Rule<'link'>;
+		const out = deleteWrapper(rule) as unknown as {
+			separator: { value: { members: { fieldName?: string; type: string }[] } };
+		};
+		expect(out.separator.value.members[0]!.fieldName).toBe('sep_kind');
+		expect(out.separator.value.members[0]!.type).toBe('STRING');
 	});
 });

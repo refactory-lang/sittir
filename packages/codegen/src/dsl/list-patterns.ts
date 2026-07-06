@@ -26,6 +26,44 @@
 import { typeEq, type RuntimeRule } from '../types/runtime-shapes.ts';
 
 /**
+ * The nested separator fact's shape (`{value, trailing?, leading?}`, PR-S),
+ * phrased structurally over `RuntimeRule` (rather than a specific
+ * `RuleBase<Phase>['separator']`) so `separatorFactsEqual` accepts the fact
+ * at ANY phase view (`RuleBase<'normalize'>.separator`,
+ * `RepeatRule<'link'>.separator`, …) without a phase-widening cast at the
+ * call site — they all share this identical structural shape post-PR-S.
+ */
+interface SeparatorFact {
+	readonly value: RuntimeRule;
+	readonly trailing?: boolean;
+	readonly leading?: boolean;
+}
+
+/**
+ * Structural equality for the nested separator fact
+ * (`{value, trailing?, leading?}`, PR-S). The wrapper object itself has no
+ * `.type` discriminant, so `rulesEqual` can't be called on it directly —
+ * compare `trailing`/`leading` primitively and `value` (the inner Rule) via
+ * `rulesEqual`.
+ *
+ * SSOT for this comparison: both `rulesEqual` below (repeat/repeat1 case) and
+ * `normalize.ts`'s own `rulesEqual` (REPEAT case) delegate here instead of
+ * `===`, which — post-PR-S — would compare object identity on a freshly
+ * allocated wrapper per lift call rather than the separator's actual value.
+ *
+ * `rulesEqual(a.value, b.value)` runs on the separator's inner Rule, which is
+ * always a terminal/simple rule (a literal string or a small choice/seq of
+ * literals) even when this helper is reached post-wrapper-deletion (e.g. from
+ * `rule-attrs.ts`'s `sharedArmAttrs`) — so it's safe despite `rulesEqual`'s own
+ * "do NOT call after wrapper-deletion" doc note, which is about the STRUCTURAL
+ * rule being compared, not this always-simple nested value.
+ */
+export function separatorFactsEqual(a: SeparatorFact | undefined, b: SeparatorFact | undefined): boolean {
+	if (a === undefined || b === undefined) return a === b;
+	return a.trailing === b.trailing && a.leading === b.leading && rulesEqual(a.value, b.value);
+}
+
+/**
  * Structural equality for rule trees. Limited to the rule shapes that exist
  * pre-link (no polymorph/supertype/terminal — those appear only after
  * Link). Used by the commaSep1 lift to verify a seq's standalone element
@@ -59,8 +97,23 @@ export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
 		case 'optional':
 			return rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
 		case 'repeat':
-		case 'repeat1':
-			return A.separator === B.separator && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
+		case 'repeat1': {
+			// `.separator` is either a plain string (evaluate-phase, unlifted) or
+			// the nested {value, trailing?, leading?} fact (link-phase, PR-S) — a
+			// freshly-allocated wrapper object per lift call, so `===` incorrectly
+			// treats two structurally-identical separators as unequal. Compare via
+			// separatorFactsEqual only when BOTH sides are the object form; a
+			// mixed object-vs-string comparison (one side already lifted, the
+			// other not) falls through to `===` (correctly `false`) instead of
+			// casting the string side to SeparatorFact and crashing inside
+			// separatorFactsEqual reading `.value`/`.trailing` off a string.
+			const aObj = typeof A.separator === 'object' && A.separator !== null;
+			const bObj = typeof B.separator === 'object' && B.separator !== null;
+			const sepEqual = aObj && bObj
+				? separatorFactsEqual(A.separator as SeparatorFact, B.separator as SeparatorFact)
+				: A.separator === B.separator;
+			return sepEqual && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
+		}
 		case 'field':
 			return A.name === B.name && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
 		default:
@@ -85,34 +138,48 @@ export function firstStringOfChoice(r: RuntimeRule): string | null {
 
 /**
  * Detect the `seq(SEP, X)` / `seq(X, SEP)` separated-list shape inside a
- * repeat/repeat1 content body, where `SEP` is a string literal (or a
- * choice-of-literals — see {@link firstStringOfChoice}). Returns the
- * non-separator content, the separator string, and whether the separator
- * was trailing (`seq(X, SEP)`); or `null` when no separator shape is present.
+ * repeat/repeat1 content body, where `SEP` is a string literal or a choice
+ * whose arms may include non-literal (symbol/external-scanner) members —
+ * not just a choice-of-literals. Returns the non-separator content, the FULL
+ * detected separator rule (a `StringRule` for the literal case, the whole
+ * `ChoiceRule` for a choice-shaped one — no longer narrowed to its first arm,
+ * PR-S, and no longer required to contain a string arm at all), and whether
+ * the separator was trailing (`seq(X, SEP)`); or `null` when no separator
+ * shape is present.
+ *
+ * Callers that need a literal string out of a returned CHOICE separator
+ * (e.g. `enrich.ts`'s `listSeparatorOfOptionalSeq`) must handle the
+ * no-string-arm case themselves — `firstStringOfChoice` returns `null` for
+ * an all-symbol choice, which is not the same as "no separator shape here".
  *
  * Pure: reports the shape; the caller decides whether to lift it onto a
- * `repeat` (evaluate) or read it for group creation (enrich).
+ * `repeat` (link) or read it for group creation (enrich).
  */
 export function detectRepeatSeparator<R extends RuntimeRule>(
 	resolved: R
-): { content: R; separator: string; trailing?: boolean } | null {
+): { content: R; separator: R; trailing?: boolean } | null {
 	if (!typeEq(resolved.type, 'SEQ')) return null;
 	const members = (resolved as { members?: R[] }).members;
 	if (!members || members.length !== 2) return null;
 	const [first, second] = members as [R, R];
 
-	const firstStr = typeEq(first.type, 'STRING') ? ((first as { value?: unknown }).value as string) : null;
-	const secondStr = typeEq(second.type, 'STRING') ? ((second as { value?: unknown }).value as string) : null;
+	const firstIsStr = typeEq(first.type, 'STRING');
+	const secondIsStr = typeEq(second.type, 'STRING');
 
 	// Canonical: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing).
-	if (firstStr !== null && secondStr === null) return { content: second, separator: firstStr };
-	if (secondStr !== null && firstStr === null) return { content: first, separator: secondStr, trailing: true };
+	if (firstIsStr && !secondIsStr) return { content: second, separator: first };
+	if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
 
-	// Choice-of-separators in the separator position.
-	const firstSepChoice = typeEq(first.type, 'CHOICE') ? firstStringOfChoice(first) : null;
-	const secondSepChoice = typeEq(second.type, 'CHOICE') ? firstStringOfChoice(second) : null;
-	if (firstSepChoice !== null && secondStr === null) return { content: second, separator: firstSepChoice };
-	if (secondSepChoice !== null && firstStr === null) return { content: first, separator: secondSepChoice, trailing: true };
+	// Choice-of-separators in the separator position — preserve the FULL
+	// choice; the caller (and everything downstream, per PR-S) now knows how
+	// to handle a non-literal separator rule. No literal-presence check here
+	// by design: a choice with zero STRING arms (all-symbol/external-scanner)
+	// still counts as a detected separator shape — it's up to the caller to
+	// decide what to do when it can't extract a literal from it.
+	const firstIsChoice = typeEq(first.type, 'CHOICE');
+	const secondIsChoice = typeEq(second.type, 'CHOICE');
+	if (firstIsChoice && !secondIsStr) return { content: second, separator: first };
+	if (secondIsChoice && !firstIsStr) return { content: first, separator: second, trailing: true };
 
 	return null;
 }

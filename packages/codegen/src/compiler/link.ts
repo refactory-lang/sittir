@@ -29,6 +29,7 @@ import type {
 	AnyRule,
 } from '../types/rule.ts';
 import { isSeq, isChoice, isEnumChoiceRule, sym, replaceAtPath, isSymbol, isString, isRepeat1, isRepeat, isOptional, isField } from '../types/rule.ts';
+import { isStringType } from '../types/runtime-shapes.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import {
 	collectGeneratedKindEntries,
@@ -250,7 +251,11 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	});
 	const rules: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
-		rules[name] = resolveRule(rule, linkCtx, name);
+		// raw.rules is Rule<'evaluate'> (pre-link); resolveRule's own job IS the
+		// evaluate→link transition, so it structurally handles both phases —
+		// widen the phase view (post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely
+		// diverge in shape, so this is now an explicit cast, not a coincidence).
+		rules[name] = resolveRule(rule as Rule<'link'>, linkCtx, name);
 	}
 
 	// Lift separated lists into canonical separator-bearing repeat nodes:
@@ -294,7 +299,11 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// context — same as how `seq('mod', $.name)` renders `mod {{ name }}`
 	// with `mod` stamped inline. Runs BEFORE applyGroupOverrides so any
 	// group lifts operate on already-stamped rule bodies.
-	const renderAs = raw.renderAs ?? {};
+	// raw.renderAs is Rule<'evaluate'> (pre-link, override-authored literal
+	// bodies); stampStaticRenderAs only reads STRING-shaped bodies, so the
+	// phase view is a widen-only cast (post-PR-S, RepeatRule's per-phase
+	// shapes genuinely diverge, so this is now explicit, not a coincidence).
+	const renderAs = (raw.renderAs ?? {}) as Record<string, Rule<'link'>>;
 	if (Object.keys(renderAs).length > 0) {
 		const stamped = stampStaticRenderAs(rules, renderAs);
 		for (const key of Object.keys(rules)) {
@@ -349,6 +358,9 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// ONE deep-walk yields BOTH the hidden-aliased set (classifier guard) and the
 	// visible→visible alias-target map (slot accept-set union), derived together so
 	// the two facets of `alias(symbol(X), $.target)` can never drift apart.
+	// raw.rules is Rule<'evaluate'> (pre-resolveRule, by design — see comment
+	// above), matching collectAliasedByParents's own Rule<'evaluate'> parameter
+	// directly — no phase-widening cast needed here.
 	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(raw.rules);
 
 	classifyAndLogHiddenRules(rules, linkCtx);
@@ -650,7 +662,10 @@ function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): 
 	const out = new Map<string, string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
-		const target = extractTopLevelAliasTarget(rule);
+		// rawRules is Rule<'evaluate'> (pre-link); extractTopLevelAliasTarget
+		// only walks the OPTIONAL/ALIAS/SEQ/CHOICE shell around a top-level
+		// alias, present in both phases — widen the phase view (post-PR-S cast).
+		const target = extractTopLevelAliasTarget(rule as Rule<'link'>);
 		if (target) out.set(name, target);
 	}
 	return out;
@@ -756,7 +771,10 @@ function collectAliasedByParents(rawRules: Record<string, Rule<'evaluate'>>): {
 			walk((rule as { content: Rule<'link'> }).content);
 		}
 	}
-	for (const rule of Object.values(rawRules)) walk(rule);
+	// rawRules is Rule<'evaluate'> (pre-resolveRule); walk only reads
+	// ALIAS/SYMBOL/structural shapes present in both phases — widen the phase
+	// view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
+	for (const rule of Object.values(rawRules)) walk(rule as Rule<'link'>);
 	return { parentAliasedKinds, visibleAliasTargets };
 }
 
@@ -842,7 +860,11 @@ function mintContentAliasKinds(
 						// hidden body is what's wanted here, not whatever the accumulator's
 						// entry (if any) already resolved to.
 						const target = ctx.rules[hiddenBody];
-						if (target) body = target;
+						// ctx.rules is Rule<'evaluate'> (RAW view, deliberately —
+						// see comment above); `body` is fed to resolveRule fresh
+						// below, which itself accepts the evaluate→link transition —
+						// widen the phase view (post-PR-S cast).
+						if (target) body = target as Rule<'link'>;
 						// DIAGNOSTIC-ONLY provenance: visible twin → hidden body kind.
 						if (contentAliasedFrom) contentAliasedFrom.set(value, hiddenBody);
 						if (contentAliasedTo) {
@@ -883,7 +905,10 @@ function mintContentAliasKinds(
 			walk((rule as { content: Rule<'link'> }).content, ownerName, false);
 		}
 	}
-	for (const [name, rule] of Object.entries(ctx.rules)) walk(rule, name, false);
+	// ctx.rules is Rule<'evaluate'> (RAW view); walk only inspects
+	// OPTIONAL/CHOICE/SEQ/content shapes present in both phases — widen
+	// the phase view (post-PR-S cast).
+	for (const [name, rule] of Object.entries(ctx.rules)) walk(rule as Rule<'link'>, name, false);
 }
 
 function collectTopLevelAliasBodies(
@@ -895,7 +920,10 @@ function collectTopLevelAliasBodies(
 	const out = new Map<string, Rule<'link'>>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
-		const content = extractTopLevelNamedAliasContent(rule);
+		// rawRules (ctx.rules) is Rule<'evaluate'> (RAW view);
+		// extractTopLevelNamedAliasContent only walks OPTIONAL/ALIAS/SEQ/CHOICE
+		// shapes present in both phases — widen the phase view (post-PR-S cast).
+		const content = extractTopLevelNamedAliasContent(rule as Rule<'link'>);
 		if (!content) continue;
 		// LOAD-BEARING GUARD — NOT a removable band-aid (isolation-test-verified).
 		// Never inline a named-alias-target's hidden body into the visible-alias
@@ -2275,7 +2303,12 @@ function walkForIndentHoist(rule: Rule<'link'>, rules: Record<string, Rule<'link
  */
 function assignRepeatSeparator(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>, visited: Set<string>): boolean {
 	if (rule.type === REPEAT || rule.type === REPEAT1) {
-		if (!rule.separator) (rule as { separator?: string }).separator = BLOCK_SEPARATOR;
+		// Fresh block separator: neither trailing nor leading set, matching
+		// the prior behavior of leaving those undefined.
+		if (!rule.separator)
+			(rule as { separator?: { value: Rule<'link'> } }).separator = {
+				value: { type: STRING, value: BLOCK_SEPARATOR } as Rule<'link'>,
+			};
 		return true;
 	}
 	if (rule.type === SYMBOL) {
@@ -2592,10 +2625,17 @@ export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[]
     for (let i = 0; i < members.length; i++) {
         const cur = members[i]!;
         const next = members[i + 1];
-        const isSepRepeat = (cur.type === REPEAT || cur.type === REPEAT1) && cur.separator !== undefined && !cur.trailing;
-        const isOptionalSepLit = (r: Rule<'link'> | undefined, sep: string): boolean => !!r && r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
-        if (isSepRepeat && isOptionalSepLit(next, (cur as RepeatRule | Repeat1Rule).separator!)) {
-            out.push({ ...(cur as RepeatRule | Repeat1Rule), trailing: true });
+        const curSep = cur.type === REPEAT || cur.type === REPEAT1 ? cur.separator : undefined;
+        const isSepRepeat = curSep !== undefined && !curSep.trailing;
+        // Bail unless the separator is a plain literal — one level deeper
+        // than before now that `.separator` is the nested {value, ...} fact.
+        const isOptionalSepLit = (r: Rule<'link'> | undefined, sep: { value: Rule<'link'> }): boolean => {
+            if (!r || r.type !== OPTIONAL || r.content.type !== STRING) return false;
+            if (!isStringType(sep.value.type)) return false;
+            return r.content.value === (sep.value as StringRule<'link'>).value;
+        };
+        if (isSepRepeat && isOptionalSepLit(next, curSep!)) {
+            out.push({ ...(cur as RepeatRule | Repeat1Rule), separator: { ...curSep!, trailing: true } });
             i++;
             changed = true;
             continue;
@@ -2622,7 +2662,13 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
     const elem = repeatNode.content;
 
     const matchesElem = (r: Rule<'link'>): boolean => rulesEqual(r, elem);
-    const matchesOptionalSep = (r: Rule<'link'>): boolean => r.type === OPTIONAL && r.content.type === STRING && r.content.value === sep;
+    // Bail unless the separator is a plain literal — one level deeper than
+    // before now that `.separator` is the nested {value, ...} fact.
+    const matchesOptionalSep = (r: Rule<'link'>): boolean => {
+        if (r.type !== OPTIONAL || r.content.type !== STRING) return false;
+        if (!isStringType(sep.value.type)) return false;
+        return r.content.value === (sep.value as StringRule<'link'>).value;
+    };
 
     // Case 1: [x, repeat(sep, x)]
     if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
@@ -2630,15 +2676,16 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
     }
     // Case 2: [x, repeat(sep, x), optional(sep)] — trailing allowed.
     if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
-        return { type: REPEAT1, content: elem, separator: sep, trailing: true };
+        return { type: REPEAT1, content: elem, separator: { ...sep, trailing: true } };
     }
     // Case 3: [sep, x, repeat(sep, x)] — leading separator.
     if (members.length === 3 &&
         repeatIdx === 2 &&
+        isStringType(sep.value.type) &&
         members[0]!.type === STRING &&
-        members[0]!.value === sep &&
+        members[0]!.value === (sep.value as StringRule<'link'>).value &&
         matchesElem(members[1]!)) {
-        return { type: REPEAT1, content: elem, separator: sep, leading: true };
+        return { type: REPEAT1, content: elem, separator: { ...sep, leading: true } };
     }
     return null;
 }
@@ -2687,7 +2734,7 @@ export function liftSeparators(rule: Rule<'link'>): Rule<'link'> {
         case REPEAT1: {
             const content = liftSeparators(rule.content);
             const sep = detectRepeatSeparator(content);
-            if (sep) return { ...rule, content: sep.content, separator: sep.separator, trailing: sep.trailing };
+            if (sep) return { ...rule, content: sep.content, separator: { value: sep.separator, trailing: sep.trailing } };
             return { ...rule, content };
         }
         case OPTIONAL:
@@ -2991,14 +3038,16 @@ function liftRule(target: Rule<'link'>, synName: string, _discriminator: string)
                 replacement: { type: OPTIONAL, content: synSym } as Rule<'link'>
             };
         case REPEAT:
+            // target.separator already carries trailing/leading nested — rides
+            // along for free (same pattern as wrapper-deletion.ts's REPEAT case).
             return {
                 liftedBody: target.content,
-                replacement: { type: REPEAT, content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule<'link'>
+                replacement: { type: REPEAT, content: synSym, separator: target.separator } as Rule<'link'>
             };
         case REPEAT1:
             return {
                 liftedBody: target.content,
-                replacement: { type: REPEAT1, content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule<'link'>
+                replacement: { type: REPEAT1, content: synSym, separator: target.separator } as Rule<'link'>
             };
         default:
             return { liftedBody: target, replacement: synSym };

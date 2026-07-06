@@ -308,9 +308,15 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			// here — templates need anonymous delimiters (`,`, `(`, `;`,
 			// …) to surface as template text. See
 			// `project_simplify_template_walker_divergence.md`.
+			// hoistInnerFieldsForTemplate's declared return type is the phase-
+			// agnostic AnyRule, but `assemblyRule` (its input, through inlineRefs)
+			// is Rule<'link'> and the function is shape-preserving — widen the
+			// phase view back (post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely
+			// diverge in shape, so AnyRule no longer coincidentally structurally
+			// matches Rule<'link'> here).
 			const inlinedRule = hoistInnerFieldsForTemplate(
 				inlineRefs(assemblyRule, { rules: normalized.linkRules })
-			);
+			) as Rule<'link'>;
 			const modelType = classifyNode(kind, inlinedRule, {
 				variantParents,
 				parentAliasedKinds: normalized.parentAliasedKinds,

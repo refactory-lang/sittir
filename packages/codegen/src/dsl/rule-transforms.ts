@@ -5,7 +5,7 @@
  * contract so signatures across normalize/simplify can thread it.
  */
 import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, RuleBase, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
+import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
@@ -123,7 +123,7 @@ export function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMult
  * whether to probe for a flanking anon-separator token when emitting
  * `$$$CHILDREN`.
  *
- * Walks the same transparent-wrapper set as `findRepeatSeparator`
+ * Walks the same transparent-wrapper set as `findNestedSeparator`
  * (seq / choice / optional / variant / clause / group / field).
  *
  * Moved from template-walker.ts (origin: template-walker.ts:65).
@@ -561,7 +561,7 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
             const sepStr = (sepArm as { value: string; }).value;
             return {
                 ...repArm,
-                separator: { rules: [{ type: STRING, value: sepStr }], trailing: true }
+                separator: { value: { type: STRING, value: sepStr } as Rule, trailing: true }
             } as AnyRule;
         }
     }

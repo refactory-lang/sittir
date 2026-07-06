@@ -103,8 +103,10 @@ export type AnyRule = Rule<PhaseName>;
  *
  * Per spec's universal-shape decision: NO `leading`/`trailing` `Rule[]` at
  * rule level. Flanking literals live as adjacent seq members. Separator
- * placement (`trailing`/`leading` booleans) lives ON the structured
- * `separator` object below.
+ * placement (`trailing`/`leading` booleans) lives NESTED inside the
+ * structured `separator` object below (not as top-level siblings), so an
+ * orphan trailing/leading-without-a-separator state is structurally
+ * impossible.
  */
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly id?: RuleId;
@@ -185,24 +187,32 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly variantArms?: readonly string[];
 } & (Phase extends NormalizedPhase
 	? {
-			// All six stamped attributes below are populated by
+			// All stamped attributes below are populated by
 			// `applyWrapperDeletion` (Normalize) — the structured `separator`
-			// object included: wrapper-deletion converts the repeat node's own
-			// link-lifted `separator?: string` into this leaf object form as
-			// it deletes the repeat wrapper. None of them exist on
-			// evaluate/link views.
+			// object included: wrapper-deletion carries the repeat node's own
+			// link-lifted `separator` object across unchanged as it deletes
+			// the repeat wrapper (RepeatRule<'link'>/Repeat1Rule<'link'>
+			// share this identical nested shape). None of them exist on
+			// evaluate/link views' RuleBase (they exist on the repeat/repeat1
+			// wrapper nodes themselves pre-deletion).
 			readonly fieldName?: string;
 			readonly multiplicity?: Multiplicity;
 			readonly nonterminal?: boolean;
 
-			readonly separator?:
-				| string
-				| readonly Rule<Phase>[]
-				| {
-						readonly rules: readonly Rule<Phase>[];
-						readonly trailing?: boolean;
-						readonly leading?: boolean;
-				  };
+			/** Single canonical separator fact (widened from the former 3-way
+			 *  `string | Rule[] | {rules, trailing?, leading?}` union, PR-S).
+			 *  `value` is a StringRule for the common literal case;
+			 *  ChoiceRule/SeqRule for a rule-shaped separator. `trailing`/
+			 *  `leading` are nested HERE (not top-level siblings) so an
+			 *  orphan trailing/leading-without-a-separator state is
+			 *  structurally impossible, and so `applyWrapperDeletion` can
+			 *  carry this whole fact across the phase boundary unchanged
+			 *  from RepeatRule<'link'>'s identical shape. */
+			readonly separator?: {
+				readonly value: Rule<Phase>;
+				readonly trailing?: boolean;
+				readonly leading?: boolean;
+			};
 
 			/**
 			 * Alias provenance pushed down from an `alias()` wrapper by
@@ -325,21 +335,54 @@ export type ChoiceRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly members: Rule<T>[];
 }
 
-export type RepeatRule<T extends PhaseName = 'link'> = T extends WrapperPhase
+export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 	? RuleBase<T> & {
 			readonly type: typeof REPEAT;
 			readonly content: Rule<T>;
-			/** Link-lifted separator string (liftSeparators); wrapper-deletion turns it into the leaf object form. */
+			/** Same nested shape as RuleBase<NormalizedPhase>.separator, one
+			 *  phase earlier — applyWrapperDeletion carries this object
+			 *  across unchanged rather than reconstructing it from separate
+			 *  fields. */
+			readonly separator?: {
+				readonly value: Rule<T>;
+				readonly trailing?: boolean;
+				readonly leading?: boolean;
+			};
+	  }
+	: T extends 'evaluate'
+	? RuleBase<T> & {
+			readonly type: typeof REPEAT;
+			readonly content: Rule<T>;
+			/** Evaluate-phase separators are always literal strings,
+			 *  reconstructed fresh by link's lift — not carried through, so
+			 *  this stays the original sibling shape (unchanged by PR-S). */
 			readonly separator?: string;
 			readonly trailing?: boolean;
 			readonly leading?: boolean;
 	  }
 	: never;
 
-export type Repeat1Rule<T extends PhaseName = 'link'> = T extends WrapperPhase
+export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 	? RuleBase<T> & {
 			readonly type: typeof REPEAT1;
 			readonly content: Rule<T>;
+			/** Same nested shape as RuleBase<NormalizedPhase>.separator, one
+			 *  phase earlier — applyWrapperDeletion carries this object
+			 *  across unchanged rather than reconstructing it from separate
+			 *  fields. */
+			readonly separator?: {
+				readonly value: Rule<T>;
+				readonly trailing?: boolean;
+				readonly leading?: boolean;
+			};
+	  }
+	: T extends 'evaluate'
+	? RuleBase<T> & {
+			readonly type: typeof REPEAT1;
+			readonly content: Rule<T>;
+			/** Evaluate-phase separators are always literal strings,
+			 *  reconstructed fresh by link's lift — not carried through, so
+			 *  this stays the original sibling shape (unchanged by PR-S). */
 			readonly separator?: string;
 			readonly trailing?: boolean;
 			readonly leading?: boolean;
