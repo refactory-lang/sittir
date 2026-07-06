@@ -2734,16 +2734,7 @@ export function liftSeparators(rule: Rule<'link'>): Rule<'link'> {
         case REPEAT1: {
             const content = liftSeparators(rule.content);
             const sep = detectRepeatSeparator(content);
-            // Temporary scaffolding: `detectRepeatSeparator` still returns a bare
-            // `separator: string` today; PR-S Task 3 widens it to return the
-            // full nested/Rule shape directly, at which point this wrapping
-            // simplifies.
-            if (sep)
-                return {
-                    ...rule,
-                    content: sep.content,
-                    separator: { value: { type: STRING, value: sep.separator } as Rule<'link'>, trailing: sep.trailing },
-                };
+            if (sep) return { ...rule, content: sep.content, separator: { value: sep.separator, trailing: sep.trailing } };
             return { ...rule, content };
         }
         case OPTIONAL:

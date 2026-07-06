@@ -72,10 +72,11 @@ import {
 	isChoiceType,
 	isRepeatType,
 	isBlankType,
-	isPrecWrapper
+	isPrecWrapper,
+	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { detectRepeatSeparator } from './list-patterns.ts';
+import { detectRepeatSeparator, firstStringOfChoice } from './list-patterns.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { ruleMatchesEmpty, isInlineSafe } from './group-classify.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
@@ -1229,7 +1230,11 @@ function listSeparatorOfOptionalSeq(rule: Rule): string | null {
 		const content = (m as { content?: RuntimeRule }).content;
 		if (content) {
 			const detected = detectRepeatSeparator(content);
-			if (detected) return detected.separator;
+			if (detected) {
+				const sep = detected.separator;
+				if (typeEq(sep.type, 'STRING')) return (sep as { value?: unknown }).value as string;
+				if (typeEq(sep.type, 'CHOICE')) return firstStringOfChoice(sep);
+			}
 		}
 	}
 	return null;

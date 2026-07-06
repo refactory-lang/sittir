@@ -134,34 +134,38 @@ export function firstStringOfChoice(r: RuntimeRule): string | null {
 
 /**
  * Detect the `seq(SEP, X)` / `seq(X, SEP)` separated-list shape inside a
- * repeat/repeat1 content body, where `SEP` is a string literal (or a
- * choice-of-literals — see {@link firstStringOfChoice}). Returns the
- * non-separator content, the separator string, and whether the separator
- * was trailing (`seq(X, SEP)`); or `null` when no separator shape is present.
+ * repeat/repeat1 content body, where `SEP` is a string literal or a
+ * choice-of-literals. Returns the non-separator content, the FULL detected
+ * separator rule (a `StringRule` for the literal case, the whole `ChoiceRule`
+ * for a choice-shaped one — no longer narrowed to its first arm, PR-S), and
+ * whether the separator was trailing (`seq(X, SEP)`); or `null` when no
+ * separator shape is present.
  *
  * Pure: reports the shape; the caller decides whether to lift it onto a
- * `repeat` (evaluate) or read it for group creation (enrich).
+ * `repeat` (link) or read it for group creation (enrich).
  */
 export function detectRepeatSeparator<R extends RuntimeRule>(
 	resolved: R
-): { content: R; separator: string; trailing?: boolean } | null {
+): { content: R; separator: R; trailing?: boolean } | null {
 	if (!typeEq(resolved.type, 'SEQ')) return null;
 	const members = (resolved as { members?: R[] }).members;
 	if (!members || members.length !== 2) return null;
 	const [first, second] = members as [R, R];
 
-	const firstStr = typeEq(first.type, 'STRING') ? ((first as { value?: unknown }).value as string) : null;
-	const secondStr = typeEq(second.type, 'STRING') ? ((second as { value?: unknown }).value as string) : null;
+	const firstIsStr = typeEq(first.type, 'STRING');
+	const secondIsStr = typeEq(second.type, 'STRING');
 
 	// Canonical: `seq(SEP, X)` (leading) or `seq(X, SEP)` (trailing).
-	if (firstStr !== null && secondStr === null) return { content: second, separator: firstStr };
-	if (secondStr !== null && firstStr === null) return { content: first, separator: secondStr, trailing: true };
+	if (firstIsStr && !secondIsStr) return { content: second, separator: first };
+	if (secondIsStr && !firstIsStr) return { content: first, separator: second, trailing: true };
 
-	// Choice-of-separators in the separator position.
-	const firstSepChoice = typeEq(first.type, 'CHOICE') ? firstStringOfChoice(first) : null;
-	const secondSepChoice = typeEq(second.type, 'CHOICE') ? firstStringOfChoice(second) : null;
-	if (firstSepChoice !== null && secondStr === null) return { content: second, separator: firstSepChoice };
-	if (secondSepChoice !== null && firstStr === null) return { content: first, separator: secondSepChoice, trailing: true };
+	// Choice-of-separators in the separator position — preserve the FULL
+	// choice; the caller (and everything downstream, per PR-S) now knows how
+	// to handle a non-literal separator rule.
+	const firstIsChoice = typeEq(first.type, 'CHOICE');
+	const secondIsChoice = typeEq(second.type, 'CHOICE');
+	if (firstIsChoice && !secondIsStr) return { content: second, separator: first };
+	if (secondIsChoice && !firstIsStr) return { content: first, separator: second, trailing: true };
 
 	return null;
 }
