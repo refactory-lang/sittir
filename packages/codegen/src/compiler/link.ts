@@ -359,12 +359,9 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// visible→visible alias-target map (slot accept-set union), derived together so
 	// the two facets of `alias(symbol(X), $.target)` can never drift apart.
 	// raw.rules is Rule<'evaluate'> (pre-resolveRule, by design — see comment
-	// above); collectAliasedByParents only walks ALIAS/SYMBOL/structural shapes
-	// present in both phases — widen the phase view (post-PR-S cast, see
-	// resolveRule's call site above for the same rationale).
-	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(
-		raw.rules as Record<string, Rule<'link'>>
-	);
+	// above), matching collectAliasedByParents's own Rule<'evaluate'> parameter
+	// directly — no phase-widening cast needed here.
+	const { parentAliasedKinds, visibleAliasTargets } = collectAliasedByParents(raw.rules);
 
 	classifyAndLogHiddenRules(rules, linkCtx);
 	// PR-P Task 2: promoteAndLogTerminalRules removed — terminals classify by shape at Assemble
@@ -774,7 +771,10 @@ function collectAliasedByParents(rawRules: Record<string, Rule<'evaluate'>>): {
 			walk((rule as { content: Rule<'link'> }).content);
 		}
 	}
-	for (const rule of Object.values(rawRules)) walk(rule);
+	// rawRules is Rule<'evaluate'> (pre-resolveRule); walk only reads
+	// ALIAS/SYMBOL/structural shapes present in both phases — widen the phase
+	// view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
+	for (const rule of Object.values(rawRules)) walk(rule as Rule<'link'>);
 	return { parentAliasedKinds, visibleAliasTargets };
 }
 
