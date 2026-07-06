@@ -4,7 +4,7 @@ import { REPEAT, SEQ, CHOICE, STRING, SYMBOL } from '../../types/rule-types.ts';
 import type { RawGrammar } from '../types.ts';
 import { createEmptyRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
-import { DiagnosticSink } from '../../types/diagnostics.ts';
+import { DiagnosticSink, type CompilerDiagnostic } from '../../types/diagnostics.ts';
 import { formatCompilerDiagnostics } from '../diagnostics/grammar-diagnostics.ts';
 
 vi.mock('../generated-metadata.ts', async () => {
@@ -147,10 +147,11 @@ describe('generate() — non-literal-separator diagnostic surfacing (PR-S task 5
 		const warnings = diagnostics
 			.all()
 			.filter(
-				(d) => d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
+				(d): d is CompilerDiagnostic =>
+					d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
 			);
 		expect(warnings).toHaveLength(1);
-		const rendered = formatCompilerDiagnostics(warnings as never);
+		const rendered = formatCompilerDiagnostics(warnings);
 		expect(rendered).toContain('non-literal-separator');
 		expect(rendered).toContain('(link)');
 	});
