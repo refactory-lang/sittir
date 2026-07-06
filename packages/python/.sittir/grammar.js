@@ -2019,6 +2019,11 @@ function buildTwoArgFieldResult(native, name, content) {
 }
 
 // packages/codegen/src/dsl/transform/transform.ts
+function makePolymorphAliasNode(hiddenName, visibleName) {
+  const alias2 = nativeRuleFn("alias");
+  const sym = nativeRuleFn("sym", "symbol");
+  return alias2(sym(hiddenName), sym(visibleName));
+}
 function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
@@ -2141,12 +2146,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
-    refs.push({
-      type: "ALIAS",
-      content: { type: "SYMBOL", name: hiddenName },
-      named: true,
-      value: visibleName
-    });
+    refs.push(makePolymorphAliasNode(hiddenName, visibleName));
   }
   registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
   const newChoice = reconstructContainer(choice2, refs);
@@ -2400,12 +2400,7 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
   if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body))) {
     throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
   }
-  const aliasNode = {
-    type: "ALIAS",
-    content: { type: "SYMBOL", name: hiddenName },
-    named: true,
-    value: aliasValue
-  };
+  const aliasNode = makePolymorphAliasNode(hiddenName, aliasValue);
   if (factored) {
     const optional2 = globalThis.optional;
     if (typeof optional2 !== "function") {
