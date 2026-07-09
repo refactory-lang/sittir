@@ -85,18 +85,36 @@ identified small caller set that gets migrated in the same task.
 - `pnpm exec oxfmt .` — 284 of 582 files currently have formatting drift.
 
 **Zero/near-zero-caller deprecated symbol deletions (items 4 + 6):**
-- `NodeId` type alias — `packages/types/src/core-types.ts:53` (tag at :50). Zero
-  references anywhere. Delete.
-- `RuleIdentity` — `packages/codegen/src/types/rule.ts:174`. Zero references. Delete.
-- `isNativeNodeData`/`assertNativeNodeData` — `packages/common/src/native-boundary.ts:176-180`,
-  re-exported `packages/common/src/index.ts:12-13`. Only consumer is
-  `packages/core/tests/native-boundary.test.ts:4-50`, which tests the aliases *as*
-  aliases. Delete both the symbols and that test file.
-- `SymbolRule.supertype` field — `packages/codegen/src/types/rule.ts:460`. Zero
-  writers, zero readers. Delete field.
-- `FieldRule.nameFrom` — `packages/codegen/src/types/rule.ts:307`. Zero writers; one
-  dead-propagation read at `packages/codegen/src/compiler/evaluate.ts:1313` that
-  copies a value nothing ever sets. Delete field and the dead read.
+
+**CORRECTION (found at Task 3 execution time, superseding the original grounding
+below — the original pass ran on the same infigraph index caught stale/wrong
+elsewhere in this document):** `RuleIdentity`, `SymbolRule.supertype`, and
+`FieldRule.nameFrom` are already deleted — confirmed via `git log -S` to have
+been removed by an earlier, unrelated commit (`eb47d0d65`, "debt PR-A — remove
+pure-dead surface … #116") already present on this branch. `isNativeNodeData`/
+`assertNativeNodeData` don't exist under those names at all — they were
+already renamed to `isRenderableNodeData`/`assertRenderableNodeData`, which
+are **live, non-deprecated** functions;
+`packages/core/tests/native-boundary.test.ts` tests that live API and must
+NOT be deleted. Only `NodeId` is real, and it has 3 additional dead-import
+sites beyond the one file originally cited: `packages/core/src/types.ts:8`
+(re-export), `packages/tools/src/probe/kind.ts:84` (unused import),
+`packages/core/tests/readNode.test.ts:17` (unused import).
+
+- `NodeId` type alias — `packages/types/src/core-types.ts:49-53` (tag + type).
+  Zero *functional* references (no code binds a value to it), but is still
+  imported (unused) in `packages/core/src/types.ts:8`,
+  `packages/tools/src/probe/kind.ts:84`, and
+  `packages/core/tests/readNode.test.ts:17`. Delete the type and all four
+  dead imports.
+- ~~`RuleIdentity`~~ — already deleted (see correction above). No task needed.
+- ~~`isNativeNodeData`/`assertNativeNodeData`~~ — already renamed to
+  `isRenderableNodeData`/`assertRenderableNodeData` (live, not deprecated).
+  No task needed; do not delete `packages/core/tests/native-boundary.test.ts`.
+- ~~`SymbolRule.supertype` field~~ — already deleted (see correction above).
+  No task needed.
+- ~~`FieldRule.nameFrom`~~ — already deleted (see correction above), including
+  its dead-propagation read. No task needed.
 - `wrap.init()`/`wrap.collect()` — `packages/codegen/src/emitters/wrap.ts:117-125`.
   Back-compat no-ops, zero call sites. Delete.
 - `from.init()`/`from.collect()` — `packages/codegen/src/emitters/from.ts:264-266`.

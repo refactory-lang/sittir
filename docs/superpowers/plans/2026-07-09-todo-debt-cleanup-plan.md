@@ -115,61 +115,50 @@ No logic changes."
 
 ---
 
-## Task 3: Cluster A — delete zero-caller deprecated symbols (batch 1: types + native-boundary)
+## Task 3: Cluster A — delete the `NodeId` dead type alias (batch 1, corrected scope)
+
+**CORRECTION (found when this task was first dispatched):** the original scope
+also listed `RuleIdentity`, `SymbolRule.supertype`, `FieldRule.nameFrom`, and
+`isNativeNodeData`/`assertNativeNodeData` for deletion. Direct investigation
+(ast-grep across the whole repo + `git log -S`) found: the first three are
+already deleted by an earlier, unrelated commit (`eb47d0d65`, "debt PR-A —
+remove pure-dead surface … #116") already present on this branch — nothing to
+do. `isNativeNodeData`/`assertNativeNodeData` don't exist under those names at
+all — already renamed to `isRenderableNodeData`/`assertRenderableNodeData`,
+which are **live, non-deprecated** functions; `packages/core/tests/native-boundary.test.ts`
+tests that live API and must NOT be deleted. Only `NodeId` was real, and it
+turned out to have 3 additional dead-import sites beyond the one file
+originally cited. This task is scoped to just `NodeId` now.
 
 **Files:**
-- Modify: `packages/types/src/core-types.ts` (delete `NodeId` type alias, ~line 50-53).
-- Modify: `packages/codegen/src/types/rule.ts` (delete `RuleIdentity`, ~line 174; delete `SymbolRule.supertype` field, ~line 460; delete `FieldRule.nameFrom` field, ~line 307).
-- Modify: `packages/codegen/src/compiler/evaluate.ts` (delete the dead `nameFrom` propagation read, ~line 1313).
-- Modify: `packages/common/src/native-boundary.ts` (delete `isNativeNodeData`/`assertNativeNodeData`, ~lines 176-180).
-- Modify: `packages/common/src/index.ts` (remove the re-export of `isNativeNodeData`/`assertNativeNodeData`, ~lines 12-13).
-- Delete: `packages/core/tests/native-boundary.test.ts`.
+- Modify: `packages/types/src/core-types.ts` (delete `NodeId` type alias + its `@deprecated` tag, ~lines 49-53).
+- Modify: `packages/core/src/types.ts` (remove the dead `NodeId` re-export, ~line 8).
+- Modify: `packages/tools/src/probe/kind.ts` (remove the unused `NodeId` import, ~line 84).
+- Modify: `packages/core/tests/readNode.test.ts` (remove the unused `NodeId` import, ~line 17).
 
 **Interfaces:**
 - Consumes: nothing from earlier tasks.
-- Produces: nothing later tasks depend on (pure deletions).
+- Produces: nothing later tasks depend on (pure deletion).
 
-- [ ] **Step 1: Re-verify each symbol has zero live callers**
+- [ ] **Step 1: Re-verify `NodeId` has zero functional (value-binding) references, only dead imports**
 
-For each symbol below, run `find_all_references` (infigraph) AND a direct text search, and confirm the caller list matches what's documented (or is now even smaller):
-- `NodeId` (`packages/types/src/core-types.ts`) — expect 0 references anywhere.
-- `RuleIdentity` (`packages/codegen/src/types/rule.ts`) — expect 0 references anywhere.
-- `SymbolRule.supertype` — expect 0 writers, 0 readers.
-- `FieldRule.nameFrom` — expect 0 writers; 1 dead read at `compiler/evaluate.ts:1313`.
-- `isNativeNodeData`/`assertNativeNodeData` (`packages/common/src/native-boundary.ts`) — expect the only consumer is `packages/core/tests/native-boundary.test.ts`.
-
-If any symbol now has a real caller that wasn't there before (codebase drift), STOP that specific deletion and report it — do not delete something that's gained a caller since the spec was written.
+Run `find_all_references` (infigraph) AND a direct text/ast-grep search (`sg --pattern 'NodeId' --lang ts packages`) for `NodeId`. Confirm: no code anywhere binds a value to the `NodeId` type (it's purely a type-level dead alias), and the only remaining references are the 4 import/declaration sites listed in Files above. If you find a real functional use, STOP and report it — do not delete something that's gained a real use since this correction was written.
 
 - [ ] **Step 2: Confirm current test coverage passes before deleting**
 
-Run: `pnpm vitest run packages/common/tests/native-boundary.test.ts` (or wherever it actually resolves via workspace config)
+Run: `pnpm test`
 Expected: PASS (this is the "before" side of the regression-test cycle for a pure deletion).
 
-- [ ] **Step 3: Delete `NodeId`**
+- [ ] **Step 3: Delete `NodeId` and all 4 dead references**
 
-In `packages/types/src/core-types.ts`, remove the `@deprecated` tag and the `export type NodeId = number;` declaration (and its preceding doc comment).
+In `packages/types/src/core-types.ts`, remove the `@deprecated` tag and the `export type NodeId = number;` declaration (and its preceding doc comment). In `packages/core/src/types.ts:8`, remove the dead re-export. In `packages/tools/src/probe/kind.ts:84`, remove the unused import. In `packages/core/tests/readNode.test.ts:17`, remove the unused import. Re-verify each line number first — this plan correction was written from a report, not a fresh read.
 
-- [ ] **Step 4: Delete `RuleIdentity`, `SymbolRule.supertype`, `FieldRule.nameFrom`, and the dead `nameFrom` read**
-
-In `packages/codegen/src/types/rule.ts`:
-- Remove the `RuleIdentity` type declaration and its `@deprecated` doc comment.
-- Remove the `supertype?: string` field from `SymbolRule`'s type body.
-- Remove the `nameFrom?: ...` field from `FieldRule`'s type body.
-
-In `packages/codegen/src/compiler/evaluate.ts:1313` (re-verify the line first — file may have shifted): remove the code that reads `.nameFrom` and propagates it (it copies a value nothing ever sets).
-
-- [ ] **Step 5: Delete `isNativeNodeData`/`assertNativeNodeData` and their test**
-
-In `packages/common/src/native-boundary.ts`, remove both function declarations (~lines 176-180) and their `@deprecated` doc comments.
-In `packages/common/src/index.ts`, remove the re-export line(s) for both symbols.
-Delete `packages/core/tests/native-boundary.test.ts` entirely (its only job was testing these two aliases as aliases).
-
-- [ ] **Step 6: Run the full test suite**
+- [ ] **Step 4: Run the full test suite**
 
 Run: `pnpm test`
-Expected: PASS — same result as Step 2's baseline, minus the now-deleted `native-boundary.test.ts` file's tests (which is expected — those tests only asserted the now-deleted symbols existed and behaved as aliases).
+Expected: PASS — identical result to Step 2's baseline (pure dead-import removal, no behavior change).
 
-- [ ] **Step 7: Regenerate and re-verify the baseline**
+- [ ] **Step 5: Regenerate and re-verify the baseline**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
@@ -179,17 +168,18 @@ SITTIR_NATIVE_DEBUG=0 pnpm run validate:native > /tmp/task3-validate.log 2>&1; t
 ```
 Expected: `read-render-parse-AstMatchPass` still exactly rust=117/typescript=75/python=102.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add packages/types/src/core-types.ts packages/codegen/src/types/rule.ts packages/codegen/src/compiler/evaluate.ts packages/common/src/native-boundary.ts packages/common/src/index.ts
-git rm packages/core/tests/native-boundary.test.ts
+git add packages/types/src/core-types.ts packages/core/src/types.ts packages/tools/src/probe/kind.ts packages/core/tests/readNode.test.ts
 git add packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json rust/crates/sittir-rust/test-fixtures.json rust/crates/sittir-typescript/test-fixtures.json rust/crates/sittir-python/test-fixtures.json
-git commit -m "chore: delete zero-caller deprecated symbols (NodeId, RuleIdentity, SymbolRule.supertype, FieldRule.nameFrom, isNativeNodeData/assertNativeNodeData)
+git commit -m "chore: delete dead NodeId type alias and its 3 unused import sites
 
-All five carried an explicit @deprecated tag with zero (or test-only)
-callers, per the Track 1 grounding pass. Deletes the native-boundary
-test that only exercised the last pair as aliases."
+RuleIdentity/SymbolRule.supertype/FieldRule.nameFrom were already
+deleted by an earlier, unrelated commit (eb47d0d65). isNativeNodeData/
+assertNativeNodeData were already renamed to isRenderableNodeData/
+assertRenderableNodeData (live, not deprecated) — left untouched.
+NodeId was the only genuinely-dead symbol in this batch."
 ```
 
 ---
