@@ -142,12 +142,15 @@ and still the plan** — only the following facts needed refreshing:
   This narrows the **remaining** gap precisely to what this spec's Model section already targets:
   render still can't recover the separator's *actual per-instance text* for a rule-shaped separator, it can
   only decline to guess. That's still exactly PR-T's job.
-- **`render-module.ts:2283-2288` / `bridge.rs:154-194 detect_field_trailing_sep` — both stale citations.**
-  `bridge.rs` was deleted entirely by the D2A normalize-inline effort
-  (`docs/superpowers/plans/2026-06-04-d2a-normalize-inline.md`). The one remaining hardcode site described
-  in Bug 1 below has moved to `emitters/render-module.ts`'s `renderTransportStruct` (`leading: false,` /
-  `trailing: false,`) — cite by symbol name going forward, not line number, since this file has already
-  shifted once.
+- **`render-module.ts:2283-2288` / `bridge.rs:154-194 detect_field_trailing_sep` — both stale, and the
+  correction below (from the first grounding pass) was ALSO wrong; this is the second, verified pass.**
+  `bridge.rs` doesn't just have a moved function — it's gone entirely, and so is the `trailing_sep`/
+  `leading_sep`-per-kind-struct model it belonged to (superseded template-generation architecture, specs
+  011/012). The current hardcode site is `emitters/render-module.ts`'s `buildTypedTemplateBody`
+  (`leading: false,` / `trailing: false,` unconditionally on every list-view slot), targeting
+  `ListNonterminalView<'a>` (`rust/crates/sittir-core/src/filters.rs`: `{ items, separator, leading: bool,
+  trailing: bool }`). Cite `buildTypedTemplateBody` / `ListNonterminalView` by symbol name going forward,
+  not line number — this file has already shifted at least twice.
 - **`detectRepeatSeparator` (`dsl/list-patterns.ts`) is now widened — a genuine head start for PR-T.**
   PR-S Task 3 changed it to return the **full** detected separator `Rule` (including CHOICE shapes)
   instead of narrowing to the first string arm via `firstStringOfChoice`. This full rule-shaped value is
