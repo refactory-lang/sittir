@@ -14,7 +14,6 @@
 import { describe, it, expect } from 'vitest';
 import { readNode } from '../src/readNode.ts';
 import type { AnyTreeNode, TreeHandle } from '../src/readNode.ts';
-import type { NodeId } from '../src/types.ts';
 
 interface FakeChild {
 	type: string;

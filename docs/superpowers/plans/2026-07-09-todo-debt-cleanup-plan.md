@@ -18,7 +18,9 @@
   pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
   pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
   ```
-  then `git add` the regenerated `packages/{rust,typescript,python}/.sittir/generated.manifest.json` and `rust/crates/sittir-{rust,typescript,python}/test-fixtures.json` alongside your source changes in the SAME commit. The pre-commit hook runs a repo-wide manifest consistency check (`propose-14` + generated-manifest verification) regardless of what's staged — an out-of-date manifest blocks the commit.
+  **Two-commit split, found necessary at Task 3 (do not skip either half):**
+  1. **Feature commit** — your source changes, plus `packages/{rust,typescript,python}/.sittir/generated.manifest.json` AND `packages/{rust,typescript,python}/.sittir/grammar.js` (`git add packages/rust/.sittir/grammar.js packages/typescript/.sittir/grammar.js packages/python/.sittir/grammar.js` — check `git status` on these three every time, they change on every regen even when nothing else does, and the pre-commit hook's manifest check hashes `grammar.js`'s exact bytes; omitting it while committing the manifest leaves a mismatch that blocks every subsequent commit until someone fixes it, which is exactly what happened after Task 2). Verify clean before committing: `pnpm exec tsx packages/codegen/src/scripts/verify-manifests-cli.ts` must exit 0.
+  2. **Separate validator-recording commit** — `rust/crates/sittir-{rust,typescript,python}/test-fixtures.json` alone, message `chore(validator): record validation run (rust/native, typescript/native, python/native)`. Do NOT bundle `test-fixtures.json` into the feature commit — `packages/codegen/src/scripts/generated-manifest.ts`'s `isManifestUntracked()` deliberately excludes it from the manifest specifically because it's derived validator output regenerated on every run, and the project's standing discipline (matching the many pre-existing `chore(validator): record validation run` commits in `git log`) is that it never lands in a feature commit.
 - **`SITTIR_NATIVE_DEBUG=1` is set in the ambient shell environment.** Every `validate:native` invocation in this plan MUST be prefixed `SITTIR_NATIVE_DEBUG=0` — debug native binaries are refused for validation by design (known segfault class). Example: `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native`.
 - **Gate every task on `read-render-parse-AstMatchPass` holding steady or improving.** Fresh baseline as of commit `97d88460`: **rust=117, typescript=75, python=102**. Re-confirm this fresh at the start of Task 1 (do not assume it still holds by the time later tasks run — re-verify after every task that touches `packages/codegen/src/**`). Clusters A/C/E must be exactly byte-neutral (identical counts). Cluster B and Cluster A's `toNativeRenderTransport`-stub-removal task are the only ones expected to change generated `utils.ts`/`wrap.ts`/`engine.ts`/`backend.ts` output — review that diff, don't treat it as a failure.
 - **Verify caller counts fresh immediately before every deletion**, via infigraph `find_all_references`, cross-checked with a direct text/import search (infigraph's index has proven stale/unreliable multiple times this session — do not trust it alone). Re-read the current file first; do not trust this plan's or the spec's line numbers blindly, the codebase is actively changing.
@@ -115,61 +117,51 @@ No logic changes."
 
 ---
 
-## Task 3: Cluster A — delete zero-caller deprecated symbols (batch 1: types + native-boundary)
+## Task 3: Cluster A — delete the `NodeId` dead type alias (batch 1, corrected scope)
+
+**CORRECTION (found when this task was first dispatched):** the original scope
+also listed `RuleIdentity`, `SymbolRule.supertype`, `FieldRule.nameFrom`, and
+`isNativeNodeData`/`assertNativeNodeData` for deletion. Direct investigation
+(ast-grep across the whole repo + `git log -S`) found: the first three are
+already deleted by an earlier, unrelated commit (`eb47d0d65`, "debt PR-A —
+remove pure-dead surface … #116") already present on this branch — nothing to
+do. `isNativeNodeData`/`assertNativeNodeData` don't exist under those names at
+all — already renamed to `isRenderableNodeData`/`assertRenderableNodeData`,
+which are **live, non-deprecated** functions; `packages/core/tests/native-boundary.test.ts`
+tests that live API and must NOT be deleted. Only `NodeId` was real, and it
+turned out to have 3 additional dead-import sites beyond the one file
+originally cited. This task is scoped to just `NodeId` now.
 
 **Files:**
-- Modify: `packages/types/src/core-types.ts` (delete `NodeId` type alias, ~line 50-53).
-- Modify: `packages/codegen/src/types/rule.ts` (delete `RuleIdentity`, ~line 174; delete `SymbolRule.supertype` field, ~line 460; delete `FieldRule.nameFrom` field, ~line 307).
-- Modify: `packages/codegen/src/compiler/evaluate.ts` (delete the dead `nameFrom` propagation read, ~line 1313).
-- Modify: `packages/common/src/native-boundary.ts` (delete `isNativeNodeData`/`assertNativeNodeData`, ~lines 176-180).
-- Modify: `packages/common/src/index.ts` (remove the re-export of `isNativeNodeData`/`assertNativeNodeData`, ~lines 12-13).
-- Delete: `packages/core/tests/native-boundary.test.ts`.
+- Modify: `packages/types/src/core-types.ts` (delete `NodeId` type alias + its `@deprecated` tag, ~lines 49-53).
+- Modify: `packages/types/src/index.ts` (remove `NodeId` from the `export type { ... }` barrel block, ~line 27 — found on the 2nd dispatch attempt, not in the original scope).
+- Modify: `packages/core/src/types.ts` (remove the dead `NodeId` re-export, ~line 8).
+- Modify: `packages/tools/src/probe/kind.ts` (remove the unused `NodeId` import, ~line 84).
+- Modify: `packages/core/tests/readNode.test.ts` (remove the unused `NodeId` import, ~line 17).
 
 **Interfaces:**
 - Consumes: nothing from earlier tasks.
-- Produces: nothing later tasks depend on (pure deletions).
+- Produces: nothing later tasks depend on (pure deletion).
 
-- [ ] **Step 1: Re-verify each symbol has zero live callers**
+- [ ] **Step 1: Re-verify `NodeId` has zero functional (value-binding) references, only dead imports**
 
-For each symbol below, run `find_all_references` (infigraph) AND a direct text search, and confirm the caller list matches what's documented (or is now even smaller):
-- `NodeId` (`packages/types/src/core-types.ts`) — expect 0 references anywhere.
-- `RuleIdentity` (`packages/codegen/src/types/rule.ts`) — expect 0 references anywhere.
-- `SymbolRule.supertype` — expect 0 writers, 0 readers.
-- `FieldRule.nameFrom` — expect 0 writers; 1 dead read at `compiler/evaluate.ts:1313`.
-- `isNativeNodeData`/`assertNativeNodeData` (`packages/common/src/native-boundary.ts`) — expect the only consumer is `packages/core/tests/native-boundary.test.ts`.
-
-If any symbol now has a real caller that wasn't there before (codebase drift), STOP that specific deletion and report it — do not delete something that's gained a caller since the spec was written.
+Run `find_all_references` (infigraph) AND a direct text/ast-grep search (`sg --pattern 'NodeId' --lang ts packages`) for `NodeId`. Confirm: no code anywhere binds a value to the `NodeId` type (it's purely a type-level dead alias), and the only remaining references are the 5 import/declaration sites listed in Files above (a 2nd dispatch of this exact task already confirmed exactly these 5 via `sg`, including the `packages/types/src/index.ts:27` barrel export the original task text missed). If you find a 6th reference or a real functional use, STOP and report it.
 
 - [ ] **Step 2: Confirm current test coverage passes before deleting**
 
-Run: `pnpm vitest run packages/common/tests/native-boundary.test.ts` (or wherever it actually resolves via workspace config)
+Run: `pnpm test`
 Expected: PASS (this is the "before" side of the regression-test cycle for a pure deletion).
 
-- [ ] **Step 3: Delete `NodeId`**
+- [ ] **Step 3: Delete `NodeId` and all 5 dead references**
 
-In `packages/types/src/core-types.ts`, remove the `@deprecated` tag and the `export type NodeId = number;` declaration (and its preceding doc comment).
+In `packages/types/src/core-types.ts`, remove the `@deprecated` tag and the `export type NodeId = number;` declaration (and its preceding doc comment). In `packages/types/src/index.ts:27`, remove `NodeId` from the `export type { ... }` barrel block (keep every other type in that block untouched). In `packages/core/src/types.ts:8`, remove the dead re-export. In `packages/tools/src/probe/kind.ts:84`, remove the unused import. In `packages/core/tests/readNode.test.ts:17`, remove the unused import. Re-verify each line number first — this plan correction was written from a report, not a fresh read.
 
-- [ ] **Step 4: Delete `RuleIdentity`, `SymbolRule.supertype`, `FieldRule.nameFrom`, and the dead `nameFrom` read**
-
-In `packages/codegen/src/types/rule.ts`:
-- Remove the `RuleIdentity` type declaration and its `@deprecated` doc comment.
-- Remove the `supertype?: string` field from `SymbolRule`'s type body.
-- Remove the `nameFrom?: ...` field from `FieldRule`'s type body.
-
-In `packages/codegen/src/compiler/evaluate.ts:1313` (re-verify the line first — file may have shifted): remove the code that reads `.nameFrom` and propagates it (it copies a value nothing ever sets).
-
-- [ ] **Step 5: Delete `isNativeNodeData`/`assertNativeNodeData` and their test**
-
-In `packages/common/src/native-boundary.ts`, remove both function declarations (~lines 176-180) and their `@deprecated` doc comments.
-In `packages/common/src/index.ts`, remove the re-export line(s) for both symbols.
-Delete `packages/core/tests/native-boundary.test.ts` entirely (its only job was testing these two aliases as aliases).
-
-- [ ] **Step 6: Run the full test suite**
+- [ ] **Step 4: Run the full test suite**
 
 Run: `pnpm test`
-Expected: PASS — same result as Step 2's baseline, minus the now-deleted `native-boundary.test.ts` file's tests (which is expected — those tests only asserted the now-deleted symbols existed and behaved as aliases).
+Expected: PASS — identical result to Step 2's baseline (pure dead-import removal, no behavior change).
 
-- [ ] **Step 7: Regenerate and re-verify the baseline**
+- [ ] **Step 5: Regenerate and re-verify the baseline**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
@@ -179,17 +171,18 @@ SITTIR_NATIVE_DEBUG=0 pnpm run validate:native > /tmp/task3-validate.log 2>&1; t
 ```
 Expected: `read-render-parse-AstMatchPass` still exactly rust=117/typescript=75/python=102.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add packages/types/src/core-types.ts packages/codegen/src/types/rule.ts packages/codegen/src/compiler/evaluate.ts packages/common/src/native-boundary.ts packages/common/src/index.ts
-git rm packages/core/tests/native-boundary.test.ts
+git add packages/types/src/core-types.ts packages/core/src/types.ts packages/tools/src/probe/kind.ts packages/core/tests/readNode.test.ts
 git add packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json rust/crates/sittir-rust/test-fixtures.json rust/crates/sittir-typescript/test-fixtures.json rust/crates/sittir-python/test-fixtures.json
-git commit -m "chore: delete zero-caller deprecated symbols (NodeId, RuleIdentity, SymbolRule.supertype, FieldRule.nameFrom, isNativeNodeData/assertNativeNodeData)
+git commit -m "chore: delete dead NodeId type alias and its 3 unused import sites
 
-All five carried an explicit @deprecated tag with zero (or test-only)
-callers, per the Track 1 grounding pass. Deletes the native-boundary
-test that only exercised the last pair as aliases."
+RuleIdentity/SymbolRule.supertype/FieldRule.nameFrom were already
+deleted by an earlier, unrelated commit (eb47d0d65). isNativeNodeData/
+assertNativeNodeData were already renamed to isRenderableNodeData/
+assertRenderableNodeData (live, not deprecated) — left untouched.
+NodeId was the only genuinely-dead symbol in this batch."
 ```
 
 ---
@@ -257,32 +250,60 @@ caller (link.ts) and deleted it."
 
 ## Task 5: Cluster A — remove `toNativeRenderTransport` stub (generated-output-affecting)
 
+**CORRECTION (found on first dispatch):** `packages/tools/src/probe/kind.ts:930-955`'s
+`nativeRenderPayload` dynamically imports each grammar's generated `utils.ts`
+and calls `toNativeRenderTransport`, **throwing** if it's absent — a genuine,
+still-live production caller the original grounding never found (unlike
+Tasks 3-4's stale-premise pattern, this one is real). It's used by
+`probe-kind`'s native-engine render path (`kind.ts:427-428`, `798-799,813`).
+Since the stub is already just an identity no-op (`return node`), the fix is
+to make `kind.ts` degrade gracefully instead of requiring it — this task's
+scope now includes that fix. Also: `utils-engine-emit.test.ts` has only ONE
+matching test (`'emits a deprecated no-op native transport seam'`, lines
+36-57), not two as originally described.
+
 **Files:**
 - Modify: `packages/codegen/src/emitters/client-utils.ts` (~line 126, stop emitting the stub).
-- Modify: `packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts` (remove the two test cases asserting the stub's presence).
+- Modify: `packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts` (remove the 1 test case asserting the stub's presence).
+- Modify: `packages/tools/src/probe/kind.ts:930-945` (`nativeRenderPayload` — fall back to an identity projection instead of throwing when `toNativeRenderTransport` is absent).
 
 **Interfaces:**
 - Consumes: nothing from earlier tasks.
 - Produces: nothing later tasks depend on.
 
-- [ ] **Step 1: Re-read the current emitter and both test cases**
+- [ ] **Step 1: Re-read the current emitter, the test file, and `kind.ts`'s caller**
 
-Re-verify `client-utils.ts:126`'s exact current content, and re-find the two `'emits a deprecated no-op native transport seam'` test cases in `utils-engine-emit.test.ts` (the spec cited lines 36 and 46 — re-verify, the file may have shifted since).
+Re-verify `client-utils.ts`'s current content around the stub emission, the test case in `utils-engine-emit.test.ts` (confirm it's really just 1, not 2), and `packages/tools/src/probe/kind.ts:930-955`'s `nativeRenderPayload`/`renderNodeDataNative` (confirm the throw-on-absent behavior and its call sites at `kind.ts:427-428`, `798-799,813`).
 
-- [ ] **Step 2: Confirm the two tests currently pass (baseline)**
+- [ ] **Step 2: Confirm the test currently passes (baseline)**
 
 Run: `pnpm vitest run packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts`
-Expected: PASS, including both `toNativeRenderTransport` assertions.
+Expected: PASS, including the `toNativeRenderTransport` assertion.
 
-- [ ] **Step 3: Remove the stub emission from the emitter template**
+- [ ] **Step 3: Fix `kind.ts` to not require the stub**
 
-In `packages/codegen/src/emitters/client-utils.ts`, remove the code path that emits `toNativeRenderTransport`'s no-op body into generated `utils.ts` (~line 126). Do not touch anything else in this template.
+In `packages/tools/src/probe/kind.ts`'s `nativeRenderPayload`, change:
+```ts
+const project = utils.toNativeRenderTransport;
+if (!project) {
+	throw new Error(`native transport projector missing for grammar '${grammar}'`);
+}
+```
+to:
+```ts
+const project = utils.toNativeRenderTransport ?? ((node: unknown) => node);
+```
+This preserves the exact current runtime behavior (the stub is an identity no-op today, so this fallback is behaviorally identical) while removing the hard dependency on an emitter output this task is about to delete. Run `pnpm vitest run` on whatever test file covers `probe/kind.ts`'s native render path (search for it) to confirm no regression from this specific change before moving on.
 
-- [ ] **Step 4: Delete the two now-obsolete test cases**
+- [ ] **Step 4: Remove the stub emission from the emitter template**
 
-In `packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts`, remove both `it('emits a deprecated no-op native transport seam', ...)` blocks.
+In `packages/codegen/src/emitters/client-utils.ts`, remove the code path that emits `toNativeRenderTransport`'s no-op body into generated `utils.ts`. Do not touch anything else in this template.
 
-- [ ] **Step 5: Regenerate all three grammars and inspect the diff**
+- [ ] **Step 5: Delete the now-obsolete test case**
+
+In `packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts`, remove the `it('emits a deprecated no-op native transport seam', ...)` block.
+
+- [ ] **Step 6: Regenerate all three grammars and inspect the diff**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
@@ -292,20 +313,20 @@ git diff --stat -- packages/rust/src/utils.ts packages/typescript/src/utils.ts p
 ```
 Expected: each grammar's generated `utils.ts` shrinks by the removed stub function — this IS an expected generated-output change for this task, review it (confirm `toNativeRenderTransport` is gone and nothing else changed) rather than treating the diff as a failure.
 
-- [ ] **Step 6: Run the full test suite**
+- [ ] **Step 7: Run the full test suite**
 
 Run: `pnpm test`
 Expected: PASS.
 
-- [ ] **Step 7: Re-verify the native validation baseline**
+- [ ] **Step 8: Re-verify the native validation baseline**
 
 Run: `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native > /tmp/task5-validate.log 2>&1; tail -100 /tmp/task5-validate.log`
 Expected: exactly rust=117/typescript=75/python=102 (this task removes a no-op stub, so counts should not move — only the generated file's byte content changes).
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit (feature commit — includes `kind.ts`, unlike the original task text)**
 
 ```bash
-git add packages/codegen/src/emitters/client-utils.ts packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts packages/rust/src/utils.ts packages/typescript/src/utils.ts packages/python/src/utils.ts packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json rust/crates/sittir-rust/test-fixtures.json rust/crates/sittir-typescript/test-fixtures.json rust/crates/sittir-python/test-fixtures.json
+git add packages/codegen/src/emitters/client-utils.ts packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts packages/tools/src/probe/kind.ts packages/rust/src/utils.ts packages/typescript/src/utils.ts packages/python/src/utils.ts packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json packages/rust/.sittir/grammar.js packages/typescript/.sittir/grammar.js packages/python/.sittir/grammar.js
 git commit -m "chore: stop emitting deprecated toNativeRenderTransport no-op stub
 
 Removes the emitter's dead no-op body from generated utils.ts across
