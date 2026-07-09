@@ -17,13 +17,12 @@
  * left as `string`-typed escape hatches here (see PathKey below) — typing
  * them precisely is future work and degrading to `string` is sound.
  *
- * DEPTH / PERF (the stated risk): this resolves a CONCRETE path string to
- * the rule at that position (`RuleAtPath`) — depth bounded by the path
- * length, NOT by enumerating all paths (no `type-fest` `Paths` over the
- * 182-rule registry, which would blow up). SYMBOL stays a lazy name-tagged
- * leaf: we do NOT follow symbols cross-rule (authored paths address within
- * one rule's inline nesting). First-segment autocomplete (`TopLevelKeys`) is
- * a cheap hand-rolled union over the top-level members tuple.
+ * PERF (the stated risk): First-segment autocomplete (`TopLevelKeys`) is a
+ * cheap hand-rolled union over the top-level members tuple, NOT a full path
+ * walk over all paths (no `type-fest` `Paths` over the 182-rule registry,
+ * which would blow up). SYMBOL stays a lazy name-tagged leaf: we do NOT
+ * follow symbols cross-rule (authored paths address within one rule's
+ * inline nesting).
  */
 
 import type { GrammarRule, SeqRule, ChoiceRule, PrecRuleUnion, SingleContentWrapper } from './grammar-json.ts';
@@ -35,65 +34,12 @@ import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
 
 // ---------------------------------------------------------------------------
-// Split a `/`-joined path into a segment tuple.
-// ---------------------------------------------------------------------------
-
-type Split<S extends string> = S extends `${infer Head}/${infer Tail}` ? [Head, ...Split<Tail>] : [S];
-
-// ---------------------------------------------------------------------------
 // Resolve a single positional index against a rule's children, after
 // transparently peeling PREC wrappers.
 // ---------------------------------------------------------------------------
 
 /** Peel all leading PREC wrappers (transparent) to the structural rule. */
 type PeelPrec<N extends GrammarRule> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
-
-/** Parse a numeric-literal segment into a number; else never. */
-type ToIndex<S extends string> = S extends `${infer N extends number}` ? N : never;
-
-/**
- * The child rule reached by index `I` at rule `N` (after PREC peel):
- *   - container: members[I]
- *   - single-content wrapper: content (I must be 0 / -1; we accept any
- *     numeric for ergonomics since wrappers have one slot)
- */
-type ChildAt<N extends GrammarRule, I extends number> =
-	PeelPrec<N> extends infer P
-		? P extends SeqRule | ChoiceRule
-			? I extends keyof P['members']
-				? P['members'][I] extends GrammarRule
-					? P['members'][I]
-					: never
-				: never
-			: P extends SingleContentWrapper
-				? P['content']
-				: never
-		: never;
-
-/**
- * Walk a tuple of (string) segments down the rule tree. Each segment is a
- * numeric index. Returns the rule at the addressed position, or `never` if
- * the path runs off a leaf / out of bounds.
- */
-type WalkSegments<N extends GrammarRule, Segs extends readonly string[]> = Segs extends readonly [
-	infer Head extends string,
-	...infer Rest extends string[]
-]
-	? ToIndex<Head> extends infer I
-		? I extends number
-			? ChildAt<N, I> extends infer Child
-				? Child extends GrammarRule
-					? Rest extends readonly []
-						? Child
-						: WalkSegments<Child, Rest>
-					: never
-				: never
-			: never // non-numeric segment -> unresolved
-		: never
-	: N;
-
-/** The rule a concrete path string resolves to within rule `N`. */
-export type RuleAtPath<N extends GrammarRule, P extends string> = WalkSegments<N, Split<P>>;
 
 // ---------------------------------------------------------------------------
 // First-segment autocomplete (shallow). The cheap, perf-safe layer: the

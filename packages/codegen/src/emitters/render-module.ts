@@ -383,18 +383,6 @@ export function planRenderModuleTemplateCopies(lang: Grammar, templates: Emitted
 	return { directory, files };
 }
 
-export function emitRenderModuleBundle(
-	lang: Grammar,
-	templates: EmittedTemplates,
-	nodeMap: NodeMap,
-	generatedIdTables?: GeneratedIdTables
-): RenderModuleBundle {
-	return {
-		emit: emitRenderModule(lang, templateFilesFromEmittedTemplates(templates), nodeMap, generatedIdTables),
-		templateCopies: planRenderModuleTemplateCopies(lang, templates)
-	};
-}
-
 /** Struct name: PascalCase(kind). Mirrors the AssembledNode.typeName
  *  conventions so emitted struct names match the factory/type naming
  *  per the T027 struct-name directive.

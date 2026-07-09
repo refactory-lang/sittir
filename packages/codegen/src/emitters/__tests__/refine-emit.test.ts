@@ -20,7 +20,7 @@ import { resolveRefinePath, narrowedFieldLiteralsForForm } from '../../compiler/
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { emitTypes } from '../types.ts';
-import { emitFactories } from '../factories.ts';
+import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { emitIr } from '../ir.ts';
 import { emitAll } from '../emit.ts';
 import { createEmptyRuleCatalog } from '../../compiler/rule-catalog.ts';

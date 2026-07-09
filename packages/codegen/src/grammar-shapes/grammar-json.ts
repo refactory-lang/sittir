@@ -196,9 +196,6 @@ export type PrecRuleUnion = PrecRule | PrecLeftRule | PrecRightRule | PrecDynami
 /** Single-content wrappers that CONSUME a path segment (index 0 / -1). */
 export type SingleContentWrapper = RepeatRule | Repeat1Rule | FieldRule | AliasRule | TokenRule | ImmediateTokenRule;
 
-/** Container rules whose members are positionally addressable. */
-export type ContainerRule<M extends readonly GrammarRule[] = GrammarRule[]> = SeqRule<M> | ChoiceRule<M>;
-
 // ---------------------------------------------------------------------------
 // MutableDeep<> — the readonly→mutable bridge used ONLY to PROVE the
 // subtyping ladder `GrammarJson ⊑ GrammarSchema<string>` (modulo readonly).

@@ -213,26 +213,6 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	}
 }
 
-/**
- * Build a minimal `Grammar<'link'>` (= {@link LinkedGrammar}) from a bare
- * resolved rules map, defaulting every other phase-invariant field to an
- * empty/absent value. For call sites (tests) that only have a rules map in
- * hand — not a full `link()` output — and need a `NormalizeCtx` (S2:
- * `NormalizeCtx` now requires a full `Grammar<'link'>` container, not a bare
- * `rules` field).
- */
-export function makeLinkedGrammar(rules: Record<string, Rule<'link'>>): LinkedGrammar {
-	return {
-		name: '',
-		rules,
-		supertypes: new Set(),
-		externalRoles: new Map(),
-		word: null,
-		references: [],
-		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] }
-	};
-}
-
 export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const include = ctx?.include;
 	const supertypes = new Set(raw.supertypes);

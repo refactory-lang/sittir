@@ -1,26 +1,20 @@
 /**
  * intellisense-demo.test-d.ts — SCRATCH demonstration that the derived
- * (post-Enrich) rule shapes give authoring IntelliSense for BOTH halves.
+ * (post-Enrich) rule shapes give authoring IntelliSense.
  * This is a PROOF artifact, not wired into the real overrides.ts.
  *
  *   B-half: direct rule-shape navigation (hover/navigate a rule's recursive
  *           structure) — `EnrichRule<RawShape['rule']>` is a fully-resolved,
  *           navigable type with literal discriminants + field names.
  *
- *   A-half: transform path-addressing — `RuleAtPath<Shape, '4/0'>` validates
- *           a path against the rule structure; out-of-bounds resolves to
- *           `never` (caught at compile time), and `PathKey<Shape>` gives
- *           first-segment autocomplete.
- *
- * Ground truth: the A-half paths used here are LIFTED VERBATIM from
- * packages/rust/overrides.ts (or_pattern, range_expression) — real authored
- * paths are the only ground truth that the post-enrich structure is the one
- * authors actually target.
+ * First-segment path autocomplete (`TopLevelKeys<Shape>` / `PathKey<Shape>`)
+ * is exercised below too — segment-1 indices/keys for a rule's top-level
+ * members.
  */
 import { describe, it, expectTypeOf, assertType } from 'vitest';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';
 import type { EnrichRule } from '../enrich-type.ts';
-import type { RuleAtPath, PathKey, TopLevelKeys } from '../path-type.ts';
+import type { PathKey, TopLevelKeys } from '../path-type.ts';
 
 type Rules = (typeof rustGrammarShape)['rules'];
 
@@ -28,7 +22,6 @@ type Rules = (typeof rustGrammarShape)['rules'];
 type AwaitExpr = EnrichRule<Rules['await_expression']>;
 type ReferenceType = EnrichRule<Rules['reference_type']>;
 type OrPattern = EnrichRule<Rules['or_pattern']>;
-type RangeExpr = EnrichRule<Rules['range_expression']>;
 
 describe('B-half: direct rule-shape navigation / IntelliSense', () => {
 	it('await_expression resolves to a navigable PREC>SEQ with a named FIELD', () => {
@@ -51,41 +44,7 @@ describe('B-half: direct rule-shape navigation / IntelliSense', () => {
 	});
 });
 
-describe('A-half: transform path-addressing validated against rule shape', () => {
-	it('or_pattern: authored paths 0/0 resolves (lifted from overrides.ts)', () => {
-		// '0/0' -> choice arm 0, seq pos 0 = SYMBOL _pattern (PREC transparent).
-		// The resolved node is the bare _pattern symbol authors wrap with field().
-		type N00 = RuleAtPath<OrPattern, '0/0'>;
-		expectTypeOf<(N00 & { type: string })['type']>().toEqualTypeOf<'SYMBOL'>();
-		expectTypeOf<(N00 & { name: string })['name']>().toEqualTypeOf<'_pattern'>();
-	});
-
-	it('range_expression: nested CHOICE at 0/1', () => {
-		// '0/1' is the inner CHOICE('..','...','..=') (operator position).
-		type Op = RuleAtPath<RangeExpr, '0/1'>;
-		expectTypeOf<(Op & { type: string })['type']>().toEqualTypeOf<'CHOICE'>();
-	});
-
-	it('PREC transparency: await_expression path 0 reaches INTO the seq, not the prec', () => {
-		// await_expression is PREC>SEQ. Path '0' skips PREC, lands on seq member 0 (the FIELD).
-		type N0 = RuleAtPath<AwaitExpr, '0'>;
-		expectTypeOf<(N0 & { type: string })['type']>().toEqualTypeOf<'FIELD'>();
-	});
-
-	it('FIELD opacity: descending into a field consumes a segment (path gained a level)', () => {
-		// await_expression '0' = FIELD; '0/0' = the field CONTENT (the symbol).
-		type N00 = RuleAtPath<AwaitExpr, '0/0'>;
-		expectTypeOf<(N00 & { type: string })['type']>().toEqualTypeOf<'SYMBOL'>();
-		expectTypeOf<(N00 & { name: string })['name']>().toEqualTypeOf<'_expression'>();
-	});
-
-	it('out-of-bounds paths are caught at compile time (resolve to never)', () => {
-		// @ts-expect-error — RuleAtPath<_, '5/0'> is `never`; assigning a real
-		// node value to `never` is a compile error, proving the bad path is rejected.
-		const _bad: RuleAtPath<OrPattern, '5/0'> = { type: 'SYMBOL', name: 'x' } as const;
-		void _bad;
-	});
-
+describe('first-segment path autocomplete validated against rule shape', () => {
 	it('first-segment autocomplete: TopLevelKeys / PathKey offer the rule indices', () => {
 		// or_pattern (PREC>CHOICE with 2 arms): top-level keys are '0' | '1'.
 		expectTypeOf<TopLevelKeys<OrPattern>>().toEqualTypeOf<'0' | '1'>();
