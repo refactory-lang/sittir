@@ -24,7 +24,6 @@ import type { CamelCase } from 'type-fest';
 
 export type {
 	AnyNodeData,
-	NodeId,
 	NodeMemberValue,
 	AnyTreeNode,
 	TemplateRule,
@@ -542,7 +541,9 @@ type FieldsOf<T> = T extends { readonly $fields: infer F }
 type InputHintsOf<T> = T extends { readonly __inputHints__?: infer H } ? H : {};
 
 /** @internal — field input type prefers generator hints over storage type. */
-type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHintsOf<T> ? InputHintsOf<T>[K] : FieldsOf<T>[K];
+type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHintsOf<T>
+	? InputHintsOf<T>[K]
+	: FieldsOf<T>[K];
 
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
@@ -624,7 +625,7 @@ export type ConfigOf<T> = T extends unknown
 						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
 						: IsKindEnumSlot<FieldInputType<T, K>> extends true
 							? KindEnumSlotInput<FieldInputType<T, K>> | undefined
-						: FieldInputType<T, K>;
+							: FieldInputType<T, K>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config
@@ -705,9 +706,7 @@ type BitflagSlotEnum<T> = T extends readonly (infer E)[] ? BitflagEnum<E> : Bitf
 type IsKindEnumSlot<T> = IsKindEnum<T> extends true ? true : T extends readonly (infer E)[] ? IsKindEnum<E> : false;
 
 /** @internal — widen a KindEnum slot back to its string-friendly input surface. */
-type KindEnumSlotInput<T> = T extends readonly (infer E)[]
-	? readonly (KindEnumText<E> | E)[]
-	: KindEnumText<T> | T;
+type KindEnumSlotInput<T> = T extends readonly (infer E)[] ? readonly (KindEnumText<E> | E)[] : KindEnumText<T> | T;
 
 /**
  * TreeNodeOf<T> — parsed tree node derived from a concrete node interface.
@@ -824,7 +823,7 @@ type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited 
 			? BitflagSlotEnum<T> | readonly string[] | string | T
 			: IsKindEnumSlot<T> extends true
 				? KindEnumSlotInput<T>
-			: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
+				: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
 /** Keys of T that are required (not optional). */
 type RequiredKeys<T> = {
@@ -978,35 +977,35 @@ type WidenValue<
 			? BitflagEnum<T> | readonly string[] | string | T
 			: IsKindEnum<T> extends true
 				? KindEnumText<T> | T
-			: T extends readonly (infer E)[]
-				? [readonly []] extends [T]
-					?
-							| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[]
-							| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
-					:
-							| NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>>
-							| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
-			: T extends {
-							readonly $type: infer K extends string | number;
-							readonly $text: string;
-					  }
-					?
-							// Leaf — distributes per leaf-kind arm to pick up each one's narrowed
-							// string / scalar. A union of leaves becomes a union of widenings.
-							T | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
-					: [T] extends [{ readonly $type: number }]
-						? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
-							// whole union, then emit accordingly.
-							IsSingleType<T> extends true
-							? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
-							: IsHomogeneous<T, NsMap> extends true
-								? // Multi-branch, but every arm's Loose projection is identical
-									// (via NsMap lookups). Runtime resolver picks any arm by
-									// field-presence — no `kind` tag needed at the type level.
-									LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
-								: // Heterogeneous multi-branch → tag each arm for discrimination.
-									TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
-						: T;
+				: T extends readonly (infer E)[]
+					? [readonly []] extends [T]
+						?
+								| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[]
+								| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+						:
+								| NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>>
+								| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+					: T extends {
+								readonly $type: infer K extends string | number;
+								readonly $text: string;
+						  }
+						?
+								// Leaf — distributes per leaf-kind arm to pick up each one's narrowed
+								// string / scalar. A union of leaves becomes a union of widenings.
+								T | (K extends keyof Strings ? Strings[K] : string) | (K extends keyof Scalars ? Scalars[K] : never)
+						: [T] extends [{ readonly $type: number }]
+							? // Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
+								// whole union, then emit accordingly.
+								IsSingleType<T> extends true
+								? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
+								: IsHomogeneous<T, NsMap> extends true
+									? // Multi-branch, but every arm's Loose projection is identical
+										// (via NsMap lookups). Runtime resolver picks any arm by
+										// field-presence — no `kind` tag needed at the type level.
+										LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
+									: // Heterogeneous multi-branch → tag each arm for discrimination.
+										TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
+							: T;
 
 /** Widen a child slot type for FromInput (applies WidenValue to arrays and single values). */
 type WidenChildSlot<

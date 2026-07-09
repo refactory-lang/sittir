@@ -81,7 +81,7 @@ import {
 	type TSNode
 } from '../validate/common.ts';
 import type * as TS from 'web-tree-sitter';
-import type { AnyNodeData, AnyTreeNode, NodeId } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
 
 // ---------------------------------------------------------------------------

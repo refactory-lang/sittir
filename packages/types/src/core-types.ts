@@ -47,12 +47,6 @@ export type NodeMemberValue = AnyNodeData | string | number;
 export type NodeChildren = NodeMemberValue | readonly NodeMemberValue[];
 
 /**
- * @deprecated NodeId branded type removed in ADR-0017. Use plain `number` instead.
- * Kept as a simple alias during migration so downstream imports resolve without error.
- */
-export type NodeId = number;
-
-/**
  * Runtime node shape — grammar-agnostic. Used by @sittir/core functions
  * that accept any node regardless of grammar.
  *
