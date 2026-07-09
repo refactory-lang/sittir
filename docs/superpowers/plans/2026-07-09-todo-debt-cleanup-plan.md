@@ -132,6 +132,7 @@ originally cited. This task is scoped to just `NodeId` now.
 
 **Files:**
 - Modify: `packages/types/src/core-types.ts` (delete `NodeId` type alias + its `@deprecated` tag, ~lines 49-53).
+- Modify: `packages/types/src/index.ts` (remove `NodeId` from the `export type { ... }` barrel block, ~line 27 — found on the 2nd dispatch attempt, not in the original scope).
 - Modify: `packages/core/src/types.ts` (remove the dead `NodeId` re-export, ~line 8).
 - Modify: `packages/tools/src/probe/kind.ts` (remove the unused `NodeId` import, ~line 84).
 - Modify: `packages/core/tests/readNode.test.ts` (remove the unused `NodeId` import, ~line 17).
@@ -142,16 +143,16 @@ originally cited. This task is scoped to just `NodeId` now.
 
 - [ ] **Step 1: Re-verify `NodeId` has zero functional (value-binding) references, only dead imports**
 
-Run `find_all_references` (infigraph) AND a direct text/ast-grep search (`sg --pattern 'NodeId' --lang ts packages`) for `NodeId`. Confirm: no code anywhere binds a value to the `NodeId` type (it's purely a type-level dead alias), and the only remaining references are the 4 import/declaration sites listed in Files above. If you find a real functional use, STOP and report it — do not delete something that's gained a real use since this correction was written.
+Run `find_all_references` (infigraph) AND a direct text/ast-grep search (`sg --pattern 'NodeId' --lang ts packages`) for `NodeId`. Confirm: no code anywhere binds a value to the `NodeId` type (it's purely a type-level dead alias), and the only remaining references are the 5 import/declaration sites listed in Files above (a 2nd dispatch of this exact task already confirmed exactly these 5 via `sg`, including the `packages/types/src/index.ts:27` barrel export the original task text missed). If you find a 6th reference or a real functional use, STOP and report it.
 
 - [ ] **Step 2: Confirm current test coverage passes before deleting**
 
 Run: `pnpm test`
 Expected: PASS (this is the "before" side of the regression-test cycle for a pure deletion).
 
-- [ ] **Step 3: Delete `NodeId` and all 4 dead references**
+- [ ] **Step 3: Delete `NodeId` and all 5 dead references**
 
-In `packages/types/src/core-types.ts`, remove the `@deprecated` tag and the `export type NodeId = number;` declaration (and its preceding doc comment). In `packages/core/src/types.ts:8`, remove the dead re-export. In `packages/tools/src/probe/kind.ts:84`, remove the unused import. In `packages/core/tests/readNode.test.ts:17`, remove the unused import. Re-verify each line number first — this plan correction was written from a report, not a fresh read.
+In `packages/types/src/core-types.ts`, remove the `@deprecated` tag and the `export type NodeId = number;` declaration (and its preceding doc comment). In `packages/types/src/index.ts:27`, remove `NodeId` from the `export type { ... }` barrel block (keep every other type in that block untouched). In `packages/core/src/types.ts:8`, remove the dead re-export. In `packages/tools/src/probe/kind.ts:84`, remove the unused import. In `packages/core/tests/readNode.test.ts:17`, remove the unused import. Re-verify each line number first — this plan correction was written from a report, not a fresh read.
 
 - [ ] **Step 4: Run the full test suite**
 
