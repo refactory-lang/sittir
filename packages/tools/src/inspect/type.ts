@@ -40,7 +40,7 @@ export interface InspectTypeOptions {
 }
 
 export const DEFAULT_NAMESPACES: Record<string, string[]> = {
-	rust: ['FieldDeclarationNs'],
+	rust: ['FieldDeclarationNs']
 };
 
 // ---------------------------------------------------------------------------
@@ -73,15 +73,13 @@ function buildProgram(entry: string): ts.Program {
 			strict: true,
 			skipLibCheck: true,
 			noEmit: true,
-			allowImportingTsExtensions: true,
-		},
+			allowImportingTsExtensions: true
+		}
 	});
 }
 
 const TYPE_FLAGS =
-	ts.TypeFormatFlags.InTypeAlias |
-	ts.TypeFormatFlags.NoTruncation |
-	ts.TypeFormatFlags.WriteArrayAsGenericType;
+	ts.TypeFormatFlags.InTypeAlias | ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.WriteArrayAsGenericType;
 
 function printType(label: string, type: ts.Type, checker: ts.TypeChecker): void {
 	const str = checker.typeToString(type, undefined, TYPE_FLAGS);
@@ -93,19 +91,13 @@ function printType(label: string, type: ts.Type, checker: ts.TypeChecker): void 
 // ---------------------------------------------------------------------------
 
 /** Walk a source file to find an interface, type alias, or namespace by name. */
-function findDeclSymbol(
-	name: string,
-	source: ts.SourceFile,
-	checker: ts.TypeChecker,
-): ts.Symbol | undefined {
+function findDeclSymbol(name: string, source: ts.SourceFile, checker: ts.TypeChecker): ts.Symbol | undefined {
 	let found: ts.Symbol | undefined;
 
 	function visit(node: ts.Node): void {
 		if (found) return;
 		if (
-			(ts.isInterfaceDeclaration(node) ||
-				ts.isTypeAliasDeclaration(node) ||
-				ts.isModuleDeclaration(node)) &&
+			(ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node) || ts.isModuleDeclaration(node)) &&
 			node.name.text === name
 		) {
 			const sym = checker.getSymbolAtLocation(node.name);
@@ -119,11 +111,7 @@ function findDeclSymbol(
 }
 
 /** Print the type of each first-level property on a given type. */
-function printSlotTypes(
-	parentLabel: string,
-	type: ts.Type,
-	checker: ts.TypeChecker,
-): void {
+function printSlotTypes(parentLabel: string, type: ts.Type, checker: ts.TypeChecker): void {
 	for (const prop of type.getProperties()) {
 		const decl = prop.declarations?.[0];
 		if (!decl) continue;
@@ -136,12 +124,7 @@ function printSlotTypes(
 // Per-namespace inspection
 // ---------------------------------------------------------------------------
 
-function inspectNs(
-	nsName: string,
-	source: ts.SourceFile,
-	checker: ts.TypeChecker,
-	opts: InspectTypeOptions,
-): void {
+function inspectNs(nsName: string, source: ts.SourceFile, checker: ts.TypeChecker, opts: InspectTypeOptions): void {
 	const nsSym = findDeclSymbol(nsName, source, checker);
 	if (!nsSym) {
 		process.stderr.write(`  warning: ${nsName} not found in source file\n`);
@@ -201,9 +184,7 @@ function inspectNs(
 export async function run(opts: InspectTypeOptions): Promise<number> {
 	const typesPath = resolveTypesPath(opts.grammar);
 	process.stdout.write(
-		`inspect-type: grammar=${opts.grammar}\n` +
-			`entry: ${typesPath}\n` +
-			`namespaces: ${opts.namespaces.join(', ')}\n`,
+		`inspect-type: grammar=${opts.grammar}\n` + `entry: ${typesPath}\n` + `namespaces: ${opts.namespaces.join(', ')}\n`
 	);
 
 	const program = buildProgram(typesPath);
@@ -215,13 +196,9 @@ export async function run(opts: InspectTypeOptions): Promise<number> {
 		return 1;
 	}
 
-	const errors = ts
-		.getPreEmitDiagnostics(program)
-		.filter((d) => d.category === ts.DiagnosticCategory.Error);
+	const errors = ts.getPreEmitDiagnostics(program).filter((d) => d.category === ts.DiagnosticCategory.Error);
 	if (errors.length > 0) {
-		process.stderr.write(
-			`warning: ${errors.length} compile error(s) — output may be incomplete\n`,
-		);
+		process.stderr.write(`warning: ${errors.length} compile error(s) — output may be incomplete\n`);
 	}
 
 	for (const nsName of opts.namespaces) {

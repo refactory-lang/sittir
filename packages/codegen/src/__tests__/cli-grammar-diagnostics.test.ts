@@ -17,10 +17,7 @@ import { runCodegenCli } from '../run-codegen.ts';
 import type { GrammarDiagnostic } from '../compiler/diagnostics/grammar-diagnostics.ts';
 
 /** Build a minimal-but-valid GrammarDiagnostic for preflight gate tests. */
-function makeDiagnostic(
-	code: string,
-	opts: { canProceed?: boolean; ownerKind?: string } = {}
-): GrammarDiagnostic {
+function makeDiagnostic(code: string, opts: { canProceed?: boolean; ownerKind?: string } = {}): GrammarDiagnostic {
 	return {
 		scope: 'grammar',
 		code,
@@ -67,13 +64,10 @@ describe('codegen CLI grammar-diagnostics preflight', () => {
 
 	it('continues when the blocking code is explicitly allowlisted via --allow-diagnostic', async () => {
 		await expect(
-			runCodegenCli(
-				[...BASE_ARGV, '--allow-diagnostic', 'parsekind-noninjective'],
-				{
-					isTTY: false,
-					diagnostics: [makeDiagnostic('parsekind-noninjective')]
-				}
-			)
+			runCodegenCli([...BASE_ARGV, '--allow-diagnostic', 'parsekind-noninjective'], {
+				isTTY: false,
+				diagnostics: [makeDiagnostic('parsekind-noninjective')]
+			})
 		).resolves.toBe(0);
 	});
 
@@ -92,10 +86,7 @@ describe('codegen CLI grammar-diagnostics preflight', () => {
 				[...BASE_ARGV, '--allow-diagnostic', 'parsekind-noninjective', '--allow-diagnostic', 'other-code'],
 				{
 					isTTY: false,
-					diagnostics: [
-						makeDiagnostic('parsekind-noninjective'),
-						makeDiagnostic('other-code')
-					]
+					diagnostics: [makeDiagnostic('parsekind-noninjective'), makeDiagnostic('other-code')]
 				}
 			)
 		).resolves.toBe(0);
@@ -103,16 +94,10 @@ describe('codegen CLI grammar-diagnostics preflight', () => {
 
 	it('still fails when only one of multiple blocking codes is allowlisted', async () => {
 		await expect(
-			runCodegenCli(
-				[...BASE_ARGV, '--allow-diagnostic', 'parsekind-noninjective'],
-				{
-					isTTY: false,
-					diagnostics: [
-						makeDiagnostic('parsekind-noninjective'),
-						makeDiagnostic('another-blocking-code')
-					]
-				}
-			)
+			runCodegenCli([...BASE_ARGV, '--allow-diagnostic', 'parsekind-noninjective'], {
+				isTTY: false,
+				diagnostics: [makeDiagnostic('parsekind-noninjective'), makeDiagnostic('another-blocking-code')]
+			})
 		).rejects.toThrow(/another-blocking-code/);
 	});
 
@@ -143,31 +128,28 @@ describe('codegen CLI grammar-diagnostics preflight', () => {
 	it('does not invoke confirm when all blocking codes are allowlisted', async () => {
 		let confirmCalled = false;
 		await expect(
-			runCodegenCli(
-				[...BASE_ARGV, '--allow-diagnostic', 'parsekind-noninjective'],
-				{
-					isTTY: true,
-					diagnostics: [makeDiagnostic('parsekind-noninjective')],
-					confirm: async () => { confirmCalled = true; return true; }
+			runCodegenCli([...BASE_ARGV, '--allow-diagnostic', 'parsekind-noninjective'], {
+				isTTY: true,
+				diagnostics: [makeDiagnostic('parsekind-noninjective')],
+				confirm: async () => {
+					confirmCalled = true;
+					return true;
 				}
-			)
+			})
 		).resolves.toBe(0);
 		expect(confirmCalled).toBe(false);
 	});
 
 	it('confirm receives the blocked (non-allowed) diagnostics', async () => {
 		let receivedBlocked: readonly GrammarDiagnostic[] = [];
-		await runCodegenCli(
-			[...BASE_ARGV, '--allow-diagnostic', 'parsekind-noninjective'],
-			{
-				isTTY: true,
-				diagnostics: [
-					makeDiagnostic('parsekind-noninjective'),
-					makeDiagnostic('another-code')
-				],
-				confirm: async (blocked) => { receivedBlocked = blocked; return true; }
+		await runCodegenCli([...BASE_ARGV, '--allow-diagnostic', 'parsekind-noninjective'], {
+			isTTY: true,
+			diagnostics: [makeDiagnostic('parsekind-noninjective'), makeDiagnostic('another-code')],
+			confirm: async (blocked) => {
+				receivedBlocked = blocked;
+				return true;
 			}
-		);
+		});
 		expect(receivedBlocked).toHaveLength(1);
 		expect(receivedBlocked[0]?.code).toBe('another-code');
 	});

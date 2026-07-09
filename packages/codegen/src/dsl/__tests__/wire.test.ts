@@ -256,8 +256,20 @@ describe('wire()', () => {
 				{
 					type: 'CHOICE',
 					members: [
-						{ type: 'SEQ', members: [{ type: 'STRING', value: '=' }, { type: 'SYMBOL', name: 'right' }] },
-						{ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'typ' }] }
+						{
+							type: 'SEQ',
+							members: [
+								{ type: 'STRING', value: '=' },
+								{ type: 'SYMBOL', name: 'right' }
+							]
+						},
+						{
+							type: 'SEQ',
+							members: [
+								{ type: 'STRING', value: ':' },
+								{ type: 'SYMBOL', name: 'typ' }
+							]
+						}
 					]
 				}
 			]
@@ -289,8 +301,20 @@ describe('wire()', () => {
 				{
 					type: 'CHOICE',
 					members: [
-						{ type: 'SEQ', members: [{ type: 'STRING', value: '=' }, { type: 'SYMBOL', name: 'right' }] },
-						{ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'typ' }] }
+						{
+							type: 'SEQ',
+							members: [
+								{ type: 'STRING', value: '=' },
+								{ type: 'SYMBOL', name: 'right' }
+							]
+						},
+						{
+							type: 'SEQ',
+							members: [
+								{ type: 'STRING', value: ':' },
+								{ type: 'SYMBOL', name: 'typ' }
+							]
+						}
 					]
 				}
 			]
@@ -476,7 +500,10 @@ describe('wire()', () => {
 			transforms: {
 				r: { 0: field('async') }
 			},
-			inline: (($, previous) => [...(previous ?? []), ($ as Record<string, unknown>)._kw_async]) as WireConfig<GrammarJson>['inline']
+			inline: (($, previous) => [
+				...(previous ?? []),
+				($ as Record<string, unknown>)._kw_async
+			]) as WireConfig<GrammarJson>['inline']
 		});
 		wired.rules.r!.call({}, {}, origSeq);
 		const $ = new Proxy(

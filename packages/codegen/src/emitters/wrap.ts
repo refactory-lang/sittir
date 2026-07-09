@@ -83,7 +83,6 @@ export interface EmitWrapConfig {
 	kindEntries?: readonly KindEnumEntry[];
 }
 
-
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -402,10 +401,7 @@ function resolveSlotAliasRewrite(slot: AssembledNonterminal): readonly [string, 
  * matches the slot's nominal `_<slot.name>` — the legacy single-key access
  * is sufficient and no probe shape is needed.
  */
-function collectConcreteStorageKeys(
-	slot: AssembledNonterminal,
-	nodeMap: NodeMap
-): readonly string[] | undefined {
+function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
 	if (!slot.isUnnamed) return undefined;
 	// Route by the slot's parse-names — the kinds the parser can actually emit:
 	// ref-kinds PLUS alias targets (collect-slots now folds the targets into
@@ -445,9 +441,7 @@ function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?:
 		// Append the slot's nominal storage key as a final fallback for any
 		// edge case the analysis missed (e.g. a tree-sitter-injected alias the
 		// supertype-expansion doesn't see).
-		const allKeys = candidateKeys.includes(slot.storageKey)
-			? candidateKeys
-			: [...candidateKeys, slot.storageKey];
+		const allKeys = candidateKeys.includes(slot.storageKey) ? candidateKeys : [...candidateKeys, slot.storageKey];
 
 		if (slot.arity === 'many') {
 			// Repeated supertype-list slot: the runtime reader populates EACH
@@ -489,7 +483,9 @@ function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
 
 function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const fn = `wrap${node.typeName}`;
-	const allowedKinds = [...new Set(node.subtypes.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))];
+	const allowedKinds = [
+		...new Set(node.subtypes.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))
+	];
 	return [
 		`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`,
 		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
@@ -724,9 +720,7 @@ function emitInlineWithProperty(
 			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $other: v }, tree) },`);
 		} else {
 			const restType = childrenSetterRestType(children, childElem, childRest);
-			lines.push(
-				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $other: vs }, tree) },`
-			);
+			lines.push(`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $other: vs }, tree) },`);
 		}
 		return;
 	}
@@ -966,11 +960,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 									'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: true, nodeType: string | number, context: WrapDiagnosticContext): T;',
 									'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: false, nodeType: string | number, context: WrapDiagnosticContext): T | undefined;',
 									'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean, nodeType: string | number, context: WrapDiagnosticContext): T | undefined {',
-						'  if (Array.isArray(value)) {',
-						'    if (value.length === 0) {',
+									'  if (Array.isArray(value)) {',
+									'    if (value.length === 0) {',
 									'      if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);',
-						'      return undefined;',
-						'    }',
+									'      return undefined;',
+									'    }',
 									'    if (value.length !== 1) {',
 									'      // read_node concatenates grammar-agnostically; the named/unnamed',
 									'      // disparity for SINGULAR slots is resolved HERE (the per-kind layer',
@@ -984,11 +978,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 									'      if (substantive.length === 1) return substantive[0] as T;',
 									'      return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);',
 									'    }',
-						'    return value[0] as T;',
-						'  }',
+									'    return value[0] as T;',
+									'  }',
 									'  if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);',
-						'  return value as T | undefined;',
-						'}'
+									'  return value as T | undefined;',
+									'}'
 								]
 							: [])
 					]
@@ -1205,11 +1199,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		// _wrapTable — runtime dispatch by kind
 		lines.push('const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {');
 		for (const [kind, node] of this.#nodeMap.nodes) {
-			if (
-				node.modelType === 'branch' ||
-				node.modelType === 'group' ||
-				node.modelType === 'supertype'
-			) {
+			if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'supertype') {
 				if (!this.#emittedStructuralKinds.has(kind)) continue;
 				lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {

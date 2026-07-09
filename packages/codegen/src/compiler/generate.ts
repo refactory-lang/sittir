@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
-import { normalize, NormalizeCtx } from './normalize.ts';
+import { normalizeGrammar as normalize, NormalizeCtx } from './normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs, classifyNode } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
@@ -148,7 +148,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		diagnostics.info({
 			code: 'unnamed-choice-slot',
 			message: `Unnamed choice slot in kind '${kind ?? '(unknown)'}'`,
-			canProceed: true,
+			canProceed: true
 		});
 	});
 
@@ -206,9 +206,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		[...inlineKinds].filter((k) => {
 			const rule = linked.rules[k];
 			if (!rule) return true; // un-classifiable (no IR rule) — leave inlinable
-			return !NON_INLINABLE_MODEL_TYPES.has(
-				classifyNode(k, rule, { parentAliasedKinds: linked.parentAliasedKinds })
-			);
+			return !NON_INLINABLE_MODEL_TYPES.has(classifyNode(k, rule, { parentAliasedKinds: linked.parentAliasedKinds }));
 		})
 	);
 
@@ -239,7 +237,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		grammar: linked,
 		inlineKinds: inlinableKinds,
 		diagnostics,
-		polymorphSkip: polymorphsConfigSkip,
+		polymorphSkip: polymorphsConfigSkip
 	});
 	const normalized = normalize(linked, normalizeCtx);
 	tracePhaseRules('normalize', normalized.rules);
@@ -279,8 +277,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const compilerWarnings = diagnostics
 		.all()
 		.filter(
-			(d): d is CompilerDiagnostic =>
-				d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
+			(d): d is CompilerDiagnostic => d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
 		);
 	if (compilerWarnings.length > 0) {
 		process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');

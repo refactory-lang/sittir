@@ -19,7 +19,7 @@ function nodeRefValue(kind: string, multiplicity: 'single' | 'array' = 'single')
 	return {
 		node: { name: kind, kind } as never,
 		parseKind: { kind: 'unresolved-ref', name: kind },
-		multiplicity,
+		multiplicity
 	} as unknown as NodeOrTerminal;
 }
 
@@ -41,7 +41,7 @@ function cleanSlot(): AssembledNonterminal {
 		values: [nodeRefValue('expression')],
 		hasTrailing: false,
 		hasLeading: false,
-		fieldName: undefined,
+		fieldName: undefined
 	} as unknown as AssembledNonterminal;
 }
 
@@ -59,8 +59,8 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 				kind: 'function_definition',
 				projection: 'storageName',
 				legacy: 'block',
-				recomputed: 'expression',
-			}),
+				recomputed: 'expression'
+			})
 		);
 	});
 
@@ -73,15 +73,15 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			configKey: snakeToCamel(storage),
 			propertyName: snakeToCamel(storage), // BUG: not pluralized
 			paramName: safeParamName(snakeToCamel(storage)),
-			values: [nodeRefValue('parameter', 'array')],
+			values: [nodeRefValue('parameter', 'array')]
 		} as unknown as AssembledNonterminal;
 		const out = diffSlotNames(slot, 'parameters');
 		expect(out).toContainEqual(
 			expect.objectContaining({
 				projection: 'propertyName',
 				legacy: 'parameter',
-				recomputed: pluralize(snakeToCamel(storage)),
-			}),
+				recomputed: pluralize(snakeToCamel(storage))
+			})
 		);
 	});
 
@@ -96,7 +96,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			configKey: 'content',
 			propertyName: 'content',
 			paramName: 'content',
-			values: [nodeRefValue('identifier'), literalValue('_')],
+			values: [nodeRefValue('identifier'), literalValue('_')]
 		} as unknown as AssembledNonterminal;
 		expect(diffSlotNames(slot, 'splat_pattern')).toEqual([]);
 	});
@@ -107,7 +107,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			...cleanSlot(),
 			storageName: 'expression',
 			name: 'expression',
-			values: [nodeRefValue('_expression')],
+			values: [nodeRefValue('_expression')]
 		} as unknown as AssembledNonterminal;
 		expect(diffSlotNames(slot, 'array_expression')).toEqual([]);
 	});
@@ -124,7 +124,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 				kind: 'node-ref',
 				node: { name: storageKind, kind: storageKind },
 				parseKind: { kind: 'unresolved-ref', name: parseKind },
-				multiplicity: 'single',
+				multiplicity: 'single'
 			}) as unknown as NodeOrTerminal;
 		const slot = {
 			...cleanSlot(),
@@ -134,7 +134,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			configKey: 'block',
 			propertyName: 'block',
 			paramName: 'block',
-			values: [aliasedRef('_simple_statements', 'block'), aliasedRef('block', 'block'), aliasedRef('_newline', 'block')],
+			values: [aliasedRef('_simple_statements', 'block'), aliasedRef('block', 'block'), aliasedRef('_newline', 'block')]
 		} as unknown as AssembledNonterminal;
 
 		const proj = projectSlotNaming(slot);
@@ -142,7 +142,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 		expect(proj.parseNames).toEqual(['block']); // parseKind (single, deduped)
 		// And the probe now REPORTS the divergence from cross-wired legacy.
 		expect(diffSlotNames(slot, '_suite')).toContainEqual(
-			expect.objectContaining({ projection: 'storageName', legacy: 'block', recomputed: 'content' }),
+			expect.objectContaining({ projection: 'storageName', legacy: 'block', recomputed: 'content' })
 		);
 	});
 
@@ -154,7 +154,7 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 			kind: 'node-ref',
 			node: { name: 'interface_body', kind: 'interface_body' },
 			parseKind: { kind: 'unresolved-ref', name: 'object_type' },
-			multiplicity: 'single',
+			multiplicity: 'single'
 		} as unknown as NodeOrTerminal;
 		const slot = { ...cleanSlot(), values: [aliased] } as unknown as AssembledNonterminal;
 		const proj = projectSlotNaming(slot);

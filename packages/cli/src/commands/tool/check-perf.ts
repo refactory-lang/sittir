@@ -11,9 +11,9 @@ export const checkPerf: CommandModule = {
 			.action(async (opts: { baseline?: string; metrics?: string }) => {
 				const code = await runCheckPerf({
 					baseline: opts.baseline,
-					metrics: opts.metrics,
+					metrics: opts.metrics
 				});
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

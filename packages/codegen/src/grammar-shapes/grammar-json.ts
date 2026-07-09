@@ -161,9 +161,20 @@ export type GrammarRule =
  */
 export type AuthoringRule = GrammarRule | string | RegExp;
 
-export type ToGrammarRule<S extends string | RegExp | GrammarRule> = S extends string ? StringRule<S> : S extends RegExp ? PatternRule<S> : S extends GrammarRule ? S : S;
+export type ToGrammarRule<S extends string | RegExp | GrammarRule> = S extends string
+	? StringRule<S>
+	: S extends RegExp
+		? PatternRule<S>
+		: S extends GrammarRule
+			? S
+			: S;
 
-export type AuthoringRulesToRules<M extends readonly AuthoringRule[]> = M extends readonly [infer Head extends AuthoringRule, ...infer Rest extends AuthoringRule[]] ? [ToGrammarRule<Head>, ...AuthoringRulesToRules<Rest>] : [];
+export type AuthoringRulesToRules<M extends readonly AuthoringRule[]> = M extends readonly [
+	infer Head extends AuthoringRule,
+	...infer Rest extends AuthoringRule[]
+]
+	? [ToGrammarRule<Head>, ...AuthoringRulesToRules<Rest>]
+	: [];
 
 /** Top-level compiled grammar.json shape (the subset we type off). */
 export interface GrammarJson {

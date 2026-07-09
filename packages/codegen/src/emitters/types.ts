@@ -52,18 +52,12 @@ function kindDiscriminantOrLiteral(
 	if (!hasEntry) return JSON.stringify(kind);
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
-import type {
-	AssembledNode,
-	AssembledNonterminal
-} from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledGroup,
 	AssembledEnum,
 	snakeToCamel,
-	isNodeRef,
-	isTerminalValue,
-	isUnresolvedRef,
 	structuralFieldsOf
 } from '../compiler/model/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
@@ -197,13 +191,13 @@ export function emitTypes(config: EmitTypesConfig): string {
 		generatedTypes.add(node.typeName);
 
 		emitInterface(
-				lines,
-				node,
-				nodeMap,
-				lookupUnion,
-				kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries),
-				kindEntries
-			);
+			lines,
+			node,
+			nodeMap,
+			lookupUnion,
+			kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries),
+			kindEntries
+		);
 	}
 	lines.push('');
 
@@ -225,13 +219,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// @sittir/types. One fewer alias to keep in sync across regenerations.
 
 	// Tree interfaces
-	const treeEmitted = emitTreeInterfaceDeclarations(
-		lines,
-		nodeKinds,
-		leafKinds,
-		nodeMap,
-		grammarKeys
-	);
+	const treeEmitted = emitTreeInterfaceDeclarations(lines, nodeKinds, leafKinds, nodeMap, grammarKeys);
 
 	// refine() per-form Tree aliases — one per form per refined kind.
 	// Tree shape is identical across forms (refine narrows choice
@@ -1266,12 +1254,7 @@ function emitFieldInputHints(
 ): void {
 	const hintLines = fields
 		.map((field) => {
-			const hintType = fieldInputHintTypeExpr(
-				field,
-				kind,
-				nodeMap,
-				kindEntries
-			);
+			const hintType = fieldInputHintTypeExpr(field, kind, nodeMap, kindEntries);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
 			const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);

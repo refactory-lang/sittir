@@ -42,7 +42,19 @@
  * and console during regen so the author can act.
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	FIELD,
+	GROUP,
+	OPTIONAL,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	VARIANT
+} from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, SimplifiedRule } from '../../types/rule.ts';
 import { isAllTextShape } from '../assemble.ts';
 import { isNonterminalRuleType } from '../rule-catalog.ts';
@@ -135,7 +147,7 @@ export function diagnoseSlotGrouping(
 					proposal:
 						`Kind '${ownerKind}' has ${contentCount} anonymous 'content' slots that would share ` +
 						`the '_content' storage key (an unemittable ambiguity). ` +
-						`field()-name at least one in overrides.ts.`,
+						`field()-name at least one in overrides.ts.`
 				});
 			}
 		}
@@ -213,7 +225,13 @@ function walkRule(
 		case FIELD:
 			// Simplified rules normally have wrappers deleted, but handle
 			// defensively. Content is in slot position (genuine group-lift position).
-			walkRule((rule as unknown as { content: Rule<'link'> }).content, ownerKind, records, /* inSlotPosition= */ true, /* inChoiceArm= */ false);
+			walkRule(
+				(rule as unknown as { content: Rule<'link'> }).content,
+				ownerKind,
+				records,
+				/* inSlotPosition= */ true,
+				/* inChoiceArm= */ false
+			);
 			break;
 
 		case VARIANT:
@@ -258,7 +276,7 @@ function checkSeq(
 		proposal:
 			`Kind '${ownerKind}' has a multi-slot seq with ${slotCount} slots in a repeat/optional slot position. ` +
 			`Propose: register a visible groups: entry so this substructure ` +
-			`becomes a single group slot in the parent.`,
+			`becomes a single group slot in the parent.`
 	});
 }
 
@@ -287,7 +305,7 @@ function checkRepeat(
 				proposal:
 					`Kind '${ownerKind}' has a repeat(choice(..., literal, ...)) — ` +
 					`heterogeneous repeating content with interleaved literals. ` +
-					`Author decides: visible groups: registration or transforms: field() rename.`,
+					`Author decides: visible groups: registration or transforms: field() rename.`
 			});
 			return;
 		}
@@ -334,7 +352,7 @@ function checkRepeatOfSymbol(
 		proposal:
 			`Kind '${ownerKind}' has a repeat(${symName}) without a field name. ` +
 			`This fragments at read by concrete kind. ` +
-			`Propose: add transforms: { '(${symName})': field('<name>') } in overrides.ts.`,
+			`Propose: add transforms: { '(${symName})': field('<name>') } in overrides.ts.`
 	});
 }
 

@@ -110,7 +110,7 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
 function structuralDiff(
 	a: AnyNodeData,
 	b: AnyNodeData,
-	kindNameFromId?: ((id: number) => string | undefined) | undefined,
+	kindNameFromId?: ((id: number) => string | undefined) | undefined
 ): string[] {
 	const diffs: string[] = [];
 	if (a.$type !== b.$type) diffs.push(`$type: ${a.$type} vs ${b.$type}`);
@@ -291,7 +291,9 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					const prev = handle.rootNode;
 					(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
 					try {
-						readData = readTreeNode ? (readTreeNode(handle) as AnyNodeData) : readNodeAt(handle, adaptNode(node1), null);
+						readData = readTreeNode
+							? (readTreeNode(handle) as AnyNodeData)
+							: readNodeAt(handle, adaptNode(node1), null);
 					} finally {
 						(handle as { rootNode: typeof prev }).rootNode = prev;
 					}
@@ -337,9 +339,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							const rawName = fieldNames?.[0];
 							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
 							const childArgs = getChildFactoryArgs(kind, config, factorySlots);
-							const value = camelName
-								? (config as Record<string, unknown>)[camelName]
-								: childArgs[0];
+							const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
 						} else {
 							factoryResult = factory(config) as AnyNodeData;

@@ -17,9 +17,9 @@ export const inspectRefs: CommandModule = {
 					grammar: opts.grammar ?? 'rust',
 					symbol: opts.symbol ?? '_type_identifier',
 					useBase: opts.base ?? false,
-					limit: opts.limit ? parseInt(opts.limit, 10) : 10,
+					limit: opts.limit ? parseInt(opts.limit, 10) : 10
 				});
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

@@ -11,7 +11,7 @@ function ensureBenchmarkNodeEnv(): void {
 async function loadRunCodemodOnDir(): Promise<(corpus: string) => Promise<readonly unknown[]>> {
 	ensureBenchmarkNodeEnv();
 	const mod: { runCodemodOnDir: (corpus: string) => Promise<readonly unknown[]> } = await import(
-		new URL(CODEMOD_INLINE_PATH, import.meta.url).pathname,
+		new URL(CODEMOD_INLINE_PATH, import.meta.url).pathname
 	);
 	return mod.runCodemodOnDir;
 }

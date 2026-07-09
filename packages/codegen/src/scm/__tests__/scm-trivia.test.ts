@@ -118,4 +118,3 @@ describe('inherits directive', () => {
 		expect(parseInheritsDirective(';  inherits:  python')).toBe('python');
 	});
 });
-

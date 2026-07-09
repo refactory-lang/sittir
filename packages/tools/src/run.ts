@@ -9,18 +9,9 @@
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import {
-	validateFrom,
-	formatFromReport,
-} from './validate/from.ts';
-import {
-	validateFactoryRenderParse,
-	formatFactoryRenderParseReport,
-} from './validate/factory-render-parse.ts';
-import {
-	validateReadRenderParse,
-	formatReadRenderParseReport,
-} from './validate/read-render-parse.ts';
+import { validateFrom, formatFromReport } from './validate/from.ts';
+import { validateFactoryRenderParse, formatFactoryRenderParseReport } from './validate/factory-render-parse.ts';
+import { validateReadRenderParse, formatReadRenderParseReport } from './validate/read-render-parse.ts';
 import type { ValidateReadRenderParseOptions } from './validate/read-render-parse.ts';
 import { validateTemplateCoverage } from './validate/template-coverage.ts';
 
@@ -31,10 +22,7 @@ export type Backend = 'native' | 'js';
 export type { FromValidationResult, FromValidationError } from './validate/from.ts';
 export type { FactoryRenderParseResult } from './validate/factory-render-parse.ts';
 export type { ReadRenderParseResult, ValidateReadRenderParseOptions } from './validate/read-render-parse.ts';
-export type {
-	TemplateCoverageResult,
-	CoverageIssue,
-} from './validate/template-coverage.ts';
+export type { TemplateCoverageResult, CoverageIssue } from './validate/template-coverage.ts';
 
 // Re-export formatting helpers.
 export { formatFromReport, formatFactoryRenderParseReport, formatReadRenderParseReport };
@@ -59,7 +47,7 @@ export function runRt(
 	grammar: Grammar,
 	templatesPath: string,
 	backend: Backend = 'native',
-	options: Pick<ValidateReadRenderParseOptions, 'recursive'> = {},
+	options: Pick<ValidateReadRenderParseOptions, 'recursive'> = {}
 ) {
 	return validateReadRenderParse(grammar, templatesPath, { backend, recursive: options.recursive });
 }
@@ -73,10 +61,6 @@ export function runCoverage(grammar: Grammar, templatesPath: string) {
  * Run factory-render-parse validation with an explicit backend.
  * @param templatesPath - absolute path to the grammar's templates directory
  */
-export function runFactory(
-	grammar: Grammar,
-	templatesPath: string,
-	backend: Backend = 'native',
-) {
+export function runFactory(grammar: Grammar, templatesPath: string, backend: Backend = 'native') {
 	return validateFactoryRenderParse(grammar, templatesPath, backend);
 }

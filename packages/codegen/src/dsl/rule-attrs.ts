@@ -127,6 +127,6 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 		multiplicity: unanimous((r) => r.multiplicity),
 		nonterminal: unanimous((r) => r.nonterminal),
 		separator,
-		strongestMultiplicity,
+		strongestMultiplicity
 	};
 }

@@ -30,7 +30,7 @@ import {
 	isSeqType,
 	isStringType,
 	isSymbolType,
-	typeEq,
+	typeEq
 } from '../types/runtime-shapes.ts';
 
 // ---------------------------------------------------------------------------

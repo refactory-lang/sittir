@@ -50,9 +50,7 @@ interface GrammarJson {
  * constructs, round-tripped through JSON — `readRuleMetadata` still works
  * on it since the brand is type-level only (erased at runtime).
  */
-function isField(
-	node: unknown
-): node is { type: string; name: string; content: unknown; metadata?: unknown } {
+function isField(node: unknown): node is { type: string; name: string; content: unknown; metadata?: unknown } {
 	return !!node && typeof node === 'object' && (node as { type?: unknown }).type === 'FIELD';
 }
 

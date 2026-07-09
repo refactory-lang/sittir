@@ -44,7 +44,8 @@ function rawWith(rules: Record<string, Rule<'evaluate'>>): RawGrammar {
 
 const sym = (n: string): Rule<'evaluate'> => ({ type: 'SYMBOL', name: n }) as Rule<'evaluate'>;
 const str = (v: string): Rule<'evaluate'> => ({ type: 'STRING', value: v }) as Rule<'evaluate'>;
-const field = (n: string, c: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'FIELD', name: n, content: c }) as Rule<'evaluate'>;
+const field = (n: string, c: Rule<'evaluate'>): Rule<'evaluate'> =>
+	({ type: 'FIELD', name: n, content: c }) as Rule<'evaluate'>;
 const seq = (...m: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'SEQ', members: m }) as Rule<'evaluate'>;
 const choice = (...m: Rule<'evaluate'>[]): Rule<'evaluate'> => ({ type: 'CHOICE', members: m }) as Rule<'evaluate'>;
 const optional = (c: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'OPTIONAL', content: c }) as Rule<'evaluate'>;
@@ -92,7 +93,10 @@ describe('mintContentAliasKinds — link pass', () => {
 	it('registers a default-named group kind from a symbol-form group alias inside a CHOICE[x, BLANK]', () => {
 		// `peelOptionalSeq`'s other recognized shape: a 2-member CHOICE with a
 		// BLANK sibling (the desugared `optional(x)` form).
-		const body = seq({ type: 'REPEAT1', content: choice(field('name', sym('id')), sym('enum_assignment')) } as Rule<'evaluate'>);
+		const body = seq({
+			type: 'REPEAT1',
+			content: choice(field('name', sym('id')), sym('enum_assignment'))
+		} as Rule<'evaluate'>);
 		const linked = link(
 			rawWith({
 				enum_body: seq(
@@ -129,7 +133,9 @@ describe('mintContentAliasKinds — link pass', () => {
 		// resolved via the ordinary `aliasedFrom` fallback instead of minting.
 		const linked = link(
 			rawWith({
-				parentE: seq(field('items', { type: 'REPEAT1', content: groupAlias('_hidden2', 'visible2') } as Rule<'evaluate'>)),
+				parentE: seq(
+					field('items', { type: 'REPEAT1', content: groupAlias('_hidden2', 'visible2') } as Rule<'evaluate'>)
+				),
 				_hidden2: seq(str('a'), field('b', sym('id'))),
 				id: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
 			})

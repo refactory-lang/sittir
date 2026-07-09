@@ -165,9 +165,7 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 		);
 		if (namedChildren.length > 0) {
 			result.$other = (
-				Array.isArray(data.$other)
-					? stripMemberValue(namedChildren)
-					: stripMemberValue(namedChildren[0])
+				Array.isArray(data.$other) ? stripMemberValue(namedChildren) : stripMemberValue(namedChildren[0])
 			) as AnyNodeData['$other'];
 		}
 	}
@@ -454,19 +452,19 @@ function alignReadDataToRenderedKind(
 	kindNameFromId?: (id: number) => string | undefined
 ): AnyNodeData {
 	if (matchesRenderedKind(rawReadData, renderedKind, kindNameFromId)) return rawReadData;
-	const childEntries = rawReadData.$other === undefined
-		? []
-		: Array.isArray(rawReadData.$other)
-			? rawReadData.$other
-			: [rawReadData.$other];
-	const matchingChildren =
-		childEntries.filter(
-			(child): child is AnyNodeData =>
-				child != null &&
-				typeof child === 'object' &&
-				(child as { $named?: boolean }).$named !== false &&
-				matchesRenderedKind(child as AnyNodeData, renderedKind, kindNameFromId)
-		);
+	const childEntries =
+		rawReadData.$other === undefined
+			? []
+			: Array.isArray(rawReadData.$other)
+				? rawReadData.$other
+				: [rawReadData.$other];
+	const matchingChildren = childEntries.filter(
+		(child): child is AnyNodeData =>
+			child != null &&
+			typeof child === 'object' &&
+			(child as { $named?: boolean }).$named !== false &&
+			matchesRenderedKind(child as AnyNodeData, renderedKind, kindNameFromId)
+	);
 	if (matchingChildren.length === 1) return matchingChildren[0]!;
 	return { ...rawReadData, $type: renderedKind };
 }
@@ -576,9 +574,7 @@ function buildFactoryNodeData(
 				const rawName = fieldNames?.[0];
 				const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
 				const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots);
-				const value = camelName
-					? (config as Record<string, unknown>)[camelName]
-					: childArgs[0];
+				const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 				return (factory as (v: unknown) => AnyNodeData)(value);
 			}
 			return factory(config) as AnyNodeData;

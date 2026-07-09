@@ -1,15 +1,21 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	FIELD,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SYMBOL
+} from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import {
-	AssembledBranch,
-	AssembledKeyword,
-	AssembledPattern
-} from '../../../codegen/src/compiler/model/node-map.ts';
+import { AssembledBranch, AssembledKeyword, AssembledPattern } from '../../../codegen/src/compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
 import type { ChoiceRule, SeqRule } from '../../../codegen/src/types/rule.ts';
 import type { NodeMap } from '../../../codegen/src/compiler/types.ts';

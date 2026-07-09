@@ -11,5 +11,5 @@ export const probeFactory: CommandModule = {
 			.action(async (grammars: string[], opts: { backend: 'native' | 'js' | 'all' }) => {
 				await runProbeFactoryCli(grammars, opts.backend);
 			});
-	},
+	}
 };

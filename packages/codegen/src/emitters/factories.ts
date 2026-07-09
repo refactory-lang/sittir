@@ -102,10 +102,7 @@ function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
 	return [...nodeMap.nodes.values()].some((n) => allSlotsOf(n).some((f) => isNonEmpty(f)));
 }
 
-function collectStorageCoercionImports(
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string[] {
+function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
 	const imports = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of allSlotsOf(node)) {
@@ -128,10 +125,7 @@ function collectStorageCoercionImports(
 	return [...imports].sort();
 }
 
-function collectUsesKindIdFromName(
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): boolean {
+function collectUsesKindIdFromName(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
 	if (!kindEntries) return false;
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of allSlotsOf(node)) {
@@ -178,7 +172,6 @@ function emitNonEmptyAssertHelper(): string[] {
 		'}'
 	];
 }
-
 
 /**
  * Compile leaf-pattern `RegExp` constants and push their declarations into `lines`.
@@ -1404,7 +1397,9 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const utilImports = ['FluentNode'];
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
-		lines.push(`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`);
+		lines.push(
+			`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`
+		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitNonEmptyAssertHelper());

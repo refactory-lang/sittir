@@ -7,7 +7,25 @@
  * but they should not reconstruct identity from local walks.
  */
 
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	DEDENT,
+	FIELD,
+	GROUP,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import { assertNever } from '../polymorph-variant.ts';
 import type { Rule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
@@ -169,7 +187,11 @@ function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult
 	}
 }
 
-function withIdentifiedChildren(rule: Rule<'evaluate'>, id: RuleId, children: readonly BuildResult[]): Rule<'evaluate'> {
+function withIdentifiedChildren(
+	rule: Rule<'evaluate'>,
+	id: RuleId,
+	children: readonly BuildResult[]
+): Rule<'evaluate'> {
 	switch (rule.type) {
 		case SEQ:
 		case CHOICE:
@@ -228,7 +250,7 @@ function classifyByType(ruleType: Rule<'evaluate'>['type'], anyChildNonterminal:
 		case SYMBOL:
 		case SUPERTYPE:
 		case PATTERN:
-		// PR-P: ENUM case removed — enum-shaped ChoiceRules use CHOICE arm.
+			// PR-P: ENUM case removed — enum-shaped ChoiceRules use CHOICE arm.
 			return 'nonterminal';
 		case CHOICE:
 		case REPEAT:
@@ -285,7 +307,7 @@ function ruleChildren(rule: Rule<'evaluate'>): readonly Rule<'evaluate'>[] {
 		case OPTIONAL:
 		case VARIANT:
 		case GROUP:
-		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'evaluate'> union.
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'evaluate'> union.
 			return [rule.content];
 		case SEQ:
 			return rule.members;

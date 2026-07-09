@@ -182,9 +182,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 		diagnostics = collectGrammarDiagnosticsForGrammar({ rawGrammar }).diagnostics;
 	}
 
-	const blockedSet = new Set(
-		diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false)
-	);
+	const blockedSet = new Set(diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false));
 	const blocked = [...blockedSet];
 
 	// Non-blocking (and allow-listed) diagnostics are always surfaced as
@@ -209,9 +207,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 }
 
 async function confirmProceed(diagnostics: readonly GrammarDiagnostic[]): Promise<boolean> {
-	process.stderr.write(
-		`Diagnostics present (${diagnostics.map((d) => d.code).join(', ')}). Proceed? [y/N] `
-	);
+	process.stderr.write(`Diagnostics present (${diagnostics.map((d) => d.code).join(', ')}). Proceed? [y/N] `);
 	const chunks: Buffer[] = [];
 	for await (const chunk of process.stdin) {
 		chunks.push(chunk as Buffer);
@@ -569,9 +565,7 @@ export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
 	// recent `field(...)` / `variant(...)` additions, producing silent
 	// AST mismatches in round-trip tests.
 	if (!skipTsChain && !transpile && !tsGenerate) {
-		console.log(
-			`Full regenerate for ${grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`
-		);
+		console.log(`Full regenerate for ${grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`);
 		const grammarDir = resolve('packages', grammar);
 		console.log(`Transpiling ${grammar} overrides...`);
 		const tr = await transpileOverrides({ grammar });

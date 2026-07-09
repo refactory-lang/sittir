@@ -100,14 +100,20 @@ function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 							type: REPEAT,
 							content: {
 								type: CHOICE,
-								members: [{ type: SYMBOL, name: 'string_fragment' }, { type: SYMBOL, name: 'escape_sequence' }]
+								members: [
+									{ type: SYMBOL, name: 'string_fragment' },
+									{ type: SYMBOL, name: 'escape_sequence' }
+								]
 							}
 						},
 						{
 							type: REPEAT,
 							content: {
 								type: CHOICE,
-								members: [{ type: SYMBOL, name: 'string_fragment' }, { type: SYMBOL, name: 'escape_sequence' }]
+								members: [
+									{ type: SYMBOL, name: 'string_fragment' },
+									{ type: SYMBOL, name: 'escape_sequence' }
+								]
 							}
 						}
 					]
@@ -147,9 +153,7 @@ function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 
 function makeRefineSymbolRaw(forms: RefineForm[], wrapOptional = false): RawGrammar {
 	const enumRef = (name: string): Rule<'evaluate'> =>
-		wrapOptional
-			? { type: OPTIONAL, content: { type: SYMBOL, name } }
-			: { type: SYMBOL, name };
+		wrapOptional ? { type: OPTIONAL, content: { type: SYMBOL, name } } : { type: SYMBOL, name };
 	return {
 		name: 'synth',
 		rules: {

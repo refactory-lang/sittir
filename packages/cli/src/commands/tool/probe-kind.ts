@@ -21,43 +21,45 @@ export const probeKind: CommandModule = {
 			.option('--trace', 'Emit full multi-lane trace (js + native, shallow + deep)')
 			.option('--log-parse', 'Log tree-sitter parse events to stderr')
 			.option('--full', 'Emit complete multi-lane trace (like --trace)')
-			.action(async (opts: {
-				grammar?: string;
-				source?: string;
-				stdin?: boolean;
-				kind?: string;
-				range?: string;
-				render?: boolean;
-				wrap?: boolean;
-				reparse?: boolean;
-				pretty?: boolean;
-				baseline?: string;
-				baselineParser?: boolean;
-				engine?: string;
-				trace?: boolean;
-				logParse?: boolean;
-				full?: boolean;
-			}) => {
-				// Commander stores `--no-render`/`--no-wrap` under the positive
-				// key (opts.render/opts.wrap === false when the flag is passed).
-				const code = await runProbeKind({
-					grammar: opts.grammar ?? 'rust',
-					source: opts.source,
-					stdin: opts.stdin ?? false,
-					kind: opts.kind,
-					range: opts.range,
-					noRender: opts.render === false,
-					noWrap: opts.wrap === false,
-					reparse: opts.reparse ?? false,
-					pretty: opts.pretty ?? false,
-					baseline: opts.baseline,
-					baselineParser: opts.baselineParser ?? false,
-					engine: opts.engine,
-					trace: opts.trace ?? false,
-					logParse: opts.logParse ?? false,
-					full: opts.full ?? false,
-				});
-				if (code !== 0) process.exitCode = code;
-			});
-	},
+			.action(
+				async (opts: {
+					grammar?: string;
+					source?: string;
+					stdin?: boolean;
+					kind?: string;
+					range?: string;
+					render?: boolean;
+					wrap?: boolean;
+					reparse?: boolean;
+					pretty?: boolean;
+					baseline?: string;
+					baselineParser?: boolean;
+					engine?: string;
+					trace?: boolean;
+					logParse?: boolean;
+					full?: boolean;
+				}) => {
+					// Commander stores `--no-render`/`--no-wrap` under the positive
+					// key (opts.render/opts.wrap === false when the flag is passed).
+					const code = await runProbeKind({
+						grammar: opts.grammar ?? 'rust',
+						source: opts.source,
+						stdin: opts.stdin ?? false,
+						kind: opts.kind,
+						range: opts.range,
+						noRender: opts.render === false,
+						noWrap: opts.wrap === false,
+						reparse: opts.reparse ?? false,
+						pretty: opts.pretty ?? false,
+						baseline: opts.baseline,
+						baselineParser: opts.baselineParser ?? false,
+						engine: opts.engine,
+						trace: opts.trace ?? false,
+						logParse: opts.logParse ?? false,
+						full: opts.full ?? false
+					});
+					if (code !== 0) process.exitCode = code;
+				}
+			);
+	}
 };

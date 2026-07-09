@@ -6,7 +6,21 @@
  * extension mechanism — each rule fn receives ($, original).
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	FIELD,
+	GROUP,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
 import type {
 	Rule,
@@ -21,7 +35,6 @@ import type {
 	PatternRule,
 	SymbolRule,
 	AliasRule,
-	EnumRule,
 	SymbolRef
 } from '../types/rule.ts';
 import { isEnumChoiceRule } from '../types/rule.ts';
@@ -95,7 +108,6 @@ export function seq(...members: Input[]): Rule<'evaluate'> {
 
 	return { type: SEQ, members: normalized };
 }
-
 
 /**
  * Choice combinator — matches exactly one of the members.
@@ -671,7 +683,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		sinks,
 		setWord: (w) => {
 			word = w;
-		},
+		}
 	};
 
 	const { roles: collectedRoles } = withRoleScope(() => {
@@ -1030,7 +1042,12 @@ function collectFieldEnumOccurrences(rules: Record<string, Rule<'evaluate'>>, ct
  * @param rules - Full rules map for symbol resolution.
  * @param out - Accumulator for discovered occurrences.
  */
-function walkFieldEnums(rule: Rule<'evaluate'>, ctx: EvaluateCtx, parentKind: string, out: FieldEnumOccurrence[]): void {
+function walkFieldEnums(
+	rule: Rule<'evaluate'>,
+	ctx: EvaluateCtx,
+	parentKind: string,
+	out: FieldEnumOccurrence[]
+): void {
 	switch (rule.type) {
 		case FIELD: {
 			// Peel one level of repeat/repeat1 wrapper so that
@@ -1132,9 +1149,7 @@ function fieldEnumSiteKey(parentKind: string, fieldName: string): string {
  * enclosing choice into a single `field(name, choice(...))` surface before
  * any later enum-like storage classification runs.
  */
-function collectConflictingFieldEnumSites(
-	occurrences: readonly FieldEnumOccurrence[]
-): ReadonlySet<string> {
+function collectConflictingFieldEnumSites(occurrences: readonly FieldEnumOccurrence[]): ReadonlySet<string> {
 	const memberKeysBySite = new Map<string, Set<string>>();
 	for (const occ of occurrences) {
 		const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
@@ -1174,8 +1189,7 @@ function claimUniqueEnumName(
 	let attempt = 2;
 	while (
 		claimedNames.has(candidate) ||
-		(!canReuseExistingEnumName(candidate, ctx, memberKey) &&
-			Object.prototype.hasOwnProperty.call(ctx.rules, candidate))
+		(!canReuseExistingEnumName(candidate, ctx, memberKey) && Object.prototype.hasOwnProperty.call(ctx.rules, candidate))
 	) {
 		candidate = `${baseName}__${slug}_${attempt}`;
 		attempt++;
@@ -1217,9 +1231,7 @@ function enumMemberKeySlug(memberKey: string): string {
 		.split(',')
 		.map((member) => {
 			const encoded = Array.from(member)
-				.map((ch) =>
-					/[A-Za-z0-9]/.test(ch) ? ch.toLowerCase() : `x${ch.codePointAt(0)!.toString(16)}`
-				)
+				.map((ch) => (/[A-Za-z0-9]/.test(ch) ? ch.toLowerCase() : `x${ch.codePointAt(0)!.toString(16)}`))
 				.join('');
 			return encoded.length > 0 ? encoded : 'empty';
 		})
@@ -1314,16 +1326,20 @@ interface FieldEnumSweepState {
  * @param sweep - The pass-local sweep state.
  * @returns The rewritten rule (may be structurally identical if no change was needed).
  */
-function rewriteFieldEnums(rule: Rule<'evaluate'>, ctx: EvaluateCtx, parentKind: string, sweep: FieldEnumSweepState): Rule<'evaluate'> {
+function rewriteFieldEnums(
+	rule: Rule<'evaluate'>,
+	ctx: EvaluateCtx,
+	parentKind: string,
+	sweep: FieldEnumSweepState
+): Rule<'evaluate'> {
 	const { newRules, memberKeyToCanonicalName, conflictingSites } = sweep;
 	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteFieldEnums(r, ctx, parentKind, sweep);
 
 	switch (rule.type) {
 		case FIELD: {
-			const synthesized =
-				conflictingSites.has(fieldEnumSiteKey(parentKind, rule.name))
-					? null
-					: tryExtractFieldEnum(rule.content, ctx, memberKeyToCanonicalName);
+			const synthesized = conflictingSites.has(fieldEnumSiteKey(parentKind, rule.name))
+				? null
+				: tryExtractFieldEnum(rule.content, ctx, memberKeyToCanonicalName);
 			if (synthesized !== null) {
 				const { enumKindName, synthesizedRule, replacementContent } = synthesized;
 				if (!newRules.has(enumKindName)) {
@@ -1412,7 +1428,8 @@ function tryExtractFieldEnum(
 	// is handled alongside `field(name, enum)`. The wrapper type is remembered
 	// so the rewrite can restore it around the synthesized symbol reference.
 	const repeatWrapperType = content.type === REPEAT || content.type === REPEAT1 ? content.type : null;
-	const innerContent = repeatWrapperType !== null ? (content as RepeatRule<'evaluate'> | Repeat1Rule<'evaluate'>).content : content;
+	const innerContent =
+		repeatWrapperType !== null ? (content as RepeatRule<'evaluate'> | Repeat1Rule<'evaluate'>).content : content;
 
 	const members = resolveToEnumMembers(innerContent, ctx);
 	if (members === null || members.length === 0) return null;
@@ -1550,7 +1567,9 @@ function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string
  * Read the raw polymorphs path→variant-name config from the wire context.
  * Returns `undefined` when no `polymorphs:` block was supplied.
  */
-function drainPolymorphsConfigMetadata(opts: GrammarOptions): Record<string, Record<string, string> | undefined> | undefined {
+function drainPolymorphsConfigMetadata(
+	opts: GrammarOptions
+): Record<string, Record<string, string> | undefined> | undefined {
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (!wireCtx || !wireCtx.polymorphsConfig) return undefined;
 	const p = wireCtx.polymorphsConfig as Record<string, Record<string, string> | undefined>;
@@ -1702,7 +1721,7 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 				if (hiddenName in rules) continue; // already present via deposit or override
 				const $ = createProxy(hiddenName, refs);
 				try {
-					const result = (value as (($: unknown, previous: unknown) => unknown)).call($, $, undefined);
+					const result = (value as ($: unknown, previous: unknown) => unknown).call($, $, undefined);
 					if (result && typeof result === 'object' && typeof (result as { type?: unknown }).type === 'string') {
 						rules[hiddenName] = normalize(result as Input);
 						provenanceByKind.set(hiddenName, 'evaluate-synthesized');
@@ -1847,7 +1866,11 @@ interface PatternCandidate {
  * body that would have been pruned is instead preserved because it has real
  * content.
  */
-function applyPatternReplacement(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx, wireCtx: WireContext): void {
+function applyPatternReplacement(
+	rules: Record<string, Rule<'evaluate'>>,
+	ctx: EvaluateCtx,
+	wireCtx: WireContext
+): void {
 	const { baseRules, provenanceByKind } = ctx;
 	// Step 1: identify pattern candidates.
 	// Path A — legacy `_`-prefix candidates declared in `rules:`.
@@ -2150,15 +2173,13 @@ function patternRulesEqual(a: Rule<'evaluate'>, b: Rule<'evaluate'>): boolean {
 		case SEQ: {
 			const bSeq = b as SeqRule<'evaluate'>;
 			return (
-				a.members.length === bSeq.members.length &&
-				a.members.every((m, i) => patternRulesEqual(m, bSeq.members[i]!))
+				a.members.length === bSeq.members.length && a.members.every((m, i) => patternRulesEqual(m, bSeq.members[i]!))
 			);
 		}
 		case CHOICE: {
 			const bCh = b as ChoiceRule<'evaluate'>;
 			return (
-				a.members.length === bCh.members.length &&
-				a.members.every((m, i) => patternRulesEqual(m, bCh.members[i]!))
+				a.members.length === bCh.members.length && a.members.every((m, i) => patternRulesEqual(m, bCh.members[i]!))
 			);
 		}
 		case OPTIONAL:
@@ -2250,7 +2271,11 @@ function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: Eva
  * — the outer's deposit + an inner variant split). Skipping preserves
  * the transform; the raw deposit is still correct when no compose ran.
  */
-function injectSyntheticRules(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx, syntheticRules: Map<string, unknown>): void {
+function injectSyntheticRules(
+	rules: Record<string, Rule<'evaluate'>>,
+	ctx: EvaluateCtx,
+	syntheticRules: Map<string, unknown>
+): void {
 	for (const [name, content] of syntheticRules) {
 		if (name in rules) continue;
 		rules[name] = content as Rule<'evaluate'>;
@@ -2276,8 +2301,7 @@ function injectSyntheticRules(rules: Record<string, Rule<'evaluate'>>, ctx: Eval
  */
 function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	const { sinks, setWord } = ctx;
-	const inherited = ((ctx.baseGrammar as { grammar?: unknown } | null | undefined)?.grammar ??
-		ctx.baseGrammar) as {
+	const inherited = ((ctx.baseGrammar as { grammar?: unknown } | null | undefined)?.grammar ?? ctx.baseGrammar) as {
 		extras?: string[];
 		externals?: string[];
 		supertypes?: string[];

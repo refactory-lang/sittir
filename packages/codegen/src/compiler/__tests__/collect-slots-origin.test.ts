@@ -26,10 +26,10 @@ function makeContentChoice(mult: 'array' | 'nonEmptyArray' | 'optional' | 'singl
 		members: [
 			{ type: 'SYMBOL', name: '_expression' } as Rule,
 			{ type: 'SYMBOL', name: 'list_splat' } as Rule,
-			{ type: 'SYMBOL', name: 'dictionary_splat' } as Rule,
+			{ type: 'SYMBOL', name: 'dictionary_splat' } as Rule
 		],
 		multiplicity: mult,
-		nonterminal: true,
+		nonterminal: true
 	} as ChoiceRule;
 }
 
@@ -52,7 +52,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 
 		const seq: Rule = {
 			type: 'SEQ',
-			members: [choice],
+			members: [choice]
 		} as unknown as Rule;
 
 		const slots = collectSlots(seq, 'test_kind');
@@ -72,7 +72,7 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		const arm2: Rule = { type: 'SEQ', members: [fieldA, innerChoice2] } as unknown as Rule;
 		const structuralChoice: Rule = {
 			type: 'CHOICE',
-			members: [arm1, arm2],
+			members: [arm1, arm2]
 		} as unknown as Rule;
 
 		const slots = collectSlots(structuralChoice, 'test_kind');
@@ -90,17 +90,11 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		// for this test, use the simplifiedRule directly as both.
 		const inlinedRule: Rule = {
 			type: 'CHOICE',
-			members: simplifiedRule.members,
+			members: simplifiedRule.members
 		} as unknown as Rule;
 		const renderRule = simplifiedRule as ReturnType<typeof deleteWrapper>;
 
-		const branch = new AssembledBranch(
-			'argument_list',
-			inlinedRule as any,
-			simplifiedRule,
-			renderRule,
-			{}
-		);
+		const branch = new AssembledBranch('argument_list', inlinedRule as any, simplifiedRule, renderRule, {});
 
 		const contentSlot = branch.slots['content'];
 		expect(contentSlot).toBeDefined();

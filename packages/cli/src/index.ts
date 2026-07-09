@@ -10,11 +10,4 @@ export { buildProgram } from './cli.ts';
 export { allCommandNames, renderGlossary } from './glossary.ts';
 export type { CommandModule } from './framework/command-module.ts';
 export { registerNamespace } from './framework/command-module.ts';
-export {
-	withGrammar,
-	withBackend,
-	withRecursive,
-	withOutput,
-	GRAMMARS,
-	BACKENDS
-} from './framework/options.ts';
+export { withGrammar, withBackend, withRecursive, withOutput, GRAMMARS, BACKENDS } from './framework/options.ts';

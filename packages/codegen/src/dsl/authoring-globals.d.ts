@@ -63,7 +63,10 @@ declare global {
 		dynamic<R extends AuthoringRule>(value: number, rule: R): PrecDynamicRule<ToGrammarRule<R>>;
 	};
 
-	function alias<R extends AuthoringRule, V extends string>(rule: R, value: V | SymbolRule<V>): AliasRule<V, ToGrammarRule<R>>;
+	function alias<R extends AuthoringRule, V extends string>(
+		rule: R,
+		value: V | SymbolRule<V>
+	): AliasRule<V, ToGrammarRule<R>>;
 
 	function sym<N extends string>(name: N): SymbolRule<N>;
 

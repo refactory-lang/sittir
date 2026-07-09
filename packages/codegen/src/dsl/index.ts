@@ -39,7 +39,14 @@ export { variant } from './primitives/variant.ts';
 export { field } from './primitives/field.ts';
 export { refine } from './primitives/refine.ts';
 export { wire } from './wire/wire.ts';
-export type { WireConfig, WiredOpts, PolymorphsConfig, TransformsConfig, PatchMap, RenderAsConfig } from './wire/wire.ts';
+export type {
+	WireConfig,
+	WiredOpts,
+	PolymorphsConfig,
+	TransformsConfig,
+	PatchMap,
+	RenderAsConfig
+} from './wire/wire.ts';
 // `GrammarBase` was renamed `GrammarJson` (defined in grammar-shapes/, not
 // wire.ts) — re-exported here from its real source so this stable import
 // surface keeps offering the base-grammar-shape type under its current name.

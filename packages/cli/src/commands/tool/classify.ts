@@ -7,7 +7,12 @@ export const classify: CommandModule = {
 	describe: 'Inspect kind classification through the compiler phases',
 	register: (program) => {
 		withGrammar(defineCommand(program, classify))
-			.option('--kind <name>', 'Show only this kind (repeatable)', (val: string, prev: string[]) => [...prev, val], [] as string[])
+			.option(
+				'--kind <name>',
+				'Show only this kind (repeatable)',
+				(val: string, prev: string[]) => [...prev, val],
+				[] as string[]
+			)
 			.option('--modeltype <type>', 'Filter output to this modelType')
 			.option('--all', 'Show all assembled kinds')
 			.action(async (opts: { grammar?: string; kind?: string[]; modeltype?: string; all?: boolean }) => {
@@ -16,9 +21,9 @@ export const classify: CommandModule = {
 					grammar: opts.grammar ?? 'rust',
 					kinds,
 					modelTypeFilter: opts.modeltype ?? null,
-					showAll: opts.all ?? false,
+					showAll: opts.all ?? false
 				});
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

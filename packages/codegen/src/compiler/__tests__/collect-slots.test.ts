@@ -86,12 +86,12 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 						name: 'operators',
 						content: {
 							type: CHOICE,
-							members: [str('<'), str('<='), str('=='), str('>')],
-						},
+							members: [str('<'), str('<='), str('=='), str('>')]
+						}
 					},
-					sym('primary_expression'),
-				],
-			},
+					sym('primary_expression')
+				]
+			}
 		};
 		const out = collectSlots(deleteWrapper(inner) as Rule);
 		const names = out.map((s) => s.name);
@@ -133,8 +133,8 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 			name: 'except_clause',
 			forms: [
 				{ name: 'as', content: sym('as_pattern') },
-				{ name: 'list', content: sym('expression_list') },
-			],
+				{ name: 'list', content: sym('expression_list') }
+			]
 		} as unknown as Rule;
 		const out = collectSlots(deleteWrapper(rule) as Rule, 'except_clause');
 		expect(out).toHaveLength(1);
@@ -145,7 +145,10 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	it('seq distributes — two symbol members → two slots', () => {
 		const rule: Rule<'link'> = {
 			type: SEQ,
-			members: [{ type: FIELD, name: 'left', content: sym('a') }, { type: FIELD, name: 'right', content: sym('b') }],
+			members: [
+				{ type: FIELD, name: 'left', content: sym('a') },
+				{ type: FIELD, name: 'right', content: sym('b') }
+			]
 		};
 		const out = collectSlots(deleteWrapper(rule) as Rule);
 		expect(out.map((s) => s.name)).toEqual(['left', 'right']);

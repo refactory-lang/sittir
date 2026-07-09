@@ -9,14 +9,17 @@ import {
 	AssembledEnum,
 	AssembledKeyword,
 	AssembledPattern,
-	AssembledSupertype,
+	AssembledSupertype
 } from '../../compiler/model/node-map.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, RenderRule, SeqRule } from '../../types/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 
-export function makeNodeMapWith(nodes: Map<string, AssembledNode>, polymorphFormKinds: ReadonlySet<string> = new Set()): NodeMap {
+export function makeNodeMapWith(
+	nodes: Map<string, AssembledNode>,
+	polymorphFormKinds: ReadonlySet<string> = new Set()
+): NodeMap {
 	return {
 		name: 'rust',
 		nodes,
@@ -70,7 +73,10 @@ export function makeMinimalNodeMap(): NodeMap {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	const callRuleSimplified = deleteWrapper(callRule) as RenderRule & typeof callRule;
-	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRuleSimplified, callRuleSimplified));
+	nodes.set(
+		'call_expression',
+		new AssembledBranch('call_expression', callRule, callRuleSimplified, callRuleSimplified)
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }));
 	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }));

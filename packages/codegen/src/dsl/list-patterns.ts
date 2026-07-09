@@ -109,9 +109,10 @@ export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
 			// separatorFactsEqual reading `.value`/`.trailing` off a string.
 			const aObj = typeof A.separator === 'object' && A.separator !== null;
 			const bObj = typeof B.separator === 'object' && B.separator !== null;
-			const sepEqual = aObj && bObj
-				? separatorFactsEqual(A.separator as SeparatorFact, B.separator as SeparatorFact)
-				: A.separator === B.separator;
+			const sepEqual =
+				aObj && bObj
+					? separatorFactsEqual(A.separator as SeparatorFact, B.separator as SeparatorFact)
+					: A.separator === B.separator;
 			return sepEqual && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
 		}
 		case 'field':

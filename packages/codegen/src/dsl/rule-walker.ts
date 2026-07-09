@@ -41,7 +41,8 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		const bag = rule as { members?: readonly R[]; content?: R; separator?: { value: R } };
 		if (Array.isArray(bag.members)) out.push(...bag.members);
 		else if (bag.content && typeof bag.content === 'object') out.push(bag.content);
-		if (bag.separator && typeof bag.separator === 'object' && 'value' in bag.separator) out.push(bag.separator.value as R);
+		if (bag.separator && typeof bag.separator === 'object' && 'value' in bag.separator)
+			out.push(bag.separator.value as R);
 		return out;
 	}
 
@@ -56,7 +57,11 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	 * use.
 	 */
 	map(rule: R, visit: (r: R) => R): R {
-		const bag = rule as { members?: readonly R[]; content?: R; separator?: { value: R; trailing?: boolean; leading?: boolean } };
+		const bag = rule as {
+			members?: readonly R[];
+			content?: R;
+			separator?: { value: R; trailing?: boolean; leading?: boolean };
+		};
 		const patch: {
 			members?: readonly R[];
 			content?: R;

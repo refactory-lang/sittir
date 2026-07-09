@@ -18,14 +18,17 @@ function makeRepeatedUnnamedChoiceNodeMap(): NodeMap {
 					type: CHOICE,
 					members: [
 						{ type: SYMBOL, name: 'identifier' },
-						{ type: SYMBOL, name: 'integer' },
-					],
-				},
-			},
-		],
+						{ type: SYMBOL, name: 'integer' }
+					]
+				}
+			}
+		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('mixed_parent', new AssembledBranch('mixed_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'mixed_parent',
+		new AssembledBranch('mixed_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
@@ -38,23 +41,29 @@ function makeOptionalUnnamedHelperNodeMap(): NodeMap {
 			{
 				type: FIELD,
 				name: 'value',
-				content: { type: SYMBOL, name: 'identifier' },
+				content: { type: SYMBOL, name: 'identifier' }
 			},
-			{ type: SYMBOL, name: 'integer' },
-		],
+			{ type: SYMBOL, name: 'integer' }
+		]
 	};
 	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
 				type: OPTIONAL,
-				content: { type: SYMBOL, name: '_helper' },
-			},
-		],
+				content: { type: SYMBOL, name: '_helper' }
+			}
+		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('parent_helper', new AssembledBranch('parent_helper', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
-	nodes.set('_helper', new AssembledBranch('_helper', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule)));
+	nodes.set(
+		'parent_helper',
+		new AssembledBranch('parent_helper', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
+	nodes.set(
+		'_helper',
+		new AssembledBranch('_helper', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
@@ -73,8 +82,8 @@ describe('render-module unnamed structural signals', () => {
 			[
 				{
 					filename: 'mixed_parent.jinja',
-					content: '{# @generated #}\n{{ identifier | join(" ") }}',
-				},
+					content: '{# @generated #}\n{{ identifier | join(" ") }}'
+				}
 			],
 			nodeMap
 		).transportRs.contents;
@@ -99,8 +108,8 @@ describe('render-module unnamed structural signals', () => {
 			[
 				{
 					filename: 'parent_helper.jinja',
-					content: '{# @generated #}\n{{ value }}',
-				},
+					content: '{# @generated #}\n{{ value }}'
+				}
 			],
 			nodeMap
 		).transportRs.contents;

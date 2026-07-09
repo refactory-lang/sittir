@@ -534,7 +534,12 @@ function deField(rule: RuntimeRule): RuntimeRule {
 	const stripPropagated = (r: RuntimeRule): RuntimeRule => {
 		const { fieldName: _drop, ...rest } = r as Record<string, unknown>;
 		const content = (rest as { content?: RuntimeRule }).content;
-		if (content && typeof content === 'object' && !isSeqType((rest as { type: string }).type) && !isChoiceType((rest as { type: string }).type)) {
+		if (
+			content &&
+			typeof content === 'object' &&
+			!isSeqType((rest as { type: string }).type) &&
+			!isChoiceType((rest as { type: string }).type)
+		) {
 			return { ...rest, content: stripPropagated(content) } as unknown as RuntimeRule;
 		}
 		return rest as unknown as RuntimeRule;

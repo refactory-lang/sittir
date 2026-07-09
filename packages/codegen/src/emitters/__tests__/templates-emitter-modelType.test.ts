@@ -162,5 +162,3 @@ describe('emitGroupTemplate', () => {
 		expect(emitGroupTemplate(mockGroup(rule), ctx)).toBe('mod {{ name }}');
 	});
 });
-
-

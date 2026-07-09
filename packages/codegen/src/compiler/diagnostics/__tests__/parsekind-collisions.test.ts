@@ -108,7 +108,9 @@ describe('diagnoseParseKindCollisions', () => {
 
 		const host = nodeMap.nodes.get('host');
 		expect(host?.modelType).toBe('branch');
-		const slot = Object.values((host as { slots: Record<string, { name: string; values: readonly unknown[] }> }).slots)[0];
+		const slot = Object.values(
+			(host as { slots: Record<string, { name: string; values: readonly unknown[] }> }).slots
+		)[0];
 		expect(slot?.name).toBe('shared');
 		expect(slot?.values).toHaveLength(1);
 	});

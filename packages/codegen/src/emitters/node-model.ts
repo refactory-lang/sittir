@@ -17,15 +17,21 @@
  * deterministically sorted by kind so diffs are stable.
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	FIELD,
+	GROUP,
+	OPTIONAL,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	SUPERTYPE,
+	SYMBOL,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import type { Rule } from '../types/rule.ts';
-import type {
-	AssembledNode,
-	AssembledNonterminal,
-	NodeOrTerminal,
-	UnresolvedRef
-} from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, UnresolvedRef } from '../compiler/model/node-map.ts';
 import { isNodeRef, isUnresolvedRef, isRequired, isMultiple, isNonEmpty, kindsOf } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';

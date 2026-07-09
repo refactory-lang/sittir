@@ -10,7 +10,25 @@
  * Link does NOT process overrides — already applied by Evaluate.
  */
 
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	DEDENT,
+	FIELD,
+	GROUP,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	SymbolRef,
@@ -26,9 +44,21 @@ import type {
 	RepeatRule,
 	VariantRule,
 	AliasRule,
-	AnyRule,
+	AnyRule
 } from '../types/rule.ts';
-import { isSeq, isChoice, isEnumChoiceRule, sym, replaceAtPath, isSymbol, isString, isRepeat1, isRepeat, isOptional, isField } from '../types/rule.ts';
+import {
+	isSeq,
+	isChoice,
+	isEnumChoiceRule,
+	sym,
+	replaceAtPath,
+	isSymbol,
+	isString,
+	isRepeat1,
+	isRepeat,
+	isOptional,
+	isField
+} from '../types/rule.ts';
 import { isStringType } from '../types/runtime-shapes.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import {
@@ -44,10 +74,10 @@ import type {
 	IncludeFilter,
 	DerivationLog,
 	RepeatedShapeEntry,
-	RefineForm,
+	RefineForm
 } from './types.ts';
 import { hasAnyField } from './model/node-map.ts';
-import { collectFieldNames } from '../types/rule.ts';
+
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import {
@@ -522,16 +552,12 @@ function canonicalizeRuleLiterals(
 		case SEQ:
 			return {
 				...rule,
-				members: rule.members.map((member) =>
-					canonicalizeRuleLiterals(member, kindEntries, false)
-				)
+				members: rule.members.map((member) => canonicalizeRuleLiterals(member, kindEntries, false))
 			};
 		case CHOICE:
 			return {
 				...rule,
-				members: rule.members.map((member) =>
-					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite)
-				)
+				members: rule.members.map((member) => canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite))
 			};
 		case OPTIONAL:
 		case REPEAT:
@@ -639,9 +665,7 @@ function markSupertypeRefsNonInline(rules: Record<string, Rule<'link'>>): void {
 	if (nonInlineKinds.size === 0) return;
 	const walk = (rule: Rule<'link'>): Rule<'link'> => {
 		if (rule.type === SYMBOL) {
-			return nonInlineKinds.has(rule.name) && rule.inline !== false
-				? { ...rule, inline: false }
-				: rule;
+			return nonInlineKinds.has(rule.name) && rule.inline !== false ? { ...rule, inline: false } : rule;
 		}
 		const xs = rule as { members?: readonly Rule<'link'>[]; content?: Rule<'link'> };
 		if (xs.members) return { ...rule, members: xs.members.map(walk) } as Rule<'link'>;
@@ -684,11 +708,7 @@ function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): 
 
 function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.value;
-	if (
-		rule.type === GROUP ||
-		rule.type === VARIANT ||
-		rule.type === TOKEN
-	) {
+	if (rule.type === GROUP || rule.type === VARIANT || rule.type === TOKEN) {
 		return extractTopLevelAliasTarget((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
@@ -720,11 +740,7 @@ function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
 		// Only pure alias-dispatch choices: every member must be a named alias.
-		if (
-			rule.type === CHOICE &&
-			rule.members.length > 0 &&
-			rule.members.every((m) => m.type === ALIAS && m.named)
-		) {
+		if (rule.type === CHOICE && rule.members.length > 0 && rule.members.every((m) => m.type === ALIAS && m.named)) {
 			out.add(name);
 		}
 	}
@@ -888,10 +904,7 @@ function mintContentAliasKinds(
 					// AFTER the main per-rule lift loop, so a minted twin whose body
 					// is `seq(item, repeat(seq(sep, item)))` would otherwise keep the
 					// raw shape and lose the separator/trailing metadata #62 centralizes.
-					rules[value] = liftSeparators(
-						resolveRule(body, ctx, value),
-						ctx
-					);
+					rules[value] = liftSeparators(resolveRule(body, ctx, value), ctx);
 				}
 			}
 			if (content) walk(content, ownerName, false);
@@ -957,29 +970,18 @@ function collectTopLevelAliasBodies(
 		// bypasses the evaluate pipeline). The predicate is now derived on-demand
 		// from `raw.rules` via `deriveComplexAliasTargetHidden` (structural
 		// derivation, not a cached set). See project_pr_e_spec_premises_false.
-		if (
-			complexAliasTargetHidden &&
-			content.type === SYMBOL &&
-			complexAliasTargetHidden.has(content.name)
-		) {
+		if (complexAliasTargetHidden && content.type === SYMBOL && complexAliasTargetHidden.has(content.name)) {
 			continue;
 		}
 		const resolvedContent = resolveRule(content, ctx, name);
-		out.set(
-			name,
-			dereferenceTopLevelAliasBody(resolvedContent, ctx, resolvedRules, new Set())
-		);
+		out.set(name, dereferenceTopLevelAliasBody(resolvedContent, ctx, resolvedRules, new Set()));
 	}
 	return out;
 }
 
 function extractTopLevelNamedAliasContent(rule: Rule<'link'>): Rule<'link'> | undefined {
 	if (rule.type === ALIAS && rule.named) return rule.content;
-	if (
-		rule.type === GROUP ||
-		rule.type === VARIANT ||
-		rule.type === TOKEN
-	) {
+	if (rule.type === GROUP || rule.type === VARIANT || rule.type === TOKEN) {
 		return extractTopLevelNamedAliasContent((rule as { content: Rule<'link'> }).content);
 	}
 	return undefined;
@@ -1038,11 +1040,7 @@ function extractAliasedFromName(content: Rule<'link'>, supertypes: ReadonlySet<s
 		// survives as the symbol `name` (the CST `$type` the reader matches).
 		return content.name;
 	}
-	if (
-		content.type === VARIANT ||
-		content.type === GROUP ||
-		content.type === TOKEN
-	) {
+	if (content.type === VARIANT || content.type === GROUP || content.type === TOKEN) {
 		return extractAliasedFromName((content as { content: Rule<'link'> }).content, supertypes);
 	}
 	return undefined;
@@ -1236,9 +1234,7 @@ export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, der
 	const structural = deriveStructuralVariantChildren(rules);
 	const parentToChildren = new Map<string, string[]>();
 	for (const [parentKind, targetNames] of structural) {
-		const suffixes = targetNames
-			.map((t) => prefixNamedSuffix(parentKind, t))
-			.filter((s): s is string => s !== null);
+		const suffixes = targetNames.map((t) => prefixNamedSuffix(parentKind, t)).filter((s): s is string => s !== null);
 		if (suffixes.length > 0) parentToChildren.set(parentKind, suffixes);
 	}
 
@@ -1263,7 +1259,8 @@ export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, der
 			if (symbolInNames(r)) return true;
 			const inner = r.type === VARIANT ? r.content : r;
 			if (inner.type === CHOICE) return inner.members.some(symbolInNames);
-			if (inner.type === SEQ) return inner.members.some((m) => symbolInNames(m) || (m.type === CHOICE && m.members.some(symbolInNames)));
+			if (inner.type === SEQ)
+				return inner.members.some((m) => symbolInNames(m) || (m.type === CHOICE && m.members.some(symbolInNames)));
 			return false;
 		};
 		const anyChildMemberInFoundChoice = found.choice.members.some(symbolInRule);
@@ -1429,7 +1426,11 @@ function isAllAliasChoice(rule: Rule<'link'>, variantChildVisibleNames: Set<stri
  * alias's `_${parent}_${child}` hidden-rule body. Return the seq with the
  * literals removed (single-member seq collapses to its inner content).
  */
-function applyVariantScaffoldPushDown(seq: SeqRule<'link'>, choiceIdx: number, rules: Record<string, Rule<'link'>>): Rule<'link'> {
+function applyVariantScaffoldPushDown(
+	seq: SeqRule<'link'>,
+	choiceIdx: number,
+	rules: Record<string, Rule<'link'>>
+): Rule<'link'> {
 	const prefix = seq.members.slice(0, choiceIdx).filter((m) => m.type === STRING) as StringRule<'link'>[];
 	const suffix = seq.members.slice(choiceIdx + 1).filter((m) => m.type === STRING) as StringRule<'link'>[];
 	if (prefix.length === 0 && suffix.length === 0) return seq; // nothing to push
@@ -1748,12 +1749,7 @@ function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
 // resolveRule — recursive resolution of all reference types
 // ---------------------------------------------------------------------------
 
-function resolveRule(
-	rule: Rule<'link'>,
-	ctx: LinkCtx,
-	currentName: string,
-	parentIsOptionalSeq = false
-): Rule<'link'> {
+function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string, parentIsOptionalSeq = false): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
 			return {
@@ -1934,12 +1930,12 @@ function resolveNamedAliasWithProvenance(content: Rule<'link'>, ctx: LinkCtx, ta
 const ROLE_TO_RULE_TYPE = {
 	indent: INDENT,
 	dedent: DEDENT,
-	newline: NEWLINE,
+	newline: NEWLINE
 } as const;
 const RULE_TYPE_TO_ROLE = {
 	[INDENT]: 'indent',
 	[DEDENT]: 'dedent',
-	[NEWLINE]: 'newline',
+	[NEWLINE]: 'newline'
 } as const;
 
 function resolveSymbolRoleOrPass(rule: SymbolRule<'link'>, ctx: LinkCtx): Rule<'link'> {
@@ -2319,7 +2315,7 @@ function assignRepeatSeparator(rule: Rule<'link'>, rules: Record<string, Rule<'l
 		// the prior behavior of leaving those undefined.
 		if (!rule.separator)
 			(rule as { separator?: { value: Rule<'link'> } }).separator = {
-				value: { type: STRING, value: BLOCK_SEPARATOR } as Rule<'link'>,
+				value: { type: STRING, value: BLOCK_SEPARATOR } as Rule<'link'>
 			};
 		return true;
 	}
@@ -2632,29 +2628,29 @@ function suggestSharedName(kinds: readonly string[]): string {
  */
 
 export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[] | null {
-    let changed = false;
-    const out: Rule<'link'>[] = [];
-    for (let i = 0; i < members.length; i++) {
-        const cur = members[i]!;
-        const next = members[i + 1];
-        const curSep = cur.type === REPEAT || cur.type === REPEAT1 ? cur.separator : undefined;
-        const isSepRepeat = curSep !== undefined && !curSep.trailing;
-        // Bail unless the separator is a plain literal — one level deeper
-        // than before now that `.separator` is the nested {value, ...} fact.
-        const isOptionalSepLit = (r: Rule<'link'> | undefined, sep: { value: Rule<'link'> }): boolean => {
-            if (!r || r.type !== OPTIONAL || r.content.type !== STRING) return false;
-            if (!isStringType(sep.value.type)) return false;
-            return r.content.value === (sep.value as StringRule<'link'>).value;
-        };
-        if (isSepRepeat && isOptionalSepLit(next, curSep!)) {
-            out.push({ ...(cur as RepeatRule | Repeat1Rule), separator: { ...curSep!, trailing: true } });
-            i++;
-            changed = true;
-            continue;
-        }
-        out.push(cur);
-    }
-    return changed ? out : null;
+	let changed = false;
+	const out: Rule<'link'>[] = [];
+	for (let i = 0; i < members.length; i++) {
+		const cur = members[i]!;
+		const next = members[i + 1];
+		const curSep = cur.type === REPEAT || cur.type === REPEAT1 ? cur.separator : undefined;
+		const isSepRepeat = curSep !== undefined && !curSep.trailing;
+		// Bail unless the separator is a plain literal — one level deeper
+		// than before now that `.separator` is the nested {value, ...} fact.
+		const isOptionalSepLit = (r: Rule<'link'> | undefined, sep: { value: Rule<'link'> }): boolean => {
+			if (!r || r.type !== OPTIONAL || r.content.type !== STRING) return false;
+			if (!isStringType(sep.value.type)) return false;
+			return r.content.value === (sep.value as StringRule<'link'>).value;
+		};
+		if (isSepRepeat && isOptionalSepLit(next, curSep!)) {
+			out.push({ ...(cur as RepeatRule | Repeat1Rule), separator: { ...curSep!, trailing: true } });
+			i++;
+			changed = true;
+			continue;
+		}
+		out.push(cur);
+	}
+	return changed ? out : null;
 }
 /**
  * Detect the `commaSep1` family inside a seq's member list and lift it to a
@@ -2665,48 +2661,50 @@ export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[]
  */
 
 export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
-    if (members.length < 2 || members.length > 3) return null;
+	if (members.length < 2 || members.length > 3) return null;
 
-    const repeatIdx = findRepeatWithSeparator(members);
-    if (repeatIdx === -1) return null;
-    const repeatNode = members[repeatIdx] as RepeatRule;
-    const sep = repeatNode.separator!;
-    const elem = repeatNode.content;
+	const repeatIdx = findRepeatWithSeparator(members);
+	if (repeatIdx === -1) return null;
+	const repeatNode = members[repeatIdx] as RepeatRule;
+	const sep = repeatNode.separator!;
+	const elem = repeatNode.content;
 
-    const matchesElem = (r: Rule<'link'>): boolean => rulesEqual(r, elem);
-    // Bail unless the separator is a plain literal — one level deeper than
-    // before now that `.separator` is the nested {value, ...} fact.
-    const matchesOptionalSep = (r: Rule<'link'>): boolean => {
-        if (r.type !== OPTIONAL || r.content.type !== STRING) return false;
-        if (!isStringType(sep.value.type)) return false;
-        return r.content.value === (sep.value as StringRule<'link'>).value;
-    };
+	const matchesElem = (r: Rule<'link'>): boolean => rulesEqual(r, elem);
+	// Bail unless the separator is a plain literal — one level deeper than
+	// before now that `.separator` is the nested {value, ...} fact.
+	const matchesOptionalSep = (r: Rule<'link'>): boolean => {
+		if (r.type !== OPTIONAL || r.content.type !== STRING) return false;
+		if (!isStringType(sep.value.type)) return false;
+		return r.content.value === (sep.value as StringRule<'link'>).value;
+	};
 
-    // Case 1: [x, repeat(sep, x)]
-    if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
-        return { type: REPEAT1, content: elem, separator: sep };
-    }
-    // Case 2: [x, repeat(sep, x), optional(sep)] — trailing allowed.
-    if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
-        return { type: REPEAT1, content: elem, separator: { ...sep, trailing: true } };
-    }
-    // Case 3: [sep, x, repeat(sep, x)] — leading separator.
-    if (members.length === 3 &&
-        repeatIdx === 2 &&
-        isStringType(sep.value.type) &&
-        members[0]!.type === STRING &&
-        members[0]!.value === (sep.value as StringRule<'link'>).value &&
-        matchesElem(members[1]!)) {
-        return { type: REPEAT1, content: elem, separator: { ...sep, leading: true } };
-    }
-    return null;
+	// Case 1: [x, repeat(sep, x)]
+	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
+		return { type: REPEAT1, content: elem, separator: sep };
+	}
+	// Case 2: [x, repeat(sep, x), optional(sep)] — trailing allowed.
+	if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
+		return { type: REPEAT1, content: elem, separator: { ...sep, trailing: true } };
+	}
+	// Case 3: [sep, x, repeat(sep, x)] — leading separator.
+	if (
+		members.length === 3 &&
+		repeatIdx === 2 &&
+		isStringType(sep.value.type) &&
+		members[0]!.type === STRING &&
+		members[0]!.value === (sep.value as StringRule<'link'>).value &&
+		matchesElem(members[1]!)
+	) {
+		return { type: REPEAT1, content: elem, separator: { ...sep, leading: true } };
+	}
+	return null;
 }
 /**
  * Locate the unique repeat-with-separator member in a seq's member list, or
  * `-1` when there is zero or more than one (not a commaSep shape).
  */
 function findRepeatWithSeparator(members: Rule<'link'>[]): number {
-    return members.findIndex((m) => m.type === REPEAT && m.separator !== undefined);
+	return members.findIndex((m) => m.type === REPEAT && m.separator !== undefined);
 }
 /**
  * Lift a seq's member list: try the `commaSep1` collapse first, then trailing-
@@ -2718,16 +2716,16 @@ function findRepeatWithSeparator(members: Rule<'link'>[]): number {
  * seq's structural position.
  */
 function liftSeqMembers(seq: SeqRule<'link'>, members: Rule<'link'>[]): Rule<'link'> {
-    const lifted = liftCommaSep(members);
-    if (lifted) return { ...carrySeqAttrs(seq), ...lifted };
-    const absorbed = absorbTrailingSeparator(members);
-    return { ...seq, members: absorbed ?? members };
+	const lifted = liftCommaSep(members);
+	if (lifted) return { ...carrySeqAttrs(seq), ...lifted };
+	const absorbed = absorbTrailingSeparator(members);
+	return { ...seq, members: absorbed ?? members };
 }
 /** Pick the position-carried modifier attrs a seq passes to a repeat that
  *  replaces it (id/fieldName/multiplicity/nonterminal/metadata) — NOT `members`. */
 function carrySeqAttrs(seq: SeqRule<'link'>): Partial<SeqRule<'link'>> {
-    const { members: _members, ...rest } = seq;
-    return rest;
+	const { members: _members, ...rest } = seq;
+	return rest;
 }
 /**
  * Lift every separated list in a rule tree, bottom-up. Children are lifted
@@ -2737,51 +2735,54 @@ function carrySeqAttrs(seq: SeqRule<'link'>): Partial<SeqRule<'link'>> {
  */
 
 export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
-    switch (rule.type) {
-        case SEQ:
-            return liftSeqMembers(rule, rule.members.map((m) => liftSeparators(m, ctx)));
-        case CHOICE:
-            return { ...rule, members: rule.members.map((m) => liftSeparators(m, ctx)) };
-        case REPEAT:
-        case REPEAT1: {
-            const content = liftSeparators(rule.content, ctx);
-            const sep = detectRepeatSeparator(content);
-            if (sep) {
-                if (sep.separator.type !== STRING) {
-                    // 0 real grammars (rust/typescript/python) hit this today — this
-                    // is purely a forward-looking guard. Rendering a non-literal
-                    // (e.g. choice(',', ';')) separator isn't supported yet; tracked
-                    // by PR-T (docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).
-                    const diagnostic: CompilerDiagnostic = {
-                        code: 'non-literal-separator',
-                        severity: 'warning',
-                        message: `Rule '${rule.type === REPEAT ? 'repeat' : 'repeat1'}' has a non-literal separator (${sep.separator.type}); rendering this shape is not yet supported (tracked: PR-T, docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).`,
-                        canProceed: true,
-                        scope: 'compiler',
-                        phase: 'link'
-                    };
-                    ctx.diagnostics.emit(diagnostic);
-                }
-                return { ...rule, content: sep.content, separator: { value: sep.separator, trailing: sep.trailing } };
-            }
-            return { ...rule, content };
-        }
-        case OPTIONAL:
-        case FIELD:
-        case TOKEN:
-        case ALIAS:
-            return { ...rule, content: liftSeparators(rule.content, ctx) };
-        default:
-            // Leaves (symbol/string/pattern/enum). The wrapper *compiler* types
-            // group/variant/terminal do NOT exist in the tree when this runs:
-            // liftSeparators is invoked in the link resolveRule loop, whereas
-            // GROUP is synthesized later in link (link.ts:189/1864) and VARIANT
-            // later still in normalize. Their bodies are lifted AT those
-            // construction sites, so skipping them here is correct, not lossy.
-            // (The pre-link DSL-shaped uppercase 'GROUP'/'VARIANT' are a separate
-            // dsl/ vocabulary that never reaches this compiler-Rule<'link'> walker.)
-            return rule;
-    }
+	switch (rule.type) {
+		case SEQ:
+			return liftSeqMembers(
+				rule,
+				rule.members.map((m) => liftSeparators(m, ctx))
+			);
+		case CHOICE:
+			return { ...rule, members: rule.members.map((m) => liftSeparators(m, ctx)) };
+		case REPEAT:
+		case REPEAT1: {
+			const content = liftSeparators(rule.content, ctx);
+			const sep = detectRepeatSeparator(content);
+			if (sep) {
+				if (sep.separator.type !== STRING) {
+					// 0 real grammars (rust/typescript/python) hit this today — this
+					// is purely a forward-looking guard. Rendering a non-literal
+					// (e.g. choice(',', ';')) separator isn't supported yet; tracked
+					// by PR-T (docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).
+					const diagnostic: CompilerDiagnostic = {
+						code: 'non-literal-separator',
+						severity: 'warning',
+						message: `Rule '${rule.type === REPEAT ? 'repeat' : 'repeat1'}' has a non-literal separator (${sep.separator.type}); rendering this shape is not yet supported (tracked: PR-T, docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).`,
+						canProceed: true,
+						scope: 'compiler',
+						phase: 'link'
+					};
+					ctx.diagnostics.emit(diagnostic);
+				}
+				return { ...rule, content: sep.content, separator: { value: sep.separator, trailing: sep.trailing } };
+			}
+			return { ...rule, content };
+		}
+		case OPTIONAL:
+		case FIELD:
+		case TOKEN:
+		case ALIAS:
+			return { ...rule, content: liftSeparators(rule.content, ctx) };
+		default:
+			// Leaves (symbol/string/pattern/enum). The wrapper *compiler* types
+			// group/variant/terminal do NOT exist in the tree when this runs:
+			// liftSeparators is invoked in the link resolveRule loop, whereas
+			// GROUP is synthesized later in link (link.ts:189/1864) and VARIANT
+			// later still in normalize. Their bodies are lifted AT those
+			// construction sites, so skipping them here is correct, not lossy.
+			// (The pre-link DSL-shaped uppercase 'GROUP'/'VARIANT' are a separate
+			// dsl/ vocabulary that never reaches this compiler-Rule<'link'> walker.)
+			return rule;
+	}
 }
 // ---------------------------------------------------------------------------
 // Group-lift synthesis (moved from group-synthesis.ts in R7 de-scatter).
@@ -2802,56 +2803,54 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
  */
 
 export function resolveGroupPath(rule: Rule<'link'>, path: string): Rule<'link'> {
-    const segments = path.split('/').filter((s) => s.length > 0);
-    let cur: Rule<'link'> = rule;
-    for (let i = 0; i < segments.length; i++) {
-        const seg = segments[i]!;
-        const idx = parseInt(seg, 10);
-        if (Number.isNaN(idx)) {
-            throw new Error(`group path '${path}' has non-numeric segment '${seg}' at position ${i}`);
-        }
-        cur = stepInto(cur, idx, path);
-    }
-    return cur;
+	const segments = path.split('/').filter((s) => s.length > 0);
+	let cur: Rule<'link'> = rule;
+	for (let i = 0; i < segments.length; i++) {
+		const seg = segments[i]!;
+		const idx = parseInt(seg, 10);
+		if (Number.isNaN(idx)) {
+			throw new Error(`group path '${path}' has non-numeric segment '${seg}' at position ${i}`);
+		}
+		cur = stepInto(cur, idx, path);
+	}
+	return cur;
 }
 function stepInto(rule: Rule<'link'>, idx: number, fullPath: string): Rule<'link'> {
-    switch (rule.type) {
-        case SEQ:
-        case CHOICE: {
-            const m = rule.members[idx];
-            if (!m) {
-                throw new Error(
-                    `group path '${fullPath}' does not resolve: index ${idx} out of range in ${rule.type} of ${rule.members.length} members`
-                );
-            }
-            return m;
-        }
-        case OPTIONAL:
-        case REPEAT:
-        case REPEAT1:
-        case FIELD:
-        case TOKEN:
-        case ALIAS:
-        case VARIANT:
-        case GROUP:
-            if (idx !== 0) {
-                throw new Error(
-                    `group path '${fullPath}' does not resolve: index ${idx} invalid for wrapper '${rule.type}' (only 0 is content)`
-                );
-            }
-            return (rule as { content: Rule<'link'>; }).content;
-        default:
-            throw new Error(
-                `group path '${fullPath}' does not resolve: cannot descend into rule of type '${rule.type}'`
-            );
-    }
+	switch (rule.type) {
+		case SEQ:
+		case CHOICE: {
+			const m = rule.members[idx];
+			if (!m) {
+				throw new Error(
+					`group path '${fullPath}' does not resolve: index ${idx} out of range in ${rule.type} of ${rule.members.length} members`
+				);
+			}
+			return m;
+		}
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case TOKEN:
+		case ALIAS:
+		case VARIANT:
+		case GROUP:
+			if (idx !== 0) {
+				throw new Error(
+					`group path '${fullPath}' does not resolve: index ${idx} invalid for wrapper '${rule.type}' (only 0 is content)`
+				);
+			}
+			return (rule as { content: Rule<'link'> }).content;
+		default:
+			throw new Error(`group path '${fullPath}' does not resolve: cannot descend into rule of type '${rule.type}'`);
+	}
 }
 
 export interface DeriveSynthesizedNameArgs {
-    parentKind: string;
-    path: string;
-    discriminator: string;
-    polymorphs: Record<string, Record<string, string> | undefined>;
+	parentKind: string;
+	path: string;
+	discriminator: string;
+	polymorphs: Record<string, Record<string, string> | undefined>;
 }
 /**
  * Compute the synthesized hidden kind name for a group lift.
@@ -2865,29 +2864,29 @@ export interface DeriveSynthesizedNameArgs {
  */
 
 export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
-    const { parentKind, path, discriminator, polymorphs } = args;
-    const polymorphsForKind = polymorphs[parentKind] ?? {};
-    const segments = path.split('/').filter((s) => s.length > 0);
+	const { parentKind, path, discriminator, polymorphs } = args;
+	const polymorphsForKind = polymorphs[parentKind] ?? {};
+	const segments = path.split('/').filter((s) => s.length > 0);
 
-    const contributions: string[] = [];
-    for (let i = 1; i <= segments.length; i++) {
-        const prefix = segments.slice(0, i).join('/');
-        if (prefix in polymorphsForKind) {
-            contributions.push(polymorphsForKind[prefix]!);
-        }
-    }
+	const contributions: string[] = [];
+	for (let i = 1; i <= segments.length; i++) {
+		const prefix = segments.slice(0, i).join('/');
+		if (prefix in polymorphsForKind) {
+			contributions.push(polymorphsForKind[prefix]!);
+		}
+	}
 
-    // When parentKind already starts with '_' (hidden rule), use it as-is
-    // as the base; otherwise prepend '_' to canonicalize.
-    const base = parentKind.startsWith('_') ? parentKind : '_' + parentKind;
-    return [base, ...contributions, discriminator].join('_');
+	// When parentKind already starts with '_' (hidden rule), use it as-is
+	// as the base; otherwise prepend '_' to canonicalize.
+	const base = parentKind.startsWith('_') ? parentKind : '_' + parentKind;
+	return [base, ...contributions, discriminator].join('_');
 }
 
 export interface ValidateGroupsArgs {
-    groups: Record<string, Record<string, string> | undefined>;
-    polymorphs: Record<string, Record<string, string> | undefined>;
-    rules: Record<string, Rule<'link'>>;
-    warn?: (msg: string) => void;
+	groups: Record<string, Record<string, string> | undefined>;
+	polymorphs: Record<string, Record<string, string> | undefined>;
+	rules: Record<string, Rule<'link'>>;
+	warn?: (msg: string) => void;
 }
 /**
  * Validate all groups config at config-load time. Throws on E1-E5,
@@ -2895,118 +2894,116 @@ export interface ValidateGroupsArgs {
  */
 
 export function validateGroupsConfig(args: ValidateGroupsArgs): void {
-    const { groups, polymorphs, rules, warn } = args;
-    const emitWarn = warn ?? ((msg: string) => console.warn(`[groups] ${msg}`));
+	const { groups, polymorphs, rules, warn } = args;
+	const emitWarn = warn ?? ((msg: string) => console.warn(`[groups] ${msg}`));
 
-    for (const [kind, lifts] of Object.entries(groups)) {
-        if (!lifts) continue;
-        const root = rules[kind];
-        if (!root) {
-            throw new Error(`groups['${kind}']: kind not in rule map`);
-        }
-        const polysForKind = polymorphs[kind] ?? {};
-        const liftPaths = Object.keys(lifts);
+	for (const [kind, lifts] of Object.entries(groups)) {
+		if (!lifts) continue;
+		const root = rules[kind];
+		if (!root) {
+			throw new Error(`groups['${kind}']: kind not in rule map`);
+		}
+		const polysForKind = polymorphs[kind] ?? {};
+		const liftPaths = Object.keys(lifts);
 
-        for (const path of liftPaths) {
-            const discriminator = lifts[path]!;
+		for (const path of liftPaths) {
+			const discriminator = lifts[path]!;
 
-            let target: Rule<'link'>;
-            try {
-                target = resolveGroupPath(root, path);
-            } catch (e) {
-                throw new Error(`groups['${kind}']['${path}']: ${(e as Error).message}`);
-            }
+			let target: Rule<'link'>;
+			try {
+				target = resolveGroupPath(root, path);
+			} catch (e) {
+				throw new Error(`groups['${kind}']['${path}']: ${(e as Error).message}`);
+			}
 
-            if (discriminator.length === 0) {
-                throw new Error(`groups['${kind}']['${path}']: discriminator must be a non-empty identifier`);
-            }
-            if (!isAsciiIdentifier(discriminator)) {
-                throw new Error(
-                    `groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`
-                );
-            }
+			if (discriminator.length === 0) {
+				throw new Error(`groups['${kind}']['${path}']: discriminator must be a non-empty identifier`);
+			}
+			if (!isAsciiIdentifier(discriminator)) {
+				throw new Error(`groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`);
+			}
 
-            for (const polyPath of Object.keys(polysForKind)) {
-                if (polyPath === path) {
-                    throw new Error(
-                        `groups['${kind}']['${path}'] and polymorphs['${kind}']['${polyPath}'] target the same position; pick one`
-                    );
-                }
-                if (isAncestorPath(path, polyPath)) {
-                    const synName = deriveSynthesizedName({ parentKind: kind, path, discriminator, polymorphs });
-                    throw new Error(
-                        `groups['${kind}']['${path}'] would lift content containing polymorphs['${kind}']['${polyPath}']; ` +
-                        `rewrite the inner polymorph relative to the lifted kind (${synName}) or remove the overlapping entry`
-                    );
-                }
-            }
+			for (const polyPath of Object.keys(polysForKind)) {
+				if (polyPath === path) {
+					throw new Error(
+						`groups['${kind}']['${path}'] and polymorphs['${kind}']['${polyPath}'] target the same position; pick one`
+					);
+				}
+				if (isAncestorPath(path, polyPath)) {
+					const synName = deriveSynthesizedName({ parentKind: kind, path, discriminator, polymorphs });
+					throw new Error(
+						`groups['${kind}']['${path}'] would lift content containing polymorphs['${kind}']['${polyPath}']; ` +
+							`rewrite the inner polymorph relative to the lifted kind (${synName}) or remove the overlapping entry`
+					);
+				}
+			}
 
-            for (const otherPath of liftPaths) {
-                if (otherPath === path) continue;
-                if (isAncestorPath(path, otherPath)) {
-                    throw new Error(
-                        `groups['${kind}']['${path}'] contains another group lift at '${otherPath}'; nested group lifts are not supported`
-                    );
-                }
-            }
+			for (const otherPath of liftPaths) {
+				if (otherPath === path) continue;
+				if (isAncestorPath(path, otherPath)) {
+					throw new Error(
+						`groups['${kind}']['${path}'] contains another group lift at '${otherPath}'; nested group lifts are not supported`
+					);
+				}
+			}
 
-            const synthName = deriveSynthesizedName({ parentKind: kind, path, discriminator, polymorphs });
-            if (synthName in rules) {
-                throw new Error(
-                    `groups['${kind}']['${path}'] would synthesize ${synthName}, but a rule with that name already exists; pick a different discriminator`
-                );
-            }
+			const synthName = deriveSynthesizedName({ parentKind: kind, path, discriminator, polymorphs });
+			if (synthName in rules) {
+				throw new Error(
+					`groups['${kind}']['${path}'] would synthesize ${synthName}, but a rule with that name already exists; pick a different discriminator`
+				);
+			}
 
-            if (!hasStructuralMember(target)) {
-                emitWarn(
-                    `groups['${kind}']['${path}']: lifted body has no structural members (purely literal/punctuation content)`
-                );
-            }
-        }
-    }
+			if (!hasStructuralMember(target)) {
+				emitWarn(
+					`groups['${kind}']['${path}']: lifted body has no structural members (purely literal/punctuation content)`
+				);
+			}
+		}
+	}
 }
 function isAncestorPath(ancestor: string, descendant: string): boolean {
-    if (ancestor === descendant) return false;
-    const a = ancestor.split('/');
-    const d = descendant.split('/');
-    if (a.length >= d.length) return false;
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] !== d[i]) return false;
-    }
-    return true;
+	if (ancestor === descendant) return false;
+	const a = ancestor.split('/');
+	const d = descendant.split('/');
+	if (a.length >= d.length) return false;
+	for (let i = 0; i < a.length; i++) {
+		if (a[i] !== d[i]) return false;
+	}
+	return true;
 }
 function hasStructuralMember(rule: Rule<'link'>): boolean {
-    switch (rule.type) {
-        case FIELD:
-        case SYMBOL:
-        case SUPERTYPE:
-            return true;
-        case SEQ:
-        case CHOICE:
-            return rule.members.some(hasStructuralMember);
-        case OPTIONAL:
-        case REPEAT:
-        case REPEAT1:
-        case TOKEN:
-        case ALIAS:
-        case VARIANT:
-        case GROUP:
-            return hasStructuralMember((rule as { content: Rule<'link'>; }).content);
-        default:
-            return false;
-    }
+	switch (rule.type) {
+		case FIELD:
+		case SYMBOL:
+		case SUPERTYPE:
+			return true;
+		case SEQ:
+		case CHOICE:
+			return rule.members.some(hasStructuralMember);
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case TOKEN:
+		case ALIAS:
+		case VARIANT:
+		case GROUP:
+			return hasStructuralMember((rule as { content: Rule<'link'> }).content);
+		default:
+			return false;
+	}
 }
 
 export interface ApplyGroupOverridesArgs {
-    rules: Record<string, Rule<'link'>>;
-    groups: Record<string, Record<string, string> | undefined>;
-    polymorphs: Record<string, Record<string, string> | undefined>;
-    warn?: (msg: string) => void;
+	rules: Record<string, Rule<'link'>>;
+	groups: Record<string, Record<string, string> | undefined>;
+	polymorphs: Record<string, Record<string, string> | undefined>;
+	warn?: (msg: string) => void;
 }
 
 export interface ApplyGroupOverridesResult {
-    rules: Record<string, Rule<'link'>>;
-    synthesizedKinds: readonly string[];
+	rules: Record<string, Rule<'link'>>;
+	synthesizedKinds: readonly string[];
 }
 /**
  * Apply all `groups:` lifts. Pure transform — input rules are not
@@ -3022,68 +3019,75 @@ export interface ApplyGroupOverridesResult {
  */
 
 export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOverridesResult {
-    validateGroupsConfig(args);
+	validateGroupsConfig(args);
 
-    const newRules: Record<string, Rule<'link'>> = { ...args.rules };
-    const synthesizedKinds: string[] = [];
+	const newRules: Record<string, Rule<'link'>> = { ...args.rules };
+	const synthesizedKinds: string[] = [];
 
-    for (const [kind, lifts] of Object.entries(args.groups)) {
-        if (!lifts || Object.keys(lifts).length === 0) continue;
-        const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length); // deep first
-        let parentBody = clone(newRules[kind]!);
+	for (const [kind, lifts] of Object.entries(args.groups)) {
+		if (!lifts || Object.keys(lifts).length === 0) continue;
+		const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length); // deep first
+		let parentBody = clone(newRules[kind]!);
 
-        for (const path of sortedPaths) {
-            const discriminator = lifts[path]!;
-            const synName = deriveSynthesizedName({
-                parentKind: kind, path, discriminator, polymorphs: args.polymorphs
-            });
-            const target = resolveGroupPath(parentBody, path);
-            const { liftedBody, replacement } = liftRule(target, synName, discriminator);
+		for (const path of sortedPaths) {
+			const discriminator = lifts[path]!;
+			const synName = deriveSynthesizedName({
+				parentKind: kind,
+				path,
+				discriminator,
+				polymorphs: args.polymorphs
+			});
+			const target = resolveGroupPath(parentBody, path);
+			const { liftedBody, replacement } = liftRule(target, synName, discriminator);
 
-            parentBody = replaceAtPath(parentBody, path, replacement);
-            newRules[synName] = liftedBody;
-            synthesizedKinds.push(synName);
-        }
+			parentBody = replaceAtPath(parentBody, path, replacement);
+			newRules[synName] = liftedBody;
+			synthesizedKinds.push(synName);
+		}
 
-        newRules[kind] = parentBody;
-    }
+		newRules[kind] = parentBody;
+	}
 
-    return { rules: newRules, synthesizedKinds };
+	return { rules: newRules, synthesizedKinds };
 }
-function liftRule(target: Rule<'link'>, synName: string, _discriminator: string): { liftedBody: Rule<'link'>; replacement: Rule<'link'>; } {
-    // Mint the helper ref through evaluate's `symbol()` so it gets the SAME
-    // construction-time stamps (`hidden`, `inline = name.startsWith('_')`) as any
-    // other ref — group-lift helpers are `_`-prefixed → inline=true. Stamping at
-    // the one constructor (then revised at wrapper push-down / link supertype pass)
-    // keeps `inline` authoritative on the normalizedRules path, so normalize's fold
-    // can read it instead of re-deriving hiddenness structurally.
-    const synSym = { ...sym(synName), metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) };
-    // (_discriminator kept for future use; the current implementation does not use it.
-    // The discriminator participates only in the synthesized kind name component.)
-    switch (target.type) {
-        case OPTIONAL:
-            return {
-                liftedBody: target.content,
-                replacement: { type: OPTIONAL, content: synSym } as Rule<'link'>
-            };
-        case REPEAT:
-            // target.separator already carries trailing/leading nested — rides
-            // along for free (same pattern as wrapper-deletion.ts's REPEAT case).
-            return {
-                liftedBody: target.content,
-                replacement: { type: REPEAT, content: synSym, separator: target.separator } as Rule<'link'>
-            };
-        case REPEAT1:
-            return {
-                liftedBody: target.content,
-                replacement: { type: REPEAT1, content: synSym, separator: target.separator } as Rule<'link'>
-            };
-        default:
-            return { liftedBody: target, replacement: synSym };
-    }
+function liftRule(
+	target: Rule<'link'>,
+	synName: string,
+	_discriminator: string
+): { liftedBody: Rule<'link'>; replacement: Rule<'link'> } {
+	// Mint the helper ref through evaluate's `symbol()` so it gets the SAME
+	// construction-time stamps (`hidden`, `inline = name.startsWith('_')`) as any
+	// other ref — group-lift helpers are `_`-prefixed → inline=true. Stamping at
+	// the one constructor (then revised at wrapper push-down / link supertype pass)
+	// keeps `inline` authoritative on the normalizedRules path, so normalize's fold
+	// can read it instead of re-deriving hiddenness structurally.
+	const synSym = { ...sym(synName), metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) };
+	// (_discriminator kept for future use; the current implementation does not use it.
+	// The discriminator participates only in the synthesized kind name component.)
+	switch (target.type) {
+		case OPTIONAL:
+			return {
+				liftedBody: target.content,
+				replacement: { type: OPTIONAL, content: synSym } as Rule<'link'>
+			};
+		case REPEAT:
+			// target.separator already carries trailing/leading nested — rides
+			// along for free (same pattern as wrapper-deletion.ts's REPEAT case).
+			return {
+				liftedBody: target.content,
+				replacement: { type: REPEAT, content: synSym, separator: target.separator } as Rule<'link'>
+			};
+		case REPEAT1:
+			return {
+				liftedBody: target.content,
+				replacement: { type: REPEAT1, content: synSym, separator: target.separator } as Rule<'link'>
+			};
+		default:
+			return { liftedBody: target, replacement: synSym };
+	}
 }
 function clone<T>(value: T): T {
-    return JSON.parse(JSON.stringify(value)) as T;
+	return JSON.parse(JSON.stringify(value)) as T;
 }
 // ---------------------------------------------------------------------------
 // stampStaticRenderAs — inline string() renderAs bodies into rule trees
@@ -3114,138 +3118,135 @@ function clone<T>(value: T): T {
  */
 
 export function stampStaticRenderAs(
-    rules: Record<string, Rule<'link'>>,
-    renderAs: Record<string, Rule<'link'>>
+	rules: Record<string, Rule<'link'>>,
+	renderAs: Record<string, Rule<'link'>>
 ): Record<string, Rule<'link'>> {
-    // Build the stamp lookup: renderAs-key → literal value, for entries
-    // that are single string() bodies.
-    const renderStamps: Record<string, string> = {};
-    // Blank-bodied renderAs entries: zero-width-equivalent. References
-    // get replaced with `{ type: 'CHOICE', members: [] }` (the blank
-    // sentinel), which the choice() collapse in `rewriteRuleForStamp`
-    // lowers to `optional(other)` when paired with another member. Use
-    // case: tree-sitter externals that fire invisibly at runtime (e.g.
-    // ASI's `_automatic_semicolon`). The slot-model look-through in
-    // node-map.ts propagates this optionality up to any SYMBOL ref
-    // pointing at the now-optional-bodied wrapper rule (`_semicolon`).
-    const blankStamps = new Set<string>();
-    for (const [sym, body] of Object.entries(renderAs)) {
-        if (body.type === STRING) renderStamps[sym] = body.value;
-        else if (isBlankRule(body)) blankStamps.add(sym);
-    }
-    if (Object.keys(renderStamps).length === 0 && blankStamps.size === 0) return rules;
+	// Build the stamp lookup: renderAs-key → literal value, for entries
+	// that are single string() bodies.
+	const renderStamps: Record<string, string> = {};
+	// Blank-bodied renderAs entries: zero-width-equivalent. References
+	// get replaced with `{ type: 'CHOICE', members: [] }` (the blank
+	// sentinel), which the choice() collapse in `rewriteRuleForStamp`
+	// lowers to `optional(other)` when paired with another member. Use
+	// case: tree-sitter externals that fire invisibly at runtime (e.g.
+	// ASI's `_automatic_semicolon`). The slot-model look-through in
+	// node-map.ts propagates this optionality up to any SYMBOL ref
+	// pointing at the now-optional-bodied wrapper rule (`_semicolon`).
+	const blankStamps = new Set<string>();
+	for (const [sym, body] of Object.entries(renderAs)) {
+		if (body.type === STRING) renderStamps[sym] = body.value;
+		else if (isBlankRule(body)) blankStamps.add(sym);
+	}
+	if (Object.keys(renderStamps).length === 0 && blankStamps.size === 0) return rules;
 
-    // Build symToLit: symbol-name → literal to stamp.
-    // Includes:
-    //   1. The original renderAs key names (exact match).
-    //   2. Names whose string body matches a renderAs value AND whose
-    //      name ends with the renderAs key (handling evaluate's
-    //      synthesized renames: `synthesizeFieldEnumRules` creates
-    //      `_<parent>_<fieldName>` where `<fieldName>` corresponds to the
-    //      field that referenced the renderAs symbol — the renderAs key
-    //      itself ends with `_<fieldName>`).
-    // This is deliberately conservative: we do NOT match all string rules
-    // by value alone, to avoid stamping unrelated `_kw_*` helpers that
-    // happen to share a character with a renderAs literal (e.g.
-    // `_kw_negative` has body `'!'` which clashes with the
-    // `_inner_*_doc_comment_marker` renderAs values).
-    const symToLit: Record<string, string> = { ...renderStamps };
-    for (const [sym, body] of Object.entries(rules)) {
-        if (sym in symToLit) continue; // Already included via exact match.
-        if (body.type !== STRING) continue;
-        // Check whether any renderAs key is a suffix of this symbol name.
-        for (const [renderKey, lit] of Object.entries(renderStamps)) {
-            if (sym.endsWith(renderKey) && body.value === lit) {
-                symToLit[sym] = lit;
-                break;
-            }
-        }
-    }
-    if (Object.keys(symToLit).length === 0 && blankStamps.size === 0) return rules;
+	// Build symToLit: symbol-name → literal to stamp.
+	// Includes:
+	//   1. The original renderAs key names (exact match).
+	//   2. Names whose string body matches a renderAs value AND whose
+	//      name ends with the renderAs key (handling evaluate's
+	//      synthesized renames: `synthesizeFieldEnumRules` creates
+	//      `_<parent>_<fieldName>` where `<fieldName>` corresponds to the
+	//      field that referenced the renderAs symbol — the renderAs key
+	//      itself ends with `_<fieldName>`).
+	// This is deliberately conservative: we do NOT match all string rules
+	// by value alone, to avoid stamping unrelated `_kw_*` helpers that
+	// happen to share a character with a renderAs literal (e.g.
+	// `_kw_negative` has body `'!'` which clashes with the
+	// `_inner_*_doc_comment_marker` renderAs values).
+	const symToLit: Record<string, string> = { ...renderStamps };
+	for (const [sym, body] of Object.entries(rules)) {
+		if (sym in symToLit) continue; // Already included via exact match.
+		if (body.type !== STRING) continue;
+		// Check whether any renderAs key is a suffix of this symbol name.
+		for (const [renderKey, lit] of Object.entries(renderStamps)) {
+			if (sym.endsWith(renderKey) && body.value === lit) {
+				symToLit[sym] = lit;
+				break;
+			}
+		}
+	}
+	if (Object.keys(symToLit).length === 0 && blankStamps.size === 0) return rules;
 
-    const out: Record<string, Rule<'link'>> = {};
-    for (const [name, rule] of Object.entries(rules)) {
-        // Blank-stamped entries are removed from the rules map: their
-        // references have been replaced inline with the blank sentinel
-        // (which `rewriteRuleForStamp` collapses to `optional(...)` in
-        // containing choices). Keeping the entry would cause assemble to
-        // classify an empty `choice` body as an empty AssembledEnum and
-        // throw.
-        if (blankStamps.has(name)) continue;
-        out[name] = rewriteRuleForStamp(rule, symToLit, blankStamps);
-    }
-    return out;
+	const out: Record<string, Rule<'link'>> = {};
+	for (const [name, rule] of Object.entries(rules)) {
+		// Blank-stamped entries are removed from the rules map: their
+		// references have been replaced inline with the blank sentinel
+		// (which `rewriteRuleForStamp` collapses to `optional(...)` in
+		// containing choices). Keeping the entry would cause assemble to
+		// classify an empty `choice` body as an empty AssembledEnum and
+		// throw.
+		if (blankStamps.has(name)) continue;
+		out[name] = rewriteRuleForStamp(rule, symToLit, blankStamps);
+	}
+	return out;
 }
 /**
  * `blank()` produces `{ type: 'CHOICE', members: [] }` (see evaluate.ts).
  * Same shape detection used by choice()'s optional-collapse pass.
  */
 function isBlankRule(rule: Rule<'link'>): boolean {
-    return (
-        (rule.type === CHOICE && rule.members.length === 0) ||
-        (rule.type === SEQ && rule.members.length === 0)
-    );
+	return (rule.type === CHOICE && rule.members.length === 0) || (rule.type === SEQ && rule.members.length === 0);
 }
 function rewriteRuleForStamp(
-    rule: Rule<'link'>,
-    symToLit: Record<string, string>,
-    blankStamps: ReadonlySet<string>
+	rule: Rule<'link'>,
+	symToLit: Record<string, string>,
+	blankStamps: ReadonlySet<string>
 ): Rule<'link'> {
-    switch (rule.type) {
-        case SYMBOL: {
-            const lit = symToLit[rule.name];
-            if (lit !== undefined) return { type: STRING, value: lit };
-            if (blankStamps.has(rule.name)) return { type: CHOICE, members: [] };
-            return rule;
-        }
+	switch (rule.type) {
+		case SYMBOL: {
+			const lit = symToLit[rule.name];
+			if (lit !== undefined) return { type: STRING, value: lit };
+			if (blankStamps.has(rule.name)) return { type: CHOICE, members: [] };
+			return rule;
+		}
 
-        case FIELD: {
-            const inner = unwrapAliasForCheck(rule.content);
-            if (inner.type === SYMBOL) {
-                const lit = symToLit[inner.name];
-                if (lit !== undefined) {
-                    // Drop the field wrapper; stamp the literal inline.
-                    return { type: STRING, value: lit };
-                }
-                // Blank-stamped: the field references a zero-width-equivalent
-                // external. Replace the whole field with blank so the parent
-                // seq/choice collapse handles cardinality.
-                if (blankStamps.has(inner.name)) return { type: CHOICE, members: [] };
-            }
-            return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
-        }
+		case FIELD: {
+			const inner = unwrapAliasForCheck(rule.content);
+			if (inner.type === SYMBOL) {
+				const lit = symToLit[inner.name];
+				if (lit !== undefined) {
+					// Drop the field wrapper; stamp the literal inline.
+					return { type: STRING, value: lit };
+				}
+				// Blank-stamped: the field references a zero-width-equivalent
+				// external. Replace the whole field with blank so the parent
+				// seq/choice collapse handles cardinality.
+				if (blankStamps.has(inner.name)) return { type: CHOICE, members: [] };
+			}
+			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
+		}
 
-        case ALIAS:
-            return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
+		case ALIAS:
+			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
 
-        case TOKEN:
-        case OPTIONAL:
-        case REPEAT:
-        case REPEAT1:
-        case VARIANT:
-        case GROUP:
-            return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule<'link'>;
+		case TOKEN:
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case VARIANT:
+		case GROUP:
+			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule<'link'>;
 
-        case SEQ:
-            return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps)) };
+		case SEQ:
+			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps)) };
 
-        case CHOICE: {
-            // Recursively stamp members, then re-apply the blank-collapse that
-            // evaluate.ts's choice() applies at DSL time. `choice(X, blank)` →
-            // `optional(X)`. Re-applied here because stamping may have
-            // synthesized new blank members the DSL-time pass didn't see.
-            const members = rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps));
-            const nonBlank = members.filter((m) => !isBlankRule(m));
-            const hadBlank = nonBlank.length < members.length;
-            if (!hadBlank) return { ...rule, members };
-            if (nonBlank.length === 0) return { type: CHOICE, members: [] };
-            if (nonBlank.length === 1) return { type: OPTIONAL, content: nonBlank[0]! };
-            return { type: OPTIONAL, content: { type: CHOICE, members: nonBlank } };
-        }
+		case CHOICE: {
+			// Recursively stamp members, then re-apply the blank-collapse that
+			// evaluate.ts's choice() applies at DSL time. `choice(X, blank)` →
+			// `optional(X)`. Re-applied here because stamping may have
+			// synthesized new blank members the DSL-time pass didn't see.
+			const members = rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps));
+			const nonBlank = members.filter((m) => !isBlankRule(m));
+			const hadBlank = nonBlank.length < members.length;
+			if (!hadBlank) return { ...rule, members };
+			if (nonBlank.length === 0) return { type: CHOICE, members: [] };
+			if (nonBlank.length === 1) return { type: OPTIONAL, content: nonBlank[0]! };
+			return { type: OPTIONAL, content: { type: CHOICE, members: nonBlank } };
+		}
 
-        default:
-            return rule;
-    }
+		default:
+			return rule;
+	}
 }
 /**
  * Unwrap alias (and token) wrappers to find the inner rule for stamp
@@ -3253,8 +3254,8 @@ function rewriteRuleForStamp(
  * strips alias/token transparency layers.
  */
 function unwrapAliasForCheck(rule: Rule<'link'>): Rule<'link'> {
-    if (rule.type === ALIAS || rule.type === TOKEN) return unwrapAliasForCheck(rule.content);
-    return rule;
+	if (rule.type === ALIAS || rule.type === TOKEN) return unwrapAliasForCheck(rule.content);
+	return rule;
 }
 // ---------------------------------------------------------------------------
 // Refine-form validation (moved from link-refine.ts in R7 de-scatter).
@@ -3273,17 +3274,17 @@ function unwrapAliasForCheck(rule: Rule<'link'>): Rule<'link'> {
  */
 
 export interface RefinePathResolution {
-    /** The field name whose content resolves to the choice, when the
-     *  path descent crossed a `field(name, ...)` wrapper. `undefined`
-     *  when the choice is at the rule root or inside a non-field
-     *  wrapper (refine currently only supports the field-wrapping
-     *  case, but we keep this optional so future non-field refinement
-     *  sites don't need a schema change). */
-    readonly fieldName: string | undefined;
-    /** The resolved choice rule — either a `ChoiceRule<'link'>` or an `EnumRule<'link'>`
-     *  (the normalized choice-of-strings). Both expose `members`, so
-     *  consumers that walk them uniformly work without adapting. */
-    readonly choice: ChoiceRule<'link'> | EnumRule<'link'>;
+	/** The field name whose content resolves to the choice, when the
+	 *  path descent crossed a `field(name, ...)` wrapper. `undefined`
+	 *  when the choice is at the rule root or inside a non-field
+	 *  wrapper (refine currently only supports the field-wrapping
+	 *  case, but we keep this optional so future non-field refinement
+	 *  sites don't need a schema change). */
+	readonly fieldName: string | undefined;
+	/** The resolved choice rule — either a `ChoiceRule<'link'>` or an `EnumRule<'link'>`
+	 *  (the normalized choice-of-strings). Both expose `members`, so
+	 *  consumers that walk them uniformly work without adapting. */
+	readonly choice: ChoiceRule<'link'> | EnumRule<'link'>;
 }
 /**
  * Validate every refine form's paths and selections for one kind.
@@ -3300,17 +3301,17 @@ export interface RefinePathResolution {
  */
 
 export function validateRefineForms(
-    kind: string,
-    rule: Rule<'link'>,
-    forms: readonly RefineForm[],
-    rules?: Readonly<Record<string, Rule<'link'>>>
+	kind: string,
+	rule: Rule<'link'>,
+	forms: readonly RefineForm[],
+	rules?: Readonly<Record<string, Rule<'link'>>>
 ): void {
-    for (const form of forms) {
-        for (const [pathStr, selection] of Object.entries(form.selections)) {
-            const resolution = resolveRefinePath(kind, form.name, pathStr, rule, rules);
-            validateSelection(kind, form.name, pathStr, resolution.choice, selection);
-        }
-    }
+	for (const form of forms) {
+		for (const [pathStr, selection] of Object.entries(form.selections)) {
+			const resolution = resolveRefinePath(kind, form.name, pathStr, rule, rules);
+			validateSelection(kind, form.name, pathStr, resolution.choice, selection);
+		}
+	}
 }
 /**
  * Resolve a refine() path against a rule tree to the target CHOICE.
@@ -3327,31 +3328,31 @@ export function validateRefineForms(
  */
 
 export function resolveRefinePath(
-    kind: string,
-    formName: string,
-    pathStr: string,
-    rule: Rule<'link'>,
-    rules?: Readonly<Record<string, Rule<'link'>>>
+	kind: string,
+	formName: string,
+	pathStr: string,
+	rule: Rule<'link'>,
+	rules?: Readonly<Record<string, Rule<'link'>>>
 ): RefinePathResolution {
-    const segments = parsePath(pathStr);
-    if (segments.length === 0) {
-        throw new Error(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
-    }
-    let cur: Rule<'link'> = rule;
-    let fieldName: string | undefined;
-    for (let i = 0; i < segments.length; i++) {
-        const seg = segments[i]!;
-        const res = stepPath(cur, seg, kind, formName, pathStr);
-        cur = res.next;
-        if (seg.kind === 'fieldName') fieldName = seg.name;
-    }
-    const final = unwrapToChoice(cur, rules);
-    if (!final) {
-        throw new Error(
-            `refine(${kind}) form '${formName}': path '${pathStr}' does not resolve to a choice (got '${cur.type}')`
-        );
-    }
-    return { fieldName, choice: final };
+	const segments = parsePath(pathStr);
+	if (segments.length === 0) {
+		throw new Error(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
+	}
+	let cur: Rule<'link'> = rule;
+	let fieldName: string | undefined;
+	for (let i = 0; i < segments.length; i++) {
+		const seg = segments[i]!;
+		const res = stepPath(cur, seg, kind, formName, pathStr);
+		cur = res.next;
+		if (seg.kind === 'fieldName') fieldName = seg.name;
+	}
+	const final = unwrapToChoice(cur, rules);
+	if (!final) {
+		throw new Error(
+			`refine(${kind}) form '${formName}': path '${pathStr}' does not resolve to a choice (got '${cur.type}')`
+		);
+	}
+	return { fieldName, choice: final };
 }
 /**
  * Advance one path segment. Handles positional index, wildcard (treated
@@ -3361,48 +3362,54 @@ export function resolveRefinePath(
  * unsupported for refine paths, and `fieldName` descends through a
  * `field(name, ...)` wrapper.
  */
-function stepPath(rule: Rule<'link'>, seg: PathSegment, kind: string, formName: string, pathStr: string): { next: Rule<'link'>; } {
-    switch (seg.kind) {
-        case 'fieldName': {
-            const target = findFieldByName(rule, seg.name);
-            if (!target) {
-                throw new Error(
-                    `refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.name}:' does not match any field in rule (type '${rule.type}')`
-                );
-            }
-            return { next: target.content };
-        }
-        case 'index': {
-            const members = membersOf(rule);
-            if (!members) {
-                throw new Error(
-                    `refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' cannot descend into '${rule.type}'`
-                );
-            }
-            const idx = seg.value < 0 ? members.length + seg.value : seg.value;
-            if (idx < 0 || idx >= members.length) {
-                throw new Error(
-                    `refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' out of bounds for ${rule.type} (length ${members.length})`
-                );
-            }
-            return { next: members[idx]! };
-        }
-        case 'wildcard': {
-            const members = membersOf(rule);
-            if (members && members.length > 0) {
-                return { next: members[0]! };
-            }
-            const content = singleContentOf(rule);
-            if (content) return { next: content };
-            throw new Error(
-                `refine(${kind}) form '${formName}': path '${pathStr}' wildcard cannot descend into '${rule.type}'`
-            );
-        }
-        case 'kind-match':
-            throw new Error(
-                `refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`
-            );
-    }
+function stepPath(
+	rule: Rule<'link'>,
+	seg: PathSegment,
+	kind: string,
+	formName: string,
+	pathStr: string
+): { next: Rule<'link'> } {
+	switch (seg.kind) {
+		case 'fieldName': {
+			const target = findFieldByName(rule, seg.name);
+			if (!target) {
+				throw new Error(
+					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.name}:' does not match any field in rule (type '${rule.type}')`
+				);
+			}
+			return { next: target.content };
+		}
+		case 'index': {
+			const members = membersOf(rule);
+			if (!members) {
+				throw new Error(
+					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' cannot descend into '${rule.type}'`
+				);
+			}
+			const idx = seg.value < 0 ? members.length + seg.value : seg.value;
+			if (idx < 0 || idx >= members.length) {
+				throw new Error(
+					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' out of bounds for ${rule.type} (length ${members.length})`
+				);
+			}
+			return { next: members[idx]! };
+		}
+		case 'wildcard': {
+			const members = membersOf(rule);
+			if (members && members.length > 0) {
+				return { next: members[0]! };
+			}
+			const content = singleContentOf(rule);
+			if (content) return { next: content };
+			throw new Error(
+				`refine(${kind}) form '${formName}': path '${pathStr}' wildcard cannot descend into '${rule.type}'`
+			);
+		}
+		case 'kind-match':
+			throw new Error(
+				`refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`
+			);
+	}
 }
 /**
  * Unwrap common single-content wrappers (optional, repeat, repeat1) to
@@ -3427,29 +3434,32 @@ function stepPath(rule: Rule<'link'>, seg: PathSegment, kind: string, formName: 
  * @returns The underlying choice or enum, or `undefined` when the rule
  *   does not reduce to one.
  */
-function unwrapToChoice(rule: Rule<'link'>, rules?: Readonly<Record<string, Rule<'link'>>>): ChoiceRule<'link'> | EnumRule<'link'> | undefined {
-    let cur = rule;
-    const visitedSymbols = new Set<string>();
-    for (; ;) {
-        if (isChoice(cur)) return cur;
-        if (isOptional(cur) || isRepeat(cur) || isRepeat1(cur)) {
-            cur = cur.content;
-            continue;
-        }
-        // Follow synthesized field-enum indirection until we reach the
-        // underlying enum/choice. Real grammars often lower field-wrapped
-        // literal choices to hidden symbol refs during evaluate.
-        if (isSymbol(cur) && rules !== undefined) {
-            if (visitedSymbols.has(cur.name)) return undefined;
-            visitedSymbols.add(cur.name);
-            const target = rules[cur.name];
-            if (target !== undefined) {
-                cur = target;
-                continue;
-            }
-        }
-        return undefined;
-    }
+function unwrapToChoice(
+	rule: Rule<'link'>,
+	rules?: Readonly<Record<string, Rule<'link'>>>
+): ChoiceRule<'link'> | EnumRule<'link'> | undefined {
+	let cur = rule;
+	const visitedSymbols = new Set<string>();
+	for (;;) {
+		if (isChoice(cur)) return cur;
+		if (isOptional(cur) || isRepeat(cur) || isRepeat1(cur)) {
+			cur = cur.content;
+			continue;
+		}
+		// Follow synthesized field-enum indirection until we reach the
+		// underlying enum/choice. Real grammars often lower field-wrapped
+		// literal choices to hidden symbol refs during evaluate.
+		if (isSymbol(cur) && rules !== undefined) {
+			if (visitedSymbols.has(cur.name)) return undefined;
+			visitedSymbols.add(cur.name);
+			const target = rules[cur.name];
+			if (target !== undefined) {
+				cur = target;
+				continue;
+			}
+		}
+		return undefined;
+	}
 }
 /**
  * Walk a rule looking for a direct `field(fieldName, ...)` wrapper.
@@ -3458,18 +3468,18 @@ function unwrapToChoice(rule: Rule<'link'>, rules?: Readonly<Record<string, Rule
  * segment; duplicate field names at the same level aren't meaningful).
  */
 function findFieldByName(rule: Rule<'link'>, fieldName: string): FieldRule | undefined {
-    if (isField(rule)) return rule.name === fieldName ? rule : undefined;
-    if (isSeq(rule)) {
-        for (const m of rule.members) {
-            const hit = findFieldByName(m, fieldName);
-            if (hit) return hit;
-        }
-        return undefined;
-    }
-    if (isOptional(rule) || isRepeat(rule) || isRepeat1(rule)) {
-        return findFieldByName(rule.content, fieldName);
-    }
-    return undefined;
+	if (isField(rule)) return rule.name === fieldName ? rule : undefined;
+	if (isSeq(rule)) {
+		for (const m of rule.members) {
+			const hit = findFieldByName(m, fieldName);
+			if (hit) return hit;
+		}
+		return undefined;
+	}
+	if (isOptional(rule) || isRepeat(rule) || isRepeat1(rule)) {
+		return findFieldByName(rule.content, fieldName);
+	}
+	return undefined;
 }
 /**
  * Validate one selection value against the target choice.
@@ -3482,27 +3492,27 @@ function findFieldByName(rule: Rule<'link'>, fieldName: string): FieldRule | und
  *   matching one of the choice's string branches.
  */
 function validateSelection(
-    kind: string,
-    formName: string,
-    pathStr: string,
-    choice: ChoiceRule<'link'> | EnumRule<'link'>,
-    selection: number | string
+	kind: string,
+	formName: string,
+	pathStr: string,
+	choice: ChoiceRule<'link'> | EnumRule<'link'>,
+	selection: number | string
 ): void {
-    const arms: readonly Rule<'link'>[] = choice.members;
-    if (typeof selection === 'number') {
-        if (selection < 0 || selection >= arms.length) {
-            throw new Error(
-                `refine(${kind}) form '${formName}': path '${pathStr}' selection index ${selection} out of range (choice has ${arms.length} branches)`
-            );
-        }
-        return;
-    }
-    const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
-    if (!stringValues.includes(selection)) {
-        throw new Error(
-            `refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(', ') || '<none>'})`
-        );
-    }
+	const arms: readonly Rule<'link'>[] = choice.members;
+	if (typeof selection === 'number') {
+		if (selection < 0 || selection >= arms.length) {
+			throw new Error(
+				`refine(${kind}) form '${formName}': path '${pathStr}' selection index ${selection} out of range (choice has ${arms.length} branches)`
+			);
+		}
+		return;
+	}
+	const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
+	if (!stringValues.includes(selection)) {
+		throw new Error(
+			`refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(', ') || '<none>'})`
+		);
+	}
 }
 /**
  * Unwrap a choice-arm rule to its string value, if any. Link wraps
@@ -3512,12 +3522,12 @@ function validateSelection(
  * return `undefined`.
  */
 function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
-    if (isString(rule)) return rule.value;
-    if (rule.type === VARIANT) {
-        const inner = (rule as { content: Rule<'link'>; }).content;
-        if (isString(inner)) return inner.value;
-    }
-    return undefined;
+	if (isString(rule)) return rule.value;
+	if (rule.type === VARIANT) {
+		const inner = (rule as { content: Rule<'link'> }).content;
+		if (isString(inner)) return inner.value;
+	}
+	return undefined;
 }
 /**
  * Given a rule tree and a resolved refine form, return the field name
@@ -3537,19 +3547,19 @@ function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
  */
 
 export function narrowedFieldLiteralsForForm(
-    rule: Rule<'link'>,
-    form: RefineForm,
-    rules?: Readonly<Record<string, Rule<'link'>>>
-): Array<{ fieldName: string; literal: string; }> {
-    const out: Array<{ fieldName: string; literal: string; }> = [];
-    for (const [pathStr, selection] of Object.entries(form.selections)) {
-        const resolution = resolveRefinePath('<emit>', form.name, pathStr, rule, rules);
-        if (!resolution.fieldName) continue;
-        const literal = resolveSelectionLiteral(resolution.choice, selection);
-        if (literal === undefined) continue;
-        out.push({ fieldName: resolution.fieldName, literal });
-    }
-    return out;
+	rule: Rule<'link'>,
+	form: RefineForm,
+	rules?: Readonly<Record<string, Rule<'link'>>>
+): Array<{ fieldName: string; literal: string }> {
+	const out: Array<{ fieldName: string; literal: string }> = [];
+	for (const [pathStr, selection] of Object.entries(form.selections)) {
+		const resolution = resolveRefinePath('<emit>', form.name, pathStr, rule, rules);
+		if (!resolution.fieldName) continue;
+		const literal = resolveSelectionLiteral(resolution.choice, selection);
+		if (literal === undefined) continue;
+		out.push({ fieldName: resolution.fieldName, literal });
+	}
+	return out;
 }
 /**
  * Map a selection (numeric index or string) to the terminal string
@@ -3557,31 +3567,34 @@ export function narrowedFieldLiteralsForForm(
  * non-string branch.
  */
 
-export function resolveSelectionLiteral(choice: ChoiceRule<'link'> | EnumRule<'link'>, selection: number | string): string | undefined {
-    if (typeof selection === 'string') return selection;
-    const arm = choice.members[selection];
-    if (!arm) return undefined;
-    return unwrapToStringValue(arm);
+export function resolveSelectionLiteral(
+	choice: ChoiceRule<'link'> | EnumRule<'link'>,
+	selection: number | string
+): string | undefined {
+	if (typeof selection === 'string') return selection;
+	const arm = choice.members[selection];
+	if (!arm) return undefined;
+	return unwrapToStringValue(arm);
 }
 // ---------------------------------------------------------------------------
 // Rule<'link'>-shape helpers (localized — we don't want link-refine to grow into
 // a general rule-walking utility; it's path-resolution only)
 // ---------------------------------------------------------------------------
 function membersOf(rule: Rule<'link'>): Rule<'link'>[] | undefined {
-    if (rule.type === SEQ || rule.type === CHOICE) return rule.members;
-    return undefined;
+	if (rule.type === SEQ || rule.type === CHOICE) return rule.members;
+	return undefined;
 }
 function singleContentOf(rule: Rule<'link'>): Rule<'link'> | undefined {
-    switch (rule.type) {
-        case OPTIONAL:
-        case REPEAT:
-        case REPEAT1:
-        case FIELD:
-        case VARIANT:
-        case GROUP:
-            // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-            return rule.content;
-        default:
-            return undefined;
-    }
+	switch (rule.type) {
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+		case FIELD:
+		case VARIANT:
+		case GROUP:
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+			return rule.content;
+		default:
+			return undefined;
+	}
 }

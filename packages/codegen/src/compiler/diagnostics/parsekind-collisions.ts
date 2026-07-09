@@ -32,9 +32,7 @@ export interface ParseKindCollisionResolution<T> {
 	readonly diagnostics: readonly ParseKindCollisionDiagnostic[];
 }
 
-export function diagnoseParseKindCollisions<T>(
-	input: ParseKindCollisionInput<T>
-): ParseKindCollisionResolution<T> {
+export function diagnoseParseKindCollisions<T>(input: ParseKindCollisionInput<T>): ParseKindCollisionResolution<T> {
 	const byParseKind = new Map<string, ParseKindCollisionValue<T>[]>();
 	for (const value of input.values) {
 		if (value.parseKind === undefined || value.storageKind === undefined) continue;
@@ -104,8 +102,7 @@ function pickRepresentative<T>(
 	parseKind: string
 ): ParseKindCollisionValue<T> {
 	const preferred =
-		bucket.find((value) => value.preferRepresentative) ??
-		bucket.find((value) => value.storageKind === parseKind);
+		bucket.find((value) => value.preferRepresentative) ?? bucket.find((value) => value.storageKind === parseKind);
 	return preferred ?? bucket[0]!;
 }
 

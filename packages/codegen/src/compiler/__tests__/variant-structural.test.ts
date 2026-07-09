@@ -66,7 +66,10 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 		const rules: Record<string, Rule<'link'>> = {
 			array_expression: seq(
 				str('['),
-				choice(aliasedSym('array_expression_semi', '_array_expression_semi'), aliasedSym('array_expression_list', '_array_expression_list')),
+				choice(
+					aliasedSym('array_expression_semi', '_array_expression_semi'),
+					aliasedSym('array_expression_list', '_array_expression_list')
+				),
 				str(']')
 			)
 			// Neither target has its own top-level entry in `rules` — alias-minted.
@@ -108,8 +111,18 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 	it('an explicit ALIAS node is unconditionally alias-minted (no independent-body check needed)', () => {
 		const rules: Record<string, Rule<'link'>> = {
 			impl_item: choice(
-				{ type: 'ALIAS', content: sym('_impl_item_body'), named: true, value: 'impl_item_body' } as unknown as Rule<'link'>,
-				{ type: 'ALIAS', content: sym('_impl_item_semi'), named: true, value: 'impl_item_semi' } as unknown as Rule<'link'>
+				{
+					type: 'ALIAS',
+					content: sym('_impl_item_body'),
+					named: true,
+					value: 'impl_item_body'
+				} as unknown as Rule<'link'>,
+				{
+					type: 'ALIAS',
+					content: sym('_impl_item_semi'),
+					named: true,
+					value: 'impl_item_semi'
+				} as unknown as Rule<'link'>
 			)
 		};
 		const found = findStructuralVariantChoices('impl_item', rules.impl_item!, rules);
@@ -159,7 +172,10 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 	it('recurses into a SEQ-first-member reference (the function_type shape: alias-then-shared-suffix-content)', () => {
 		const rules: Record<string, Rule<'link'>> = {
 			function_type: choice(
-				seq(aliasedSym('function_type_trait_form', '_function_type_trait_form'), field('parameters', sym('parameters'))),
+				seq(
+					aliasedSym('function_type_trait_form', '_function_type_trait_form'),
+					field('parameters', sym('parameters'))
+				),
 				seq(aliasedSym('function_type_fn_form', '_function_type_fn_form'), field('parameters', sym('parameters')))
 			),
 			parameters: str('()')
@@ -172,7 +188,10 @@ describe('findStructuralVariantChoices — prefix-named + alias-minted arm detec
 	it('admits a HIDDEN target name as a qualifying arm (RESOLUTION 3)', () => {
 		// A hidden parent whose alias-minted target is ALSO hidden.
 		const rules: Record<string, Rule<'link'>> = {
-			_simple_pattern_helper: choice(sym('class_pattern'), aliasedSym('_simple_pattern_helper_negative', '__simple_pattern_helper_negative')),
+			_simple_pattern_helper: choice(
+				sym('class_pattern'),
+				aliasedSym('_simple_pattern_helper_negative', '__simple_pattern_helper_negative')
+			),
 			class_pattern: str('class')
 		};
 		const found = findStructuralVariantChoices('_simple_pattern_helper', rules._simple_pattern_helper!, rules);
@@ -208,8 +227,20 @@ describe('deriveStructuralVariantChildren — grammar-wide map, full target name
 	it('de-duplicates the same alias-minted target appearing as more than one arm (ts string_fragment: two quote-style branches, one child kind)', () => {
 		const rules: Record<string, Rule<'link'>> = {
 			string: choice(
-				seq(str('"'), field('contents', choice(aliasedSym('string_fragment', 'unescaped_double_string_fragment'), sym('escape_sequence')))),
-				seq(str("'"), field('contents', choice(aliasedSym('string_fragment', 'unescaped_single_string_fragment'), sym('escape_sequence'))))
+				seq(
+					str('"'),
+					field(
+						'contents',
+						choice(aliasedSym('string_fragment', 'unescaped_double_string_fragment'), sym('escape_sequence'))
+					)
+				),
+				seq(
+					str("'"),
+					field(
+						'contents',
+						choice(aliasedSym('string_fragment', 'unescaped_single_string_fragment'), sym('escape_sequence'))
+					)
+				)
 			),
 			escape_sequence: str('\\\\')
 		};
