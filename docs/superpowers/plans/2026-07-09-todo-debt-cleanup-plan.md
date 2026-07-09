@@ -250,32 +250,60 @@ caller (link.ts) and deleted it."
 
 ## Task 5: Cluster A — remove `toNativeRenderTransport` stub (generated-output-affecting)
 
+**CORRECTION (found on first dispatch):** `packages/tools/src/probe/kind.ts:930-955`'s
+`nativeRenderPayload` dynamically imports each grammar's generated `utils.ts`
+and calls `toNativeRenderTransport`, **throwing** if it's absent — a genuine,
+still-live production caller the original grounding never found (unlike
+Tasks 3-4's stale-premise pattern, this one is real). It's used by
+`probe-kind`'s native-engine render path (`kind.ts:427-428`, `798-799,813`).
+Since the stub is already just an identity no-op (`return node`), the fix is
+to make `kind.ts` degrade gracefully instead of requiring it — this task's
+scope now includes that fix. Also: `utils-engine-emit.test.ts` has only ONE
+matching test (`'emits a deprecated no-op native transport seam'`, lines
+36-57), not two as originally described.
+
 **Files:**
 - Modify: `packages/codegen/src/emitters/client-utils.ts` (~line 126, stop emitting the stub).
-- Modify: `packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts` (remove the two test cases asserting the stub's presence).
+- Modify: `packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts` (remove the 1 test case asserting the stub's presence).
+- Modify: `packages/tools/src/probe/kind.ts:930-945` (`nativeRenderPayload` — fall back to an identity projection instead of throwing when `toNativeRenderTransport` is absent).
 
 **Interfaces:**
 - Consumes: nothing from earlier tasks.
 - Produces: nothing later tasks depend on.
 
-- [ ] **Step 1: Re-read the current emitter and both test cases**
+- [ ] **Step 1: Re-read the current emitter, the test file, and `kind.ts`'s caller**
 
-Re-verify `client-utils.ts:126`'s exact current content, and re-find the two `'emits a deprecated no-op native transport seam'` test cases in `utils-engine-emit.test.ts` (the spec cited lines 36 and 46 — re-verify, the file may have shifted since).
+Re-verify `client-utils.ts`'s current content around the stub emission, the test case in `utils-engine-emit.test.ts` (confirm it's really just 1, not 2), and `packages/tools/src/probe/kind.ts:930-955`'s `nativeRenderPayload`/`renderNodeDataNative` (confirm the throw-on-absent behavior and its call sites at `kind.ts:427-428`, `798-799,813`).
 
-- [ ] **Step 2: Confirm the two tests currently pass (baseline)**
+- [ ] **Step 2: Confirm the test currently passes (baseline)**
 
 Run: `pnpm vitest run packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts`
-Expected: PASS, including both `toNativeRenderTransport` assertions.
+Expected: PASS, including the `toNativeRenderTransport` assertion.
 
-- [ ] **Step 3: Remove the stub emission from the emitter template**
+- [ ] **Step 3: Fix `kind.ts` to not require the stub**
 
-In `packages/codegen/src/emitters/client-utils.ts`, remove the code path that emits `toNativeRenderTransport`'s no-op body into generated `utils.ts` (~line 126). Do not touch anything else in this template.
+In `packages/tools/src/probe/kind.ts`'s `nativeRenderPayload`, change:
+```ts
+const project = utils.toNativeRenderTransport;
+if (!project) {
+	throw new Error(`native transport projector missing for grammar '${grammar}'`);
+}
+```
+to:
+```ts
+const project = utils.toNativeRenderTransport ?? ((node: unknown) => node);
+```
+This preserves the exact current runtime behavior (the stub is an identity no-op today, so this fallback is behaviorally identical) while removing the hard dependency on an emitter output this task is about to delete. Run `pnpm vitest run` on whatever test file covers `probe/kind.ts`'s native render path (search for it) to confirm no regression from this specific change before moving on.
 
-- [ ] **Step 4: Delete the two now-obsolete test cases**
+- [ ] **Step 4: Remove the stub emission from the emitter template**
 
-In `packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts`, remove both `it('emits a deprecated no-op native transport seam', ...)` blocks.
+In `packages/codegen/src/emitters/client-utils.ts`, remove the code path that emits `toNativeRenderTransport`'s no-op body into generated `utils.ts`. Do not touch anything else in this template.
 
-- [ ] **Step 5: Regenerate all three grammars and inspect the diff**
+- [ ] **Step 5: Delete the now-obsolete test case**
+
+In `packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts`, remove the `it('emits a deprecated no-op native transport seam', ...)` block.
+
+- [ ] **Step 6: Regenerate all three grammars and inspect the diff**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
@@ -285,20 +313,20 @@ git diff --stat -- packages/rust/src/utils.ts packages/typescript/src/utils.ts p
 ```
 Expected: each grammar's generated `utils.ts` shrinks by the removed stub function — this IS an expected generated-output change for this task, review it (confirm `toNativeRenderTransport` is gone and nothing else changed) rather than treating the diff as a failure.
 
-- [ ] **Step 6: Run the full test suite**
+- [ ] **Step 7: Run the full test suite**
 
 Run: `pnpm test`
 Expected: PASS.
 
-- [ ] **Step 7: Re-verify the native validation baseline**
+- [ ] **Step 8: Re-verify the native validation baseline**
 
 Run: `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native > /tmp/task5-validate.log 2>&1; tail -100 /tmp/task5-validate.log`
 Expected: exactly rust=117/typescript=75/python=102 (this task removes a no-op stub, so counts should not move — only the generated file's byte content changes).
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit (feature commit — includes `kind.ts`, unlike the original task text)**
 
 ```bash
-git add packages/codegen/src/emitters/client-utils.ts packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts packages/rust/src/utils.ts packages/typescript/src/utils.ts packages/python/src/utils.ts packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json rust/crates/sittir-rust/test-fixtures.json rust/crates/sittir-typescript/test-fixtures.json rust/crates/sittir-python/test-fixtures.json
+git add packages/codegen/src/emitters/client-utils.ts packages/codegen/src/emitters/__tests__/utils-engine-emit.test.ts packages/tools/src/probe/kind.ts packages/rust/src/utils.ts packages/typescript/src/utils.ts packages/python/src/utils.ts packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json packages/rust/.sittir/grammar.js packages/typescript/.sittir/grammar.js packages/python/.sittir/grammar.js
 git commit -m "chore: stop emitting deprecated toNativeRenderTransport no-op stub
 
 Removes the emitter's dead no-op body from generated utils.ts across
