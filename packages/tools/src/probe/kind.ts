@@ -933,10 +933,7 @@ async function nativeRenderPayload(grammar: string, nodeData: unknown): Promise<
 	const utils = (await import(utilsPath)) as {
 		toNativeRenderTransport?: (node: unknown) => unknown;
 	};
-	const project = utils.toNativeRenderTransport;
-	if (!project) {
-		throw new Error(`native transport projector missing for grammar '${grammar}'`);
-	}
+	const project = utils.toNativeRenderTransport ?? ((node: unknown) => node);
 	const payload = project(stripBigInts(nodeData));
 	if (payload === null || typeof payload !== 'object' || Array.isArray(payload)) {
 		throw new Error('native render payload must be a transport object');

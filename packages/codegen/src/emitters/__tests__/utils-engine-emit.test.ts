@@ -1,13 +1,8 @@
-import { PATTERN, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitClientUtils } from '../client-utils.ts';
 import { emitFactories } from '../factories.ts';
 import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
-import { AssembledBranch, AssembledPattern } from '../../compiler/model/node-map.ts';
-import type { AssembledNode } from '../../compiler/model/node-map.ts';
-import type { SeqRule } from '../../types/rule.ts';
-import { makeMinimalNodeMap, makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
+import { makeMinimalNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 describe('utils engine facade emission', () => {
 	it('emits a grammar-local methodsEngine plus explicit withMethods(node, engine)', () => {
@@ -31,28 +26,5 @@ describe('utils engine facade emission', () => {
 		expect(factoriesSrc).toContain('}, methodsEngine);');
 		expect(wrapSrc).toContain('import { withMethods, methodsEngine');
 		expect(wrapSrc).toContain('}, methodsEngine);');
-	});
-
-	it('emits a deprecated no-op native transport seam', () => {
-		const wrapperRule: SeqRule<'link'> = {
-			type: SEQ,
-			members: [{ type: SYMBOL, name: 'identifier' }]
-		};
-		const nodes = new Map<string, AssembledNode>();
-		nodes.set(
-			'wrapper',
-			new AssembledBranch('wrapper', wrapperRule, deleteWrapper(wrapperRule), deleteWrapper(wrapperRule))
-		);
-		nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-		const contents = emitClientUtils({ nodeMap: makeNodeMapWith(nodes) });
-
-		expect(contents).toContain('* @deprecated Native transport projection is a no-op.');
-		expect(contents).toContain('Wrap already projects');
-		expect(contents).toContain('read nodes into transport shape, and factories already store transport-shaped');
-		expect(contents).toContain('export function toNativeRenderTransport(node: unknown): unknown {');
-		expect(contents).toContain('  return node;');
-		expect(contents).not.toContain('projectNativeRenderTransport');
-		expect(contents).not.toContain('resolveTransportStorageValue');
-		expect(contents).not.toContain('_SINGULAR_NATIVE_CHILDREN_KIND_IDS');
 	});
 });
