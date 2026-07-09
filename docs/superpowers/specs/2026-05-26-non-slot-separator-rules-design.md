@@ -117,3 +117,50 @@ the options block) — no standalone separator-slot storage key. Render placemen
 change (the multi-separator memory's gap). No new top-level structure — a separator is a *child slot* for
 *reading*, with a delimiter role + a `delimits` relationship, whose value **folds onto the content slot** it
 delimits.
+
+## Grounding update (2026-07-09, post-PR-S)
+
+PR-S (`separator-canonical`, PR #140/#141, merged to master) landed since this spec was written. It
+deliberately did **not** touch the value/slot/render layer this spec owns — but it changed the RULE-level
+representation this spec's Problem section cites, and it changes what PR-T's own derivation step needs to
+do. The core MODEL below (role:'separator' slots, `delimits` edge, content-slot storage) is **unaffected
+and still the plan** — only the following facts needed refreshing:
+
+- **`node-map.ts:175-177` → now `node-map.ts:361-363`.** `NodeRef`/`NodeOrTerminal`'s `separator?: string`
+  / `trailing?: boolean` / `leading?: boolean` shape is confirmed **unchanged** — PR-S explicitly deferred
+  this layer to PR-T (this spec), so the Problem section's description of the value model is still accurate,
+  just at a new line.
+- **`RuleBase.separator = string | Rule[] | object`, `templates.ts:1067` — stale, this is exactly what
+  PR-S changed.** The rule-level separator is now a single canonical fact, `types/rule.ts:211-215`:
+  `separator?: { value: Rule<Phase>; trailing?: boolean; leading?: boolean }`. `separatorToString` moved to
+  `emitters/templates.ts` (now exported) and no longer does a blind `isStringType` check — it gates on
+  `isNonterminalRuleType` (Table 1, `rule-catalog.ts`): a plain literal, a sequence of literals, or a
+  group/variant wrapping one now all stringify correctly (previously only bare `StringRule`/`SeqRule` did).
+  For a genuinely rule-shaped separator (choice/symbol/pattern/repeat) it now correctly returns `undefined`
+  — the caller (`emitListSlot`) falls back to the slot's per-value separator or `DEFAULT_JOIN_SEPARATOR`
+  instead of the *old* bug where it silently returned `''` and dropped the separator character entirely.
+  This narrows the **remaining** gap precisely to what this spec's Model section already targets:
+  render still can't recover the separator's *actual per-instance text* for a rule-shaped separator, it can
+  only decline to guess. That's still exactly PR-T's job.
+- **`render-module.ts:2283-2288` / `bridge.rs:154-194 detect_field_trailing_sep` — both stale citations.**
+  `bridge.rs` was deleted entirely by the D2A normalize-inline effort
+  (`docs/superpowers/plans/2026-06-04-d2a-normalize-inline.md`). The one remaining hardcode site described
+  in Bug 1 below has moved to `emitters/render-module.ts`'s `renderTransportStruct` (`leading: false,` /
+  `trailing: false,`) — cite by symbol name going forward, not line number, since this file has already
+  shifted once.
+- **`detectRepeatSeparator` (`dsl/list-patterns.ts`) is now widened — a genuine head start for PR-T.**
+  PR-S Task 3 changed it to return the **full** detected separator `Rule` (including CHOICE shapes)
+  instead of narrowing to the first string arm via `firstStringOfChoice`. This full rule-shaped value is
+  already threaded through `link.ts`'s `liftSeparators` onto `RuleBase.separator.value` by the time PR-T's
+  own derivation would run. **PR-T's derivation narrows to consuming this already-preserved value at the
+  slot/render layer** (deriving the `separator`-role slot + `delimits` edge from it), not re-deriving the
+  rule shape from scratch the way this spec originally assumed.
+- **This spec's "Validation + native realization" case is no longer hypothetical.** PR-S Task 5 (Stage 2,
+  merged) added a `non-literal-separator` warning diagnostic at the link-phase lift
+  (`compiler/link.ts`'s `liftSeparators`, code `'non-literal-separator'`) — and it **already fires** for a
+  real, shipped grammar: TypeScript's `interface_body` (an unhandled alias target of `object_type`, which
+  inherits `object_type`'s `choice(',', $._semicolon)` separator). Confirmed empirically (0 hits on
+  rust/python, 1 on typescript, pinned in `compiler/__tests__/generate.test.ts`). This is the **exact same
+  case** this section's `object_type` discussion already describes — PR-T now has a concrete, already-
+  flagged real trigger to implement and test against, not just the `interface_body`-is-currently-unhandled
+  comment in `packages/typescript/overrides.ts` to reason from abstractly.
