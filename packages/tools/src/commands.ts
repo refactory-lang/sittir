@@ -7,15 +7,7 @@
 
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import {
-	runFrom,
-	runRt,
-	runCoverage,
-	runFactory,
-	defaultTemplatesPath,
-	type Grammar,
-	type Backend,
-} from './run.ts';
+import { runFrom, runRt, runCoverage, runFactory, defaultTemplatesPath, type Grammar, type Backend } from './run.ts';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
@@ -70,10 +62,7 @@ export interface GrammarCounts {
 	readonly factoryRenderParse: Awaited<ReturnType<typeof runFactory>>;
 }
 
-export async function collectGrammarCounts(
-	grammar: Grammar,
-	backend: Backend,
-): Promise<GrammarCounts> {
+export async function collectGrammarCounts(grammar: Grammar, backend: Backend): Promise<GrammarCounts> {
 	const tp = defaultTemplatesPath(grammar);
 	// Guard: a `.node` older than its templates means the binary wasn't rebuilt
 	// after the last regen — native render will silently fall back to JS (FR-020),
@@ -82,7 +71,7 @@ export async function collectGrammarCounts(
 	const [from, coverage, factoryRenderParse] = await Promise.all([
 		runFrom(grammar, backend),
 		runCoverage(grammar, tp),
-		runFactory(grammar, tp, backend),
+		runFactory(grammar, tp, backend)
 	]);
 	// Native RT validation reuses a cached grammar engine per process, so run the
 	// recursive and shallow passes sequentially to avoid cross-run interference.
@@ -95,7 +84,7 @@ export async function collectGrammarCounts(
 		coverage,
 		readRenderParse,
 		readRenderParseShallow,
-		factoryRenderParse,
+		factoryRenderParse
 	};
 }
 
@@ -107,34 +96,34 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		`  covPass=${coverage.pass}    covTotal=${coverage.total}`,
 		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}`,
 		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}`,
-		`  factory-render-parsePass=${factoryRenderParse.pass}    factory-render-parseTotal=${factoryRenderParse.total}    factory-render-parseAstMatchPass=${factoryRenderParse.astMatchPass}`,
+		`  factory-render-parsePass=${factoryRenderParse.pass}    factory-render-parseTotal=${factoryRenderParse.total}    factory-render-parseAstMatchPass=${factoryRenderParse.astMatchPass}`
 	];
 	const rtFails = formatFirstFailures(
 		'read-render-parse',
-		readRenderParse.errors.map((e) => ({ label: e.name, message: e.message })),
+		readRenderParse.errors.map((e) => ({ label: e.name, message: e.message }))
 	);
 	if (rtFails) lines.push(rtFails);
 	const rtAstFails = formatFirstFailures(
 		'read-render-parse-ast-mismatch',
 		readRenderParse.astMismatches.map((m) => ({
 			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
-			message: m.message,
-		})),
+			message: m.message
+		}))
 	);
 	if (rtAstFails) lines.push(rtAstFails);
 	const rtShallowFails = formatFirstFailures(
 		'read-render-parse-shallow',
-		readRenderParseShallow.errors.map((e) => ({ label: e.name, message: e.message })),
+		readRenderParseShallow.errors.map((e) => ({ label: e.name, message: e.message }))
 	);
 	if (rtShallowFails) lines.push(rtShallowFails);
 	const factoryFails = formatFirstFailures(
 		'factory-render-parse',
-		factoryRenderParse.errors.map((e) => ({ label: e.entry ? `${e.entry} (${e.kind})` : e.kind, message: e.message })),
+		factoryRenderParse.errors.map((e) => ({ label: e.entry ? `${e.entry} (${e.kind})` : e.kind, message: e.message }))
 	);
 	if (factoryFails) lines.push(factoryFails);
 	const fromFails = formatFirstFailures(
 		'from',
-		from.errors.map((e) => ({ label: e.kind, message: e.message })),
+		from.errors.map((e) => ({ label: e.kind, message: e.message }))
 	);
 	if (fromFails) lines.push(fromFails);
 	return lines.join('\n');
@@ -143,15 +132,14 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 export function formatFirstFailures(
 	stage: string,
 	failures: ReadonlyArray<{ label: string; message: string }>,
-	max = process.env.SITTIR_VALIDATOR_MAX_FAILURES
-		? Number(process.env.SITTIR_VALIDATOR_MAX_FAILURES)
-		: 5,
+	max = process.env.SITTIR_VALIDATOR_MAX_FAILURES ? Number(process.env.SITTIR_VALIDATOR_MAX_FAILURES) : 5
 ): string | null {
 	if (failures.length === 0) return null;
 	const shown = failures.slice(0, max);
-	const header = failures.length > max
-		? `  ${stage} first failures (${max} of ${failures.length}):`
-		: `  ${stage} failures (${failures.length}):`;
+	const header =
+		failures.length > max
+			? `  ${stage} first failures (${max} of ${failures.length}):`
+			: `  ${stage} failures (${failures.length}):`;
 	const items = shown.map(({ label, message }) => {
 		const oneLine = message.replace(/\s+/g, ' ').slice(0, 100);
 		return `    ${JSON.stringify(label)} — ${oneLine}`;
@@ -177,7 +165,7 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		readRenderParseShallowAstMatchPass: readRenderParseShallow.astMatchPass,
 		factoryRenderParsePass: factoryRenderParse.pass,
 		factoryRenderParseTotal: factoryRenderParse.total,
-		factoryRenderParseAstMatchPass: factoryRenderParse.astMatchPass,
+		factoryRenderParseAstMatchPass: factoryRenderParse.astMatchPass
 	};
 }
 
@@ -186,7 +174,7 @@ export async function grammarProbeFactory(grammar: Grammar, backend: Backend): P
 	const tp = defaultTemplatesPath(grammar);
 	const r = await runFactory(grammar, tp, backend);
 	console.log(
-		`\n=== ${grammar}/${formatBackendLabel(backend)} === total=${r.total} pass=${r.pass} fail=${r.fail} skip=${r.skip} astMatch=${r.astMatchPass}`,
+		`\n=== ${grammar}/${formatBackendLabel(backend)} === total=${r.total} pass=${r.pass} fail=${r.fail} skip=${r.skip} astMatch=${r.astMatchPass}`
 	);
 	const buckets = new Map<string, Array<{ kind: string; msg: string }>>();
 	for (const err of r.errors) {
@@ -194,14 +182,11 @@ export async function grammarProbeFactory(grammar: Grammar, backend: Backend): P
 		if (!buckets.has(key)) buckets.set(key, []);
 		buckets.get(key)!.push({ kind: err.kind, msg: err.message.slice(0, 140) });
 	}
-	for (const [key, items] of [...buckets.entries()]
-		.sort((a, b) => b[1].length - a[1].length)
-		.slice(0, 8)) {
+	for (const [key, items] of [...buckets.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 8)) {
 		const byKind = new Map<string, number>();
 		for (const it of items) byKind.set(it.kind, (byKind.get(it.kind) ?? 0) + 1);
 		console.log(`  [${items.length}] ${key}`);
-		for (const [k, n] of [...byKind.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8))
-			console.log(`     ${k}: ${n}`);
+		for (const [k, n] of [...byKind.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8)) console.log(`     ${k}: ${n}`);
 		console.log(`     sample: ${items[0]?.msg}`);
 	}
 }
@@ -229,7 +214,7 @@ export function formatIsolateGrammarSummary(
 	output: string,
 	lastKind: string | null,
 	exitCode: number | null,
-	signal: NodeJS.Signals | null,
+	signal: NodeJS.Signals | null
 ): string {
 	if (status === 'crashed') {
 		return `⚠ native engine SIGSEGV in ${grammar} — last kind attempted: '${lastKind ?? '<unknown>'}'`;
@@ -262,8 +247,14 @@ export function resolveCliEntryArgs(): { tsxBin: string; cliPath: string } {
  */
 export async function spawnIsolatedGrammarWorker(
 	grammar: Grammar,
-	backendMode: CliBackend,
-): Promise<{ status: 'ok' | 'crashed' | 'error'; stdout: string; stderr: string; exitCode: number | null; signal: NodeJS.Signals | null }> {
+	backendMode: CliBackend
+): Promise<{
+	status: 'ok' | 'crashed' | 'error';
+	stdout: string;
+	stderr: string;
+	exitCode: number | null;
+	signal: NodeJS.Signals | null;
+}> {
 	const { tsxBin, cliPath } = resolveCliEntryArgs();
 	// Build child argv: validate counts --backend <mode> <grammar> --_isolate-worker
 	const childArgs = [cliPath, 'validate', 'counts', '--backend', backendMode, grammar, '--_isolate-worker'];
@@ -271,17 +262,21 @@ export async function spawnIsolatedGrammarWorker(
 	return new Promise((resolve) => {
 		const childEnv: NodeJS.ProcessEnv = {
 			...process.env,
-			SITTIR_ISOLATE_WORKER: '1',
+			SITTIR_ISOLATE_WORKER: '1'
 		};
 		const child = spawn(tsxBin, childArgs, {
 			env: childEnv,
-			stdio: ['ignore', 'pipe', 'pipe'],
+			stdio: ['ignore', 'pipe', 'pipe']
 		});
 
 		let stdout = '';
 		let stderr = '';
-		child.stdout?.on('data', (chunk: Buffer) => { stdout += chunk.toString(); });
-		child.stderr?.on('data', (chunk: Buffer) => { stderr += chunk.toString(); });
+		child.stdout?.on('data', (chunk: Buffer) => {
+			stdout += chunk.toString();
+		});
+		child.stderr?.on('data', (chunk: Buffer) => {
+			stderr += chunk.toString();
+		});
 
 		child.on('close', (exitCode, signal) => {
 			const isSigsegv = exitCode === 139 || signal === 'SIGSEGV';
@@ -292,7 +287,13 @@ export async function spawnIsolatedGrammarWorker(
 		// (missing tsx binary, EACCES, …) — `close` never fires in that case.
 		// Resolve as 'error' so the parent reports it and continues.
 		child.on('error', (err: Error) => {
-			resolve({ status: 'error', stdout, stderr: `${stderr}\n[spawn error] ${err.message}`, exitCode: null, signal: null });
+			resolve({
+				status: 'error',
+				stdout,
+				stderr: `${stderr}\n[spawn error] ${err.message}`,
+				exitCode: null,
+				signal: null
+			});
 		});
 	});
 }
@@ -301,7 +302,7 @@ export async function spawnIsolatedGrammarWorker(
 export async function runCountsCli(
 	args: string[],
 	backendMode: CliBackend = 'native',
-	options: { recursive?: boolean; isolate?: boolean; isolateWorker?: boolean } = {},
+	options: { recursive?: boolean; isolate?: boolean; isolateWorker?: boolean } = {}
 ): Promise<void> {
 	const { isolate = false, isolateWorker = false } = options;
 
@@ -403,7 +404,7 @@ export function runHistoryCli(args: string[]): void {
 				`  cov=${r.covPass}/${r.covTotal}` +
 				`  read-render-parse=${r.readRenderParsePass}/${r.readRenderParseTotal}` +
 				`  read-render-parse-shallow=${r.readRenderParseShallowPass}/${r.readRenderParseShallowTotal}` +
-				`  factory-render-parse=${r.factoryRenderParsePass}/${r.factoryRenderParseTotal}`,
+				`  factory-render-parse=${r.factoryRenderParsePass}/${r.factoryRenderParseTotal}`
 		);
 	}
 }
@@ -411,7 +412,7 @@ export function runHistoryCli(args: string[]): void {
 export async function runTraceRtCli(
 	grammar: Grammar,
 	backend: Backend,
-	options: { recursive?: boolean } = {},
+	options: { recursive?: boolean } = {}
 ): Promise<void> {
 	const templatesPath = defaultTemplatesPath(grammar);
 	let failure: ReadRenderParseFailure | undefined;
@@ -421,19 +422,25 @@ export async function runTraceRtCli(
 		stopOnFirstFailure: true,
 		onFailure: (next) => {
 			if (!failure) failure = next;
-		},
+		}
 	});
 	if (!failure) {
 		console.log(`${grammar}/${formatBackendLabel(backend)}: no RT failure found`);
 		return;
 	}
 	const trace = await loadProbeTrace()(grammar, failure.entrySource, {
-		range: failure.range,
+		range: failure.range
 	});
-	console.log(JSON.stringify({
-		failure,
-		trace,
-	}, null, 2));
+	console.log(
+		JSON.stringify(
+			{
+				failure,
+				trace
+			},
+			null,
+			2
+		)
+	);
 }
 
 export function loadProbeTrace(): ProbeTraceFn {

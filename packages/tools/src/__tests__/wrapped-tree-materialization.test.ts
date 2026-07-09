@@ -3,7 +3,12 @@ import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import type { TreeHandle } from '@sittir/common';
-import { AssembledBranch, AssembledNonterminal, AssembledPattern, type AssembledNode } from '../../../codegen/src/compiler/model/node-map.ts';
+import {
+	AssembledBranch,
+	AssembledNonterminal,
+	AssembledPattern,
+	type AssembledNode
+} from '../../../codegen/src/compiler/model/node-map.ts';
 import type { SeqRule } from '../../../codegen/src/types/rule.ts';
 import { emitWrap } from '../../../codegen/src/__tests__/helpers/emit-wrap.ts';
 import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated-manifest.ts';
@@ -66,7 +71,10 @@ async function loadFreshWrapWitnessModule(): Promise<{
 }
 
 async function loadAliasRoutingWrapWitnessModule(): Promise<{
-	wrapAliasHolder: (node: unknown, tree: TreeHandle) => {
+	wrapAliasHolder: (
+		node: unknown,
+		tree: TreeHandle
+	) => {
 		identifier: () => { $type: string };
 	};
 }> {
@@ -110,7 +118,10 @@ async function loadAliasRoutingWrapWitnessModule(): Promise<{
 		}
 	}).outputText;
 	return (await import(`data:text/javascript,${encodeURIComponent(transpiled)}`)) as {
-		wrapAliasHolder: (node: unknown, tree: TreeHandle) => {
+		wrapAliasHolder: (
+			node: unknown,
+			tree: TreeHandle
+		) => {
 			identifier: () => { $type: string };
 		};
 	};
@@ -165,7 +176,7 @@ describe('wrapped tree materialization', () => {
 			},
 			children() {
 				throw new Error('boom');
-			},
+			}
 		} satisfies WrappedNodeData;
 
 		const visited: number[] = [];
@@ -217,7 +228,14 @@ describe('wrapped tree materialization', () => {
 
 		expect(materialized.$type).toBe(1);
 		expect(materialized._value).toMatchObject({ $type: 11, $text: 'field' });
-		expect(materialized.$other).toEqual({ $type: 21, $source: 0, $named: true, $text: 'child', $nodeHandle: 21, $childIndex: 0 });
+		expect(materialized.$other).toEqual({
+			$type: 21,
+			$source: 0,
+			$named: true,
+			$text: 'child',
+			$nodeHandle: 21,
+			$childIndex: 0
+		});
 		expect(materialized).not.toHaveProperty('value');
 		expect(materialized).not.toHaveProperty('children');
 		expect(materialized).not.toHaveProperty('$render');
@@ -236,7 +254,7 @@ describe('wrapped tree materialization', () => {
 		const tree = {
 			get rootNode(): never {
 				throw new Error('unused');
-			},
+			}
 		} satisfies TreeHandle;
 
 		const wrapped = wrapFunctionItem(
@@ -244,62 +262,65 @@ describe('wrapped tree materialization', () => {
 				$type: TSKindId.FunctionItem,
 				_function_modifiers: {
 					$type: TSKindId.FunctionModifiers,
-					_modifier: TSKindId.Async,
+					_modifier: TSKindId.Async
 				},
 				_name: {
 					$type: TSKindId.Identifier,
-					$text: 'abc',
+					$text: 'abc'
 				},
 				_parameters: {
 					$type: TSKindId.Parameters,
-					$other: [],
+					$other: []
 				},
 				_body: {
 					$type: TSKindId.Block,
-					$other: [],
-				},
+					$other: []
+				}
 			},
-			tree,
+			tree
 		);
 
 		const materialized = asRecord(materializeWrappedNodeData(wrapped));
 
 		expect(materialized._function_modifiers).toMatchObject({
 			$type: TSKindId.FunctionModifiers,
-			_modifier: TSKindId.Async,
+			_modifier: TSKindId.Async
 		});
 	});
 
-	it.skipIf(!typescriptGeneratedClean)('materializes typescript function signatures without requiring a surfaced semicolon', async () => {
-		const source = 'export async function readFile(filename: string): Promise<Buffer>';
-		const { Parser, Language } = await loadWebTreeSitter();
-		const lang = await Language.load(
-			fileURLToPath(new URL('../../../typescript/.sittir/parser.wasm', import.meta.url))
-		);
-		const parser = new Parser();
-		parser.setLanguage(lang);
-		const tree = parser.parse(source)!;
-		const handle = buildReadHandle('typescript', tree, source, 'native');
-		const wrapModulePath = new URL('../../../typescript/src/wrap.ts', import.meta.url).pathname;
-		const { readTreeNode } = (await import(wrapModulePath)) as {
-			readTreeNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
-		};
-		const root = readTreeNode(handle) as {
-			statements: () => Array<{
-				children: () => {
-					declaration: () => unknown;
-				};
-			}>;
-		};
-		const exportStatement = root.statements()[0]!;
-		const declarationArm = exportStatement.children();
+	it.skipIf(!typescriptGeneratedClean)(
+		'materializes typescript function signatures without requiring a surfaced semicolon',
+		async () => {
+			const source = 'export async function readFile(filename: string): Promise<Buffer>';
+			const { Parser, Language } = await loadWebTreeSitter();
+			const lang = await Language.load(
+				fileURLToPath(new URL('../../../typescript/.sittir/parser.wasm', import.meta.url))
+			);
+			const parser = new Parser();
+			parser.setLanguage(lang);
+			const tree = parser.parse(source)!;
+			const handle = buildReadHandle('typescript', tree, source, 'native');
+			const wrapModulePath = new URL('../../../typescript/src/wrap.ts', import.meta.url).pathname;
+			const { readTreeNode } = (await import(wrapModulePath)) as {
+				readTreeNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
+			};
+			const root = readTreeNode(handle) as {
+				statements: () => Array<{
+					children: () => {
+						declaration: () => unknown;
+					};
+				}>;
+			};
+			const exportStatement = root.statements()[0]!;
+			const declarationArm = exportStatement.children();
 
-		expect(() => declarationArm.declaration()).not.toThrow();
+			expect(() => declarationArm.declaration()).not.toThrow();
 
-		const declaration = asRecord(materializeWrappedNodeData(declarationArm.declaration()));
-		expect(declaration._name).toBe('readFile');
-		expect(declaration).not.toHaveProperty('_semicolon');
-	});
+			const declaration = asRecord(materializeWrappedNodeData(declarationArm.declaration()));
+			expect(declaration._name).toBe('readFile');
+			expect(declaration).not.toHaveProperty('_semicolon');
+		}
+	);
 
 	it('includes source coordinates and snippet in fresh emitted wrap diagnostics', async () => {
 		const { wrapListSplat } = await loadFreshWrapWitnessModule();
@@ -307,7 +328,7 @@ describe('wrapped tree materialization', () => {
 			source: 'value=*f',
 			get rootNode(): never {
 				throw new Error('unused');
-			},
+			}
 		} satisfies TreeHandle;
 
 		let thrown: unknown;
@@ -338,7 +359,7 @@ describe('wrapped tree materialization', () => {
 		const tree = {
 			get rootNode(): never {
 				throw new Error('unused');
-			},
+			}
 		} satisfies TreeHandle;
 
 		let thrown: unknown;
@@ -371,7 +392,11 @@ describe('wrapped tree materialization', () => {
 				$type: 'alias_holder',
 				_decorator: { $type: 'decorator', $text: '@dec' }
 			},
-			{ get rootNode(): never { throw new Error('unused'); } } satisfies TreeHandle
+			{
+				get rootNode(): never {
+					throw new Error('unused');
+				}
+			} satisfies TreeHandle
 		);
 
 		expect(wrapped.identifier().$type).toBe('identifier');

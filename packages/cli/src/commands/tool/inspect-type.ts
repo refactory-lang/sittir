@@ -11,23 +11,28 @@ export const inspectType: CommandModule = {
 			.option('--namespaces <ns,...>', 'Comma-separated list of namespaces (overrides --entry)')
 			.option('--slots', 'Print each slot type on the resolved Loose shape')
 			.option('--config', 'Print Config shape for comparison')
-			.action(async (opts: { grammar?: string; entry?: string; namespaces?: string; slots?: boolean; config?: boolean }) => {
-				const grammar = opts.grammar ?? 'rust';
-				let namespaces: string[];
-				if (opts.namespaces) {
-					namespaces = opts.namespaces.split(',').map((s) => s.trim()).filter(Boolean);
-				} else if (opts.entry) {
-					namespaces = [opts.entry];
-				} else {
-					namespaces = DEFAULT_NAMESPACES[grammar] ?? ['FieldDeclarationNs'];
+			.action(
+				async (opts: { grammar?: string; entry?: string; namespaces?: string; slots?: boolean; config?: boolean }) => {
+					const grammar = opts.grammar ?? 'rust';
+					let namespaces: string[];
+					if (opts.namespaces) {
+						namespaces = opts.namespaces
+							.split(',')
+							.map((s) => s.trim())
+							.filter(Boolean);
+					} else if (opts.entry) {
+						namespaces = [opts.entry];
+					} else {
+						namespaces = DEFAULT_NAMESPACES[grammar] ?? ['FieldDeclarationNs'];
+					}
+					const code = await runInspectType({
+						grammar,
+						namespaces,
+						showSlots: opts.slots ?? false,
+						showConfig: opts.config ?? false
+					});
+					if (code !== 0) process.exitCode = code;
 				}
-				const code = await runInspectType({
-					grammar,
-					namespaces,
-					showSlots: opts.slots ?? false,
-					showConfig: opts.config ?? false,
-				});
-				if (code !== 0) process.exitCode = code;
-			});
-	},
+			);
+	}
 };

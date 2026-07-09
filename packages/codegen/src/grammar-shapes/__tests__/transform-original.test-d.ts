@@ -18,7 +18,7 @@
  * (another dev's mid-flight refactor) — once that becomes `RuleBuilder`, the
  * config flip yields precise `$` AND `original`.
  */
-import { describe, it, expectTypeOf, assertType } from 'vitest';
+import { describe, it, expectTypeOf } from 'vitest';
 import { rustGrammarShape } from '../grammar-shape.rust.ts';
 import type { EnrichRule } from '../enrich-type.ts';
 import type { RuleAtPath, TopLevelKeys } from '../path-type.ts';
@@ -28,24 +28,24 @@ type Shape = typeof rustGrammarShape;
 type Rules = Shape['rules'];
 
 describe('precise transform original (hand-off mechanism, standalone)', () => {
-  it('a transform callback can type `original` as the rule post-Enrich shape', () => {
-    // Simulating: or_pattern: ($, original) => transform(original, {...})
-    type OriginalOf<K extends keyof Rules> = EnrichRule<Rules[K]>;
-    type OrOriginal = OriginalOf<'or_pattern'>;
-    // original is navigable:
-    type N00 = RuleAtPath<OrOriginal, '0/0'>;
-    expectTypeOf<(N00 & { name: string })['name']>().toEqualTypeOf<'_pattern'>();
-    // and segment-1 keys autocomplete:
-    expectTypeOf<TopLevelKeys<OrOriginal>>().toEqualTypeOf<'0' | '1'>();
-    // @ts-expect-error — RuleAtPath of an out-of-bounds path is `never`.
-    const _bad: RuleAtPath<OrOriginal, '5/0'> = { type: 'SYMBOL', name: 'x' } as const;
-    void _bad;
-  });
+	it('a transform callback can type `original` as the rule post-Enrich shape', () => {
+		// Simulating: or_pattern: ($, original) => transform(original, {...})
+		type OriginalOf<K extends keyof Rules> = EnrichRule<Rules[K]>;
+		type OrOriginal = OriginalOf<'or_pattern'>;
+		// original is navigable:
+		type N00 = RuleAtPath<OrOriginal, '0/0'>;
+		expectTypeOf<(N00 & { name: string })['name']>().toEqualTypeOf<'_pattern'>();
+		// and segment-1 keys autocomplete:
+		expectTypeOf<TopLevelKeys<OrOriginal>>().toEqualTypeOf<'0' | '1'>();
+		// @ts-expect-error — RuleAtPath of an out-of-bounds path is `never`.
+		const _bad: RuleAtPath<OrOriginal, '5/0'> = { type: 'SYMBOL', name: 'x' } as const;
+		void _bad;
+	});
 
-  it('RecursiveRuleBuilder narrows previous to the base rule shape', () => {
-    type RB = RecursiveRuleBuilder<Shape, 'or_pattern'>;
-    type Prev = Parameters<RB>[1];
-    // previous IS the post-Enrich or_pattern shape (PREC_LEFT top node):
-    expectTypeOf<(Prev & { type: string })['type']>().toEqualTypeOf<'PREC_LEFT'>();
-  });
+	it('RecursiveRuleBuilder narrows previous to the base rule shape', () => {
+		type RB = RecursiveRuleBuilder<Shape, 'or_pattern'>;
+		type Prev = Parameters<RB>[1];
+		// previous IS the post-Enrich or_pattern shape (PREC_LEFT top node):
+		expectTypeOf<(Prev & { type: string })['type']>().toEqualTypeOf<'PREC_LEFT'>();
+	});
 });

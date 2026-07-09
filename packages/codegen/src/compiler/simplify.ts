@@ -11,7 +11,24 @@
  * Per-function rationale: docs/compiler-phase-glossary.md (Phase 3.5: Simplify).
  */
 
-import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	DEDENT,
+	FIELD,
+	GROUP,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
@@ -36,7 +53,9 @@ export class SimplifyCtx extends BaseCtx<'normalize'> {
 	readonly inlineKinds: ReadonlySet<string>;
 	/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
 	readonly polymorphSkipExtra?: ReadonlySet<string>;
-	constructor(init: BaseCtxInit<'normalize'> & { inlineKinds?: ReadonlySet<string>; polymorphSkipExtra?: ReadonlySet<string> }) {
+	constructor(
+		init: BaseCtxInit<'normalize'> & { inlineKinds?: ReadonlySet<string>; polymorphSkipExtra?: ReadonlySet<string> }
+	) {
 		// Default builder to attributeBuilder — simplify's wrapper-free output is
 		// realized by the attribute-push strategy. Callers may override via
 		// init.builder; the construction sites read ctx.builder, never a direct ref.
@@ -73,7 +92,15 @@ export function makeNormalizedGrammar(rules: Record<string, RenderRule>): Normal
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] }
 	};
 }
-import { structuralBuilder, inlineRefs, recurseChildren, fuseHeadRepeatLists, combineMultiplicity, type InlineRefsCtx, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
+import {
+	structuralBuilder,
+	inlineRefs,
+	recurseChildren,
+	fuseHeadRepeatLists,
+	combineMultiplicity,
+	type InlineRefsCtx,
+	type LeafMultiplicity
+} from '../dsl/rule-transforms.ts';
 import type { AssembledNode } from './model/node-map.ts';
 
 // ---------------------------------------------------------------------------
@@ -111,7 +138,7 @@ export const attributeBuilder: RuleBuilder = {
 	},
 	repeat: (content) => deleteWrapper({ type: REPEAT, content }) as RenderRule,
 	repeat1: (content) => deleteWrapper({ type: REPEAT1, content }) as RenderRule,
-	field: (name, content) => deleteWrapper({ type: FIELD, name, content }) as RenderRule,
+	field: (name, content) => deleteWrapper({ type: FIELD, name, content }) as RenderRule
 };
 
 // ---------------------------------------------------------------------------
@@ -155,10 +182,7 @@ export function canonicalizeSeqOfLeaves(rule: AnyRule): AnyRule {
 		// otherwise withAttrsFrom already transferred it (absent-only) and we
 		// must not stamp 'single' onto nodes that had no explicit multiplicity.
 		if (outerMult !== undefined) {
-			const combined = combineMultiplicity(
-				outerMult,
-				(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
-			);
+			const combined = combineMultiplicity(outerMult, (survivor as { multiplicity?: LeafMultiplicity }).multiplicity);
 			// Only stamp when non-default (single → undefined per combineMultiplicity).
 			if (combined !== undefined) return { ...carried, multiplicity: combined } as AnyRule;
 		}
@@ -564,17 +588,13 @@ export function assertUniversalShape(node: AssembledNode): void {
 export function assertUniversalShapeRule(rule: SimplifiedRule, kind: string): void {
 	if (rule.type !== SEQ) {
 		if (!isLeaf(rule)) {
-			throw new Error(
-				`Universal-shape violation in kind '${kind}': body is not a seq of leaves; found ${rule.type}`
-			);
+			throw new Error(`Universal-shape violation in kind '${kind}': body is not a seq of leaves; found ${rule.type}`);
 		}
 		return;
 	}
 	for (const member of rule.members) {
 		if (!isLeaf(member)) {
-			throw new Error(
-				`Universal-shape violation in kind '${kind}': seq member is not a leaf; found ${member.type}`
-			);
+			throw new Error(`Universal-shape violation in kind '${kind}': seq member is not a leaf; found ${member.type}`);
 		}
 	}
 }
@@ -636,7 +656,11 @@ export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
  * attribute-push strategy.
  */
 export function makeDefaultCtx(): SimplifyCtx {
-	return new SimplifyCtx({ grammar: makeNormalizedGrammar({}), diagnostics: new DiagnosticSink(), builder: attributeBuilder });
+	return new SimplifyCtx({
+		grammar: makeNormalizedGrammar({}),
+		diagnostics: new DiagnosticSink(),
+		builder: attributeBuilder
+	});
 }
 
 /**
@@ -810,9 +834,7 @@ export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyC
  * @param normalizedRules - Wrapper-less rule map (output of applyWrapperDeletion).
  * @returns A new map containing the simplified form of each rule.
  */
-export function computeSimplifiedRules(
-	ctx: SimplifyCtx
-): Record<string, SimplifiedRule> {
+export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, SimplifiedRule> {
 	// Option 2 (R12): the operated-on render-rule map lives on ctx.rules.
 	// Construction sites delegate wrapper-vs-attribute to ctx.builder (SimplifyCtx
 	// defaults it to attributeBuilder — simplify's wrapper-free strategy); we
@@ -863,7 +885,7 @@ export function computeSimplifiedRules(
 				code: rec.code,
 				message: rec.message,
 				canProceed: true,
-				proposal: rec.proposal,
+				proposal: rec.proposal
 			});
 		}
 	}

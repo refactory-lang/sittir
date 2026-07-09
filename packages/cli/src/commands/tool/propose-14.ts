@@ -15,9 +15,9 @@ export const propose14: CommandModule = {
 					update: opts.update ?? false,
 					table: opts.table ?? false,
 					json: opts.json ?? false,
-					baseline: opts.baseline,
+					baseline: opts.baseline
 				});
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

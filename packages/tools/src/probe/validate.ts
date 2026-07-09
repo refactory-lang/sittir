@@ -40,9 +40,7 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 			(opts.firstFailing && 'first-failing') ||
 			null;
 		if (!selector) {
-			process.stderr.write(
-				'probe-validate: provide --source, --stdin, --entry, --entry-pattern, or --first-failing\n'
-			);
+			process.stderr.write('probe-validate: provide --source, --stdin, --entry, --entry-pattern, or --first-failing\n');
 			return 1;
 		}
 
@@ -51,18 +49,14 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 		if (selector === 'entry') {
 			target = entries.find((e) => e.name === opts.entry);
 			if (!target) {
-				process.stderr.write(
-					`probe-validate: no corpus entry named ${JSON.stringify(opts.entry)} in ${grammar}\n`
-				);
+				process.stderr.write(`probe-validate: no corpus entry named ${JSON.stringify(opts.entry)} in ${grammar}\n`);
 				return 1;
 			}
 		} else if (selector === 'entry-pattern') {
 			const re = new RegExp(opts.entryPattern as string);
 			target = entries.find((e) => re.test(e.name));
 			if (!target) {
-				process.stderr.write(
-					`probe-validate: no corpus entry matching /${opts.entryPattern}/ in ${grammar}\n`
-				);
+				process.stderr.write(`probe-validate: no corpus entry matching /${opts.entryPattern}/ in ${grammar}\n`);
 				return 1;
 			}
 		} else if (selector === 'first-failing') {
@@ -74,16 +68,12 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 			});
 			const firstFail = result.errors[0] ?? result.astMismatches[0];
 			if (!firstFail) {
-				process.stderr.write(
-					`probe-validate: no failures found for ${grammar} (engine=${engine})\n`
-				);
+				process.stderr.write(`probe-validate: no failures found for ${grammar} (engine=${engine})\n`);
 				return 0;
 			}
 			const stripKind = (name: string): string => name.replace(/\s*\[[^\]]+\]\s*$/, '');
 			const failName = firstFail.name;
-			target =
-				entries.find((e) => e.name === failName) ??
-				entries.find((e) => e.name === stripKind(failName));
+			target = entries.find((e) => e.name === failName) ?? entries.find((e) => e.name === stripKind(failName));
 			if (!target) {
 				process.stderr.write(
 					`probe-validate: failing entry ${JSON.stringify(failName)} not found in corpus (renamed?)\n`
@@ -120,7 +110,7 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 		engine,
 		trace: opts.trace,
 		logParse: false,
-		full: false,
+		full: false
 	});
 }
 

@@ -37,14 +37,7 @@
  */
 
 import { createHash } from 'node:crypto';
-import {
-	existsSync,
-	mkdirSync,
-	readFileSync,
-	readdirSync,
-	statSync,
-	writeFileSync
-} from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
@@ -182,10 +175,7 @@ interface Manifest {
 const HOST_BINARY_SENTINEL = 'freshness-checked';
 
 function sourceInputsFor(grammar: Grammar): string[] {
-	return [
-		join(REPO_ROOT, `packages/${grammar}/overrides.ts`),
-		join(REPO_ROOT, `packages/${grammar}/package.json`)
-	];
+	return [join(REPO_ROOT, `packages/${grammar}/overrides.ts`), join(REPO_ROOT, `packages/${grammar}/package.json`)];
 }
 
 /**
@@ -399,7 +389,9 @@ export function assertGeneratedManifestsClean(grammars?: readonly Grammar[]): vo
 			continue;
 		}
 		if (r.sourceHashMismatch) {
-			lines.push(`    SOURCE INPUTS CHANGED (overrides.ts, package.json, or packages/codegen/src/** edited since last regen)`);
+			lines.push(
+				`    SOURCE INPUTS CHANGED (overrides.ts, package.json, or packages/codegen/src/** edited since last regen)`
+			);
 		}
 		for (const f of r.modified) lines.push(`    MODIFIED: ${f}`);
 		for (const f of r.missing) lines.push(`    MISSING : ${f}`);

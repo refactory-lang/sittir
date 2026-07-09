@@ -41,11 +41,9 @@ import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
 import { getEnrichClauseGroups } from '../enrich.ts';
-import type { Rule } from '../../types/rule.ts';
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
-
 
 // ---------------------------------------------------------------------------
 // RenderAsConfig — sittir-side rule bodies for external scanner symbols
@@ -68,9 +66,7 @@ import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type
  *     _automatic_semicolon: blank(),
  *   })
  */
-export type RenderAsConfig = (
-	$: Record<string, unknown>
-) => Record<string, unknown>;
+export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
 // ---------------------------------------------------------------------------
 // WireContext + module-level current pointer
@@ -268,7 +264,6 @@ export function withWireContext<T>(
  * doesn't supply a base type.
  */
 
-
 /** @internal — extract the rule-kind string union from a base grammar.
  *  Handles both shapes: `{ rules: { … } }` (tree-sitter native) and
  *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
@@ -348,7 +343,9 @@ export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
  * resolution deposits captured content into wire's context; the
  * deferred fns read deposits.
  */
-export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [Base['rules'][keyof Base['rules']]]
+export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
+	Base['rules'][keyof Base['rules']]
+]
 	? // Loose default (`Base = GrammarJson`, rule values are the open
 		// `GrammarRule` union): use the plain `PatchMap` form. Mapping
 		// `PathKey<…>` over the OPEN union recurses unboundedly (TS2589); the
@@ -406,7 +403,10 @@ export type ShapedSymbols<B extends GrammarJson> = {
 	readonly [name: string]: SymbolRule<string>;
 };
 
-export type WireConfig< B extends GrammarJson, NewRules extends string = string> = Omit<Grammar<NewRules, keyof B['rules'] & string>, 'rules' | 'conflicts'> & {
+export type WireConfig<B extends GrammarJson, NewRules extends string = string> = Omit<
+	Grammar<NewRules, keyof B['rules'] & string>,
+	'rules' | 'conflicts'
+> & {
 	/**
 	 * Conflict sets — same clean-`$` typing as `rules`/`groups` (`ShapedSymbols<B>`,
 	 * no `undefined` leak). `previous` is the base grammar's conflict list.
@@ -425,10 +425,7 @@ export type WireConfig< B extends GrammarJson, NewRules extends string = string>
 	 * `=> unknown` return accepts sittir DSL outputs.
 	 */
 	readonly rules?: {
-		readonly [K in keyof B['rules'] & string]?: (
-			$: ShapedSymbols<B>,
-			previous: B['rules'][K]
-		) => unknown;
+		readonly [K in keyof B['rules'] & string]?: ($: ShapedSymbols<B>, previous: B['rules'][K]) => unknown;
 	} & {
 		// New rules the override ADDS (not in the base grammar.json, e.g. a
 		// synthesized `_wildcard_pattern`): `$` stays typed; no base `previous`.
@@ -465,7 +462,7 @@ export type WireConfig< B extends GrammarJson, NewRules extends string = string>
 	 *   })
 	 */
 	readonly renderAs?: RenderAsConfig;
-}
+};
 
 export interface WiredOpts {
 	readonly name?: string;
@@ -552,10 +549,7 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 // stays shallow. The residual no-base artifact is editor-only typecheck
 // noise; runtime is unaffected (`config` is aliased to a loose
 // `WireConfig<any>` in the body below).
-export function wire<B extends GrammarJson = any> (
-	config: WireConfig<B>,
-	base?: B
-): WiredOpts {
+export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: B): WiredOpts {
 	// Generics are contained to the SIGNATURE so `B` infers from `base`
 	// and the literal `config` is contextually checked against
 	// `WireConfig<B>`. The BODY operates on the loose runtime shapes wire
@@ -1304,7 +1298,17 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 		});
 		return changed ? { ...r, members: newMembers } : rule;
 	}
-	if (t === 'OPTIONAL' || t === 'REPEAT' || t === 'REPEAT1' || t === 'FIELD' || t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC' || t === 'TOKEN') {
+	if (
+		t === 'OPTIONAL' ||
+		t === 'REPEAT' ||
+		t === 'REPEAT1' ||
+		t === 'FIELD' ||
+		t === 'PREC' ||
+		t === 'PREC_LEFT' ||
+		t === 'PREC_RIGHT' ||
+		t === 'PREC_DYNAMIC' ||
+		t === 'TOKEN'
+	) {
 		const newContent = replaceInBodyRt(r.content, candidates);
 		return newContent !== r.content ? { ...r, content: newContent } : rule;
 	}
@@ -1406,9 +1410,7 @@ function applyWirePatternReplacement(
 			// for the symbol the alias() wrappers will reference. Wrap via
 			// wrapOneRuleFn directly (this fn runs after wrapAllRuleFns) so
 			// the body fn evaluates inside a proper wire context.
-			rules[hiddenName] = context
-				? wrapOneRuleFn(hiddenName, value as RuleFn, context)
-				: (value as RuleFn);
+			rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value as RuleFn, context) : (value as RuleFn);
 		}
 	}
 

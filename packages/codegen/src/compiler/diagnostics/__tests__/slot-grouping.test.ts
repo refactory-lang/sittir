@@ -15,7 +15,6 @@
 
 import { describe, it, expect } from 'vitest';
 import { diagnoseSlotGrouping } from '../slot-grouping.ts';
-import type { SlotGroupingDiagnostic } from '../slot-grouping.ts';
 
 // Rule helpers (simplified rules — no wrapper nodes in production path)
 const sym = (name: string) => ({ type: 'SYMBOL', name }) as any;
@@ -56,10 +55,9 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 
 	it('repeat(seq(field_a, field_b)) inside a rule → fires (slot position)', () => {
 		// The seq is inside a repeat's content → slot position → should fire.
-		const rule = repeat(seq(
-			{ type: 'SYMBOL', name: 'a', fieldName: 'a' },
-			{ type: 'SYMBOL', name: 'b', fieldName: 'b' }
-		));
+		const rule = repeat(
+			seq({ type: 'SYMBOL', name: 'a', fieldName: 'a' }, { type: 'SYMBOL', name: 'b', fieldName: 'b' })
+		);
 		const records = diagnoseSlotGrouping({ some_list: rule as any });
 		expect(records.filter((r) => r.code === 'multi-slot-nested-seq')).toHaveLength(1);
 	});
@@ -178,8 +176,8 @@ describe('diagnoseSlotGrouping — polymorph skip-set', () => {
 			source: 'promoted',
 			forms: [
 				{ name: 'numeric', content: seq(sym('value'), sym('unit')) },
-				{ name: 'string', content: seq(sym('quote'), sym('body')) },
-			],
+				{ name: 'string', content: seq(sym('quote'), sym('body')) }
+			]
 		};
 		// A rule with an unrecognized type should not fire any diagnostic.
 		const records = diagnoseSlotGrouping({ binary_expression: unknownRule as any });

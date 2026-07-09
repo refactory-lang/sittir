@@ -33,7 +33,25 @@
  * Backward compatibility: `rule.ts` re-exports everything from this file.
  */
 
-import { ALIAS, CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	DEDENT,
+	FIELD,
+	GROUP,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AnyRule,
 	Rule,
@@ -45,9 +63,7 @@ import type {
 	RepeatRule,
 	Repeat1Rule,
 	StringRule,
-	PatternRule,
 	TokenRule,
-	EnumRule,
 	SupertypeRule,
 	Multiplicity,
 	RuleId
@@ -67,10 +83,7 @@ import {
 	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
 } from '../diagnostics/parsekind-collisions.ts';
-import {
-	describeDeriveShape,
-	type DeriveShapeDiagnostic
-} from '../diagnostics/derive-shapes.ts';
+import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 
 // ============================================================================
 // 1. Diagnostics & module state
@@ -179,41 +192,42 @@ export function drainAssembleWarnings(): AssembleWarning[] {
  */
 
 export function fieldContentIsMultiSibling(content: Rule<'link'>): boolean {
-    const core = unwrapStructuralPassthroughs(content);
-    if (core.type === CHOICE) {
-        return core.members.some((member) => fieldContentIsMultiSibling(member));
-    }
-    if (core.type !== SEQ) return false;
-    let count = 0;
-    for (const member of core.members) {
-        let unwrapped: Rule<'link'> = member;
-        while (unwrapped.type === OPTIONAL ||
-            unwrapped.type === VARIANT ||
-            unwrapped.type === GROUP ||
-            unwrapped.type === TOKEN
-            // PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
-        ) {
-            unwrapped = (unwrapped as { content: Rule<'link'>; }).content;
-        }
-        switch (unwrapped.type) {
-            case SYMBOL:
-                if (isLinkSymbol(unwrapped)) break;
-                count++;
-                if (count >= 2) return true;
-                break;
-            case SUPERTYPE:
-            case ALIAS:
-            case FIELD:
-            case REPEAT:
-            case REPEAT1:
-                count++;
-                if (count >= 2) return true;
-                break;
-            default:
-                break;
-        }
-    }
-    return false;
+	const core = unwrapStructuralPassthroughs(content);
+	if (core.type === CHOICE) {
+		return core.members.some((member) => fieldContentIsMultiSibling(member));
+	}
+	if (core.type !== SEQ) return false;
+	let count = 0;
+	for (const member of core.members) {
+		let unwrapped: Rule<'link'> = member;
+		while (
+			unwrapped.type === OPTIONAL ||
+			unwrapped.type === VARIANT ||
+			unwrapped.type === GROUP ||
+			unwrapped.type === TOKEN
+			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+		) {
+			unwrapped = (unwrapped as { content: Rule<'link'> }).content;
+		}
+		switch (unwrapped.type) {
+			case SYMBOL:
+				if (isLinkSymbol(unwrapped)) break;
+				count++;
+				if (count >= 2) return true;
+				break;
+			case SUPERTYPE:
+			case ALIAS:
+			case FIELD:
+			case REPEAT:
+			case REPEAT1:
+				count++;
+				if (count >= 2) return true;
+				break;
+			default:
+				break;
+		}
+	}
+	return false;
 }
 
 /**
@@ -675,7 +689,7 @@ function auditDerivationShape(rule: Rule<'link'>, context: 'fields' | 'children'
 			ruleType: rule.type,
 			context,
 			ownerKind: currentAuditKind,
-			ruleId: rule.id,
+			ruleId: rule.id
 		})
 	);
 	const key = `${context}:${shape}`;
@@ -829,13 +843,7 @@ function classifyTopLevelShape(rule: Rule<'link'>): string {
  */
 function isTokenLikeChoiceMember(m: Rule<'link'>): boolean {
 	const peel = (r: Rule<'link'>): Rule<'link'> =>
-		r.type === ALIAS
-			? peel(r.content)
-			: r.type === TOKEN
-				? peel(r.content)
-				: r.type === VARIANT
-					? peel(r.content)
-					: r;
+		r.type === ALIAS ? peel(r.content) : r.type === TOKEN ? peel(r.content) : r.type === VARIANT ? peel(r.content) : r;
 	const core = peel(m);
 	if (core.type === SYMBOL || core.type === SUPERTYPE || isEnumChoiceRule(core)) return true;
 	// Bare `string` / `pattern` members — token-literal alternatives.
@@ -964,12 +972,15 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 			byName.set(f.name, f);
 			continue;
 		}
-		byName.set(f.name, existing.with({
-			values: dedupeValues([...existing.values, ...f.values]),
-			hasTrailing: existing.hasTrailing || f.hasTrailing,
-			hasLeading: existing.hasLeading || f.hasLeading,
-			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds),
-		}));
+		byName.set(
+			f.name,
+			existing.with({
+				values: dedupeValues([...existing.values, ...f.values]),
+				hasTrailing: existing.hasTrailing || f.hasTrailing,
+				hasLeading: existing.hasLeading || f.hasLeading,
+				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds)
+			})
+		);
 	}
 	return Array.from(byName.values());
 }
@@ -1009,9 +1020,7 @@ export interface KindedDeriveCtx extends DeriveCtx {
 export function buildParseKindRuleSignatures<T extends Rule<'link'>>(
 	rules: Readonly<Record<string, T>>
 ): Readonly<Record<string, string>> {
-	return Object.fromEntries(
-		Object.entries(rules).map(([kind, rule]) => [kind, canonicalRuleSignature(rule)])
-	);
+	return Object.fromEntries(Object.entries(rules).map(([kind, rule]) => [kind, canonicalRuleSignature(rule)]));
 }
 
 export function storageKindOfValue(value: NodeOrTerminal): string | undefined {
@@ -1029,10 +1038,7 @@ function resolveParseKindCollisions(
 	return mergeSlotsByName(slots.map((slot) => resolveParseKindCollisionsInSlot(slot, ctx)));
 }
 
-function resolveParseKindCollisionsInSlot(
-	slot: AssembledNonterminal,
-	ctx: KindedDeriveCtx
-): AssembledNonterminal {
+function resolveParseKindCollisionsInSlot(slot: AssembledNonterminal, ctx: KindedDeriveCtx): AssembledNonterminal {
 	const describedValues: ParseKindCollisionValue<NodeOrTerminal>[] = slot.values.map((value) => {
 		const storageKind = storageKindOfValue(value);
 		return {
@@ -1053,16 +1059,11 @@ function resolveParseKindCollisionsInSlot(
 	}
 	const nextValues = [...resolution.values];
 	const unchanged =
-		nextValues.length === slot.values.length &&
-		nextValues.every((value, index) => value === slot.values[index]);
+		nextValues.length === slot.values.length && nextValues.every((value, index) => value === slot.values[index]);
 	return unchanged ? slot : slot.with({ values: dedupeValues(nextValues) });
 }
 
-function structuralSignatureOfValue(
-	value: NodeOrTerminal,
-	ctx: DeriveCtx,
-	storageKind: string | undefined
-): string {
+function structuralSignatureOfValue(value: NodeOrTerminal, ctx: DeriveCtx, storageKind: string | undefined): string {
 	const surface = [
 		value.multiplicity,
 		value.separator ?? '',
@@ -1077,10 +1078,7 @@ function structuralSignatureOfValue(
 	return `node:${structuralSignatureOfStorageKind(storageKind, ctx)}:${surface}`;
 }
 
-function structuralSignatureOfStorageKind(
-	storageKind: string | undefined,
-	ctx: DeriveCtx
-): string {
+function structuralSignatureOfStorageKind(storageKind: string | undefined, ctx: DeriveCtx): string {
 	if (storageKind === undefined) return 'missing';
 	return ctx.collision?.ruleSignatures[storageKind] ?? `missing:${storageKind}`;
 }
@@ -1128,7 +1126,6 @@ export function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: s
 		v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray' ? { ...v, separator: separatorStr } : v
 	);
 }
-
 
 /**
  * Derive child slots from a canonical rule tree.
@@ -1313,8 +1310,7 @@ export function deriveValuesForRule(
 			// Mirrors the fieldContentMultiplicity choice handling and the
 			// rule-body lookthrough in assemble.ts.
 			const isBlank = (r: Rule<'link'>): boolean =>
-				(r.type === CHOICE && r.members.length === 0) ||
-				(r.type === SEQ && r.members.length === 0);
+				(r.type === CHOICE && r.members.length === 0) || (r.type === SEQ && r.members.length === 0);
 			const nonBlank = rule.members.filter((m) => !isBlank(m));
 			const hasBlank = nonBlank.length < rule.members.length;
 			const armMult: Multiplicity =
@@ -1349,9 +1345,7 @@ export function deriveValuesForRule(
 			// is therefore relaxed to `array` at the outer slot — empty inputs
 			// like `{}` (object_type with zero members) are valid.
 			const inner = deriveValuesForRule(rule.content, ctx, 'optional');
-			return inner.map((v) =>
-				v.multiplicity === 'nonEmptyArray' ? { ...v, multiplicity: 'array' as const } : v
-			);
+			return inner.map((v) => (v.multiplicity === 'nonEmptyArray' ? { ...v, multiplicity: 'array' as const } : v));
 		}
 		case REPEAT:
 			return deriveValuesForRule(rule.content, ctx, 'array');
@@ -1738,7 +1732,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 		if (this.factoryName === undefined) return undefined;
 		return `${this.factoryName}From`;
 	}
-
 }
 
 /**
@@ -1781,9 +1774,7 @@ export interface AssembledNonterminalInit {
 	storageInfo?: FieldStorageInfo;
 }
 
-export function mergeSourceRuleIds(
-	...groups: readonly (readonly RuleId[] | undefined)[]
-): readonly RuleId[] {
+export function mergeSourceRuleIds(...groups: readonly (readonly RuleId[] | undefined)[]): readonly RuleId[] {
 	const seen = new Set<RuleId>();
 	const out: RuleId[] = [];
 	for (const group of groups) {
@@ -1825,13 +1816,25 @@ export class AssembledNonterminal {
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 
-	get storageName(): string { return projectSlotNaming(this).storageName; }
-	get name(): string { return projectSlotNaming(this).name; }
+	get storageName(): string {
+		return projectSlotNaming(this).storageName;
+	}
+	get name(): string {
+		return projectSlotNaming(this).name;
+	}
 	/** Config key — matches ConfigOf projection (camelCase of storageName). Always singular. */
-	get configKey(): string { return projectSlotNaming(this).configKey; }
-	get propertyName(): string { return projectSlotNaming(this).propertyName; }
-	get paramName(): string { return projectSlotNaming(this).paramName; }
-	get parseNames(): readonly string[] { return projectSlotNaming(this).parseNames; }
+	get configKey(): string {
+		return projectSlotNaming(this).configKey;
+	}
+	get propertyName(): string {
+		return projectSlotNaming(this).propertyName;
+	}
+	get paramName(): string {
+		return projectSlotNaming(this).paramName;
+	}
+	get parseNames(): readonly string[] {
+		return projectSlotNaming(this).parseNames;
+	}
 	/**
 	 * True when the slot has no declared grammar `fieldName` (a positional
 	 * slot named from structure — e.g. a bare symbol ref or an unnamed
@@ -1841,11 +1844,17 @@ export class AssembledNonterminal {
 	 * derivation and has been deleted. Named vs positional: derive from
 	 * `fieldName` presence directly, here or via this getter.
 	 */
-	get isUnnamed(): boolean { return this.fieldName === undefined; }
+	get isUnnamed(): boolean {
+		return this.fieldName === undefined;
+	}
 	/** Multiplicity: 'many' when any value has array/nonEmptyArray multiplicity, 'one' otherwise. */
-	get arity(): 'one' | 'many' { return isMultiple(this) ? 'many' : 'one'; }
+	get arity(): 'one' | 'many' {
+		return isMultiple(this) ? 'many' : 'one';
+	}
 	/** Canonical `_<storageName>` storage key (single source of truth for the `_` prefix convention). */
-	get storageKey(): string { return `_${this.storageName}`; }
+	get storageKey(): string {
+		return `_${this.storageName}`;
+	}
 
 	constructor(init: AssembledNonterminalInit) {
 		this.values = init.values;
@@ -1869,7 +1878,7 @@ export class AssembledNonterminal {
 			metadata: this.metadata,
 			ruleMetadata: this.ruleMetadata,
 			storageInfo: this.storageInfo,
-			...overrides,
+			...overrides
 		});
 	}
 }
@@ -1927,9 +1936,9 @@ export function valueParseKindsOf(slot: { values: readonly NodeOrTerminal[] }): 
  * Derive the alias-target -> canonical-source map for a slot from per-value
  * `parseKind` metadata.
  */
-export function aliasTargetToSourceMapOf(
-	slot: { values: readonly NodeOrTerminal[] }
-): Readonly<Record<string, string>> {
+export function aliasTargetToSourceMapOf(slot: {
+	values: readonly NodeOrTerminal[];
+}): Readonly<Record<string, string>> {
 	const out: Record<string, string> = {};
 	for (const value of slot.values) {
 		if (!isNodeRef(value)) continue;
@@ -1968,10 +1977,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// slot routes by its field name (`childByFieldName('body')`) — so the field
 	// name IS the parse name. An UNNAMED slot routes by child kind — so the parse
 	// names are the distinct value parse-as (CST / alias-target) kinds.
-	const parseNames =
-		slot.fieldName !== undefined
-			? [slot.fieldName]
-			: valueParseKindsOf(slot);
+	const parseNames = slot.fieldName !== undefined ? [slot.fieldName] : valueParseKindsOf(slot);
 	// storageName derives from the STORAGE / render-source kind (`value.node` —
 	// how the value is stored and keyed via `drillAs`), NOT `parseKind`. The two
 	// projections are parallel and must NOT cross: storageKind→storageName,
@@ -2013,8 +2019,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// exactly one NAMED storage kind is present. Without this guard a 2-value
 	// slot (named ref + literal) is mis-read as single-kind and named after the
 	// lone ref (`splat_pattern.content` → `identifier`).
-	const hasUnnamedValue =
-		slot.fieldName === undefined && slot.values.some((v) => v.parseKind?.name === undefined);
+	const hasUnnamedValue = slot.fieldName === undefined && slot.values.some((v) => v.parseKind?.name === undefined);
 	const storageName =
 		slot.fieldName ??
 		(distinctStorageKinds.length === 1 && !hasUnnamedValue
@@ -2023,7 +2028,14 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	const configKey = snakeToCamel(storageName);
 	const isMulti = slot.values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 	const propertyName = isMulti ? pluralize(configKey) : configKey;
-	return { storageName, name: storageName, configKey, propertyName, paramName: safeParamName(propertyName), parseNames };
+	return {
+		storageName,
+		name: storageName,
+		configKey,
+		propertyName,
+		paramName: safeParamName(propertyName),
+		parseNames
+	};
 }
 
 // --- Concrete classes per model type ---
@@ -2133,7 +2145,10 @@ function foldParseKindDuplicateSingularSlots(slots: readonly AssembledNontermina
 		}
 		// Find the array slot that covers this slot's first parseKind.
 		const pk0 = slot.values[0]?.parseKind?.name;
-		if (pk0 === undefined) { out.push(slot); continue; }
+		if (pk0 === undefined) {
+			out.push(slot);
+			continue;
+		}
 		// Drop this slot — values are already covered by the array slot.
 		// Nothing to merge since the parseKinds are identical and the array
 		// slot already accepts them at the native reader level.
@@ -2164,10 +2179,7 @@ function foldParseKindDuplicateSingularSlots(slots: readonly AssembledNontermina
  * Named (field-named) slots route by field name at the CST level; the native reader
  * uses field names, not kind IDs, for those — no expansion needed.
  */
-function expandSlotWithVisibleAliasSources(
-	slot: AssembledNonterminal,
-	ctx: KindedDeriveCtx
-): AssembledNonterminal {
+function expandSlotWithVisibleAliasSources(slot: AssembledNonterminal, ctx: KindedDeriveCtx): AssembledNonterminal {
 	// Only expand unnamed (kind-routed) slots.
 	if (slot.fieldName !== undefined) return slot;
 
@@ -2178,14 +2190,11 @@ function expandSlotWithVisibleAliasSources(
 	if (!sources || sources.length === 0) return slot;
 
 	// Use the dominant multiplicity of this slot's values for the expansion.
-	const dominantMult = slot.values.reduce<Multiplicity>(
-		(acc, v) => {
-			if (v.multiplicity === 'nonEmptyArray' || v.multiplicity === 'array') return v.multiplicity;
-			if (acc === 'single' && v.multiplicity === 'optional') return 'optional';
-			return acc;
-		},
-		'single'
-	);
+	const dominantMult = slot.values.reduce<Multiplicity>((acc, v) => {
+		if (v.multiplicity === 'nonEmptyArray' || v.multiplicity === 'array') return v.multiplicity;
+		if (acc === 'single' && v.multiplicity === 'optional') return 'optional';
+		return acc;
+	}, 'single');
 
 	const extraValues: NodeOrTerminal[] = [];
 	for (const sourceKind of sources) {
@@ -2247,7 +2256,7 @@ function buildSlotsRecord(
 			const existing = slots.find((slot) => slot.name === renderSlot.name);
 			if (!existing) continue;
 			const next = existing.with({
-				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, renderSlot.sourceRuleIds),
+				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, renderSlot.sourceRuleIds)
 			});
 			slots.splice(slots.indexOf(existing), 1, next);
 		}
@@ -2350,10 +2359,7 @@ function buildSlotsRecord(
  *   fixtures), unresolved refs conservatively return false. No `_<name>`
  *   hidden-source fallback — the old fixpoint had none.
  */
-function _isAutoStampSlotForParameterless(
-	slot: AssembledNonterminal,
-	ctx?: DeriveCtx
-): boolean {
+function _isAutoStampSlotForParameterless(slot: AssembledNonterminal, ctx?: DeriveCtx): boolean {
 	const nodes = ctx?.nodes;
 	if (!isRequired(slot)) return true; // optional — does not block
 	if (isMultiple(slot)) return false; // required repeated — user must supply
@@ -2477,13 +2483,17 @@ export class AssembledBranch<
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
 		this._slots =
 			opts?.slotRecord ??
-			buildSlotsRecord(simplifiedRule, {
-				kindName: kind,
-				kindEntries: opts?.kindEntries,
-				collision: opts?.parseKindCollisionContext,
-				visibleAliasTargets: opts?.visibleAliasTargets,
-				simplifiedRules: opts?.simplifiedRules,
-			}, renderRule);
+			buildSlotsRecord(
+				simplifiedRule,
+				{
+					kindName: kind,
+					kindEntries: opts?.kindEntries,
+					collision: opts?.parseKindCollisionContext,
+					visibleAliasTargets: opts?.visibleAliasTargets,
+					simplifiedRules: opts?.simplifiedRules
+				},
+				renderRule
+			);
 	}
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
@@ -2682,7 +2692,7 @@ function isAllPunct(rule: Rule<'link'>): boolean {
 		case FIELD:
 		case SYMBOL:
 		case SUPERTYPE:
-		// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by CHOICE.
+			// PR-P: ENUM case removed — enum-shaped ChoiceRules handled by CHOICE.
 			return false;
 		case SEQ:
 		case CHOICE:
@@ -2730,7 +2740,7 @@ export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
 			case GROUP:
 			case ALIAS:
 			case TOKEN:
-			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+				// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
 				r = r.content;
 				continue;
 			case SEQ:
@@ -2841,9 +2851,7 @@ function collectFixedLiteral(rule: Rule<'link'>): string | undefined {
 			if (rule.members.length === 0) return undefined; // blank sentinel
 			let found: string | undefined;
 			for (const m of rule.members) {
-				const isBlank =
-					(m.type === CHOICE && m.members.length === 0) ||
-					(m.type === SEQ && m.members.length === 0);
+				const isBlank = (m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0);
 				if (isBlank) continue; // blank arm — ignore
 				const v = collectFixedLiteral(m);
 				if (v === undefined) return undefined; // non-literal or divergent branch
@@ -2857,9 +2865,7 @@ function collectFixedLiteral(rule: Rule<'link'>): string | undefined {
 			// A seq of a single non-blank member is safe; multi-member seqs are not
 			// fixed single literals (they'd produce concatenated output).
 			const nonBlanks = rule.members.filter(
-				m =>
-					!((m.type === CHOICE && m.members.length === 0) ||
-					  (m.type === SEQ && m.members.length === 0))
+				(m) => !((m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0))
 			);
 			if (nonBlanks.length !== 1) return undefined;
 			const [only] = nonBlanks;
@@ -2928,7 +2934,11 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 	readonly modelType = 'token' as const;
 	readonly resolvedKind?: string;
 
-	constructor(kind: string, rule: StringRule<'link'> | TokenRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
+	constructor(
+		kind: string,
+		rule: StringRule<'link'> | TokenRule,
+		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
+	) {
 		super(kind, rule, { hidden: true });
 		this.resolvedKind =
 			rule.type === STRING ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
@@ -3332,7 +3342,6 @@ export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[]
  * `.slots`; non-structural kinds return `[]`.
  */
 export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group')
-		return Object.values(node.slots);
+	if (node.modelType === 'branch' || node.modelType === 'group') return Object.values(node.slots);
 	return [];
 }

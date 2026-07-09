@@ -99,7 +99,11 @@ export interface GrammarResult {
  * `GrammarResult` wrapper) pass through unchanged.
  */
 export type EnrichedGrammar<B> = B extends GrammarJson
-	? { readonly [K in keyof B]: K extends 'rules' ? { readonly [R in keyof B['rules']]: EnrichRule<B['rules'][R]> } : B[K] }
+	? {
+			readonly [K in keyof B]: K extends 'rules'
+				? { readonly [R in keyof B['rules']]: EnrichRule<B['rules'][R]> }
+				: B[K];
+		}
 	: B;
 
 export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
@@ -166,7 +170,18 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
 		enrichedRules[name] = rule
-			? applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, wordMatcher)
+			? applyEnrichPasses(
+					name,
+					rule,
+					kwRules,
+					supertypeNames,
+					rulesBag,
+					clauseGroupRules,
+					clauseDedupeMap,
+					groupDedupeMap,
+					visibleGroupHiddenNames,
+					wordMatcher
+				)
 			: rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
@@ -196,9 +211,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// Only inline-safe hidden clause groups go into `inline:` (syntheticInline).
 	// VISIBLE-aliased groups' hidden rules (`_<parent>_group<N>`) are excluded —
 	// inlining them would re-distribute the visible alias across the seq members.
-	const clauseGroupNames = new Set(
-		Object.keys(clauseGroupRules).filter((n) => !visibleGroupHiddenNames.has(n))
-	);
+	const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupHiddenNames.has(n)));
 	const result: unknown = hasWrapper
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
 		: { ...(base as unknown as object), rules: mergedRules };
@@ -267,7 +280,10 @@ function applyEnrichPasses(
 		// generator tables, breaking unrelated rules' reparse (rust corpus
 		// regresses by ~47/136 with this pass on).
 		r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
-		if (r === before) { converged = true; break; }
+		if (r === before) {
+			converged = true;
+			break;
+		}
 	}
 	if (!converged && !process.env.SITTIR_QUIET) {
 		process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations\n`);
@@ -281,7 +297,16 @@ function applyEnrichPasses(
 	// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
 	// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
 	const clauseHoistCounter = { opt: 0, grp: 0 };
-	r = applyClauseHoist(ruleName, r, rulesBag, clauseGroupRules, clauseDedupeMap, clauseHoistCounter, groupDedupeMap, visibleGroupHiddenNames);
+	r = applyClauseHoist(
+		ruleName,
+		r,
+		rulesBag,
+		clauseGroupRules,
+		clauseDedupeMap,
+		clauseHoistCounter,
+		groupDedupeMap,
+		visibleGroupHiddenNames
+	);
 	return r;
 }
 
@@ -982,7 +1007,6 @@ function tryPromoteInRepeatSeq(
 // still happens in `applySymbolToField` (a real structural promotion, not a
 // derived-attr stamp).
 
-
 // Multiplicity / nonterminal are NOT stamped here — they are derived later by
 // `applyWrapperDeletion` (normalize) from the OPTIONAL/REPEAT/REPEAT1/FIELD
 // wrapper structure, the single source of truth. Stamping them in enrich was
@@ -995,7 +1019,12 @@ function tryPromoteInRepeatSeq(
 // Pass 2: optional keyword-prefix
 // ---------------------------------------------------------------------------
 
-function applyOptionalKeyword(ruleName: string, rule: Rule, kwRules: Record<string, Rule>, wordMatcher: RegExp | undefined): Rule {
+function applyOptionalKeyword(
+	ruleName: string,
+	rule: Rule,
+	kwRules: Record<string, Rule>,
+	wordMatcher: RegExp | undefined
+): Rule {
 	// Peel prec wrappers so claimed-name set covers the inner seq.
 	const inner = peelPrec(rule);
 	const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>();
@@ -1350,7 +1379,16 @@ function applyClauseHoist(
 	const peeled = peelOptionalSeq(rule);
 	if (peeled !== null) {
 		// Post-order: recurse into the seq body FIRST, then classify.
-		const recursedSeqBody = applyClauseHoist(parentKind, peeled.seqBody, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+		const recursedSeqBody = applyClauseHoist(
+			parentKind,
+			peeled.seqBody,
+			rulesBag,
+			clauseGroupRules,
+			dedupeMap,
+			counter,
+			groupDedupeMap,
+			visibleGroupHiddenNames
+		);
 
 		if (ruleMatchesEmpty(recursedSeqBody)) {
 			// Empty-matching body: tree-sitter rejects named rules that match the
@@ -1409,7 +1447,14 @@ function applyClauseHoist(
 			// run where it is still active (it is disabled this chunk, but the
 			// invariant is cheap to preserve).
 			counter.opt += 1;
-			const names = visibleGroupSynthName(recursedSeqBody, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules);
+			const names = visibleGroupSynthName(
+				recursedSeqBody,
+				parentKind,
+				groupDedupeMap,
+				counter,
+				rulesBag,
+				clauseGroupRules
+			);
 			if (names !== null) {
 				// Pass 2 tag: this hidden rule backs a VISIBLE alias → keep it OUT of
 				// the `inline:` list (so tree-sitter aliases the symbol-node, not the
@@ -1454,7 +1499,16 @@ function applyClauseHoist(
 		const members = absorbed ?? rawMembers;
 		let changed = absorbed !== null;
 		const newMembers = members.map((m) => {
-			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+			const out = applyClauseHoist(
+				parentKind,
+				m,
+				rulesBag,
+				clauseGroupRules,
+				dedupeMap,
+				counter,
+				groupDedupeMap,
+				visibleGroupHiddenNames
+			);
 			if (out !== m) changed = true;
 			return out;
 		});
@@ -1468,7 +1522,16 @@ function applyClauseHoist(
 		if (!Array.isArray(members)) return rule;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = applyClauseHoist(parentKind, m, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+			const out = applyClauseHoist(
+				parentKind,
+				m,
+				rulesBag,
+				clauseGroupRules,
+				dedupeMap,
+				counter,
+				groupDedupeMap,
+				visibleGroupHiddenNames
+			);
 			if (out !== m) changed = true;
 			return out;
 		});
@@ -1479,7 +1542,16 @@ function applyClauseHoist(
 	if (isRepeatType(rule.type) || isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (!content) return rule;
-		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+		const newContent = applyClauseHoist(
+			parentKind,
+			content,
+			rulesBag,
+			clauseGroupRules,
+			dedupeMap,
+			counter,
+			groupDedupeMap,
+			visibleGroupHiddenNames
+		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
 	}
@@ -1488,7 +1560,16 @@ function applyClauseHoist(
 	if (isFieldType(rule.type)) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (!content) return rule;
-		const newContent = applyClauseHoist(parentKind, content, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames);
+		const newContent = applyClauseHoist(
+			parentKind,
+			content,
+			rulesBag,
+			clauseGroupRules,
+			dedupeMap,
+			counter,
+			groupDedupeMap,
+			visibleGroupHiddenNames
+		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
 	}

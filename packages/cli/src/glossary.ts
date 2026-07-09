@@ -91,9 +91,10 @@ function appendCommandSection(lines: string[], namespace: string, cmd: Command):
 
 function appendCommandBody(lines: string[], fullPath: string, cmd: Command, isTop: boolean): void {
 	// Arguments
-	const args: Argument[] = (cmd as Command & { registeredArguments?: Argument[]; _args?: Argument[] }).registeredArguments
-		?? (cmd as Command & { _args?: Argument[] })._args
-		?? [];
+	const args: Argument[] =
+		(cmd as Command & { registeredArguments?: Argument[]; _args?: Argument[] }).registeredArguments ??
+		(cmd as Command & { _args?: Argument[] })._args ??
+		[];
 	if (args.length > 0) {
 		lines.push('');
 		lines.push('**Arguments**');

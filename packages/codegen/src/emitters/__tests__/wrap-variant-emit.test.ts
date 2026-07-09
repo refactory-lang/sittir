@@ -30,7 +30,10 @@ function makeHiddenGroupNodeMap() {
 		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule)));
+	nodes.set(
+		'_assignment_eq',
+		new AssembledGroup('_assignment_eq', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -49,7 +52,10 @@ function makeTransparentHiddenGroupNodeMap() {
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_export_statement_default', new AssembledGroup('_export_statement_default', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule)));
+	nodes.set(
+		'_export_statement_default',
+		new AssembledGroup('_export_statement_default', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -83,7 +89,9 @@ function makeTransparentHiddenSupertypeNodeMap() {
 
 describe('wrap emitter — polymorph variant stamping', () => {
 	it('limits named-slot filtering to separator-carrying verbatim slots', () => {
-		expect(wrapEmitterSource).toContain('const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);');
+		expect(wrapEmitterSource).toContain(
+			'const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);'
+		);
 		expect(wrapEmitterSource).toContain("storageInfo.kind === 'verbatim' && hasSeparatorMetadata");
 	});
 
@@ -108,7 +116,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 	it('emits wrap accessors and dispatch for hidden helper groups', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeHiddenGroupNodeMap() });
 
-		expect(wrapSrc).toContain("export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {");
+		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
 		expect(wrapSrc).toContain('right() { return drillIn<');
 		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
 		expect(wrapSrc).toContain("'assignment_eq': '_assignment_eq'");
@@ -121,14 +129,14 @@ describe('wrap emitter — polymorph variant stamping', () => {
 			kindEntries: [{ kind: 'identifier', member: 'Identifier', id: 1 }]
 		});
 
-		expect(wrapSrc).toContain("export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {");
+		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
 		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
 	});
 
 	it('emits hidden helper wraps even when no factory surface exists', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeNoFactoryHiddenGroupNodeMap() });
 
-		expect(wrapSrc).toContain("export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {");
+		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
 		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
 		expect(wrapSrc).not.toContain('    $with: {},');
 	});
@@ -136,10 +144,16 @@ describe('wrap emitter — polymorph variant stamping', () => {
 	it('flattens transparent hidden helper groups to their single wrapped child', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeTransparentHiddenGroupNodeMap() });
 
-		expect(wrapSrc).toContain("export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {");
+		expect(wrapSrc).toContain(
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {'
+		);
 		expect(wrapSrc).toContain('return drillIn<T.Identifier>(');
-		expect(wrapSrc).toContain("'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),");
-		expect(wrapSrc).not.toContain('export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {\n  return withMethods({');
+		expect(wrapSrc).toContain(
+			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
+		);
+		expect(wrapSrc).not.toContain(
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {\n  return withMethods({'
+		);
 	});
 
 	it('keeps synthesized canonical alias-source helpers on the wrap surface', () => {
@@ -149,15 +163,23 @@ describe('wrap emitter — polymorph variant stamping', () => {
 			synthesizedKinds: new Set(['_export_statement_default'])
 		});
 
-		expect(wrapSrc).toContain("export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {");
-		expect(wrapSrc).toContain("'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),");
+		expect(wrapSrc).toContain(
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {'
+		);
+		expect(wrapSrc).toContain(
+			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
+		);
 	});
 
 	it('emits transparent wraps for hidden supertypes', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeTransparentHiddenSupertypeNodeMap() });
 
-		expect(wrapSrc).toContain("export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {");
+		expect(wrapSrc).toContain(
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {'
+		);
 		expect(wrapSrc).toContain('return drillIn<T.ExportStatementDefault>(');
-		expect(wrapSrc).toContain("'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),");
+		expect(wrapSrc).toContain(
+			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
+		);
 	});
 });

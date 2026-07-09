@@ -53,7 +53,17 @@
  * affects only `type_item` and `index_expression`.)
  */
 
-import type { GrammarRule, SeqRule, ChoiceRule, SymbolRule, BlankRule, FieldRule, RepeatRule, Repeat1Rule, PrecRuleUnion } from './grammar-json.ts';
+import type {
+	GrammarRule,
+	SeqRule,
+	ChoiceRule,
+	SymbolRule,
+	BlankRule,
+	FieldRule,
+	RepeatRule,
+	Repeat1Rule,
+	PrecRuleUnion
+} from './grammar-json.ts';
 
 /** tree-sitter-rust declared supertypes (from grammar.json `supertypes`). */
 export type RustSupertypes =
@@ -186,10 +196,8 @@ type CountBase<
 	: Acc['length'];
 
 /** Field name to emit: base name if unique among siblings, else `string`. */
-type FieldNameFor<
-	WName extends string,
-	AllMembers extends readonly GrammarRule[]
-> = CountBase<AllMembers, BaseFieldName<WName>> extends 1 ? BaseFieldName<WName> : string;
+type FieldNameFor<WName extends string, AllMembers extends readonly GrammarRule[]> =
+	CountBase<AllMembers, BaseFieldName<WName>> extends 1 ? BaseFieldName<WName> : string;
 
 // ---------------------------------------------------------------------------
 // Member rewrite: insert FIELD at the wrap site, preserving structure.
@@ -222,38 +230,42 @@ type WrapShape3Members<M extends readonly GrammarRule[], Name extends string> = 
  * Rewrite a single seq member, inserting a FIELD if it is a wrap target.
  * `AllMembers` is the sibling tuple (for the uniqueness/name decision).
  */
-type EnrichMember<N extends GrammarRule, AllMembers extends readonly GrammarRule[]> = MemberWrapName<N> extends infer WName
-	? // never-guard FIRST: a non-wrap member yields `WName = never`, and a
-		// bare `WName extends string` DISTRIBUTES over never -> never (the
-		// `: N` fallback is unreachable), collapsing every non-wrapped member.
-		// `[never] extends [string]` is `true`, so the never test must precede.
-		[WName] extends [never]
-		? N // not a wrap target -> unchanged
-		: WName extends string
-			? FieldNameFor<WName, AllMembers> extends infer FName
-				? FName extends string
-				? N extends SymbolRule
-					? WrapShape1<FName, N> // Shape 1
-					: N extends ChoiceRule
-						? N['members'] extends infer CM extends readonly GrammarRule[]
-							? OptionalInner<N> extends infer Inner
-								? Inner extends SymbolRule
-									? ChoiceRule & { type: 'CHOICE'; members: ReplaceOptionalMembers<CM, WrapShape1<FName, Inner>> } // Shape 2
-									: Inner extends SeqRule
-										? Inner['members'] extends infer SM extends readonly GrammarRule[]
-											? ChoiceRule & {
-													type: 'CHOICE';
-													members: ReplaceOptionalMembers<CM, SeqRule & { type: 'SEQ'; members: WrapShape3Members<SM, FName> }>;
-												} // Shape 3
-											: N
+type EnrichMember<N extends GrammarRule, AllMembers extends readonly GrammarRule[]> =
+	MemberWrapName<N> extends infer WName
+		? // never-guard FIRST: a non-wrap member yields `WName = never`, and a
+			// bare `WName extends string` DISTRIBUTES over never -> never (the
+			// `: N` fallback is unreachable), collapsing every non-wrapped member.
+			// `[never] extends [string]` is `true`, so the never test must precede.
+			[WName] extends [never]
+			? N // not a wrap target -> unchanged
+			: WName extends string
+				? FieldNameFor<WName, AllMembers> extends infer FName
+					? FName extends string
+						? N extends SymbolRule
+							? WrapShape1<FName, N> // Shape 1
+							: N extends ChoiceRule
+								? N['members'] extends infer CM extends readonly GrammarRule[]
+									? OptionalInner<N> extends infer Inner
+										? Inner extends SymbolRule
+											? ChoiceRule & { type: 'CHOICE'; members: ReplaceOptionalMembers<CM, WrapShape1<FName, Inner>> } // Shape 2
+											: Inner extends SeqRule
+												? Inner['members'] extends infer SM extends readonly GrammarRule[]
+													? ChoiceRule & {
+															type: 'CHOICE';
+															members: ReplaceOptionalMembers<
+																CM,
+																SeqRule & { type: 'SEQ'; members: WrapShape3Members<SM, FName> }
+															>;
+														} // Shape 3
+													: N
+												: N
 										: N
+									: N
 								: N
-							: N
 						: N
-				: N
-			: N
-		: N // not a wrap target -> unchanged
-	: N;
+					: N
+				: N // not a wrap target -> unchanged
+		: N;
 
 /** Map every member of a top-level seq through EnrichMember. */
 type EnrichSeqMembers<M extends readonly GrammarRule[]> = {
@@ -279,17 +291,18 @@ type EnrichRepeatContent<C extends GrammarRule> = C extends SeqRule
 //     unchanged (enrich only wraps within a top-level SEQ context).
 // ---------------------------------------------------------------------------
 
-export type EnrichRule<N extends GrammarRule> = IsPrec<N> extends true
-	? N extends PrecRuleUnion
-		? RewrapPrec<N, EnrichRule<N['content']>>
-		: N
-	: N extends SeqRule
-		? { type: 'SEQ'; members: EnrichSeqMembers<N['members']> }
-		: N extends RepeatRule
-			? { type: 'REPEAT'; content: EnrichRepeatContent<N['content']> }
-			: N extends Repeat1Rule
-				? { type: 'REPEAT1'; content: EnrichRepeatContent<N['content']> }
-				: N;
+export type EnrichRule<N extends GrammarRule> =
+	IsPrec<N> extends true
+		? N extends PrecRuleUnion
+			? RewrapPrec<N, EnrichRule<N['content']>>
+			: N
+		: N extends SeqRule
+			? { type: 'SEQ'; members: EnrichSeqMembers<N['members']> }
+			: N extends RepeatRule
+				? { type: 'REPEAT'; content: EnrichRepeatContent<N['content']> }
+				: N extends Repeat1Rule
+					? { type: 'REPEAT1'; content: EnrichRepeatContent<N['content']> }
+					: N;
 
 // Re-exports for consumers.
 export type { GrammarRule, SeqRule, ChoiceRule, SymbolRule, FieldRule };

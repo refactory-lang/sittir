@@ -48,8 +48,8 @@ export function describeDeriveShape(input: {
 				rawShape: input.rawShape,
 				ruleType: input.ruleType,
 				context: input.context,
-				expected: input.expected,
-			},
+				expected: input.expected
+			}
 		};
 	}
 	if (input.rawShape.startsWith('seq-member-')) {
@@ -67,8 +67,8 @@ export function describeDeriveShape(input: {
 				rawShape: input.rawShape,
 				ruleType: input.ruleType,
 				context: input.context,
-				expected: input.expected,
-			},
+				expected: input.expected
+			}
 		};
 	}
 	if (input.rawShape.includes('choice-needs-variant-or-merge')) {
@@ -86,8 +86,8 @@ export function describeDeriveShape(input: {
 				rawShape: input.rawShape,
 				ruleType: input.ruleType,
 				context: input.context,
-				expected: input.expected,
-			},
+				expected: input.expected
+			}
 		};
 	}
 	if (input.rawShape.includes('polymorph')) {
@@ -105,8 +105,8 @@ export function describeDeriveShape(input: {
 				rawShape: input.rawShape,
 				ruleType: input.ruleType,
 				context: input.context,
-				expected: input.expected,
-			},
+				expected: input.expected
+			}
 		};
 	}
 	return {
@@ -123,7 +123,7 @@ export function describeDeriveShape(input: {
 			rawShape: input.rawShape,
 			ruleType: input.ruleType,
 			context: input.context,
-			expected: input.expected,
-		},
+			expected: input.expected
+		}
 	};
 }

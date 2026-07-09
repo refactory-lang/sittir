@@ -15,7 +15,9 @@ describe('native node coords', () => {
 	it('finds nested rust nodes from the native parseAndRead snapshot', async () => {
 		const grammar = 'rust';
 		const entries = loadCorpusEntries(grammar);
-		const entry = entries.find((candidate) => candidate.name === 'Async function') ?? entries.find((candidate) => candidate.source.includes('fn '));
+		const entry =
+			entries.find((candidate) => candidate.name === 'Async function') ??
+			entries.find((candidate) => candidate.source.includes('fn '));
 		if (!entry) throw new Error('expected a rust corpus entry containing a function');
 
 		const { Parser, lang } = await loadLanguageForGrammar(grammar);

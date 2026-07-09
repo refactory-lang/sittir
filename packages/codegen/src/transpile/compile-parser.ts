@@ -86,4 +86,3 @@ function syncExternalScanner(grammarDir: string, sittirDir: string): void {
 		copyFileSync(baseInc, sittirInc);
 	}
 }
-

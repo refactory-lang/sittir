@@ -639,10 +639,7 @@ export function keywordPresenceIsNonEmptyRepeat(field: AssembledNonterminal): bo
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
 }
 
-function classifyFieldStorageInfo(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap
-): FieldStorageInfo {
+function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
 	const keywordKind = keywordPresenceKind(field, nodeMap);
 	if (keywordKind === 'boolean') {
 		const text = keywordPresenceValue(field, nodeMap);
@@ -778,10 +775,7 @@ export type ChildFactorySurface = 'direct' | 'spread';
  * @param nodeMap - The assembled node map, needed by the filtering helpers.
  */
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
-	if (
-		node.modelType !== 'branch' &&
-		node.modelType !== 'group'
-	) {
+	if (node.modelType !== 'branch' && node.modelType !== 'group') {
 		return { tag: 'multiSlot' };
 	}
 
@@ -814,10 +808,7 @@ export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): Bran
  */
 export function computeSlotClasses(nodeMap: NodeMap): void {
 	for (const [, node] of nodeMap.nodes) {
-		if (
-			node.modelType === 'branch' ||
-			node.modelType === 'group'
-		) {
+		if (node.modelType === 'branch' || node.modelType === 'group') {
 			node.slotClass = classifyBranchSlots(node, nodeMap);
 		}
 	}
@@ -1030,11 +1021,7 @@ export function classifyWrapEmission(
 	return 'emit';
 }
 
-export type TemplateEmission =
-	| 'emit'
-	| 'skip-non-user-facing'
-	| 'skip-polymorph-form-group'
-	| 'skip-leaf-model-type';
+export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph-form-group' | 'skip-leaf-model-type';
 
 export function classifyTemplateEmission(node: AssembledNode): TemplateEmission {
 	if (!node.userFacing) return 'skip-non-user-facing';

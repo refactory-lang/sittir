@@ -41,7 +41,8 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 	g.optional = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'OPTIONAL', content }) as Rule<'evaluate'>;
 	g.repeat = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'REPEAT', content }) as Rule<'evaluate'>;
 	g.repeat1 = (content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'REPEAT1', content }) as Rule<'evaluate'>;
-	g.field = (name: string, content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'FIELD', name, content }) as Rule<'evaluate'>;
+	g.field = (name: string, content: Rule<'evaluate'>): Rule<'evaluate'> =>
+		({ type: 'FIELD', name, content }) as Rule<'evaluate'>;
 	g.alias = (rule: unknown, value: unknown): Rule<'evaluate'> => {
 		if (typeof value === 'string') {
 			return { type: 'ALIAS', content: rule, named: false, value } as Rule<'evaluate'>;
@@ -57,7 +58,8 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 		}
 		throw new Error('fake alias: invalid value');
 	};
-	g.sym = (name: string): Rule<'evaluate'> => ({ type: 'SYMBOL', name, hidden: name.startsWith('_'), inline: name.startsWith('_') }) as Rule<'evaluate'>;
+	g.sym = (name: string): Rule<'evaluate'> =>
+		({ type: 'SYMBOL', name, hidden: name.startsWith('_'), inline: name.startsWith('_') }) as Rule<'evaluate'>;
 	// prec/prec.left/prec.right/prec.dynamic all preserve the value
 	// on the returned rule so tests can assert precedence round-trip.
 	// Sittir's real `prec()` strips the wrapper entirely (see

@@ -32,7 +32,7 @@ import type { AssembledNodeMap as NodeMap, AssembledNode } from '../codegen-surf
 const DEFAULT_TARGETS: Record<string, string[]> = {
 	rust: ['mod_item', 'mod_item_external', 'mod_item_inline', 'never_type', 'struct_item_unit', 'impl_item_semi'],
 	typescript: ['empty_statement', 'existential_type'],
-	python: ['_match_block', 'match_statement'],
+	python: ['_match_block', 'match_statement']
 };
 
 // ---------------------------------------------------------------------------
@@ -52,27 +52,25 @@ export interface ClassifyOptions {
 
 /** Print classification details for one assembled node. */
 function printNode(kind: string, node: AssembledNode): void {
-// `rule` is present on structural nodes (branch, group, polymorph, multi);
-// token/keyword/pattern/enum nodes carry rule-adjacent data differently.
-// `node.rule` is now the real `Rule` type (via codegen-surface), so `.type`
-// is directly accessible — no cast needed.
-const ruleObj = node['rule'];
-const ruleType =
-ruleObj !== undefined && typeof ruleObj === 'object' && ruleObj !== null
-? ruleObj.type ?? '-'
-: '-';
+	// `rule` is present on structural nodes (branch, group, polymorph, multi);
+	// token/keyword/pattern/enum nodes carry rule-adjacent data differently.
+	// `node.rule` is now the real `Rule` type (via codegen-surface), so `.type`
+	// is directly accessible — no cast needed.
+	const ruleObj = node['rule'];
+	const ruleType =
+		ruleObj !== undefined && typeof ruleObj === 'object' && ruleObj !== null ? (ruleObj.type ?? '-') : '-';
 
-process.stdout.write(`  ${kind}: modelType=${node.modelType} rule.type=${ruleType}\n`);
+	process.stdout.write(`  ${kind}: modelType=${node.modelType} rule.type=${ruleType}\n`);
 
-if (ruleObj !== undefined) {
-const snippet = JSON.stringify(ruleObj, null, 2).slice(0, 500);
-// Indent the snippet for readability.
-const indented = snippet
-.split('\n')
-.map((l) => `    ${l}`)
-.join('\n');
-process.stdout.write(`    rule:\n${indented}\n`);
-}
+	if (ruleObj !== undefined) {
+		const snippet = JSON.stringify(ruleObj, null, 2).slice(0, 500);
+		// Indent the snippet for readability.
+		const indented = snippet
+			.split('\n')
+			.map((l) => `    ${l}`)
+			.join('\n');
+		process.stdout.write(`    rule:\n${indented}\n`);
+	}
 }
 
 // ---------------------------------------------------------------------------

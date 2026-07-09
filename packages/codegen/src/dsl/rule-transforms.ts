@@ -4,7 +4,21 @@
  * the copilot LSP pass (PR-H Task 5); this file is born holding only the ctx
  * contract so signatures across normalize/simplify can thread it.
  */
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	FIELD,
+	GROUP,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 
@@ -51,7 +65,7 @@ export const structuralBuilder: RuleBuilder = {
 	optional: (content) => ({ type: OPTIONAL, content }),
 	repeat: (content) => ({ type: REPEAT, content }),
 	repeat1: (content) => ({ type: REPEAT1, content }),
-	field: (name, content) => ({ type: FIELD, name, content }),
+	field: (name, content) => ({ type: FIELD, name, content })
 };
 
 // Phase contexts moved to the compiler layer (R12): compiler/ctx.ts holds
@@ -137,7 +151,9 @@ export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boo
 			if (typeof sep === 'object' && !Array.isArray(sep) && sep !== null) {
 				if ((sep as { trailing?: boolean; leading?: boolean })[flag] === true) return true;
 			}
-			return (r.type === REPEAT || r.type === REPEAT1) && (r as { trailing?: boolean; leading?: boolean })[flag] === true;
+			return (
+				(r.type === REPEAT || r.type === REPEAT1) && (r as { trailing?: boolean; leading?: boolean })[flag] === true
+			);
 		}) !== undefined
 	);
 }
@@ -232,7 +248,6 @@ export function pushAttrsToLeaves(
 	}
 }
 
-
 /**
  * Ctx for the shared `inlineRefs` op (R3 / PR-O M1 closure). Self-contained
  * so non-phase callers (assemble's alias-body path) can construct it without
@@ -265,7 +280,11 @@ const EMPTY_INLINE_KINDS: ReadonlySet<string> = new Set();
  *
  * Cycle-safe via visited set.
  */
-export function inlineRefs<R extends AnyRule>(rule: R, ctx: InlineRefsCtx, visited: ReadonlySet<string> = new Set()): R {
+export function inlineRefs<R extends AnyRule>(
+	rule: R,
+	ctx: InlineRefsCtx,
+	visited: ReadonlySet<string> = new Set()
+): R {
 	const rules = ctx.rules;
 	const inlineKinds = ctx.inlineKinds ?? EMPTY_INLINE_KINDS;
 	const recurse = (r: AnyRule, v: ReadonlySet<string>): AnyRule => inlineRefs(r, ctx, v);
@@ -512,61 +531,60 @@ const isArrayMult = (m: Mult): boolean => m === 'array' || m === 'nonEmptyArray'
  * head element and a repeat element are "the same list element".
  */
 function sameSlotShape(a: AnyRule, b: AnyRule): boolean {
-    if (a.type !== b.type) return false;
-    switch (a.type) {
-        case SYMBOL:
-            return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
-        case STRING:
-        case PATTERN:
-            return a.value === (b as typeof a).value;
-        case CHOICE: {
-            const bm = (b as typeof a).members;
-            return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
-        }
-        case SEQ: {
-            const bm = (b as typeof a).members;
-            return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
-        }
-        // PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to default.
-        default:
-            return false;
-    }
+	if (a.type !== b.type) return false;
+	switch (a.type) {
+		case SYMBOL:
+			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
+		case STRING:
+		case PATTERN:
+			return a.value === (b as typeof a).value;
+		case CHOICE: {
+			const bm = (b as typeof a).members;
+			return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
+		}
+		case SEQ: {
+			const bm = (b as typeof a).members;
+			return a.members.length === bm.length && a.members.every((m, i) => sameSlotShape(m, bm[i]!));
+		}
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to default.
+		default:
+			return false;
+	}
 }
 /**
  * If `head` + `next` form a head+repeat list pair, return the fused multi
  * element; otherwise `null`.
  */
 function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
-    if (!next) return null;
-    const headMult = (head as { multiplicity?: Mult; }).multiplicity;
-    if (isArrayMult(headMult)) return null; // head is already multi — not a head+repeat pair
+	if (!next) return null;
+	const headMult = (head as { multiplicity?: Mult }).multiplicity;
+	if (isArrayMult(headMult)) return null; // head is already multi — not a head+repeat pair
 
+	// Idiom A: [E, E{array}]
+	const nextMult = (next as { multiplicity?: Mult }).multiplicity;
+	if (isArrayMult(nextMult) && sameSlotShape(head, next)) {
+		return next; // the array element absorbs the single head occurrence
+	}
 
-    // Idiom A: [E, E{array}]
-    const nextMult = (next as { multiplicity?: Mult; }).multiplicity;
-    if (isArrayMult(nextMult) && sameSlotShape(head, next)) {
-        return next; // the array element absorbs the single head occurrence
-    }
+	// Idiom B: [E, choice(sepString, E{array})]
+	if (next.type === CHOICE && next.members.length === 2) {
+		const sepArm = next.members.find((m) => m.type === STRING);
+		const repArm = next.members.find(
+			(m) => isArrayMult((m as { multiplicity?: Mult }).multiplicity) && sameSlotShape(head, m)
+		);
+		if (sepArm && repArm) {
+			const repSep = (repArm as { separator?: RuleBase<'normalize'>['separator'] }).separator;
+			if (repSep !== undefined) return repArm;
+			// Fall back to the choice's separator-string arm, marking trailing.
+			const sepStr = (sepArm as { value: string }).value;
+			return {
+				...repArm,
+				separator: { value: { type: STRING, value: sepStr } as Rule, trailing: true }
+			} as AnyRule;
+		}
+	}
 
-    // Idiom B: [E, choice(sepString, E{array})]
-    if (next.type === CHOICE && next.members.length === 2) {
-        const sepArm = next.members.find((m) => m.type === STRING);
-        const repArm = next.members.find(
-            (m) => isArrayMult((m as { multiplicity?: Mult; }).multiplicity) && sameSlotShape(head, m)
-        );
-        if (sepArm && repArm) {
-            const repSep = (repArm as { separator?: RuleBase<'normalize'>['separator']; }).separator;
-            if (repSep !== undefined) return repArm;
-            // Fall back to the choice's separator-string arm, marking trailing.
-            const sepStr = (sepArm as { value: string; }).value;
-            return {
-                ...repArm,
-                separator: { value: { type: STRING, value: sepStr } as Rule, trailing: true }
-            } as AnyRule;
-        }
-    }
-
-    return null;
+	return null;
 }
 
 /**
@@ -577,22 +595,21 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
  */
 
 export function fuseHeadRepeatLists<R extends AnyRule>(rule: R): R {
-    const recursed = recurseChildren(rule, fuseHeadRepeatLists);
-    if (recursed.type !== SEQ) return recursed;
-    const members = (recursed as SeqRule).members;
-    const out: AnyRule[] = [];
-    let changed = false;
-    for (let i = 0; i < members.length; i++) {
-        const fused = tryFusePair(members[i]!, members[i + 1]);
-        if (fused) {
-            out.push(fused);
-            i++; // consume the repeat member too
-            changed = true;
-            continue;
-        }
-        out.push(members[i]!);
-    }
-    if (!changed) return recursed;
-    return { ...recursed, members: out } as unknown as R;
+	const recursed = recurseChildren(rule, fuseHeadRepeatLists);
+	if (recursed.type !== SEQ) return recursed;
+	const members = (recursed as SeqRule).members;
+	const out: AnyRule[] = [];
+	let changed = false;
+	for (let i = 0; i < members.length; i++) {
+		const fused = tryFusePair(members[i]!, members[i + 1]);
+		if (fused) {
+			out.push(fused);
+			i++; // consume the repeat member too
+			changed = true;
+			continue;
+		}
+		out.push(members[i]!);
+	}
+	if (!changed) return recursed;
+	return { ...recursed, members: out } as unknown as R;
 }
-

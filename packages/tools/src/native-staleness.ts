@@ -57,7 +57,7 @@ export function warnIfNativeBinaryStale(grammar: string, templatesPath: string):
 		console.warn(
 			`⚠ [${grammar}] no native binding (.node) in rust/crates/sittir-${grammar}/ — ` +
 				`\`--backend native\` will fail or fall back to TS. Build it: \`pnpm validate:native\` ` +
-				`or \`pnpm -C rust/crates/sittir-${grammar} run build\`.`,
+				`or \`pnpm -C rust/crates/sittir-${grammar} run build\`.`
 		);
 		return;
 	}
@@ -72,7 +72,7 @@ export function warnIfNativeBinaryStale(grammar: string, templatesPath: string):
 				`Askama bakes templates into the .node at build time, so \`--backend native\` may silently fall back ` +
 				`to JS render (FR-020) — these counts will NOT reflect your template changes. ` +
 				`Rebuild: \`pnpm validate:native\` (regens + rebuilds + counts) or \`pnpm -C rust/crates/sittir-${grammar} run build\`. ` +
-				`[mtime heuristic — a no-op regen that only bumped timestamps can false-positive.]`,
+				`[mtime heuristic — a no-op regen that only bumped timestamps can false-positive.]`
 		);
 	}
 }

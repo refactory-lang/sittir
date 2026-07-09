@@ -13,9 +13,9 @@ export const profileFactory: CommandModule = {
 				const code = await runProfileFactory({
 					grammar: opts.grammar,
 					recursive: opts.recursive ?? false,
-					showAst: opts.ast ?? false,
+					showAst: opts.ast ?? false
 				});
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

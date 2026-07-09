@@ -16,7 +16,21 @@
  * curator can import either, or pull specific entries out by hand.
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	FIELD,
+	GROUP,
+	OPTIONAL,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry } from '../compiler/types.ts';
 import { AssembledSupertype } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
@@ -241,7 +255,9 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	lines.push('// Summary');
 	lines.push('// ---------------------------------------------------------------');
 	lines.push(`// Field inferences:  ${log.inferredFields.length}  (${inferredApplied} applied, ${inferredHeld} held)`);
-	lines.push(`// Rule<'link'> promotions:   ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`);
+	lines.push(
+		`// Rule<'link'> promotions:   ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`
+	);
 	lines.push(`// Repeated shapes:   ${log.repeatedShapes.length}  (advisory — suggested supertypes/groups)`);
 	if (roundTripFailures.length > 0) {
 		const parseErrors = roundTripFailures.filter((f) => f.category === 'parse-error').length;
@@ -735,10 +751,7 @@ function walkBodyForGroups(
 	// structural seq — suggest the wrapper's path. This way the user's groups
 	// entry points to the optional/repeat, and applyGroupOverrides's liftRule
 	// preserves the wrapper (lifts only the inner seq body) as designed.
-	if (
-		(rule.type === OPTIONAL || rule.type === REPEAT || rule.type === REPEAT1) &&
-		!ctx.isTopLevel
-	) {
+	if ((rule.type === OPTIONAL || rule.type === REPEAT || rule.type === REPEAT1) && !ctx.isTopLevel) {
 		const inner = (rule as { content: Rule<'link'> }).content;
 		if (inner.type === SEQ && hasGroupableStructure(inner)) {
 			out.push({

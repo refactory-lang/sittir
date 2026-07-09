@@ -17,35 +17,37 @@ export const probeValidate: CommandModule = {
 			.option('--pretty', 'Pretty-print JSON output')
 			.option('--no-render', 'Skip the render pass')
 			.option('--no-wrap', 'Use core readNode directly (skip grammar readTreeNode)')
-			.action(async (opts: {
-				grammar?: string;
-				entry?: string;
-				entryPattern?: string;
-				firstFailing?: boolean;
-				source?: string;
-				stdin?: boolean;
-				engine?: string;
-				trace?: boolean;
-				pretty?: boolean;
-				render?: boolean;
-				wrap?: boolean;
-			}) => {
-				// Commander stores `--no-render`/`--no-wrap` under the positive
-				// key (opts.render/opts.wrap === false when the flag is passed).
-				const code = await runProbeValidate({
-					grammar: opts.grammar ?? 'rust',
-					engine: opts.engine ?? 'native',
-					entry: opts.entry,
-					entryPattern: opts.entryPattern,
-					firstFailing: opts.firstFailing ?? false,
-					source: opts.source,
-					stdin: opts.stdin ?? false,
-					trace: opts.trace ?? true,
-					pretty: opts.pretty ?? true,
-					noRender: opts.render === false,
-					noWrap: opts.wrap === false,
-				});
-				if (code !== 0) process.exitCode = code;
-			});
-	},
+			.action(
+				async (opts: {
+					grammar?: string;
+					entry?: string;
+					entryPattern?: string;
+					firstFailing?: boolean;
+					source?: string;
+					stdin?: boolean;
+					engine?: string;
+					trace?: boolean;
+					pretty?: boolean;
+					render?: boolean;
+					wrap?: boolean;
+				}) => {
+					// Commander stores `--no-render`/`--no-wrap` under the positive
+					// key (opts.render/opts.wrap === false when the flag is passed).
+					const code = await runProbeValidate({
+						grammar: opts.grammar ?? 'rust',
+						engine: opts.engine ?? 'native',
+						entry: opts.entry,
+						entryPattern: opts.entryPattern,
+						firstFailing: opts.firstFailing ?? false,
+						source: opts.source,
+						stdin: opts.stdin ?? false,
+						trace: opts.trace ?? true,
+						pretty: opts.pretty ?? true,
+						noRender: opts.render === false,
+						noWrap: opts.wrap === false
+					});
+					if (code !== 0) process.exitCode = code;
+				}
+			);
+	}
 };

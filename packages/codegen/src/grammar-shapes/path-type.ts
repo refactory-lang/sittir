@@ -57,17 +57,18 @@ type ToIndex<S extends string> = S extends `${infer N extends number}` ? N : nev
  *   - single-content wrapper: content (I must be 0 / -1; we accept any
  *     numeric for ergonomics since wrappers have one slot)
  */
-type ChildAt<N extends GrammarRule, I extends number> = PeelPrec<N> extends infer P
-	? P extends SeqRule | ChoiceRule
-		? I extends keyof P['members']
-			? P['members'][I] extends GrammarRule
-				? P['members'][I]
+type ChildAt<N extends GrammarRule, I extends number> =
+	PeelPrec<N> extends infer P
+		? P extends SeqRule | ChoiceRule
+			? I extends keyof P['members']
+				? P['members'][I] extends GrammarRule
+					? P['members'][I]
+					: never
 				: never
-			: never
-		: P extends SingleContentWrapper
-			? P['content']
-			: never
-	: never;
+			: P extends SingleContentWrapper
+				? P['content']
+				: never
+		: never;
 
 /**
  * Walk a tuple of (string) segments down the rule tree. Each segment is a
@@ -103,13 +104,14 @@ export type RuleAtPath<N extends GrammarRule, P extends string> = WalkSegments<N
 type IndicesOf<M extends readonly unknown[]> = Extract<keyof M, `${number}`>;
 
 /** Valid first-segment index strings for rule `N` (top-level). */
-export type TopLevelKeys<N extends GrammarRule> = PeelPrec<N> extends infer P
-	? P extends SeqRule | ChoiceRule
-		? IndicesOf<P['members']>
-		: P extends SingleContentWrapper
-			? '0'
-			: never
-	: never;
+export type TopLevelKeys<N extends GrammarRule> =
+	PeelPrec<N> extends infer P
+		? P extends SeqRule | ChoiceRule
+			? IndicesOf<P['members']>
+			: P extends SingleContentWrapper
+				? '0'
+				: never
+		: never;
 
 // ---------------------------------------------------------------------------
 // PathKey — the type a transform patch-object KEY should have for rule `N`.
@@ -175,12 +177,7 @@ export type PathKey<N extends GrammarRule> =
  *  has no effect on the `unknown`-typed alias() expression. Reported as a
  *  residual — NOT papered with a `unknown`/`any` union (that would collapse
  *  the whole value type and accept anything). */
-export type TransformPatchValue =
-	| RuleOrLiteral
-	| FieldPlaceholder
-	| FieldLike
-	| VariantPlaceholder
-	| AliasPlaceholder;
+export type TransformPatchValue = RuleOrLiteral | FieldPlaceholder | FieldLike | VariantPlaceholder | AliasPlaceholder;
 
 /** A single patch-map for one rule: path-key → patch value. */
 export type TransformPatchMap<Keys extends string> = Partial<Record<Keys, TransformPatchValue>>;

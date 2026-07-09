@@ -11,5 +11,5 @@ export const phantomKinds: CommandModule = {
 				const code = await runPhantomKinds({ grammars });
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

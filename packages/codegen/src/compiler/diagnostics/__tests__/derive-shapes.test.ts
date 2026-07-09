@@ -8,14 +8,14 @@ describe('describeDeriveShape', () => {
 				rawShape: 'seq-with-nested-seq',
 				ruleType: 'seq',
 				context: 'derive-values',
-				ownerKind: 'host',
-			}),
+				ownerKind: 'host'
+			})
 		).toEqual(
 			expect.objectContaining({
 				code: 'seq-with-nested-seq',
 				ownerKind: 'host',
-				details: expect.objectContaining({ rawShape: 'seq-with-nested-seq' }),
-			}),
+				details: expect.objectContaining({ rawShape: 'seq-with-nested-seq' })
+			})
 		);
 	});
 
@@ -25,8 +25,8 @@ describe('describeDeriveShape', () => {
 				rawShape: 'seq-member-choice-needs-variant-or-merge',
 				ruleType: 'choice',
 				context: 'derive-values',
-				ownerKind: 'host',
-			}),
+				ownerKind: 'host'
+			})
 		).toEqual(expect.objectContaining({ code: 'seq-member-collision' }));
 	});
 
@@ -36,8 +36,8 @@ describe('describeDeriveShape', () => {
 				rawShape: 'choice-needs-variant-or-merge',
 				ruleType: 'choice',
 				context: 'derive-values',
-				ownerKind: 'host',
-			}),
+				ownerKind: 'host'
+			})
 		).toEqual(expect.objectContaining({ code: 'choice-with-multiple-arm-shapes' }));
 	});
 
@@ -48,15 +48,13 @@ describe('describeDeriveShape', () => {
 				ruleType: 'alias',
 				context: 'optional -> seq member',
 				ownerKind: 'host',
-				expected: ['field', 'symbol', 'string'],
-			}),
+				expected: ['field', 'symbol', 'string']
+			})
 		).toEqual(
 			expect.objectContaining({
 				code: 'rule-unexpected',
-				message: expect.stringContaining(
-					'we did not expect rule type alias inside optional -> seq member',
-				),
-			}),
+				message: expect.stringContaining('we did not expect rule type alias inside optional -> seq member')
+			})
 		);
 	});
 });

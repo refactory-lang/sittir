@@ -13,9 +13,9 @@ export const walk: CommandModule = {
 				const code = await runWalk({
 					grammar: opts.grammar ?? 'rust',
 					source: opts.source,
-					render: opts.render ?? false,
+					render: opts.render ?? false
 				});
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

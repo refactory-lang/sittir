@@ -15,7 +15,18 @@
  * field-free members).
  */
 
-import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	FIELD,
+	GROUP,
+	OPTIONAL,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	VARIANT
+} from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { AnyRule, Rule, RenderRule } from '../../types/rule.ts';
 import type { ChoiceRule } from '../../types/rule.ts';
@@ -48,11 +59,12 @@ const repeat1 = (content: Rule<'link'>, separator?: string): Rule<'link'> =>
  * Helper: result of pushing a field wrapper down to its content as leaf attrs,
  * exactly as `applyWrapperDeletion(field(name, content))` produces.
  */
-const fieldAttrs = (name: string, content: AnyRule): Rule => ({
-	...content,
-	fieldName: name,
-	nonterminal: true,
-}) as Rule;
+const fieldAttrs = (name: string, content: AnyRule): Rule =>
+	({
+		...content,
+		fieldName: name,
+		nonterminal: true
+	}) as Rule;
 
 describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesForChoice)', () => {
 	// These tests call mergeBranchesForChoice directly because simplifyRule's
@@ -79,7 +91,7 @@ describe('mergeBranchesForChoice — field-merging (directly via mergeBranchesFo
 		// Position 0: left field — attrs pushed onto sym('expr')
 		expect(members[0]).toEqual(fieldAttrs('left', sym('expr')));
 		// Position 1: op field — attrs pushed onto choice of literals
-		expect(members[1]).toEqual(fieldAttrs('op', choice(str('&&'), str('||'), str('+'))) );
+		expect(members[1]).toEqual(fieldAttrs('op', choice(str('&&'), str('||'), str('+'))));
 		// Position 2: right field — attrs pushed onto sym('expr')
 		expect(members[2]).toEqual(fieldAttrs('right', sym('expr')));
 	});

@@ -9,7 +9,8 @@ const sym = (name: string): AnyRule => ({ type: SYMBOL, name });
 describe('RuleWalker.childrenOf', () => {
 	const w = new RuleWalker();
 	it('members for seq/choice', () => {
-		const a = str('a'), b = str('b');
+		const a = str('a'),
+			b = str('b');
 		expect(w.childrenOf({ type: SEQ, members: [a, b] } as AnyRule)).toEqual([a, b]);
 		expect(w.childrenOf({ type: CHOICE, members: [a, b] } as AnyRule)).toEqual([a, b]);
 	});
@@ -95,7 +96,9 @@ describe('map rebuilds through separator edges', () => {
 		const w = new RuleWalker();
 		const members = [str('a'), str('b')];
 		const tree = { type: SEQ, members, separator: { value: sym('old') } } as unknown as AnyRule;
-		const out = w.map(tree, (r) => (r.type === SYMBOL && (r as { name: string }).name === 'old' ? sym('new') : r)) as unknown as { members: AnyRule[]; separator: { value: AnyRule } };
+		const out = w.map(tree, (r) =>
+			r.type === SYMBOL && (r as { name: string }).name === 'old' ? sym('new') : r
+		) as unknown as { members: AnyRule[]; separator: { value: AnyRule } };
 		expect(out.members).toBe(members);
 		expect(out.separator.value).toEqual(sym('new'));
 	});
@@ -104,7 +107,9 @@ describe('map rebuilds through separator edges', () => {
 		const w = new RuleWalker();
 		const separator = { value: sym('comma') };
 		const tree = { type: REPEAT, content: sym('old'), separator } as unknown as AnyRule;
-		const out = w.map(tree, (r) => (r.type === SYMBOL && (r as { name: string }).name === 'old' ? sym('new') : r)) as unknown as { content: AnyRule; separator: { value: AnyRule } };
+		const out = w.map(tree, (r) =>
+			r.type === SYMBOL && (r as { name: string }).name === 'old' ? sym('new') : r
+		) as unknown as { content: AnyRule; separator: { value: AnyRule } };
 		expect(out.separator).toBe(separator);
 		expect((out.content as { name: string }).name).toBe('new');
 	});
@@ -113,7 +118,9 @@ describe('map rebuilds through separator edges', () => {
 		const w = new RuleWalker();
 		const separator = { value: sym('comma'), trailing: true, leading: false };
 		const tree = { type: SEQ, members: [str('old')], separator } as unknown as AnyRule;
-		const out = w.map(tree, (r) => (r.type === STRING && r.value === 'old' ? str('new') : r)) as unknown as { separator: { value: AnyRule; trailing: boolean; leading: boolean } };
+		const out = w.map(tree, (r) => (r.type === STRING && r.value === 'old' ? str('new') : r)) as unknown as {
+			separator: { value: AnyRule; trailing: boolean; leading: boolean };
+		};
 		expect(out.separator).toBe(separator);
 		expect(out.separator.trailing).toBe(true);
 		expect(out.separator.leading).toBe(false);
@@ -141,7 +148,7 @@ describe('RuleWalker.fold / find', () => {
 describe('RuleWalker deref wing', () => {
 	const rules: Record<string, AnyRule> = {
 		a: { type: SEQ, members: [sym('b'), str('lit')] } as AnyRule,
-		b: { type: CHOICE, members: [sym('a'), str('deep')] } as AnyRule, // cycle a -> b -> a
+		b: { type: CHOICE, members: [sym('a'), str('deep')] } as AnyRule // cycle a -> b -> a
 	};
 	const w = new RuleWalker(rules);
 	it('deref resolves one step; undefined for unknown/non-symbol', () => {
@@ -154,11 +161,14 @@ describe('RuleWalker deref wing', () => {
 	});
 	it('foldDeep follows refs and terminates on cycles', () => {
 		const values = w.foldDeep(rules.a!, [] as string[], (acc, r) =>
-			(r.type === STRING ? (acc.push(r.value), acc) : acc));
+			r.type === STRING ? (acc.push(r.value), acc) : acc
+		);
 		expect(values.sort()).toEqual(['deep', 'lit']);
 	});
 	it('findDeep finds through refs, cycle-safe', () => {
-		expect((w.findDeep(rules.a!, (r) => r.type === STRING && r.value === 'deep') as { value: string }).value).toBe('deep');
+		expect((w.findDeep(rules.a!, (r) => r.type === STRING && r.value === 'deep') as { value: string }).value).toBe(
+			'deep'
+		);
 		expect(w.findDeep(rules.a!, (r) => r.type === 'INDENT')).toBeUndefined();
 	});
 	it('foldDeep visits a diamond-shared target only once', () => {
@@ -166,11 +176,12 @@ describe('RuleWalker deref wing', () => {
 			s: { type: SEQ, members: [sym('x'), sym('y')] } as AnyRule,
 			x: { type: SEQ, members: [sym('shared')] } as AnyRule,
 			y: { type: SEQ, members: [sym('shared')] } as AnyRule,
-			shared: str('once'),
+			shared: str('once')
 		};
 		const dw = new RuleWalker(diamondRules);
 		const values = dw.foldDeep(diamondRules.s!, [] as string[], (acc, r) =>
-			(r.type === STRING ? (acc.push(r.value), acc) : acc));
+			r.type === STRING ? (acc.push(r.value), acc) : acc
+		);
 		expect(values).toEqual(['once']);
 	});
 });

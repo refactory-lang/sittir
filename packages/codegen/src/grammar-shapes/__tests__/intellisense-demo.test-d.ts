@@ -22,7 +22,7 @@ import { rustGrammarShape } from '../grammar-shape.rust.ts';
 import type { EnrichRule } from '../enrich-type.ts';
 import type { RuleAtPath, PathKey, TopLevelKeys } from '../path-type.ts';
 
-type Rules = typeof rustGrammarShape['rules'];
+type Rules = (typeof rustGrammarShape)['rules'];
 
 // Post-enrich rule shapes (what a transform's `original` actually sees).
 type AwaitExpr = EnrichRule<Rules['await_expression']>;

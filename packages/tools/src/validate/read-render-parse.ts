@@ -2,16 +2,16 @@
  * Read-render-parse validation (Checks 6 & 7) — parse → readNode → render → parse.
  *
  * Uses tree-sitter test corpus files (downloaded from grammar repos) as
- * source fixtures. Each corpus entry is parsed, readNode'd, rendered, and
+ * source fixtures. Each corpus entry is parsed'd, rendered, and
  * re-parsed. Structural match is checked.
  *
  * Requires web-tree-sitter + language WASM files.
  */
 
 import { writeSync } from 'node:fs';
-import { readNode } from '@sittir/common';
+
 import { createRenderer } from '@sittir/core';
-import type { TreeHandle } from '@sittir/common';
+
 import type { AnyNodeData } from '@sittir/types';
 import { deriveRuleKinds } from './templates-path.ts';
 import { load } from '../codegen-surface.ts';
@@ -24,10 +24,6 @@ import {
 	loadKindNames,
 	loadKindIdFromName,
 	buildReadHandle,
-	findFirst,
-	findNativeNodeId,
-	adaptNode,
-	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
 	loadReadTreeNode,
@@ -83,10 +79,15 @@ async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<str
  * (fields, children, or subtypes) so nested descendants arrive with the shape
  * the native transport layer expects.
  */
-function loadNativeStructuredKinds(rawEntries: readonly ReturnType<typeof loadRawEntries>[number][]): ReadonlySet<string> {
+function loadNativeStructuredKinds(
+	rawEntries: readonly ReturnType<typeof loadRawEntries>[number][]
+): ReadonlySet<string> {
 	return new Set(
 		rawEntries
-			.filter((entry) => entry.named && (entry.fields !== undefined || entry.children !== undefined || entry.subtypes !== undefined))
+			.filter(
+				(entry) =>
+					entry.named && (entry.fields !== undefined || entry.children !== undefined || entry.subtypes !== undefined)
+			)
 			.map((entry) => entry.type)
 	);
 }
@@ -267,7 +268,6 @@ export interface ReadRenderParseResult {
 		rendered?: string;
 	}[];
 }
-
 
 /**
  * Locate the reparsed target node at the exact byte offset where the rendered
@@ -552,7 +552,10 @@ export async function validateReadRenderParse(
 								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex ?? 0) as unknown as AnyNodeData)
 								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node)) as AnyNodeData);
 					} catch (e) {
-						kindErrors.push({ name: `${entry.name} [${kind}]`, message: `read: ${(e as Error).message.slice(0, 100)}` });
+						kindErrors.push({
+							name: `${entry.name} [${kind}]`,
+							message: `read: ${(e as Error).message.slice(0, 100)}`
+						});
 						continue;
 					}
 					const renderedKind = kind;
@@ -768,10 +771,7 @@ export async function validateReadRenderParse(
 	};
 }
 
-function reportFailure(
-	options: ValidateReadRenderParseOptions,
-	failure: ReadRenderParseFailure
-): void {
+function reportFailure(options: ValidateReadRenderParseOptions, failure: ReadRenderParseFailure): void {
 	options.onFailure?.(failure);
 }
 

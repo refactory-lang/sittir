@@ -53,7 +53,7 @@ interface FactoryRenderParseResult {
 // ---------------------------------------------------------------------------
 
 const VALIDATOR_PATHS: Record<string, string> = {
-	run: '../run.ts',
+	run: '../run.ts'
 };
 
 interface ValidatorModules {
@@ -102,10 +102,7 @@ function classifyMessage(msg: string): string {
  * reads this env var internally. The try/finally ensures no global mutation
  * leaks even on error.
  */
-async function runFactoryWithRecursive(
-	grammar: Grammar,
-	recursive: boolean,
-): Promise<FactoryRenderParseResult> {
+async function runFactoryWithRecursive(grammar: Grammar, recursive: boolean): Promise<FactoryRenderParseResult> {
 	const { runFactory, defaultTemplatesPath } = await loadValidatorModules();
 	const tp = defaultTemplatesPath(grammar);
 	const prev = process.env['SITTIR_VALIDATE_RECURSIVE'];
@@ -127,7 +124,7 @@ async function runFactoryWithRecursive(
 function reportGrammar(result: FactoryRenderParseResult, showAst: boolean): void {
 	const { grammar, total, pass, fail, skip, astMatchPass, errors, astMismatches } = result;
 	process.stdout.write(
-		`\n=== ${grammar} === total=${total} pass=${pass} fail=${fail} skip=${skip} astMatch=${astMatchPass}\n`,
+		`\n=== ${grammar} === total=${total} pass=${pass} fail=${fail} skip=${skip} astMatch=${astMatchPass}\n`
 	);
 
 	if (errors.length > 0) {

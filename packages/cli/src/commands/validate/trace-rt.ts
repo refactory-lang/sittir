@@ -13,5 +13,5 @@ export const traceRt: CommandModule = {
 					await runTraceRtCli(grammar as 'rust' | 'typescript' | 'python', backend, { recursive: opts.recursive });
 				}
 			});
-	},
+	}
 };

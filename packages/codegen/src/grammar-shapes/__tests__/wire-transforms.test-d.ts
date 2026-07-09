@@ -17,7 +17,7 @@ import { field, variant } from '../../dsl/index.ts';
 import type { EnrichRule } from '../enrich-type.ts';
 import type { PathKey, FastKeys, TransformPatchMap, TopLevelKeys, TransformPatchValue } from '../path-type.ts';
 
-type Rules = typeof rustGrammarShape['rules'];
+type Rules = (typeof rustGrammarShape)['rules'];
 
 describe('FastKeys ≡ PreciseKeys (first-segment keys are enrich-invariant)', () => {
 	it('Shape-1 (await_expression): post-enrich keys equal raw keys', () => {
@@ -34,7 +34,6 @@ describe('FastKeys ≡ PreciseKeys (first-segment keys are enrich-invariant)', (
 	it('duplicate (index_expression): keys equal despite numbered fields', () => {
 		expectTypeOf<PathKey<EnrichRule<Rules['index_expression']>>>().toEqualTypeOf<PathKey<Rules['index_expression']>>();
 	});
-
 });
 
 describe('per-rule transform patch-map (the TransformsConfig value surface)', () => {
@@ -60,7 +59,7 @@ describe('per-rule transform patch-map (the TransformsConfig value surface)', ()
 		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
 		// These authored forms exist in real overrides.ts (`_pattern` uses `-1`,
 		// other rules use `(_expression)` / `_`) — must NOT false-reject.
-		assertType<Patch>({ '_': field('x') });
+		assertType<Patch>({ _: field('x') });
 		assertType<Patch>({ '(_expression)': field('elements') });
 		assertType<Patch>({ '-1': field('last') });
 	});

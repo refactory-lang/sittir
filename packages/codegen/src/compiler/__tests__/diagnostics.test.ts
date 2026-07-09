@@ -1,12 +1,39 @@
 import { describe, it, expect } from 'vitest';
-import type { Diagnostic, GrammarDiagnostic, CompilerDiagnostic, RuntimeDiagnostic, Severity } from '../../types/diagnostics.ts';
+import type {
+	Diagnostic,
+	GrammarDiagnostic,
+	CompilerDiagnostic,
+	RuntimeDiagnostic,
+	Severity
+} from '../../types/diagnostics.ts';
 import { DiagnosticSink, EmitHaltedError } from '../../types/diagnostics.ts';
 
 describe('diagnostics model', () => {
 	it('discriminates by scope', () => {
-		const g: GrammarDiagnostic = { scope: 'grammar', code: 'x', severity: 'error', message: 'm', canProceed: false, grammar: 'rust' };
-		const c: CompilerDiagnostic = { scope: 'compiler', code: 'y', severity: 'warning', message: 'm', canProceed: true, phase: 'assemble' };
-		const r: RuntimeDiagnostic = { scope: 'runtime', code: 'z', severity: 'info', message: 'm', canProceed: true, stage: 'render' };
+		const g: GrammarDiagnostic = {
+			scope: 'grammar',
+			code: 'x',
+			severity: 'error',
+			message: 'm',
+			canProceed: false,
+			grammar: 'rust'
+		};
+		const c: CompilerDiagnostic = {
+			scope: 'compiler',
+			code: 'y',
+			severity: 'warning',
+			message: 'm',
+			canProceed: true,
+			phase: 'assemble'
+		};
+		const r: RuntimeDiagnostic = {
+			scope: 'runtime',
+			code: 'z',
+			severity: 'info',
+			message: 'm',
+			canProceed: true,
+			stage: 'render'
+		};
 		const all = [g, c, r];
 		expect(all.map((d) => d.scope)).toEqual(['grammar', 'compiler', 'runtime']);
 		// base fields shared:
@@ -105,7 +132,7 @@ describe('EmitHaltedError', () => {
 	it('message includes code and message of each blocking item', () => {
 		const items: Diagnostic[] = [
 			{ code: 'F1', severity: 'fail', message: 'first fatal', canProceed: false },
-			{ code: 'F2', severity: 'fail', message: 'second fatal', canProceed: false },
+			{ code: 'F2', severity: 'fail', message: 'second fatal', canProceed: false }
 		];
 		const err = new EmitHaltedError(items);
 		expect(err.message).toContain('F1');

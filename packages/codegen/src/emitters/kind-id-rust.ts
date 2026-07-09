@@ -19,7 +19,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { collectKindEntries, collectCatalogKinds, kindIdMemberName } from './kind-discriminant.ts';
+import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 
 export interface EmitKindIdRustConfig {
 	/** Grammar name, e.g. `'rust'` | `'typescript'` | `'python'`. */

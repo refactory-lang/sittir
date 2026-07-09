@@ -26,15 +26,10 @@ export const PIPELINE_MODULES: readonly string[] = [
 	'compiler/link.ts',
 	'compiler/assemble.ts',
 	'compiler/model/node-map.ts',
-	'dsl/rule-transforms.ts',
+	'dsl/rule-transforms.ts'
 ];
 
-export type Principle14Bucket =
-	| 'conforming'
-	| 'getter-candidate'
-	| 'zero-param'
-	| 'non-conforming'
-	| 'dead';
+export type Principle14Bucket = 'conforming' | 'getter-candidate' | 'zero-param' | 'non-conforming' | 'dead';
 
 export interface FnRecord {
 	/** module-relative path, e.g. `compiler/link.ts` */
@@ -62,7 +57,10 @@ export interface BaselineFile {
 }
 
 const stripOptionalUndefined = (type: string): string =>
-	type.replace(/\s*\|\s*undefined\s*$/, '').replace(/^\s*undefined\s*\|\s*/, '').trim();
+	type
+		.replace(/\s*\|\s*undefined\s*$/, '')
+		.replace(/^\s*undefined\s*\|\s*/, '')
+		.trim();
 
 function bucketOf(params: FnRecord['params']): Exclude<Principle14Bucket, 'dead'> {
 	if (params.length === 0) return 'zero-param';
@@ -74,9 +72,7 @@ function bucketOf(params: FnRecord['params']): Exclude<Principle14Bucket, 'dead'
 	// ending in `Ctx`, or the param literally named `ctx` (the convention every
 	// pipeline fn already follows — `ctx: SimplifyCtx`, `ctx: AssembleCtx`, … —
 	// a more direct signal than the type-name suffix when both are available).
-	const hasCtxParam = params
-		.slice(1)
-		.some((p) => p.name === 'ctx' || stripOptionalUndefined(p.type).endsWith('Ctx'));
+	const hasCtxParam = params.slice(1).some((p) => p.name === 'ctx' || stripOptionalUndefined(p.type).endsWith('Ctx'));
 	return hasCtxParam ? 'conforming' : 'non-conforming';
 }
 
@@ -88,15 +84,10 @@ export function classifySource(file: string, source: string): FnRecord[] {
 	const hasExport = (node: ts.Node): boolean =>
 		!!(ts.getCombinedModifierFlags(node as ts.Declaration) & ts.ModifierFlags.Export);
 
-	const record = (
-		name: string,
-		kind: FnRecord['kind'],
-		sig: ts.SignatureDeclaration,
-		exported: boolean,
-	) => {
+	const record = (name: string, kind: FnRecord['kind'], sig: ts.SignatureDeclaration, exported: boolean) => {
 		const params = sig.parameters.map((p) => ({
 			name: p.name.getText(sf),
-			type: p.type ? (p.type.getText(sf).split('<')[0] ?? '').trim() : '',
+			type: p.type ? (p.type.getText(sf).split('<')[0] ?? '').trim() : ''
 		}));
 		records.push({
 			file,
@@ -104,7 +95,7 @@ export function classifySource(file: string, source: string): FnRecord[] {
 			kind,
 			exported,
 			params,
-			bucket: kind === 'getter' ? 'getter-candidate' : bucketOf(params),
+			bucket: kind === 'getter' ? 'getter-candidate' : bucketOf(params)
 		});
 	};
 
@@ -182,7 +173,7 @@ export function countByModule(records: FnRecord[]): Record<string, ModuleCounts>
 			getterCandidate: 0,
 			zeroParam: 0,
 			nonConforming: 0,
-			dead: 0,
+			dead: 0
 		});
 		c.total++;
 		if (r.bucket === 'conforming') c.conforming++;
@@ -200,10 +191,7 @@ export interface RatchetResult {
 }
 
 /** The ratchet: fail when any module's non-conforming count EXCEEDS its baseline. */
-export function compareWithBaseline(
-	counts: Record<string, ModuleCounts>,
-	baseline: BaselineFile,
-): RatchetResult {
+export function compareWithBaseline(counts: Record<string, ModuleCounts>, baseline: BaselineFile): RatchetResult {
 	const regressions: RatchetResult['regressions'] = [];
 	for (const [module, c] of Object.entries(counts)) {
 		const ceiling = baseline.modules[module] ?? 0;
@@ -272,7 +260,7 @@ function formatTable(records: FnRecord[]): string {
 	const lines = ['file\tname\tkind\tbucket\tparams'];
 	for (const r of records) {
 		lines.push(
-			`${r.file}\t${r.name}\t${r.kind}\t${r.bucket}\t(${r.params.map((p) => `${p.name}: ${p.type || '?'}`).join(', ')})`,
+			`${r.file}\t${r.name}\t${r.kind}\t${r.bucket}\t(${r.params.map((p) => `${p.name}: ${p.type || '?'}`).join(', ')})`
 		);
 	}
 	return lines.join('\n');
@@ -307,7 +295,7 @@ export async function run(opts: Propose14Options = {}): Promise<number> {
 		console.log('module\ttotal\tconforming\tgetter-cand\tzero-param\tdead\tNON-CONFORMING');
 		for (const [module, c] of Object.entries(counts)) {
 			console.log(
-				`${module}\t${c.total}\t${c.conforming}\t${c.getterCandidate}\t${c.zeroParam}\t${c.dead}\t${c.nonConforming}`,
+				`${module}\t${c.total}\t${c.conforming}\t${c.getterCandidate}\t${c.zeroParam}\t${c.dead}\t${c.nonConforming}`
 			);
 		}
 		if (opts.table) {
@@ -320,7 +308,7 @@ export async function run(opts: Propose14Options = {}): Promise<number> {
 		console.error('');
 		for (const r of result.regressions) {
 			console.error(
-				`RATCHET-REGRESSION: ${r.module} non-conforming ${r.current} > baseline ${r.baseline} — new code must use (target, ctx: *Ctx) per Principle #14 (§7.7); sweep rows lower the baseline, never raise it`,
+				`RATCHET-REGRESSION: ${r.module} non-conforming ${r.current} > baseline ${r.baseline} — new code must use (target, ctx: *Ctx) per Principle #14 (§7.7); sweep rows lower the baseline, never raise it`
 			);
 		}
 		return 1;

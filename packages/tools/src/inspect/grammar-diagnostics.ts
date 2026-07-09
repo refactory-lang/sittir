@@ -31,11 +31,9 @@ export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
 	const grammarJsPath = await invoke('resolveGrammar', 'resolveGrammarJsPath', grammar);
 	const rawGrammar = await invoke('evaluate', 'evaluate', grammarJsPath);
 	const { diagnostics } = await invoke('grammarDiagnostics', 'collectGrammarDiagnosticsForGrammar', {
-		rawGrammar,
+		rawGrammar
 	});
 
-	process.stdout.write(
-		(await invoke('grammarDiagnostics', 'formatGrammarDiagnostics', diagnostics)) + '\n',
-	);
+	process.stdout.write((await invoke('grammarDiagnostics', 'formatGrammarDiagnostics', diagnostics)) + '\n');
 	return diagnostics.length > 0 ? 1 : 0;
 }

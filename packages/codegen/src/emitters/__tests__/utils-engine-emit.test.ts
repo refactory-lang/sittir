@@ -13,7 +13,7 @@ describe('utils engine facade emission', () => {
 	it('emits a grammar-local methodsEngine plus explicit withMethods(node, engine)', () => {
 		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
 
-		expect(contents).toContain("import { withMethods as withCommonMethods");
+		expect(contents).toContain('import { withMethods as withCommonMethods');
 		expect(contents).toContain("from '@sittir/common/utils'");
 		expect(contents).toContain('export const methodsEngine = {');
 		expect(contents).toContain('export function withMethods<T extends object>(');
@@ -39,7 +39,10 @@ describe('utils engine facade emission', () => {
 			members: [{ type: SYMBOL, name: 'identifier' }]
 		};
 		const nodes = new Map<string, AssembledNode>();
-		nodes.set('wrapper', new AssembledBranch('wrapper', wrapperRule, deleteWrapper(wrapperRule), deleteWrapper(wrapperRule)));
+		nodes.set(
+			'wrapper',
+			new AssembledBranch('wrapper', wrapperRule, deleteWrapper(wrapperRule), deleteWrapper(wrapperRule))
+		);
 		nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 		const contents = emitClientUtils({ nodeMap: makeNodeMapWith(nodes) });
 

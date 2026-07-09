@@ -68,9 +68,7 @@ export interface EmitAllResult {
 	renderModule?: RenderModuleBundle;
 }
 
-type RenderModuleEmission =
-	| { tag: 'emit'; validGrammar: Grammar }
-	| { tag: 'skip' };
+type RenderModuleEmission = { tag: 'emit'; validGrammar: Grammar } | { tag: 'skip' };
 
 function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean | undefined): RenderModuleEmission {
 	if (emitRenderModule !== true) return { tag: 'skip' };
@@ -139,7 +137,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 					grammar: renderModuleEmission.validGrammar,
 					nodeMap,
 					generatedIdTables
-			  })
+				})
 			: undefined;
 
 	// -----------------------------------------------------------------

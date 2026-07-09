@@ -327,7 +327,6 @@ export namespace from {
 		}
 		output.push(result);
 	}
-
 }
 
 // ---------------------------------------------------------------------------
@@ -345,7 +344,6 @@ interface BranchLikeNode {
 	readonly slotClass?: BranchSlotClass;
 }
 
-
 /**
  * Builds the input signature parts for a branch from() function.
  * Return type is omitted — TS infers it from the body.
@@ -360,11 +358,7 @@ function buildBranchSignatureParts(
 	return { inputType, inputOptional };
 }
 
-function stampedConfigFieldExpr(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap,
-	intern: KindInterner
-): string | null {
+function stampedConfigFieldExpr(field: AssembledNonterminal, nodeMap: NodeMap, intern: KindInterner): string | null {
 	const literal = resolveEffectiveLiteral(field, nodeMap);
 	if (literal === undefined) return null;
 	const storageInfo = resolveFieldStorageInfo(field, nodeMap);
@@ -380,7 +374,6 @@ function emitBranchNodeDataPassthrough(lines: string[], inputOptional: boolean, 
 	const passGuard = inputOptional ? 'input !== undefined && ' : '';
 	lines.push(`  if (${passGuard}isNodeData(input)) return input as unknown as ${returnType};`);
 }
-
 
 /**
  * Returns the target factory name when a required field can default to an
@@ -410,9 +403,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!targetNode.rawFactoryName) return null;
 
 	const branchTarget = targetNode instanceof AssembledBranch ? targetNode : null;
-	const childSurface = branchTarget?.modelType === 'branch'
-		? classifyChildFactorySurface(branchTarget, nodeMap)
-		: null;
+	const childSurface = branchTarget?.modelType === 'branch' ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
 	// Positional-child factories (`direct`/`spread`): the sole slot backing
 	// them always lives in `.fields` now, so there is no separate child slot
 	// to check for requiredness — the factory is always callable with zero
@@ -633,7 +624,6 @@ function emitRepeatedContainerFrom(
 		'}'
 	].join('\n');
 }
-
 
 /**
  * Emits the singular-child variant of a container from() function.
@@ -1030,8 +1020,7 @@ function resolveFieldCall(
 		if (kwCall !== undefined) return kwCall;
 	}
 
-	const storageInfo =
-		'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
+	const storageInfo = 'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
 
 	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap);
 	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);

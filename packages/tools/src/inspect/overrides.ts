@@ -67,8 +67,7 @@ function extractRulePatches(src: string): Map<string, Set<string>> {
 	const out = new Map<string, Set<string>>();
 
 	// Find each rule entry point
-	const rulesRx =
-		/(?:"([a-zA-Z_][\w]*)"|([a-zA-Z_][\w]*))\s*:\s*\(\$,\s*original\)\s*=>\s*transform/g;
+	const rulesRx = /(?:"([a-zA-Z_][\w]*)"|([a-zA-Z_][\w]*))\s*:\s*\(\$,\s*original\)\s*=>\s*transform/g;
 	const starts: { name: string; idx: number }[] = [];
 	let m: RegExpExecArray | null;
 	while ((m = rulesRx.exec(src)) !== null) {
@@ -109,10 +108,7 @@ interface CompareResult {
 	details: string[];
 }
 
-function resolveBackupPath(
-	grammar: GrammarName,
-	opts: CompareOverridesOptions,
-): string | undefined {
+function resolveBackupPath(grammar: GrammarName, opts: CompareOverridesOptions): string | undefined {
 	if (opts.backupFiles[grammar]) return resolve(opts.backupFiles[grammar]!);
 	if (opts.backupDir) return join(resolve(opts.backupDir), `${grammar}-overrides.ts`);
 	return undefined;
@@ -123,9 +119,7 @@ function compareGrammar(grammar: GrammarName, opts: CompareOverridesOptions): Co
 	const suggestedPath = join(opts.suggestedDir, grammar, 'overrides.suggested.ts');
 
 	if (!backupPath) {
-		process.stderr.write(
-			`  ${grammar}: no backup path provided — use --backup-dir or --backup-${grammar}\n`,
-		);
+		process.stderr.write(`  ${grammar}: no backup path provided — use --backup-dir or --backup-${grammar}\n`);
 		return null;
 	}
 	if (!existsSync(backupPath)) {
@@ -159,14 +153,12 @@ function compareGrammar(grammar: GrammarName, opts: CompareOverridesOptions): Co
 		} else if (anyOverlap) {
 			partial++;
 			details.push(
-				`  PARTIAL ${name}: backup=[${[...bKeys].sort().join(',')}] ` +
-					`suggested=[${[...sKeys].sort().join(',')}]`,
+				`  PARTIAL ${name}: backup=[${[...bKeys].sort().join(',')}] ` + `suggested=[${[...sKeys].sort().join(',')}]`
 			);
 		} else {
 			disjoint++;
 			details.push(
-				`  DISJOINT ${name}: backup=[${[...bKeys].sort().join(',')}] ` +
-					`suggested=[${[...sKeys].sort().join(',')}]`,
+				`  DISJOINT ${name}: backup=[${[...bKeys].sort().join(',')}] ` + `suggested=[${[...sKeys].sort().join(',')}]`
 			);
 		}
 	}
@@ -180,7 +172,7 @@ function compareGrammar(grammar: GrammarName, opts: CompareOverridesOptions): Co
 		subset,
 		partial,
 		disjoint,
-		details,
+		details
 	};
 }
 
@@ -191,15 +183,13 @@ function compareGrammar(grammar: GrammarName, opts: CompareOverridesOptions): Co
 const DETAIL_LIMIT = 30;
 
 function printResult(r: CompareResult): void {
-	process.stdout.write(
-		`\n=== ${r.grammar} ===  backup=${r.backupSize} rules, suggested=${r.suggestedSize} rules\n`,
-	);
+	process.stdout.write(`\n=== ${r.grammar} ===  backup=${r.backupSize} rules, suggested=${r.suggestedSize} rules\n`);
 	process.stdout.write(`  backup:    ${r.backupPath}\n`);
 	process.stdout.write(`  suggested: ${r.suggestedPath}\n`);
 	const shared = r.subset + r.partial + r.disjoint;
 	process.stdout.write(
 		`  shared rules: ${shared}  subset(user agrees + adds): ${r.subset}  ` +
-			`partial: ${r.partial}  disjoint: ${r.disjoint}\n`,
+			`partial: ${r.partial}  disjoint: ${r.disjoint}\n`
 	);
 	for (const d of r.details.slice(0, DETAIL_LIMIT)) {
 		process.stdout.write(d + '\n');
@@ -224,9 +214,7 @@ export async function run(opts: CompareOverridesOptions): Promise<number> {
 	}
 
 	if (!hasAnyBackup) {
-		process.stderr.write(
-			'No backup files found. Provide --backup-dir <dir> or per-grammar --backup-<name> <file>.\n',
-		);
+		process.stderr.write('No backup files found. Provide --backup-dir <dir> or per-grammar --backup-<name> <file>.\n');
 		return 1;
 	}
 

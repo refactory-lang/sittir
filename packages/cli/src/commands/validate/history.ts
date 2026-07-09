@@ -7,6 +7,8 @@ export const history: CommandModule = {
 	register: (program) => {
 		defineCommand(program, history)
 			.argument('[n]', 'Number of entries to show', '10')
-			.action((n: string) => { runHistoryCli([n]); });
-	},
+			.action((n: string) => {
+				runHistoryCli([n]);
+			});
+	}
 };

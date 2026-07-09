@@ -74,7 +74,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 				// RepeatRule<'evaluate'>/<'link'> genuinely diverge in shape, so
 				// this is now an explicit phase-widening cast, not a structural
 				// coincidence — same pattern as collect-slots.ts's isSlotNode).
-				nonterminal: attrs.nonterminal ?? (isNonterminalRuleType(rule.content as Rule<'evaluate'>) || undefined),
+				nonterminal: attrs.nonterminal ?? (isNonterminalRuleType(rule.content as Rule<'evaluate'>) || undefined)
 			};
 			return deleteWrapperWith(rule.content, next);
 		}
@@ -85,7 +85,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 				...attrs,
 				fieldName: attrs.fieldName ?? rule.name,
 				// field forces a slot on its content (Table 2), incl. terminal.
-				nonterminal: true,
+				nonterminal: true
 			};
 			return deleteWrapperWith(rule.content, next);
 		}
@@ -209,7 +209,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 				aliasedFrom: attrs.aliasedFrom,
 				aliasNamed: attrs.aliasNamed,
 				nonterminal: attrs.nonterminal,
-				multiplicity: hasBareLiteral ? multToPush : undefined,
+				multiplicity: hasBareLiteral ? multToPush : undefined
 			};
 			return stampAttrs({ ...rule, members }, seqAttrs);
 		}
@@ -252,7 +252,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 				// alias wins (??), mirroring aliasedFrom.
 				inline: attrs.inline ?? false,
 				// A named alias forces a slot on its content (Table 2).
-				nonterminal: attrs.nonterminal ?? (rule.named || undefined),
+				nonterminal: attrs.nonterminal ?? (rule.named || undefined)
 			};
 			return deleteWrapperWith(rule.content, next);
 		}

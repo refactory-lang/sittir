@@ -10,9 +10,7 @@ describe('emitEngine', () => {
 	it('imports createJsEngine from @sittir/core/engine at the top level', () => {
 		const output = emitEngine({ grammar: 'rust' });
 		const lines = output.split('\n');
-		const staticImports = lines.filter(
-			(l) => l.startsWith('import') && l.includes('createJsEngine')
-		);
+		const staticImports = lines.filter((l) => l.startsWith('import') && l.includes('createJsEngine'));
 		expect(staticImports.length).toBeGreaterThan(0);
 		expect(staticImports[0]).toContain("'@sittir/core/engine'");
 	});
