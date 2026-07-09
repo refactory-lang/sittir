@@ -391,16 +391,6 @@ function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
  * instance-local instead of living in module globals.
  */
 export namespace factory {
-	/** Back-compat no-op; collection state now lives on emitter instances. */
-	export function init(): void {
-		// No-op.
-	}
-
-	/** Back-compat stub; callers now own the output buffer directly. */
-	export function collect(): string[] {
-		return [];
-	}
-
 	/**
 	 * Emit a leaf factory (pattern, keyword, enum).
 	 */
