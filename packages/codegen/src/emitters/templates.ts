@@ -26,6 +26,7 @@
  */
 
 import { CHOICE, DEDENT, GROUP, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import { isNonterminalRuleType } from '../compiler/rule-catalog.ts';
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
@@ -43,8 +44,7 @@ import type {
 	AssembledNonterminal,
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
-import type { RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
-import { isStringType } from '../types/runtime-shapes.ts';
+import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission } from './shared.ts';
 
@@ -153,12 +153,27 @@ export function escapeJinjaString(value: string): string {
 	return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
 }
 
+/**
+ * Statically render a rule to its fixed literal text — only meaningful for
+ * a rule classified `terminal` by Table 1 (`isNonterminalRuleType`,
+ * rule-catalog.ts): every reachable descendant is compile-time-known text,
+ * so there's nothing to capture at read-time. Callers gate on that
+ * classification (e.g. `separatorToString` below); this function mirrors
+ * Table 1's own recursive structure for the shapes actually reachable in a
+ * `RenderRule` (GROUP/VARIANT survive wrapper-deletion; TOKEN is preserved
+ * by the mechanism but excluded from `RenderRule`'s type — see
+ * `RenderRule`'s doc comment — so it falls to `default` like any other
+ * unreachable/nonterminal shape).
+ */
 export function stringifyRule(rule: RenderRule): string {
 	switch (rule.type) {
 		case STRING:
 			return rule.value;
 		case SEQ:
 			return rule.members.map(stringifyRule).join('');
+		case GROUP:
+		case VARIANT:
+			return stringifyRule(rule.content);
 		default:
 			return '';
 	}
@@ -1128,14 +1143,25 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
  * Project a rule's separator metadata onto a primitive `string`. The
  * shared `RuleBase.separator` is the nested `{value, trailing?, leading?}`
  * fact (PR-S); the rendering layer only needs the primitive textual
- * separator. `value` is a StringRule for the common literal case;
- * otherwise stringify the rule-shaped separator so the resulting join
- * filter still represents the source text faithfully.
+ * separator. Gates on Table 1 (`isNonterminalRuleType`) rather than a bare
+ * `StringRule` check — ANY terminal-classified shape (a plain literal, a
+ * sequence of literals, a group/variant wrapping one) has fixed,
+ * compile-time-known text and can be embedded directly via `stringifyRule`.
+ * A genuinely nonterminal shape (choice/repeat/symbol/pattern) has no fixed
+ * text — returns `undefined` (NOT `stringifyRule`'s `''`) so the caller
+ * falls back to the slot's per-value separator / `DEFAULT_JOIN_SEPARATOR`
+ * instead of silently treating "unknown" as "empty" (the previous
+ * behavior: a choice-shaped separator like `choice(',', ';')` would render
+ * with NO separator character at all, since `''` short-circuits the `??`
+ * fallback chain in `emitListSlot` just as effectively as a real value).
+ * `isNonterminalRuleType` is typed over `Rule<'evaluate'>` but classifies
+ * purely by `.type` + child shape — phase-agnostic in practice, same cast
+ * pattern used throughout PR-S (e.g. wrapper-deletion.ts's OPTIONAL case).
  */
-function separatorToString(rule: RenderRule): string | undefined {
+export function separatorToString(rule: RenderRule): string | undefined {
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 	if (sep === undefined) return undefined;
-	if (isStringType(sep.value.type)) return (sep.value as { value: string }).value;
+	if (isNonterminalRuleType(sep.value as Rule<'evaluate'>)) return undefined;
 	return stringifyRule(sep.value as RenderRule);
 }
 

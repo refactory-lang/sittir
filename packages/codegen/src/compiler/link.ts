@@ -60,7 +60,7 @@ import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { deriveStructuralVariantChildren, isAliasMintedRef, prefixNamedSuffix } from './variant-structural.ts';
 import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
-import { DiagnosticSink } from '../types/diagnostics.ts';
+import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 
@@ -81,6 +81,17 @@ import { RuleWalker } from '../dsl/rule-walker.ts';
 export interface LinkOptions {
 	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
+	/**
+	 * Pipeline-wide `DiagnosticSink` (PR-H ctx threading). When supplied, Link
+	 * phase diagnostics (e.g. `liftSeparators`'s `non-literal-separator`
+	 * warning) land in THIS sink — the same instance `generate.ts` threads
+	 * through `NormalizeCtx`/`AssembleCtx.from`/`assertEmittable` — so they
+	 * are visible to callers reading the sink after the pipeline runs.
+	 * Defaults to a fresh, throwaway `DiagnosticSink` (pre-PR-S task 5
+	 * behavior) for callers (mostly tests) that only care about the returned
+	 * `LinkedGrammar` and never asked for diagnostics.
+	 */
+	readonly diagnostics?: DiagnosticSink;
 }
 
 /**
@@ -240,7 +251,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// walks below, a distinct object from the public options bag.
 	const linkCtx = new LinkCtx({
 		grammar: raw,
-		diagnostics: new DiagnosticSink(),
+		diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
 		wordMatcher: (s) => matchesWordShape(s, wordMatcherRegex),
 		supertypes,
 		externalRoles,
@@ -268,7 +279,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// the constructors still lift. Runs before group-lift / classification,
 	// which expect the canonical separator shape.
 	for (const name of Object.keys(rules)) {
-		rules[name] = liftSeparators(rules[name]!);
+		rules[name] = liftSeparators(rules[name]!, linkCtx);
 	}
 
 	// Mint visible kinds from enrich content-aliases. enrich wraps an
@@ -341,7 +352,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 				rules[synthKind] = {
 					type: GROUP,
 					name: synthKind,
-					content: liftSeparators(body)
+					content: liftSeparators(body, linkCtx)
 				} satisfies GroupRule<'link'>;
 			}
 		}
@@ -878,7 +889,8 @@ function mintContentAliasKinds(
 					// is `seq(item, repeat(seq(sep, item)))` would otherwise keep the
 					// raw shape and lose the separator/trailing metadata #62 centralizes.
 					rules[value] = liftSeparators(
-						resolveRule(body, ctx, value)
+						resolveRule(body, ctx, value),
+						ctx
 					);
 				}
 			}
@@ -2724,24 +2736,41 @@ function carrySeqAttrs(seq: SeqRule<'link'>): Partial<SeqRule<'link'>> {
  * constructors produced by lifting inner-to-outer at call time.
  */
 
-export function liftSeparators(rule: Rule<'link'>): Rule<'link'> {
+export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
     switch (rule.type) {
         case SEQ:
-            return liftSeqMembers(rule, rule.members.map(liftSeparators));
+            return liftSeqMembers(rule, rule.members.map((m) => liftSeparators(m, ctx)));
         case CHOICE:
-            return { ...rule, members: rule.members.map(liftSeparators) };
+            return { ...rule, members: rule.members.map((m) => liftSeparators(m, ctx)) };
         case REPEAT:
         case REPEAT1: {
-            const content = liftSeparators(rule.content);
+            const content = liftSeparators(rule.content, ctx);
             const sep = detectRepeatSeparator(content);
-            if (sep) return { ...rule, content: sep.content, separator: { value: sep.separator, trailing: sep.trailing } };
+            if (sep) {
+                if (sep.separator.type !== STRING) {
+                    // 0 real grammars (rust/typescript/python) hit this today — this
+                    // is purely a forward-looking guard. Rendering a non-literal
+                    // (e.g. choice(',', ';')) separator isn't supported yet; tracked
+                    // by PR-T (docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).
+                    const diagnostic: CompilerDiagnostic = {
+                        code: 'non-literal-separator',
+                        severity: 'warning',
+                        message: `Rule '${rule.type === REPEAT ? 'repeat' : 'repeat1'}' has a non-literal separator (${sep.separator.type}); rendering this shape is not yet supported (tracked: PR-T, docs/superpowers/specs/2026-05-26-non-slot-separator-rules-design.md).`,
+                        canProceed: true,
+                        scope: 'compiler',
+                        phase: 'link'
+                    };
+                    ctx.diagnostics.emit(diagnostic);
+                }
+                return { ...rule, content: sep.content, separator: { value: sep.separator, trailing: sep.trailing } };
+            }
             return { ...rule, content };
         }
         case OPTIONAL:
         case FIELD:
         case TOKEN:
         case ALIAS:
-            return { ...rule, content: liftSeparators(rule.content) };
+            return { ...rule, content: liftSeparators(rule.content, ctx) };
         default:
             // Leaves (symbol/string/pattern/enum). The wrapper *compiler* types
             // group/variant/terminal do NOT exist in the tree when this runs:

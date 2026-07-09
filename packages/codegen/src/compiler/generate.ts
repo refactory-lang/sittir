@@ -27,8 +27,9 @@ import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
-import { DiagnosticSink } from '../types/diagnostics.ts';
+import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
+import { formatCompilerDiagnostics } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
@@ -164,8 +165,12 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
 	// Phase 2: Link — pass the include filter so derivation passes
-	// know whether to mutate the rule tree or only log to the sidecar.
-	const linked = link(raw, { include: cfg.include, generatedIdTables });
+	// know whether to mutate the rule tree or only log to the sidecar. Also
+	// thread the pipeline's live `diagnostics` sink (PR-S task 5) — without
+	// this, Link-phase diagnostics (e.g. `non-literal-separator`) land in a
+	// throwaway sink `link()` discards internally and never reach the
+	// surfacing code below.
+	const linked = link(raw, { include: cfg.include, generatedIdTables, diagnostics });
 	tracePhaseRules('link', linked.rules);
 
 	// Authoritative inline list from the compiled grammar.json (if present).
@@ -247,6 +252,34 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// the sink is empty and this never throws. Threading real diagnostics into
 	// `diagnostics` is PR-H's job (phase contexts).
 	assertEmittable(nodeMap, diagnostics);
+
+	// Surface accumulated compiler-phase warnings (PR-S task 5) — e.g. the
+	// link-phase `non-literal-separator` warning — to the author. `fail`
+	// diagnostics already halted the pipeline via assertEmittable above.
+	//
+	// Deliberately scoped to `severity === 'warning'` AND `scope ===
+	// 'compiler'` — NOT "every non-`fail` diagnostic". Empirically (all 3
+	// real grammars), the sink already carries a pre-existing `info`-severity
+	// `unnamed-choice-slot` entry, forwarded into this SAME shared sink and
+	// already drained by its own `console.warn` path (`addUnnamedChoiceListener`
+	// below). Reprinting it here via a blanket `!== 'fail'` filter would
+	// duplicate that output on every real-grammar run — not silent, contrary
+	// to this diagnostic's design. (`content-collision` is a separate case:
+	// `warning`-severity, but it never reaches this sink at all — it lives in
+	// `simplify.ts`'s own `_slotGroupingDiagnostics` accumulator, drained
+	// independently into `GeneratedFiles.slotGroupingDiagnostics` below, so it
+	// isn't part of this filter's job to begin with.) `warning` + `scope:
+	// 'compiler'` is the exact vocabulary this task introduces; nothing else
+	// emits at that severity/scope pair today.
+	const compilerWarnings = diagnostics
+		.all()
+		.filter(
+			(d): d is CompilerDiagnostic =>
+				d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
+		);
+	if (compilerWarnings.length > 0) {
+		process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');
+	}
 
 	// Extract all semantic roles from the grammar's highlights.scm + tags.scm.
 	// Trivia kinds are used to type the `$trivia()` signature in utils.ts.

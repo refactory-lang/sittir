@@ -1,7 +1,7 @@
-import { CHOICE, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, GROUP, SEQ, STRING, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
-import { escapeJinjaString, escapeLiteral, snakeToCamel, stringifyRule } from '../templates.ts';
+import { escapeJinjaString, escapeLiteral, separatorToString, snakeToCamel, stringifyRule } from '../templates.ts';
 
 describe('escapeLiteral', () => {
 	it('adds spacing around opening braces', () => {

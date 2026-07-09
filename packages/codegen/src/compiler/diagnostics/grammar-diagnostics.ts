@@ -7,7 +7,7 @@ import type { AssembleWarning } from '../model/node-map.ts';
 import { drainSlotGroupingDiagnostics } from '../simplify.ts';
 import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar } from '../types.ts';
-import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
+import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 
 export type { GrammarDiagnostic };
 
@@ -163,6 +163,22 @@ export function formatGrammarDiagnostics(
 	if (diagnostics.length === 0) return 'No grammar diagnostics.';
 	return diagnostics
 		.map((d) => `[${d.severity}] ${d.code}  ${d.ownerKind ?? '-'}.${d.slotName ?? '-'}\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`)
+		.join('\n');
+}
+
+/**
+ * Sibling of {@link formatGrammarDiagnostics} for `CompilerDiagnostic`s (PR-S
+ * task 5) — kept alongside its natural relative in the same module rather
+ * than a new one. `CompilerDiagnostic` has no `ownerKind`/`slotName` (those
+ * are `GrammarDiagnostic`-only fields); reusing `formatGrammarDiagnostics`
+ * as-is would print literal `-.-` noise, so this formats on `phase` instead.
+ */
+export function formatCompilerDiagnostics(
+	diagnostics: readonly CompilerDiagnostic[]
+): string {
+	if (diagnostics.length === 0) return 'No compiler diagnostics.';
+	return diagnostics
+		.map((d) => `[${d.severity}] ${d.code}  (${d.phase})\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`)
 		.join('\n');
 }
 
