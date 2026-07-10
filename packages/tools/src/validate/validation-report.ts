@@ -20,10 +20,15 @@ import { writeFileSync } from 'node:fs';
  * synthesized/hardcoded downstream in `buildValidationReportEntries` — this
  * leaves room for a source to genuinely report a `warning` in the future
  * without another round of code/severity drift.
+ *
+ * Severity matches `Diagnostic['severity']` in
+ * `packages/codegen/src/types/diagnostics.ts` (`'error' | 'warning' | 'info' | 'fail'`) —
+ * grammar diagnostics can carry any of those four; validator failures only
+ * ever assign `'error'`/`'warning'` today.
  */
 export interface DiagnosticEntryBase {
 	readonly code: string;
-	readonly severity: 'error' | 'warning';
+	readonly severity: 'error' | 'warning' | 'info' | 'fail';
 	readonly message: string;
 }
 
@@ -48,7 +53,7 @@ export interface ValidatorDiagnostic extends DiagnosticEntryBase {
 
 export interface ValidationReportEntry {
 	readonly source: 'grammar' | 'validator';
-	readonly severity: 'error' | 'warning';
+	readonly severity: 'error' | 'warning' | 'info' | 'fail';
 	readonly code: string;
 	readonly grammar: string;
 	readonly backend: string;

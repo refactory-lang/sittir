@@ -209,8 +209,11 @@ Three commitments worth flagging:
 
 ### Runtime
 
-The runtime is split into a backend-neutral contract layer and two
-interchangeable engine implementations.
+The runtime is split into a backend-neutral contract layer and a single
+native engine implementation. The JS (Nunjucks) `SittirEngineLike` engine
+has been removed — native is the only supported backend, and
+`createEngine()` throws if the native binding is unavailable rather than
+falling back.
 
 ```
                  ┌──────────────────────────────────┐
@@ -220,16 +223,13 @@ interchangeable engine implementations.
                  │   templates/*.jinja               │
                  │   createEngine() ──┐              │
                  └────────────────────┼──────────────┘
-                                      │  picks first available
-                       ┌──────────────┴───────────────┐
-                       ▼                              ▼
-        ┌──────────────────────────┐    ┌────────────────────────────────┐
-        │  @sittir/core            │    │  @sittir/<grammar>-native       │
-        │  JS engine (Nunjucks)    │    │  N-API binding (Askama crate)   │
-        │  createJsEngine()        │    │  rust/crates/sittir-<grammar>/  │
-        └──────────┬───────────────┘    └──────────────┬─────────────────┘
-                   │   both implement SittirEngineLike │
-                   └──────────────────┬────────────────┘
+                                      ▼
+                       ┌────────────────────────────────┐
+                       │  @sittir/<grammar>-native       │
+                       │  N-API binding (Askama crate)   │
+                       │  rust/crates/sittir-<grammar>/  │
+                       └──────────────┬───────────────────┘
+                                      │  implements SittirEngineLike
                                       ▼
                           ┌────────────────────────────┐
                           │  @sittir/common             │
@@ -253,13 +253,17 @@ interchangeable engine implementations.
 - **`@sittir/common`** — backend-neutral runtime. Implements
   `readNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
   `applyEdits(source, edits)`, `freezeNodeData()`, the native boundary
-  invariants (`assertNativeNodeData`, `normalizeNativeReadNode`), and the
-  engine and tree-handle interfaces both backends implement.
-- **`@sittir/core`** — the Nunjucks-based JS render engine and reference
-  implementation.
+  invariants (`assertNativeNodeData`, `normalizeNativeReadNode`), and
+  `createNativeEngine()`, which the native backend implements against the
+  shared `SittirEngineLike`/tree-handle interfaces.
+- **`@sittir/core`** — shared engine option/handle types
+  (`resolveEngineFormat`) plus a lower-level Nunjucks-backed renderer
+  (`createRenderer`/`createRendererFromConfig`) retained for template
+  rendering outside the `SittirEngineLike` surface; it no longer hosts a
+  `SittirEngineLike`-conforming JS engine.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
-  one exposes `createEngine()`, an `ir.*` namespace, `.from()` coercion,
-  `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
+  one exposes `createEngine()` (native-only), an `ir.*` namespace, `.from()`
+  coercion, `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
   constants, and the native template-bundle hash.
 
 #### NodeData shape

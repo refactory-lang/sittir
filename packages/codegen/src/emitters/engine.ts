@@ -50,7 +50,7 @@ export type { EngineOptions };
  * @returns An engine implementing SittirEngineLike.
  */
 export function createEngine(options?: EngineOptions): SittirEngineLike {
-	const engine = createNativeEngine(
+	const result = createNativeEngine(
 		{
 			templatesPath: join(__dirname, '..', 'templates'),
 			kindNames: KIND_NAMES,
@@ -58,10 +58,10 @@ export function createEngine(options?: EngineOptions): SittirEngineLike {
 		},
 		options
 	);
-	if (!engine) {
-		throw new Error('createEngine: native engine unavailable (no JS-engine fallback)');
+	if (!result.engine) {
+		throw new Error(\`createEngine: native engine unavailable (no JS-engine fallback): \${result.reason}\`);
 	}
-	return engine;
+	return result.engine;
 }
 `;
 }

@@ -1,15 +1,22 @@
 /**
- * path-type.ts — type-level transform PATH addressing over a (post-Enrich)
- * rule shape. Mirrors `dsl/transform/transform-path.ts`'s navigation:
+ * path-type.ts — type-level FIRST-SEGMENT addressing for transform PATH
+ * keys over a (post-Enrich) rule shape.
  *
- *   - SEQ / CHOICE  : a numeric segment indexes `members[N]` (consumes 1).
- *   - PREC*         : TRANSPARENT — descend into `content`, DO NOT consume a
- *                     segment (path skips prec wrappers).
- *   - FIELD/ALIAS/REPEAT/REPEAT1/TOKEN/IMMEDIATE_TOKEN : single-content
- *                     wrappers — index 0 (or -1) descends into `content` and
- *                     CONSUMES the segment. FIELD is NOT transparent (it is a
- *                     real level — consistent with enrich INSERTING fields).
- *   - leaves (SYMBOL/STRING/PATTERN/BLANK) : no descent.
+ * Only the first path segment is resolved precisely (`TopLevelKeys`), after
+ * transparently peeling PREC wrappers (PREC does not consume a segment):
+ *
+ *   - SEQ / CHOICE  : the segment must be a valid `members` index.
+ *   - single-content wrappers (FIELD/ALIAS/REPEAT/REPEAT1/TOKEN/
+ *     IMMEDIATE_TOKEN) : the only valid segment is `'0'`.
+ *   - leaves (SYMBOL/STRING/PATTERN/BLANK) : no valid segment (`never`).
+ *
+ * Everything past the first segment (`PathKey`'s `/${string}` tail) is
+ * free-form and unchecked — deep paths are accepted permissively rather
+ * than walked and bounds-checked (soundness: never REJECT a deep path we
+ * can't prove invalid). The full recursive path-to-rule resolver this
+ * module used to expose (`RuleAtPath`) was deleted as dead code (Track 1
+ * sweep, commit `662fde555`); this module now only powers segment-1
+ * autocomplete/validation, not full path resolution.
  *
  * Paths are `/`-joined segments, e.g. `'4/0'`, `'1/0'`. We model numeric
  * segments only (the dominant authoring form). Wildcard `_`, kind-match

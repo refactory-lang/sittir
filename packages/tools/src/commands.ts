@@ -343,9 +343,7 @@ export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnost
 					? `${d.ownerKind}.${d.slotName}`
 					: d.ownerKind
 				: undefined;
-			// Report entries only model 'error' | 'warning'; fold 'info'/'fail' to 'warning'/'error'.
-			const severity: 'error' | 'warning' = d.severity === 'error' || d.severity === 'fail' ? 'error' : 'warning';
-			return { code: d.code, severity, location, message: d.message, proposal: d.proposal };
+			return { code: d.code, severity: d.severity, location, message: d.message, proposal: d.proposal };
 		});
 	} catch (e) {
 		return [
@@ -486,6 +484,11 @@ export function extractIsolateReportJson(stdout: string): {
  * isolate and non-isolate `runCountsCli` paths so there is exactly one
  * merge+write call site (previously each isolation worker wrote its own
  * report, so only the last worker's single-grammar report survived).
+ *
+ * `packages/tools/validation-report.json` is a deliberately git-tracked
+ * artifact (like `test-fixtures.json`) — it is committed after each
+ * validation run so reviewers can diff diagnostic drift, not a stray
+ * runtime file.
  */
 export function writeMergedValidationReport(
 	grammars: readonly Grammar[],
