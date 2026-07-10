@@ -299,7 +299,9 @@ const nativePackages: Record<string, string> = {
 	typescript: 'sittir-typescript',
 	python: 'sittir-python'
 };
-function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
+type NativeEngineLoadResult = { engine: NativeEngineLike; reason?: undefined } | { engine: null; reason: string };
+
+function loadNativeEngineForGrammar(grammar: string): NativeEngineLoadResult {
 	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 	// Freshness report doubles as the cache-key source: napi modules can
 	// never be re-dlopened in-process, so the binary's mtime at first load
@@ -318,7 +320,7 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 					`napi modules cannot be reloaded in-process. Re-run the command in a fresh process.`
 			);
 		}
-		return _cachedNativeEngine.engine;
+		return { engine: _cachedNativeEngine.engine };
 	}
 
 	// Staleness gate: a binary older than the crate's generated src/templates
@@ -330,18 +332,25 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 	// Match probe-kind's loader — try the package name, then fall
 	// back to the workspace-local grammar crate directory.
 	const pkg = nativePackages[grammar];
-	if (!pkg) return null;
+	if (!pkg) return { engine: null, reason: `no native package mapping registered for grammar '${grammar}'` };
 	const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
 	let mod: { SittirEngine: new () => NativeEngineLike };
+	const req = createRequire(import.meta.url);
+	let pkgLoadError: Error | undefined;
 	try {
-		const req = createRequire(import.meta.url);
+		mod = req(pkg) as typeof mod;
+	} catch (e) {
+		pkgLoadError = e as Error;
 		try {
-			mod = req(pkg) as typeof mod;
-		} catch {
 			mod = req(localCratePath) as typeof mod;
+		} catch (e2) {
+			return {
+				engine: null,
+				reason:
+					`require('${pkg}') failed: ${pkgLoadError.message}; ` +
+					`require('${localCratePath}') failed: ${(e2 as Error).message}`
+			};
 		}
-	} catch {
-		return null;
 	}
 	const engine = new mod.SittirEngine();
 
@@ -359,7 +368,7 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 	}
 
 	_cachedNativeEngine = { grammar, engine, binaryMtimeMs };
-	return engine;
+	return { engine };
 }
 
 export function buildReadHandle(
@@ -371,11 +380,13 @@ export function buildReadHandle(
 ): TreeHandle {
 	const effectiveBackend = backend ?? process.env.SITTIR_BACKEND;
 	if (effectiveBackend === 'native') {
-		const engine = loadNativeEngineForGrammar(grammar);
-		if (!engine) {
-			throw new Error(`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`);
+		const result = loadNativeEngineForGrammar(grammar);
+		if (!result.engine) {
+			throw new Error(
+				`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}': ${result.reason}`
+			);
 		}
-		return nativeTreeHandle(engine, source);
+		return nativeTreeHandle(result.engine, source);
 	}
 	return treeHandle(tree, source, kindIdFromName);
 }

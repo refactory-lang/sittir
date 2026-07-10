@@ -438,6 +438,14 @@ export async function runCountsCli(
 				validatorFailuresByGrammar[grammar] = collectValidatorFailuresForGrammar(counts);
 			} catch (e) {
 				console.log(`${grammar}/${formatBackendLabel(backend)}: ERROR ${(e as Error).message}`);
+				// Whole-grammar collection failure: still surface it in the persisted
+				// report (validatorFailuresByGrammar) even though we deliberately skip
+				// appendHistory/recorded.push — history is meant to record successful
+				// validation runs, not failures.
+				validatorFailuresByGrammar[grammar] = [
+					...(validatorFailuresByGrammar[grammar] ?? []),
+					{ stage: 'collect', label: grammar, message: (e as Error).message }
+				];
 			}
 		}
 	}

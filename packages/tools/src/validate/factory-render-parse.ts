@@ -804,7 +804,17 @@ export async function validateFactoryRenderParse(
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
 
-		const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+		let handle: ReturnType<typeof buildReadHandle>;
+		try {
+			handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+		} catch (e) {
+			errors.push({
+				kind: '(native-load)',
+				entry: entry.name,
+				message: `buildReadHandle throws: ${(e as Error).message.slice(0, 120)}`
+			});
+			continue;
+		}
 		const rawKinds = new Set(collectKinds(tree1.rootNode));
 		const kinds = new Set(rawKinds);
 		const nodeIdToEffectiveType = new Map<string, string>();
