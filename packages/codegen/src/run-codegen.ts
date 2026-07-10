@@ -15,6 +15,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
+import { format as oxfmtFormat } from 'oxfmt';
 
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
 
@@ -85,6 +86,13 @@ export interface CodegenOptions {
 /**
  * Write `content` to `path`, creating parent directories as needed.
  *
+ * `.ts` output is run through oxfmt (the project's own formatter) before
+ * the content-aware comparison below, so generated `.ts` files land on
+ * disk already matching `pnpm run format`'s output — no separate
+ * formatting pass needed, and no risk of a formatter reformatting
+ * generated code out from under the emitters (oxfmt must never run over
+ * `packages/*\/src/*` directly; only codegen writes there).
+ *
  * Content-aware: skips the write when the file already holds identical
  * bytes. Generated outputs are rewritten wholesale on every regen even
  * when nothing changed, and the mtime bump alone forced cargo (release
@@ -92,18 +100,32 @@ export interface CodegenOptions {
  * made every mtime-based freshness signal noisy. Skipping no-op writes
  * keeps mtimes meaningful: unchanged crates fingerprint-match in cargo,
  * so rebuilds and the workspace check finish in seconds on a no-change
- * regen.
+ * regen. Formatting BEFORE this comparison (not after) is what makes the
+ * skip meaningful — comparing against on-disk (already-formatted) content
+ * with pre-format content would never match, causing a spurious rewrite
+ * on every single regen.
  */
-export function writeFile(path: string, content: string): void {
+export async function writeFile(path: string, content: string): Promise<void> {
+	let finalContent = content;
+	if (path.endsWith('.ts')) {
+		const result = await oxfmtFormat(path, content);
+		if (result.errors.length === 0) {
+			finalContent = result.code;
+		} else {
+			console.warn(
+				`  ⚠ oxfmt failed to format ${path} (${result.errors.length} error(s)) — writing unformatted content.`
+			);
+		}
+	}
 	if (existsSync(path)) {
 		try {
-			if (readFileSync(path, 'utf8') === content) return;
+			if (readFileSync(path, 'utf8') === finalContent) return;
 		} catch {
 			// Unreadable existing file — fall through and overwrite.
 		}
 	}
 	mkdirSync(dirname(path), { recursive: true });
-	writeFileSync(path, content, 'utf8');
+	writeFileSync(path, finalContent, 'utf8');
 }
 
 /**
@@ -336,17 +358,17 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	const outDir = outputDir;
 
 	// Write source files
-	writeFile(join(outDir, 'grammar.ts'), result.grammar);
-	writeFile(join(outDir, 'engine.ts'), result.engine);
-	writeFile(join(outDir, 'types.ts'), result.types);
-	writeFile(join(outDir, 'factories.ts'), result.factories);
-	writeFile(join(outDir, 'wrap.ts'), result.wrap);
-	writeFile(join(outDir, 'utils.ts'), result.utils);
-	writeFile(join(outDir, 'from.ts'), result.from);
-	writeFile(join(outDir, 'ir.ts'), result.irNamespace);
-	writeFile(join(outDir, 'consts.ts'), result.consts);
-	writeFile(join(outDir, 'is.ts'), result.is);
-	writeFile(join(outDir, 'index.ts'), result.index);
+	await writeFile(join(outDir, 'grammar.ts'), result.grammar);
+	await writeFile(join(outDir, 'engine.ts'), result.engine);
+	await writeFile(join(outDir, 'types.ts'), result.types);
+	await writeFile(join(outDir, 'factories.ts'), result.factories);
+	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
+	await writeFile(join(outDir, 'utils.ts'), result.utils);
+	await writeFile(join(outDir, 'from.ts'), result.from);
+	await writeFile(join(outDir, 'ir.ts'), result.irNamespace);
+	await writeFile(join(outDir, 'consts.ts'), result.consts);
+	await writeFile(join(outDir, 'is.ts'), result.is);
+	await writeFile(join(outDir, 'index.ts'), result.index);
 
 	// Write per-rule `.jinja` files to packages/<grammar>/templates/
 	// (feature 011). writeJinjaTemplates also deletes stale `.jinja` files
@@ -368,11 +390,11 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 			throw new Error(`generate() did not return renderModule output for ${grammar}`);
 		}
 		const emit = renderModule.emit;
-		writeFile(emit.hashRs.path, emit.hashRs.contents);
-		writeFile(emit.hashTs.path, emit.hashTs.contents);
-		writeFile(emit.templatesRs.path, emit.templatesRs.contents);
-		writeFile(emit.transportRs.path, emit.transportRs.contents);
-		writeFile(emit.libRs.path, emit.libRs.contents);
+		await writeFile(emit.hashRs.path, emit.hashRs.contents);
+		await writeFile(emit.hashTs.path, emit.hashTs.contents);
+		await writeFile(emit.templatesRs.path, emit.templatesRs.contents);
+		await writeFile(emit.transportRs.path, emit.transportRs.contents);
+		await writeFile(emit.libRs.path, emit.libRs.contents);
 		// Copy the per-kind `.jinja` files into the grammar crate's templates/
 		// directory so askama's build-time `#[template(path = ...)]` can
 		// resolve them (T030). Stale files (no longer in the generated copy
@@ -381,7 +403,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		mkdirSync(dstTemplatesDir, { recursive: true });
 		const emittedNames = new Set<string>();
 		for (const file of renderModule.templateCopies.files) {
-			writeFile(file.path, file.contents);
+			await writeFile(file.path, file.contents);
 			emittedNames.add(file.path.split('/').pop() ?? file.path);
 		}
 		for (const existing of readdirSync(dstTemplatesDir)) {
@@ -392,7 +414,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		// This file exports one pub const per kind matching the TS-side TSKindId enum.
 		if (result.kindIds) {
 			const kindIdsPath = `${renderModuleSrcDir(grammarTyped)}/kind_ids.rs`;
-			writeFile(kindIdsPath, result.kindIds);
+			await writeFile(kindIdsPath, result.kindIds);
 			console.log(`    ${kindIdsPath}`);
 		}
 		console.log(`  → Rust render module regenerated for ${grammar}:`);
@@ -465,21 +487,21 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	// Write node model (single on-disk metadata source — PR-K folded the
 	// former factory-map.json5 sections in here).
-	writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
+	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
 	// Write suggested overrides log (T042f) next to overrides.ts at the
 	// package root. This is a documentation file — not runnable.
-	writeFile(join(dirname(outDir), 'overrides.suggested.ts'), result.suggested);
+	await writeFile(join(dirname(outDir), 'overrides.suggested.ts'), result.suggested);
 
 	// Write tests
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
-	writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
+	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
 
 	// Write type-level tests
-	writeFile(join(outDir, 'type-test.ts'), result.typeTests);
+	await writeFile(join(outDir, 'type-test.ts'), result.typeTests);
 
 	// Write vitest config
-	writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
+	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
 	// --- Renderability check: every named kind in node-types.json must be
 	// reachable by @sittir/core's render() function (supertype, leaf, or rule).

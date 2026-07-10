@@ -108,6 +108,9 @@ importers:
       '@sittir/types':
         specifier: workspace:*
         version: link:../types
+      oxfmt:
+        specifier: ^0.45.0
+        version: 0.45.0
     devDependencies:
       '@ast-grep/wasm':
         specifier: ^0.42.1
