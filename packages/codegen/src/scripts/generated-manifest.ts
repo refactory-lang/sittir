@@ -10,10 +10,10 @@
  *   at the end of each successful per-grammar regen. There is intentionally no
  *   separate CLI for writing — the manifest must always be in lockstep with the
  *   codegen output it describes.
- * - `verifyAll()` is called by the validator (`packages/validator/src/cli.ts`)
- *   at startup, before any counts/probe-factory work. Verification failure
- *   aborts the validator; the only legitimate way to update a manifest is to
- *   re-run codegen.
+ * - `assertGeneratedManifestsClean()` is called by the validator
+ *   (`packages/tools/src/validate/common.ts`) at startup, before any
+ *   counts/probe-factory work. Verification failure aborts the validator;
+ *   the only legitimate way to update a manifest is to re-run codegen.
  *
  * The manifest excludes itself (would otherwise be a chicken-and-egg).
  *
@@ -344,10 +344,6 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 		result.extra.length === 0 &&
 		result.stale.length === 0;
 	return result;
-}
-
-export function verifyAll(): VerifyResult[] {
-	return GRAMMARS.map((g) => verifyManifestForGrammar(g));
 }
 
 /**

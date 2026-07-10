@@ -50,7 +50,8 @@
 	"dependencies": {
 		"@sittir/core": "workspace:*",
 		"@sittir/types": "workspace:*",
-		"@sittir/common": "workspace:*"
+		"@sittir/common": "workspace:*",
+		"oxfmt": "^0.45.0"
 	},
 	"devDependencies": {
 		"@ast-grep/wasm": "^0.42.1",

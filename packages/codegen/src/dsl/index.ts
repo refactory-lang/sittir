@@ -4,13 +4,13 @@
  * This is the stable import surface for `packages/<lang>/overrides.ts`.
  * Override files import from here:
  *
- *     import { transform, insert, replace, role, enrich, field, alias } from '@sittir/codegen/dsl'
+ *     import { transform, role, enrich, field, alias } from '@sittir/codegen/dsl'
  *
  * Two categories of exports:
  *
  * **Pure sittir extensions** (no tree-sitter equivalent):
- *   - `transform` / `insert` / `replace` — override-authoring primitives
- *     that patch positions in an existing rule tree.
+ *   - `transform` — override-authoring primitive that patches positions
+ *     in an existing rule tree.
  *   - `role` — structural-whitespace annotation with per-grammar
  *     accumulator.
  *   - `enrich` — mechanical enrichment passes applied before the
@@ -31,7 +31,7 @@
  * grammar.js files call `grammar(...)` without importing it.
  */
 
-export { transform, insert, replace } from './transform/transform.ts';
+export { transform } from './transform/transform.ts';
 export { role } from './primitives/role.ts';
 export { enrich } from './enrich.ts';
 export { alias } from './primitives/alias.ts';

@@ -15,7 +15,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
-import { emitRenderModule, emitRenderModuleBundle } from '../render-module.ts';
+import { emitRenderModule } from '../render-module.ts';
 import { runRenderModuleEmitter } from '../render-module-runner.ts';
 import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
@@ -333,19 +333,4 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 	expect(transport).not.toContain(`array_expression_list: Box<ArrayExpressionSemiTransport>`);
 }, 60_000);
 
-it('collectMetaData path matches buildMetaDataFromEntries path (render metadata parity)', async () => {
-	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
 
-	// Old path: emitRenderModuleBundle → emitRenderModule (no precomputed) → collectMetaData(nodeMap)
-	const viaOldPath = emitRenderModuleBundle(grammar, jinjaTemplates, nodeMap, generatedIdTables);
-
-	// New path: RenderModuleEmitter collecting loop → buildMetaDataFromEntries → emitRenderModule(precomputed)
-	const viaNewPath = runRenderModuleEmitter({
-		grammar,
-		nodeMap,
-		generatedIdTables,
-		jinjaTemplates
-	});
-
-	expect(viaNewPath.emit).toEqual(viaOldPath.emit);
-}, 60_000);

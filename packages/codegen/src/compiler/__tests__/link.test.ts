@@ -18,7 +18,6 @@ import { link, enrichPositions, computeParentSets, applyOverridePolymorphs, lift
 import type { DerivationLog } from '../types.ts';
 import type { Rule, SymbolRef } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
-import { createEmptyRuleCatalog } from '../rule-catalog.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 
@@ -26,7 +25,7 @@ function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<Ra
 	return {
 		name: 'test',
 		rules,
-		ruleCatalog: createEmptyRuleCatalog(),
+		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
 		externals: [],
 		supertypes: [],

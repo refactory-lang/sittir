@@ -67,3 +67,27 @@ When a TS function body grows a 3+ line inline comment block explaining the next
 ## Test layout
 
 - Tests: unit tests live module-adjacent (`<module>/__tests__/*.test.ts`); `src/__tests__/` is reserved for cross-module integration tests. No co-located `*.test.ts` next to source.
+
+## `@forFutureUse` tagging convention
+
+A JSDoc tag mirroring `@deprecated` but with the opposite intent: marks a
+symbol that is deliberately kept despite having no current caller, because
+it implements (or partially implements) an Accepted ADR or a
+drafted-but-deferred (not rejected) spec. `@deprecated` says "remove this
+despite it having callers"; `@forFutureUse` says "keep this despite it
+having none."
+
+Format — always include a one-line reason citing the ADR/spec:
+
+```ts
+/**
+ * @forFutureUse ADR-0018 (dehoisted NodeData surface) — $with update namespace.
+ * Not yet wired into generated output; scaffolding only.
+ */
+```
+
+Before deleting any exported symbol with zero (or test-only) callers,
+check whether it carries this tag. If it does, do not delete it as part
+of a routine dead-code sweep — its disposition (finish wiring it up, or
+formally retire it) is a decision for whoever owns the referenced
+ADR/spec, not a mechanical cleanup pass.

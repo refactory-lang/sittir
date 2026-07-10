@@ -280,10 +280,12 @@ preserved (no restructuring).
 **Action:** Promotes all-string choices to `EnumRule`; symbol-compatible choices to `SupertypeRule`; hidden seqs with fields to `GroupRule`.
 **Output:** Classified rule or original.
 
-### `promotePolymorph(rule)` / `applyOverridePolymorphs(...)` / `findVariantChoice(rule)` / `wrapVariants(choice)` / `nameVariant(...)` / `tokenToName(token)`
+### `promotePolymorph(rule)` / `applyOverridePolymorphs(...)` / `findVariantChoice(rule)` / `tokenToName(token)`
 **Pattern:** Top-level / nested variant-bearing choices; `polymorphVariants` from wire.
-**Action:** Build `PolymorphRule`s (promoted or override-sourced) with fused prefix/suffix; wrap each choice member in a `variant` with a derived name; map punctuation to readable names.
+**Action:** Build `PolymorphRule`s (promoted or override-sourced) with fused prefix/suffix; map punctuation to readable names.
 **Output:** `PolymorphRule` / variant-wrapped choices.
+
+> **`wrapVariants` / `deduplicateVariants` / `nameVariant` DELETED (Track 1, commit `48292a847`):** zero external production callers — only referenced via `normalize.ts`'s re-export and `normalize.test.ts` (updated in the same commit). Removed from `link.ts` entirely; not replaced. `tokenToName` (still consumed by `node-map.ts`) is the only remaining re-export `normalize.ts` narrows down to.
 
 ### `detectClause(content, currentName)` **(legacy — PR3 deletes)**
 **Pattern:** Content of an `optional` that is `seq(string, field, …)`.
@@ -530,7 +532,7 @@ not a shared-arm-field operator-enum), `sharedArmFieldName`,
 ### R4 — link/assemble ctx families
 - **`ResolveCtx`** (`link.ts`): `{ allRules, supertypes, externalRoles }` — pass-constant state for the rule-resolution walk. `resolveRule(rule, ctx, currentName)`, `resolveRepeat1PreservingNonEmpty`, `resolveSymbolRoleOrPass(rule, ctx)`, `resolveNamedAliasWithProvenance(content, ctx, targetName)`, `dereferenceTopLevelAliasBody(rule, ctx, resolvedRules, seen)`, `mintContentAliasKinds(rules, ctx, from, to)`, `collectTopLevelAliasBodies(resolvedRules, ctx, complex?)`. `currentName` stays explicit — per-top-level-rule attribution (CW6); `seen` cycle guards stay explicit.
 - **`SubtypeCtx`** (`assemble.ts`): `{ rules, topLevelAliasBodies }` — the supertype-subtype resolution family: `resolveHiddenSubtypes(names, ctx, ownerName?)`, `includeAliasMemberKinds(subtypes, ctx, ownerName?)`, `isAliasMemberKind(rule, ctx, name, subtypeSet)`, `isCompatibleSubtypeMember(name, ctx, subtypeSet, seen)`. The unused `_aliasedHiddenKinds` parameter was dropped.
-- Honest non-conforming leaves are utilities/comparators (`setsEqual`, `rulesEqualForVariant`, `nameVariant`, rename helpers, classify leaf predicates) and single-grammar-wide-arg passes (the `kindEntries` canonicalize trio — folding ONE arg into a fabricated ctx adds indirection without navigability gain).
+- Honest non-conforming leaves are utilities/comparators (`setsEqual`, rename helpers, classify leaf predicates) and single-grammar-wide-arg passes (the `kindEntries` canonicalize trio — folding ONE arg into a fabricated ctx adds indirection without navigability gain). (`nameVariant` deleted, Track 1 commit `48292a847`; `rulesEqualForVariant` also deleted from `link.ts` — see the Link-phase entry above.)
 
 ### `deriveSlots(rule, ctx?)` / `_deriveSlotsInternal(rule, ctx?)` / `mergeSlotsByName(slots)` / `buildSlotsRecord(rule, ctx, renderRule?)`
 **Pattern:** Public slot-derivation entry point.

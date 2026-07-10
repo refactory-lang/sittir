@@ -804,6 +804,14 @@ export async function validateFactoryRenderParse(
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
 
+		// buildReadHandle failures (missing/stale native engine, debug-binary
+		// refusal, etc.) are whole-grammar loader failures, not per-entry
+		// rendering failures — they throw identically for every remaining
+		// entry once the engine is unavailable. Swallowing them here (as a
+		// prior fix did) meant `total` never incremented and `fail =
+		// total - pass - skip` came out 0, so a completely missing native
+		// engine was reported as a passing 0/0 run. Let it propagate to
+		// runCountsCli's grammar-collection catch, which records it properly.
 		const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 		const rawKinds = new Set(collectKinds(tree1.rootNode));
 		const kinds = new Set(rawKinds);

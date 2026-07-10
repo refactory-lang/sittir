@@ -6,8 +6,7 @@ describe('resolvers', () => {
 		expect(resolveGrammars(['rust', 'bogus'])).toEqual(['rust']);
 		expect(resolveGrammars([])).toEqual(['rust', 'typescript', 'python']);
 	});
-	it('resolveBackends expands all', () => {
-		expect(resolveBackends('all')).toEqual(['native', 'js']);
+	it('resolveBackends returns native only', () => {
 		expect(resolveBackends('native')).toEqual(['native']);
 	});
 	it('defaultTemplatesPath returns a per-grammar path', () => {

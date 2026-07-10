@@ -1,7 +1,7 @@
 import { CHOICE, GROUP, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
-import { escapeJinjaString, escapeLiteral, snakeToCamel, stringifyRule } from '../templates.ts';
+import { escapeJinjaString, escapeLiteral, stringifyRule } from '../templates.ts';
 
 describe('escapeLiteral', () => {
 	it('adds spacing around opening braces', () => {
@@ -18,20 +18,6 @@ describe('escapeLiteral', () => {
 
 	it('escapes multiple brace pairs', () => {
 		expect(escapeLiteral('{{value}}')).toBe('{ { value } }');
-	});
-});
-
-describe('snakeToCamel', () => {
-	it('converts snake case to camel case', () => {
-		expect(snakeToCamel('field_name')).toBe('fieldName');
-	});
-
-	it('converts digit-prefixed segments', () => {
-		expect(snakeToCamel('field_1_name')).toBe('field1Name');
-	});
-
-	it('leaves names without underscores unchanged', () => {
-		expect(snakeToCamel('fieldName')).toBe('fieldName');
 	});
 });
 

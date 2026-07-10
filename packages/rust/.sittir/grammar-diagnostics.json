@@ -1,0 +1,148 @@
+[
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "error",
+    "grammar": "rust",
+    "ownerKind": "scoped_type_identifier",
+    "slotName": "path",
+    "message": "Slot 'path' of kind 'scoped_type_identifier' collapses [generic_type_with_turbofish, generic_type] onto parse kind 'generic_type'.",
+    "proposal": "Slot 'path' of kind 'scoped_type_identifier' collapses distinct storage kinds [generic_type_with_turbofish, generic_type] onto parse kind 'generic_type'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "generic_type",
+      "storageKinds": [
+        "generic_type_with_turbofish",
+        "generic_type"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "rust",
+    "ownerKind": "_array_expression_semi",
+    "ruleId": "rule:_array_expression_semi:root",
+    "message": "Kind '_array_expression_semi' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "rust",
+    "ownerKind": "_macro_definition_brace",
+    "ruleId": "rule:_macro_definition_brace:root",
+    "message": "Kind '_macro_definition_brace' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "rust",
+    "ownerKind": "_macro_definition_bracket",
+    "ruleId": "rule:_macro_definition_bracket:root",
+    "message": "Kind '_macro_definition_bracket' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "rust",
+    "ownerKind": "_macro_definition_paren",
+    "ruleId": "rule:_macro_definition_paren:root",
+    "message": "Kind '_macro_definition_paren' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "rust",
+    "ownerKind": "tuple_expression",
+    "ruleId": "rule:tuple_expression:root",
+    "message": "Kind 'tuple_expression' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_mutable_specifier",
+    "message": "[assemble] typeName collision: kind '_mutable_specifier' renamed 'MutableSpecifier' → '_MutableSpecifier' (visible sibling(s): 'mutable_specifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "MutableSpecifier",
+      "newType": "_MutableSpecifier",
+      "visibleKinds": [
+        "mutable_specifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_type",
+    "message": "[assemble] typeName collision: kind '_type' renamed 'Type' → '_Type' (visible sibling(s): 'type')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Type",
+      "newType": "_Type",
+      "visibleKinds": [
+        "type"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_visibility_modifier_group1",
+    "message": "[assemble] typeName collision: kind '_visibility_modifier_group1' renamed 'VisibilityModifierGroup1' → '_VisibilityModifierGroup1' (visible sibling(s): 'visibility_modifier_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "VisibilityModifierGroup1",
+      "newType": "_VisibilityModifierGroup1",
+      "visibleKinds": [
+        "visibility_modifier_group1"
+      ]
+    }
+  }
+]

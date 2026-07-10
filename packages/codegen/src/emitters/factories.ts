@@ -71,20 +71,8 @@ export interface EmitFactoriesConfig {
 	synthesizedKinds?: ReadonlySet<string>;
 }
 
-/**
- * Standalone entry point — preserved for backwards compatibility (tests,
- * CLI callers). Delegates to the emitter protocol (init → loop → finalize).
- */
-export function emitFactories(config: EmitFactoriesConfig): string {
-	const factoryEmitter = new FactoryEmitter(config);
-	for (const [kind, node] of config.nodeMap.nodes) {
-		factoryEmitter.dispatchNode(kind, node);
-	}
-	return factoryEmitter.finalize();
-}
-
 // ---------------------------------------------------------------------------
-// emitFactories helpers
+// FactoryEmitter helpers
 // ---------------------------------------------------------------------------
 
 /**

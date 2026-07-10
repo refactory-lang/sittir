@@ -11,7 +11,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { applyEdits } from '@sittir/core';
+import { applyEdits } from '@sittir/common';
 import type { Edit } from '@sittir/types';
 import {
 	loadFixtureSource,
@@ -47,7 +47,8 @@ describe('format-roundtrip rust fixtures', () => {
 	}
 });
 
-describe('US1 — borrowed Askama parity (rust)', () => {
+// Skipped: JS render engine removed (Track 1 cleanup) — this spec-017 US1 JS-vs-native parity check has no comparison baseline until a new SittirEngineLike adapter exists.
+describe.skip('US1 — borrowed Askama parity (rust)', () => {
 	it('generated function_item render fixture matches the TS renderer', () => {
 		const engine = tryLoadNativeEngine('rust');
 		if (!engine) return; // skip — native not built
@@ -92,7 +93,8 @@ describe('US2 — edit isolation (rust)', () => {
 	});
 });
 
-describe('US2 — direct render parity (rust)', () => {
+// Skipped: JS render engine removed (Track 1 cleanup) — this spec-017 US1 JS-vs-native parity check has no comparison baseline until a new SittirEngineLike adapter exists.
+describe.skip('US2 — direct render parity (rust)', () => {
 	it('rust-tab-indent.rs: native direct render matches TS render for parsed node data', async () => {
 		const engine = tryLoadNativeEngine('rust');
 		if (!engine) return; // skip — native not built
@@ -108,7 +110,8 @@ describe('US2 — direct render parity (rust)', () => {
 	});
 });
 
-describe('US3 — native/TS render parity (rust)', () => {
+// Skipped: JS render engine removed (Track 1 cleanup) — this spec-017 US1 JS-vs-native parity check has no comparison baseline until a new SittirEngineLike adapter exists.
+describe.skip('US3 — native/TS render parity (rust)', () => {
 	const bothFixtures = loadFormatCorpusEntries('rust').filter((entry) => entry.expectedBackendCoverage === 'both');
 
 	if (bothFixtures.length === 0) {

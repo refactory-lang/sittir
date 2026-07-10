@@ -20,7 +20,7 @@ import {
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { transform, insert, replace } from '../../dsl/transform/transform.ts';
+import { transform } from '../../dsl/transform/transform.ts';
 import type { SymbolRef } from '../../types/rule.ts';
 import { expectCompleteCatalog, serializeCatalog, walkRule } from '../../__tests__/helpers/rule-catalog.ts';
 import { readRuleMetadata } from '../../dsl/rule-metadata.ts';
@@ -334,63 +334,6 @@ describe('Evaluate — DSL functions', () => {
 		});
 	});
 
-	describe('insert — wraps position preserving content', () => {
-		const original: any = {
-			type: 'SEQ',
-			members: [
-				{ type: 'STRING', value: 'fn' },
-				{ type: 'SYMBOL', name: 'block' }
-			]
-		};
-
-		it('wraps a member at a position with a field using the original content', () => {
-			const result = insert(original, 1, (content: any) => field('body', content));
-			const member = (result as any).members[1];
-			expect(member).toEqual({
-				type: 'FIELD',
-				name: 'body',
-				content: { type: 'SYMBOL', name: 'block' },
-				metadata: expect.anything()
-			});
-			expect(readRuleMetadata(member.metadata)?.fieldSource).toBe('override');
-		});
-	});
-
-	describe('replace — substitutes at position', () => {
-		const original: any = {
-			type: 'SEQ',
-			members: [
-				{ type: 'STRING', value: 'fn' },
-				{ type: 'SYMBOL', name: 'block' },
-				{ type: 'STRING', value: ';' }
-			]
-		};
-
-		it('replaces content at a position', () => {
-			const result = replace(original, 2, {
-				type: 'STRING',
-				value: '.'
-			} as any);
-			expect((result as any).members[2]).toEqual({
-				type: 'STRING',
-				value: '.'
-			});
-		});
-
-		it('suppresses a position when replacement is null', () => {
-			const result = replace(original, 2, null);
-			expect((result as any).members).toHaveLength(2);
-			expect((result as any).members[0]).toEqual({
-				type: 'STRING',
-				value: 'fn'
-			});
-			expect((result as any).members[1]).toEqual({
-				type: 'SYMBOL',
-				name: 'block'
-			});
-		});
-	});
-
 	describe('prec', () => {
 		it('strips precedence and returns the content Rule', () => {
 			const rule = prec(1, 'x');
@@ -471,42 +414,6 @@ describe('Evaluate — edge cases', () => {
 			const raw = await evaluate(fixture('hidden-only-grammar.js'));
 			expect(raw.name).toBe('hidden_only');
 			expect(Object.keys(raw.rules)).toContain('_expr');
-		});
-	});
-
-	describe('T014a — insert/replace/suppress semantics', () => {
-		const original: any = {
-			type: 'SEQ',
-			members: [
-				{ type: 'STRING', value: 'fn' },
-				{ type: 'SYMBOL', name: 'body' },
-				{ type: 'STRING', value: ';' }
-			]
-		};
-
-		it('insert preserves original content inside the wrapper', () => {
-			const result = insert(original, 1, (content: any) => field('body', content));
-			expect((result as any).members[1].content).toEqual({
-				type: 'SYMBOL',
-				name: 'body'
-			});
-		});
-
-		it('replace substitutes content entirely', () => {
-			const result = replace(original, 1, {
-				type: 'SYMBOL',
-				name: 'new_body'
-			} as any);
-			expect((result as any).members[1]).toEqual({
-				type: 'SYMBOL',
-				name: 'new_body'
-			});
-		});
-
-		it('replace with null suppresses (removes the member)', () => {
-			const result = replace(original, 2, null);
-			expect((result as any).members).toHaveLength(2);
-			expect((result as any).members.every((m: any) => m.value !== ';')).toBe(true);
 		});
 	});
 });

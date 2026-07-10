@@ -97,12 +97,24 @@ interface NativeParseResultShape {
 	readonly format?: FormatRecord;
 }
 
+/**
+ * Tagged-union result for `createNativeEngine` — mirrors the
+ * `loadNativeEngineForGrammar` pattern in
+ * `packages/tools/src/validate/common.ts`: `engine: null` always carries a
+ * `reason` string (the real failure cause) instead of discarding it.
+ */
+export type CreateNativeEngineResult =
+	| { readonly engine: SittirEngineLike; readonly reason?: undefined }
+	| { readonly engine: null; readonly reason: string };
+
 export function createNativeEngine<
 	TTransport = unknown,
 	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
->(config: GrammarEngineConfig<TTransport, TModule>, options?: EngineOptions): SittirEngineLike | null {
+>(config: GrammarEngineConfig<TTransport, TModule>, options?: EngineOptions): CreateNativeEngineResult {
 	const status = config.getActiveBackend();
-	if (status.name !== 'native') return null;
+	if (status.name !== 'native') {
+		return { engine: null, reason: status.reason ?? `active backend is '${status.name}', not 'native'` };
+	}
 
 	try {
 		const nativeOptions = options?.format ? { format: JSON.stringify(options.format) } : undefined;
@@ -115,7 +127,8 @@ export function createNativeEngine<
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +
-						'Use JS engine or wait for Task 4 (engine-owned format state).'
+						'Native is the only backend — omit ignoreFormat (or pass false) ' +
+						'until Task 4 (engine-owned format state) lands.'
 				);
 			}
 			return createRenderHandle(
@@ -131,54 +144,56 @@ export function createNativeEngine<
 		}
 
 		return {
-			render(node, opts) {
-				return renderNativeNode(node, opts);
-			},
-
-			applyEdits(source, edits) {
-				return engine.applyEdits(
-					source,
-					edits.map((edit) => ({ ...edit }))
-				);
-			},
-
-			dispose() {
-				engine.dispose();
-			},
-
-			reader: {
-				parseAndRead(source: string) {
-					const json = engine.parseAndRead(source);
-					const parsed = JSON.parse(json) as NativeParseResultShape;
-					const root = parsed.nodeData;
-					return {
-						root,
-						tree: {
-							get rootNode(): never {
-								throw new Error('rootNode unavailable on native engine handle; use tree.read()');
-							},
-							source,
-							read: (handle, childIndex) => {
-								if (handle === undefined) return root;
-								const nodeJson = engine.readNode(handle, childIndex ?? 0);
-								return JSON.parse(nodeJson) as AnyNodeData;
-							},
-							render: (handle, opts) => {
-								const node = handle === undefined ? root : (JSON.parse(engine.readNode(handle, 0)) as AnyNodeData);
-								return renderNativeNode(node, opts).toString();
-							},
-							format: parsed.format
-						} satisfies TreeHandle
-					};
+			engine: {
+				render(node, opts) {
+					return renderNativeNode(node, opts);
 				},
 
-				readNode(handle: number, childIndex = 0) {
-					const json = engine.readNode(handle, childIndex);
-					return JSON.parse(json) as AnyNodeData;
+				applyEdits(source, edits) {
+					return engine.applyEdits(
+						source,
+						edits.map((edit) => ({ ...edit }))
+					);
+				},
+
+				dispose() {
+					engine.dispose();
+				},
+
+				reader: {
+					parseAndRead(source: string) {
+						const json = engine.parseAndRead(source);
+						const parsed = JSON.parse(json) as NativeParseResultShape;
+						const root = parsed.nodeData;
+						return {
+							root,
+							tree: {
+								get rootNode(): never {
+									throw new Error('rootNode unavailable on native engine handle; use tree.read()');
+								},
+								source,
+								read: (handle, childIndex) => {
+									if (handle === undefined) return root;
+									const nodeJson = engine.readNode(handle, childIndex ?? 0);
+									return JSON.parse(nodeJson) as AnyNodeData;
+								},
+								render: (handle, opts) => {
+									const node = handle === undefined ? root : (JSON.parse(engine.readNode(handle, 0)) as AnyNodeData);
+									return renderNativeNode(node, opts).toString();
+								},
+								format: parsed.format
+							} satisfies TreeHandle
+						};
+					},
+
+					readNode(handle: number, childIndex = 0) {
+						const json = engine.readNode(handle, childIndex);
+						return JSON.parse(json) as AnyNodeData;
+					}
 				}
 			}
 		};
-	} catch {
-		return null;
+	} catch (e) {
+		return { engine: null, reason: e instanceof Error ? e.message : String(e) };
 	}
 }

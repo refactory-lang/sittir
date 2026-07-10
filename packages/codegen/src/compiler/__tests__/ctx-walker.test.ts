@@ -1,9 +1,22 @@
 import { describe, it, expect } from 'vitest';
 import { NormalizeCtx } from '../normalize.ts';
-import { makeLinkedGrammar } from '../link.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Rule } from '../../types/rule.ts';
+import type { LinkedGrammar, ExternalRole } from '../types.ts';
+
+function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<LinkedGrammar>): LinkedGrammar {
+	return {
+		name: 'test',
+		rules,
+		supertypes: new Set(),
+		externalRoles: new Map<string, ExternalRole>(),
+		word: null,
+		references: [],
+		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
+		...overrides
+	};
+}
 
 describe('BaseCtx.walker', () => {
 	it('is bound to ctx.rules — deref resolves through them', () => {
@@ -12,7 +25,7 @@ describe('BaseCtx.walker', () => {
 			b: { type: STRING, value: 'x' } as Rule
 		};
 		const ctx = new NormalizeCtx({
-			grammar: makeLinkedGrammar(rules),
+			grammar: makeLinked(rules),
 			diagnostics: new DiagnosticSink(),
 			inlineKinds: new Set()
 		});

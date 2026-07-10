@@ -1,12 +1,15 @@
 /**
- * polymorph-dispatcher-throw.test.ts — asserts the generated polymorph
- * dispatcher's error behavior.
+ * polymorph-dispatcher-throw.test.ts — asserts generated from() resolver
+ * error behavior for a polymorph parent (python `assignment`).
  *
- * The generated factory for a polymorph parent (e.g. python `assignment`)
- * dispatches to a per-form factory via `switch (config.$variant)` and
- * throws on unknown / missing tags. Covers:
- *   - Unknown $variant value → throws with a helpful message.
- *   - Malformed (null) input → throws (TypeError on property access).
+ * Covers the two silent-failure gaps fixed in the `_resolveOne` family and
+ * the `from()` call-emission site (packages/codegen/src/emitters/from.ts):
+ *   - Gap B: an unresolvable object/array slot value throws a clear error
+ *     naming the parent kind / expected kind(s), instead of being embedded
+ *     raw into the tree.
+ *   - Gap A: a REQUIRED slot that resolves to undefined/null throws a
+ *     purpose-built "Missing required slot" error, instead of silently
+ *     constructing a node with a missing field.
  *
  * Uses the generated python package directly so the test pins the
  * GENERATED code's behavior, not an abstract contract.
@@ -28,20 +31,25 @@ beforeAll(async () => {
 	assignment = mod.ir.assignment;
 });
 
-describe('generated polymorph dispatcher — throw behavior', () => {
-	it('throws with "unknown $variant" message on bogus $variant', () => {
-		expect(() => assignment({ $variant: 'bogus' })).toThrow(/unknown \$variant/);
+describe('generated from() resolver — silent-failure gaps', () => {
+	it('throws a clear error when a slot receives an unresolvable object (Gap B)', () => {
+		expect(() =>
+			assignment({ left: { totally: 'garbage' }, content: { also: 'garbage' } })
+		).toThrow(/cannot resolve value/);
 	});
 
-	it('names the parent kind in the error message', () => {
-		expect(() => assignment({ $variant: 'bogus' })).toThrow(/assignment/);
+	it('names the expected kind(s) tried in the Gap B error message', () => {
+		// `left` resolves through _K3/_K4 — "identifier" is always one of the
+		// tried leaf candidates for python's LeftHandSide.
+		expect(() => assignment({ left: { totally: 'garbage' } })).toThrow(/identifier/);
 	});
 
-	it('lists the known variants in the error message', () => {
-		// Message format: "expected one of 'eq' | 'type' | 'typed'."
-		expect(() => assignment({ $variant: 'bogus' })).toThrow(/'eq'/);
-		expect(() => assignment({ $variant: 'bogus' })).toThrow(/'type'/);
-		expect(() => assignment({ $variant: 'bogus' })).toThrow(/'typed'/);
+	it('embeds the offending value in the Gap B error message', () => {
+		expect(() => assignment({ left: { totally: 'garbage' } })).toThrow(/totally/);
+	});
+
+	it('throws a purpose-built "Missing required slot" error when a required slot resolves to undefined (Gap A)', () => {
+		expect(() => assignment({})).toThrow(/Missing required slot 'left' on assignment\.from\(\)/);
 	});
 
 	it('throws on null input (malformed)', () => {

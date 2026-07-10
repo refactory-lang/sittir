@@ -157,10 +157,6 @@ export function escapeLiteral(value: string): string {
 	return value.replaceAll('{', '{ ').replaceAll('}', ' }').replaceAll('{  }', '{ }');
 }
 
-export function snakeToCamel(value: string): string {
-	return value.replace(/_([a-z0-9])/g, (_match, char: string) => char.toUpperCase());
-}
-
 export function escapeJinjaString(value: string): string {
 	return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
 }

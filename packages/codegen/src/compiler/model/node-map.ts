@@ -451,17 +451,6 @@ export function deriveSlotCardinality(slot: { values: readonly NodeOrTerminal[] 
 	};
 }
 
-export function mergeSlotValues(
-	slots: readonly {
-		values: readonly NodeOrTerminal[];
-	}[]
-): { readonly values: readonly NodeOrTerminal[] } | undefined {
-	if (slots.length === 0) return undefined;
-	return {
-		values: dedupeValues(slots.flatMap((slot) => [...slot.values]))
-	};
-}
-
 export function deriveUnnamedChildrenCardinality(
 	children: readonly {
 		values: readonly NodeOrTerminal[];

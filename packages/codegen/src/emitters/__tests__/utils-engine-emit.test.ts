@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { emitClientUtils } from '../client-utils.ts';
-import { emitFactories } from '../factories.ts';
+import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import { makeMinimalNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
 

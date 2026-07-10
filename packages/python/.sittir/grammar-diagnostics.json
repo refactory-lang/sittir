@@ -1,0 +1,178 @@
+[
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "python",
+    "ownerKind": "dict_pattern",
+    "ruleId": "rule:dict_pattern:root",
+    "message": "Kind 'dict_pattern' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_as_pattern",
+    "message": "[assemble] typeName collision: kind '_as_pattern' renamed 'AsPattern' → '_AsPattern' (visible sibling(s): 'as_pattern')",
+    "canProceed": true,
+    "details": {
+      "typeName": "AsPattern",
+      "newType": "_AsPattern",
+      "visibleKinds": [
+        "as_pattern"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_list_pattern",
+    "message": "[assemble] typeName collision: kind '_list_pattern' renamed 'ListPattern' → '_ListPattern' (visible sibling(s): 'list_pattern')",
+    "canProceed": true,
+    "details": {
+      "typeName": "ListPattern",
+      "newType": "_ListPattern",
+      "visibleKinds": [
+        "list_pattern"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_parameters",
+    "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' → '_Parameters' (visible sibling(s): 'parameters')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Parameters",
+      "newType": "_Parameters",
+      "visibleKinds": [
+        "parameters"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_slice_group1",
+    "message": "[assemble] typeName collision: kind '_slice_group1' renamed 'SliceGroup1' → '_SliceGroup1' (visible sibling(s): 'slice_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "SliceGroup1",
+      "newType": "_SliceGroup1",
+      "visibleKinds": [
+        "slice_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_tuple_pattern",
+    "message": "[assemble] typeName collision: kind '_tuple_pattern' renamed 'TuplePattern' → '_TuplePattern' (visible sibling(s): 'tuple_pattern')",
+    "canProceed": true,
+    "details": {
+      "typeName": "TuplePattern",
+      "newType": "_TuplePattern",
+      "visibleKinds": [
+        "tuple_pattern"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "ellipsis",
+    "message": "[assemble] typeName collision between visible kinds: 'ellipsis' renamed 'Ellipsis' → 'Ellipsis2' (siblings: '...')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Ellipsis",
+      "newType": "Ellipsis2",
+      "siblingKinds": [
+        "..."
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "False",
+    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')",
+    "canProceed": true,
+    "details": {
+      "typeName": "False",
+      "newType": "False2",
+      "siblingKinds": [
+        "false"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "None",
+    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')",
+    "canProceed": true,
+    "details": {
+      "typeName": "None",
+      "newType": "None2",
+      "siblingKinds": [
+        "none"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_string_content",
+    "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
+    "canProceed": true,
+    "details": {
+      "typeName": "StringContent",
+      "newType": "_StringContent",
+      "visibleKinds": [
+        "string_content"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "True",
+    "message": "[assemble] typeName collision between visible kinds: 'True' renamed 'True' → 'True2' (siblings: 'true')",
+    "canProceed": true,
+    "details": {
+      "typeName": "True",
+      "newType": "True2",
+      "siblingKinds": [
+        "true"
+      ]
+    }
+  }
+]

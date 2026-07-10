@@ -41,7 +41,7 @@ describe('createNativeEngine native boundary', () => {
 				}
 			})
 		} satisfies GrammarEngineConfig;
-		const engine = createNativeEngine(config);
+		const result = createNativeEngine(config);
 		const invalid = {
 			$type: 1 as const,
 			$source: 2 as const,
@@ -52,8 +52,8 @@ describe('createNativeEngine native boundary', () => {
 			}
 		};
 
-		expect(engine).not.toBeNull();
-		const handle = engine!.render(invalid);
+		expect(result.engine).not.toBeNull();
+		const handle = result.engine!.render(invalid);
 
 		expect(handle.toString()).toBe('ok');
 		expect(render).toHaveBeenCalledTimes(1);

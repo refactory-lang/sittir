@@ -16,7 +16,7 @@
  */
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
-import ts from 'typescript';
+import ts from 'typescript6';
 
 /** The pipeline modules under the ratchet (proposal §1 gap table). */
 export const PIPELINE_MODULES: readonly string[] = [

@@ -52,7 +52,6 @@ Per-grammar raw pass/total counts for all four validators
 
 **Options**
 
-- `-b, --backend <backend>` — Validation backend — choices: `native` | `js` | `all` (default: `native`)
 - `--isolate` — Run each grammar in a child process; attributes SIGSEGV to the last attempted kind (default: `false`)
 - `--_isolate-worker` — Internal: run as an isolation worker for a single grammar (default: `false`)
 
@@ -69,10 +68,6 @@ Factory-render-parse error bucketing (top-8 buckets)
 **Arguments**
 
 - `grammars…` (optional) — Grammars to validate; defaults to all
-
-**Options**
-
-- `-b, --backend <backend>` — Validation backend — choices: `native` | `js` | `all` (default: `native`)
 
 **Example**
 
@@ -104,7 +99,6 @@ Replay the first failing read-render-parse case as a rich trace
 
 **Options**
 
-- `-b, --backend <backend>` — Validation backend — choices: `native` | `js` | `all` (default: `native`)
 - `-r, --recursive` — Use recursive deep-read instead of shallow (default: `false`)
 
 **Example**

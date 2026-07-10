@@ -1,7 +1,7 @@
 ---
 name: sittir-codegen
 description: Specialized implementer for sittir tree-sitter codegen changes — edits packages/codegen/src/** or packages/<lang>/overrides.ts, regenerates grammars, and gates on validator covPass. Use for any specified codegen/compiler/emitter implementation task in the sittir repo (the dispatcher provides the task + baselines). Knows the never-edit-generated rule, the tsx-no-build fast-iteration workflow, the fix/compile split, and the covPass gate discipline. NOT for open-ended root-cause diagnosis — escalate those to a more capable model.
-tools: Bash, Read, Edit, Write, Glob, Grep, LSP
+tools: Bash, Read, Edit, Write, Glob, Grep, LSP, infigraph
 model: sonnet
 effort: medium
 ---

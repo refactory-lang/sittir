@@ -1,3 +1,5 @@
+import { writeFileSync } from 'node:fs';
+
 import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
@@ -165,6 +167,22 @@ export function formatCompilerDiagnostics(diagnostics: readonly CompilerDiagnost
 				`[${d.severity}] ${d.code}  (${d.phase})\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`
 		)
 		.join('\n');
+}
+
+/**
+ * Persist a diagnostics array to JSON (Cluster D task 13). Sibling of
+ * {@link formatGrammarDiagnostics}/{@link formatCompilerDiagnostics} — those
+ * format for stderr, this serializes the same shape for a later task
+ * (Cluster D task 14) to merge into a unified validation report. Works for
+ * either `GrammarDiagnostic` or `CompilerDiagnostic` since both extend the
+ * shared `Diagnostic` base (code/severity/message/proposal + scope-specific
+ * fields), so no shape adaptation is needed — the array is written as-is.
+ */
+export function writeGrammarDiagnosticsJson(
+	diagnostics: readonly (GrammarDiagnostic | CompilerDiagnostic)[],
+	outPath: string
+): void {
+	writeFileSync(outPath, JSON.stringify(diagnostics, null, 2));
 }
 
 /**

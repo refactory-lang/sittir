@@ -35,6 +35,7 @@ packages/*/.sittir/*
 !packages/*/.sittir/package.json
 !packages/*/.sittir/tree-sitter.json
 !packages/*/.sittir/generated.manifest.json
+!packages/*/.sittir/grammar-diagnostics.json
 
 
 # Stray tree-sitter build artifacts (parser.wasm should be in .sittir/)
