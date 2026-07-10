@@ -95,12 +95,12 @@ export function makeNormalizedGrammar(rules: Record<string, RenderRule>): Normal
 import {
 	structuralBuilder,
 	inlineRefs,
-	recurseChildren,
 	fuseHeadRepeatLists,
 	combineMultiplicity,
 	type InlineRefsCtx,
 	type LeafMultiplicity
 } from '../dsl/rule-transforms.ts';
+import { RuleWalker } from '../dsl/rule-walker.ts';
 import type { AssembledNode } from './model/node-map.ts';
 
 // ---------------------------------------------------------------------------
@@ -159,11 +159,11 @@ export const attributeBuilder: RuleBuilder = {
  * `seq([X])` → `X` shapes left behind by upstream transformations.
  * Idempotent — running it twice produces the same result as running once.
  *
- * Stays AnyRule-typed (phase-visibility-tightening finding): it delegates
- * recursion to `recurseChildren`, a genuinely phase-agnostic dsl utility that
+ * Stays AnyRule-typed (phase-visibility-tightening finding): recursion is
+ * delegated to a bare `RuleWalker<AnyRule>` (R12 traversal engine), which
  * still passes through wrapper nodes (FIELD/OPTIONAL/REPEAT/REPEAT1/TOKEN/
- * ALIAS) structurally — confirmed load-bearing by
- * `simplify-universal-shape.test.ts`'s "preserves leaf content inside
+ * ALIAS) structurally via its generic `content` edge — confirmed load-bearing
+ * by `simplify-universal-shape.test.ts`'s "preserves leaf content inside
  * wrappers (does not push down attributes)" case, which feeds a FIELD-wrapped
  * rule directly and asserts the wrapper survives untouched. Every PRODUCTION
  * call (`computeSimplifiedRules`) passes RenderRule-shaped input (simplifyRule
@@ -171,9 +171,21 @@ export const attributeBuilder: RuleBuilder = {
  * itself is not restricted to that — narrowing the signature would make the
  * type dishonest in the other direction (claiming it can't handle a shape it
  * demonstrably does).
+ *
+ * `RuleWalker.map` is NOT a drop-in replacement for the former
+ * `recurseChildren`-based self-recursive visitor: `map` already recurses the
+ * whole subtree internally and applies `visit` to every already-mapped node,
+ * so `visit` here (`collapseSingleMemberSeq`) does ONLY the single-level
+ * collapse — it must NOT call `canonicalizeSeqOfLeaves` on itself (that would
+ * recurse twice). The exported function additionally applies
+ * `collapseSingleMemberSeq` to `map`'s own return value, since `map` rebuilds
+ * a node's children bottom-up but does not apply `visit` to the top node
+ * itself — matching `recurseChildren(rule, canonicalizeSeqOfLeaves)` followed
+ * by the collapse check that used to sit inline in this function.
  */
-export function canonicalizeSeqOfLeaves(rule: AnyRule): AnyRule {
-	const recursed = recurseChildren(rule, canonicalizeSeqOfLeaves);
+const seqOfLeavesWalker = new RuleWalker<AnyRule>();
+
+function collapseSingleMemberSeq(recursed: AnyRule): AnyRule {
 	if (recursed.type === SEQ && recursed.members.length === 1) {
 		const survivor = recursed.members[0]!;
 		const carried = withAttrsFrom(recursed, survivor);
@@ -189,6 +201,10 @@ export function canonicalizeSeqOfLeaves(rule: AnyRule): AnyRule {
 		return carried;
 	}
 	return recursed;
+}
+
+export function canonicalizeSeqOfLeaves(rule: AnyRule): AnyRule {
+	return collapseSingleMemberSeq(seqOfLeavesWalker.map(rule, collapseSingleMemberSeq));
 }
 
 /**

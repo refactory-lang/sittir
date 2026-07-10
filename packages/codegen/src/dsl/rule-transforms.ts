@@ -445,68 +445,6 @@ function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {
 	return pushAttrsToLeaves(inlined, r.multiplicity, r.separator, r.fieldName);
 }
 
-/**
- * Generic post-order child recursion for the `AnyRule` IR, tightened to
- * the canonical typed AnyRule shape (no string-typed legacy variants like
- * 'TOKEN' / 'ALIAS' / 'IMMEDIATE_TOKEN' — those don't appear post-evaluate).
- *
- * Identity-preserving: returns the input rule unchanged when no child
- * was rewritten (`visit` returned the same reference for every child).
- *
- * @deprecated Superseded by `RuleWalker.map` (dsl/rule-walker.ts) for NEW
- * walks — but the two are NOT drop-in equivalents, so migrating an existing
- * caller requires rewriting its visitor:
- *
- *   - `recurseChildren` maps only the DIRECT children and expects the
- *     visitor to drive deep recursion itself (callers like
- *     `fuseHeadRepeatLists` / simplify's `canonicalizeSeqOfLeaves` pass
- *     themselves as the visitor). `RuleWalker.map` recurses the whole
- *     subtree internally and applies `visit` to every already-mapped node —
- *     a blind swap therefore recurses twice. Migrated visitors must STOP
- *     self-recursing.
- *   - Edge sets also differ: both rebuild via structural edges
- *     (members/content), but `RuleWalker.map` deliberately excludes
- *     separator edges too — see its doc for the rebuild-vs-observation
- *     asymmetry.
- *
- * Both are identity-preserving. New walks use `ctx.walker.map`; existing
- * callers migrate opportunistically WITH the visitor rewrite above.
- */
-export function recurseChildren<R extends AnyRule>(rule: R, visit: (r: R) => R): R {
-	switch (rule.type) {
-		case SEQ:
-		case CHOICE: {
-			// `rule.members` is typed `Rule<PhaseName>[]` (the general per-member
-			// union for this structural node), narrower than the exact `R` the
-			// caller's `visit` expects — but every member IS an `R`-shaped rule
-			// at runtime (same phase view as the parent `rule: R`); only the
-			// generic's structural inference loses that connection here.
-			const members = rule.members as unknown as R[];
-			let changed = false;
-			const next = members.map((m) => {
-				const out = visit(m);
-				if (out !== m) changed = true;
-				return out;
-			});
-			return changed ? ({ ...rule, members: next } as unknown as R) : rule;
-		}
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-		case ALIAS: {
-			const content = (rule as { content: AnyRule }).content as R;
-			const out = visit(content);
-			return out === content ? rule : ({ ...rule, content: out } as unknown as R);
-		}
-		default:
-			return rule;
-	}
-}
-
 // ---------------------------------------------------------------------------
 // List-fusion pass — fuse a separated-list's head + repeat occurrences into
 // a single multi-valued slot (moved from list-fusion.ts in R7 de-scatter).
@@ -592,10 +530,22 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
  * Behaviour-preserving everywhere else — non-seq rules and seqs without the
  * head+repeat shape pass through unchanged (reference-identical when no fusion
  * applies).
+ *
+ * Recursion is delegated to a bare `RuleWalker<AnyRule>` (R12 traversal
+ * engine), replacing the former `recurseChildren`-based self-recursive
+ * visitor. `RuleWalker.map` is NOT a drop-in replacement: `map` already
+ * recurses the whole subtree internally and applies `visit` to every
+ * already-mapped node, so `visit` here (`fuseAtNode`) does ONLY the
+ * single-level fusion — it must NOT call `fuseHeadRepeatLists` on itself
+ * (that would recurse twice). `fuseHeadRepeatLists` additionally applies
+ * `fuseAtNode` to `map`'s own return value, since `map` rebuilds a node's
+ * children bottom-up but does not apply `visit` to the top node itself —
+ * matching `recurseChildren(rule, fuseHeadRepeatLists)` followed by the
+ * seq-fusion check that used to sit inline in this function.
  */
+const fuseHeadRepeatListsWalker = new RuleWalker<AnyRule>();
 
-export function fuseHeadRepeatLists<R extends AnyRule>(rule: R): R {
-	const recursed = recurseChildren(rule, fuseHeadRepeatLists);
+function fuseAtNode(recursed: AnyRule): AnyRule {
 	if (recursed.type !== SEQ) return recursed;
 	const members = (recursed as SeqRule).members;
 	const out: AnyRule[] = [];
@@ -611,5 +561,9 @@ export function fuseHeadRepeatLists<R extends AnyRule>(rule: R): R {
 		out.push(members[i]!);
 	}
 	if (!changed) return recursed;
-	return { ...recursed, members: out } as unknown as R;
+	return { ...recursed, members: out };
+}
+
+export function fuseHeadRepeatLists<R extends AnyRule>(rule: R): R {
+	return fuseAtNode(fuseHeadRepeatListsWalker.map(rule, fuseAtNode)) as R;
 }
