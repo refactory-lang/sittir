@@ -142,11 +142,10 @@ shipped them yet but they are in scope:
   on the canonical rule tree; `.from()` coercion, `$with` immutability,
   fluent getters, and `.$trivia()` are projections over the same
   `NodeData`.
-- **Two backends, one contract.** A Nunjucks-based JS engine and an
-  Askama-based native engine sit behind one engine interface. Native is
-  preferred when the platform binary is loadable and its baked
-  template-bundle hash matches the JS-side bundle; otherwise JS handles the
-  same call. Consumers don't branch on backend.
+- **One engine, one contract.** An Askama-based native engine sits behind a
+  single `SittirEngineLike` interface. `createEngine()` throws if the
+  native binding for the grammar isn't loadable rather than silently
+  falling back — there is no JS rendering engine to fall back to.
 - **Determinism.** Same grammar version, same overrides, byte-identical
   generated output. No timestamps, no Map iteration order, no PRNG.
 - **DRY as a correctness rule.** Every fact (a field name, a separator, a
@@ -253,7 +252,7 @@ falling back.
 - **`@sittir/common`** — backend-neutral runtime. Implements
   `readNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
   `applyEdits(source, edits)`, `freezeNodeData()`, the native boundary
-  invariants (`assertNativeNodeData`, `normalizeNativeReadNode`), and
+  invariants (`assertRenderableNodeData`, `normalizeNativeReadNode`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.
 - **`@sittir/core`** — shared engine option/handle types
@@ -331,15 +330,16 @@ Simplify, so anonymous delimiters and separator placement survive.
 Field/child derivation reads the simplified rule; templates and derivation
 are two views of the same tree.
 
-`createEngine()` returns an engine that delegates to the native binding
-when its `templateBundleHash` matches the JS-side hash, and to
-`@sittir/core` otherwise. The native FFI path is N-API direct — no
-`serde_json` round-trip on either side — and streams `Renderable::Transport`
-references through Askama templates rather than materializing
-per-field intermediate strings. The fallback to JS is silent (no throw,
-no log) unless `SITTIR_BACKEND_DEBUG=1` is set; force a backend with
-`SITTIR_BACKEND=native` or `SITTIR_BACKEND=js`. Inspect the resolved
-engine with `getActiveBackend()`.
+`createEngine()` delegates to the native binding and throws if it isn't
+loadable or its baked `templateBundleHash` doesn't match the generated
+package's hash — there is no JS engine left to fall back to. The native
+FFI path is N-API direct — no `serde_json` round-trip on either side — and
+streams `Renderable::Transport` references through Askama templates rather
+than materializing per-field intermediate strings. `getActiveBackend()`
+still reports a `'js'` status in the unavailable/mismatched case (a
+holdover name meaning "native isn't being used", not an active JS render
+path); `SITTIR_BACKEND=native|js|wasm` forces that status for testing, and
+`SITTIR_BACKEND_DEBUG=1` logs which status was selected and why.
 
 #### Read pipeline
 
@@ -388,7 +388,7 @@ lives in `packages/<lang>/overrides.ts`.
 | `is.ts`                                       | Type guards (`is.*`, `isNode`, `isTree`, `assert.*`)                                           |
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
 | `utils.ts`                                    | Per-grammar resolution helpers and transport coercion                                          |
-| `engine.ts`                                   | `createEngine()` — native first, JS fallback                                                   |
+| `engine.ts`                                   | `createEngine()` — native-only, throws if the native binding is unavailable                    |
 | `backend.ts` / `boundary.ts` / `hash.ts`      | Backend selection, dispatching shims, baked template-bundle hash                               |
 | `grammar.ts`, `node-model.json5`              | Grammar literal type and a debug snapshot of the assembled model                               |
 | `templates/*.jinja`                           | One render template per renderable kind                                                        |

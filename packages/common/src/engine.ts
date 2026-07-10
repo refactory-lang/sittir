@@ -127,7 +127,8 @@ export function createNativeEngine<
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +
-						'Use JS engine or wait for Task 4 (engine-owned format state).'
+						'Native is the only backend — omit ignoreFormat (or pass false) ' +
+						'until Task 4 (engine-owned format state) lands.'
 				);
 			}
 			return createRenderHandle(
@@ -177,8 +178,7 @@ export function createNativeEngine<
 									return JSON.parse(nodeJson) as AnyNodeData;
 								},
 								render: (handle, opts) => {
-									const node =
-										handle === undefined ? root : (JSON.parse(engine.readNode(handle, 0)) as AnyNodeData);
+									const node = handle === undefined ? root : (JSON.parse(engine.readNode(handle, 0)) as AnyNodeData);
 									return renderNativeNode(node, opts).toString();
 								},
 								format: parsed.format
