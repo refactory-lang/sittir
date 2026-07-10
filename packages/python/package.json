@@ -17,8 +17,7 @@
 		"directory": "packages/python"
 	},
 	"files": [
-		"dist",
-		"templates/*.jinja"
+		"dist"
 	],
 	"type": "module",
 	"main": "./dist/index.js",

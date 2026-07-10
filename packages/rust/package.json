@@ -17,8 +17,7 @@
 		"directory": "packages/rust"
 	},
 	"files": [
-		"dist",
-		"templates/*.jinja"
+		"dist"
 	],
 	"type": "module",
 	"main": "./dist/index.js",

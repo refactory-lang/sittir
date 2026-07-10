@@ -17,8 +17,7 @@
 		"directory": "packages/typescript"
 	},
 	"files": [
-		"dist",
-		"templates/*.jinja"
+		"dist"
 	],
 	"type": "module",
 	"main": "./dist/index.js",
