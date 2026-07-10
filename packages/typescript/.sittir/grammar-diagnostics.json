@@ -1,0 +1,344 @@
+[
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "error",
+    "grammar": "typescript",
+    "ownerKind": "_arrow_function_parameter",
+    "slotName": "parameter",
+    "message": "Slot 'parameter' of kind '_arrow_function_parameter' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'.",
+    "proposal": "Slot 'parameter' of kind '_arrow_function_parameter' collapses distinct storage kinds [_reserved_identifier, identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "_reserved_identifier",
+        "identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "error",
+    "grammar": "typescript",
+    "ownerKind": "_index_signature_colon",
+    "slotName": "name",
+    "message": "Slot 'name' of kind '_index_signature_colon' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'.",
+    "proposal": "Slot 'name' of kind '_index_signature_colon' collapses distinct storage kinds [identifier, _reserved_identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "identifier",
+        "_reserved_identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "error",
+    "grammar": "typescript",
+    "ownerKind": "_jsx_string",
+    "slotName": "content",
+    "message": "Slot 'content' of kind '_jsx_string' collapses [unescaped_double_jsx_string_fragment, unescaped_single_jsx_string_fragment] onto parse kind 'string_fragment'.",
+    "proposal": "Slot 'content' of kind '_jsx_string' collapses distinct storage kinds [unescaped_double_jsx_string_fragment, unescaped_single_jsx_string_fragment] onto parse kind 'string_fragment'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "string_fragment",
+      "storageKinds": [
+        "unescaped_double_jsx_string_fragment",
+        "unescaped_single_jsx_string_fragment"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "error",
+    "grammar": "typescript",
+    "ownerKind": "augmented_assignment_expression",
+    "slotName": "left",
+    "message": "Slot 'left' of kind 'augmented_assignment_expression' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'.",
+    "proposal": "Slot 'left' of kind 'augmented_assignment_expression' collapses distinct storage kinds [_reserved_identifier, identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "_reserved_identifier",
+        "identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "error",
+    "grammar": "typescript",
+    "ownerKind": "string",
+    "slotName": "contents",
+    "message": "Slot 'contents' of kind 'string' collapses [unescaped_double_string_fragment, unescaped_single_string_fragment] onto parse kind 'string_fragment'.",
+    "proposal": "Slot 'contents' of kind 'string' collapses distinct storage kinds [unescaped_double_string_fragment, unescaped_single_string_fragment] onto parse kind 'string_fragment'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "string_fragment",
+      "storageKinds": [
+        "unescaped_double_string_fragment",
+        "unescaped_single_string_fragment"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "error",
+    "grammar": "typescript",
+    "ownerKind": "type_predicate",
+    "slotName": "name",
+    "message": "Slot 'name' of kind 'type_predicate' collapses [identifier, predefined_type] onto parse kind 'identifier'.",
+    "proposal": "Slot 'name' of kind 'type_predicate' collapses distinct storage kinds [identifier, predefined_type] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "identifier",
+        "predefined_type"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "typescript",
+    "ownerKind": "export_specifier",
+    "ruleId": "rule:export_specifier:root",
+    "message": "Kind 'export_specifier' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "typescript",
+    "ownerKind": "for_in_statement",
+    "ruleId": "rule:for_in_statement:root",
+    "message": "Kind 'for_in_statement' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_accessibility_modifier",
+    "message": "[assemble] typeName collision: kind '_accessibility_modifier' renamed 'AccessibilityModifier' → '_AccessibilityModifier' (visible sibling(s): 'accessibility_modifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "AccessibilityModifier",
+      "newType": "_AccessibilityModifier",
+      "visibleKinds": [
+        "accessibility_modifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_call_signature",
+    "message": "[assemble] typeName collision: kind '_call_signature' renamed 'CallSignature' → '_CallSignature' (visible sibling(s): 'call_signature')",
+    "canProceed": true,
+    "details": {
+      "typeName": "CallSignature",
+      "newType": "_CallSignature",
+      "visibleKinds": [
+        "call_signature"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_catch_clause_group1",
+    "message": "[assemble] typeName collision: kind '_catch_clause_group1' renamed 'CatchClauseGroup1' → '_CatchClauseGroup1' (visible sibling(s): 'catch_clause_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "CatchClauseGroup1",
+      "newType": "_CatchClauseGroup1",
+      "visibleKinds": [
+        "catch_clause_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_identifier",
+    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Identifier",
+      "newType": "_Identifier",
+      "visibleKinds": [
+        "identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_import_clause_group1",
+    "message": "[assemble] typeName collision: kind '_import_clause_group1' renamed 'ImportClauseGroup1' → '_ImportClauseGroup1' (visible sibling(s): 'import_clause_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "ImportClauseGroup1",
+      "newType": "_ImportClauseGroup1",
+      "visibleKinds": [
+        "import_clause_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_jsx_attribute",
+    "message": "[assemble] typeName collision: kind '_jsx_attribute' renamed 'JsxAttribute' → '_JsxAttribute' (visible sibling(s): 'jsx_attribute')",
+    "canProceed": true,
+    "details": {
+      "typeName": "JsxAttribute",
+      "newType": "_JsxAttribute",
+      "visibleKinds": [
+        "jsx_attribute"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_jsx_element",
+    "message": "[assemble] typeName collision: kind '_jsx_element' renamed 'JsxElement' → '_JsxElement' (visible sibling(s): 'jsx_element')",
+    "canProceed": true,
+    "details": {
+      "typeName": "JsxElement",
+      "newType": "_JsxElement",
+      "visibleKinds": [
+        "jsx_element"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_jsx_identifier",
+    "message": "[assemble] typeName collision: kind '_jsx_identifier' renamed 'JsxIdentifier' → '_JsxIdentifier' (visible sibling(s): 'jsx_identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "JsxIdentifier",
+      "newType": "_JsxIdentifier",
+      "visibleKinds": [
+        "jsx_identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_module",
+    "message": "[assemble] typeName collision: kind '_module' renamed 'Module' → '_Module' (visible sibling(s): 'module')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Module",
+      "newType": "_Module",
+      "visibleKinds": [
+        "module"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_number",
+    "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Number",
+      "newType": "_Number",
+      "visibleKinds": [
+        "number"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_override_modifier",
+    "message": "[assemble] typeName collision: kind '_override_modifier' renamed 'OverrideModifier' → '_OverrideModifier' (visible sibling(s): 'override_modifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "OverrideModifier",
+      "newType": "_OverrideModifier",
+      "visibleKinds": [
+        "override_modifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "content-collision",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "_object_type_optional1",
+    "message": "Kind '_object_type_optional1' has 3 anonymous 'content' slots that would share the '_content' storage key.",
+    "proposal": "Kind '_object_type_optional1' has 3 anonymous 'content' slots that would share the '_content' storage key (an unemittable ambiguity). field()-name at least one in overrides.ts.",
+    "canProceed": true,
+    "details": {
+      "slotCount": 3
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "content-collision",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "public_field_definition",
+    "message": "Kind 'public_field_definition' has 2 anonymous 'content' slots that would share the '_content' storage key.",
+    "proposal": "Kind 'public_field_definition' has 2 anonymous 'content' slots that would share the '_content' storage key (an unemittable ambiguity). field()-name at least one in overrides.ts.",
+    "canProceed": true,
+    "details": {
+      "slotCount": 2
+    }
+  }
+]

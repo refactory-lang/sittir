@@ -25,6 +25,7 @@ import {
 	collectGrammarDiagnosticsForGrammar,
 	GrammarDiagnosticError,
 	formatGrammarDiagnostics,
+	writeGrammarDiagnosticsJson,
 	fromSlotGrouping,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
@@ -192,6 +193,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 	if (nonBlocking.length > 0) {
 		process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
 	}
+	writeGrammarDiagnosticsJson(nonBlocking, resolve('packages', input.grammar, '.sittir', 'grammar-diagnostics.json'));
 
 	if (blocked.length === 0) return;
 
