@@ -6,14 +6,14 @@
  * there is no JS-engine fallback.
  */
 import {
-	createNativeEngine,
-	type SittirEngineLike,
-	type EngineOptions
-} from '@sittir/common/engine';
-import { KIND_NAMES } from './types.js';
-import { getActiveBackend } from './backend.js';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+  createNativeEngine,
+  type SittirEngineLike,
+  type EngineOptions,
+} from "@sittir/common/engine";
+import { KIND_NAMES } from "./types.js";
+import { getActiveBackend } from "./backend.js";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -29,16 +29,18 @@ export type { EngineOptions };
  * @returns An engine implementing SittirEngineLike.
  */
 export function createEngine(options?: EngineOptions): SittirEngineLike {
-	const result = createNativeEngine(
-		{
-			templatesPath: join(__dirname, '..', 'templates'),
-			kindNames: KIND_NAMES,
-			getActiveBackend,
-		},
-		options
-	);
-	if (!result.engine) {
-		throw new Error(`createEngine: native engine unavailable (no JS-engine fallback): ${result.reason}`);
-	}
-	return result.engine;
+  const result = createNativeEngine(
+    {
+      templatesPath: join(__dirname, "..", "templates"),
+      kindNames: KIND_NAMES,
+      getActiveBackend,
+    },
+    options,
+  );
+  if (!result.engine) {
+    throw new Error(
+      `createEngine: native engine unavailable (no JS-engine fallback): ${result.reason}`,
+    );
+  }
+  return result.engine;
 }

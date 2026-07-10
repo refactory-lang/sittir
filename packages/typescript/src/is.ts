@@ -2,442 +2,1046 @@
 // Per-grammar type guards: is / assert / isTree / isNode.
 // Composition: kind × shape = concrete type via NamespaceMap.
 
-import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
-import { TSKindId } from './types.js';
+import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from "@sittir/types";
+import { TSKindId } from "./types.js";
 import type {
-    NamespaceMap,
-    Declaration,
-    DestructuringPattern,
-    Expression,
-    Expressions,
-    FormalParameter,
-    ImportIdentifier,
-    JsxAttributeName,
-    JsxAttributeValue,
-    JsxChild,
-    JsxElementName,
-    ModuleExportName,
-    Pattern,
-    PrimaryExpression,
-    PrimaryType,
-    PropertyIdentifier,
-    PropertyName,
-    ShorthandPropertyIdentifier,
-    ShorthandPropertyIdentifierPattern,
-    Statement,
-    StatementIdentifier,
-    TupleTypeMember,
-    Type,
-    _Identifier,
-    _JsxAttribute,
-    _JsxElement,
-    _JsxIdentifier,
-} from './types.js';
+  NamespaceMap,
+  Declaration,
+  DestructuringPattern,
+  Expression,
+  Expressions,
+  FormalParameter,
+  ImportIdentifier,
+  JsxAttributeName,
+  JsxAttributeValue,
+  JsxChild,
+  JsxElementName,
+  ModuleExportName,
+  Pattern,
+  PrimaryExpression,
+  PrimaryType,
+  PropertyIdentifier,
+  PropertyName,
+  ShorthandPropertyIdentifier,
+  ShorthandPropertyIdentifierPattern,
+  Statement,
+  StatementIdentifier,
+  TupleTypeMember,
+  Type,
+  _Identifier,
+  _JsxAttribute,
+  _JsxElement,
+  _JsxIdentifier,
+} from "./types.js";
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
-    ArrowFunctionParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrowFunctionParameter };
-    ClassBodyMethodSig<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMethodSig };
-    ClassHeritageExtendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritageExtendsClause };
-    ExportStatementDefault<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefault };
-    ExportStatementDefaultFromArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
-    ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
-    ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
-    ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
-    ExportStatementEqualsExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementEqualsExport };
-    ExportStatementNamespaceExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementNamespaceExport };
-    ExportStatementTypeExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementTypeExport };
-    ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
-    ImportClauseDefaultImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseDefaultImport };
-    ImportClauseGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseGroup1 };
-    PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-    abstractClassDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
-    abstractMethodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractMethodSignature };
-    addingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AddingTypeAnnotation };
-    ambientDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AmbientDeclaration };
-    arguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Arguments };
-    array<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Array };
-    arrayPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayPattern };
-    arrayType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayType };
-    arrowFunction<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrowFunction };
-    asExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AsExpression };
-    asserts<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Asserts };
-    assertsAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AssertsAnnotation };
-    assignmentExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AssignmentExpression };
-    assignmentPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AssignmentPattern };
-    augmentedAssignmentExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AugmentedAssignmentExpression };
-    awaitExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AwaitExpression };
-    binaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BinaryExpression };
-    breakStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BreakStatement };
-    callExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CallExpression };
-    callSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CallSignature };
-    catchClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CatchClause };
-    class_<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Class };
-    classBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBody };
-    classDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassDeclaration };
-    classHeritage<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritage };
-    classStaticBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassStaticBlock };
-    computedPropertyName<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ComputedPropertyName };
-    conditionalType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConditionalType };
-    constraint<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Constraint };
-    constructSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstructSignature };
-    constructorType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstructorType };
-    continueStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ContinueStatement };
-    debuggerStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DebuggerStatement };
-    decorator<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Decorator };
-    decoratorCallExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DecoratorCallExpression };
-    decoratorMemberExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DecoratorMemberExpression };
-    decoratorParenthesizedExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DecoratorParenthesizedExpression };
-    defaultType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DefaultType };
-    doStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DoStatement };
-    elseClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ElseClause };
-    enumAssignment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumAssignment };
-    enumBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumBody };
-    enumDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumDeclaration };
-    exportClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportClause };
-    exportSpecifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportSpecifier };
-    exportStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatement };
-    expressionStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatement };
-    extendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExtendsClause };
-    extendsTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExtendsTypeClause };
-    finallyClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FinallyClause };
-    flowMaybeType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FlowMaybeType };
-    forInStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForInStatement };
-    forStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForStatement };
-    formalParameters<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FormalParameters };
-    functionDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionDeclaration };
-    functionExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionExpression };
-    functionSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionSignature };
-    functionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionType };
-    generatorFunction<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GeneratorFunction };
-    generatorFunctionDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GeneratorFunctionDeclaration };
-    genericType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenericType };
-    ifStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IfStatement };
-    implementsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImplementsClause };
-    importAlias<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportAlias };
-    importAttribute<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportAttribute };
-    importClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClause };
-    importRequireClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportRequireClause };
-    importSpecifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportSpecifier };
-    importStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportStatement };
-    indexSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IndexSignature };
-    indexTypeQuery<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IndexTypeQuery };
-    inferType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InferType };
-    instantiationExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InstantiationExpression };
-    interfaceDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InterfaceDeclaration };
-    internalModule<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.InternalModule };
-    intersectionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IntersectionType };
-    labeledStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LabeledStatement };
-    lexicalDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LexicalDeclaration };
-    literalType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LiteralType };
-    lookupType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LookupType };
-    mappedTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MappedTypeClause };
-    memberExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MemberExpression };
-    methodDefinition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MethodDefinition };
-    methodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MethodSignature };
-    module<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Module };
-    namedImports<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NamedImports };
-    namespaceExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NamespaceExport };
-    namespaceImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NamespaceImport };
-    nestedIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NestedIdentifier };
-    nestedTypeIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NestedTypeIdentifier };
-    newExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NewExpression };
-    nonNullExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NonNullExpression };
-    object<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Object };
-    objectAssignmentPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectAssignmentPattern };
-    objectPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectPattern };
-    objectType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectType };
-    objectTypeContent<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectTypeContent };
-    objectTypeContentComma<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectTypeContentComma };
-    objectTypeContentSemi<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectTypeContentSemi };
-    omittingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OmittingTypeAnnotation };
-    optingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptingTypeAnnotation };
-    optionalParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptionalParameter };
-    optionalTupleParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptionalTupleParameter };
-    optionalType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptionalType };
-    pair<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pair };
-    pairPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PairPattern };
-    parenthesizedExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParenthesizedExpression };
-    parenthesizedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParenthesizedType };
-    program<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Program };
-    propertySignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PropertySignature };
-    publicFieldDefinition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinition };
-    readonlyType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReadonlyType };
-    regex<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Regex };
-    requiredParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RequiredParameter };
-    restPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RestPattern };
-    restType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RestType };
-    returnStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReturnStatement };
-    satisfiesExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SatisfiesExpression };
-    sequenceExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SequenceExpression };
-    spreadElement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SpreadElement };
-    statementBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StatementBlock };
-    string<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.String };
-    subscriptExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SubscriptExpression };
-    switchBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SwitchBody };
-    switchCase<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SwitchCase };
-    switchDefault<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SwitchDefault };
-    switchStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SwitchStatement };
-    templateLiteralType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TemplateLiteralType };
-    templateString<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TemplateString };
-    templateSubstitution<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TemplateSubstitution };
-    templateType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TemplateType };
-    ternaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TernaryExpression };
-    throwStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ThrowStatement };
-    tryStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TryStatement };
-    tupleParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleParameter };
-    tupleType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleType };
-    typeAliasDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeAliasDeclaration };
-    typeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeAnnotation };
-    typeArguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArguments };
-    typeAssertion<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeAssertion };
-    typeParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeParameter };
-    typeParameters<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeParameters };
-    typePredicate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypePredicate };
-    typePredicateAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypePredicateAnnotation };
-    typeQuery<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeQuery };
-    unaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnaryExpression };
-    unionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnionType };
-    updateExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UpdateExpression };
-    variableDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VariableDeclaration };
-    variableDeclarator<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.VariableDeclarator };
-    whileStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WhileStatement };
-    withStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithStatement };
-    yieldExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldExpression };
-    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-    destructuringPattern(v: { readonly $type: string | number }): v is DestructuringPattern;
-    expressions(v: { readonly $type: string | number }): v is Expressions;
-    formalParameter(v: { readonly $type: string | number }): v is FormalParameter;
-    identifier(v: { readonly $type: string | number }): v is _Identifier;
-    importIdentifier(v: { readonly $type: string | number }): v is ImportIdentifier;
-    jsxAttribute(v: { readonly $type: string | number }): v is _JsxAttribute;
-    jsxAttributeName(v: { readonly $type: string | number }): v is JsxAttributeName;
-    jsxAttributeValue(v: { readonly $type: string | number }): v is JsxAttributeValue;
-    jsxChild(v: { readonly $type: string | number }): v is JsxChild;
-    jsxElement(v: { readonly $type: string | number }): v is _JsxElement;
-    jsxElementName(v: { readonly $type: string | number }): v is JsxElementName;
-    jsxIdentifier(v: { readonly $type: string | number }): v is _JsxIdentifier;
-    moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
-    propertyIdentifier(v: { readonly $type: string | number }): v is PropertyIdentifier;
-    propertyName(v: { readonly $type: string | number }): v is PropertyName;
-    shorthandPropertyIdentifier(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifier;
-    shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifierPattern;
-    statementIdentifier(v: { readonly $type: string | number }): v is StatementIdentifier;
-    tupleTypeMember(v: { readonly $type: string | number }): v is TupleTypeMember;
-    declaration(v: { readonly $type: string | number }): v is Declaration;
-    expression(v: { readonly $type: string | number }): v is Expression;
-    pattern(v: { readonly $type: string | number }): v is Pattern;
-    primaryExpression(v: { readonly $type: string | number }): v is PrimaryExpression;
-    primaryType(v: { readonly $type: string | number }): v is PrimaryType;
-    statement(v: { readonly $type: string | number }): v is Statement;
-    type(v: { readonly $type: string | number }): v is Type;
+  ArrowFunctionParameter<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ArrowFunctionParameter };
+  ClassBodyMethodSig<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ClassBodyMethodSig };
+  ClassHeritageExtendsClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ClassHeritageExtendsClause };
+  ExportStatementDefault<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportStatementDefault };
+  ExportStatementDefaultFromArm<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
+  ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
+  ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
+  ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
+  ExportStatementEqualsExport<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportStatementEqualsExport };
+  ExportStatementNamespaceExport<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportStatementNamespaceExport };
+  ExportStatementTypeExport<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportStatementTypeExport };
+  ForHeaderLhs<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ForHeaderLhs };
+  ImportClauseDefaultImport<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ImportClauseDefaultImport };
+  ImportClauseGroup1<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId._ImportClauseGroup1 };
+  PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+  abstractClassDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
+  abstractMethodSignature<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AbstractMethodSignature };
+  addingTypeAnnotation<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AddingTypeAnnotation };
+  ambientDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AmbientDeclaration };
+  arguments<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.Arguments };
+  array<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Array };
+  arrayPattern<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ArrayPattern };
+  arrayType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ArrayType };
+  arrowFunction<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ArrowFunction };
+  asExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AsExpression };
+  asserts<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.Asserts };
+  assertsAnnotation<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AssertsAnnotation };
+  assignmentExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AssignmentExpression };
+  assignmentPattern<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AssignmentPattern };
+  augmentedAssignmentExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AugmentedAssignmentExpression };
+  awaitExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.AwaitExpression };
+  binaryExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.BinaryExpression };
+  breakStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.BreakStatement };
+  callExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.CallExpression };
+  callSignature<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.CallSignature };
+  catchClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.CatchClause };
+  class_<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Class };
+  classBody<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ClassBody };
+  classDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ClassDeclaration };
+  classHeritage<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ClassHeritage };
+  classStaticBlock<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ClassStaticBlock };
+  computedPropertyName<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ComputedPropertyName };
+  conditionalType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ConditionalType };
+  constraint<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.Constraint };
+  constructSignature<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ConstructSignature };
+  constructorType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ConstructorType };
+  continueStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ContinueStatement };
+  debuggerStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.DebuggerStatement };
+  decorator<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.Decorator };
+  decoratorCallExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.DecoratorCallExpression };
+  decoratorMemberExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.DecoratorMemberExpression };
+  decoratorParenthesizedExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.DecoratorParenthesizedExpression };
+  defaultType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.DefaultType };
+  doStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.DoStatement };
+  elseClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ElseClause };
+  enumAssignment<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.EnumAssignment };
+  enumBody<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.EnumBody };
+  enumDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.EnumDeclaration };
+  exportClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportClause };
+  exportSpecifier<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportSpecifier };
+  exportStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExportStatement };
+  expressionStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExpressionStatement };
+  extendsClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExtendsClause };
+  extendsTypeClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ExtendsTypeClause };
+  finallyClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.FinallyClause };
+  flowMaybeType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.FlowMaybeType };
+  forInStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ForInStatement };
+  forStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ForStatement };
+  formalParameters<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.FormalParameters };
+  functionDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.FunctionDeclaration };
+  functionExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.FunctionExpression };
+  functionSignature<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.FunctionSignature };
+  functionType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.FunctionType };
+  generatorFunction<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.GeneratorFunction };
+  generatorFunctionDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.GeneratorFunctionDeclaration };
+  genericType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.GenericType };
+  ifStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.IfStatement };
+  implementsClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ImplementsClause };
+  importAlias<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ImportAlias };
+  importAttribute<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ImportAttribute };
+  importClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ImportClause };
+  importRequireClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ImportRequireClause };
+  importSpecifier<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ImportSpecifier };
+  importStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ImportStatement };
+  indexSignature<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.IndexSignature };
+  indexTypeQuery<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.IndexTypeQuery };
+  inferType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.InferType };
+  instantiationExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.InstantiationExpression };
+  interfaceDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.InterfaceDeclaration };
+  internalModule<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.InternalModule };
+  intersectionType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.IntersectionType };
+  labeledStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.LabeledStatement };
+  lexicalDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.LexicalDeclaration };
+  literalType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.LiteralType };
+  lookupType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.LookupType };
+  mappedTypeClause<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.MappedTypeClause };
+  memberExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.MemberExpression };
+  methodDefinition<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.MethodDefinition };
+  methodSignature<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.MethodSignature };
+  module<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Module };
+  namedImports<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.NamedImports };
+  namespaceExport<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.NamespaceExport };
+  namespaceImport<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.NamespaceImport };
+  nestedIdentifier<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.NestedIdentifier };
+  nestedTypeIdentifier<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.NestedTypeIdentifier };
+  newExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.NewExpression };
+  nonNullExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.NonNullExpression };
+  object<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Object };
+  objectAssignmentPattern<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ObjectAssignmentPattern };
+  objectPattern<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ObjectPattern };
+  objectType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ObjectType };
+  objectTypeContent<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ObjectTypeContent };
+  objectTypeContentComma<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ObjectTypeContentComma };
+  objectTypeContentSemi<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ObjectTypeContentSemi };
+  omittingTypeAnnotation<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.OmittingTypeAnnotation };
+  optingTypeAnnotation<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.OptingTypeAnnotation };
+  optionalParameter<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.OptionalParameter };
+  optionalTupleParameter<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.OptionalTupleParameter };
+  optionalType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.OptionalType };
+  pair<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Pair };
+  pairPattern<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.PairPattern };
+  parenthesizedExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ParenthesizedExpression };
+  parenthesizedType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ParenthesizedType };
+  program<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.Program };
+  propertySignature<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.PropertySignature };
+  publicFieldDefinition<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.PublicFieldDefinition };
+  readonlyType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ReadonlyType };
+  regex<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Regex };
+  requiredParameter<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.RequiredParameter };
+  restPattern<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.RestPattern };
+  restType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.RestType };
+  returnStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ReturnStatement };
+  satisfiesExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.SatisfiesExpression };
+  sequenceExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.SequenceExpression };
+  spreadElement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.SpreadElement };
+  statementBlock<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.StatementBlock };
+  string<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.String };
+  subscriptExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.SubscriptExpression };
+  switchBody<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.SwitchBody };
+  switchCase<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.SwitchCase };
+  switchDefault<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.SwitchDefault };
+  switchStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.SwitchStatement };
+  templateLiteralType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TemplateLiteralType };
+  templateString<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TemplateString };
+  templateSubstitution<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TemplateSubstitution };
+  templateType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TemplateType };
+  ternaryExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TernaryExpression };
+  throwStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.ThrowStatement };
+  tryStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TryStatement };
+  tupleParameter<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TupleParameter };
+  tupleType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TupleType };
+  typeAliasDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TypeAliasDeclaration };
+  typeAnnotation<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TypeAnnotation };
+  typeArguments<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TypeArguments };
+  typeAssertion<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TypeAssertion };
+  typeParameter<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TypeParameter };
+  typeParameters<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TypeParameters };
+  typePredicate<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TypePredicate };
+  typePredicateAnnotation<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TypePredicateAnnotation };
+  typeQuery<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.TypeQuery };
+  unaryExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.UnaryExpression };
+  unionType<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.UnionType };
+  updateExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.UpdateExpression };
+  variableDeclaration<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.VariableDeclaration };
+  variableDeclarator<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.VariableDeclarator };
+  whileStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.WhileStatement };
+  withStatement<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.WithStatement };
+  yieldExpression<T extends { readonly $type: number }>(
+    v: T,
+  ): v is T & { readonly $type: TSKindId.YieldExpression };
+  kind<K extends keyof NamespaceMap>(
+    v: { readonly $type: number },
+    kind: K,
+  ): v is { readonly $type: number };
+  destructuringPattern(v: { readonly $type: string | number }): v is DestructuringPattern;
+  expressions(v: { readonly $type: string | number }): v is Expressions;
+  formalParameter(v: { readonly $type: string | number }): v is FormalParameter;
+  identifier(v: { readonly $type: string | number }): v is _Identifier;
+  importIdentifier(v: { readonly $type: string | number }): v is ImportIdentifier;
+  jsxAttribute(v: { readonly $type: string | number }): v is _JsxAttribute;
+  jsxAttributeName(v: { readonly $type: string | number }): v is JsxAttributeName;
+  jsxAttributeValue(v: { readonly $type: string | number }): v is JsxAttributeValue;
+  jsxChild(v: { readonly $type: string | number }): v is JsxChild;
+  jsxElement(v: { readonly $type: string | number }): v is _JsxElement;
+  jsxElementName(v: { readonly $type: string | number }): v is JsxElementName;
+  jsxIdentifier(v: { readonly $type: string | number }): v is _JsxIdentifier;
+  moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
+  propertyIdentifier(v: { readonly $type: string | number }): v is PropertyIdentifier;
+  propertyName(v: { readonly $type: string | number }): v is PropertyName;
+  shorthandPropertyIdentifier(v: {
+    readonly $type: string | number;
+  }): v is ShorthandPropertyIdentifier;
+  shorthandPropertyIdentifierPattern(v: {
+    readonly $type: string | number;
+  }): v is ShorthandPropertyIdentifierPattern;
+  statementIdentifier(v: { readonly $type: string | number }): v is StatementIdentifier;
+  tupleTypeMember(v: { readonly $type: string | number }): v is TupleTypeMember;
+  declaration(v: { readonly $type: string | number }): v is Declaration;
+  expression(v: { readonly $type: string | number }): v is Expression;
+  pattern(v: { readonly $type: string | number }): v is Pattern;
+  primaryExpression(v: { readonly $type: string | number }): v is PrimaryExpression;
+  primaryType(v: { readonly $type: string | number }): v is PrimaryType;
+  statement(v: { readonly $type: string | number }): v is Statement;
+  type(v: { readonly $type: string | number }): v is Type;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
-    ArrowFunctionParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrowFunctionParameter };
-    ClassBodyMethodSig(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMethodSig };
-    ClassHeritageExtendsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassHeritageExtendsClause };
-    ExportStatementDefault(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefault };
-    ExportStatementDefaultFromArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
-    ExportStatementDefaultFromArmClauseFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
-    ExportStatementDefaultFromArmNsFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
-    ExportStatementDefaultFromArmStarFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
-    ExportStatementEqualsExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementEqualsExport };
-    ExportStatementNamespaceExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementNamespaceExport };
-    ExportStatementTypeExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementTypeExport };
-    ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
-    ImportClauseDefaultImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
-    ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseGroup1 };
-    PublicFieldDefinitionDeclareFirst(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-    abstractClassDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
-    abstractMethodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractMethodSignature };
-    addingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AddingTypeAnnotation };
-    ambientDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AmbientDeclaration };
-    arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
-    array(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Array };
-    arrayPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayPattern };
-    arrayType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayType };
-    arrowFunction(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrowFunction };
-    asExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AsExpression };
-    asserts(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Asserts };
-    assertsAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssertsAnnotation };
-    assignmentExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssignmentExpression };
-    assignmentPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssignmentPattern };
-    augmentedAssignmentExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AugmentedAssignmentExpression };
-    awaitExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AwaitExpression };
-    binaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BinaryExpression };
-    breakStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BreakStatement };
-    callExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CallExpression };
-    callSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CallSignature };
-    catchClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CatchClause };
-    class_(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Class };
-    classBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBody };
-    classDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassDeclaration };
-    classHeritage(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassHeritage };
-    classStaticBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassStaticBlock };
-    computedPropertyName(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ComputedPropertyName };
-    conditionalType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConditionalType };
-    constraint(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Constraint };
-    constructSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstructSignature };
-    constructorType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstructorType };
-    continueStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ContinueStatement };
-    debuggerStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DebuggerStatement };
-    decorator(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Decorator };
-    decoratorCallExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DecoratorCallExpression };
-    decoratorMemberExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DecoratorMemberExpression };
-    decoratorParenthesizedExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DecoratorParenthesizedExpression };
-    defaultType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DefaultType };
-    doStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DoStatement };
-    elseClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ElseClause };
-    enumAssignment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumAssignment };
-    enumBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumBody };
-    enumDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumDeclaration };
-    exportClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportClause };
-    exportSpecifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportSpecifier };
-    exportStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatement };
-    expressionStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionStatement };
-    extendsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExtendsClause };
-    extendsTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExtendsTypeClause };
-    finallyClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FinallyClause };
-    flowMaybeType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FlowMaybeType };
-    forInStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForInStatement };
-    forStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForStatement };
-    formalParameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FormalParameters };
-    functionDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionDeclaration };
-    functionExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionExpression };
-    functionSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionSignature };
-    functionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionType };
-    generatorFunction(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GeneratorFunction };
-    generatorFunctionDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GeneratorFunctionDeclaration };
-    genericType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenericType };
-    ifStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IfStatement };
-    implementsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImplementsClause };
-    importAlias(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportAlias };
-    importAttribute(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportAttribute };
-    importClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClause };
-    importRequireClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportRequireClause };
-    importSpecifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportSpecifier };
-    importStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatement };
-    indexSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IndexSignature };
-    indexTypeQuery(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IndexTypeQuery };
-    inferType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InferType };
-    instantiationExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InstantiationExpression };
-    interfaceDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InterfaceDeclaration };
-    internalModule(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InternalModule };
-    intersectionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IntersectionType };
-    labeledStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LabeledStatement };
-    lexicalDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LexicalDeclaration };
-    literalType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LiteralType };
-    lookupType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LookupType };
-    mappedTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MappedTypeClause };
-    memberExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MemberExpression };
-    methodDefinition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MethodDefinition };
-    methodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MethodSignature };
-    module(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Module };
-    namedImports(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamedImports };
-    namespaceExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamespaceExport };
-    namespaceImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamespaceImport };
-    nestedIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NestedIdentifier };
-    nestedTypeIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NestedTypeIdentifier };
-    newExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NewExpression };
-    nonNullExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NonNullExpression };
-    object(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Object };
-    objectAssignmentPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectAssignmentPattern };
-    objectPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectPattern };
-    objectType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectType };
-    objectTypeContent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
-    objectTypeContentComma(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContentComma };
-    objectTypeContentSemi(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContentSemi };
-    omittingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OmittingTypeAnnotation };
-    optingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptingTypeAnnotation };
-    optionalParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptionalParameter };
-    optionalTupleParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptionalTupleParameter };
-    optionalType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptionalType };
-    pair(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Pair };
-    pairPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PairPattern };
-    parenthesizedExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParenthesizedExpression };
-    parenthesizedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParenthesizedType };
-    program(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Program };
-    propertySignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PropertySignature };
-    publicFieldDefinition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinition };
-    readonlyType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReadonlyType };
-    regex(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Regex };
-    requiredParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RequiredParameter };
-    restPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RestPattern };
-    restType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RestType };
-    returnStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReturnStatement };
-    satisfiesExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SatisfiesExpression };
-    sequenceExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SequenceExpression };
-    spreadElement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SpreadElement };
-    statementBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StatementBlock };
-    string(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.String };
-    subscriptExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SubscriptExpression };
-    switchBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchBody };
-    switchCase(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchCase };
-    switchDefault(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchDefault };
-    switchStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchStatement };
-    templateLiteralType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TemplateLiteralType };
-    templateString(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TemplateString };
-    templateSubstitution(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TemplateSubstitution };
-    templateType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TemplateType };
-    ternaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TernaryExpression };
-    throwStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ThrowStatement };
-    tryStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TryStatement };
-    tupleParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleParameter };
-    tupleType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleType };
-    typeAliasDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeAliasDeclaration };
-    typeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeAnnotation };
-    typeArguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArguments };
-    typeAssertion(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeAssertion };
-    typeParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeParameter };
-    typeParameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeParameters };
-    typePredicate(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypePredicate };
-    typePredicateAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypePredicateAnnotation };
-    typeQuery(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeQuery };
-    unaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnaryExpression };
-    unionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnionType };
-    updateExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UpdateExpression };
-    variableDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VariableDeclaration };
-    variableDeclarator(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VariableDeclarator };
-    whileStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WhileStatement };
-    withStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithStatement };
-    yieldExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldExpression };
-    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
-    destructuringPattern(v: { readonly $type: string | number }): asserts v is DestructuringPattern;
-    expressions(v: { readonly $type: string | number }): asserts v is Expressions;
-    formalParameter(v: { readonly $type: string | number }): asserts v is FormalParameter;
-    identifier(v: { readonly $type: string | number }): asserts v is _Identifier;
-    importIdentifier(v: { readonly $type: string | number }): asserts v is ImportIdentifier;
-    jsxAttribute(v: { readonly $type: string | number }): asserts v is _JsxAttribute;
-    jsxAttributeName(v: { readonly $type: string | number }): asserts v is JsxAttributeName;
-    jsxAttributeValue(v: { readonly $type: string | number }): asserts v is JsxAttributeValue;
-    jsxChild(v: { readonly $type: string | number }): asserts v is JsxChild;
-    jsxElement(v: { readonly $type: string | number }): asserts v is _JsxElement;
-    jsxElementName(v: { readonly $type: string | number }): asserts v is JsxElementName;
-    jsxIdentifier(v: { readonly $type: string | number }): asserts v is _JsxIdentifier;
-    moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
-    propertyIdentifier(v: { readonly $type: string | number }): asserts v is PropertyIdentifier;
-    propertyName(v: { readonly $type: string | number }): asserts v is PropertyName;
-    shorthandPropertyIdentifier(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifier;
-    shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifierPattern;
-    statementIdentifier(v: { readonly $type: string | number }): asserts v is StatementIdentifier;
-    tupleTypeMember(v: { readonly $type: string | number }): asserts v is TupleTypeMember;
-    declaration(v: { readonly $type: string | number }): asserts v is Declaration;
-    expression(v: { readonly $type: string | number }): asserts v is Expression;
-    pattern(v: { readonly $type: string | number }): asserts v is Pattern;
-    primaryExpression(v: { readonly $type: string | number }): asserts v is PrimaryExpression;
-    primaryType(v: { readonly $type: string | number }): asserts v is PrimaryType;
-    statement(v: { readonly $type: string | number }): asserts v is Statement;
-    type(v: { readonly $type: string | number }): asserts v is Type;
+  ArrowFunctionParameter(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ArrowFunctionParameter };
+  ClassBodyMethodSig(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ClassBodyMethodSig };
+  ClassHeritageExtendsClause(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ClassHeritageExtendsClause };
+  ExportStatementDefault(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportStatementDefault };
+  ExportStatementDefaultFromArm(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
+  ExportStatementDefaultFromArmClauseFrom(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
+  ExportStatementDefaultFromArmNsFrom(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
+  ExportStatementDefaultFromArmStarFrom(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
+  ExportStatementEqualsExport(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportStatementEqualsExport };
+  ExportStatementNamespaceExport(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportStatementNamespaceExport };
+  ExportStatementTypeExport(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportStatementTypeExport };
+  ForHeaderLhs(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
+  ImportClauseDefaultImport(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
+  ImportClauseGroup1(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId._ImportClauseGroup1 };
+  PublicFieldDefinitionDeclareFirst(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+  abstractClassDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
+  abstractMethodSignature(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AbstractMethodSignature };
+  addingTypeAnnotation(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AddingTypeAnnotation };
+  ambientDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AmbientDeclaration };
+  arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
+  array(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Array };
+  arrayPattern(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ArrayPattern };
+  arrayType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayType };
+  arrowFunction(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ArrowFunction };
+  asExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AsExpression };
+  asserts(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Asserts };
+  assertsAnnotation(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AssertsAnnotation };
+  assignmentExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AssignmentExpression };
+  assignmentPattern(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AssignmentPattern };
+  augmentedAssignmentExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AugmentedAssignmentExpression };
+  awaitExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.AwaitExpression };
+  binaryExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.BinaryExpression };
+  breakStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.BreakStatement };
+  callExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.CallExpression };
+  callSignature(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.CallSignature };
+  catchClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CatchClause };
+  class_(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Class };
+  classBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBody };
+  classDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ClassDeclaration };
+  classHeritage(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ClassHeritage };
+  classStaticBlock(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ClassStaticBlock };
+  computedPropertyName(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ComputedPropertyName };
+  conditionalType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ConditionalType };
+  constraint(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Constraint };
+  constructSignature(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ConstructSignature };
+  constructorType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ConstructorType };
+  continueStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ContinueStatement };
+  debuggerStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.DebuggerStatement };
+  decorator(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Decorator };
+  decoratorCallExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.DecoratorCallExpression };
+  decoratorMemberExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.DecoratorMemberExpression };
+  decoratorParenthesizedExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.DecoratorParenthesizedExpression };
+  defaultType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DefaultType };
+  doStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DoStatement };
+  elseClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ElseClause };
+  enumAssignment(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.EnumAssignment };
+  enumBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumBody };
+  enumDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.EnumDeclaration };
+  exportClause(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportClause };
+  exportSpecifier(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportSpecifier };
+  exportStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExportStatement };
+  expressionStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExpressionStatement };
+  extendsClause(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExtendsClause };
+  extendsTypeClause(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ExtendsTypeClause };
+  finallyClause(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.FinallyClause };
+  flowMaybeType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.FlowMaybeType };
+  forInStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ForInStatement };
+  forStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ForStatement };
+  formalParameters(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.FormalParameters };
+  functionDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.FunctionDeclaration };
+  functionExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.FunctionExpression };
+  functionSignature(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.FunctionSignature };
+  functionType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.FunctionType };
+  generatorFunction(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.GeneratorFunction };
+  generatorFunctionDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.GeneratorFunctionDeclaration };
+  genericType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenericType };
+  ifStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IfStatement };
+  implementsClause(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ImplementsClause };
+  importAlias(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportAlias };
+  importAttribute(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ImportAttribute };
+  importClause(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ImportClause };
+  importRequireClause(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ImportRequireClause };
+  importSpecifier(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ImportSpecifier };
+  importStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ImportStatement };
+  indexSignature(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.IndexSignature };
+  indexTypeQuery(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.IndexTypeQuery };
+  inferType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InferType };
+  instantiationExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.InstantiationExpression };
+  interfaceDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.InterfaceDeclaration };
+  internalModule(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.InternalModule };
+  intersectionType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.IntersectionType };
+  labeledStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.LabeledStatement };
+  lexicalDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.LexicalDeclaration };
+  literalType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LiteralType };
+  lookupType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LookupType };
+  mappedTypeClause(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.MappedTypeClause };
+  memberExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.MemberExpression };
+  methodDefinition(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.MethodDefinition };
+  methodSignature(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.MethodSignature };
+  module(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Module };
+  namedImports(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.NamedImports };
+  namespaceExport(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.NamespaceExport };
+  namespaceImport(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.NamespaceImport };
+  nestedIdentifier(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.NestedIdentifier };
+  nestedTypeIdentifier(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.NestedTypeIdentifier };
+  newExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.NewExpression };
+  nonNullExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.NonNullExpression };
+  object(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Object };
+  objectAssignmentPattern(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ObjectAssignmentPattern };
+  objectPattern(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ObjectPattern };
+  objectType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectType };
+  objectTypeContent(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
+  objectTypeContentComma(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ObjectTypeContentComma };
+  objectTypeContentSemi(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ObjectTypeContentSemi };
+  omittingTypeAnnotation(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.OmittingTypeAnnotation };
+  optingTypeAnnotation(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.OptingTypeAnnotation };
+  optionalParameter(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.OptionalParameter };
+  optionalTupleParameter(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.OptionalTupleParameter };
+  optionalType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.OptionalType };
+  pair(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Pair };
+  pairPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PairPattern };
+  parenthesizedExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ParenthesizedExpression };
+  parenthesizedType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ParenthesizedType };
+  program(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Program };
+  propertySignature(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.PropertySignature };
+  publicFieldDefinition(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.PublicFieldDefinition };
+  readonlyType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ReadonlyType };
+  regex(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Regex };
+  requiredParameter(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.RequiredParameter };
+  restPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RestPattern };
+  restType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RestType };
+  returnStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ReturnStatement };
+  satisfiesExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.SatisfiesExpression };
+  sequenceExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.SequenceExpression };
+  spreadElement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.SpreadElement };
+  statementBlock(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.StatementBlock };
+  string(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.String };
+  subscriptExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.SubscriptExpression };
+  switchBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchBody };
+  switchCase(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SwitchCase };
+  switchDefault(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.SwitchDefault };
+  switchStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.SwitchStatement };
+  templateLiteralType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TemplateLiteralType };
+  templateString(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TemplateString };
+  templateSubstitution(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TemplateSubstitution };
+  templateType(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TemplateType };
+  ternaryExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TernaryExpression };
+  throwStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.ThrowStatement };
+  tryStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TryStatement };
+  tupleParameter(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TupleParameter };
+  tupleType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleType };
+  typeAliasDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TypeAliasDeclaration };
+  typeAnnotation(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TypeAnnotation };
+  typeArguments(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TypeArguments };
+  typeAssertion(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TypeAssertion };
+  typeParameter(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TypeParameter };
+  typeParameters(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TypeParameters };
+  typePredicate(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TypePredicate };
+  typePredicateAnnotation(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.TypePredicateAnnotation };
+  typeQuery(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeQuery };
+  unaryExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.UnaryExpression };
+  unionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnionType };
+  updateExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.UpdateExpression };
+  variableDeclaration(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.VariableDeclaration };
+  variableDeclarator(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.VariableDeclarator };
+  whileStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.WhileStatement };
+  withStatement(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.WithStatement };
+  yieldExpression(v: {
+    readonly $type: number;
+  }): asserts v is { readonly $type: TSKindId.YieldExpression };
+  kind<K extends keyof NamespaceMap>(
+    v: { readonly $type: number },
+    kind: K,
+  ): asserts v is { readonly $type: number };
+  destructuringPattern(v: { readonly $type: string | number }): asserts v is DestructuringPattern;
+  expressions(v: { readonly $type: string | number }): asserts v is Expressions;
+  formalParameter(v: { readonly $type: string | number }): asserts v is FormalParameter;
+  identifier(v: { readonly $type: string | number }): asserts v is _Identifier;
+  importIdentifier(v: { readonly $type: string | number }): asserts v is ImportIdentifier;
+  jsxAttribute(v: { readonly $type: string | number }): asserts v is _JsxAttribute;
+  jsxAttributeName(v: { readonly $type: string | number }): asserts v is JsxAttributeName;
+  jsxAttributeValue(v: { readonly $type: string | number }): asserts v is JsxAttributeValue;
+  jsxChild(v: { readonly $type: string | number }): asserts v is JsxChild;
+  jsxElement(v: { readonly $type: string | number }): asserts v is _JsxElement;
+  jsxElementName(v: { readonly $type: string | number }): asserts v is JsxElementName;
+  jsxIdentifier(v: { readonly $type: string | number }): asserts v is _JsxIdentifier;
+  moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
+  propertyIdentifier(v: { readonly $type: string | number }): asserts v is PropertyIdentifier;
+  propertyName(v: { readonly $type: string | number }): asserts v is PropertyName;
+  shorthandPropertyIdentifier(v: {
+    readonly $type: string | number;
+  }): asserts v is ShorthandPropertyIdentifier;
+  shorthandPropertyIdentifierPattern(v: {
+    readonly $type: string | number;
+  }): asserts v is ShorthandPropertyIdentifierPattern;
+  statementIdentifier(v: { readonly $type: string | number }): asserts v is StatementIdentifier;
+  tupleTypeMember(v: { readonly $type: string | number }): asserts v is TupleTypeMember;
+  declaration(v: { readonly $type: string | number }): asserts v is Declaration;
+  expression(v: { readonly $type: string | number }): asserts v is Expression;
+  pattern(v: { readonly $type: string | number }): asserts v is Pattern;
+  primaryExpression(v: { readonly $type: string | number }): asserts v is PrimaryExpression;
+  primaryType(v: { readonly $type: string | number }): asserts v is PrimaryType;
+  statement(v: { readonly $type: string | number }): asserts v is Statement;
+  type(v: { readonly $type: string | number }): asserts v is Type;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
 function _g(id: number): (v: { readonly $type: number }) => boolean {
-    return (v) => v.$type === id;
+  return (v) => v.$type === id;
 }
 function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {
-    return (v) => ids.has(v.$type);
+  return (v) => ids.has(v.$type);
 }
 
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
@@ -456,715 +1060,831 @@ const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1]);
 const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1]);
 const _supertype_statementIdentifier_ids = new Set<number>([1]);
 const _supertype_tupleTypeMember_ids = new Set<number>([308, 309, 310, 311]);
-const _supertype_declaration_ids = new Set<number>([224, 226, 221, 184, 183, 271, 282, 283, 284, 293, 290, 288, 286, 281]);
-const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
+const _supertype_declaration_ids = new Set<number>([
+  224, 226, 221, 184, 183, 271, 282, 283, 284, 293, 290, 288, 286, 281,
+]);
+const _supertype_expression_ids = new Set<number>([
+  274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212,
+]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
-const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 424, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
-const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
+const _supertype_primaryExpression_ids = new Set<number>([
+  235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220,
+  251, 231, 268,
+]);
+const _supertype_primaryType_ids = new Set<number>([
+  334, 335, 424, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349,
+]);
+const _supertype_statement_ids = new Set<number>([
+  167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203,
+]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
 const _kindIdByKind = new Map<string, number>([
-    ["identifier", TSKindId.Identifier],
-    ["hash_bang_line", TSKindId.HashBangLine],
-    ["as", TSKindId.As],
-    ["typeof", TSKindId.Typeof],
-    ["from", TSKindId.From],
-    ["with", TSKindId.With],
-    ["var", TSKindId.Var],
-    ["const", TSKindId.Const],
-    ["else", TSKindId.Else],
-    ["if", TSKindId.If],
-    ["switch", TSKindId.Switch],
-    ["for", TSKindId.For],
-    ["await", TSKindId.Await],
-    ["in", TSKindId.In],
-    ["while", TSKindId.While],
-    ["do", TSKindId.Do],
-    ["try", TSKindId.Try],
-    ["break", TSKindId.Break],
-    ["continue", TSKindId.Continue],
-    ["debugger", TSKindId.Debugger],
-    ["return", TSKindId.Return],
-    ["throw", TSKindId.Throw],
-    ["case", TSKindId.Case],
-    ["default", TSKindId.Default],
-    ["catch", TSKindId.Catch],
-    ["finally", TSKindId.Finally],
-    ["yield", TSKindId.Yield],
-    ["function", TSKindId.Function],
-    ["async", TSKindId.Async],
-    ["new", TSKindId.New],
-    ["instanceof", TSKindId.Instanceof],
-    ["unescaped_double_string_fragment", TSKindId.UnescapedDoubleStringFragment],
-    ["unescaped_single_string_fragment", TSKindId.UnescapedSingleStringFragment],
-    ["escape_sequence", TSKindId.EscapeSequence],
-    ["comment", TSKindId.Comment],
-    ["regex_pattern", TSKindId.RegexPattern],
-    ["regex_flags", TSKindId.RegexFlags],
-    ["number", TSKindId.Number],
-    ["private_property_identifier", TSKindId.PrivatePropertyIdentifier],
-    ["this", TSKindId.This],
-    ["super", TSKindId.Super],
-    ["true", TSKindId.True],
-    ["false", TSKindId.False],
-    ["null", TSKindId.Null],
-    ["undefined", TSKindId.Undefined],
-    ["static", TSKindId.Static],
-    ["declare", TSKindId.Declare],
-    ["namespace", TSKindId.Namespace],
-    ["override", TSKindId.Override],
-    ["readonly", TSKindId.Readonly],
-    ["export", TSKindId.Export],
-    ["abstract", TSKindId.Abstract],
-    ["satisfies", TSKindId.Satisfies],
-    ["require", TSKindId.Require],
-    ["extends", TSKindId.Extends],
-    ["implements", TSKindId.Implements],
-    ["interface", TSKindId.Interface],
-    ["enum", TSKindId.Enum],
-    ["infer", TSKindId.Infer],
-    ["is", TSKindId.Is],
-    ["keyof", TSKindId.Keyof],
-    ["global", TSKindId.Global],
-    ["accessor", TSKindId.Accessor],
-    ["using", TSKindId.Using],
-    ["_template_chars", TSKindId.TemplateChars],
-    ["_ternary_qmark", TSKindId.TernaryQmark],
-    ["html_comment", TSKindId.HtmlComment],
-    ["jsx_text", TSKindId.JsxText],
-    ["__error_recovery", TSKindId.ErrorRecovery],
-    ["program", TSKindId.Program],
-    ["export_statement", TSKindId.ExportStatement],
-    ["namespace_export", TSKindId.NamespaceExport],
-    ["export_clause", TSKindId.ExportClause],
-    ["export_specifier", TSKindId.ExportSpecifier],
-    ["import", TSKindId.Import],
-    ["import_statement", TSKindId.ImportStatement],
-    ["import_clause", TSKindId.ImportClause],
-    ["_from_clause", TSKindId.FromClause],
-    ["namespace_import", TSKindId.NamespaceImport],
-    ["named_imports", TSKindId.NamedImports],
-    ["import_specifier", TSKindId.ImportSpecifier],
-    ["import_attribute", TSKindId.ImportAttribute],
-    ["expression_statement", TSKindId.ExpressionStatement],
-    ["variable_declaration", TSKindId.VariableDeclaration],
-    ["lexical_declaration", TSKindId.LexicalDeclaration],
-    ["variable_declarator", TSKindId.VariableDeclarator],
-    ["statement_block", TSKindId.StatementBlock],
-    ["else_clause", TSKindId.ElseClause],
-    ["if_statement", TSKindId.IfStatement],
-    ["switch_statement", TSKindId.SwitchStatement],
-    ["for_statement", TSKindId.ForStatement],
-    ["for_in_statement", TSKindId.ForInStatement],
-    ["_for_header", TSKindId.ForHeader],
-    ["while_statement", TSKindId.WhileStatement],
-    ["do_statement", TSKindId.DoStatement],
-    ["try_statement", TSKindId.TryStatement],
-    ["with_statement", TSKindId.WithStatement],
-    ["break_statement", TSKindId.BreakStatement],
-    ["continue_statement", TSKindId.ContinueStatement],
-    ["debugger_statement", TSKindId.DebuggerStatement],
-    ["return_statement", TSKindId.ReturnStatement],
-    ["throw_statement", TSKindId.ThrowStatement],
-    ["labeled_statement", TSKindId.LabeledStatement],
-    ["switch_body", TSKindId.SwitchBody],
-    ["switch_case", TSKindId.SwitchCase],
-    ["switch_default", TSKindId.SwitchDefault],
-    ["catch_clause", TSKindId.CatchClause],
-    ["finally_clause", TSKindId.FinallyClause],
-    ["parenthesized_expression", TSKindId.ParenthesizedExpression],
-    ["yield_expression", TSKindId.YieldExpression],
-    ["object", TSKindId.Object],
-    ["object_pattern", TSKindId.ObjectPattern],
-    ["assignment_pattern", TSKindId.AssignmentPattern],
-    ["object_assignment_pattern", TSKindId.ObjectAssignmentPattern],
-    ["array", TSKindId.Array],
-    ["array_pattern", TSKindId.ArrayPattern],
-    ["nested_identifier", TSKindId.NestedIdentifier],
-    ["class", TSKindId.Class],
-    ["class_declaration", TSKindId.ClassDeclaration],
-    ["class_heritage", TSKindId.ClassHeritage],
-    ["function_expression", TSKindId.FunctionExpression],
-    ["function_declaration", TSKindId.FunctionDeclaration],
-    ["generator_function", TSKindId.GeneratorFunction],
-    ["generator_function_declaration", TSKindId.GeneratorFunctionDeclaration],
-    ["arrow_function", TSKindId.ArrowFunction],
-    ["_call_signature", TSKindId._CallSignature],
-    ["call_expression", TSKindId.CallExpression],
-    ["new_expression", TSKindId.NewExpression],
-    ["await_expression", TSKindId.AwaitExpression],
-    ["member_expression", TSKindId.MemberExpression],
-    ["subscript_expression", TSKindId.SubscriptExpression],
-    ["assignment_expression", TSKindId.AssignmentExpression],
-    ["augmented_assignment_expression", TSKindId.AugmentedAssignmentExpression],
-    ["_initializer", TSKindId.Initializer],
-    ["spread_element", TSKindId.SpreadElement],
-    ["ternary_expression", TSKindId.TernaryExpression],
-    ["binary_expression", TSKindId.BinaryExpression],
-    ["unary_expression", TSKindId.UnaryExpression],
-    ["update_expression", TSKindId.UpdateExpression],
-    ["sequence_expression", TSKindId.SequenceExpression],
-    ["string", TSKindId.String],
-    ["template_string", TSKindId.TemplateString],
-    ["template_substitution", TSKindId.TemplateSubstitution],
-    ["regex", TSKindId.Regex],
-    ["meta_property", TSKindId.MetaProperty],
-    ["arguments", TSKindId.Arguments],
-    ["decorator", TSKindId.Decorator],
-    ["decorator_member_expression", TSKindId.DecoratorMemberExpression],
-    ["decorator_call_expression", TSKindId.DecoratorCallExpression],
-    ["class_body", TSKindId.ClassBody],
-    ["formal_parameters", TSKindId.FormalParameters],
-    ["class_static_block", TSKindId.ClassStaticBlock],
-    ["rest_pattern", TSKindId.RestPattern],
-    ["method_definition", TSKindId.MethodDefinition],
-    ["pair", TSKindId.Pair],
-    ["pair_pattern", TSKindId.PairPattern],
-    ["computed_property_name", TSKindId.ComputedPropertyName],
-    ["public_field_definition", TSKindId.PublicFieldDefinition],
-    ["non_null_expression", TSKindId.NonNullExpression],
-    ["method_signature", TSKindId.MethodSignature],
-    ["abstract_method_signature", TSKindId.AbstractMethodSignature],
-    ["function_signature", TSKindId.FunctionSignature],
-    ["decorator_parenthesized_expression", TSKindId.DecoratorParenthesizedExpression],
-    ["type_assertion", TSKindId.TypeAssertion],
-    ["as_expression", TSKindId.AsExpression],
-    ["satisfies_expression", TSKindId.SatisfiesExpression],
-    ["instantiation_expression", TSKindId.InstantiationExpression],
-    ["import_require_clause", TSKindId.ImportRequireClause],
-    ["extends_clause", TSKindId.ExtendsClause],
-    ["_extends_clause_single", TSKindId.ExtendsClauseSingle],
-    ["implements_clause", TSKindId.ImplementsClause],
-    ["ambient_declaration", TSKindId.AmbientDeclaration],
-    ["abstract_class_declaration", TSKindId.AbstractClassDeclaration],
-    ["module", TSKindId.Module],
-    ["internal_module", TSKindId.InternalModule],
-    ["_module", TSKindId._Module],
-    ["import_alias", TSKindId.ImportAlias],
-    ["nested_type_identifier", TSKindId.NestedTypeIdentifier],
-    ["interface_declaration", TSKindId.InterfaceDeclaration],
-    ["extends_type_clause", TSKindId.ExtendsTypeClause],
-    ["enum_declaration", TSKindId.EnumDeclaration],
-    ["enum_body", TSKindId.EnumBody],
-    ["enum_assignment", TSKindId.EnumAssignment],
-    ["type_alias_declaration", TSKindId.TypeAliasDeclaration],
-    ["accessibility_modifier", TSKindId.AccessibilityModifier],
-    ["override_modifier", TSKindId.OverrideModifier],
-    ["required_parameter", TSKindId.RequiredParameter],
-    ["optional_parameter", TSKindId.OptionalParameter],
-    ["_parameter_name", TSKindId.ParameterName],
-    ["omitting_type_annotation", TSKindId.OmittingTypeAnnotation],
-    ["adding_type_annotation", TSKindId.AddingTypeAnnotation],
-    ["opting_type_annotation", TSKindId.OptingTypeAnnotation],
-    ["type_annotation", TSKindId.TypeAnnotation],
-    ["_type_query_member_expression_in_type_annotation", TSKindId.TypeQueryMemberExpressionInTypeAnnotation],
-    ["_type_query_call_expression_in_type_annotation", TSKindId.TypeQueryCallExpressionInTypeAnnotation],
-    ["asserts", TSKindId.Asserts],
-    ["asserts_annotation", TSKindId.AssertsAnnotation],
-    ["tuple_parameter", TSKindId.TupleParameter],
-    ["optional_tuple_parameter", TSKindId.OptionalTupleParameter],
-    ["optional_type", TSKindId.OptionalType],
-    ["rest_type", TSKindId.RestType],
-    ["constructor_type", TSKindId.ConstructorType],
-    ["template_type", TSKindId.TemplateType],
-    ["template_literal_type", TSKindId.TemplateLiteralType],
-    ["infer_type", TSKindId.InferType],
-    ["conditional_type", TSKindId.ConditionalType],
-    ["generic_type", TSKindId.GenericType],
-    ["type_predicate", TSKindId.TypePredicate],
-    ["type_predicate_annotation", TSKindId.TypePredicateAnnotation],
-    ["_type_query_member_expression", TSKindId.TypeQueryMemberExpression],
-    ["_type_query_subscript_expression", TSKindId.TypeQuerySubscriptExpression],
-    ["_type_query_call_expression", TSKindId.TypeQueryCallExpression],
-    ["_type_query_instantiation_expression", TSKindId.TypeQueryInstantiationExpression],
-    ["type_query", TSKindId.TypeQuery],
-    ["index_type_query", TSKindId.IndexTypeQuery],
-    ["lookup_type", TSKindId.LookupType],
-    ["mapped_type_clause", TSKindId.MappedTypeClause],
-    ["literal_type", TSKindId.LiteralType],
-    ["_number", TSKindId._Number],
-    ["flow_maybe_type", TSKindId.FlowMaybeType],
-    ["parenthesized_type", TSKindId.ParenthesizedType],
-    ["predefined_type", TSKindId.PredefinedType],
-    ["type_arguments", TSKindId.TypeArguments],
-    ["object_type", TSKindId.ObjectType],
-    ["call_signature", TSKindId.CallSignature],
-    ["property_signature", TSKindId.PropertySignature],
-    ["type_parameters", TSKindId.TypeParameters],
-    ["type_parameter", TSKindId.TypeParameter],
-    ["default_type", TSKindId.DefaultType],
-    ["constraint", TSKindId.Constraint],
-    ["construct_signature", TSKindId.ConstructSignature],
-    ["index_signature", TSKindId.IndexSignature],
-    ["array_type", TSKindId.ArrayType],
-    ["tuple_type", TSKindId.TupleType],
-    ["readonly_type", TSKindId.ReadonlyType],
-    ["union_type", TSKindId.UnionType],
-    ["intersection_type", TSKindId.IntersectionType],
-    ["function_type", TSKindId.FunctionType],
-    ["_import_clause_group1", TSKindId._ImportClauseGroup1],
-    ["_catch_clause_group1", TSKindId._CatchClauseGroup1],
-    ["_ambient_declaration_global", TSKindId.AmbientDeclarationGlobal],
-    ["_ambient_declaration_module", TSKindId.AmbientDeclarationModule],
-    ["object_type_content", TSKindId.ObjectTypeContent],
-    ["object_type_content_comma", TSKindId.ObjectTypeContentComma],
-    ["object_type_content_semi", TSKindId.ObjectTypeContentSemi],
-    ["_export_statement_default", TSKindId.ExportStatementDefault],
-    ["_export_statement_default_from_arm", TSKindId.ExportStatementDefaultFromArm],
-    ["_export_statement_default_decl_arm", TSKindId.ExportStatementDefaultDeclArm],
-    ["_export_statement_default_decl_arm_default_kw", TSKindId.ExportStatementDefaultDeclArmDefaultKw],
-    ["_arrow_function_parameter", TSKindId.ArrowFunctionParameter],
-    ["_class_heritage_extends_clause", TSKindId.ClassHeritageExtendsClause],
-    ["_import_clause_default_import", TSKindId.ImportClauseDefaultImport],
-    ["_import_specifier_as", TSKindId.ImportSpecifierAs],
-    ["_index_signature_colon", TSKindId.IndexSignatureColon],
-    ["_export_statement_default_from_arm_star_from", TSKindId.ExportStatementDefaultFromArmStarFrom],
-    ["_export_statement_default_from_arm_ns_from", TSKindId.ExportStatementDefaultFromArmNsFrom],
-    ["_export_statement_default_from_arm_clause_from", TSKindId.ExportStatementDefaultFromArmClauseFrom],
-    ["_export_statement_default_decl_arm_default_kw_value", TSKindId.ExportStatementDefaultDeclArmDefaultKwValue],
-    ["_class_body_method", TSKindId.ClassBodyMethod],
-    ["_class_body_method_sig", TSKindId.ClassBodyMethodSig],
-    ["_class_body_member", TSKindId.ClassBodyMember],
-    ["_for_header_lhs", TSKindId.ForHeaderLhs],
-    ["_for_header_var_kind", TSKindId.ForHeaderVarKind],
-    ["_for_header_let_const_kind", TSKindId.ForHeaderLetConstKind],
-    ["_parenthesized_expression_typed", TSKindId.ParenthesizedExpressionTyped],
-    ["_export_statement_type_export", TSKindId.ExportStatementTypeExport],
-    ["_export_statement_equals_export", TSKindId.ExportStatementEqualsExport],
-    ["_export_statement_namespace_export", TSKindId.ExportStatementNamespaceExport],
-    ["_call_expression_call", TSKindId.CallExpressionCall],
-    ["_call_expression_template_call", TSKindId.CallExpressionTemplateCall],
-    ["_call_expression_member", TSKindId.CallExpressionMember],
-    ["_update_expression_postfix", TSKindId.UpdateExpressionPostfix],
-    ["_update_expression_prefix", TSKindId.UpdateExpressionPrefix],
-    ["_public_field_definition_abstract_first", TSKindId.PublicFieldDefinitionAbstractFirst],
-    ["_public_field_definition_access_first", TSKindId.PublicFieldDefinitionAccessFirst],
-    ["_public_field_definition_declare_first", TSKindId.PublicFieldDefinitionDeclareFirst],
-    ["_public_field_definition_readonly_first", TSKindId.PublicFieldDefinitionReadonlyFirst],
-    ["_public_field_definition_static_mods", TSKindId.PublicFieldDefinitionStaticMods],
-    ["_type_identifier", TSKindId.TypeIdentifier],
+  ["identifier", TSKindId.Identifier],
+  ["hash_bang_line", TSKindId.HashBangLine],
+  ["as", TSKindId.As],
+  ["typeof", TSKindId.Typeof],
+  ["from", TSKindId.From],
+  ["with", TSKindId.With],
+  ["var", TSKindId.Var],
+  ["const", TSKindId.Const],
+  ["else", TSKindId.Else],
+  ["if", TSKindId.If],
+  ["switch", TSKindId.Switch],
+  ["for", TSKindId.For],
+  ["await", TSKindId.Await],
+  ["in", TSKindId.In],
+  ["while", TSKindId.While],
+  ["do", TSKindId.Do],
+  ["try", TSKindId.Try],
+  ["break", TSKindId.Break],
+  ["continue", TSKindId.Continue],
+  ["debugger", TSKindId.Debugger],
+  ["return", TSKindId.Return],
+  ["throw", TSKindId.Throw],
+  ["case", TSKindId.Case],
+  ["default", TSKindId.Default],
+  ["catch", TSKindId.Catch],
+  ["finally", TSKindId.Finally],
+  ["yield", TSKindId.Yield],
+  ["function", TSKindId.Function],
+  ["async", TSKindId.Async],
+  ["new", TSKindId.New],
+  ["instanceof", TSKindId.Instanceof],
+  ["unescaped_double_string_fragment", TSKindId.UnescapedDoubleStringFragment],
+  ["unescaped_single_string_fragment", TSKindId.UnescapedSingleStringFragment],
+  ["escape_sequence", TSKindId.EscapeSequence],
+  ["comment", TSKindId.Comment],
+  ["regex_pattern", TSKindId.RegexPattern],
+  ["regex_flags", TSKindId.RegexFlags],
+  ["number", TSKindId.Number],
+  ["private_property_identifier", TSKindId.PrivatePropertyIdentifier],
+  ["this", TSKindId.This],
+  ["super", TSKindId.Super],
+  ["true", TSKindId.True],
+  ["false", TSKindId.False],
+  ["null", TSKindId.Null],
+  ["undefined", TSKindId.Undefined],
+  ["static", TSKindId.Static],
+  ["declare", TSKindId.Declare],
+  ["namespace", TSKindId.Namespace],
+  ["override", TSKindId.Override],
+  ["readonly", TSKindId.Readonly],
+  ["export", TSKindId.Export],
+  ["abstract", TSKindId.Abstract],
+  ["satisfies", TSKindId.Satisfies],
+  ["require", TSKindId.Require],
+  ["extends", TSKindId.Extends],
+  ["implements", TSKindId.Implements],
+  ["interface", TSKindId.Interface],
+  ["enum", TSKindId.Enum],
+  ["infer", TSKindId.Infer],
+  ["is", TSKindId.Is],
+  ["keyof", TSKindId.Keyof],
+  ["global", TSKindId.Global],
+  ["accessor", TSKindId.Accessor],
+  ["using", TSKindId.Using],
+  ["_template_chars", TSKindId.TemplateChars],
+  ["_ternary_qmark", TSKindId.TernaryQmark],
+  ["html_comment", TSKindId.HtmlComment],
+  ["jsx_text", TSKindId.JsxText],
+  ["__error_recovery", TSKindId.ErrorRecovery],
+  ["program", TSKindId.Program],
+  ["export_statement", TSKindId.ExportStatement],
+  ["namespace_export", TSKindId.NamespaceExport],
+  ["export_clause", TSKindId.ExportClause],
+  ["export_specifier", TSKindId.ExportSpecifier],
+  ["import", TSKindId.Import],
+  ["import_statement", TSKindId.ImportStatement],
+  ["import_clause", TSKindId.ImportClause],
+  ["_from_clause", TSKindId.FromClause],
+  ["namespace_import", TSKindId.NamespaceImport],
+  ["named_imports", TSKindId.NamedImports],
+  ["import_specifier", TSKindId.ImportSpecifier],
+  ["import_attribute", TSKindId.ImportAttribute],
+  ["expression_statement", TSKindId.ExpressionStatement],
+  ["variable_declaration", TSKindId.VariableDeclaration],
+  ["lexical_declaration", TSKindId.LexicalDeclaration],
+  ["variable_declarator", TSKindId.VariableDeclarator],
+  ["statement_block", TSKindId.StatementBlock],
+  ["else_clause", TSKindId.ElseClause],
+  ["if_statement", TSKindId.IfStatement],
+  ["switch_statement", TSKindId.SwitchStatement],
+  ["for_statement", TSKindId.ForStatement],
+  ["for_in_statement", TSKindId.ForInStatement],
+  ["_for_header", TSKindId.ForHeader],
+  ["while_statement", TSKindId.WhileStatement],
+  ["do_statement", TSKindId.DoStatement],
+  ["try_statement", TSKindId.TryStatement],
+  ["with_statement", TSKindId.WithStatement],
+  ["break_statement", TSKindId.BreakStatement],
+  ["continue_statement", TSKindId.ContinueStatement],
+  ["debugger_statement", TSKindId.DebuggerStatement],
+  ["return_statement", TSKindId.ReturnStatement],
+  ["throw_statement", TSKindId.ThrowStatement],
+  ["labeled_statement", TSKindId.LabeledStatement],
+  ["switch_body", TSKindId.SwitchBody],
+  ["switch_case", TSKindId.SwitchCase],
+  ["switch_default", TSKindId.SwitchDefault],
+  ["catch_clause", TSKindId.CatchClause],
+  ["finally_clause", TSKindId.FinallyClause],
+  ["parenthesized_expression", TSKindId.ParenthesizedExpression],
+  ["yield_expression", TSKindId.YieldExpression],
+  ["object", TSKindId.Object],
+  ["object_pattern", TSKindId.ObjectPattern],
+  ["assignment_pattern", TSKindId.AssignmentPattern],
+  ["object_assignment_pattern", TSKindId.ObjectAssignmentPattern],
+  ["array", TSKindId.Array],
+  ["array_pattern", TSKindId.ArrayPattern],
+  ["nested_identifier", TSKindId.NestedIdentifier],
+  ["class", TSKindId.Class],
+  ["class_declaration", TSKindId.ClassDeclaration],
+  ["class_heritage", TSKindId.ClassHeritage],
+  ["function_expression", TSKindId.FunctionExpression],
+  ["function_declaration", TSKindId.FunctionDeclaration],
+  ["generator_function", TSKindId.GeneratorFunction],
+  ["generator_function_declaration", TSKindId.GeneratorFunctionDeclaration],
+  ["arrow_function", TSKindId.ArrowFunction],
+  ["_call_signature", TSKindId._CallSignature],
+  ["call_expression", TSKindId.CallExpression],
+  ["new_expression", TSKindId.NewExpression],
+  ["await_expression", TSKindId.AwaitExpression],
+  ["member_expression", TSKindId.MemberExpression],
+  ["subscript_expression", TSKindId.SubscriptExpression],
+  ["assignment_expression", TSKindId.AssignmentExpression],
+  ["augmented_assignment_expression", TSKindId.AugmentedAssignmentExpression],
+  ["_initializer", TSKindId.Initializer],
+  ["spread_element", TSKindId.SpreadElement],
+  ["ternary_expression", TSKindId.TernaryExpression],
+  ["binary_expression", TSKindId.BinaryExpression],
+  ["unary_expression", TSKindId.UnaryExpression],
+  ["update_expression", TSKindId.UpdateExpression],
+  ["sequence_expression", TSKindId.SequenceExpression],
+  ["string", TSKindId.String],
+  ["template_string", TSKindId.TemplateString],
+  ["template_substitution", TSKindId.TemplateSubstitution],
+  ["regex", TSKindId.Regex],
+  ["meta_property", TSKindId.MetaProperty],
+  ["arguments", TSKindId.Arguments],
+  ["decorator", TSKindId.Decorator],
+  ["decorator_member_expression", TSKindId.DecoratorMemberExpression],
+  ["decorator_call_expression", TSKindId.DecoratorCallExpression],
+  ["class_body", TSKindId.ClassBody],
+  ["formal_parameters", TSKindId.FormalParameters],
+  ["class_static_block", TSKindId.ClassStaticBlock],
+  ["rest_pattern", TSKindId.RestPattern],
+  ["method_definition", TSKindId.MethodDefinition],
+  ["pair", TSKindId.Pair],
+  ["pair_pattern", TSKindId.PairPattern],
+  ["computed_property_name", TSKindId.ComputedPropertyName],
+  ["public_field_definition", TSKindId.PublicFieldDefinition],
+  ["non_null_expression", TSKindId.NonNullExpression],
+  ["method_signature", TSKindId.MethodSignature],
+  ["abstract_method_signature", TSKindId.AbstractMethodSignature],
+  ["function_signature", TSKindId.FunctionSignature],
+  ["decorator_parenthesized_expression", TSKindId.DecoratorParenthesizedExpression],
+  ["type_assertion", TSKindId.TypeAssertion],
+  ["as_expression", TSKindId.AsExpression],
+  ["satisfies_expression", TSKindId.SatisfiesExpression],
+  ["instantiation_expression", TSKindId.InstantiationExpression],
+  ["import_require_clause", TSKindId.ImportRequireClause],
+  ["extends_clause", TSKindId.ExtendsClause],
+  ["_extends_clause_single", TSKindId.ExtendsClauseSingle],
+  ["implements_clause", TSKindId.ImplementsClause],
+  ["ambient_declaration", TSKindId.AmbientDeclaration],
+  ["abstract_class_declaration", TSKindId.AbstractClassDeclaration],
+  ["module", TSKindId.Module],
+  ["internal_module", TSKindId.InternalModule],
+  ["_module", TSKindId._Module],
+  ["import_alias", TSKindId.ImportAlias],
+  ["nested_type_identifier", TSKindId.NestedTypeIdentifier],
+  ["interface_declaration", TSKindId.InterfaceDeclaration],
+  ["extends_type_clause", TSKindId.ExtendsTypeClause],
+  ["enum_declaration", TSKindId.EnumDeclaration],
+  ["enum_body", TSKindId.EnumBody],
+  ["enum_assignment", TSKindId.EnumAssignment],
+  ["type_alias_declaration", TSKindId.TypeAliasDeclaration],
+  ["accessibility_modifier", TSKindId.AccessibilityModifier],
+  ["override_modifier", TSKindId.OverrideModifier],
+  ["required_parameter", TSKindId.RequiredParameter],
+  ["optional_parameter", TSKindId.OptionalParameter],
+  ["_parameter_name", TSKindId.ParameterName],
+  ["omitting_type_annotation", TSKindId.OmittingTypeAnnotation],
+  ["adding_type_annotation", TSKindId.AddingTypeAnnotation],
+  ["opting_type_annotation", TSKindId.OptingTypeAnnotation],
+  ["type_annotation", TSKindId.TypeAnnotation],
+  [
+    "_type_query_member_expression_in_type_annotation",
+    TSKindId.TypeQueryMemberExpressionInTypeAnnotation,
+  ],
+  [
+    "_type_query_call_expression_in_type_annotation",
+    TSKindId.TypeQueryCallExpressionInTypeAnnotation,
+  ],
+  ["asserts", TSKindId.Asserts],
+  ["asserts_annotation", TSKindId.AssertsAnnotation],
+  ["tuple_parameter", TSKindId.TupleParameter],
+  ["optional_tuple_parameter", TSKindId.OptionalTupleParameter],
+  ["optional_type", TSKindId.OptionalType],
+  ["rest_type", TSKindId.RestType],
+  ["constructor_type", TSKindId.ConstructorType],
+  ["template_type", TSKindId.TemplateType],
+  ["template_literal_type", TSKindId.TemplateLiteralType],
+  ["infer_type", TSKindId.InferType],
+  ["conditional_type", TSKindId.ConditionalType],
+  ["generic_type", TSKindId.GenericType],
+  ["type_predicate", TSKindId.TypePredicate],
+  ["type_predicate_annotation", TSKindId.TypePredicateAnnotation],
+  ["_type_query_member_expression", TSKindId.TypeQueryMemberExpression],
+  ["_type_query_subscript_expression", TSKindId.TypeQuerySubscriptExpression],
+  ["_type_query_call_expression", TSKindId.TypeQueryCallExpression],
+  ["_type_query_instantiation_expression", TSKindId.TypeQueryInstantiationExpression],
+  ["type_query", TSKindId.TypeQuery],
+  ["index_type_query", TSKindId.IndexTypeQuery],
+  ["lookup_type", TSKindId.LookupType],
+  ["mapped_type_clause", TSKindId.MappedTypeClause],
+  ["literal_type", TSKindId.LiteralType],
+  ["_number", TSKindId._Number],
+  ["flow_maybe_type", TSKindId.FlowMaybeType],
+  ["parenthesized_type", TSKindId.ParenthesizedType],
+  ["predefined_type", TSKindId.PredefinedType],
+  ["type_arguments", TSKindId.TypeArguments],
+  ["object_type", TSKindId.ObjectType],
+  ["call_signature", TSKindId.CallSignature],
+  ["property_signature", TSKindId.PropertySignature],
+  ["type_parameters", TSKindId.TypeParameters],
+  ["type_parameter", TSKindId.TypeParameter],
+  ["default_type", TSKindId.DefaultType],
+  ["constraint", TSKindId.Constraint],
+  ["construct_signature", TSKindId.ConstructSignature],
+  ["index_signature", TSKindId.IndexSignature],
+  ["array_type", TSKindId.ArrayType],
+  ["tuple_type", TSKindId.TupleType],
+  ["readonly_type", TSKindId.ReadonlyType],
+  ["union_type", TSKindId.UnionType],
+  ["intersection_type", TSKindId.IntersectionType],
+  ["function_type", TSKindId.FunctionType],
+  ["_import_clause_group1", TSKindId._ImportClauseGroup1],
+  ["_catch_clause_group1", TSKindId._CatchClauseGroup1],
+  ["_ambient_declaration_global", TSKindId.AmbientDeclarationGlobal],
+  ["_ambient_declaration_module", TSKindId.AmbientDeclarationModule],
+  ["object_type_content", TSKindId.ObjectTypeContent],
+  ["object_type_content_comma", TSKindId.ObjectTypeContentComma],
+  ["object_type_content_semi", TSKindId.ObjectTypeContentSemi],
+  ["_export_statement_default", TSKindId.ExportStatementDefault],
+  ["_export_statement_default_from_arm", TSKindId.ExportStatementDefaultFromArm],
+  ["_export_statement_default_decl_arm", TSKindId.ExportStatementDefaultDeclArm],
+  [
+    "_export_statement_default_decl_arm_default_kw",
+    TSKindId.ExportStatementDefaultDeclArmDefaultKw,
+  ],
+  ["_arrow_function_parameter", TSKindId.ArrowFunctionParameter],
+  ["_class_heritage_extends_clause", TSKindId.ClassHeritageExtendsClause],
+  ["_import_clause_default_import", TSKindId.ImportClauseDefaultImport],
+  ["_import_specifier_as", TSKindId.ImportSpecifierAs],
+  ["_index_signature_colon", TSKindId.IndexSignatureColon],
+  ["_export_statement_default_from_arm_star_from", TSKindId.ExportStatementDefaultFromArmStarFrom],
+  ["_export_statement_default_from_arm_ns_from", TSKindId.ExportStatementDefaultFromArmNsFrom],
+  [
+    "_export_statement_default_from_arm_clause_from",
+    TSKindId.ExportStatementDefaultFromArmClauseFrom,
+  ],
+  [
+    "_export_statement_default_decl_arm_default_kw_value",
+    TSKindId.ExportStatementDefaultDeclArmDefaultKwValue,
+  ],
+  ["_class_body_method", TSKindId.ClassBodyMethod],
+  ["_class_body_method_sig", TSKindId.ClassBodyMethodSig],
+  ["_class_body_member", TSKindId.ClassBodyMember],
+  ["_for_header_lhs", TSKindId.ForHeaderLhs],
+  ["_for_header_var_kind", TSKindId.ForHeaderVarKind],
+  ["_for_header_let_const_kind", TSKindId.ForHeaderLetConstKind],
+  ["_parenthesized_expression_typed", TSKindId.ParenthesizedExpressionTyped],
+  ["_export_statement_type_export", TSKindId.ExportStatementTypeExport],
+  ["_export_statement_equals_export", TSKindId.ExportStatementEqualsExport],
+  ["_export_statement_namespace_export", TSKindId.ExportStatementNamespaceExport],
+  ["_call_expression_call", TSKindId.CallExpressionCall],
+  ["_call_expression_template_call", TSKindId.CallExpressionTemplateCall],
+  ["_call_expression_member", TSKindId.CallExpressionMember],
+  ["_update_expression_postfix", TSKindId.UpdateExpressionPostfix],
+  ["_update_expression_prefix", TSKindId.UpdateExpressionPrefix],
+  ["_public_field_definition_abstract_first", TSKindId.PublicFieldDefinitionAbstractFirst],
+  ["_public_field_definition_access_first", TSKindId.PublicFieldDefinitionAccessFirst],
+  ["_public_field_definition_declare_first", TSKindId.PublicFieldDefinitionDeclareFirst],
+  ["_public_field_definition_readonly_first", TSKindId.PublicFieldDefinitionReadonlyFirst],
+  ["_public_field_definition_static_mods", TSKindId.PublicFieldDefinitionStaticMods],
+  ["_type_identifier", TSKindId.TypeIdentifier],
 ]);
 
 export const is = {
-    ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
-    ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
-    ClassHeritageExtendsClause: _g(TSKindId.ClassHeritageExtendsClause),
-    ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
-    ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
-    ExportStatementDefaultFromArmClauseFrom: _g(TSKindId.ExportStatementDefaultFromArmClauseFrom),
-    ExportStatementDefaultFromArmNsFrom: _g(TSKindId.ExportStatementDefaultFromArmNsFrom),
-    ExportStatementDefaultFromArmStarFrom: _g(TSKindId.ExportStatementDefaultFromArmStarFrom),
-    ExportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
-    ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
-    ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
-    ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
-    ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
-    ImportClauseGroup1: _g(TSKindId._ImportClauseGroup1),
-    PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
-    abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
-    abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
-    addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
-    ambientDeclaration: _g(TSKindId.AmbientDeclaration),
-    arguments: _g(TSKindId.Arguments),
-    array: _g(TSKindId.Array),
-    arrayPattern: _g(TSKindId.ArrayPattern),
-    arrayType: _g(TSKindId.ArrayType),
-    arrowFunction: _g(TSKindId.ArrowFunction),
-    asExpression: _g(TSKindId.AsExpression),
-    asserts: _g(TSKindId.Asserts),
-    assertsAnnotation: _g(TSKindId.AssertsAnnotation),
-    assignmentExpression: _g(TSKindId.AssignmentExpression),
-    assignmentPattern: _g(TSKindId.AssignmentPattern),
-    augmentedAssignmentExpression: _g(TSKindId.AugmentedAssignmentExpression),
-    awaitExpression: _g(TSKindId.AwaitExpression),
-    binaryExpression: _g(TSKindId.BinaryExpression),
-    breakStatement: _g(TSKindId.BreakStatement),
-    callExpression: _g(TSKindId.CallExpression),
-    callSignature: _g(TSKindId.CallSignature),
-    catchClause: _g(TSKindId.CatchClause),
-    class_: _g(TSKindId.Class),
-    classBody: _g(TSKindId.ClassBody),
-    classDeclaration: _g(TSKindId.ClassDeclaration),
-    classHeritage: _g(TSKindId.ClassHeritage),
-    classStaticBlock: _g(TSKindId.ClassStaticBlock),
-    computedPropertyName: _g(TSKindId.ComputedPropertyName),
-    conditionalType: _g(TSKindId.ConditionalType),
-    constraint: _g(TSKindId.Constraint),
-    constructSignature: _g(TSKindId.ConstructSignature),
-    constructorType: _g(TSKindId.ConstructorType),
-    continueStatement: _g(TSKindId.ContinueStatement),
-    debuggerStatement: _g(TSKindId.DebuggerStatement),
-    decorator: _g(TSKindId.Decorator),
-    decoratorCallExpression: _g(TSKindId.DecoratorCallExpression),
-    decoratorMemberExpression: _g(TSKindId.DecoratorMemberExpression),
-    decoratorParenthesizedExpression: _g(TSKindId.DecoratorParenthesizedExpression),
-    defaultType: _g(TSKindId.DefaultType),
-    doStatement: _g(TSKindId.DoStatement),
-    elseClause: _g(TSKindId.ElseClause),
-    enumAssignment: _g(TSKindId.EnumAssignment),
-    enumBody: _g(TSKindId.EnumBody),
-    enumDeclaration: _g(TSKindId.EnumDeclaration),
-    exportClause: _g(TSKindId.ExportClause),
-    exportSpecifier: _g(TSKindId.ExportSpecifier),
-    exportStatement: _g(TSKindId.ExportStatement),
-    expressionStatement: _g(TSKindId.ExpressionStatement),
-    extendsClause: _g(TSKindId.ExtendsClause),
-    extendsTypeClause: _g(TSKindId.ExtendsTypeClause),
-    finallyClause: _g(TSKindId.FinallyClause),
-    flowMaybeType: _g(TSKindId.FlowMaybeType),
-    forInStatement: _g(TSKindId.ForInStatement),
-    forStatement: _g(TSKindId.ForStatement),
-    formalParameters: _g(TSKindId.FormalParameters),
-    functionDeclaration: _g(TSKindId.FunctionDeclaration),
-    functionExpression: _g(TSKindId.FunctionExpression),
-    functionSignature: _g(TSKindId.FunctionSignature),
-    functionType: _g(TSKindId.FunctionType),
-    generatorFunction: _g(TSKindId.GeneratorFunction),
-    generatorFunctionDeclaration: _g(TSKindId.GeneratorFunctionDeclaration),
-    genericType: _g(TSKindId.GenericType),
-    ifStatement: _g(TSKindId.IfStatement),
-    implementsClause: _g(TSKindId.ImplementsClause),
-    importAlias: _g(TSKindId.ImportAlias),
-    importAttribute: _g(TSKindId.ImportAttribute),
-    importClause: _g(TSKindId.ImportClause),
-    importRequireClause: _g(TSKindId.ImportRequireClause),
-    importSpecifier: _g(TSKindId.ImportSpecifier),
-    importStatement: _g(TSKindId.ImportStatement),
-    indexSignature: _g(TSKindId.IndexSignature),
-    indexTypeQuery: _g(TSKindId.IndexTypeQuery),
-    inferType: _g(TSKindId.InferType),
-    instantiationExpression: _g(TSKindId.InstantiationExpression),
-    interfaceDeclaration: _g(TSKindId.InterfaceDeclaration),
-    internalModule: _g(TSKindId.InternalModule),
-    intersectionType: _g(TSKindId.IntersectionType),
-    labeledStatement: _g(TSKindId.LabeledStatement),
-    lexicalDeclaration: _g(TSKindId.LexicalDeclaration),
-    literalType: _g(TSKindId.LiteralType),
-    lookupType: _g(TSKindId.LookupType),
-    mappedTypeClause: _g(TSKindId.MappedTypeClause),
-    memberExpression: _g(TSKindId.MemberExpression),
-    methodDefinition: _g(TSKindId.MethodDefinition),
-    methodSignature: _g(TSKindId.MethodSignature),
-    module: _g(TSKindId.Module),
-    namedImports: _g(TSKindId.NamedImports),
-    namespaceExport: _g(TSKindId.NamespaceExport),
-    namespaceImport: _g(TSKindId.NamespaceImport),
-    nestedIdentifier: _g(TSKindId.NestedIdentifier),
-    nestedTypeIdentifier: _g(TSKindId.NestedTypeIdentifier),
-    newExpression: _g(TSKindId.NewExpression),
-    nonNullExpression: _g(TSKindId.NonNullExpression),
-    object: _g(TSKindId.Object),
-    objectAssignmentPattern: _g(TSKindId.ObjectAssignmentPattern),
-    objectPattern: _g(TSKindId.ObjectPattern),
-    objectType: _g(TSKindId.ObjectType),
-    objectTypeContent: _g(TSKindId.ObjectTypeContent),
-    objectTypeContentComma: _g(TSKindId.ObjectTypeContentComma),
-    objectTypeContentSemi: _g(TSKindId.ObjectTypeContentSemi),
-    omittingTypeAnnotation: _g(TSKindId.OmittingTypeAnnotation),
-    optingTypeAnnotation: _g(TSKindId.OptingTypeAnnotation),
-    optionalParameter: _g(TSKindId.OptionalParameter),
-    optionalTupleParameter: _g(TSKindId.OptionalTupleParameter),
-    optionalType: _g(TSKindId.OptionalType),
-    pair: _g(TSKindId.Pair),
-    pairPattern: _g(TSKindId.PairPattern),
-    parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
-    parenthesizedType: _g(TSKindId.ParenthesizedType),
-    program: _g(TSKindId.Program),
-    propertySignature: _g(TSKindId.PropertySignature),
-    publicFieldDefinition: _g(TSKindId.PublicFieldDefinition),
-    readonlyType: _g(TSKindId.ReadonlyType),
-    regex: _g(TSKindId.Regex),
-    requiredParameter: _g(TSKindId.RequiredParameter),
-    restPattern: _g(TSKindId.RestPattern),
-    restType: _g(TSKindId.RestType),
-    returnStatement: _g(TSKindId.ReturnStatement),
-    satisfiesExpression: _g(TSKindId.SatisfiesExpression),
-    sequenceExpression: _g(TSKindId.SequenceExpression),
-    spreadElement: _g(TSKindId.SpreadElement),
-    statementBlock: _g(TSKindId.StatementBlock),
-    string: _g(TSKindId.String),
-    subscriptExpression: _g(TSKindId.SubscriptExpression),
-    switchBody: _g(TSKindId.SwitchBody),
-    switchCase: _g(TSKindId.SwitchCase),
-    switchDefault: _g(TSKindId.SwitchDefault),
-    switchStatement: _g(TSKindId.SwitchStatement),
-    templateLiteralType: _g(TSKindId.TemplateLiteralType),
-    templateString: _g(TSKindId.TemplateString),
-    templateSubstitution: _g(TSKindId.TemplateSubstitution),
-    templateType: _g(TSKindId.TemplateType),
-    ternaryExpression: _g(TSKindId.TernaryExpression),
-    throwStatement: _g(TSKindId.ThrowStatement),
-    tryStatement: _g(TSKindId.TryStatement),
-    tupleParameter: _g(TSKindId.TupleParameter),
-    tupleType: _g(TSKindId.TupleType),
-    typeAliasDeclaration: _g(TSKindId.TypeAliasDeclaration),
-    typeAnnotation: _g(TSKindId.TypeAnnotation),
-    typeArguments: _g(TSKindId.TypeArguments),
-    typeAssertion: _g(TSKindId.TypeAssertion),
-    typeParameter: _g(TSKindId.TypeParameter),
-    typeParameters: _g(TSKindId.TypeParameters),
-    typePredicate: _g(TSKindId.TypePredicate),
-    typePredicateAnnotation: _g(TSKindId.TypePredicateAnnotation),
-    typeQuery: _g(TSKindId.TypeQuery),
-    unaryExpression: _g(TSKindId.UnaryExpression),
-    unionType: _g(TSKindId.UnionType),
-    updateExpression: _g(TSKindId.UpdateExpression),
-    variableDeclaration: _g(TSKindId.VariableDeclaration),
-    variableDeclarator: _g(TSKindId.VariableDeclarator),
-    whileStatement: _g(TSKindId.WhileStatement),
-    withStatement: _g(TSKindId.WithStatement),
-    yieldExpression: _g(TSKindId.YieldExpression),
-    kind: (v: { readonly $type: number }, k: string): boolean => {
-        const id = _kindIdByKind.get(k);
-        return id !== undefined && v.$type === id;
-    },
-    destructuringPattern: _sg(_supertype_destructuringPattern_ids),
-    expressions: _sg(_supertype_expressions_ids),
-    formalParameter: _sg(_supertype_formalParameter_ids),
-    identifier: _sg(_supertype_identifier_ids),
-    importIdentifier: _sg(_supertype_importIdentifier_ids),
-    jsxAttribute: _sg(new Set<number>()),
-    jsxAttributeName: _sg(_supertype_jsxAttributeName_ids),
-    jsxAttributeValue: _sg(new Set<number>()),
-    jsxChild: _sg(_supertype_jsxChild_ids),
-    jsxElement: _sg(new Set<number>()),
-    jsxElementName: _sg(_supertype_jsxElementName_ids),
-    jsxIdentifier: _sg(_supertype_jsxIdentifier_ids),
-    moduleExportName: _sg(_supertype_moduleExportName_ids),
-    propertyIdentifier: _sg(_supertype_propertyIdentifier_ids),
-    propertyName: _sg(_supertype_propertyName_ids),
-    shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier_ids),
-    shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern_ids),
-    statementIdentifier: _sg(_supertype_statementIdentifier_ids),
-    tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
-    declaration: _sg(_supertype_declaration_ids),
-    expression: _sg(_supertype_expression_ids),
-    pattern: _sg(_supertype_pattern_ids),
-    primaryExpression: _sg(_supertype_primaryExpression_ids),
-    primaryType: _sg(_supertype_primaryType_ids),
-    statement: _sg(_supertype_statement_ids),
-    type: _sg(_supertype_type_ids),
+  ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
+  ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
+  ClassHeritageExtendsClause: _g(TSKindId.ClassHeritageExtendsClause),
+  ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
+  ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
+  ExportStatementDefaultFromArmClauseFrom: _g(TSKindId.ExportStatementDefaultFromArmClauseFrom),
+  ExportStatementDefaultFromArmNsFrom: _g(TSKindId.ExportStatementDefaultFromArmNsFrom),
+  ExportStatementDefaultFromArmStarFrom: _g(TSKindId.ExportStatementDefaultFromArmStarFrom),
+  ExportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
+  ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
+  ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
+  ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
+  ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
+  ImportClauseGroup1: _g(TSKindId._ImportClauseGroup1),
+  PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
+  abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
+  abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
+  addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
+  ambientDeclaration: _g(TSKindId.AmbientDeclaration),
+  arguments: _g(TSKindId.Arguments),
+  array: _g(TSKindId.Array),
+  arrayPattern: _g(TSKindId.ArrayPattern),
+  arrayType: _g(TSKindId.ArrayType),
+  arrowFunction: _g(TSKindId.ArrowFunction),
+  asExpression: _g(TSKindId.AsExpression),
+  asserts: _g(TSKindId.Asserts),
+  assertsAnnotation: _g(TSKindId.AssertsAnnotation),
+  assignmentExpression: _g(TSKindId.AssignmentExpression),
+  assignmentPattern: _g(TSKindId.AssignmentPattern),
+  augmentedAssignmentExpression: _g(TSKindId.AugmentedAssignmentExpression),
+  awaitExpression: _g(TSKindId.AwaitExpression),
+  binaryExpression: _g(TSKindId.BinaryExpression),
+  breakStatement: _g(TSKindId.BreakStatement),
+  callExpression: _g(TSKindId.CallExpression),
+  callSignature: _g(TSKindId.CallSignature),
+  catchClause: _g(TSKindId.CatchClause),
+  class_: _g(TSKindId.Class),
+  classBody: _g(TSKindId.ClassBody),
+  classDeclaration: _g(TSKindId.ClassDeclaration),
+  classHeritage: _g(TSKindId.ClassHeritage),
+  classStaticBlock: _g(TSKindId.ClassStaticBlock),
+  computedPropertyName: _g(TSKindId.ComputedPropertyName),
+  conditionalType: _g(TSKindId.ConditionalType),
+  constraint: _g(TSKindId.Constraint),
+  constructSignature: _g(TSKindId.ConstructSignature),
+  constructorType: _g(TSKindId.ConstructorType),
+  continueStatement: _g(TSKindId.ContinueStatement),
+  debuggerStatement: _g(TSKindId.DebuggerStatement),
+  decorator: _g(TSKindId.Decorator),
+  decoratorCallExpression: _g(TSKindId.DecoratorCallExpression),
+  decoratorMemberExpression: _g(TSKindId.DecoratorMemberExpression),
+  decoratorParenthesizedExpression: _g(TSKindId.DecoratorParenthesizedExpression),
+  defaultType: _g(TSKindId.DefaultType),
+  doStatement: _g(TSKindId.DoStatement),
+  elseClause: _g(TSKindId.ElseClause),
+  enumAssignment: _g(TSKindId.EnumAssignment),
+  enumBody: _g(TSKindId.EnumBody),
+  enumDeclaration: _g(TSKindId.EnumDeclaration),
+  exportClause: _g(TSKindId.ExportClause),
+  exportSpecifier: _g(TSKindId.ExportSpecifier),
+  exportStatement: _g(TSKindId.ExportStatement),
+  expressionStatement: _g(TSKindId.ExpressionStatement),
+  extendsClause: _g(TSKindId.ExtendsClause),
+  extendsTypeClause: _g(TSKindId.ExtendsTypeClause),
+  finallyClause: _g(TSKindId.FinallyClause),
+  flowMaybeType: _g(TSKindId.FlowMaybeType),
+  forInStatement: _g(TSKindId.ForInStatement),
+  forStatement: _g(TSKindId.ForStatement),
+  formalParameters: _g(TSKindId.FormalParameters),
+  functionDeclaration: _g(TSKindId.FunctionDeclaration),
+  functionExpression: _g(TSKindId.FunctionExpression),
+  functionSignature: _g(TSKindId.FunctionSignature),
+  functionType: _g(TSKindId.FunctionType),
+  generatorFunction: _g(TSKindId.GeneratorFunction),
+  generatorFunctionDeclaration: _g(TSKindId.GeneratorFunctionDeclaration),
+  genericType: _g(TSKindId.GenericType),
+  ifStatement: _g(TSKindId.IfStatement),
+  implementsClause: _g(TSKindId.ImplementsClause),
+  importAlias: _g(TSKindId.ImportAlias),
+  importAttribute: _g(TSKindId.ImportAttribute),
+  importClause: _g(TSKindId.ImportClause),
+  importRequireClause: _g(TSKindId.ImportRequireClause),
+  importSpecifier: _g(TSKindId.ImportSpecifier),
+  importStatement: _g(TSKindId.ImportStatement),
+  indexSignature: _g(TSKindId.IndexSignature),
+  indexTypeQuery: _g(TSKindId.IndexTypeQuery),
+  inferType: _g(TSKindId.InferType),
+  instantiationExpression: _g(TSKindId.InstantiationExpression),
+  interfaceDeclaration: _g(TSKindId.InterfaceDeclaration),
+  internalModule: _g(TSKindId.InternalModule),
+  intersectionType: _g(TSKindId.IntersectionType),
+  labeledStatement: _g(TSKindId.LabeledStatement),
+  lexicalDeclaration: _g(TSKindId.LexicalDeclaration),
+  literalType: _g(TSKindId.LiteralType),
+  lookupType: _g(TSKindId.LookupType),
+  mappedTypeClause: _g(TSKindId.MappedTypeClause),
+  memberExpression: _g(TSKindId.MemberExpression),
+  methodDefinition: _g(TSKindId.MethodDefinition),
+  methodSignature: _g(TSKindId.MethodSignature),
+  module: _g(TSKindId.Module),
+  namedImports: _g(TSKindId.NamedImports),
+  namespaceExport: _g(TSKindId.NamespaceExport),
+  namespaceImport: _g(TSKindId.NamespaceImport),
+  nestedIdentifier: _g(TSKindId.NestedIdentifier),
+  nestedTypeIdentifier: _g(TSKindId.NestedTypeIdentifier),
+  newExpression: _g(TSKindId.NewExpression),
+  nonNullExpression: _g(TSKindId.NonNullExpression),
+  object: _g(TSKindId.Object),
+  objectAssignmentPattern: _g(TSKindId.ObjectAssignmentPattern),
+  objectPattern: _g(TSKindId.ObjectPattern),
+  objectType: _g(TSKindId.ObjectType),
+  objectTypeContent: _g(TSKindId.ObjectTypeContent),
+  objectTypeContentComma: _g(TSKindId.ObjectTypeContentComma),
+  objectTypeContentSemi: _g(TSKindId.ObjectTypeContentSemi),
+  omittingTypeAnnotation: _g(TSKindId.OmittingTypeAnnotation),
+  optingTypeAnnotation: _g(TSKindId.OptingTypeAnnotation),
+  optionalParameter: _g(TSKindId.OptionalParameter),
+  optionalTupleParameter: _g(TSKindId.OptionalTupleParameter),
+  optionalType: _g(TSKindId.OptionalType),
+  pair: _g(TSKindId.Pair),
+  pairPattern: _g(TSKindId.PairPattern),
+  parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
+  parenthesizedType: _g(TSKindId.ParenthesizedType),
+  program: _g(TSKindId.Program),
+  propertySignature: _g(TSKindId.PropertySignature),
+  publicFieldDefinition: _g(TSKindId.PublicFieldDefinition),
+  readonlyType: _g(TSKindId.ReadonlyType),
+  regex: _g(TSKindId.Regex),
+  requiredParameter: _g(TSKindId.RequiredParameter),
+  restPattern: _g(TSKindId.RestPattern),
+  restType: _g(TSKindId.RestType),
+  returnStatement: _g(TSKindId.ReturnStatement),
+  satisfiesExpression: _g(TSKindId.SatisfiesExpression),
+  sequenceExpression: _g(TSKindId.SequenceExpression),
+  spreadElement: _g(TSKindId.SpreadElement),
+  statementBlock: _g(TSKindId.StatementBlock),
+  string: _g(TSKindId.String),
+  subscriptExpression: _g(TSKindId.SubscriptExpression),
+  switchBody: _g(TSKindId.SwitchBody),
+  switchCase: _g(TSKindId.SwitchCase),
+  switchDefault: _g(TSKindId.SwitchDefault),
+  switchStatement: _g(TSKindId.SwitchStatement),
+  templateLiteralType: _g(TSKindId.TemplateLiteralType),
+  templateString: _g(TSKindId.TemplateString),
+  templateSubstitution: _g(TSKindId.TemplateSubstitution),
+  templateType: _g(TSKindId.TemplateType),
+  ternaryExpression: _g(TSKindId.TernaryExpression),
+  throwStatement: _g(TSKindId.ThrowStatement),
+  tryStatement: _g(TSKindId.TryStatement),
+  tupleParameter: _g(TSKindId.TupleParameter),
+  tupleType: _g(TSKindId.TupleType),
+  typeAliasDeclaration: _g(TSKindId.TypeAliasDeclaration),
+  typeAnnotation: _g(TSKindId.TypeAnnotation),
+  typeArguments: _g(TSKindId.TypeArguments),
+  typeAssertion: _g(TSKindId.TypeAssertion),
+  typeParameter: _g(TSKindId.TypeParameter),
+  typeParameters: _g(TSKindId.TypeParameters),
+  typePredicate: _g(TSKindId.TypePredicate),
+  typePredicateAnnotation: _g(TSKindId.TypePredicateAnnotation),
+  typeQuery: _g(TSKindId.TypeQuery),
+  unaryExpression: _g(TSKindId.UnaryExpression),
+  unionType: _g(TSKindId.UnionType),
+  updateExpression: _g(TSKindId.UpdateExpression),
+  variableDeclaration: _g(TSKindId.VariableDeclaration),
+  variableDeclarator: _g(TSKindId.VariableDeclarator),
+  whileStatement: _g(TSKindId.WhileStatement),
+  withStatement: _g(TSKindId.WithStatement),
+  yieldExpression: _g(TSKindId.YieldExpression),
+  kind: (v: { readonly $type: number }, k: string): boolean => {
+    const id = _kindIdByKind.get(k);
+    return id !== undefined && v.$type === id;
+  },
+  destructuringPattern: _sg(_supertype_destructuringPattern_ids),
+  expressions: _sg(_supertype_expressions_ids),
+  formalParameter: _sg(_supertype_formalParameter_ids),
+  identifier: _sg(_supertype_identifier_ids),
+  importIdentifier: _sg(_supertype_importIdentifier_ids),
+  jsxAttribute: _sg(new Set<number>()),
+  jsxAttributeName: _sg(_supertype_jsxAttributeName_ids),
+  jsxAttributeValue: _sg(new Set<number>()),
+  jsxChild: _sg(_supertype_jsxChild_ids),
+  jsxElement: _sg(new Set<number>()),
+  jsxElementName: _sg(_supertype_jsxElementName_ids),
+  jsxIdentifier: _sg(_supertype_jsxIdentifier_ids),
+  moduleExportName: _sg(_supertype_moduleExportName_ids),
+  propertyIdentifier: _sg(_supertype_propertyIdentifier_ids),
+  propertyName: _sg(_supertype_propertyName_ids),
+  shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier_ids),
+  shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern_ids),
+  statementIdentifier: _sg(_supertype_statementIdentifier_ids),
+  tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
+  declaration: _sg(_supertype_declaration_ids),
+  expression: _sg(_supertype_expression_ids),
+  pattern: _sg(_supertype_pattern_ids),
+  primaryExpression: _sg(_supertype_primaryExpression_ids),
+  primaryType: _sg(_supertype_primaryType_ids),
+  statement: _sg(_supertype_statement_ids),
+  type: _sg(_supertype_type_ids),
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
 type _AnyGuard = (...args: unknown[]) => boolean;
 function _makeAssert(name: string, guard: _AnyGuard) {
-    return (...args: unknown[]): void => {
-        if (!guard(...args)) {
-            const v = args[0] as { $type?: unknown } | null;
-            const actual = v?.$type ?? '(none)';
-            throw new TypeError(`assert.${name}: expected type '${name}', got '${String(actual)}'`);
-        }
-    };
+  return (...args: unknown[]): void => {
+    if (!guard(...args)) {
+      const v = args[0] as { $type?: unknown } | null;
+      const actual = v?.$type ?? "(none)";
+      throw new TypeError(`assert.${name}: expected type '${name}', got '${String(actual)}'`);
+    }
+  };
 }
 function _makeAssertKind(guard: _AnyGuard) {
-    return (...args: unknown[]): void => {
-        if (!guard(...args)) {
-            const v = args[0] as { $type?: unknown } | null;
-            const expected = String(args[1] ?? '(unknown)');
-            const actual = v?.$type ?? '(none)';
-            throw new TypeError(`assert.kind: expected type '${expected}', got '${String(actual)}'`);
-        }
-    };
+  return (...args: unknown[]): void => {
+    if (!guard(...args)) {
+      const v = args[0] as { $type?: unknown } | null;
+      const expected = String(args[1] ?? "(unknown)");
+      const actual = v?.$type ?? "(none)";
+      throw new TypeError(`assert.kind: expected type '${expected}', got '${String(actual)}'`);
+    }
+  };
 }
 
 export const assert = {
-    ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
-    ClassBodyMethodSig: _makeAssert('ClassBodyMethodSig', is.ClassBodyMethodSig as _AnyGuard),
-    ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
-    ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
-    ExportStatementDefaultFromArm: _makeAssert('ExportStatementDefaultFromArm', is.ExportStatementDefaultFromArm as _AnyGuard),
-    ExportStatementDefaultFromArmClauseFrom: _makeAssert('ExportStatementDefaultFromArmClauseFrom', is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard),
-    ExportStatementDefaultFromArmNsFrom: _makeAssert('ExportStatementDefaultFromArmNsFrom', is.ExportStatementDefaultFromArmNsFrom as _AnyGuard),
-    ExportStatementDefaultFromArmStarFrom: _makeAssert('ExportStatementDefaultFromArmStarFrom', is.ExportStatementDefaultFromArmStarFrom as _AnyGuard),
-    ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),
-    ExportStatementNamespaceExport: _makeAssert('ExportStatementNamespaceExport', is.ExportStatementNamespaceExport as _AnyGuard),
-    ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
-    ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
-    ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
-    ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
-    PublicFieldDefinitionDeclareFirst: _makeAssert('PublicFieldDefinitionDeclareFirst', is.PublicFieldDefinitionDeclareFirst as _AnyGuard),
-    abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
-    abstractMethodSignature: _makeAssert('abstractMethodSignature', is.abstractMethodSignature as _AnyGuard),
-    addingTypeAnnotation: _makeAssert('addingTypeAnnotation', is.addingTypeAnnotation as _AnyGuard),
-    ambientDeclaration: _makeAssert('ambientDeclaration', is.ambientDeclaration as _AnyGuard),
-    arguments: _makeAssert('arguments', is.arguments as _AnyGuard),
-    array: _makeAssert('array', is.array as _AnyGuard),
-    arrayPattern: _makeAssert('arrayPattern', is.arrayPattern as _AnyGuard),
-    arrayType: _makeAssert('arrayType', is.arrayType as _AnyGuard),
-    arrowFunction: _makeAssert('arrowFunction', is.arrowFunction as _AnyGuard),
-    asExpression: _makeAssert('asExpression', is.asExpression as _AnyGuard),
-    asserts: _makeAssert('asserts', is.asserts as _AnyGuard),
-    assertsAnnotation: _makeAssert('assertsAnnotation', is.assertsAnnotation as _AnyGuard),
-    assignmentExpression: _makeAssert('assignmentExpression', is.assignmentExpression as _AnyGuard),
-    assignmentPattern: _makeAssert('assignmentPattern', is.assignmentPattern as _AnyGuard),
-    augmentedAssignmentExpression: _makeAssert('augmentedAssignmentExpression', is.augmentedAssignmentExpression as _AnyGuard),
-    awaitExpression: _makeAssert('awaitExpression', is.awaitExpression as _AnyGuard),
-    binaryExpression: _makeAssert('binaryExpression', is.binaryExpression as _AnyGuard),
-    breakStatement: _makeAssert('breakStatement', is.breakStatement as _AnyGuard),
-    callExpression: _makeAssert('callExpression', is.callExpression as _AnyGuard),
-    callSignature: _makeAssert('callSignature', is.callSignature as _AnyGuard),
-    catchClause: _makeAssert('catchClause', is.catchClause as _AnyGuard),
-    class_: _makeAssert('class_', is.class_ as _AnyGuard),
-    classBody: _makeAssert('classBody', is.classBody as _AnyGuard),
-    classDeclaration: _makeAssert('classDeclaration', is.classDeclaration as _AnyGuard),
-    classHeritage: _makeAssert('classHeritage', is.classHeritage as _AnyGuard),
-    classStaticBlock: _makeAssert('classStaticBlock', is.classStaticBlock as _AnyGuard),
-    computedPropertyName: _makeAssert('computedPropertyName', is.computedPropertyName as _AnyGuard),
-    conditionalType: _makeAssert('conditionalType', is.conditionalType as _AnyGuard),
-    constraint: _makeAssert('constraint', is.constraint as _AnyGuard),
-    constructSignature: _makeAssert('constructSignature', is.constructSignature as _AnyGuard),
-    constructorType: _makeAssert('constructorType', is.constructorType as _AnyGuard),
-    continueStatement: _makeAssert('continueStatement', is.continueStatement as _AnyGuard),
-    debuggerStatement: _makeAssert('debuggerStatement', is.debuggerStatement as _AnyGuard),
-    decorator: _makeAssert('decorator', is.decorator as _AnyGuard),
-    decoratorCallExpression: _makeAssert('decoratorCallExpression', is.decoratorCallExpression as _AnyGuard),
-    decoratorMemberExpression: _makeAssert('decoratorMemberExpression', is.decoratorMemberExpression as _AnyGuard),
-    decoratorParenthesizedExpression: _makeAssert('decoratorParenthesizedExpression', is.decoratorParenthesizedExpression as _AnyGuard),
-    defaultType: _makeAssert('defaultType', is.defaultType as _AnyGuard),
-    doStatement: _makeAssert('doStatement', is.doStatement as _AnyGuard),
-    elseClause: _makeAssert('elseClause', is.elseClause as _AnyGuard),
-    enumAssignment: _makeAssert('enumAssignment', is.enumAssignment as _AnyGuard),
-    enumBody: _makeAssert('enumBody', is.enumBody as _AnyGuard),
-    enumDeclaration: _makeAssert('enumDeclaration', is.enumDeclaration as _AnyGuard),
-    exportClause: _makeAssert('exportClause', is.exportClause as _AnyGuard),
-    exportSpecifier: _makeAssert('exportSpecifier', is.exportSpecifier as _AnyGuard),
-    exportStatement: _makeAssert('exportStatement', is.exportStatement as _AnyGuard),
-    expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
-    extendsClause: _makeAssert('extendsClause', is.extendsClause as _AnyGuard),
-    extendsTypeClause: _makeAssert('extendsTypeClause', is.extendsTypeClause as _AnyGuard),
-    finallyClause: _makeAssert('finallyClause', is.finallyClause as _AnyGuard),
-    flowMaybeType: _makeAssert('flowMaybeType', is.flowMaybeType as _AnyGuard),
-    forInStatement: _makeAssert('forInStatement', is.forInStatement as _AnyGuard),
-    forStatement: _makeAssert('forStatement', is.forStatement as _AnyGuard),
-    formalParameters: _makeAssert('formalParameters', is.formalParameters as _AnyGuard),
-    functionDeclaration: _makeAssert('functionDeclaration', is.functionDeclaration as _AnyGuard),
-    functionExpression: _makeAssert('functionExpression', is.functionExpression as _AnyGuard),
-    functionSignature: _makeAssert('functionSignature', is.functionSignature as _AnyGuard),
-    functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
-    generatorFunction: _makeAssert('generatorFunction', is.generatorFunction as _AnyGuard),
-    generatorFunctionDeclaration: _makeAssert('generatorFunctionDeclaration', is.generatorFunctionDeclaration as _AnyGuard),
-    genericType: _makeAssert('genericType', is.genericType as _AnyGuard),
-    ifStatement: _makeAssert('ifStatement', is.ifStatement as _AnyGuard),
-    implementsClause: _makeAssert('implementsClause', is.implementsClause as _AnyGuard),
-    importAlias: _makeAssert('importAlias', is.importAlias as _AnyGuard),
-    importAttribute: _makeAssert('importAttribute', is.importAttribute as _AnyGuard),
-    importClause: _makeAssert('importClause', is.importClause as _AnyGuard),
-    importRequireClause: _makeAssert('importRequireClause', is.importRequireClause as _AnyGuard),
-    importSpecifier: _makeAssert('importSpecifier', is.importSpecifier as _AnyGuard),
-    importStatement: _makeAssert('importStatement', is.importStatement as _AnyGuard),
-    indexSignature: _makeAssert('indexSignature', is.indexSignature as _AnyGuard),
-    indexTypeQuery: _makeAssert('indexTypeQuery', is.indexTypeQuery as _AnyGuard),
-    inferType: _makeAssert('inferType', is.inferType as _AnyGuard),
-    instantiationExpression: _makeAssert('instantiationExpression', is.instantiationExpression as _AnyGuard),
-    interfaceDeclaration: _makeAssert('interfaceDeclaration', is.interfaceDeclaration as _AnyGuard),
-    internalModule: _makeAssert('internalModule', is.internalModule as _AnyGuard),
-    intersectionType: _makeAssert('intersectionType', is.intersectionType as _AnyGuard),
-    labeledStatement: _makeAssert('labeledStatement', is.labeledStatement as _AnyGuard),
-    lexicalDeclaration: _makeAssert('lexicalDeclaration', is.lexicalDeclaration as _AnyGuard),
-    literalType: _makeAssert('literalType', is.literalType as _AnyGuard),
-    lookupType: _makeAssert('lookupType', is.lookupType as _AnyGuard),
-    mappedTypeClause: _makeAssert('mappedTypeClause', is.mappedTypeClause as _AnyGuard),
-    memberExpression: _makeAssert('memberExpression', is.memberExpression as _AnyGuard),
-    methodDefinition: _makeAssert('methodDefinition', is.methodDefinition as _AnyGuard),
-    methodSignature: _makeAssert('methodSignature', is.methodSignature as _AnyGuard),
-    module: _makeAssert('module', is.module as _AnyGuard),
-    namedImports: _makeAssert('namedImports', is.namedImports as _AnyGuard),
-    namespaceExport: _makeAssert('namespaceExport', is.namespaceExport as _AnyGuard),
-    namespaceImport: _makeAssert('namespaceImport', is.namespaceImport as _AnyGuard),
-    nestedIdentifier: _makeAssert('nestedIdentifier', is.nestedIdentifier as _AnyGuard),
-    nestedTypeIdentifier: _makeAssert('nestedTypeIdentifier', is.nestedTypeIdentifier as _AnyGuard),
-    newExpression: _makeAssert('newExpression', is.newExpression as _AnyGuard),
-    nonNullExpression: _makeAssert('nonNullExpression', is.nonNullExpression as _AnyGuard),
-    object: _makeAssert('object', is.object as _AnyGuard),
-    objectAssignmentPattern: _makeAssert('objectAssignmentPattern', is.objectAssignmentPattern as _AnyGuard),
-    objectPattern: _makeAssert('objectPattern', is.objectPattern as _AnyGuard),
-    objectType: _makeAssert('objectType', is.objectType as _AnyGuard),
-    objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
-    objectTypeContentComma: _makeAssert('objectTypeContentComma', is.objectTypeContentComma as _AnyGuard),
-    objectTypeContentSemi: _makeAssert('objectTypeContentSemi', is.objectTypeContentSemi as _AnyGuard),
-    omittingTypeAnnotation: _makeAssert('omittingTypeAnnotation', is.omittingTypeAnnotation as _AnyGuard),
-    optingTypeAnnotation: _makeAssert('optingTypeAnnotation', is.optingTypeAnnotation as _AnyGuard),
-    optionalParameter: _makeAssert('optionalParameter', is.optionalParameter as _AnyGuard),
-    optionalTupleParameter: _makeAssert('optionalTupleParameter', is.optionalTupleParameter as _AnyGuard),
-    optionalType: _makeAssert('optionalType', is.optionalType as _AnyGuard),
-    pair: _makeAssert('pair', is.pair as _AnyGuard),
-    pairPattern: _makeAssert('pairPattern', is.pairPattern as _AnyGuard),
-    parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
-    parenthesizedType: _makeAssert('parenthesizedType', is.parenthesizedType as _AnyGuard),
-    program: _makeAssert('program', is.program as _AnyGuard),
-    propertySignature: _makeAssert('propertySignature', is.propertySignature as _AnyGuard),
-    publicFieldDefinition: _makeAssert('publicFieldDefinition', is.publicFieldDefinition as _AnyGuard),
-    readonlyType: _makeAssert('readonlyType', is.readonlyType as _AnyGuard),
-    regex: _makeAssert('regex', is.regex as _AnyGuard),
-    requiredParameter: _makeAssert('requiredParameter', is.requiredParameter as _AnyGuard),
-    restPattern: _makeAssert('restPattern', is.restPattern as _AnyGuard),
-    restType: _makeAssert('restType', is.restType as _AnyGuard),
-    returnStatement: _makeAssert('returnStatement', is.returnStatement as _AnyGuard),
-    satisfiesExpression: _makeAssert('satisfiesExpression', is.satisfiesExpression as _AnyGuard),
-    sequenceExpression: _makeAssert('sequenceExpression', is.sequenceExpression as _AnyGuard),
-    spreadElement: _makeAssert('spreadElement', is.spreadElement as _AnyGuard),
-    statementBlock: _makeAssert('statementBlock', is.statementBlock as _AnyGuard),
-    string: _makeAssert('string', is.string as _AnyGuard),
-    subscriptExpression: _makeAssert('subscriptExpression', is.subscriptExpression as _AnyGuard),
-    switchBody: _makeAssert('switchBody', is.switchBody as _AnyGuard),
-    switchCase: _makeAssert('switchCase', is.switchCase as _AnyGuard),
-    switchDefault: _makeAssert('switchDefault', is.switchDefault as _AnyGuard),
-    switchStatement: _makeAssert('switchStatement', is.switchStatement as _AnyGuard),
-    templateLiteralType: _makeAssert('templateLiteralType', is.templateLiteralType as _AnyGuard),
-    templateString: _makeAssert('templateString', is.templateString as _AnyGuard),
-    templateSubstitution: _makeAssert('templateSubstitution', is.templateSubstitution as _AnyGuard),
-    templateType: _makeAssert('templateType', is.templateType as _AnyGuard),
-    ternaryExpression: _makeAssert('ternaryExpression', is.ternaryExpression as _AnyGuard),
-    throwStatement: _makeAssert('throwStatement', is.throwStatement as _AnyGuard),
-    tryStatement: _makeAssert('tryStatement', is.tryStatement as _AnyGuard),
-    tupleParameter: _makeAssert('tupleParameter', is.tupleParameter as _AnyGuard),
-    tupleType: _makeAssert('tupleType', is.tupleType as _AnyGuard),
-    typeAliasDeclaration: _makeAssert('typeAliasDeclaration', is.typeAliasDeclaration as _AnyGuard),
-    typeAnnotation: _makeAssert('typeAnnotation', is.typeAnnotation as _AnyGuard),
-    typeArguments: _makeAssert('typeArguments', is.typeArguments as _AnyGuard),
-    typeAssertion: _makeAssert('typeAssertion', is.typeAssertion as _AnyGuard),
-    typeParameter: _makeAssert('typeParameter', is.typeParameter as _AnyGuard),
-    typeParameters: _makeAssert('typeParameters', is.typeParameters as _AnyGuard),
-    typePredicate: _makeAssert('typePredicate', is.typePredicate as _AnyGuard),
-    typePredicateAnnotation: _makeAssert('typePredicateAnnotation', is.typePredicateAnnotation as _AnyGuard),
-    typeQuery: _makeAssert('typeQuery', is.typeQuery as _AnyGuard),
-    unaryExpression: _makeAssert('unaryExpression', is.unaryExpression as _AnyGuard),
-    unionType: _makeAssert('unionType', is.unionType as _AnyGuard),
-    updateExpression: _makeAssert('updateExpression', is.updateExpression as _AnyGuard),
-    variableDeclaration: _makeAssert('variableDeclaration', is.variableDeclaration as _AnyGuard),
-    variableDeclarator: _makeAssert('variableDeclarator', is.variableDeclarator as _AnyGuard),
-    whileStatement: _makeAssert('whileStatement', is.whileStatement as _AnyGuard),
-    withStatement: _makeAssert('withStatement', is.withStatement as _AnyGuard),
-    yieldExpression: _makeAssert('yieldExpression', is.yieldExpression as _AnyGuard),
-    kind: _makeAssertKind(is.kind as _AnyGuard),
-    destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
-    expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
-    formalParameter: _makeAssert('formalParameter', is.formalParameter as _AnyGuard),
-    identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
-    importIdentifier: _makeAssert('importIdentifier', is.importIdentifier as _AnyGuard),
-    jsxAttribute: _makeAssert('jsxAttribute', is.jsxAttribute as _AnyGuard),
-    jsxAttributeName: _makeAssert('jsxAttributeName', is.jsxAttributeName as _AnyGuard),
-    jsxAttributeValue: _makeAssert('jsxAttributeValue', is.jsxAttributeValue as _AnyGuard),
-    jsxChild: _makeAssert('jsxChild', is.jsxChild as _AnyGuard),
-    jsxElement: _makeAssert('jsxElement', is.jsxElement as _AnyGuard),
-    jsxElementName: _makeAssert('jsxElementName', is.jsxElementName as _AnyGuard),
-    jsxIdentifier: _makeAssert('jsxIdentifier', is.jsxIdentifier as _AnyGuard),
-    moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
-    propertyIdentifier: _makeAssert('propertyIdentifier', is.propertyIdentifier as _AnyGuard),
-    propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
-    shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
-    shorthandPropertyIdentifierPattern: _makeAssert('shorthandPropertyIdentifierPattern', is.shorthandPropertyIdentifierPattern as _AnyGuard),
-    statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),
-    tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),
-    declaration: _makeAssert('declaration', is.declaration as _AnyGuard),
-    expression: _makeAssert('expression', is.expression as _AnyGuard),
-    pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
-    primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
-    primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard),
-    statement: _makeAssert('statement', is.statement as _AnyGuard),
-    type: _makeAssert('type', is.type as _AnyGuard),
+  ArrowFunctionParameter: _makeAssert(
+    "ArrowFunctionParameter",
+    is.ArrowFunctionParameter as _AnyGuard,
+  ),
+  ClassBodyMethodSig: _makeAssert("ClassBodyMethodSig", is.ClassBodyMethodSig as _AnyGuard),
+  ClassHeritageExtendsClause: _makeAssert(
+    "ClassHeritageExtendsClause",
+    is.ClassHeritageExtendsClause as _AnyGuard,
+  ),
+  ExportStatementDefault: _makeAssert(
+    "ExportStatementDefault",
+    is.ExportStatementDefault as _AnyGuard,
+  ),
+  ExportStatementDefaultFromArm: _makeAssert(
+    "ExportStatementDefaultFromArm",
+    is.ExportStatementDefaultFromArm as _AnyGuard,
+  ),
+  ExportStatementDefaultFromArmClauseFrom: _makeAssert(
+    "ExportStatementDefaultFromArmClauseFrom",
+    is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard,
+  ),
+  ExportStatementDefaultFromArmNsFrom: _makeAssert(
+    "ExportStatementDefaultFromArmNsFrom",
+    is.ExportStatementDefaultFromArmNsFrom as _AnyGuard,
+  ),
+  ExportStatementDefaultFromArmStarFrom: _makeAssert(
+    "ExportStatementDefaultFromArmStarFrom",
+    is.ExportStatementDefaultFromArmStarFrom as _AnyGuard,
+  ),
+  ExportStatementEqualsExport: _makeAssert(
+    "ExportStatementEqualsExport",
+    is.ExportStatementEqualsExport as _AnyGuard,
+  ),
+  ExportStatementNamespaceExport: _makeAssert(
+    "ExportStatementNamespaceExport",
+    is.ExportStatementNamespaceExport as _AnyGuard,
+  ),
+  ExportStatementTypeExport: _makeAssert(
+    "ExportStatementTypeExport",
+    is.ExportStatementTypeExport as _AnyGuard,
+  ),
+  ForHeaderLhs: _makeAssert("ForHeaderLhs", is.ForHeaderLhs as _AnyGuard),
+  ImportClauseDefaultImport: _makeAssert(
+    "ImportClauseDefaultImport",
+    is.ImportClauseDefaultImport as _AnyGuard,
+  ),
+  ImportClauseGroup1: _makeAssert("ImportClauseGroup1", is.ImportClauseGroup1 as _AnyGuard),
+  PublicFieldDefinitionDeclareFirst: _makeAssert(
+    "PublicFieldDefinitionDeclareFirst",
+    is.PublicFieldDefinitionDeclareFirst as _AnyGuard,
+  ),
+  abstractClassDeclaration: _makeAssert(
+    "abstractClassDeclaration",
+    is.abstractClassDeclaration as _AnyGuard,
+  ),
+  abstractMethodSignature: _makeAssert(
+    "abstractMethodSignature",
+    is.abstractMethodSignature as _AnyGuard,
+  ),
+  addingTypeAnnotation: _makeAssert("addingTypeAnnotation", is.addingTypeAnnotation as _AnyGuard),
+  ambientDeclaration: _makeAssert("ambientDeclaration", is.ambientDeclaration as _AnyGuard),
+  arguments: _makeAssert("arguments", is.arguments as _AnyGuard),
+  array: _makeAssert("array", is.array as _AnyGuard),
+  arrayPattern: _makeAssert("arrayPattern", is.arrayPattern as _AnyGuard),
+  arrayType: _makeAssert("arrayType", is.arrayType as _AnyGuard),
+  arrowFunction: _makeAssert("arrowFunction", is.arrowFunction as _AnyGuard),
+  asExpression: _makeAssert("asExpression", is.asExpression as _AnyGuard),
+  asserts: _makeAssert("asserts", is.asserts as _AnyGuard),
+  assertsAnnotation: _makeAssert("assertsAnnotation", is.assertsAnnotation as _AnyGuard),
+  assignmentExpression: _makeAssert("assignmentExpression", is.assignmentExpression as _AnyGuard),
+  assignmentPattern: _makeAssert("assignmentPattern", is.assignmentPattern as _AnyGuard),
+  augmentedAssignmentExpression: _makeAssert(
+    "augmentedAssignmentExpression",
+    is.augmentedAssignmentExpression as _AnyGuard,
+  ),
+  awaitExpression: _makeAssert("awaitExpression", is.awaitExpression as _AnyGuard),
+  binaryExpression: _makeAssert("binaryExpression", is.binaryExpression as _AnyGuard),
+  breakStatement: _makeAssert("breakStatement", is.breakStatement as _AnyGuard),
+  callExpression: _makeAssert("callExpression", is.callExpression as _AnyGuard),
+  callSignature: _makeAssert("callSignature", is.callSignature as _AnyGuard),
+  catchClause: _makeAssert("catchClause", is.catchClause as _AnyGuard),
+  class_: _makeAssert("class_", is.class_ as _AnyGuard),
+  classBody: _makeAssert("classBody", is.classBody as _AnyGuard),
+  classDeclaration: _makeAssert("classDeclaration", is.classDeclaration as _AnyGuard),
+  classHeritage: _makeAssert("classHeritage", is.classHeritage as _AnyGuard),
+  classStaticBlock: _makeAssert("classStaticBlock", is.classStaticBlock as _AnyGuard),
+  computedPropertyName: _makeAssert("computedPropertyName", is.computedPropertyName as _AnyGuard),
+  conditionalType: _makeAssert("conditionalType", is.conditionalType as _AnyGuard),
+  constraint: _makeAssert("constraint", is.constraint as _AnyGuard),
+  constructSignature: _makeAssert("constructSignature", is.constructSignature as _AnyGuard),
+  constructorType: _makeAssert("constructorType", is.constructorType as _AnyGuard),
+  continueStatement: _makeAssert("continueStatement", is.continueStatement as _AnyGuard),
+  debuggerStatement: _makeAssert("debuggerStatement", is.debuggerStatement as _AnyGuard),
+  decorator: _makeAssert("decorator", is.decorator as _AnyGuard),
+  decoratorCallExpression: _makeAssert(
+    "decoratorCallExpression",
+    is.decoratorCallExpression as _AnyGuard,
+  ),
+  decoratorMemberExpression: _makeAssert(
+    "decoratorMemberExpression",
+    is.decoratorMemberExpression as _AnyGuard,
+  ),
+  decoratorParenthesizedExpression: _makeAssert(
+    "decoratorParenthesizedExpression",
+    is.decoratorParenthesizedExpression as _AnyGuard,
+  ),
+  defaultType: _makeAssert("defaultType", is.defaultType as _AnyGuard),
+  doStatement: _makeAssert("doStatement", is.doStatement as _AnyGuard),
+  elseClause: _makeAssert("elseClause", is.elseClause as _AnyGuard),
+  enumAssignment: _makeAssert("enumAssignment", is.enumAssignment as _AnyGuard),
+  enumBody: _makeAssert("enumBody", is.enumBody as _AnyGuard),
+  enumDeclaration: _makeAssert("enumDeclaration", is.enumDeclaration as _AnyGuard),
+  exportClause: _makeAssert("exportClause", is.exportClause as _AnyGuard),
+  exportSpecifier: _makeAssert("exportSpecifier", is.exportSpecifier as _AnyGuard),
+  exportStatement: _makeAssert("exportStatement", is.exportStatement as _AnyGuard),
+  expressionStatement: _makeAssert("expressionStatement", is.expressionStatement as _AnyGuard),
+  extendsClause: _makeAssert("extendsClause", is.extendsClause as _AnyGuard),
+  extendsTypeClause: _makeAssert("extendsTypeClause", is.extendsTypeClause as _AnyGuard),
+  finallyClause: _makeAssert("finallyClause", is.finallyClause as _AnyGuard),
+  flowMaybeType: _makeAssert("flowMaybeType", is.flowMaybeType as _AnyGuard),
+  forInStatement: _makeAssert("forInStatement", is.forInStatement as _AnyGuard),
+  forStatement: _makeAssert("forStatement", is.forStatement as _AnyGuard),
+  formalParameters: _makeAssert("formalParameters", is.formalParameters as _AnyGuard),
+  functionDeclaration: _makeAssert("functionDeclaration", is.functionDeclaration as _AnyGuard),
+  functionExpression: _makeAssert("functionExpression", is.functionExpression as _AnyGuard),
+  functionSignature: _makeAssert("functionSignature", is.functionSignature as _AnyGuard),
+  functionType: _makeAssert("functionType", is.functionType as _AnyGuard),
+  generatorFunction: _makeAssert("generatorFunction", is.generatorFunction as _AnyGuard),
+  generatorFunctionDeclaration: _makeAssert(
+    "generatorFunctionDeclaration",
+    is.generatorFunctionDeclaration as _AnyGuard,
+  ),
+  genericType: _makeAssert("genericType", is.genericType as _AnyGuard),
+  ifStatement: _makeAssert("ifStatement", is.ifStatement as _AnyGuard),
+  implementsClause: _makeAssert("implementsClause", is.implementsClause as _AnyGuard),
+  importAlias: _makeAssert("importAlias", is.importAlias as _AnyGuard),
+  importAttribute: _makeAssert("importAttribute", is.importAttribute as _AnyGuard),
+  importClause: _makeAssert("importClause", is.importClause as _AnyGuard),
+  importRequireClause: _makeAssert("importRequireClause", is.importRequireClause as _AnyGuard),
+  importSpecifier: _makeAssert("importSpecifier", is.importSpecifier as _AnyGuard),
+  importStatement: _makeAssert("importStatement", is.importStatement as _AnyGuard),
+  indexSignature: _makeAssert("indexSignature", is.indexSignature as _AnyGuard),
+  indexTypeQuery: _makeAssert("indexTypeQuery", is.indexTypeQuery as _AnyGuard),
+  inferType: _makeAssert("inferType", is.inferType as _AnyGuard),
+  instantiationExpression: _makeAssert(
+    "instantiationExpression",
+    is.instantiationExpression as _AnyGuard,
+  ),
+  interfaceDeclaration: _makeAssert("interfaceDeclaration", is.interfaceDeclaration as _AnyGuard),
+  internalModule: _makeAssert("internalModule", is.internalModule as _AnyGuard),
+  intersectionType: _makeAssert("intersectionType", is.intersectionType as _AnyGuard),
+  labeledStatement: _makeAssert("labeledStatement", is.labeledStatement as _AnyGuard),
+  lexicalDeclaration: _makeAssert("lexicalDeclaration", is.lexicalDeclaration as _AnyGuard),
+  literalType: _makeAssert("literalType", is.literalType as _AnyGuard),
+  lookupType: _makeAssert("lookupType", is.lookupType as _AnyGuard),
+  mappedTypeClause: _makeAssert("mappedTypeClause", is.mappedTypeClause as _AnyGuard),
+  memberExpression: _makeAssert("memberExpression", is.memberExpression as _AnyGuard),
+  methodDefinition: _makeAssert("methodDefinition", is.methodDefinition as _AnyGuard),
+  methodSignature: _makeAssert("methodSignature", is.methodSignature as _AnyGuard),
+  module: _makeAssert("module", is.module as _AnyGuard),
+  namedImports: _makeAssert("namedImports", is.namedImports as _AnyGuard),
+  namespaceExport: _makeAssert("namespaceExport", is.namespaceExport as _AnyGuard),
+  namespaceImport: _makeAssert("namespaceImport", is.namespaceImport as _AnyGuard),
+  nestedIdentifier: _makeAssert("nestedIdentifier", is.nestedIdentifier as _AnyGuard),
+  nestedTypeIdentifier: _makeAssert("nestedTypeIdentifier", is.nestedTypeIdentifier as _AnyGuard),
+  newExpression: _makeAssert("newExpression", is.newExpression as _AnyGuard),
+  nonNullExpression: _makeAssert("nonNullExpression", is.nonNullExpression as _AnyGuard),
+  object: _makeAssert("object", is.object as _AnyGuard),
+  objectAssignmentPattern: _makeAssert(
+    "objectAssignmentPattern",
+    is.objectAssignmentPattern as _AnyGuard,
+  ),
+  objectPattern: _makeAssert("objectPattern", is.objectPattern as _AnyGuard),
+  objectType: _makeAssert("objectType", is.objectType as _AnyGuard),
+  objectTypeContent: _makeAssert("objectTypeContent", is.objectTypeContent as _AnyGuard),
+  objectTypeContentComma: _makeAssert(
+    "objectTypeContentComma",
+    is.objectTypeContentComma as _AnyGuard,
+  ),
+  objectTypeContentSemi: _makeAssert(
+    "objectTypeContentSemi",
+    is.objectTypeContentSemi as _AnyGuard,
+  ),
+  omittingTypeAnnotation: _makeAssert(
+    "omittingTypeAnnotation",
+    is.omittingTypeAnnotation as _AnyGuard,
+  ),
+  optingTypeAnnotation: _makeAssert("optingTypeAnnotation", is.optingTypeAnnotation as _AnyGuard),
+  optionalParameter: _makeAssert("optionalParameter", is.optionalParameter as _AnyGuard),
+  optionalTupleParameter: _makeAssert(
+    "optionalTupleParameter",
+    is.optionalTupleParameter as _AnyGuard,
+  ),
+  optionalType: _makeAssert("optionalType", is.optionalType as _AnyGuard),
+  pair: _makeAssert("pair", is.pair as _AnyGuard),
+  pairPattern: _makeAssert("pairPattern", is.pairPattern as _AnyGuard),
+  parenthesizedExpression: _makeAssert(
+    "parenthesizedExpression",
+    is.parenthesizedExpression as _AnyGuard,
+  ),
+  parenthesizedType: _makeAssert("parenthesizedType", is.parenthesizedType as _AnyGuard),
+  program: _makeAssert("program", is.program as _AnyGuard),
+  propertySignature: _makeAssert("propertySignature", is.propertySignature as _AnyGuard),
+  publicFieldDefinition: _makeAssert(
+    "publicFieldDefinition",
+    is.publicFieldDefinition as _AnyGuard,
+  ),
+  readonlyType: _makeAssert("readonlyType", is.readonlyType as _AnyGuard),
+  regex: _makeAssert("regex", is.regex as _AnyGuard),
+  requiredParameter: _makeAssert("requiredParameter", is.requiredParameter as _AnyGuard),
+  restPattern: _makeAssert("restPattern", is.restPattern as _AnyGuard),
+  restType: _makeAssert("restType", is.restType as _AnyGuard),
+  returnStatement: _makeAssert("returnStatement", is.returnStatement as _AnyGuard),
+  satisfiesExpression: _makeAssert("satisfiesExpression", is.satisfiesExpression as _AnyGuard),
+  sequenceExpression: _makeAssert("sequenceExpression", is.sequenceExpression as _AnyGuard),
+  spreadElement: _makeAssert("spreadElement", is.spreadElement as _AnyGuard),
+  statementBlock: _makeAssert("statementBlock", is.statementBlock as _AnyGuard),
+  string: _makeAssert("string", is.string as _AnyGuard),
+  subscriptExpression: _makeAssert("subscriptExpression", is.subscriptExpression as _AnyGuard),
+  switchBody: _makeAssert("switchBody", is.switchBody as _AnyGuard),
+  switchCase: _makeAssert("switchCase", is.switchCase as _AnyGuard),
+  switchDefault: _makeAssert("switchDefault", is.switchDefault as _AnyGuard),
+  switchStatement: _makeAssert("switchStatement", is.switchStatement as _AnyGuard),
+  templateLiteralType: _makeAssert("templateLiteralType", is.templateLiteralType as _AnyGuard),
+  templateString: _makeAssert("templateString", is.templateString as _AnyGuard),
+  templateSubstitution: _makeAssert("templateSubstitution", is.templateSubstitution as _AnyGuard),
+  templateType: _makeAssert("templateType", is.templateType as _AnyGuard),
+  ternaryExpression: _makeAssert("ternaryExpression", is.ternaryExpression as _AnyGuard),
+  throwStatement: _makeAssert("throwStatement", is.throwStatement as _AnyGuard),
+  tryStatement: _makeAssert("tryStatement", is.tryStatement as _AnyGuard),
+  tupleParameter: _makeAssert("tupleParameter", is.tupleParameter as _AnyGuard),
+  tupleType: _makeAssert("tupleType", is.tupleType as _AnyGuard),
+  typeAliasDeclaration: _makeAssert("typeAliasDeclaration", is.typeAliasDeclaration as _AnyGuard),
+  typeAnnotation: _makeAssert("typeAnnotation", is.typeAnnotation as _AnyGuard),
+  typeArguments: _makeAssert("typeArguments", is.typeArguments as _AnyGuard),
+  typeAssertion: _makeAssert("typeAssertion", is.typeAssertion as _AnyGuard),
+  typeParameter: _makeAssert("typeParameter", is.typeParameter as _AnyGuard),
+  typeParameters: _makeAssert("typeParameters", is.typeParameters as _AnyGuard),
+  typePredicate: _makeAssert("typePredicate", is.typePredicate as _AnyGuard),
+  typePredicateAnnotation: _makeAssert(
+    "typePredicateAnnotation",
+    is.typePredicateAnnotation as _AnyGuard,
+  ),
+  typeQuery: _makeAssert("typeQuery", is.typeQuery as _AnyGuard),
+  unaryExpression: _makeAssert("unaryExpression", is.unaryExpression as _AnyGuard),
+  unionType: _makeAssert("unionType", is.unionType as _AnyGuard),
+  updateExpression: _makeAssert("updateExpression", is.updateExpression as _AnyGuard),
+  variableDeclaration: _makeAssert("variableDeclaration", is.variableDeclaration as _AnyGuard),
+  variableDeclarator: _makeAssert("variableDeclarator", is.variableDeclarator as _AnyGuard),
+  whileStatement: _makeAssert("whileStatement", is.whileStatement as _AnyGuard),
+  withStatement: _makeAssert("withStatement", is.withStatement as _AnyGuard),
+  yieldExpression: _makeAssert("yieldExpression", is.yieldExpression as _AnyGuard),
+  kind: _makeAssertKind(is.kind as _AnyGuard),
+  destructuringPattern: _makeAssert("destructuringPattern", is.destructuringPattern as _AnyGuard),
+  expressions: _makeAssert("expressions", is.expressions as _AnyGuard),
+  formalParameter: _makeAssert("formalParameter", is.formalParameter as _AnyGuard),
+  identifier: _makeAssert("identifier", is.identifier as _AnyGuard),
+  importIdentifier: _makeAssert("importIdentifier", is.importIdentifier as _AnyGuard),
+  jsxAttribute: _makeAssert("jsxAttribute", is.jsxAttribute as _AnyGuard),
+  jsxAttributeName: _makeAssert("jsxAttributeName", is.jsxAttributeName as _AnyGuard),
+  jsxAttributeValue: _makeAssert("jsxAttributeValue", is.jsxAttributeValue as _AnyGuard),
+  jsxChild: _makeAssert("jsxChild", is.jsxChild as _AnyGuard),
+  jsxElement: _makeAssert("jsxElement", is.jsxElement as _AnyGuard),
+  jsxElementName: _makeAssert("jsxElementName", is.jsxElementName as _AnyGuard),
+  jsxIdentifier: _makeAssert("jsxIdentifier", is.jsxIdentifier as _AnyGuard),
+  moduleExportName: _makeAssert("moduleExportName", is.moduleExportName as _AnyGuard),
+  propertyIdentifier: _makeAssert("propertyIdentifier", is.propertyIdentifier as _AnyGuard),
+  propertyName: _makeAssert("propertyName", is.propertyName as _AnyGuard),
+  shorthandPropertyIdentifier: _makeAssert(
+    "shorthandPropertyIdentifier",
+    is.shorthandPropertyIdentifier as _AnyGuard,
+  ),
+  shorthandPropertyIdentifierPattern: _makeAssert(
+    "shorthandPropertyIdentifierPattern",
+    is.shorthandPropertyIdentifierPattern as _AnyGuard,
+  ),
+  statementIdentifier: _makeAssert("statementIdentifier", is.statementIdentifier as _AnyGuard),
+  tupleTypeMember: _makeAssert("tupleTypeMember", is.tupleTypeMember as _AnyGuard),
+  declaration: _makeAssert("declaration", is.declaration as _AnyGuard),
+  expression: _makeAssert("expression", is.expression as _AnyGuard),
+  pattern: _makeAssert("pattern", is.pattern as _AnyGuard),
+  primaryExpression: _makeAssert("primaryExpression", is.primaryExpression as _AnyGuard),
+  primaryType: _makeAssert("primaryType", is.primaryType as _AnyGuard),
+  statement: _makeAssert("statement", is.statement as _AnyGuard),
+  type: _makeAssert("type", is.type as _AnyGuard),
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.
@@ -1172,16 +1892,16 @@ export const assert = {
 // Overload 2: generic unknown → fall back to AnyTreeNode / AnyNodeData.
 
 export function isTree<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>(
-    v: T,
-): v is T & NamespaceMap[K]['Tree'];
+  v: T,
+): v is T & NamespaceMap[K]["Tree"];
 export function isTree(v: unknown): v is AnyTreeNode;
 export function isTree(v: unknown): boolean {
-    return typeof (v as { range?: unknown })?.range === 'function';
+  return typeof (v as { range?: unknown })?.range === "function";
 }
 
 export function isNode(v: { readonly $type: string | number }): v is AnyNodeData;
 export function isNode(v: { readonly $type: string | number }): boolean {
-    const o = v as Record<string, unknown>;
-    const hasFields = Object.keys(o).some((k) => k.startsWith('_'));
-    return hasFields || typeof o['$text'] === 'string';
+  const o = v as Record<string, unknown>;
+  const hasFields = Object.keys(o).some((k) => k.startsWith("_"));
+  return hasFields || typeof o["$text"] === "string";
 }

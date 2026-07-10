@@ -11,12 +11,20 @@
 // to feed it directly into `.from()`, use the typed wrapper (`readTreeNode`)
 // so `.from()` sees a wrapped node and takes the identity quick-return path.
 
-import * as F from './factories.js';
-import * as FR from './from.js';
+import * as F from "./factories.js";
+import * as FR from "./from.js";
 
-function _attach<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {
+function _attach<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(
+  fn: T,
+  props: P,
+): T & P {
   for (const key of Object.keys(props)) {
-    Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
+    Object.defineProperty(fn, key, {
+      value: props[key],
+      writable: true,
+      configurable: true,
+      enumerable: true,
+    });
   }
   return fn as T & P;
 }
@@ -24,78 +32,174 @@ function _attach<T extends (...args: never[]) => unknown, P extends Record<strin
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const condition = {
-  unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
-  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
+  unary: _attach(FR.unaryExpressionFrom, {
+    from: FR.unaryExpressionFrom,
+    strict: F.unaryExpression,
+  }),
+  reference: _attach(FR.referenceExpressionFrom, {
+    from: FR.referenceExpressionFrom,
+    strict: F.referenceExpression,
+  }),
   try: _attach(FR.tryExpressionFrom, { from: FR.tryExpressionFrom, strict: F.tryExpression }),
-  binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
-  assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
-  compoundAssignment: _attach(FR.compoundAssignmentExprFrom, { from: FR.compoundAssignmentExprFrom, strict: F.compoundAssignmentExpr }),
-  typeCast: _attach(FR.typeCastExpressionFrom, { from: FR.typeCastExpressionFrom, strict: F.typeCastExpression }),
+  binary: _attach(FR.binaryExpressionFrom, {
+    from: FR.binaryExpressionFrom,
+    strict: F.binaryExpression,
+  }),
+  assignment: _attach(FR.assignmentExpressionFrom, {
+    from: FR.assignmentExpressionFrom,
+    strict: F.assignmentExpression,
+  }),
+  compoundAssignment: _attach(FR.compoundAssignmentExprFrom, {
+    from: FR.compoundAssignmentExprFrom,
+    strict: F.compoundAssignmentExpr,
+  }),
+  typeCast: _attach(FR.typeCastExpressionFrom, {
+    from: FR.typeCastExpressionFrom,
+    strict: F.typeCastExpression,
+  }),
   call: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
-  return: _attach(FR.returnExpressionFrom, { from: FR.returnExpressionFrom, strict: F.returnExpression }),
-  yield: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+  return: _attach(FR.returnExpressionFrom, {
+    from: FR.returnExpressionFrom,
+    strict: F.returnExpression,
+  }),
+  yield: _attach(FR.yieldExpressionFrom, {
+    from: FR.yieldExpressionFrom,
+    strict: F.yieldExpression,
+  }),
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
   float: F.floatLiteral,
   identifier: F.identifier,
   self: F.self,
-  scoped: _attach(FR.scopedIdentifierFrom, { from: FR.scopedIdentifierFrom, strict: F.scopedIdentifier }),
-  generic: _attach(FR.genericFunctionFrom, { from: FR.genericFunctionFrom, strict: F.genericFunction }),
-  await: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
-  field: _attach(FR.fieldExpressionFrom, { from: FR.fieldExpressionFrom, strict: F.fieldExpression }),
-  array: _attach(FR.arrayExpressionFrom, { from: FR.arrayExpressionFrom, strict: F.arrayExpression }),
-  tuple: _attach(FR.tupleExpressionFrom, { from: FR.tupleExpressionFrom, strict: F.tupleExpression }),
-  macro: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
+  scoped: _attach(FR.scopedIdentifierFrom, {
+    from: FR.scopedIdentifierFrom,
+    strict: F.scopedIdentifier,
+  }),
+  generic: _attach(FR.genericFunctionFrom, {
+    from: FR.genericFunctionFrom,
+    strict: F.genericFunction,
+  }),
+  await: _attach(FR.awaitExpressionFrom, {
+    from: FR.awaitExpressionFrom,
+    strict: F.awaitExpression,
+  }),
+  field: _attach(FR.fieldExpressionFrom, {
+    from: FR.fieldExpressionFrom,
+    strict: F.fieldExpression,
+  }),
+  array: _attach(FR.arrayExpressionFrom, {
+    from: FR.arrayExpressionFrom,
+    strict: F.arrayExpression,
+  }),
+  tuple: _attach(FR.tupleExpressionFrom, {
+    from: FR.tupleExpressionFrom,
+    strict: F.tupleExpression,
+  }),
+  macro: _attach(FR.macroInvocationFrom, {
+    from: FR.macroInvocationFrom,
+    strict: F.macroInvocation,
+  }),
   unit: F.unitExpression,
-  break: _attach(FR.breakExpressionFrom, { from: FR.breakExpressionFrom, strict: F.breakExpression }),
-  continue: _attach(FR.continueExpressionFrom, { from: FR.continueExpressionFrom, strict: F.continueExpression }),
-  index: _attach(FR.indexExpressionFrom, { from: FR.indexExpressionFrom, strict: F.indexExpression }),
+  break: _attach(FR.breakExpressionFrom, {
+    from: FR.breakExpressionFrom,
+    strict: F.breakExpression,
+  }),
+  continue: _attach(FR.continueExpressionFrom, {
+    from: FR.continueExpressionFrom,
+    strict: F.continueExpression,
+  }),
+  index: _attach(FR.indexExpressionFrom, {
+    from: FR.indexExpressionFrom,
+    strict: F.indexExpression,
+  }),
   metavariable: F.metavariable,
-  closure: _attach(FR.closureExpressionFrom, { from: FR.closureExpressionFrom, strict: F.closureExpression }),
-  parenthesized: _attach(FR.parenthesizedExpressionFrom, { from: FR.parenthesizedExpressionFrom, strict: F.parenthesizedExpression }),
-  struct: _attach(FR.structExpressionFrom, { from: FR.structExpressionFrom, strict: F.structExpression }),
+  closure: _attach(FR.closureExpressionFrom, {
+    from: FR.closureExpressionFrom,
+    strict: F.closureExpression,
+  }),
+  parenthesized: _attach(FR.parenthesizedExpressionFrom, {
+    from: FR.parenthesizedExpressionFrom,
+    strict: F.parenthesizedExpression,
+  }),
+  struct: _attach(FR.structExpressionFrom, {
+    from: FR.structExpressionFrom,
+    strict: F.structExpression,
+  }),
   unsafe: _attach(FR.unsafeBlockFrom, { from: FR.unsafeBlockFrom, strict: F.unsafeBlock }),
   async: _attach(FR.asyncBlockFrom, { from: FR.asyncBlockFrom, strict: F.asyncBlock }),
   gen: _attach(FR.genBlockFrom, { from: FR.genBlockFrom, strict: F.genBlock }),
   block: _attach(FR.blockFrom, { from: FR.blockFrom, strict: F.block }),
   if: _attach(FR.ifExpressionFrom, { from: FR.ifExpressionFrom, strict: F.ifExpression }),
-  match: _attach(FR.matchExpressionFrom, { from: FR.matchExpressionFrom, strict: F.matchExpression }),
-  while: _attach(FR.whileExpressionFrom, { from: FR.whileExpressionFrom, strict: F.whileExpression }),
+  match: _attach(FR.matchExpressionFrom, {
+    from: FR.matchExpressionFrom,
+    strict: F.matchExpression,
+  }),
+  while: _attach(FR.whileExpressionFrom, {
+    from: FR.whileExpressionFrom,
+    strict: F.whileExpression,
+  }),
   loop: _attach(FR.loopExpressionFrom, { from: FR.loopExpressionFrom, strict: F.loopExpression }),
   for: _attach(FR.forExpressionFrom, { from: FR.forExpressionFrom, strict: F.forExpression }),
   const: _attach(FR.constBlockFrom, { from: FR.constBlockFrom, strict: F.constBlock }),
-  range: _attach(FR.rangeExpressionFrom, { from: FR.rangeExpressionFrom, strict: F.rangeExpression }),
+  range: _attach(FR.rangeExpressionFrom, {
+    from: FR.rangeExpressionFrom,
+    strict: F.rangeExpression,
+  }),
   let: _attach(FR.letConditionFrom, { from: FR.letConditionFrom, strict: F.letCondition }),
 } as const;
 
 export const declarationStatement = {
   const: _attach(FR.constItemFrom, { from: FR.constItemFrom, strict: F.constItem }),
-  macro: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
+  macro: _attach(FR.macroInvocationFrom, {
+    from: FR.macroInvocationFrom,
+    strict: F.macroInvocation,
+  }),
   attribute: _attach(FR.attributeItemFrom, { from: FR.attributeItemFrom, strict: F.attributeItem }),
-  innerAttribute: _attach(FR.innerAttributeItemFrom, { from: FR.innerAttributeItemFrom, strict: F.innerAttributeItem }),
+  innerAttribute: _attach(FR.innerAttributeItemFrom, {
+    from: FR.innerAttributeItemFrom,
+    strict: F.innerAttributeItem,
+  }),
   mod: _attach(FR.modItemFrom, { from: FR.modItemFrom, strict: F.modItem }),
-  foreignMod: _attach(FR.foreignModItemFrom, { from: FR.foreignModItemFrom, strict: F.foreignModItem }),
+  foreignMod: _attach(FR.foreignModItemFrom, {
+    from: FR.foreignModItemFrom,
+    strict: F.foreignModItem,
+  }),
   struct: _attach(FR.structItemFrom, { from: FR.structItemFrom, strict: F.structItem }),
   union: _attach(FR.unionItemFrom, { from: FR.unionItemFrom, strict: F.unionItem }),
   enum: _attach(FR.enumItemFrom, { from: FR.enumItemFrom, strict: F.enumItem }),
   type: _attach(FR.typeItemFrom, { from: FR.typeItemFrom, strict: F.typeItem }),
   function: _attach(FR.functionItemFrom, { from: FR.functionItemFrom, strict: F.functionItem }),
-  functionSignature: _attach(FR.functionSignatureItemFrom, { from: FR.functionSignatureItemFrom, strict: F.functionSignatureItem }),
+  functionSignature: _attach(FR.functionSignatureItemFrom, {
+    from: FR.functionSignatureItemFrom,
+    strict: F.functionSignatureItem,
+  }),
   impl: _attach(FR.implItemFrom, { from: FR.implItemFrom, strict: F.implItem }),
   trait: _attach(FR.traitItemFrom, { from: FR.traitItemFrom, strict: F.traitItem }),
-  associated: _attach(FR.associatedTypeFrom, { from: FR.associatedTypeFrom, strict: F.associatedType }),
+  associated: _attach(FR.associatedTypeFrom, {
+    from: FR.associatedTypeFrom,
+    strict: F.associatedType,
+  }),
   let: _attach(FR.letDeclarationFrom, { from: FR.letDeclarationFrom, strict: F.letDeclaration }),
   use: _attach(FR.useDeclarationFrom, { from: FR.useDeclarationFrom, strict: F.useDeclaration }),
-  externCrate: _attach(FR.externCrateDeclarationFrom, { from: FR.externCrateDeclarationFrom, strict: F.externCrateDeclaration }),
+  externCrate: _attach(FR.externCrateDeclarationFrom, {
+    from: FR.externCrateDeclarationFrom,
+    strict: F.externCrateDeclaration,
+  }),
   static: _attach(FR.staticItemFrom, { from: FR.staticItemFrom, strict: F.staticItem }),
 } as const;
 
 export const delimTokens = {
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
@@ -105,54 +209,132 @@ export const delimTokens = {
   self: F.self,
   super: F.super_,
   crate: F.crate,
-  delimToken: _attach(FR.delimTokenTreeFrom, { from: FR.delimTokenTreeFrom, strict: F.delimTokenTree }),
+  delimToken: _attach(FR.delimTokenTreeFrom, {
+    from: FR.delimTokenTreeFrom,
+    strict: F.delimTokenTree,
+  }),
 } as const;
 
 export const expression = {
-  unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
-  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
+  unary: _attach(FR.unaryExpressionFrom, {
+    from: FR.unaryExpressionFrom,
+    strict: F.unaryExpression,
+  }),
+  reference: _attach(FR.referenceExpressionFrom, {
+    from: FR.referenceExpressionFrom,
+    strict: F.referenceExpression,
+  }),
   try: _attach(FR.tryExpressionFrom, { from: FR.tryExpressionFrom, strict: F.tryExpression }),
-  binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
-  assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
-  compoundAssignment: _attach(FR.compoundAssignmentExprFrom, { from: FR.compoundAssignmentExprFrom, strict: F.compoundAssignmentExpr }),
-  typeCast: _attach(FR.typeCastExpressionFrom, { from: FR.typeCastExpressionFrom, strict: F.typeCastExpression }),
+  binary: _attach(FR.binaryExpressionFrom, {
+    from: FR.binaryExpressionFrom,
+    strict: F.binaryExpression,
+  }),
+  assignment: _attach(FR.assignmentExpressionFrom, {
+    from: FR.assignmentExpressionFrom,
+    strict: F.assignmentExpression,
+  }),
+  compoundAssignment: _attach(FR.compoundAssignmentExprFrom, {
+    from: FR.compoundAssignmentExprFrom,
+    strict: F.compoundAssignmentExpr,
+  }),
+  typeCast: _attach(FR.typeCastExpressionFrom, {
+    from: FR.typeCastExpressionFrom,
+    strict: F.typeCastExpression,
+  }),
   call: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
-  return: _attach(FR.returnExpressionFrom, { from: FR.returnExpressionFrom, strict: F.returnExpression }),
-  yield: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+  return: _attach(FR.returnExpressionFrom, {
+    from: FR.returnExpressionFrom,
+    strict: F.returnExpression,
+  }),
+  yield: _attach(FR.yieldExpressionFrom, {
+    from: FR.yieldExpressionFrom,
+    strict: F.yieldExpression,
+  }),
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
   float: F.floatLiteral,
   identifier: F.identifier,
   self: F.self,
-  scoped: _attach(FR.scopedIdentifierFrom, { from: FR.scopedIdentifierFrom, strict: F.scopedIdentifier }),
-  generic: _attach(FR.genericFunctionFrom, { from: FR.genericFunctionFrom, strict: F.genericFunction }),
-  await: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
-  field: _attach(FR.fieldExpressionFrom, { from: FR.fieldExpressionFrom, strict: F.fieldExpression }),
-  array: _attach(FR.arrayExpressionFrom, { from: FR.arrayExpressionFrom, strict: F.arrayExpression }),
-  tuple: _attach(FR.tupleExpressionFrom, { from: FR.tupleExpressionFrom, strict: F.tupleExpression }),
-  macro: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
+  scoped: _attach(FR.scopedIdentifierFrom, {
+    from: FR.scopedIdentifierFrom,
+    strict: F.scopedIdentifier,
+  }),
+  generic: _attach(FR.genericFunctionFrom, {
+    from: FR.genericFunctionFrom,
+    strict: F.genericFunction,
+  }),
+  await: _attach(FR.awaitExpressionFrom, {
+    from: FR.awaitExpressionFrom,
+    strict: F.awaitExpression,
+  }),
+  field: _attach(FR.fieldExpressionFrom, {
+    from: FR.fieldExpressionFrom,
+    strict: F.fieldExpression,
+  }),
+  array: _attach(FR.arrayExpressionFrom, {
+    from: FR.arrayExpressionFrom,
+    strict: F.arrayExpression,
+  }),
+  tuple: _attach(FR.tupleExpressionFrom, {
+    from: FR.tupleExpressionFrom,
+    strict: F.tupleExpression,
+  }),
+  macro: _attach(FR.macroInvocationFrom, {
+    from: FR.macroInvocationFrom,
+    strict: F.macroInvocation,
+  }),
   unit: F.unitExpression,
-  break: _attach(FR.breakExpressionFrom, { from: FR.breakExpressionFrom, strict: F.breakExpression }),
-  continue: _attach(FR.continueExpressionFrom, { from: FR.continueExpressionFrom, strict: F.continueExpression }),
-  index: _attach(FR.indexExpressionFrom, { from: FR.indexExpressionFrom, strict: F.indexExpression }),
+  break: _attach(FR.breakExpressionFrom, {
+    from: FR.breakExpressionFrom,
+    strict: F.breakExpression,
+  }),
+  continue: _attach(FR.continueExpressionFrom, {
+    from: FR.continueExpressionFrom,
+    strict: F.continueExpression,
+  }),
+  index: _attach(FR.indexExpressionFrom, {
+    from: FR.indexExpressionFrom,
+    strict: F.indexExpression,
+  }),
   metavariable: F.metavariable,
-  closure: _attach(FR.closureExpressionFrom, { from: FR.closureExpressionFrom, strict: F.closureExpression }),
-  parenthesized: _attach(FR.parenthesizedExpressionFrom, { from: FR.parenthesizedExpressionFrom, strict: F.parenthesizedExpression }),
-  struct: _attach(FR.structExpressionFrom, { from: FR.structExpressionFrom, strict: F.structExpression }),
+  closure: _attach(FR.closureExpressionFrom, {
+    from: FR.closureExpressionFrom,
+    strict: F.closureExpression,
+  }),
+  parenthesized: _attach(FR.parenthesizedExpressionFrom, {
+    from: FR.parenthesizedExpressionFrom,
+    strict: F.parenthesizedExpression,
+  }),
+  struct: _attach(FR.structExpressionFrom, {
+    from: FR.structExpressionFrom,
+    strict: F.structExpression,
+  }),
   unsafe: _attach(FR.unsafeBlockFrom, { from: FR.unsafeBlockFrom, strict: F.unsafeBlock }),
   async: _attach(FR.asyncBlockFrom, { from: FR.asyncBlockFrom, strict: F.asyncBlock }),
   gen: _attach(FR.genBlockFrom, { from: FR.genBlockFrom, strict: F.genBlock }),
   block: _attach(FR.blockFrom, { from: FR.blockFrom, strict: F.block }),
   if: _attach(FR.ifExpressionFrom, { from: FR.ifExpressionFrom, strict: F.ifExpression }),
-  match: _attach(FR.matchExpressionFrom, { from: FR.matchExpressionFrom, strict: F.matchExpression }),
-  while: _attach(FR.whileExpressionFrom, { from: FR.whileExpressionFrom, strict: F.whileExpression }),
+  match: _attach(FR.matchExpressionFrom, {
+    from: FR.matchExpressionFrom,
+    strict: F.matchExpression,
+  }),
+  while: _attach(FR.whileExpressionFrom, {
+    from: FR.whileExpressionFrom,
+    strict: F.whileExpression,
+  }),
   loop: _attach(FR.loopExpressionFrom, { from: FR.loopExpressionFrom, strict: F.loopExpression }),
   for: _attach(FR.forExpressionFrom, { from: FR.forExpressionFrom, strict: F.forExpression }),
   const: _attach(FR.constBlockFrom, { from: FR.constBlockFrom, strict: F.constBlock }),
-  range: _attach(FR.rangeExpressionFrom, { from: FR.rangeExpressionFrom, strict: F.rangeExpression }),
+  range: _attach(FR.rangeExpressionFrom, {
+    from: FR.rangeExpressionFrom,
+    strict: F.rangeExpression,
+  }),
 } as const;
 
 export const expressionEndingWithBlock = {
@@ -162,54 +344,132 @@ export const expressionEndingWithBlock = {
   try: _attach(FR.tryBlockFrom, { from: FR.tryBlockFrom, strict: F.tryBlock }),
   block: _attach(FR.blockFrom, { from: FR.blockFrom, strict: F.block }),
   if: _attach(FR.ifExpressionFrom, { from: FR.ifExpressionFrom, strict: F.ifExpression }),
-  match: _attach(FR.matchExpressionFrom, { from: FR.matchExpressionFrom, strict: F.matchExpression }),
-  while: _attach(FR.whileExpressionFrom, { from: FR.whileExpressionFrom, strict: F.whileExpression }),
+  match: _attach(FR.matchExpressionFrom, {
+    from: FR.matchExpressionFrom,
+    strict: F.matchExpression,
+  }),
+  while: _attach(FR.whileExpressionFrom, {
+    from: FR.whileExpressionFrom,
+    strict: F.whileExpression,
+  }),
   loop: _attach(FR.loopExpressionFrom, { from: FR.loopExpressionFrom, strict: F.loopExpression }),
   for: _attach(FR.forExpressionFrom, { from: FR.forExpressionFrom, strict: F.forExpression }),
   const: _attach(FR.constBlockFrom, { from: FR.constBlockFrom, strict: F.constBlock }),
 } as const;
 
 export const expressionExceptRange = {
-  unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
-  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
+  unary: _attach(FR.unaryExpressionFrom, {
+    from: FR.unaryExpressionFrom,
+    strict: F.unaryExpression,
+  }),
+  reference: _attach(FR.referenceExpressionFrom, {
+    from: FR.referenceExpressionFrom,
+    strict: F.referenceExpression,
+  }),
   try: _attach(FR.tryExpressionFrom, { from: FR.tryExpressionFrom, strict: F.tryExpression }),
-  binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
-  assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
-  compoundAssignment: _attach(FR.compoundAssignmentExprFrom, { from: FR.compoundAssignmentExprFrom, strict: F.compoundAssignmentExpr }),
-  typeCast: _attach(FR.typeCastExpressionFrom, { from: FR.typeCastExpressionFrom, strict: F.typeCastExpression }),
+  binary: _attach(FR.binaryExpressionFrom, {
+    from: FR.binaryExpressionFrom,
+    strict: F.binaryExpression,
+  }),
+  assignment: _attach(FR.assignmentExpressionFrom, {
+    from: FR.assignmentExpressionFrom,
+    strict: F.assignmentExpression,
+  }),
+  compoundAssignment: _attach(FR.compoundAssignmentExprFrom, {
+    from: FR.compoundAssignmentExprFrom,
+    strict: F.compoundAssignmentExpr,
+  }),
+  typeCast: _attach(FR.typeCastExpressionFrom, {
+    from: FR.typeCastExpressionFrom,
+    strict: F.typeCastExpression,
+  }),
   call: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
-  return: _attach(FR.returnExpressionFrom, { from: FR.returnExpressionFrom, strict: F.returnExpression }),
-  yield: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+  return: _attach(FR.returnExpressionFrom, {
+    from: FR.returnExpressionFrom,
+    strict: F.returnExpression,
+  }),
+  yield: _attach(FR.yieldExpressionFrom, {
+    from: FR.yieldExpressionFrom,
+    strict: F.yieldExpression,
+  }),
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
   float: F.floatLiteral,
   identifier: F.identifier,
   self: F.self,
-  scoped: _attach(FR.scopedIdentifierFrom, { from: FR.scopedIdentifierFrom, strict: F.scopedIdentifier }),
-  generic: _attach(FR.genericFunctionFrom, { from: FR.genericFunctionFrom, strict: F.genericFunction }),
-  await: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
-  field: _attach(FR.fieldExpressionFrom, { from: FR.fieldExpressionFrom, strict: F.fieldExpression }),
-  array: _attach(FR.arrayExpressionFrom, { from: FR.arrayExpressionFrom, strict: F.arrayExpression }),
-  tuple: _attach(FR.tupleExpressionFrom, { from: FR.tupleExpressionFrom, strict: F.tupleExpression }),
-  macro: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
+  scoped: _attach(FR.scopedIdentifierFrom, {
+    from: FR.scopedIdentifierFrom,
+    strict: F.scopedIdentifier,
+  }),
+  generic: _attach(FR.genericFunctionFrom, {
+    from: FR.genericFunctionFrom,
+    strict: F.genericFunction,
+  }),
+  await: _attach(FR.awaitExpressionFrom, {
+    from: FR.awaitExpressionFrom,
+    strict: F.awaitExpression,
+  }),
+  field: _attach(FR.fieldExpressionFrom, {
+    from: FR.fieldExpressionFrom,
+    strict: F.fieldExpression,
+  }),
+  array: _attach(FR.arrayExpressionFrom, {
+    from: FR.arrayExpressionFrom,
+    strict: F.arrayExpression,
+  }),
+  tuple: _attach(FR.tupleExpressionFrom, {
+    from: FR.tupleExpressionFrom,
+    strict: F.tupleExpression,
+  }),
+  macro: _attach(FR.macroInvocationFrom, {
+    from: FR.macroInvocationFrom,
+    strict: F.macroInvocation,
+  }),
   unit: F.unitExpression,
-  break: _attach(FR.breakExpressionFrom, { from: FR.breakExpressionFrom, strict: F.breakExpression }),
-  continue: _attach(FR.continueExpressionFrom, { from: FR.continueExpressionFrom, strict: F.continueExpression }),
-  index: _attach(FR.indexExpressionFrom, { from: FR.indexExpressionFrom, strict: F.indexExpression }),
+  break: _attach(FR.breakExpressionFrom, {
+    from: FR.breakExpressionFrom,
+    strict: F.breakExpression,
+  }),
+  continue: _attach(FR.continueExpressionFrom, {
+    from: FR.continueExpressionFrom,
+    strict: F.continueExpression,
+  }),
+  index: _attach(FR.indexExpressionFrom, {
+    from: FR.indexExpressionFrom,
+    strict: F.indexExpression,
+  }),
   metavariable: F.metavariable,
-  closure: _attach(FR.closureExpressionFrom, { from: FR.closureExpressionFrom, strict: F.closureExpression }),
-  parenthesized: _attach(FR.parenthesizedExpressionFrom, { from: FR.parenthesizedExpressionFrom, strict: F.parenthesizedExpression }),
-  struct: _attach(FR.structExpressionFrom, { from: FR.structExpressionFrom, strict: F.structExpression }),
+  closure: _attach(FR.closureExpressionFrom, {
+    from: FR.closureExpressionFrom,
+    strict: F.closureExpression,
+  }),
+  parenthesized: _attach(FR.parenthesizedExpressionFrom, {
+    from: FR.parenthesizedExpressionFrom,
+    strict: F.parenthesizedExpression,
+  }),
+  struct: _attach(FR.structExpressionFrom, {
+    from: FR.structExpressionFrom,
+    strict: F.structExpression,
+  }),
   unsafe: _attach(FR.unsafeBlockFrom, { from: FR.unsafeBlockFrom, strict: F.unsafeBlock }),
   async: _attach(FR.asyncBlockFrom, { from: FR.asyncBlockFrom, strict: F.asyncBlock }),
   gen: _attach(FR.genBlockFrom, { from: FR.genBlockFrom, strict: F.genBlock }),
   block: _attach(FR.blockFrom, { from: FR.blockFrom, strict: F.block }),
   if: _attach(FR.ifExpressionFrom, { from: FR.ifExpressionFrom, strict: F.ifExpression }),
-  match: _attach(FR.matchExpressionFrom, { from: FR.matchExpressionFrom, strict: F.matchExpression }),
-  while: _attach(FR.whileExpressionFrom, { from: FR.whileExpressionFrom, strict: F.whileExpression }),
+  match: _attach(FR.matchExpressionFrom, {
+    from: FR.matchExpressionFrom,
+    strict: F.matchExpression,
+  }),
+  while: _attach(FR.whileExpressionFrom, {
+    from: FR.whileExpressionFrom,
+    strict: F.whileExpression,
+  }),
   loop: _attach(FR.loopExpressionFrom, { from: FR.loopExpressionFrom, strict: F.loopExpression }),
   for: _attach(FR.forExpressionFrom, { from: FR.forExpressionFrom, strict: F.forExpression }),
   const: _attach(FR.constBlockFrom, { from: FR.constBlockFrom, strict: F.constBlock }),
@@ -217,7 +477,10 @@ export const expressionExceptRange = {
 
 export const literal = {
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
@@ -226,17 +489,26 @@ export const literal = {
 
 export const literalPattern = {
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
   float: F.floatLiteral,
-  negative: _attach(FR.negativeLiteralFrom, { from: FR.negativeLiteralFrom, strict: F.negativeLiteral }),
+  negative: _attach(FR.negativeLiteralFrom, {
+    from: FR.negativeLiteralFrom,
+    strict: F.negativeLiteral,
+  }),
 } as const;
 
 export const nonDelimToken = {
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
@@ -254,64 +526,124 @@ export const path = {
   metavariable: F.metavariable,
   super: F.super_,
   crate: F.crate,
-  scoped: _attach(FR.scopedIdentifierFrom, { from: FR.scopedIdentifierFrom, strict: F.scopedIdentifier }),
+  scoped: _attach(FR.scopedIdentifierFrom, {
+    from: FR.scopedIdentifierFrom,
+    strict: F.scopedIdentifier,
+  }),
 } as const;
 
 export const pattern = {
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
   float: F.floatLiteral,
-  negative: _attach(FR.negativeLiteralFrom, { from: FR.negativeLiteralFrom, strict: F.negativeLiteral }),
+  negative: _attach(FR.negativeLiteralFrom, {
+    from: FR.negativeLiteralFrom,
+    strict: F.negativeLiteral,
+  }),
   identifier: F.identifier,
-  scoped: _attach(FR.scopedIdentifierFrom, { from: FR.scopedIdentifierFrom, strict: F.scopedIdentifier }),
-  generic: _attach(FR.genericPatternFrom, { from: FR.genericPatternFrom, strict: F.genericPattern }),
+  scoped: _attach(FR.scopedIdentifierFrom, {
+    from: FR.scopedIdentifierFrom,
+    strict: F.scopedIdentifier,
+  }),
+  generic: _attach(FR.genericPatternFrom, {
+    from: FR.genericPatternFrom,
+    strict: F.genericPattern,
+  }),
   tuple: _attach(FR.tuplePatternFrom, { from: FR.tuplePatternFrom, strict: F.tuplePattern }),
-  tupleStruct: _attach(FR.tupleStructPatternFrom, { from: FR.tupleStructPatternFrom, strict: F.tupleStructPattern }),
+  tupleStruct: _attach(FR.tupleStructPatternFrom, {
+    from: FR.tupleStructPatternFrom,
+    strict: F.tupleStructPattern,
+  }),
   struct: _attach(FR.structPatternFrom, { from: FR.structPatternFrom, strict: F.structPattern }),
   ref: _attach(FR.refPatternFrom, { from: FR.refPatternFrom, strict: F.refPattern }),
   slice: _attach(FR.slicePatternFrom, { from: FR.slicePatternFrom, strict: F.slicePattern }),
-  captured: _attach(FR.capturedPatternFrom, { from: FR.capturedPatternFrom, strict: F.capturedPattern }),
-  reference: _attach(FR.referencePatternFrom, { from: FR.referencePatternFrom, strict: F.referencePattern }),
+  captured: _attach(FR.capturedPatternFrom, {
+    from: FR.capturedPatternFrom,
+    strict: F.capturedPattern,
+  }),
+  reference: _attach(FR.referencePatternFrom, {
+    from: FR.referencePatternFrom,
+    strict: F.referencePattern,
+  }),
   mut: _attach(FR.mutPatternFrom, { from: FR.mutPatternFrom, strict: F.mutPattern }),
   range: _attach(FR.rangePatternFrom, { from: FR.rangePatternFrom, strict: F.rangePattern }),
   or: _attach(FR.orPatternFrom, { from: FR.orPatternFrom, strict: F.orPattern }),
   const: _attach(FR.constBlockFrom, { from: FR.constBlockFrom, strict: F.constBlock }),
-  macro: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
+  macro: _attach(FR.macroInvocationFrom, {
+    from: FR.macroInvocationFrom,
+    strict: F.macroInvocation,
+  }),
 } as const;
 
 export const statement = {
-  expression: _attach(FR.expressionStatementFrom, { from: FR.expressionStatementFrom, strict: F.expressionStatement }),
+  expression: _attach(FR.expressionStatementFrom, {
+    from: FR.expressionStatementFrom,
+    strict: F.expressionStatement,
+  }),
   const: _attach(FR.constItemFrom, { from: FR.constItemFrom, strict: F.constItem }),
-  macro: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
+  macro: _attach(FR.macroInvocationFrom, {
+    from: FR.macroInvocationFrom,
+    strict: F.macroInvocation,
+  }),
   attribute: _attach(FR.attributeItemFrom, { from: FR.attributeItemFrom, strict: F.attributeItem }),
-  innerAttribute: _attach(FR.innerAttributeItemFrom, { from: FR.innerAttributeItemFrom, strict: F.innerAttributeItem }),
+  innerAttribute: _attach(FR.innerAttributeItemFrom, {
+    from: FR.innerAttributeItemFrom,
+    strict: F.innerAttributeItem,
+  }),
   mod: _attach(FR.modItemFrom, { from: FR.modItemFrom, strict: F.modItem }),
-  foreignMod: _attach(FR.foreignModItemFrom, { from: FR.foreignModItemFrom, strict: F.foreignModItem }),
+  foreignMod: _attach(FR.foreignModItemFrom, {
+    from: FR.foreignModItemFrom,
+    strict: F.foreignModItem,
+  }),
   struct: _attach(FR.structItemFrom, { from: FR.structItemFrom, strict: F.structItem }),
   union: _attach(FR.unionItemFrom, { from: FR.unionItemFrom, strict: F.unionItem }),
   enum: _attach(FR.enumItemFrom, { from: FR.enumItemFrom, strict: F.enumItem }),
   type: _attach(FR.typeItemFrom, { from: FR.typeItemFrom, strict: F.typeItem }),
   function: _attach(FR.functionItemFrom, { from: FR.functionItemFrom, strict: F.functionItem }),
-  functionSignature: _attach(FR.functionSignatureItemFrom, { from: FR.functionSignatureItemFrom, strict: F.functionSignatureItem }),
+  functionSignature: _attach(FR.functionSignatureItemFrom, {
+    from: FR.functionSignatureItemFrom,
+    strict: F.functionSignatureItem,
+  }),
   impl: _attach(FR.implItemFrom, { from: FR.implItemFrom, strict: F.implItem }),
   trait: _attach(FR.traitItemFrom, { from: FR.traitItemFrom, strict: F.traitItem }),
-  associated: _attach(FR.associatedTypeFrom, { from: FR.associatedTypeFrom, strict: F.associatedType }),
+  associated: _attach(FR.associatedTypeFrom, {
+    from: FR.associatedTypeFrom,
+    strict: F.associatedType,
+  }),
   let: _attach(FR.letDeclarationFrom, { from: FR.letDeclarationFrom, strict: F.letDeclaration }),
   use: _attach(FR.useDeclarationFrom, { from: FR.useDeclarationFrom, strict: F.useDeclaration }),
-  externCrate: _attach(FR.externCrateDeclarationFrom, { from: FR.externCrateDeclarationFrom, strict: F.externCrateDeclaration }),
+  externCrate: _attach(FR.externCrateDeclarationFrom, {
+    from: FR.externCrateDeclarationFrom,
+    strict: F.externCrateDeclaration,
+  }),
   static: _attach(FR.staticItemFrom, { from: FR.staticItemFrom, strict: F.staticItem }),
 } as const;
 
 export const tokenPattern = {
-  tokenTree: _attach(FR.tokenTreePatternFrom, { from: FR.tokenTreePatternFrom, strict: F.tokenTreePattern }),
-  tokenRepetition: _attach(FR.tokenRepetitionPatternFrom, { from: FR.tokenRepetitionPatternFrom, strict: F.tokenRepetitionPattern }),
-  tokenBinding: _attach(FR.tokenBindingPatternFrom, { from: FR.tokenBindingPatternFrom, strict: F.tokenBindingPattern }),
+  tokenTree: _attach(FR.tokenTreePatternFrom, {
+    from: FR.tokenTreePatternFrom,
+    strict: F.tokenTreePattern,
+  }),
+  tokenRepetition: _attach(FR.tokenRepetitionPatternFrom, {
+    from: FR.tokenRepetitionPatternFrom,
+    strict: F.tokenRepetitionPattern,
+  }),
+  tokenBinding: _attach(FR.tokenBindingPatternFrom, {
+    from: FR.tokenBindingPatternFrom,
+    strict: F.tokenBindingPattern,
+  }),
   metavariable: F.metavariable,
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
@@ -327,7 +659,10 @@ export const tokens = {
   token: _attach(FR.tokenTreeFrom, { from: FR.tokenTreeFrom, strict: F.tokenTree }),
   metavariable: F.metavariable,
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   char: F.charLiteral,
   boolean: F.booleanLiteral,
   integer: F.integerLiteral,
@@ -345,15 +680,24 @@ export const type = {
   metavariable: F.metavariable,
   pointer: _attach(FR.pointerTypeFrom, { from: FR.pointerTypeFrom, strict: F.pointerType }),
   generic: _attach(FR.genericTypeFrom, { from: FR.genericTypeFrom, strict: F.genericType }),
-  scopedType: _attach(FR.scopedTypeIdentifierFrom, { from: FR.scopedTypeIdentifierFrom, strict: F.scopedTypeIdentifier }),
+  scopedType: _attach(FR.scopedTypeIdentifierFrom, {
+    from: FR.scopedTypeIdentifierFrom,
+    strict: F.scopedTypeIdentifier,
+  }),
   tuple: _attach(FR.tupleTypeFrom, { from: FR.tupleTypeFrom, strict: F.tupleType }),
   unit: F.unitType,
   array: _attach(FR.arrayTypeFrom, { from: FR.arrayTypeFrom, strict: F.arrayType }),
   function: _attach(FR.functionTypeFrom, { from: FR.functionTypeFrom, strict: F.functionType }),
-  macro: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
+  macro: _attach(FR.macroInvocationFrom, {
+    from: FR.macroInvocationFrom,
+    strict: F.macroInvocation,
+  }),
   dynamic: _attach(FR.dynamicTypeFrom, { from: FR.dynamicTypeFrom, strict: F.dynamicType }),
   bounded: _attach(FR.boundedTypeFrom, { from: FR.boundedTypeFrom, strict: F.boundedType }),
-  removedTrait: _attach(FR.removedTraitBoundFrom, { from: FR.removedTraitBoundFrom, strict: F.removedTraitBound }),
+  removedTrait: _attach(FR.removedTraitBoundFrom, {
+    from: FR.removedTraitBoundFrom,
+    strict: F.removedTraitBound,
+  }),
 } as const;
 
 export const useClause = {
@@ -362,7 +706,10 @@ export const useClause = {
   metavariable: F.metavariable,
   super: F.super_,
   crate: F.crate,
-  scoped: _attach(FR.scopedIdentifierFrom, { from: FR.scopedIdentifierFrom, strict: F.scopedIdentifier }),
+  scoped: _attach(FR.scopedIdentifierFrom, {
+    from: FR.scopedIdentifierFrom,
+    strict: F.scopedIdentifier,
+  }),
   useAs: _attach(FR.useAsClauseFrom, { from: FR.useAsClauseFrom, strict: F.useAsClause }),
   use: _attach(FR.useListFrom, { from: FR.useListFrom, strict: F.useList }),
   scopedUse: _attach(FR.scopedUseListFrom, { from: FR.scopedUseListFrom, strict: F.scopedUseList }),
@@ -372,18 +719,24 @@ export const useClause = {
 // Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
 export const from = {
   boolean(value: boolean): ReturnType<typeof F.booleanLiteral> {
-    return F.booleanLiteral(value ? 'true' : 'false');
+    return F.booleanLiteral(value ? "true" : "false");
   },
   number: Object.assign(
-    function number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.floatLiteral> {
+    function number(
+      value: number,
+    ): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.floatLiteral> {
       return Number.isInteger(value)
         ? F.integerLiteral(String(value))
         : F.floatLiteral(String(value));
     },
     {
-      integer(value: number): ReturnType<typeof F.integerLiteral> { return F.integerLiteral(String(value)); },
-      float(value: number): ReturnType<typeof F.floatLiteral> { return F.floatLiteral(String(value)); },
-    }
+      integer(value: number): ReturnType<typeof F.integerLiteral> {
+        return F.integerLiteral(String(value));
+      },
+      float(value: number): ReturnType<typeof F.floatLiteral> {
+        return F.floatLiteral(String(value));
+      },
+    },
   ),
   string(value: string): ReturnType<typeof F.stringLiteral> {
     return F.stringLiteral({ children: [F.stringContent(value)] });
@@ -395,159 +748,418 @@ export const from = {
     return F.identifier(name);
   },
   // definition.function → function_item
-  get function() { return ir.functionItem; },
+  get function() {
+    return ir.functionItem;
+  },
   // definition.class → struct_item
-  get class() { return ir.structItem; },
+  get class() {
+    return ir.structItem;
+  },
   // definition.method → function_item
-  get method() { return ir.functionItem; },
+  get method() {
+    return ir.functionItem;
+  },
   // definition.module → mod_item
-  get module() { return ir.modItem; },
+  get module() {
+    return ir.modItem;
+  },
   // definition.interface → trait_item
-  get interface() { return ir.traitItem; },
+  get interface() {
+    return ir.traitItem;
+  },
 } as const;
 
 export const ir = {
   // Node factories
   abstractType: _attach(FR.abstractTypeFrom, { from: FR.abstractTypeFrom, strict: F.abstractType }),
   arguments: _attach(FR.arguments_From, { from: FR.arguments_From, strict: F.arguments_ }),
-  arrayExpression: _attach(FR.arrayExpressionFrom, { from: FR.arrayExpressionFrom, strict: F.arrayExpression }),
+  arrayExpression: _attach(FR.arrayExpressionFrom, {
+    from: FR.arrayExpressionFrom,
+    strict: F.arrayExpression,
+  }),
   arrayType: _attach(FR.arrayTypeFrom, { from: FR.arrayTypeFrom, strict: F.arrayType }),
-  assignmentExpression: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
-  associatedType: _attach(FR.associatedTypeFrom, { from: FR.associatedTypeFrom, strict: F.associatedType }),
+  assignmentExpression: _attach(FR.assignmentExpressionFrom, {
+    from: FR.assignmentExpressionFrom,
+    strict: F.assignmentExpression,
+  }),
+  associatedType: _attach(FR.associatedTypeFrom, {
+    from: FR.associatedTypeFrom,
+    strict: F.associatedType,
+  }),
   asyncBlock: _attach(FR.asyncBlockFrom, { from: FR.asyncBlockFrom, strict: F.asyncBlock }),
   attribute: _attach(FR.attributeFrom, { from: FR.attributeFrom, strict: F.attribute }),
-  attributeItem: _attach(FR.attributeItemFrom, { from: FR.attributeItemFrom, strict: F.attributeItem }),
-  awaitExpression: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
-  baseFieldInitializer: _attach(FR.baseFieldInitializerFrom, { from: FR.baseFieldInitializerFrom, strict: F.baseFieldInitializer }),
-  binaryExpression: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
+  attributeItem: _attach(FR.attributeItemFrom, {
+    from: FR.attributeItemFrom,
+    strict: F.attributeItem,
+  }),
+  awaitExpression: _attach(FR.awaitExpressionFrom, {
+    from: FR.awaitExpressionFrom,
+    strict: F.awaitExpression,
+  }),
+  baseFieldInitializer: _attach(FR.baseFieldInitializerFrom, {
+    from: FR.baseFieldInitializerFrom,
+    strict: F.baseFieldInitializer,
+  }),
+  binaryExpression: _attach(FR.binaryExpressionFrom, {
+    from: FR.binaryExpressionFrom,
+    strict: F.binaryExpression,
+  }),
   block: _attach(FR.blockFrom, { from: FR.blockFrom, strict: F.block }),
   blockComment: _attach(FR.blockCommentFrom, { from: FR.blockCommentFrom, strict: F.blockComment }),
   boundedType: _attach(FR.boundedTypeFrom, { from: FR.boundedTypeFrom, strict: F.boundedType }),
-  bracketedType: _attach(FR.bracketedTypeFrom, { from: FR.bracketedTypeFrom, strict: F.bracketedType }),
-  breakExpression: _attach(FR.breakExpressionFrom, { from: FR.breakExpressionFrom, strict: F.breakExpression }),
-  callExpression: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
-  capturedPattern: _attach(FR.capturedPatternFrom, { from: FR.capturedPatternFrom, strict: F.capturedPattern }),
-  closureExpression: _attach(FR.closureExpressionFrom, { from: FR.closureExpressionFrom, strict: F.closureExpression }),
-  closureParameters: _attach(FR.closureParametersFrom, { from: FR.closureParametersFrom, strict: F.closureParameters }),
-  compoundAssignmentExpr: _attach(FR.compoundAssignmentExprFrom, { from: FR.compoundAssignmentExprFrom, strict: F.compoundAssignmentExpr }),
+  bracketedType: _attach(FR.bracketedTypeFrom, {
+    from: FR.bracketedTypeFrom,
+    strict: F.bracketedType,
+  }),
+  breakExpression: _attach(FR.breakExpressionFrom, {
+    from: FR.breakExpressionFrom,
+    strict: F.breakExpression,
+  }),
+  callExpression: _attach(FR.callExpressionFrom, {
+    from: FR.callExpressionFrom,
+    strict: F.callExpression,
+  }),
+  capturedPattern: _attach(FR.capturedPatternFrom, {
+    from: FR.capturedPatternFrom,
+    strict: F.capturedPattern,
+  }),
+  closureExpression: _attach(FR.closureExpressionFrom, {
+    from: FR.closureExpressionFrom,
+    strict: F.closureExpression,
+  }),
+  closureParameters: _attach(FR.closureParametersFrom, {
+    from: FR.closureParametersFrom,
+    strict: F.closureParameters,
+  }),
+  compoundAssignmentExpr: _attach(FR.compoundAssignmentExprFrom, {
+    from: FR.compoundAssignmentExprFrom,
+    strict: F.compoundAssignmentExpr,
+  }),
   constBlock: _attach(FR.constBlockFrom, { from: FR.constBlockFrom, strict: F.constBlock }),
   constItem: _attach(FR.constItemFrom, { from: FR.constItemFrom, strict: F.constItem }),
-  constParameter: _attach(FR.constParameterFrom, { from: FR.constParameterFrom, strict: F.constParameter }),
-  continueExpression: _attach(FR.continueExpressionFrom, { from: FR.continueExpressionFrom, strict: F.continueExpression }),
-  declarationList: _attach(FR.declarationListFrom, { from: FR.declarationListFrom, strict: F.declarationList }),
-  delimTokenTree: _attach(FR.delimTokenTreeFrom, { from: FR.delimTokenTreeFrom, strict: F.delimTokenTree }),
+  constParameter: _attach(FR.constParameterFrom, {
+    from: FR.constParameterFrom,
+    strict: F.constParameter,
+  }),
+  continueExpression: _attach(FR.continueExpressionFrom, {
+    from: FR.continueExpressionFrom,
+    strict: F.continueExpression,
+  }),
+  declarationList: _attach(FR.declarationListFrom, {
+    from: FR.declarationListFrom,
+    strict: F.declarationList,
+  }),
+  delimTokenTree: _attach(FR.delimTokenTreeFrom, {
+    from: FR.delimTokenTreeFrom,
+    strict: F.delimTokenTree,
+  }),
   dynamicType: _attach(FR.dynamicTypeFrom, { from: FR.dynamicTypeFrom, strict: F.dynamicType }),
   elseClause: _attach(FR.elseClauseFrom, { from: FR.elseClauseFrom, strict: F.elseClause }),
   enumItem: _attach(FR.enumItemFrom, { from: FR.enumItemFrom, strict: F.enumItem }),
   enumVariant: _attach(FR.enumVariantFrom, { from: FR.enumVariantFrom, strict: F.enumVariant }),
-  enumVariantList: _attach(FR.enumVariantListFrom, { from: FR.enumVariantListFrom, strict: F.enumVariantList }),
-  expressionStatement: _attach(FR.expressionStatementFrom, { from: FR.expressionStatementFrom, strict: F.expressionStatement }),
-  externCrateDeclaration: _attach(FR.externCrateDeclarationFrom, { from: FR.externCrateDeclarationFrom, strict: F.externCrateDeclaration }),
-  externModifier: _attach(FR.externModifierFrom, { from: FR.externModifierFrom, strict: F.externModifier }),
-  fieldDeclaration: _attach(FR.fieldDeclarationFrom, { from: FR.fieldDeclarationFrom, strict: F.fieldDeclaration }),
-  fieldDeclarationList: _attach(FR.fieldDeclarationListFrom, { from: FR.fieldDeclarationListFrom, strict: F.fieldDeclarationList }),
-  fieldExpression: _attach(FR.fieldExpressionFrom, { from: FR.fieldExpressionFrom, strict: F.fieldExpression }),
-  fieldInitializer: _attach(FR.fieldInitializerFrom, { from: FR.fieldInitializerFrom, strict: F.fieldInitializer }),
-  fieldInitializerList: _attach(FR.fieldInitializerListFrom, { from: FR.fieldInitializerListFrom, strict: F.fieldInitializerList }),
+  enumVariantList: _attach(FR.enumVariantListFrom, {
+    from: FR.enumVariantListFrom,
+    strict: F.enumVariantList,
+  }),
+  expressionStatement: _attach(FR.expressionStatementFrom, {
+    from: FR.expressionStatementFrom,
+    strict: F.expressionStatement,
+  }),
+  externCrateDeclaration: _attach(FR.externCrateDeclarationFrom, {
+    from: FR.externCrateDeclarationFrom,
+    strict: F.externCrateDeclaration,
+  }),
+  externModifier: _attach(FR.externModifierFrom, {
+    from: FR.externModifierFrom,
+    strict: F.externModifier,
+  }),
+  fieldDeclaration: _attach(FR.fieldDeclarationFrom, {
+    from: FR.fieldDeclarationFrom,
+    strict: F.fieldDeclaration,
+  }),
+  fieldDeclarationList: _attach(FR.fieldDeclarationListFrom, {
+    from: FR.fieldDeclarationListFrom,
+    strict: F.fieldDeclarationList,
+  }),
+  fieldExpression: _attach(FR.fieldExpressionFrom, {
+    from: FR.fieldExpressionFrom,
+    strict: F.fieldExpression,
+  }),
+  fieldInitializer: _attach(FR.fieldInitializerFrom, {
+    from: FR.fieldInitializerFrom,
+    strict: F.fieldInitializer,
+  }),
+  fieldInitializerList: _attach(FR.fieldInitializerListFrom, {
+    from: FR.fieldInitializerListFrom,
+    strict: F.fieldInitializerList,
+  }),
   fieldPattern: _attach(FR.fieldPatternFrom, { from: FR.fieldPatternFrom, strict: F.fieldPattern }),
-  forExpression: _attach(FR.forExpressionFrom, { from: FR.forExpressionFrom, strict: F.forExpression }),
+  forExpression: _attach(FR.forExpressionFrom, {
+    from: FR.forExpressionFrom,
+    strict: F.forExpression,
+  }),
   forLifetimes: _attach(FR.forLifetimesFrom, { from: FR.forLifetimesFrom, strict: F.forLifetimes }),
-  foreignModItem: _attach(FR.foreignModItemFrom, { from: FR.foreignModItemFrom, strict: F.foreignModItem }),
+  foreignModItem: _attach(FR.foreignModItemFrom, {
+    from: FR.foreignModItemFrom,
+    strict: F.foreignModItem,
+  }),
   functionItem: _attach(FR.functionItemFrom, { from: FR.functionItemFrom, strict: F.functionItem }),
-  functionModifiers: _attach(FR.functionModifiersFrom, { from: FR.functionModifiersFrom, strict: F.functionModifiers }),
-  functionSignatureItem: _attach(FR.functionSignatureItemFrom, { from: FR.functionSignatureItemFrom, strict: F.functionSignatureItem }),
+  functionModifiers: _attach(FR.functionModifiersFrom, {
+    from: FR.functionModifiersFrom,
+    strict: F.functionModifiers,
+  }),
+  functionSignatureItem: _attach(FR.functionSignatureItemFrom, {
+    from: FR.functionSignatureItemFrom,
+    strict: F.functionSignatureItem,
+  }),
   functionType: _attach(FR.functionTypeFrom, { from: FR.functionTypeFrom, strict: F.functionType }),
   genBlock: _attach(FR.genBlockFrom, { from: FR.genBlockFrom, strict: F.genBlock }),
-  genericFunction: _attach(FR.genericFunctionFrom, { from: FR.genericFunctionFrom, strict: F.genericFunction }),
-  genericPattern: _attach(FR.genericPatternFrom, { from: FR.genericPatternFrom, strict: F.genericPattern }),
+  genericFunction: _attach(FR.genericFunctionFrom, {
+    from: FR.genericFunctionFrom,
+    strict: F.genericFunction,
+  }),
+  genericPattern: _attach(FR.genericPatternFrom, {
+    from: FR.genericPatternFrom,
+    strict: F.genericPattern,
+  }),
   genericType: _attach(FR.genericTypeFrom, { from: FR.genericTypeFrom, strict: F.genericType }),
-  genericTypeWithTurbofish: _attach(FR.genericTypeWithTurbofishFrom, { from: FR.genericTypeWithTurbofishFrom, strict: F.genericTypeWithTurbofish }),
-  higherRankedTraitBound: _attach(FR.higherRankedTraitBoundFrom, { from: FR.higherRankedTraitBoundFrom, strict: F.higherRankedTraitBound }),
+  genericTypeWithTurbofish: _attach(FR.genericTypeWithTurbofishFrom, {
+    from: FR.genericTypeWithTurbofishFrom,
+    strict: F.genericTypeWithTurbofish,
+  }),
+  higherRankedTraitBound: _attach(FR.higherRankedTraitBoundFrom, {
+    from: FR.higherRankedTraitBoundFrom,
+    strict: F.higherRankedTraitBound,
+  }),
   ifExpression: _attach(FR.ifExpressionFrom, { from: FR.ifExpressionFrom, strict: F.ifExpression }),
   implItem: _attach(FR.implItemFrom, { from: FR.implItemFrom, strict: F.implItem }),
-  indexExpression: _attach(FR.indexExpressionFrom, { from: FR.indexExpressionFrom, strict: F.indexExpression }),
-  innerAttributeItem: _attach(FR.innerAttributeItemFrom, { from: FR.innerAttributeItemFrom, strict: F.innerAttributeItem }),
+  indexExpression: _attach(FR.indexExpressionFrom, {
+    from: FR.indexExpressionFrom,
+    strict: F.indexExpression,
+  }),
+  innerAttributeItem: _attach(FR.innerAttributeItemFrom, {
+    from: FR.innerAttributeItemFrom,
+    strict: F.innerAttributeItem,
+  }),
   label: _attach(FR.labelFrom, { from: FR.labelFrom, strict: F.label }),
   lastMatchArm: _attach(FR.lastMatchArmFrom, { from: FR.lastMatchArmFrom, strict: F.lastMatchArm }),
   letCondition: _attach(FR.letConditionFrom, { from: FR.letConditionFrom, strict: F.letCondition }),
-  letDeclaration: _attach(FR.letDeclarationFrom, { from: FR.letDeclarationFrom, strict: F.letDeclaration }),
+  letDeclaration: _attach(FR.letDeclarationFrom, {
+    from: FR.letDeclarationFrom,
+    strict: F.letDeclaration,
+  }),
   lifetime: _attach(FR.lifetimeFrom, { from: FR.lifetimeFrom, strict: F.lifetime }),
-  lifetimeParameter: _attach(FR.lifetimeParameterFrom, { from: FR.lifetimeParameterFrom, strict: F.lifetimeParameter }),
+  lifetimeParameter: _attach(FR.lifetimeParameterFrom, {
+    from: FR.lifetimeParameterFrom,
+    strict: F.lifetimeParameter,
+  }),
   lineComment: _attach(FR.lineCommentFrom, { from: FR.lineCommentFrom, strict: F.lineComment }),
-  loopExpression: _attach(FR.loopExpressionFrom, { from: FR.loopExpressionFrom, strict: F.loopExpression }),
-  macroDefinition: _attach(FR.macroDefinitionFrom, { from: FR.macroDefinitionFrom, strict: F.macroDefinition }),
-  macroInvocation: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
+  loopExpression: _attach(FR.loopExpressionFrom, {
+    from: FR.loopExpressionFrom,
+    strict: F.loopExpression,
+  }),
+  macroDefinition: _attach(FR.macroDefinitionFrom, {
+    from: FR.macroDefinitionFrom,
+    strict: F.macroDefinition,
+  }),
+  macroInvocation: _attach(FR.macroInvocationFrom, {
+    from: FR.macroInvocationFrom,
+    strict: F.macroInvocation,
+  }),
   macroRule: _attach(FR.macroRuleFrom, { from: FR.macroRuleFrom, strict: F.macroRule }),
   matchArm: _attach(FR.matchArmFrom, { from: FR.matchArmFrom, strict: F.matchArm }),
   matchBlock: _attach(FR.matchBlockFrom, { from: FR.matchBlockFrom, strict: F.matchBlock }),
-  matchExpression: _attach(FR.matchExpressionFrom, { from: FR.matchExpressionFrom, strict: F.matchExpression }),
+  matchExpression: _attach(FR.matchExpressionFrom, {
+    from: FR.matchExpressionFrom,
+    strict: F.matchExpression,
+  }),
   matchPattern: _attach(FR.matchPatternFrom, { from: FR.matchPatternFrom, strict: F.matchPattern }),
   modItem: _attach(FR.modItemFrom, { from: FR.modItemFrom, strict: F.modItem }),
   mutPattern: _attach(FR.mutPatternFrom, { from: FR.mutPatternFrom, strict: F.mutPattern }),
-  negativeLiteral: _attach(FR.negativeLiteralFrom, { from: FR.negativeLiteralFrom, strict: F.negativeLiteral }),
+  negativeLiteral: _attach(FR.negativeLiteralFrom, {
+    from: FR.negativeLiteralFrom,
+    strict: F.negativeLiteral,
+  }),
   orPattern: _attach(FR.orPatternFrom, { from: FR.orPatternFrom, strict: F.orPattern }),
-  orderedFieldDeclarationList: _attach(FR.orderedFieldDeclarationListFrom, { from: FR.orderedFieldDeclarationListFrom, strict: F.orderedFieldDeclarationList }),
+  orderedFieldDeclarationList: _attach(FR.orderedFieldDeclarationListFrom, {
+    from: FR.orderedFieldDeclarationListFrom,
+    strict: F.orderedFieldDeclarationList,
+  }),
   parameter: _attach(FR.parameterFrom, { from: FR.parameterFrom, strict: F.parameter }),
   parameters: _attach(FR.parametersFrom, { from: FR.parametersFrom, strict: F.parameters }),
-  parenthesizedExpression: _attach(FR.parenthesizedExpressionFrom, { from: FR.parenthesizedExpressionFrom, strict: F.parenthesizedExpression }),
+  parenthesizedExpression: _attach(FR.parenthesizedExpressionFrom, {
+    from: FR.parenthesizedExpressionFrom,
+    strict: F.parenthesizedExpression,
+  }),
   pointerType: _attach(FR.pointerTypeFrom, { from: FR.pointerTypeFrom, strict: F.pointerType }),
-  qualifiedType: _attach(FR.qualifiedTypeFrom, { from: FR.qualifiedTypeFrom, strict: F.qualifiedType }),
-  rangeExpression: _attach(FR.rangeExpressionFrom, { from: FR.rangeExpressionFrom, strict: F.rangeExpression }),
+  qualifiedType: _attach(FR.qualifiedTypeFrom, {
+    from: FR.qualifiedTypeFrom,
+    strict: F.qualifiedType,
+  }),
+  rangeExpression: _attach(FR.rangeExpressionFrom, {
+    from: FR.rangeExpressionFrom,
+    strict: F.rangeExpression,
+  }),
   rangePattern: _attach(FR.rangePatternFrom, { from: FR.rangePatternFrom, strict: F.rangePattern }),
-  rawStringLiteral: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  rawStringLiteral: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   refPattern: _attach(FR.refPatternFrom, { from: FR.refPatternFrom, strict: F.refPattern }),
-  referenceExpression: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
-  referencePattern: _attach(FR.referencePatternFrom, { from: FR.referencePatternFrom, strict: F.referencePattern }),
-  referenceType: _attach(FR.referenceTypeFrom, { from: FR.referenceTypeFrom, strict: F.referenceType }),
-  removedTraitBound: _attach(FR.removedTraitBoundFrom, { from: FR.removedTraitBoundFrom, strict: F.removedTraitBound }),
-  returnExpression: _attach(FR.returnExpressionFrom, { from: FR.returnExpressionFrom, strict: F.returnExpression }),
-  scopedIdentifier: _attach(FR.scopedIdentifierFrom, { from: FR.scopedIdentifierFrom, strict: F.scopedIdentifier }),
-  scopedTypeIdentifier: _attach(FR.scopedTypeIdentifierFrom, { from: FR.scopedTypeIdentifierFrom, strict: F.scopedTypeIdentifier }),
-  scopedTypeIdentifierInExpressionPosition: _attach(FR.scopedTypeIdentifierInExpressionPositionFrom, { from: FR.scopedTypeIdentifierInExpressionPositionFrom, strict: F.scopedTypeIdentifierInExpressionPosition }),
-  scopedUseList: _attach(FR.scopedUseListFrom, { from: FR.scopedUseListFrom, strict: F.scopedUseList }),
-  selfParameter: _attach(FR.selfParameterFrom, { from: FR.selfParameterFrom, strict: F.selfParameter }),
-  shorthandFieldInitializer: _attach(FR.shorthandFieldInitializerFrom, { from: FR.shorthandFieldInitializerFrom, strict: F.shorthandFieldInitializer }),
+  referenceExpression: _attach(FR.referenceExpressionFrom, {
+    from: FR.referenceExpressionFrom,
+    strict: F.referenceExpression,
+  }),
+  referencePattern: _attach(FR.referencePatternFrom, {
+    from: FR.referencePatternFrom,
+    strict: F.referencePattern,
+  }),
+  referenceType: _attach(FR.referenceTypeFrom, {
+    from: FR.referenceTypeFrom,
+    strict: F.referenceType,
+  }),
+  removedTraitBound: _attach(FR.removedTraitBoundFrom, {
+    from: FR.removedTraitBoundFrom,
+    strict: F.removedTraitBound,
+  }),
+  returnExpression: _attach(FR.returnExpressionFrom, {
+    from: FR.returnExpressionFrom,
+    strict: F.returnExpression,
+  }),
+  scopedIdentifier: _attach(FR.scopedIdentifierFrom, {
+    from: FR.scopedIdentifierFrom,
+    strict: F.scopedIdentifier,
+  }),
+  scopedTypeIdentifier: _attach(FR.scopedTypeIdentifierFrom, {
+    from: FR.scopedTypeIdentifierFrom,
+    strict: F.scopedTypeIdentifier,
+  }),
+  scopedTypeIdentifierInExpressionPosition: _attach(
+    FR.scopedTypeIdentifierInExpressionPositionFrom,
+    {
+      from: FR.scopedTypeIdentifierInExpressionPositionFrom,
+      strict: F.scopedTypeIdentifierInExpressionPosition,
+    },
+  ),
+  scopedUseList: _attach(FR.scopedUseListFrom, {
+    from: FR.scopedUseListFrom,
+    strict: F.scopedUseList,
+  }),
+  selfParameter: _attach(FR.selfParameterFrom, {
+    from: FR.selfParameterFrom,
+    strict: F.selfParameter,
+  }),
+  shorthandFieldInitializer: _attach(FR.shorthandFieldInitializerFrom, {
+    from: FR.shorthandFieldInitializerFrom,
+    strict: F.shorthandFieldInitializer,
+  }),
   slicePattern: _attach(FR.slicePatternFrom, { from: FR.slicePatternFrom, strict: F.slicePattern }),
   sourceFile: _attach(FR.sourceFileFrom, { from: FR.sourceFileFrom, strict: F.sourceFile }),
   staticItem: _attach(FR.staticItemFrom, { from: FR.staticItemFrom, strict: F.staticItem }),
-  stringLiteral: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  structExpression: _attach(FR.structExpressionFrom, { from: FR.structExpressionFrom, strict: F.structExpression }),
+  stringLiteral: _attach(FR.stringLiteralFrom, {
+    from: FR.stringLiteralFrom,
+    strict: F.stringLiteral,
+  }),
+  structExpression: _attach(FR.structExpressionFrom, {
+    from: FR.structExpressionFrom,
+    strict: F.structExpression,
+  }),
   structItem: _attach(FR.structItemFrom, { from: FR.structItemFrom, strict: F.structItem }),
-  structPattern: _attach(FR.structPatternFrom, { from: FR.structPatternFrom, strict: F.structPattern }),
-  tokenBindingPattern: _attach(FR.tokenBindingPatternFrom, { from: FR.tokenBindingPatternFrom, strict: F.tokenBindingPattern }),
-  tokenRepetition: _attach(FR.tokenRepetitionFrom, { from: FR.tokenRepetitionFrom, strict: F.tokenRepetition }),
-  tokenRepetitionPattern: _attach(FR.tokenRepetitionPatternFrom, { from: FR.tokenRepetitionPatternFrom, strict: F.tokenRepetitionPattern }),
+  structPattern: _attach(FR.structPatternFrom, {
+    from: FR.structPatternFrom,
+    strict: F.structPattern,
+  }),
+  tokenBindingPattern: _attach(FR.tokenBindingPatternFrom, {
+    from: FR.tokenBindingPatternFrom,
+    strict: F.tokenBindingPattern,
+  }),
+  tokenRepetition: _attach(FR.tokenRepetitionFrom, {
+    from: FR.tokenRepetitionFrom,
+    strict: F.tokenRepetition,
+  }),
+  tokenRepetitionPattern: _attach(FR.tokenRepetitionPatternFrom, {
+    from: FR.tokenRepetitionPatternFrom,
+    strict: F.tokenRepetitionPattern,
+  }),
   tokenTree: _attach(FR.tokenTreeFrom, { from: FR.tokenTreeFrom, strict: F.tokenTree }),
-  tokenTreePattern: _attach(FR.tokenTreePatternFrom, { from: FR.tokenTreePatternFrom, strict: F.tokenTreePattern }),
+  tokenTreePattern: _attach(FR.tokenTreePatternFrom, {
+    from: FR.tokenTreePatternFrom,
+    strict: F.tokenTreePattern,
+  }),
   traitBounds: _attach(FR.traitBoundsFrom, { from: FR.traitBoundsFrom, strict: F.traitBounds }),
   traitItem: _attach(FR.traitItemFrom, { from: FR.traitItemFrom, strict: F.traitItem }),
   tryBlock: _attach(FR.tryBlockFrom, { from: FR.tryBlockFrom, strict: F.tryBlock }),
-  tryExpression: _attach(FR.tryExpressionFrom, { from: FR.tryExpressionFrom, strict: F.tryExpression }),
-  tupleExpression: _attach(FR.tupleExpressionFrom, { from: FR.tupleExpressionFrom, strict: F.tupleExpression }),
+  tryExpression: _attach(FR.tryExpressionFrom, {
+    from: FR.tryExpressionFrom,
+    strict: F.tryExpression,
+  }),
+  tupleExpression: _attach(FR.tupleExpressionFrom, {
+    from: FR.tupleExpressionFrom,
+    strict: F.tupleExpression,
+  }),
   tuplePattern: _attach(FR.tuplePatternFrom, { from: FR.tuplePatternFrom, strict: F.tuplePattern }),
-  tupleStructPattern: _attach(FR.tupleStructPatternFrom, { from: FR.tupleStructPatternFrom, strict: F.tupleStructPattern }),
+  tupleStructPattern: _attach(FR.tupleStructPatternFrom, {
+    from: FR.tupleStructPatternFrom,
+    strict: F.tupleStructPattern,
+  }),
   tupleType: _attach(FR.tupleTypeFrom, { from: FR.tupleTypeFrom, strict: F.tupleType }),
-  typeArguments: _attach(FR.typeArgumentsFrom, { from: FR.typeArgumentsFrom, strict: F.typeArguments }),
+  typeArguments: _attach(FR.typeArgumentsFrom, {
+    from: FR.typeArgumentsFrom,
+    strict: F.typeArguments,
+  }),
   typeBinding: _attach(FR.typeBindingFrom, { from: FR.typeBindingFrom, strict: F.typeBinding }),
-  typeCastExpression: _attach(FR.typeCastExpressionFrom, { from: FR.typeCastExpressionFrom, strict: F.typeCastExpression }),
+  typeCastExpression: _attach(FR.typeCastExpressionFrom, {
+    from: FR.typeCastExpressionFrom,
+    strict: F.typeCastExpression,
+  }),
   typeItem: _attach(FR.typeItemFrom, { from: FR.typeItemFrom, strict: F.typeItem }),
-  typeParameter: _attach(FR.typeParameterFrom, { from: FR.typeParameterFrom, strict: F.typeParameter }),
-  typeParameters: _attach(FR.typeParametersFrom, { from: FR.typeParametersFrom, strict: F.typeParameters }),
-  unaryExpression: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
+  typeParameter: _attach(FR.typeParameterFrom, {
+    from: FR.typeParameterFrom,
+    strict: F.typeParameter,
+  }),
+  typeParameters: _attach(FR.typeParametersFrom, {
+    from: FR.typeParametersFrom,
+    strict: F.typeParameters,
+  }),
+  unaryExpression: _attach(FR.unaryExpressionFrom, {
+    from: FR.unaryExpressionFrom,
+    strict: F.unaryExpression,
+  }),
   unionItem: _attach(FR.unionItemFrom, { from: FR.unionItemFrom, strict: F.unionItem }),
   unsafeBlock: _attach(FR.unsafeBlockFrom, { from: FR.unsafeBlockFrom, strict: F.unsafeBlock }),
   useAsClause: _attach(FR.useAsClauseFrom, { from: FR.useAsClauseFrom, strict: F.useAsClause }),
   useBounds: _attach(FR.useBoundsFrom, { from: FR.useBoundsFrom, strict: F.useBounds }),
-  useDeclaration: _attach(FR.useDeclarationFrom, { from: FR.useDeclarationFrom, strict: F.useDeclaration }),
+  useDeclaration: _attach(FR.useDeclarationFrom, {
+    from: FR.useDeclarationFrom,
+    strict: F.useDeclaration,
+  }),
   useList: _attach(FR.useListFrom, { from: FR.useListFrom, strict: F.useList }),
   useWildcard: _attach(FR.useWildcardFrom, { from: FR.useWildcardFrom, strict: F.useWildcard }),
-  variadicParameter: _attach(FR.variadicParameterFrom, { from: FR.variadicParameterFrom, strict: F.variadicParameter }),
-  visibilityModifier: _attach(FR.visibilityModifierFrom, { from: FR.visibilityModifierFrom, strict: F.visibilityModifier }),
+  variadicParameter: _attach(FR.variadicParameterFrom, {
+    from: FR.variadicParameterFrom,
+    strict: F.variadicParameter,
+  }),
+  visibilityModifier: _attach(FR.visibilityModifierFrom, {
+    from: FR.visibilityModifierFrom,
+    strict: F.visibilityModifier,
+  }),
   whereClause: _attach(FR.whereClauseFrom, { from: FR.whereClauseFrom, strict: F.whereClause }),
-  wherePredicate: _attach(FR.wherePredicateFrom, { from: FR.wherePredicateFrom, strict: F.wherePredicate }),
-  whileExpression: _attach(FR.whileExpressionFrom, { from: FR.whileExpressionFrom, strict: F.whileExpression }),
-  yieldExpression: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
-  visibilityModifierGroup1: _attach(FR.visibilityModifierGroup1From, { from: FR.visibilityModifierGroup1From, strict: F.visibilityModifierGroup1 }),
+  wherePredicate: _attach(FR.wherePredicateFrom, {
+    from: FR.wherePredicateFrom,
+    strict: F.wherePredicate,
+  }),
+  whileExpression: _attach(FR.whileExpressionFrom, {
+    from: FR.whileExpressionFrom,
+    strict: F.whileExpression,
+  }),
+  yieldExpression: _attach(FR.yieldExpressionFrom, {
+    from: FR.yieldExpressionFrom,
+    strict: F.yieldExpression,
+  }),
+  visibilityModifierGroup1: _attach(FR.visibilityModifierGroup1From, {
+    from: FR.visibilityModifierGroup1From,
+    strict: F.visibilityModifierGroup1,
+  }),
 
   // Keyword factories
   crate: F.crate,
@@ -572,78 +1184,189 @@ export const ir = {
 
   // Supertype-stripped short aliases
   abstract: _attach(FR.abstractTypeFrom, { from: FR.abstractTypeFrom, strict: F.abstractType }),
-  array: _attach(FR.arrayExpressionFrom, { from: FR.arrayExpressionFrom, strict: F.arrayExpression }),
-  assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
-  associated: _attach(FR.associatedTypeFrom, { from: FR.associatedTypeFrom, strict: F.associatedType }),
+  array: _attach(FR.arrayExpressionFrom, {
+    from: FR.arrayExpressionFrom,
+    strict: F.arrayExpression,
+  }),
+  assignment: _attach(FR.assignmentExpressionFrom, {
+    from: FR.assignmentExpressionFrom,
+    strict: F.assignmentExpression,
+  }),
+  associated: _attach(FR.associatedTypeFrom, {
+    from: FR.associatedTypeFrom,
+    strict: F.associatedType,
+  }),
   async: _attach(FR.asyncBlockFrom, { from: FR.asyncBlockFrom, strict: F.asyncBlock }),
-  await: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
-  binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
+  await: _attach(FR.awaitExpressionFrom, {
+    from: FR.awaitExpressionFrom,
+    strict: F.awaitExpression,
+  }),
+  binary: _attach(FR.binaryExpressionFrom, {
+    from: FR.binaryExpressionFrom,
+    strict: F.binaryExpression,
+  }),
   boolean: F.booleanLiteral,
   bounded: _attach(FR.boundedTypeFrom, { from: FR.boundedTypeFrom, strict: F.boundedType }),
-  break: _attach(FR.breakExpressionFrom, { from: FR.breakExpressionFrom, strict: F.breakExpression }),
+  break: _attach(FR.breakExpressionFrom, {
+    from: FR.breakExpressionFrom,
+    strict: F.breakExpression,
+  }),
   call: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
-  captured: _attach(FR.capturedPatternFrom, { from: FR.capturedPatternFrom, strict: F.capturedPattern }),
+  captured: _attach(FR.capturedPatternFrom, {
+    from: FR.capturedPatternFrom,
+    strict: F.capturedPattern,
+  }),
   char: F.charLiteral,
-  closure: _attach(FR.closureExpressionFrom, { from: FR.closureExpressionFrom, strict: F.closureExpression }),
-  compoundAssignment: _attach(FR.compoundAssignmentExprFrom, { from: FR.compoundAssignmentExprFrom, strict: F.compoundAssignmentExpr }),
+  closure: _attach(FR.closureExpressionFrom, {
+    from: FR.closureExpressionFrom,
+    strict: F.closureExpression,
+  }),
+  compoundAssignment: _attach(FR.compoundAssignmentExprFrom, {
+    from: FR.compoundAssignmentExprFrom,
+    strict: F.compoundAssignmentExpr,
+  }),
   const: _attach(FR.constBlockFrom, { from: FR.constBlockFrom, strict: F.constBlock }),
-  continue: _attach(FR.continueExpressionFrom, { from: FR.continueExpressionFrom, strict: F.continueExpression }),
-  delimToken: _attach(FR.delimTokenTreeFrom, { from: FR.delimTokenTreeFrom, strict: F.delimTokenTree }),
+  continue: _attach(FR.continueExpressionFrom, {
+    from: FR.continueExpressionFrom,
+    strict: F.continueExpression,
+  }),
+  delimToken: _attach(FR.delimTokenTreeFrom, {
+    from: FR.delimTokenTreeFrom,
+    strict: F.delimTokenTree,
+  }),
   dynamic: _attach(FR.dynamicTypeFrom, { from: FR.dynamicTypeFrom, strict: F.dynamicType }),
   enum: _attach(FR.enumItemFrom, { from: FR.enumItemFrom, strict: F.enumItem }),
-  externCrate: _attach(FR.externCrateDeclarationFrom, { from: FR.externCrateDeclarationFrom, strict: F.externCrateDeclaration }),
-  field: _attach(FR.fieldExpressionFrom, { from: FR.fieldExpressionFrom, strict: F.fieldExpression }),
+  externCrate: _attach(FR.externCrateDeclarationFrom, {
+    from: FR.externCrateDeclarationFrom,
+    strict: F.externCrateDeclaration,
+  }),
+  field: _attach(FR.fieldExpressionFrom, {
+    from: FR.fieldExpressionFrom,
+    strict: F.fieldExpression,
+  }),
   float: F.floatLiteral,
   for: _attach(FR.forExpressionFrom, { from: FR.forExpressionFrom, strict: F.forExpression }),
-  foreignMod: _attach(FR.foreignModItemFrom, { from: FR.foreignModItemFrom, strict: F.foreignModItem }),
+  foreignMod: _attach(FR.foreignModItemFrom, {
+    from: FR.foreignModItemFrom,
+    strict: F.foreignModItem,
+  }),
   function: _attach(FR.functionItemFrom, { from: FR.functionItemFrom, strict: F.functionItem }),
-  functionSignature: _attach(FR.functionSignatureItemFrom, { from: FR.functionSignatureItemFrom, strict: F.functionSignatureItem }),
+  functionSignature: _attach(FR.functionSignatureItemFrom, {
+    from: FR.functionSignatureItemFrom,
+    strict: F.functionSignatureItem,
+  }),
   gen: _attach(FR.genBlockFrom, { from: FR.genBlockFrom, strict: F.genBlock }),
-  generic: _attach(FR.genericFunctionFrom, { from: FR.genericFunctionFrom, strict: F.genericFunction }),
+  generic: _attach(FR.genericFunctionFrom, {
+    from: FR.genericFunctionFrom,
+    strict: F.genericFunction,
+  }),
   if: _attach(FR.ifExpressionFrom, { from: FR.ifExpressionFrom, strict: F.ifExpression }),
   impl: _attach(FR.implItemFrom, { from: FR.implItemFrom, strict: F.implItem }),
-  index: _attach(FR.indexExpressionFrom, { from: FR.indexExpressionFrom, strict: F.indexExpression }),
-  innerAttribute: _attach(FR.innerAttributeItemFrom, { from: FR.innerAttributeItemFrom, strict: F.innerAttributeItem }),
+  index: _attach(FR.indexExpressionFrom, {
+    from: FR.indexExpressionFrom,
+    strict: F.indexExpression,
+  }),
+  innerAttribute: _attach(FR.innerAttributeItemFrom, {
+    from: FR.innerAttributeItemFrom,
+    strict: F.innerAttributeItem,
+  }),
   integer: F.integerLiteral,
   let: _attach(FR.letConditionFrom, { from: FR.letConditionFrom, strict: F.letCondition }),
   loop: _attach(FR.loopExpressionFrom, { from: FR.loopExpressionFrom, strict: F.loopExpression }),
-  macro: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
-  match: _attach(FR.matchExpressionFrom, { from: FR.matchExpressionFrom, strict: F.matchExpression }),
+  macro: _attach(FR.macroInvocationFrom, {
+    from: FR.macroInvocationFrom,
+    strict: F.macroInvocation,
+  }),
+  match: _attach(FR.matchExpressionFrom, {
+    from: FR.matchExpressionFrom,
+    strict: F.matchExpression,
+  }),
   mod: _attach(FR.modItemFrom, { from: FR.modItemFrom, strict: F.modItem }),
   mut: _attach(FR.mutPatternFrom, { from: FR.mutPatternFrom, strict: F.mutPattern }),
   mutable: F.mutableSpecifier,
-  negative: _attach(FR.negativeLiteralFrom, { from: FR.negativeLiteralFrom, strict: F.negativeLiteral }),
+  negative: _attach(FR.negativeLiteralFrom, {
+    from: FR.negativeLiteralFrom,
+    strict: F.negativeLiteral,
+  }),
   or: _attach(FR.orPatternFrom, { from: FR.orPatternFrom, strict: F.orPattern }),
-  parenthesized: _attach(FR.parenthesizedExpressionFrom, { from: FR.parenthesizedExpressionFrom, strict: F.parenthesizedExpression }),
+  parenthesized: _attach(FR.parenthesizedExpressionFrom, {
+    from: FR.parenthesizedExpressionFrom,
+    strict: F.parenthesizedExpression,
+  }),
   pointer: _attach(FR.pointerTypeFrom, { from: FR.pointerTypeFrom, strict: F.pointerType }),
-  range: _attach(FR.rangeExpressionFrom, { from: FR.rangeExpressionFrom, strict: F.rangeExpression }),
-  rawString: _attach(FR.rawStringLiteralFrom, { from: FR.rawStringLiteralFrom, strict: F.rawStringLiteral }),
+  range: _attach(FR.rangeExpressionFrom, {
+    from: FR.rangeExpressionFrom,
+    strict: F.rangeExpression,
+  }),
+  rawString: _attach(FR.rawStringLiteralFrom, {
+    from: FR.rawStringLiteralFrom,
+    strict: F.rawStringLiteral,
+  }),
   ref: _attach(FR.refPatternFrom, { from: FR.refPatternFrom, strict: F.refPattern }),
-  reference: _attach(FR.referenceExpressionFrom, { from: FR.referenceExpressionFrom, strict: F.referenceExpression }),
-  removedTrait: _attach(FR.removedTraitBoundFrom, { from: FR.removedTraitBoundFrom, strict: F.removedTraitBound }),
-  return: _attach(FR.returnExpressionFrom, { from: FR.returnExpressionFrom, strict: F.returnExpression }),
-  scoped: _attach(FR.scopedIdentifierFrom, { from: FR.scopedIdentifierFrom, strict: F.scopedIdentifier }),
-  scopedType: _attach(FR.scopedTypeIdentifierFrom, { from: FR.scopedTypeIdentifierFrom, strict: F.scopedTypeIdentifier }),
+  reference: _attach(FR.referenceExpressionFrom, {
+    from: FR.referenceExpressionFrom,
+    strict: F.referenceExpression,
+  }),
+  removedTrait: _attach(FR.removedTraitBoundFrom, {
+    from: FR.removedTraitBoundFrom,
+    strict: F.removedTraitBound,
+  }),
+  return: _attach(FR.returnExpressionFrom, {
+    from: FR.returnExpressionFrom,
+    strict: F.returnExpression,
+  }),
+  scoped: _attach(FR.scopedIdentifierFrom, {
+    from: FR.scopedIdentifierFrom,
+    strict: F.scopedIdentifier,
+  }),
+  scopedType: _attach(FR.scopedTypeIdentifierFrom, {
+    from: FR.scopedTypeIdentifierFrom,
+    strict: F.scopedTypeIdentifier,
+  }),
   scopedUse: _attach(FR.scopedUseListFrom, { from: FR.scopedUseListFrom, strict: F.scopedUseList }),
   slice: _attach(FR.slicePatternFrom, { from: FR.slicePatternFrom, strict: F.slicePattern }),
   static: _attach(FR.staticItemFrom, { from: FR.staticItemFrom, strict: F.staticItem }),
   string: _attach(FR.stringLiteralFrom, { from: FR.stringLiteralFrom, strict: F.stringLiteral }),
-  struct: _attach(FR.structExpressionFrom, { from: FR.structExpressionFrom, strict: F.structExpression }),
+  struct: _attach(FR.structExpressionFrom, {
+    from: FR.structExpressionFrom,
+    strict: F.structExpression,
+  }),
   token: _attach(FR.tokenTreeFrom, { from: FR.tokenTreeFrom, strict: F.tokenTree }),
-  tokenBinding: _attach(FR.tokenBindingPatternFrom, { from: FR.tokenBindingPatternFrom, strict: F.tokenBindingPattern }),
+  tokenBinding: _attach(FR.tokenBindingPatternFrom, {
+    from: FR.tokenBindingPatternFrom,
+    strict: F.tokenBindingPattern,
+  }),
   trait: _attach(FR.traitItemFrom, { from: FR.traitItemFrom, strict: F.traitItem }),
   try: _attach(FR.tryExpressionFrom, { from: FR.tryExpressionFrom, strict: F.tryExpression }),
-  tuple: _attach(FR.tupleExpressionFrom, { from: FR.tupleExpressionFrom, strict: F.tupleExpression }),
-  tupleStruct: _attach(FR.tupleStructPatternFrom, { from: FR.tupleStructPatternFrom, strict: F.tupleStructPattern }),
-  typeCast: _attach(FR.typeCastExpressionFrom, { from: FR.typeCastExpressionFrom, strict: F.typeCastExpression }),
-  unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
+  tuple: _attach(FR.tupleExpressionFrom, {
+    from: FR.tupleExpressionFrom,
+    strict: F.tupleExpression,
+  }),
+  tupleStruct: _attach(FR.tupleStructPatternFrom, {
+    from: FR.tupleStructPatternFrom,
+    strict: F.tupleStructPattern,
+  }),
+  typeCast: _attach(FR.typeCastExpressionFrom, {
+    from: FR.typeCastExpressionFrom,
+    strict: F.typeCastExpression,
+  }),
+  unary: _attach(FR.unaryExpressionFrom, {
+    from: FR.unaryExpressionFrom,
+    strict: F.unaryExpression,
+  }),
   union: _attach(FR.unionItemFrom, { from: FR.unionItemFrom, strict: F.unionItem }),
   unit: F.unitExpression,
   unsafe: _attach(FR.unsafeBlockFrom, { from: FR.unsafeBlockFrom, strict: F.unsafeBlock }),
   use: _attach(FR.useDeclarationFrom, { from: FR.useDeclarationFrom, strict: F.useDeclaration }),
   useAs: _attach(FR.useAsClauseFrom, { from: FR.useAsClauseFrom, strict: F.useAsClause }),
-  while: _attach(FR.whileExpressionFrom, { from: FR.whileExpressionFrom, strict: F.whileExpression }),
-  yield: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+  while: _attach(FR.whileExpressionFrom, {
+    from: FR.whileExpressionFrom,
+    strict: F.whileExpression,
+  }),
+  yield: _attach(FR.yieldExpressionFrom, {
+    from: FR.yieldExpressionFrom,
+    strict: F.yieldExpression,
+  }),
 
   // Supertype-grouped sub-namespaces (also exported standalone above)
   condition,
