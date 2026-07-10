@@ -23,7 +23,6 @@ import { emitTypes } from '../types.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { emitIr } from '../ir.ts';
 import { emitAll } from '../emit.ts';
-import { createEmptyRuleCatalog } from '../../compiler/rule-catalog.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 
 // ---------------------------------------------------------------------------
@@ -63,7 +62,7 @@ function makeRefineRaw(forms: RefineForm[]): RawGrammar {
 		rules: {
 			iface_body: ifaceBodyRule
 		},
-		ruleCatalog: createEmptyRuleCatalog(),
+		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
 		externals: [],
 		supertypes: [],
@@ -139,7 +138,7 @@ function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 			string_fragment: { type: PATTERN, value: '[^"\'\\\\]+' },
 			escape_sequence: { type: PATTERN, value: '\\\\.' }
 		},
-		ruleCatalog: createEmptyRuleCatalog(),
+		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
 		externals: [],
 		supertypes: [],
@@ -187,7 +186,7 @@ function makeRefineSymbolRaw(forms: RefineForm[], wrapOptional = false): RawGram
 				]
 			}
 		},
-		ruleCatalog: createEmptyRuleCatalog(),
+		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],
 		externals: [],
 		supertypes: [],

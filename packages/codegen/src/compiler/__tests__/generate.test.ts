@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { describe, it, expect, vi } from 'vitest';
 import { REPEAT, SEQ, CHOICE, STRING, SYMBOL } from '../../types/rule-types.ts';
 import type { RawGrammar } from '../types.ts';
-import { createEmptyRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../../types/diagnostics.ts';
 import { formatCompilerDiagnostics } from '../diagnostics/grammar-diagnostics.ts';
@@ -128,7 +127,7 @@ describe('generate() — non-literal-separator diagnostic surfacing (PR-S task 5
 				},
 				item: { type: STRING, value: 'x' }
 			},
-			ruleCatalog: createEmptyRuleCatalog(),
+			ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 			extras: [],
 			externals: [],
 			supertypes: [],

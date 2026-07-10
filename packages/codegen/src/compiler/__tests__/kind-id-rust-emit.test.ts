@@ -1,7 +1,6 @@
 import { PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { field, seq } from '../evaluate.ts';
-import { buildRuleCatalog } from '../rule-catalog.ts';
+import { buildRuleCatalog, field, seq } from '../evaluate.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';

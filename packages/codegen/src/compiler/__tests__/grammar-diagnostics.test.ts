@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { alias, choice } from '../evaluate.ts';
-import { buildRuleCatalog } from '../rule-catalog.ts';
+import { alias, buildRuleCatalog, choice } from '../evaluate.ts';
 import {
 	collectGrammarDiagnostics,
 	collectGrammarDiagnosticsForGrammar,

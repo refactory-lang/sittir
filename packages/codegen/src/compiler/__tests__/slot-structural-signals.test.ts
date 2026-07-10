@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { seq } from '../evaluate.ts';
-import { buildRuleCatalog } from '../rule-catalog.ts';
+import { buildRuleCatalog, seq } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
