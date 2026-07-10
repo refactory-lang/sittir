@@ -15,7 +15,17 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
-import { format as oxfmtFormat } from 'oxfmt';
+import { format as oxfmtFormat, type FormatConfig } from 'oxfmt';
+import oxfmtProjectConfig from '../../../oxfmt.config.ts';
+
+/**
+ * oxfmt's programmatic `format()` API does NOT auto-discover `.editorconfig`
+ * the way its CLI does — only the explicit config object below applies.
+ * `.editorconfig` sets `indent_style = tab` for `.ts` files repo-wide (root
+ * = true, single unambiguous rule), so that has to be merged in by hand to
+ * match what `pnpm run format`/`oxfmt --check .` actually expect on disk.
+ */
+const oxfmtEffectiveConfig: FormatConfig = { ...(oxfmtProjectConfig as FormatConfig), useTabs: true };
 
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
 
@@ -86,12 +96,22 @@ export interface CodegenOptions {
 /**
  * Write `content` to `path`, creating parent directories as needed.
  *
- * `.ts` output is run through oxfmt (the project's own formatter) before
- * the content-aware comparison below, so generated `.ts` files land on
- * disk already matching `pnpm run format`'s output — no separate
- * formatting pass needed, and no risk of a formatter reformatting
- * generated code out from under the emitters (oxfmt must never run over
- * `packages/*\/src/*` directly; only codegen writes there).
+ * `.ts` output is run through oxfmt (the project's own formatter, config
+ * merged from `oxfmt.config.ts` + `.editorconfig`'s tab-indent rule for
+ * `.ts` files — the programmatic `format()` API does not auto-discover
+ * either file) before the content-aware comparison below, so generated
+ * `.ts` files land on disk already matching `pnpm run format`'s output —
+ * no separate formatting pass needed, and no risk of a formatter
+ * reformatting generated code out from under the emitters (oxfmt must
+ * never run over `packages/*\/src/*` directly; only codegen writes there).
+ *
+ * `node-model.json5` is deliberately NOT run through oxfmt here even
+ * though it matches `pnpm run format`'s scope: `packages/tools/src/
+ * validate/common.ts`'s `loadNodeModel` parses it with strict `JSON.parse`,
+ * and oxfmt reformats JSON5 idiomatically (unquoted keys, single-quoted
+ * strings) — valid JSON5, but not valid JSON, breaking that parser. Fix
+ * belongs in `loadNodeModel` (use a real JSON5 parser) before this file
+ * can be formatted too.
  *
  * Content-aware: skips the write when the file already holds identical
  * bytes. Generated outputs are rewritten wholesale on every regen even
@@ -108,7 +128,7 @@ export interface CodegenOptions {
 export async function writeFile(path: string, content: string): Promise<void> {
 	let finalContent = content;
 	if (path.endsWith('.ts')) {
-		const result = await oxfmtFormat(path, content);
+		const result = await oxfmtFormat(path, content, oxfmtEffectiveConfig);
 		if (result.errors.length === 0) {
 			finalContent = result.code;
 		} else {

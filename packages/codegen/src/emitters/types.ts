@@ -333,14 +333,16 @@ export function emitTypes(config: EmitTypesConfig): string {
 
 	// Patch the @sittir/types import: include only names referenced in the
 	// emitted body. Always-used: NodeData/NodeConfig/TreeNode/NodeKind/NodeNs/
-	// AnyTreeNodeOf/Terminal/NonEmptyArray/AutoStamp/BooleanKeyword. Optional:
-	// ConfigOf (used by polymorph dispatcher signatures), Bitflag / KindEnum (used by
-	// bitflag-typed fields). Empty grammars don't pull either, so emitting
+	// AnyTreeNodeOf/Terminal/NonEmptyArray/BooleanKeyword. Optional: ConfigOf
+	// (used by polymorph dispatcher signatures), Bitflag / KindEnum (used by
+	// bitflag-typed fields), AutoStamp (used by auto-stamp fields, see
+	// isAutoStampField). Empty grammars don't pull any of these, so emitting
 	// them unconditionally trips `no-unused-vars` on the generated package.
 	const body = lines.slice(sittirImportIndex + 1).join('\n');
 	const usesConfigOf = /\bConfigOf\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
 	const usesKindEnum = /\bKindEnum\b/.test(body);
+	const usesAutoStamp = /\bAutoStamp\b/.test(body);
 	const importedNames = [
 		'NodeData as BaseNodeData',
 		'NodeConfig as BaseNodeConfig',
@@ -351,7 +353,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'AnyTreeNodeOf as AnyTreeNode',
 		'Terminal',
 		'NonEmptyArray',
-		'AutoStamp',
+		...(usesAutoStamp ? ['AutoStamp'] : []),
 		'BooleanKeyword',
 		...(usesBitflag ? ['Bitflag'] : []),
 		...(usesKindEnum ? ['KindEnum'] : [])

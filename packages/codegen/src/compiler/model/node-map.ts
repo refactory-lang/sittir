@@ -497,13 +497,38 @@ export interface RenderTemplateSlot {
 // ---------------------------------------------------------------------------
 
 /**
+ * `Object.prototype` members that, if a grammar field name camelCases onto
+ * one of them, produce a public accessor that shadows a special JS/TS
+ * meaning rather than a plain data property — most visibly `constructor`
+ * (TypeScript's `new_expression` grammar field), which trips
+ * `no-misused-new` on the emitted interface and, worse, overwrites
+ * `Object.prototype.constructor` on every wrapped node instance.
+ */
+const RESERVED_ACCESSOR_NAMES: ReadonlySet<string> = new Set([
+	'constructor',
+	'toString',
+	'valueOf',
+	'hasOwnProperty',
+	'isPrototypeOf',
+	'propertyIsEnumerable',
+	'toLocaleString',
+	'__proto__'
+]);
+
+/**
  * Convert a snake_case name to camelCase — the single source of truth for
  * this transformation in the codegen pipeline. Used by field/child
  * `propertyName` derivation here, and re-exported for emitters and
  * validators that need the same canonical form.
+ *
+ * Appends a trailing underscore when the camelCased result collides with a
+ * reserved `Object.prototype` member name (see `RESERVED_ACCESSOR_NAMES`) —
+ * the underlying `_`-prefixed storage name is unaffected, only the public
+ * accessor.
  */
 export function snakeToCamel(name: string): string {
-	return name.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+	const camel = name.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+	return RESERVED_ACCESSOR_NAMES.has(camel) ? `${camel}_` : camel;
 }
 
 /**

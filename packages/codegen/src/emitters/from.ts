@@ -157,7 +157,7 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	} else {
 		lines.push(`import { kindIdFromName } from './types.js';`);
 	}
-	lines.push("import type { AnyNodeData, ConfigOf } from '@sittir/types';");
+	lines.push("import type { AnyNodeData } from '@sittir/types';");
 	lines.push("import { coerceKindEnumStorage, isNodeData } from './utils.js';");
 	lines.push('');
 }
@@ -1277,7 +1277,7 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 function emitRequireFieldHelper(lines: string[]): void {
 	lines.push('function _requireField<T>(kind: string, slot: string, v: T): T {');
 	lines.push('  if (v === undefined || v === null) {');
-	lines.push('    throw new Error(`Missing required slot \'${slot}\' on ${kind}.from()`);');
+	lines.push("    throw new Error(`Missing required slot '${slot}' on ${kind}.from()`);");
 	lines.push('  }');
 	lines.push('  return v;');
 	lines.push('}');
@@ -1483,7 +1483,9 @@ function emitResolverHelpers(
 	lines.push('  }');
 	// Gap B: see _resolveOne — same object/array-only throw, scalars pass through.
 	lines.push('  if (typeof v === "object") {');
-	lines.push('    throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind \'${kind}\': ${JSON.stringify(v)}`);');
+	lines.push(
+		"    throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);"
+	);
 	lines.push('  }');
 	lines.push('  return v as T;');
 	lines.push('}');
@@ -1536,7 +1538,9 @@ function emitResolverHelpers(
 	lines.push('  }');
 	// Gap B: see _resolveOne — same object/array-only throw, scalars pass through.
 	lines.push('  if (typeof v === "object") {');
-	lines.push('    throw new Error(`_resolveOneBranch: cannot resolve value to branch kind \'${kind}\': ${JSON.stringify(v)}`);');
+	lines.push(
+		"    throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);"
+	);
 	lines.push('  }');
 	lines.push('  return v as T;');
 	lines.push('}');
