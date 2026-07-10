@@ -24,6 +24,11 @@ const METRICS_ENABLED: boolean = process.env['SITTIR_METRICS'] === '1';
 // Public types
 // ---------------------------------------------------------------------------
 
+/**
+ * @forFutureUse archived spec 054 (specs/archive-054-post-016-perf-tracking) —
+ * SITTIR_METRICS per-render timing / FFI-cost-tracking design. Drafted,
+ * not implemented; deferred, not abandoned.
+ */
 export interface PerKindMetrics {
 	readonly grammar: string;
 	readonly callCount: number;
@@ -39,6 +44,11 @@ export interface PerKindMetrics {
 	readonly napiCopyBytes?: number;
 }
 
+/**
+ * @forFutureUse archived spec 054 (specs/archive-054-post-016-perf-tracking) —
+ * SITTIR_METRICS per-render timing / FFI-cost-tracking design. Drafted,
+ * not implemented; deferred, not abandoned.
+ */
 export interface FfiMetrics {
 	readonly totalCalls: number;
 	readonly meanRoundtripMs: number;
@@ -46,6 +56,11 @@ export interface FfiMetrics {
 	readonly meanPayloadBytes: number;
 }
 
+/**
+ * @forFutureUse archived spec 054 (specs/archive-054-post-016-perf-tracking) —
+ * SITTIR_METRICS per-render timing / FFI-cost-tracking design. Drafted,
+ * not implemented; deferred, not abandoned.
+ */
 export interface MetricsFile {
 	readonly schemaVersion: 1;
 	readonly backend: 'ts' | 'native';
@@ -157,6 +172,10 @@ export function withMetrics<T>(grammar: string, kind: string, fn: () => T): T {
 /**
  * Record a single FFI (napi) round-trip cost. Called by boundary.ts around
  * each native `engine.render(node)` call when SITTIR_METRICS=1.
+ *
+ * @forFutureUse archived spec 054 (specs/archive-054-post-016-perf-tracking) —
+ * SITTIR_METRICS per-render timing / FFI-cost-tracking design. Drafted,
+ * not implemented; deferred, not abandoned.
  *
  * @param grammar - Grammar name (used for per-kind correlation).
  * @param kind - Node kind (used to attribute `napiCopyBytes` to the right bucket).
