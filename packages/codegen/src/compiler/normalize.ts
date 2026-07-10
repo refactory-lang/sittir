@@ -13,6 +13,7 @@
  */
 
 import {
+	ALIAS,
 	CHOICE,
 	DEDENT,
 	FIELD,
@@ -32,7 +33,6 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice, isEnumChoiceRule } from '../types/rule.ts';
-import { isTerminalShape } from './link.ts';
 import type { LinkedGrammar, NormalizedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, attributeBuilder, SimplifyCtx } from './simplify.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
@@ -837,6 +837,100 @@ function iterateInliningToFixedPoint(work: Record<string, Rule<'link'>>, preserv
 }
 
 /**
+ * A rule is terminal-shaped when its subtree has no fields and no symbol
+ * references — hidden or visible. Tree-sitter exposes such a kind as a
+ * pure text node at parse time.
+ *
+ * Skips rules that already have a classification wrapper (enum, supertype,
+ * group) — those are structural but Assemble has dedicated classifiers.
+ * PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+ * (Formerly exported from `link.ts`; moved here since this is its only caller.)
+ */
+function isTerminalShape(rule: Rule<'link'>): boolean {
+	switch (rule.type) {
+		// PR-P: ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+		case SUPERTYPE:
+		case GROUP:
+			return false; // already has a structural classification
+
+		case FIELD:
+			return false; // a field means it's a branch
+
+		case SYMBOL:
+		case 'supertype' as never:
+			return false; // a symbol means it carries children
+
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			// Bare terminals don't need wrapping — they're already leaf-shaped
+			// at the point Assemble inspects them. We only wrap composed
+			// terminal structures.
+			return false;
+
+		case SEQ:
+			return rule.members.every(isTerminalShape_allowBareTerm);
+		case CHOICE:
+			// PR-P: enum-shaped choices (all-STRING members) are classified as enum,
+			// not terminal — guard here to prevent double-wrapping.
+			if (isEnumChoiceRule(rule)) return false;
+			return rule.members.every(isTerminalShape_allowBareTerm);
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+			return isTerminalShape_allowBareTerm(rule.content);
+		case VARIANT:
+			return isTerminalShape_allowBareTerm(rule.content);
+		case ALIAS:
+		case TOKEN:
+			// Should be resolved by Link, but handle defensively
+			return isTerminalShape_allowBareTerm(rule.content);
+	}
+	return false;
+}
+
+/**
+ * Like isTerminalShape but bare terminals (string/pattern/whitespace) count
+ * as terminal. Used to recurse into composed structures.
+ */
+function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
+	switch (rule.type) {
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			return true;
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE arm above.
+		// All-STRING ChoiceRules are terminal-like but classified as enum, not terminal.
+		case FIELD:
+			return false;
+		case SYMBOL:
+			return false;
+		case SUPERTYPE:
+			return false;
+		case GROUP:
+			return false;
+		case SEQ:
+		case CHOICE:
+			return rule.members.every(isTerminalShape_allowBareTerm);
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+			return isTerminalShape_allowBareTerm(rule.content);
+		case VARIANT:
+			return isTerminalShape_allowBareTerm(rule.content);
+		case ALIAS:
+		case TOKEN:
+			return isTerminalShape_allowBareTerm(rule.content);
+	}
+	return false;
+}
+
+/**
  * Determine whether a hidden rule carries explicit structural classification
  * that downstream phases rely on, making it ineligible for inlining.
  *
@@ -1150,4 +1244,4 @@ function findCommonSuffix(seqs: Rule<'link'>[][], prefixLen: number): number {
 // wrapVariants / deduplicateVariants / nameVariant / tokenToName all
 // moved to compiler/link.ts — they're classification, not simplification.
 // Re-export from there if test files or callers still need them.
-export { wrapVariants, deduplicateVariants, nameVariant, tokenToName } from './link.ts';
+export { tokenToName } from './link.ts';
