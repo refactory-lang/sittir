@@ -11,7 +11,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { applyEdits } from '@sittir/core';
+import { applyEdits } from '@sittir/common';
 import type { Edit } from '@sittir/types';
 import {
 	loadFixtureSource,
@@ -45,7 +45,8 @@ describe('format-roundtrip python fixtures', () => {
 	}
 });
 
-describe('US1 — borrowed Askama parity (python)', () => {
+// Skipped: JS render engine removed (Track 1 cleanup) — this spec-017 US1 JS-vs-native parity check has no comparison baseline until a new SittirEngineLike adapter exists.
+describe.skip('US1 — borrowed Askama parity (python)', () => {
 	it('generated call render fixture matches the TS renderer', () => {
 		const engine = tryLoadNativeEngine('python');
 		if (!engine) return; // skip — native not built
@@ -90,7 +91,8 @@ describe('US2 — edit isolation (python)', () => {
 	});
 });
 
-describe('US2 — direct render parity (python)', () => {
+// Skipped: JS render engine removed (Track 1 cleanup) — this spec-017 US1 JS-vs-native parity check has no comparison baseline until a new SittirEngineLike adapter exists.
+describe.skip('US2 — direct render parity (python)', () => {
 	it('python-4space.py: native direct render matches TS render for parsed node data', async () => {
 		const engine = tryLoadNativeEngine('python');
 		if (!engine) return; // skip — native not built
@@ -106,7 +108,8 @@ describe('US2 — direct render parity (python)', () => {
 	});
 });
 
-describe('US3 — native/TS render parity (python)', () => {
+// Skipped: JS render engine removed (Track 1 cleanup) — this spec-017 US1 JS-vs-native parity check has no comparison baseline until a new SittirEngineLike adapter exists.
+describe.skip('US3 — native/TS render parity (python)', () => {
 	const bothFixtures = loadFormatCorpusEntries('python').filter((entry) => entry.expectedBackendCoverage === 'both');
 
 	if (bothFixtures.length === 0) {
