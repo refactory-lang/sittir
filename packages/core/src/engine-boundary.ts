@@ -1,7 +1,6 @@
 // JS-backend engine boundary.
 
-export { createJsEngine, resolveEngineFormat } from './engine.ts';
-export type { JsEngineOptions } from './engine.ts';
+export { resolveEngineFormat } from './engine.ts';
 export type {
 	EngineOptions,
 	ParseAndReadResult,
