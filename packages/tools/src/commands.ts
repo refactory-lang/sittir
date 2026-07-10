@@ -449,7 +449,14 @@ export async function runCountsCli(
 	// grammar diagnostics with the full (unbounded) validator failure lists
 	// collected above into a single persisted, structured artifact. Purely
 	// additive — does not alter any existing stdout/stderr output above.
-	if (recorded.length > 0) {
+	// Write the report whenever any grammar was ATTEMPTED — not only when at
+	// least one succeeded. Gating this on `recorded.length > 0` meant a run
+	// where every requested grammar failed left a stale prior report file on
+	// disk looking like nothing went wrong, even though
+	// `validatorFailuresByGrammar` already has the synthetic collect-failure
+	// entries to report. History (below) stays gated on `recorded.length`
+	// since it should only record successful runs.
+	if (grammars.length > 0) {
 		const grammarDiagnosticsByGrammar: Record<string, GrammarDiagnosticEntry[]> = {};
 		for (const grammar of grammars) grammarDiagnosticsByGrammar[grammar] = readGrammarDiagnosticsEntries(grammar);
 		const reportEntries = buildValidationReportEntries(grammarDiagnosticsByGrammar, validatorFailuresByGrammar);

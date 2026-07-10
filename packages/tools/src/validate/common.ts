@@ -1504,7 +1504,9 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 			// Per-handle dispatch: native handles read via napi (tree.read);
 			// wasm handles fall through to the JS walker. Validators stay
 			// backend-agnostic.
-			drilled = tree.read!(c.$nodeHandle, c.$childIndex) as ReadNodeLike;
+			drilled = (
+				tree.read ? tree.read(c.$nodeHandle, c.$childIndex) : readNodeFn(tree, c.$nodeHandle, c.$childIndex)
+			) as ReadNodeLike;
 		} catch {
 			// Tree handle lacked the node (factory-built subtree?) — fall
 			// back to the shallow entry we already have.
