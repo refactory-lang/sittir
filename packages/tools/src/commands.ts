@@ -7,10 +7,18 @@
 
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { existsSync, readFileSync } from 'node:fs';
+import { join, resolve as resolvePath } from 'node:path';
 import { runFrom, runRt, runCoverage, runFactory, defaultTemplatesPath, type Grammar, type Backend } from './run.ts';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
+import {
+	buildValidationReportEntries,
+	writeValidationReport,
+	type GrammarDiagnosticEntry,
+	type ValidatorFailureInput
+} from './validate/validation-report.ts';
 
 export const ALL_GRAMMARS: Grammar[] = ['rust', 'typescript', 'python'];
 export const ALL_CLI_BACKENDS = ['native', 'js', 'all'] as const;
@@ -298,6 +306,74 @@ export async function spawnIsolatedGrammarWorker(
 	});
 }
 
+/**
+ * Read `packages/<grammar>/.sittir/grammar-diagnostics.json` (written by
+ * codegen's `writeGrammarDiagnosticsJson`, Task 13) and normalize each entry
+ * into a `GrammarDiagnosticEntry` for the unified validation report.
+ *
+ * The on-disk shape is the real `GrammarDiagnostic | CompilerDiagnostic`
+ * union (`packages/codegen/src/types/diagnostics.ts`) — it has NO `location`
+ * field. `location` is derived here from `ownerKind`/`slotName`: `ownerKind`
+ * alone when `slotName` is absent, `${ownerKind}.${slotName}` when both are
+ * present, `undefined` when neither is.
+ *
+ * Returns an empty array (rather than throwing) when the file doesn't exist
+ * for a grammar — `gen` may not have been re-run for every grammar since
+ * Task 13 landed.
+ */
+export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnosticEntry[] {
+	const path = resolvePath(join('packages', grammar, '.sittir', 'grammar-diagnostics.json'));
+	if (!existsSync(path)) return [];
+	try {
+		const raw = JSON.parse(readFileSync(path, 'utf8')) as ReadonlyArray<{
+			code: string;
+			severity: 'error' | 'warning' | 'info' | 'fail';
+			message: string;
+			proposal?: string;
+			ownerKind?: string;
+			slotName?: string;
+		}>;
+		return raw.map((d) => {
+			const location = d.ownerKind
+				? d.slotName
+					? `${d.ownerKind}.${d.slotName}`
+					: d.ownerKind
+				: undefined;
+			// Report entries only model 'error' | 'warning'; fold 'info'/'fail' to 'warning'/'error'.
+			const severity: 'error' | 'warning' = d.severity === 'error' || d.severity === 'fail' ? 'error' : 'warning';
+			return { code: d.code, severity, location, message: d.message, proposal: d.proposal };
+		});
+	} catch {
+		return [];
+	}
+}
+
+/**
+ * Collect every stage's FULL (unbounded) failure list from a `GrammarCounts`
+ * result — i.e. before `formatFirstFailures` truncates to
+ * `SITTIR_VALIDATOR_MAX_FAILURES` for the stdout printout — tagged per stage
+ * for the unified validation report.
+ */
+export function collectValidatorFailuresForGrammar(counts: GrammarCounts): ValidatorFailureInput[] {
+	const { from, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
+	const failures: ValidatorFailureInput[] = [];
+	for (const e of from.errors) failures.push({ stage: 'from', label: e.kind, message: e.message });
+	for (const e of readRenderParse.errors) failures.push({ stage: 'read-render-parse', label: e.name, message: e.message });
+	for (const m of readRenderParse.astMismatches)
+		failures.push({ stage: 'read-render-parse-ast-mismatch', label: m.name, message: m.message });
+	for (const e of readRenderParseShallow.errors)
+		failures.push({ stage: 'read-render-parse-shallow', label: e.name, message: e.message });
+	for (const e of factoryRenderParse.errors)
+		failures.push({ stage: 'factory-render-parse', label: e.entry ? `${e.entry} (${e.kind})` : e.kind, message: e.message });
+	for (const m of factoryRenderParse.astMismatches)
+		failures.push({
+			stage: 'factory-render-parse-ast-mismatch',
+			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
+			message: m.message
+		});
+	return failures;
+}
+
 /** Exported entry: counts subcommand — prints raw pass/total for all four validators. */
 export async function runCountsCli(
 	args: string[],
@@ -351,6 +427,7 @@ export async function runCountsCli(
 		return;
 	}
 
+	const validatorFailuresByGrammar: Record<string, ValidatorFailureInput[]> = {};
 	for (const backend of resolveBackends(backendMode)) {
 		for (const grammar of grammars) {
 			try {
@@ -358,10 +435,21 @@ export async function runCountsCli(
 				appendHistory(toValidationRun(counts));
 				recorded.push(`${grammar}/${formatBackendLabel(backend)}`);
 				console.log(formatGrammarCounts(counts));
+				validatorFailuresByGrammar[grammar] = collectValidatorFailuresForGrammar(counts);
 			} catch (e) {
 				console.log(`${grammar}/${formatBackendLabel(backend)}: ERROR ${(e as Error).message}`);
 			}
 		}
+	}
+	// Unified validation report (Task 14): merge Task 13's per-grammar static
+	// grammar diagnostics with the full (unbounded) validator failure lists
+	// collected above into a single persisted, structured artifact. Purely
+	// additive — does not alter any existing stdout/stderr output above.
+	if (recorded.length > 0) {
+		const grammarDiagnosticsByGrammar: Record<string, GrammarDiagnosticEntry[]> = {};
+		for (const grammar of grammars) grammarDiagnosticsByGrammar[grammar] = readGrammarDiagnosticsEntries(grammar);
+		const reportEntries = buildValidationReportEntries(grammarDiagnosticsByGrammar, validatorFailuresByGrammar);
+		writeValidationReport(reportEntries, resolvePath(join('packages', 'tools', 'validation-report.json')));
 	}
 	// One commit per validation invocation covering every row just appended —
 	// keeps history reliably captured without a commit per grammar. Best-effort

@@ -1,0 +1,11 @@
+[
+  {
+    "source": "grammar",
+    "severity": "error",
+    "code": "parsekind-noninjective",
+    "grammar": "rust",
+    "backend": "native",
+    "location": "_test_kind",
+    "message": "Diagnostic: parsekind-noninjective"
+  }
+]
