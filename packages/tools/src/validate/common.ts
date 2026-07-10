@@ -403,9 +403,9 @@ export function buildReadHandle(
 export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyNodeData {
 	if (nativeCoords && handle.read) {
 		if (nativeCoords.handle === undefined) {
-			return readNodeFn(handle);
+			return handle.read();
 		}
-		return readNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex);
+		return handle.read(nativeCoords.handle, nativeCoords.childIndex);
 	}
 	// WASM/JS path: temporarily set rootNode to the target node and read
 	// with no navigation coords (readNode reads rootNode when handle is undefined).
@@ -1504,9 +1504,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 			// Per-handle dispatch: native handles read via napi (tree.read);
 			// wasm handles fall through to the JS walker. Validators stay
 			// backend-agnostic.
-			drilled = (
-				tree.read ? tree.read(c.$nodeHandle, c.$childIndex) : readNodeFn(tree, c.$nodeHandle, c.$childIndex)
-			) as ReadNodeLike;
+			drilled = tree.read!(c.$nodeHandle, c.$childIndex) as ReadNodeLike;
 		} catch {
 			// Tree handle lacked the node (factory-built subtree?) — fall
 			// back to the shallow entry we already have.
