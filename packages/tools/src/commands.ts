@@ -17,7 +17,7 @@ import {
 	buildValidationReportEntries,
 	writeValidationReport,
 	type GrammarDiagnosticEntry,
-	type ValidatorFailureInput
+	type ValidatorDiagnostic
 } from './validate/validation-report.ts';
 
 export const ALL_GRAMMARS: Grammar[] = ['rust', 'typescript', 'python'];
@@ -313,9 +313,17 @@ export async function spawnIsolatedGrammarWorker(grammar: Grammar): Promise<{
  * alone when `slotName` is absent, `${ownerKind}.${slotName}` when both are
  * present, `undefined` when neither is.
  *
- * Returns an empty array (rather than throwing) when the file doesn't exist
- * for a grammar — `gen` may not have been re-run for every grammar since
- * Task 13 landed.
+ * Returns an empty array (rather than throwing) ONLY when the file doesn't
+ * exist for a grammar — `gen` may not have been re-run for every grammar
+ * since Task 13 landed, and that absence is expected/skippable. A file that
+ * DOES exist but fails to read or parse (truncated write, permission error,
+ * corrupt JSON, …) is a real error — silently folding that into "no
+ * diagnostics" would recreate the exact silent-drop behavior this report is
+ * meant to eliminate, and could make a successful validation run overwrite
+ * the report without any grammar entries. Surface it loudly instead, as a
+ * synthetic `GrammarDiagnosticEntry` carrying the file path — consistent
+ * with how `runCountsCli` already surfaces whole-grammar collection
+ * failures as synthetic entries rather than throwing out of the report loop.
  */
 export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnosticEntry[] {
 	const path = resolvePath(join('packages', grammar, '.sittir', 'grammar-diagnostics.json'));
@@ -339,8 +347,15 @@ export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnost
 			const severity: 'error' | 'warning' = d.severity === 'error' || d.severity === 'fail' ? 'error' : 'warning';
 			return { code: d.code, severity, location, message: d.message, proposal: d.proposal };
 		});
-	} catch {
-		return [];
+	} catch (e) {
+		return [
+			{
+				code: 'grammar-diagnostics-read-error',
+				severity: 'error',
+				location: path,
+				message: `Failed to read/parse grammar diagnostics file at ${path}: ${(e as Error).message}`
+			}
+		];
 	}
 }
 
@@ -349,25 +364,138 @@ export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnost
  * result — i.e. before `formatFirstFailures` truncates to
  * `SITTIR_VALIDATOR_MAX_FAILURES` for the stdout printout — tagged per stage
  * for the unified validation report.
+ *
+ * Each pushed entry carries its own real `code` (one distinct code per
+ * distinct failure kind, named after the `stage` it came from) and
+ * `severity`, rather than a single hardcoded bucket code/severity being
+ * synthesized downstream in `buildValidationReportEntries`. Coverage issues
+ * (`counts.coverage.issues`) and the read-render-parse-shallow AST
+ * mismatches are included here too — both were previously missing from this
+ * collector entirely.
  */
-export function collectValidatorFailuresForGrammar(counts: GrammarCounts): ValidatorFailureInput[] {
-	const { from, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
-	const failures: ValidatorFailureInput[] = [];
-	for (const e of from.errors) failures.push({ stage: 'from', label: e.kind, message: e.message });
-	for (const e of readRenderParse.errors) failures.push({ stage: 'read-render-parse', label: e.name, message: e.message });
+export function collectValidatorFailuresForGrammar(counts: GrammarCounts): ValidatorDiagnostic[] {
+	const { from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
+	const failures: ValidatorDiagnostic[] = [];
+	for (const e of from.errors)
+		failures.push({ stage: 'from', code: 'from-error', severity: 'error', label: e.kind, message: e.message });
+	for (const e of readRenderParse.errors)
+		failures.push({
+			stage: 'read-render-parse',
+			code: 'read-render-parse-error',
+			severity: 'error',
+			label: e.name,
+			message: e.message
+		});
 	for (const m of readRenderParse.astMismatches)
-		failures.push({ stage: 'read-render-parse-ast-mismatch', label: m.name, message: m.message });
+		failures.push({
+			stage: 'read-render-parse-ast-mismatch',
+			code: 'read-render-parse-ast-mismatch',
+			severity: 'error',
+			label: m.name,
+			message: m.message
+		});
 	for (const e of readRenderParseShallow.errors)
-		failures.push({ stage: 'read-render-parse-shallow', label: e.name, message: e.message });
+		failures.push({
+			stage: 'read-render-parse-shallow',
+			code: 'read-render-parse-shallow-error',
+			severity: 'error',
+			label: e.name,
+			message: e.message
+		});
+	for (const m of readRenderParseShallow.astMismatches)
+		failures.push({
+			stage: 'read-render-parse-shallow-ast-mismatch',
+			code: 'read-render-parse-shallow-ast-mismatch',
+			severity: 'error',
+			label: m.name,
+			message: m.message
+		});
 	for (const e of factoryRenderParse.errors)
-		failures.push({ stage: 'factory-render-parse', label: e.entry ? `${e.entry} (${e.kind})` : e.kind, message: e.message });
+		failures.push({
+			stage: 'factory-render-parse',
+			code: 'factory-render-parse-error',
+			severity: 'error',
+			label: e.entry ? `${e.entry} (${e.kind})` : e.kind,
+			message: e.message
+		});
 	for (const m of factoryRenderParse.astMismatches)
 		failures.push({
 			stage: 'factory-render-parse-ast-mismatch',
+			code: 'factory-render-parse-ast-mismatch',
+			severity: 'error',
 			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
 			message: m.message
 		});
+	// `literal-leak` issues are a heuristic near-miss surfaced for visibility
+	// (a suspicious doubled-punctuation run), not a hard structural failure
+	// like `missing-field` — tag them 'warning' rather than folding every
+	// coverage issue into the same 'error' bucket the rest of this collector
+	// uses.
+	for (const issue of coverage.issues)
+		failures.push({
+			stage: 'coverage',
+			code: `coverage-${issue.type}`,
+			severity: issue.type === 'literal-leak' ? 'warning' : 'error',
+			label: issue.kind,
+			message: issue.message
+		});
 	return failures;
+}
+
+/**
+ * Prefix for the single-line JSON blob an isolation worker prints to stdout
+ * carrying its `ValidatorDiagnostic[]` for the one grammar it validated. The
+ * parent (`runCountsCli`'s isolate branch) extracts and strips this line
+ * from the forwarded child stdout, then merges it into the unified report —
+ * see `extractIsolateReportJson`.
+ */
+const ISOLATE_REPORT_JSON_PREFIX = '[isolate-report-json] ';
+
+/**
+ * Extract an isolation worker's `[isolate-report-json] <json>` line (if
+ * present) from its captured stdout, returning the parsed
+ * `ValidatorDiagnostic[]` and the remaining stdout with that line removed
+ * (so the human-readable forwarded output stays clean).
+ */
+export function extractIsolateReportJson(stdout: string): {
+	entries: ValidatorDiagnostic[];
+	remaining: string;
+} {
+	const lines = stdout.split('\n');
+	let entries: ValidatorDiagnostic[] = [];
+	const kept: string[] = [];
+	for (const line of lines) {
+		if (line.startsWith(ISOLATE_REPORT_JSON_PREFIX)) {
+			try {
+				entries = JSON.parse(line.slice(ISOLATE_REPORT_JSON_PREFIX.length)) as ValidatorDiagnostic[];
+			} catch {
+				// Malformed/partial line — leave entries empty; the crashed/error
+				// branches already cover missing-report cases with a synthetic entry.
+			}
+		} else {
+			kept.push(line);
+		}
+	}
+	return { entries, remaining: kept.join('\n') };
+}
+
+/**
+ * Merge Task 13's per-grammar static grammar diagnostics with the full
+ * (unbounded) validator failure lists collected for `grammars` into one
+ * persisted, structured `validation-report.json`. Shared by both the
+ * isolate and non-isolate `runCountsCli` paths so there is exactly one
+ * merge+write call site (previously each isolation worker wrote its own
+ * report, so only the last worker's single-grammar report survived).
+ */
+export function writeMergedValidationReport(
+	grammars: readonly Grammar[],
+	validatorFailuresByGrammar: Readonly<Record<string, readonly ValidatorDiagnostic[]>>
+): void {
+	if (grammars.length === 0) return;
+	const grammarDiagnosticsByGrammar: Record<string, GrammarDiagnosticEntry[]> = {};
+	for (const grammar of grammars) grammarDiagnosticsByGrammar[grammar] = readGrammarDiagnosticsEntries(grammar);
+	const reportEntries = buildValidationReportEntries(grammarDiagnosticsByGrammar, validatorFailuresByGrammar);
+	writeValidationReport(reportEntries, resolvePath(join('packages', 'tools', 'validation-report.json')));
 }
 
 /** Exported entry: counts subcommand — prints raw pass/total for all four validators. */
@@ -391,11 +519,19 @@ export async function runCountsCli(
 	// Non-native backends are still run in-process (no segfault risk).
 	if (isolate && backendMode === 'native') {
 		let anyCrashed = false;
+		// Each worker validates exactly one grammar and (per the ISOLATE_REPORT_JSON_PREFIX
+		// seam below) reports its ValidatorDiagnostic[] back to this parent instead of
+		// writing validation-report.json itself — every spawned worker previously called
+		// writeMergedValidationReport (well, its predecessor) independently, so only the
+		// LAST worker's single-grammar report survived on disk. The parent now collects
+		// every worker's (or crash's) entries and performs exactly one merged write below.
+		const validatorFailuresByGrammar: Record<string, ValidatorDiagnostic[]> = {};
 		for (const grammar of grammars) {
 			const result = await spawnIsolatedGrammarWorker(grammar);
 			if (result.status === 'ok') {
-				// Forward the child's stdout output.
-				if (result.stdout) process.stdout.write(result.stdout);
+				const { entries, remaining } = extractIsolateReportJson(result.stdout);
+				if (remaining) process.stdout.write(remaining);
+				validatorFailuresByGrammar[grammar] = entries;
 				// The worker appended its history row but skipped commit
 				// (isolateWorker); record it so the parent commits once below.
 				recorded.push(`${grammar}/${formatBackendLabel('native')}`);
@@ -404,11 +540,29 @@ export async function runCountsCli(
 				const lastKind = parseLastIsolateProgress(result.stderr);
 				const msg = formatIsolateGrammarSummary(grammar, 'crashed', '', lastKind, result.exitCode, result.signal);
 				console.log(msg);
+				validatorFailuresByGrammar[grammar] = [
+					{
+						stage: 'collect',
+						code: 'grammar-collection-failure',
+						severity: 'error',
+						label: grammar,
+						message: `native engine SIGSEGV — last kind attempted: '${lastKind ?? '<unknown>'}'`
+					}
+				];
 			} else {
 				// Non-zero, non-crash exit.
 				const msg = formatIsolateGrammarSummary(grammar, 'error', '', null, result.exitCode, result.signal);
 				console.log(msg);
 				if (result.stdout) process.stdout.write(result.stdout);
+				validatorFailuresByGrammar[grammar] = [
+					{
+						stage: 'collect',
+						code: 'grammar-collection-failure',
+						severity: 'error',
+						label: grammar,
+						message: `isolation worker child process failed (exit ${result.exitCode ?? '?'}, signal ${result.signal ?? 'none'})`
+					}
+				];
 			}
 		}
 		// Single commit in the parent covering every worker that appended a row —
@@ -417,13 +571,16 @@ export async function runCountsCli(
 		if (recorded.length > 0 && !isolateWorker) {
 			commitHistory(`chore(validator): record validation run (${recorded.join(', ')})`);
 		}
+		// One merged write covering every grammar attempted (ok, crashed, and
+		// error alike) — mirrors the non-isolate path's write-on-attempt policy.
+		writeMergedValidationReport(grammars, validatorFailuresByGrammar);
 		if (anyCrashed) {
 			process.exitCode = 1;
 		}
 		return;
 	}
 
-	const validatorFailuresByGrammar: Record<string, ValidatorFailureInput[]> = {};
+	const validatorFailuresByGrammar: Record<string, ValidatorDiagnostic[]> = {};
 	for (const backend of resolveBackends(backendMode)) {
 		for (const grammar of grammars) {
 			try {
@@ -440,7 +597,13 @@ export async function runCountsCli(
 				// validation runs, not failures.
 				validatorFailuresByGrammar[grammar] = [
 					...(validatorFailuresByGrammar[grammar] ?? []),
-					{ stage: 'collect', label: grammar, message: (e as Error).message }
+					{
+						stage: 'collect',
+						code: 'grammar-collection-failure',
+						severity: 'error',
+						label: grammar,
+						message: (e as Error).message
+					}
 				];
 			}
 		}
@@ -456,11 +619,20 @@ export async function runCountsCli(
 	// `validatorFailuresByGrammar` already has the synthetic collect-failure
 	// entries to report. History (below) stays gated on `recorded.length`
 	// since it should only record successful runs.
-	if (grammars.length > 0) {
-		const grammarDiagnosticsByGrammar: Record<string, GrammarDiagnosticEntry[]> = {};
-		for (const grammar of grammars) grammarDiagnosticsByGrammar[grammar] = readGrammarDiagnosticsEntries(grammar);
-		const reportEntries = buildValidationReportEntries(grammarDiagnosticsByGrammar, validatorFailuresByGrammar);
-		writeValidationReport(reportEntries, resolvePath(join('packages', 'tools', 'validation-report.json')));
+	//
+	// Isolate-worker children are a single-grammar SLICE of the overall run —
+	// they must NOT write validation-report.json themselves (that was Finding
+	// #4: each worker overwrote the whole report, so only the last worker's
+	// single-grammar report survived). Instead, report entries back to the
+	// parent via a dedicated stdout line; the parent merges every worker's
+	// entries and performs the one real write (see the `isolate` branch above
+	// and `extractIsolateReportJson`).
+	if (isolateWorker) {
+		for (const grammar of grammars) {
+			console.log(`${ISOLATE_REPORT_JSON_PREFIX}${JSON.stringify(validatorFailuresByGrammar[grammar] ?? [])}`);
+		}
+	} else {
+		writeMergedValidationReport(grammars, validatorFailuresByGrammar);
 	}
 	// One commit per validation invocation covering every row just appended —
 	// keeps history reliably captured without a commit per grammar. Best-effort

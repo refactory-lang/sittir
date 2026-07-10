@@ -32,7 +32,13 @@ describe('buildValidationReportEntries', () => {
 			{},
 			{
 				rust: [
-					{ stage: 'read-render-parse', label: 'Async Block (async_block)', message: 're-parse error: "async "' }
+					{
+						stage: 'read-render-parse',
+						code: 'read-render-parse-error',
+						severity: 'error',
+						label: 'Async Block (async_block)',
+						message: 're-parse error: "async "'
+					}
 				]
 			}
 		);
@@ -40,7 +46,7 @@ describe('buildValidationReportEntries', () => {
 			{
 				source: 'validator',
 				severity: 'error',
-				code: 'validation-failure',
+				code: 'read-render-parse-error',
 				grammar: 'rust',
 				backend: 'native',
 				stage: 'read-render-parse',

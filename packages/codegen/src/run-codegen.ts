@@ -193,7 +193,21 @@ export async function runGrammarDiagnosticsPreflight(input: {
 	if (nonBlocking.length > 0) {
 		process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
 	}
-	writeGrammarDiagnosticsJson(nonBlocking, resolve('packages', input.grammar, '.sittir', 'grammar-diagnostics.json'));
+	// Persist the COMPLETE diagnostic set (blocking + non-blocking) — writing
+	// only `nonBlocking` silently dropped blocking diagnostics from the
+	// persisted artifact even when the run went on to proceed (allow-listed,
+	// or confirmed interactively).
+	//
+	// Only write when running against a REAL loaded grammar. `injectedDiagnostics`
+	// is a test-only seam (`cli-grammar-diagnostics.test.ts` injects diagnostics
+	// for an arbitrary/fake grammar to exercise the gate's allow-list/confirm
+	// logic in isolation, bypassing real grammar loading) — writing through to
+	// the tracked `packages/<grammar>/.sittir/grammar-diagnostics.json` in that
+	// case would contaminate the real artifact with test fixtures. Keep the
+	// injection seam side-effect-free.
+	if (input.injectedDiagnostics === undefined) {
+		writeGrammarDiagnosticsJson(diagnostics, resolve('packages', input.grammar, '.sittir', 'grammar-diagnostics.json'));
+	}
 
 	if (blocked.length === 0) return;
 

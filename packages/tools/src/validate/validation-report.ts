@@ -13,21 +13,37 @@
 
 import { writeFileSync } from 'node:fs';
 
-/** Generic, pre-normalized grammar diagnostic input — decoupled from the real
- *  `GrammarDiagnostic` union in `@sittir/codegen/types/diagnostics.ts`. */
-export interface GrammarDiagnosticEntry {
+/**
+ * Minimal shared shape both diagnostic sources (`grammar` static diagnostics
+ * and `validator` runtime failures) conform to. Each source assigns its own
+ * real `code`/`severity` at construction time rather than having them
+ * synthesized/hardcoded downstream in `buildValidationReportEntries` — this
+ * leaves room for a source to genuinely report a `warning` in the future
+ * without another round of code/severity drift.
+ */
+export interface DiagnosticEntryBase {
 	readonly code: string;
 	readonly severity: 'error' | 'warning';
-	readonly location?: string;
 	readonly message: string;
+}
+
+/** Generic, pre-normalized grammar diagnostic input — decoupled from the real
+ *  `GrammarDiagnostic` union in `@sittir/codegen/types/diagnostics.ts`. */
+export interface GrammarDiagnosticEntry extends DiagnosticEntryBase {
+	readonly location?: string;
 	readonly proposal?: string;
 }
 
-/** One (unbounded) validator failure, tagged with the stage it came from. */
-export interface ValidatorFailureInput {
+/**
+ * One (unbounded) validator failure, tagged with the stage it came from.
+ * Carries its own real `code`/`severity` — the caller (`collectValidatorFailuresForGrammar`
+ * in `packages/tools/src/commands.ts`) assigns a distinct `code` per failure
+ * kind rather than every validator failure being tagged with one generic
+ * bucket code.
+ */
+export interface ValidatorDiagnostic extends DiagnosticEntryBase {
 	readonly stage: string;
 	readonly label: string;
-	readonly message: string;
 }
 
 export interface ValidationReportEntry {
@@ -43,13 +59,14 @@ export interface ValidationReportEntry {
 
 /**
  * Merge per-grammar static grammar diagnostics and per-grammar validator
- * failures into one flat array of `ValidationReportEntry`. Grammar
- * diagnostics keep their own `code`/`severity`; validator failures are all
- * tagged `severity: 'error'`, `code: 'validation-failure'`.
+ * failures into one flat array of `ValidationReportEntry`. Both sides keep
+ * their own real `code`/`severity`, assigned at the source (`readGrammarDiagnosticsEntries`
+ * / `collectValidatorFailuresForGrammar` in `packages/tools/src/commands.ts`)
+ * rather than synthesized here.
  */
 export function buildValidationReportEntries(
 	grammarDiagnosticsByGrammar: Readonly<Record<string, readonly GrammarDiagnosticEntry[]>>,
-	validatorFailuresByGrammar: Readonly<Record<string, readonly ValidatorFailureInput[]>>,
+	validatorFailuresByGrammar: Readonly<Record<string, readonly ValidatorDiagnostic[]>>,
 	backend = 'native'
 ): ValidationReportEntry[] {
 	const entries: ValidationReportEntry[] = [];
@@ -70,8 +87,8 @@ export function buildValidationReportEntries(
 		for (const f of failures) {
 			entries.push({
 				source: 'validator',
-				severity: 'error',
-				code: 'validation-failure',
+				severity: f.severity,
+				code: f.code,
 				grammar,
 				backend,
 				stage: f.stage,
