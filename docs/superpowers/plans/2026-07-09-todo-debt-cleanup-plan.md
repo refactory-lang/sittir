@@ -467,6 +467,20 @@ one-line reasoning from Step 3 here]."
 
 ## Task 8: Cluster A — dead-branch deletion + doc-comment corrections
 
+**CORRECTION (found when this task was first dispatched):** all of this
+task's targets were already fixed by an earlier, unrelated commit
+(`0ddf6a771`, "debt PR-B/C batch — shims, deprecated aliases, dead
+MIDWAY-STATE branches (#124)") before Task 8 was ever dispatched. The dead
+`children.length > 0` / `structuralChildrenOf(node)` guard branches in
+`transport-common.ts` and `factory-map.ts` were already deleted by that
+commit. The `metadata.inlinedFrom` doc-comment premise also no longer held —
+that commit's follow-on work moved spacing-behavior responsibility to a
+separately-documented `splicedBody` flag (`packages/codegen/src/types/rule.ts`),
+and the current `inlinedFrom` comment already reflects this correctly. Direct
+investigation (re-reading both files + `git log -S` on the cited line ranges)
+confirmed there was nothing left to do. Task 8 therefore executed as a no-op
+with no commit.
+
 **Files:**
 - Modify: `packages/codegen/src/emitters/transport-common.ts` (~lines 116-126,135-141 — delete dead branches).
 - Modify: `packages/codegen/src/emitters/factory-map.ts` (~lines 102-110 — delete dead branch).
