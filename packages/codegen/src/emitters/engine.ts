@@ -1,7 +1,7 @@
 /**
- * Emits a thin per-grammar `engine.ts` wrapper that delegates native fallback
- * to `createNativeEngine` from `@sittir/common/engine` and the JS backend to
- * `createJsEngine` from `@sittir/core/engine`.
+ * Emits a thin per-grammar `engine.ts` wrapper that delegates to
+ * `createNativeEngine` from `@sittir/common/engine`. The JS-engine fallback
+ * has been removed — native is the only supported backend.
  */
 
 export interface EmitEngineConfig {
@@ -10,9 +10,9 @@ export interface EmitEngineConfig {
 
 /**
  * Emit a per-grammar `engine.ts` that wires grammar-specific values
- * (KIND_NAMES, getActiveBackend) into the shared
- * native wrapper from `@sittir/common/engine`, then falls back to the JS
- * backend from `@sittir/core/engine`.
+ * (KIND_NAMES, getActiveBackend) into the shared native wrapper from
+ * `@sittir/common/engine`. Throws if native engine creation fails — there
+ * is no JS-engine fallback.
  *
  * @param config - Grammar name (used in the JSDoc comment only).
  * @returns The full content of the emitted `engine.ts` file.
@@ -23,10 +23,9 @@ export function emitEngine(config: EmitEngineConfig): string {
 /**
  * Grammar-specific engine factory for @sittir/${grammar}.
  *
- * Thin wrapper — native binding stays in @sittir/common/engine while the
- * JS backend implementation comes from @sittir/core/engine.
+ * Thin wrapper — native binding stays in @sittir/common/engine. Native-only:
+ * there is no JS-engine fallback.
  */
-import { createJsEngine } from '@sittir/core/engine';
 import {
 	createNativeEngine,
 	type SittirEngineLike,
@@ -44,28 +43,25 @@ export type { EngineOptions };
 /**
  * Create a grammar-specific engine instance.
  *
- * Attempts to use the native backend if available; falls back to the JS
- * engine otherwise.
+ * Native-only — throws if the native backend is unavailable rather than
+ * silently falling back to a JS engine.
  *
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing SittirEngineLike.
  */
 export function createEngine(options?: EngineOptions): SittirEngineLike {
-	return (
-		createNativeEngine(
-			{
-				templatesPath: join(__dirname, '..', 'templates'),
-				kindNames: KIND_NAMES,
-				getActiveBackend,
-			},
-			options
-		) ??
-		createJsEngine({
+	const engine = createNativeEngine(
+		{
 			templatesPath: join(__dirname, '..', 'templates'),
-			format: options?.format,
 			kindNames: KIND_NAMES,
-		})
+			getActiveBackend,
+		},
+		options
 	);
+	if (!engine) {
+		throw new Error('createEngine: native engine unavailable (no JS-engine fallback)');
+	}
+	return engine;
 }
 `;
 }

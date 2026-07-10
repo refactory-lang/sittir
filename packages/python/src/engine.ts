@@ -2,10 +2,9 @@
 /**
  * Grammar-specific engine factory for @sittir/python.
  *
- * Thin wrapper — native binding stays in @sittir/common/engine while the
- * JS backend implementation comes from @sittir/core/engine.
+ * Thin wrapper — native binding stays in @sittir/common/engine. Native-only:
+ * there is no JS-engine fallback.
  */
-import { createJsEngine } from '@sittir/core/engine';
 import {
 	createNativeEngine,
 	type SittirEngineLike,
@@ -23,26 +22,23 @@ export type { EngineOptions };
 /**
  * Create a grammar-specific engine instance.
  *
- * Attempts to use the native backend if available; falls back to the JS
- * engine otherwise.
+ * Native-only — throws if the native backend is unavailable rather than
+ * silently falling back to a JS engine.
  *
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing SittirEngineLike.
  */
 export function createEngine(options?: EngineOptions): SittirEngineLike {
-	return (
-		createNativeEngine(
-			{
-				templatesPath: join(__dirname, '..', 'templates'),
-				kindNames: KIND_NAMES,
-				getActiveBackend,
-			},
-			options
-		) ??
-		createJsEngine({
+	const engine = createNativeEngine(
+		{
 			templatesPath: join(__dirname, '..', 'templates'),
-			format: options?.format,
 			kindNames: KIND_NAMES,
-		})
+			getActiveBackend,
+		},
+		options
 	);
+	if (!engine) {
+		throw new Error('createEngine: native engine unavailable (no JS-engine fallback)');
+	}
+	return engine;
 }
