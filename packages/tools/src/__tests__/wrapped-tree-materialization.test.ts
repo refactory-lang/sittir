@@ -1,6 +1,6 @@
 import { FIELD, PATTERN, SEQ, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { fileURLToPath } from 'node:url';
-import ts from 'typescript';
+import ts from 'typescript6';
 import { describe, expect, it } from 'vitest';
 import type { TreeHandle } from '@sittir/common';
 import {

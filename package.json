@@ -62,6 +62,7 @@
     "typedoc-plugin-markdown": "^4.11.0",
     "typedoc-plugin-to-skills": "^0.6.6",
     "typescript": "^6.0.3",
+    "typescript6": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^4.1.4",
     "web-tree-sitter": "^0.26.9"
   },

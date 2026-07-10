@@ -23,7 +23,7 @@
  *   --config       also print Config shape for comparison
  */
 
-import * as ts from 'typescript';
+import * as ts from 'typescript6';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
