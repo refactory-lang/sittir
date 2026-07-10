@@ -55,7 +55,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "rust",
     "backend": "native",
@@ -64,7 +64,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "rust",
     "backend": "native",
@@ -73,7 +73,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "rust",
     "backend": "native",
@@ -154,7 +154,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -163,7 +163,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -172,7 +172,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -181,7 +181,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -190,7 +190,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -199,7 +199,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -208,7 +208,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -217,7 +217,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -226,7 +226,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -235,7 +235,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -244,7 +244,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
@@ -280,7 +280,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -289,7 +289,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -298,7 +298,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -307,7 +307,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -316,7 +316,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -325,7 +325,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -334,7 +334,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -343,7 +343,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -352,7 +352,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -361,7 +361,7 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
+    "severity": "info",
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
@@ -1366,17 +1366,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Struct patterns (tuple_expression)",
-    "message": "re-parse error: \"( \"adult\",adult_name,\"adult\",adult_name \"adult\",adult_name)\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "factory-render-parse",
-    "location": "Captured patterns (range_pattern)",
-    "message": "kind not found in re-parse (rendered: \"1\")"
+    "message": "re-parse error: \"( \"toddler\",name,\"toddler\",name \"toddler\",name)\""
   },
   {
     "source": "validator",
@@ -1565,16 +1555,6 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Let-else Statements (call_expression)",
-    "message": "call_expression[0].field_expression: type field_expression ≠ identifier"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Let-else Statements (return_expression)",
     "message": "return_expression: childCount 2 ≠ 1 [\"return\",call_expression] vs [\"return\"]"
   },
@@ -1587,16 +1567,6 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Let-else Statements (tuple_struct_pattern)",
     "message": "tuple_struct_pattern: childCount 4 ≠ 3 [identifier,\"(\",identifier,\")\"] vs [identifier,\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Generic functions (generic_type)",
-    "message": "generic_type[1].type_arguments[1].type_argument[0].type_identifier: type type_identifier ≠ primitive_type"
   },
   {
     "source": "validator",
@@ -1687,16 +1657,6 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Inner attributes (tuple_struct_pattern)",
     "message": "tuple_struct_pattern: childCount 4 ≠ 3 [scoped_identifier,\"(\",identifier,\")\"] vs [scoped_identifier,\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Inner attributes (field_expression)",
-    "message": "field_expression[0].self: type self ≠ identifier"
   },
   {
     "source": "validator",
@@ -2166,7 +2126,7 @@
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Tuple struct patterns (tuple_struct_pattern)",
-    "message": "tuple_struct_pattern: childCount 4 ≠ 3 [identifier,\"(\",identifier,\")\"] vs [scoped_identifier,\"(\",\")\"]"
+    "message": "tuple_struct_pattern: childCount 4 ≠ 3 [identifier,\"(\",identifier,\")\"] vs [identifier,\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -2237,6 +2197,16 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Ignored patterns (tuple_struct_pattern)",
     "message": "tuple_struct_pattern: childCount 4 ≠ 3 [identifier,\"(\",remaining_field_pattern,\")\"] vs [identifier,\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "factory-render-parse-ast-mismatch",
+    "location": "Captured patterns (captured_pattern)",
+    "message": "captured_pattern[2].tuple_struct_pattern: type tuple_struct_pattern ≠ range_pattern"
   },
   {
     "source": "validator",
@@ -3675,8 +3645,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Ambient export function declarations (type_annotation)",
-    "message": "type_annotation[1].generic_type[0].nested_type_identifier: type nested_type_identifier ≠ type_identifier"
+    "location": "Ambient export function declarations (generic_type)",
+    "message": "generic_type[0].nested_type_identifier: type nested_type_identifier ≠ type_identifier"
   },
   {
     "source": "validator",
@@ -3735,18 +3705,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Classes with method signatures (type_annotation)",
-    "message": "type_annotation[1].function_type: type function_type ≠ generic_type"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Classes with method signatures (function_type)",
-    "message": "function_type[0].formal_parameters: childCount 2 ≠ 3 [\"(\",\")\"] vs [\"(\",required_parameter,\")\"]"
+    "location": "Classes with method signatures (required_parameter)",
+    "message": "required_parameter[1].type_annotation[1].function_type: type function_type ≠ type_identifier"
   },
   {
     "source": "validator",
@@ -3865,8 +3825,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "As expressions (object_type)",
-    "message": "object_type: childCount 2 ≠ 3 [\"{\",\"}\"] vs [\"{\",object_type_content,\"}\"]"
+    "location": "Satisfies expressions (template_literal_type)",
+    "message": "template_literal_type: childCount 3 ≠ 2 [\"`\",string_fragment,\"`\"] vs [\"`\",\"`\"]"
   },
   {
     "source": "validator",
@@ -3875,8 +3835,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Satisfies expressions (template_literal_type)",
-    "message": "template_literal_type: childCount 3 ≠ 2 [\"`\",string_fragment,\"`\"] vs [\"`\",\"`\"]"
+    "location": "Satisfies expressions (object_type)",
+    "message": "object_type: childCount 2 ≠ 3 [\"{\",\"}\"] vs [\"{\",object_type_content,\"}\"]"
   },
   {
     "source": "validator",
@@ -4905,16 +4865,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
-    "location": "Matching multiple values (argument_list)",
-    "message": "re-parse error: \"(obj,,,current_room)\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse",
     "location": "Or patterns (assignment)",
     "message": "kind not found in re-parse (rendered: \"current_room \")"
   },
@@ -5225,16 +5175,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Named expressions (named_expression)",
-    "message": "named_expression[2].identifier: type identifier ≠ integer"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Named expressions (parameters)",
     "message": "parameters: childCount 3 ≠ 2 [\"(\",default_parameter,\")\"] vs [\"(\",\")\"]"
   },
@@ -5445,16 +5385,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Matching specific values (call)",
-    "message": "call[0].attribute: type attribute ≠ identifier"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Matching specific values (argument_list)",
     "message": "argument_list: childCount 2 ≠ 3 [\"(\",\")\"] vs [\"(\",string,\")\"]"
   },
@@ -5515,8 +5445,38 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
+    "location": "Or patterns (call)",
+    "message": "call[1].argument_list: childCount 2 ≠ 3 [\"(\",\")\"] vs [\"(\",string,\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse-ast-mismatch",
+    "location": "Or patterns (argument_list)",
+    "message": "argument_list: childCount 2 ≠ 3 [\"(\",\")\"] vs [\"(\",string,\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse-ast-mismatch",
     "location": "Or patterns (list_pattern)",
     "message": "list_pattern: childCount 3 ≠ 2 [\"[\",case_pattern,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse-ast-mismatch",
+    "location": "As patterns (argument_list)",
+    "message": "argument_list: childCount 2 ≠ 3 [\"(\",\")\"] vs [\"(\",identifier,\")\"]"
   },
   {
     "source": "validator",
