@@ -8,28 +8,61 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 // Mock child_process so we don't actually spawn anything.
 vi.mock('node:child_process', () => {
 	return {
-		spawn: vi.fn(),
+		spawn: vi.fn()
 	};
 });
 
 // Mock the run module so no live validators launch.
 vi.mock('../src/run.ts', () => ({
-	runFrom: vi.fn().mockResolvedValue({ grammar: 'rust', total: 5, pass: 5, fail: 0, skip: 0, undefinedCount: 0, divergentCount: 0, errors: [] }),
-	runRt: vi.fn().mockResolvedValue({ grammar: 'rust', total: 8, pass: 8, fail: 0, skip: 0, astMatchPass: 8, errors: [], astMismatches: [] }),
+	runFrom: vi
+		.fn()
+		.mockResolvedValue({
+			grammar: 'rust',
+			total: 5,
+			pass: 5,
+			fail: 0,
+			skip: 0,
+			undefinedCount: 0,
+			divergentCount: 0,
+			errors: []
+		}),
+	runRt: vi
+		.fn()
+		.mockResolvedValue({
+			grammar: 'rust',
+			total: 8,
+			pass: 8,
+			fail: 0,
+			skip: 0,
+			astMatchPass: 8,
+			errors: [],
+			astMismatches: []
+		}),
 	runCoverage: vi.fn().mockReturnValue({ grammar: 'rust', total: 10, pass: 10, fail: 0, issues: [] }),
-	runFactory: vi.fn().mockResolvedValue({ grammar: 'rust', total: 7, pass: 7, fail: 0, skip: 0, astMatchPass: 7, errors: [], astMismatches: [] }),
-	defaultTemplatesPath: vi.fn().mockReturnValue('/fake/templates'),
+	runFactory: vi
+		.fn()
+		.mockResolvedValue({
+			grammar: 'rust',
+			total: 7,
+			pass: 7,
+			fail: 0,
+			skip: 0,
+			astMatchPass: 7,
+			errors: [],
+			astMismatches: []
+		}),
+	defaultTemplatesPath: vi.fn().mockReturnValue('/fake/templates')
 }));
 
 vi.mock('../src/history.ts', () => ({
 	readHistory: vi.fn().mockReturnValue([]),
 	appendHistory: vi.fn(),
 	commitHistory: vi.fn(),
-	historyPath: vi.fn().mockReturnValue('/fake/validation-history.jsonl'),
+	historyPath: vi.fn().mockReturnValue('/fake/validation-history.jsonl')
 }));
 
 vi.mock('../src/native-staleness.ts', () => ({
-	warnIfNativeBinaryStale: vi.fn(),
+	warnIfNativeBinaryStale: vi.fn()
 }));
 
 import { parseLastIsolateProgress, formatIsolateGrammarSummary, runCountsCli } from '../src/commands.ts';
@@ -60,7 +93,7 @@ describe('parseLastIsolateProgress', () => {
 			'[isolate-progress] rust function_item',
 			'[isolate-progress] rust struct_item',
 			'[isolate-progress] rust impl_item',
-			'',
+			''
 		].join('\n');
 		expect(parseLastIsolateProgress(stderr)).toBe('impl_item');
 	});
@@ -70,7 +103,7 @@ describe('parseLastIsolateProgress', () => {
 			'[isolate-progress] rust function_item',
 			'[isolate-progress] rust impl_item',
 			'Segmentation fault: 11',
-			'',
+			''
 		].join('\n');
 		expect(parseLastIsolateProgress(stderr)).toBe('impl_item');
 	});
@@ -152,7 +185,9 @@ describe('runCountsCli --isolate mode', () => {
 
 	it('spawns a child process per grammar when isolate=true + backend=native', async () => {
 		const mockSpawn = vi.mocked(spawn);
-		mockSpawn.mockReturnValue(makeMockChild({ stdout: 'rust/native:\n  covPass=10\n', exitCode: 0 }) as ReturnType<typeof spawn>);
+		mockSpawn.mockReturnValue(
+			makeMockChild({ stdout: 'rust/native:\n  covPass=10\n', exitCode: 0 }) as ReturnType<typeof spawn>
+		);
 		const writeSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 
 		await runCountsCli(['rust'], 'native', { isolate: true });
@@ -185,7 +220,7 @@ describe('runCountsCli --isolate mode', () => {
 		const stderrData = [
 			'[isolate-progress] rust function_item',
 			'[isolate-progress] rust impl_item',
-			'Segmentation fault: 11',
+			'Segmentation fault: 11'
 		].join('\n');
 		mockSpawn.mockReturnValue(makeMockChild({ stderr: stderrData, exitCode: 139 }) as ReturnType<typeof spawn>);
 		const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -201,7 +236,9 @@ describe('runCountsCli --isolate mode', () => {
 	it('prints SIGSEGV attribution when child signal is SIGSEGV', async () => {
 		const mockSpawn = vi.mocked(spawn);
 		const stderrData = '[isolate-progress] typescript jsx_element\n';
-		mockSpawn.mockReturnValue(makeMockChild({ stderr: stderrData, exitCode: null, signal: 'SIGSEGV' }) as ReturnType<typeof spawn>);
+		mockSpawn.mockReturnValue(
+			makeMockChild({ stderr: stderrData, exitCode: null, signal: 'SIGSEGV' }) as ReturnType<typeof spawn>
+		);
 		const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 		await runCountsCli(['typescript'], 'native', { isolate: true });
@@ -215,8 +252,12 @@ describe('runCountsCli --isolate mode', () => {
 		const mockSpawn = vi.mocked(spawn);
 		// rust crashes, python succeeds
 		mockSpawn
-			.mockReturnValueOnce(makeMockChild({ stderr: '[isolate-progress] rust impl_item\n', exitCode: 139 }) as ReturnType<typeof spawn>)
-			.mockReturnValueOnce(makeMockChild({ stdout: 'python/native:\n  covPass=5\n', exitCode: 0 }) as ReturnType<typeof spawn>);
+			.mockReturnValueOnce(
+				makeMockChild({ stderr: '[isolate-progress] rust impl_item\n', exitCode: 139 }) as ReturnType<typeof spawn>
+			)
+			.mockReturnValueOnce(
+				makeMockChild({ stdout: 'python/native:\n  covPass=5\n', exitCode: 0 }) as ReturnType<typeof spawn>
+			);
 		const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		const writeSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 
@@ -253,7 +294,9 @@ describe('runCountsCli --isolate mode', () => {
 
 	it('does NOT commit history when every isolate worker crashed (nothing recorded)', async () => {
 		const mockSpawn = vi.mocked(spawn);
-		mockSpawn.mockReturnValue(makeMockChild({ stderr: '[isolate-progress] rust impl_item\n', exitCode: 139 }) as ReturnType<typeof spawn>);
+		mockSpawn.mockReturnValue(
+			makeMockChild({ stderr: '[isolate-progress] rust impl_item\n', exitCode: 139 }) as ReturnType<typeof spawn>
+		);
 		const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 		await runCountsCli(['rust'], 'native', { isolate: true });
@@ -278,15 +321,6 @@ describe('runCountsCli --isolate mode', () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 		await runCountsCli(['rust'], 'native', { isolate: false });
-		expect(mockSpawn).not.toHaveBeenCalled();
-		logSpy.mockRestore();
-	});
-
-	it('does NOT spawn children for js backend even with isolate=true', async () => {
-		const mockSpawn = vi.mocked(spawn);
-		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-		await runCountsCli(['rust'], 'js', { isolate: true });
 		expect(mockSpawn).not.toHaveBeenCalled();
 		logSpy.mockRestore();
 	});

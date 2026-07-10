@@ -21,7 +21,12 @@ import {
 } from './validate/validation-report.ts';
 
 export const ALL_GRAMMARS: Grammar[] = ['rust', 'typescript', 'python'];
-export const ALL_CLI_BACKENDS = ['native', 'js', 'all'] as const;
+/**
+ * The `validate` CLI namespace only ever validates against native — js/all
+ * backend selection was removed (see `tool bench`/`tool probe-kind` for the
+ * separate js-vs-native comparison diagnostics, which are unaffected).
+ */
+export const ALL_CLI_BACKENDS = ['native'] as const;
 export type CliBackend = (typeof ALL_CLI_BACKENDS)[number];
 type ProbeTraceFn = (
 	grammar: string,
@@ -46,14 +51,7 @@ export function resolveGrammars(args: string[]): Grammar[] {
 }
 
 export function resolveBackends(mode: CliBackend): Backend[] {
-	switch (mode) {
-		case 'native':
-			return ['native'];
-		case 'js':
-			return ['js'];
-		case 'all':
-			return ['native', 'js'];
-	}
+	return [mode];
 }
 
 export function formatBackendLabel(backend: Backend): 'native' | 'js' {
@@ -253,10 +251,7 @@ export function resolveCliEntryArgs(): { tsxBin: string; cliPath: string } {
  * Spawn a child process to run native validation for a single grammar.
  * Returns the child's combined output + metadata.
  */
-export async function spawnIsolatedGrammarWorker(
-	grammar: Grammar,
-	backendMode: CliBackend
-): Promise<{
+export async function spawnIsolatedGrammarWorker(grammar: Grammar): Promise<{
 	status: 'ok' | 'crashed' | 'error';
 	stdout: string;
 	stderr: string;
@@ -264,8 +259,9 @@ export async function spawnIsolatedGrammarWorker(
 	signal: NodeJS.Signals | null;
 }> {
 	const { tsxBin, cliPath } = resolveCliEntryArgs();
-	// Build child argv: validate counts --backend <mode> <grammar> --_isolate-worker
-	const childArgs = [cliPath, 'validate', 'counts', '--backend', backendMode, grammar, '--_isolate-worker'];
+	// Build child argv: validate counts <grammar> --_isolate-worker (native-only;
+	// the `validate` CLI no longer accepts --backend).
+	const childArgs = [cliPath, 'validate', 'counts', grammar, '--_isolate-worker'];
 
 	return new Promise((resolve) => {
 		const childEnv: NodeJS.ProcessEnv = {
@@ -396,7 +392,7 @@ export async function runCountsCli(
 	if (isolate && backendMode === 'native') {
 		let anyCrashed = false;
 		for (const grammar of grammars) {
-			const result = await spawnIsolatedGrammarWorker(grammar, backendMode);
+			const result = await spawnIsolatedGrammarWorker(grammar);
 			if (result.status === 'ok') {
 				// Forward the child's stdout output.
 				if (result.stdout) process.stdout.write(result.stdout);
