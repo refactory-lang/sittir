@@ -61,8 +61,8 @@ export interface GeneratedFiles {
 	typeTests: string;
 	config: string;
 	nodeModel: string;
-	/** overrides.suggested.ts — human-readable derivation log. */
-	suggested: string;
+	/** overrides.suggested.ts — human-readable derivation log. `undefined` when there's nothing to suggest (emission disabled or empty result); the caller skips writing the file in that case. */
+	suggested: string | undefined;
 	/** is.ts — per-grammar type guards (is/assert/isTree/isNode). */
 	is: string;
 	/** kind_ids.rs — per-grammar numeric KindId constants for the Rust render crate */

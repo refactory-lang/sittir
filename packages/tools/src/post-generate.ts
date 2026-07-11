@@ -15,7 +15,7 @@
  * `tools → codegen` declaration edge.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 import { invoke, type NodeMap, type RoundTripDiagnostic } from './codegen-surface.ts';
@@ -168,15 +168,22 @@ export async function runRoundtripProbes(grammar: string, templatesDir: string, 
 		});
 	}
 	if (diagnostics.length > 0) {
-		const suggestedWithFailures = await invoke('suggested', 'emitSuggested', {
+		const suggestedWithFailures: string | undefined = await invoke('suggested', 'emitSuggested', {
 			grammar,
 			nodeMap,
 			roundTripFailures: diagnostics
 		});
 		// overrides.suggested.ts lives at the package root, next to overrides.ts —
-		// i.e. the parent of the templates directory.
-		writeFile(join(dirname(templatesDir), 'overrides.suggested.ts'), suggestedWithFailures);
-		console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} render-parse diagnostic(s)`);
+		// i.e. the parent of the templates directory. `undefined` means the
+		// emitter has nothing to suggest (emission disabled) — skip the write
+		// and clear any stale file from a prior run.
+		const suggestedPath = join(dirname(templatesDir), 'overrides.suggested.ts');
+		if (suggestedWithFailures !== undefined) {
+			writeFile(suggestedPath, suggestedWithFailures);
+			console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} render-parse diagnostic(s)`);
+		} else if (existsSync(suggestedPath)) {
+			rmSync(suggestedPath);
+		}
 	}
 
 	return readRenderParseResult.fail + factoryRenderParseResult.fail + fromResult.fail;

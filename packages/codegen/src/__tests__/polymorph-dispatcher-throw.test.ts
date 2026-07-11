@@ -33,9 +33,9 @@ beforeAll(async () => {
 
 describe('generated from() resolver — silent-failure gaps', () => {
 	it('throws a clear error when a slot receives an unresolvable object (Gap B)', () => {
-		expect(() =>
-			assignment({ left: { totally: 'garbage' }, content: { also: 'garbage' } })
-		).toThrow(/cannot resolve value/);
+		expect(() => assignment({ left: { totally: 'garbage' }, content: { also: 'garbage' } })).toThrow(
+			/cannot resolve value/
+		);
 	});
 
 	it('names the expected kind(s) tried in the Gap B error message', () => {

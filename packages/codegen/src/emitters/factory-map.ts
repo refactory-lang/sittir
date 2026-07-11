@@ -20,9 +20,7 @@ import {
 	allSlotsOf,
 	aliasTargetToSourceMapOf,
 	deriveSlotCardinality,
-	structuralFieldsOf,
-	isNodeRef,
-	isUnresolvedRef
+	structuralFieldsOf
 } from '../compiler/model/node-map.ts';
 import { classifyFactoryShape, collectAliasSourceKinds, resolveFactoryFieldNames } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
@@ -131,22 +129,6 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	}
 
 	return { factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
-}
-
-function collectHelperChildKinds(kind: string, nodeMap: NodeMap): string[] {
-	const node = nodeMap.nodes.get(kind);
-	if (!node || !('fields' in node)) return [];
-	const out = new Set<string>();
-	for (const slot of node.fields) {
-		for (const value of slot.values) {
-			if (!isNodeRef(value)) continue;
-			const targetKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-			for (const runtimeKind of expandRuntimeDiscriminatorKinds([targetKind], nodeMap)) {
-				out.add(runtimeKind);
-			}
-		}
-	}
-	return [...out];
 }
 
 function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {

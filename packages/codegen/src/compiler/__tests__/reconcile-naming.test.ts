@@ -162,3 +162,15 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 		expect(proj.parseNames).toEqual(['object_type']);
 	});
 });
+
+describe('snakeToCamel — reserved accessor names', () => {
+	it('appends a trailing underscore to Object.prototype member names', () => {
+		expect(snakeToCamel('constructor')).toBe('constructor_');
+		expect(snakeToCamel('to_string')).toBe('toString_');
+		expect(snakeToCamel('has_own_property')).toBe('hasOwnProperty_');
+	});
+
+	it('leaves an unaffected snake_case name unchanged', () => {
+		expect(snakeToCamel('function_item')).toBe('functionItem');
+	});
+});

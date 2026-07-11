@@ -180,36 +180,6 @@ function makeChoiceParentSingularChildrenNodeMap(): NodeMap {
 	return makeNodeMapWith(nodes, new Set());
 }
 
-function makeTokenOnlyGeneratedIdTables(): GeneratedIdTables {
-	return {
-		kindIds: {
-			token_child_parent: {
-				id: 1,
-				parser: {
-					cSymbol: 'sym_token_child_parent',
-					parserName: 'token_child_parent',
-					anon: false,
-					aux: false,
-					alias: false,
-					hidden: false
-				}
-			},
-			kw_j: {
-				id: 2,
-				parser: {
-					cSymbol: 'anon_sym_jjjj',
-					parserName: 'kw_j',
-					anon: true,
-					aux: false,
-					alias: false,
-					hidden: false
-				}
-			}
-		},
-		sourceArtifact: 'parser.wasm'
-	};
-}
-
 // NOTE: assertRustRenderRuntimeBehavior previously verified render_dispatch (bridge.rs path)
 // by spinning up a temp Rust crate. Since render_dispatch + bridge.rs are retired (PR-E2),
 // this function is removed. Transport-path correctness is verified by cargo test --workspace.

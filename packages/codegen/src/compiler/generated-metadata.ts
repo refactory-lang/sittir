@@ -10,7 +10,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadWebTreeSitter } from '../engine-loader.ts';
-import { type KindParserMetadata, type RuleCatalog } from './types.ts';
+import { type KindParserMetadata } from './types.ts';
 import type * as TS from 'web-tree-sitter';
 
 /**
@@ -163,14 +163,6 @@ function collectFieldIds(language: TreeSitterLanguageMetadata): Map<string, numb
 	}
 
 	return result;
-}
-
-function collectEdgeNames(ruleCatalog: RuleCatalog): Set<string> {
-	const names = new Set<string>();
-	for (const classification of ruleCatalog.classificationById.values()) {
-		if (classification.edgeName) names.add(classification.edgeName);
-	}
-	return names;
 }
 
 function toEntries(input: GeneratedIdTable | undefined): readonly (readonly [string, GeneratedIdEntry])[] {

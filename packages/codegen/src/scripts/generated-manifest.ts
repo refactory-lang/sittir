@@ -123,12 +123,14 @@ function sha256(file: string): string {
 /**
  * Files that `generatedRootsFor` lists (so `emit-diff.ts` still reports their
  * regen drift) but that the manifest must NOT hash-track. Currently just
- * `test-fixtures.json`: it is derived output, regenerated on every run, and is
- * NEVER committed in feature work (standing discipline — a pre-commit hook
- * blocks staging it). Tracking it would record a hash that can never match the
- * committed file, so `assertGeneratedManifestsClean` would fail on a clean
- * checkout. Excluding it here keeps the write side (manifest generation) and the
- * read side (verification) in agreement: no entry written, none expected.
+ * `test-fixtures.json`: it is derived output, regenerated on every run, and
+ * lands in its own dedicated `chore(validator): record validation run`
+ * commit rather than bundled with feature/source changes (standing
+ * discipline, not hook-enforced). Tracking it would record a hash that can
+ * never match the committed file, so `assertGeneratedManifestsClean` would
+ * fail on a clean checkout. Excluding it here keeps the write side (manifest
+ * generation) and the read side (verification) in agreement: no entry
+ * written, none expected.
  */
 function isManifestUntracked(relPath: string): boolean {
 	return relPath.endsWith('/test-fixtures.json');

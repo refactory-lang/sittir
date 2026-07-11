@@ -16,6 +16,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { execSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
 import { format as oxfmtFormat } from 'oxfmt';
+import { OXFMT_EFFECTIVE_CONFIG } from './oxfmt-config.ts';
 
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
 
@@ -86,12 +87,24 @@ export interface CodegenOptions {
 /**
  * Write `content` to `path`, creating parent directories as needed.
  *
- * `.ts` output is run through oxfmt (the project's own formatter) before
- * the content-aware comparison below, so generated `.ts` files land on
- * disk already matching `pnpm run format`'s output — no separate
- * formatting pass needed, and no risk of a formatter reformatting
- * generated code out from under the emitters (oxfmt must never run over
- * `packages/*\/src/*` directly; only codegen writes there).
+ * `.ts` output is run through oxfmt (the project's own formatter, config
+ * from `./oxfmt-config.ts` — the repo-root `oxfmt.config.ts` derives from
+ * that same module rather than the other way around, since a package's
+ * `src/` can't reach outside its own `tsconfig.build.json` rootDir once
+ * only `dist` is packaged) before the content-aware comparison below, so
+ * generated `.ts` files land on disk already matching `pnpm run format`'s
+ * output —
+ * no separate formatting pass needed, and no risk of a formatter
+ * reformatting generated code out from under the emitters (oxfmt must
+ * never run over `packages/*\/src/*` directly; only codegen writes there).
+ *
+ * `node-model.json5` is deliberately NOT run through oxfmt here even
+ * though it matches `pnpm run format`'s scope: `packages/tools/src/
+ * validate/common.ts`'s `loadNodeModel` parses it with strict `JSON.parse`,
+ * and oxfmt reformats JSON5 idiomatically (unquoted keys, single-quoted
+ * strings) — valid JSON5, but not valid JSON, breaking that parser. Fix
+ * belongs in `loadNodeModel` (use a real JSON5 parser) before this file
+ * can be formatted too.
  *
  * Content-aware: skips the write when the file already holds identical
  * bytes. Generated outputs are rewritten wholesale on every regen even
@@ -108,7 +121,7 @@ export interface CodegenOptions {
 export async function writeFile(path: string, content: string): Promise<void> {
 	let finalContent = content;
 	if (path.endsWith('.ts')) {
-		const result = await oxfmtFormat(path, content);
+		const result = await oxfmtFormat(path, content, OXFMT_EFFECTIVE_CONFIG);
 		if (result.errors.length === 0) {
 			finalContent = result.code;
 		} else {
@@ -490,8 +503,16 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
 	// Write suggested overrides log (T042f) next to overrides.ts at the
-	// package root. This is a documentation file — not runnable.
-	await writeFile(join(dirname(outDir), 'overrides.suggested.ts'), result.suggested);
+	// package root. This is a documentation file — not runnable. `undefined`
+	// means the emitter has nothing to suggest (emission disabled or empty
+	// result) — skip the write, and remove any stale file left by a prior
+	// run so re-enabling the emitter later naturally recreates it.
+	const suggestedPath = join(dirname(outDir), 'overrides.suggested.ts');
+	if (result.suggested !== undefined) {
+		await writeFile(suggestedPath, result.suggested);
+	} else if (existsSync(suggestedPath)) {
+		rmSync(suggestedPath);
+	}
 
 	// Write tests
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
