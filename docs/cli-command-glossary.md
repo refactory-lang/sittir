@@ -499,6 +499,24 @@ Principle #14 signature-conformance ratchet (classify pipeline fns; fail on base
 pnpm exec tsx packages/cli/src/cli.ts tool propose-14 [options]
 ```
 
+### `tool test-history`
+
+Record or show `vitest run` result history (test-history.jsonl)
+
+**Arguments**
+
+- `n` (optional) — Number of entries to show (ignored with --record)
+
+**Options**
+
+- `--record` — Run the full vitest suite and record a new entry
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool test-history [n] [options]
+```
+
 ### `tool variant-derivation-probe`
 
 Assert the live structural variantChildKinds derivation equals committed node-model.json5 (cross-commit drift detector)
