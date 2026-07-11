@@ -1375,16 +1375,6 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "factory-render-parse",
-    "location": "Captured patterns (range_pattern)",
-    "message": "kind not found in re-parse (rendered: \"1\")"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "factory-render-parse",
     "location": "Or patterns (closure_expression)",
     "message": "re-parse error: \"  |(Ok(x) | Err(x))| \""
   },
@@ -1495,6 +1485,16 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
+    "location": "Functions with abstract return types (abstract_type)",
+    "message": "abstract_type[1].type_identifier: type type_identifier ≠ generic_type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "factory-render-parse-ast-mismatch",
     "location": "Impl with lifetimes first (parameters)",
     "message": "parameters: childCount 3 ≠ 2 [\"(\",attributed_parameter,\")\"] vs [\"(\",\")\"]"
   },
@@ -1547,16 +1547,6 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Let-else Statements (struct_pattern)",
     "message": "struct_pattern: childCount 7 ≠ 6 [scoped_type_identifier,\"{\",field_pattern,\",\",field_pattern,\",\",\"}\"] vs [scoped_type_identifier,\"{\",field_pattern,\",\",field_pat"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Let-else Statements (call_expression)",
-    "message": "call_expression[0].field_expression: type field_expression ≠ identifier"
   },
   {
     "source": "validator",
@@ -1667,6 +1657,16 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Inner attributes (tuple_struct_pattern)",
     "message": "tuple_struct_pattern: childCount 4 ≠ 3 [scoped_identifier,\"(\",identifier,\")\"] vs [scoped_identifier,\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "factory-render-parse-ast-mismatch",
+    "location": "Inner attributes (field_expression)",
+    "message": "field_expression[0].self: type self ≠ identifier"
   },
   {
     "source": "validator",
@@ -1837,6 +1837,16 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Where clauses (parameters)",
     "message": "parameters: childCount 5 ≠ 2 [\"(\",attributed_parameter,\",\",attributed_parameter,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "factory-render-parse-ast-mismatch",
+    "location": "Where clauses (reference_type)",
+    "message": "reference_type: childCount 3 ≠ 2 [\"&\",mutable_specifier,type_identifier] vs [\"&\",type_identifier]"
   },
   {
     "source": "validator",
@@ -2187,16 +2197,6 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Ignored patterns (tuple_struct_pattern)",
     "message": "tuple_struct_pattern: childCount 4 ≠ 3 [identifier,\"(\",remaining_field_pattern,\")\"] vs [identifier,\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Captured patterns (captured_pattern)",
-    "message": "captured_pattern[2].tuple_struct_pattern[2].wildcard_pattern: type wildcard_pattern ≠ remaining_field_pattern"
   },
   {
     "source": "validator",
@@ -3715,8 +3715,18 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
+    "location": "Classes with method signatures (union_type)",
+    "message": "union_type[0].type_identifier: type type_identifier ≠ predefined_type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "factory-render-parse-ast-mismatch",
     "location": "Classes with method signatures (generic_type)",
-    "message": "generic_type[1].type_arguments[1].union_type: type union_type ≠ predefined_type"
+    "message": "generic_type[1].type_arguments[1].union_type: type union_type ≠ type_identifier"
   },
   {
     "source": "validator",
@@ -4865,16 +4875,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
-    "location": "Matching multiple values (argument_list)",
-    "message": "re-parse error: \"(obj,,,current_room)\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse",
     "location": "Or patterns (assignment)",
     "message": "kind not found in re-parse (rendered: \"current_room \")"
   },
@@ -5035,27 +5035,7 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
-    "location": "Matching objects (argument_list)",
-    "message": "re-parse error: \"(x,,,y)\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse",
     "location": "Positional arguments (argument_list)",
-    "message": "re-parse error: \"(x,,,y)\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse",
-    "location": "Constants and enums (argument_list)",
     "message": "re-parse error: \"(x,,,y)\""
   },
   {
@@ -5425,16 +5405,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Matching specific values (argument_list)",
-    "message": "argument_list: childCount 2 ≠ 3 [\"(\",\")\"] vs [\"(\",string,\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Matching specific values (list_pattern)",
     "message": "list_pattern: childCount 3 ≠ 2 [\"[\",case_pattern,\"]\"] vs [\"[\",\"]\"]"
   },
@@ -5465,28 +5435,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Adding a wild card (argument_list)",
-    "message": "argument_list: childCount 2 ≠ 3 [\"(\",\")\"] vs [\"(\",string,\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Adding a wild card (list_pattern)",
     "message": "list_pattern: childCount 3 ≠ 2 [\"[\",case_pattern,\"]\"] vs [\"[\",\"]\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Or patterns (argument_list)",
-    "message": "argument_list: childCount 2 ≠ 3 [\"(\",\")\"] vs [\"(\",string,\")\"]"
   },
   {
     "source": "validator",
