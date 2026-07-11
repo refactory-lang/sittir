@@ -9,10 +9,7 @@
 		"tsBuildInfoFile": "./tsconfig.build.tsbuildinfo",
 		"paths": {}
 	},
-	"references": [
-		{ "path": "../types/tsconfig.build.json" },
-		{ "path": "../common/tsconfig.build.json" }
-	],
+	"references": [{ "path": "../types/tsconfig.build.json" }, { "path": "../common/tsconfig.build.json" }],
 	"include": [
 		"src/index.ts",
 		"src/engine-boundary.ts",

@@ -692,108 +692,101 @@ re-flagging it as mystery debt every pass."
 
 ---
 
-## Task 11: Cluster E — single-phase method consolidation via lsproxy
+## Task 11: Cluster E — single-phase method consolidation
+
+**CORRECTION (found when this task was first dispatched):** the plan originally
+mandated lsproxy `move-symbol`/`move-file` for every move. Direct investigation
+(both by the dispatched implementer and by the controller independently)
+confirmed neither the globally-installed `lsproxy` (v0.11.4) nor the `lspeasy`
+repo's current source tree (`apps/cli/src` has no `commands/move-*.ts` at all —
+the `dist/commands/move-symbol.js`/`move-file.js` files are stale leftovers
+from a since-replaced, purely-capability-driven CLI architecture) exposes a
+move-symbol/move-file command — only raw LSP passthrough
+(`textDocument`/`workspace` namespaces). TypeScript's language server DOES
+expose "Move to a new file" as a genuine `refactor.move.newFile` code action
+(confirmed via `lsproxy textDocument codeAction <file> <range>`), but applying
+it through lsproxy's `workspace executeCommand` is unreliable in practice — a
+`--dry-run` attempt against `isAliasMintedRef` looped, generating
+`isAliasMintedRef.1.ts` through `.7.ts` phantom target files instead of a
+single clean move, apparently because the refactor needs an explicit target-
+file argument lsproxy has no clean way to supply. **The user explicitly
+authorized manual `Edit`-based moves as a one-time tooling exception for this
+task** given both automated mechanisms are unusable in this environment —
+apply the same rigor manual Edit would need anyway (verify caller counts
+before AND after, confirm no stray re-export left behind, full test suite).
+
+**Also corrected via the implementer's fresh re-verification:** `flatten`
+does not exist anywhere in `packages/codegen/src` under that name (only the
+English word appears in an unrelated comment in `wrapper-deletion.ts`) — that
+move is dropped entirely, nothing to do for it. `findStructuralVariantChoices`/
+`StructuralVariantChoice` in `variant-structural.ts` are **NOT** dead — confirmed
+called internally by `deriveStructuralVariantChildren`, itself a live production
+export `link.ts` imports and calls — do NOT delete these two; scope corrected
+to exclude them entirely.
+
+**Further correction (found during execution — `isTerminalShape` landed, `isAliasMintedRef` did NOT):**
+`isAliasMintedRef` cannot move out of `variant-structural.ts` — it's called
+internally by that file's own `namedKindArmTarget` (line 246), which feeds
+`findStructuralVariantChoices` (which must stay per the correction above).
+`link.ts` already imports `deriveStructuralVariantChildren`/`prefixNamedSuffix`
+FROM `variant-structural.ts`; moving `isAliasMintedRef` to `link.ts` would
+either create a circular import back into `variant-structural.ts` or force
+duplicating the predicate. **`isAliasMintedRef` stays in `variant-structural.ts`**
+— same category as `deleteWrapper`'s documented import-cycle exclusion, just
+discovered later. `isTerminalShape` (the other single move) DID land cleanly:
+committed `48292a847` (feature) + `11611b0f2` (validator). The `buildRuleCatalog`/
+`attachReferenceRuleIds` move and the `createEmptyRuleCatalog` deletion are
+still pending — blocked only by test-file coupling, not architecture (see
+Task 11b below), not a hard exclusion like `isAliasMintedRef`.
+
+---
+
+## Task 11b: Cluster E — finish `buildRuleCatalog`/`attachReferenceRuleIds` move + `createEmptyRuleCatalog` deletion
+
+**Why a separate task:** Task 11's dispatch found `buildRuleCatalog` is imported
+directly (not just re-exported) by 6 test files not in Task 11's original file
+list (`compiler/__tests__/slot-structural-signals.test.ts`,
+`compiler/__tests__/kind-id-rust-emit.test.ts`,
+`compiler/diagnostics/__tests__/grammar-diagnostics.test.ts`,
+`compiler/__tests__/kindid-emit.test.ts`,
+`compiler/__tests__/node-map-backpointers.test.ts`,
+`compiler/diagnostics/__tests__/parsekind-collisions.test.ts`), and
+`createEmptyRuleCatalog` is imported directly by 3 more
+(`compiler/__tests__/link.test.ts`, `compiler/__tests__/generate.test.ts`,
+`emitters/__tests__/refine-emit.test.ts`). This is test-import plumbing, not an
+architectural blocker like `isAliasMintedRef`'s — the fix is to update all 9
+test files' imports alongside the move/deletion.
 
 **Files:**
-- Modify: `packages/codegen/src/compiler/wrapper-deletion.ts` (remove `flatten`, moved out).
-- Modify: `packages/codegen/src/compiler/normalize.ts` (receives `flatten`; receives `isTerminalShape`; narrows the re-export at ~line 1120).
-- Modify: `packages/codegen/src/compiler/variant-structural.ts` (remove `isAliasMintedRef`, moved out; delete unused `findStructuralVariantChoices`/`StructuralVariantChoice`).
-- Modify: `packages/codegen/src/compiler/link.ts` (receives `isAliasMintedRef`; remove `isTerminalShape`, moved out; delete unused `wrapVariants`/`deduplicateVariants`/`nameVariant`).
-- Modify: `packages/codegen/src/compiler/rule-catalog.ts` (remove `buildRuleCatalog`/`attachReferenceRuleIds`, moved out; delete unused `createEmptyRuleCatalog`).
+- Modify: `packages/codegen/src/compiler/rule-catalog.ts` (remove `buildRuleCatalog`/`attachReferenceRuleIds`, moved to `evaluate.ts`; delete `createEmptyRuleCatalog`; keep `isNonterminalRuleType` and whatever private helpers (`classifyByType`/`classifyIntrinsic`) it depends on — if `buildRuleCatalog` also depends on those helpers, keep them in `rule-catalog.ts` and import into `evaluate.ts` rather than duplicating).
 - Modify: `packages/codegen/src/compiler/evaluate.ts` (receives `buildRuleCatalog`/`attachReferenceRuleIds`).
-- Modify: `packages/codegen/src/compiler/__tests__/normalize.test.ts` (drop coverage of the three deleted `link.ts` re-exports, keep `tokenToName` coverage).
-- Modify: `packages/codegen/src/compiler/__tests__/variant-structural.test.ts` (drop `findStructuralVariantChoices` tests if it becomes fully dead).
+- Modify the 6 test files that import `buildRuleCatalog` directly to import it from `evaluate.ts` instead: `compiler/__tests__/slot-structural-signals.test.ts`, `compiler/__tests__/kind-id-rust-emit.test.ts`, `compiler/diagnostics/__tests__/grammar-diagnostics.test.ts`, `compiler/__tests__/kindid-emit.test.ts`, `compiler/__tests__/node-map-backpointers.test.ts`, `compiler/diagnostics/__tests__/parsekind-collisions.test.ts`.
+- Modify the 3 test files that import `createEmptyRuleCatalog` directly (`compiler/__tests__/link.test.ts`, `compiler/__tests__/generate.test.ts`, `emitters/__tests__/refine-emit.test.ts`) — read what each actually uses it for; either replace with an equivalent inline object literal (check `createEmptyRuleCatalog`'s exact return shape first) or remove the specific test cases if the coverage is redundant with other tests. Re-verify `createEmptyRuleCatalog` truly has zero non-test callers before deleting.
 
-**Interfaces:**
-- Consumes: nothing from earlier tasks.
-- Produces: nothing later tasks depend on.
-
-- [ ] **Step 1: Re-verify each move's caller-file count fresh**
-
-Run `find_all_references` (cross-checked with text search) for `flatten`, `isAliasMintedRef`, `buildRuleCatalog`, `attachReferenceRuleIds`, `isTerminalShape`. Confirm each still has exactly the single caller-file documented in the spec. If any now has a second caller-file (codebase drift), stop that specific move and report it — do not force a move that would now create a multi-caller dependency.
-
-- [ ] **Step 2: Confirm `deleteWrapper` is explicitly out of scope**
-
-Re-read `docs/superpowers/plans/2026-05-26-compiler-simplification-master-plan.md`'s note on `deleteWrapper`'s import-cycle hazard. Do not attempt to move it in this task.
-
-- [ ] **Step 3: Preview each move with lsproxy `--dry-run` before applying**
-
-Per the `lsproxy-cli` skill, for each of the four moves, first preview:
-```bash
-lsproxy textDocument rename --dry-run packages/codegen/src/compiler/wrapper-deletion.ts <line>:<col> "<newName>"
+- [ ] Step 1: Re-verify `buildRuleCatalog`/`attachReferenceRuleIds` still have exactly one PRODUCTION caller-file (`evaluate.ts`) — the 6 test files' direct imports don't count against "single-phase," they just need updating alongside the move. Re-verify `createEmptyRuleCatalog` has zero production callers (only the 3 test files).
+- [ ] Step 2: Move `buildRuleCatalog` + `attachReferenceRuleIds` from `rule-catalog.ts` to `evaluate.ts` via Edit (lsproxy move-symbol/move-file unavailable — see the correction note above Task 11b; same manual-move exception applies). Confirm `isNonterminalRuleType` (which stays in `rule-catalog.ts`, consumed by `wrapper-deletion.ts`) still has access to whatever private helpers it shares with `buildRuleCatalog`.
+- [ ] Step 3: Update the 6 test files' `buildRuleCatalog` import to point at `evaluate.ts`.
+- [ ] Step 4: Delete `createEmptyRuleCatalog` from `rule-catalog.ts`; update the 3 test files that used it (inline the equivalent object literal or drop redundant test cases — read each site first).
+- [ ] Step 5: Run `pnpm test` — expect PASS modulo the known pre-existing unrelated baseline (confirm no NEW failures beyond intentional test-file edits).
+- [ ] Step 6: Regenerate and re-verify baseline (same 3-grammar regen + `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native` pattern as every other task) — expect exactly rust=117/typescript=75/python=102, byte-neutral.
+- [ ] Step 7: Commit (feature commit + separate validator commit, same two-commit split as every other task):
 ```
-(Use lsproxy's move/rename capability appropriate to relocating a function across files — check `lsproxy --help` for the exact move-symbol or file-level command this version supports; use `--dry-run` first regardless of which command you use.) Confirm the preview only touches `flatten`'s definition and its one caller in `normalize.ts` before applying.
+git commit -m "refactor: move buildRuleCatalog/attachReferenceRuleIds to evaluate.ts, delete createEmptyRuleCatalog (manual move, lsproxy move-symbol unavailable)
 
-- [ ] **Step 4: Move `flatten` (wrapper-deletion.ts → normalize.ts)**
-
-Apply the lsproxy move confirmed in Step 3. After the move, confirm via `find_all_references` that `flatten` is not re-exported from `wrapper-deletion.ts` (it should no longer exist there at all).
-
-- [ ] **Step 5: Move `isAliasMintedRef` (variant-structural.ts → link.ts)**
-
-Same dry-run-then-apply pattern via lsproxy. After the move, confirm `isAliasMintedRef` is not re-exported from `variant-structural.ts`.
-
-- [ ] **Step 6: Move `buildRuleCatalog` + `attachReferenceRuleIds` (rule-catalog.ts → evaluate.ts)**
-
-Same pattern, moving both together (they're both used only by `evaluate.ts`'s one caller). Confirm neither is re-exported from `rule-catalog.ts` afterward.
-
-- [ ] **Step 7: Move `isTerminalShape` (link.ts → normalize.ts) — the inverse case**
-
-Same pattern. Confirm `isTerminalShape` is not re-exported from `link.ts` afterward, and that `link.ts` itself never called it (per the spec's finding).
-
-- [ ] **Step 8: Delete the bonus zero-external-caller exports found alongside these moves**
-
-Re-verify fresh, then delete: `createEmptyRuleCatalog` (`rule-catalog.ts`, only used by 3 test files), `findStructuralVariantChoices` + `StructuralVariantChoice` (`variant-structural.ts`, only used internally/by its own test file), `wrapVariants`/`deduplicateVariants`/`nameVariant` (`link.ts`, zero external production callers).
-
-- [ ] **Step 9: Fix `normalize.ts:1120`'s re-export**
-
-Change:
-```ts
-export { wrapVariants, deduplicateVariants, nameVariant, tokenToName } from './link.ts';
+Completes Task 11's single-phase consolidation for the remaining pair.
+Required updating 6 test files' direct buildRuleCatalog imports and 3
+test files' createEmptyRuleCatalog usage alongside the move/deletion —
+this is why it landed as a follow-up task rather than in Task 11 itself."
 ```
-to just:
-```ts
-export { tokenToName } from './link.ts';
-```
-(since `wrapVariants`/`deduplicateVariants`/`nameVariant` were just deleted in Step 8, and `tokenToName` has a real external consumer at `model/node-map.ts:60`).
 
-- [ ] **Step 10: Update `normalize.test.ts`'s `describe('Normalize — tokenToName', ...)` block**
-
-Remove the test cases that exercised `wrapVariants`/`deduplicateVariants`/`nameVariant` through the now-narrowed re-export; keep the `tokenToName` test cases.
-
-- [ ] **Step 11: Update `variant-structural.test.ts` if `findStructuralVariantChoices` had a dedicated test**
-
-Remove test cases exercising the now-deleted `findStructuralVariantChoices`/`StructuralVariantChoice`.
-
-- [ ] **Step 12: Run the full test suite**
-
-Run: `pnpm test`
-Expected: PASS.
-
-- [ ] **Step 13: Regenerate and re-verify the baseline**
-
-```bash
-pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
-pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
-pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
-SITTIR_NATIVE_DEBUG=0 pnpm run validate:native > /tmp/task11-validate.log 2>&1; tail -100 /tmp/task11-validate.log
-```
-Expected: exactly rust=117/typescript=75/python=102, byte-neutral (pure internal reorganization, no behavior change).
-
-- [ ] **Step 14: Commit**
-
-```bash
-git add packages/codegen/src/compiler/wrapper-deletion.ts packages/codegen/src/compiler/normalize.ts packages/codegen/src/compiler/variant-structural.ts packages/codegen/src/compiler/link.ts packages/codegen/src/compiler/rule-catalog.ts packages/codegen/src/compiler/evaluate.ts packages/codegen/src/compiler/__tests__/normalize.test.ts packages/codegen/src/compiler/__tests__/variant-structural.test.ts
-git add packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json rust/crates/sittir-rust/test-fixtures.json rust/crates/sittir-typescript/test-fixtures.json rust/crates/sittir-python/test-fixtures.json
-git commit -m "refactor: consolidate 4 single-phase-only compiler methods via lsproxy
-
-flatten (wrapper-deletion.ts→normalize.ts), isAliasMintedRef
-(variant-structural.ts→link.ts), buildRuleCatalog+attachReferenceRuleIds
-(rule-catalog.ts→evaluate.ts), and the inverse case isTerminalShape
-(link.ts→normalize.ts) each had exactly one caller-file. deleteWrapper
-stays put — documented import-cycle hazard. Also deletes 4 bonus
-zero-external-caller exports found alongside these moves and narrows
-normalize.ts's re-export of link.ts symbols to just tokenToName."
-```
+**Task 11 outcome (superseded by the corrections above — this is what actually landed):**
+`isTerminalShape` moved `link.ts` → `normalize.ts`, and `wrapVariants`/
+`deduplicateVariants`/`nameVariant` were deleted from `link.ts`, with
+`normalize.ts`'s re-export narrowed to just `tokenToName`. Committed
+`48292a847` (feature) + `11611b0f2` (validator). `isAliasMintedRef` stays in
+`variant-structural.ts` (circular-import hazard, permanent exclusion).
+`buildRuleCatalog`/`attachReferenceRuleIds`/`createEmptyRuleCatalog` deferred
+to Task 11b (test-file coupling, not architectural — see above).
 
 ---
 
@@ -877,6 +870,8 @@ nothing calls it."
 - Consumes: nothing from earlier tasks.
 - Produces: `writeGrammarDiagnosticsJson(diagnostics: readonly CompilerDiagnostic[], outPath: string): void` — writes a JSON array of `{code, severity, location, message, proposal}` (matching each diagnostic's existing shape) to `outPath`. Task 14 reads the files this writes.
 - Also produces: each `gen` invocation writes `packages/<grammar>/.sittir/grammar-diagnostics.json` (grammar-specific path — Task 14 needs to know this exact path/naming to read it back).
+
+**Landed (corrected real shape — read this before starting Task 14):** committed as `338c67124` (feature) + `585c6e8e5` (validator). The REAL on-disk shape has **no `location` field** — `writeGrammarDiagnosticsJson` serializes the actual `GrammarDiagnostic | CompilerDiagnostic` union from `packages/codegen/src/types/diagnostics.ts`: base `Diagnostic` = `{code, severity, message, canProceed, proposal?, details?}`; `GrammarDiagnostic` adds `{scope: 'grammar', grammar, ownerKind?, slotName?, ruleId?, subject?}`; `CompilerDiagnostic` adds `{scope: 'compiler', phase, ruleId?, subject?}`. Task 14's reader must derive a `location` string from `ownerKind`/`slotName` (e.g. `ownerKind` alone, or `` `${ownerKind}.${slotName}` `` when both present) rather than reading a nonexistent `d.location` field. Also: typescript's actual current diagnostics are `typename-collision`, `seq-with-nested-seq`, `parsekind-noninjective`, `content-collision` (21 total) — `non-literal-separator` does NOT currently fire (the plan's assumed example was stale); don't assert on that specific code in Task 14's integration check.
 
 - [ ] **Step 1: Read `grammar-diagnostics.ts`'s current `CompilerDiagnostic` type and `formatCompilerDiagnostics`/`formatGrammarDiagnostics` functions**
 
@@ -1191,70 +1186,69 @@ persisted, structured, unbounded report — closes TODO.md item 8."
 
 ## Task 15: Cluster D — wire the identified silent catches into the report
 
-**Files:**
-- Modify: `packages/codegen/src/emitters/backend.ts` (the emitter TEMPLATE that generates `backend.ts` for all three grammars — NOT the generated files directly; find the actual emitter source, likely under `packages/codegen/src/emitters/`).
-- Modify: `packages/tools/src/probe/stages.ts` (~lines 108,115).
-- Modify: `packages/tools/src/probe/kind.ts` (~lines 539,782,807).
-- Modify: `packages/tools/src/validate/validation-report.ts` (extend `ValidatorFailureInput`/report-building if a new entry shape is needed for these sites).
+**MAJOR CORRECTION (found on first dispatch + a follow-up research pass — read before starting):**
+The original Steps 1-5 below are WRONG and superseded. `packages/{rust,typescript,python}/src/backend.ts` is NOT codegen-emitted (confirmed: no emitter in `packages/codegen/src` produces it; it's hand-maintained, kept in sync across all three grammar packages by hand — see commit `a970e023c`'s identical one-line fix applied to all three). Worse, `getActiveBackend()`/`tryLoadNative()` in `backend.ts` turned out to be **irrelevant to the validator's actual native-load path entirely** — `collectGrammarCounts` never calls it. A dedicated research pass traced the REAL call chain and found two genuine silent-loss bugs, both in `packages/tools/src/**` (normal source, not generated, not hand-maintained-but-manifest-tracked):
 
-**Interfaces:**
-- Consumes: `writeValidationReport`/`buildValidationReportEntries` from Task 14.
-- Produces: nothing later tasks depend on.
+**Finding A — real native-load error reason discarded.** `packages/tools/src/validate/common.ts:340` and `:343`, inside `loadNativeEngineForGrammar` (~lines 302-363): both `catch { }` blocks are unparameterized — the real `Error` from `require()` (missing `.node`, N-API ABI mismatch, dlopen failure, etc.) is discarded completely, and the function returns `null`. Downstream, `buildReadHandle` (`common.ts:373-378`) synthesizes a generic, reason-free error: `` `SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'` ``.
 
-- [ ] **Step 1: Find the actual emitter source for generated `backend.ts`**
+**Finding B — whole-grammar validator failure vanishes from the persisted report.** `validateFactoryRenderParse` (`packages/tools/src/validate/factory-render-parse.ts:~803-807`) calls `buildReadHandle` in its per-entry loop with **no enclosing try/catch** — unlike `validateFrom` (`from.ts:272-308`) and `validateReadRenderParse` (`read-render-parse.ts:472,745-751`), which both wrap the same call per-entry and push failures into an `errors` array that DOES reach `validation-report.json`. A native-load failure during `validateFactoryRenderParse` throws straight out, rejects `collectGrammarCounts`'s `Promise.all`, and is caught only in `runCountsCli`'s per-(backend,grammar) loop (`commands.ts:433-441`), which just does `console.log(...ERROR...)` and **skips** `appendHistory`, `recorded.push`, and populating `validatorFailuresByGrammar[grammar]` entirely. Net effect: a grammar whose validation genuinely failed to complete is indistinguishable in `validation-report.json` from a grammar that ran clean (only its static `grammar-diagnostics.json` entries still show up) — and if it's the only grammar/backend requested, the report file isn't written at all.
 
-Search for whichever `packages/codegen/src/emitters/*.ts` file's template literal produces `packages/{rust,typescript,python}/src/backend.ts` (the spec's grounding didn't pin an exact emitter filename for this — find it now via `find_all_references`/search for the `tryLoadNative` function name or `SITTIR_BACKEND_DEBUG` string literal). Read the current template around where `tryLoadNative()`'s catch swallows a native-load failure unless `SITTIR_BACKEND_DEBUG` is set.
+**Files (corrected):**
+- Modify: `packages/tools/src/validate/common.ts` (`loadNativeEngineForGrammar` ~302-363, `buildReadHandle` ~365-381 — capture and thread the real error reason instead of discarding it).
+- Modify: `packages/tools/src/validate/factory-render-parse.ts` (~803-807 — wrap `buildReadHandle` in a per-entry try/catch matching `from.ts`/`read-render-parse.ts`'s existing pattern).
+- Modify: `packages/tools/src/commands.ts` (`runCountsCli`'s catch block ~433-441 — don't silently drop the grammar from `validatorFailuresByGrammar`/`recorded`/history on a whole-collection failure; record a synthetic failure entry instead).
+- Delete the now-superseded Steps 4/5's premise: `packages/tools/src/probe/stages.ts` and `packages/tools/src/probe/kind.ts` are OUT OF SCOPE — confirmed via direct trace that `validate counts`/`runCountsCli` never invokes probe at all (probe is a fully separate CLI command with no integration point into the counts/validate flow). Do not touch these two files.
 
-- [ ] **Step 2: Add a report hook to the generated `tryLoadNative()`, always-on (not gated by `SITTIR_BACKEND_DEBUG`)**
+- [ ] **Step 1: Re-verify Findings A and B fresh** — read `common.ts`'s `loadNativeEngineForGrammar`/`buildReadHandle`, `factory-render-parse.ts`'s per-entry loop, and `commands.ts`'s `runCountsCli` catch block yourself before changing anything; line numbers above were captured by a research pass, re-confirm they still match.
 
-Modify the emitter template so generated `tryLoadNative()` catch block, in addition to its existing `SITTIR_BACKEND_DEBUG`-gated `emitDebug` stderr print, ALSO always writes a small marker file or in-process signal that `runCountsCli`/`validate counts` can pick up (e.g., append to a per-grammar `.sittir/native-load-fallback.json` with `{ reason: message }` — mirroring how `grammar-diagnostics.json` works from Task 13). Keep the existing `SITTIR_BACKEND_DEBUG`-gated stderr behavior unchanged — this is additive, not a behavior change to what the user sees by default.
+- [ ] **Step 2: Fix Finding A — thread the real native-load failure reason through**
 
-- [ ] **Step 3: Read this file into `validation-report.ts`'s entry-building step**
+In `common.ts`, change `loadNativeEngineForGrammar` to capture `err` in both catch blocks (`req(pkg)` failure and `req(localCratePath)` failure) and return a richer result instead of a bare `null` — e.g. `{ engine: NativeEngineLike } | { engine: null; reason: string }` (design the exact shape yourself, matching how the rest of this file already threads similar unions; keep the happy-path return type change minimal). Update `buildReadHandle` to use the captured `reason` in its synthesized error message instead of the current generic text — e.g. `` `SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}': ${reason}` `` — so every downstream validator's generic-error-catch (Findings from `from.ts`/`read-render-parse.ts`) now surfaces the REAL cause instead of a content-free message.
 
-Extend `buildValidationReportEntries` (or add a small helper) to read `packages/<grammar>/.sittir/native-load-fallback.json` if present, and emit a `{source: 'validator', severity: 'warning', code: 'native-load-fallback', grammar, backend: 'native', message: reason}` entry for it. Update `commands.ts`'s wiring (Task 14's Step 6 site) to call this new read.
+- [ ] **Step 3: Fix Finding B — guard `factory-render-parse.ts`'s unguarded `buildReadHandle` call**
 
-- [ ] **Step 4: Wire `probe/stages.ts`'s captured errors into the report when probe runs as part of validate**
+Wrap the per-entry `buildReadHandle` call in `validateFactoryRenderParse` in a try/catch matching the existing pattern in `validateFrom`/`validateReadRenderParse` (read those two first for the exact idiom — error message formatting, what gets pushed to the errors array, whether it continues to the next entry or aborts). This stops a single native-load failure from rejecting the whole grammar's validation run.
 
-Read `packages/tools/src/probe/stages.ts:108,115` (re-verify lines) — these already capture errors into `stages.emitInterface.error`/`stages.emitTemplate.error`. Find where `validate counts` invokes probe (if it does as part of its own run) and, if so, feed these captured errors into the same `buildValidationReportEntries` call from Task 14, tagged appropriately (`stage: 'emitInterface'` / `'emitTemplate'`). Do NOT change probe's own standalone JSON output format — this is additive only, and only fires when probe runs as part of `validate`.
+- [ ] **Step 4: Harden `commands.ts`'s `runCountsCli` catch block (defense in depth, in case any future validator addition hits the same gap)**
 
-- [ ] **Step 5: Wire `probe/kind.ts`'s captured errors similarly**
+In the catch block at `commands.ts:433-441`, when `collectGrammarCounts` rejects, still populate `validatorFailuresByGrammar[grammar]` with a single synthetic entry describing the whole-grammar collection failure (e.g. `{ stage: 'collect', label: grammar, message: (e as Error).message }`), instead of silently skipping it. Decide whether `recorded.push`/`appendHistory` should still happen for a failed grammar (probably not for `appendHistory`, since it's meant to record successful validation runs — check `ValidationRun`'s shape and existing semantics in `packages/tools/src/history.ts` before deciding) — but the report-entry population should happen regardless of that decision, since the goal is making the FAILURE visible in `validation-report.json`, not making history-tracking swallow it as a success.
 
-Same pattern for `packages/tools/src/probe/kind.ts:539,782,807` (re-verify lines) — feed into the report when relevant, without changing probe's own standalone behavior.
+- [ ] **Step 5: Confirm the fix end-to-end**
+
+Run `pnpm test`, then `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native` and inspect `packages/tools/validation-report.json` — confirm it still has the same entry counts as before for the currently-passing grammars (this task shouldn't change what's already visible), and, if you can construct a reproducible native-load failure in a test/mock (check `factory-render-parse.ts`'s or `common.ts`'s existing test files for a pattern to simulate this), confirm the new reason string and the new synthetic collection-failure entry actually appear when triggered.
 
 - [ ] **Step 6: Run the full test suite**
 
 Run: `pnpm test`
-Expected: PASS.
+Expected: PASS modulo the known pre-existing unrelated baseline.
 
-- [ ] **Step 7: Regenerate all three grammars and confirm `backend.ts`'s diff is the expected additive change**
-
-```bash
-pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
-pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
-pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
-git diff -- packages/rust/src/backend.ts packages/typescript/src/backend.ts packages/python/src/backend.ts
-```
-Expected: each grammar's generated `backend.ts` gains the new always-on report-write in `tryLoadNative()`'s catch, with no other changes.
-
-- [ ] **Step 8: Re-verify the native validation baseline**
+- [ ] **Step 7: Re-verify the native validation baseline**
 
 Run: `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native > /tmp/task15-validate.log 2>&1; tail -100 /tmp/task15-validate.log`
-Expected: exactly rust=117/typescript=75/python=102 (this is a diagnostics-only addition, no behavior change to the native-load-fallback decision itself, only its visibility).
+Expected: exactly rust=117/typescript=75/python=102 — this task only improves error-message content and report completeness on FAILURE paths; it must not change the AstMatchPass counts on the (currently passing) success path at all.
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 8: Commit**
+
+This task doesn't touch `packages/codegen/src/**` or generated grammar output — no regen/manifest steps, no two-commit split needed.
 
 ```bash
-git add -u packages/codegen/src/emitters packages/tools/src/probe/stages.ts packages/tools/src/probe/kind.ts packages/tools/src/validate/validation-report.ts packages/tools/src/commands.ts
-git add packages/rust/src/backend.ts packages/typescript/src/backend.ts packages/python/src/backend.ts
-git add packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json rust/crates/sittir-rust/test-fixtures.json rust/crates/sittir-typescript/test-fixtures.json rust/crates/sittir-python/test-fixtures.json
-git commit -m "feat(tools): wire silent native-load-fallback + probe capture sites into validation-report.json
+git add packages/tools/src/validate/common.ts packages/tools/src/validate/factory-render-parse.ts packages/tools/src/commands.ts
+git commit -m "fix(tools): surface native-load failure reasons + stop dropping whole-grammar validator failures from validation-report.json
 
-tryLoadNative()'s native-load failure was silent by default (only
-visible with SITTIR_BACKEND_DEBUG set); now always recorded in the
-persisted report regardless. probe/stages.ts and probe/kind.ts's
-already-captured errors also feed the same report when probe runs as
-part of validate. Closes TODO.md item 7's silent-failure findings."
+Two silent-loss bugs found by tracing collectGrammarCounts's real
+native-load path (packages/{rust,typescript,python}/src/backend.ts's
+getActiveBackend()/tryLoadNative() turned out to be unused by the
+validator entirely): (1) loadNativeEngineForGrammar's require()
+catches discarded the real failure reason before buildReadHandle
+synthesized a content-free generic error; (2)
+validateFactoryRenderParse's unguarded buildReadHandle call let a
+native-load failure reject the whole grammar's validation, which
+runCountsCli's catch block then silently dropped from
+validatorFailuresByGrammar/history instead of recording it. Closes
+TODO.md item 7's silent-failure findings for the validator's actual
+native-load path."
 ```
+If the pre-commit hook rejects for any reason, do NOT use `--no-verify` — stop and report the exact failure.
 
 ---
 
@@ -1381,49 +1375,48 @@ tree-walk reader) now that nothing generated imports it."
 
 ---
 
-## Task 18: Cluster B — remove `backend === 'js'` handling from CLI, validate, probe, bench
+## Task 18: Cluster B — finish deleting `readNode.ts` (narrowed scope)
+
+**MAJOR CORRECTION (found on dispatch — this task's original scope was wrong, not just its file list):** the original premise — that `backend === 'js'` handling across `options.ts`/`check-baseline.ts`/`from.ts`/`probe/kind.ts`/`bench.ts` is all dead debt from the deprecated JS engine — does NOT hold. Direct investigation found:
+- `packages/tools/src/validate/common.ts`'s `buildReadHandle()` non-native branch returns a real, functional WASM/JS read path used by the whole validate CLI — not dead.
+- `packages/tools/src/profile/bench.ts`'s `benchGrammar()` does a genuine, live JS-vs-native **speedup comparison** — `BenchResult.backend: 'js' | 'native'` is structural to its whole report format, not an isolated dead branch.
+- `packages/tools/src/probe/kind.ts`'s `--engine js|native|both` flag drives a genuine, live **dual-engine diff/trace diagnostic** (compares JS-side reads against native reads to debug drift) — a real feature, not debt.
+- The CLI's `backend`/`resolveBackends`/`CliBackend` typing is pervasive across more files than originally listed (`counts.ts`, `probe-factory.ts`, `trace-rt.ts`, `commands.ts`'s isolate-worker spawning) — narrowing it to native-only as originally scoped would leave the codebase type-inconsistent, since these live features still need it.
+
+TODO.md item 5 ("remove the JS engine") was about `createJsEngine`/`readNode.ts` as a **production fallback** — already removed by Tasks 16-17. `bench.ts`'s comparison tooling and `probe/kind.ts`'s dual-engine diagnostic are a **different, legitimately still-valuable use case** (JS-vs-native comparison for perf/drift debugging) that happens to also construct a JS renderer — explicitly OUT of scope for this task. User decision: narrow Task 18 to ONLY the two confirmed-safe fixes below plus finishing `readNode.ts`'s deletion if nothing else still needs it after those fixes. The CLI `--backend` flag, `options.ts`, `check-baseline.ts`, `from.ts`'s `backend === 'js'` branch, `probe/kind.ts`'s `--engine` feature, and `bench.ts`'s comparison feature all stay exactly as they are — not touched by this task.
 
 **Files:**
-- Modify: `packages/cli/src/framework/options.ts` (~line 6 — narrow `BACKENDS` to `['native']` or remove the option's multi-value nature entirely, per what still makes sense once `js`/`all` are gone).
-- Modify: `packages/cli/src/commands/tool/check-baseline.ts` (~line 10 — remove its separate, inconsistent `--backend` option defaulting to `'js'`; use the shared native-only default instead).
-- Modify: `packages/tools/src/validate/from.ts` (~line 186 — remove the `backend === 'js'` branch).
-- Modify: `packages/tools/src/probe/kind.ts` (~lines 130,554,770 — remove `backend === 'js'` branches).
-- Modify: `packages/tools/src/profile/bench.ts` (~lines 100,294,358 — remove `backend === 'js'` branches).
+- Modify: `packages/tools/src/validate/common.ts` (`resolveChild()` ~line 1507-1509 — collapse `tree.read ? tree.read(...) : readNodeFn(tree, ...)` to `tree.read(...)`; `readNodeAt()` ~line 403-419 — collapse its native-coords-branch `readNodeFn(handle, ...)` call to `handle.read(...)`, since `packages/common/src/readNode.ts` itself already does exactly this redirect when `tree.read` is present — the call through `readNodeFn` is a provably redundant indirection, not real JS-engine invocation).
+- Delete: `packages/common/src/readNode.ts` — ONLY if Step 3 below confirms nothing else in the repo still imports it after the `common.ts` fix (this includes checking whether `bench.ts`/`probe/kind.ts`'s JS-comparison paths call `readNode()` directly vs. constructing reads some other way — if they DO still need it, `readNode.ts` stays and this task is scoped down to just the `common.ts` fix).
+- Modify: `packages/common/src/index.ts` (remove the `readNode` re-export — only if `readNode.ts` itself gets deleted).
+- Modify: `packages/tools/src/validate/common.ts` (~lines 403-419 `readNodeAt()`, ~1507-1509 `resolveChild()` — make both native-only, removing the unconditional `readNode`/`readNodeFn` import and calls).
+- Delete: `packages/common/src/readNode.ts` (finally safe once `common.ts`'s uses are gone).
+- Modify: `packages/common/src/index.ts` (remove the `readNode` re-export, if Task 16/17 didn't already).
 
 **Interfaces:**
-- Consumes: Tasks 16-17's removal of the JS engine (this task removes the CLI surface that selected it).
-- Produces: nothing later tasks depend on — this is the last task in Cluster B and the plan.
+- Consumes: Tasks 16-17's removal of the JS engine (this task finishes the last two lingering `readNode` call sites and, if safe, the file itself).
+- Produces: nothing later tasks depend on — this is the last task in Cluster B and the plan. `options.ts`, `check-baseline.ts`, `from.ts`, `probe/kind.ts`, `bench.ts` are explicitly NOT touched by this task — their `backend`/`--engine` handling is live diagnostic tooling, not debt.
 
-- [ ] **Step 1: Read `packages/cli/src/framework/options.ts`'s current `BACKENDS`/`withBackend()`**
+- [ ] **Step 1: Read `common.ts`'s `resolveChild()` and `readNodeAt()` in full, and re-confirm the redundant-indirection reasoning**
 
-Confirm the current `BACKENDS = ['native', 'js', 'all']` array and `withBackend()`'s default. Decide (based on what reads this option elsewhere) whether to collapse it to a single implicit native-only mode (removing the `--backend` flag's meaningful choice entirely) or keep the flag but narrow its allowed values to `['native']`. Prefer removing the flag's optionality if nothing else in the CLI framework depends on it accepting multiple values — check call sites before deciding.
+Read `packages/tools/src/validate/common.ts`'s `resolveChild()` (~line 1507-1509) and `readNodeAt()` (~line 403-419) plus `packages/common/src/readNode.ts`'s own implementation in full. Confirm directly: does `readNode()`/`readNodeFn` do anything beyond `if (tree.read) return tree.read(handle, childIndex)` (i.e. is it PURELY a redirect to `tree.read`/`handle.read` when that's present, with a distinct JS-engine-specific code path only in the `else` branch that's now unreachable)? If so, both call sites collapse safely. If you find `readNode()` does something MORE than that in the branch these two call sites actually hit, STOP and report — do not force the collapse.
 
-- [ ] **Step 2: Apply the decision from Step 1**
+- [ ] **Step 2: Apply the collapse**
 
-Modify `options.ts` accordingly.
+In `resolveChild()`, change `tree.read ? tree.read(...) : readNodeFn(tree, ...)` to `tree.read(...)`. In `readNodeAt()`, change its native-coords-branch `readNodeFn(handle, ...)` call to `handle.read(...)` directly (per Step 1's confirmed reasoning).
 
-- [ ] **Step 3: Fix `check-baseline.ts`'s inconsistent default**
+- [ ] **Step 3: Check whether `readNode.ts` is now fully deletable**
 
-Remove its separate `--backend` option (currently defaulting to `'js'`) and have it use the shared `withBackend()` helper from Step 1/2 instead, so there's one consistent backend-selection surface across the whole CLI.
+Run `find_all_references` (cross-checked with a direct text/import search) for `readNode`/`readNodeJs`/`readNodeFn`/the module path `packages/common/src/readNode.ts` across the ENTIRE repo — including `packages/tools/src/profile/bench.ts` and `packages/tools/src/probe/kind.ts` (their JS-vs-native comparison/diagnostic features are staying, per this task's narrowed scope, but you need to know whether THEY still import `readNode()` specifically, as opposed to constructing reads some other way — e.g. via `createRenderer`'s own mechanism). 
+  - If NO other caller remains: delete `packages/common/src/readNode.ts` and remove its re-export from `packages/common/src/index.ts`.
+  - If `bench.ts`/`probe/kind.ts`/anything else genuinely still needs it: leave `readNode.ts` in place — it's now serving only the live JS-comparison features, which is a legitimate, intentional use, not debt. Document this finding clearly either way.
 
-- [ ] **Step 4: Remove `backend === 'js'` branches from `validate/from.ts`**
-
-Read `packages/tools/src/validate/from.ts:186` (re-verify) and remove the conditional branch and any dead code it guarded (the non-js branch becomes unconditional).
-
-- [ ] **Step 5: Remove `backend === 'js'` branches from `probe/kind.ts`**
-
-Same pattern at `packages/tools/src/probe/kind.ts:130,554,770` (re-verify each).
-
-- [ ] **Step 6: Remove `backend === 'js'` branches from `profile/bench.ts`**
-
-Same pattern at `packages/tools/src/profile/bench.ts:100,294,358` (re-verify each).
-
-- [ ] **Step 7: Run the full test suite**
+- [ ] **Step 4: Run the full test suite**
 
 Run: `pnpm test`
-Expected: PASS, minus any tests that specifically exercised `--backend js`/`--backend all` (expected reduction).
+Expected: PASS, with no new failures (this is either a pure redundant-indirection removal, or that plus a dead-file deletion — no live behavior should change either way).
 
-- [ ] **Step 8: Regenerate all three grammars and re-verify the baseline**
+- [ ] **Step 5: Regenerate all three grammars and re-verify the baseline**
 
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
@@ -1431,24 +1424,31 @@ pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output pa
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 SITTIR_NATIVE_DEBUG=0 pnpm run validate:native > /tmp/task18-validate.log 2>&1; tail -100 /tmp/task18-validate.log
 ```
-Expected: exactly rust=117/typescript=75/python=102 (removing dead CLI branches doesn't change native validation behavior).
+Expected: exactly rust=117/typescript=75/python=102.
 
-- [ ] **Step 9: Manually smoke-test the CLI's `--backend` behavior**
-
-Run: `pnpm exec tsx packages/cli/src/cli.ts validate counts --help` (or equivalent) and confirm the `--backend` flag's help text/allowed-values no longer mentions `js`/`all`. Run `pnpm exec tsx packages/cli/src/cli.ts validate counts --backend native` directly and confirm it still works as before.
-
-- [ ] **Step 10: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add packages/cli/src/framework/options.ts packages/cli/src/commands/tool/check-baseline.ts packages/tools/src/validate/from.ts packages/tools/src/probe/kind.ts packages/tools/src/profile/bench.ts
-git add packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json rust/crates/sittir-rust/test-fixtures.json rust/crates/sittir-typescript/test-fixtures.json rust/crates/sittir-python/test-fixtures.json
-git commit -m "chore: remove backend===js handling from CLI/validate/probe/bench
+git add packages/tools/src/validate/common.ts
+# If Step 3 concluded readNode.ts is deletable:
+git rm packages/common/src/readNode.ts
+git add packages/common/src/index.ts
+git add packages/rust/.sittir/generated.manifest.json packages/typescript/.sittir/generated.manifest.json packages/python/.sittir/generated.manifest.json packages/rust/.sittir/grammar.js packages/typescript/.sittir/grammar.js packages/python/.sittir/grammar.js
+git commit -m "chore: collapse the last two redundant readNode indirections in validate/common.ts[, delete readNode.ts]
 
-Final step of Cluster B (JS engine removal, TODO.md item 5). Fixes
-check-baseline.ts's inconsistent --backend default (was 'js', now
-matches the shared native-only helper). The CLI's --backend flag no
-longer offers js/all."
+Task 18 (final task of Cluster B) narrowed after discovering
+bench.ts's JS-vs-native comparison and probe/kind.ts's --engine
+dual-trace diagnostic are live tooling, not debt — TODO.md item 5's
+JS-engine-removal target (createJsEngine, the generated-code
+read-fallback path) was already fully removed by Tasks 16-17.
+resolveChild()/readNodeAt() collapse to tree.read(...)/handle.read(...)
+since readNode()'s own implementation shows this is a pure,
+provably-redundant redirect. [readNode.ts itself is now safe to
+delete — nothing else in the repo imports it. / readNode.ts stays,
+since bench.ts/probe-kind.ts's live comparison features still use it.]"
 ```
+(Adjust the bracketed portion and pathspecs to match Step 3's actual finding.)
+Then separately if manifest/grammar.js files changed: `git add rust/crates/sittir-rust/test-fixtures.json rust/crates/sittir-typescript/test-fixtures.json rust/crates/sittir-python/test-fixtures.json` with message `chore(validator): record validation run (rust/native, typescript/native, python/native)`.
 
 ---
 

@@ -26,10 +26,12 @@ describe('tool check-perf command', () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		checkPerfCmd.register(program);
-		await program.parseAsync(['check-perf', '--baseline', 'my-baseline.json', '--metrics', 'my-metrics.json'], { from: 'user' });
+		await program.parseAsync(['check-perf', '--baseline', 'my-baseline.json', '--metrics', 'my-metrics.json'], {
+			from: 'user'
+		});
 		expect(vi.mocked(runCheckPerf)).toHaveBeenCalledWith({
 			baseline: 'my-baseline.json',
-			metrics: 'my-metrics.json',
+			metrics: 'my-metrics.json'
 		});
 	});
 });

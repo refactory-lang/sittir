@@ -10,9 +10,7 @@ describe('tool exercise command', () => {
 		const program = new Command();
 		exerciseCmd.register(program);
 		const cmd = program.commands.find((c) => c.name() === 'exercise')!;
-		expect(cmd.options.map((o) => o.long)).toEqual(
-			expect.arrayContaining(['--grammar', '--kinds']),
-		);
+		expect(cmd.options.map((o) => o.long)).toEqual(expect.arrayContaining(['--grammar', '--kinds']));
 	});
 
 	it('passes parsed options to the tool run()', async () => {
@@ -21,7 +19,7 @@ describe('tool exercise command', () => {
 		await program.parseAsync(['exercise', '--grammar', 'rust', '--kinds', 'foo, bar'], { from: 'user' });
 		expect(vi.mocked(runExercise)).toHaveBeenCalledWith({
 			grammar: 'rust',
-			kinds: ['foo', 'bar'],
+			kinds: ['foo', 'bar']
 		});
 	});
 });

@@ -9,7 +9,13 @@ describe('buildValidationReportEntries', () => {
 		const entries = buildValidationReportEntries(
 			{
 				typescript: [
-					{ code: 'non-literal-separator', severity: 'warning', location: 'interface_body.-', message: 'Separator is not a literal string.', proposal: 'See PR-T.' }
+					{
+						code: 'non-literal-separator',
+						severity: 'warning',
+						location: 'interface_body.-',
+						message: 'Separator is not a literal string.',
+						proposal: 'See PR-T.'
+					}
 				]
 			},
 			{}
@@ -61,7 +67,10 @@ describe('writeValidationReport', () => {
 	it('writes the entries array as JSON, overwriting any previous report', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-report-test-'));
 		const outPath = join(dir, 'validation-report.json');
-		writeValidationReport([{ source: 'grammar', severity: 'warning', code: 'x', grammar: 'rust', backend: 'native', message: 'y' }], outPath);
+		writeValidationReport(
+			[{ source: 'grammar', severity: 'warning', code: 'x', grammar: 'rust', backend: 'native', message: 'y' }],
+			outPath
+		);
 		expect(JSON.parse(readFileSync(outPath, 'utf8'))).toHaveLength(1);
 		writeValidationReport([], outPath);
 		expect(JSON.parse(readFileSync(outPath, 'utf8'))).toEqual([]);

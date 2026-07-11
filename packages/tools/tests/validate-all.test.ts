@@ -103,9 +103,7 @@ for (const grammar of GRAMMARS) {
 				expect(
 					frt.fail,
 					`factory-render-parse regressions (ceiling ${ceiling.factoryRenderParse})`
-				).toBeLessThanOrEqual(
-					ceiling.factoryRenderParse
-				);
+				).toBeLessThanOrEqual(ceiling.factoryRenderParse);
 			}, 30_000);
 		});
 	});

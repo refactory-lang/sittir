@@ -331,5 +331,3 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 	// Key regression guard: list field must not be labelled as semi
 	expect(transport).not.toContain(`array_expression_list: Box<ArrayExpressionSemiTransport>`);
 }, 60_000);
-
-

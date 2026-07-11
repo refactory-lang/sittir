@@ -117,7 +117,9 @@ describe('probe-kind native trace helpers', () => {
 
 		expect(trace.trace.js).toBeUndefined();
 		expect(trace.trace.native).toMatchObject({
-			wrapError: expect.stringContaining('singular slot "comprehension_clauses" on "generator_expression" requires one value')
+			wrapError: expect.stringContaining(
+				'singular slot "comprehension_clauses" on "generator_expression" requires one value'
+			)
 		});
 	});
 });

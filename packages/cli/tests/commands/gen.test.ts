@@ -4,7 +4,7 @@ import { Command } from 'commander';
 vi.mock('@sittir/codegen/run-codegen', () => ({
 	runCodegen: vi.fn().mockResolvedValue(undefined),
 	runFullRegen: vi.fn().mockResolvedValue(undefined),
-	runStandaloneSteps: vi.fn().mockResolvedValue(undefined),
+	runStandaloneSteps: vi.fn().mockResolvedValue(undefined)
 }));
 
 import { gen } from '../../src/commands/gen.ts';
@@ -24,30 +24,53 @@ describe('gen command', () => {
 		const program = new Command();
 		gen.register(program);
 		await program.parseAsync(['gen', '--grammar', 'rust', '--all', '--output', 'packages/rust/src'], { from: 'user' });
-		expect(vi.mocked(runFullRegen)).toHaveBeenCalledWith(expect.objectContaining({ grammar: 'rust', all: true, outputDir: 'packages/rust/src' }));
+		expect(vi.mocked(runFullRegen)).toHaveBeenCalledWith(
+			expect.objectContaining({ grammar: 'rust', all: true, outputDir: 'packages/rust/src' })
+		);
 		expect(vi.mocked(runCodegen)).not.toHaveBeenCalled();
 	});
 	it('routes --nodes (no --all) to runCodegen', async () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		gen.register(program);
-		await program.parseAsync(['gen', '--grammar', 'rust', '--nodes', 'struct_item', '--output', 'packages/rust/src'], { from: 'user' });
-		expect(vi.mocked(runCodegen)).toHaveBeenCalledWith(expect.objectContaining({ grammar: 'rust', nodes: ['struct_item'], outputDir: 'packages/rust/src' }));
+		await program.parseAsync(['gen', '--grammar', 'rust', '--nodes', 'struct_item', '--output', 'packages/rust/src'], {
+			from: 'user'
+		});
+		expect(vi.mocked(runCodegen)).toHaveBeenCalledWith(
+			expect.objectContaining({ grammar: 'rust', nodes: ['struct_item'], outputDir: 'packages/rust/src' })
+		);
 		expect(vi.mocked(runFullRegen)).not.toHaveBeenCalled();
 	});
 	it('maps --no-build-native and --allow-diagnostic', async () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		gen.register(program);
-		await program.parseAsync(['gen', '--grammar', 'rust', '--all', '--output', 'o', '--no-build-native', '--allow-diagnostic', 'parsekind-noninjective'], { from: 'user' });
-		expect(vi.mocked(runFullRegen)).toHaveBeenCalledWith(expect.objectContaining({ buildNative: false, allowDiagnostics: ['parsekind-noninjective'] }));
+		await program.parseAsync(
+			[
+				'gen',
+				'--grammar',
+				'rust',
+				'--all',
+				'--output',
+				'o',
+				'--no-build-native',
+				'--allow-diagnostic',
+				'parsekind-noninjective'
+			],
+			{ from: 'user' }
+		);
+		expect(vi.mocked(runFullRegen)).toHaveBeenCalledWith(
+			expect.objectContaining({ buildNative: false, allowDiagnostics: ['parsekind-noninjective'] })
+		);
 	});
 	it('runs standalone --transpile with only --grammar (no --output/--nodes/--all)', async () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		gen.register(program);
 		await program.parseAsync(['gen', '--grammar', 'rust', '--transpile'], { from: 'user' });
-		expect(vi.mocked(runStandaloneSteps)).toHaveBeenCalledWith(expect.objectContaining({ grammar: 'rust', transpile: true }));
+		expect(vi.mocked(runStandaloneSteps)).toHaveBeenCalledWith(
+			expect.objectContaining({ grammar: 'rust', transpile: true })
+		);
 		expect(vi.mocked(runCodegen)).not.toHaveBeenCalled();
 		expect(vi.mocked(runFullRegen)).not.toHaveBeenCalled();
 	});

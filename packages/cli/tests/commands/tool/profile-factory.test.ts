@@ -21,7 +21,7 @@ describe('tool profile-factory command', () => {
 		expect(vi.mocked(runProfileFactory)).toHaveBeenCalledWith({
 			grammar: 'rust',
 			recursive: true,
-			showAst: true,
+			showAst: true
 		});
 	});
 });

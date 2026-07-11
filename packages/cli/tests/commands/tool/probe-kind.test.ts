@@ -19,29 +19,37 @@ describe('tool probe-kind command', () => {
 		probeKindCmd.register(program);
 		const cmd = program.commands.find((c) => c.name() === 'probe-kind')!;
 		const longs = cmd.options.map((o) => o.long);
-		expect(longs).toEqual(expect.arrayContaining(['--grammar', '--source', '--kind', '--engine', '--trace', '--pretty']));
+		expect(longs).toEqual(
+			expect.arrayContaining(['--grammar', '--source', '--kind', '--engine', '--trace', '--pretty'])
+		);
 	});
 
 	it('passes parsed options to the tool run()', async () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		probeKindCmd.register(program);
-		await program.parseAsync(['probe-kind', '--grammar', 'rust', '--source', 'let x = 1;', '--pretty'], { from: 'user' });
-		expect(vi.mocked(runProbeKind)).toHaveBeenCalledWith(expect.objectContaining({
-			grammar: 'rust',
-			source: 'let x = 1;',
-			pretty: true,
-			stdin: false,
-			noRender: false,
-			trace: false,
-		}));
+		await program.parseAsync(['probe-kind', '--grammar', 'rust', '--source', 'let x = 1;', '--pretty'], {
+			from: 'user'
+		});
+		expect(vi.mocked(runProbeKind)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				grammar: 'rust',
+				source: 'let x = 1;',
+				pretty: true,
+				stdin: false,
+				noRender: false,
+				trace: false
+			})
+		);
 	});
 
 	it('maps --no-render/--no-wrap to noRender/noWrap (commander stores the positive key)', async () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		probeKindCmd.register(program);
-		await program.parseAsync(['probe-kind', '--grammar', 'rust', '--source', 'x', '--no-render', '--no-wrap'], { from: 'user' });
+		await program.parseAsync(['probe-kind', '--grammar', 'rust', '--source', 'x', '--no-render', '--no-wrap'], {
+			from: 'user'
+		});
 		expect(vi.mocked(runProbeKind)).toHaveBeenCalledWith(expect.objectContaining({ noRender: true, noWrap: true }));
 	});
 });

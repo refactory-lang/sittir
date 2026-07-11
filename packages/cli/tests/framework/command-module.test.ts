@@ -4,8 +4,20 @@ import { registerNamespace, type CommandModule } from '../../src/framework/comma
 
 describe('registerNamespace', () => {
 	it('creates a subcommand group and registers each module under it', () => {
-		const a: CommandModule = { name: 'alpha', describe: 'Alpha cmd', register: (p) => { p.command('alpha').action(() => {}); } };
-		const b: CommandModule = { name: 'beta', describe: 'Beta cmd', register: (p) => { p.command('beta').action(() => {}); } };
+		const a: CommandModule = {
+			name: 'alpha',
+			describe: 'Alpha cmd',
+			register: (p) => {
+				p.command('alpha').action(() => {});
+			}
+		};
+		const b: CommandModule = {
+			name: 'beta',
+			describe: 'Beta cmd',
+			register: (p) => {
+				p.command('beta').action(() => {});
+			}
+		};
 		const program = new Command();
 		registerNamespace(program, 'demo', 'Demo namespace', [a, b]);
 		const demo = program.commands.find((c) => c.name() === 'demo');

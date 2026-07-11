@@ -11,19 +11,21 @@ describe('tool classify command', () => {
 		classifyCmd.register(program);
 		const cmd = program.commands.find((c) => c.name() === 'classify')!;
 		expect(cmd.options.map((o) => o.long)).toEqual(
-			expect.arrayContaining(['--grammar', '--kind', '--modeltype', '--all']),
+			expect.arrayContaining(['--grammar', '--kind', '--modeltype', '--all'])
 		);
 	});
 
 	it('passes parsed options to the tool run()', async () => {
 		const program = new Command();
 		classifyCmd.register(program);
-		await program.parseAsync(['classify', '--grammar', 'rust', '--kind', 'foo', '--modeltype', 'branch', '--all'], { from: 'user' });
+		await program.parseAsync(['classify', '--grammar', 'rust', '--kind', 'foo', '--modeltype', 'branch', '--all'], {
+			from: 'user'
+		});
 		expect(vi.mocked(runClassify)).toHaveBeenCalledWith({
 			grammar: 'rust',
 			kinds: ['foo'],
 			modelTypeFilter: 'branch',
-			showAll: true,
+			showAll: true
 		});
 	});
 });

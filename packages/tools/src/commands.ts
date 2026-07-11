@@ -338,11 +338,7 @@ export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnost
 			slotName?: string;
 		}>;
 		return raw.map((d) => {
-			const location = d.ownerKind
-				? d.slotName
-					? `${d.ownerKind}.${d.slotName}`
-					: d.ownerKind
-				: undefined;
+			const location = d.ownerKind ? (d.slotName ? `${d.ownerKind}.${d.slotName}` : d.ownerKind) : undefined;
 			return { code: d.code, severity: d.severity, location, message: d.message, proposal: d.proposal };
 		});
 	} catch (e) {
