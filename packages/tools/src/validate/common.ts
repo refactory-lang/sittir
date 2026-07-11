@@ -1603,7 +1603,7 @@ function shouldPromoteOrphanChildren(
 	if (!declaredFields || namedChildren.length === 0) return false;
 	if (namedChildren.length > declaredFields.length) return false;
 	const noFieldMatched = declaredFields.every((name) => {
-		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		const camel = snakeToCamel(name);
 		return populatedOut[camel] === undefined;
 	});
 	return noFieldMatched;
@@ -1617,7 +1617,7 @@ function slotOrigin(slot: SlotModel): SlotOrigin {
 }
 
 function slotConfigKey(slot: SlotModel): string {
-	return slotOrigin(slot) === 'kind' ? slot.name : slot.name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+	return slotOrigin(slot) === 'kind' ? slot.name : snakeToCamel(slot.name);
 }
 
 function memberValueOpts(
@@ -1787,7 +1787,7 @@ function getMissingDeclaredFields(
 ): string[] {
 	if (!declaredFields) return [];
 	return declaredFields.filter((name) => {
-		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		const camel = snakeToCamel(name);
 		return out[camel] === undefined;
 	});
 }

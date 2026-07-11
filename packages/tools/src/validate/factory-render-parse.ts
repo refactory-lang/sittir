@@ -17,6 +17,7 @@ import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
+const { snakeToCamel } = await load('modelNodeMap');
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -572,7 +573,7 @@ function buildFactoryNodeData(
 				// names one, otherwise treat it as a single child call.
 				const fieldNames = factoryFields[renderedKind];
 				const rawName = fieldNames?.[0];
-				const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+				const camelName = rawName ? snakeToCamel(rawName) : undefined;
 				const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots);
 				const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 				return (factory as (v: unknown) => AnyNodeData)(value);

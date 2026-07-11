@@ -15,17 +15,8 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
-import { format as oxfmtFormat, type FormatConfig } from 'oxfmt';
-import oxfmtProjectConfig from '../../../oxfmt.config.ts';
-
-/**
- * oxfmt's programmatic `format()` API does NOT auto-discover `.editorconfig`
- * the way its CLI does — only the explicit config object below applies.
- * `.editorconfig` sets `indent_style = tab` for `.ts` files repo-wide (root
- * = true, single unambiguous rule), so that has to be merged in by hand to
- * match what `pnpm run format`/`oxfmt --check .` actually expect on disk.
- */
-const oxfmtEffectiveConfig: FormatConfig = { ...(oxfmtProjectConfig as FormatConfig), useTabs: true };
+import { format as oxfmtFormat } from 'oxfmt';
+import { OXFMT_EFFECTIVE_CONFIG } from './oxfmt-config.ts';
 
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
 
@@ -97,10 +88,12 @@ export interface CodegenOptions {
  * Write `content` to `path`, creating parent directories as needed.
  *
  * `.ts` output is run through oxfmt (the project's own formatter, config
- * merged from `oxfmt.config.ts` + `.editorconfig`'s tab-indent rule for
- * `.ts` files — the programmatic `format()` API does not auto-discover
- * either file) before the content-aware comparison below, so generated
- * `.ts` files land on disk already matching `pnpm run format`'s output —
+ * from `./oxfmt-config.ts` — the repo-root `oxfmt.config.ts` derives from
+ * that same module rather than the other way around, since a package's
+ * `src/` can't reach outside its own `tsconfig.build.json` rootDir once
+ * only `dist` is packaged) before the content-aware comparison below, so
+ * generated `.ts` files land on disk already matching `pnpm run format`'s
+ * output —
  * no separate formatting pass needed, and no risk of a formatter
  * reformatting generated code out from under the emitters (oxfmt must
  * never run over `packages/*\/src/*` directly; only codegen writes there).
@@ -128,7 +121,7 @@ export interface CodegenOptions {
 export async function writeFile(path: string, content: string): Promise<void> {
 	let finalContent = content;
 	if (path.endsWith('.ts')) {
-		const result = await oxfmtFormat(path, content, oxfmtEffectiveConfig);
+		const result = await oxfmtFormat(path, content, OXFMT_EFFECTIVE_CONFIG);
 		if (result.errors.length === 0) {
 			finalContent = result.code;
 		} else {
