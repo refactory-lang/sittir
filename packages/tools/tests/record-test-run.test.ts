@@ -89,6 +89,11 @@ describe('recordTestRun', () => {
 		expect(result.entry.numFailedTestFiles).toBe(2);
 		expect(appendTestHistory).toHaveBeenCalledTimes(1);
 		expect(commitTestHistory).toHaveBeenCalledTimes(1);
+		// No previous run recorded (readTestHistory() returns [] by default in
+		// beforeEach) — there's no baseline to diff against, so despite 2
+		// current failures neither array should report them as "newly" anything.
+		expect(result.newlyFailing).toEqual([]);
+		expect(result.newlyFixed).toEqual([]);
 	});
 
 	it('a no-tests / run-level failure (non-zero exit, zero reported failures) rejects', async () => {

@@ -130,10 +130,19 @@ export async function recordTestRun(): Promise<TestRunResult> {
 	appendTestHistory(entry);
 	commitTestHistory(`chore(tests): record test run (${entry.numFailedTests} failed / ${entry.numTotalTests} total)`);
 
-	const previousFailing = new Set(previous?.failedTestFiles ?? []);
-	const currentFailing = new Set(failedTestFiles);
-	const newlyFailing = failedTestFiles.filter((f) => !previousFailing.has(f));
-	const newlyFixed = [...previousFailing].filter((f) => !currentFailing.has(f)).sort();
+	// With no previous run there's no baseline to diff against — every
+	// currently-failing file would otherwise show up as "newly failing"
+	// (an empty previousFailing set contains none of them), which the CLI
+	// wrapper would then report as a regression and exit non-zero for on
+	// the very first recorded run.
+	let newlyFailing: string[] = [];
+	let newlyFixed: string[] = [];
+	if (previous) {
+		const previousFailing = new Set(previous.failedTestFiles);
+		const currentFailing = new Set(failedTestFiles);
+		newlyFailing = failedTestFiles.filter((f) => !previousFailing.has(f));
+		newlyFixed = [...previousFailing].filter((f) => !currentFailing.has(f)).sort();
+	}
 
 	return { entry, previous, newlyFailing, newlyFixed };
 }
