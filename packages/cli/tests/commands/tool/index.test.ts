@@ -26,11 +26,12 @@ const EXPECTED = [
 	'profile',
 	'profile-factory',
 	'propose-14',
+	'test-history',
 	'walk'
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 24 converted tools', () => {
+	it('registers exactly the 25 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 

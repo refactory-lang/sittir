@@ -35,8 +35,6 @@ interface VitestJsonTestResult {
 }
 
 interface VitestJsonReport {
-	numTotalTestSuites: number;
-	numFailedTestSuites: number;
 	numTotalTests: number;
 	numPassedTests: number;
 	numFailedTests: number;
@@ -93,8 +91,12 @@ export async function recordTestRun(): Promise<TestRunResult> {
 		ts: new Date().toISOString(),
 		branch: gitOutput(['rev-parse', '--abbrev-ref', 'HEAD']),
 		commit: gitOutput(['rev-parse', 'HEAD']),
-		numTotalTestFiles: report.numTotalTestSuites,
-		numFailedTestFiles: report.numFailedTestSuites,
+		// `numTotalTestSuites`/`numFailedTestSuites` count each top-level
+		// `describe()` block, not files (a single file with 3 describes
+		// reports numTotalTestSuites=3) — derive file counts from
+		// `testResults` itself, consistent with `failedTestFiles` above.
+		numTotalTestFiles: report.testResults.length,
+		numFailedTestFiles: failedTestFiles.length,
 		numTotalTests: report.numTotalTests,
 		numPassedTests: report.numPassedTests,
 		numFailedTests: report.numFailedTests,
