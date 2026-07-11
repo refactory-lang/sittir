@@ -57,7 +57,7 @@ export type { ValidationRun } from './history.ts';
 export { appendTestHistory, readTestHistory, testHistoryPath } from './test-history.ts';
 export type { TestRun } from './test-history.ts';
 
-export { recordTestRun } from './scripts/record-test-run.ts';
+export { recordTestRun, formatReport as formatTestRunReport } from './scripts/record-test-run.ts';
 export type { TestRunResult } from './scripts/record-test-run.ts';
 
 export {

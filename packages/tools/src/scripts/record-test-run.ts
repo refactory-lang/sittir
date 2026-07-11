@@ -147,7 +147,8 @@ export async function recordTestRun(): Promise<TestRunResult> {
 	return { entry, previous, newlyFailing, newlyFixed };
 }
 
-function formatReport(result: TestRunResult): string {
+/** Human-readable summary of a recorded run, including the diff against the previous one (if any). */
+export function formatReport(result: TestRunResult): string {
 	const { entry, previous, newlyFailing, newlyFixed } = result;
 	const lines = [
 		`Recorded: ${entry.ts}  ${entry.branch}@${entry.commit.slice(0, 8)}`,

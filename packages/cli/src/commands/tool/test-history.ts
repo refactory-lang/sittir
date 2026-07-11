@@ -1,5 +1,5 @@
 import { type CommandModule, defineCommand } from '../../framework/command-module.ts';
-import { recordTestRun, runTestHistoryCli } from '@sittir/tools';
+import { recordTestRun, formatTestRunReport, runTestHistoryCli } from '@sittir/tools';
 
 export const testHistory: CommandModule = {
 	name: 'test-history',
@@ -11,17 +11,8 @@ export const testHistory: CommandModule = {
 			.action(async (n: string, opts: { record?: boolean }) => {
 				if (opts.record) {
 					const result = await recordTestRun();
-					console.log(
-						`Recorded: ${result.entry.numPassedTests}/${result.entry.numTotalTests} passed, ` +
-							`${result.entry.numFailedTests} failed`
-					);
-					if (result.newlyFailing.length > 0) {
-						console.log(`Newly failing (${result.newlyFailing.length}): ${result.newlyFailing.join(', ')}`);
-						process.exitCode = 1;
-					}
-					if (result.newlyFixed.length > 0) {
-						console.log(`Newly fixed (${result.newlyFixed.length}): ${result.newlyFixed.join(', ')}`);
-					}
+					console.log(formatTestRunReport(result));
+					if (result.newlyFailing.length > 0) process.exitCode = 1;
 					return;
 				}
 				runTestHistoryCli([n]);
