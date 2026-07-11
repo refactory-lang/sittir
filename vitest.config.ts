@@ -26,6 +26,13 @@ export default defineConfig({
 		// ceilings below floor. compileParser() is mtime-aware — local
 		// runs with a cached wasm are a no-op (~1ms). Cold compile pays
 		// ~10s total across the three grammars, paid once per session.
-		globalSetup: ['./vitest.setup.ts']
+		globalSetup: ['./vitest.setup.ts'],
+		// JSON report as a side artifact of the SAME run (gitignored scratch
+		// path) — `scripts/test-and-record.ts` reads it to append a
+		// test-history.jsonl entry without spawning a second, separate
+		// vitest invocation. Cheap to always emit; nothing consumes it
+		// unless the wrapper script asks for it.
+		reporters: ['default', 'json'],
+		outputFile: { json: './.vitest-report.json' }
 	}
 });
