@@ -61,12 +61,15 @@ export function appendTestHistory(entry: TestRun): void {
  * contract as `history.ts`'s `commitHistory` (see its doc comment for the
  * full rationale). Never disrupts the calling test run: no-ops when
  * `SITTIR_TEST_HISTORY_PATH` is set (tests/scratch locations),
- * `SITTIR_HISTORY_NO_COMMIT=1` is set (CI, bisects, demos), or any git
- * operation fails (no repo, mid-rebase, nothing to commit, git absent).
+ * `SITTIR_HISTORY_NO_COMMIT=1` is set (CI, bisects, demos),
+ * `SITTIR_INTERNAL_CODEGEN_RUN=1` is set (codegen-internal runs own their
+ * own commit boundaries), or any git operation fails (no repo, mid-rebase,
+ * nothing to commit, git absent).
  */
 export function commitTestHistory(message: string): void {
 	if (process.env['SITTIR_TEST_HISTORY_PATH']) return;
 	if (process.env['SITTIR_HISTORY_NO_COMMIT'] === '1') return;
+	if (process.env['SITTIR_INTERNAL_CODEGEN_RUN'] === '1') return;
 	const path = getTestHistoryPath();
 	try {
 		execFileSync('git', ['commit', '--no-verify', '-m', message, '--', path], {

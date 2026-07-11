@@ -95,4 +95,13 @@ describe('@sittir/tools test-history round-trip (scratch file)', () => {
 		const runs = readTestHistory();
 		expect(runs[0]!.failedTestFiles).toEqual([]);
 	});
+
+	it('readTestHistory returns empty array for empty file', () => {
+		expect(readTestHistory()).toEqual([]);
+	});
+
+	it('readTestHistory returns empty array when file does not exist', () => {
+		if (existsSync(SCRATCH)) unlinkSync(SCRATCH);
+		expect(readTestHistory()).toEqual([]);
+	});
 });

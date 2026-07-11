@@ -15,7 +15,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -52,16 +52,26 @@ function runVitestJson(): VitestJsonReport {
 	const outputFile = join(scratchDir, 'report.json');
 	try {
 		// vitest run exits non-zero when tests fail — that's the expected,
-		// common case here (we're recording state, not gating on it), so
-		// the exit code is deliberately ignored; only a thrown spawn error
-		// (vitest itself missing/crashing) should propagate.
+		// common case here (we're recording state, not gating on it), so a
+		// non-zero exit alone is not re-thrown. But a real spawn/crash
+		// failure (vitest itself missing, pnpm not found, an uncaught crash
+		// before the JSON reporter writes anything) leaves outputFile
+		// missing too — in that case surface the original error instead of
+		// letting the subsequent readFileSync's opaque ENOENT hide it.
+		let spawnError: unknown;
 		try {
 			execFileSync('pnpm', ['exec', 'vitest', 'run', '--reporter=json', `--outputFile=${outputFile}`], {
 				cwd: REPO_ROOT,
 				stdio: 'ignore'
 			});
-		} catch {
-			// non-zero exit from failing tests is expected; fall through to read the report
+		} catch (e) {
+			spawnError = e;
+		}
+		if (!existsSync(outputFile)) {
+			throw new Error(
+				`vitest did not produce a JSON report at ${outputFile} — the run likely crashed before writing it.`,
+				{ cause: spawnError }
+			);
 		}
 		return JSON.parse(readFileSync(outputFile, 'utf8')) as VitestJsonReport;
 	} finally {
