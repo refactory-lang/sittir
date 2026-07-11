@@ -410,7 +410,20 @@ export async function probe(
 			: opts.baselineDir
 				? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
 				: await loadReadTreeNode(grammar);
-		const handle = treeHandle(tree, source);
+		// kindIdFromName is required for JS-side reads (readNode emits numeric
+		// $type — see common.ts's treeHandle doc). Wrap so an unknown kind name
+		// returns undefined instead of throwing, matching run()'s own pattern.
+		const rawKindIdFromName = await loadKindIdFromName(grammar);
+		const kindIdFromName = rawKindIdFromName
+			? (name: string): number | undefined => {
+					try {
+						return rawKindIdFromName(name);
+					} catch {
+						return undefined;
+					}
+				}
+			: undefined;
+		const handle = treeHandle(tree, source, kindIdFromName);
 		const nodeId = isRoot ? undefined : (targetNode.id as NodeId);
 		nodeData = readTreeNodeFn ? readTreeNodeFn(handle, nodeId) : await fallbackReadNode(handle, nodeId);
 	}
@@ -874,7 +887,11 @@ async function renderNodeData(grammar: string, nodeData: unknown): Promise<strin
 	const templatesPath = new URL(`../../../${grammar}/templates`, thisFile).pathname;
 	const kindNames = await loadKindNames(grammar);
 	const bound = createRenderer(templatesPath, { kindNames });
-	return bound.render(nodeData as Parameters<typeof bound.render>[0]);
+	// readTreeNode's wrap output carries lazy getters ($children, _<field>)
+	// for on-demand drilling — the renderer needs plain resolved values.
+	// Materialize first, matching validateReadRenderParse's working pattern.
+	const materialized = materializeProbeWrappedNodeData(nodeData);
+	return bound.render(materialized as Parameters<typeof bound.render>[0]);
 }
 
 /** @internal — render via templates from an explicit absolute path
@@ -883,7 +900,8 @@ async function renderNodeDataFromPath(grammar: string, templatesPath: string, no
 	const { createRenderer } = await import('@sittir/core');
 	const kindNames = await loadKindNames(grammar);
 	const bound = createRenderer(templatesPath, { kindNames });
-	return bound.render(nodeData as Parameters<typeof bound.render>[0]);
+	const materialized = materializeProbeWrappedNodeData(nodeData);
+	return bound.render(materialized as Parameters<typeof bound.render>[0]);
 }
 
 /** @internal — load the grammar-owned native engine for `grammar`. Mirrors
