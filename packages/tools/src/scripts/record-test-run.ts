@@ -17,7 +17,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { appendTestHistory, commitTestHistory, readTestHistory, type TestRun } from '../test-history.ts';
@@ -55,9 +55,9 @@ function runVitestJson(): VitestJsonReport {
 		// common case here (we're recording state, not gating on it), so a
 		// non-zero exit alone is not re-thrown. But a real spawn/crash
 		// failure (vitest itself missing, pnpm not found, an uncaught crash
-		// before the JSON reporter writes anything) leaves outputFile
-		// missing too — in that case surface the original error instead of
-		// letting the subsequent readFileSync's opaque ENOENT hide it.
+		// before the JSON reporter writes anything, or a run-level failure
+		// like "no test files found" that still emits a report) needs to
+		// surface instead of silently recording a misleading 0-failure row.
 		let spawnError: unknown;
 		try {
 			execFileSync('pnpm', ['exec', 'vitest', 'run', '--reporter=json', `--outputFile=${outputFile}`], {
@@ -73,7 +73,17 @@ function runVitestJson(): VitestJsonReport {
 				{ cause: spawnError }
 			);
 		}
-		return JSON.parse(readFileSync(outputFile, 'utf8')) as VitestJsonReport;
+		const report = JSON.parse(readFileSync(outputFile, 'utf8')) as VitestJsonReport;
+		// A non-zero exit with zero reported test failures means the exit
+		// wasn't caused by ordinary test failures (e.g. no test files
+		// discovered, a config error) — the report itself can't explain the
+		// exit, so trust the process failure over the report.
+		if (spawnError !== undefined && report.numFailedTests === 0) {
+			throw new Error('vitest exited non-zero but reported no failing tests — a run-level failure, not test failures.', {
+				cause: spawnError
+			});
+		}
+		return report;
 	} finally {
 		rmSync(scratchDir, { recursive: true, force: true });
 	}
@@ -94,7 +104,9 @@ export async function recordTestRun(): Promise<TestRunResult> {
 	const report = runVitestJson();
 	const failedTestFiles = report.testResults
 		.filter((r) => r.status === 'failed')
-		.map((r) => relative(REPO_ROOT, r.name))
+		// `relative()` emits backslashes on Windows; normalize to posix
+		// separators so history rows are comparable across platforms.
+		.map((r) => relative(REPO_ROOT, r.name).split(sep).join('/'))
 		.sort();
 
 	const entry: TestRun = {

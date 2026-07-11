@@ -1,0 +1,160 @@
+/**
+ * Unit tests for record-test-run.ts's recordTestRun() — mocked
+ * child_process/fs/test-history, no real vitest subprocess spawned.
+ * Follows the process-mocking pattern established in isolate.test.ts.
+ */
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+vi.mock('node:child_process', () => ({
+	execFileSync: vi.fn()
+}));
+
+vi.mock('node:fs', () => ({
+	existsSync: vi.fn(),
+	mkdtempSync: vi.fn(() => '/fake/scratch'),
+	readFileSync: vi.fn(),
+	rmSync: vi.fn()
+}));
+
+vi.mock('../src/test-history.ts', () => ({
+	readTestHistory: vi.fn(),
+	appendTestHistory: vi.fn(),
+	commitTestHistory: vi.fn()
+}));
+
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { readTestHistory, appendTestHistory, commitTestHistory } from '../src/test-history.ts';
+import { recordTestRun } from '../src/scripts/record-test-run.ts';
+
+// record-test-run.ts's REPO_ROOT resolves to the actual repo root at import
+// time (not mocked — only child_process/fs/test-history are). Test-result
+// `name` values must sit under it so `relative()` produces clean file names.
+const REPO_ROOT = process.cwd();
+const testFile = (name: string) => join(REPO_ROOT, name);
+
+const GIT_ARGS_BRANCH = ['rev-parse', '--abbrev-ref', 'HEAD'];
+const GIT_ARGS_COMMIT = ['rev-parse', 'HEAD'];
+
+function mockGitAndVitest(vitestOutcome: { throws: boolean }, report: unknown) {
+	vi.mocked(execFileSync).mockImplementation((cmd, args) => {
+		if (cmd === 'git' && (args as string[]).join(' ') === GIT_ARGS_BRANCH.join(' ')) {
+			return 'feature-branch\n' as never;
+		}
+		if (cmd === 'git' && (args as string[]).join(' ') === GIT_ARGS_COMMIT.join(' ')) {
+			return 'deadbeef1234\n' as never;
+		}
+		if (cmd === 'pnpm') {
+			if (vitestOutcome.throws) throw new Error('vitest exited 1');
+			return undefined as never;
+		}
+		throw new Error(`unexpected execFileSync call: ${cmd}`);
+	});
+	vi.mocked(existsSync).mockReturnValue(true);
+	vi.mocked(readFileSync).mockReturnValue(JSON.stringify(report));
+}
+
+describe('recordTestRun', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		vi.mocked(readTestHistory).mockReturnValue([]);
+	});
+
+	it('an ordinary failing run (non-zero exit, real failures) records successfully', async () => {
+		mockGitAndVitest(
+			{ throws: true },
+			{
+				numTotalTests: 5,
+				numPassedTests: 3,
+				numFailedTests: 2,
+				numPendingTests: 0,
+				numTodoTests: 0,
+				testResults: [
+					{ name: testFile('a.test.ts'), status: 'failed', assertionResults: [] },
+					{ name: testFile('b.test.ts'), status: 'passed', assertionResults: [] },
+					{ name: testFile('c.test.ts'), status: 'failed', assertionResults: [] }
+				]
+			}
+		);
+
+		const result = await recordTestRun();
+
+		expect(result.entry.numFailedTests).toBe(2);
+		expect(result.entry.numFailedTestFiles).toBe(2);
+		expect(appendTestHistory).toHaveBeenCalledTimes(1);
+		expect(commitTestHistory).toHaveBeenCalledTimes(1);
+	});
+
+	it('a no-tests / run-level failure (non-zero exit, zero reported failures) rejects', async () => {
+		mockGitAndVitest(
+			{ throws: true },
+			{
+				numTotalTests: 0,
+				numPassedTests: 0,
+				numFailedTests: 0,
+				numPendingTests: 0,
+				numTodoTests: 0,
+				testResults: []
+			}
+		);
+
+		await expect(recordTestRun()).rejects.toThrow(/run-level failure/);
+		expect(appendTestHistory).not.toHaveBeenCalled();
+	});
+
+	it('a fully green run (zero exit, zero failures) records without error', async () => {
+		mockGitAndVitest(
+			{ throws: false },
+			{
+				numTotalTests: 3,
+				numPassedTests: 3,
+				numFailedTests: 0,
+				numPendingTests: 0,
+				numTodoTests: 0,
+				testResults: [{ name: testFile('a.test.ts'), status: 'passed', assertionResults: [] }]
+			}
+		);
+
+		const result = await recordTestRun();
+		expect(result.entry.numFailedTests).toBe(0);
+		expect(appendTestHistory).toHaveBeenCalledTimes(1);
+	});
+
+	it('computes newlyFailing and newlyFixed against the previous recorded entry', async () => {
+		vi.mocked(readTestHistory).mockReturnValue([
+			{
+				ts: '2026-01-01T00:00:00.000Z',
+				branch: 'main',
+				commit: 'aaaa',
+				numTotalTestFiles: 2,
+				numFailedTestFiles: 2,
+				numTotalTests: 2,
+				numPassedTests: 0,
+				numFailedTests: 2,
+				numPendingTests: 0,
+				numTodoTests: 0,
+				failedTestFiles: ['a.test.ts', 'b.test.ts']
+			}
+		]);
+		mockGitAndVitest(
+			{ throws: true },
+			{
+				numTotalTests: 2,
+				numPassedTests: 1,
+				numFailedTests: 1,
+				numPendingTests: 0,
+				numTodoTests: 0,
+				testResults: [
+					{ name: testFile('b.test.ts'), status: 'failed', assertionResults: [] },
+					{ name: testFile('c.test.ts'), status: 'passed', assertionResults: [] }
+				]
+			}
+		);
+
+		const result = await recordTestRun();
+
+		expect(result.newlyFixed).toEqual(['a.test.ts']);
+		expect(result.newlyFailing).toEqual([]);
+	});
+});
