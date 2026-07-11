@@ -74,11 +74,18 @@ function runVitestJson(): VitestJsonReport {
 			);
 		}
 		const report = JSON.parse(readFileSync(outputFile, 'utf8')) as VitestJsonReport;
-		// A non-zero exit with zero reported test failures means the exit
-		// wasn't caused by ordinary test failures (e.g. no test files
-		// discovered, a config error) — the report itself can't explain the
-		// exit, so trust the process failure over the report.
-		if (spawnError !== undefined && report.numFailedTests === 0) {
+		// A non-zero exit with zero reported test failures AND no failed
+		// files means the exit wasn't caused by ordinary test failures
+		// (e.g. no test files discovered, a config error) — the report
+		// itself can't explain the exit, so trust the process failure over
+		// the report. A file-level collection/setup failure (an import
+		// error, a throwing beforeAll) marks that file's testResults[]
+		// status as 'failed' but contributes nothing to numFailedTests
+		// (which counts individual assertions, not files) — check both so
+		// that case is correctly treated as a real failing file, not a
+		// run-level failure to discard.
+		const hasFailedFile = report.testResults.some((r) => r.status === 'failed');
+		if (spawnError !== undefined && report.numFailedTests === 0 && !hasFailedFile) {
 			throw new Error('vitest exited non-zero but reported no failing tests — a run-level failure, not test failures.', {
 				cause: spawnError
 			});

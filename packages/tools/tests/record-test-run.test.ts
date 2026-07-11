@@ -113,6 +113,30 @@ describe('recordTestRun', () => {
 		expect(appendTestHistory).not.toHaveBeenCalled();
 	});
 
+	it('a file-level collection failure (non-zero exit, zero test failures, but a failed file) records the failure', async () => {
+		// A file that throws during collection (import error, a throwing
+		// beforeAll) has no assertionResults, so numFailedTests stays 0 —
+		// but testResults[] still marks that file's status as 'failed'.
+		// This must NOT be mistaken for a run-level failure with nothing
+		// to explain the exit.
+		mockGitAndVitest(
+			{ throws: true },
+			{
+				numTotalTests: 0,
+				numPassedTests: 0,
+				numFailedTests: 0,
+				numPendingTests: 0,
+				numTodoTests: 0,
+				testResults: [{ name: testFile('broken-import.test.ts'), status: 'failed', assertionResults: [] }]
+			}
+		);
+
+		const result = await recordTestRun();
+
+		expect(result.entry.failedTestFiles).toEqual(['broken-import.test.ts']);
+		expect(appendTestHistory).toHaveBeenCalledTimes(1);
+	});
+
 	it('a fully green run (zero exit, zero failures) records without error', async () => {
 		mockGitAndVitest(
 			{ throws: false },
