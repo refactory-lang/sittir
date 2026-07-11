@@ -164,7 +164,6 @@ function emitBranchTest(
 
 	// Gap 5: single-field-no-children factories take the value directly.
 	// Detect and emit a direct-value call instead of a config-object.
-	const nonStampFields = node.fields.filter((f) => !isAutoStampField(f, nodeMap));
 	const singleFieldSlot = resolveSingleFieldFactorySlot(node, nodeMap);
 
 	let typeConfigArg: string;

@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
@@ -120,91 +120,6 @@ function makeVisibleSupertypeChildrenNodeMap() {
 	);
 	nodes.set('expression', new AssembledSupertype('expression', expressionRule, ['identifier']));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	return makeNodeMapWith(nodes);
-}
-
-function makeOptionalThenRequiredChildNodeMap() {
-	const parentRule: SeqRule<'link'> = {
-		type: SEQ,
-		members: [
-			{
-				type: OPTIONAL,
-				content: { type: SYMBOL, name: 'identifier' }
-			},
-			{ type: SYMBOL, name: 'number_literal' }
-		]
-	};
-	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'optional_then_required_parent',
-		new AssembledBranch(
-			'optional_then_required_parent',
-			parentRule,
-			deleteWrapper(parentRule),
-			deleteWrapper(parentRule)
-		)
-	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('number_literal', new AssembledPattern('number_literal', { type: PATTERN, value: '[0-9]+' }));
-	return makeNodeMapWith(nodes);
-}
-
-function makeMultiSiblingFieldNodeMap() {
-	const parentRule: SeqRule<'link'> = {
-		type: SEQ,
-		members: [
-			{
-				type: FIELD,
-				name: 'declaration',
-				content: {
-					type: CHOICE,
-					members: [
-						{ type: SYMBOL, name: 'identifier' },
-						{
-							type: SEQ,
-							members: [
-								{ type: STRING, value: 'module' },
-								{ type: SYMBOL, name: 'property_identifier' },
-								{ type: STRING, value: ':' },
-								{ type: SYMBOL, name: 'object_type' }
-							]
-						}
-					]
-				}
-			}
-		]
-	};
-	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'ambient_like_parent',
-		new AssembledBranch('ambient_like_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
-	);
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('property_identifier', new AssembledPattern('property_identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('object_type', new AssembledPattern('object_type', { type: PATTERN, value: '\\{\\}' }));
-	return makeNodeMapWith(nodes);
-}
-
-function makeHiddenWrapperChildNodeMap() {
-	const parentRule: SeqRule<'link'> = {
-		type: SEQ,
-		members: [{ type: SYMBOL, name: '_suite' }]
-	};
-	const suiteRule: ChoiceRule<'link'> = {
-		type: CHOICE,
-		members: [
-			{ type: SYMBOL, name: 'block' },
-			{ type: SYMBOL, name: '_newline' }
-		]
-	};
-	const nodes = new Map<string, AssembledNode>();
-	nodes.set(
-		'except_like_parent',
-		new AssembledBranch('except_like_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
-	);
-	nodes.set('_suite', new AssembledBranch('_suite', suiteRule, deleteWrapper(suiteRule), deleteWrapper(suiteRule)));
-	nodes.set('block', new AssembledPattern('block', { type: PATTERN, value: 'block' }));
-	nodes.set('_newline', new AssembledPattern('_newline', { type: PATTERN, value: '\\n' }));
 	return makeNodeMapWith(nodes);
 }
 

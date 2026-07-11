@@ -1662,9 +1662,6 @@ export function emitRenderModule(
 	}
 	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
-	const kindIdByKind = generatedIdTables
-		? buildKindIdByKind(collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables))
-		: undefined;
 
 	// --- templates.rs ---
 	// Per-kind Template structs. The `filters` module must live here because
@@ -3076,23 +3073,6 @@ function renderTransportEntry(): string[] {
 }
 
 /**
- * Typed bridge classification for a field — returns how to convert the
- * typed transport field to `AnyTransport` for the per-slot bridges.
- *
- * Returns `{ kind: 'concrete', variant }` — wrap with `AnyTransport::Variant(…)`.
- * Returns `{ kind: 'supertype', toAnyFn }` — call `<supertype>_transport_to_any(…)`.
- * Returns `{ kind: 'transportSlot', toAnyFn }` — call
- *   `<ownerSnake>_<fieldSnake>_transport_slot_to_any(…)` (the heterogeneous
- *   per-slot typed enum landed on the named field after spec 024 cleanup-§E1).
- * Returns `undefined` — already `AnyTransport`, pass unchanged.
- */
-type BridgeFieldClass =
-	| { readonly kind: 'concrete'; readonly variant: string }
-	| { readonly kind: 'supertype'; readonly toAnyFn: string }
-	| { readonly kind: 'transportSlot'; readonly toAnyFn: string }
-	| undefined;
-
-/**
  * Previously emitted a `pub struct LiteralTransport { text: String, ... }` napi
  * object so JS could send the literal text across the FFI boundary. Now that
  * `AnyTransport` literal variants are unit variants (no payload), the struct is
@@ -3776,33 +3756,6 @@ function findSupertypeKindByTypeName(supertypeName: string, nodeMap: NodeMap): s
 		supertypeKindByTypeNameCache.set(nodeMap, map);
 	}
 	return map.get(supertypeName);
-}
-
-/**
- * Returns true when a singular slot's emitted Rust type is `Box<T>` because
- * the slot closes a size cycle through the singular-reference graph. Mirrors
- * the logic in `rustTransportSlotType` so bridge expression builders (which
- * pass field values to `*_transport_to_any` fns expecting unboxed types) can
- * emit a `*` deref when needed. Vec slots are never Boxed (they don't
- * propagate size cycles), so this returns false for `isMultiple(field)`.
- */
-function slotCreatesBackEdge(field: AssembledNonterminal, parentKind: string, nodeMap: NodeMap): boolean {
-	if (isMultiple(field)) return false;
-	const scc = nodeMap.scc;
-	if (scc === undefined) return false;
-	const slotKinds = kindsOf(field);
-	const hasMixedContent = slotKinds.length > 0 && slotLiteralValues(field).length > 0;
-	const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
-	let reachableKinds: readonly string[] = [];
-	if (cls.tag === 'concrete') {
-		reachableKinds = [cls.kind];
-	} else if (cls.tag === 'supertype') {
-		const supertypeKind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
-		reachableKinds = supertypeKind !== undefined ? [supertypeKind] : slotKinds;
-	} else {
-		reachableKinds = slotKinds;
-	}
-	return reachableKinds.some((k) => scc.sameSCC(parentKind, k));
 }
 
 /**

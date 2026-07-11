@@ -1065,64 +1065,6 @@ function _fieldTypeParts(field: AssembledNonterminal, nodeMap?: NodeMap): string
 	});
 }
 
-function emitFormInterface(
-	lines: string[],
-	node: AssembledNode,
-	form: AssembledGroup,
-	typeName: string,
-	nodeMap: NodeMap,
-	lookupUnion?: LookupUnion,
-	kindDiscriminant = JSON.stringify(node.kind),
-	kindEntries?: readonly KindEnumEntry[]
-): void {
-	lines.push(`export interface ${typeName} {`);
-	// Canonical-hidden architecture (Option Y): UForm interfaces declare
-	// the parent polymorph's kind verbatim — no underscore strip — so
-	// factory output (which stamps the parent kind) and `wrapNode`
-	// output (which canonicalizes via the alias map) converge on the
-	// same `$type` literal that the interface declares.
-	lines.push(`  readonly $type: ${kindDiscriminant};`);
-	// `$variant` literal discriminant — matches what the form factory stamps
-	// on its output (`$variant: '<form.name>' as const`). Makes the parent
-	// polymorph union a discriminated union so consumers can narrow via
-	// `if (expr.$variant === 'binary') { … }` without structural probing.
-	lines.push(`  readonly $variant: '${form.name}';`);
-
-	// ADR-0018 Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor
-	// function types at the top level instead of `$fields: { name: T }`.
-	if (form.fields.length > 0) {
-		// Storage keys: `readonly _name?: T`
-		for (const f of form.fields) {
-			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
-			const opt = isRequired(f) ? '' : '?';
-			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
-			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				lines.push(`  readonly ${f.storageKey}${opt}: readonly (${storageType})[];`);
-			} else {
-				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
-			}
-		}
-		emitFieldInputHints(lines, form.fields, node.kind, nodeMap, kindEntries);
-		// Accessor function types: `name(): T`
-		for (const f of form.fields) {
-			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
-			const propName = f.propertyName;
-			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
-			const opt = isRequired(f) ? '' : '?';
-			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
-				lines.push(`  ${propName}(): readonly (${storageType})[];`);
-			} else {
-				lines.push(`  ${propName}(): ${storageType}${opt ? ' | undefined' : ''};`);
-			}
-		}
-	}
-
-	lines.push('}');
-	lines.push('');
-}
-
 /**
  * Format a field's type expression for the types.ts surface — bare
  * identifiers (no `T.` prefix) and missing kinds registered via

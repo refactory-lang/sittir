@@ -32,7 +32,7 @@ export async function setup() {
 			stdio: 'pipe'
 		});
 		console.log(`[vitest-setup] pnpm -r run build (${Date.now() - t0}ms)`);
-	} catch (e) {
+	} catch {
 		// The dist artifacts are already present from the last successful build.
 		// Warn but continue — tests resolve via tsconfig paths (tsx runtime),
 		// not from dist.

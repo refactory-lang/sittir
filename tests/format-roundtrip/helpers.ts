@@ -8,12 +8,7 @@ import { readTreeNode as readRustTreeNode } from '@sittir/rust';
 import { readTreeNode as readTypeScriptTreeNode } from '@sittir/typescript';
 import type { FormatRecord } from '@sittir/types';
 
-import {
-	loadLanguageForGrammar,
-	loadWebTreeSitter,
-	loadKindIdFromName,
-	treeHandle
-} from '../../packages/tools/src/validate/common.ts';
+import { loadLanguageForGrammar, loadKindIdFromName, treeHandle } from '../../packages/tools/src/validate/common.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '../..');

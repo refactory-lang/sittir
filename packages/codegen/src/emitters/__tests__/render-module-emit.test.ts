@@ -16,7 +16,6 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
-import { runRenderModuleEmitter } from '../render-module-runner.ts';
 import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';

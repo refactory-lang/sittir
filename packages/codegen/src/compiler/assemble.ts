@@ -16,7 +16,6 @@ import type {
 	ChoiceRule,
 	RepeatRule,
 	Repeat1Rule,
-	PatternRule,
 	StringRule,
 	EnumRule,
 	SupertypeRule
@@ -51,7 +50,6 @@ import {
 	isNodeRef,
 	isUnresolvedRef,
 	allSlotsOf,
-	type ParseKindCollisionContext,
 	resetParseKindCollisionDiagnostics,
 	resetDeriveShapeDiagnostics,
 	setOptionalBodyKinds,
@@ -1709,57 +1707,6 @@ export { simplifyRule };
 // backwards compatibility with assemble.test.ts and any other callers that
 // import it from this module.
 export { nameNode } from './model/node-map.ts';
-
-// Reserved words that cannot be used as parameter/method names in TypeScript.
-const TS_RESERVED_WORDS = new Set([
-	'arguments',
-	'await',
-	'break',
-	'case',
-	'catch',
-	'class',
-	'const',
-	'continue',
-	'debugger',
-	'default',
-	'delete',
-	'do',
-	'else',
-	'enum',
-	'export',
-	'extends',
-	'false',
-	'finally',
-	'for',
-	'function',
-	'if',
-	'import',
-	'in',
-	'instanceof',
-	'new',
-	'null',
-	'return',
-	'super',
-	'switch',
-	'this',
-	'throw',
-	'true',
-	'try',
-	'typeof',
-	'var',
-	'void',
-	'while',
-	'with',
-	'yield',
-	'let',
-	'static',
-	'implements',
-	'interface',
-	'package',
-	'private',
-	'protected',
-	'public'
-]);
 
 // `extractRepeatShape` moved to `simplify.ts` (needed by the inlining
 // fixpoint and re-exported for the remaining assemble call sites). The

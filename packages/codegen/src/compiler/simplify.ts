@@ -994,7 +994,7 @@ export function hoistInnerFieldsForTemplate(rule: AnyRule): AnyRule {
  * lattice (survivor `optional` + seq `array` → `array`); the rest ride along
  * absent-only (`withAttrsFrom`). See glossary (Phase 3.5).
  */
-function simplifySeqRule(rule: SeqRule, ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
+function simplifySeqRule(rule: SeqRule, _ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	// Members already simplified by simplifyRule's ctx.walker.map recursion —
 	// this function no longer recurses into its own children (PR-S task 4).
 	const mapped: AnyRule[] = rule.members;
