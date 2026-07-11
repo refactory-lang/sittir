@@ -108,7 +108,7 @@ export interface ExerciseOptions {
 	kinds: string[];
 }
 
-const COMMON_MODULE_PATH = '../../../codegen/src/validate/common.ts';
+const COMMON_MODULE_PATH = '../validate/common.ts';
 const FACTORY_MODULE_PATHS: Record<GrammarName, string> = {
 	rust: '../../../rust/src/factories.ts',
 	typescript: '../../../typescript/src/factories.ts',

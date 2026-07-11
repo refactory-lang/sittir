@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import * as common from '../../codegen/src/validate/common.ts';
+import * as common from '../src/validate/common.ts';
 import { buildFactoryNode, loadFactoryArtifacts, run } from '../src/exercise/roundtrip.ts';
 
 describe('exercise roundtrip helpers', () => {
@@ -11,8 +11,11 @@ describe('exercise roundtrip helpers', () => {
 		const artifacts = await loadFactoryArtifacts('rust');
 
 		expect(artifacts.factorySlots.await_expression).toBeDefined();
-		expect(artifacts.factorySlots.await_expression?.children).toMatchObject({
-			unnamed: true,
+		// rust's await_expression carries its operand in a named `expression`
+		// field, not an unnamed `children` slot — current codegen assigns
+		// semantic field names where the grammar makes one available.
+		expect(artifacts.factorySlots.await_expression?.expression).toMatchObject({
+			unnamed: false,
 			required: true,
 			multiple: false
 		});
@@ -43,7 +46,7 @@ describe('exercise roundtrip helpers', () => {
 
 		const result = buildFactoryNode(
 			'direct_child',
-			{ $type: 'direct_child', $children: [leaf] },
+			{ $type: 'direct_child', $other: [leaf] },
 			{},
 			artifacts,
 			common,
@@ -79,7 +82,7 @@ describe('exercise roundtrip helpers', () => {
 
 		const result = buildFactoryNode(
 			'spread_child',
-			{ $type: 'spread_child', $children: [left, right] },
+			{ $type: 'spread_child', $other: [left, right] },
 			{},
 			artifacts,
 			common,
@@ -93,7 +96,7 @@ describe('exercise roundtrip helpers', () => {
 		const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true);
 		const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
 
-		await expect(run(['--grammar', 'rust', '--kinds', 'await_expression'])).resolves.toBe(0);
+		await expect(run({ grammar: 'rust', kinds: ['await_expression'] })).resolves.toBe(0);
 
 		expect(stdout).toHaveBeenCalled();
 		expect(stderr).not.toHaveBeenCalled();
