@@ -46,10 +46,6 @@ export type {
 	Renderable
 } from './core-types.ts';
 
-// NOTE: NodeId is kept as a deprecated plain `number` alias for backward
-// compatibility during the ADR-0017 migration. New code should use plain
-// `number` for node handles and child indices.
-
 // ---------------------------------------------------------------------------
 // Type utilities
 // ---------------------------------------------------------------------------
