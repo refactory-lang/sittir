@@ -510,8 +510,16 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
 	// Write suggested overrides log (T042f) next to overrides.ts at the
-	// package root. This is a documentation file — not runnable.
-	await writeFile(join(dirname(outDir), 'overrides.suggested.ts'), result.suggested);
+	// package root. This is a documentation file — not runnable. `undefined`
+	// means the emitter has nothing to suggest (emission disabled or empty
+	// result) — skip the write, and remove any stale file left by a prior
+	// run so re-enabling the emitter later naturally recreates it.
+	const suggestedPath = join(dirname(outDir), 'overrides.suggested.ts');
+	if (result.suggested !== undefined) {
+		await writeFile(suggestedPath, result.suggested);
+	} else if (existsSync(suggestedPath)) {
+		rmSync(suggestedPath);
+	}
 
 	// Write tests
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
