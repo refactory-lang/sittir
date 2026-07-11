@@ -31,7 +31,6 @@ import type {
 	ChoiceRule,
 	RepeatRule,
 	Repeat1Rule,
-	PatternRule,
 	StringRule,
 	EnumRule,
 	SupertypeRule
@@ -62,7 +61,6 @@ import {
 	isNodeRef,
 	isUnresolvedRef,
 	allSlotsOf,
-	type ParseKindCollisionContext,
 	resetParseKindCollisionDiagnostics,
 	resetDeriveShapeDiagnostics,
 	setOptionalBodyKinds,
