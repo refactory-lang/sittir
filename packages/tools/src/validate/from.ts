@@ -219,11 +219,16 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let polymorphVariants: Record<string, unknown> = {};
 	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
+	const errors: FromValidationError[] = [];
 	try {
 		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		fromMap = fromModule._fromMap ?? {};
-	} catch {
-		/* from module unavailable */
+	} catch (e) {
+		errors.push({
+			kind: '(from-module-load)',
+			severity: 'error',
+			message: (e as Error).message
+		});
 	}
 	try {
 		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
@@ -236,18 +241,38 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 		factorySlots = model.factorySlots;
 		fieldAliasMap = model.fieldAliasMap;
 		polymorphVariants = model.polymorphVariants;
-	} catch {
-		/* factory module unavailable */
+	} catch (e) {
+		errors.push({
+			kind: '(factory-module-load)',
+			severity: 'error',
+			message: (e as Error).message
+		});
 	}
 	try {
 		const wrapModule = await import(new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		readTreeNode = wrapModule.readTreeNode;
 	} catch {
-		/* wrap module unavailable */
+		/* wrap module unavailable — readTreeNode falls back to raw readNode below */
+	}
+
+	// Without fromMap/factoryMap, every kind fails `kind in fromMap && kind
+	// in factoryMap` below and total stays 0 — silently reporting a passing
+	// "0/0" run instead of the real load failure. Short-circuit and surface
+	// it, matching validateFactoryRenderParse's importFailure guard.
+	if (errors.length > 0) {
+		return {
+			grammar,
+			total: 0,
+			pass: 0,
+			fail: 0,
+			skip: 0,
+			undefinedCount: 0,
+			divergentCount: 0,
+			errors
+		};
 	}
 
 	const entries = loadCorpusEntries(grammar);
-	const errors: FromValidationError[] = [];
 	const testedKinds = new Set<string>();
 	let pass = 0;
 	let skip = 0;
