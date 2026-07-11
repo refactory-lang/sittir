@@ -37,7 +37,6 @@ import type {
 } from '../types/rule.ts';
 import { isLinkSymbol, isEnumChoiceRule } from '../types/rule.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
-import { computePolymorphFormKinds } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
 import { collectGeneratedKindEntries, type GeneratedIdTables, type GeneratedKindEntry } from './generated-metadata.ts';
 import type { AssembledNode, AssembledNonterminal, UnresolvedRef } from './model/node-map.ts';
@@ -563,6 +562,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		resetAssembleWarnings();
 		setOptionalBodyKinds(null);
 	}
+}
+
+// No PolymorphRule/AssembledPolymorph model types exist at runtime —
+// polymorphFormKinds is always empty. Kept in NodeMap for API stability.
+function computePolymorphFormKinds(_nodes: Map<string, AssembledNode>): Set<string> {
+	return new Set<string>();
 }
 
 /**
