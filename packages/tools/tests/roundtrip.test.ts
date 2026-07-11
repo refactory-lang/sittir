@@ -41,7 +41,14 @@ describe('exercise roundtrip helpers', () => {
 			polymorphVariants: {}
 		};
 
-		const result = buildFactoryNode('direct_child', { $type: 'direct_child', $children: [leaf] }, {}, artifacts, common, undefined);
+		const result = buildFactoryNode(
+			'direct_child',
+			{ $type: 'direct_child', $children: [leaf] },
+			{},
+			artifacts,
+			common,
+			undefined
+		);
 
 		expect(result).toEqual({ $type: 'rebuilt_direct', value: leaf });
 	});

@@ -4,14 +4,14 @@ import {
 	compareWithBaseline,
 	countByModule,
 	markDead,
-	PIPELINE_MODULES,
+	PIPELINE_MODULES
 } from '../src/validate/propose-14.ts';
 
 describe('propose-14 signature classification', () => {
 	it('classifies (target, ctx: *Ctx) as conforming', () => {
 		const recs = classifySource(
 			'compiler/simplify.ts',
-			'export function collapseSeq(rule: Rule, ctx: SimplifyCtx): Rule { return rule; }',
+			'export function collapseSeq(rule: Rule, ctx: SimplifyCtx): Rule { return rule; }'
 		);
 		expect(recs).toHaveLength(1);
 		expect(recs[0].name).toBe('collapseSeq');
@@ -21,7 +21,7 @@ describe('propose-14 signature classification', () => {
 	it('classifies an optional-union ctx (SimplifyCtx | undefined) as conforming', () => {
 		const recs = classifySource(
 			'compiler/simplify.ts',
-			'function fix(rule: Rule, ctx: SimplifyCtx | undefined, rules: Readonly<Record<string, Rule>>) {}',
+			'function fix(rule: Rule, ctx: SimplifyCtx | undefined, rules: Readonly<Record<string, Rule>>) {}'
 		);
 		expect(recs[0].bucket).toBe('conforming');
 	});
@@ -29,7 +29,7 @@ describe('propose-14 signature classification', () => {
 	it('classifies (target, ctx, recursion-local) as conforming per CW6', () => {
 		const recs = classifySource(
 			'compiler/normalize.ts',
-			'function liftRule(rule: Rule, ctx: NormalizeCtx, inField: boolean): Rule { return rule; }',
+			'function liftRule(rule: Rule, ctx: NormalizeCtx, inField: boolean): Rule { return rule; }'
 		);
 		expect(recs[0].bucket).toBe('conforming');
 	});
@@ -37,7 +37,7 @@ describe('propose-14 signature classification', () => {
 	it('classifies a single-param fn as getter-candidate', () => {
 		const recs = classifySource(
 			'compiler/model/node-map.ts',
-			'export function storageKindOf(slot: AssembledSlot): string { return slot.kind; }',
+			'export function storageKindOf(slot: AssembledSlot): string { return slot.kind; }'
 		);
 		expect(recs[0].bucket).toBe('getter-candidate');
 	});
@@ -50,17 +50,14 @@ describe('propose-14 signature classification', () => {
 	it('classifies loose multi-param signatures as non-conforming', () => {
 		const recs = classifySource(
 			'compiler/link.ts',
-			'export function walkRules(rule: Rule, rules: Map<string, Rule>, seen: Set<string>) {}',
+			'export function walkRules(rule: Rule, rules: Map<string, Rule>, seen: Set<string>) {}'
 		);
 		expect(recs[0].bucket).toBe('non-conforming');
 		expect(recs[0].params.map((p) => p.name)).toEqual(['rule', 'rules', 'seen']);
 	});
 
 	it('the FIRST param is always the target, even when it looks ctx-shaped — (ctx, target) is non-conforming', () => {
-		const recs = classifySource(
-			'compiler/link.ts',
-			'function resolveRef(ctx: LinkCtx, rule: Rule) {}',
-		);
+		const recs = classifySource('compiler/link.ts', 'function resolveRef(ctx: LinkCtx, rule: Rule) {}');
 		expect(recs[0].bucket).toBe('non-conforming');
 	});
 
@@ -68,7 +65,7 @@ describe('propose-14 signature classification', () => {
 		// Mirrors assemble()'s real shape: optimized, generatedIdTables?, assembleCtx?.
 		const recs = classifySource(
 			'compiler/assemble.ts',
-			'export function assemble(normalized: NormalizedGrammar, generatedIdTables: GeneratedIdTables, ctx: AssembleCtx) { return ctx; }',
+			'export function assemble(normalized: NormalizedGrammar, generatedIdTables: GeneratedIdTables, ctx: AssembleCtx) { return ctx; }'
 		);
 		expect(recs[0].bucket).toBe('conforming');
 	});
@@ -79,7 +76,7 @@ describe('propose-14 signature classification', () => {
 		// param is still named `ctx` per convention.
 		const recs = classifySource(
 			'compiler/link.ts',
-			'export function link(raw: RawGrammar, ctx: LinkOptions): LinkedGrammar { return raw; }',
+			'export function link(raw: RawGrammar, ctx: LinkOptions): LinkedGrammar { return raw; }'
 		);
 		expect(recs[0].bucket).toBe('conforming');
 	});
@@ -90,7 +87,7 @@ describe('propose-14 signature classification', () => {
 			`export class NodeMap {
 				get size(): number { return 0; }
 				lookup(kind: string, table: Map<string, number>, depth: number): number { return 0; }
-			}`,
+			}`
 		);
 		const byName = Object.fromEntries(recs.map((r) => [r.name, r.bucket]));
 		expect(byName['NodeMap.size']).toBe('getter-candidate');
@@ -100,7 +97,7 @@ describe('propose-14 signature classification', () => {
 	it('captures exported arrow-const functions', () => {
 		const recs = classifySource(
 			'compiler/assemble.ts',
-			'export const nameSlot = (slot: AssembledSlot, ctx: AssembleCtx) => slot.name;',
+			'export const nameSlot = (slot: AssembledSlot, ctx: AssembleCtx) => slot.name;'
 		);
 		expect(recs[0].name).toBe('nameSlot');
 		expect(recs[0].bucket).toBe('conforming');
@@ -114,13 +111,16 @@ describe('propose-14 dead flagging', () => {
 		'export function orphanHelper(rule: Rule) { return rule; }',
 		'function privateUsed(rule: Rule) { return rule; }',
 		'export function caller(rule: Rule) { return privateUsed(rule); }',
-		'function privateOrphan(rule: Rule) { return rule; }',
+		'function privateOrphan(rule: Rule) { return rule; }'
 	].join('\n');
 
 	const corpus = new Map<string, string>([
 		['packages/codegen/src/compiler/link.ts', moduleSource],
 		['packages/codegen/src/compiler/evaluate.ts', 'import { aliveHelper } from "./link.ts"; aliveHelper(r, rules);'],
-		['packages/codegen/src/compiler/__tests__/link.test.ts', 'import { testOnlyHelper } from "../link.ts"; testOnlyHelper(r);'],
+		[
+			'packages/codegen/src/compiler/__tests__/link.test.ts',
+			'import { testOnlyHelper } from "../link.ts"; testOnlyHelper(r);'
+		]
 	]);
 
 	it('flags exported fns with zero non-test external refs and no in-file use as dead', () => {
@@ -137,7 +137,7 @@ describe('propose-14 dead flagging', () => {
 describe('propose-14 ratchet comparison', () => {
 	const counts = {
 		'compiler/link.ts': { total: 10, conforming: 1, getterCandidate: 3, zeroParam: 0, nonConforming: 6, dead: 0 },
-		'compiler/simplify.ts': { total: 5, conforming: 2, getterCandidate: 2, zeroParam: 0, nonConforming: 1, dead: 0 },
+		'compiler/simplify.ts': { total: 5, conforming: 2, getterCandidate: 2, zeroParam: 0, nonConforming: 1, dead: 0 }
 	};
 
 	it('passes when counts equal the baseline', () => {
@@ -168,7 +168,7 @@ describe('propose-14 module aggregation + self-test', () => {
 	it('aggregates per-module counts with exclusive buckets', () => {
 		const recs = [
 			...classifySource('compiler/link.ts', 'export function a(r: Rule, ctx: LinkCtx) {}'),
-			...classifySource('compiler/link.ts', 'export function b(r: Rule, rules: Map<string, Rule>) {}'),
+			...classifySource('compiler/link.ts', 'export function b(r: Rule, rules: Map<string, Rule>) {}')
 		];
 		const counts = countByModule(recs);
 		expect(counts['compiler/link.ts']).toEqual({
@@ -177,7 +177,7 @@ describe('propose-14 module aggregation + self-test', () => {
 			getterCandidate: 0,
 			zeroParam: 0,
 			nonConforming: 1,
-			dead: 0,
+			dead: 0
 		});
 	});
 

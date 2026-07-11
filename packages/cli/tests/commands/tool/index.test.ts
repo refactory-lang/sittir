@@ -3,11 +3,30 @@ import { Command } from 'commander';
 import { toolModules, registerTools } from '../../../src/commands/tool/index.ts';
 
 const EXPECTED = [
-	'bench', 'bench-codemod', 'check-baseline', 'check-jinja', 'check-perf',
-	'classify', 'compare-overrides', 'diff-failures', 'dump-ast-mismatches',
-	'exercise', 'field-provenance', 'grammar-diagnostics', 'inspect-refs',
-	'inspect-type', 'list-kinds', 'phantom-kinds', 'probe-kind', 'probe-parity',
-	'probe-stages', 'probe-validate', 'profile', 'profile-factory', 'propose-14', 'walk'
+	'bench',
+	'bench-codemod',
+	'check-baseline',
+	'check-jinja',
+	'check-perf',
+	'classify',
+	'compare-overrides',
+	'diff-failures',
+	'dump-ast-mismatches',
+	'exercise',
+	'field-provenance',
+	'grammar-diagnostics',
+	'inspect-refs',
+	'inspect-type',
+	'list-kinds',
+	'phantom-kinds',
+	'probe-kind',
+	'probe-parity',
+	'probe-stages',
+	'probe-validate',
+	'profile',
+	'profile-factory',
+	'propose-14',
+	'walk'
 ];
 
 describe('tool namespace', () => {

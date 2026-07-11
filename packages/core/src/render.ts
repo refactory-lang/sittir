@@ -345,7 +345,9 @@ function isAnonEntry(value: unknown): value is AnyNodeData {
 
 type ChildEntry = AnyNodeData | string | number;
 
-function isChildEntryArray(children: ChildEntry | readonly ChildEntry[] | undefined): children is readonly ChildEntry[] {
+function isChildEntryArray(
+	children: ChildEntry | readonly ChildEntry[] | undefined
+): children is readonly ChildEntry[] {
 	return Array.isArray(children);
 }
 
@@ -570,7 +572,9 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 					if (typeof item !== 'object' || item === null) return true;
 					return (item as AnyNodeData).$named !== false;
 				});
-					const joined = named.map((item) => renderValue(item as AnyNodeData | string | number | boolean, ctx, fieldKey)).join(sep);
+				const joined = named
+					.map((item) => renderValue(item as AnyNodeData | string | number | boolean, ctx, fieldKey))
+					.join(sep);
 				// Apply joinByLeading / joinByTrailing to multi-valued
 				// fields too (not just $$$CHILDREN). Mandatory-separator
 				// patterns like rust's tuple_expression `seq(expr, ',')`
@@ -669,8 +673,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 			);
 			if (unconsumedNamed >= 0) {
 				const onlyOne =
-					children.filter((c: any, i: number) => !consumed.has(i) && (c as AnyNodeData).$named !== false)
-						.length === 1;
+					children.filter((c: any, i: number) => !consumed.has(i) && (c as AnyNodeData).$named !== false).length === 1;
 				if (onlyOne) {
 					consumed.add(unconsumedNamed);
 					return renderValue(children[unconsumedNamed] as AnyNodeData | string | number | boolean, ctx);

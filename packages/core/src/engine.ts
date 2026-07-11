@@ -21,4 +21,3 @@ export function resolveEngineFormat(
 	if (!detached) return treeFormat;
 	return undefined;
 }
-

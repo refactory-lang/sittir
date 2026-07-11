@@ -19,10 +19,12 @@ describe('tool check-baseline command', () => {
 		const program = new Command();
 		checkBaselineCmd.register(program);
 		await program.parseAsync(['check-baseline', '--collect', '--backend', 'native'], { from: 'user' });
-		expect(vi.mocked(runCheckBaseline)).toHaveBeenCalledWith(expect.objectContaining({
-			collect: true,
-			backend: 'native',
-		}));
+		expect(vi.mocked(runCheckBaseline)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				collect: true,
+				backend: 'native'
+			})
+		);
 	});
 
 	it('passes check mode options to the tool run()', async () => {
@@ -30,10 +32,12 @@ describe('tool check-baseline command', () => {
 		const program = new Command();
 		checkBaselineCmd.register(program);
 		await program.parseAsync(['check-baseline', '--base', 'base.json', '--head', 'head.json'], { from: 'user' });
-		expect(vi.mocked(runCheckBaseline)).toHaveBeenCalledWith(expect.objectContaining({
-			collect: false,
-			base: 'base.json',
-			head: 'head.json',
-		}));
+		expect(vi.mocked(runCheckBaseline)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				collect: false,
+				base: 'base.json',
+				head: 'head.json'
+			})
+		);
 	});
 });

@@ -7,10 +7,7 @@ import { appendHistory, readHistory, historyPath } from '../src/history.ts';
 import type { ValidationRun } from '../src/history.ts';
 
 const REAL_HISTORY = historyPath();
-const SCRATCH = resolve(
-	fileURLToPath(new URL('..', import.meta.url)),
-	'validation-history-test-scratch.jsonl',
-);
+const SCRATCH = resolve(fileURLToPath(new URL('..', import.meta.url)), 'validation-history-test-scratch.jsonl');
 
 function makeEntry(overrides: Partial<ValidationRun> = {}): ValidationRun {
 	return {
@@ -30,7 +27,7 @@ function makeEntry(overrides: Partial<ValidationRun> = {}): ValidationRun {
 		factoryRenderParsePass: 3,
 		factoryRenderParseTotal: 4,
 		factoryRenderParseAstMatchPass: 3,
-		...overrides,
+		...overrides
 	};
 }
 
@@ -90,7 +87,7 @@ describe('@sittir/validator history round-trip (scratch file)', () => {
 		const schemaLine = JSON.stringify({
 			schema: 'v1',
 			description: 'sittir validation history',
-			fields: ['ts', 'grammar'],
+			fields: ['ts', 'grammar']
 		});
 		writeFileSync(SCRATCH, schemaLine + '\n');
 
@@ -128,7 +125,7 @@ describe('@sittir/validator history round-trip (scratch file)', () => {
 			'readRenderParseShallowAstMatchPass',
 			'factoryRenderParsePass',
 			'factoryRenderParseTotal',
-			'factoryRenderParseAstMatchPass',
+			'factoryRenderParseAstMatchPass'
 		];
 		for (const k of keys) {
 			expect(Object.prototype.hasOwnProperty.call(entry, k)).toBe(true);

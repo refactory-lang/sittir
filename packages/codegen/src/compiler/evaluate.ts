@@ -46,13 +46,7 @@ import { isEnumChoiceRule } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import type { AnyRule } from '../types/rule.ts';
 import type { RawGrammar } from './types.ts';
-import type {
-	RuleCatalog,
-	RuleCatalogEntry,
-	RuleClassification,
-	RulePathSegment,
-	RuleProvenance
-} from './types.ts';
+import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 import { classifyByType } from './rule-catalog.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
@@ -2660,11 +2654,7 @@ function identifyRule(params: IdentifyParams): BuildResult {
 function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): BuildResult[] {
 	const { selfId, ...params } = args;
 
-	const childParams = (childArgs: {
-		rule: Rule<'evaluate'>;
-		segment: RulePathSegment;
-		force?: ClassificationForce;
-	}) =>
+	const childParams = (childArgs: { rule: Rule<'evaluate'>; segment: RulePathSegment; force?: ClassificationForce }) =>
 		identifyRule({
 			rule: childArgs.rule,
 			ownerKind: params.ownerKind,
@@ -2767,7 +2757,8 @@ function classifyRule(
 	}
 ): RuleClassification {
 	const intrinsicKind = classifyIntrinsic(rule, { children: ctx.children });
-	const forcedKind = ctx.force.forcedBy === 'field' || ctx.force.forcedBy === 'named-alias' ? 'nonterminal' : intrinsicKind;
+	const forcedKind =
+		ctx.force.forcedBy === 'field' || ctx.force.forcedBy === 'named-alias' ? 'nonterminal' : intrinsicKind;
 	return {
 		ruleId: ctx.id,
 		kind: forcedKind,
@@ -2784,7 +2775,10 @@ function classifyRule(
  * {@link classifyByType} with their own computation of `anyChildNonterminal`,
  * so the per-rule-type table lives there in one place.
  */
-function classifyIntrinsic(rule: Rule<'evaluate'>, ctx: { readonly children: readonly BuildResult[] }): RuleClassification['kind'] {
+function classifyIntrinsic(
+	rule: Rule<'evaluate'>,
+	ctx: { readonly children: readonly BuildResult[] }
+): RuleClassification['kind'] {
 	const anyChildNonterminal = ctx.children.some((child) => child.classification.kind === 'nonterminal');
 	return classifyByType(rule.type, anyChildNonterminal);
 }

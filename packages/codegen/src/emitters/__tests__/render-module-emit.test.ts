@@ -16,6 +16,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
+import { runRenderModuleEmitter } from '../render-module-runner.ts';
 import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';
@@ -331,5 +332,3 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 	// Key regression guard: list field must not be labelled as semi
 	expect(transport).not.toContain(`array_expression_list: Box<ArrayExpressionSemiTransport>`);
 }, 60_000);
-
-

@@ -14,43 +14,37 @@ vi.mock('node:child_process', () => {
 
 // Mock the run module so no live validators launch.
 vi.mock('../src/run.ts', () => ({
-	runFrom: vi
-		.fn()
-		.mockResolvedValue({
-			grammar: 'rust',
-			total: 5,
-			pass: 5,
-			fail: 0,
-			skip: 0,
-			undefinedCount: 0,
-			divergentCount: 0,
-			errors: []
-		}),
-	runRt: vi
-		.fn()
-		.mockResolvedValue({
-			grammar: 'rust',
-			total: 8,
-			pass: 8,
-			fail: 0,
-			skip: 0,
-			astMatchPass: 8,
-			errors: [],
-			astMismatches: []
-		}),
+	runFrom: vi.fn().mockResolvedValue({
+		grammar: 'rust',
+		total: 5,
+		pass: 5,
+		fail: 0,
+		skip: 0,
+		undefinedCount: 0,
+		divergentCount: 0,
+		errors: []
+	}),
+	runRt: vi.fn().mockResolvedValue({
+		grammar: 'rust',
+		total: 8,
+		pass: 8,
+		fail: 0,
+		skip: 0,
+		astMatchPass: 8,
+		errors: [],
+		astMismatches: []
+	}),
 	runCoverage: vi.fn().mockReturnValue({ grammar: 'rust', total: 10, pass: 10, fail: 0, issues: [] }),
-	runFactory: vi
-		.fn()
-		.mockResolvedValue({
-			grammar: 'rust',
-			total: 7,
-			pass: 7,
-			fail: 0,
-			skip: 0,
-			astMatchPass: 7,
-			errors: [],
-			astMismatches: []
-		}),
+	runFactory: vi.fn().mockResolvedValue({
+		grammar: 'rust',
+		total: 7,
+		pass: 7,
+		fail: 0,
+		skip: 0,
+		astMatchPass: 7,
+		errors: [],
+		astMismatches: []
+	}),
 	defaultTemplatesPath: vi.fn().mockReturnValue('/fake/templates')
 }));
 

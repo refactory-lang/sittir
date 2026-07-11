@@ -32,7 +32,7 @@ describe('tool probe-validate command', () => {
 				entry: 'Simple function',
 				engine: 'native',
 				firstFailing: false,
-				stdin: false,
+				stdin: false
 			})
 		);
 	});

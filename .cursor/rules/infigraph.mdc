@@ -1,11 +1,10 @@
-# Copilot instructions for `sittir`
-
-Use [`CLAUDE.md`](../CLAUDE.md) as the single source of truth for repository-specific commands, architecture, conventions, and workflow rules.
-
-This file is intentionally minimal to avoid drift.
-
-
 <!-- infigraph-instructions -->
+---
+description: Infigraph code intelligence — use Infigraph MCP tools for all code navigation
+globs: 
+alwaysApply: true
+---
+
 # Infigraph — Code Intelligence
 
 This project is indexed by Infigraph. Use Infigraph tools FIRST for all code tasks. Fall back to grep/read only if Infigraph returns nothing or for non-code files.
