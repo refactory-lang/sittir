@@ -11,6 +11,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve as resolvePath } from 'node:path';
 import { runFrom, runRt, runCoverage, runFactory, defaultTemplatesPath, type Grammar, type Backend } from './run.ts';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
+import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 import {
@@ -676,6 +677,29 @@ export function runHistoryCli(args: string[]): void {
 				`  read-render-parse-shallow=${r.readRenderParseShallowPass}/${r.readRenderParseShallowTotal}` +
 				`  factory-render-parse=${r.factoryRenderParsePass}/${r.factoryRenderParseTotal}`
 		);
+	}
+}
+
+/** Exported entry: test-history subcommand — prints last N recorded `vitest run` summaries. */
+export function runTestHistoryCli(args: string[]): void {
+	const n = parseInt(args.find((a) => /^\d+$/.test(a)) ?? '10', 10);
+	const runs = readTestHistory().slice(-n);
+	if (runs.length === 0) {
+		console.log('No test history found. Run `sittir tool test-history --record` to create the first entry.');
+		return;
+	}
+	console.log(`Last ${runs.length} recorded test run(s):\n`);
+	for (const r of runs) {
+		console.log(
+			`${r.ts}  ${r.branch}@${r.commit.slice(0, 8)}` +
+				`  tests=${r.numPassedTests}/${r.numTotalTests} passed` +
+				`  failed=${r.numFailedTests}` +
+				`  skipped=${r.numPendingTests}` +
+				`  files-failed=${r.numFailedTestFiles}/${r.numTotalTestFiles}`
+		);
+		if (r.failedTestFiles.length > 0) {
+			console.log(`    failing: ${r.failedTestFiles.join(', ')}`);
+		}
 	}
 }
 
