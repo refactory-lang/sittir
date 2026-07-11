@@ -401,7 +401,15 @@ export async function probe(
 			if (!target) {
 				throw new Error(`probe-kind: --engine native: no node match in NodeData tree`);
 			}
-			const targetId = (target as { $nodeId?: NodeId }).$nodeId;
+			// `$nodeId` is ADR-0017's retired field name (replaced by
+			// `$nodeHandle`+`$childIndex`) — kept as a defensive optional
+			// check, not a live path: current NodeData shapes never carry
+			// it, so this is always `undefined` and `target` (the wrap-read
+			// match from `root` above, already fully materialized) is what
+			// actually gets used. Native --kind/--range currently fails
+			// earlier in the pipeline regardless (unrelated transport bug),
+			// so this branch isn't independently testable right now.
+			const targetId = (target as { $nodeId?: number }).$nodeId;
 			nodeData = targetId !== undefined && readTreeNodeFn ? readTreeNodeFn(handle, targetId) : target;
 		}
 	} else {
@@ -413,7 +421,12 @@ export async function probe(
 		// kindIdFromName is required for JS-side reads (readNode emits numeric
 		// $type — see common.ts's treeHandle doc). Wrap so an unknown kind name
 		// returns undefined instead of throwing, matching run()'s own pattern.
-		const rawKindIdFromName = await loadKindIdFromName(grammar);
+		// Kind IDs can differ across generated versions — the exact scenario
+		// --baseline compares — so load from the baseline package's own
+		// types.ts, not the current package's, whenever a baseline is set.
+		const rawKindIdFromName = opts.baselineDir
+			? await loadKindIdFromNameFromPath(resolveBaselinePath(opts.baselineDir, 'src/types.ts'))
+			: await loadKindIdFromName(grammar);
 		const kindIdFromName = rawKindIdFromName
 			? (name: string): number | undefined => {
 					try {
@@ -424,8 +437,26 @@ export async function probe(
 				}
 			: undefined;
 		const handle = treeHandle(tree, source, kindIdFromName);
-		const nodeId = isRoot ? undefined : (targetNode.id as NodeId);
-		nodeData = readTreeNodeFn ? readTreeNodeFn(handle, nodeId) : await fallbackReadNode(handle, nodeId);
+		// targetNode.id is tree-sitter wasm's own internal id, not a
+		// $nodeHandle/$childIndex pair (ADR-0017 replaced $nodeId with that
+		// pair; readNode/readTreeNode navigate ONLY via handle+childIndex —
+		// see readNode.ts: `if (handle != null && childIndex != null...)`,
+		// else it falls back to reading `tree.rootNode`). Passing just
+		// targetNode.id as a single positional arg can never satisfy that
+		// check, so --kind/--range silently read/render the root instead of
+		// the selected node. Swap the handle's rootNode instead, matching
+		// readSelectedNode's already-correct pattern elsewhere in this file.
+		if (isRoot) {
+			nodeData = readTreeNodeFn ? readTreeNodeFn(handle) : await fallbackReadNode(handle);
+		} else {
+			const prev = handle.rootNode;
+			(handle as { rootNode: typeof prev }).rootNode = adaptNode(targetNode);
+			try {
+				nodeData = readTreeNodeFn ? readTreeNodeFn(handle) : await fallbackReadNode(handle);
+			} finally {
+				(handle as { rootNode: typeof prev }).rootNode = prev;
+			}
+		}
 	}
 
 	let rendered: string | undefined;
@@ -434,14 +465,22 @@ export async function probe(
 	let reparsedCst: CstNode | undefined;
 	let astDiff: ProbeReport['astDiff'] | undefined;
 	if (!opts.noRender) {
-		rendered =
-			opts.engine === 'native'
-				? nativeEngine
-					? nativeEngine.render(await nativeRenderPayload(grammar, nodeData))
-					: await renderNodeDataNative(grammar, nodeData)
-				: opts.baselineDir
-					? await renderNodeDataFromPath(grammar, resolveBaselinePath(opts.baselineDir, 'templates'), nodeData)
-					: await renderNodeData(grammar, nodeData);
+		if (opts.engine === 'native') {
+			rendered = nativeEngine
+				? nativeEngine.render(await nativeRenderPayload(grammar, nodeData))
+				: await renderNodeDataNative(grammar, nodeData);
+		} else if (opts.baselineDir) {
+			// Baseline rendering needs the baseline package's own KIND_NAMES —
+			// same reasoning as the baseline kindIdFromName load above.
+			const baselineKindNames = await loadKindNamesFromPath(resolveBaselinePath(opts.baselineDir, 'src/types.ts'));
+			rendered = await renderNodeDataFromPath(
+				resolveBaselinePath(opts.baselineDir, 'templates'),
+				nodeData,
+				baselineKindNames
+			);
+		} else {
+			rendered = await renderNodeData(grammar, nodeData);
+		}
 		renderedLen = rendered.length;
 		const originalText = probeRange ? probeRange.text : source;
 		sameText = rendered === originalText;
@@ -608,9 +647,9 @@ function dumpCst(node: TSNode, fieldName: string | null): CstNode {
 	return out;
 }
 
-async function fallbackReadNode(handle: ReturnType<typeof treeHandle>, nodeId?: NodeId): Promise<unknown> {
+async function fallbackReadNode(handle: ReturnType<typeof treeHandle>): Promise<unknown> {
 	const { readNode } = await import('@sittir/common');
-	return readNode(handle, nodeId);
+	return readNode(handle);
 }
 
 async function deepReadProbeNode(
@@ -895,10 +934,17 @@ async function renderNodeData(grammar: string, nodeData: unknown): Promise<strin
 }
 
 /** @internal — render via templates from an explicit absolute path
- *  (used by --baseline mode to swap render-side artifacts). */
-async function renderNodeDataFromPath(grammar: string, templatesPath: string, nodeData: unknown): Promise<string> {
+ *  (used by --baseline mode to swap render-side artifacts). `kindNames`
+ *  must come from the SAME package as `templatesPath` — kind ids can
+ *  differ across generated versions, so the caller passes the baseline
+ *  package's own table (loadKindNamesFromPath) rather than this
+ *  defaulting to the current grammar's. */
+async function renderNodeDataFromPath(
+	templatesPath: string,
+	nodeData: unknown,
+	kindNames: ReadonlyMap<number, string> | undefined
+): Promise<string> {
 	const { createRenderer } = await import('@sittir/core');
-	const kindNames = await loadKindNames(grammar);
 	const bound = createRenderer(templatesPath, { kindNames });
 	const materialized = materializeProbeWrappedNodeData(nodeData);
 	return bound.render(materialized as Parameters<typeof bound.render>[0]);
@@ -910,7 +956,7 @@ async function renderNodeDataFromPath(grammar: string, templatesPath: string, no
  *  TS render and mask a parity issue. */
 interface NativeProbeEngine {
 	parseAndRead(source: string): string;
-	readNode(nodeId: NodeId): string;
+	readNode(nodeId: number): string;
 	render(node: Record<string, unknown>): string;
 }
 const nativePackages: Record<string, string> = {
@@ -981,6 +1027,32 @@ async function loadReadTreeNodeFromPath(
 	} catch (e) {
 		process.stderr.write(`probe-kind: failed to load baseline wrap module at ${wrapTsPath}: ${(e as Error).message}\n`);
 		return null;
+	}
+}
+
+/** @internal — load `kindIdFromName` from an explicit `src/types.ts`
+ *  path. Mirrors `loadKindIdFromName` in `validate/common.ts` but reads
+ *  the baseline package's own table — kind IDs can differ across
+ *  generated versions, the exact scenario --baseline compares. */
+async function loadKindIdFromNameFromPath(typesTsPath: string): Promise<((name: string) => number) | undefined> {
+	try {
+		const mod = await import(typesTsPath);
+		return (mod as { kindIdFromName?: (name: string) => number }).kindIdFromName;
+	} catch {
+		return undefined;
+	}
+}
+
+/** @internal — load `KIND_NAMES` from an explicit `src/types.ts` path.
+ *  Mirrors `loadKindNames` in `validate/common.ts`; baseline rendering
+ *  needs the baseline package's own id→name table for the same reason
+ *  `loadKindIdFromNameFromPath` does. */
+async function loadKindNamesFromPath(typesTsPath: string): Promise<ReadonlyMap<number, string> | undefined> {
+	try {
+		const mod = await import(typesTsPath);
+		return (mod as { KIND_NAMES?: ReadonlyMap<number, string> }).KIND_NAMES;
+	} catch {
+		return undefined;
 	}
 }
 
