@@ -25,7 +25,7 @@
  *                text / field-name / children). Shows EXACTLY what tree-sitter
  *                emits, including anonymous tokens and field assignments.
  * - `nodeData`:  output of `readTreeNode(root)` — sittir's NodeData view.
- *                Shows `$fields` / `$children` / `$type` identity after
+ *                Shows `$fields` / `$other` / `$type` identity after
  *                drillAs remapping.
  * - `rendered`:  output of `render(nodeData)` — the text re-emitted by the
  *                render pipeline.
@@ -667,16 +667,6 @@ async function deepReadProbeNode(
 		typeof entry.$nodeHandle === 'number' &&
 		typeof entry.$childIndex === 'number' &&
 		typeof entry.$type === 'number';
-	if (data.$children) {
-		const children = Array.isArray(data.$children) ? data.$children : [data.$children];
-		const drilled = await Promise.all(
-			children.map(async (entry) => {
-				if (!shouldDrill(entry)) return entry;
-				return deepReadProbeNode(handle, entry.$nodeHandle, entry.$childIndex);
-			})
-		);
-		(data as { $children?: typeof data.$children }).$children = Array.isArray(data.$children) ? drilled : drilled[0];
-	}
 	const record = data as unknown as Record<string, unknown>;
 	for (const rawKey of Object.keys(record).filter((key) => key.startsWith('_'))) {
 		const value = record[rawKey];
@@ -926,7 +916,7 @@ async function renderNodeData(grammar: string, nodeData: unknown): Promise<strin
 	const templatesPath = new URL(`../../../${grammar}/templates`, thisFile).pathname;
 	const kindNames = await loadKindNames(grammar);
 	const bound = createRenderer(templatesPath, { kindNames });
-	// readTreeNode's wrap output carries lazy getters ($children, _<field>)
+	// readTreeNode's wrap output carries lazy getters ($other, _<field>)
 	// for on-demand drilling — the renderer needs plain resolved values.
 	// Materialize first, matching validateReadRenderParse's working pattern.
 	const materialized = materializeProbeWrappedNodeData(nodeData);
@@ -1133,8 +1123,8 @@ function findInNodeData(node: unknown, kind: string): unknown | null {
 			if (found) return found;
 		}
 	}
-	if (Array.isArray(n.$children)) {
-		for (const c of n.$children as unknown[]) {
+	if (Array.isArray(n.$other)) {
+		for (const c of n.$other as unknown[]) {
 			const found = findInNodeData(c, kind);
 			if (found) return found;
 		}
@@ -1167,8 +1157,8 @@ function findInNodeDataByRange(node: unknown, start: number, end: number): unkno
 			if (f) return f;
 		}
 	}
-	if (Array.isArray(n.$children)) {
-		for (const c of n.$children) {
+	if (Array.isArray(n.$other)) {
+		for (const c of n.$other) {
 			const f = recurseInto(c);
 			if (f) return f;
 		}

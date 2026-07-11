@@ -201,13 +201,6 @@ function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>())
 	seen.set(ref, out);
 	for (const [key, entry] of Object.entries(ref)) {
 		if (!key.startsWith('$')) continue;
-		if (key === '$children') {
-			const childReader = ref['children'];
-			const renderedChildren =
-				typeof childReader === 'function' && childReader.length === 0 ? childReader.call(ref) : entry;
-			out.$children = toRenderableNode(renderedChildren, seen);
-			continue;
-		}
 		if (typeof entry === 'function') continue;
 		out[key] = toRenderableNode(entry, seen);
 	}
