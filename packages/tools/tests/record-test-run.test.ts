@@ -25,13 +25,18 @@ vi.mock('../src/test-history.ts', () => ({
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { readTestHistory, appendTestHistory, commitTestHistory } from '../src/test-history.ts';
 import { recordTestRun } from '../src/scripts/record-test-run.ts';
 
-// record-test-run.ts's REPO_ROOT resolves to the actual repo root at import
-// time (not mocked — only child_process/fs/test-history are). Test-result
-// `name` values must sit under it so `relative()` produces clean file names.
-const REPO_ROOT = process.cwd();
+// record-test-run.ts's REPO_ROOT resolves relative to that file's own
+// location (fileURLToPath(new URL('../../../..', import.meta.url)) from
+// packages/tools/src/scripts/), not process.cwd() — so it stays correct
+// regardless of the invoking shell's working directory (e.g. a
+// package-scoped `pnpm -F @sittir/tools test`). Mirror that here rather
+// than using process.cwd(), which would only match when vitest happens to
+// be invoked from the repo root.
+const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 const testFile = (name: string) => join(REPO_ROOT, name);
 
 const GIT_ARGS_BRANCH = ['rev-parse', '--abbrev-ref', 'HEAD'];
@@ -156,5 +161,23 @@ describe('recordTestRun', () => {
 
 		expect(result.newlyFixed).toEqual(['a.test.ts']);
 		expect(result.newlyFailing).toEqual([]);
+	});
+
+	it('a crash before the JSON reporter writes anything (no output file) rejects with a clear diagnosis', async () => {
+		vi.mocked(execFileSync).mockImplementation((cmd, args) => {
+			if (cmd === 'git' && (args as string[]).join(' ') === GIT_ARGS_BRANCH.join(' ')) {
+				return 'feature-branch\n' as never;
+			}
+			if (cmd === 'git' && (args as string[]).join(' ') === GIT_ARGS_COMMIT.join(' ')) {
+				return 'deadbeef1234\n' as never;
+			}
+			if (cmd === 'pnpm') throw new Error('vitest binary not found');
+			throw new Error(`unexpected execFileSync call: ${cmd}`);
+		});
+		vi.mocked(existsSync).mockReturnValue(false);
+
+		await expect(recordTestRun()).rejects.toThrow(/did not produce a JSON report/);
+		expect(readFileSync).not.toHaveBeenCalled();
+		expect(appendTestHistory).not.toHaveBeenCalled();
 	});
 });
