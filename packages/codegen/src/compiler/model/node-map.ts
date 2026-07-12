@@ -1756,11 +1756,31 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 // ============================================================================
 
 /** Stored (non-computed) constructor inputs for {@link AssembledNonterminal}. */
+/**
+ * A non-literal (rule-shaped) separator captured on a repeated slot — e.g.
+ * `choice(',', ';')` or `optional(',')` as a list separator, as opposed to a
+ * plain string. Post-PR-S, `liftSeparators` already isolates the full
+ * separator `Rule` at the `RuleBase.separator` level, so there is nothing
+ * left to bucket by role at this compiler layer, only to capture: this type
+ * just carries that already-computed rule (and its trailing/leading grammar
+ * permissions) onto the content slot for later per-instance runtime
+ * derivation (native reader / wrap.ts / render).
+ */
+export interface SeparatorSource {
+	/** The non-literal separator rule itself (post-PR-S, already the FULL rule — e.g. a ChoiceRule — not narrowed to one arm). */
+	readonly rule: Rule<'normalize'>;
+	/** Grammar-level permission (generalizes hasTrailing/hasLeading for the non-literal case; the boolean flags stay for compatibility but this is the derivation source going forward for non-literal separators). */
+	readonly trailingPermitted: boolean;
+	readonly leadingPermitted: boolean;
+}
+
 export interface AssembledNonterminalInit {
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
+	/** Non-literal separator rule captured for a repeated slot — see {@link SeparatorSource}. */
+	readonly separatorSource?: SeparatorSource;
 	/**
 	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot —
 	 * see `AssembledNonterminal.sourceRuleIds`.
@@ -1809,6 +1829,8 @@ export class AssembledNonterminal {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
+	/** Non-literal separator rule captured for a repeated slot — see {@link SeparatorSource}. */
+	readonly separatorSource?: SeparatorSource;
 	/**
 	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot.
 	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
@@ -1852,6 +1874,7 @@ export class AssembledNonterminal {
 		this.fieldName = init.fieldName;
 		this.hasTrailing = init.hasTrailing;
 		this.hasLeading = init.hasLeading;
+		this.separatorSource = init.separatorSource;
 		this.sourceRuleIds = init.sourceRuleIds;
 		this.metadata = init.metadata ?? opaqueFacts({});
 		this.ruleMetadata = init.ruleMetadata;
@@ -1865,6 +1888,7 @@ export class AssembledNonterminal {
 			fieldName: this.fieldName,
 			hasTrailing: this.hasTrailing,
 			hasLeading: this.hasLeading,
+			separatorSource: this.separatorSource,
 			sourceRuleIds: this.sourceRuleIds,
 			metadata: this.metadata,
 			ruleMetadata: this.ruleMetadata,
