@@ -719,9 +719,3 @@ export interface NodeMap {
 	 */
 	scc?: SCCAnalysis;
 }
-
-// No PolymorphRule/AssembledPolymorph model types exist at runtime —
-// polymorphFormKinds is always empty. Kept in NodeMap for API stability.
-export function computePolymorphFormKinds(_nodes: Map<string, AssembledNode>): Set<string> {
-	return new Set<string>();
-}

@@ -34,7 +34,7 @@ interface VitestJsonTestResult {
 	assertionResults: VitestJsonAssertionResult[];
 }
 
-interface VitestJsonReport {
+export interface VitestJsonReport {
 	numTotalTests: number;
 	numPassedTests: number;
 	numFailedTests: number;
@@ -105,10 +105,20 @@ export interface TestRunResult {
 
 /** Run the full suite once, record it, and diff against the last recorded run. */
 export async function recordTestRun(): Promise<TestRunResult> {
+	return recordFromReport(runVitestJson());
+}
+
+/**
+ * Record an already-produced vitest JSON report and diff it against the
+ * last recorded run — no vitest invocation of its own. Shared by
+ * `recordTestRun` (spawns a fresh run) and `scripts/test-and-record.ts`
+ * (reads the JSON reporter's side artifact from a run that already
+ * happened, avoiding a second full suite run).
+ */
+export async function recordFromReport(report: VitestJsonReport): Promise<TestRunResult> {
 	const history = readTestHistory();
 	const previous = history[history.length - 1];
 
-	const report = runVitestJson();
 	const failedTestFiles = report.testResults
 		.filter((r) => r.status === 'failed')
 		// `relative()` emits backslashes on Windows; normalize to posix

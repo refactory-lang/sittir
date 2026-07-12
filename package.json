@@ -23,7 +23,7 @@
 		"fresh": "pnpm clean:all && pnpm install",
 		"lint": "oxlint -c oxlint.config.ts .",
 		"lint:fix": "oxlint -c oxlint.config.ts --fix .",
-		"test": "vitest run",
+		"test": "tsx packages/tools/src/scripts/test-and-record.ts",
 		"regen:all": "tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src --no-workspace-check && tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src --no-workspace-check && tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src",
 		"validate": "pnpm run regen:all && tsx packages/cli/src/cli.ts validate counts",
 		"validate:native": "pnpm run regen:all && tsx packages/cli/src/cli.ts validate counts",

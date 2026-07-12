@@ -55,6 +55,9 @@ rust/crates/sittir-*/*.node
 tmp-scripts/
 graphify-out/cache/**
 
+# vitest JSON reporter side-artifact (scripts/test-and-record.ts)
+/.vitest-report.json
+
 # tsc build outputs accidentally landing alongside .ts source. These four
 # packages have ZERO intentionally-tracked .js/.d.ts in src/ (verified
 # 2026-05-15) — pure TS source. (packages/codegen and packages/validator
