@@ -150,9 +150,16 @@ fn read_children(
                     // uniform with field-tagged slots (spec 2026-05-17 kind-named slots).
                     assign_named_slot(&mut fields_acc, child.kind(), data);
                 } else {
-                    // Anonymous literal token — stays in the legacy children bucket
-                    // (numeric kind IDs only after the slot model unification).
-                    children_acc.push(data);
+                    // Anonymous literal token — stays in the legacy children
+                    // bucket. Stamp the ordinal `child_index` so
+                    // `scalar_child_value`'s existing "don't scalarize a node
+                    // that carries a child_index" guard preserves span/text
+                    // for these tokens (e.g. list separators) instead of
+                    // collapsing them to a bare KindId number.
+                    children_acc.push(NodeData {
+                        child_index: Some(i as u16),
+                        ..data
+                    });
                 }
             }
         }

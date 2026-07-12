@@ -248,3 +248,42 @@ fn find_first_ts_node_by_kind<'a>(
     }
     None
 }
+
+#[test]
+fn anonymous_separator_token_retains_span_and_text_through_wire_roundtrip() {
+    // Reproduces the PR-T Task 2 bug: an anonymous separator token (the
+    // `,` between call arguments) must survive the actual JSON
+    // serialize/deserialize round-trip `parse_and_read` performs on the
+    // NAPI boundary, not just the pre-serialization NodeData. Before the
+    // fix, `scalar_child_value` scalarizes every anonymous leaf child
+    // with no `child_index` down to a bare `KindId` number, discarding
+    // `$span`/`$text`.
+    let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+    let source = "fn f() { g(x, y); }";
+    let tree = parse_tree(lang, source);
+    let args = find_first_ts_node_by_kind(tree.root_node(), "arguments").expect("arguments node");
+    let node = read_node(&tree, source, Some(args), Some(0));
+
+    let wire = serde_json::to_string(&node).expect("serialize");
+    let round_tripped: NodeData = serde_json::from_str(&wire).expect("deserialize");
+
+    let other = round_tripped
+        .children
+        .as_ref()
+        .expect("arguments has $other children");
+    assert_eq!(
+        other.len(),
+        3,
+        "expected '(' ',' ')' as the three anonymous children"
+    );
+    let comma = &other[1];
+    assert_eq!(
+        comma.text.as_deref(),
+        Some(","),
+        "comma token must retain its literal text through the wire round-trip"
+    );
+    assert!(
+        comma.span.is_some(),
+        "comma token must retain its span through the wire round-trip"
+    );
+}
