@@ -4,7 +4,7 @@ Use this file when the task touches generated packages, runtime data shapes, or 
 
 ## Package layers
 
-- `@sittir/core` — grammar-driven render engine, validation, CST/edit creation, and runtime read helpers.
+- `@sittir/legacy-core` — deprecated as a production engine (native is the source of truth; the package name signals this); retained as diagnostic/validator tooling. Grammar-driven render engine, validation, CST/edit creation, and runtime read helpers.
 - `@sittir/types` — zero-runtime TypeScript types such as `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `ByteRange`, `Edit`, and `RenderContext`.
 - `@sittir/codegen` — reads `grammar.json` + `node-types.json` and emits the grammar-specific packages.
 

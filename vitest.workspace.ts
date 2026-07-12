@@ -1,7 +1,7 @@
 import { defineWorkspace } from 'vitest/config';
 
 export default defineWorkspace([
-	'packages/core',
+	'packages/legacy-core',
 	'packages/codegen',
 	'packages/tools',
 	'packages/rust',

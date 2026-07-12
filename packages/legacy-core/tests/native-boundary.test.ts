@@ -4,7 +4,7 @@ import { assertRenderableNodeData, isRenderableNodeData } from '../src/native-bo
 import type { AnyNodeData, FormatRecord } from '../src/types.ts';
 
 // Use a numeric $type (Phase D: parser.c-derived KindId). Any finite integer
-// stands in here since @sittir/core has no grammar-specific TSKindId enum.
+// stands in here since @sittir/legacy-core has no grammar-specific TSKindId enum.
 const MOCK_KIND_ID = 42;
 
 const leaf: AnyNodeData = {

@@ -225,9 +225,9 @@ async function buildParityRenderer(
 		const render = await loadBoundaryRender(grammar, importFn);
 		return { render };
 	}
-	// Lazy import of @sittir/core's createRenderer — keeps the module
+	// Lazy import of @sittir/legacy-core's createRenderer — keeps the module
 	// import-cheap when the test target only exercises the type shape.
-	const core = (await import('@sittir/core')) as {
+	const core = (await import('@sittir/legacy-core')) as {
 		createRenderer: (
 			templatesPath: string,
 			options?: { kindNames?: ReadonlyMap<number, string> }

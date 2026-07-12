@@ -1,7 +1,7 @@
 {
-	"name": "@sittir/core",
+	"name": "@sittir/legacy-core",
 	"version": "0.1.0",
-	"description": "JavaScript backend implementation for sittir",
+	"description": "Deprecated JS/Nunjucks backend — diagnostic and validator tooling only, not a production render engine",
 	"keywords": [
 		"ast-grep",
 		"cst",
@@ -14,7 +14,7 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/refactory-lang/sittir.git",
-		"directory": "packages/core"
+		"directory": "packages/legacy-core"
 	},
 	"files": [
 		"dist"

@@ -1177,7 +1177,7 @@ function escapeRegex(s: string): string {
 //
 // Structural type for a nunjucks.Environment — keeps the nunjucks
 // import out of render.ts (preserves ADR-0013 Task 1's browser-safe
-// guarantee). `@sittir/core/templates/nunjucks-env.ts` is the opt-in
+// guarantee). `@sittir/legacy-core/templates/nunjucks-env.ts` is the opt-in
 // module that constructs one and passes it in via options.
 
 export interface NunjucksEnvLike {

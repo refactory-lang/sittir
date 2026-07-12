@@ -525,7 +525,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
 	// --- Renderability check: every named kind in node-types.json must be
-	// reachable by @sittir/core's render() function (supertype, leaf, or rule).
+	// reachable by @sittir/legacy-core's render() function (supertype, leaf, or rule).
 	// Uses the NodeMap directly for a structural truth check.
 	const config = { grammar, nodes: all ? undefined : nodes, outputDir };
 	const renderable = validateRenderableFromNodeMap(config.grammar, result.nodeMap);

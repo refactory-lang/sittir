@@ -1,6 +1,6 @@
 /**
  * validate-renderable — every named kind in tree-sitter's node-types.json
- * must be renderable by @sittir/core.
+ * must be renderable by @sittir/legacy-core.
  *
  * A kind is renderable when one of these holds:
  *

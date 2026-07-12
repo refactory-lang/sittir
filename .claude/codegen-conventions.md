@@ -33,7 +33,7 @@ When touching emitters or generated-TS-facing helpers:
 
 1. Do not emit `Object.defineProperty`; use inline object-literal methods/properties plus `withMethods<T>`.
 2. Do not use `Record<string, unknown>` bridges when a typed property access or generic preserves the shape.
-3. Grammar-specific shared helpers belong in per-grammar `utils.ts`, not `@sittir/core`.
+3. Grammar-specific shared helpers belong in per-grammar `utils.ts`, not `@sittir/legacy-core`.
 4. Shared helpers must preserve caller types with generics; do not widen public helper inputs to `object`.
 5. Avoid `AnyNodeData` in factory/wrap/from code except in genuinely generic shared infrastructure.
 6. Do not spread shared method objects into factory literals; use `withMethods<T>(literal)` instead.

@@ -22,7 +22,7 @@
 		"@ast-grep/wasm": "^0.42.1",
 		"@sittir/codegen": "workspace:*",
 		"@sittir/common": "workspace:*",
-		"@sittir/core": "workspace:*",
+		"@sittir/legacy-core": "workspace:*",
 		"@sittir/types": "workspace:*"
 	},
 	"devDependencies": {

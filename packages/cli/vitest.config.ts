@@ -29,8 +29,8 @@ export default defineConfig({
 			{ find: '@sittir/common/engine', replacement: pkg('common/src/engine-boundary.ts') },
 			{ find: '@sittir/common/utils', replacement: pkg('common/src/utils.ts') },
 			{ find: '@sittir/common', replacement: pkg('common/src/index.ts') },
-			{ find: '@sittir/core/engine', replacement: pkg('core/src/engine-boundary.ts') },
-			{ find: '@sittir/core', replacement: pkg('core/src/index.ts') },
+			{ find: '@sittir/legacy-core/engine', replacement: pkg('legacy-core/src/engine-boundary.ts') },
+			{ find: '@sittir/legacy-core', replacement: pkg('legacy-core/src/index.ts') },
 			{ find: '@sittir/types', replacement: pkg('types/src/index.ts') }
 		]
 	},

@@ -38,7 +38,7 @@ import { validateTemplateCoverage } from '../validate/template-coverage.ts';
  *
  * MEASUREMENT RESET (commit 016/measurement-reset, 2026-04-25): TS-side
  * cosmetic post-processing (`collapse_inner_spaces` regex + outer
- * `.trim()`) was removed from `packages/core/src/render.ts` and the
+ * `.trim()`) was removed from `packages/legacy-core/src/render.ts` and the
  * legacy native preparation path to surface walker bugs that
  * the post-processing was hiding (per
  * `~/.claude/projects/.../memory/feedback_no_silent_formatting.md` and

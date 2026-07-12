@@ -255,10 +255,14 @@ falling back.
   invariants (`assertRenderableNodeData`, `normalizeNativeReadNode`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.
-- **`@sittir/core`** — shared engine option/handle types
+- **`@sittir/legacy-core`** — deprecated as a production engine (native is
+  the source of truth; the package name itself signals this — see its
+  `index.ts` doc comment). Still live as intentionally-kept diagnostic/
+  validator tooling: shared engine option/handle types
   (`resolveEngineFormat`) plus a lower-level Nunjucks-backed renderer
-  (`createRenderer`/`createRendererFromConfig`) retained for template
-  rendering outside the `SittirEngineLike` surface; it no longer hosts a
+  (`createRenderer`/`createRendererFromConfig`) used by `tool bench`,
+  `tool probe-kind --engine js`, `tool walk --render`, and the corpus
+  validators' `backend: 'js'` mode. It no longer hosts a
   `SittirEngineLike`-conforming JS engine.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
   one exposes `createEngine()` (native-only), an `ir.*` namespace, `.from()`
@@ -475,7 +479,7 @@ target API in flight.
 | ------------------------------------------- | ------------------------------------------------------------------------------------ |
 | [`@sittir/types`](packages/types)           | Pure TypeScript types — zero runtime                                                 |
 | [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readNode`, `applyEdits`, native boundary, engine interface |
-| [`@sittir/core`](packages/core)             | JS render engine (Nunjucks); reference implementation                                |
+| [`@sittir/legacy-core`](packages/legacy-core) | Deprecated JS/Nunjucks render engine; diagnostic + validator tooling only, not production |
 | [`@sittir/codegen`](packages/codegen)       | Seven-phase compiler, emitters, and CLI                                              |
 | [`@sittir/tools`](packages/tools)           | Diagnostics + validation facade: `probe-*`, `counts`, `probe-factory`, `history`, `walk`, `exercise`, `inspect-*` (CLI + run APIs) |
 | [`@sittir/rust`](packages/rust)             | Generated Rust package                                                               |
