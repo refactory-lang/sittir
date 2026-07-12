@@ -1,0 +1,79 @@
+# Separator-as-slot: a unified terminal/nonterminal model for list separators
+
+> **Status:** Design (brainstormed 2026-07-12). Supersedes the separator-modeling approach built in PR-T Tasks 1-3 (`docs/superpowers/plans/2026-07-12-pr-t-non-slot-separator-rules-plan.md`, worktree `/private/tmp/sittir-worktrees/pr-t`, branch `non-slot-separator-rules`). This spec replaces PR-T's Model/Read/Construct/Render sections; PR-T's Problem section, Fixed-literal-separators section, and Derivation section remain accurate background and are not repeated here.
+
+## Problem (recap)
+
+The value model can express a repeated slot's separator only as a single literal string (`separator?: string` + `trailing?`/`leading?` booleans). A rule-shaped separator (`choice(',', ';')`, `optional(',')`) can't be represented this way — today it's silently dropped and replaced with a generic default at render time, producing wrong output (e.g. TypeScript's `{ a: string; }` renders `{ a :string }`, losing the `;`).
+
+## Why this supersedes Tasks 1-3
+
+Tasks 1-3 (already implemented and committed on this branch) captured the separator's *rule* as a side-fact attached to the existing content slot (`AssembledNonterminal.separatorSource`), then derived three bespoke sibling wire-keys at wrap-emission time (`_<name>_trailing_sep`, `_<name>_leading_sep`, `_<name>_separator_kind`) via new runtime helpers that span-correlate `$other` against content values — which in turn required a native Rust reader change (`read_node.rs`) to stop discarding span/text for anonymous tokens during wire serialization.
+
+Working through the actual data needed exposed that all of this machinery is unnecessary. The core realization, arrived at through direct design dialogue:
+
+1. **A separator's *kind* (not its text) is all render needs**, because the render side already resynthesizes separator text from grammar-known knowledge rather than reading it back from storage — that's exactly how literal separators already work today (a literal separator is *never stored at all*; `extractSeparatorString` computes a compile-time constant baked directly into the render template, with zero storage round-trip). A rule-shaped separator's arms are still just literals (`,`, `;`) — codegen already knows each arm's text at compile time. So resynthesizing from a captured *kind reference* is sufficient; the actual text never needs to survive the wire.
+2. **The kind reference already survives today**, with zero Rust changes. `scalar_child_value` (`rust/crates/sittir-core/src/types.rs`) scalarizes every anonymous wire child down to a bare numeric `KindId` during JSON serialization — it only discards `span`/`text`, never the kind itself. Task 2's fix (stamping `child_index` to skip scalarization) was solving a problem — recovering span/text — that this design doesn't have.
+3. **Leading/trailing presence is a simple read-order fact**, not something requiring span correlation. Whatever does the classification (see below) already visits a node's children in native document order; a separator token seen before the first content element is leading, one seen after the last content element is trailing, anything between two content elements is ordinary. No position math, no array-length inference, no ambiguity.
+
+Net effect: the entire feature is buildable as a compiler/emitter-side change, with **no native Rust reader change required**.
+
+## Architecture
+
+`compiler/assemble.ts`'s `assemble()` function (confirmed dispatch point: line ~246) iterates every rule in `normalized.linkRules`, calls `classifyNode()` to get a `modelType`, and switches on it to construct the matching `AssembledX` class (`AssembledBranch` for `'branch'`, etc. — `AssembledGroup`, `AssembledEnum`, and others are existing peers in this same taxonomy).
+
+This design adds one classification: **`'multi'`**, fired when a rule's own top-level structure is *entirely* array/`nonEmptyArray` multiplicity (the rule's whole identity is a list — not a branch that merely *has* one array-multiplicity field among several named fields, which stays on the existing `'branch'` path unchanged) **and** `isNonterminalRuleType(rule.separator.value)` is true, checked directly against the raw rule at classification time. `assemble()`'s switch gains `case 'multi': new AssembledMulti(kind, ...)`.
+
+`AssembledMulti` is a new peer class alongside `AssembledBranch`/`AssembledGroup`/`AssembledEnum` — not a variant of `AssembledNonterminal` (the per-*slot* model) and not something routed through `collect-slots.ts`'s generic per-rule slot-collection/merge machinery. It builds its own fields directly from the rule:
+
+- `elements`: `readonly NodeOrTerminal[]` — the content values, derived via the same `deriveValuesForRule` primitive any other slot already uses on the content rule. No new derivation logic.
+- `separatorRule`: the separator's `Rule<'normalize'>` (needed at codegen time to enumerate candidate kinds and their literal text for render-time resynthesis — this is compile-time-only information, not a per-instance capture).
+- `leadingPermitted` / `trailingPermitted`: booleans — the existing grammar-level permission facts (today's `hasTrailing`/`hasLeading`, unchanged in spirit), used only for validation/type-surface purposes (e.g. can a factory caller legally omit/supply a leading separator at all). Not a per-instance fact.
+
+Everything upstream of `assemble()` — normalize, simplify, evaluate, and link's `liftSeparators` (which already threads the full separator rule onto `RuleBase.separator.value`, per PR-S) — is unchanged and fully reused.
+
+## Field shape and wire capture
+
+At the wire/runtime layer, a node classified `'multi'` carries:
+
+- `_content` (matching the existing storage-key convention already used for an unnamed catch-all array slot, rather than inventing a new `_elements` name — keeps `projectSlotNaming`'s existing conventions intact) — an array, populated exactly like any other repeated slot's storage today.
+- `_separator_kind: number | undefined` — a single scalar `KindId`, identifying which literal arm of the separator's choice was matched. **Assumes a uniform separator across the whole list** (see Out of Scope).
+- `_leading_sep: boolean`, `_trailing_sep: boolean` — per-instance presence, populated only when the corresponding `leadingPermitted`/`trailingPermitted` grammar-level fact is true (when a flank isn't grammatically possible at all, there's nothing to capture — it's statically `false`).
+
+**Capture mechanism:** wherever the wire-population code (equivalent to Task 3's `emitFieldCarryingWrap` addition, but simpler) processes this node's anonymous wire children (today's `$other`/children-bucket, in native document order — order is preserved through JSON serialization regardless of per-element scalarization), it does a **single linear pass**: the first anonymous child, if any, before the first `elements` entry sets `_leading_sep = true`; a trailing anonymous child after the last `elements` entry sets `_trailing_sep = true`; any anonymous child's `KindId` (already surviving scalarization unmodified today) sets `_separator_kind` the first time it's seen. No span, no `child_index` stamping, no candidate-kind span-correlation helpers (`_detectFlankSeparator`/`_findSeparatorKind` from Task 3 are not needed under this design).
+
+## Render
+
+The render side does the mirror operation: given `_separator_kind`, look up its literal text via a compile-time-known `KindId → literal` mapping (the separator rule's arms are enumerable at codegen time — this mapping is baked into generated Rust as a `match`, not a runtime lookup). Interleave `elements`, with the resolved separator text at each internal gap, plus a leading/trailing occurrence when `_leading_sep`/`_trailing_sep` is set. This is a natural generalization of the existing `ListNonterminalView`/`joinWithTrailing` rendering path (`rust/crates/sittir-core/src/filters.rs`) — it already accepts a `separator: &str` and `leading`/`trailing: bool`; this design just makes those three inputs come from real per-instance data instead of always being a hardcoded literal and `false`.
+
+## Construct / factory surface
+
+A `'multi'`-classified kind gets its own factory, following the same pattern as any other node kind: positional/variadic `elements` argument, plus an options object for `separatorKind`/`leading`/`trailing` when the caller wants to override the defaults (mirrors PR-T's original Task 5 options-block idea, but the block now maps directly onto `AssembledMulti`'s own real fields — no separate Config-surface invention needed, since these are just the node's normal constructable fields).
+
+## Relationship to PR-T's committed Tasks 1-3
+
+All three are superseded:
+
+- **Task 1** (`SeparatorSource` capture + `collect-slots.ts` population + the `mergeSlotsByName` fix, commits `db94ebfad`/`d78cf171d`/`5983e19b5`/`23c22723a`): unnecessary. `AssembledMulti` doesn't go through `collect-slots.ts`'s generic slot-collection/merge path at all — the "is separator nonterminal" check happens inline in `classifyNode`, and there's no side-fact to merge/drop.
+- **Task 2** (native reader `child_index` stamping, commit `fc566a49f`): unnecessary. Confirmed safe to revert — no commits after it touch `read_node.rs`/`types.rs`, and `child_index`'s only other consumer is the pre-existing, unrelated `engine.rs` node-coordinate table.
+- **Task 3** (wrap.ts sibling-key derivation + runtime helpers, commit `18d19f90a`): unnecessary. Superseded by `AssembledMulti`'s own, much simpler single-pass capture (no span-correlation, no candidate-kind-expression derivation, no bespoke runtime helpers).
+
+Recommendation: revert all four commits cleanly at the start of implementation, rather than build the new design alongside dead code.
+
+## Relationship to the `object_type` override revert
+
+Still a separate, necessary step to get a real, live validation target — this design doesn't change that investigation's findings (recorded in the PR-T plan doc's Amendment section: reverting `packages/typescript/overrides.ts`'s `object_type_content_comma`/`_semi` split back to a single rule-shaped-separator rule is safe at the parser level and a net fidelity improvement). What changes is that Extension A (widening `link.ts`'s flank-absorption predicates from literal-equality to structural `rulesEqual`) is still needed regardless of which separator-representation model is used — it's about correctly *lifting* a `RepeatRule`'s flanking `optional(choice(...))` members into the repeat's `separator`/permission facts before `assemble()` ever sees the rule, which this design's `classifyNode` check depends on. Extension B (the old Task 4's render-side `_separator_kind` wiring) is superseded by this design's own render section above.
+
+## Explicitly out of scope
+
+- **Genuine per-gap heterogeneous separators** (`{a, b; c}` — legal upstream). `_separator_kind` is a single scalar per list, assuming uniformity. A future generalization (a full per-gap array, as originally considered and rejected during this design's own brainstorming for being unnecessary complexity) would be needed to support real mixing — not attempted here. Note this is the *same* carve-out PR-T's original plan already documented, for a different underlying reason.
+- **Grammars where both leading and trailing are independently optional AND ambiguous from a single instance** — practically: this doesn't arise, because the read-order classification (leading = before first element, trailing = after last element) is unambiguous by construction; there's no count-based inference step where ambiguity could occur. This concern from earlier design discussion turned out to be moot once the mechanism was actually specified precisely.
+- **Enrich-based auto-synthesis for anonymous/inline separator-shaped patterns with no rule of their own** (e.g. the original, un-reverted `_object_type_optional1` synthesized wrapper). This design's `classifyNode` check only applies to rules that are *already* their own named grammar rule — tree-sitter gives those their own kind by construction, so `'multi'` classification is free. An anonymous/inline pattern has no rule to classify. A future enrich pass would synthesize a named rule for such patterns specifically so they *become* "already exists" cases this design's classification can then treat uniformly. Not needed for the `object_type_content` target case (which, after the override revert, is already its own named rule) — deferred as documented future work.
+
+## Testing strategy
+
+- `classifyNode`: unit tests confirming `'multi'` fires for a rule matching the trigger condition (array/nonEmptyArray multiplicity, nonterminal separator) and does NOT fire for (a) a branch with one array-multiplicity field among several named fields, (b) a rule with a literal separator (stays on the existing path, byte-neutral).
+- `AssembledMulti` construction: unit tests on `elements`/`separatorRule`/`leadingPermitted`/`trailingPermitted` derivation from a hand-built rule fixture.
+- Wire capture: a test exercising the single-pass read-order classification against a realistic multi-element, multi-separator wire payload (leading present, trailing present, neither, both — using the SAME grammar shapes already available in the existing test grammar fixtures rather than inventing new ones).
+- Render: a test confirming `_separator_kind`-driven text resynthesis produces the correct literal at each gap, plus correct leading/trailing emission.
+- End-to-end: TypeScript's `interface_body`/`object_type`, after the override revert, byte-faithfully round-trips both `,`-delimited and `;`-delimited forms, and `validate:native`'s deep-AST count for typescript improves (same acceptance criteria PR-T's plan already documented for its own Task 7).
