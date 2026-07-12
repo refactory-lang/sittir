@@ -52,7 +52,7 @@ describe('tool test-history command', () => {
 		expect(vi.mocked(recordTestRun)).not.toHaveBeenCalled();
 	});
 
-	it('with --record, routes to recordTestRun and prints formatTestRunReport\'s output', async () => {
+	it("with --record, routes to recordTestRun and prints formatTestRunReport's output", async () => {
 		vi.mocked(recordTestRun).mockResolvedValue(makeResult());
 		const program = new Command();
 		testHistoryCmd.register(program);

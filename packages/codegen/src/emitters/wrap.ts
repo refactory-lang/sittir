@@ -413,6 +413,94 @@ function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap
 	return storageKeys;
 }
 
+/**
+ * Union the wire-only `_<kind>` storage keys (see `collectConcreteStorageKeys`)
+ * across every field of a wrap function, mapped to the SAME element type as
+ * the field's own canonical key (`fieldElementType`) — not a generic
+ * catch-all. This matters: each probe key feeds the same `??`-coalesce /
+ * `_concatInSourceOrder` expression as the field's canonical key, whose
+ * result flows (via the generic `normalizeSingularWrapSlot<T>` /
+ * `normalizeRepeatedWrapSlot<T>` helpers) into a `drillIn<ElemType>`-typed
+ * accessor. A broad probe-key type would widen that inferred `T`, breaking
+ * the accessor's explicit generic argument — so precision here isn't
+ * cosmetic, it's required for the coalesce chain to type-check.
+ *
+ * Excludes each field's own canonical `storageKey` (already declared on the
+ * canonical `T.X` interface). When the SAME wire key is probed by more than
+ * one field with different element types (a key collision that can't
+ * actually happen at runtime — a physical key holds one value shape — but
+ * isn't structurally impossible to encode), the member types are unioned.
+ */
+function collectWrapWireKeyTypes(
+	fields: readonly AssembledNonterminal[],
+	nodeMap: NodeMap
+): ReadonlyMap<string, string> {
+	// A wire key that coincides with SOME OTHER field's own canonical
+	// `storageKey` (e.g. a `block`-aliased field sharing the physical wire
+	// key with an unrelated `_block` field — tree-sitter alias-source
+	// sharing) is already declared, with its own authoritative type, on the
+	// canonical `T.X` interface. Adding a second, differently-typed member
+	// for that same key would form an incoherent property-type intersection
+	// (e.g. `Block & (SimpleStatements | Newline)`) and break assignability
+	// at every existing `T.X`-typed call site. The field that legitimately
+	// owns that key already reads it through its canonical declaration; skip
+	// re-declaring it here.
+	const canonicalKeys = new Set(fields.map((f) => f.storageKey));
+	const keyTypes = new Map<string, string>();
+	for (const f of fields) {
+		const candidates = collectConcreteStorageKeys(f, nodeMap);
+		if (!candidates) continue;
+		const elemType = fieldElementType(f, nodeMap);
+		// `resolveSlotStoreExpr`'s `arity: 'many'` branch documents that each
+		// wire candidate key may hold EITHER a scalar (text-collapsed leaf) OR
+		// an array of node stubs — that's what `_toArr`/`_concatInSourceOrder`
+		// normalize. Mirror that shape here (same widening pattern as
+		// `resolveSlotAccessorBody`'s `arrayElemType`), or the declared type
+		// would be narrower than what the runtime actually delivers.
+		const candidateType =
+			f.arity === 'many'
+				? `${elemType} | readonly ${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`
+				: elemType;
+		for (const k of candidates) {
+			if (k === f.storageKey || canonicalKeys.has(k)) continue;
+			const existing = keyTypes.get(k);
+			keyTypes.set(
+				k,
+				existing === undefined || existing === candidateType ? candidateType : `${existing} | ${candidateType}`
+			);
+		}
+	}
+	return keyTypes;
+}
+
+/**
+ * Build the wrap function's `data` parameter type: the canonical `T.X`
+ * interface widened with the wire-only keys the function body actually
+ * reads/writes (`_<concreteKind>` probe keys from `collectWrapWireKeyTypes`,
+ * and/or `$other`). The canonical interface intentionally omits these —
+ * they're wire-shape artifacts, not part of the public `T.X` surface — so
+ * the wrap body needs a widened LOCAL view. All added members are optional,
+ * so `T.X` values remain assignable to the widened type (no cast needed at
+ * existing `T.X`-typed call sites).
+ *
+ * `otherType`, when provided, is the PRECISE type for `$other` (e.g.
+ * `T.Condition | readonly T.Condition[]` for a transparent supertype whose
+ * body reads `data.$other` through the same generic-inference chain as the
+ * field probe keys above — see `emitTransparentSupertypeWrap`). Pass a
+ * generic fallback for call sites that only ever WRITE `$other` inside a
+ * `{ ...data, $other: v }` argument literal (no local read, so no inference
+ * chain to keep narrow — see the `childSurface` branch in
+ * `emitInlineWithProperty`).
+ */
+function buildWrapParamType(typeName: string, wireKeyTypes: ReadonlyMap<string, string>, otherType?: string): string {
+	if (wireKeyTypes.size === 0 && otherType === undefined) return `T.${typeName}`;
+	const members = [
+		...[...wireKeyTypes].map(([k, t]) => `readonly ${JSON.stringify(k)}?: ${t};`),
+		...(otherType !== undefined ? [`readonly $other?: ${otherType};`] : [])
+	];
+	return `T.${typeName} & { ${members.join(' ')} }`;
+}
+
 // `_<ident>` where ident is a valid JS identifier suffix. Keys outside this
 // shape must be accessed via bracket notation. Tree-sitter exposes some kinds
 // as literal token strings (`'`, `$`, `.`), which become storage keys like
@@ -428,10 +516,21 @@ function dataAccessExpr(dataExpr: string, storageKey: string): string {
 
 function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?: readonly string[]): string {
 	if (candidateKeys && candidateKeys.length > 0) {
-		// Append the slot's nominal storage key as a final fallback for any
-		// edge case the analysis missed (e.g. a tree-sitter-injected alias the
-		// supertype-expansion doesn't see).
-		const allKeys = candidateKeys.includes(slot.storageKey) ? candidateKeys : [...candidateKeys, slot.storageKey];
+		// Probe the slot's own canonical storage key WITH PRIORITY over the
+		// concrete-kind candidate keys, rather than as a final fallback. On a
+		// genuinely fresh wire read the reader never populates the canonical
+		// key (only the concrete-kind-keyed candidates), so this is a no-op for
+		// that case. But `$with` setters re-invoke the wrap function via
+		// `{ ...data, [storageKey]: v }` (see `emitInlineWithProperty`), which
+		// spreads the ORIGINAL data — carrying the stale candidate-key values
+		// from the original read — alongside the newly patched canonical key.
+		// Probing candidates first would mask the patched value entirely
+		// (singular: the stale `??` operand wins) or merge stale-and-patched
+		// (repeated: concat includes both) — the canonical key must win
+		// outright once populated. Exclude it from the candidate list itself
+		// so it isn't probed twice.
+		const candidates = candidateKeys.filter((k) => k !== slot.storageKey);
+		const canonicalExpr = dataAccessExpr(dataExpr, slot.storageKey);
 
 		if (slot.arity === 'many') {
 			// Repeated supertype-list slot: the runtime reader populates EACH
@@ -451,13 +550,19 @@ function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?:
 			// `call_signature` + `property_signature` swap). `_concatInSourceOrder`
 			// normalizes each source (via _toArr) and STABLE-sorts the result by
 			// CST position (`$span.start` / `$childIndex`) to restore source order.
-			const sources = allKeys.map((k) => dataAccessExpr(dataExpr, k));
-			return `_concatInSourceOrder([${sources.join(', ')}])`;
+			//
+			// The canonical key, once populated by a `$with` setter, is
+			// authoritative on its own — normalize it (scalar-or-array, via the
+			// same `_toArr` the concat path uses) rather than merging it into
+			// the candidate concat.
+			const sources = candidates.map((k) => dataAccessExpr(dataExpr, k));
+			const candidateExpr = sources.length > 0 ? `_concatInSourceOrder([${sources.join(', ')}])` : '[]';
+			return `(${canonicalExpr} !== undefined ? _toArr(${canonicalExpr}) : ${candidateExpr})`;
 		}
 
-		// Singular slot: exactly one of these will be populated.
-		// ??-coalesce is correct — return the first non-null source.
-		const probes = allKeys.map((k) => dataAccessExpr(dataExpr, k));
+		// Singular slot: exactly one of these will be populated on a fresh
+		// read; the canonical key wins outright once a `$with` setter patches it.
+		const probes = [canonicalExpr, ...candidates.map((k) => dataAccessExpr(dataExpr, k))];
 		return `(${probes.join(' ?? ')})`;
 	}
 	return dataAccessExpr(dataExpr, slot.storageKey);
@@ -476,8 +581,15 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const allowedKinds = [
 		...new Set(node.subtypes.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))
 	];
+	// `data.$other` flows through the generic `_filterWrapChildrenByKind<T>` /
+	// `normalizeSingularWrapSlot<T>` helpers into an explicit
+	// `drillIn<T.${typeName}>(...)` check below — the inferred `T` must stay
+	// exactly `T.${typeName}` (the supertype's own member union), or the
+	// explicit generic argument mismatches. Array-inclusive: the wire may
+	// deliver the single member wrapped in a 1-element array.
+	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	return [
-		`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`,
+		`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`,
 		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
 		`}`
 	].join('\n');
@@ -543,7 +655,16 @@ function emitFieldCarryingWrap(
 ): string {
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`);
+	const wireKeyTypes = collectWrapWireKeyTypes(fields, nodeMap);
+	// $other is real ONLY when the assembled node's own children slot is
+	// non-empty — the model's structural fact that this kind's wire data can
+	// carry unfielded/unnamed children. (`node.childSurface` governs $with
+	// CALLING CONVENTION, not wire storage shape — see investigation note
+	// below; using it here would describe the body's ACCESS, not the data's
+	// real shape.)
+	const needsOther = children.length > 0;
+	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
+	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 
 	// Shape A: inline object literal wrapped by withMethods<T>. No
 	// Object.defineProperty, no freezeNodeData, no Record<string,unknown> cast.
@@ -679,14 +800,22 @@ function emitFieldCarryingWrap(
 /**
  * Emit the inline `$with: { ... }` property for a wrap function literal.
  *
- * Container-shape nodes emit `$other`/`$child` lambdas calling the
- * rest-param factory. Field-carrying nodes emit per-field setters that
- * build a lazy config and call the factory with a patched value.
+ * Container-shape nodes with a real unnamed-children wire slot (`children`
+ * non-empty) emit `$other`/`$child` lambdas calling the rest-param factory.
+ * `node.childSurface` alone is NOT sufficient to pick that path — it
+ * describes the factory's own calling convention, and under the unified-slot
+ * model an unnamed slot lives in `fields` with a real `_<name>` storage key,
+ * not in `$other`. All other nodes (including childSurface spread/direct
+ * nodes whose unnamed slot is a `fields` entry) fall through to the
+ * per-field setters below, which build a lazy config and call the factory
+ * with a patched value at the field's real storage key.
  *
  * @param lines - Output line buffer to append to.
  * @param node - The assembled node descriptor.
  * @param fields - Named field slots.
- * @param children - Unnamed child slots.
+ * @param children - Unnamed child slots (currently always `[]` from both
+ *   call sites — `AssembledBranch/Group.fields` already unifies unnamed
+ *   slots into `fields`).
  */
 function emitInlineWithProperty(
 	lines: string[],
@@ -702,7 +831,7 @@ function emitInlineWithProperty(
 
 	const spreadData = '...data';
 
-	if (node.childSurface === 'spread' || node.childSurface === 'direct') {
+	if ((node.childSurface === 'spread' || node.childSurface === 'direct') && children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
