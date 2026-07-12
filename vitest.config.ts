@@ -14,7 +14,9 @@ import { fileURLToPath } from 'node:url';
 export default defineConfig({
 	resolve: {
 		alias: {
-			'@sittir/core/engine': fileURLToPath(new URL('./packages/core/src/engine-boundary.ts', import.meta.url))
+			'@sittir/legacy-core/engine': fileURLToPath(
+				new URL('./packages/legacy-core/src/engine-boundary.ts', import.meta.url)
+			)
 		}
 	},
 	test: {

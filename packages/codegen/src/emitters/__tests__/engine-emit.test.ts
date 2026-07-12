@@ -7,10 +7,10 @@ describe('emitEngine', () => {
 		expect(output).toContain("from '@sittir/common/engine'");
 	});
 
-	it('does not import createJsEngine from @sittir/core/engine', () => {
+	it('does not import createJsEngine from @sittir/legacy-core/engine', () => {
 		const output = emitEngine({ grammar: 'rust' });
 		expect(output).not.toContain('createJsEngine');
-		expect(output).not.toContain("'@sittir/core/engine'");
+		expect(output).not.toContain("'@sittir/legacy-core/engine'");
 	});
 
 	it('does not contain createGrammarEngine(', () => {
@@ -18,9 +18,9 @@ describe('emitEngine', () => {
 		expect(output).not.toContain('createGrammarEngine(');
 	});
 
-	it('does not use dynamic import of @sittir/core/engine', () => {
+	it('does not use dynamic import of @sittir/legacy-core/engine', () => {
 		const output = emitEngine({ grammar: 'typescript' });
-		expect(output).not.toContain("import('@sittir/core/engine')");
+		expect(output).not.toContain("import('@sittir/legacy-core/engine')");
 	});
 
 	it('createEngine is synchronous (not async)', () => {

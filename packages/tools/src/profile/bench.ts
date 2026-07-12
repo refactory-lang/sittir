@@ -44,7 +44,7 @@ function ensureBenchmarkNodeEnv(): void {
 
 type BenchmarkRuntime = {
 	readNode: typeof import('@sittir/common').readNode;
-	createRenderer: typeof import('@sittir/core').createRenderer;
+	createRenderer: typeof import('@sittir/legacy-core').createRenderer;
 	loadCorpusEntries: typeof import('../validate/common.ts').loadCorpusEntries;
 	loadLanguageForGrammar: typeof import('../validate/common.ts').loadLanguageForGrammar;
 	loadKindNames: typeof import('../validate/common.ts').loadKindNames;
@@ -58,7 +58,7 @@ async function loadBenchmarkRuntime(): Promise<BenchmarkRuntime> {
 	ensureBenchmarkNodeEnv();
 	benchmarkRuntimePromise ??= Promise.all([
 		import('@sittir/common'),
-		import('@sittir/core'),
+		import('@sittir/legacy-core'),
 		import('../validate/common.ts')
 	]).then(([common, core, validate]) => ({
 		readNode: common.readNode,

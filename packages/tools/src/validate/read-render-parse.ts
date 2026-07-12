@@ -10,7 +10,7 @@
 
 import { writeSync } from 'node:fs';
 
-import { createRenderer } from '@sittir/core';
+import { createRenderer } from '@sittir/legacy-core';
 
 import type { AnyNodeData } from '@sittir/types';
 import { deriveRuleKinds } from './templates-path.ts';

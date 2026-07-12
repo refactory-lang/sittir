@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { SittirEngineLike } from '@sittir/core/engine';
+import type { SittirEngineLike } from '@sittir/legacy-core/engine';
 import { readTreeNode as readPythonTreeNode } from '@sittir/python';
 import { readTreeNode as readRustTreeNode } from '@sittir/rust';
 import { readTreeNode as readTypeScriptTreeNode } from '@sittir/typescript';
@@ -181,7 +181,7 @@ export function renderNativeNodeData(engine: NativeEngine, nodeData: object): st
 export function createTsRenderEngine(_grammar: Grammar, _format?: FormatRecord): SittirEngineLike {
 	throw new Error(
 		'createTsRenderEngine: the JS render engine was removed (Track 1 JS-engine-removal cleanup). ' +
-			"This spec-017 US1 JS-vs-native parity comparison is no longer possible without a new SittirEngineLike adapter around @sittir/core's Nunjucks primitives (createRenderer). See tests/format-roundtrip/*.test.ts for the skipped call sites."
+			"This spec-017 US1 JS-vs-native parity comparison is no longer possible without a new SittirEngineLike adapter around @sittir/legacy-core's Nunjucks primitives (createRenderer). See tests/format-roundtrip/*.test.ts for the skipped call sites."
 	);
 }
 

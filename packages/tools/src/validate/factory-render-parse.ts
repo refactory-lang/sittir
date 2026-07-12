@@ -10,7 +10,7 @@
  * 5. Re-parse and verify the kind exists
  */
 
-import { createRenderer } from '@sittir/core';
+import { createRenderer } from '@sittir/legacy-core';
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap, FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';

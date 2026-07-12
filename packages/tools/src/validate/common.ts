@@ -2570,7 +2570,7 @@ function inferFromFieldPresence(
  * → `'native'`; anything else → `'ts'`. No-op when `SITTIR_METRICS=1`
  * is unset (the underlying `dumpMetrics` short-circuits).
  *
- * @see packages/core/src/metrics.ts for the accumulator + writer.
+ * @see packages/legacy-core/src/metrics.ts for the accumulator + writer.
  */
 export function emitValidatorMetrics(): void {
 	if (!metricsEnabled) return;

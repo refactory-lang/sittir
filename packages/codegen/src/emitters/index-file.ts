@@ -37,7 +37,7 @@ export function emitIndex(_config: EmitIndexConfig): string {
 		"export type { IsGuards, AssertGuards } from './is.js';",
 		'',
 		'// Core re-exports',
-		"export { createRenderer } from '@sittir/core';",
+		"export { createRenderer } from '@sittir/legacy-core';",
 		"export type { NodeData, TreeNode } from './types.js';",
 		"export type { Edit, CSTNode, RenderContext } from '@sittir/types';",
 		'',

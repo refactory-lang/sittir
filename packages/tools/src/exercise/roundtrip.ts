@@ -1,4 +1,4 @@
-import { createRenderer } from '@sittir/core';
+import { createRenderer } from '@sittir/legacy-core';
 import type { AnyNodeData } from '@sittir/types';
 
 type GrammarName = 'rust' | 'typescript' | 'python';

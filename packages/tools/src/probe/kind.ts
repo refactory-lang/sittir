@@ -316,7 +316,7 @@ export async function probe(
 		/** Which render engine renders the NodeData:
 		 *    - `js`: parse via web-tree-sitter wasm, read via
 		 *                    `<lang>/src/wrap.ts:readTreeNode`, render
-		 *                    via `@sittir/core` createRenderer.
+		 *                    via `@sittir/legacy-core` createRenderer.
 		 *    - `native`:     parse via `@sittir/<lang>-native`'s
 		 *                    embedded `tree_sitter` Rust crate (no
 		 *                    wasm), read via napi `parseAndRead`,
@@ -911,7 +911,7 @@ function parseRange(spec: string): { start: number; end: number } {
 }
 
 async function renderNodeData(grammar: string, nodeData: unknown): Promise<string> {
-	const { createRenderer } = await import('@sittir/core');
+	const { createRenderer } = await import('@sittir/legacy-core');
 	const thisFile = import.meta.url;
 	const templatesPath = new URL(`../../../${grammar}/templates`, thisFile).pathname;
 	const kindNames = await loadKindNames(grammar);
@@ -934,7 +934,7 @@ async function renderNodeDataFromPath(
 	nodeData: unknown,
 	kindNames: ReadonlyMap<number, string> | undefined
 ): Promise<string> {
-	const { createRenderer } = await import('@sittir/core');
+	const { createRenderer } = await import('@sittir/legacy-core');
 	const bound = createRenderer(templatesPath, { kindNames });
 	const materialized = materializeProbeWrappedNodeData(nodeData);
 	return bound.render(materialized as Parameters<typeof bound.render>[0]);
@@ -1168,7 +1168,7 @@ function findInNodeDataByRange(node: unknown, start: number, end: number): unkno
 
 /** @internal — engine-vs-engine compare summary for `--engine both`.
  *  TS and native render the same NodeData; equal output means the
- *  napi crate's `render_dispatch` agrees with `@sittir/core`'s
+ *  napi crate's `render_dispatch` agrees with `@sittir/legacy-core`'s
  *  `createRenderer`. */
 export interface ProbeEngineCompare {
 	/** Both engines rendered identical text. */

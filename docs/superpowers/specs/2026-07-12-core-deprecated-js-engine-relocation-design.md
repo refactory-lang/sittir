@@ -1,4 +1,6 @@
-# Relocate @sittir/core's JS-engine internals into a `deprecated-js-engine/` subdirectory
+# Relocate @sittir/core's JS-engine internals
+
+> **Superseded during implementation.** The subdirectory-move approach below was the initial proposal; the user opted instead for a full package rename (`@sittir/core` → `@sittir/legacy-core`, directory `packages/core` → `packages/legacy-core`) for a stronger, unmistakable signal at lower long-term cost than expected. That's what actually landed — see the rename commit. This doc is kept as the record of the problem statement and the rejected alternative; the rest of this file describes the original (not-implemented) subdirectory design.
 
 ## Goal
 

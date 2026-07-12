@@ -41,7 +41,7 @@ import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 export interface GeneratedFiles {
 	grammar: string;
 	types: string;
-	/** engine.ts — thin wrapper around createNativeEngine from @sittir/common/engine plus createJsEngine from @sittir/core/engine */
+	/** engine.ts — thin wrapper around createNativeEngine from @sittir/common/engine plus createJsEngine from @sittir/legacy-core/engine */
 	engine: string;
 	/** Per-rule `.jinja` files. `EmittedTemplates.bodies`
 	 *  is keyed by rule kind with the full file contents (incl.

@@ -128,7 +128,7 @@ function collectUsesKindIdFromName(nodeMap: NodeMap, kindEntries: readonly KindE
 /**
  * The old `_setField`, `_setFields`, `_branchMethods`, and
  * `_leafMethods` helpers are replaced by the `withMethods`/`freezeNodeData`/
- * `buildWithNamespace` runtime helpers from `@sittir/core`. Nothing to emit here.
+ * `buildWithNamespace` runtime helpers from `@sittir/legacy-core`. Nothing to emit here.
  *
  * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
  */
