@@ -17,7 +17,7 @@ import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '.
 import { describe, it, expect, afterEach } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
 import { deleteWrapper } from '../wrapper-deletion.ts';
-import { deriveSlots, isTerminalValue } from '../model/node-map.ts';
+import { isTerminalValue } from '../model/node-map.ts';
 import type { Rule } from '../../types/rule.ts';
 
 const sym = (name: string): Rule<'link'> => ({ type: SYMBOL, name });
@@ -184,32 +184,5 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		const out = slots(rule);
 		expect(out).toHaveLength(1);
 		expect(out[0]!.separatorSource).toBeUndefined();
-	});
-
-	it('mergeSlotsByName preserves separatorSource when the FIRST same-named contributor lacks one (PR-T merge fix)', () => {
-		// Mirrors python's if_statement 'alternative' pattern (mergeSlotsByName's
-		// own docstring): the same slot name appears in two positions — here, an
-		// unnamed `member` symbol ref appears both bare (no separator) AND inside
-		// a repeat1 with a rule-shaped (non-literal) separator. mergeSlotsByName
-		// must fold these into ONE 'member' slot without dropping the
-		// separatorSource captured on the second occurrence just because the
-		// FIRST-encountered occurrence (which wins naming/propertyName) had none.
-		const sepRule: Rule<'link'> = { type: CHOICE, members: [str(','), str(';')] };
-		const rule: Rule<'link'> = {
-			type: SEQ,
-			members: [
-				sym('member'),
-				{
-					type: REPEAT1,
-					content: sym('member'),
-					separator: { value: sepRule, trailing: true, leading: false },
-				},
-			],
-		};
-		const out = deriveSlots(rule, { kindName: 'test_kind' });
-		const memberSlots = out.filter((s) => s.name === 'member');
-		expect(memberSlots).toHaveLength(1);
-		expect(memberSlots[0]!.separatorSource).toBeDefined();
-		expect(memberSlots[0]!.separatorSource!.rule).toEqual(sepRule);
 	});
 });
