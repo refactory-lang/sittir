@@ -126,9 +126,14 @@ function collectUsesKindIdFromName(nodeMap: NodeMap, kindEntries: readonly KindE
 }
 
 /**
- * The old `_setField`, `_setFields`, `_branchMethods`, and
- * `_leafMethods` helpers are replaced by the `withMethods`/`freezeNodeData`/
- * `buildWithNamespace` runtime helpers from `@sittir/legacy-core`. Nothing to emit here.
+ * The old `_setField`, `_setFields`, `_branchMethods`, and `_leafMethods`
+ * helpers are replaced by `withMethods` — emitted per-grammar in each
+ * package's own `utils.ts` as a facade over `withMethods` from
+ * `@sittir/common/utils` (not `@sittir/legacy-core`; see
+ * `.claude/codegen-conventions.md` rule 3). `freezeNodeData`/
+ * `buildWithNamespace` in `@sittir/legacy-core/src/nodeData.ts` are
+ * `@forFutureUse` scaffolding, not currently wired into generated output.
+ * Nothing to emit here.
  *
  * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
  */
