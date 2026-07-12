@@ -1513,7 +1513,10 @@ export function wrapDelimTokenTreeBrace(
 			delimTokens() {
 				return drillInAll<T.DelimTokens>(this._delim_tokens as readonly T.DelimTokens[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapDelimTokenTreeBrace({ ...data, $other: vs }, tree) }
+			$with: {
+				delimTokens: (...v: NonNullable<T.DelimTokenTreeBrace['_delim_tokens']>[number][]) =>
+					wrapDelimTokenTreeBrace({ ...data, _delim_tokens: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1569,7 +1572,10 @@ export function wrapDelimTokenTreeBracket(
 			delimTokens() {
 				return drillInAll<T.DelimTokens>(this._delim_tokens as readonly T.DelimTokens[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapDelimTokenTreeBracket({ ...data, $other: vs }, tree) }
+			$with: {
+				delimTokens: (...v: NonNullable<T.DelimTokenTreeBracket['_delim_tokens']>[number][]) =>
+					wrapDelimTokenTreeBracket({ ...data, _delim_tokens: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1625,7 +1631,10 @@ export function wrapDelimTokenTreeParen(
 			delimTokens() {
 				return drillInAll<T.DelimTokens>(this._delim_tokens as readonly T.DelimTokens[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapDelimTokenTreeParen({ ...data, $other: vs }, tree) }
+			$with: {
+				delimTokens: (...v: NonNullable<T.DelimTokenTreeParen['_delim_tokens']>[number][]) =>
+					wrapDelimTokenTreeParen({ ...data, _delim_tokens: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1908,7 +1917,10 @@ export function wrapExpressionStatementWithSemi(
 			expression() {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapExpressionStatementWithSemi({ ...data, $other: vs }, tree) }
+			$with: {
+				expression: (v: NonNullable<T.ExpressionStatementWithSemi['_expression']>) =>
+					wrapExpressionStatementWithSemi({ ...data, _expression: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1966,7 +1978,10 @@ export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHan
 			functionModifiers() {
 				return drillIn<T.FunctionModifiers | undefined>(this._function_modifiers, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapFunctionTypeFnForm({ ...data, $other: vs }, tree) }
+			$with: {
+				functionModifiers: (v: NonNullable<T.FunctionTypeFnForm['_function_modifiers']>) =>
+					wrapFunctionTypeFnForm({ ...data, _function_modifiers: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2013,7 +2028,10 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle) {
 			declarationList() {
 				return drillIn<T.DeclarationList>(this._declaration_list, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapImplItemBody({ ...data, $other: vs }, tree) }
+			$with: {
+				declarationList: (v: NonNullable<T.ImplItemBody['_declaration_list']>) =>
+					wrapImplItemBody({ ...data, _declaration_list: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2332,7 +2350,10 @@ export function wrapMacroDefinitionBrace(data: T.MacroDefinitionBrace, tree: Tre
 			macroRules() {
 				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapMacroDefinitionBrace({ ...data, $other: vs }, tree) }
+			$with: {
+				macroRules: (...v: NonNullable<T.MacroDefinitionBrace['_macro_rule']>[number][]) =>
+					wrapMacroDefinitionBrace({ ...data, _macro_rule: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2354,7 +2375,10 @@ export function wrapMacroDefinitionBracket(data: T.MacroDefinitionBracket, tree:
 			macroRules() {
 				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapMacroDefinitionBracket({ ...data, $other: vs }, tree) }
+			$with: {
+				macroRules: (...v: NonNullable<T.MacroDefinitionBracket['_macro_rule']>[number][]) =>
+					wrapMacroDefinitionBracket({ ...data, _macro_rule: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2376,7 +2400,10 @@ export function wrapMacroDefinitionParen(data: T.MacroDefinitionParen, tree: Tre
 			macroRules() {
 				return drillInAll<T.MacroRule>(this._macro_rule as readonly T.MacroRule[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapMacroDefinitionParen({ ...data, $other: vs }, tree) }
+			$with: {
+				macroRules: (...v: NonNullable<T.MacroDefinitionParen['_macro_rule']>[number][]) =>
+					wrapMacroDefinitionParen({ ...data, _macro_rule: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3016,7 +3043,10 @@ export function wrapTokenTreeBrace(
 			tokens() {
 				return drillInAll<T.Tokens>(this._tokens as readonly T.Tokens[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTokenTreeBrace({ ...data, $other: vs }, tree) }
+			$with: {
+				tokens: (...v: NonNullable<T.TokenTreeBrace['_tokens']>[number][]) =>
+					wrapTokenTreeBrace({ ...data, _tokens: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3074,7 +3104,10 @@ export function wrapTokenTreeBracket(
 			tokens() {
 				return drillInAll<T.Tokens>(this._tokens as readonly T.Tokens[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTokenTreeBracket({ ...data, $other: vs }, tree) }
+			$with: {
+				tokens: (...v: NonNullable<T.TokenTreeBracket['_tokens']>[number][]) =>
+					wrapTokenTreeBracket({ ...data, _tokens: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3132,7 +3165,10 @@ export function wrapTokenTreeParen(
 			tokens() {
 				return drillInAll<T.Tokens>(this._tokens as readonly T.Tokens[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTokenTreeParen({ ...data, $other: vs }, tree) }
+			$with: {
+				tokens: (...v: NonNullable<T.TokenTreeParen['_tokens']>[number][]) =>
+					wrapTokenTreeParen({ ...data, _tokens: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3192,7 +3228,10 @@ export function wrapTokenTreePatternBrace(
 			tokenPatterns() {
 				return drillInAll<T.TokenPattern>(this._token_pattern as readonly T.TokenPattern[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTokenTreePatternBrace({ ...data, $other: vs }, tree) }
+			$with: {
+				tokenPatterns: (...v: NonNullable<T.TokenTreePatternBrace['_token_pattern']>[number][]) =>
+					wrapTokenTreePatternBrace({ ...data, _token_pattern: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3252,7 +3291,10 @@ export function wrapTokenTreePatternBracket(
 			tokenPatterns() {
 				return drillInAll<T.TokenPattern>(this._token_pattern as readonly T.TokenPattern[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTokenTreePatternBracket({ ...data, $other: vs }, tree) }
+			$with: {
+				tokenPatterns: (...v: NonNullable<T.TokenTreePatternBracket['_token_pattern']>[number][]) =>
+					wrapTokenTreePatternBracket({ ...data, _token_pattern: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3312,7 +3354,10 @@ export function wrapTokenTreePatternParen(
 			tokenPatterns() {
 				return drillInAll<T.TokenPattern>(this._token_pattern as readonly T.TokenPattern[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTokenTreePatternParen({ ...data, $other: vs }, tree) }
+			$with: {
+				tokenPatterns: (...v: NonNullable<T.TokenTreePatternParen['_token_pattern']>[number][]) =>
+					wrapTokenTreePatternParen({ ...data, _token_pattern: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3521,7 +3566,10 @@ export function wrap_VisibilityModifierGroup1(
 			content() {
 				return drillAs<T.Self | T.Super | T.Crate | T.InPath>(this._content, tree, 'in_path', '_in_path');
 			},
-			$with: { $children: (...vs: readonly [never]) => wrap_VisibilityModifierGroup1({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T._VisibilityModifierGroup1['_content']>) =>
+					wrap_VisibilityModifierGroup1({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3686,7 +3734,10 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
 					'_attributed_argument'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapArguments({ ...data, $other: vs }, tree) }
+			$with: {
+				attributedArguments: (...v: NonNullable<T.Arguments['_attributed_argument']>[number][]) =>
+					wrapArguments({ ...data, _attributed_argument: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3715,7 +3766,9 @@ export function wrapArrayExpression(
 			content() {
 				return drillIn<T.ArrayExpressionSemi | T.ArrayExpressionList>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapArrayExpression({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ArrayExpression['_content']>) => wrapArrayExpression({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4306,7 +4359,9 @@ export function wrapBracketedType(
 			content() {
 				return drillIn<T._Type | T.QualifiedType>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapBracketedType({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.BracketedType['_content']>) => wrapBracketedType({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4931,7 +4986,10 @@ export function wrapDeclarationList(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapDeclarationList({ ...data, $other: vs }, tree) }
+			$with: {
+				declarationStatements: (...v: NonNullable<T.DeclarationList['_declaration_statement']>[number][]) =>
+					wrapDeclarationList({ ...data, _declaration_statement: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4961,7 +5019,9 @@ export function wrapDelimTokenTree(
 			content() {
 				return drillIn<T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapDelimTokenTree({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.DelimTokenTree['_content']>) => wrapDelimTokenTree({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5021,7 +5081,9 @@ export function wrapElseClause(
 			content() {
 				return drillIn<T.Block | T.IfExpression>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapElseClause({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ElseClause['_content']>) => wrapElseClause({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5174,7 +5236,10 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle) {
 					'_attributed_enum_variant'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapEnumVariantList({ ...data, $other: vs }, tree) }
+			$with: {
+				attributedEnumVariants: (...v: NonNullable<T.EnumVariantList['_attributed_enum_variant']>[number][]) =>
+					wrapEnumVariantList({ ...data, _attributed_enum_variant: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5230,7 +5295,10 @@ export function wrapExpressionStatement(
 					'_expression_statement_with_semi'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapExpressionStatement({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ExpressionStatement['_content']>) =>
+					wrapExpressionStatement({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5393,7 +5461,11 @@ export function wrapFieldDeclarationList(data: T.FieldDeclarationList, tree: Tre
 					'_attributed_field_declaration'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapFieldDeclarationList({ ...data, $other: vs }, tree) }
+			$with: {
+				attributedFieldDeclarations: (
+					...v: NonNullable<T.FieldDeclarationList['_attributed_field_declaration']>[number][]
+				) => wrapFieldDeclarationList({ ...data, _attributed_field_declaration: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5557,7 +5629,13 @@ export function wrapFieldPattern(
 			content() {
 				return drillIn<T.Identifier | T.FieldPatternNamed>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapFieldPattern({ ...data, $other: vs }, tree) }
+			$with: {
+				refMarker: (v: NonNullable<T.FieldPattern['_ref_marker']>) =>
+					wrapFieldPattern({ ...data, _ref_marker: v }, tree),
+				mutableSpecifier: (v: NonNullable<T.FieldPattern['_mutable_specifier']>) =>
+					wrapFieldPattern({ ...data, _mutable_specifier: v }, tree),
+				content: (v: NonNullable<T.FieldPattern['_content']>) => wrapFieldPattern({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5633,7 +5711,10 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle) {
 			lifetimes() {
 				return drillInAll<T.Lifetime>(this._lifetime as readonly T.Lifetime[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapForLifetimes({ ...data, $other: vs }, tree) }
+			$with: {
+				lifetimes: (...v: NonEmptyArray<NonNullable<T.ForLifetimes['_lifetime']>[number]>) =>
+					wrapForLifetimes({ ...data, _lifetime: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6678,7 +6759,9 @@ export function wrapLineComment(
 			content() {
 				return drillIn<T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapLineComment({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.LineComment['_content']>) => wrapLineComment({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6932,7 +7015,10 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
 					'_match_block_arms'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapMatchBlock({ ...data, $other: vs }, tree) }
+			$with: {
+				matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
+					wrapMatchBlock({ ...data, _match_block_arms: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -7141,7 +7227,9 @@ export function wrapOrPattern(
 			content() {
 				return drillIn<T.OrPatternBinary | T.OrPatternPrefix>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapOrPattern({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.OrPattern['_content']>) => wrapOrPattern({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -7245,7 +7333,10 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
 					'_attributed_parameter'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapParameters({ ...data, $other: vs }, tree) }
+			$with: {
+				attributedParameters: (...v: NonNullable<T.Parameters['_attributed_parameter']>[number][]) =>
+					wrapParameters({ ...data, _attributed_parameter: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -7395,7 +7486,9 @@ export function wrapRangeExpression(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapRangeExpression({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.RangeExpression['_content']>) => wrapRangeExpression({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -7791,7 +7884,10 @@ export function wrapReturnExpression(
 			expression() {
 				return drillIn<T.Expression | undefined>(this._expression, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapReturnExpression({ ...data, $other: vs }, tree) }
+			$with: {
+				expression: (v: NonNullable<T.ReturnExpression['_expression']>) =>
+					wrapReturnExpression({ ...data, _expression: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -8156,7 +8252,10 @@ export function wrapSlicePattern(
 			patterns() {
 				return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapSlicePattern({ ...data, $other: vs }, tree) }
+			$with: {
+				patterns: (...v: NonNullable<T.SlicePattern['_pattern']>[number][]) =>
+					wrapSlicePattern({ ...data, _pattern: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -8289,7 +8388,10 @@ export function wrapStringLiteral(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapStringLiteral({ ...data, $other: vs }, tree) }
+			$with: {
+				contents: (...v: NonNullable<T.StringLiteral['_content']>[number][]) =>
+					wrapStringLiteral({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -8743,7 +8845,9 @@ export function wrapTokenTree(
 					| T.DelimTokenTreeBrace
 				>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTokenTree({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.TokenTree['_content']>) => wrapTokenTree({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -8782,7 +8886,10 @@ export function wrapTokenTreePattern(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTokenTreePattern({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.TokenTreePattern['_content']>) =>
+					wrapTokenTreePattern({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -9307,7 +9414,10 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
 			typeArguments() {
 				return drillAsAll<T.TypeArgument>(this._type_argument, tree, 'type_argument', '_type_argument');
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTypeArguments({ ...data, $other: vs }, tree) }
+			$with: {
+				typeArguments: (...v: NonEmptyArray<NonNullable<T.TypeArguments['_type_argument']>[number]>) =>
+					wrapTypeArguments({ ...data, _type_argument: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -9540,7 +9650,11 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 					'_attributed_type_parameter'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTypeParameters({ ...data, $other: vs }, tree) }
+			$with: {
+				attributedTypeParameters: (
+					...v: NonEmptyArray<NonNullable<T.TypeParameters['_attributed_type_parameter']>[number]>
+				) => wrapTypeParameters({ ...data, _attributed_type_parameter: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -9831,7 +9945,10 @@ export function wrapUseList(
 			useClauses() {
 				return drillInAll<T.UseClause>(this._use_clause as readonly T.UseClause[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapUseList({ ...data, $other: vs }, tree) }
+			$with: {
+				useClauses: (...v: NonNullable<T.UseList['_use_clause']>[number][]) =>
+					wrapUseList({ ...data, _use_clause: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -9927,7 +10044,10 @@ export function wrapVisibilityModifier(
 					'_visibility_modifier_pub'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapVisibilityModifier({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.VisibilityModifier['_content']>) =>
+					wrapVisibilityModifier({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -9949,7 +10069,10 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle) {
 			wherePredicates() {
 				return drillInAll<T.WherePredicate>(this._where_predicate as readonly T.WherePredicate[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapWhereClause({ ...data, $other: vs }, tree) }
+			$with: {
+				wherePredicates: (...v: NonNullable<T.WhereClause['_where_predicate']>[number][]) =>
+					wrapWhereClause({ ...data, _where_predicate: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -10158,7 +10281,10 @@ export function wrapYieldExpression(
 			expression() {
 				return drillIn<T.Expression | undefined>(this._expression, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapYieldExpression({ ...data, $other: vs }, tree) }
+			$with: {
+				expression: (v: NonNullable<T.YieldExpression['_expression']>) =>
+					wrapYieldExpression({ ...data, _expression: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -10188,7 +10314,10 @@ export function wrapVisibilityModifierGroup1(
 			content() {
 				return drillAs<T.Self | T.Super | T.Crate | T.InPath>(this._content, tree, 'in_path', '_in_path');
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapVisibilityModifierGroup1({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.VisibilityModifierGroup1['_content']>) =>
+					wrapVisibilityModifierGroup1({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);

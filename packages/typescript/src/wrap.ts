@@ -1109,7 +1109,10 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
 			methodSignature() {
 				return drillIn<T.MethodSignature>(this._method_signature, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapClassBodyMethodSig({ ...data, $other: vs }, tree) }
+			$with: {
+				methodSignature: (v: NonNullable<T.ClassBodyMethodSig['_method_signature']>) =>
+					wrapClassBodyMethodSig({ ...data, _method_signature: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1190,7 +1193,10 @@ export function wrapExportStatementDefault(
 			content() {
 				return drillIn<T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapExportStatementDefault({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ExportStatementDefault['_content']>) =>
+					wrapExportStatementDefault({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2036,7 +2042,10 @@ export function wrap_ImportClauseGroup1(
 			content() {
 				return drillIn<T.NamespaceImport | T.NamedImports>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrap_ImportClauseGroup1({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T._ImportClauseGroup1['_content']>) =>
+					wrap_ImportClauseGroup1({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2574,7 +2583,8 @@ export function wrapPublicFieldDefinitionDeclareFirst(data: T.PublicFieldDefinit
 				return this._accessibility_modifier;
 			},
 			$with: {
-				$children: (...vs: readonly [never]) => wrapPublicFieldDefinitionDeclareFirst({ ...data, $other: vs }, tree)
+				accessibilityModifier: (v: NonNullable<T.PublicFieldDefinitionDeclareFirst['_accessibility_modifier']>) =>
+					wrapPublicFieldDefinitionDeclareFirst({ ...data, _accessibility_modifier: v }, tree)
 			}
 		},
 		methodsEngine
@@ -3367,7 +3377,10 @@ export function wrapAmbientDeclaration(
 			content() {
 				return drillIn<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapAmbientDeclaration({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.AmbientDeclaration['_content']>) =>
+					wrapAmbientDeclaration({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3728,7 +3741,9 @@ export function wrapAsserts(
 			content() {
 				return drillIn<T.TypePredicate | T.Identifier | T.This>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapAsserts({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.Asserts['_content']>) => wrapAsserts({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4092,7 +4107,9 @@ export function wrapCallExpression(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapCallExpression({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.CallExpression['_content']>) => wrapCallExpression({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4306,7 +4323,10 @@ export function wrapClassBody(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapClassBody({ ...data, $other: vs }, tree) }
+			$with: {
+				contents: (...v: NonNullable<T.ClassBody['_content']>[number][]) =>
+					wrapClassBody({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4407,7 +4427,9 @@ export function wrapClassHeritage(
 					'_class_heritage_extends_clause'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapClassHeritage({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ClassHeritage['_content']>) => wrapClassHeritage({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4817,7 +4839,9 @@ export function wrapDecorator(
 					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
 				>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapDecorator({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.Decorator['_content']>) => wrapDecorator({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4941,7 +4965,8 @@ export function wrapDecoratorParenthesizedExpression(
 				return drillIn<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this._content, tree);
 			},
 			$with: {
-				$children: (...vs: readonly [never]) => wrapDecoratorParenthesizedExpression({ ...data, $other: vs }, tree)
+				content: (v: NonNullable<T.DecoratorParenthesizedExpression['_content']>) =>
+					wrapDecoratorParenthesizedExpression({ ...data, _content: v }, tree)
 			}
 		},
 		methodsEngine
@@ -5181,7 +5206,10 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle) {
 			exportSpecifiers() {
 				return drillInAll<T.ExportSpecifier>(this._export_specifier as readonly T.ExportSpecifier[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapExportClause({ ...data, $other: vs }, tree) }
+			$with: {
+				exportSpecifiers: (...v: NonNullable<T.ExportClause['_export_specifier']>[number][]) =>
+					wrapExportClause({ ...data, _export_specifier: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5285,7 +5313,9 @@ export function wrapExportStatement(
 					| T.ExportStatementNamespaceExport
 				>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapExportStatement({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ExportStatement['_content']>) => wrapExportStatement({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5763,7 +5793,10 @@ export function wrapFormalParameters(
 			formalParameters() {
 				return drillInAll<T.FormalParameter>(this._formal_parameter as readonly T.FormalParameter[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapFormalParameters({ ...data, $other: vs }, tree) }
+			$with: {
+				formalParameters: (...v: NonNullable<T.FormalParameters['_formal_parameter']>[number][]) =>
+					wrapFormalParameters({ ...data, _formal_parameter: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6418,7 +6451,10 @@ export function wrapImplementsClause(
 			types() {
 				return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapImplementsClause({ ...data, $other: vs }, tree) }
+			$with: {
+				types: (...v: NonEmptyArray<NonNullable<T.ImplementsClause['_type']>[number]>) =>
+					wrapImplementsClause({ ...data, _type: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6521,7 +6557,9 @@ export function wrapImportClause(
 					'_import_clause_default_import'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapImportClause({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ImportClause['_content']>) => wrapImportClause({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -7081,7 +7119,9 @@ export function wrapLiteralType(
 					'_number'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapLiteralType({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.LiteralType['_content']>) => wrapLiteralType({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -7587,7 +7627,10 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle) {
 			importSpecifiers() {
 				return drillInAll<T.ImportSpecifier>(this._import_specifier as readonly T.ImportSpecifier[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapNamedImports({ ...data, $other: vs }, tree) }
+			$with: {
+				importSpecifiers: (...v: NonNullable<T.NamedImports['_import_specifier']>[number][]) =>
+					wrapNamedImports({ ...data, _import_specifier: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -7613,7 +7656,10 @@ export function wrapNamespaceExport(
 			moduleExportName() {
 				return drillIn<T.ModuleExportName>(this._module_export_name, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapNamespaceExport({ ...data, $other: vs }, tree) }
+			$with: {
+				moduleExportName: (v: NonNullable<T.NamespaceExport['_module_export_name']>) =>
+					wrapNamespaceExport({ ...data, _module_export_name: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -7973,7 +8019,10 @@ export function wrapObjectTypeContent(
 			content() {
 				return drillIn<T.ObjectTypeContentComma | T.ObjectTypeContentSemi>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapObjectTypeContent({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ObjectTypeContent['_content']>) =>
+					wrapObjectTypeContent({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -8078,7 +8127,10 @@ export function wrapObjectTypeContentComma(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapObjectTypeContentComma({ ...data, $other: vs }, tree) }
+			$with: {
+				contents: (...v: NonNullable<T.ObjectTypeContentComma['_content']>[number][]) =>
+					wrapObjectTypeContentComma({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -8183,7 +8235,10 @@ export function wrapObjectTypeContentSemi(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapObjectTypeContentSemi({ ...data, $other: vs }, tree) }
+			$with: {
+				contents: (...v: NonNullable<T.ObjectTypeContentSemi['_content']>[number][]) =>
+					wrapObjectTypeContentSemi({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -8525,7 +8580,10 @@ export function wrapParenthesizedExpression(
 					| T.DecoratorCallExpression
 				>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapParenthesizedExpression({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ParenthesizedExpression['_content']>) =>
+					wrapParenthesizedExpression({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -9210,7 +9268,9 @@ export function wrapRestPattern(
 					| T.NonNullExpression
 				>(this._content, tree, 'identifier', '_reserved_identifier');
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapRestPattern({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.RestPattern['_content']>) => wrapRestPattern({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -9538,7 +9598,10 @@ export function wrapSequenceExpression(
 			expressions() {
 				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapSequenceExpression({ ...data, $other: vs }, tree) }
+			$with: {
+				expressions: (...v: NonEmptyArray<NonNullable<T.SequenceExpression['_expression']>[number]>) =>
+					wrapSequenceExpression({ ...data, _expression: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -9875,7 +9938,10 @@ export function wrapTemplateLiteralType(
 			contents() {
 				return drillAsAll<T.TemplateChars | T.TemplateType>(this._content, tree, 'string_fragment', '_template_chars');
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTemplateLiteralType({ ...data, $other: vs }, tree) }
+			$with: {
+				contents: (...v: NonNullable<T.TemplateLiteralType['_content']>[number][]) =>
+					wrapTemplateLiteralType({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -9914,7 +9980,10 @@ export function wrapTemplateString(
 					'_template_chars'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTemplateString({ ...data, $other: vs }, tree) }
+			$with: {
+				contents: (...v: NonNullable<T.TemplateString['_content']>[number][]) =>
+					wrapTemplateString({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -10019,7 +10088,10 @@ export function wrapTemplateSubstitution(
 			expressions() {
 				return drillIn<T.Expressions>(this._expressions, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTemplateSubstitution({ ...data, $other: vs }, tree) }
+			$with: {
+				expressions: (v: NonNullable<T.TemplateSubstitution['_expressions']>) =>
+					wrapTemplateSubstitution({ ...data, _expressions: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -10086,7 +10158,9 @@ export function wrapTemplateType(
 			content() {
 				return drillIn<T.PrimaryType | T.InferType>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTemplateType({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.TemplateType['_content']>) => wrapTemplateType({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -10452,7 +10526,10 @@ export function wrapTupleType(
 			tupleTypeMembers() {
 				return drillInAll<T.TupleTypeMember>(this._tuple_type_member as readonly T.TupleTypeMember[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTupleType({ ...data, $other: vs }, tree) }
+			$with: {
+				tupleTypeMembers: (...v: NonNullable<T.TupleType['_tuple_type_member']>[number][]) =>
+					wrapTupleType({ ...data, _tuple_type_member: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -10666,7 +10743,10 @@ export function wrapTypeArguments(
 			types() {
 				return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTypeArguments({ ...data, $other: vs }, tree) }
+			$with: {
+				types: (...v: NonEmptyArray<NonNullable<T.TypeArguments['_type']>[number]>) =>
+					wrapTypeArguments({ ...data, _type: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -10782,7 +10862,10 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 			typeParameters() {
 				return drillInAll<T.TypeParameter>(this._type_parameter as readonly T.TypeParameter[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTypeParameters({ ...data, $other: vs }, tree) }
+			$with: {
+				typeParameters: (...v: NonEmptyArray<NonNullable<T.TypeParameters['_type_parameter']>[number]>) =>
+					wrapTypeParameters({ ...data, _type_parameter: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -10923,7 +11006,9 @@ export function wrapTypeQuery(
 					| T.This
 				>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTypeQuery({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.TypeQuery['_content']>) => wrapTypeQuery({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -11034,7 +11119,10 @@ export function wrapUpdateExpression(
 			content() {
 				return drillIn<T.UpdateExpressionPostfix | T.UpdateExpressionPrefix>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapUpdateExpression({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.UpdateExpression['_content']>) =>
+					wrapUpdateExpression({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -11236,7 +11324,10 @@ export function wrapImportClauseGroup1(
 			content() {
 				return drillIn<T.NamespaceImport | T.NamedImports>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapImportClauseGroup1({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ImportClauseGroup1['_content']>) =>
+					wrapImportClauseGroup1({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);

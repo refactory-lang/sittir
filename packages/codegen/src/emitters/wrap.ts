@@ -770,14 +770,22 @@ function emitFieldCarryingWrap(
 /**
  * Emit the inline `$with: { ... }` property for a wrap function literal.
  *
- * Container-shape nodes emit `$other`/`$child` lambdas calling the
- * rest-param factory. Field-carrying nodes emit per-field setters that
- * build a lazy config and call the factory with a patched value.
+ * Container-shape nodes with a real unnamed-children wire slot (`children`
+ * non-empty) emit `$other`/`$child` lambdas calling the rest-param factory.
+ * `node.childSurface` alone is NOT sufficient to pick that path — it
+ * describes the factory's own calling convention, and under the unified-slot
+ * model an unnamed slot lives in `fields` with a real `_<name>` storage key,
+ * not in `$other`. All other nodes (including childSurface spread/direct
+ * nodes whose unnamed slot is a `fields` entry) fall through to the
+ * per-field setters below, which build a lazy config and call the factory
+ * with a patched value at the field's real storage key.
  *
  * @param lines - Output line buffer to append to.
  * @param node - The assembled node descriptor.
  * @param fields - Named field slots.
- * @param children - Unnamed child slots.
+ * @param children - Unnamed child slots (currently always `[]` from both
+ *   call sites — `AssembledBranch/Group.fields` already unifies unnamed
+ *   slots into `fields`).
  */
 function emitInlineWithProperty(
 	lines: string[],
@@ -793,7 +801,7 @@ function emitInlineWithProperty(
 
 	const spreadData = '...data';
 
-	if (node.childSurface === 'spread' || node.childSurface === 'direct') {
+	if ((node.childSurface === 'spread' || node.childSurface === 'direct') && children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;

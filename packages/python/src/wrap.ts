@@ -887,7 +887,10 @@ export function wrapComprehensionClauses(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapComprehensionClauses({ ...data, $other: vs }, tree) }
+			$with: {
+				contents: (...v: NonNullable<T.ComprehensionClauses['_content']>[number][]) =>
+					wrapComprehensionClauses({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1131,7 +1134,10 @@ export function wrapExpressionStatementTuple(
 			expressions() {
 				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapExpressionStatementTuple({ ...data, $other: vs }, tree) }
+			$with: {
+				expressions: (...v: NonEmptyArray<NonNullable<T.ExpressionStatementTuple['_expression']>[number]>) =>
+					wrapExpressionStatementTuple({ ...data, _expression: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1249,7 +1255,10 @@ export function wrap_ListPattern(data: T._ListPattern, tree: TreeHandle) {
 			casePatterns() {
 				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrap_ListPattern({ ...data, $other: vs }, tree) }
+			$with: {
+				casePatterns: (...v: NonNullable<T._ListPattern['_case_pattern']>[number][]) =>
+					wrap_ListPattern({ ...data, _case_pattern: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1271,7 +1280,10 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
 			matchBlockBlock() {
 				return drillAs<T.MatchBlockBlock>(this._match_block_block, tree, 'match_block_block', '_match_block_block');
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapMatchBlock({ ...data, $other: vs }, tree) }
+			$with: {
+				matchBlockBlock: (v: NonNullable<T.MatchBlock['_match_block_block']>) =>
+					wrapMatchBlock({ ...data, _match_block_block: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1394,7 +1406,10 @@ export function wrapSimplePatternNegative(
 			content() {
 				return drillIn<T.Integer | T.Float>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapSimplePatternNegative({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.SimplePatternNegative['_content']>) =>
+					wrapSimplePatternNegative({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1475,7 +1490,10 @@ export function wrapSimpleStatements(
 			simpleStatements() {
 				return drillInAll<T.SimpleStatement>(this._simple_statement as readonly T.SimpleStatement[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapSimpleStatements({ ...data, $other: vs }, tree) }
+			$with: {
+				simpleStatements: (...v: NonEmptyArray<NonNullable<T.SimpleStatements['_simple_statement']>[number]>) =>
+					wrapSimpleStatements({ ...data, _simple_statement: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1568,7 +1586,10 @@ export function wrap_SliceGroup1(
 			expression() {
 				return drillIn<T.Expression | undefined>(this._expression, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrap_SliceGroup1({ ...data, $other: vs }, tree) }
+			$with: {
+				expression: (v: NonNullable<T._SliceGroup1['_expression']>) =>
+					wrap_SliceGroup1({ ...data, _expression: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1620,7 +1641,10 @@ export function wrap_TuplePattern(data: T._TuplePattern, tree: TreeHandle) {
 			casePatterns() {
 				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrap_TuplePattern({ ...data, $other: vs }, tree) }
+			$with: {
+				casePatterns: (...v: NonNullable<T._TuplePattern['_case_pattern']>[number][]) =>
+					wrap_TuplePattern({ ...data, _case_pattern: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1642,7 +1666,10 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle) {
 			withItems() {
 				return drillInAll<T.WithItem>(this._with_item as readonly T.WithItem[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapWithClauseBare({ ...data, $other: vs }, tree) }
+			$with: {
+				withItems: (...v: NonEmptyArray<NonNullable<T.WithClauseBare['_with_item']>[number]>) =>
+					wrapWithClauseBare({ ...data, _with_item: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1664,7 +1691,10 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle) {
 			withItems() {
 				return drillInAll<T.WithItem>(this._with_item as readonly T.WithItem[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapWithClauseParen({ ...data, $other: vs }, tree) }
+			$with: {
+				withItems: (...v: NonEmptyArray<NonNullable<T.WithClauseParen['_with_item']>[number]>) =>
+					wrapWithClauseParen({ ...data, _with_item: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -1932,7 +1962,10 @@ export function wrapAssertStatement(
 			expressions() {
 				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapAssertStatement({ ...data, $other: vs }, tree) }
+			$with: {
+				expressions: (...v: NonEmptyArray<NonNullable<T.AssertStatement['_expression']>[number]>) =>
+					wrapAssertStatement({ ...data, _expression: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2224,7 +2257,9 @@ export function wrapBlock(
 			statements() {
 				return drillInAll<T.Statement>(this._statement as readonly T.Statement[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapBlock({ ...data, $other: vs }, tree) }
+			$with: {
+				statements: (...v: NonNullable<T.Block['_statement']>[number][]) => wrapBlock({ ...data, _statement: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2416,7 +2451,9 @@ export function wrapCasePattern(
 					'_as_pattern'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapCasePattern({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.CasePattern['_content']>) => wrapCasePattern({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2658,7 +2695,10 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
 			strings() {
 				return drillInAll<T.String>(this._string as readonly T.String[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapConcatenatedString({ ...data, $other: vs }, tree) }
+			$with: {
+				strings: (...v: NonEmptyArray<NonNullable<T.ConcatenatedString['_string']>[number]>) =>
+					wrapConcatenatedString({ ...data, _string: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -2930,7 +2970,10 @@ export function wrapDeleteStatement(
 			expressions() {
 				return drillIn<T.Expressions>(this._expressions, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapDeleteStatement({ ...data, $other: vs }, tree) }
+			$with: {
+				expressions: (v: NonNullable<T.DeleteStatement['_expressions']>) =>
+					wrapDeleteStatement({ ...data, _expressions: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3122,7 +3165,10 @@ export function wrapDictionarySplatPattern(
 			content() {
 				return drillIn<T.Identifier | T.Subscript | T.Attribute>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapDictionarySplatPattern({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.DictionarySplatPattern['_content']>) =>
+					wrapDictionarySplatPattern({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3144,7 +3190,10 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle) {
 			identifiers() {
 				return drillInAll<T.Identifier>(this._identifier as readonly T.Identifier[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapDottedName({ ...data, $other: vs }, tree) }
+			$with: {
+				identifiers: (...v: NonEmptyArray<NonNullable<T.DottedName['_identifier']>[number]>) =>
+					wrapDottedName({ ...data, _identifier: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3495,7 +3544,10 @@ export function wrapExpressionList(
 			expressions() {
 				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapExpressionList({ ...data, $other: vs }, tree) }
+			$with: {
+				expressions: (...v: NonEmptyArray<NonNullable<T.ExpressionList['_expression']>[number]>) =>
+					wrapExpressionList({ ...data, _expression: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3681,7 +3733,10 @@ export function wrapExpressionStatement(
 					'_expression_statement_tuple'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapExpressionStatement({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ExpressionStatement['_content']>) =>
+					wrapExpressionStatement({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -3887,7 +3942,10 @@ export function wrapFormatSpecifier(
 			contents() {
 				return drillAsAll<'[^{}\\n]+' | T.Interpolation>(this._content, tree, 'format_expression', 'interpolation');
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapFormatSpecifier({ ...data, $other: vs }, tree) }
+			$with: {
+				contents: (...v: NonNullable<T.FormatSpecifier['_content']>[number][]) =>
+					wrapFormatSpecifier({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4089,7 +4147,10 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle) {
 			identifiers() {
 				return drillInAll<T.Identifier>(this._identifier as readonly T.Identifier[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapGlobalStatement({ ...data, $other: vs }, tree) }
+			$with: {
+				identifiers: (...v: NonEmptyArray<NonNullable<T.GlobalStatement['_identifier']>[number]>) =>
+					wrapGlobalStatement({ ...data, _identifier: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4402,7 +4463,10 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 			parameters() {
 				return drillIn<T._Parameters>(this._parameters, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapLambdaParameters({ ...data, $other: vs }, tree) }
+			$with: {
+				parameters: (v: NonNullable<T.LambdaParameters['_parameters']>) =>
+					wrapLambdaParameters({ ...data, _parameters: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4461,7 +4525,10 @@ export function wrapList(data: T.List, tree: TreeHandle) {
 			collectionElements() {
 				return drillIn<T.CollectionElements | undefined>(this._collection_elements, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapList({ ...data, $other: vs }, tree) }
+			$with: {
+				collectionElements: (v: NonNullable<T.List['_collection_elements']>) =>
+					wrapList({ ...data, _collection_elements: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4519,7 +4586,9 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle) {
 			patterns() {
 				return drillIn<T.Patterns | undefined>(this._patterns, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapListPattern({ ...data, $other: vs }, tree) }
+			$with: {
+				patterns: (v: NonNullable<T.ListPattern['_patterns']>) => wrapListPattern({ ...data, _patterns: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4573,7 +4642,10 @@ export function wrapListSplatPattern(
 			content() {
 				return drillIn<T.Identifier | T.Subscript | T.Attribute>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapListSplatPattern({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ListSplatPattern['_content']>) =>
+					wrapListSplatPattern({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4726,7 +4798,10 @@ export function wrapModule(
 			statements() {
 				return drillInAll<T.Statement>(this._statement as readonly T.Statement[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapModule({ ...data, $other: vs }, tree) }
+			$with: {
+				statements: (...v: NonNullable<T.Module['_statement']>[number][]) =>
+					wrapModule({ ...data, _statement: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4782,7 +4857,10 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
 			identifiers() {
 				return drillInAll<T.Identifier>(this._identifier as readonly T.Identifier[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapNonlocalStatement({ ...data, $other: vs }, tree) }
+			$with: {
+				identifiers: (...v: NonEmptyArray<NonNullable<T.NonlocalStatement['_identifier']>[number]>) =>
+					wrapNonlocalStatement({ ...data, _identifier: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4888,7 +4966,9 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
 			parameters() {
 				return drillIn<T._Parameters | undefined>(this._parameters, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapParameters({ ...data, $other: vs }, tree) }
+			$with: {
+				parameters: (v: NonNullable<T.Parameters['_parameters']>) => wrapParameters({ ...data, _parameters: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -4990,7 +5070,10 @@ export function wrapParenthesizedExpression(
 					'parenthesized_list_splat'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapParenthesizedExpression({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ParenthesizedExpression['_content']>) =>
+					wrapParenthesizedExpression({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5024,7 +5107,10 @@ export function wrapParenthesizedListSplat(
 					'parenthesized_list_splat'
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapParenthesizedListSplat({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.ParenthesizedListSplat['_content']>) =>
+					wrapParenthesizedListSplat({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5102,7 +5188,10 @@ export function wrapPatternList(
 			patterns() {
 				return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapPatternList({ ...data, $other: vs }, tree) }
+			$with: {
+				patterns: (...v: NonEmptyArray<NonNullable<T.PatternList['_pattern']>[number]>) =>
+					wrapPatternList({ ...data, _pattern: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5455,7 +5544,10 @@ export function wrapReturnStatement(
 			expressions() {
 				return drillIn<T.Expressions | undefined>(this._expressions, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapReturnStatement({ ...data, $other: vs }, tree) }
+			$with: {
+				expressions: (v: NonNullable<T.ReturnStatement['_expressions']>) =>
+					wrapReturnStatement({ ...data, _expressions: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5478,7 +5570,10 @@ export function wrapSet(data: T.Set, tree: TreeHandle) {
 			collectionElements() {
 				return drillIn<T.CollectionElements>(this._collection_elements, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapSet({ ...data, $other: vs }, tree) }
+			$with: {
+				collectionElements: (v: NonNullable<T.Set['_collection_elements']>) =>
+					wrapSet({ ...data, _collection_elements: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5706,7 +5801,10 @@ export function wrapStringContent(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapStringContent({ ...data, $other: vs }, tree) }
+			$with: {
+				contents: (...v: NonNullable<T.StringContent['_content']>[number][]) =>
+					wrapStringContent({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5861,7 +5959,10 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle) {
 			collectionElements() {
 				return drillIn<T.CollectionElements | undefined>(this._collection_elements, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTuple({ ...data, $other: vs }, tree) }
+			$with: {
+				collectionElements: (v: NonNullable<T.Tuple['_collection_elements']>) =>
+					wrapTuple({ ...data, _collection_elements: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -5883,7 +5984,9 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
 			patterns() {
 				return drillIn<T.Patterns | undefined>(this._patterns, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTuplePattern({ ...data, $other: vs }, tree) }
+			$with: {
+				patterns: (v: NonNullable<T.TuplePattern['_patterns']>) => wrapTuplePattern({ ...data, _patterns: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6091,7 +6194,9 @@ export function wrapType(
 					tree
 				);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapType({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.Type['_content']>) => wrapType({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6160,7 +6265,10 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 			types() {
 				return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapTypeParameter({ ...data, $other: vs }, tree) }
+			$with: {
+				types: (...v: NonEmptyArray<NonNullable<T.TypeParameter['_type']>[number]>) =>
+					wrapTypeParameter({ ...data, _type: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6361,7 +6469,10 @@ export function wrapUnionPattern(
 			simplePatterns() {
 				return drillInAll<T.SimplePattern>(this._simple_pattern as readonly T.SimplePattern[] | undefined, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapUnionPattern({ ...data, $other: vs }, tree) }
+			$with: {
+				simplePatterns: (...v: NonEmptyArray<NonNullable<T.UnionPattern['_simple_pattern']>[number]>) =>
+					wrapUnionPattern({ ...data, _simple_pattern: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6470,7 +6581,9 @@ export function wrapWithClause(
 			content() {
 				return drillIn<T.WithClauseBare | T.WithClauseParen>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapWithClause({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.WithClause['_content']>) => wrapWithClause({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6637,7 +6750,9 @@ export function wrapYield(
 			content() {
 				return drillIn<T.Expression | T.Expressions | undefined>(this._content, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapYield({ ...data, $other: vs }, tree) }
+			$with: {
+				content: (v: NonNullable<T.Yield['_content']>) => wrapYield({ ...data, _content: v }, tree)
+			}
 		},
 		methodsEngine
 	);
@@ -6729,7 +6844,9 @@ export function wrapSliceGroup1(
 			expression() {
 				return drillIn<T.Expression | undefined>(this._expression, tree);
 			},
-			$with: { $children: (...vs: readonly [never]) => wrapSliceGroup1({ ...data, $other: vs }, tree) }
+			$with: {
+				expression: (v: NonNullable<T.SliceGroup1['_expression']>) => wrapSliceGroup1({ ...data, _expression: v }, tree)
+			}
 		},
 		methodsEngine
 	);
