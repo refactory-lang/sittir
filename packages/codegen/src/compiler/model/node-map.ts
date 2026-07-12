@@ -968,6 +968,12 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 			values: dedupeValues([...existing.values, ...f.values]),
 			hasTrailing: existing.hasTrailing || f.hasTrailing,
 			hasLeading: existing.hasLeading || f.hasLeading,
+			// At most one same-named contributor carries a real separatorSource
+			// (see PR-T Task 1) — `existing`'s may be undefined if it was the
+			// first-encountered sibling (e.g. a leading-optional-separator
+			// member) while a LATER-merged sibling (the member-list itself)
+			// is the one that actually captured the rule-shaped separator.
+			separatorSource: existing.separatorSource ?? f.separatorSource,
 			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds),
 		}));
 	}
