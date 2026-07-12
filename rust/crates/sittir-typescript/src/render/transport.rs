@@ -9185,95 +9185,6 @@ impl RenderableTransport for ObjectTypeOptional1ContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ObjectTypeOptional1SemicolonTransportSlot {
-    Semicolon(SemicolonTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeOptional1SemicolonTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ObjectTypeOptional1SemicolonTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                Ok(Self::Verbatim(VerbatimTransport { text }))
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ObjectTypeOptional1SemicolonTransportSlot")
-                )?;
-                match kind_id {
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ObjectTypeOptional1SemicolonTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ObjectTypeOptional1SemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ObjectTypeOptional1SemicolonTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ObjectTypeOptional1SemicolonTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ObjectTypeOptional1SemicolonTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ObjectTypeOptional1SemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectTypeOptional1SemicolonTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ObjectTypeOptional1SemicolonTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn object_type_optional1_semicolon_transport_slot_to_any(t: ObjectTypeOptional1SemicolonTransportSlot) -> AnyTransport {
-    match t {
-        ObjectTypeOptional1SemicolonTransportSlot::Semicolon(inner) => AnyTransport::Semicolon(inner),
-        ObjectTypeOptional1SemicolonTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for ObjectTypeOptional1SemicolonTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ObjectTypeOptional1SemicolonTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
-            ObjectTypeOptional1SemicolonTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ParameterNamePatternTransportSlot {
     MemberExpression(MemberExpressionTransport),
     SubscriptExpression(SubscriptExpressionTransport),
@@ -28124,8 +28035,6 @@ pub struct ObjectTypeOptional1Transport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<ObjectTypeOptional1ContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<ObjectTypeOptional1SemicolonTransportSlot>,
 }
 
 impl RenderableTransport for ObjectTypeOptional1Transport {
@@ -53618,9 +53527,6 @@ fn render_object_type_optional1(node: &ObjectTypeOptional1Transport, dest: &mut 
         for child in items.iter() {
         child.render_into(dest)?;
         }
-    }
-    if let Some(child) = &node.semicolon {
-        child.render_into(dest)?;
     }
     Ok(())
 }

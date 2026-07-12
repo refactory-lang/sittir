@@ -812,3 +812,80 @@ describe('liftSeparators emits a warning for a non-literal separator', () => {
 		expect(diagnostics.all().filter((d) => d.severity === 'warning')).toHaveLength(0);
 	});
 });
+
+describe('liftSeparators \u2014 flank absorption widened to structural rulesEqual', () => {
+	function makeCtx(): LinkCtx {
+		return new LinkCtx({
+			grammar: makeRaw({}),
+			diagnostics: new DiagnosticSink(),
+			supertypes: new Set(),
+			externalRoles: new Map(),
+			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
+			applyPromotedRules: true,
+			hiddenChoicesWithNamedAliasMembers: new Set()
+		});
+	}
+
+	function choiceSep(): Rule<'link'> {
+		return {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
+	}
+
+	it('absorbs a flanking optional(choice(...)) leading AND trailing separator into a single REPEAT1', () => {
+		const ctx = makeCtx();
+		const rule: Rule<'link'> = {
+			type: SEQ,
+			members: [
+				{ type: OPTIONAL, content: choiceSep() },
+				{
+					type: SEQ,
+					members: [
+						{ type: SYMBOL, name: 'member' },
+						{
+							type: REPEAT,
+							content: {
+								type: SEQ,
+								members: [choiceSep(), { type: SYMBOL, name: 'member' }]
+							}
+						}
+					]
+				},
+				{ type: OPTIONAL, content: choiceSep() }
+			]
+		};
+		const lifted = liftSeparators(rule, ctx) as any;
+		expect(lifted.type).toBe('REPEAT1');
+		expect(lifted.content).toEqual({ type: 'SYMBOL', name: 'member' });
+		expect(lifted.separator).toEqual({ value: choiceSep(), trailing: true, leading: true });
+	});
+
+	it('still absorbs the ordinary literal optional(",") trailing-separator case unchanged', () => {
+		const ctx = makeCtx();
+		const rule: Rule<'link'> = {
+			type: SEQ,
+			members: [
+				{ type: SYMBOL, name: 'member' },
+				{
+					type: REPEAT,
+					content: {
+						type: SEQ,
+						members: [
+							{ type: STRING, value: ',' },
+							{ type: SYMBOL, name: 'member' }
+						]
+					}
+				},
+				{ type: OPTIONAL, content: { type: STRING, value: ',' } }
+			]
+		};
+		const lifted = liftSeparators(rule, ctx) as any;
+		expect(lifted.type).toBe('REPEAT1');
+		expect(lifted.content).toEqual({ type: 'SYMBOL', name: 'member' });
+		expect(lifted.separator).toEqual({ value: { type: 'STRING', value: ',' }, trailing: true });
+	});
+});

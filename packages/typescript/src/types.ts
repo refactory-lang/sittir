@@ -2448,9 +2448,7 @@ export interface _Number {
 export interface ObjectTypeOptional1 {
   readonly $type: "_object_type_optional1";
   readonly _content?: readonly ("," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature)[];
-  readonly _semicolon?: "," | Semicolon;
   contents(): readonly ("," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature)[];
-  semicolon(): "," | Semicolon | undefined;
 }
 
 export interface ParameterName {

@@ -1951,7 +1951,6 @@ export interface ObjectTypeOptional1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<ObjectTypeOptional1ContentTransportSlot>
-  _semicolon?: ObjectTypeOptional1SemicolonTransportSlot
 }
 
 export interface ObjectTypeTransport {

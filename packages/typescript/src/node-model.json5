@@ -7867,35 +7867,6 @@
               "method_signature"
             ]
           }
-        },
-        {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ",",
-              "parseKind": "comma"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_semicolon",
-              "parseKind": "_semicolon",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_semicolon"
-            ]
-          }
         }
       ],
       "children": []
@@ -18886,159 +18857,45 @@
     },
     {
       "kind": "object_type_content_comma",
-      "modelType": "branch",
+      "modelType": "separatedList",
       "typeName": "ObjectTypeContentComma",
       "factoryName": "objectTypeContentComma",
       "irKey": "objectTypeContentComma",
       "hidden": false,
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "export_statement",
-              "parseKind": "export_statement",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "property_signature",
-              "parseKind": "property_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "call_signature",
-              "parseKind": "call_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "construct_signature",
-              "parseKind": "construct_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "index_signature",
-              "parseKind": "index_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "method_signature",
-              "parseKind": "method_signature",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "export_statement",
-              "property_signature",
-              "call_signature",
-              "construct_signature",
-              "index_signature",
-              "method_signature"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "optional",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "export_statement",
+        "property_signature",
+        "call_signature",
+        "construct_signature",
+        "index_signature",
+        "method_signature"
       ],
-      "children": [],
-      "factoryShape": "spread",
-      "factoryFields": [
-        "content"
-      ]
+      "factoryShape": "spread"
     },
     {
       "kind": "object_type_content_semi",
-      "modelType": "branch",
+      "modelType": "separatedList",
       "typeName": "ObjectTypeContentSemi",
       "factoryName": "objectTypeContentSemi",
       "irKey": "objectTypeContentSemi",
       "hidden": false,
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "export_statement",
-              "parseKind": "export_statement",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "property_signature",
-              "parseKind": "property_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "call_signature",
-              "parseKind": "call_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "construct_signature",
-              "parseKind": "construct_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "index_signature",
-              "parseKind": "index_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "method_signature",
-              "parseKind": "method_signature",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "export_statement",
-              "property_signature",
-              "call_signature",
-              "construct_signature",
-              "index_signature",
-              "method_signature"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "optional",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "export_statement",
+        "property_signature",
+        "call_signature",
+        "construct_signature",
+        "index_signature",
+        "method_signature"
       ],
-      "children": [],
-      "factoryShape": "spread",
-      "factoryFields": [
-        "content"
-      ]
+      "factoryShape": "spread"
     },
     {
       "kind": "omitting_type_annotation",

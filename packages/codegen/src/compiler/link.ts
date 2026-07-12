@@ -29,7 +29,6 @@ import type {
 	AnyRule,
 } from '../types/rule.ts';
 import { isSeq, isChoice, isEnumChoiceRule, sym, replaceAtPath, isSymbol, isString, isRepeat1, isRepeat, isOptional, isField } from '../types/rule.ts';
-import { isStringType } from '../types/runtime-shapes.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import {
 	collectGeneratedKindEntries,
@@ -2639,12 +2638,12 @@ export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[]
         const next = members[i + 1];
         const curSep = cur.type === REPEAT || cur.type === REPEAT1 ? cur.separator : undefined;
         const isSepRepeat = curSep !== undefined && !curSep.trailing;
-        // Bail unless the separator is a plain literal — one level deeper
-        // than before now that `.separator` is the nested {value, ...} fact.
+        // Structural comparison (not literal-string-only) so a choice-shaped
+        // separator (e.g. `optional(choice(',', ';'))`) is absorbed the same
+        // way a plain literal one is.
         const isOptionalSepLit = (r: Rule<'link'> | undefined, sep: { value: Rule<'link'> }): boolean => {
-            if (!r || r.type !== OPTIONAL || r.content.type !== STRING) return false;
-            if (!isStringType(sep.value.type)) return false;
-            return r.content.value === (sep.value as StringRule<'link'>).value;
+            if (!r || r.type !== OPTIONAL) return false;
+            return rulesEqual(r.content, sep.value);
         };
         if (isSepRepeat && isOptionalSepLit(next, curSep!)) {
             out.push({ ...(cur as RepeatRule | Repeat1Rule), separator: { ...curSep!, trailing: true } });
@@ -2674,12 +2673,12 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
     const elem = repeatNode.content;
 
     const matchesElem = (r: Rule<'link'>): boolean => rulesEqual(r, elem);
-    // Bail unless the separator is a plain literal — one level deeper than
-    // before now that `.separator` is the nested {value, ...} fact.
+    // Structural comparison (not literal-string-only) so a choice-shaped
+    // separator (e.g. `optional(choice(',', ';'))`) is absorbed the same way
+    // a plain literal one is.
     const matchesOptionalSep = (r: Rule<'link'>): boolean => {
-        if (r.type !== OPTIONAL || r.content.type !== STRING) return false;
-        if (!isStringType(sep.value.type)) return false;
-        return r.content.value === (sep.value as StringRule<'link'>).value;
+        if (r.type !== OPTIONAL) return false;
+        return rulesEqual(r.content, sep.value);
     };
 
     // Case 1: [x, repeat(sep, x)]
@@ -2690,23 +2689,39 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
     if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
         return { type: REPEAT1, content: elem, separator: { ...sep, trailing: true } };
     }
-    // Case 3: [sep, x, repeat(sep, x)] — leading separator.
+    // Case 3: [sep, x, repeat(sep, x)] — mandatory leading separator.
     if (members.length === 3 &&
         repeatIdx === 2 &&
-        isStringType(sep.value.type) &&
-        members[0]!.type === STRING &&
-        members[0]!.value === (sep.value as StringRule<'link'>).value &&
+        rulesEqual(members[0]!, sep.value) &&
         matchesElem(members[1]!)) {
         return { type: REPEAT1, content: elem, separator: { ...sep, leading: true } };
+    }
+    // Case 4: [optional(sep), repeat(sep, x)] or
+    // [optional(sep), repeat(sep, x), optional(sep)] — optional leading
+    // separator (the flanking counterpart of Case 3's mandatory form), also
+    // absorbing a trailing optional on the far side when present. No case
+    // handled an OPTIONAL leading flank at all before this widening (Case 3
+    // only ever matched a bare, mandatory literal/structural separator).
+    if (repeatIdx === 1 && members[0]!.type === OPTIONAL && rulesEqual(members[0]!.content, sep.value)) {
+        if (members.length === 2) {
+            return { type: REPEAT1, content: elem, separator: { ...sep, leading: true } };
+        }
+        if (members.length === 3 && matchesOptionalSep(members[2]!)) {
+            return { type: REPEAT1, content: elem, separator: { ...sep, leading: true, trailing: true } };
+        }
     }
     return null;
 }
 /**
  * Locate the unique repeat-with-separator member in a seq's member list, or
- * `-1` when there is zero or more than one (not a commaSep shape).
+ * `-1` when there is zero or more than one (not a commaSep shape). Matches
+ * both `repeat` and `repeat1` — a nested `seq(x, repeat(seq(sep, x)))` member
+ * already collapses to `repeat1` bottom-up (Case 1, above) before an
+ * enclosing seq's own flank-absorption runs, so restricting this to `repeat`
+ * alone would miss the already-lifted inner list entirely.
  */
 function findRepeatWithSeparator(members: Rule<'link'>[]): number {
-    return members.findIndex((m) => m.type === REPEAT && m.separator !== undefined);
+    return members.findIndex((m) => (m.type === REPEAT || m.type === REPEAT1) && m.separator !== undefined);
 }
 /**
  * Lift a seq's member list: try the `commaSep1` collapse first, then trailing-

@@ -1668,7 +1668,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_object_type_optional1': [
     { name: 'contents', required: false, multiple: true },
-    { name: 'semicolon', required: false, multiple: false },
   ],
   '_public_field_definition_declare_first': [
     { name: 'accessibilityModifier', required: false, multiple: false },
