@@ -175,7 +175,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeTransparentHiddenSupertypeNodeMap() });
 
 		expect(wrapSrc).toContain(
-			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {'
+			"export function wrapExportStatementDefault(data: T.ExportStatementDefault & { readonly $other?: T.ExportStatementDefault | readonly T.ExportStatementDefault[]; }, tree: TreeHandle) {"
 		);
 		expect(wrapSrc).toContain('return drillIn<T.ExportStatementDefault>(');
 		expect(wrapSrc).toContain(
