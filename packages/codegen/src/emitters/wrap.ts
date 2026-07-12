@@ -451,10 +451,23 @@ function collectWrapWireKeyTypes(
 		const candidates = collectConcreteStorageKeys(f, nodeMap);
 		if (!candidates) continue;
 		const elemType = fieldElementType(f, nodeMap);
+		// `resolveSlotStoreExpr`'s `arity: 'many'` branch documents that each
+		// wire candidate key may hold EITHER a scalar (text-collapsed leaf) OR
+		// an array of node stubs — that's what `_toArr`/`_concatInSourceOrder`
+		// normalize. Mirror that shape here (same widening pattern as
+		// `resolveSlotAccessorBody`'s `arrayElemType`), or the declared type
+		// would be narrower than what the runtime actually delivers.
+		const candidateType =
+			f.arity === 'many'
+				? `${elemType} | readonly ${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`
+				: elemType;
 		for (const k of candidates) {
 			if (k === f.storageKey || canonicalKeys.has(k)) continue;
 			const existing = keyTypes.get(k);
-			keyTypes.set(k, existing === undefined || existing === elemType ? elemType : `${existing} | ${elemType}`);
+			keyTypes.set(
+				k,
+				existing === undefined || existing === candidateType ? candidateType : `${existing} | ${candidateType}`
+			);
 		}
 	}
 	return keyTypes;
@@ -503,10 +516,21 @@ function dataAccessExpr(dataExpr: string, storageKey: string): string {
 
 function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?: readonly string[]): string {
 	if (candidateKeys && candidateKeys.length > 0) {
-		// Append the slot's nominal storage key as a final fallback for any
-		// edge case the analysis missed (e.g. a tree-sitter-injected alias the
-		// supertype-expansion doesn't see).
-		const allKeys = candidateKeys.includes(slot.storageKey) ? candidateKeys : [...candidateKeys, slot.storageKey];
+		// Probe the slot's own canonical storage key WITH PRIORITY over the
+		// concrete-kind candidate keys, rather than as a final fallback. On a
+		// genuinely fresh wire read the reader never populates the canonical
+		// key (only the concrete-kind-keyed candidates), so this is a no-op for
+		// that case. But `$with` setters re-invoke the wrap function via
+		// `{ ...data, [storageKey]: v }` (see `emitInlineWithProperty`), which
+		// spreads the ORIGINAL data — carrying the stale candidate-key values
+		// from the original read — alongside the newly patched canonical key.
+		// Probing candidates first would mask the patched value entirely
+		// (singular: the stale `??` operand wins) or merge stale-and-patched
+		// (repeated: concat includes both) — the canonical key must win
+		// outright once populated. Exclude it from the candidate list itself
+		// so it isn't probed twice.
+		const candidates = candidateKeys.filter((k) => k !== slot.storageKey);
+		const canonicalExpr = dataAccessExpr(dataExpr, slot.storageKey);
 
 		if (slot.arity === 'many') {
 			// Repeated supertype-list slot: the runtime reader populates EACH
@@ -526,13 +550,19 @@ function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?:
 			// `call_signature` + `property_signature` swap). `_concatInSourceOrder`
 			// normalizes each source (via _toArr) and STABLE-sorts the result by
 			// CST position (`$span.start` / `$childIndex`) to restore source order.
-			const sources = allKeys.map((k) => dataAccessExpr(dataExpr, k));
-			return `_concatInSourceOrder([${sources.join(', ')}])`;
+			//
+			// The canonical key, once populated by a `$with` setter, is
+			// authoritative on its own — normalize it (scalar-or-array, via the
+			// same `_toArr` the concat path uses) rather than merging it into
+			// the candidate concat.
+			const sources = candidates.map((k) => dataAccessExpr(dataExpr, k));
+			const candidateExpr = sources.length > 0 ? `_concatInSourceOrder([${sources.join(', ')}])` : '[]';
+			return `(${canonicalExpr} !== undefined ? _toArr(${canonicalExpr}) : ${candidateExpr})`;
 		}
 
-		// Singular slot: exactly one of these will be populated.
-		// ??-coalesce is correct — return the first non-null source.
-		const probes = allKeys.map((k) => dataAccessExpr(dataExpr, k));
+		// Singular slot: exactly one of these will be populated on a fresh
+		// read; the canonical key wins outright once a `$with` setter patches it.
+		const probes = [canonicalExpr, ...candidates.map((k) => dataAccessExpr(dataExpr, k))];
 		return `(${probes.join(' ?? ')})`;
 	}
 	return dataAccessExpr(dataExpr, slot.storageKey);

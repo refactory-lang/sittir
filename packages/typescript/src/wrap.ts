@@ -1010,11 +1010,11 @@ export function wrapClassBodyMember(
 			...data,
 			$type: TSKindId.ClassBodyMember as const,
 			_content: normalizeSingularWrapSlot(
-				data._abstract_method_signature ??
+				data._content ??
+					data._abstract_method_signature ??
 					data._index_signature ??
 					data._method_signature ??
-					data._public_field_definition ??
-					data._content,
+					data._public_field_definition,
 				'content',
 				true,
 				data.$type,
@@ -1183,7 +1183,7 @@ export function wrapExportStatementDefault(
 			...data,
 			$type: TSKindId.ExportStatementDefault as const,
 			_content: normalizeSingularWrapSlot(
-				data._export_statement_default_from_arm ?? data._export_statement_default_decl_arm ?? data._content,
+				data._content ?? data._export_statement_default_from_arm ?? data._export_statement_default_decl_arm,
 				'content',
 				true,
 				data.$type,
@@ -1388,11 +1388,11 @@ export function wrapExportStatementDefaultFromArm(
 			...data,
 			$type: TSKindId.ExportStatementDefaultFromArm as const,
 			_content: normalizeSingularWrapSlot(
-				data._export_statement_default_from_arm_star_from ??
+				data._content ??
+					data._export_statement_default_from_arm_star_from ??
 					data._export_statement_default_from_arm_ns_from ??
 					data._export_statement_default_from_arm_clause_from ??
-					data._export_clause ??
-					data._content,
+					data._export_clause,
 				'content',
 				true,
 				data.$type,
@@ -1579,7 +1579,8 @@ export function wrapExportStatementEqualsExport(
 			...data,
 			$type: TSKindId.ExportStatementEqualsExport as const,
 			_expression: normalizeSingularWrapSlot(
-				data._as_expression ??
+				data._expression ??
+					data._as_expression ??
 					data._satisfies_expression ??
 					data._instantiation_expression ??
 					data._internal_module ??
@@ -1616,8 +1617,7 @@ export function wrapExportStatementEqualsExport(
 					data._ternary_expression ??
 					data._update_expression ??
 					data._new_expression ??
-					data._yield_expression ??
-					data._expression,
+					data._yield_expression,
 				'expression',
 				true,
 				data.$type,
@@ -1780,7 +1780,7 @@ export function wrapForHeader(
 			...data,
 			$type: TSKindId.ForHeader as const,
 			_content: normalizeSingularWrapSlot(
-				data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind ?? data._content,
+				data._content ?? data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind,
 				'content',
 				true,
 				data.$type,
@@ -1988,7 +1988,7 @@ export function wrapImportClauseDefaultImport(
 			...data,
 			$type: TSKindId.ImportClauseDefaultImport as const,
 			_import_identifier: normalizeSingularWrapSlot(
-				data._identifier ?? data._import_identifier,
+				data._import_identifier ?? data._identifier,
 				'import_identifier',
 				true,
 				data.$type,
@@ -2032,7 +2032,7 @@ export function wrap_ImportClauseGroup1(
 			...data,
 			$type: TSKindId._ImportClauseGroup1 as const,
 			_content: normalizeSingularWrapSlot(
-				data._namespace_import ?? data._named_imports ?? data._content,
+				data._content ?? data._namespace_import ?? data._named_imports,
 				'content',
 				true,
 				data.$type,
@@ -2371,7 +2371,8 @@ export function wrapParenthesizedExpressionTyped(
 			...data,
 			$type: TSKindId.ParenthesizedExpressionTyped as const,
 			_expression: normalizeSingularWrapSlot(
-				data._as_expression ??
+				data._expression ??
+					data._as_expression ??
 					data._satisfies_expression ??
 					data._instantiation_expression ??
 					data._internal_module ??
@@ -2408,8 +2409,7 @@ export function wrapParenthesizedExpressionTyped(
 					data._ternary_expression ??
 					data._update_expression ??
 					data._new_expression ??
-					data._yield_expression ??
-					data._expression,
+					data._yield_expression,
 				'expression',
 				true,
 				data.$type,
@@ -2899,9 +2899,9 @@ export function wrapTypeQueryMemberExpression(
 			}),
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._dot ??
+					data._content ??
+						data._dot ??
 						data._qmark_dot ??
-						data._content ??
 						readTerminalFromOther(data, [TSKindId.Dot, TSKindId.QmarkDot]),
 					'content',
 					true,
@@ -3351,7 +3351,8 @@ export function wrapAmbientDeclaration(
 			...data,
 			$type: TSKindId.AmbientDeclaration as const,
 			_content: normalizeSingularWrapSlot(
-				data._function_declaration ??
+				data._content ??
+					data._function_declaration ??
 					data._generator_function_declaration ??
 					data._class_declaration ??
 					data._lexical_declaration ??
@@ -3366,8 +3367,7 @@ export function wrapAmbientDeclaration(
 					data._import_alias ??
 					data._ambient_declaration ??
 					data._ambient_declaration_global ??
-					data._ambient_declaration_module ??
-					data._content,
+					data._ambient_declaration_module,
 				'content',
 				true,
 				data.$type,
@@ -3731,7 +3731,7 @@ export function wrapAsserts(
 			...data,
 			$type: TSKindId.Asserts as const,
 			_content: normalizeSingularWrapSlot(
-				data._type_predicate ?? data._identifier ?? data._this ?? data._content,
+				data._content ?? data._type_predicate ?? data._identifier ?? data._this,
 				'content',
 				true,
 				data.$type,
@@ -4091,10 +4091,10 @@ export function wrapCallExpression(
 			...data,
 			$type: TSKindId.CallExpression as const,
 			_content: normalizeSingularWrapSlot(
-				data._call_expression_call ??
+				data._content ??
+					data._call_expression_call ??
 					data._call_expression_template_call ??
-					data._call_expression_member ??
-					data._content,
+					data._call_expression_member,
 				'content',
 				true,
 				data.$type,
@@ -4274,26 +4274,36 @@ export function wrapClassBody(
 			| T.ClassBodyMethodSig
 			| T.ClassStaticBlock
 			| T.ClassBodyMember
-			| ';';
+			| ';'
+			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
 		readonly _class_body_method_sig?:
 			| T.ClassBodyMethod
 			| T.ClassBodyMethodSig
 			| T.ClassStaticBlock
 			| T.ClassBodyMember
-			| ';';
+			| ';'
+			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
 		readonly _class_static_block?:
 			| T.ClassBodyMethod
 			| T.ClassBodyMethodSig
 			| T.ClassStaticBlock
 			| T.ClassBodyMember
-			| ';';
+			| ';'
+			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
 		readonly _class_body_member?:
 			| T.ClassBodyMethod
 			| T.ClassBodyMethodSig
 			| T.ClassStaticBlock
 			| T.ClassBodyMember
-			| ';';
-		readonly _semi?: T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';';
+			| ';'
+			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
+		readonly _semi?:
+			| T.ClassBodyMethod
+			| T.ClassBodyMethodSig
+			| T.ClassStaticBlock
+			| T.ClassBodyMember
+			| ';'
+			| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[];
 	},
 	tree: TreeHandle
 ) {
@@ -4302,14 +4312,15 @@ export function wrapClassBody(
 			...data,
 			$type: TSKindId.ClassBody as const,
 			_content: normalizeRepeatedWrapSlot(
-				_concatInSourceOrder([
-					data._class_body_method,
-					data._class_body_method_sig,
-					data._class_static_block,
-					data._class_body_member,
-					data._semi,
-					data._content
-				]),
+				data._content !== undefined
+					? _toArr(data._content)
+					: _concatInSourceOrder([
+							data._class_body_method,
+							data._class_body_method_sig,
+							data._class_static_block,
+							data._class_body_member,
+							data._semi
+						]),
 				false,
 				'content',
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
@@ -4412,7 +4423,7 @@ export function wrapClassHeritage(
 			...data,
 			$type: TSKindId.ClassHeritage as const,
 			_content: normalizeSingularWrapSlot(
-				data._class_heritage_extends_clause ?? data._implements_clause ?? data._content,
+				data._content ?? data._class_heritage_extends_clause ?? data._implements_clause,
 				'content',
 				true,
 				data.$type,
@@ -4551,9 +4562,9 @@ export function wrapConstraint(
 			$type: TSKindId.Constraint as const,
 			_content: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._extends ??
+					data._content ??
+						data._extends ??
 						data._colon ??
-						data._content ??
 						readTerminalFromOther(data, [TSKindId.Extends, TSKindId.Colon]),
 					'content',
 					true,
@@ -4823,11 +4834,11 @@ export function wrapDecorator(
 			...data,
 			$type: TSKindId.Decorator as const,
 			_content: normalizeSingularWrapSlot(
-				data._identifier ??
+				data._content ??
+					data._identifier ??
 					data._member_expression ??
 					data._call_expression ??
-					data._parenthesized_expression ??
-					data._content,
+					data._parenthesized_expression,
 				'content',
 				true,
 				data.$type,
@@ -4954,7 +4965,7 @@ export function wrapDecoratorParenthesizedExpression(
 			...data,
 			$type: TSKindId.DecoratorParenthesizedExpression as const,
 			_content: normalizeSingularWrapSlot(
-				data._identifier ?? data._member_expression ?? data._call_expression ?? data._content,
+				data._content ?? data._identifier ?? data._member_expression ?? data._call_expression,
 				'content',
 				true,
 				data.$type,
@@ -5294,11 +5305,11 @@ export function wrapExportStatement(
 			...data,
 			$type: TSKindId.ExportStatement as const,
 			_content: normalizeSingularWrapSlot(
-				data._export_statement_default ??
+				data._content ??
+					data._export_statement_default ??
 					data._export_statement_type_export ??
 					data._export_statement_equals_export ??
-					data._export_statement_namespace_export ??
-					data._content,
+					data._export_statement_namespace_export,
 				'content',
 				true,
 				data.$type,
@@ -5403,7 +5414,8 @@ export function wrapExpressionStatement(
 			...data,
 			$type: TSKindId.ExpressionStatement as const,
 			_expressions: normalizeSingularWrapSlot(
-				data._as_expression ??
+				data._expressions ??
+					data._as_expression ??
 					data._satisfies_expression ??
 					data._instantiation_expression ??
 					data._internal_module ??
@@ -5441,8 +5453,7 @@ export function wrapExpressionStatement(
 					data._update_expression ??
 					data._new_expression ??
 					data._yield_expression ??
-					data._sequence_expression ??
-					data._expressions,
+					data._sequence_expression,
 				'expressions',
 				true,
 				data.$type,
@@ -5656,7 +5667,7 @@ export function wrapForInStatement(
 				})
 			),
 			_content: normalizeSingularWrapSlot(
-				data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind ?? data._content,
+				data._content ?? data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind,
 				'content',
 				true,
 				data.$type,
@@ -5771,8 +5782,8 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 
 export function wrapFormalParameters(
 	data: T.FormalParameters & {
-		readonly _required_parameter?: T.FormalParameter;
-		readonly _optional_parameter?: T.FormalParameter;
+		readonly _required_parameter?: T.FormalParameter | readonly T.FormalParameter[];
+		readonly _optional_parameter?: T.FormalParameter | readonly T.FormalParameter[];
 	},
 	tree: TreeHandle
 ) {
@@ -5782,7 +5793,9 @@ export function wrapFormalParameters(
 			$type: TSKindId.FormalParameters as const,
 			_formal_parameter: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(
-					_concatInSourceOrder([data._required_parameter, data._optional_parameter, data._formal_parameter]),
+					data._formal_parameter !== undefined
+						? _toArr(data._formal_parameter)
+						: _concatInSourceOrder([data._required_parameter, data._optional_parameter]),
 					['_formal_parameter', 'required_parameter', 'optional_parameter']
 				),
 				false,
@@ -6351,31 +6364,31 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 
 export function wrapImplementsClause(
 	data: T.ImplementsClause & {
-		readonly _parenthesized_type?: T.Type;
-		readonly _predefined_type?: T.Type;
-		readonly _type_identifier?: T.Type;
-		readonly _nested_type_identifier?: T.Type;
-		readonly _generic_type?: T.Type;
-		readonly _object_type?: T.Type;
-		readonly _array_type?: T.Type;
-		readonly _tuple_type?: T.Type;
-		readonly _flow_maybe_type?: T.Type;
-		readonly _type_query?: T.Type;
-		readonly _index_type_query?: T.Type;
-		readonly _this?: T.Type;
-		readonly _existential_type?: T.Type;
-		readonly _literal_type?: T.Type;
-		readonly _lookup_type?: T.Type;
-		readonly _conditional_type?: T.Type;
-		readonly _template_literal_type?: T.Type;
-		readonly _intersection_type?: T.Type;
-		readonly _union_type?: T.Type;
-		readonly _function_type?: T.Type;
-		readonly _readonly_type?: T.Type;
-		readonly _constructor_type?: T.Type;
-		readonly _infer_type?: T.Type;
-		readonly _type_query_member_expression_in_type_annotation?: T.Type;
-		readonly _type_query_call_expression_in_type_annotation?: T.Type;
+		readonly _parenthesized_type?: T.Type | readonly T.Type[];
+		readonly _predefined_type?: T.Type | readonly T.Type[];
+		readonly _type_identifier?: T.Type | readonly T.Type[];
+		readonly _nested_type_identifier?: T.Type | readonly T.Type[];
+		readonly _generic_type?: T.Type | readonly T.Type[];
+		readonly _object_type?: T.Type | readonly T.Type[];
+		readonly _array_type?: T.Type | readonly T.Type[];
+		readonly _tuple_type?: T.Type | readonly T.Type[];
+		readonly _flow_maybe_type?: T.Type | readonly T.Type[];
+		readonly _type_query?: T.Type | readonly T.Type[];
+		readonly _index_type_query?: T.Type | readonly T.Type[];
+		readonly _this?: T.Type | readonly T.Type[];
+		readonly _existential_type?: T.Type | readonly T.Type[];
+		readonly _literal_type?: T.Type | readonly T.Type[];
+		readonly _lookup_type?: T.Type | readonly T.Type[];
+		readonly _conditional_type?: T.Type | readonly T.Type[];
+		readonly _template_literal_type?: T.Type | readonly T.Type[];
+		readonly _intersection_type?: T.Type | readonly T.Type[];
+		readonly _union_type?: T.Type | readonly T.Type[];
+		readonly _function_type?: T.Type | readonly T.Type[];
+		readonly _readonly_type?: T.Type | readonly T.Type[];
+		readonly _constructor_type?: T.Type | readonly T.Type[];
+		readonly _infer_type?: T.Type | readonly T.Type[];
+		readonly _type_query_member_expression_in_type_annotation?: T.Type | readonly T.Type[];
+		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
 	},
 	tree: TreeHandle
 ) {
@@ -6385,34 +6398,35 @@ export function wrapImplementsClause(
 			$type: TSKindId.ImplementsClause as const,
 			_type: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(
-					_concatInSourceOrder([
-						data._parenthesized_type,
-						data._predefined_type,
-						data._type_identifier,
-						data._nested_type_identifier,
-						data._generic_type,
-						data._object_type,
-						data._array_type,
-						data._tuple_type,
-						data._flow_maybe_type,
-						data._type_query,
-						data._index_type_query,
-						data._this,
-						data._existential_type,
-						data._literal_type,
-						data._lookup_type,
-						data._conditional_type,
-						data._template_literal_type,
-						data._intersection_type,
-						data._union_type,
-						data._function_type,
-						data._readonly_type,
-						data._constructor_type,
-						data._infer_type,
-						data._type_query_member_expression_in_type_annotation,
-						data._type_query_call_expression_in_type_annotation,
-						data._type
-					]),
+					data._type !== undefined
+						? _toArr(data._type)
+						: _concatInSourceOrder([
+								data._parenthesized_type,
+								data._predefined_type,
+								data._type_identifier,
+								data._nested_type_identifier,
+								data._generic_type,
+								data._object_type,
+								data._array_type,
+								data._tuple_type,
+								data._flow_maybe_type,
+								data._type_query,
+								data._index_type_query,
+								data._this,
+								data._existential_type,
+								data._literal_type,
+								data._lookup_type,
+								data._conditional_type,
+								data._template_literal_type,
+								data._intersection_type,
+								data._union_type,
+								data._function_type,
+								data._readonly_type,
+								data._constructor_type,
+								data._infer_type,
+								data._type_query_member_expression_in_type_annotation,
+								data._type_query_call_expression_in_type_annotation
+							]),
 					[
 						'type',
 						'primary_type',
@@ -6542,7 +6556,7 @@ export function wrapImportClause(
 			...data,
 			$type: TSKindId.ImportClause as const,
 			_content: normalizeSingularWrapSlot(
-				data._namespace_import ?? data._named_imports ?? data._import_clause_default_import ?? data._content,
+				data._content ?? data._namespace_import ?? data._named_imports ?? data._import_clause_default_import,
 				'content',
 				true,
 				data.$type,
@@ -6623,7 +6637,7 @@ export function wrapImportSpecifier(
 				)
 			),
 			_content: normalizeSingularWrapSlot(
-				data._identifier ?? data._import_specifier_as ?? data._content,
+				data._content ?? data._identifier ?? data._import_specifier_as,
 				'content',
 				true,
 				data.$type,
@@ -6734,7 +6748,7 @@ export function wrapIndexSignature(
 				)
 			),
 			_content: normalizeSingularWrapSlot(
-				data._index_signature_colon ?? data._mapped_type_clause ?? data._content,
+				data._content ?? data._index_signature_colon ?? data._mapped_type_clause,
 				'content',
 				true,
 				data.$type,
@@ -7097,14 +7111,14 @@ export function wrapLiteralType(
 			...data,
 			$type: TSKindId.LiteralType as const,
 			_content: normalizeSingularWrapSlot(
-				data._unary_expression ??
+				data._content ??
+					data._unary_expression ??
 					data._number ??
 					data._string ??
 					data._true ??
 					data._false ??
 					data._null ??
-					data._undefined ??
-					data._content,
+					data._undefined,
 				'content',
 				true,
 				data.$type,
@@ -7646,7 +7660,7 @@ export function wrapNamespaceExport(
 			...data,
 			$type: TSKindId.NamespaceExport as const,
 			_module_export_name: normalizeSingularWrapSlot(
-				data._identifier ?? data._string ?? data._module_export_name,
+				data._module_export_name ?? data._identifier ?? data._string,
 				'module_export_name',
 				true,
 				data.$type,
@@ -8009,7 +8023,7 @@ export function wrapObjectTypeContent(
 			...data,
 			$type: TSKindId.ObjectTypeContent as const,
 			_content: normalizeSingularWrapSlot(
-				data._object_type_content_comma ?? data._object_type_content_semi ?? data._content,
+				data._content ?? data._object_type_content_comma ?? data._object_type_content_semi,
 				'content',
 				true,
 				data.$type,
@@ -8037,42 +8051,90 @@ export function wrapObjectTypeContentComma(
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _property_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _call_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _construct_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _index_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _method_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 	},
 	tree: TreeHandle
 ) {
@@ -8082,15 +8144,16 @@ export function wrapObjectTypeContentComma(
 			$type: TSKindId.ObjectTypeContentComma as const,
 			_content: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(
-					_concatInSourceOrder([
-						data._export_statement,
-						data._property_signature,
-						data._call_signature,
-						data._construct_signature,
-						data._index_signature,
-						data._method_signature,
-						data._content
-					]),
+					data._content !== undefined
+						? _toArr(data._content)
+						: _concatInSourceOrder([
+								data._export_statement,
+								data._property_signature,
+								data._call_signature,
+								data._construct_signature,
+								data._index_signature,
+								data._method_signature
+							]),
 					[
 						'export_statement',
 						'property_signature',
@@ -8145,42 +8208,90 @@ export function wrapObjectTypeContentSemi(
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _property_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _call_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _construct_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _index_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 		readonly _method_signature?:
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature;
+			| T.MethodSignature
+			| readonly (
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+			  )[];
 	},
 	tree: TreeHandle
 ) {
@@ -8190,15 +8301,16 @@ export function wrapObjectTypeContentSemi(
 			$type: TSKindId.ObjectTypeContentSemi as const,
 			_content: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(
-					_concatInSourceOrder([
-						data._export_statement,
-						data._property_signature,
-						data._call_signature,
-						data._construct_signature,
-						data._index_signature,
-						data._method_signature,
-						data._content
-					]),
+					data._content !== undefined
+						? _toArr(data._content)
+						: _concatInSourceOrder([
+								data._export_statement,
+								data._property_signature,
+								data._call_signature,
+								data._construct_signature,
+								data._index_signature,
+								data._method_signature
+							]),
 					[
 						'export_statement',
 						'property_signature',
@@ -8559,12 +8671,12 @@ export function wrapParenthesizedExpression(
 			...data,
 			$type: TSKindId.ParenthesizedExpression as const,
 			_content: normalizeSingularWrapSlot(
-				data._parenthesized_expression_typed ??
+				data._content ??
+					data._parenthesized_expression_typed ??
 					data._sequence_expression ??
 					data._identifier ??
 					data._member_expression ??
-					data._call_expression ??
-					data._content,
+					data._call_expression,
 				'content',
 				true,
 				data.$type,
@@ -8878,7 +8990,7 @@ export function wrapPublicFieldDefinition(
 				span: (data as _NodeData).$span
 			}),
 			_content: normalizeSingularWrapSlot(
-				data._public_field_definition_declare_first ?? data._public_field_definition_access_first ?? data._content,
+				data._content ?? data._public_field_definition_declare_first ?? data._public_field_definition_access_first,
 				'content',
 				false,
 				data.$type,
@@ -9244,14 +9356,14 @@ export function wrapRestPattern(
 			...data,
 			$type: TSKindId.RestPattern as const,
 			_content: normalizeSingularWrapSlot(
-				data._member_expression ??
+				data._content ??
+					data._member_expression ??
 					data._subscript_expression ??
 					data._undefined ??
 					data._identifier ??
 					data._object_pattern ??
 					data._array_pattern ??
-					data._non_null_expression ??
-					data._content,
+					data._non_null_expression,
 				'content',
 				true,
 				data.$type,
@@ -9350,7 +9462,8 @@ export function wrapReturnStatement(
 			...data,
 			$type: TSKindId.ReturnStatement as const,
 			_expressions: normalizeSingularWrapSlot(
-				data._as_expression ??
+				data._expressions ??
+					data._as_expression ??
 					data._satisfies_expression ??
 					data._instantiation_expression ??
 					data._internal_module ??
@@ -9388,8 +9501,7 @@ export function wrapReturnStatement(
 					data._update_expression ??
 					data._new_expression ??
 					data._yield_expression ??
-					data._sequence_expression ??
-					data._expressions,
+					data._sequence_expression,
 				'expressions',
 				false,
 				data.$type,
@@ -9458,44 +9570,44 @@ export function wrapSatisfiesExpression(data: T.SatisfiesExpression, tree: TreeH
 
 export function wrapSequenceExpression(
 	data: T.SequenceExpression & {
-		readonly _as_expression?: T.Expression;
-		readonly _satisfies_expression?: T.Expression;
-		readonly _instantiation_expression?: T.Expression;
-		readonly _internal_module?: T.Expression;
-		readonly _type_assertion?: T.Expression;
-		readonly _subscript_expression?: T.Expression;
-		readonly _member_expression?: T.Expression;
-		readonly _parenthesized_expression?: T.Expression;
-		readonly _undefined?: T.Expression;
-		readonly _identifier?: T.Expression;
-		readonly _reserved_identifier?: T.Expression;
-		readonly _this?: T.Expression;
-		readonly _super?: T.Expression;
-		readonly _number?: T.Expression;
-		readonly _string?: T.Expression;
-		readonly _template_string?: T.Expression;
-		readonly _regex?: T.Expression;
-		readonly _true?: T.Expression;
-		readonly _false?: T.Expression;
-		readonly _null?: T.Expression;
-		readonly _object?: T.Expression;
-		readonly _array?: T.Expression;
-		readonly _function_expression?: T.Expression;
-		readonly _arrow_function?: T.Expression;
-		readonly _generator_function?: T.Expression;
-		readonly _class?: T.Expression;
-		readonly _meta_property?: T.Expression;
-		readonly _call_expression?: T.Expression;
-		readonly _non_null_expression?: T.Expression;
-		readonly _assignment_expression?: T.Expression;
-		readonly _augmented_assignment_expression?: T.Expression;
-		readonly _await_expression?: T.Expression;
-		readonly _unary_expression?: T.Expression;
-		readonly _binary_expression?: T.Expression;
-		readonly _ternary_expression?: T.Expression;
-		readonly _update_expression?: T.Expression;
-		readonly _new_expression?: T.Expression;
-		readonly _yield_expression?: T.Expression;
+		readonly _as_expression?: T.Expression | readonly T.Expression[];
+		readonly _satisfies_expression?: T.Expression | readonly T.Expression[];
+		readonly _instantiation_expression?: T.Expression | readonly T.Expression[];
+		readonly _internal_module?: T.Expression | readonly T.Expression[];
+		readonly _type_assertion?: T.Expression | readonly T.Expression[];
+		readonly _subscript_expression?: T.Expression | readonly T.Expression[];
+		readonly _member_expression?: T.Expression | readonly T.Expression[];
+		readonly _parenthesized_expression?: T.Expression | readonly T.Expression[];
+		readonly _undefined?: T.Expression | readonly T.Expression[];
+		readonly _identifier?: T.Expression | readonly T.Expression[];
+		readonly _reserved_identifier?: T.Expression | readonly T.Expression[];
+		readonly _this?: T.Expression | readonly T.Expression[];
+		readonly _super?: T.Expression | readonly T.Expression[];
+		readonly _number?: T.Expression | readonly T.Expression[];
+		readonly _string?: T.Expression | readonly T.Expression[];
+		readonly _template_string?: T.Expression | readonly T.Expression[];
+		readonly _regex?: T.Expression | readonly T.Expression[];
+		readonly _true?: T.Expression | readonly T.Expression[];
+		readonly _false?: T.Expression | readonly T.Expression[];
+		readonly _null?: T.Expression | readonly T.Expression[];
+		readonly _object?: T.Expression | readonly T.Expression[];
+		readonly _array?: T.Expression | readonly T.Expression[];
+		readonly _function_expression?: T.Expression | readonly T.Expression[];
+		readonly _arrow_function?: T.Expression | readonly T.Expression[];
+		readonly _generator_function?: T.Expression | readonly T.Expression[];
+		readonly _class?: T.Expression | readonly T.Expression[];
+		readonly _meta_property?: T.Expression | readonly T.Expression[];
+		readonly _call_expression?: T.Expression | readonly T.Expression[];
+		readonly _non_null_expression?: T.Expression | readonly T.Expression[];
+		readonly _assignment_expression?: T.Expression | readonly T.Expression[];
+		readonly _augmented_assignment_expression?: T.Expression | readonly T.Expression[];
+		readonly _await_expression?: T.Expression | readonly T.Expression[];
+		readonly _unary_expression?: T.Expression | readonly T.Expression[];
+		readonly _binary_expression?: T.Expression | readonly T.Expression[];
+		readonly _ternary_expression?: T.Expression | readonly T.Expression[];
+		readonly _update_expression?: T.Expression | readonly T.Expression[];
+		readonly _new_expression?: T.Expression | readonly T.Expression[];
+		readonly _yield_expression?: T.Expression | readonly T.Expression[];
 	},
 	tree: TreeHandle
 ) {
@@ -9505,47 +9617,48 @@ export function wrapSequenceExpression(
 			$type: TSKindId.SequenceExpression as const,
 			_expression: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(
-					_concatInSourceOrder([
-						data._as_expression,
-						data._satisfies_expression,
-						data._instantiation_expression,
-						data._internal_module,
-						data._type_assertion,
-						data._subscript_expression,
-						data._member_expression,
-						data._parenthesized_expression,
-						data._undefined,
-						data._identifier,
-						data._reserved_identifier,
-						data._this,
-						data._super,
-						data._number,
-						data._string,
-						data._template_string,
-						data._regex,
-						data._true,
-						data._false,
-						data._null,
-						data._object,
-						data._array,
-						data._function_expression,
-						data._arrow_function,
-						data._generator_function,
-						data._class,
-						data._meta_property,
-						data._call_expression,
-						data._non_null_expression,
-						data._assignment_expression,
-						data._augmented_assignment_expression,
-						data._await_expression,
-						data._unary_expression,
-						data._binary_expression,
-						data._ternary_expression,
-						data._update_expression,
-						data._new_expression,
-						data._yield_expression,
-						data._expression
-					]),
+					data._expression !== undefined
+						? _toArr(data._expression)
+						: _concatInSourceOrder([
+								data._as_expression,
+								data._satisfies_expression,
+								data._instantiation_expression,
+								data._internal_module,
+								data._type_assertion,
+								data._subscript_expression,
+								data._member_expression,
+								data._parenthesized_expression,
+								data._undefined,
+								data._identifier,
+								data._reserved_identifier,
+								data._this,
+								data._super,
+								data._number,
+								data._string,
+								data._template_string,
+								data._regex,
+								data._true,
+								data._false,
+								data._null,
+								data._object,
+								data._array,
+								data._function_expression,
+								data._arrow_function,
+								data._generator_function,
+								data._class,
+								data._meta_property,
+								data._call_expression,
+								data._non_null_expression,
+								data._assignment_expression,
+								data._augmented_assignment_expression,
+								data._await_expression,
+								data._unary_expression,
+								data._binary_expression,
+								data._ternary_expression,
+								data._update_expression,
+								data._new_expression,
+								data._yield_expression
+							]),
 					[
 						'expression',
 						'as_expression',
@@ -9919,8 +10032,8 @@ export function wrapSwitchStatement(data: T.SwitchStatement, tree: TreeHandle) {
 
 export function wrapTemplateLiteralType(
 	data: T.TemplateLiteralType & {
-		readonly _string_fragment?: T.TemplateChars | T.TemplateType;
-		readonly _template_type?: T.TemplateChars | T.TemplateType;
+		readonly _string_fragment?: T.TemplateChars | T.TemplateType | readonly (T.TemplateChars | T.TemplateType)[];
+		readonly _template_type?: T.TemplateChars | T.TemplateType | readonly (T.TemplateChars | T.TemplateType)[];
 	},
 	tree: TreeHandle
 ) {
@@ -9929,7 +10042,9 @@ export function wrapTemplateLiteralType(
 			...data,
 			$type: TSKindId.TemplateLiteralType as const,
 			_content: normalizeRepeatedWrapSlot(
-				_concatInSourceOrder([data._string_fragment, data._template_type, data._content]),
+				data._content !== undefined
+					? _toArr(data._content)
+					: _concatInSourceOrder([data._string_fragment, data._template_type]),
 				false,
 				'content',
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
@@ -9950,9 +10065,21 @@ export function wrapTemplateLiteralType(
 
 export function wrapTemplateString(
 	data: T.TemplateString & {
-		readonly _string_fragment?: T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution;
-		readonly _escape_sequence?: T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution;
-		readonly _template_substitution?: T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution;
+		readonly _string_fragment?:
+			| T.TemplateChars
+			| T.EscapeSequence
+			| T.TemplateSubstitution
+			| readonly (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[];
+		readonly _escape_sequence?:
+			| T.TemplateChars
+			| T.EscapeSequence
+			| T.TemplateSubstitution
+			| readonly (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[];
+		readonly _template_substitution?:
+			| T.TemplateChars
+			| T.EscapeSequence
+			| T.TemplateSubstitution
+			| readonly (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[];
 	},
 	tree: TreeHandle
 ) {
@@ -9961,12 +10088,9 @@ export function wrapTemplateString(
 			...data,
 			$type: TSKindId.TemplateString as const,
 			_content: normalizeRepeatedWrapSlot(
-				_concatInSourceOrder([
-					data._string_fragment,
-					data._escape_sequence,
-					data._template_substitution,
-					data._content
-				]),
+				data._content !== undefined
+					? _toArr(data._content)
+					: _concatInSourceOrder([data._string_fragment, data._escape_sequence, data._template_substitution]),
 				false,
 				'content',
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
@@ -10039,7 +10163,8 @@ export function wrapTemplateSubstitution(
 			...data,
 			$type: TSKindId.TemplateSubstitution as const,
 			_expressions: normalizeSingularWrapSlot(
-				data._as_expression ??
+				data._expressions ??
+					data._as_expression ??
 					data._satisfies_expression ??
 					data._instantiation_expression ??
 					data._internal_module ??
@@ -10077,8 +10202,7 @@ export function wrapTemplateSubstitution(
 					data._update_expression ??
 					data._new_expression ??
 					data._yield_expression ??
-					data._sequence_expression ??
-					data._expressions,
+					data._sequence_expression,
 				'expressions',
 				true,
 				data.$type,
@@ -10128,7 +10252,8 @@ export function wrapTemplateType(
 			...data,
 			$type: TSKindId.TemplateType as const,
 			_content: normalizeSingularWrapSlot(
-				data._parenthesized_type ??
+				data._content ??
+					data._parenthesized_type ??
 					data._predefined_type ??
 					data._type_identifier ??
 					data._nested_type_identifier ??
@@ -10147,8 +10272,7 @@ export function wrapTemplateType(
 					data._template_literal_type ??
 					data._intersection_type ??
 					data._union_type ??
-					data._infer_type ??
-					data._content,
+					data._infer_type,
 				'content',
 				true,
 				data.$type,
@@ -10263,7 +10387,8 @@ export function wrapThrowStatement(
 			...data,
 			$type: TSKindId.ThrowStatement as const,
 			_expressions: normalizeSingularWrapSlot(
-				data._as_expression ??
+				data._expressions ??
+					data._as_expression ??
 					data._satisfies_expression ??
 					data._instantiation_expression ??
 					data._internal_module ??
@@ -10301,8 +10426,7 @@ export function wrapThrowStatement(
 					data._update_expression ??
 					data._new_expression ??
 					data._yield_expression ??
-					data._sequence_expression ??
-					data._expressions,
+					data._sequence_expression,
 				'expressions',
 				true,
 				data.$type,
@@ -10413,35 +10537,35 @@ export function wrapTupleParameter(data: T.TupleParameter, tree: TreeHandle) {
 
 export function wrapTupleType(
 	data: T.TupleType & {
-		readonly _tuple_parameter?: T.TupleTypeMember;
-		readonly _optional_tuple_parameter?: T.TupleTypeMember;
-		readonly _optional_type?: T.TupleTypeMember;
-		readonly _rest_type?: T.TupleTypeMember;
-		readonly _parenthesized_type?: T.TupleTypeMember;
-		readonly _predefined_type?: T.TupleTypeMember;
-		readonly _type_identifier?: T.TupleTypeMember;
-		readonly _nested_type_identifier?: T.TupleTypeMember;
-		readonly _generic_type?: T.TupleTypeMember;
-		readonly _object_type?: T.TupleTypeMember;
-		readonly _array_type?: T.TupleTypeMember;
-		readonly _tuple_type?: T.TupleTypeMember;
-		readonly _flow_maybe_type?: T.TupleTypeMember;
-		readonly _type_query?: T.TupleTypeMember;
-		readonly _index_type_query?: T.TupleTypeMember;
-		readonly _this?: T.TupleTypeMember;
-		readonly _existential_type?: T.TupleTypeMember;
-		readonly _literal_type?: T.TupleTypeMember;
-		readonly _lookup_type?: T.TupleTypeMember;
-		readonly _conditional_type?: T.TupleTypeMember;
-		readonly _template_literal_type?: T.TupleTypeMember;
-		readonly _intersection_type?: T.TupleTypeMember;
-		readonly _union_type?: T.TupleTypeMember;
-		readonly _function_type?: T.TupleTypeMember;
-		readonly _readonly_type?: T.TupleTypeMember;
-		readonly _constructor_type?: T.TupleTypeMember;
-		readonly _infer_type?: T.TupleTypeMember;
-		readonly _type_query_member_expression_in_type_annotation?: T.TupleTypeMember;
-		readonly _type_query_call_expression_in_type_annotation?: T.TupleTypeMember;
+		readonly _tuple_parameter?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _optional_tuple_parameter?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _optional_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _rest_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _parenthesized_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _predefined_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _type_identifier?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _nested_type_identifier?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _generic_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _object_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _array_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _tuple_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _flow_maybe_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _type_query?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _index_type_query?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _this?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _existential_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _literal_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _lookup_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _conditional_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _template_literal_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _intersection_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _union_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _function_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _readonly_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _constructor_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _infer_type?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _type_query_member_expression_in_type_annotation?: T.TupleTypeMember | readonly T.TupleTypeMember[];
+		readonly _type_query_call_expression_in_type_annotation?: T.TupleTypeMember | readonly T.TupleTypeMember[];
 	},
 	tree: TreeHandle
 ) {
@@ -10451,38 +10575,39 @@ export function wrapTupleType(
 			$type: TSKindId.TupleType as const,
 			_tuple_type_member: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(
-					_concatInSourceOrder([
-						data._tuple_parameter,
-						data._optional_tuple_parameter,
-						data._optional_type,
-						data._rest_type,
-						data._parenthesized_type,
-						data._predefined_type,
-						data._type_identifier,
-						data._nested_type_identifier,
-						data._generic_type,
-						data._object_type,
-						data._array_type,
-						data._tuple_type,
-						data._flow_maybe_type,
-						data._type_query,
-						data._index_type_query,
-						data._this,
-						data._existential_type,
-						data._literal_type,
-						data._lookup_type,
-						data._conditional_type,
-						data._template_literal_type,
-						data._intersection_type,
-						data._union_type,
-						data._function_type,
-						data._readonly_type,
-						data._constructor_type,
-						data._infer_type,
-						data._type_query_member_expression_in_type_annotation,
-						data._type_query_call_expression_in_type_annotation,
-						data._tuple_type_member
-					]),
+					data._tuple_type_member !== undefined
+						? _toArr(data._tuple_type_member)
+						: _concatInSourceOrder([
+								data._tuple_parameter,
+								data._optional_tuple_parameter,
+								data._optional_type,
+								data._rest_type,
+								data._parenthesized_type,
+								data._predefined_type,
+								data._type_identifier,
+								data._nested_type_identifier,
+								data._generic_type,
+								data._object_type,
+								data._array_type,
+								data._tuple_type,
+								data._flow_maybe_type,
+								data._type_query,
+								data._index_type_query,
+								data._this,
+								data._existential_type,
+								data._literal_type,
+								data._lookup_type,
+								data._conditional_type,
+								data._template_literal_type,
+								data._intersection_type,
+								data._union_type,
+								data._function_type,
+								data._readonly_type,
+								data._constructor_type,
+								data._infer_type,
+								data._type_query_member_expression_in_type_annotation,
+								data._type_query_call_expression_in_type_annotation
+							]),
 					[
 						'_tuple_type_member',
 						'tuple_parameter',
@@ -10643,31 +10768,31 @@ export function wrapTypeAnnotation(data: T.TypeAnnotation, tree: TreeHandle) {
 
 export function wrapTypeArguments(
 	data: T.TypeArguments & {
-		readonly _parenthesized_type?: T.Type;
-		readonly _predefined_type?: T.Type;
-		readonly _type_identifier?: T.Type;
-		readonly _nested_type_identifier?: T.Type;
-		readonly _generic_type?: T.Type;
-		readonly _object_type?: T.Type;
-		readonly _array_type?: T.Type;
-		readonly _tuple_type?: T.Type;
-		readonly _flow_maybe_type?: T.Type;
-		readonly _type_query?: T.Type;
-		readonly _index_type_query?: T.Type;
-		readonly _this?: T.Type;
-		readonly _existential_type?: T.Type;
-		readonly _literal_type?: T.Type;
-		readonly _lookup_type?: T.Type;
-		readonly _conditional_type?: T.Type;
-		readonly _template_literal_type?: T.Type;
-		readonly _intersection_type?: T.Type;
-		readonly _union_type?: T.Type;
-		readonly _function_type?: T.Type;
-		readonly _readonly_type?: T.Type;
-		readonly _constructor_type?: T.Type;
-		readonly _infer_type?: T.Type;
-		readonly _type_query_member_expression_in_type_annotation?: T.Type;
-		readonly _type_query_call_expression_in_type_annotation?: T.Type;
+		readonly _parenthesized_type?: T.Type | readonly T.Type[];
+		readonly _predefined_type?: T.Type | readonly T.Type[];
+		readonly _type_identifier?: T.Type | readonly T.Type[];
+		readonly _nested_type_identifier?: T.Type | readonly T.Type[];
+		readonly _generic_type?: T.Type | readonly T.Type[];
+		readonly _object_type?: T.Type | readonly T.Type[];
+		readonly _array_type?: T.Type | readonly T.Type[];
+		readonly _tuple_type?: T.Type | readonly T.Type[];
+		readonly _flow_maybe_type?: T.Type | readonly T.Type[];
+		readonly _type_query?: T.Type | readonly T.Type[];
+		readonly _index_type_query?: T.Type | readonly T.Type[];
+		readonly _this?: T.Type | readonly T.Type[];
+		readonly _existential_type?: T.Type | readonly T.Type[];
+		readonly _literal_type?: T.Type | readonly T.Type[];
+		readonly _lookup_type?: T.Type | readonly T.Type[];
+		readonly _conditional_type?: T.Type | readonly T.Type[];
+		readonly _template_literal_type?: T.Type | readonly T.Type[];
+		readonly _intersection_type?: T.Type | readonly T.Type[];
+		readonly _union_type?: T.Type | readonly T.Type[];
+		readonly _function_type?: T.Type | readonly T.Type[];
+		readonly _readonly_type?: T.Type | readonly T.Type[];
+		readonly _constructor_type?: T.Type | readonly T.Type[];
+		readonly _infer_type?: T.Type | readonly T.Type[];
+		readonly _type_query_member_expression_in_type_annotation?: T.Type | readonly T.Type[];
+		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
 	},
 	tree: TreeHandle
 ) {
@@ -10677,34 +10802,35 @@ export function wrapTypeArguments(
 			$type: TSKindId.TypeArguments as const,
 			_type: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(
-					_concatInSourceOrder([
-						data._parenthesized_type,
-						data._predefined_type,
-						data._type_identifier,
-						data._nested_type_identifier,
-						data._generic_type,
-						data._object_type,
-						data._array_type,
-						data._tuple_type,
-						data._flow_maybe_type,
-						data._type_query,
-						data._index_type_query,
-						data._this,
-						data._existential_type,
-						data._literal_type,
-						data._lookup_type,
-						data._conditional_type,
-						data._template_literal_type,
-						data._intersection_type,
-						data._union_type,
-						data._function_type,
-						data._readonly_type,
-						data._constructor_type,
-						data._infer_type,
-						data._type_query_member_expression_in_type_annotation,
-						data._type_query_call_expression_in_type_annotation,
-						data._type
-					]),
+					data._type !== undefined
+						? _toArr(data._type)
+						: _concatInSourceOrder([
+								data._parenthesized_type,
+								data._predefined_type,
+								data._type_identifier,
+								data._nested_type_identifier,
+								data._generic_type,
+								data._object_type,
+								data._array_type,
+								data._tuple_type,
+								data._flow_maybe_type,
+								data._type_query,
+								data._index_type_query,
+								data._this,
+								data._existential_type,
+								data._literal_type,
+								data._lookup_type,
+								data._conditional_type,
+								data._template_literal_type,
+								data._intersection_type,
+								data._union_type,
+								data._function_type,
+								data._readonly_type,
+								data._constructor_type,
+								data._infer_type,
+								data._type_query_member_expression_in_type_annotation,
+								data._type_query_call_expression_in_type_annotation
+							]),
 					[
 						'type',
 						'primary_type',
@@ -10983,13 +11109,13 @@ export function wrapTypeQuery(
 			...data,
 			$type: TSKindId.TypeQuery as const,
 			_content: normalizeSingularWrapSlot(
-				data._subscript_expression ??
+				data._content ??
+					data._subscript_expression ??
 					data._member_expression ??
 					data._call_expression ??
 					data._instantiation_expression ??
 					data._identifier ??
-					data._this ??
-					data._content,
+					data._this,
 				'content',
 				true,
 				data.$type,
@@ -11109,7 +11235,7 @@ export function wrapUpdateExpression(
 			...data,
 			$type: TSKindId.UpdateExpression as const,
 			_content: normalizeSingularWrapSlot(
-				data._update_expression_postfix ?? data._update_expression_prefix ?? data._content,
+				data._content ?? data._update_expression_postfix ?? data._update_expression_prefix,
 				'content',
 				true,
 				data.$type,
@@ -11314,7 +11440,7 @@ export function wrapImportClauseGroup1(
 		{
 			...data,
 			_content: normalizeSingularWrapSlot(
-				data._namespace_import ?? data._named_imports ?? data._content,
+				data._content ?? data._namespace_import ?? data._named_imports,
 				'content',
 				true,
 				data.$type,
