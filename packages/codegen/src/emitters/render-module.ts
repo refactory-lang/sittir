@@ -22,13 +22,13 @@ import type {
 	AssembledNode,
 	RenderTemplateSurface,
 	AssembledNonterminal,
-	AssembledSupertype,
-	AssembledSeparatedList
+	AssembledSupertype
 } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledEnum,
 	AssembledGroup,
+	AssembledSeparatedList,
 	deriveUnnamedChildrenCardinality,
 	isMultiple,
 	isRequired,
@@ -847,10 +847,22 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 		if (!node.userFacing) continue;
 		// Separator — scan slot values for stamped separators (set by
 		// deriveSlotsRawFromLeafAttr via stampSeparatorOnValues for named
-		// field slots). Falls back to node.separator (AssembledBranch
-		// simplified-rule separator) for container-shaped nodes whose
-		// separator lives on the simplified rule rather than slot values.
-		if (node instanceof AssembledBranch || node instanceof AssembledGroup) {
+		// field slots). Falls back to node.separator (AssembledBranch /
+		// AssembledSeparatedList simplified-rule-or-raw-rule separator) for
+		// container-shaped nodes whose separator lives on the rule rather
+		// than slot values.
+		//
+		// TEMPORARY (separator-as-slot Task 2 follow-up — see
+		// isSlotBearingCompound's doc comment, emitters/shared.ts):
+		// AssembledSeparatedList widened in alongside AssembledBranch/
+		// AssembledGroup so this scan (and its fallback) doesn't silently
+		// skip 'separatedList' nodes. AssembledBranch.separator is
+		// permanently dead (0/468 branches ever had a REPEAT-shaped
+		// simplifiedRule — wrapper-deletion always converts it to a leaf
+		// attribute first) but AssembledSeparatedList.separator is NOT dead:
+		// its `rule` is always the raw REPEAT/REPEAT1 rule by construction,
+		// so the fallback is live for it even though it's a no-op for branch.
+		if (node instanceof AssembledBranch || node instanceof AssembledGroup || node instanceof AssembledSeparatedList) {
 			let sep: string | undefined;
 			// 1. Check field slot values for a stamped separator.
 			const allSlots = node.fields;
@@ -862,11 +874,12 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 					}
 				}
 			}
-			// 2. Fall back to AssembledBranch.separator (from simplified rule)
-			//    for list-container nodes where the separator lives on the
-			//    top-level repeat and children are inferred/positional (no
-			//    deriveSlotsRawFromLeafAttr path).
-			if (sep === undefined && node instanceof AssembledBranch) {
+			// 2. Fall back to AssembledBranch/AssembledSeparatedList.separator
+			//    (from simplified rule / raw rule) for list-container nodes
+			//    where the separator lives on the top-level repeat and
+			//    children are inferred/positional (no deriveSlotsRawFromLeafAttr
+			//    path).
+			if (sep === undefined && (node instanceof AssembledBranch || node instanceof AssembledSeparatedList)) {
 				sep = node.separator ?? undefined;
 			}
 			if (sep !== undefined) separators.set(kind, sep);

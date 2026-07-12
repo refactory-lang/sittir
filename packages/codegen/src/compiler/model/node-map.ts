@@ -3384,6 +3384,24 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 		return this.rule.type === REPEAT1;
 	}
 
+	/**
+	 * Separator string from the repeat rule, if any — `undefined` for a
+	 * nonterminal separator (mirrors `separatorRule`'s same distinction) or
+	 * when the separator is otherwise not a fixed literal. Mirrors
+	 * `AssembledMulti.separator` exactly — unlike `AssembledBranch.separator`
+	 * (permanently dead: a branch's post-wrapper-deletion `simplifiedRule`
+	 * never survives as REPEAT-shaped), `this.rule` here IS always the raw
+	 * REPEAT/REPEAT1 rule by construction (that's the classification
+	 * criterion), so this getter is live. `render-module.ts`'s
+	 * `collectMetaData` reads this as the node-wide separator fallback for
+	 * list-container nodes whose separator doesn't reach a per-slot-value
+	 * stamp — see isSlotBearingCompound's doc comment (emitters/shared.ts)
+	 * for why 'separatedList' shares that fallback with 'branch'.
+	 */
+	get separator(): string | undefined {
+		return extractSeparatorString(this.rule.separator as RuleBase<'normalize'>['separator']);
+	}
+
 	/** TEMPORARY stub — see `simplifiedRule`'s doc comment. Mirrors `AssembledGroup.slots`. */
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
 		return this._slots;
