@@ -150,39 +150,4 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		const out = collectSlots(deleteWrapper(rule) as Rule);
 		expect(out.map((s) => s.name)).toEqual(['left', 'right']);
 	});
-
-	it('repeated slot with a non-literal (choice) separator → separatorSource captures the rule + permissions', () => {
-		const sepRule: Rule<'link'> = { type: CHOICE, members: [str(','), str(';')] };
-		const rule: Rule<'link'> = {
-			type: FIELD,
-			name: 'items',
-			content: {
-				type: REPEAT1,
-				content: sym('item'),
-				separator: { value: sepRule, trailing: true, leading: false },
-			},
-		};
-		const out = slots(rule);
-		expect(out).toHaveLength(1);
-		const slot = out[0]!;
-		expect(slot.separatorSource).toBeDefined();
-		expect(slot.separatorSource!.rule).toEqual(sepRule);
-		expect(slot.separatorSource!.trailingPermitted).toBe(true);
-		expect(slot.separatorSource!.leadingPermitted).toBe(false);
-	});
-
-	it('repeated slot with a literal separator → separatorSource stays undefined (out of scope for PR-T)', () => {
-		const rule: Rule<'link'> = {
-			type: FIELD,
-			name: 'items',
-			content: {
-				type: REPEAT1,
-				content: sym('item'),
-				separator: { value: str(','), trailing: true, leading: false },
-			},
-		};
-		const out = slots(rule);
-		expect(out).toHaveLength(1);
-		expect(out[0]!.separatorSource).toBeUndefined();
-	});
 });

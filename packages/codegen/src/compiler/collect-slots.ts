@@ -39,7 +39,6 @@ import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import {
 	AssembledNonterminal,
 	type NodeOrTerminal,
-	type SeparatorSource,
 	deriveValuesForRule,
 	dedupeValues,
 	extractSeparatorString,
@@ -425,21 +424,11 @@ function buildSlot(
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
 	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);
 
-	// Non-literal (rule-shaped) separator: extractSeparatorString returned
-	// undefined but sep itself is defined — capture the rule for later
-	// runtime per-instance derivation. Literal separators (separatorStr set)
-	// never populate this — they stay on the existing render-constant path.
-	const separatorSource: SeparatorSource | undefined =
-		isMultiSlot && sep !== undefined && separatorStr === undefined
-			? { rule: sep.value, trailingPermitted: hasTrailing, leadingPermitted: hasLeading }
-			: undefined;
-
 	return new AssembledNonterminal({
 		values,
 		fieldName: (rule as { fieldName?: string }).fieldName,
 		hasTrailing,
 		hasLeading,
-		separatorSource,
 		sourceRuleIds: rule.id ? [rule.id] : [],
 		// (debt PR-P1, item 4) Blind opaque passthrough — never read/branched
 		// on here or by any compiler consumer. Only a dsl-sanctioned reader
