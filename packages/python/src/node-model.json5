@@ -2689,41 +2689,19 @@
     },
     {
       "kind": "_expression_statement_tuple",
-      "modelType": "branch",
+      "modelType": "separatedList",
       "typeName": "ExpressionStatementTuple",
       "factoryName": "expressionStatementTuple",
       "irKey": "expressionStatementTuple",
       "hidden": false,
-      "fields": [
-        {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "spread",
-      "factoryFields": [
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
         "expression"
-      ]
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "_expression_within_for_in_clause",
@@ -3515,41 +3493,19 @@
     },
     {
       "kind": "_with_clause_bare",
-      "modelType": "branch",
+      "modelType": "separatedList",
       "typeName": "WithClauseBare",
       "factoryName": "withClauseBare",
       "irKey": "withClauseBare",
       "hidden": false,
-      "fields": [
-        {
-          "name": "with_item",
-          "propertyName": "withItems",
-          "paramName": "withItems",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "with_item",
-              "parseKind": "with_item",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "with_item"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "spread",
-      "factoryFields": [
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
         "with_item"
-      ]
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "_with_clause_paren",
@@ -7901,41 +7857,19 @@
     },
     {
       "kind": "lambda_parameters",
-      "modelType": "branch",
+      "modelType": "separatedList",
       "typeName": "LambdaParameters",
       "factoryName": "lambdaParameters",
       "irKey": "lambdaParameters",
       "hidden": false,
-      "fields": [
-        {
-          "name": "parameters",
-          "propertyName": "parameters",
-          "paramName": "parameters",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_parameters",
-              "parseKind": "_parameters",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_parameters"
-            ]
-          }
-        }
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "parameter"
       ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "parameters"
-      ]
+      "factoryShape": "direct"
     },
     {
       "kind": "lambda_within_for_in_clause",

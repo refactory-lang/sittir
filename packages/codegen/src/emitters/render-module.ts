@@ -22,7 +22,8 @@ import type {
 	AssembledNode,
 	RenderTemplateSurface,
 	AssembledNonterminal,
-	AssembledSupertype
+	AssembledSupertype,
+	AssembledSeparatedList
 } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
@@ -45,7 +46,7 @@ import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-pa
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import { acceptedTransportKinds, buildSupertypeTransportSet, classifySlot, type SlotClass } from './transport-common.ts';
-import { keywordPresenceValue, slotLiteralValues } from './shared.ts';
+import { keywordPresenceValue, slotLiteralValues, isSlotBearingCompound } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
@@ -131,7 +132,9 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 	// No per-node accumulation needed — emitRenderModule reads the full nodeMap.
 	emitLeaf(_node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void {}
 
-	emitBranch(_node: Extract<AssembledNode, { modelType: 'branch' }>): void {}
+	// TEMPORARY: 'separatedList' widened in alongside 'branch' (no-op body,
+	// same as 'branch') — see isSlotBearingCompound's doc comment (shared.ts).
+	emitBranch(_node: Extract<AssembledNode, { modelType: 'branch' }> | AssembledSeparatedList): void {}
 
 	emitGroup(_node: Extract<AssembledNode, { modelType: 'group' }>): void {}
 
@@ -509,7 +512,7 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 }
 
 function renderSlotAuditVariantsOf(
-	node: Extract<AssembledNode, { modelType: 'branch' | 'group' }>
+	node: Extract<AssembledNode, { modelType: 'branch' | 'group' | 'separatedList' }>
 ): readonly (readonly AssembledNonterminal[])[] {
 	return [Object.values(node.slots)];
 }
@@ -521,10 +524,7 @@ function renderSlotAuditKey(slot: AssembledNonterminal): string {
 }
 
 function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
-	if (
-		node === undefined ||
-		(node.modelType !== 'branch' && node.modelType !== 'group')
-	) {
+	if (node === undefined || !isSlotBearingCompound(node)) {
 		return {
 			named: [],
 			unnamed: [],
@@ -1107,7 +1107,10 @@ function renderTypedKindFn(
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
-		case 'group': {
+		case 'group':
+		// TEMPORARY: 'separatedList' shares 'branch'/'group's typed-render
+		// path — see isSlotBearingCompound's doc comment (shared.ts).
+		case 'separatedList': {
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
 				// No template for this kind — fall back to joining children/text.
@@ -3217,6 +3220,12 @@ function renderTransportDataStruct(
 	switch (node.modelType) {
 		case 'branch':
 		case 'group':
+		// TEMPORARY (separator-as-slot Task 2 follow-up — see
+		// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
+		// shares 'branch's transport struct field emission for
+		// byte-identical output pending Tasks 4-6's real per-instance
+		// capture.
+		case 'separatedList':
 			lines.push(...renderTransportMetadataFields(true));
 			// Per cleanup-rules §E1: named and unnamed slots emit symmetric per-slot
 			// transport fields. JS factories write `_<storageName>` keys for every

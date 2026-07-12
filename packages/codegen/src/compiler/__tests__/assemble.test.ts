@@ -128,6 +128,14 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('items', rule)).toBe('branch');
 	});
 
+	it('does NOT classify a bare repeat with no separator as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT,
+			content: { type: SYMBOL, name: 'item' }
+		};
+		expect(classifyNode('items_no_sep', rule)).toBe('branch');
+	});
+
 	it('classifies visible choice with same field set as branch', () => {
 		const rule: Rule<'link'> = {
 			type: CHOICE,
@@ -499,6 +507,88 @@ describe('Assemble — classifyNode', () => {
 		// name as-is" fallback preserves `_simple_pattern_negative` itself as
 		// the subtype entry — never its inner integer/float leaf types.
 		expect(subtypes).toEqual(['identifier', '_simple_pattern_negative']);
+	});
+});
+
+describe('Assemble — classifyNode — separatedList', () => {
+	it('classifies a rule with a nonterminal separator as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: {
+				value: {
+					type: CHOICE,
+					members: [
+						{ type: STRING, value: ',' },
+						{ type: STRING, value: ';' }
+					]
+				},
+				trailing: false,
+				leading: false
+			}
+		};
+		expect(classifyNode('member_list', rule)).toBe('separatedList');
+	});
+
+	it('classifies a rule with a literal separator and an optional trailing flank as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: {
+				value: { type: STRING, value: ',' },
+				trailing: true
+			}
+		};
+		expect(classifyNode('member_list', rule)).toBe('separatedList');
+	});
+
+	it('classifies a rule with a literal separator and an optional leading flank as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: {
+				value: { type: STRING, value: ',' },
+				leading: true
+			}
+		};
+		expect(classifyNode('member_list', rule)).toBe('separatedList');
+	});
+
+	it('does NOT classify a rule with a literal separator and no flank as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: {
+				value: { type: STRING, value: ',' }
+			}
+		};
+		expect(classifyNode('member_list', rule)).toBe('branch');
+	});
+
+	it('does NOT classify a branch with one array-multiplicity field among several named fields as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: SEQ,
+			members: [
+				{
+					type: FIELD,
+					name: 'name',
+					content: { type: SYMBOL, name: 'identifier' }
+				},
+				{
+					type: FIELD,
+					name: 'items',
+					content: {
+						type: REPEAT1,
+						content: { type: SYMBOL, name: 'item' },
+						separator: {
+							value: { type: STRING, value: ',' },
+							trailing: true
+						}
+					}
+				}
+			]
+		};
+		expect(classifyNode('some_branch', rule)).toBe('branch');
 	});
 });
 

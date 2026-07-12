@@ -22,7 +22,16 @@ import type {
 	AssembledNode,
 	AssembledSupertype
 } from '../compiler/model/node-map.ts';
+import type { AssembledSeparatedList } from '../compiler/model/node-map.ts';
 import { aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/model/node-map.ts';
+
+/**
+ * TEMPORARY (separator-as-slot Task 2 follow-up — see isSlotBearingCompound's
+ * doc comment, shared.ts): 'separatedList' nodes route through the exact
+ * same wrap emission as 'branch' for byte-identical output. Remove once
+ * 'separatedList' gets its own dedicated wrap emission.
+ */
+type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }> | AssembledSeparatedList;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
@@ -32,7 +41,8 @@ import {
 	resolveFieldStorageInfo,
 	classifyChildFactorySurface,
 	classifyWrapEmission,
-	warnSkippedParserSymbol
+	warnSkippedParserSymbol,
+	isSlotBearingCompound
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -130,7 +140,7 @@ export namespace wrap {
 	 */
 	export function branch(
 		output: string[],
-		node: Extract<AssembledNode, { modelType: 'branch' }>,
+		node: BranchLikeForWrap,
 		kindEntries: readonly KindEnumEntry[] | undefined,
 		nodeMap: NodeMap
 	): void {
@@ -802,7 +812,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				: undefined;
 	}
 
-	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
+	emitBranch(node: BranchLikeForWrap): void {
 		wrap.branch(this.#output, node, this.#kindEntries, this.#nodeMap);
 		this.#emittedStructuralKinds.add(node.kind);
 	}
@@ -846,6 +856,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				break;
 			case 'supertype':
 				this.emitSupertype(node);
+				break;
+			// TEMPORARY: 'separatedList' shares 'branch's wrap emission — see
+			// isSlotBearingCompound's doc comment (shared.ts).
+			case 'separatedList':
+				this.emitBranch(node);
 				break;
 			default:
 				break;
@@ -1208,7 +1223,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			if (
 				node.modelType === 'branch' ||
 				node.modelType === 'group' ||
-				node.modelType === 'supertype'
+				node.modelType === 'supertype' ||
+				// TEMPORARY: 'separatedList' shares 'branch's wrap function — see
+				// isSlotBearingCompound's doc comment (shared.ts).
+				node.modelType === 'separatedList'
 			) {
 				if (!this.#emittedStructuralKinds.has(kind)) continue;
 				lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`);

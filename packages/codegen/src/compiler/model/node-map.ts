@@ -3273,6 +3273,128 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	}
 }
 
+/**
+ * A repeated rule with genuine per-instance separator variability — either
+ * the separator itself is nonterminal (multiple possible literal kinds), or
+ * it's a literal separator with an optional leading/trailing flank. See
+ * docs/superpowers/specs/2026-07-12-separator-as-slot-design.md. Classified
+ * by `assemble.ts`'s `isSeparatedListShape` — distinct from `AssembledMulti`
+ * (hidden repeat-shape helpers tree-sitter inlines away, an unrelated
+ * concept sharing only the REPEAT/REPEAT1 rule type).
+ *
+ * Unlike `AssembledGroup`, does NOT route through
+ * `buildSlotsRecord`/`deriveSlots` (the general-purpose slot-collection/
+ * merge machinery this design explicitly avoids) — it has exactly two
+ * fixed-purpose fields (`elements`, `separatorRule`), derived directly via
+ * `deriveValuesForRule`.
+ */
+export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
+	readonly modelType = 'separatedList' as const;
+	readonly elements: readonly NodeOrTerminal[];
+	/**
+	 * Set only when the separator is nonterminal (multiple possible literal
+	 * kinds) — the rule later tasks project onto a slot. A literal
+	 * separator has fixed, compile-time-known text and needs no rule
+	 * reference here (mirrors `separatorToString`'s same distinction,
+	 * emitters/templates.ts). Resolved by the caller (`assemble.ts`'s
+	 * `isNonterminalRuleType` check, already needed there for
+	 * `isSeparatedListShape`) rather than here — this file intentionally
+	 * does NOT import `rule-catalog.ts` for this: doing so closes an
+	 * existing cross-module cycle (node-map.ts → rule-catalog.ts →
+	 * compiler/types.ts → node-map.ts, the last leg via `AssembledNode`)
+	 * into a shorter path that broke `tsgo`'s type inference in unrelated
+	 * files (`simplify.ts`, `refine-emit.test.ts`) — confirmed by bisection.
+	 */
+	readonly separatorRule: Rule<'link'> | undefined;
+	/**
+	 * Leading/trailing flank state. Structurally, `RuleBase.separator`'s
+	 * `leading`/`trailing` are always `true` (optional flank permitted) or
+	 * absent (no flank) — link.ts's separator-lift pass
+	 * (`liftCommaSep`/`absorbTrailingSeparator`) only ever stamps `true`
+	 * when merging an `optional(sepLit)` member into the repeat; a
+	 * mandatory (non-optional) flank literal stays a separate SEQ member
+	 * outside the repeat and never reaches `.separator` — that shape
+	 * classifies as `'branch'`, not `'separatedList'`. So `'mandatory'` is
+	 * unreachable for the flanks specifically here — kept in the union only
+	 * for the *between* position (implicitly mandatory whenever a separator
+	 * exists at all, so not stored as a field on this class).
+	 */
+	readonly leadingMode: 'mandatory' | 'optional' | 'none';
+	readonly trailingMode: 'mandatory' | 'optional' | 'none';
+
+	/**
+	 * TEMPORARY behavior-preserving stub (separator-as-slot Task 2 follow-up,
+	 * see docs/superpowers/specs/2026-07-12-separator-as-slot-design.md).
+	 * `simplifiedRule`/`renderRule`/`slots`/`fields`/`slotClass` exist ONLY so
+	 * the wrap/render/factory emitters can route a `'separatedList'` node
+	 * through the EXACT SAME code paths they already use for `'branch'`/
+	 * `'group'` — `_slots` is built via the identical
+	 * `buildSlotsRecord(simplifiedRule, ctx, renderRule)` call
+	 * `AssembledBranch`/`AssembledGroup` make, with the SAME `simplifiedRule`/
+	 * `renderRule` `assemble()` would have passed had this kind stayed
+	 * classified as `'branch'`. This guarantees real grammar kinds that now
+	 * classify as `'separatedList'` (e.g. python's `_with_clause_bare`,
+	 * `_expression_statement_tuple`, `lambda_parameters`) keep rendering
+	 * byte-identically to their pre-Task-2 `'branch'` output, so `cargo
+	 * build` stays green and existing corpus round-trips don't regress.
+	 * Tasks 4-6 replace this with real per-instance separator capture
+	 * (`_separator_kind`/`_leading_sep`/`_trailing_sep`); at that point this
+	 * slot-bearing surface goes away — do NOT build new capture logic on
+	 * top of it.
+	 */
+	readonly simplifiedRule: SimplifiedRule;
+	/** See `simplifiedRule`'s doc comment — same TEMPORARY-stub rationale. */
+	readonly renderRule: RenderRule;
+	/** See `simplifiedRule`'s doc comment — same TEMPORARY-stub rationale. */
+	protected readonly _slots: Readonly<Record<string, AssembledNonterminal>>;
+	/** See `AssembledBranch.slotClass` — set post-assembly by `computeSlotClasses()`. */
+	slotClass?: BranchSlotClass;
+
+	constructor(
+		kind: string,
+		rule: RepeatRule | Repeat1Rule,
+		ctx: DeriveCtx | undefined,
+		opts: {
+			separatorRule: Rule<'link'> | undefined;
+			simplifiedRule: SimplifiedRule;
+			renderRule: RenderRule;
+			kindEntries?: readonly GeneratedKindEntry[];
+			parseKindCollisionContext?: ParseKindCollisionContext;
+		}
+	) {
+		super(kind, rule, {});
+		const sep = rule.separator;
+		this.elements = deriveValuesForRule(rule.content, ctx, rule.type === REPEAT1 ? 'nonEmptyArray' : 'array');
+		this.separatorRule = opts.separatorRule;
+		this.leadingMode = sep?.leading === true ? 'optional' : 'none';
+		this.trailingMode = sep?.trailing === true ? 'optional' : 'none';
+		this.simplifiedRule = opts.simplifiedRule;
+		this.renderRule = opts.renderRule;
+		this._slots = buildSlotsRecord(
+			opts.simplifiedRule,
+			{ kindName: kind, kindEntries: opts.kindEntries, collision: opts.parseKindCollisionContext },
+			opts.renderRule
+		);
+	}
+
+	/** `true` when the source rule is `repeat1` (at least one element);
+	 * `false` for plain `repeat` (zero-or-more). Mirrors
+	 * `AssembledMulti.nonEmpty`. */
+	get nonEmpty(): boolean {
+		return this.rule.type === REPEAT1;
+	}
+
+	/** TEMPORARY stub — see `simplifiedRule`'s doc comment. Mirrors `AssembledGroup.slots`. */
+	get slots(): Readonly<Record<string, AssembledNonterminal>> {
+		return this._slots;
+	}
+
+	/** TEMPORARY stub — see `simplifiedRule`'s doc comment. Mirrors `AssembledGroup.fields`. */
+	get fields(): readonly AssembledNonterminal[] {
+		return Object.values(this._slots);
+	}
+}
+
 export type AssembledNode =
 	| AssembledBranch
 	| AssembledPattern
@@ -3281,7 +3403,8 @@ export type AssembledNode =
 	| AssembledEnum
 	| AssembledSupertype
 	| AssembledGroup
-	| AssembledMulti;
+	| AssembledMulti
+	| AssembledSeparatedList;
 
 // ============================================================================
 // 5. Canonical structural-view helpers
@@ -3300,7 +3423,10 @@ export type AssembledNode =
  * "what fields does this kind have."
  */
 export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group') return node.fields;
+	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+	// isSlotBearingCompound's doc comment (emitters/shared.ts).
+	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
+		return node.fields;
 	return [];
 }
 
@@ -3311,7 +3437,10 @@ export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonte
  * (Previously Polymorph returned per-form fields; no polymorphs exist at runtime.)
  */
 export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group') return node.fields;
+	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+	// isSlotBearingCompound's doc comment (emitters/shared.ts).
+	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
+		return node.fields;
 	return [];
 }
 
@@ -3323,7 +3452,10 @@ export function allFormFieldsOf(node: AssembledNode): readonly AssembledNontermi
  * (graph traversal, kind reachability, alias-source collection, etc.).
  */
 export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group') return Object.values(node.slots);
+	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+	// isSlotBearingCompound's doc comment (emitters/shared.ts).
+	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
+		return Object.values(node.slots);
 	return [];
 }
 
@@ -3332,7 +3464,9 @@ export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[]
  * `.slots`; non-structural kinds return `[]`.
  */
 export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group')
+	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+	// isSlotBearingCompound's doc comment (emitters/shared.ts).
+	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList')
 		return Object.values(node.slots);
 	return [];
 }

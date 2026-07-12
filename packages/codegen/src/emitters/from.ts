@@ -17,8 +17,15 @@ import {
 	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
-import { AssembledBranch } from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, AssembledSeparatedList } from '../compiler/model/node-map.ts';
+
+/**
+ * TEMPORARY (separator-as-slot Task 2 follow-up — see isSlotBearingCompound's
+ * doc comment, shared.ts): 'separatedList' nodes route through the exact
+ * same from() emission as 'branch' for byte-identical output. Remove once
+ * 'separatedList' gets its own dedicated from() emission.
+ */
+type BranchLikeForFrom = Extract<AssembledNode, { modelType: 'branch' }> | AssembledSeparatedList;
 import {
 	isAutoStampField,
 	isRequired,
@@ -304,7 +311,7 @@ export namespace from {
 	 */
 	export function branch(
 		output: string[],
-		node: Extract<AssembledNode, { modelType: 'branch' }>,
+		node: BranchLikeForFrom,
 		nodeMap: NodeMap,
 		intern: KindInterner,
 		kindEntries: readonly KindEnumEntry[] | undefined
@@ -336,7 +343,9 @@ export namespace from {
 
 interface BranchLikeNode {
 	readonly kind: string;
-	readonly modelType: 'branch' | 'group';
+	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+	// isSlotBearingCompound's doc comment (shared.ts).
+	readonly modelType: 'branch' | 'group' | 'separatedList';
 	readonly typeName: string;
 	readonly fromInputTypeName: string;
 	readonly rawFactoryName?: string;
@@ -409,10 +418,13 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!targetNode) return null;
 	if (!targetNode.rawFactoryName) return null;
 
-	const branchTarget = targetNode instanceof AssembledBranch ? targetNode : null;
-	const childSurface = branchTarget?.modelType === 'branch'
-		? classifyChildFactorySurface(branchTarget, nodeMap)
-		: null;
+	// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+	// isSlotBearingCompound's doc comment (shared.ts). `instanceof
+	// AssembledBranch` can't recognize AssembledSeparatedList, so narrow on
+	// modelType instead.
+	const branchTarget =
+		targetNode.modelType === 'branch' || targetNode.modelType === 'separatedList' ? targetNode : null;
+	const childSurface = branchTarget !== null ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
 	// Positional-child factories (`direct`/`spread`): the sole slot backing
 	// them always lives in `.fields` now, so there is no separate child slot
 	// to check for requiredness — the factory is always callable with zero
@@ -423,7 +435,13 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	}
 
 	// Branch / group with fields: check if the factory config is all-optional.
-	if (targetNode.modelType !== 'branch' && targetNode.modelType !== 'group') {
+	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+	// isSlotBearingCompound's doc comment (shared.ts).
+	if (
+		targetNode.modelType !== 'branch' &&
+		targetNode.modelType !== 'group' &&
+		targetNode.modelType !== 'separatedList'
+	) {
 		return null;
 	}
 	const targetFields = targetNode.fields;
@@ -433,7 +451,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 }
 
 function emitBranchFrom(
-	node: Extract<AssembledNode, { modelType: 'branch' }>,
+	node: BranchLikeForFrom,
 	nodeMap: NodeMap,
 	intern: KindInterner
 ): string {
@@ -918,6 +936,9 @@ function classifyKindsForResolver(
 			case 'supertype':
 			case 'branch':
 			case 'group':
+			// TEMPORARY: 'separatedList' shares 'branch'/'group's from()
+			// dispatch — see isSlotBearingCompound's doc comment (shared.ts).
+			case 'separatedList':
 				branchKinds.push(t);
 				break;
 		}
@@ -1292,7 +1313,9 @@ function collectWrapChildrenEntries(
 ): WrapChildrenEntry[] {
 	const entries: WrapChildrenEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'branch') continue;
+		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+		// isSlotBearingCompound's doc comment (shared.ts).
+		if (node.modelType !== 'branch' && node.modelType !== 'separatedList') continue;
 		if (!node.rawFactoryName) continue;
 		if (kind.startsWith('_') && !node.userFacing) continue;
 		if (!kindEntries) continue;
@@ -1598,7 +1621,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 		from.leaf(this.#output, node);
 	}
 
-	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
+	emitBranch(node: BranchLikeForFrom): void {
 		from.branch(this.#output, node, this.#nodeMap, this.#internKinds, this.#kindEntries);
 	}
 
@@ -1619,6 +1642,11 @@ export class FromEmitter implements CodegenEmitter<string> {
 			case 'enum':
 			case 'keyword':
 				this.emitLeaf(node);
+				break;
+			// TEMPORARY: 'separatedList' shares 'branch's from() emission —
+			// see isSlotBearingCompound's doc comment (shared.ts).
+			case 'separatedList':
+				this.emitBranch(node);
 				break;
 			default:
 				break;

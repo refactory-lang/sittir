@@ -16,7 +16,7 @@ import {
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import { type AssembledNode, type AssembledNonterminal, AssembledGroup } from '../compiler/model/node-map.ts';
+import { type AssembledNode, type AssembledNonterminal, type AssembledSeparatedList, AssembledGroup } from '../compiler/model/node-map.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef, allSlotsOf } from '../compiler/model/node-map.ts';
 import {
 	stampExpressionFor,
@@ -324,7 +324,9 @@ function buildFactoryMapEntries(
 		// never appear at runtime; no factory was emitted for them, so no map
 		// entry either. Lockstep with emitPerNodeFactories.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		const fluent = node.modelType === 'branch';
+		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+		// isSlotBearingCompound's doc comment (shared.ts).
+		const fluent = node.modelType === 'branch' || node.modelType === 'separatedList';
 		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
 		if (!classified) continue;
 		const shape = classified === 'spread' ? 'children' : classified;
@@ -448,7 +450,9 @@ export namespace factory {
 	 */
 	export function branch(
 		output: string[],
-		node: Extract<AssembledNode, { modelType: 'branch' }>,
+		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+		// isSlotBearingCompound's doc comment (shared.ts).
+		node: Extract<AssembledNode, { modelType: 'branch' }> | AssembledSeparatedList,
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
@@ -545,7 +549,9 @@ function buildEnumLiteralUnion(node: { values: readonly string[] }): string {
 // Field-carrying factory (branches, groups, polymorph forms)
 // ---------------------------------------------------------------------------
 
-type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' }>;
+// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+// isSlotBearingCompound's doc comment (shared.ts).
+type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' }> | AssembledSeparatedList;
 
 /** Resolve a container node's children element type to a concrete TS type expression. */
 export function childElementType(node: { children: readonly AssembledNonterminal[] }, nodeMap: NodeMap): string {
@@ -1433,7 +1439,9 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		factory.leaf(this.#output, node, this.#nodeMap, this.#leafReConsts, this.#kindEntries);
 	}
 
-	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
+	// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+	// isSlotBearingCompound's doc comment (shared.ts).
+	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }> | AssembledSeparatedList): void {
 		factory.branch(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
@@ -1479,6 +1487,11 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'group':
 				this.emitGroup(node);
+				break;
+			// TEMPORARY: 'separatedList' shares 'branch's factory emission —
+			// see isSlotBearingCompound's doc comment (shared.ts).
+			case 'separatedList':
+				this.emitBranch(node);
 				break;
 			default:
 				break;

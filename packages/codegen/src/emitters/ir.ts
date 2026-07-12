@@ -107,7 +107,9 @@ export function emitIr(config: EmitIrConfig): string {
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
 			usedMemberKeys.add(memberKey);
 
-			if (sub.modelType === 'branch') {
+			// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+			// isSlotBearingCompound's doc comment (shared.ts).
+			if (sub.modelType === 'branch' || sub.modelType === 'separatedList') {
 				if (!sub.fromFunctionName) continue;
 				memberEntries.push(`  ${memberKey}: ${bundleExpr(sub)},`);
 			} else if (sub.modelType === 'keyword' || sub.modelType === 'pattern' || sub.modelType === 'enum') {
@@ -134,15 +136,18 @@ export function emitIr(config: EmitIrConfig): string {
 		if (kind.startsWith('_')) continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
+		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+		// isSlotBearingCompound's doc comment (shared.ts).
 		if (
 			node.modelType !== 'branch' &&
+			node.modelType !== 'separatedList' &&
 			node.modelType !== 'keyword' &&
 			node.modelType !== 'pattern' &&
 			node.modelType !== 'enum'
 		) {
 			continue;
 		}
-		if (node.modelType === 'branch' && !node.fromFunctionName) continue;
+		if ((node.modelType === 'branch' || node.modelType === 'separatedList') && !node.fromFunctionName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		flatKeys.add(node.irKey);
 	}
@@ -158,7 +163,9 @@ export function emitIr(config: EmitIrConfig): string {
 			const alias = memberKeyFor(subKind, kind);
 			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
 			let bundle: string | undefined;
-			if (sub.modelType === 'branch') {
+			// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+			// isSlotBearingCompound's doc comment (shared.ts).
+			if (sub.modelType === 'branch' || sub.modelType === 'separatedList') {
 				if (!sub.fromFunctionName) continue;
 				bundle = bundleExpr(sub, refineByKind.get(subKind));
 			} else if (sub.modelType === 'keyword' || sub.modelType === 'pattern' || sub.modelType === 'enum') {
@@ -198,7 +205,9 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		if (usedGroupNames.has(node.irKey)) continue;
-		if (node.modelType !== 'branch') continue;
+		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+		// isSlotBearingCompound's doc comment (shared.ts).
+		if (node.modelType !== 'branch' && node.modelType !== 'separatedList') continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
@@ -265,7 +274,9 @@ export function emitIr(config: EmitIrConfig): string {
  * loose `from()` path by default and expose the raw factory as `.strict`.
  */
 function bundleExpr(node: AssembledNode, refineInfo?: RefineKindInfo): string {
-	if (node.modelType === 'branch') {
+	// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+	// isSlotBearingCompound's doc comment (shared.ts).
+	if (node.modelType === 'branch' || node.modelType === 'separatedList') {
 		if (!node.rawFactoryName) {
 			return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName} })`;
 		}

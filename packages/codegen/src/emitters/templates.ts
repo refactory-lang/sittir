@@ -42,6 +42,7 @@ import type {
 	AssembledBranch,
 	AssembledNode,
 	AssembledNonterminal,
+	AssembledSeparatedList,
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
@@ -268,6 +269,12 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 			// classifyTemplateEmission always skips 'multi' nodes before emitOne
 			// is reached — this arm is an unreachable safety fallback.
 			throw new Error(`emitOne: 'multi' node reached emitOne (should be skipped by classifyTemplateEmission): ${node.kind}`);
+		// TEMPORARY (separator-as-slot Task 2 follow-up — see
+		// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
+		// shares 'branch's template emission for byte-identical output pending
+		// Tasks 4-6's real per-instance capture.
+		case 'separatedList':
+			return emitBranchTemplate(node, ctxK);
 		default: {
 			const _exhaustive: never = node;
 			throw new Error(`emitOne: unhandled modelType ${(_exhaustive as AssembledNode).modelType}`);
@@ -286,7 +293,9 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 // required).
 // ---------------------------------------------------------------------------
 
-export function emitBranchTemplate(node: AssembledBranch, ctx: EmitCtx): string {
+// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+// isSlotBearingCompound's doc comment (shared.ts).
+export function emitBranchTemplate(node: AssembledBranch | AssembledSeparatedList, ctx: EmitCtx): string {
 	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free) instead
 	// of rule (RawRule, wrapper-bearing). Wrapper attributes (fieldName,
 	// multiplicity, separator) are now on the leaf rules themselves.
@@ -1785,6 +1794,11 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 			case 'multi':
 				// These modelTypes don't emit templates; classifyTemplateEmission
 				// should have already skipped them, so this is a safety fallback.
+				break;
+			// TEMPORARY: 'separatedList' shares 'branch's template emission —
+			// see isSlotBearingCompound's doc comment (shared.ts).
+			case 'separatedList':
+				te.emitBranch(node);
 				break;
 			default: {
 				const _exhaustive: never = node;

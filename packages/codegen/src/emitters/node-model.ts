@@ -26,7 +26,7 @@ import type {
 	NodeOrTerminal,
 	UnresolvedRef
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isUnresolvedRef, isRequired, isMultiple, isNonEmpty, kindsOf } from '../compiler/model/node-map.ts';
+import { isNodeRef, isUnresolvedRef, isRequired, isMultiple, isNonEmpty, kindsOf, valueParseKindsOf } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -149,6 +149,22 @@ interface SerializedMulti extends SerializedNodeBase {
 	elementKinds: string[];
 }
 
+/**
+ * No wire/render/factory support yet (separator-as-slot Task 2) — this
+ * serialization is deliberately minimal (mirrors `SerializedMulti`'s shape
+ * using the analogous `AssembledSeparatedList` facts) rather than attempting
+ * to serialize the full separator rule tree, which is a later task's design
+ * surface.
+ */
+interface SerializedSeparatedList extends SerializedNodeBase {
+	modelType: 'separatedList';
+	nonEmpty: boolean;
+	hasNonterminalSeparator: boolean;
+	leadingMode: 'mandatory' | 'optional' | 'none';
+	trailingMode: 'mandatory' | 'optional' | 'none';
+	elementKinds: string[];
+}
+
 type SerializedNode =
 	| SerializedBranch
 	| SerializedGroupNode
@@ -157,7 +173,8 @@ type SerializedNode =
 	| SerializedToken
 	| SerializedEnum
 	| SerializedSupertype
-	| SerializedMulti;
+	| SerializedMulti
+	| SerializedSeparatedList;
 
 interface SerializedNodeModel {
 	name: string;
@@ -325,6 +342,16 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				trailing: node.trailing,
 				leading: node.leading,
 				elementKinds: extractElementKinds(node.elementRule)
+			};
+		case 'separatedList':
+			return {
+				...base,
+				modelType: 'separatedList',
+				nonEmpty: node.nonEmpty,
+				hasNonterminalSeparator: node.separatorRule !== undefined,
+				leadingMode: node.leadingMode,
+				trailingMode: node.trailingMode,
+				elementKinds: [...valueParseKindsOf({ values: node.elements })]
 			};
 	}
 }

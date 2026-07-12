@@ -114,6 +114,11 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
+			// TEMPORARY (separator-as-slot Task 2 follow-up — see
+			// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
+			// shares 'branch's type-test emission for byte-identical output
+			// pending Tasks 4-6's real per-instance capture.
+			case 'separatedList':
 				structuralKinds.push({
 					kind,
 					typeName: node.typeName,
