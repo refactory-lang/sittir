@@ -121,7 +121,9 @@ function _toArr<T>(value: T | readonly T[] | undefined): readonly T[] {
 // node stub carries `$span.start` (byte offset) / `$childIndex` (position
 // in parent); sort on those to restore order. Text-collapsed scalar
 // leaves lack both → sorted to the end, stable among themselves (so a
-// homogeneous single-bucket slot is a no-op).
+// homogeneous single-bucket slot is a no-op) — separator-shaped anonymous
+// leaves retain $span since PR-T Task 2 but never reach this sort, as they
+// live in $other, not these fielded-union buckets.
 function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[]): readonly T[] {
   const flat = parts.flatMap((p) => _toArr(p));
   const pos = (e: T): number => {

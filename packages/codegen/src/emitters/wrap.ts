@@ -20,7 +20,8 @@ import type {
 	AssembledEnum,
 	AssembledNonterminal,
 	AssembledNode,
-	AssembledSupertype
+	AssembledSupertype,
+	SeparatorSource
 } from '../compiler/model/node-map.ts';
 import { aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/model/node-map.ts';
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
@@ -42,10 +43,13 @@ import {
 	hasCatalogEntry,
 	kindDiscriminantExpr,
 	collectCatalogKinds,
+	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { expandRuntimeDiscriminatorKinds } from './factory-map.ts';
+import { RuleWalker } from '../dsl/rule-walker.ts';
+import { STRING, PATTERN } from '../types/rule-types.ts'; // @rule-type-consts
 
 // Local view-layer slot descriptor: the minimal `{ name, storageKey, arity }`
 // surface wrap.ts consumes. `AssembledNonterminal` structurally satisfies it
@@ -427,6 +431,42 @@ function collectConcreteStorageKeys(
 	return storageKeys;
 }
 
+// Walks the same transparent-wrapper set as `findRepeatFlag`
+// (dsl/rule-transforms.ts) — RuleWalker's `childrenOf` covers seq / choice /
+// optional / variant / clause / group / field / the separator edge itself.
+const separatorRuleWalker = new RuleWalker();
+
+/**
+ * Resolve a captured `SeparatorSource.rule` (a CHOICE/OPTIONAL/GROUP/STRING/
+ * TOKEN tree, e.g. `choice(',', ';')`) down to the numeric `TSKindId.X`
+ * discriminant expressions for each anonymous-token leaf. Mirrors the
+ * literal → catalog kind derivation `deriveValuesForRule`'s STRING/PATTERN
+ * cases use for `resolvedKind` (node-map.ts) — `findKindEntry` performs the
+ * same catalog lookup (anon symbolName match), so this delegates rather than
+ * re-deriving. Leaves with no catalog entry (regex patterns with no anon
+ * token) are silently dropped — they can never appear as a `$other` entry.
+ */
+function collectSeparatorCandidateKindExprs(
+	source: SeparatorSource,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): readonly string[] {
+	if (!kindEntries) return [];
+	const literals = separatorRuleWalker.fold<string[]>(source.rule, [], (acc, r) => {
+		if (r.type === STRING || r.type === PATTERN) return [...acc, (r as { value: string }).value];
+		return acc;
+	});
+	const exprs: string[] = [];
+	const seen = new Set<string>();
+	for (const literal of literals) {
+		const entry = findKindEntry(kindEntries, literal);
+		if (!entry || seen.has(entry.kind)) continue;
+		seen.add(entry.kind);
+		exprs.push(kindDiscriminantExpr(entry.kind, nodeMap, kindEntries));
+	}
+	return exprs;
+}
+
 // `_<ident>` where ident is a valid JS identifier suffix. Keys outside this
 // shape must be accessed via bracket notation. Tree-sitter exposes some kinds
 // as literal token strings (`'`, `$`, `.`), which become storage keys like
@@ -627,6 +667,25 @@ function emitFieldCarryingWrap(
 			reclaimKindIdsExpr
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
+		// Per-instance separator facts (PR-T Task 3): a repeated slot whose
+		// separator is rule-shaped (e.g. `choice(',', ';')`) rather than a plain
+		// string carries `separatorSource` (Task 1). The native reader now
+		// preserves `$span` for these anonymous tokens in `$other` (Task 2), so
+		// we can derive trailing/leading-separator presence and which separator
+		// kind was used per-instance. Consumed by rendering in a later task.
+		if (f.arity === 'many' && f.separatorSource) {
+			const candidateKindExprs = collectSeparatorCandidateKindExprs(f.separatorSource, nodeMap, kindEntries);
+			if (candidateKindExprs.length > 0) {
+				const candidateKindsExpr = `[${candidateKindExprs.join(', ')}]`;
+				lines.push(
+					`    ${f.storageKey}_trailing_sep: _detectFlankSeparator(data.$other, ${candidateKindsExpr}, ${storeExpr}, 'trailing', data.$span),`
+				);
+				lines.push(
+					`    ${f.storageKey}_leading_sep: _detectFlankSeparator(data.$other, ${candidateKindsExpr}, ${storeExpr}, 'leading', data.$span),`
+				);
+				lines.push(`    ${f.storageKey}_separator_kind: _findSeparatorKind(data.$other, ${candidateKindsExpr}),`);
+			}
+		}
 	}
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $other is a $-prefixed metadata key, not a _<name> storage key, so
@@ -873,6 +932,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource);
 		// `_concatInSourceOrder` calls `_toArr`, so emit `_toArr` whenever either is used.
 		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
+		const usesDetectFlankSeparator = /\b_detectFlankSeparator\b/.test(bodySource);
+		const usesFindSeparatorKind = /\b_findSeparatorKind\b/.test(bodySource);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
 			'withMethods',
@@ -1024,7 +1085,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// node stub carries `$span.start` (byte offset) / `$childIndex` (position',
 						'// in parent); sort on those to restore order. Text-collapsed scalar',
 						'// leaves lack both → sorted to the end, stable among themselves (so a',
-						'// homogeneous single-bucket slot is a no-op).',
+						'// homogeneous single-bucket slot is a no-op) — separator-shaped anonymous',
+						'// leaves retain $span since PR-T Task 2 but never reach this sort, as they',
+						'// live in $other, not these fielded-union buckets.',
 						'function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[]): readonly T[] {',
 						'  const flat = parts.flatMap((p) => _toArr(p));',
 						'  const pos = (e: T): number => {',
@@ -1035,6 +1098,50 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    .map((e, i) => [e, i] as const)',
 						'    .sort(([a, ai], [b, bi]) => pos(a) - pos(b) || ai - bi)',
 						'    .map(([e]) => e);',
+						'}'
+					]
+				: []),
+			...(usesFindSeparatorKind
+				? [
+						'// _findSeparatorKind — scan a $other bucket for the first entry whose',
+						'// $type matches one of the candidate separator kinds (PR-T Task 3).',
+						'// Returns the matched $type (numeric TSKindId or string), or undefined',
+						'// when no separator token is present (e.g. a single-element list).',
+						'function _findSeparatorKind(other: unknown, candidateKinds: readonly (number | string)[]): number | string | undefined {',
+						'  const items = Array.isArray(other) ? other : other == null ? [] : [other];',
+						'  for (const item of items) {',
+						'    if (item !== null && typeof item === "object" && "$type" in item) {',
+						'      const type_ = (item as { $type?: number | string }).$type;',
+						'      if (type_ !== undefined && (candidateKinds as readonly unknown[]).includes(type_)) return type_;',
+						'    }',
+						'  }',
+						'  return undefined;',
+						'}'
+					]
+				: []),
+			...(usesDetectFlankSeparator
+				? [
+						'// _detectFlankSeparator — was there a separator token flanking a repeated',
+						'// slot\'s content on the given side (PR-T Task 3)? Computes the content',
+						'// span\'s outer boundary (max end for \'trailing\', min start for \'leading\'),',
+						'// then scans $other for a candidate-kind separator token whose own $span',
+						'// sits on the correct side of that boundary.',
+						'function _detectFlankSeparator(other: unknown, candidateKinds: readonly (number | string)[], contentValue: unknown, flank: "trailing" | "leading", _parentSpan: unknown): boolean {',
+						'  const content = Array.isArray(contentValue) ? contentValue : contentValue == null ? [] : [contentValue];',
+						'  const spans = content',
+						'    .map((c) => (c !== null && typeof c === "object" ? (c as { $span?: { start: number; end: number } }).$span : undefined))',
+						'    .filter((s): s is { start: number; end: number } => s !== undefined);',
+						'  if (spans.length === 0) return false;',
+						'  const boundary = flank === "trailing" ? Math.max(...spans.map((s) => s.end)) : Math.min(...spans.map((s) => s.start));',
+						'  const items = Array.isArray(other) ? other : other == null ? [] : [other];',
+						'  for (const item of items) {',
+						'    if (item === null || typeof item !== "object" || !("$type" in item) || !("$span" in item)) continue;',
+						'    const type_ = (item as { $type?: number | string }).$type;',
+						'    const span = (item as { $span?: { start: number; end: number } }).$span;',
+						'    if (type_ === undefined || span === undefined || !(candidateKinds as readonly unknown[]).includes(type_)) continue;',
+						'    if (flank === "trailing" ? span.start >= boundary : span.end <= boundary) return true;',
+						'  }',
+						'  return false;',
 						'}'
 					]
 				: []),
