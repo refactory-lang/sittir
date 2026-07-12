@@ -2668,7 +2668,7 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
 
     const repeatIdx = findRepeatWithSeparator(members);
     if (repeatIdx === -1) return null;
-    const repeatNode = members[repeatIdx] as RepeatRule;
+    const repeatNode = members[repeatIdx] as RepeatRule | Repeat1Rule;
     const sep = repeatNode.separator!;
     const elem = repeatNode.content;
 
@@ -2702,7 +2702,7 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
     // absorbing a trailing optional on the far side when present. No case
     // handled an OPTIONAL leading flank at all before this widening (Case 3
     // only ever matched a bare, mandatory literal/structural separator).
-    if (repeatIdx === 1 && members[0]!.type === OPTIONAL && rulesEqual(members[0]!.content, sep.value)) {
+    if (repeatIdx === 1 && matchesOptionalSep(members[0]!)) {
         if (members.length === 2) {
             return { type: REPEAT1, content: elem, separator: { ...sep, leading: true } };
         }

@@ -888,4 +888,31 @@ describe('liftSeparators \u2014 flank absorption widened to structural rulesEqua
 		expect(lifted.content).toEqual({ type: 'SYMBOL', name: 'member' });
 		expect(lifted.separator).toEqual({ value: { type: 'STRING', value: ',' }, trailing: true });
 	});
+
+	it('absorbs a leading-only optional(choice(...)) flank with no trailing member present (Case 4, 2-member branch)', () => {
+		const ctx = makeCtx();
+		const rule: Rule<'link'> = {
+			type: SEQ,
+			members: [
+				{ type: OPTIONAL, content: choiceSep() },
+				{
+					type: SEQ,
+					members: [
+						{ type: SYMBOL, name: 'member' },
+						{
+							type: REPEAT,
+							content: {
+								type: SEQ,
+								members: [choiceSep(), { type: SYMBOL, name: 'member' }]
+							}
+						}
+					]
+				}
+			]
+		};
+		const lifted = liftSeparators(rule, ctx) as any;
+		expect(lifted.type).toBe('REPEAT1');
+		expect(lifted.content).toEqual({ type: 'SYMBOL', name: 'member' });
+		expect(lifted.separator).toEqual({ value: choiceSep(), leading: true });
+	});
 });
