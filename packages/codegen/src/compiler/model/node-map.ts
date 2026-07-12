@@ -1755,7 +1755,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 // 3. AssembledNonterminal & naming projection
 // ============================================================================
 
-/** Stored (non-computed) constructor inputs for {@link AssembledNonterminal}. */
 /**
  * A non-literal (rule-shaped) separator captured on a repeated slot — e.g.
  * `choice(',', ';')` or `optional(',')` as a list separator, as opposed to a
@@ -1774,6 +1773,7 @@ export interface SeparatorSource {
 	readonly leadingPermitted: boolean;
 }
 
+/** Stored (non-computed) constructor inputs for {@link AssembledNonterminal}. */
 export interface AssembledNonterminalInit {
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
