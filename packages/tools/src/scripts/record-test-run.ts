@@ -86,9 +86,12 @@ function runVitestJson(): VitestJsonReport {
 		// run-level failure to discard.
 		const hasFailedFile = report.testResults.some((r) => r.status === 'failed');
 		if (spawnError !== undefined && report.numFailedTests === 0 && !hasFailedFile) {
-			throw new Error('vitest exited non-zero but reported no failing tests — a run-level failure, not test failures.', {
-				cause: spawnError
-			});
+			throw new Error(
+				'vitest exited non-zero but reported no failing tests — a run-level failure, not test failures.',
+				{
+					cause: spawnError
+				}
+			);
 		}
 		return report;
 	} finally {
