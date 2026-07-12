@@ -867,7 +867,6 @@ export function wrapComprehensionClauses(
 	data: T.ComprehensionClauses & {
 		readonly _for_in_clause?: T.ForInClause | T.IfClause;
 		readonly _if_clause?: T.ForInClause | T.IfClause;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -1041,7 +1040,6 @@ export function wrapExpressionStatementTuple(
 		readonly _conditional_expression?: T.Expression;
 		readonly _named_expression?: T.Expression;
 		readonly _as_pattern?: T.Expression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -1236,7 +1234,7 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrap_ListPattern(data: T._ListPattern & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrap_ListPattern(data: T._ListPattern, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -1258,7 +1256,7 @@ export function wrap_ListPattern(data: T._ListPattern & { readonly $other?: _Nod
 	return _node;
 }
 
-export function wrapMatchBlock(data: T.MatchBlock & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -1379,11 +1377,7 @@ export function wrapSimplePattern(
 }
 
 export function wrapSimplePatternNegative(
-	data: T.SimplePatternNegative & {
-		readonly _integer?: T.Integer | T.Float;
-		readonly _float?: T.Integer | T.Float;
-		readonly $other?: _NodeData['$other'];
-	},
+	data: T.SimplePatternNegative & { readonly _integer?: T.Integer | T.Float; readonly _float?: T.Integer | T.Float },
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
@@ -1425,7 +1419,6 @@ export function wrapSimpleStatements(
 		readonly _nonlocal_statement?: T.SimpleStatement;
 		readonly _exec_statement?: T.SimpleStatement;
 		readonly _type_alias_statement?: T.SimpleStatement;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -1524,7 +1517,6 @@ export function wrap_SliceGroup1(
 		readonly _conditional_expression?: T.Expression;
 		readonly _named_expression?: T.Expression;
 		readonly _as_pattern?: T.Expression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -1613,7 +1605,7 @@ export function wrapStatement(
 	);
 }
 
-export function wrap_TuplePattern(data: T._TuplePattern & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrap_TuplePattern(data: T._TuplePattern, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -1635,10 +1627,7 @@ export function wrap_TuplePattern(data: T._TuplePattern & { readonly $other?: _N
 	return _node;
 }
 
-export function wrapWithClauseBare(
-	data: T.WithClauseBare & { readonly $other?: _NodeData['$other'] },
-	tree: TreeHandle
-) {
+export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -1660,10 +1649,7 @@ export function wrapWithClauseBare(
 	return _node;
 }
 
-export function wrapWithClauseParen(
-	data: T.WithClauseParen & { readonly $other?: _NodeData['$other'] },
-	tree: TreeHandle
-) {
+export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -1855,7 +1841,6 @@ export function wrapAssertStatement(
 		readonly _conditional_expression?: T.Expression;
 		readonly _named_expression?: T.Expression;
 		readonly _as_pattern?: T.Expression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -2194,7 +2179,6 @@ export function wrapBlock(
 		readonly _class_definition?: T.Statement;
 		readonly _decorated_definition?: T.Statement;
 		readonly _match_statement?: T.Statement;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -2393,7 +2377,6 @@ export function wrapCasePattern(
 		readonly _simple_pattern_negative?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _complex_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _dotted_name?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -2660,10 +2643,7 @@ export function wrapComplexPattern(
 	return _node;
 }
 
-export function wrapConcatenatedString(
-	data: T.ConcatenatedString & { readonly $other?: _NodeData['$other'] },
-	tree: TreeHandle
-) {
+export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -2898,7 +2878,6 @@ export function wrapDeleteStatement(
 		readonly _named_expression?: T.Expressions;
 		readonly _as_pattern?: T.Expressions;
 		readonly _expression_list?: T.Expressions;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -3125,7 +3104,6 @@ export function wrapDictionarySplatPattern(
 		readonly _identifier?: T.Identifier | T.Subscript | T.Attribute;
 		readonly _subscript?: T.Identifier | T.Subscript | T.Attribute;
 		readonly _attribute?: T.Identifier | T.Subscript | T.Attribute;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -3151,7 +3129,7 @@ export function wrapDictionarySplatPattern(
 	return _node;
 }
 
-export function wrapDottedName(data: T.DottedName & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapDottedName(data: T.DottedName, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -3426,7 +3404,6 @@ export function wrapExpressionList(
 		readonly _conditional_expression?: T.Expression;
 		readonly _named_expression?: T.Expression;
 		readonly _as_pattern?: T.Expression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -3644,7 +3621,6 @@ export function wrapExpressionStatement(
 			| T.AugmentedAssignment
 			| T.Yield;
 		readonly _yield?: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -3894,10 +3870,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 }
 
 export function wrapFormatSpecifier(
-	data: T.FormatSpecifier & {
-		readonly _format_expression?: '[^{}\\n]+' | T.Interpolation;
-		readonly $other?: _NodeData['$other'];
-	},
+	data: T.FormatSpecifier & { readonly _format_expression?: '[^{}\\n]+' | T.Interpolation },
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
@@ -4101,10 +4074,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapGlobalStatement(
-	data: T.GlobalStatement & { readonly $other?: _NodeData['$other'] },
-	tree: TreeHandle
-) {
+export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -4417,10 +4387,7 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapLambdaParameters(
-	data: T.LambdaParameters & { readonly $other?: _NodeData['$other'] },
-	tree: TreeHandle
-) {
+export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -4478,7 +4445,7 @@ export function wrapLambdaWithinForInClause(data: T.LambdaWithinForInClause, tre
 	return _node;
 }
 
-export function wrapList(data: T.List & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapList(data: T.List, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -4537,7 +4504,7 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 	return _node;
 }
 
-export function wrapListPattern(data: T.ListPattern & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapListPattern(data: T.ListPattern, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -4588,7 +4555,6 @@ export function wrapListSplatPattern(
 		readonly _identifier?: T.Identifier | T.Subscript | T.Attribute;
 		readonly _subscript?: T.Identifier | T.Subscript | T.Attribute;
 		readonly _attribute?: T.Identifier | T.Subscript | T.Attribute;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -4731,7 +4697,6 @@ export function wrapModule(
 		readonly _class_definition?: T.Statement;
 		readonly _decorated_definition?: T.Statement;
 		readonly _match_statement?: T.Statement;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -4802,10 +4767,7 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapNonlocalStatement(
-	data: T.NonlocalStatement & { readonly $other?: _NodeData['$other'] },
-	tree: TreeHandle
-) {
+export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -4911,7 +4873,7 @@ export function wrapParameter(
 	);
 }
 
-export function wrapParameters(data: T.Parameters & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -4970,7 +4932,6 @@ export function wrapParenthesizedExpression(
 		readonly _as_pattern?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
 		readonly _yield?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
 		readonly _list_splat?: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -5040,7 +5001,6 @@ export function wrapParenthesizedListSplat(
 	data: T.ParenthesizedListSplat & {
 		readonly _parenthesized_expression?: T.ParenthesizedListSplat | T.ListSplat;
 		readonly _list_splat?: T.ParenthesizedListSplat | T.ListSplat;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -5104,7 +5064,6 @@ export function wrapPatternList(
 		readonly _list_splat_pattern?: T.Pattern;
 		readonly _tuple_pattern?: T.Pattern;
 		readonly _list_pattern?: T.Pattern;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -5444,7 +5403,6 @@ export function wrapReturnStatement(
 		readonly _named_expression?: T.Expressions;
 		readonly _as_pattern?: T.Expressions;
 		readonly _expression_list?: T.Expressions;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -5504,7 +5462,7 @@ export function wrapReturnStatement(
 	return _node;
 }
 
-export function wrapSet(data: T.Set & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapSet(data: T.Set, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -5722,7 +5680,6 @@ export function wrapStringContent(
 		readonly _escape_sequence?: T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent;
 		readonly _not_escape_sequence?: T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent;
 		readonly _string_content?: T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -5888,7 +5845,7 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapTuple(data: T.Tuple & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapTuple(data: T.Tuple, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -5911,7 +5868,7 @@ export function wrapTuple(data: T.Tuple & { readonly $other?: _NodeData['$other'
 	return _node;
 }
 
-export function wrapTuplePattern(data: T.TuplePattern & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -6075,7 +6032,6 @@ export function wrapType(
 			| T.ConstrainedType
 			| T.MemberType;
 		readonly _member_type?: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -6189,7 +6145,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 	return _node;
 }
 
-export function wrapTypeParameter(data: T.TypeParameter & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -6353,7 +6309,6 @@ export function wrapUnionPattern(
 		readonly _simple_pattern_negative?: T.SimplePattern;
 		readonly _complex_pattern?: T.SimplePattern;
 		readonly _dotted_name?: T.SimplePattern;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -6497,7 +6452,6 @@ export function wrapWithClause(
 	data: T.WithClause & {
 		readonly _with_clause_bare?: T.WithClauseBare | T.WithClauseParen;
 		readonly _with_clause_paren?: T.WithClauseBare | T.WithClauseParen;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -6631,7 +6585,6 @@ export function wrapYield(
 		readonly _named_expression?: T.Expression | T.Expressions;
 		readonly _as_pattern?: T.Expression | T.Expressions;
 		readonly _expression_list?: T.Expression | T.Expressions;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -6726,7 +6679,6 @@ export function wrapSliceGroup1(
 		readonly _conditional_expression?: T.Expression;
 		readonly _named_expression?: T.Expression;
 		readonly _as_pattern?: T.Expression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {

@@ -1094,10 +1094,7 @@ export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapClassBodyMethodSig(
-	data: T.ClassBodyMethodSig & { readonly $other?: _NodeData['$other'] },
-	tree: TreeHandle
-) {
+export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -1175,7 +1172,6 @@ export function wrapExportStatementDefault(
 	data: T.ExportStatementDefault & {
 		readonly _export_statement_default_from_arm?: T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm;
 		readonly _export_statement_default_decl_arm?: T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -2022,7 +2018,6 @@ export function wrap_ImportClauseGroup1(
 	data: T._ImportClauseGroup1 & {
 		readonly _namespace_import?: T.NamespaceImport | T.NamedImports;
 		readonly _named_imports?: T.NamespaceImport | T.NamedImports;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -2559,10 +2554,7 @@ export function wrapPublicFieldDefinitionAccessFirst(data: T.PublicFieldDefiniti
 	return _node;
 }
 
-export function wrapPublicFieldDefinitionDeclareFirst(
-	data: T.PublicFieldDefinitionDeclareFirst & { readonly $other?: _NodeData['$other'] },
-	tree: TreeHandle
-) {
+export function wrapPublicFieldDefinitionDeclareFirst(data: T.PublicFieldDefinitionDeclareFirst, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -3341,7 +3333,6 @@ export function wrapAmbientDeclaration(
 		readonly _ambient_declaration?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
 		readonly _ambient_declaration_global?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
 		readonly _ambient_declaration_module?: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -3719,7 +3710,6 @@ export function wrapAsserts(
 		readonly _type_predicate?: T.TypePredicate | T.Identifier | T.This;
 		readonly _identifier?: T.TypePredicate | T.Identifier | T.This;
 		readonly _this?: T.TypePredicate | T.Identifier | T.This;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -4078,7 +4068,6 @@ export function wrapCallExpression(
 			| T.CallExpressionTemplateCall
 			| T.CallExpressionMember;
 		readonly _call_expression_member?: T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -4288,7 +4277,6 @@ export function wrapClassBody(
 			| T.ClassBodyMember
 			| ';';
 		readonly _semi?: T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';';
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -4396,7 +4384,6 @@ export function wrapClassHeritage(
 	data: T.ClassHeritage & {
 		readonly _class_heritage_extends_clause?: T.ClassHeritageExtendsClause | T.ImplementsClause;
 		readonly _implements_clause?: T.ClassHeritageExtendsClause | T.ImplementsClause;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -4806,7 +4793,6 @@ export function wrapDecorator(
 			| T.DecoratorMemberExpression
 			| T.DecoratorCallExpression
 			| T.DecoratorParenthesizedExpression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -4936,7 +4922,6 @@ export function wrapDecoratorParenthesizedExpression(
 		readonly _identifier?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
 		readonly _member_expression?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
 		readonly _call_expression?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -5181,7 +5166,7 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapExportClause(data: T.ExportClause & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapExportClause(data: T.ExportClause, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -5273,7 +5258,6 @@ export function wrapExportStatement(
 			| T.ExportStatementTypeExport
 			| T.ExportStatementEqualsExport
 			| T.ExportStatementNamespaceExport;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -5759,7 +5743,6 @@ export function wrapFormalParameters(
 	data: T.FormalParameters & {
 		readonly _required_parameter?: T.FormalParameter;
 		readonly _optional_parameter?: T.FormalParameter;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -6360,7 +6343,6 @@ export function wrapImplementsClause(
 		readonly _infer_type?: T.Type;
 		readonly _type_query_member_expression_in_type_annotation?: T.Type;
 		readonly _type_query_call_expression_in_type_annotation?: T.Type;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -6516,7 +6498,6 @@ export function wrapImportClause(
 		readonly _namespace_import?: T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport;
 		readonly _named_imports?: T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport;
 		readonly _import_clause_default_import?: T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -7070,7 +7051,6 @@ export function wrapLiteralType(
 		readonly _false?: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined;
 		readonly _null?: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined;
 		readonly _undefined?: T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -7592,7 +7572,7 @@ export function wrapModule(data: T.Module, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapNamedImports(data: T.NamedImports & { readonly $other?: _NodeData['$other'] }, tree: TreeHandle) {
+export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -7615,11 +7595,7 @@ export function wrapNamedImports(data: T.NamedImports & { readonly $other?: _Nod
 }
 
 export function wrapNamespaceExport(
-	data: T.NamespaceExport & {
-		readonly _identifier?: T.ModuleExportName;
-		readonly _string?: T.ModuleExportName;
-		readonly $other?: _NodeData['$other'];
-	},
+	data: T.NamespaceExport & { readonly _identifier?: T.ModuleExportName; readonly _string?: T.ModuleExportName },
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
@@ -7979,7 +7955,6 @@ export function wrapObjectTypeContent(
 	data: T.ObjectTypeContent & {
 		readonly _object_type_content_comma?: T.ObjectTypeContentComma | T.ObjectTypeContentSemi;
 		readonly _object_type_content_semi?: T.ObjectTypeContentComma | T.ObjectTypeContentSemi;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -8049,7 +8024,6 @@ export function wrapObjectTypeContentComma(
 			| T.ConstructSignature
 			| T.IndexSignature
 			| T.MethodSignature;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -8155,7 +8129,6 @@ export function wrapObjectTypeContentSemi(
 			| T.ConstructSignature
 			| T.IndexSignature
 			| T.MethodSignature;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -8523,7 +8496,6 @@ export function wrapParenthesizedExpression(
 			| T.Identifier
 			| T.DecoratorMemberExpression
 			| T.DecoratorCallExpression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -9206,7 +9178,6 @@ export function wrapRestPattern(
 			| T.ReservedIdentifier
 			| T.DestructuringPattern
 			| T.NonNullExpression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -9465,7 +9436,6 @@ export function wrapSequenceExpression(
 		readonly _update_expression?: T.Expression;
 		readonly _new_expression?: T.Expression;
 		readonly _yield_expression?: T.Expression;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -9888,7 +9858,6 @@ export function wrapTemplateLiteralType(
 	data: T.TemplateLiteralType & {
 		readonly _string_fragment?: T.TemplateChars | T.TemplateType;
 		readonly _template_type?: T.TemplateChars | T.TemplateType;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -9918,7 +9887,6 @@ export function wrapTemplateString(
 		readonly _string_fragment?: T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution;
 		readonly _escape_sequence?: T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution;
 		readonly _template_substitution?: T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -9994,7 +9962,6 @@ export function wrapTemplateSubstitution(
 		readonly _new_expression?: T.Expressions;
 		readonly _yield_expression?: T.Expressions;
 		readonly _sequence_expression?: T.Expressions;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -10081,7 +10048,6 @@ export function wrapTemplateType(
 		readonly _intersection_type?: T.PrimaryType | T.InferType;
 		readonly _union_type?: T.PrimaryType | T.InferType;
 		readonly _infer_type?: T.PrimaryType | T.InferType;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -10402,7 +10368,6 @@ export function wrapTupleType(
 		readonly _infer_type?: T.TupleTypeMember;
 		readonly _type_query_member_expression_in_type_annotation?: T.TupleTypeMember;
 		readonly _type_query_call_expression_in_type_annotation?: T.TupleTypeMember;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -10626,7 +10591,6 @@ export function wrapTypeArguments(
 		readonly _infer_type?: T.Type;
 		readonly _type_query_member_expression_in_type_annotation?: T.Type;
 		readonly _type_query_call_expression_in_type_annotation?: T.Type;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -10803,10 +10767,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapTypeParameters(
-	data: T.TypeParameters & { readonly $other?: _NodeData['$other'] },
-	tree: TreeHandle
-) {
+export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -10931,7 +10892,6 @@ export function wrapTypeQuery(
 			| T.TypeQueryInstantiationExpression
 			| T.Identifier
 			| T.This;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -11056,7 +11016,6 @@ export function wrapUpdateExpression(
 	data: T.UpdateExpression & {
 		readonly _update_expression_postfix?: T.UpdateExpressionPostfix | T.UpdateExpressionPrefix;
 		readonly _update_expression_prefix?: T.UpdateExpressionPostfix | T.UpdateExpressionPrefix;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {
@@ -11260,7 +11219,6 @@ export function wrapImportClauseGroup1(
 	data: T.ImportClauseGroup1 & {
 		readonly _namespace_import?: T.NamespaceImport | T.NamedImports;
 		readonly _named_imports?: T.NamespaceImport | T.NamedImports;
-		readonly $other?: _NodeData['$other'];
 	},
 	tree: TreeHandle
 ) {

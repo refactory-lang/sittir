@@ -626,12 +626,13 @@ function emitFieldCarryingWrap(
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
 	const wireKeyTypes = collectWrapWireKeyTypes(fields, nodeMap);
-	// $other here is only ever WRITTEN inside a `{ ...data, $other: v }`
-	// recursive self-call argument (the childSurface spread/direct branch of
-	// `emitInlineWithProperty`) — never read through this function's own
-	// generic-inference chain — so a generic fallback is safe (no narrowing
-	// requirement to satisfy).
-	const needsOther = children.length > 0 || node.childSurface === 'spread' || node.childSurface === 'direct';
+	// $other is real ONLY when the assembled node's own children slot is
+	// non-empty — the model's structural fact that this kind's wire data can
+	// carry unfielded/unnamed children. (`node.childSurface` governs $with
+	// CALLING CONVENTION, not wire storage shape — see investigation note
+	// below; using it here would describe the body's ACCESS, not the data's
+	// real shape.)
+	const needsOther = children.length > 0;
 	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 
