@@ -14,6 +14,48 @@ That fix only covers the `ruleSep` path. The parallel `slotValueSep` fallback ex
 
 **Fix, if/when a real kind hits this:** thread the same nonterminal-separator detection Task 7 added for the `ruleSep` path into the `slotValueSep` path — likely requires `stampSeparatorOnValues` (or its caller) to accept a "nonterminal, resolve at runtime via struct field" marker instead of only a literal string.
 
+## `mintContentAliasKinds`'s self-referential classification bug when an alias target's name equals the kind's own natural stripped name
+
+**Found during:** Track B (separator-as-slot follow-up), `packages/python/overrides.ts`, promoting `_patterns`/`_collection_elements` to visible `separatedList` kinds.
+
+When a hidden rule `_foo` is promoted via a reference-site `alias($._foo, $.<visibleName>)` and `<visibleName>` is chosen to be the EXACT underscore-stripped natural name (`foo`), the promoted kind fails to classify as `separatedList` — it stays `modelType: "branch"` with a single field that is a circular self-reference back to its own kind (`{"name": "foo", "values": [{"kind": "node-ref", "name": "_foo", "parseKind": "foo"}]}`). Reproduced with a throwaway, semantically unrelated alias target name (`zzztest_group`), confirming the trigger is purely "alias target name == kind's own natural stripped name," not anything specific to `patterns`/`collection_elements`.
+
+**Status: worked around, not fixed.** Track B's overrides use non-natural names (`pattern_group`, `element_list`) specifically to avoid this bug — see `packages/python/overrides.ts`'s Track B comment block. The underlying bug is un-fixed and out of `overrides.ts`'s scope; it most likely lives in `compiler/assemble.ts`'s `isSeparatedListShape` / parse-kind self-reference resolution (not yet root-caused past this point).
+
+**Fix, if/when prioritized:** trace why a self-matching alias-target name causes the classifier to treat the kind's own slot as a reference to itself instead of resolving through to the real repeat/separator shape, likely in `assemble.ts`'s parse-kind resolution or `resolveParseKindCollisions` (`compiler/model/node-map.ts`).
+
+## `mintContentAliasKinds` requires the alias to be the IMMEDIATE content of `optional(...)`/`CHOICE[x, BLANK]` — `field()`-wrapping silently prevents the mint
+
+**Found during:** Track B, same task as above.
+
+`link.ts`'s `mintContentAliasKinds` (the pass that registers a visible kind from a reference-site `alias($._hidden, $.visible)`) only mints when `isClauseHoistVisibleGroupAlias`'s `parentIsOptionalSeq` check is true — which requires the alias to be the DIRECT content of `optional(...)` or a 2-member `CHOICE[x, BLANK]`. The structural walk treats `field()` as opaque (falls through to the generic `'content' in rule` case, which resets `parentIsOptionalSeq` to `false`), so writing `optional(field('name', alias($._hidden, $.visible)))` in an override silently prevents the mint entirely — the promoted kind simply never gets registered (confirmed: `no NodeMap render path for '<name>'`, absent from `node-model.json5`), with no error surfaced at regen time.
+
+**Status: not a bug needing a fix — a documented gotcha.** The correct pattern is to alias the BARE symbol directly inside `optional(...)`, with NO `field()` wrapper: `optional(alias($._hidden, $.visible))`. (This turned out to also make a separately-suspected `field()`-wrap workaround for a naming divergence unnecessary — see `packages/python/overrides.ts`'s Track B comment block for the full resolved picture.) Documented here so a future author doesn't lose time rediscovering it.
+
+**Fix, if ever worth doing:** `isClauseHoistVisibleGroupAlias`'s structural walk (`compiler/evaluate.ts`) could treat `FIELD` as transparent (like it already treats `OPTIONAL`/`CHOICE`), so a field-wrapped alias still mints — but there is no current need since the field-name divergence this was meant to work around doesn't occur when aliasing the bare symbol directly (see the previous point).
+
+## `tuple_pattern`'s case-context variant renders as `'()'` — a deeper two-rules-one-parse-kind model-merge gap
+
+**Found during:** Track B, `_patterns` promotion follow-up (flagged by a research pass, not fixed in that task).
+
+Python's assignment-context `tuple_pattern` (`seq('(', optional($._patterns), ')')`) and match-statement's case-context `_tuple_pattern` are two DIFFERENT grammar rules that both parse to the same `tuple_pattern` kind at the tree-sitter level (one parse kind, two source rules) — a base-grammar quirk pythonlang's own tree-sitter grammar already has. `case (a, b):` wraps without throwing, but renders as `'()'` — `templates/tuple_pattern.jinja` only emits the `pattern_group` field (Track B's promoted assignment-context slot); it has no branch for whatever field/shape the case-context `_tuple_pattern` production actually needs. Confirmed via `validate:native`: `tuple_pattern[1].pattern_group: type pattern_group ≠ list_pattern_group1` — the real parsed CST in a case-pattern position carries a DIFFERENT child kind (`list_pattern_group1`, a separate pre-existing Track-A promotion) than the assignment-context template expects.
+
+**Status: deferred, not fixed.** This is a distinct, more complex shared-codegen problem (the node-map/template layer needs to properly model TWO source rules merging into one parse kind, each potentially needing different render logic) — explicitly out of scope for the `_patterns`/Track B promotion task that surfaced it.
+
+**Fix, if/when prioritized:** needs node-map-level support for a parse kind whose real shape can vary depending on which of several distinct SOURCE rules produced it (not just which grammar POSITION references it, the case Track A/B already handle) — likely a template/render-module change, not a small overrides.ts patch.
+
+## Reference-site-alias-minted kinds (`link.ts`'s `mintContentAliasKinds`) never get a dedicated `factories.ts`/`wrap.ts` function
+
+**Found during:** [separator-as-slot plan](superpowers/plans/2026-07-12-separator-as-slot-plan.md), Task 5 (Track B, `packages/python/overrides.ts`).
+
+After fixing the body-alias vs reference-site-alias bug (see below) and the `field()`-wrap mint gotcha, the 3 promoted kinds (`parameter_list`, `pattern_group`, `element_list`) correctly classify as `modelType: "separatedList"` in `node-model.json5`, with the correct `factoryName` (e.g. `"parameterList"`). But `emitters/factories.ts` never actually emits a dedicated `export function parameterList(...)`, and `emitters/wrap.ts` never emits a dedicated `wrapParameterList`, for any of the 3 — confirmed via temporary debug instrumentation in `emitSeparatedListFactory` that it is dispatched to for pre-existing Track-A-minted kinds (`_list_pattern_group1`/`list_pattern_group1`, both `hidden: false`) but never for these 3 link-time-minted kinds. The skip happens upstream, in `emitters/shared.ts`'s `classifyFactoryEmission`/`classifyParserSymbolEmission` gate (most likely `hasCatalogEntry(kindEntries, kind)` returning `false` for these kinds, since they're minted during `link.ts` rather than registered in `base.grammar.rules` before catalog collection the way Track A's enrich-synthesized kinds are).
+
+The kind is still fully constructible and renders correctly — only reachable via the WRAPPING kind's factory (e.g. `ir.parameters({...})`, whose `_parameter_list` field holds a plain `NodeData`-shaped literal for the nested value), not via a standalone `F.parameterList(...)` call. This is the same "TS factories/wrap surface is the deprecated JS-side view, not the native production path" situation documented in project memory (`feedback_ts_readnode_deprecated`) — the NATIVE render path (verified via `probe-kind --backend native` and the `validate:native` sweep) is confirmed correct and unaffected; this gap is cosmetic to the deprecated TS construction surface, not a correctness bug in production rendering.
+
+**Status:** documented gap, not fixed. Root cause not conclusively pinned down (suspected `hasCatalogEntry`/`synthesizedKinds` treating link-time-minted kinds differently from enrich-time-registered ones) — would need further tracing in `emitters/shared.ts` + wherever `kindEntries`/`synthesizedKinds` get populated to confirm and fix cleanly.
+
+**Fix, if/when prioritized:** make `classifyParserSymbolEmission`'s catalog/synthesized-kind checks recognize link-time-minted kinds (from `mintContentAliasKinds`) the same way it already recognizes enrich-time-minted ones, so `factories.ts`/`wrap.ts` emit dedicated functions for them too.
+
 ## `_concatInSourceOrder` sorts text-collapsed leaves (no `$span`/`$childIndex`) to the end, losing source order
 
 **Found during:** `isInlineSafe` separator-variability qualification follow-on (rust render-emptiness regression investigation), `packages/codegen/src/emitters/wrap.ts`, `_concatInSourceOrder` (~line 1384, emitted runtime helper).

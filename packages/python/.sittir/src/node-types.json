@@ -1774,36 +1774,17 @@
   {
     "type": "element_list",
     "named": true,
-    "fields": {
-      "expression": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "expression",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "expression",
           "named": true
         },
         {
-          "type": "expression_list",
-          "named": true
-        },
-        {
           "type": "list_splat",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
           "named": true
         },
         {
@@ -2689,7 +2670,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
@@ -2702,17 +2683,16 @@
   {
     "type": "list",
     "named": true,
-    "fields": {
-      "element_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "element_list",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "element_list",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2748,24 +2728,17 @@
   {
     "type": "list_pattern",
     "named": true,
-    "fields": {
-      "pattern_group": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "pattern_group",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
       "required": false,
       "types": [
         {
           "type": "list_pattern_group1",
+          "named": true
+        },
+        {
+          "type": "pattern_group",
           "named": true
         }
       ]
@@ -3007,7 +2980,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "parameter",
@@ -3019,17 +2992,16 @@
   {
     "type": "parameters",
     "named": true,
-    "fields": {
-      "parameter_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "parameter_list",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "parameter_list",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3089,7 +3061,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "pattern",
@@ -3222,17 +3194,16 @@
   {
     "type": "set",
     "named": true,
-    "fields": {
-      "element_list": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "element_list",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "element_list",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3537,40 +3508,32 @@
   {
     "type": "tuple",
     "named": true,
-    "fields": {
-      "element_list": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "element_list",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "element_list",
+          "named": true
+        }
+      ]
     }
   },
   {
     "type": "tuple_pattern",
     "named": true,
-    "fields": {
-      "pattern_group": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "pattern_group",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": false,
       "required": false,
       "types": [
         {
           "type": "list_pattern_group1",
+          "named": true
+        },
+        {
+          "type": "pattern_group",
           "named": true
         }
       ]

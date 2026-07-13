@@ -378,13 +378,31 @@ export default grammar(
 			// alias into; these are pre-existing base-grammar rules referenced
 			// directly by their parents (`parameters`/`lambda_parameters` for
 			// `_parameters`; `tuple_pattern`/`list_pattern` for `_patterns`;
-			// `list`/`set`/`tuple` for `_collection_elements`). Redefining
-			// each rule's OWN body as `alias(previous, $.<visibleName>)` makes
-			// tree-sitter emit ONE named node for it (instead of inlining the
-			// body at every reference site), so `classifyNode`'s existing
-			// `isSeparatedListShape` check routes it to
-			// `AssembledSeparatedList` instead of `AssembledMulti`'s dead-end
-			// 'multi' classification.
+			// `list`/`set`/`tuple` for `_collection_elements`).
+			//
+			// IMPORTANT — alias the SYMBOL at each REFERENCE SITE, never the
+			// hidden rule's OWN body. An earlier version of this fix redefined
+			// each hidden rule's body as `alias(previous, $.visibleName)`
+			// (`previous` being the rule's SEQ content, not a symbol).
+			// Tree-sitter's `flatten_grammar` doesn't wrap a non-symbol alias
+			// in a single container node — it pushes the alias down onto
+			// EVERY symbol step of the flattened production. `_parameters`'s
+			// production flattens to `[pattern, _patterns_repeat1?, ','?]`-
+			// shaped steps, so BOTH the first element and the hidden
+			// repeat-continuation helper each individually surfaced as
+			// separate `pattern_group`/`parameter_list` nodes — confirmed via
+			// probe-kind: `tuple_pattern` on `(a, b)` produced
+			// `pattern_group("a")` AND a second `pattern_group(", b")`, while
+			// the IR (correctly) expects exactly one value for that singular
+			// slot. Track A's already-proven mechanism aliases the SYMBOL at
+			// the reference site instead (`alias($._hiddenRule,
+			// $.visibleName)`), which produces exactly one container node
+			// regardless of the hidden rule's own internal structure
+			// (confirmed already working in this codebase: `_list_pattern_
+			// group1` is shared across 3 different parent rules, each
+			// aliasing the symbol at its own reference site, and correctly
+			// produces one node per occurrence). Applying that same pattern
+			// here.
 			//
 			// Naming: `patterns` and `collection_elements` are free (no
 			// existing kind by those names in python's grammar). `parameters`
@@ -393,34 +411,65 @@ export default grammar(
 			// wrapper) — aliasing `_parameters` to `$.parameters` would collide
 			// with it. Named the promoted list `parameter_list` instead
 			// (verified no existing `parameter_list` kind either).
-			// `parameters`'s own slot for `optional($._parameters)` is an
-			// UNNAMED (bare-symbol) reference — `buildSlot`'s field-name
-			// derivation falls back to the RAW symbol name minus its leading
-			// underscore (`_parameters` -> `parameters`), independent of
-			// what `_parameters` itself gets aliased to. That diverges from
+			//
+			// `field()`-wrapping each reference site with the SAME name as
+			// the alias target is still required (orthogonal to the body-vs-
+			// reference-site fix above): `buildSlot`'s field-name derivation
+			// for an unnamed (bare-symbol) reference falls back to the RAW
+			// symbol name minus its leading underscore (`_parameters` ->
+			// `parameters`), independent of what the referenced symbol
+			// resolves to via alias. That diverges from
 			// `emitters/templates.ts`'s slot-reference naming for this same
 			// position (which follows the ALIAS-RESOLVED render rule's name,
 			// `parameter_list`) whenever the alias target differs from the
-			// raw symbol's stripped name -- confirmed via a real cargo build
-			// failure (`ParametersTransport` has no field `parameter_list`;
-			// the actual generated struct field is `parameters`, but
-			// `parameters.jinja` referenced `parameter_list`). Explicitly
-			// field-wrapping this reference with the SAME name as the alias
-			// target realigns both derivations onto `parameter_list` and
-			// eliminates the divergence, without touching any emitter.
-			parameters: ($) => seq('(', optional(field('parameter_list', $._parameters)), ')'),
-			_parameters: ($, previous) => alias(previous, $.parameter_list),
-			// Same field-wrap realignment as `parameters` above, applied
-			// symmetrically to `_patterns`/`_collection_elements`'s reference
-			// sites — testing/confirming whether the same divergence applies
-			// uniformly (it does; see the fix comment on `parameters`).
-			tuple_pattern: ($) => seq('(', optional(field('pattern_group', $._patterns)), ')'),
-			list_pattern: ($) => seq('[', optional(field('pattern_group', $._patterns)), ']'),
-			_patterns: ($, previous) => alias(previous, $.pattern_group),
-			list: ($) => seq('[', optional(field('element_list', $._collection_elements)), ']'),
-			set: ($) => seq('{', field('element_list', $._collection_elements), '}'),
-			tuple: ($) => seq('(', optional(field('element_list', $._collection_elements)), ')'),
-			_collection_elements: ($, previous) => alias(previous, $.element_list)
+			// raw symbol's stripped name — confirmed via a real cargo build
+			// failure (`ParametersTransport` has no field `parameter_list`).
+			// Explicitly field-wrapping each reference with the SAME name as
+			// its alias target realigns both derivations and eliminates the
+			// divergence, without touching any emitter.
+			// NOTE on field(): do NOT field()-wrap these alias references.
+			// `link.ts`'s `mintContentAliasKinds` (the pass that actually
+			// registers the visible kind from a reference-site alias) only
+			// mints when the alias is the IMMEDIATE content of `optional(...)`
+			// / a 2-member `CHOICE[x, BLANK]` (`isClauseHoistVisibleGroupAlias`'s
+			// `parentIsOptionalSeq` check) — its structural walk treats `field()`
+			// as an opaque wrapper (falls through the generic `content` case,
+			// which resets `parentIsOptionalSeq` to `false`), so interposing a
+			// `field()` between `optional(...)` and the alias silently
+			// prevents the mint entirely (confirmed: with field() present, the
+			// promoted kinds vanished — `no NodeMap render path`, kind absent
+			// from node-model.json5). This also means Bug 1's field()-wrap
+			// workaround (from the earlier body-alias mechanism) is no longer
+			// needed at all: with the reference resolving THROUGH the alias to
+			// the real `parameter_list`/`pattern_group`/`element_list` kind
+			// (not the mismatched `_parameters`/`_patterns`/
+			// `_collection_elements` hidden name), `buildSlot`'s bare-symbol
+			// field-name fallback (strip leading `_`) already produces the
+			// SAME name `emitters/templates.ts` derives — no divergence to
+			// paper over.
+			parameters: ($) => seq('(', optional(alias($._parameters, $.parameter_list)), ')'),
+			// `lambda_parameters`'s base definition is the bare symbol
+			// `$ => $._parameters` (its whole body IS the reference). Aliasing
+			// this reference site too is a deliberate decision, not an
+			// oversight: `_parameters`'s separator variability is a property
+			// of the RULE, not of which parent references it — leaving this
+			// site unaliased would silently revert `lambda_parameters` to the
+			// ORIGINAL pre-feature behavior (hidden, AssembledMulti-
+			// classified, separator unreachable), defeating this feature for
+			// that reference site. (No `optional(...)` needed for the mint
+			// here — `parameters`'s reference site above already satisfies
+			// `parentIsOptionalSeq` and mints the kind; this site just needs
+			// to resolve through the same alias.)
+			lambda_parameters: ($) => alias($._parameters, $.parameter_list),
+			tuple_pattern: ($) => seq('(', optional(alias($._patterns, $.pattern_group)), ')'),
+			list_pattern: ($) => seq('[', optional(alias($._patterns, $.pattern_group)), ']'),
+			list: ($) => seq('[', optional(alias($._collection_elements, $.element_list)), ']'),
+			// `set`'s reference is MANDATORY (base: `seq('{', $._collection_elements, '}')`,
+			// no `optional(...)`) — it can't itself satisfy `parentIsOptionalSeq`,
+			// but doesn't need to: `list`/`tuple`'s optional-wrapped references
+			// mint the kind; this site just resolves through the same alias.
+			set: ($) => seq('{', alias($._collection_elements, $.element_list), '}'),
+			tuple: ($) => seq('(', optional(alias($._collection_elements, $.element_list)), ')')
 		}
 	}, enrichedBase)
 );

@@ -297,10 +297,7 @@ pub const _WITH_CLAUSE_BARE_REPEAT1: KindId = KindId(286);
 pub const _MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(287);
 pub const _EXCEPT_CLAUSE_LIST_REPEAT1: KindId = KindId(288);
 pub const _AS_PATTERN_TARGET: KindId = KindId(289);
-pub const _ELEMENT_LIST: KindId = KindId(290);
-pub const _FORMAT_EXPRESSION: KindId = KindId(291);
-pub const _PARAMETER_LIST: KindId = KindId(292);
-pub const _PATTERN_GROUP: KindId = KindId(293);
+pub const _FORMAT_EXPRESSION: KindId = KindId(290);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -480,8 +477,8 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         172 => "splat_pattern", // "splat_pattern"
         173 => "class_pattern", // "class_pattern"
         174 => "complex_pattern", // "complex_pattern"
-        175 => "_parameters", // "_parameters"
-        176 => "_patterns", // "_patterns"
+        175 => "parameter_list", // "_parameters"
+        176 => "pattern_group", // "_patterns"
         177 => "parameter", // "parameter"
         178 => "pattern", // "pattern"
         179 => "tuple_pattern", // "tuple_pattern"
@@ -531,7 +528,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         223 => "generator_expression", // "generator_expression"
         224 => "_comprehension_clauses", // "_comprehension_clauses"
         225 => "parenthesized_expression", // "parenthesized_expression"
-        226 => "_collection_elements", // "_collection_elements"
+        226 => "element_list", // "_collection_elements"
         227 => "for_in_clause", // "for_in_clause"
         228 => "if_clause", // "if_clause"
         229 => "conditional_expression", // "conditional_expression"
@@ -595,10 +592,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         287 => "_match_block_block_repeat1", // "_match_block_block_repeat1"
         288 => "_except_clause_list_repeat1", // "_except_clause_list_repeat1"
         289 => "as_pattern_target", // "_as_pattern_target"
-        290 => "element_list", // "_element_list"
-        291 => "format_expression", // "_format_expression"
-        292 => "parameter_list", // "_parameter_list"
-        293 => "pattern_group", // "_pattern_group"
+        290 => "format_expression", // "_format_expression"
         _ => "<unknown>",
     }
 }
