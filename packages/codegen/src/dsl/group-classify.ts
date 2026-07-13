@@ -23,6 +23,7 @@
 
 import {
 	isBlankType,
+	isChoiceType,
 	isFieldType,
 	isOptionalType,
 	isPrecWrapper,
@@ -31,7 +32,9 @@ import {
 	isStringType,
 	isSymbolType,
 	typeEq,
+	type RuntimeRule,
 } from '../types/runtime-shapes.ts';
+import { detectRepeatSeparator } from './list-patterns.ts';
 
 // ---------------------------------------------------------------------------
 // ruleMatchesEmpty
@@ -185,6 +188,137 @@ function seqHasTopLevelRepeat(members: unknown[]): boolean {
 	return false;
 }
 
+// ---------------------------------------------------------------------------
+// Separator-variability qualification
+// ---------------------------------------------------------------------------
+
+/**
+ * True iff a detected repeat separator itself varies per-instance: a
+ * non-literal (`choice`/`symbol`/`pattern`) separator rule rather than a bare
+ * `string` literal. A choice-of-separators (e.g. tree-sitter-typescript's
+ * `sepBy1(choice(',', $._semicolon), X)`) or a symbol/pattern separator
+ * (external-scanner-driven) means the concrete separator text can differ
+ * per instance, so the list can't render from one fixed separator string —
+ * the same signal `detectRepeatSeparator`'s existing callers
+ * (`enrich.ts`'s `listSeparatorOfOptionalSeq`) already act on.
+ */
+function isNonterminalSeparatorType(t: string): boolean {
+	return isChoiceType(t) || isSymbolType(t) || typeEq(t, 'PATTERN');
+}
+
+/**
+ * True iff `repeatRule`'s own separator (per `detectRepeatSeparator` run on
+ * its `content`) is non-literal — see `isNonterminalSeparatorType`.
+ */
+function repeatHasNonterminalSeparator(repeatRule: RuntimeRule): boolean {
+	const content = (repeatRule as { content?: unknown }).content;
+	if (!content || typeof content !== 'object') return false;
+	const detected = detectRepeatSeparator(content as RuntimeRule);
+	if (!detected) return false;
+	return isNonterminalSeparatorType(detected.separator.type);
+}
+
+/**
+ * True iff `member` is an `optional(STRING sep)` or `choice(STRING sep,
+ * blank)` flank whose literal value equals `sepValue` — mirrors the shape
+ * `absorbTrailingListSeparators`/`peelOptionalSeq` (enrich.ts) already
+ * recognize for a stranded leading/trailing separator flank sibling to a
+ * list's repeat (e.g. `commaSep1(E)`'s desugared
+ * `seq(E, repeat(seq(SEP, E)), optional(SEP))`).
+ */
+function isOptionalSeparatorFlank(member: unknown, sepValue: string): boolean {
+	if (!member || typeof member !== 'object') return false;
+	const r = member as Record<string, unknown>;
+	const t = typeof r.type === 'string' ? r.type : '';
+
+	if (isOptionalType(t)) {
+		const content = r.content;
+		if (!content || typeof content !== 'object') return false;
+		const cr = content as Record<string, unknown>;
+		return isStringType(typeof cr.type === 'string' ? cr.type : '') && cr.value === sepValue;
+	}
+
+	if (isChoiceType(t)) {
+		const members = r.members;
+		if (!Array.isArray(members) || members.length !== 2) return false;
+		const hasBlank = members.some(
+			(m) => m && typeof m === 'object' && isBlankType((m as Record<string, unknown>).type as string)
+		);
+		const hasMatchingLiteral = members.some(
+			(m) =>
+				m &&
+				typeof m === 'object' &&
+				isStringType(typeof (m as Record<string, unknown>).type === 'string' ? ((m as Record<string, unknown>).type as string) : '') &&
+				(m as Record<string, unknown>).value === sepValue
+		);
+		return hasBlank && hasMatchingLiteral;
+	}
+
+	return false;
+}
+
+/**
+ * True iff `repeatRule` (a top-level repeat member found among `siblings`,
+ * the flattened seq member list it lives in) has genuine per-instance
+ * separator variability: either its own separator is non-literal
+ * (`repeatHasNonterminalSeparator`), or a SIBLING member in the same
+ * flattened seq is an optional/choice-of-blank flank of that same separator
+ * literal (a stranded leading/trailing comma). Either shape means the list
+ * can't be rendered from one fixed separator string — it needs its own
+ * visible `AssembledSeparatedList` template, not the hidden inline-flat
+ * path.
+ */
+function repeatMemberHasGenuineSeparatorVariability(repeatRule: RuntimeRule, siblings: unknown[]): boolean {
+	if (repeatHasNonterminalSeparator(repeatRule)) return true;
+
+	const content = (repeatRule as { content?: unknown }).content;
+	if (!content || typeof content !== 'object') return false;
+	const detected = detectRepeatSeparator(content as RuntimeRule);
+	if (!detected || !isStringType(detected.separator.type)) return false;
+	const sepValue = (detected.separator as unknown as { value?: unknown }).value;
+	if (typeof sepValue !== 'string') return false;
+
+	return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
+}
+
+/**
+ * True iff a BARE repeat/repeat1 body (not embedded in an enclosing seq) has
+ * genuine separator variability. No sibling flank check applies here — a
+ * bare repeat has no enclosing seq member list to hold a stranded flank —
+ * so this reduces to the non-literal-separator check only.
+ */
+function repeatHasGenuineSeparatorVariability(repeatRule: RuntimeRule): boolean {
+	return repeatHasNonterminalSeparator(repeatRule);
+}
+
+/**
+ * True iff `members` (post-flattening) contains EXACTLY ONE top-level
+ * repeat/repeat1 member AND that one repeat has genuine separator
+ * variability — see `repeatMemberHasGenuineSeparatorVariability`.
+ *
+ * Scoped to the single-repeat case deliberately: a seq body representing a
+ * genuine separated list (`commaSep1(E)` and its Task-1-confirmed real-world
+ * shape) has exactly ONE top-level repeat carrying the list. A seq with
+ * MULTIPLE top-level repeats is a different, compound shape outside this
+ * qualification's design intent — declining to flag it reverts to the
+ * existing inline-flat floor behavior (safe by construction, per this
+ * file's existing "cannot regress below floor" convention) rather than
+ * risking a false-positive match against an unrelated repeat elsewhere in
+ * the same seq.
+ */
+function seqHasGenuineSeparatorVariability(members: unknown[]): boolean {
+	const flat = flattenSeqMembers(members);
+	const repeatMembers: RuntimeRule[] = [];
+	for (const m of flat) {
+		const core = unwrapPrec(m);
+		if (!core || typeof core !== 'object') continue;
+		const ct = (core as Record<string, unknown>).type;
+		if (typeof ct === 'string' && isRepeatLike(ct)) repeatMembers.push(core as RuntimeRule);
+	}
+	if (repeatMembers.length !== 1) return false;
+	return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0]!, flat);
+}
+
 /**
  * Returns true iff the seq body is "inline-safe":
  *   - After dropping pure literals (`string`, `token`) and `blank` from the
@@ -212,7 +346,13 @@ export function isInlineSafe(seqBody: unknown): boolean {
 	// element) instead of one group → array-of-siblings → empty render. A list
 	// stays INLINE-FLAT (one list slot); only genuine co-optional groups (a bare
 	// `choice`, e.g. rust `visibility_modifier`) take the visible-alias path.
-	if (isRepeatLike(t)) return true;
+	//
+	// EXCEPT when the repeat has genuine per-instance separator variability
+	// (a non-literal separator rule) — such a list can't render from one
+	// fixed separator string on the inline-flat path and needs its own
+	// visible `AssembledSeparatedList` template instead. See
+	// `repeatHasGenuineSeparatorVariability`.
+	if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody as RuntimeRule);
 
 	if (!isSeqType(t)) return false;
 
@@ -232,7 +372,13 @@ export function isInlineSafe(seqBody: unknown): boolean {
 	// `visibility_modifier`; python `slice`) take the visible-alias path.
 	// Safe by construction: declining to mint reverts the kind to inline (floor)
 	// behavior, which cannot regress below floor.
-	if (seqHasTopLevelRepeat(members)) return true;
+	//
+	// EXCEPT when the top-level repeat has genuine per-instance separator
+	// variability (a non-literal separator, or an adjacent stranded
+	// optional/choice-of-blank separator flank sibling in this same seq) —
+	// see `seqHasGenuineSeparatorVariability`. Such a list falls through to
+	// the visible-promotion path below, same as a multi-slot/bare-choice body.
+	if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members);
 
 	const slots = collectSlots(members);
 

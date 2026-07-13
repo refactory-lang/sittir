@@ -302,6 +302,10 @@ export const ir = {
   withItem: _attach(FR.withItemFrom, { from: FR.withItemFrom, strict: F.withItem }),
   withStatement: _attach(FR.withStatementFrom, { from: FR.withStatementFrom, strict: F.withStatement }),
   yield: _attach(FR.yield_From, { from: FR.yield_From, strict: F.yield_ }),
+  listPatternGroup1: _attach(FR.listPatternGroup1From, { from: FR.listPatternGroup1From, strict: F.listPatternGroup1 }),
+  argumentListGroup1: _attach(FR.argumentListGroup1From, { from: FR.argumentListGroup1From, strict: F.argumentListGroup1 }),
+  dictPatternGroup1: _attach(FR.dictPatternGroup1From, { from: FR.dictPatternGroup1From, strict: F.dictPatternGroup1 }),
+  dictionaryGroup1: _attach(FR.dictionaryGroup1From, { from: FR.dictionaryGroup1From, strict: F.dictionaryGroup1 }),
   sliceGroup1: _attach(FR.sliceGroup1From, { from: FR.sliceGroup1From, strict: F.sliceGroup1 }),
 
   // Keyword factories

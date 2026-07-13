@@ -1886,11 +1886,19 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_argument_list_optional1",
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_argument_list_group1",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  }
+                },
+                "named": true,
+                "value": "argument_list_group1",
                 "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
+                  "author": "enrich"
                 }
               },
               {
@@ -2275,11 +2283,19 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "__list_pattern_optional1",
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_list_pattern_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "list_pattern_group1",
               "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
+                "author": "enrich"
               }
             },
             {
@@ -2304,11 +2320,19 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "__list_pattern_optional1",
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_list_pattern_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "list_pattern_group1",
               "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
+                "author": "enrich"
               }
             },
             {
@@ -2333,11 +2357,19 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_dict_pattern_optional1",
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_dict_pattern_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "dict_pattern_group1",
               "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
+                "author": "enrich"
               }
             },
             {
@@ -2481,11 +2513,19 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "__list_pattern_optional1",
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_list_pattern_group1",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  }
+                },
+                "named": true,
+                "value": "list_pattern_group1",
                 "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
+                  "author": "enrich"
                 }
               },
               {
@@ -4703,11 +4743,19 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_dictionary_optional1",
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_dictionary_group1",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  }
+                },
+                "named": true,
+                "value": "dictionary_group1",
                 "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
+                  "author": "enrich"
                 }
               },
               {
@@ -5967,7 +6015,7 @@
         }
       ]
     },
-    "_argument_list_optional1": {
+    "_argument_list_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -6056,7 +6104,7 @@
         }
       ]
     },
-    "__list_pattern_optional1": {
+    "_list_pattern_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -6098,7 +6146,7 @@
         }
       ]
     },
-    "_dict_pattern_optional1": {
+    "_dict_pattern_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -6175,7 +6223,7 @@
         }
       ]
     },
-    "_dictionary_optional1": {
+    "_dictionary_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -6872,10 +6920,6 @@
     "_except_clause_optional1",
     "_function_definition_optional1",
     "_exec_statement_optional1",
-    "_argument_list_optional1",
-    "__list_pattern_optional1",
-    "_dict_pattern_optional1",
-    "_dictionary_optional1",
     "_kw_real",
     "_kw_async_marker",
     "_kw_identifier",

@@ -44,17 +44,13 @@ pub enum AnyTransport {
     DelimTokenTreeBrace(DelimTokenTreeBraceTransport),
     DelimTokenTreeBracket(DelimTokenTreeBracketTransport),
     DelimTokenTreeParen(DelimTokenTreeParenTransport),
-    EnumVariantOptional1(EnumVariantOptional1Transport),
     ExpressionStatementWithSemi(ExpressionStatementWithSemiTransport),
     ExternCrateDeclarationOptional1(ExternCrateDeclarationOptional1Transport),
     FieldIdentifier(FieldIdentifierTransport),
+    _FieldInitializerListGroup1(_FieldInitializerListGroup1Transport),
     FieldPatternNamed(FieldPatternNamedTransport),
-    ForExpressionOptional1(ForExpressionOptional1Transport),
     ForeignModItemSemi(ForeignModItemSemiTransport),
-    FunctionItemOptional1(FunctionItemOptional1Transport),
-    FunctionSignatureItemOptional1(FunctionSignatureItemOptional1Transport),
     FunctionTypeFnForm(FunctionTypeFnFormTransport),
-    FunctionTypeOptional1(FunctionTypeOptional1Transport),
     FunctionTypeTraitForm(FunctionTypeTraitFormTransport),
     ImplItemBody(ImplItemBodyTransport),
     ImplItemGroup1(ImplItemGroup1Transport),
@@ -75,11 +71,9 @@ pub enum AnyTransport {
     LetChain(LetChainTransport),
     LetDeclarationOptional1(LetDeclarationOptional1Transport),
     LetDeclarationOptional2(LetDeclarationOptional2Transport),
-    LetDeclarationOptional3(LetDeclarationOptional3Transport),
     LineCommentContent(LineCommentContentTransport),
     LineCommentDoc(LineCommentDocTransport),
     LineCommentRegularDslash(LineCommentRegularDslashTransport),
-    LoopExpressionOptional1(LoopExpressionOptional1Transport),
     MacroDefinitionBrace(MacroDefinitionBraceTransport),
     MacroDefinitionBracket(MacroDefinitionBracketTransport),
     MacroDefinitionParen(MacroDefinitionParenTransport),
@@ -96,6 +90,7 @@ pub enum AnyTransport {
     OrPatternPrefix(OrPatternPrefixTransport),
     OuterBlockDocCommentMarker(OuterBlockDocCommentMarkerTransport),
     OuterLineDocCommentMarker(OuterLineDocCommentMarkerTransport),
+    _ParametersGroup1(_ParametersGroup1Transport),
     PointerTypeConst(PointerTypeConstTransport),
     PrimitiveType(PrimitiveTypeEnum),
     RangeExpressionBinary(RangeExpressionBinaryTransport),
@@ -111,10 +106,11 @@ pub enum AnyTransport {
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     ReferenceExpressionRawMut(ReferenceExpressionRawMutTransport),
     ReservedIdentifier(ReservedIdentifierEnum),
-    StaticItemOptional1(StaticItemOptional1Transport),
+    _SlicePatternGroup1(_SlicePatternGroup1Transport),
     StructItemBrace(StructItemBraceTransport),
     StructItemTuple(StructItemTupleTransport),
     StructItemUnit(StructItemUnitTransport),
+    _StructPatternGroup1(_StructPatternGroup1Transport),
     TokenBindingPatternType(TokenBindingPatternTypeEnum),
     TokenTreeBrace(TokenTreeBraceTransport),
     TokenTreeBracket(TokenTreeBracketTransport),
@@ -122,18 +118,21 @@ pub enum AnyTransport {
     TokenTreePatternBrace(TokenTreePatternBraceTransport),
     TokenTreePatternBracket(TokenTreePatternBracketTransport),
     TokenTreePatternParen(TokenTreePatternParenTransport),
+    _TuplePatternGroup1(_TuplePatternGroup1Transport),
     TypeArgument(TypeArgumentTransport),
     TypeIdentifier(TypeIdentifierTransport),
     TypeParameterOptional1(TypeParameterOptional1Transport),
     UnaryExpressionOperator(UnaryExpressionOperatorEnum),
     UnsafeMarker(UnsafeMarkerTransport),
+    _UseBoundsGroup1(_UseBoundsGroup1Transport),
+    _UseListGroup1(_UseListGroup1Transport),
     UseWildcardClause(UseWildcardClauseTransport),
     UseWildcardGroup1(UseWildcardGroup1Transport),
     VariadicParameterOptional1(VariadicParameterOptional1Transport),
     _VisibilityModifierGroup1(_VisibilityModifierGroup1Transport),
     VisibilityModifierInPath(VisibilityModifierInPathTransport),
     VisibilityModifierPub(VisibilityModifierPubTransport),
-    WhileExpressionOptional1(WhileExpressionOptional1Transport),
+    _WhereClauseGroup1(_WhereClauseGroup1Transport),
     WildcardPattern(WildcardPatternTransport),
     AbstractType(AbstractTypeTransport),
     Arguments(ArgumentsTransport),
@@ -293,6 +292,14 @@ pub enum AnyTransport {
     WhileExpression(WhileExpressionTransport),
     YieldExpression(YieldExpressionTransport),
     VisibilityModifierGroup1(VisibilityModifierGroup1Transport),
+    FieldInitializerListGroup1(FieldInitializerListGroup1Transport),
+    ParametersGroup1(ParametersGroup1Transport),
+    SlicePatternGroup1(SlicePatternGroup1Transport),
+    StructPatternGroup1(StructPatternGroup1Transport),
+    TuplePatternGroup1(TuplePatternGroup1Transport),
+    UseBoundsGroup1(UseBoundsGroup1Transport),
+    UseListGroup1(UseListGroup1Transport),
+    WhereClauseGroup1(WhereClauseGroup1Transport),
     StringContent(StringContentTransport),
     RawStringLiteralContent(RawStringLiteralContentTransport),
     FloatLiteral(FloatLiteralTransport),
@@ -421,99 +428,103 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 // kind: _array_expression_list (_ARRAY_EXPRESSION_LIST)
-                331 => Ok(AnyTransport::ArrayExpressionList(
+                339 => Ok(AnyTransport::ArrayExpressionList(
                     ArrayExpressionListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _array_expression_semi (_ARRAY_EXPRESSION_SEMI)
-                330 => Ok(AnyTransport::ArrayExpressionSemi(
+                338 => Ok(AnyTransport::ArrayExpressionSemi(
                     ArrayExpressionSemiTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _attributed_argument (_ATTRIBUTED_ARGUMENT)
-                373 => Ok(AnyTransport::AttributedArgument(
+                381 => Ok(AnyTransport::AttributedArgument(
                     AttributedArgumentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _attributed_enum_variant (_ATTRIBUTED_ENUM_VARIANT)
-                370 => Ok(AnyTransport::AttributedEnumVariant(
+                378 => Ok(AnyTransport::AttributedEnumVariant(
                     AttributedEnumVariantTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _attributed_field_declaration (_ATTRIBUTED_FIELD_DECLARATION)
-                369 => Ok(AnyTransport::AttributedFieldDeclaration(
+                377 => Ok(AnyTransport::AttributedFieldDeclaration(
                     AttributedFieldDeclarationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _attributed_ordered_field (_ATTRIBUTED_ORDERED_FIELD)
-                374 => Ok(AnyTransport::AttributedOrderedField(
+                382 => Ok(AnyTransport::AttributedOrderedField(
                     AttributedOrderedFieldTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _attributed_parameter (_ATTRIBUTED_PARAMETER)
-                371 => Ok(AnyTransport::AttributedParameter(
+                379 => Ok(AnyTransport::AttributedParameter(
                     AttributedParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _attributed_type_parameter (_ATTRIBUTED_TYPE_PARAMETER)
-                372 => Ok(AnyTransport::AttributedTypeParameter(
+                380 => Ok(AnyTransport::AttributedTypeParameter(
                     AttributedTypeParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _closure_expression_block (_CLOSURE_EXPRESSION_BLOCK)
-                332 => Ok(AnyTransport::ClosureExpressionBlock(
+                340 => Ok(AnyTransport::ClosureExpressionBlock(
                     ClosureExpressionBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _closure_expression_expr (_CLOSURE_EXPRESSION_EXPR)
-                333 => Ok(AnyTransport::ClosureExpressionExpr(
+                341 => Ok(AnyTransport::ClosureExpressionExpr(
                     ClosureExpressionExprTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _delim_token_tree_brace (_DELIM_TOKEN_TREE_BRACE)
-                368 => Ok(AnyTransport::DelimTokenTreeBrace(
+                376 => Ok(AnyTransport::DelimTokenTreeBrace(
                     DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _delim_token_tree_bracket (_DELIM_TOKEN_TREE_BRACKET)
-                367 => Ok(AnyTransport::DelimTokenTreeBracket(
+                375 => Ok(AnyTransport::DelimTokenTreeBracket(
                     DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _delim_token_tree_paren (_DELIM_TOKEN_TREE_PAREN)
-                366 => Ok(AnyTransport::DelimTokenTreeParen(
+                374 => Ok(AnyTransport::DelimTokenTreeParen(
                     DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _expression_statement_with_semi (_EXPRESSION_STATEMENT_WITH_SEMI)
-                355 => Ok(AnyTransport::ExpressionStatementWithSemi(
+                363 => Ok(AnyTransport::ExpressionStatementWithSemi(
                     ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_identifier (_FIELD_IDENTIFIER)
-                408 => Ok(AnyTransport::FieldIdentifier(
+                416 => Ok(AnyTransport::FieldIdentifier(
                     FieldIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _field_initializer_list_group1 (_FIELD_INITIALIZER_LIST_GROUP1)
+                325 => Ok(AnyTransport::_FieldInitializerListGroup1(
+                    _FieldInitializerListGroup1Transport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _field_pattern_named (_FIELD_PATTERN_NAMED)
-                334 => Ok(AnyTransport::FieldPatternNamed(
+                342 => Ok(AnyTransport::FieldPatternNamed(
                     FieldPatternNamedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _foreign_mod_item_semi (_FOREIGN_MOD_ITEM_SEMI)
-                356 => Ok(AnyTransport::ForeignModItemSemi(
+                364 => Ok(AnyTransport::ForeignModItemSemi(
                     ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _function_type_fn_form (_FUNCTION_TYPE_FN_FORM)
-                336 => Ok(AnyTransport::FunctionTypeFnForm(
+                344 => Ok(AnyTransport::FunctionTypeFnForm(
                     FunctionTypeFnFormTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _function_type_trait_form (_FUNCTION_TYPE_TRAIT_FORM)
-                335 => Ok(AnyTransport::FunctionTypeTraitForm(
+                343 => Ok(AnyTransport::FunctionTypeTraitForm(
                     FunctionTypeTraitFormTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _impl_item_body (_IMPL_ITEM_BODY)
-                326 => Ok(AnyTransport::ImplItemBody(
+                334 => Ok(AnyTransport::ImplItemBody(
                     ImplItemBodyTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _impl_item_negative_clause (_IMPL_ITEM_NEGATIVE_CLAUSE)
-                329 => Ok(AnyTransport::ImplItemNegativeClause(
+                337 => Ok(AnyTransport::ImplItemNegativeClause(
                     ImplItemNegativeClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _impl_item_positive_clause (_IMPL_ITEM_POSITIVE_CLAUSE)
-                328 => Ok(AnyTransport::ImplItemPositiveClause(
+                336 => Ok(AnyTransport::ImplItemPositiveClause(
                     ImplItemPositiveClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _impl_item_semi (_IMPL_ITEM_SEMI)
-                327 => Ok(AnyTransport::ImplItemSemi(
+                335 => Ok(AnyTransport::ImplItemSemi(
                     ImplItemSemiTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _impl_item_unsafe_marker (_IMPL_ITEM_UNSAFE_MARKER)
-                325 => Ok(AnyTransport::ImplItemUnsafeMarker(
+                333 => Ok(AnyTransport::ImplItemUnsafeMarker(
                     ImplItemUnsafeMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _inner_block_doc_comment_marker (_INNER_BLOCK_DOC_COMMENT_MARKER)
@@ -533,43 +544,43 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     LineCommentContentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _line_comment_doc (_LINE_COMMENT_DOC)
-                359 => Ok(AnyTransport::LineCommentDoc(
+                367 => Ok(AnyTransport::LineCommentDoc(
                     LineCommentDocTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _line_comment_regular_dslash (_LINE_COMMENT_REGULAR_DSLASH)
-                358 => Ok(AnyTransport::LineCommentRegularDslash(
+                366 => Ok(AnyTransport::LineCommentRegularDslash(
                     LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _macro_definition_brace (_MACRO_DEFINITION_BRACE)
-                339 => Ok(AnyTransport::MacroDefinitionBrace(
+                347 => Ok(AnyTransport::MacroDefinitionBrace(
                     MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _macro_definition_bracket (_MACRO_DEFINITION_BRACKET)
-                338 => Ok(AnyTransport::MacroDefinitionBracket(
+                346 => Ok(AnyTransport::MacroDefinitionBracket(
                     MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _macro_definition_paren (_MACRO_DEFINITION_PAREN)
-                337 => Ok(AnyTransport::MacroDefinitionParen(
+                345 => Ok(AnyTransport::MacroDefinitionParen(
                     MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _match_arm_with_comma (_MATCH_ARM_WITH_COMMA)
-                357 => Ok(AnyTransport::MatchArmWithComma(
+                365 => Ok(AnyTransport::MatchArmWithComma(
                     MatchArmWithCommaTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _match_block_arms (_MATCH_BLOCK_ARMS)
-                376 => Ok(AnyTransport::MatchBlockArms(
+                384 => Ok(AnyTransport::MatchBlockArms(
                     MatchBlockArmsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _mod_item_external (_MOD_ITEM_EXTERNAL)
-                340 => Ok(AnyTransport::ModItemExternal(
+                348 => Ok(AnyTransport::ModItemExternal(
                     ModItemExternalTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _or_pattern_binary (_OR_PATTERN_BINARY)
-                341 => Ok(AnyTransport::OrPatternBinary(
+                349 => Ok(AnyTransport::OrPatternBinary(
                     OrPatternBinaryTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _or_pattern_prefix (_OR_PATTERN_PREFIX)
-                342 => Ok(AnyTransport::OrPatternPrefix(
+                350 => Ok(AnyTransport::OrPatternPrefix(
                     OrPatternPrefixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _outer_block_doc_comment_marker (_OUTER_BLOCK_DOC_COMMENT_MARKER)
@@ -580,32 +591,36 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 317 => Ok(AnyTransport::OuterLineDocCommentMarker(
                     OuterLineDocCommentMarkerTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _parameters_group1 (_PARAMETERS_GROUP1)
+                322 => Ok(AnyTransport::_ParametersGroup1(
+                    _ParametersGroup1Transport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _pointer_type_const (_POINTER_TYPE_CONST)
-                354 => Ok(AnyTransport::PointerTypeConst(
+                362 => Ok(AnyTransport::PointerTypeConst(
                     PointerTypeConstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _range_expression_binary (_RANGE_EXPRESSION_BINARY)
-                343 => Ok(AnyTransport::RangeExpressionBinary(
+                351 => Ok(AnyTransport::RangeExpressionBinary(
                     RangeExpressionBinaryTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _range_expression_postfix (_RANGE_EXPRESSION_POSTFIX)
-                344 => Ok(AnyTransport::RangeExpressionPostfix(
+                352 => Ok(AnyTransport::RangeExpressionPostfix(
                     RangeExpressionPostfixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _range_expression_prefix (_RANGE_EXPRESSION_PREFIX)
-                345 => Ok(AnyTransport::RangeExpressionPrefix(
+                353 => Ok(AnyTransport::RangeExpressionPrefix(
                     RangeExpressionPrefixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _range_pattern_left_bare (_RANGE_PATTERN_LEFT_BARE)
-                348 => Ok(AnyTransport::RangePatternLeftBare(
+                356 => Ok(AnyTransport::RangePatternLeftBare(
                     RangePatternLeftBareTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _range_pattern_left_with_right (_RANGE_PATTERN_LEFT_WITH_RIGHT)
-                347 => Ok(AnyTransport::RangePatternLeftWithRight(
+                355 => Ok(AnyTransport::RangePatternLeftWithRight(
                     RangePatternLeftWithRightTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _range_pattern_prefix (_RANGE_PATTERN_PREFIX)
-                346 => Ok(AnyTransport::RangePatternPrefix(
+                354 => Ok(AnyTransport::RangePatternPrefix(
                     RangePatternPrefixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _raw_string_literal_end (_RAW_STRING_LITERAL_END)
@@ -617,75 +632,99 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     RawStringLiteralStartTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _reference_expression_raw_const (_REFERENCE_EXPRESSION_RAW_CONST)
-                323 => Ok(AnyTransport::ReferenceExpressionRawConst(
+                331 => Ok(AnyTransport::ReferenceExpressionRawConst(
                     ReferenceExpressionRawConstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _reference_expression_raw_mut (_REFERENCE_EXPRESSION_RAW_MUT)
-                324 => Ok(AnyTransport::ReferenceExpressionRawMut(
+                332 => Ok(AnyTransport::ReferenceExpressionRawMut(
                     ReferenceExpressionRawMutTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _slice_pattern_group1 (_SLICE_PATTERN_GROUP1)
+                327 => Ok(AnyTransport::_SlicePatternGroup1(
+                    _SlicePatternGroup1Transport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _struct_item_brace (_STRUCT_ITEM_BRACE)
-                349 => Ok(AnyTransport::StructItemBrace(
+                357 => Ok(AnyTransport::StructItemBrace(
                     StructItemBraceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _struct_item_tuple (_STRUCT_ITEM_TUPLE)
-                350 => Ok(AnyTransport::StructItemTuple(
+                358 => Ok(AnyTransport::StructItemTuple(
                     StructItemTupleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _struct_item_unit (_STRUCT_ITEM_UNIT)
-                351 => Ok(AnyTransport::StructItemUnit(
+                359 => Ok(AnyTransport::StructItemUnit(
                     StructItemUnitTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _struct_pattern_group1 (_STRUCT_PATTERN_GROUP1)
+                328 => Ok(AnyTransport::_StructPatternGroup1(
+                    _StructPatternGroup1Transport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _token_tree_brace (_TOKEN_TREE_BRACE)
-                365 => Ok(AnyTransport::TokenTreeBrace(
+                373 => Ok(AnyTransport::TokenTreeBrace(
                     TokenTreeBraceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _token_tree_bracket (_TOKEN_TREE_BRACKET)
-                364 => Ok(AnyTransport::TokenTreeBracket(
+                372 => Ok(AnyTransport::TokenTreeBracket(
                     TokenTreeBracketTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _token_tree_paren (_TOKEN_TREE_PAREN)
-                363 => Ok(AnyTransport::TokenTreeParen(
+                371 => Ok(AnyTransport::TokenTreeParen(
                     TokenTreeParenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _token_tree_pattern_brace (_TOKEN_TREE_PATTERN_BRACE)
-                362 => Ok(AnyTransport::TokenTreePatternBrace(
+                370 => Ok(AnyTransport::TokenTreePatternBrace(
                     TokenTreePatternBraceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _token_tree_pattern_bracket (_TOKEN_TREE_PATTERN_BRACKET)
-                361 => Ok(AnyTransport::TokenTreePatternBracket(
+                369 => Ok(AnyTransport::TokenTreePatternBracket(
                     TokenTreePatternBracketTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _token_tree_pattern_paren (_TOKEN_TREE_PATTERN_PAREN)
-                360 => Ok(AnyTransport::TokenTreePatternParen(
+                368 => Ok(AnyTransport::TokenTreePatternParen(
                     TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _tuple_pattern_group1 (_TUPLE_PATTERN_GROUP1)
+                326 => Ok(AnyTransport::_TuplePatternGroup1(
+                    _TuplePatternGroup1Transport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _type_argument (_TYPE_ARGUMENT)
-                375 => Ok(AnyTransport::TypeArgument(
+                383 => Ok(AnyTransport::TypeArgument(
                     TypeArgumentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_identifier (_TYPE_IDENTIFIER)
-                411 => Ok(AnyTransport::TypeIdentifier(
+                419 => Ok(AnyTransport::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _use_bounds_group1 (_USE_BOUNDS_GROUP1)
+                324 => Ok(AnyTransport::_UseBoundsGroup1(
+                    _UseBoundsGroup1Transport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _use_list_group1 (_USE_LIST_GROUP1)
+                321 => Ok(AnyTransport::_UseListGroup1(
+                    _UseListGroup1Transport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _use_wildcard_clause (_USE_WILDCARD_CLAUSE)
-                321 => Ok(AnyTransport::UseWildcardClause(
+                329 => Ok(AnyTransport::UseWildcardClause(
                     UseWildcardClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _visibility_modifier_group1 (_VISIBILITY_MODIFIER_GROUP1)
-                320 => Ok(AnyTransport::_VisibilityModifierGroup1(
+                323 => Ok(AnyTransport::_VisibilityModifierGroup1(
                     _VisibilityModifierGroup1Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _visibility_modifier_in_path (_VISIBILITY_MODIFIER_IN_PATH)
-                353 => Ok(AnyTransport::VisibilityModifierInPath(
+                361 => Ok(AnyTransport::VisibilityModifierInPath(
                     VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _visibility_modifier_pub (_VISIBILITY_MODIFIER_PUB)
-                352 => Ok(AnyTransport::VisibilityModifierPub(
+                360 => Ok(AnyTransport::VisibilityModifierPub(
                     VisibilityModifierPubTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _where_clause_group1 (_WHERE_CLAUSE_GROUP1)
+                320 => Ok(AnyTransport::_WhereClauseGroup1(
+                    _WhereClauseGroup1Transport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _wildcard_pattern (_WILDCARD_PATTERN)
-                322 => Ok(AnyTransport::WildcardPattern(
+                330 => Ok(AnyTransport::WildcardPattern(
                     WildcardPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: abstract_type (ABSTRACT_TYPE)
@@ -5807,7 +5846,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     239 => Ok(Self::MacroInvocation(
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
-                    322 => Ok(Self::WildcardPattern(
+                    330 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5993,7 +6032,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     239 => Ok(Self::MacroInvocation(
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
-                    322 => Ok(Self::WildcardPattern(
+                    330 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7031,7 +7070,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -7199,7 +7238,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -7612,7 +7651,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -7735,7 +7774,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -8722,6 +8761,112 @@ impl RenderableTransport for ConstParameterOptional1ValueTransportSlot {
             ConstParameterOptional1ValueTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
             ConstParameterOptional1ValueTransportSlot::NegativeLiteral(inner) => render_negative_literal(inner, dest),
             ConstParameterOptional1ValueTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum _FieldInitializerListGroup1ContentTransportSlot {
+    ShorthandFieldInitializer(ShorthandFieldInitializerTransport),
+    FieldInitializer(FieldInitializerTransport),
+    BaseFieldInitializer(BaseFieldInitializerTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for _FieldInitializerListGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    264 => Ok(Self::ShorthandFieldInitializer(
+                        ShorthandFieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    265 => Ok(Self::FieldInitializer(
+                        FieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    266 => Ok(Self::BaseFieldInitializer(
+                        BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in _FieldInitializerListGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in _FieldInitializerListGroup1ContentTransportSlot")
+                )?;
+                match kind_id {
+                    264 => Ok(Self::ShorthandFieldInitializer(
+                        ShorthandFieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    265 => Ok(Self::FieldInitializer(
+                        FieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    266 => Ok(Self::BaseFieldInitializer(
+                        BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in _FieldInitializerListGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("_FieldInitializerListGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for _FieldInitializerListGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("_FieldInitializerListGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_FieldInitializerListGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _FieldInitializerListGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_FieldInitializerListGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _FieldInitializerListGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn _field_initializer_list_group1_content_transport_slot_to_any(t: _FieldInitializerListGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        _FieldInitializerListGroup1ContentTransportSlot::ShorthandFieldInitializer(inner) => AnyTransport::ShorthandFieldInitializer(inner),
+        _FieldInitializerListGroup1ContentTransportSlot::FieldInitializer(inner) => AnyTransport::FieldInitializer(inner),
+        _FieldInitializerListGroup1ContentTransportSlot::BaseFieldInitializer(inner) => AnyTransport::BaseFieldInitializer(inner),
+    }
+}
+
+impl RenderableTransport for _FieldInitializerListGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            _FieldInitializerListGroup1ContentTransportSlot::ShorthandFieldInitializer(inner) => render_shorthand_field_initializer(inner, dest),
+            _FieldInitializerListGroup1ContentTransportSlot::FieldInitializer(inner) => render_field_initializer(inner, dest),
+            _FieldInitializerListGroup1ContentTransportSlot::BaseFieldInitializer(inner) => render_base_field_initializer(inner, dest),
         }
     }
 }
@@ -10049,6 +10194,447 @@ impl RenderableTransport for RangePatternPrefixRightTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum _StructPatternGroup1ContentTransportSlot {
+    FieldPattern(FieldPatternTransport),
+    RemainingFieldPattern(RemainingFieldPatternTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for _StructPatternGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    300 => Ok(Self::FieldPattern(
+                        FieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    301 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in _StructPatternGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in _StructPatternGroup1ContentTransportSlot")
+                )?;
+                match kind_id {
+                    300 => Ok(Self::FieldPattern(
+                        FieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    301 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in _StructPatternGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("_StructPatternGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for _StructPatternGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("_StructPatternGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_StructPatternGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _StructPatternGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_StructPatternGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _StructPatternGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn _struct_pattern_group1_content_transport_slot_to_any(t: _StructPatternGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        _StructPatternGroup1ContentTransportSlot::FieldPattern(inner) => AnyTransport::FieldPattern(inner),
+        _StructPatternGroup1ContentTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
+    }
+}
+
+impl RenderableTransport for _StructPatternGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            _StructPatternGroup1ContentTransportSlot::FieldPattern(inner) => render_field_pattern(inner, dest),
+            _StructPatternGroup1ContentTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum _TuplePatternGroup1ContentTransportSlot {
+    StringLiteral(StringLiteralTransport),
+    RawStringLiteral(RawStringLiteralTransport),
+    CharLiteral(CharLiteralTransport),
+    BooleanLiteral(BooleanLiteralEnum),
+    IntegerLiteral(IntegerLiteralTransport),
+    FloatLiteral(FloatLiteralTransport),
+    NegativeLiteral(NegativeLiteralTransport),
+    Identifier(IdentifierTransport),
+    ScopedIdentifier(ScopedIdentifierTransport),
+    GenericPattern(GenericPatternTransport),
+    TuplePattern(TuplePatternTransport),
+    TupleStructPattern(TupleStructPatternTransport),
+    StructPattern(StructPatternTransport),
+    ReservedIdentifier(ReservedIdentifierEnum),
+    RefPattern(RefPatternTransport),
+    SlicePattern(SlicePatternTransport),
+    CapturedPattern(CapturedPatternTransport),
+    ReferencePattern(ReferencePatternTransport),
+    RemainingFieldPattern(RemainingFieldPatternTransport),
+    MutPattern(MutPatternTransport),
+    RangePattern(RangePatternTransport),
+    OrPattern(OrPatternTransport),
+    ConstBlock(ConstBlockTransport),
+    MacroInvocation(MacroInvocationTransport),
+    WildcardPattern(WildcardPatternTransport),
+    ClosureExpression(ClosureExpressionTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for _TuplePatternGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    311 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    312 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    310 => Ok(Self::NegativeLiteral(
+                        NegativeLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    295 => Ok(Self::GenericPattern(
+                        GenericPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    296 => Ok(Self::TuplePattern(
+                        TuplePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    298 => Ok(Self::TupleStructPattern(
+                        TupleStructPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    299 => Ok(Self::StructPattern(
+                        StructPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    304 => Ok(Self::RefPattern(
+                        RefPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    297 => Ok(Self::SlicePattern(
+                        SlicePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    305 => Ok(Self::CapturedPattern(
+                        CapturedPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    306 => Ok(Self::ReferencePattern(
+                        ReferencePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    301 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    302 => Ok(Self::MutPattern(
+                        MutPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    303 => Ok(Self::RangePattern(
+                        RangePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    307 => Ok(Self::OrPattern(
+                        OrPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    280 => Ok(Self::ConstBlock(
+                        ConstBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::MacroInvocation(
+                        MacroInvocationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    330 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::ClosureExpression(
+                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in _TuplePatternGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in _TuplePatternGroup1ContentTransportSlot")
+                )?;
+                match kind_id {
+                    311 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    312 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    310 => Ok(Self::NegativeLiteral(
+                        NegativeLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    295 => Ok(Self::GenericPattern(
+                        GenericPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    296 => Ok(Self::TuplePattern(
+                        TuplePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    298 => Ok(Self::TupleStructPattern(
+                        TupleStructPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    299 => Ok(Self::StructPattern(
+                        StructPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    304 => Ok(Self::RefPattern(
+                        RefPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    297 => Ok(Self::SlicePattern(
+                        SlicePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    305 => Ok(Self::CapturedPattern(
+                        CapturedPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    306 => Ok(Self::ReferencePattern(
+                        ReferencePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    301 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    302 => Ok(Self::MutPattern(
+                        MutPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    303 => Ok(Self::RangePattern(
+                        RangePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    307 => Ok(Self::OrPattern(
+                        OrPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    280 => Ok(Self::ConstBlock(
+                        ConstBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::MacroInvocation(
+                        MacroInvocationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    330 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::ClosureExpression(
+                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in _TuplePatternGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("_TuplePatternGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for _TuplePatternGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("_TuplePatternGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_TuplePatternGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _TuplePatternGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_TuplePatternGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _TuplePatternGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn _tuple_pattern_group1_content_transport_slot_to_any(t: _TuplePatternGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        _TuplePatternGroup1ContentTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        _TuplePatternGroup1ContentTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        _TuplePatternGroup1ContentTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        _TuplePatternGroup1ContentTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        _TuplePatternGroup1ContentTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        _TuplePatternGroup1ContentTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        _TuplePatternGroup1ContentTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
+        _TuplePatternGroup1ContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        _TuplePatternGroup1ContentTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        _TuplePatternGroup1ContentTransportSlot::GenericPattern(inner) => AnyTransport::GenericPattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::TupleStructPattern(inner) => AnyTransport::TupleStructPattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::StructPattern(inner) => AnyTransport::StructPattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        _TuplePatternGroup1ContentTransportSlot::RefPattern(inner) => AnyTransport::RefPattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::SlicePattern(inner) => AnyTransport::SlicePattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::CapturedPattern(inner) => AnyTransport::CapturedPattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::ReferencePattern(inner) => AnyTransport::ReferencePattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::MutPattern(inner) => AnyTransport::MutPattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::RangePattern(inner) => AnyTransport::RangePattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::OrPattern(inner) => AnyTransport::OrPattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
+        _TuplePatternGroup1ContentTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        _TuplePatternGroup1ContentTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
+        _TuplePatternGroup1ContentTransportSlot::ClosureExpression(inner) => AnyTransport::ClosureExpression(inner),
+        _TuplePatternGroup1ContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for _TuplePatternGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            _TuplePatternGroup1ContentTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::NegativeLiteral(inner) => render_negative_literal(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::GenericPattern(inner) => render_generic_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::TuplePattern(inner) => render_tuple_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::TupleStructPattern(inner) => render_tuple_struct_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::StructPattern(inner) => render_struct_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::RefPattern(inner) => render_ref_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::SlicePattern(inner) => render_slice_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::CapturedPattern(inner) => render_captured_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::ReferencePattern(inner) => render_reference_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::MutPattern(inner) => render_mut_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::RangePattern(inner) => render_range_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::OrPattern(inner) => render_or_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::WildcardPattern(inner) => render_wildcard_pattern(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::ClosureExpression(inner) => render_closure_expression(inner, dest),
+            _TuplePatternGroup1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum TypeArgumentContentTransportSlot {
     AbstractType(AbstractTypeTransport),
     ReferenceType(ReferenceTypeTransport),
@@ -10118,7 +10704,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -10265,7 +10851,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -10472,6 +11058,110 @@ impl RenderableTransport for TypeArgumentContentTransportSlot {
             TypeArgumentContentTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
             TypeArgumentContentTransportSlot::Block(inner) => render_block(inner, dest),
             TypeArgumentContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum _UseBoundsGroup1ContentTransportSlot {
+    Lifetime(LifetimeTransport),
+    Identifier(IdentifierTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for _UseBoundsGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    219 => Ok(Self::Lifetime(
+                        LifetimeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in _UseBoundsGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in _UseBoundsGroup1ContentTransportSlot")
+                )?;
+                match kind_id {
+                    219 => Ok(Self::Lifetime(
+                        LifetimeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in _UseBoundsGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("_UseBoundsGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for _UseBoundsGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("_UseBoundsGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_UseBoundsGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _UseBoundsGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_UseBoundsGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _UseBoundsGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn _use_bounds_group1_content_transport_slot_to_any(t: _UseBoundsGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        _UseBoundsGroup1ContentTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
+        _UseBoundsGroup1ContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        _UseBoundsGroup1ContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for _UseBoundsGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            _UseBoundsGroup1ContentTransportSlot::Lifetime(inner) => render_lifetime(inner, dest),
+            _UseBoundsGroup1ContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            _UseBoundsGroup1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -10749,10 +11439,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayExpressionContentTransportS
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    330 => Ok(Self::ArrayExpressionSemi(
+                    338 => Ok(Self::ArrayExpressionSemi(
                         ArrayExpressionSemiTransport::from_napi_value(env, napi_val)?
                     )),
-                    331 => Ok(Self::ArrayExpressionList(
+                    339 => Ok(Self::ArrayExpressionList(
                         ArrayExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10766,10 +11456,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayExpressionContentTransportS
                     ::napi::Error::from_reason("$type property missing in ArrayExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    330 => Ok(Self::ArrayExpressionSemi(
+                    338 => Ok(Self::ArrayExpressionSemi(
                         ArrayExpressionSemiTransport::from_napi_value(env, napi_val)?
                     )),
-                    331 => Ok(Self::ArrayExpressionList(
+                    339 => Ok(Self::ArrayExpressionList(
                         ArrayExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10897,7 +11587,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -11017,7 +11707,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -11250,7 +11940,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -11370,7 +12060,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -11599,7 +12289,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -11716,7 +12406,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -11896,10 +12586,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionContentTranspor
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    332 => Ok(Self::ClosureExpressionBlock(
+                    340 => Ok(Self::ClosureExpressionBlock(
                         ClosureExpressionBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    333 => Ok(Self::ClosureExpressionExpr(
+                    341 => Ok(Self::ClosureExpressionExpr(
                         ClosureExpressionExprTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -11913,10 +12603,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionContentTranspor
                     ::napi::Error::from_reason("$type property missing in ClosureExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    332 => Ok(Self::ClosureExpressionBlock(
+                    340 => Ok(Self::ClosureExpressionBlock(
                         ClosureExpressionBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    333 => Ok(Self::ClosureExpressionExpr(
+                    341 => Ok(Self::ClosureExpressionExpr(
                         ClosureExpressionExprTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12102,7 +12792,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureParametersParametersTrans
                     239 => Ok(Self::MacroInvocation(
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
-                    322 => Ok(Self::WildcardPattern(
+                    330 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     213 => Ok(Self::Parameter(
@@ -12207,7 +12897,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureParametersParametersTrans
                     239 => Ok(Self::MacroInvocation(
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
-                    322 => Ok(Self::WildcardPattern(
+                    330 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     213 => Ok(Self::Parameter(
@@ -12614,13 +13304,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeContentTransportSl
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    366 => Ok(Self::DelimTokenTreeParen(
+                    374 => Ok(Self::DelimTokenTreeParen(
                         DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    367 => Ok(Self::DelimTokenTreeBracket(
+                    375 => Ok(Self::DelimTokenTreeBracket(
                         DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    368 => Ok(Self::DelimTokenTreeBrace(
+                    376 => Ok(Self::DelimTokenTreeBrace(
                         DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12634,13 +13324,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeContentTransportSl
                     ::napi::Error::from_reason("$type property missing in DelimTokenTreeContentTransportSlot")
                 )?;
                 match kind_id {
-                    366 => Ok(Self::DelimTokenTreeParen(
+                    374 => Ok(Self::DelimTokenTreeParen(
                         DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    367 => Ok(Self::DelimTokenTreeBracket(
+                    375 => Ok(Self::DelimTokenTreeBracket(
                         DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    368 => Ok(Self::DelimTokenTreeBrace(
+                    376 => Ok(Self::DelimTokenTreeBrace(
                         DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13063,7 +13753,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    355 => Ok(Self::ExpressionStatementWithSemi(
+                    363 => Ok(Self::ExpressionStatementWithSemi(
                         ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
                     )),
                     289 => Ok(Self::UnsafeBlock(
@@ -13110,7 +13800,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     ::napi::Error::from_reason("$type property missing in ExpressionStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    355 => Ok(Self::ExpressionStatementWithSemi(
+                    363 => Ok(Self::ExpressionStatementWithSemi(
                         ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
                     )),
                     289 => Ok(Self::UnsafeBlock(
@@ -13434,112 +14124,6 @@ impl RenderableTransport for FieldInitializerFieldTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum FieldInitializerListInitializersTransportSlot {
-    ShorthandFieldInitializer(ShorthandFieldInitializerTransport),
-    FieldInitializer(FieldInitializerTransport),
-    BaseFieldInitializer(BaseFieldInitializerTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListInitializersTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    264 => Ok(Self::ShorthandFieldInitializer(
-                        ShorthandFieldInitializerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    265 => Ok(Self::FieldInitializer(
-                        FieldInitializerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    266 => Ok(Self::BaseFieldInitializer(
-                        BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FieldInitializerListInitializersTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in FieldInitializerListInitializersTransportSlot")
-                )?;
-                match kind_id {
-                    264 => Ok(Self::ShorthandFieldInitializer(
-                        ShorthandFieldInitializerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    265 => Ok(Self::FieldInitializer(
-                        FieldInitializerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    266 => Ok(Self::BaseFieldInitializer(
-                        BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FieldInitializerListInitializersTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("FieldInitializerListInitializersTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldInitializerListInitializersTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldInitializerListInitializersTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldInitializerListInitializersTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FieldInitializerListInitializersTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldInitializerListInitializersTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FieldInitializerListInitializersTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn field_initializer_list_initializers_transport_slot_to_any(t: FieldInitializerListInitializersTransportSlot) -> AnyTransport {
-    match t {
-        FieldInitializerListInitializersTransportSlot::ShorthandFieldInitializer(inner) => AnyTransport::ShorthandFieldInitializer(inner),
-        FieldInitializerListInitializersTransportSlot::FieldInitializer(inner) => AnyTransport::FieldInitializer(inner),
-        FieldInitializerListInitializersTransportSlot::BaseFieldInitializer(inner) => AnyTransport::BaseFieldInitializer(inner),
-    }
-}
-
-impl RenderableTransport for FieldInitializerListInitializersTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            FieldInitializerListInitializersTransportSlot::ShorthandFieldInitializer(inner) => render_shorthand_field_initializer(inner, dest),
-            FieldInitializerListInitializersTransportSlot::FieldInitializer(inner) => render_field_initializer(inner, dest),
-            FieldInitializerListInitializersTransportSlot::BaseFieldInitializer(inner) => render_base_field_initializer(inner, dest),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum FieldPatternContentTransportSlot {
     Identifier(IdentifierTransport),
     FieldPatternNamed(FieldPatternNamedTransport),
@@ -13558,7 +14142,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternContentTransportSlot
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::FieldPatternNamed(
+                    342 => Ok(Self::FieldPatternNamed(
                         FieldPatternNamedTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13579,7 +14163,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternContentTransportSlot
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    334 => Ok(Self::FieldPatternNamed(
+                    342 => Ok(Self::FieldPatternNamed(
                         FieldPatternNamedTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13658,7 +14242,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemContentTransportSl
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    356 => Ok(Self::ForeignModItemSemi(
+                    364 => Ok(Self::ForeignModItemSemi(
                         ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
                     )),
                     175 => Ok(Self::DeclarationList(
@@ -13675,7 +14259,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemContentTransportSl
                     ::napi::Error::from_reason("$type property missing in ForeignModItemContentTransportSlot")
                 )?;
                 match kind_id {
-                    356 => Ok(Self::ForeignModItemSemi(
+                    364 => Ok(Self::ForeignModItemSemi(
                         ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
                     )),
                     175 => Ok(Self::DeclarationList(
@@ -14476,10 +15060,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemTraitClauseTransportSlot
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    328 => Ok(Self::ImplItemPositiveClause(
+                    336 => Ok(Self::ImplItemPositiveClause(
                         ImplItemPositiveClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::ImplItemNegativeClause(
+                    337 => Ok(Self::ImplItemNegativeClause(
                         ImplItemNegativeClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14493,10 +15077,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemTraitClauseTransportSlot
                     ::napi::Error::from_reason("$type property missing in ImplItemTraitClauseTransportSlot")
                 )?;
                 match kind_id {
-                    328 => Ok(Self::ImplItemPositiveClause(
+                    336 => Ok(Self::ImplItemPositiveClause(
                         ImplItemPositiveClauseTransport::from_napi_value(env, napi_val)?
                     )),
-                    329 => Ok(Self::ImplItemNegativeClause(
+                    337 => Ok(Self::ImplItemNegativeClause(
                         ImplItemNegativeClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14573,10 +15157,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    326 => Ok(Self::ImplItemBody(
+                    334 => Ok(Self::ImplItemBody(
                         ImplItemBodyTransport::from_napi_value(env, napi_val)?
                     )),
-                    327 => Ok(Self::ImplItemSemi(
+                    335 => Ok(Self::ImplItemSemi(
                         ImplItemSemiTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14590,10 +15174,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ImplItemContentTransportSlot")
                 )?;
                 match kind_id {
-                    326 => Ok(Self::ImplItemBody(
+                    334 => Ok(Self::ImplItemBody(
                         ImplItemBodyTransport::from_napi_value(env, napi_val)?
                     )),
-                    327 => Ok(Self::ImplItemSemi(
+                    335 => Ok(Self::ImplItemSemi(
                         ImplItemSemiTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14769,10 +15353,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransportSlot 
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    358 => Ok(Self::LineCommentRegularDslash(
+                    366 => Ok(Self::LineCommentRegularDslash(
                         LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
                     )),
-                    359 => Ok(Self::LineCommentDoc(
+                    367 => Ok(Self::LineCommentDoc(
                         LineCommentDocTransport::from_napi_value(env, napi_val)?
                     )),
                     146 => Ok(Self::LineCommentContent(
@@ -14793,10 +15377,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransportSlot 
                     ::napi::Error::from_reason("$type property missing in LineCommentContentTransportSlot")
                 )?;
                 match kind_id {
-                    358 => Ok(Self::LineCommentRegularDslash(
+                    366 => Ok(Self::LineCommentRegularDslash(
                         LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
                     )),
-                    359 => Ok(Self::LineCommentDoc(
+                    367 => Ok(Self::LineCommentDoc(
                         LineCommentDocTransport::from_napi_value(env, napi_val)?
                     )),
                     146 => Ok(Self::LineCommentContent(
@@ -14881,13 +15465,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for MacroDefinitionContentTransportS
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    337 => Ok(Self::MacroDefinitionParen(
+                    345 => Ok(Self::MacroDefinitionParen(
                         MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    338 => Ok(Self::MacroDefinitionBracket(
+                    346 => Ok(Self::MacroDefinitionBracket(
                         MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::MacroDefinitionBrace(
+                    347 => Ok(Self::MacroDefinitionBrace(
                         MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14901,13 +15485,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for MacroDefinitionContentTransportS
                     ::napi::Error::from_reason("$type property missing in MacroDefinitionContentTransportSlot")
                 )?;
                 match kind_id {
-                    337 => Ok(Self::MacroDefinitionParen(
+                    345 => Ok(Self::MacroDefinitionParen(
                         MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    338 => Ok(Self::MacroDefinitionBracket(
+                    346 => Ok(Self::MacroDefinitionBracket(
                         MacroDefinitionBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    339 => Ok(Self::MacroDefinitionBrace(
+                    347 => Ok(Self::MacroDefinitionBrace(
                         MacroDefinitionBraceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15197,7 +15781,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchArmContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    357 => Ok(Self::MatchArmWithComma(
+                    365 => Ok(Self::MatchArmWithComma(
                         MatchArmWithCommaTransport::from_napi_value(env, napi_val)?
                     )),
                     289 => Ok(Self::UnsafeBlock(
@@ -15244,7 +15828,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchArmContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in MatchArmContentTransportSlot")
                 )?;
                 match kind_id {
-                    357 => Ok(Self::MatchArmWithComma(
+                    365 => Ok(Self::MatchArmWithComma(
                         MatchArmWithCommaTransport::from_napi_value(env, napi_val)?
                     )),
                     289 => Ok(Self::UnsafeBlock(
@@ -15374,7 +15958,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    340 => Ok(Self::ModItemExternal(
+                    348 => Ok(Self::ModItemExternal(
                         ModItemExternalTransport::from_napi_value(env, napi_val)?
                     )),
                     175 => Ok(Self::DeclarationList(
@@ -15391,7 +15975,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ModItemContentTransportSlot")
                 )?;
                 match kind_id {
-                    340 => Ok(Self::ModItemExternal(
+                    348 => Ok(Self::ModItemExternal(
                         ModItemExternalTransport::from_napi_value(env, napi_val)?
                     )),
                     175 => Ok(Self::DeclarationList(
@@ -15575,10 +16159,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrPatternContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    341 => Ok(Self::OrPatternBinary(
+                    349 => Ok(Self::OrPatternBinary(
                         OrPatternBinaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    342 => Ok(Self::OrPatternPrefix(
+                    350 => Ok(Self::OrPatternPrefix(
                         OrPatternPrefixTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15592,10 +16176,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for OrPatternContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in OrPatternContentTransportSlot")
                 )?;
                 match kind_id {
-                    341 => Ok(Self::OrPatternBinary(
+                    349 => Ok(Self::OrPatternBinary(
                         OrPatternBinaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    342 => Ok(Self::OrPatternPrefix(
+                    350 => Ok(Self::OrPatternPrefix(
                         OrPatternPrefixTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15781,7 +16365,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
                     239 => Ok(Self::MacroInvocation(
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
-                    322 => Ok(Self::WildcardPattern(
+                    330 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     138 => Ok(Self::Self_(
@@ -15886,7 +16470,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
                     239 => Ok(Self::MacroInvocation(
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
-                    322 => Ok(Self::WildcardPattern(
+                    330 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     138 => Ok(Self::Self_(
@@ -16016,7 +16600,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeContentTransportSlot 
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    354 => Ok(Self::PointerTypeConst(
+                    362 => Ok(Self::PointerTypeConst(
                         PointerTypeConstTransport::from_napi_value(env, napi_val)?
                     )),
                     119 => Ok(Self::MutableSpecifier(
@@ -16033,7 +16617,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeContentTransportSlot 
                     ::napi::Error::from_reason("$type property missing in PointerTypeContentTransportSlot")
                 )?;
                 match kind_id {
-                    354 => Ok(Self::PointerTypeConst(
+                    362 => Ok(Self::PointerTypeConst(
                         PointerTypeConstTransport::from_napi_value(env, napi_val)?
                     )),
                     119 => Ok(Self::MutableSpecifier(
@@ -16114,13 +16698,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionContentTransportS
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    343 => Ok(Self::RangeExpressionBinary(
+                    351 => Ok(Self::RangeExpressionBinary(
                         RangeExpressionBinaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    344 => Ok(Self::RangeExpressionPostfix(
+                    352 => Ok(Self::RangeExpressionPostfix(
                         RangeExpressionPostfixTransport::from_napi_value(env, napi_val)?
                     )),
-                    345 => Ok(Self::RangeExpressionPrefix(
+                    353 => Ok(Self::RangeExpressionPrefix(
                         RangeExpressionPrefixTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16134,13 +16718,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionContentTransportS
                     ::napi::Error::from_reason("$type property missing in RangeExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    343 => Ok(Self::RangeExpressionBinary(
+                    351 => Ok(Self::RangeExpressionBinary(
                         RangeExpressionBinaryTransport::from_napi_value(env, napi_val)?
                     )),
-                    344 => Ok(Self::RangeExpressionPostfix(
+                    352 => Ok(Self::RangeExpressionPostfix(
                         RangeExpressionPostfixTransport::from_napi_value(env, napi_val)?
                     )),
-                    345 => Ok(Self::RangeExpressionPrefix(
+                    353 => Ok(Self::RangeExpressionPrefix(
                         RangeExpressionPrefixTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16455,10 +17039,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternContentTransportSlot
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    347 => Ok(Self::RangePatternLeftWithRight(
+                    355 => Ok(Self::RangePatternLeftWithRight(
                         RangePatternLeftWithRightTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::RangePatternLeftBare(
+                    356 => Ok(Self::RangePatternLeftBare(
                         RangePatternLeftBareTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16472,10 +17056,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternContentTransportSlot
                     ::napi::Error::from_reason("$type property missing in RangePatternContentTransportSlot")
                 )?;
                 match kind_id {
-                    347 => Ok(Self::RangePatternLeftWithRight(
+                    355 => Ok(Self::RangePatternLeftWithRight(
                         RangePatternLeftWithRightTransport::from_napi_value(env, napi_val)?
                     )),
-                    348 => Ok(Self::RangePatternLeftBare(
+                    356 => Ok(Self::RangePatternLeftBare(
                         RangePatternLeftBareTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -16554,10 +17138,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionContentTransp
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    323 => Ok(Self::ReferenceExpressionRawConst(
+                    331 => Ok(Self::ReferenceExpressionRawConst(
                         ReferenceExpressionRawConstTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::ReferenceExpressionRawMut(
+                    332 => Ok(Self::ReferenceExpressionRawMut(
                         ReferenceExpressionRawMutTransport::from_napi_value(env, napi_val)?
                     )),
                     119 => Ok(Self::MutableSpecifier(
@@ -16578,10 +17162,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionContentTransp
                     ::napi::Error::from_reason("$type property missing in ReferenceExpressionContentTransportSlot")
                 )?;
                 match kind_id {
-                    323 => Ok(Self::ReferenceExpressionRawConst(
+                    331 => Ok(Self::ReferenceExpressionRawConst(
                         ReferenceExpressionRawConstTransport::from_napi_value(env, napi_val)?
                     )),
-                    324 => Ok(Self::ReferenceExpressionRawMut(
+                    332 => Ok(Self::ReferenceExpressionRawMut(
                         ReferenceExpressionRawMutTransport::from_napi_value(env, napi_val)?
                     )),
                     119 => Ok(Self::MutableSpecifier(
@@ -17612,13 +18196,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    349 => Ok(Self::StructItemBrace(
+                    357 => Ok(Self::StructItemBrace(
                         StructItemBraceTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::StructItemTuple(
+                    358 => Ok(Self::StructItemTuple(
                         StructItemTupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::StructItemUnit(
+                    359 => Ok(Self::StructItemUnit(
                         StructItemUnitTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17632,13 +18216,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in StructItemContentTransportSlot")
                 )?;
                 match kind_id {
-                    349 => Ok(Self::StructItemBrace(
+                    357 => Ok(Self::StructItemBrace(
                         StructItemBraceTransport::from_napi_value(env, napi_val)?
                     )),
-                    350 => Ok(Self::StructItemTuple(
+                    358 => Ok(Self::StructItemTuple(
                         StructItemTupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    351 => Ok(Self::StructItemUnit(
+                    359 => Ok(Self::StructItemUnit(
                         StructItemUnitTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17807,103 +18391,6 @@ impl RenderableTransport for StructPatternTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum StructPatternFieldsTransportSlot {
-    FieldPattern(FieldPatternTransport),
-    RemainingFieldPattern(RemainingFieldPatternTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for StructPatternFieldsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    300 => Ok(Self::FieldPattern(
-                        FieldPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    301 => Ok(Self::RemainingFieldPattern(
-                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StructPatternFieldsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in StructPatternFieldsTransportSlot")
-                )?;
-                match kind_id {
-                    300 => Ok(Self::FieldPattern(
-                        FieldPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    301 => Ok(Self::RemainingFieldPattern(
-                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in StructPatternFieldsTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("StructPatternFieldsTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StructPatternFieldsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StructPatternFieldsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StructPatternFieldsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        StructPatternFieldsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StructPatternFieldsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        StructPatternFieldsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn struct_pattern_fields_transport_slot_to_any(t: StructPatternFieldsTransportSlot) -> AnyTransport {
-    match t {
-        StructPatternFieldsTransportSlot::FieldPattern(inner) => AnyTransport::FieldPattern(inner),
-        StructPatternFieldsTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
-    }
-}
-
-impl RenderableTransport for StructPatternFieldsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            StructPatternFieldsTransportSlot::FieldPattern(inner) => render_field_pattern(inner, dest),
-            StructPatternFieldsTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum TokenTreeContentTransportSlot {
     TokenTreeParen(TokenTreeParenTransport),
     TokenTreeBracket(TokenTreeBracketTransport),
@@ -17922,22 +18409,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    363 => Ok(Self::TokenTreeParen(
+                    371 => Ok(Self::TokenTreeParen(
                         TokenTreeParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    364 => Ok(Self::TokenTreeBracket(
+                    372 => Ok(Self::TokenTreeBracket(
                         TokenTreeBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    365 => Ok(Self::TokenTreeBrace(
+                    373 => Ok(Self::TokenTreeBrace(
                         TokenTreeBraceTransport::from_napi_value(env, napi_val)?
                     )),
-                    366 => Ok(Self::DelimTokenTreeParen(
+                    374 => Ok(Self::DelimTokenTreeParen(
                         DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    367 => Ok(Self::DelimTokenTreeBracket(
+                    375 => Ok(Self::DelimTokenTreeBracket(
                         DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    368 => Ok(Self::DelimTokenTreeBrace(
+                    376 => Ok(Self::DelimTokenTreeBrace(
                         DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -17951,22 +18438,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in TokenTreeContentTransportSlot")
                 )?;
                 match kind_id {
-                    363 => Ok(Self::TokenTreeParen(
+                    371 => Ok(Self::TokenTreeParen(
                         TokenTreeParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    364 => Ok(Self::TokenTreeBracket(
+                    372 => Ok(Self::TokenTreeBracket(
                         TokenTreeBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    365 => Ok(Self::TokenTreeBrace(
+                    373 => Ok(Self::TokenTreeBrace(
                         TokenTreeBraceTransport::from_napi_value(env, napi_val)?
                     )),
-                    366 => Ok(Self::DelimTokenTreeParen(
+                    374 => Ok(Self::DelimTokenTreeParen(
                         DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    367 => Ok(Self::DelimTokenTreeBracket(
+                    375 => Ok(Self::DelimTokenTreeBracket(
                         DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    368 => Ok(Self::DelimTokenTreeBrace(
+                    376 => Ok(Self::DelimTokenTreeBrace(
                         DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18052,13 +18539,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternContentTransport
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    360 => Ok(Self::TokenTreePatternParen(
+                    368 => Ok(Self::TokenTreePatternParen(
                         TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    361 => Ok(Self::TokenTreePatternBracket(
+                    369 => Ok(Self::TokenTreePatternBracket(
                         TokenTreePatternBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    362 => Ok(Self::TokenTreePatternBrace(
+                    370 => Ok(Self::TokenTreePatternBrace(
                         TokenTreePatternBraceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18072,13 +18559,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternContentTransport
                     ::napi::Error::from_reason("$type property missing in TokenTreePatternContentTransportSlot")
                 )?;
                 match kind_id {
-                    360 => Ok(Self::TokenTreePatternParen(
+                    368 => Ok(Self::TokenTreePatternParen(
                         TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
                     )),
-                    361 => Ok(Self::TokenTreePatternBracket(
+                    369 => Ok(Self::TokenTreePatternBracket(
                         TokenTreePatternBracketTransport::from_napi_value(env, napi_val)?
                     )),
-                    362 => Ok(Self::TokenTreePatternBrace(
+                    370 => Ok(Self::TokenTreePatternBrace(
                         TokenTreePatternBraceTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18205,7 +18692,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -18325,7 +18812,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                     222 => Ok(Self::FunctionType(
                         FunctionTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    411 => Ok(Self::TypeIdentifier(
+                    419 => Ok(Self::TypeIdentifier(
                         TypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     239 => Ok(Self::MacroInvocation(
@@ -18496,350 +18983,6 @@ impl RenderableTransport for TraitBoundsBoundsTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum TuplePatternElementsTransportSlot {
-    StringLiteral(StringLiteralTransport),
-    RawStringLiteral(RawStringLiteralTransport),
-    CharLiteral(CharLiteralTransport),
-    BooleanLiteral(BooleanLiteralEnum),
-    IntegerLiteral(IntegerLiteralTransport),
-    FloatLiteral(FloatLiteralTransport),
-    NegativeLiteral(NegativeLiteralTransport),
-    Identifier(IdentifierTransport),
-    ScopedIdentifier(ScopedIdentifierTransport),
-    GenericPattern(GenericPatternTransport),
-    TuplePattern(TuplePatternTransport),
-    TupleStructPattern(TupleStructPatternTransport),
-    StructPattern(StructPatternTransport),
-    ReservedIdentifier(ReservedIdentifierEnum),
-    RefPattern(RefPatternTransport),
-    SlicePattern(SlicePatternTransport),
-    CapturedPattern(CapturedPatternTransport),
-    ReferencePattern(ReferencePatternTransport),
-    RemainingFieldPattern(RemainingFieldPatternTransport),
-    MutPattern(MutPatternTransport),
-    RangePattern(RangePatternTransport),
-    OrPattern(OrPatternTransport),
-    ConstBlock(ConstBlockTransport),
-    MacroInvocation(MacroInvocationTransport),
-    WildcardPattern(WildcardPatternTransport),
-    ClosureExpression(ClosureExpressionTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternElementsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    311 => Ok(Self::StringLiteral(
-                        StringLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    312 => Ok(Self::RawStringLiteral(
-                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    128 => Ok(Self::CharLiteral(
-                        CharLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    313 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    130 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    131 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    125 => Ok(Self::IntegerLiteral(
-                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    151 => Ok(Self::FloatLiteral(
-                        FloatLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    310 => Ok(Self::NegativeLiteral(
-                        NegativeLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    243 => Ok(Self::ScopedIdentifier(
-                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    295 => Ok(Self::GenericPattern(
-                        GenericPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    296 => Ok(Self::TuplePattern(
-                        TuplePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    298 => Ok(Self::TupleStructPattern(
-                        TupleStructPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    299 => Ok(Self::StructPattern(
-                        StructPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    90 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    107 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    94 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    304 => Ok(Self::RefPattern(
-                        RefPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    297 => Ok(Self::SlicePattern(
-                        SlicePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    305 => Ok(Self::CapturedPattern(
-                        CapturedPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    306 => Ok(Self::ReferencePattern(
-                        ReferencePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    301 => Ok(Self::RemainingFieldPattern(
-                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    302 => Ok(Self::MutPattern(
-                        MutPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    303 => Ok(Self::RangePattern(
-                        RangePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    307 => Ok(Self::OrPattern(
-                        OrPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    280 => Ok(Self::ConstBlock(
-                        ConstBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    239 => Ok(Self::MacroInvocation(
-                        MacroInvocationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    322 => Ok(Self::WildcardPattern(
-                        WildcardPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    281 => Ok(Self::ClosureExpression(
-                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TuplePatternElementsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                Ok(Self::Verbatim(VerbatimTransport { text }))
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TuplePatternElementsTransportSlot")
-                )?;
-                match kind_id {
-                    311 => Ok(Self::StringLiteral(
-                        StringLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    312 => Ok(Self::RawStringLiteral(
-                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    128 => Ok(Self::CharLiteral(
-                        CharLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    313 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    130 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    131 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    125 => Ok(Self::IntegerLiteral(
-                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    151 => Ok(Self::FloatLiteral(
-                        FloatLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    310 => Ok(Self::NegativeLiteral(
-                        NegativeLiteralTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    243 => Ok(Self::ScopedIdentifier(
-                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    295 => Ok(Self::GenericPattern(
-                        GenericPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    296 => Ok(Self::TuplePattern(
-                        TuplePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    298 => Ok(Self::TupleStructPattern(
-                        TupleStructPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    299 => Ok(Self::StructPattern(
-                        StructPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    90 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    107 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    94 => Ok(Self::ReservedIdentifier(
-                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
-                    )),
-                    304 => Ok(Self::RefPattern(
-                        RefPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    297 => Ok(Self::SlicePattern(
-                        SlicePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    305 => Ok(Self::CapturedPattern(
-                        CapturedPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    306 => Ok(Self::ReferencePattern(
-                        ReferencePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    301 => Ok(Self::RemainingFieldPattern(
-                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    302 => Ok(Self::MutPattern(
-                        MutPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    303 => Ok(Self::RangePattern(
-                        RangePatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    307 => Ok(Self::OrPattern(
-                        OrPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    280 => Ok(Self::ConstBlock(
-                        ConstBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    239 => Ok(Self::MacroInvocation(
-                        MacroInvocationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    322 => Ok(Self::WildcardPattern(
-                        WildcardPatternTransport::from_napi_value(env, napi_val)?
-                    )),
-                    281 => Ok(Self::ClosureExpression(
-                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TuplePatternElementsTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("TuplePatternElementsTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TuplePatternElementsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TuplePatternElementsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TuplePatternElementsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TuplePatternElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TuplePatternElementsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TuplePatternElementsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn tuple_pattern_elements_transport_slot_to_any(t: TuplePatternElementsTransportSlot) -> AnyTransport {
-    match t {
-        TuplePatternElementsTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
-        TuplePatternElementsTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
-        TuplePatternElementsTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
-        TuplePatternElementsTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
-        TuplePatternElementsTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
-        TuplePatternElementsTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
-        TuplePatternElementsTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
-        TuplePatternElementsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TuplePatternElementsTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
-        TuplePatternElementsTransportSlot::GenericPattern(inner) => AnyTransport::GenericPattern(inner),
-        TuplePatternElementsTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        TuplePatternElementsTransportSlot::TupleStructPattern(inner) => AnyTransport::TupleStructPattern(inner),
-        TuplePatternElementsTransportSlot::StructPattern(inner) => AnyTransport::StructPattern(inner),
-        TuplePatternElementsTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        TuplePatternElementsTransportSlot::RefPattern(inner) => AnyTransport::RefPattern(inner),
-        TuplePatternElementsTransportSlot::SlicePattern(inner) => AnyTransport::SlicePattern(inner),
-        TuplePatternElementsTransportSlot::CapturedPattern(inner) => AnyTransport::CapturedPattern(inner),
-        TuplePatternElementsTransportSlot::ReferencePattern(inner) => AnyTransport::ReferencePattern(inner),
-        TuplePatternElementsTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
-        TuplePatternElementsTransportSlot::MutPattern(inner) => AnyTransport::MutPattern(inner),
-        TuplePatternElementsTransportSlot::RangePattern(inner) => AnyTransport::RangePattern(inner),
-        TuplePatternElementsTransportSlot::OrPattern(inner) => AnyTransport::OrPattern(inner),
-        TuplePatternElementsTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
-        TuplePatternElementsTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
-        TuplePatternElementsTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
-        TuplePatternElementsTransportSlot::ClosureExpression(inner) => AnyTransport::ClosureExpression(inner),
-        TuplePatternElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for TuplePatternElementsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            TuplePatternElementsTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
-            TuplePatternElementsTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
-            TuplePatternElementsTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
-            TuplePatternElementsTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
-            TuplePatternElementsTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
-            TuplePatternElementsTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
-            TuplePatternElementsTransportSlot::NegativeLiteral(inner) => render_negative_literal(inner, dest),
-            TuplePatternElementsTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TuplePatternElementsTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
-            TuplePatternElementsTransportSlot::GenericPattern(inner) => render_generic_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::TuplePattern(inner) => render_tuple_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::TupleStructPattern(inner) => render_tuple_struct_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::StructPattern(inner) => render_struct_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            TuplePatternElementsTransportSlot::RefPattern(inner) => render_ref_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::SlicePattern(inner) => render_slice_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::CapturedPattern(inner) => render_captured_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::ReferencePattern(inner) => render_reference_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::MutPattern(inner) => render_mut_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::RangePattern(inner) => render_range_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::OrPattern(inner) => render_or_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
-            TuplePatternElementsTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
-            TuplePatternElementsTransportSlot::WildcardPattern(inner) => render_wildcard_pattern(inner, dest),
-            TuplePatternElementsTransportSlot::ClosureExpression(inner) => render_closure_expression(inner, dest),
-            TuplePatternElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum TupleStructPatternTypeTransportSlot {
     Identifier(IdentifierTransport),
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -18953,110 +19096,6 @@ impl RenderableTransport for TupleStructPatternTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum UseBoundsBoundsTransportSlot {
-    Lifetime(LifetimeTransport),
-    Identifier(IdentifierTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsBoundsTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    219 => Ok(Self::Lifetime(
-                        LifetimeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in UseBoundsBoundsTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                Ok(Self::Verbatim(VerbatimTransport { text }))
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in UseBoundsBoundsTransportSlot")
-                )?;
-                match kind_id {
-                    219 => Ok(Self::Lifetime(
-                        LifetimeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in UseBoundsBoundsTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("UseBoundsBoundsTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UseBoundsBoundsTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UseBoundsBoundsTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UseBoundsBoundsTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        UseBoundsBoundsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UseBoundsBoundsTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        UseBoundsBoundsTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn use_bounds_bounds_transport_slot_to_any(t: UseBoundsBoundsTransportSlot) -> AnyTransport {
-    match t {
-        UseBoundsBoundsTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
-        UseBoundsBoundsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        UseBoundsBoundsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for UseBoundsBoundsTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            UseBoundsBoundsTransportSlot::Lifetime(inner) => render_lifetime(inner, dest),
-            UseBoundsBoundsTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            UseBoundsBoundsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum VisibilityModifierContentTransportSlot {
     Crate(CrateTransport),
     VisibilityModifierPub(VisibilityModifierPubTransport),
@@ -19074,7 +19113,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierContentTranspo
                     140 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::VisibilityModifierPub(
+                    360 => Ok(Self::VisibilityModifierPub(
                         VisibilityModifierPubTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19091,7 +19130,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierContentTranspo
                     140 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    352 => Ok(Self::VisibilityModifierPub(
+                    360 => Ok(Self::VisibilityModifierPub(
                         VisibilityModifierPubTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19530,6 +19569,657 @@ impl RenderableTransport for VisibilityModifierGroup1ContentTransportSlot {
             VisibilityModifierGroup1ContentTransportSlot::Super(inner) => render_super(inner, dest),
             VisibilityModifierGroup1ContentTransportSlot::Crate(inner) => render_crate(inner, dest),
             VisibilityModifierGroup1ContentTransportSlot::InPath(inner) => render_in_path(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum FieldInitializerListGroup1ContentTransportSlot {
+    ShorthandFieldInitializer(ShorthandFieldInitializerTransport),
+    FieldInitializer(FieldInitializerTransport),
+    BaseFieldInitializer(BaseFieldInitializerTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    264 => Ok(Self::ShorthandFieldInitializer(
+                        ShorthandFieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    265 => Ok(Self::FieldInitializer(
+                        FieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    266 => Ok(Self::BaseFieldInitializer(
+                        BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FieldInitializerListGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in FieldInitializerListGroup1ContentTransportSlot")
+                )?;
+                match kind_id {
+                    264 => Ok(Self::ShorthandFieldInitializer(
+                        ShorthandFieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    265 => Ok(Self::FieldInitializer(
+                        FieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    266 => Ok(Self::BaseFieldInitializer(
+                        BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FieldInitializerListGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("FieldInitializerListGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FieldInitializerListGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FieldInitializerListGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldInitializerListGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FieldInitializerListGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldInitializerListGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FieldInitializerListGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn field_initializer_list_group1_content_transport_slot_to_any(t: FieldInitializerListGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        FieldInitializerListGroup1ContentTransportSlot::ShorthandFieldInitializer(inner) => AnyTransport::ShorthandFieldInitializer(inner),
+        FieldInitializerListGroup1ContentTransportSlot::FieldInitializer(inner) => AnyTransport::FieldInitializer(inner),
+        FieldInitializerListGroup1ContentTransportSlot::BaseFieldInitializer(inner) => AnyTransport::BaseFieldInitializer(inner),
+    }
+}
+
+impl RenderableTransport for FieldInitializerListGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FieldInitializerListGroup1ContentTransportSlot::ShorthandFieldInitializer(inner) => render_shorthand_field_initializer(inner, dest),
+            FieldInitializerListGroup1ContentTransportSlot::FieldInitializer(inner) => render_field_initializer(inner, dest),
+            FieldInitializerListGroup1ContentTransportSlot::BaseFieldInitializer(inner) => render_base_field_initializer(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum StructPatternGroup1ContentTransportSlot {
+    FieldPattern(FieldPatternTransport),
+    RemainingFieldPattern(RemainingFieldPatternTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for StructPatternGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    300 => Ok(Self::FieldPattern(
+                        FieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    301 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in StructPatternGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in StructPatternGroup1ContentTransportSlot")
+                )?;
+                match kind_id {
+                    300 => Ok(Self::FieldPattern(
+                        FieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    301 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in StructPatternGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("StructPatternGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StructPatternGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("StructPatternGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StructPatternGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StructPatternGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StructPatternGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StructPatternGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn struct_pattern_group1_content_transport_slot_to_any(t: StructPatternGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        StructPatternGroup1ContentTransportSlot::FieldPattern(inner) => AnyTransport::FieldPattern(inner),
+        StructPatternGroup1ContentTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
+    }
+}
+
+impl RenderableTransport for StructPatternGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            StructPatternGroup1ContentTransportSlot::FieldPattern(inner) => render_field_pattern(inner, dest),
+            StructPatternGroup1ContentTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum TuplePatternGroup1ContentTransportSlot {
+    StringLiteral(StringLiteralTransport),
+    RawStringLiteral(RawStringLiteralTransport),
+    CharLiteral(CharLiteralTransport),
+    BooleanLiteral(BooleanLiteralEnum),
+    IntegerLiteral(IntegerLiteralTransport),
+    FloatLiteral(FloatLiteralTransport),
+    NegativeLiteral(NegativeLiteralTransport),
+    Identifier(IdentifierTransport),
+    ScopedIdentifier(ScopedIdentifierTransport),
+    GenericPattern(GenericPatternTransport),
+    TuplePattern(TuplePatternTransport),
+    TupleStructPattern(TupleStructPatternTransport),
+    StructPattern(StructPatternTransport),
+    ReservedIdentifier(ReservedIdentifierEnum),
+    RefPattern(RefPatternTransport),
+    SlicePattern(SlicePatternTransport),
+    CapturedPattern(CapturedPatternTransport),
+    ReferencePattern(ReferencePatternTransport),
+    RemainingFieldPattern(RemainingFieldPatternTransport),
+    MutPattern(MutPatternTransport),
+    RangePattern(RangePatternTransport),
+    OrPattern(OrPatternTransport),
+    ConstBlock(ConstBlockTransport),
+    MacroInvocation(MacroInvocationTransport),
+    WildcardPattern(WildcardPatternTransport),
+    ClosureExpression(ClosureExpressionTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    311 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    312 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    310 => Ok(Self::NegativeLiteral(
+                        NegativeLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    295 => Ok(Self::GenericPattern(
+                        GenericPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    296 => Ok(Self::TuplePattern(
+                        TuplePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    298 => Ok(Self::TupleStructPattern(
+                        TupleStructPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    299 => Ok(Self::StructPattern(
+                        StructPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    304 => Ok(Self::RefPattern(
+                        RefPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    297 => Ok(Self::SlicePattern(
+                        SlicePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    305 => Ok(Self::CapturedPattern(
+                        CapturedPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    306 => Ok(Self::ReferencePattern(
+                        ReferencePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    301 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    302 => Ok(Self::MutPattern(
+                        MutPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    303 => Ok(Self::RangePattern(
+                        RangePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    307 => Ok(Self::OrPattern(
+                        OrPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    280 => Ok(Self::ConstBlock(
+                        ConstBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::MacroInvocation(
+                        MacroInvocationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    330 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::ClosureExpression(
+                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TuplePatternGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in TuplePatternGroup1ContentTransportSlot")
+                )?;
+                match kind_id {
+                    311 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    312 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    310 => Ok(Self::NegativeLiteral(
+                        NegativeLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    295 => Ok(Self::GenericPattern(
+                        GenericPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    296 => Ok(Self::TuplePattern(
+                        TuplePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    298 => Ok(Self::TupleStructPattern(
+                        TupleStructPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    299 => Ok(Self::StructPattern(
+                        StructPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    304 => Ok(Self::RefPattern(
+                        RefPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    297 => Ok(Self::SlicePattern(
+                        SlicePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    305 => Ok(Self::CapturedPattern(
+                        CapturedPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    306 => Ok(Self::ReferencePattern(
+                        ReferencePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    301 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    302 => Ok(Self::MutPattern(
+                        MutPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    303 => Ok(Self::RangePattern(
+                        RangePatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    307 => Ok(Self::OrPattern(
+                        OrPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    280 => Ok(Self::ConstBlock(
+                        ConstBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::MacroInvocation(
+                        MacroInvocationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    330 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::ClosureExpression(
+                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TuplePatternGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("TuplePatternGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TuplePatternGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("TuplePatternGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TuplePatternGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TuplePatternGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TuplePatternGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TuplePatternGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn tuple_pattern_group1_content_transport_slot_to_any(t: TuplePatternGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        TuplePatternGroup1ContentTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        TuplePatternGroup1ContentTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        TuplePatternGroup1ContentTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        TuplePatternGroup1ContentTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        TuplePatternGroup1ContentTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        TuplePatternGroup1ContentTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        TuplePatternGroup1ContentTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
+        TuplePatternGroup1ContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        TuplePatternGroup1ContentTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        TuplePatternGroup1ContentTransportSlot::GenericPattern(inner) => AnyTransport::GenericPattern(inner),
+        TuplePatternGroup1ContentTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
+        TuplePatternGroup1ContentTransportSlot::TupleStructPattern(inner) => AnyTransport::TupleStructPattern(inner),
+        TuplePatternGroup1ContentTransportSlot::StructPattern(inner) => AnyTransport::StructPattern(inner),
+        TuplePatternGroup1ContentTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        TuplePatternGroup1ContentTransportSlot::RefPattern(inner) => AnyTransport::RefPattern(inner),
+        TuplePatternGroup1ContentTransportSlot::SlicePattern(inner) => AnyTransport::SlicePattern(inner),
+        TuplePatternGroup1ContentTransportSlot::CapturedPattern(inner) => AnyTransport::CapturedPattern(inner),
+        TuplePatternGroup1ContentTransportSlot::ReferencePattern(inner) => AnyTransport::ReferencePattern(inner),
+        TuplePatternGroup1ContentTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
+        TuplePatternGroup1ContentTransportSlot::MutPattern(inner) => AnyTransport::MutPattern(inner),
+        TuplePatternGroup1ContentTransportSlot::RangePattern(inner) => AnyTransport::RangePattern(inner),
+        TuplePatternGroup1ContentTransportSlot::OrPattern(inner) => AnyTransport::OrPattern(inner),
+        TuplePatternGroup1ContentTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
+        TuplePatternGroup1ContentTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        TuplePatternGroup1ContentTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
+        TuplePatternGroup1ContentTransportSlot::ClosureExpression(inner) => AnyTransport::ClosureExpression(inner),
+        TuplePatternGroup1ContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for TuplePatternGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            TuplePatternGroup1ContentTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::NegativeLiteral(inner) => render_negative_literal(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::GenericPattern(inner) => render_generic_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::TuplePattern(inner) => render_tuple_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::TupleStructPattern(inner) => render_tuple_struct_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::StructPattern(inner) => render_struct_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::RefPattern(inner) => render_ref_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::SlicePattern(inner) => render_slice_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::CapturedPattern(inner) => render_captured_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::ReferencePattern(inner) => render_reference_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::MutPattern(inner) => render_mut_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::RangePattern(inner) => render_range_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::OrPattern(inner) => render_or_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::WildcardPattern(inner) => render_wildcard_pattern(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::ClosureExpression(inner) => render_closure_expression(inner, dest),
+            TuplePatternGroup1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum UseBoundsGroup1ContentTransportSlot {
+    Lifetime(LifetimeTransport),
+    Identifier(IdentifierTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    219 => Ok(Self::Lifetime(
+                        LifetimeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in UseBoundsGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in UseBoundsGroup1ContentTransportSlot")
+                )?;
+                match kind_id {
+                    219 => Ok(Self::Lifetime(
+                        LifetimeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in UseBoundsGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("UseBoundsGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UseBoundsGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("UseBoundsGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UseBoundsGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        UseBoundsGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UseBoundsGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        UseBoundsGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn use_bounds_group1_content_transport_slot_to_any(t: UseBoundsGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        UseBoundsGroup1ContentTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
+        UseBoundsGroup1ContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        UseBoundsGroup1ContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for UseBoundsGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            UseBoundsGroup1ContentTransportSlot::Lifetime(inner) => render_lifetime(inner, dest),
+            UseBoundsGroup1ContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            UseBoundsGroup1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -20751,56 +21441,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DelimTokenTreeParenTransport> 
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct EnumVariantOptional1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
-}
-
-impl RenderableTransport for EnumVariantOptional1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_enum_variant_optional1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<EnumVariantOptional1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        EnumVariantOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumVariantOptional1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        EnumVariantOptional1Transport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
 pub struct ExpressionStatementWithSemiTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -21002,6 +21642,58 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldIdentifierTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct _FieldInitializerListGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<_FieldInitializerListGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for _FieldInitializerListGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__field_initializer_list_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_FieldInitializerListGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _FieldInitializerListGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_FieldInitializerListGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _FieldInitializerListGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct FieldPatternNamedTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -21049,56 +21741,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldPatternNamedTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         FieldPatternNamedTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct ForExpressionOptional1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
-    pub label: LabelTransport,
-}
-
-impl RenderableTransport for ForExpressionOptional1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_for_expression_optional1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ForExpressionOptional1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ForExpressionOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ForExpressionOptional1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ForExpressionOptional1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -21207,106 +21849,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForeignModItemSemiTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct FunctionItemOptional1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: _TypeTransport,
-}
-
-impl RenderableTransport for FunctionItemOptional1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_function_item_optional1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionItemOptional1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FunctionItemOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionItemOptional1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FunctionItemOptional1Transport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct FunctionSignatureItemOptional1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: _TypeTransport,
-}
-
-impl RenderableTransport for FunctionSignatureItemOptional1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_function_signature_item_optional1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionSignatureItemOptional1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FunctionSignatureItemOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionSignatureItemOptional1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FunctionSignatureItemOptional1Transport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
 pub struct FunctionTypeFnFormTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -21352,56 +21894,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionTypeFnFormTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         FunctionTypeFnFormTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct FunctionTypeOptional1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
-    pub return_type: _TypeTransport,
-}
-
-impl RenderableTransport for FunctionTypeOptional1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_function_type_optional1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionTypeOptional1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FunctionTypeOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionTypeOptional1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FunctionTypeOptional1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -23029,8 +23521,8 @@ pub struct LetDeclarationOptional2Transport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
+    pub alternative: BlockTransport,
 }
 
 impl RenderableTransport for LetDeclarationOptional2Transport {
@@ -23059,56 +23551,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LetDeclarationOptional2Transpo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         LetDeclarationOptional2Transport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct LetDeclarationOptional3Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
-    pub alternative: BlockTransport,
-}
-
-impl RenderableTransport for LetDeclarationOptional3Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_let_declaration_optional3(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LetDeclarationOptional3Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LetDeclarationOptional3Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LetDeclarationOptional3Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LetDeclarationOptional3Transport::to_napi_value(env, *val)
     }
 }
 
@@ -23365,56 +23807,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LineCommentRegularDslashTransp
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         LineCommentRegularDslashTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct LoopExpressionOptional1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
-    pub label: LabelTransport,
-}
-
-impl RenderableTransport for LoopExpressionOptional1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_loop_expression_optional1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LoopExpressionOptional1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LoopExpressionOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LoopExpressionOptional1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LoopExpressionOptional1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -24720,6 +25112,58 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<OuterLineDocCommentMarkerTrans
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         OuterLineDocCommentMarkerTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct _ParametersGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_parameter"))]
+    pub attributed_parameter: Vec<AttributedParameterTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for _ParametersGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__parameters_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_ParametersGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _ParametersGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_ParametersGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _ParametersGroup1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -26054,7 +26498,7 @@ impl RenderableTransport for ReservedIdentifierEnum {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct StaticItemOptional1Transport {
+pub struct _SlicePatternGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -26069,36 +26513,38 @@ pub struct StaticItemOptional1Transport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    pub pattern: Vec<PatternTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
-impl RenderableTransport for StaticItemOptional1Transport {
+impl RenderableTransport for _SlicePatternGroup1Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_static_item_optional1(self, dest))
+        render_with_trivia!(self, dest, render__slice_pattern_group1(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StaticItemOptional1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_SlicePatternGroup1Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        StaticItemOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+        _SlicePatternGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StaticItemOptional1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_SlicePatternGroup1Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        StaticItemOptional1Transport::to_napi_value(env, *val)
+        _SlicePatternGroup1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -26306,6 +26752,58 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StructItemUnitTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         StructItemUnitTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct _StructPatternGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<_StructPatternGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for _StructPatternGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__struct_pattern_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_StructPatternGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _StructPatternGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_StructPatternGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _StructPatternGroup1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -26800,6 +27298,58 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TokenTreePatternParenTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct _TuplePatternGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<_TuplePatternGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for _TuplePatternGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__tuple_pattern_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_TuplePatternGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _TuplePatternGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_TuplePatternGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _TuplePatternGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct TypeArgumentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -27234,6 +27784,110 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UnsafeMarkerTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct _UseBoundsGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<_UseBoundsGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for _UseBoundsGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__use_bounds_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_UseBoundsGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _UseBoundsGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_UseBoundsGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _UseBoundsGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct _UseListGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause"))]
+    pub use_clause: Vec<UseClauseTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for _UseListGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__use_list_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_UseListGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _UseListGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_UseListGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _UseListGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct UseWildcardClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -27538,7 +28192,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierPubTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct WhileExpressionOptional1Transport {
+pub struct _WhereClauseGroup1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -27553,36 +28207,38 @@ pub struct WhileExpressionOptional1Transport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
-    pub label: LabelTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate"))]
+    pub where_predicate: Vec<WherePredicateTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
-impl RenderableTransport for WhileExpressionOptional1Transport {
+impl RenderableTransport for _WhereClauseGroup1Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_while_expression_optional1(self, dest))
+        render_with_trivia!(self, dest, render__where_clause_group1(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WhileExpressionOptional1Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_WhereClauseGroup1Transport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        WhileExpressionOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
+        _WhereClauseGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileExpressionOptional1Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_WhereClauseGroup1Transport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        WhileExpressionOptional1Transport::to_napi_value(env, *val)
+        _WhereClauseGroup1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -30340,7 +30996,7 @@ pub struct FieldInitializerListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_initializers"))]
-    pub initializers: Option<Vec<FieldInitializerListInitializersTransportSlot>>,
+    pub initializers: Option<FieldInitializerListGroup1Transport>,
 }
 
 impl RenderableTransport for FieldInitializerListTransport {
@@ -33161,8 +33817,8 @@ pub struct ParametersTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_parameter"))]
-    pub attributed_parameter: Option<Vec<AttributedParameterTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters_group1"))]
+    pub parameters_group1: Option<ParametersGroup1Transport>,
 }
 
 impl RenderableTransport for ParametersTransport {
@@ -34452,8 +35108,8 @@ pub struct SlicePatternTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: Option<Vec<PatternTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_slice_pattern_group1"))]
+    pub slice_pattern_group1: Option<SlicePatternGroup1Transport>,
 }
 
 impl RenderableTransport for SlicePatternTransport {
@@ -34773,7 +35429,7 @@ pub struct StructPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Box<StructPatternTypeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_fields"))]
-    pub fields: Option<Vec<StructPatternFieldsTransportSlot>>,
+    pub fields: Option<StructPatternGroup1Transport>,
 }
 
 impl RenderableTransport for StructPatternTransport {
@@ -35450,7 +36106,7 @@ pub struct TuplePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
-    pub elements: Option<Vec<TuplePatternElementsTransportSlot>>,
+    pub elements: Option<TuplePatternGroup1Transport>,
 }
 
 impl RenderableTransport for TuplePatternTransport {
@@ -35501,8 +36157,8 @@ pub struct TupleStructPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Box<TupleStructPatternTypeTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: Option<Vec<PatternTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_slice_pattern_group1"))]
+    pub slice_pattern_group1: Option<SlicePatternGroup1Transport>,
 }
 
 impl RenderableTransport for TupleStructPatternTransport {
@@ -36336,7 +36992,7 @@ pub struct UseBoundsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_bounds"))]
-    pub bounds: Option<Vec<UseBoundsBoundsTransportSlot>>,
+    pub bounds: Option<UseBoundsGroup1Transport>,
 }
 
 impl RenderableTransport for UseBoundsTransport {
@@ -36437,8 +37093,8 @@ pub struct UseListTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause"))]
-    pub use_clause: Option<Vec<UseClauseTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_list_group1"))]
+    pub use_list_group1: Option<UseListGroup1Transport>,
 }
 
 impl RenderableTransport for UseListTransport {
@@ -36639,8 +37295,8 @@ pub struct WhereClauseTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate"))]
-    pub where_predicate: Option<Vec<WherePredicateTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_clause_group1"))]
+    pub where_clause_group1: Option<WhereClauseGroup1Transport>,
 }
 
 impl RenderableTransport for WhereClauseTransport {
@@ -36875,6 +37531,422 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<VisibilityModifierGroup1Transp
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         VisibilityModifierGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct FieldInitializerListGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<FieldInitializerListGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for FieldInitializerListGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_field_initializer_list_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldInitializerListGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FieldInitializerListGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldInitializerListGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FieldInitializerListGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ParametersGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_parameter"))]
+    pub attributed_parameter: Vec<AttributedParameterTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for ParametersGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_parameters_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ParametersGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ParametersGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ParametersGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ParametersGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct SlicePatternGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    pub pattern: Vec<PatternTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for SlicePatternGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_slice_pattern_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SlicePatternGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SlicePatternGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SlicePatternGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SlicePatternGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct StructPatternGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<StructPatternGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for StructPatternGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_struct_pattern_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StructPatternGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StructPatternGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StructPatternGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StructPatternGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct TuplePatternGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<TuplePatternGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for TuplePatternGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_tuple_pattern_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TuplePatternGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TuplePatternGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TuplePatternGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TuplePatternGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct UseBoundsGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Vec<UseBoundsGroup1ContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for UseBoundsGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_use_bounds_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UseBoundsGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        UseBoundsGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UseBoundsGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        UseBoundsGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct UseListGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_clause"))]
+    pub use_clause: Vec<UseClauseTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for UseListGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_use_list_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UseListGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        UseListGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UseListGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        UseListGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct WhereClauseGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_predicate"))]
+    pub where_predicate: Vec<WherePredicateTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
+}
+
+impl RenderableTransport for WhereClauseGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_where_clause_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<WhereClauseGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        WhereClauseGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<WhereClauseGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        WhereClauseGroup1Transport::to_napi_value(env, *val)
     }
 }
 
@@ -46073,11 +47145,6 @@ fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, dest: &mut
     template.render_into(dest)
 }
 
-fn render_enum_variant_optional1(node: &EnumVariantOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_expression(&node.value, dest)?;
-    Ok(())
-}
-
 fn render_expression_statement_with_semi(node: &ExpressionStatementWithSemiTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExpressionStatementWithSemiTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
@@ -46094,6 +47161,15 @@ fn render_field_identifier(t: &FieldIdentifierTransport, dest: &mut dyn ::std::f
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render__field_initializer_list_group1(node: &_FieldInitializerListGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if let Some(items) = &node.content {
+        for child in items.iter() {
+        child.render_into(dest)?;
+        }
+    }
+    Ok(())
+}
+
 fn render_field_pattern_named(node: &FieldPatternNamedTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FieldPatternNamedTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
@@ -46102,23 +47178,8 @@ fn render_field_pattern_named(node: &FieldPatternNamedTransport, dest: &mut dyn 
     template.render_into(dest)
 }
 
-fn render_for_expression_optional1(node: &ForExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_label(&node.label, dest)?;
-    Ok(())
-}
-
 fn render_foreign_mod_item_semi(t: &ForeignModItemSemiTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_function_item_optional1(node: &FunctionItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render__type(&node.return_type, dest)?;
-    Ok(())
-}
-
-fn render_function_signature_item_optional1(node: &FunctionSignatureItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render__type(&node.return_type, dest)?;
-    Ok(())
 }
 
 fn render_function_type_fn_form(node: &FunctionTypeFnFormTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -46134,11 +47195,6 @@ fn render_function_type_fn_form(node: &FunctionTypeFnFormTransport, dest: &mut d
         },
     };
     template.render_into(dest)
-}
-
-fn render_function_type_optional1(node: &FunctionTypeOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render__type(&node.return_type, dest)?;
-    Ok(())
 }
 
 fn render_function_type_trait_form(node: &FunctionTypeTraitFormTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -46250,11 +47306,6 @@ fn render_let_declaration_optional1(node: &LetDeclarationOptional1Transport, des
 }
 
 fn render_let_declaration_optional2(node: &LetDeclarationOptional2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_expression(&node.value, dest)?;
-    Ok(())
-}
-
-fn render_let_declaration_optional3(node: &LetDeclarationOptional3Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     render_block(&node.alternative, dest)?;
     Ok(())
 }
@@ -46280,11 +47331,6 @@ fn render_line_comment_doc(node: &LineCommentDocTransport, dest: &mut dyn ::std:
 
 fn render_line_comment_regular_dslash(t: &LineCommentRegularDslashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_loop_expression_optional1(node: &LoopExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_label(&node.label, dest)?;
-    Ok(())
 }
 
 fn render_macro_definition_brace(node: &MacroDefinitionBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -46431,6 +47477,13 @@ fn render_outer_line_doc_comment_marker(t: &OuterLineDocCommentMarkerTransport, 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render__parameters_group1(node: &_ParametersGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    for child in node.attributed_parameter.iter() {
+        render_attributed_parameter(child, dest)?;
+    }
+    Ok(())
+}
+
 fn render_pointer_type_const(t: &PointerTypeConstTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -46515,8 +47568,10 @@ fn render_reserved_identifier(t: &ReservedIdentifierEnum, dest: &mut dyn ::std::
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
-fn render_static_item_optional1(node: &StaticItemOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_expression(&node.value, dest)?;
+fn render__slice_pattern_group1(node: &_SlicePatternGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    for child in node.pattern.iter() {
+        render_pattern(child, dest)?;
+    }
     Ok(())
 }
 
@@ -46544,6 +47599,15 @@ fn render_struct_item_tuple(node: &StructItemTupleTransport, dest: &mut dyn ::st
 
 fn render_struct_item_unit(t: &StructItemUnitTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render__struct_pattern_group1(node: &_StructPatternGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if let Some(items) = &node.content {
+        for child in items.iter() {
+        child.render_into(dest)?;
+        }
+    }
+    Ok(())
 }
 
 fn render_token_binding_pattern_type(t: &TokenBindingPatternTypeEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -46676,6 +47740,15 @@ fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, dest: 
     template.render_into(dest)
 }
 
+fn render__tuple_pattern_group1(node: &_TuplePatternGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if let Some(items) = &node.content {
+        for child in items.iter() {
+        child.render_into(dest)?;
+        }
+    }
+    Ok(())
+}
+
 fn render_type_argument(node: &TypeArgumentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeArgumentTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
@@ -46702,6 +47775,22 @@ fn render_unary_expression_operator(t: &UnaryExpressionOperatorEnum, dest: &mut 
 
 fn render_unsafe_marker(t: &UnsafeMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render__use_bounds_group1(node: &_UseBoundsGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if let Some(items) = &node.content {
+        for child in items.iter() {
+        child.render_into(dest)?;
+        }
+    }
+    Ok(())
+}
+
+fn render__use_list_group1(node: &_UseListGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    for child in node.use_clause.iter() {
+        render_use_clause(child, dest)?;
+    }
+    Ok(())
 }
 
 fn render_use_wildcard_clause(node: &UseWildcardClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -46743,8 +47832,10 @@ fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, dest: &
     template.render_into(dest)
 }
 
-fn render_while_expression_optional1(node: &WhileExpressionOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    render_label(&node.label, dest)?;
+fn render__where_clause_group1(node: &_WhereClauseGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    for child in node.where_predicate.iter() {
+        render_where_predicate(child, dest)?;
+    }
     Ok(())
 }
 
@@ -47314,21 +48405,15 @@ fn render_field_initializer(node: &FieldInitializerTransport, dest: &mut dyn ::s
 }
 
 fn render_field_initializer_list(node: &FieldInitializerListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.initializers.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.initializers.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let initializers_owned = node.initializers.as_deref().unwrap_or(&[]);
-    let initializers_buf: Vec<::sittir_core::filters::Renderable<'_>> = initializers_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = FieldInitializerListTemplate {
-        initializers: ListNonterminalView {
-            items: initializers_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
+        initializers: match &node.initializers {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -47853,21 +48938,15 @@ fn render_parameter(node: &ParameterTransport, dest: &mut dyn ::std::fmt::Write)
 }
 
 fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.attributed_parameter.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.parameters_group1.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let attributed_parameter_owned = node.attributed_parameter.as_deref().unwrap_or(&[]);
-    let attributed_parameter_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributed_parameter_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ParametersTemplate {
-        attributed_parameter: ListNonterminalView {
-            items: attributed_parameter_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
+        parameters_group1: match &node.parameters_group1 {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -48088,21 +49167,15 @@ fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport,
 }
 
 fn render_slice_pattern(node: &SlicePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.pattern.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.slice_pattern_group1.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let pattern_owned = node.pattern.as_deref().unwrap_or(&[]);
-    let pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = pattern_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = SlicePatternTemplate {
-        pattern: ListNonterminalView {
-            items: pattern_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
+        slice_pattern_group1: match &node.slice_pattern_group1 {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -48199,16 +49272,10 @@ fn render_struct_item(node: &StructItemTransport, dest: &mut dyn ::std::fmt::Wri
 }
 
 fn render_struct_pattern(node: &StructPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let fields_owned = node.fields.as_deref().unwrap_or(&[]);
-    let fields_buf: Vec<::sittir_core::filters::Renderable<'_>> = fields_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = StructPatternTemplate {
-        fields: ListNonterminalView {
-            items: fields_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
+        fields: match &node.fields {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
@@ -48377,37 +49444,25 @@ fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std
 }
 
 fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.elements.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.elements.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let elements_owned = node.elements.as_deref().unwrap_or(&[]);
-    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TuplePatternTemplate {
-        elements: ListNonterminalView {
-            items: elements_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
+        elements: match &node.elements {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
 fn render_tuple_struct_pattern(node: &TupleStructPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let pattern_owned = node.pattern.as_deref().unwrap_or(&[]);
-    let pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = pattern_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TupleStructPatternTemplate {
-        pattern: ListNonterminalView {
-            items: pattern_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
+        slice_pattern_group1: match &node.slice_pattern_group1 {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
@@ -48585,21 +49640,15 @@ fn render_use_as_clause(node: &UseAsClauseTransport, dest: &mut dyn ::std::fmt::
 }
 
 fn render_use_bounds(node: &UseBoundsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.bounds.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.bounds.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let bounds_owned = node.bounds.as_deref().unwrap_or(&[]);
-    let bounds_buf: Vec<::sittir_core::filters::Renderable<'_>> = bounds_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = UseBoundsTemplate {
-        bounds: ListNonterminalView {
-            items: bounds_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
+        bounds: match &node.bounds {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -48617,21 +49666,15 @@ fn render_use_declaration(node: &UseDeclarationTransport, dest: &mut dyn ::std::
 }
 
 fn render_use_list(node: &UseListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.use_clause.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.use_list_group1.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let use_clause_owned = node.use_clause.as_deref().unwrap_or(&[]);
-    let use_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = use_clause_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = UseListTemplate {
-        use_clause: ListNonterminalView {
-            items: use_clause_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
+        use_list_group1: match &node.use_list_group1 {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -48679,21 +49722,15 @@ fn render_visibility_modifier(node: &VisibilityModifierTransport, dest: &mut dyn
 }
 
 fn render_where_clause(node: &WhereClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.where_predicate.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.where_clause_group1.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let where_predicate_owned = node.where_predicate.as_deref().unwrap_or(&[]);
-    let where_predicate_buf: Vec<::sittir_core::filters::Renderable<'_>> = where_predicate_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = WhereClauseTemplate {
-        where_predicate: ListNonterminalView {
-            items: where_predicate_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
+        where_clause_group1: match &node.where_clause_group1 {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -48737,6 +49774,170 @@ fn render_yield_expression(node: &YieldExpressionTransport, dest: &mut dyn ::std
 fn render_visibility_modifier_group1(node: &VisibilityModifierGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierGroup1Template {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
+    };
+    template.render_into(dest)
+}
+
+fn render_field_initializer_list_group1(node: &FieldInitializerListGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let content_owned = node.content.as_deref().unwrap_or(&[]);
+    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = FieldInitializerListGroup1Template {
+        content: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: node.trailing_sep.unwrap_or(false),
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_parameters_group1(node: &ParametersGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.attributed_parameter.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let attributed_parameter_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.attributed_parameter.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = ParametersGroup1Template {
+        attributed_parameter: ListNonterminalView {
+            items: attributed_parameter_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: node.trailing_sep.unwrap_or(false),
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_slice_pattern_group1(node: &SlicePatternGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.pattern.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.pattern.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = SlicePatternGroup1Template {
+        pattern: ListNonterminalView {
+            items: pattern_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: node.trailing_sep.unwrap_or(false),
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_struct_pattern_group1(node: &StructPatternGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let content_owned = node.content.as_deref().unwrap_or(&[]);
+    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = StructPatternGroup1Template {
+        content: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: node.trailing_sep.unwrap_or(false),
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_tuple_pattern_group1(node: &TuplePatternGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let content_owned = node.content.as_deref().unwrap_or(&[]);
+    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = TuplePatternGroup1Template {
+        content: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: node.trailing_sep.unwrap_or(false),
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_use_bounds_group1(node: &UseBoundsGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let content_owned = node.content.as_deref().unwrap_or(&[]);
+    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = UseBoundsGroup1Template {
+        content: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: node.trailing_sep.unwrap_or(false),
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_use_list_group1(node: &UseListGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.use_clause.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let use_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.use_clause.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = UseListGroup1Template {
+        use_clause: ListNonterminalView {
+            items: use_clause_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: node.trailing_sep.unwrap_or(false),
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_where_clause_group1(node: &WhereClauseGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.where_predicate.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let where_predicate_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.where_predicate.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = WhereClauseGroup1Template {
+        where_predicate: ListNonterminalView {
+            items: where_predicate_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: node.trailing_sep.unwrap_or(false),
+        },
     };
     template.render_into(dest)
 }
@@ -49532,17 +50733,13 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::DelimTokenTreeBrace(t) => render_delim_token_tree_brace(t, dest),
             AnyTransport::DelimTokenTreeBracket(t) => render_delim_token_tree_bracket(t, dest),
             AnyTransport::DelimTokenTreeParen(t) => render_delim_token_tree_paren(t, dest),
-            AnyTransport::EnumVariantOptional1(t) => render_enum_variant_optional1(t, dest),
             AnyTransport::ExpressionStatementWithSemi(t) => render_expression_statement_with_semi(t, dest),
             AnyTransport::ExternCrateDeclarationOptional1(t) => render_extern_crate_declaration_optional1(t, dest),
             AnyTransport::FieldIdentifier(t) => t.render_into(dest),
+            AnyTransport::_FieldInitializerListGroup1(t) => render__field_initializer_list_group1(t, dest),
             AnyTransport::FieldPatternNamed(t) => render_field_pattern_named(t, dest),
-            AnyTransport::ForExpressionOptional1(t) => render_for_expression_optional1(t, dest),
             AnyTransport::ForeignModItemSemi(t) => t.render_into(dest),
-            AnyTransport::FunctionItemOptional1(t) => render_function_item_optional1(t, dest),
-            AnyTransport::FunctionSignatureItemOptional1(t) => render_function_signature_item_optional1(t, dest),
             AnyTransport::FunctionTypeFnForm(t) => render_function_type_fn_form(t, dest),
-            AnyTransport::FunctionTypeOptional1(t) => render_function_type_optional1(t, dest),
             AnyTransport::FunctionTypeTraitForm(t) => render_function_type_trait_form(t, dest),
             AnyTransport::ImplItemBody(t) => render_impl_item_body(t, dest),
             AnyTransport::ImplItemGroup1(t) => render_impl_item_group1(t, dest),
@@ -49563,11 +50760,9 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::LetChain(t) => render_let_chain(t, dest),
             AnyTransport::LetDeclarationOptional1(t) => render_let_declaration_optional1(t, dest),
             AnyTransport::LetDeclarationOptional2(t) => render_let_declaration_optional2(t, dest),
-            AnyTransport::LetDeclarationOptional3(t) => render_let_declaration_optional3(t, dest),
             AnyTransport::LineCommentContent(t) => t.render_into(dest),
             AnyTransport::LineCommentDoc(t) => render_line_comment_doc(t, dest),
             AnyTransport::LineCommentRegularDslash(t) => t.render_into(dest),
-            AnyTransport::LoopExpressionOptional1(t) => render_loop_expression_optional1(t, dest),
             AnyTransport::MacroDefinitionBrace(t) => render_macro_definition_brace(t, dest),
             AnyTransport::MacroDefinitionBracket(t) => render_macro_definition_bracket(t, dest),
             AnyTransport::MacroDefinitionParen(t) => render_macro_definition_paren(t, dest),
@@ -49584,6 +50779,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::OrPatternPrefix(t) => render_or_pattern_prefix(t, dest),
             AnyTransport::OuterBlockDocCommentMarker(t) => t.render_into(dest),
             AnyTransport::OuterLineDocCommentMarker(t) => t.render_into(dest),
+            AnyTransport::_ParametersGroup1(t) => render__parameters_group1(t, dest),
             AnyTransport::PointerTypeConst(t) => t.render_into(dest),
             AnyTransport::PrimitiveType(t) => t.render_into(dest),
             AnyTransport::RangeExpressionBinary(t) => render_range_expression_binary(t, dest),
@@ -49599,10 +50795,11 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ReferenceExpressionRawConst(t) => t.render_into(dest),
             AnyTransport::ReferenceExpressionRawMut(t) => render_reference_expression_raw_mut(t, dest),
             AnyTransport::ReservedIdentifier(t) => t.render_into(dest),
-            AnyTransport::StaticItemOptional1(t) => render_static_item_optional1(t, dest),
+            AnyTransport::_SlicePatternGroup1(t) => render__slice_pattern_group1(t, dest),
             AnyTransport::StructItemBrace(t) => render_struct_item_brace(t, dest),
             AnyTransport::StructItemTuple(t) => render_struct_item_tuple(t, dest),
             AnyTransport::StructItemUnit(t) => t.render_into(dest),
+            AnyTransport::_StructPatternGroup1(t) => render__struct_pattern_group1(t, dest),
             AnyTransport::TokenBindingPatternType(t) => t.render_into(dest),
             AnyTransport::TokenTreeBrace(t) => render_token_tree_brace(t, dest),
             AnyTransport::TokenTreeBracket(t) => render_token_tree_bracket(t, dest),
@@ -49610,18 +50807,21 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::TokenTreePatternBrace(t) => render_token_tree_pattern_brace(t, dest),
             AnyTransport::TokenTreePatternBracket(t) => render_token_tree_pattern_bracket(t, dest),
             AnyTransport::TokenTreePatternParen(t) => render_token_tree_pattern_paren(t, dest),
+            AnyTransport::_TuplePatternGroup1(t) => render__tuple_pattern_group1(t, dest),
             AnyTransport::TypeArgument(t) => render_type_argument(t, dest),
             AnyTransport::TypeIdentifier(t) => t.render_into(dest),
             AnyTransport::TypeParameterOptional1(t) => render_type_parameter_optional1(t, dest),
             AnyTransport::UnaryExpressionOperator(t) => t.render_into(dest),
             AnyTransport::UnsafeMarker(t) => t.render_into(dest),
+            AnyTransport::_UseBoundsGroup1(t) => render__use_bounds_group1(t, dest),
+            AnyTransport::_UseListGroup1(t) => render__use_list_group1(t, dest),
             AnyTransport::UseWildcardClause(t) => render_use_wildcard_clause(t, dest),
             AnyTransport::UseWildcardGroup1(t) => render_use_wildcard_group1(t, dest),
             AnyTransport::VariadicParameterOptional1(t) => render_variadic_parameter_optional1(t, dest),
             AnyTransport::_VisibilityModifierGroup1(t) => render__visibility_modifier_group1(t, dest),
             AnyTransport::VisibilityModifierInPath(t) => render_visibility_modifier_in_path(t, dest),
             AnyTransport::VisibilityModifierPub(t) => render_visibility_modifier_pub(t, dest),
-            AnyTransport::WhileExpressionOptional1(t) => render_while_expression_optional1(t, dest),
+            AnyTransport::_WhereClauseGroup1(t) => render__where_clause_group1(t, dest),
             AnyTransport::WildcardPattern(t) => t.render_into(dest),
             AnyTransport::AbstractType(t) => render_abstract_type(t, dest),
             AnyTransport::Arguments(t) => render_arguments(t, dest),
@@ -49781,6 +50981,14 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::WhileExpression(t) => render_while_expression(t, dest),
             AnyTransport::YieldExpression(t) => render_yield_expression(t, dest),
             AnyTransport::VisibilityModifierGroup1(t) => render_visibility_modifier_group1(t, dest),
+            AnyTransport::FieldInitializerListGroup1(t) => render_field_initializer_list_group1(t, dest),
+            AnyTransport::ParametersGroup1(t) => render_parameters_group1(t, dest),
+            AnyTransport::SlicePatternGroup1(t) => render_slice_pattern_group1(t, dest),
+            AnyTransport::StructPatternGroup1(t) => render_struct_pattern_group1(t, dest),
+            AnyTransport::TuplePatternGroup1(t) => render_tuple_pattern_group1(t, dest),
+            AnyTransport::UseBoundsGroup1(t) => render_use_bounds_group1(t, dest),
+            AnyTransport::UseListGroup1(t) => render_use_list_group1(t, dest),
+            AnyTransport::WhereClauseGroup1(t) => render_where_clause_group1(t, dest),
             AnyTransport::StringContent(t) => t.render_into(dest),
             AnyTransport::RawStringLiteralContent(t) => t.render_into(dest),
             AnyTransport::FloatLiteral(t) => t.render_into(dest),
@@ -49918,17 +51126,13 @@ impl AnyTransport {
             Self::DelimTokenTreeBrace(t) => t.transport_named,
             Self::DelimTokenTreeBracket(t) => t.transport_named,
             Self::DelimTokenTreeParen(t) => t.transport_named,
-            Self::EnumVariantOptional1(t) => t.transport_named,
             Self::ExpressionStatementWithSemi(t) => t.transport_named,
             Self::ExternCrateDeclarationOptional1(t) => t.transport_named,
             Self::FieldIdentifier(t) => t.transport_named,
+            Self::_FieldInitializerListGroup1(t) => t.transport_named,
             Self::FieldPatternNamed(t) => t.transport_named,
-            Self::ForExpressionOptional1(t) => t.transport_named,
             Self::ForeignModItemSemi(t) => t.transport_named,
-            Self::FunctionItemOptional1(t) => t.transport_named,
-            Self::FunctionSignatureItemOptional1(t) => t.transport_named,
             Self::FunctionTypeFnForm(t) => t.transport_named,
-            Self::FunctionTypeOptional1(t) => t.transport_named,
             Self::FunctionTypeTraitForm(t) => t.transport_named,
             Self::ImplItemBody(t) => t.transport_named,
             Self::ImplItemGroup1(t) => t.transport_named,
@@ -49949,11 +51153,9 @@ impl AnyTransport {
             Self::LetChain(t) => t.transport_named,
             Self::LetDeclarationOptional1(t) => t.transport_named,
             Self::LetDeclarationOptional2(t) => t.transport_named,
-            Self::LetDeclarationOptional3(t) => t.transport_named,
             Self::LineCommentContent(t) => t.transport_named,
             Self::LineCommentDoc(t) => t.transport_named,
             Self::LineCommentRegularDslash(t) => t.transport_named,
-            Self::LoopExpressionOptional1(t) => t.transport_named,
             Self::MacroDefinitionBrace(t) => t.transport_named,
             Self::MacroDefinitionBracket(t) => t.transport_named,
             Self::MacroDefinitionParen(t) => t.transport_named,
@@ -49969,6 +51171,7 @@ impl AnyTransport {
             Self::OrPatternPrefix(t) => t.transport_named,
             Self::OuterBlockDocCommentMarker(t) => t.transport_named,
             Self::OuterLineDocCommentMarker(t) => t.transport_named,
+            Self::_ParametersGroup1(t) => t.transport_named,
             Self::PointerTypeConst(t) => t.transport_named,
             Self::RangeExpressionBinary(t) => t.transport_named,
             Self::RangeExpressionPostfix(t) => t.transport_named,
@@ -49982,27 +51185,31 @@ impl AnyTransport {
             Self::RawStringLiteralStart(t) => t.transport_named,
             Self::ReferenceExpressionRawConst(t) => t.transport_named,
             Self::ReferenceExpressionRawMut(t) => t.transport_named,
-            Self::StaticItemOptional1(t) => t.transport_named,
+            Self::_SlicePatternGroup1(t) => t.transport_named,
             Self::StructItemBrace(t) => t.transport_named,
             Self::StructItemTuple(t) => t.transport_named,
             Self::StructItemUnit(t) => t.transport_named,
+            Self::_StructPatternGroup1(t) => t.transport_named,
             Self::TokenTreeBrace(t) => t.transport_named,
             Self::TokenTreeBracket(t) => t.transport_named,
             Self::TokenTreeParen(t) => t.transport_named,
             Self::TokenTreePatternBrace(t) => t.transport_named,
             Self::TokenTreePatternBracket(t) => t.transport_named,
             Self::TokenTreePatternParen(t) => t.transport_named,
+            Self::_TuplePatternGroup1(t) => t.transport_named,
             Self::TypeArgument(t) => t.transport_named,
             Self::TypeIdentifier(t) => t.transport_named,
             Self::TypeParameterOptional1(t) => t.transport_named,
             Self::UnsafeMarker(t) => t.transport_named,
+            Self::_UseBoundsGroup1(t) => t.transport_named,
+            Self::_UseListGroup1(t) => t.transport_named,
             Self::UseWildcardClause(t) => t.transport_named,
             Self::UseWildcardGroup1(t) => t.transport_named,
             Self::VariadicParameterOptional1(t) => t.transport_named,
             Self::_VisibilityModifierGroup1(t) => t.transport_named,
             Self::VisibilityModifierInPath(t) => t.transport_named,
             Self::VisibilityModifierPub(t) => t.transport_named,
-            Self::WhileExpressionOptional1(t) => t.transport_named,
+            Self::_WhereClauseGroup1(t) => t.transport_named,
             Self::WildcardPattern(t) => t.transport_named,
             Self::AbstractType(t) => t.transport_named,
             Self::Arguments(t) => t.transport_named,
@@ -50160,6 +51367,14 @@ impl AnyTransport {
             Self::WhileExpression(t) => t.transport_named,
             Self::YieldExpression(t) => t.transport_named,
             Self::VisibilityModifierGroup1(t) => t.transport_named,
+            Self::FieldInitializerListGroup1(t) => t.transport_named,
+            Self::ParametersGroup1(t) => t.transport_named,
+            Self::SlicePatternGroup1(t) => t.transport_named,
+            Self::StructPatternGroup1(t) => t.transport_named,
+            Self::TuplePatternGroup1(t) => t.transport_named,
+            Self::UseBoundsGroup1(t) => t.transport_named,
+            Self::UseListGroup1(t) => t.transport_named,
+            Self::WhereClauseGroup1(t) => t.transport_named,
             Self::StringContent(t) => t.transport_named,
             Self::RawStringLiteralContent(t) => t.transport_named,
             Self::FloatLiteral(t) => t.transport_named,

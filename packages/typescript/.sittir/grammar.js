@@ -619,15 +619,73 @@ function seqHasTopLevelRepeat(members) {
   }
   return false;
 }
+function isNonterminalSeparatorType(t) {
+  return isChoiceType(t) || isSymbolType(t) || typeEq(t, "PATTERN");
+}
+function repeatHasNonterminalSeparator(repeatRule) {
+  const content = repeatRule.content;
+  if (!content || typeof content !== "object") return false;
+  const detected = detectRepeatSeparator(content);
+  if (!detected) return false;
+  return isNonterminalSeparatorType(detected.separator.type);
+}
+function isOptionalSeparatorFlank(member, sepValue) {
+  if (!member || typeof member !== "object") return false;
+  const r = member;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (isOptionalType(t)) {
+    const content = r.content;
+    if (!content || typeof content !== "object") return false;
+    const cr = content;
+    return isStringType(typeof cr.type === "string" ? cr.type : "") && cr.value === sepValue;
+  }
+  if (isChoiceType(t)) {
+    const members = r.members;
+    if (!Array.isArray(members) || members.length !== 2) return false;
+    const hasBlank = members.some(
+      (m) => m && typeof m === "object" && isBlankType(m.type)
+    );
+    const hasMatchingLiteral = members.some(
+      (m) => m && typeof m === "object" && isStringType(typeof m.type === "string" ? m.type : "") && m.value === sepValue
+    );
+    return hasBlank && hasMatchingLiteral;
+  }
+  return false;
+}
+function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings) {
+  if (repeatHasNonterminalSeparator(repeatRule)) return true;
+  const content = repeatRule.content;
+  if (!content || typeof content !== "object") return false;
+  const detected = detectRepeatSeparator(content);
+  if (!detected || !isStringType(detected.separator.type)) return false;
+  const sepValue = detected.separator.value;
+  if (typeof sepValue !== "string") return false;
+  return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
+}
+function repeatHasGenuineSeparatorVariability(repeatRule) {
+  return repeatHasNonterminalSeparator(repeatRule);
+}
+function seqHasGenuineSeparatorVariability(members) {
+  const flat = flattenSeqMembers(members);
+  const repeatMembers = [];
+  for (const m of flat) {
+    const core = unwrapPrec(m);
+    if (!core || typeof core !== "object") continue;
+    const ct = core.type;
+    if (typeof ct === "string" && isRepeatLike(ct)) repeatMembers.push(core);
+  }
+  if (repeatMembers.length !== 1) return false;
+  return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat);
+}
 function isInlineSafe(seqBody) {
   if (!seqBody || typeof seqBody !== "object") return false;
   const r = seqBody;
   const t = typeof r.type === "string" ? r.type : "";
-  if (isRepeatLike(t)) return true;
+  if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody);
   if (!isSeqType(t)) return false;
   const members = r.members;
   if (!Array.isArray(members)) return false;
-  if (seqHasTopLevelRepeat(members)) return true;
+  if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members);
   const slots = collectSlots(members);
   if (slots.length !== 1) return false;
   const core = unwrapPrec(slots[0]);
@@ -1297,6 +1355,7 @@ function canonicalStringifyClause(value) {
   const keys = Object.keys(obj).sort();
   const parts = [];
   for (const k of keys) {
+    if (k === "id" || k === "_ref" || k === "metadata" || k === "hidden" || k === "inline") continue;
     const v = obj[k];
     if (typeof v === "function" || typeof v === "undefined") continue;
     parts.push(JSON.stringify(k) + ":" + canonicalStringifyClause(v));

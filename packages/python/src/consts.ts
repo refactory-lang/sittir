@@ -2,11 +2,15 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_argument_list_group1',
   '_as_pattern',
   '_comprehension_clauses',
+  '_dict_pattern_group1',
+  '_dictionary_group1',
   '_except_clause_list',
   '_expression_statement_tuple',
   '_list_pattern',
+  '_list_pattern_group1',
   '_match_block',
   '_simple_pattern_negative',
   '_simple_statements',
@@ -17,6 +21,7 @@ export const NODE_KINDS = [
   '_with_clause_paren',
   'aliased_import',
   'argument_list',
+  'argument_list_group1',
   'as_pattern',
   'assert_statement',
   'assignment',
@@ -42,8 +47,10 @@ export const NODE_KINDS = [
   'default_parameter',
   'delete_statement',
   'dict_pattern',
+  'dict_pattern_group1',
   'dictionary',
   'dictionary_comprehension',
+  'dictionary_group1',
   'dictionary_splat',
   'dictionary_splat_pattern',
   'dotted_name',
@@ -76,6 +83,7 @@ export const NODE_KINDS = [
   'list',
   'list_comprehension',
   'list_pattern',
+  'list_pattern_group1',
   'list_splat',
   'list_splat_pattern',
   'match_statement',
@@ -480,12 +488,16 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "await": 237,
   "positional_separator": 238,
   "keyword_separator": 239,
-  "_slice_group1": 240,
-  "_expression_statement_tuple": 245,
-  "_with_clause_bare": 246,
-  "_with_clause_paren": 247,
-  "_simple_pattern_negative": 250,
-  "_except_clause_list": 251,
+  "_argument_list_group1": 240,
+  "_list_pattern_group1": 241,
+  "_dict_pattern_group1": 242,
+  "_slice_group1": 243,
+  "_dictionary_group1": 244,
+  "_expression_statement_tuple": 249,
+  "_with_clause_bare": 250,
+  "_with_clause_paren": 251,
+  "_simple_pattern_negative": 254,
+  "_except_clause_list": 255,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -671,12 +683,16 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [237]: "await",
   [238]: "positional_separator",
   [239]: "keyword_separator",
-  [240]: "_slice_group1",
-  [245]: "_expression_statement_tuple",
-  [246]: "_with_clause_bare",
-  [247]: "_with_clause_paren",
-  [250]: "_simple_pattern_negative",
-  [251]: "_except_clause_list",
+  [240]: "_argument_list_group1",
+  [241]: "_list_pattern_group1",
+  [242]: "_dict_pattern_group1",
+  [243]: "_slice_group1",
+  [244]: "_dictionary_group1",
+  [249]: "_expression_statement_tuple",
+  [250]: "_with_clause_bare",
+  [251]: "_with_clause_paren",
+  [254]: "_simple_pattern_negative",
+  [255]: "_except_clause_list",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -862,12 +878,16 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "await", id: 237, enumName: "Await", cName: "sym_await" },
   { name: "positional_separator", id: 238, enumName: "PositionalSeparator", cName: "sym_positional_separator" },
   { name: "keyword_separator", id: 239, enumName: "KeywordSeparator", cName: "sym_keyword_separator" },
-  { name: "_slice_group1", id: 240, enumName: "SliceGroup1", cName: "sym__slice_group1" },
-  { name: "_expression_statement_tuple", id: 245, enumName: "ExpressionStatementTuple", cName: "sym__expression_statement_tuple" },
-  { name: "_with_clause_bare", id: 246, enumName: "WithClauseBare", cName: "sym__with_clause_bare" },
-  { name: "_with_clause_paren", id: 247, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
-  { name: "_simple_pattern_negative", id: 250, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
-  { name: "_except_clause_list", id: 251, enumName: "ExceptClauseList", cName: "sym__except_clause_list" },
+  { name: "_argument_list_group1", id: 240, enumName: "ArgumentListGroup1", cName: "sym__argument_list_group1" },
+  { name: "_list_pattern_group1", id: 241, enumName: "ListPatternGroup1", cName: "sym__list_pattern_group1" },
+  { name: "_dict_pattern_group1", id: 242, enumName: "DictPatternGroup1", cName: "sym__dict_pattern_group1" },
+  { name: "_slice_group1", id: 243, enumName: "SliceGroup1", cName: "sym__slice_group1" },
+  { name: "_dictionary_group1", id: 244, enumName: "DictionaryGroup1", cName: "sym__dictionary_group1" },
+  { name: "_expression_statement_tuple", id: 249, enumName: "ExpressionStatementTuple", cName: "sym__expression_statement_tuple" },
+  { name: "_with_clause_bare", id: 250, enumName: "WithClauseBare", cName: "sym__with_clause_bare" },
+  { name: "_with_clause_paren", id: 251, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
+  { name: "_simple_pattern_negative", id: 254, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
+  { name: "_except_clause_list", id: 255, enumName: "ExceptClauseList", cName: "sym__except_clause_list" },
 ] as const;
 
 export const enum TSFieldId {
@@ -1124,11 +1144,23 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_argument_list_group1': [
+    { name: 'contents', required: false, multiple: true },
+  ],
   '_as_pattern': [
     { name: 'casePattern', required: true, multiple: false },
     { name: 'identifier', required: true, multiple: false },
   ],
   '_comprehension_clauses': [
+    { name: 'contents', required: false, multiple: true },
+  ],
+  '_dict_pattern_group1': [
+    { name: 'dictPatternKv', required: true, multiple: false },
+    { name: 'keys', required: false, multiple: true },
+    { name: 'values', required: false, multiple: true },
+    { name: 'splatPatterns', required: false, multiple: true },
+  ],
+  '_dictionary_group1': [
     { name: 'contents', required: false, multiple: true },
   ],
   '_except_clause_list': [
@@ -1138,7 +1170,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expressions', required: true, multiple: true },
   ],
   '_list_pattern': [
-    { name: 'casePatterns', required: false, multiple: true },
+    { name: 'listPatternGroup1', required: false, multiple: false },
+  ],
+  '_list_pattern_group1': [
+    { name: 'casePatterns', required: true, multiple: true },
   ],
   '_match_block': [
     { name: 'matchBlockBlock', required: true, multiple: false },
@@ -1158,7 +1193,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'newline', required: false, multiple: false },
   ],
   '_tuple_pattern': [
-    { name: 'casePatterns', required: false, multiple: true },
+    { name: 'listPatternGroup1', required: false, multiple: false },
   ],
   '_with_clause_bare': [
     { name: 'withItems', required: true, multiple: true },
@@ -1171,7 +1206,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: true, multiple: false },
   ],
   'argument_list': [
-    { name: 'arguments', required: false, multiple: true },
+    { name: 'arguments', required: false, multiple: false },
+  ],
+  'argument_list_group1': [
+    { name: 'contents', required: false, multiple: true },
   ],
   'as_pattern': [
     { name: 'expression', required: true, multiple: false },
@@ -1232,7 +1270,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'class_pattern': [
     { name: 'dottedName', required: true, multiple: false },
-    { name: 'arguments', required: false, multiple: true },
+    { name: 'arguments', required: false, multiple: false },
   ],
   'comparison_operator': [
     { name: 'left', required: true, multiple: false },
@@ -1271,17 +1309,23 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expressions', required: true, multiple: false },
   ],
   'dict_pattern': [
-    { name: 'dictPatternKv', required: false, multiple: false },
+    { name: 'dictPatternGroup1', required: false, multiple: false },
+  ],
+  'dict_pattern_group1': [
+    { name: 'dictPatternKv', required: true, multiple: false },
     { name: 'keys', required: false, multiple: true },
     { name: 'values', required: false, multiple: true },
     { name: 'splatPatterns', required: false, multiple: true },
   ],
   'dictionary': [
-    { name: 'entries', required: false, multiple: true },
+    { name: 'entries', required: false, multiple: false },
   ],
   'dictionary_comprehension': [
     { name: 'body', required: true, multiple: false },
     { name: 'comprehensionClauses', required: true, multiple: false },
+  ],
+  'dictionary_group1': [
+    { name: 'contents', required: false, multiple: true },
   ],
   'dictionary_splat': [
     { name: 'expression', required: true, multiple: false },
@@ -1406,6 +1450,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'list_pattern': [
     { name: 'patterns', required: false, multiple: false },
+  ],
+  'list_pattern_group1': [
+    { name: 'casePatterns', required: true, multiple: true },
   ],
   'list_splat': [
     { name: 'expression', required: true, multiple: false },

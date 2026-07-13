@@ -801,6 +801,16 @@ export default grammar(enrichedBase, wire<EnrichedGrammar<RustGrammarShape>>({
 		use_wildcard: ($) => seq(optional($._use_wildcard_clause), '*'),
 		_use_wildcard_clause: ($) => seq(field('path', $._path), '::'),
 
+		// _where_clause_group1 — enrich's visible-group hoist extracts base
+		// where_clause's predicate list (sepBy1(',', where_predicate) +
+		// trailing optional ',') into this hidden backing rule. Base
+		// tree-sitter-rust resolves the trailing-comma-vs-next-predicate
+		// shift/reduce with prec.right ON where_clause; the hoist moves those
+		// productions out of that annotation's scope, so restore the same
+		// right-associativity on the hoisted body (`where 'a: 'b, 'c: 'd` must
+		// shift at `, • '`, not end the group).
+		_where_clause_group1: ($, previous) => prec.right(0, previous),
+
 		// Hidden `_kw_*` rules that previously sat here
 		// (`_kw_async` / `_kw_default` / `_kw_const` / `_kw_unsafe` /
 		// `_kw_pub` / `_kw_in`) have been deleted. They're now

@@ -402,6 +402,11 @@ export const ir = {
   yieldExpression: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
   importClauseGroup1: _attach(FR.importClauseGroup1From, { from: FR.importClauseGroup1From, strict: F.importClauseGroup1 }),
   catchClauseGroup1: _attach(FR.catchClauseGroup1From, { from: FR.catchClauseGroup1From, strict: F.catchClauseGroup1 }),
+  enumBodyGroup1: _attach(FR.enumBodyGroup1From, { from: FR.enumBodyGroup1From, strict: F.enumBodyGroup1 }),
+  exportClauseGroup1: _attach(FR.exportClauseGroup1From, { from: FR.exportClauseGroup1From, strict: F.exportClauseGroup1 }),
+  formalParametersGroup1: _attach(FR.formalParametersGroup1From, { from: FR.formalParametersGroup1From, strict: F.formalParametersGroup1 }),
+  namedImportsGroup1: _attach(FR.namedImportsGroup1From, { from: FR.namedImportsGroup1From, strict: F.namedImportsGroup1 }),
+  tupleTypeGroup1: _attach(FR.tupleTypeGroup1From, { from: FR.tupleTypeGroup1From, strict: F.tupleTypeGroup1 }),
 
   // Keyword factories
   false: F.false_,

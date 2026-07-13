@@ -115,11 +115,19 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_export_clause_optional1",
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_clause_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "export_clause_group1",
               "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
+                "author": "enrich"
               }
             },
             {
@@ -469,11 +477,19 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_named_imports_optional1",
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_named_imports_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "named_imports_group1",
               "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
+                "author": "enrich"
               }
             },
             {
@@ -6414,11 +6430,19 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_formal_parameters_optional1",
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_formal_parameters_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "formal_parameters_group1",
               "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
+                "author": "enrich"
               }
             },
             {
@@ -8257,11 +8281,19 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_enum_body_optional1",
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_enum_body_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "enum_body_group1",
               "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
+                "author": "enrich"
               }
             },
             {
@@ -10522,11 +10554,19 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_tuple_type_optional1",
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_tuple_type_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "tuple_type_group1",
               "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
+                "author": "enrich"
               }
             },
             {
@@ -10713,7 +10753,7 @@
       "named": true,
       "value": "type_identifier"
     },
-    "_export_clause_optional1": {
+    "_export_clause_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -10789,7 +10829,7 @@
         }
       ]
     },
-    "_named_imports_optional1": {
+    "_named_imports_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -10885,7 +10925,7 @@
         }
       ]
     },
-    "_formal_parameters_optional1": {
+    "_formal_parameters_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -10936,7 +10976,7 @@
       "named": true,
       "value": "jsx_opening_element_content"
     },
-    "_enum_body_optional1": {
+    "_enum_body_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -11041,7 +11081,7 @@
         }
       ]
     },
-    "_object_type_optional1": {
+    "_object_type_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -11206,7 +11246,7 @@
         }
       ]
     },
-    "_tuple_type_optional1": {
+    "_tuple_type_group1": {
       "type": "SEQ",
       "members": [
         {
@@ -13885,18 +13925,12 @@
     "_public_field_definition_abstract_first",
     "_public_field_definition_readonly_first",
     "_public_field_definition_accessor_opt",
-    "_export_clause_optional1",
     "_export_specifier_optional1",
-    "_named_imports_optional1",
     "_jsx_attribute_optional1",
-    "_formal_parameters_optional1",
     "__jsx_start_opening_element_optional1",
-    "_enum_body_optional1",
     "_infer_type_optional1",
     "_mapped_type_clause_optional1",
-    "_object_type_optional1",
     "_index_signature_optional1",
-    "_tuple_type_optional1",
     "_kw_optional_marker",
     "_kw_static_marker",
     "_kw_readonly_marker",

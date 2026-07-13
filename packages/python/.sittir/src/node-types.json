@@ -358,35 +358,46 @@
     "named": true,
     "fields": {
       "arguments": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "dictionary_splat",
-            "named": true
-          },
-          {
-            "type": "expression",
-            "named": true
-          },
-          {
-            "type": "keyword_argument",
-            "named": true
-          },
-          {
-            "type": "list_splat",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
+            "type": "argument_list_group1",
             "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "argument_list_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "dictionary_splat",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "keyword_argument",
+          "named": true
+        },
+        {
+          "type": "list_splat",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1090,15 +1101,11 @@
     "named": true,
     "fields": {
       "arguments": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "case_pattern",
+            "type": "list_pattern_group1",
             "named": true
           }
         ]
@@ -1445,6 +1452,21 @@
   {
     "type": "dict_pattern",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "dict_pattern_group1",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "dict_pattern_group1",
+    "named": true,
     "fields": {
       "key": {
         "multiple": true,
@@ -1525,7 +1547,7 @@
     },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "dict_pattern_kv",
@@ -1635,19 +1657,11 @@
     "named": true,
     "fields": {
       "entries": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "dictionary_splat",
-            "named": true
-          },
-          {
-            "type": "pair",
+            "type": "dictionary_group1",
             "named": true
           }
         ]
@@ -1679,6 +1693,25 @@
         },
         {
           "type": "if_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "dictionary_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "dictionary_splat",
+          "named": true
+        },
+        {
+          "type": "pair",
           "named": true
         }
       ]
@@ -2686,11 +2719,26 @@
       "required": false,
       "types": [
         {
-          "type": "case_pattern",
+          "type": "list_pattern_group1",
           "named": true
         },
         {
           "type": "pattern",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "list_pattern_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "case_pattern",
           "named": true
         }
       ]
@@ -3460,7 +3508,7 @@
       "required": false,
       "types": [
         {
-          "type": "case_pattern",
+          "type": "list_pattern_group1",
           "named": true
         },
         {

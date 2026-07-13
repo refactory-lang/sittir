@@ -31,7 +31,24 @@ describe('isInlineSafe — exactly 1 non-choice field/symbol slot after dropping
   it('bare repeat1 body is inline-safe (a list is one flat slot)', () => expect(isInlineSafe({ type: 'REPEAT1', content: field('parameter', sym('parameter')) })).toBe(true));
   it('bare repeat body is inline-safe', () => expect(isInlineSafe({ type: 'REPEAT', content: sym('statement') })).toBe(true));
   // Flat separated-list `commaSep1(E)` = `seq(E, repeat(seq(SEP, E)), optional(SEP))`
-  // is ONE logical repeated slot → inline-flat. The top-level `repeat` member is
-  // caught by seqHasTopLevelRepeat (formerly a dedicated isSeparatedList probe).
-  it('flat separated-list seq(E, repeat(seq(SEP,E)), opt(SEP)) is inline-safe', () => expect(isInlineSafe(seq(sym('expr'), { type: 'REPEAT', content: seq(str(','), sym('expr')) }, opt(str(','))))).toBe(true));
+  // has a stranded optional trailing/leading separator flank sibling to the
+  // repeat — genuine per-instance separator variability (the list may or may
+  // not end with a trailing SEP). It is NO LONGER inline-safe: it falls
+  // through to the visible-promotion path (AssembledSeparatedList), same as
+  // a multi-slot/bare-choice body. Confirmed via Task 1's live probe on
+  // rust's `parameters` rule (`_parameters_optional1`/`parameters_group1`).
+  it('separator-variable seq(E, repeat(seq(SEP,E)), opt(SEP)) is NOT inline-safe (genuine separator variability)', () => expect(isInlineSafe(seq(sym('expr'), { type: 'REPEAT', content: seq(str(','), sym('expr')) }, opt(str(','))))).toBe(false));
+
+  // A repeat with NO adjacent optional/choice-of-blank separator flank, and a
+  // bare literal separator, has no genuine variability — stays inline-safe.
+  it('seq(E, repeat(seq(SEP,E))) with NO trailing flank is still inline-safe', () => expect(isInlineSafe(seq(sym('expr'), { type: 'REPEAT', content: seq(str(','), sym('expr')) }))).toBe(true));
+
+  // A repeat whose separator is itself a CHOICE (non-literal, e.g.
+  // tree-sitter-typescript's `sepBy1(choice(',', $._semicolon), X)`) has
+  // genuine per-instance separator variability regardless of any flank.
+  it('seq with repeat separator = CHOICE (non-literal) is NOT inline-safe', () => expect(isInlineSafe(seq(sym('expr'), { type: 'REPEAT', content: seq(choice(str(','), sym('_semicolon')), sym('expr')) }))).toBe(false));
+
+  // Bare repeat body whose OWN separator is non-literal is also NOT
+  // inline-safe (no enclosing seq needed for this check).
+  it('bare repeat body with CHOICE-shaped inner separator is NOT inline-safe', () => expect(isInlineSafe({ type: 'REPEAT', content: seq(choice(str(','), sym('_semicolon')), sym('expr')) })).toBe(false));
 });

@@ -39,6 +39,7 @@ export interface IsGuards {
     ArrowFunctionParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrowFunctionParameter };
     ClassBodyMethodSig<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMethodSig };
     ClassHeritageExtendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassHeritageExtendsClause };
+    ExportClauseGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExportClauseGroup1 };
     ExportStatementDefault<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefault };
     ExportStatementDefaultFromArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
     ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
@@ -48,9 +49,12 @@ export interface IsGuards {
     ExportStatementNamespaceExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementNamespaceExport };
     ExportStatementTypeExport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExportStatementTypeExport };
     ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
+    FormalParametersGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FormalParametersGroup1 };
     ImportClauseDefaultImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImportClauseDefaultImport };
     ImportClauseGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImportClauseGroup1 };
+    NamedImportsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._NamedImportsGroup1 };
     PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+    TupleTypeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TupleTypeGroup1 };
     abstractClassDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractMethodSignature };
     addingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AddingTypeAnnotation };
@@ -236,6 +240,7 @@ export interface AssertGuards {
     ArrowFunctionParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrowFunctionParameter };
     ClassBodyMethodSig(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMethodSig };
     ClassHeritageExtendsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassHeritageExtendsClause };
+    ExportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportClauseGroup1 };
     ExportStatementDefault(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefault };
     ExportStatementDefaultFromArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
     ExportStatementDefaultFromArmClauseFrom(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
@@ -245,9 +250,12 @@ export interface AssertGuards {
     ExportStatementNamespaceExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementNamespaceExport };
     ExportStatementTypeExport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportStatementTypeExport };
     ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
+    FormalParametersGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FormalParametersGroup1 };
     ImportClauseDefaultImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
     ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseGroup1 };
+    NamedImportsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._NamedImportsGroup1 };
     PublicFieldDefinitionDeclareFirst(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+    TupleTypeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TupleTypeGroup1 };
     abstractClassDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractMethodSignature };
     addingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AddingTypeAnnotation };
@@ -456,7 +464,7 @@ const _supertype_declaration_ids = new Set<number>([224, 226, 221, 184, 183, 271
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
 const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 421, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
+const _supertype_primaryType_ids = new Set<number>([334, 335, 426, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
@@ -699,8 +707,13 @@ const _kindIdByKind = new Map<string, number>([
     ["union_type", TSKindId.UnionType],
     ["intersection_type", TSKindId.IntersectionType],
     ["function_type", TSKindId.FunctionType],
+    ["_export_clause_group1", TSKindId._ExportClauseGroup1],
     ["_import_clause_group1", TSKindId._ImportClauseGroup1],
+    ["_named_imports_group1", TSKindId._NamedImportsGroup1],
     ["_catch_clause_group1", TSKindId._CatchClauseGroup1],
+    ["_formal_parameters_group1", TSKindId._FormalParametersGroup1],
+    ["_enum_body_group1", TSKindId._EnumBodyGroup1],
+    ["_tuple_type_group1", TSKindId._TupleTypeGroup1],
     ["_ambient_declaration_global", TSKindId.AmbientDeclarationGlobal],
     ["_ambient_declaration_module", TSKindId.AmbientDeclarationModule],
     ["object_type_content", TSKindId.ObjectTypeContent],
@@ -744,6 +757,7 @@ export const is = {
     ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
     ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
     ClassHeritageExtendsClause: _g(TSKindId.ClassHeritageExtendsClause),
+    ExportClauseGroup1: _g(TSKindId._ExportClauseGroup1),
     ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
     ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
     ExportStatementDefaultFromArmClauseFrom: _g(TSKindId.ExportStatementDefaultFromArmClauseFrom),
@@ -753,9 +767,12 @@ export const is = {
     ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
     ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
     ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
+    FormalParametersGroup1: _g(TSKindId._FormalParametersGroup1),
     ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
     ImportClauseGroup1: _g(TSKindId._ImportClauseGroup1),
+    NamedImportsGroup1: _g(TSKindId._NamedImportsGroup1),
     PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
+    TupleTypeGroup1: _g(TSKindId._TupleTypeGroup1),
     abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
     abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
     addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
@@ -965,6 +982,7 @@ export const assert = {
     ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
     ClassBodyMethodSig: _makeAssert('ClassBodyMethodSig', is.ClassBodyMethodSig as _AnyGuard),
     ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
+    ExportClauseGroup1: _makeAssert('ExportClauseGroup1', is.ExportClauseGroup1 as _AnyGuard),
     ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
     ExportStatementDefaultFromArm: _makeAssert('ExportStatementDefaultFromArm', is.ExportStatementDefaultFromArm as _AnyGuard),
     ExportStatementDefaultFromArmClauseFrom: _makeAssert('ExportStatementDefaultFromArmClauseFrom', is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard),
@@ -974,9 +992,12 @@ export const assert = {
     ExportStatementNamespaceExport: _makeAssert('ExportStatementNamespaceExport', is.ExportStatementNamespaceExport as _AnyGuard),
     ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
     ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
+    FormalParametersGroup1: _makeAssert('FormalParametersGroup1', is.FormalParametersGroup1 as _AnyGuard),
     ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
     ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
+    NamedImportsGroup1: _makeAssert('NamedImportsGroup1', is.NamedImportsGroup1 as _AnyGuard),
     PublicFieldDefinitionDeclareFirst: _makeAssert('PublicFieldDefinitionDeclareFirst', is.PublicFieldDefinitionDeclareFirst as _AnyGuard),
+    TupleTypeGroup1: _makeAssert('TupleTypeGroup1', is.TupleTypeGroup1 as _AnyGuard),
     abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
     abstractMethodSignature: _makeAssert('abstractMethodSignature', is.abstractMethodSignature as _AnyGuard),
     addingTypeAnnotation: _makeAssert('addingTypeAnnotation', is.addingTypeAnnotation as _AnyGuard),

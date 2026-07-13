@@ -903,7 +903,7 @@ function emitSingleFieldFactory(
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
 	const variantName = node.modelType === 'group' ? resolvePolymorphFormVariantName(node as AssembledGroup) : undefined;
 	const elemType = `T.${node.typeName}.Config['${soleField.configKey}']`;
-	const paramName = soleField.propertyName;
+	const paramName = soleField.paramName;
 	const fieldOptional = !isRequired(soleField);
 	const optMark = fieldOptional ? '?' : '';
 

@@ -14,6 +14,16 @@ That fix only covers the `ruleSep` path. The parallel `slotValueSep` fallback ex
 
 **Fix, if/when a real kind hits this:** thread the same nonterminal-separator detection Task 7 added for the `ruleSep` path into the `slotValueSep` path — likely requires `stampSeparatorOnValues` (or its caller) to accept a "nonterminal, resolve at runtime via struct field" marker instead of only a literal string.
 
+## `_concatInSourceOrder` sorts text-collapsed leaves (no `$span`/`$childIndex`) to the end, losing source order
+
+**Found during:** `isInlineSafe` separator-variability qualification follow-on (rust render-emptiness regression investigation), `packages/codegen/src/emitters/wrap.ts`, `_concatInSourceOrder` (~line 1384, emitted runtime helper).
+
+`_concatInSourceOrder` restores cross-kind source order for a repeated heterogeneous-union slot by sorting each element's `$span.start` (byte offset) or `$childIndex` (position in parent) — text-collapsed scalar leaves have neither, so they fall back to `Number.MAX_SAFE_INTEGER` and sort to the end, stable among themselves. When a real slot mixes text-collapsed leaves WITH span/childIndex-bearing elements, this pushes the leaves after everything else regardless of their true source position — reproduced on rust's `tuple_pattern`: `(x, ..)` (a text-collapsed `..` rest-marker leaf mixed with a real `identifier` element) renders as `(.., x)` instead of `(x, ..)`, a 1-2 mismatch in `read-render-parseAstMatchPass`.
+
+**Status: deferred, not blocking.** Small (1-2 mismatches), isolated to this specific mixed-leaf-shape ordering case, and not required to resolve the separator-variability qualification's own regression (which Bugs A and B above fully account for).
+
+**Fix, if/when prioritized:** text-collapsed leaves need SOME source-position signal to sort correctly among span-bearing siblings — likely requires either preserving a positional marker through the text-collapse step, or falling back to declaration order relative to neighboring spans instead of a global end-of-list sort.
+
 ## `emitters/test.ts` generates broken minimal-config tests for `separatedList` kinds
 
 **Found during:** separator-as-slot plan, Tasks 6 and 8.

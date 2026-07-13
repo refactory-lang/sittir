@@ -627,6 +627,7 @@ function collectSeparatedListContentStorageKeys(contentSlot: AssembledNontermina
 function collectSeparatedListWireKeyTypes(
 	contentSlot: AssembledNonterminal,
 	canonicalKeys: ReadonlySet<string>,
+	fallbackStorageKey: string,
 	nodeMap: NodeMap
 ): ReadonlyMap<string, string> {
 	const candidates = collectSeparatedListContentStorageKeys(contentSlot, nodeMap);
@@ -636,15 +637,18 @@ function collectSeparatedListWireKeyTypes(
 		if (canonicalKeys.has(k)) continue;
 		keyTypes.set(k, elemType);
 	}
-	// `resolveSlotStoreExpr` always appends the target `_content` storage key
-	// itself as a final probe fallback (its normal behavior for ANY slot
-	// whose nominal key isn't already among the concrete candidates — see
-	// its doc comment) — so `data._content` is read regardless, even though
-	// it is never a REAL wire key. Widen for it too unless `_content`
-	// already happens to be this kind's canonical key (the common case for
-	// genuinely multi-kind content, where `types.ts`'s own `_slots`-derived
-	// naming already fell back to the same generic 'content' name).
-	if (!canonicalKeys.has('_content')) keyTypes.set('_content', elemType);
+	// `resolveSlotStoreExpr` always appends the target slot's OWN storage
+	// key as a final probe fallback (its normal behavior for ANY slot whose
+	// nominal key isn't already among the concrete candidates — see its doc
+	// comment) — so `data[fallbackStorageKey]` is read regardless, even
+	// though it is never a REAL wire key. `fallbackStorageKey` is the
+	// model's OWN derived slot name (Bug B fix — `node.fields`'s real
+	// storage key, e.g. `_pattern`, NOT a hardcoded `_content`; single-field
+	// kinds pass their sole field's storage key here). Widen for it too
+	// unless it already happens to be this kind's canonical key (the common
+	// case for genuinely multi-kind content, where `types.ts`'s own
+	// `_slots`-derived naming already fell back to the same generic name).
+	if (!canonicalKeys.has(fallbackStorageKey)) keyTypes.set(fallbackStorageKey, elemType);
 	return keyTypes;
 }
 
@@ -720,19 +724,41 @@ function emitSeparatedListWrap(
 	const lines: string[] = [];
 
 	const contentSlot = buildSeparatedListContentSlot(node);
+	// Bug B fix (separator-as-slot follow-up): a separatedList's elements do
+	// NOT always all bucket under one generic "content" name — `node.fields`
+	// (the SAME `_slots`-derived source `types.ts` derives `T.<TypeName>`'s
+	// declared members from) is the model's OWN name for the real slot(s),
+	// e.g. `_pattern`/`_parameters`/`_use_clause`/`_where_predicate` — NOT
+	// always `_content`. Hardcoding `_content` here (independent of
+	// `node.fields`) made anything whose real slot name differs throw a hard
+	// "Missing field" at render time (or silently happen to coincide with
+	// `_content` by luck, e.g. `tuple_pattern_group1`'s unnamed-CHOICE
+	// element). `_content` (the local var below) remains an INTERNAL bucket
+	// used only to feed `_hasSeparatorFlank`/`_separatorKindOf` (which need
+	// the full element list's span boundaries, not any one field's subset);
+	// it is no longer emitted as a storage key or accessor name itself.
+	//
+	// Single-field kinds (the common case: one field spans the whole element
+	// union) rename the emitted property/accessor to the model's real slot
+	// name. Multi-field kinds (e.g. a dict-pattern-shaped separatedList whose
+	// elements route to more than one real slot by kind) route EACH field
+	// through the exact same per-field drilling logic
+	// `emitFieldCarryingWrap` uses (`emitFieldStorageLines`/
+	// `emitFieldAccessorLines`) instead of one shared bucket.
+	const canonical = node.fields.find((f) => f.multiple) ?? node.fields[0]!;
 	// `node.fields` (Task-2 `_slots` stub) is the SAME source `types.ts`
 	// derives `T.<TypeName>`'s declared members from — the canonical-key
 	// exclusion set for `collectSeparatedListWireKeyTypes` must match it
 	// exactly, or a still-declared key gets redundantly (and incoherently)
 	// re-widened.
 	const canonicalKeys = new Set(node.fields.map((f) => f.storageKey));
-	const wireKeyTypes = collectSeparatedListWireKeyTypes(contentSlot, canonicalKeys, nodeMap);
+	const wireKeyTypes = collectSeparatedListWireKeyTypes(contentSlot, canonicalKeys, canonical.storageKey, nodeMap);
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
 	const candidateStorageKeys = collectSeparatedListContentStorageKeys(contentSlot, nodeMap);
-	const contentModel: SlotModel = { name: 'content', storageKey: '_content', arity: 'many' };
+	const contentModel: SlotModel = { name: canonical.name, storageKey: canonical.storageKey, arity: 'many' };
 	const { storeExpr, accessorBody } = resolveSlotDrillExprs(contentModel, {
 		dataExpr: 'data',
 		elemType: fieldElementType(contentSlot, nodeMap),
@@ -750,7 +776,11 @@ function emitSeparatedListWrap(
 			lines.push(`    $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)} as const,`);
 		}
 	}
-	lines.push('    _content: _content,');
+	if (node.fields.length > 1) {
+		emitFieldStorageLines(node.fields, node.kind, 'data', lines, kindEntries, nodeMap);
+	} else {
+		lines.push(`    ${canonical.storageKey}: _content,`);
+	}
 	if (node.separatorRule) {
 		const candidateKindNames = collectSeparatorCandidateKindNames(node.separatorRule);
 		const candidateExprs = candidateKindNames
@@ -766,7 +796,11 @@ function emitSeparatedListWrap(
 		lines.push(`    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", ${bothFlanksOptional}),`);
 	}
 	lines.push('');
-	lines.push(`    content() { ${accessorBody}; },`);
+	if (node.fields.length > 1) {
+		emitFieldAccessorLines(node.fields, 'data', lines, kindEntries, nodeMap);
+	} else {
+		lines.push(`    ${canonical.name}() { ${accessorBody}; },`);
+	}
 	lines.push('    $with: {},');
 	lines.push('  }, methodsEngine);');
 	lines.push('}');
@@ -824,6 +858,107 @@ function computeCollidedReclaimKinds(
 	return collided;
 }
 
+/**
+ * Emit per-field `_<name>: <storeExpr>,` storage assignments for `fields`,
+ * reusing the exact same per-field kindEnum/verbatim/alias/candidate-
+ * storage-key drilling logic regardless of which caller's kind classifies as
+ * (`'branch'`/`'group'` via `emitFieldCarryingWrap`, or a MULTI-field
+ * `'separatedList'` via `emitSeparatedListWrap` — e.g. a separatedList whose
+ * elements route to more than one real slot by kind, not one shared
+ * bucket). Extracted so both callers share ONE source for this drilling
+ * decision tree instead of two copies drifting apart.
+ */
+function emitFieldStorageLines(
+	fields: readonly AssembledNonterminal[],
+	ownerKind: string,
+	dataExpr: string,
+	lines: string[],
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): void {
+	// Option-B reclamation guard (pre-pass): each kindEnum slot reclaims its
+	// member tokens from `$other` by kindId. If two kindEnum slots on THIS kind
+	// claim the same member kind, a `$other` token is ambiguous between them (the
+	// `??` fallback would award it to whichever slot is read first). Detect such
+	// members up front, warn, and SUPPRESS the auto-reclaim for them — those slots
+	// fall back to normal field population / explicit fielding (option C).
+	const collidedReclaimKinds = computeCollidedReclaimKinds(fields, ownerKind, nodeMap, kindEntries);
+	for (const f of fields) {
+		// f IS AssembledNonterminal — read getters directly (DRY: single source for arity/storageKey).
+		const aliasRewrite = resolveSlotAliasRewrite(f);
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
+		const allowedKinds =
+			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
+				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
+				: undefined;
+		// For kind-origin slots whose values reference one or more concrete
+		// kinds (possibly via a supertype), the native reader populates
+		// `_<concrete_kind>` not `_<slot.name>`. Probe each concrete key.
+		const candidateStorageKeys = collectConcreteStorageKeys(f, nodeMap);
+		// Option B: for kindEnum slots, build the numeric-kindId list for the
+		// `$other` reclamation fallback (anonymous discriminant tokens). Only
+		// catalog-resolvable members (real parser symbols) can appear in $other.
+		const reclaimKindIdsExpr =
+			storageInfo.kind === 'kindEnum'
+				? (() => {
+						const reclaimKinds = storageInfo.enumKinds.filter(
+							(k) => hasCatalogEntry(kindEntries, k) && !collidedReclaimKinds.has(k)
+						);
+						const ids = reclaimKinds.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
+						return ids.length > 0 ? `[${ids.join(', ')}]` : undefined;
+					})()
+				: undefined;
+		const { storeExpr } = resolveSlotDrillExprs(f, {
+			dataExpr,
+			elemType: fieldElementType(f, nodeMap),
+			required: isRequired(f),
+			nonEmpty: isNonEmpty(f),
+			alias: aliasRewrite,
+			storageInfo,
+			allowedKinds,
+			candidateStorageKeys,
+			reclaimKindIdsExpr
+		});
+		lines.push(`    ${f.storageKey}: ${storeExpr},`);
+	}
+}
+
+/**
+ * Emit per-field `<propName>() { ... },` inline accessor methods for
+ * `fields` — the accessor-side counterpart to `emitFieldStorageLines`,
+ * shared for the same reason (branch/group AND multi-field separatedList
+ * both need identical per-field drilling for their accessors).
+ */
+function emitFieldAccessorLines(
+	fields: readonly AssembledNonterminal[],
+	dataExpr: string,
+	lines: string[],
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): void {
+	for (const f of fields) {
+		const propName = f.propertyName;
+		const aliasRewrite = resolveSlotAliasRewrite(f);
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
+		const allowedKinds =
+			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
+				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
+				: undefined;
+		const { accessorBody } = resolveSlotDrillExprs(f, {
+			dataExpr,
+			elemType: fieldElementType(f, nodeMap),
+			required: isRequired(f),
+			nonEmpty: isNonEmpty(f),
+			alias: aliasRewrite,
+			storageInfo,
+			allowedKinds
+		});
+		lines.push(`    ${propName}() { ${accessorBody}; },`);
+	}
+}
+
 function emitFieldCarryingWrap(
 	node: WrapNode,
 	fields: readonly AssembledNonterminal[],
@@ -857,53 +992,7 @@ function emitFieldCarryingWrap(
 		}
 	}
 	// Named fields -> `_<name>` storage (enumerable).
-	//
-	// Option-B reclamation guard (pre-pass): each kindEnum slot reclaims its
-	// member tokens from `$other` by kindId. If two kindEnum slots on THIS kind
-	// claim the same member kind, a `$other` token is ambiguous between them (the
-	// `??` fallback would award it to whichever slot is read first). Detect such
-	// members up front, warn, and SUPPRESS the auto-reclaim for them — those slots
-	// fall back to normal field population / explicit fielding (option C).
-	const collidedReclaimKinds = computeCollidedReclaimKinds(fields, node.kind, nodeMap, kindEntries);
-	for (const f of fields) {
-		// f IS AssembledNonterminal — read getters directly (DRY: single source for arity/storageKey).
-		const aliasRewrite = resolveSlotAliasRewrite(f);
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
-		const allowedKinds =
-			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
-				: undefined;
-		// For kind-origin slots whose values reference one or more concrete
-		// kinds (possibly via a supertype), the native reader populates
-		// `_<concrete_kind>` not `_<slot.name>`. Probe each concrete key.
-		const candidateStorageKeys = collectConcreteStorageKeys(f, nodeMap);
-		// Option B: for kindEnum slots, build the numeric-kindId list for the
-		// `$other` reclamation fallback (anonymous discriminant tokens). Only
-		// catalog-resolvable members (real parser symbols) can appear in $other.
-		const reclaimKindIdsExpr =
-			storageInfo.kind === 'kindEnum'
-				? (() => {
-						const reclaimKinds = storageInfo.enumKinds.filter(
-							(k) => hasCatalogEntry(kindEntries, k) && !collidedReclaimKinds.has(k)
-						);
-						const ids = reclaimKinds.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
-						return ids.length > 0 ? `[${ids.join(', ')}]` : undefined;
-					})()
-				: undefined;
-		const { storeExpr } = resolveSlotDrillExprs(f, {
-			dataExpr: 'data',
-			elemType: fieldElementType(f, nodeMap),
-			required: isRequired(f),
-			nonEmpty: isNonEmpty(f),
-			alias: aliasRewrite,
-			storageInfo,
-			allowedKinds,
-			candidateStorageKeys,
-			reclaimKindIdsExpr
-		});
-		lines.push(`    ${f.storageKey}: ${storeExpr},`);
-	}
+	emitFieldStorageLines(fields, node.kind, 'data', lines, kindEntries, nodeMap);
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $other is a $-prefixed metadata key, not a _<name> storage key, so
 	// $other doesn't have the `_` prefix convention — access via data.$other
@@ -922,27 +1011,7 @@ function emitFieldCarryingWrap(
 	lines.push('');
 
 	// Inline method shorthand accessors: `name()` returns drilled value via `this._<name>`.
-	for (const f of fields) {
-		const propName = f.propertyName;
-		// f IS AssembledNonterminal — read getters directly (DRY: single source for arity/storageKey).
-		const aliasRewrite = resolveSlotAliasRewrite(f);
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
-		const allowedKinds =
-			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
-				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...valueParseKindsOf(f)])]
-				: undefined;
-		const { accessorBody } = resolveSlotDrillExprs(f, {
-			dataExpr: 'data',
-			elemType: fieldElementType(f, nodeMap),
-			required: isRequired(f),
-			nonEmpty: isNonEmpty(f),
-			alias: aliasRewrite,
-			storageInfo,
-			allowedKinds
-		});
-		lines.push(`    ${propName}() { ${accessorBody}; },`);
-	}
+	emitFieldAccessorLines(fields, 'data', lines, kindEntries, nodeMap);
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const { accessorBody } = resolveSlotDrillExprs(childrenConfig.slot, {

@@ -484,13 +484,13 @@ describe('field_initializer', () => {
 
 describe('field_initializer_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.fieldInitializerList({});
+    const node = ir.fieldInitializerList();
     expect(node.$type).toBe(TSKindId.FieldInitializerList);
     expect(node.$source).toBe(2);
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.fieldInitializerList({});
-    expect(() => node.$render!()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.fieldInitializerList({ $type: TSKindId._FieldInitializerListGroup1, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1410,13 +1410,13 @@ describe('tuple_expression', () => {
 
 describe('tuple_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.tuplePattern({});
+    const node = ir.tuplePattern();
     expect(node.$type).toBe(TSKindId.TuplePattern);
     expect(node.$source).toBe(2);
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.tuplePattern({});
-    expect(() => node.$render!()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.tuplePattern({ $type: TSKindId._TuplePatternGroup1, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1576,13 +1576,13 @@ describe('use_as_clause', () => {
 
 describe('use_bounds', () => {
   it('factory produces correct type', () => {
-    const node = ir.useBounds({});
+    const node = ir.useBounds();
     expect(node.$type).toBe(TSKindId.UseBounds);
     expect(node.$source).toBe(2);
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.useBounds({});
-    expect(() => node.$render!()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.useBounds({ $type: TSKindId._UseBoundsGroup1, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1683,6 +1683,102 @@ describe('visibility_modifier_group1', () => {
     const node = ir.visibilityModifierGroup1({ type: "self" } as never);
     expect(node.$type).toBe(TSKindId._VisibilityModifierGroup1);
     expect(node.$source).toBe(2);
+  });
+});
+
+describe('field_initializer_list_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.fieldInitializerListGroup1({});
+    expect(node.$type).toBe(TSKindId._FieldInitializerListGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.fieldInitializerListGroup1({});
+    expect(() => node.$render!()).not.toThrow();
+  });
+});
+
+describe('parameters_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parametersGroup1({ attributedParameter: [{ $type: TSKindId.AttributedParameter, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any } as any] });
+    expect(node.$type).toBe(TSKindId._ParametersGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.parametersGroup1({ attributedParameter: [{ $type: TSKindId.AttributedParameter, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('slice_pattern_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.slicePatternGroup1({ pattern: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any] });
+    expect(node.$type).toBe(TSKindId._SlicePatternGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.slicePatternGroup1({ pattern: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('struct_pattern_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.structPatternGroup1({});
+    expect(node.$type).toBe(TSKindId._StructPatternGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.structPatternGroup1({});
+    expect(() => node.$render!()).not.toThrow();
+  });
+});
+
+describe('tuple_pattern_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tuplePatternGroup1({});
+    expect(node.$type).toBe(TSKindId._TuplePatternGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.tuplePatternGroup1({});
+    expect(() => node.$render!()).not.toThrow();
+  });
+});
+
+describe('use_bounds_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.useBoundsGroup1({});
+    expect(node.$type).toBe(TSKindId._UseBoundsGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.useBoundsGroup1({});
+    expect(() => node.$render!()).not.toThrow();
+  });
+});
+
+describe('use_list_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.useListGroup1({ useClause: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any] });
+    expect(node.$type).toBe(TSKindId._UseListGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.useListGroup1({ useClause: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('where_clause_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.whereClauseGroup1({ wherePredicate: [{ $type: TSKindId.WherePredicate, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, _bounds: { $type: TSKindId.TraitBounds, $text: 'test', $source: 2, $named: true , _bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any] } as any } as any] });
+    expect(node.$type).toBe(TSKindId._WhereClauseGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.whereClauseGroup1({ wherePredicate: [{ $type: TSKindId.WherePredicate, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, _bounds: { $type: TSKindId.TraitBounds, $text: 'test', $source: 2, $named: true , _bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any] } as any } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

@@ -548,6 +548,14 @@ export const ir = {
   whileExpression: _attach(FR.whileExpressionFrom, { from: FR.whileExpressionFrom, strict: F.whileExpression }),
   yieldExpression: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
   visibilityModifierGroup1: _attach(FR.visibilityModifierGroup1From, { from: FR.visibilityModifierGroup1From, strict: F.visibilityModifierGroup1 }),
+  fieldInitializerListGroup1: _attach(FR.fieldInitializerListGroup1From, { from: FR.fieldInitializerListGroup1From, strict: F.fieldInitializerListGroup1 }),
+  parametersGroup1: _attach(FR.parametersGroup1From, { from: FR.parametersGroup1From, strict: F.parametersGroup1 }),
+  slicePatternGroup1: _attach(FR.slicePatternGroup1From, { from: FR.slicePatternGroup1From, strict: F.slicePatternGroup1 }),
+  structPatternGroup1: _attach(FR.structPatternGroup1From, { from: FR.structPatternGroup1From, strict: F.structPatternGroup1 }),
+  tuplePatternGroup1: _attach(FR.tuplePatternGroup1From, { from: FR.tuplePatternGroup1From, strict: F.tuplePatternGroup1 }),
+  useBoundsGroup1: _attach(FR.useBoundsGroup1From, { from: FR.useBoundsGroup1From, strict: F.useBoundsGroup1 }),
+  useListGroup1: _attach(FR.useListGroup1From, { from: FR.useListGroup1From, strict: F.useListGroup1 }),
+  whereClauseGroup1: _attach(FR.whereClauseGroup1From, { from: FR.whereClauseGroup1From, strict: F.whereClauseGroup1 }),
 
   // Keyword factories
   crate: F.crate,
