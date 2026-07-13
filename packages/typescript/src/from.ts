@@ -367,8 +367,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "named_imports": return F.namedImports(...(children as Parameters<typeof F.namedImports>));
     case "namespace_export": return F.namespaceExport(children[0] as Parameters<typeof F.namespaceExport>[0]);
     case "object_type_content": return F.objectTypeContent(children[0] as Parameters<typeof F.objectTypeContent>[0]);
-    case "object_type_content_comma": return F.objectTypeContentComma(children as unknown as Parameters<typeof F.objectTypeContentComma>[0]);
-    case "object_type_content_semi": return F.objectTypeContentSemi(children as unknown as Parameters<typeof F.objectTypeContentSemi>[0]);
+    case "object_type_content_comma": return F.objectTypeContentComma(children as Parameters<typeof F.objectTypeContentComma>[0]);
+    case "object_type_content_semi": return F.objectTypeContentSemi(children as Parameters<typeof F.objectTypeContentSemi>[0]);
     case "parenthesized_expression": return F.parenthesizedExpression(children[0] as Parameters<typeof F.parenthesizedExpression>[0]);
     case "rest_pattern": return F.restPattern(children[0] as Parameters<typeof F.restPattern>[0]);
     case "sequence_expression": return F.sequenceExpression(...(children as Parameters<typeof F.sequenceExpression>));
@@ -1408,20 +1408,20 @@ export function objectTypeContentCommaFrom(...input: readonly (T.ExportStatement
   if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ObjectTypeContentComma) {
     const data = input[0];
     const stored = (data as unknown as { _content?: unknown })._content;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.objectTypeContentComma(children as unknown as Parameters<typeof F.objectTypeContentComma>[0]);
+    const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+    return F.objectTypeContentComma(children as Parameters<typeof F.objectTypeContentComma>[0]);
   }
-  return F.objectTypeContentComma(input as unknown as Parameters<typeof F.objectTypeContentComma>[0]);
+  return F.objectTypeContentComma(input as Parameters<typeof F.objectTypeContentComma>[0]);
 }
 
 export function objectTypeContentSemiFrom(...input: readonly (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.ObjectTypeContentSemi)[]): ReturnType<typeof F.objectTypeContentSemi> {
   if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ObjectTypeContentSemi) {
     const data = input[0];
     const stored = (data as unknown as { _content?: unknown })._content;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.objectTypeContentSemi(children as unknown as Parameters<typeof F.objectTypeContentSemi>[0]);
+    const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+    return F.objectTypeContentSemi(children as Parameters<typeof F.objectTypeContentSemi>[0]);
   }
-  return F.objectTypeContentSemi(input as unknown as Parameters<typeof F.objectTypeContentSemi>[0]);
+  return F.objectTypeContentSemi(input as Parameters<typeof F.objectTypeContentSemi>[0]);
 }
 
 export function omittingTypeAnnotationFrom(input: T.OmittingTypeAnnotation.Loose): ReturnType<typeof F.omittingTypeAnnotation> {

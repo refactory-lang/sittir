@@ -761,7 +761,7 @@ function emitContainerFrom(
  * Structurally mirrors `emitRepeatedContainerFrom` (rest-param `...input`,
  * self-NodeData `_content` unwrap) with ONE deliberate difference: the
  * resolved children are passed to the factory as the `elements` ARRAY
- * argument directly (`factory(children as unknown as Parameters<typeof
+ * argument directly (`factory(children as Parameters<typeof
  * factory>[0])`), never spread and never indexed — factories.ts's Task 6
  * signature is `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`,
  * not the old `factory(...children: T[])` `emitRepeatedContainerFrom`
@@ -772,6 +772,22 @@ function emitContainerFrom(
  * (found in spec-compliance review of Task 6, confirmed via code reading:
  * `_assertNonEmpty` is a no-op outside `SITTIR_DEBUG`, so the mis-binding
  * compiled and ran silently rather than throwing).
+ *
+ * Deliberately NOT `as unknown as Parameters<...>` (the cast pattern that
+ * let the original bug hide from tsgo undetected) — empirically confirmed
+ * (`tsgo` against a scratch repro) that a DIRECT cast from a `readonly`
+ * array type to the tuple-shaped `NonEmptyArray<T>` target IS accepted as
+ * "sufficiently overlapping" (tsgo TS2352's own comparability rule), for
+ * both the rest-param `input` (already `readonly (...)[]`-typed) and the
+ * self-NodeData-unwrap `children` local, PROVIDED that local carries an
+ * explicit `readonly unknown[]` annotation — its inferred type otherwise
+ * widens to `any[]` (via the `Array.isArray` ternary), which tsgo does
+ * reject directly. A narrower cast means a genuinely wrong shape at one of
+ * these two remaining opaque-`unknown`-origin sites (the self-NodeData
+ * unwrap's `stored` read, and `_wrapWithChildren`'s own `children` param)
+ * would now surface as a real tsgo error instead of silently laundering
+ * through `unknown`, closing the exact gap that let this bug ship
+ * undetected the first time.
  *
  * `options` is intentionally omitted on both paths (fresh input and
  * self-NodeData unwrap) — matches pre-Task-6 behavior, which had no
@@ -798,7 +814,7 @@ function emitSeparatedListFrom(
 	if (!hasNumericDiscriminant) {
 		return [
 			`export function ${fn}(...input: readonly (${elemType} | ${tName})[]): ${returnType} {`,
-			`  return ${factory}(input as unknown as Parameters<typeof ${factory}>[0]);`,
+			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 			'}'
 		].join('\n');
 	}
@@ -808,10 +824,10 @@ function emitSeparatedListFrom(
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
 		`    const stored = (data as unknown as { _content?: unknown })._content;`,
-		`    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
-		`    return ${factory}(children as unknown as Parameters<typeof ${factory}>[0]);`,
+		`    const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
+		`    return ${factory}(children as Parameters<typeof ${factory}>[0]);`,
 		`  }`,
-		`  return ${factory}(input as unknown as Parameters<typeof ${factory}>[0]);`,
+		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 		'}'
 	].join('\n');
 }
@@ -1453,8 +1469,13 @@ function emitWrapWithChildrenTable(
 		} else if (e.childSurface === 'array') {
 			// 'separatedList' — the whole array IS the `elements` argument, never
 			// spread and never indexed. See `emitSeparatedListFrom`'s doc comment.
+			// Direct cast (no `as unknown` intermediate) — `children`'s own
+			// declared param type is already `readonly unknown[]`, which tsgo
+			// accepts as directly comparable to the tuple-shaped
+			// `NonEmptyArray<T>` target (confirmed empirically; see
+			// `emitSeparatedListFrom`'s doc comment for the same finding).
 			lines.push(
-				`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(children as unknown as Parameters<typeof F.${e.factoryName}>[0]);`
+				`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(children as Parameters<typeof F.${e.factoryName}>[0]);`
 			);
 		} else {
 			lines.push(
