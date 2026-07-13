@@ -1909,32 +1909,6 @@ export interface ObjectTransport {
   _properties?: Array<ObjectPropertiesTransportSlot>
 }
 
-export interface ObjectTypeContentCommaTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _content?: Array<ObjectTypeContentCommaContentTransportSlot>
-  _leading_sep?: boolean
-  _trailing_sep?: boolean
-}
-
-export interface ObjectTypeContentSemiTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _content?: Array<ObjectTypeContentSemiContentTransportSlot>
-  _leading_sep?: boolean
-  _trailing_sep?: boolean
-}
-
 export interface ObjectTypeContentTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1943,7 +1917,10 @@ export interface ObjectTypeContentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: ObjectTypeContentContentTransportSlot
+  _content?: Array<ObjectTypeContentContentTransportSlot>
+  _leading_sep?: boolean
+  _trailing_sep?: boolean
+  _separator_kind?: number
 }
 
 export interface ObjectTypeOptional1Transport {

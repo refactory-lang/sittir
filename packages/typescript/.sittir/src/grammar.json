@@ -11331,27 +11331,23 @@
       }
     },
     "object_type_content": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "object_type_content_comma"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "object_type_content_semi"
-        }
-      ]
-    },
-    "object_type_content_comma": {
       "type": "SEQ",
       "members": [
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": ","
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "STRING",
+                  "value": ";"
+                }
+              ]
             },
             {
               "type": "BLANK"
@@ -11396,8 +11392,17 @@
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "STRING",
-                    "value": ","
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ";"
+                      }
+                    ]
                   },
                   {
                     "type": "CHOICE",
@@ -11435,114 +11440,19 @@
         },
         {
           "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": ","
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        }
-      ]
-    },
-    "object_type_content_semi": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": ";"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "SEQ",
           "members": [
             {
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "export_statement"
+                  "type": "STRING",
+                  "value": ","
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "property_signature"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "call_signature"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "construct_signature"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "index_signature"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "method_signature"
+                  "type": "STRING",
+                  "value": ";"
                 }
               ]
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ";"
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "export_statement"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "property_signature"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "call_signature"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "construct_signature"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "index_signature"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "method_signature"
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": ";"
             },
             {
               "type": "BLANK"
@@ -13191,10 +13101,6 @@
       "object",
       "object_pattern",
       "object_type"
-    ],
-    [
-      "object_type_content_comma",
-      "object_type_content_semi"
     ],
     [
       "primary_expression",

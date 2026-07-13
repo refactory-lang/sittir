@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 426,
+  "nodeCount": 424,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -3146,24 +3146,6 @@
       }
     },
     "object_type_content": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "object_type_content_comma": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "object_type_content_semi": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -18811,80 +18793,13 @@
     },
     {
       "kind": "object_type_content",
-      "modelType": "branch",
+      "modelType": "separatedList",
       "typeName": "ObjectTypeContent",
       "factoryName": "objectTypeContent",
       "irKey": "objectTypeContent",
       "hidden": false,
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "object_type_content_comma",
-              "parseKind": "object_type_content_comma",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "object_type_content_semi",
-              "parseKind": "object_type_content_semi",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "object_type_content_comma",
-              "object_type_content_semi"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ]
-    },
-    {
-      "kind": "object_type_content_comma",
-      "modelType": "separatedList",
-      "typeName": "ObjectTypeContentComma",
-      "factoryName": "objectTypeContentComma",
-      "irKey": "objectTypeContentComma",
-      "hidden": false,
       "nonEmpty": true,
-      "hasNonterminalSeparator": false,
-      "leadingMode": "optional",
-      "trailingMode": "optional",
-      "elementKinds": [
-        "export_statement",
-        "property_signature",
-        "call_signature",
-        "construct_signature",
-        "index_signature",
-        "method_signature"
-      ],
-      "factoryShape": "spread"
-    },
-    {
-      "kind": "object_type_content_semi",
-      "modelType": "separatedList",
-      "typeName": "ObjectTypeContentSemi",
-      "factoryName": "objectTypeContentSemi",
-      "irKey": "objectTypeContentSemi",
-      "hidden": false,
-      "nonEmpty": true,
-      "hasNonterminalSeparator": false,
+      "hasNonterminalSeparator": true,
       "leadingMode": "optional",
       "trailingMode": "optional",
       "elementKinds": [

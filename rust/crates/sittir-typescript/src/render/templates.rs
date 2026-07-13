@@ -1166,21 +1166,9 @@ pub struct ObjectPatternTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "object_type_content_comma.jinja", escape = "none")]
-pub struct ObjectTypeContentCommaTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "object_type_content_semi.jinja", escape = "none")]
-pub struct ObjectTypeContentSemiTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "object_type_content.jinja", escape = "none")]
 pub struct ObjectTypeContentTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
+    pub content: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

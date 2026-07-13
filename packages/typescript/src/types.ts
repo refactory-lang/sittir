@@ -269,8 +269,6 @@ export const enum SyntaxKind {
   ObjectPattern = "object_pattern",
   ObjectType = "object_type",
   ObjectTypeContent = "object_type_content",
-  ObjectTypeContentComma = "object_type_content_comma",
-  ObjectTypeContentSemi = "object_type_content_semi",
   OmittingTypeAnnotation = "omitting_type_annotation",
   OptingTypeAnnotation = "opting_type_annotation",
   OptionalParameter = "optional_parameter",
@@ -797,74 +795,71 @@ export const enum TSKindId {
   AmbientDeclarationGlobal = 354,
   AmbientDeclarationModule = 355,
   ObjectTypeContent = 356,
-  ObjectTypeContentComma = 357,
-  ObjectTypeContentSemi = 358,
-  ExportStatementDefault = 359,
-  ExportStatementDefaultFromArm = 360,
-  ExportStatementDefaultDeclArm = 361,
-  ExportStatementDefaultDeclArmDefaultKw = 362,
-  ArrowFunctionParameter = 363,
-  ClassHeritageExtendsClause = 364,
-  ImportClauseDefaultImport = 365,
-  ImportSpecifierAs = 366,
-  IndexSignatureColon = 367,
-  ExportStatementDefaultFromArmStarFrom = 368,
-  ExportStatementDefaultFromArmNsFrom = 369,
-  ExportStatementDefaultFromArmClauseFrom = 370,
-  ExportStatementDefaultDeclArmDefaultKwValue = 371,
-  ClassBodyMethod = 372,
-  ClassBodyMethodSig = 373,
-  ClassBodyMember = 374,
-  ForHeaderLhs = 375,
-  ForHeaderVarKind = 376,
-  ForHeaderLetConstKind = 377,
-  ParenthesizedExpressionTyped = 378,
-  ExportStatementTypeExport = 379,
-  ExportStatementEqualsExport = 380,
-  ExportStatementNamespaceExport = 381,
-  CallExpressionCall = 382,
-  CallExpressionTemplateCall = 383,
-  CallExpressionMember = 384,
-  UpdateExpressionPostfix = 385,
-  UpdateExpressionPrefix = 386,
-  ProgramRepeat1 = 387,
-  VariableDeclarationRepeat1 = 388,
-  SwitchBodyRepeat1 = 389,
-  ObjectRepeat1 = 390,
-  ObjectPatternRepeat1 = 391,
-  ArrayRepeat1 = 392,
-  ArrayPatternRepeat1 = 393,
-  ClassRepeat1 = 394,
-  SequenceExpressionRepeat1 = 395,
-  StringRepeat1 = 396,
-  StringRepeat2 = 397,
-  TemplateStringRepeat1 = 398,
-  ClassBodyRepeat1 = 399,
-  ExtendsClauseRepeat1 = 400,
-  ImplementsClauseRepeat1 = 401,
-  ExtendsTypeClauseRepeat1 = 402,
-  TemplateLiteralTypeRepeat1 = 403,
-  TypeParametersRepeat1 = 404,
-  _ExportClauseOptional1Repeat1 = 405,
-  _NamedImportsOptional1Repeat1 = 406,
-  _FormalParametersOptional1Repeat1 = 407,
-  _EnumBodyOptional1Repeat1 = 408,
-  _TupleTypeOptional1Repeat1 = 409,
-  ObjectTypeContentCommaRepeat1 = 410,
-  ObjectTypeContentSemiRepeat1 = 411,
-  _InterfaceBody = 412,
-  PropertyIdentifier = 413,
-  PublicFieldDefinitionAbstractFirst = 414,
-  PublicFieldDefinitionAccessFirst = 415,
-  _PublicFieldDefinitionAccessorOpt = 416,
-  PublicFieldDefinitionDeclareFirst = 417,
-  PublicFieldDefinitionReadonlyFirst = 418,
-  PublicFieldDefinitionStaticMods = 419,
-  ShorthandPropertyIdentifier = 420,
-  ShorthandPropertyIdentifierPattern = 421,
-  StatementIdentifier = 422,
-  _ThisType = 423,
-  TypeIdentifier = 424,
+  ExportStatementDefault = 357,
+  ExportStatementDefaultFromArm = 358,
+  ExportStatementDefaultDeclArm = 359,
+  ExportStatementDefaultDeclArmDefaultKw = 360,
+  ArrowFunctionParameter = 361,
+  ClassHeritageExtendsClause = 362,
+  ImportClauseDefaultImport = 363,
+  ImportSpecifierAs = 364,
+  IndexSignatureColon = 365,
+  ExportStatementDefaultFromArmStarFrom = 366,
+  ExportStatementDefaultFromArmNsFrom = 367,
+  ExportStatementDefaultFromArmClauseFrom = 368,
+  ExportStatementDefaultDeclArmDefaultKwValue = 369,
+  ClassBodyMethod = 370,
+  ClassBodyMethodSig = 371,
+  ClassBodyMember = 372,
+  ForHeaderLhs = 373,
+  ForHeaderVarKind = 374,
+  ForHeaderLetConstKind = 375,
+  ParenthesizedExpressionTyped = 376,
+  ExportStatementTypeExport = 377,
+  ExportStatementEqualsExport = 378,
+  ExportStatementNamespaceExport = 379,
+  CallExpressionCall = 380,
+  CallExpressionTemplateCall = 381,
+  CallExpressionMember = 382,
+  UpdateExpressionPostfix = 383,
+  UpdateExpressionPrefix = 384,
+  ProgramRepeat1 = 385,
+  VariableDeclarationRepeat1 = 386,
+  SwitchBodyRepeat1 = 387,
+  ObjectRepeat1 = 388,
+  ObjectPatternRepeat1 = 389,
+  ArrayRepeat1 = 390,
+  ArrayPatternRepeat1 = 391,
+  ClassRepeat1 = 392,
+  SequenceExpressionRepeat1 = 393,
+  StringRepeat1 = 394,
+  StringRepeat2 = 395,
+  TemplateStringRepeat1 = 396,
+  ClassBodyRepeat1 = 397,
+  ExtendsClauseRepeat1 = 398,
+  ImplementsClauseRepeat1 = 399,
+  ExtendsTypeClauseRepeat1 = 400,
+  TemplateLiteralTypeRepeat1 = 401,
+  TypeParametersRepeat1 = 402,
+  _ExportClauseOptional1Repeat1 = 403,
+  _NamedImportsOptional1Repeat1 = 404,
+  _FormalParametersOptional1Repeat1 = 405,
+  _EnumBodyOptional1Repeat1 = 406,
+  _TupleTypeOptional1Repeat1 = 407,
+  ObjectTypeContentRepeat1 = 408,
+  _InterfaceBody = 409,
+  PropertyIdentifier = 410,
+  PublicFieldDefinitionAbstractFirst = 411,
+  PublicFieldDefinitionAccessFirst = 412,
+  _PublicFieldDefinitionAccessorOpt = 413,
+  PublicFieldDefinitionDeclareFirst = 414,
+  PublicFieldDefinitionReadonlyFirst = 415,
+  PublicFieldDefinitionStaticMods = 416,
+  ShorthandPropertyIdentifier = 417,
+  ShorthandPropertyIdentifierPattern = 418,
+  StatementIdentifier = 419,
+  _ThisType = 420,
+  TypeIdentifier = 421,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1224,74 +1219,71 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [354, "_ambient_declaration_global"],
   [355, "_ambient_declaration_module"],
   [356, "object_type_content"],
-  [357, "object_type_content_comma"],
-  [358, "object_type_content_semi"],
-  [359, "_export_statement_default"],
-  [360, "_export_statement_default_from_arm"],
-  [361, "_export_statement_default_decl_arm"],
-  [362, "_export_statement_default_decl_arm_default_kw"],
-  [363, "_arrow_function_parameter"],
-  [364, "_class_heritage_extends_clause"],
-  [365, "_import_clause_default_import"],
-  [366, "_import_specifier_as"],
-  [367, "_index_signature_colon"],
-  [368, "_export_statement_default_from_arm_star_from"],
-  [369, "_export_statement_default_from_arm_ns_from"],
-  [370, "_export_statement_default_from_arm_clause_from"],
-  [371, "_export_statement_default_decl_arm_default_kw_value"],
-  [372, "_class_body_method"],
-  [373, "_class_body_method_sig"],
-  [374, "_class_body_member"],
-  [375, "_for_header_lhs"],
-  [376, "_for_header_var_kind"],
-  [377, "_for_header_let_const_kind"],
-  [378, "_parenthesized_expression_typed"],
-  [379, "_export_statement_type_export"],
-  [380, "_export_statement_equals_export"],
-  [381, "_export_statement_namespace_export"],
-  [382, "_call_expression_call"],
-  [383, "_call_expression_template_call"],
-  [384, "_call_expression_member"],
-  [385, "_update_expression_postfix"],
-  [386, "_update_expression_prefix"],
-  [387, "program_repeat1"],
-  [388, "variable_declaration_repeat1"],
-  [389, "switch_body_repeat1"],
-  [390, "object_repeat1"],
-  [391, "object_pattern_repeat1"],
-  [392, "array_repeat1"],
-  [393, "array_pattern_repeat1"],
-  [394, "class_repeat1"],
-  [395, "sequence_expression_repeat1"],
-  [396, "string_repeat1"],
-  [397, "string_repeat2"],
-  [398, "template_string_repeat1"],
-  [399, "class_body_repeat1"],
-  [400, "extends_clause_repeat1"],
-  [401, "implements_clause_repeat1"],
-  [402, "extends_type_clause_repeat1"],
-  [403, "template_literal_type_repeat1"],
-  [404, "type_parameters_repeat1"],
-  [405, "_export_clause_optional1_repeat1"],
-  [406, "_named_imports_optional1_repeat1"],
-  [407, "_formal_parameters_optional1_repeat1"],
-  [408, "_enum_body_optional1_repeat1"],
-  [409, "_tuple_type_optional1_repeat1"],
-  [410, "object_type_content_comma_repeat1"],
-  [411, "object_type_content_semi_repeat1"],
-  [412, "_interface_body"],
-  [413, "_property_identifier"],
-  [414, "_public_field_definition_abstract_first"],
-  [415, "_public_field_definition_access_first"],
-  [416, "_public_field_definition_accessor_opt"],
-  [417, "_public_field_definition_declare_first"],
-  [418, "_public_field_definition_readonly_first"],
-  [419, "_public_field_definition_static_mods"],
-  [420, "_shorthand_property_identifier"],
-  [421, "_shorthand_property_identifier_pattern"],
-  [422, "_statement_identifier"],
-  [423, "_this_type"],
-  [424, "_type_identifier"],
+  [357, "_export_statement_default"],
+  [358, "_export_statement_default_from_arm"],
+  [359, "_export_statement_default_decl_arm"],
+  [360, "_export_statement_default_decl_arm_default_kw"],
+  [361, "_arrow_function_parameter"],
+  [362, "_class_heritage_extends_clause"],
+  [363, "_import_clause_default_import"],
+  [364, "_import_specifier_as"],
+  [365, "_index_signature_colon"],
+  [366, "_export_statement_default_from_arm_star_from"],
+  [367, "_export_statement_default_from_arm_ns_from"],
+  [368, "_export_statement_default_from_arm_clause_from"],
+  [369, "_export_statement_default_decl_arm_default_kw_value"],
+  [370, "_class_body_method"],
+  [371, "_class_body_method_sig"],
+  [372, "_class_body_member"],
+  [373, "_for_header_lhs"],
+  [374, "_for_header_var_kind"],
+  [375, "_for_header_let_const_kind"],
+  [376, "_parenthesized_expression_typed"],
+  [377, "_export_statement_type_export"],
+  [378, "_export_statement_equals_export"],
+  [379, "_export_statement_namespace_export"],
+  [380, "_call_expression_call"],
+  [381, "_call_expression_template_call"],
+  [382, "_call_expression_member"],
+  [383, "_update_expression_postfix"],
+  [384, "_update_expression_prefix"],
+  [385, "program_repeat1"],
+  [386, "variable_declaration_repeat1"],
+  [387, "switch_body_repeat1"],
+  [388, "object_repeat1"],
+  [389, "object_pattern_repeat1"],
+  [390, "array_repeat1"],
+  [391, "array_pattern_repeat1"],
+  [392, "class_repeat1"],
+  [393, "sequence_expression_repeat1"],
+  [394, "string_repeat1"],
+  [395, "string_repeat2"],
+  [396, "template_string_repeat1"],
+  [397, "class_body_repeat1"],
+  [398, "extends_clause_repeat1"],
+  [399, "implements_clause_repeat1"],
+  [400, "extends_type_clause_repeat1"],
+  [401, "template_literal_type_repeat1"],
+  [402, "type_parameters_repeat1"],
+  [403, "_export_clause_optional1_repeat1"],
+  [404, "_named_imports_optional1_repeat1"],
+  [405, "_formal_parameters_optional1_repeat1"],
+  [406, "_enum_body_optional1_repeat1"],
+  [407, "_tuple_type_optional1_repeat1"],
+  [408, "object_type_content_repeat1"],
+  [409, "_interface_body"],
+  [410, "_property_identifier"],
+  [411, "_public_field_definition_abstract_first"],
+  [412, "_public_field_definition_access_first"],
+  [413, "_public_field_definition_accessor_opt"],
+  [414, "_public_field_definition_declare_first"],
+  [415, "_public_field_definition_readonly_first"],
+  [416, "_public_field_definition_static_mods"],
+  [417, "_shorthand_property_identifier"],
+  [418, "_shorthand_property_identifier_pattern"],
+  [419, "_statement_identifier"],
+  [420, "_this_type"],
+  [421, "_type_identifier"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1652,8 +1644,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_ambient_declaration_global": return TSKindId.AmbientDeclarationGlobal;
     case "_ambient_declaration_module": return TSKindId.AmbientDeclarationModule;
     case "object_type_content": return TSKindId.ObjectTypeContent;
-    case "object_type_content_comma": return TSKindId.ObjectTypeContentComma;
-    case "object_type_content_semi": return TSKindId.ObjectTypeContentSemi;
     case "_export_statement_default": return TSKindId.ExportStatementDefault;
     case "_export_statement_default_from_arm": return TSKindId.ExportStatementDefaultFromArm;
     case "_export_statement_default_decl_arm": return TSKindId.ExportStatementDefaultDeclArm;
@@ -1705,8 +1695,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_formal_parameters_optional1_repeat1": return TSKindId._FormalParametersOptional1Repeat1;
     case "_enum_body_optional1_repeat1": return TSKindId._EnumBodyOptional1Repeat1;
     case "_tuple_type_optional1_repeat1": return TSKindId._TupleTypeOptional1Repeat1;
-    case "object_type_content_comma_repeat1": return TSKindId.ObjectTypeContentCommaRepeat1;
-    case "object_type_content_semi_repeat1": return TSKindId.ObjectTypeContentSemiRepeat1;
+    case "object_type_content_repeat1": return TSKindId.ObjectTypeContentRepeat1;
     case "_interface_body": return TSKindId._InterfaceBody;
     case "_property_identifier": return TSKindId.PropertyIdentifier;
     case "_public_field_definition_abstract_first": return TSKindId.PublicFieldDefinitionAbstractFirst;
@@ -3643,18 +3632,6 @@ export interface ObjectType {
 
 export interface ObjectTypeContent {
   readonly $type: TSKindId.ObjectTypeContent;
-  readonly _content: ObjectTypeContentComma | ObjectTypeContentSemi;
-  content(): ObjectTypeContentComma | ObjectTypeContentSemi;
-}
-
-export interface ObjectTypeContentComma {
-  readonly $type: TSKindId.ObjectTypeContentComma;
-  readonly _content?: readonly (ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature)[];
-  contents(): readonly (ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature)[];
-}
-
-export interface ObjectTypeContentSemi {
-  readonly $type: TSKindId.ObjectTypeContentSemi;
   readonly _content?: readonly (ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature)[];
   contents(): readonly (ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature)[];
 }
@@ -4371,8 +4348,6 @@ export interface ObjectAssignmentPatternTree extends TreeNode<'object_assignment
 export interface ObjectPatternTree extends TreeNode<'object_pattern'> {}
 export interface ObjectTypeTree extends TreeNode<'object_type'> {}
 export interface ObjectTypeContentTree extends TreeNode<'object_type_content'> {}
-export interface ObjectTypeContentCommaTree extends TreeNode<'object_type_content_comma'> {}
-export interface ObjectTypeContentSemiTree extends TreeNode<'object_type_content_semi'> {}
 export interface OmittingTypeAnnotationTree extends TreeNode<'omitting_type_annotation'> {}
 export interface OptingTypeAnnotationTree extends TreeNode<'opting_type_annotation'> {}
 export interface OptionalParameterTree extends TreeNode<'optional_parameter'> {}
@@ -4993,8 +4968,6 @@ export type TypescriptNode =
   | ObjectPattern
   | ObjectType
   | ObjectTypeContent
-  | ObjectTypeContentComma
-  | ObjectTypeContentSemi
   | OmittingTypeAnnotation
   | OptingTypeAnnotation
   | OptionalParameter
@@ -5220,8 +5193,6 @@ export interface KindMap {
   'object_pattern': ObjectPattern;
   'object_type': ObjectType;
   'object_type_content': ObjectTypeContent;
-  'object_type_content_comma': ObjectTypeContentComma;
-  'object_type_content_semi': ObjectTypeContentSemi;
   'omitting_type_annotation': OmittingTypeAnnotation;
   'opting_type_annotation': OptingTypeAnnotation;
   'optional_parameter': OptionalParameter;
@@ -5495,8 +5466,6 @@ export interface ObjectAssignmentPatternNs extends NodeNs<ObjectAssignmentPatter
 export interface ObjectPatternNs extends NodeNs<ObjectPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ObjectTypeNs extends NodeNs<ObjectType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ObjectTypeContentNs extends NodeNs<ObjectTypeContent, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ObjectTypeContentCommaNs extends NodeNs<ObjectTypeContentComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ObjectTypeContentSemiNs extends NodeNs<ObjectTypeContentSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface OmittingTypeAnnotationNs extends NodeNs<OmittingTypeAnnotation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface OptingTypeAnnotationNs extends NodeNs<OptingTypeAnnotation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface OptionalParameterNs extends NodeNs<OptionalParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5721,8 +5690,6 @@ export interface NamespaceMap {
   'object_pattern': ObjectPatternNs;
   'object_type': ObjectTypeNs;
   'object_type_content': ObjectTypeContentNs;
-  'object_type_content_comma': ObjectTypeContentCommaNs;
-  'object_type_content_semi': ObjectTypeContentSemiNs;
   'omitting_type_annotation': OmittingTypeAnnotationNs;
   'opting_type_annotation': OptingTypeAnnotationNs;
   'optional_parameter': OptionalParameterNs;
@@ -6958,20 +6925,6 @@ export namespace ObjectTypeContent {
   export type Loose = LooseFor<'object_type_content'>;
   export type Tree = TreeFor<'object_type_content'>;
   export type Kind = 'object_type_content';
-}
-export namespace ObjectTypeContentComma {
-  export type Config = ConfigFor<'object_type_content_comma'>;
-  export type Fluent = FluentFor<'object_type_content_comma'>;
-  export type Loose = LooseFor<'object_type_content_comma'>;
-  export type Tree = TreeFor<'object_type_content_comma'>;
-  export type Kind = 'object_type_content_comma';
-}
-export namespace ObjectTypeContentSemi {
-  export type Config = ConfigFor<'object_type_content_semi'>;
-  export type Fluent = FluentFor<'object_type_content_semi'>;
-  export type Loose = LooseFor<'object_type_content_semi'>;
-  export type Tree = TreeFor<'object_type_content_semi'>;
-  export type Kind = 'object_type_content_semi';
 }
 export namespace OmittingTypeAnnotation {
   export type Config = ConfigFor<'omitting_type_annotation'>;

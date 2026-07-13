@@ -1186,25 +1186,13 @@ describe('object_type', () => {
 
 describe('object_type_content', () => {
   it('factory produces correct type', () => {
-    const node = ir.objectTypeContent({ type: "object_type_content_comma" } as never);
+    const node = ir.objectTypeContent({});
     expect(node.$type).toBe(TSKindId.ObjectTypeContent);
     expect(node.$source).toBe(2);
   });
-});
-
-describe('object_type_content_comma', () => {
-  it('factory produces correct type', () => {
-    const node = ir.objectTypeContentComma();
-    expect(node.$type).toBe(TSKindId.ObjectTypeContentComma);
-    expect(node.$source).toBe(2);
-  });
-});
-
-describe('object_type_content_semi', () => {
-  it('factory produces correct type', () => {
-    const node = ir.objectTypeContentSemi();
-    expect(node.$type).toBe(TSKindId.ObjectTypeContentSemi);
-    expect(node.$source).toBe(2);
+  it('render does not throw on minimal config', () => {
+    const node = ir.objectTypeContent({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 

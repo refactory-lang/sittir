@@ -3007,56 +3007,26 @@ export function objectTypeFlow(config?: T.ObjectType.Flow.Config) {
   }, methodsEngine);
 }
 
-export function objectTypeContent(child: (T.ObjectTypeContentComma | T.ObjectTypeContentSemi)) {
-  const _content = child;
+export function objectTypeContent(elements: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>, options: { separatorKind?: "," | ";"; leading?: boolean; trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, 'object_type_content.elements');
+  const _content = elements;
+  const _separator_kind = ({ ",": TSKindId.Comma2, ";": TSKindId.Semi } as Record<string, number>)[options.separatorKind ?? ","];
+  const _leading_sep = options.leading ?? false;
+  const _trailing_sep = options.trailing ?? false;
   return withMethods({
     $type: TSKindId.ObjectTypeContent as const,
     $source: 2 as const,
     $named: true as const,
     _content,
-    content() { return _content; },
-    $with: { $child: (v: (T.ObjectTypeContentComma | T.ObjectTypeContentSemi)) => objectTypeContent(v) },
-  }, methodsEngine);
-}
-
-export function objectTypeContentComma(elements: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>, options: { leading?: boolean; trailing?: boolean } = {}) {
-  _assertNonEmpty(elements, 'object_type_content_comma.elements');
-  const _content = elements;
-  const _leading_sep = options.leading ?? false;
-  const _trailing_sep = options.trailing ?? false;
-  return withMethods({
-    $type: TSKindId.ObjectTypeContentComma as const,
-    $source: 2 as const,
-    $named: true as const,
-    _content,
+    _separator_kind,
     _leading_sep,
     _trailing_sep,
     content() { return _content; },
     $with: {
-      $children: (...vs: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectTypeContentComma(vs, options),
-      leading: (v: boolean) => objectTypeContentComma(elements, { ...options, leading: v }),
-      trailing: (v: boolean) => objectTypeContentComma(elements, { ...options, trailing: v }),
-    },
-  }, methodsEngine);
-}
-
-export function objectTypeContentSemi(elements: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>, options: { leading?: boolean; trailing?: boolean } = {}) {
-  _assertNonEmpty(elements, 'object_type_content_semi.elements');
-  const _content = elements;
-  const _leading_sep = options.leading ?? false;
-  const _trailing_sep = options.trailing ?? false;
-  return withMethods({
-    $type: TSKindId.ObjectTypeContentSemi as const,
-    $source: 2 as const,
-    $named: true as const,
-    _content,
-    _leading_sep,
-    _trailing_sep,
-    content() { return _content; },
-    $with: {
-      $children: (...vs: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectTypeContentSemi(vs, options),
-      leading: (v: boolean) => objectTypeContentSemi(elements, { ...options, leading: v }),
-      trailing: (v: boolean) => objectTypeContentSemi(elements, { ...options, trailing: v }),
+      $children: (...vs: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectTypeContent(vs, options),
+      separatorKind: (v: "," | ";") => objectTypeContent(elements, { ...options, separatorKind: v }),
+      leading: (v: boolean) => objectTypeContent(elements, { ...options, leading: v }),
+      trailing: (v: boolean) => objectTypeContent(elements, { ...options, trailing: v }),
     },
   }, methodsEngine);
 }
@@ -4434,8 +4404,6 @@ export type FluentKindMap = {
   "object_pattern": FluentNode<"object_pattern", T.ObjectPattern.Config>;
   "object_type": FluentNode<"object_type", T.ObjectType.Config>;
   "object_type_content": FluentNode<"object_type_content", T.ObjectTypeContent.Config>;
-  "object_type_content_comma": FluentNode<"object_type_content_comma", T.ObjectTypeContentComma.Config>;
-  "object_type_content_semi": FluentNode<"object_type_content_semi", T.ObjectTypeContentSemi.Config>;
   "omitting_type_annotation": FluentNode<"omitting_type_annotation", T.OmittingTypeAnnotation.Config>;
   "opting_type_annotation": FluentNode<"opting_type_annotation", T.OptingTypeAnnotation.Config>;
   "optional_parameter": FluentNode<"optional_parameter", T.OptionalParameter.Config>;
@@ -4671,8 +4639,6 @@ export const _factoryMap = {
   "object_pattern": objectPattern,
   "object_type": objectType,
   "object_type_content": objectTypeContent,
-  "object_type_content_comma": objectTypeContentComma,
-  "object_type_content_semi": objectTypeContentSemi,
   "omitting_type_annotation": omittingTypeAnnotation,
   "opting_type_annotation": optingTypeAnnotation,
   "optional_parameter": optionalParameter,

@@ -204,6 +204,13 @@ function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[
   }
   return undefined;
 }
+// _separatorKindOf — a separatedList nonterminal-separator discriminant,
+// reusing readTerminalFromOther’s $other kind-id scan (option B
+// reclamation) rather than a parallel scan.
+function _separatorKindOf(data: _NodeData, candidateKindIds: readonly number[]): number | undefined {
+  const entry = readTerminalFromOther(data, candidateKindIds);
+  return typeof entry === "number" ? entry : (entry as _NodeData | undefined)?.$type as number | undefined;
+}
 // _hasSeparatorFlank — whether an optional leading/trailing separator is
 // present on this instance.
 //
@@ -3003,38 +3010,13 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
   return _node;
 }
 
-export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandle) {
-  const _node = withMethods({
+export function wrapObjectTypeContent(data: T.ObjectTypeContent & { readonly "_export_statement"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_property_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_call_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_construct_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_index_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_method_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
+  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._export_statement, data._property_signature, data._call_signature, data._construct_signature, data._index_signature, data._method_signature, data._content]), true, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span });
+  return withMethods({
     ...data,
     $type: TSKindId.ObjectTypeContent as const,
-    _content: normalizeSingularWrapSlot((data._object_type_content_comma ?? data._object_type_content_semi ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
-
-    content() { return drillIn<T.ObjectTypeContentComma | T.ObjectTypeContentSemi>(this._content, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapObjectTypeContent({ ...data, $other: vs }, tree) },
-  }, methodsEngine);
-  return _node;
-}
-
-export function wrapObjectTypeContentComma(data: T.ObjectTypeContentComma & { readonly "_export_statement"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_property_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_call_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_construct_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_index_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_method_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
-  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._export_statement, data._property_signature, data._call_signature, data._construct_signature, data._index_signature, data._method_signature, data._content]), true, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span });
-  return withMethods({
-    ...data,
-    $type: TSKindId.ObjectTypeContentComma as const,
     _content: _content,
-    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", true),
-    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", true),
-
-    content() { return drillInAll<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>(this._content as readonly (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[] | undefined, tree); },
-    $with: {},
-  }, methodsEngine);
-}
-
-export function wrapObjectTypeContentSemi(data: T.ObjectTypeContentSemi & { readonly "_export_statement"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_property_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_call_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_construct_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_index_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly "_method_signature"?: T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature; readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
-  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._export_statement, data._property_signature, data._call_signature, data._construct_signature, data._index_signature, data._method_signature, data._content]), true, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span });
-  return withMethods({
-    ...data,
-    $type: TSKindId.ObjectTypeContentSemi as const,
-    _content: _content,
+    _separator_kind: _separatorKindOf(data, [TSKindId.Comma2, TSKindId.Semi]),
     _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", true),
     _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", true),
 
@@ -4177,8 +4159,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'object_pattern': (d, t) => wrapObjectPattern(d as unknown as T.ObjectPattern, t),
   'object_type': (d, t) => wrapObjectType(d as unknown as T.ObjectType, t),
   'object_type_content': (d, t) => wrapObjectTypeContent(d as unknown as T.ObjectTypeContent, t),
-  'object_type_content_comma': (d, t) => wrapObjectTypeContentComma(d as unknown as T.ObjectTypeContentComma, t),
-  'object_type_content_semi': (d, t) => wrapObjectTypeContentSemi(d as unknown as T.ObjectTypeContentSemi, t),
   'omitting_type_annotation': (d, t) => wrapOmittingTypeAnnotation(d as unknown as T.OmittingTypeAnnotation, t),
   'opting_type_annotation': (d, t) => wrapOptingTypeAnnotation(d as unknown as T.OptingTypeAnnotation, t),
   'optional_parameter': (d, t) => wrapOptionalParameter(d as unknown as T.OptionalParameter, t),
