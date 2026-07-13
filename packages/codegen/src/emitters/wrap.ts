@@ -18,20 +18,14 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type {
 	AssembledEnum,
-	AssembledNonterminal,
 	AssembledNode,
 	AssembledSupertype
 } from '../compiler/model/node-map.ts';
 import type { AssembledSeparatedList } from '../compiler/model/node-map.ts';
-import { aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/model/node-map.ts';
+import { AssembledNonterminal, aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/model/node-map.ts';
+import type { Rule } from '../types/rule.ts';
 
-/**
- * TEMPORARY (separator-as-slot Task 2 follow-up — see isSlotBearingCompound's
- * doc comment, shared.ts): 'separatedList' nodes route through the exact
- * same wrap emission as 'branch' for byte-identical output. Remove once
- * 'separatedList' gets its own dedicated wrap emission.
- */
-type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }> | AssembledSeparatedList;
+type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }>;
 import { deriveUnnamedChildrenCardinality } from '../compiler/model/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
@@ -194,6 +188,21 @@ export namespace wrap {
 		_kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		output.push(emitTransparentSupertypeWrap(node));
+	}
+
+	/**
+	 * Emit a separatedList wrap function — per-instance separator capture
+	 * (`_content`/`_separator_kind`/`_leading_sep`/`_trailing_sep`). See
+	 * `emitSeparatedListWrap`'s doc comment for the wire-shape rationale.
+	 */
+	export function separatedList(
+		output: string[],
+		node: AssembledSeparatedList,
+		kindEntries: readonly KindEnumEntry[] | undefined,
+		nodeMap: NodeMap
+	): void {
+		const result = emitSeparatedListWrap(node, kindEntries, nodeMap);
+		if (result !== undefined) output.push(result);
 	}
 }
 
@@ -505,6 +514,176 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
 		`}`
 	].join('\n');
+}
+
+/**
+ * Recursively collect candidate separator token kind names from a
+ * nonterminal separator rule (`AssembledSeparatedList.separatorRule`) —
+ * walks CHOICE/GROUP/OPTIONAL down to STRING/SYMBOL leaves. Mirrors the
+ * shape `link.ts`'s flank-absorption already recognizes for
+ * `optional(choice(...))` flanks (Task 3), reused here to gather the set
+ * of literal texts / referenced rule names the runtime `$other` scan
+ * must match against.
+ */
+function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[] {
+	switch (rule.type) {
+		case 'STRING':
+			return [rule.value];
+		case 'SYMBOL':
+			return [rule.name];
+		case 'CHOICE':
+			return rule.members.flatMap((m) => collectSeparatorCandidateKindNames(m));
+		case 'GROUP':
+		case 'OPTIONAL':
+			return collectSeparatorCandidateKindNames(rule.content);
+		default:
+			return [];
+	}
+}
+
+/**
+ * Build the synthetic `AssembledNonterminal` representing a
+ * separatedList node's `elements` as a positional (unnamed) repeated
+ * slot — routes through the SAME storage-info / concrete-kind-expansion
+ * machinery real 'branch' repeated content fields use (`resolveFieldStorageInfo`,
+ * `expandRuntimeDiscriminatorKinds`), so `_content`'s READ SOURCE matches
+ * whatever kind-named wire keys the native reader actually populates for
+ * these elements (verified empirically — see `collectSeparatedListContentStorageKeys`).
+ * `fieldName` is intentionally left `undefined` (positional/unnamed) so
+ * `valueParseKindsOf` — not a literal field name — drives that expansion;
+ * the OUTPUT storage key is forced to the fixed `_content` name separately
+ * (see `emitSeparatedListWrap`), decoupling "what we call it" from "where
+ * the data actually lives on the wire".
+ */
+function buildSeparatedListContentSlot(node: AssembledSeparatedList): AssembledNonterminal {
+	return new AssembledNonterminal({
+		values: node.elements,
+		fieldName: undefined,
+		hasTrailing: false,
+		hasLeading: false,
+		sourceRuleIds: []
+	});
+}
+
+/**
+ * Concrete `_<kind>` wire storage keys for a separatedList's content
+ * elements. Deliberately NOT `collectConcreteStorageKeys` (which elides
+ * the result to `undefined` when the expansion matches the slot's OWN
+ * nominal name) — `_content` is a fixed target name that never matches
+ * the elements' real kind name, so that elision would silently produce
+ * `data._content` (a key that does not exist on the wire; verified via
+ * `probe-kind` — the native reader keys unnamed repeated children by
+ * their CONCRETE kind, e.g. `data._with_item` / `data._identifier`, never
+ * by a generic slot name). Always returns the real expansion instead.
+ */
+function collectSeparatedListContentStorageKeys(contentSlot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] {
+	const parseKinds = valueParseKindsOf(contentSlot);
+	if (parseKinds.length === 0) return [];
+	const concrete = expandRuntimeDiscriminatorKinds(parseKinds, nodeMap);
+	return [...new Set(concrete.map((k) => `_${k}`))];
+}
+
+/**
+ * Emit a wrap function for a `'separatedList'`-classified kind — REAL
+ * per-instance separator capture, replacing the Task-2 stub's
+ * `_slots`-based branch-reuse emission for wrap.ts specifically (other
+ * emitters — render-module.ts, factories.ts, from.ts — still read the
+ * stub's `_slots`/`fields` surface; only wrap.ts, the TS SDK's deprecated
+ * JS view layer, switches over here — see `AssembledSeparatedList`'s doc
+ * comment: "at that point this slot-bearing surface goes away" for wrap.ts).
+ *
+ * Field derivation, verified against real generated grammar output
+ * (`probe-kind` on python's `with_clause_bare` / `expression_statement_tuple`
+ * / `lambda_parameters` and typescript's `object_type_content_comma` /
+ * `object_type_content_semi` — the only 5 real `'separatedList'` kinds
+ * across all 3 grammars as of this task):
+ *
+ * - `_content`: the elements array. The wire has NO `_content` key —
+ *   the native reader buckets unnamed repeated children by their CONCRETE
+ *   kind (`data._with_item`, `data._identifier`, ...; see
+ *   `collectSeparatedListContentStorageKeys`). Populated via the same
+ *   `resolveSlotDrillExprs` a real repeated field uses, just targeting a
+ *   fixed output key instead of the kind-projected name.
+ *
+ * - `_leading_sep` / `_trailing_sep`: whether an optional flank separator
+ *   is present in THIS instance. `$other`'s entries carry no per-entry
+ *   position data for literal (scalar-kindId) separators — verified:
+ *   a `,` token appears as a bare NUMBER in `$other`, indistinguishable
+ *   from any other `,` at a different position. Where content elements
+ *   retain their own `$span` (not text-collapsed), comparing the
+ *   CONTAINER's own `$span` against the first/last content element's
+ *   `$span` is a direct, order-independent signal: the container span
+ *   extends past its content's own extent exactly when a flank separator
+ *   occupies that extra byte range (verified against real
+ *   `object_type_content_comma` payloads — the one real case where BOTH
+ *   `leadingMode` and `trailingMode` are simultaneously `'optional'`, so
+ *   a pure `$other`-count can't disambiguate which side is occupied).
+ *   Falls back to a `$other`-count comparison when content is
+ *   text-collapsed (no per-element `$span`) — correct whenever the
+ *   OPPOSITE flank direction is structurally `'none'`, true for every
+ *   real grammar kind that reaches this branch today (all 3 python
+ *   kinds: `leadingMode: 'none'`).
+ *
+ * - `_separator_kind`: only emitted when `separatorRule` is a nonterminal
+ *   (Task 2). UNVERIFIED against real wire data — no real grammar kind in
+ *   any of the 3 grammars currently has a nonterminal separator (all 5
+ *   real `'separatedList'` kinds have a literal `,` separator with
+ *   `separatorRule === undefined`). Implemented via the SAME `$other`
+ *   kind-id scan `readTerminalFromOther` already performs for kindEnum
+ *   reclamation (option B) — reused, not reinvented — but this specific
+ *   path has no real-grammar coverage yet.
+ */
+function emitSeparatedListWrap(
+	node: AssembledSeparatedList,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string | undefined {
+	if (!node.rawFactoryName) return undefined;
+	const fn = `wrap${node.typeName}`;
+	const lines: string[] = [];
+	lines.push(`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`);
+
+	const contentSlot = buildSeparatedListContentSlot(node);
+	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
+	const candidateStorageKeys = collectSeparatedListContentStorageKeys(contentSlot, nodeMap);
+	const contentModel: SlotModel = { name: 'content', storageKey: '_content', arity: 'many' };
+	const { storeExpr, accessorBody } = resolveSlotDrillExprs(contentModel, {
+		dataExpr: 'data',
+		elemType: fieldElementType(contentSlot, nodeMap),
+		required: node.nonEmpty,
+		nonEmpty: node.nonEmpty,
+		storageInfo,
+		candidateStorageKeys: candidateStorageKeys.length > 0 ? candidateStorageKeys : undefined
+	});
+	lines.push(`  const _content = ${storeExpr};`);
+	lines.push('  return withMethods({');
+	lines.push('    ...data,');
+	if (kindEntries) {
+		const entry = kindEntries.find((e) => e.kind === node.kind);
+		if (entry) {
+			lines.push(`    $type: TSKindId.${kindIdMemberName(nodeMap, node.kind)} as const,`);
+		}
+	}
+	lines.push('    _content: _content,');
+	if (node.separatorRule) {
+		const candidateKindNames = collectSeparatorCandidateKindNames(node.separatorRule);
+		const candidateExprs = candidateKindNames
+			.filter((k) => hasCatalogEntry(kindEntries, k))
+			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
+		lines.push(`    _separator_kind: _separatorKindOf(data, [${candidateExprs.join(', ')}]),`);
+	}
+	if (node.leadingMode === 'optional') {
+		lines.push('    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading"),');
+	}
+	if (node.trailingMode === 'optional') {
+		lines.push('    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing"),');
+	}
+	lines.push('');
+	lines.push(`    content() { ${accessorBody}; },`);
+	lines.push('    $with: {},');
+	lines.push('  }, methodsEngine);');
+	lines.push('}');
+	return lines.join('\n');
 }
 
 /**
@@ -827,6 +1006,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#emittedStructuralKinds.add(node.kind);
 	}
 
+	emitSeparatedList(node: AssembledSeparatedList): void {
+		wrap.separatedList(this.#output, node, this.#kindEntries, this.#nodeMap);
+		this.#emittedStructuralKinds.add(node.kind);
+	}
+
 	dispatchNode(kind: string, node: AssembledNode): void {
 		let emission = classifyWrapEmission(kind, node, {
 			kindEntries: this.#kindEntries,
@@ -857,10 +1041,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			case 'supertype':
 				this.emitSupertype(node);
 				break;
-			// TEMPORARY: 'separatedList' shares 'branch's wrap emission — see
-			// isSlotBearingCompound's doc comment (shared.ts).
 			case 'separatedList':
-				this.emitBranch(node);
+				this.emitSeparatedList(node);
 				break;
 			default:
 				break;
@@ -879,7 +1061,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesDrillAs = /\bdrillAs\b/.test(bodySource);
 		const usesDrillAsAll = /\bdrillAsAll\b/.test(bodySource);
 		const usesProjectKindEnum = /\bprojectKindEnumStorage\b/.test(bodySource);
-		const usesReadTerminalFromOther = /\breadTerminalFromOther\b/.test(bodySource);
+		const usesSeparatorKindOf = /\b_separatorKindOf\b/.test(bodySource);
+		// `_separatorKindOf` calls `readTerminalFromOther`, so emit it whenever either is used.
+		const usesReadTerminalFromOther = /\breadTerminalFromOther\b/.test(bodySource) || usesSeparatorKindOf;
+		const usesHasSeparatorFlank = /\b_hasSeparatorFlank\b/.test(bodySource);
 		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
@@ -1145,6 +1330,40 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    if (typeof id === "number" && allowedKindIds.includes(id)) return e as _NodeData | number;',
 						'  }',
 						'  return undefined;',
+						'}'
+					]
+				: []),
+			...(usesSeparatorKindOf
+				? [
+						'// _separatorKindOf — a separatedList nonterminal-separator discriminant,',
+						'// reusing readTerminalFromOther’s $other kind-id scan (option B',
+						'// reclamation) rather than a parallel scan.',
+						'function _separatorKindOf(data: _NodeData, candidateKindIds: readonly number[]): number | undefined {',
+						'  const entry = readTerminalFromOther(data, candidateKindIds);',
+						'  return typeof entry === "number" ? entry : (entry as _NodeData | undefined)?.$type as number | undefined;',
+						'}'
+					]
+				: []),
+			...(usesHasSeparatorFlank
+				? [
+						'// _hasSeparatorFlank — whether an optional leading/trailing separator is',
+						'// present on this instance. Preferred signal: compare the container span',
+						'// against the first/last content element span (a literal separator’s',
+						'// $other entry is a bare kind-id number with no position of its own, so a',
+						'// container extending past the content extent is the direct evidence).',
+						'// Falls back to a $other-length vs. between-separator-count comparison when',
+						'// content is text-collapsed (no per-element span) — correct whenever the',
+						'// opposite flank direction is structurally "none".',
+						'function _hasSeparatorFlank(container: { $span?: { start: number; end: number } }, content: readonly unknown[], other: readonly unknown[] | undefined, edge: "leading" | "trailing"): boolean {',
+						'  const containerSpan = container.$span;',
+						'  const anchor = edge === "leading" ? content[0] : content[content.length - 1];',
+						'  const anchorSpan = anchor && typeof anchor === "object" ? (anchor as { $span?: { start: number; end: number } }).$span : undefined;',
+						'  if (containerSpan && anchorSpan) {',
+						'    return edge === "leading" ? containerSpan.start < anchorSpan.start : containerSpan.end > anchorSpan.end;',
+						'  }',
+						'  const otherCount = Array.isArray(other) ? other.length : 0;',
+						'  const between = Math.max(content.length - 1, 0);',
+						'  return otherCount > between;',
 						'}'
 					]
 				: []),
