@@ -3019,27 +3019,45 @@ export function objectTypeContent(child: (T.ObjectTypeContentComma | T.ObjectTyp
   }, methodsEngine);
 }
 
-export function objectTypeContentComma(...children: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[]) {
-  const _content = children;
+export function objectTypeContentComma(elements: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>, options: { leading?: boolean; trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, 'object_type_content_comma.elements');
+  const _content = elements;
+  const _leading_sep = options.leading ?? false;
+  const _trailing_sep = options.trailing ?? false;
   return withMethods({
     $type: TSKindId.ObjectTypeContentComma as const,
     $source: 2 as const,
     $named: true as const,
     _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[]) => objectTypeContentComma(...vs) },
+    _leading_sep,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectTypeContentComma(vs, options),
+      leading: (v: boolean) => objectTypeContentComma(elements, { ...options, leading: v }),
+      trailing: (v: boolean) => objectTypeContentComma(elements, { ...options, trailing: v }),
+    },
   }, methodsEngine);
 }
 
-export function objectTypeContentSemi(...children: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[]) {
-  const _content = children;
+export function objectTypeContentSemi(elements: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>, options: { leading?: boolean; trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, 'object_type_content_semi.elements');
+  const _content = elements;
+  const _leading_sep = options.leading ?? false;
+  const _trailing_sep = options.trailing ?? false;
   return withMethods({
     $type: TSKindId.ObjectTypeContentSemi as const,
     $source: 2 as const,
     $named: true as const,
     _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[]) => objectTypeContentSemi(...vs) },
+    _leading_sep,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectTypeContentSemi(vs, options),
+      leading: (v: boolean) => objectTypeContentSemi(elements, { ...options, leading: v }),
+      trailing: (v: boolean) => objectTypeContentSemi(elements, { ...options, trailing: v }),
+    },
   }, methodsEngine);
 }
 

@@ -207,14 +207,15 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 			case 'multi':
 				break;
 			// TEMPORARY (separator-as-slot Task 2 follow-up — see
-			// isSlotBearingCompound's doc comment, shared.ts): factory/from/
+			// isSlotBearingCompound's doc comment, shared.ts): from/
 			// template/render-module still share 'branch's full emission for
 			// byte-identical output. Remove once 'separatedList' gets its own
-			// dedicated emission there too (Tasks 5-6). wrap.ts switched over
-			// to its own dedicated emission in Task 4 — see
-			// `emitSeparatedListWrap`'s doc comment (wrap.ts).
+			// dedicated emission there too. wrap.ts (Task 4) and factories.ts
+			// (Task 6) switched over to their own dedicated emission — see
+			// `emitSeparatedListWrap`'s doc comment (wrap.ts) and
+			// `emitSeparatedListFactory`'s doc comment (factories.ts).
 			case 'separatedList':
-				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
+				if (factoryEmission === 'emit') factoryEmitter.emitSeparatedList(node);
 				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
 				if (wrapEmission === 'emit') wrapEmitter.emitSeparatedList(node);
 				if (templateEmission === 'emit') templateEmitter.emitBranch(node);

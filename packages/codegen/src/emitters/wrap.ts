@@ -575,8 +575,13 @@ export function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[]
  * the OUTPUT storage key is forced to the fixed `_content` name separately
  * (see `emitSeparatedListWrap`), decoupling "what we call it" from "where
  * the data actually lives on the wire".
+ *
+ * Exported for reuse by factories.ts, which needs the SAME synthetic
+ * "elements as an unnamed repeated slot" to resolve the `elements`
+ * constructor parameter's element type — same reuse rationale as
+ * `collectSeparatorCandidateKindNames` above.
  */
-function buildSeparatedListContentSlot(node: AssembledSeparatedList): AssembledNonterminal {
+export function buildSeparatedListContentSlot(node: AssembledSeparatedList): AssembledNonterminal {
 	return new AssembledNonterminal({
 		values: node.elements,
 		fieldName: undefined,

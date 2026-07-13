@@ -144,16 +144,21 @@ export function exceptClauseList(config: T.ExceptClauseList.Config) {
   }, methodsEngine);
 }
 
-export function expressionStatementTuple(...children: T.Expression[]) {
-  _assertNonEmpty(children, '_expression_statement_tuple.children');
-  const _expression = children;
+export function expressionStatementTuple(elements: NonEmptyArray<T.Expression>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, '_expression_statement_tuple.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
   return withMethods({
     $type: TSKindId.ExpressionStatementTuple as const,
     $source: 2 as const,
     $named: true as const,
-    _expression,
-    expressions() { return _expression; },
-    $with: { $children: (...vs: T.Expression[]) => expressionStatementTuple(...vs) },
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.Expression>) => expressionStatementTuple(vs, options),
+      trailing: (v: boolean) => expressionStatementTuple(elements, { ...options, trailing: v }),
+    },
   }, methodsEngine);
 }
 
@@ -296,16 +301,21 @@ export function _tuplePattern(...children: T.CasePattern[]) {
   }, methodsEngine);
 }
 
-export function withClauseBare(...children: T.WithItem[]) {
-  _assertNonEmpty(children, '_with_clause_bare.children');
-  const _with_item = children;
+export function withClauseBare(elements: NonEmptyArray<T.WithItem>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, '_with_clause_bare.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
   return withMethods({
     $type: TSKindId.WithClauseBare as const,
     $source: 2 as const,
     $named: true as const,
-    _with_item,
-    withItems() { return _with_item; },
-    $with: { $children: (...vs: T.WithItem[]) => withClauseBare(...vs) },
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.WithItem>) => withClauseBare(vs, options),
+      trailing: (v: boolean) => withClauseBare(elements, { ...options, trailing: v }),
+    },
   }, methodsEngine);
 }
 
@@ -1386,15 +1396,21 @@ export function lambda(config: T.Lambda.Config) {
   }, methodsEngine);
 }
 
-export function lambdaParameters(child: T.Parameters) {
-  const _parameters = child;
+export function lambdaParameters(elements: NonEmptyArray<T.Parameter>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, 'lambda_parameters.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
   return withMethods({
     $type: TSKindId.LambdaParameters as const,
     $source: 2 as const,
     $named: true as const,
-    _parameters,
-    parameters() { return _parameters; },
-    $with: { $child: (v: T.Parameters) => lambdaParameters(v) },
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.Parameter>) => lambdaParameters(vs, options),
+      trailing: (v: boolean) => lambdaParameters(elements, { ...options, trailing: v }),
+    },
   }, methodsEngine);
 }
 
