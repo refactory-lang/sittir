@@ -3,7 +3,7 @@
  * (`AssembledSeparatedList`) against `object_type_content` — the ONE real
  * grammar kind with a genuinely nonterminal separator (`choice(',', ';')`),
  * merged from the former `object_type_content_comma`/`_semi` split by the
- * plan's Task 7. Two concerns:
+ * plan's Task 7. Three concerns:
  *
  * - Wire capture (Task 4's `_leading_sep`/`_trailing_sep`): the
  *   `wrap-separated-list-emit` unit tests only assert the EMITTED SOURCE
@@ -16,9 +16,16 @@
  *   separator) was found and fixed only by Task 7's manual `probe-kind`
  *   verification, with no committed regression test at the time — these
  *   `rendered` assertions close that gap.
+ * - Reconstruction (`emitSeparatedListFrom`): `from()` on an already-wrapped
+ *   separatedList node used to silently reset `_separator_kind`/
+ *   `_leading_sep`/`_trailing_sep` to the factory's defaults (comma, no
+ *   flanks) instead of preserving the original instance's own facts —
+ *   found via external code review, fixed by threading them through as
+ *   factory options on the self-NodeData-unwrap path.
  */
 import { describe, expect, it } from 'vitest';
 import { probeTrace } from '../../src/probe/kind.ts';
+import { objectTypeContentFrom } from '../../../typescript/src/from.ts';
 
 describe('separatedList wrap capture — real typescript grammar integration', () => {
 	it('captures a present trailing comma with no leading comma', async () => {
@@ -79,5 +86,24 @@ describe('separatedList render — real typescript grammar integration (nontermi
 		expect(rendered).toContain('a');
 		expect(rendered).toContain('b');
 		expect(rendered).toContain('c');
+	});
+});
+
+describe('separatedList from() reconstruction — preserves original separator facts', () => {
+	it('preserves a trailing semicolon when reconstructing an already-wrapped node', async () => {
+		const trace = await probeTrace('typescript', 'interface Foo { a: string; b: number; }', {
+			kind: 'object_type_content',
+			engine: 'native'
+		});
+
+		const wrapped = trace.trace.native?.deep?.nodeData as { _trailing_sep?: boolean; _separator_kind?: number };
+		expect(wrapped._trailing_sep).toBe(true);
+		expect(wrapped._separator_kind).toBeDefined();
+
+		const reconstructed = objectTypeContentFrom(wrapped as never);
+		expect((reconstructed as unknown as { _trailing_sep: boolean })._trailing_sep).toBe(true);
+		expect((reconstructed as unknown as { _separator_kind: number })._separator_kind).toBe(wrapped._separator_kind);
+		expect(reconstructed.$render!()).toContain(';');
+		expect(reconstructed.$render!()).not.toContain(',');
 	});
 });

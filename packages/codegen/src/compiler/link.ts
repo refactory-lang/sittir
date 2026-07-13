@@ -2689,13 +2689,23 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
     if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
         return { type: REPEAT1, content: elem, separator: { ...sep, trailing: true } };
     }
-    // Case 3: [sep, x, repeat(sep, x)] — mandatory leading separator.
-    if (members.length === 3 &&
-        repeatIdx === 2 &&
-        rulesEqual(members[0]!, sep.value) &&
-        matchesElem(members[1]!)) {
-        return { type: REPEAT1, content: elem, separator: { ...sep, leading: true } };
-    }
+    // Case 3 [sep, x, repeat(sep, x)] — a MANDATORY leading separator — is
+    // deliberately NOT absorbed here. `AssembledSeparatedList.leadingMode`
+    // (node-map.ts) can only represent `'optional'`/`'none'` for a flank
+    // (see its doc comment: `.separator.leading` is `true` exclusively for
+    // an absorbed `optional(sep)` member; a bare, non-optional separator
+    // literal has no way to signal "always present" through that same
+    // boolean once absorbed). Absorbing a genuinely mandatory leading
+    // separator into `.separator.leading = true` here would therefore be
+    // silently misclassified as `'optional'` downstream, producing a
+    // factory default of `leading: false` and invalid rendered syntax for
+    // any caller who doesn't explicitly override it. Confirmed via a full
+    // regen of all 3 grammars that no current rule shape ever reaches this
+    // case (a prior version of this function DID absorb it — found and
+    // removed as part of separator-as-slot PR review). Leaving `[sep, x,
+    // repeat(sep, x)]` as a plain, un-lifted seq means it classifies as
+    // `'branch'` instead — the architecture this class's own doc comment
+    // already assumes is true for this shape.
     // Case 4: [optional(sep), repeat(sep, x)] or
     // [optional(sep), repeat(sep, x), optional(sep)] — optional leading
     // separator (the flanking counterpart of Case 3's mandatory form), also

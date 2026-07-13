@@ -19,7 +19,7 @@
  * let the original spread/index bug hide from the type checker undetected.
  */
 
-import { CHOICE, PATTERN, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { PATTERN, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 import { AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';

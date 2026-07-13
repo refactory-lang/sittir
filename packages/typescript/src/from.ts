@@ -1394,7 +1394,7 @@ export function objectTypeContentFrom(...input: readonly (T.ExportStatement | T.
     const data = input[0];
     const stored = (data as unknown as { _content?: unknown })._content;
     const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.objectTypeContent(children as Parameters<typeof F.objectTypeContent>[0]);
+    return F.objectTypeContent(children as Parameters<typeof F.objectTypeContent>[0], { separatorKind: (() => { const sk = (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })._separator_kind; return sk === undefined ? undefined : ({ [TSKindId.Comma2]: ",", [TSKindId.Semi]: ";" } as Record<number, string>)[sk]; })(), leading: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })._leading_sep, trailing: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })._trailing_sep } as Parameters<typeof F.objectTypeContent>[1]);
   }
   return F.objectTypeContent(input as Parameters<typeof F.objectTypeContent>[0]);
 }

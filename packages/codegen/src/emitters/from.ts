@@ -38,7 +38,7 @@ import {
 	classifyFromEmission
 } from './shared.ts';
 import { fieldElementType } from './factories.ts';
-import { buildSeparatedListContentSlot } from './wrap.ts';
+import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -623,7 +623,14 @@ function emitRestParamFromResolver(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap,
 	storageKey: string,
-	buildCallExpr: (varExpr: string) => string,
+	// `isSelfUnwrap` distinguishes the two call sites below: `true` inside
+	// the self-NodeData-unwrap branch (a `data` local naming the original
+	// wrapped node is in scope, so a caller like `emitSeparatedListFrom` can
+	// read per-instance facts off it — e.g. preserving `_separator_kind`/
+	// `_leading_sep`/`_trailing_sep` when reconstructing an already-wrapped
+	// separatedList node); `false` for the fresh-input path, where no such
+	// source node exists to read facts from.
+	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
 	childrenTypeAnnotation = ''
 ): string {
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
@@ -634,7 +641,7 @@ function emitRestParamFromResolver(
 	if (!hasNumericDiscriminant) {
 		return [
 			`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
-			`  return ${buildCallExpr('input')};`,
+			`  return ${buildCallExpr('input', false)};`,
 			'}'
 		].join('\n');
 	}
@@ -653,9 +660,9 @@ function emitRestParamFromResolver(
 		`    const data = input[0];`,
 		`    const stored = ${storageAccess};`,
 		`    const children${childrenTypeAnnotation} = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
-		`    return ${buildCallExpr('children')};`,
+		`    return ${buildCallExpr('children', true)};`,
 		`  }`,
-		`  return ${buildCallExpr('input')};`,
+		`  return ${buildCallExpr('input', false)};`,
 		'}'
 	].join('\n');
 }
@@ -839,12 +846,22 @@ function emitContainerFrom(
  * through `unknown`, closing the exact gap that let this bug ship
  * undetected the first time.
  *
- * `options` is intentionally omitted on both paths (fresh input and
- * self-NodeData unwrap) — matches pre-Task-6 behavior, which had no
- * leading/trailing/separatorKind concept in from() at all; the factory's
- * own defaults (`leading`/`trailing` false, `separatorKind` first
- * candidate) apply. Not a regression: `from()` never round-tripped these
- * per-instance facts before Task 6 either.
+ * `options` is omitted on the fresh-input path (no source node exists there
+ * to read per-instance facts from — the factory's own defaults apply, same
+ * as before this fix). On the self-NodeData-unwrap path, `options` IS built
+ * from the original wrapped node's own `_separator_kind`/`_leading_sep`/
+ * `_trailing_sep` — calling `from()` on an already-wrapped separatedList
+ * node used to silently reconstruct it with the factory's DEFAULTS (comma,
+ * no flanks) regardless of what the original instance actually was, e.g.
+ * `objectTypeContentFrom()` on a wrapped semicolon-delimited node would
+ * change its rendered syntax back to a comma. Gated identically to
+ * `emitSeparatedListFactory`'s own options surface (`node.separatorRule !==
+ * undefined` / `leadingMode === 'optional'` / `trailingMode === 'optional'`)
+ * so only fields the factory actually accepts get passed. `separatorKind`
+ * needs a NUMBER→NAME reverse lookup since the wire stores a KindId but the
+ * factory's `options.separatorKind` takes one of the candidate NAME
+ * strings — built the same way `emitSeparatedListFactory`'s forward
+ * (name→id) lookup is, just with the object literal's key/value swapped.
  */
 function emitSeparatedListFrom(
 	node: AssembledSeparatedList,
@@ -857,6 +874,44 @@ function emitSeparatedListFrom(
 	const tName = `T.${node.typeName}`;
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elemType = fieldElementType(contentSlot, nodeMap);
+
+	// Mirrors emitSeparatedListFactory's own gating exactly (see that
+	// function's doc comment, factories.ts) — kept consistent across
+	// capture/render/construct/reconstruct rather than diverging.
+	const hasSeparatorKindOption = node.separatorRule !== undefined;
+	const candidateKindNames = hasSeparatorKindOption
+		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
+		: [];
+	const hasLeadingOption = node.leadingMode === 'optional';
+	const hasTrailingOption = node.trailingMode === 'optional';
+	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
+
+	const buildOptionsPreservingCall = (varExpr: string): string => {
+		// `data`'s ambient type has no arbitrary storage keys (same reason
+		// `storageAccess` above needs its own `unknown` cast) — read the
+		// three per-instance fields through one shared cast rather than
+		// three separate ones.
+		const sourceFields =
+			'(data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })';
+		const optionParts: string[] = [];
+		if (candidateKindNames.length > 0) {
+			const reverseArms = candidateKindNames
+				.map((k) => `[${kindDiscriminantExpr(k, nodeMap, kindEntries)}]: ${JSON.stringify(k)}`)
+				.join(', ');
+			// IIFE (not a bare ternary) so the `_separator_kind` read is
+			// narrowed by a single `const`, not two independent casts — a
+			// ternary re-reading the cast expression twice can't correlate
+			// the `undefined` check with the second read, tripping tsgo's
+			// "undefined can't be used as an index type" (TS2538).
+			optionParts.push(
+				`separatorKind: (() => { const sk = ${sourceFields}._separator_kind; return sk === undefined ? undefined : ({ ${reverseArms} } as Record<number, string>)[sk]; })()`
+			);
+		}
+		if (hasLeadingOption) optionParts.push(`leading: ${sourceFields}._leading_sep`);
+		if (hasTrailingOption) optionParts.push(`trailing: ${sourceFields}._trailing_sep`);
+		return `${factory}(${varExpr} as Parameters<typeof ${factory}>[0], { ${optionParts.join(', ')} } as Parameters<typeof ${factory}>[1])`;
+	};
+
 	return emitRestParamFromResolver(
 		fn,
 		factory,
@@ -866,7 +921,10 @@ function emitSeparatedListFrom(
 		kindEntries,
 		nodeMap,
 		'_content',
-		(varExpr) => `${factory}(${varExpr} as Parameters<typeof ${factory}>[0])`,
+		(varExpr, isSelfUnwrap) =>
+			isSelfUnwrap && hasOptions
+				? buildOptionsPreservingCall(varExpr)
+				: `${factory}(${varExpr} as Parameters<typeof ${factory}>[0])`,
 		': readonly unknown[]'
 	);
 }

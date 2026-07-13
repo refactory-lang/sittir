@@ -974,7 +974,7 @@ export function lambdaParametersFrom(...input: readonly (T.Parameter | T.LambdaP
     const data = input[0];
     const stored = (data as unknown as { _content?: unknown })._content;
     const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.lambdaParameters(children as Parameters<typeof F.lambdaParameters>[0]);
+    return F.lambdaParameters(children as Parameters<typeof F.lambdaParameters>[0], { trailing: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })._trailing_sep } as Parameters<typeof F.lambdaParameters>[1]);
   }
   return F.lambdaParameters(input as Parameters<typeof F.lambdaParameters>[0]);
 }
