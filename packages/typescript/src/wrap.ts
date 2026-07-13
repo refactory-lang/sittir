@@ -205,19 +205,41 @@ function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[
   return undefined;
 }
 // _hasSeparatorFlank — whether an optional leading/trailing separator is
-// present on this instance. Preferred signal: compare the container span
-// against the first/last content element span (a literal separator’s
-// $other entry is a bare kind-id number with no position of its own, so a
-// container extending past the content extent is the direct evidence).
-// Falls back to a $other-length vs. between-separator-count comparison when
-// content is text-collapsed (no per-element span) — correct whenever the
-// opposite flank direction is structurally "none".
-function _hasSeparatorFlank(container: { $span?: { start: number; end: number } }, content: readonly unknown[], other: readonly unknown[] | undefined, edge: "leading" | "trailing"): boolean {
+// present on this instance.
+//
+// Preferred signal: compare the container span against the first/last
+// content element span. A literal separator's $other entry is a bare
+// kind-id number with no position of its own (verified against real
+// parsed payloads — a "," token is indistinguishable from any other ","
+// at a different position), so it cannot answer "which side is this on".
+// The container span extending past the content's own extent is direct,
+// order-independent evidence instead: no separator ever falls OUTSIDE
+// [firstContent.start, lastContent.end] except a leading/trailing flank.
+//
+// Falls back to a $other-length vs. between-separator-count comparison
+// when content is text-collapsed (no per-element span survives — e.g. a
+// bare-identifier tuple element arriving as the plain string "a"). That
+// fallback is correct ONLY when the OPPOSITE flank direction is
+// structurally 'none' on this kind — otherwise a single extra $other
+// entry is genuinely ambiguous between "this is the leading flank" and
+// "this is the trailing flank", and the count alone cannot tell them
+// apart (both queries would compute the identical boolean off the
+// identical formula). `otherFlankOptional` is the codegen-time fact
+// (`node.leadingMode === 'optional' && node.trailingMode === 'optional'`)
+// that flags this — a kind combining both-optional flanks with
+// text-collapsed content has no real-grammar coverage today (all such
+// kinds currently retain per-element span), so this throws loudly rather
+// than silently returning a wrong-for-one-edge answer if that combination
+// is ever reached.
+function _hasSeparatorFlank(container: { $span?: { start: number; end: number } }, content: readonly unknown[], other: readonly unknown[] | undefined, edge: "leading" | "trailing", otherFlankOptional: boolean): boolean {
   const containerSpan = container.$span;
   const anchor = edge === "leading" ? content[0] : content[content.length - 1];
   const anchorSpan = anchor && typeof anchor === "object" ? (anchor as { $span?: { start: number; end: number } }).$span : undefined;
   if (containerSpan && anchorSpan) {
     return edge === "leading" ? containerSpan.start < anchorSpan.start : containerSpan.end > anchorSpan.end;
+  }
+  if (otherFlankOptional) {
+    throw new Error(`_hasSeparatorFlank: cannot disambiguate the "${edge}" flank from its opposite for a text-collapsed content element (no per-element $span) when BOTH flank directions are optional on this kind — the $other-count fallback is ambiguous here. This combination has no real-grammar coverage; a genuine order-aware mechanism is needed before this kind can support both-optional-flank capture.`);
   }
   const otherCount = Array.isArray(other) ? other.length : 0;
   const between = Math.max(content.length - 1, 0);
@@ -2999,8 +3021,8 @@ export function wrapObjectTypeContentComma(data: T.ObjectTypeContentComma & { re
     ...data,
     $type: TSKindId.ObjectTypeContentComma as const,
     _content: _content,
-    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading"),
-    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing"),
+    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", true),
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", true),
 
     content() { return drillInAll<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>(this._content as readonly (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[] | undefined, tree); },
     $with: {},
@@ -3013,8 +3035,8 @@ export function wrapObjectTypeContentSemi(data: T.ObjectTypeContentSemi & { read
     ...data,
     $type: TSKindId.ObjectTypeContentSemi as const,
     _content: _content,
-    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading"),
-    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing"),
+    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", true),
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", true),
 
     content() { return drillInAll<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>(this._content as readonly (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[] | undefined, tree); },
     $with: {},

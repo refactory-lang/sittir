@@ -519,11 +519,21 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 /**
  * Recursively collect candidate separator token kind names from a
  * nonterminal separator rule (`AssembledSeparatedList.separatorRule`) —
- * walks CHOICE/GROUP/OPTIONAL down to STRING/SYMBOL leaves. Mirrors the
- * shape `link.ts`'s flank-absorption already recognizes for
- * `optional(choice(...))` flanks (Task 3), reused here to gather the set
- * of literal texts / referenced rule names the runtime `$other` scan
- * must match against.
+ * walks CHOICE/GROUP/OPTIONAL down to STRING/SYMBOL leaves, gathering the
+ * set of literal texts / referenced rule names the runtime `$other` scan
+ * must match against. A plain leaf-collecting walk, not related to
+ * `link.ts`'s flank-absorption (which does structural `rulesEqual`
+ * comparison between two rule trees — a different mechanism entirely).
+ *
+ * Throws on any rule shape this walk doesn't know how to resolve to a
+ * kind-discriminant leaf (e.g. a `SEQ`-shaped separator — a genuinely
+ * different scenario needing multi-token matching, not a single kind-id
+ * probe) — no real grammar currently sets a nonterminal `separatorRule`
+ * at all (see `emitSeparatedListWrap`'s doc comment), so a silent `[]`
+ * here would make `_separator_kind` silently always resolve to
+ * `undefined` for whatever future kind first reaches this gap, rather
+ * than failing loudly at codegen time the way `kindDiscriminantExpr`
+ * (this file) already does for its own unresolvable-kind case.
  */
 function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[] {
 	switch (rule.type) {
@@ -537,7 +547,11 @@ function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[] {
 		case 'OPTIONAL':
 			return collectSeparatorCandidateKindNames(rule.content);
 		default:
-			return [];
+			throw new Error(
+				`collectSeparatorCandidateKindNames: unhandled separator rule shape '${rule.type}' — ` +
+					`extend this walk to resolve its kind-discriminant leaves before this kind can emit ` +
+					`_separator_kind.`
+			);
 	}
 }
 
@@ -587,10 +601,8 @@ function collectSeparatedListContentStorageKeys(contentSlot: AssembledNontermina
  * Union the wire-only `_<kind>` storage keys a separatedList wrap function
  * body actually reads (`collectSeparatedListContentStorageKeys`) to the
  * content slot's own element type — mirrors the SAME wire-widening pattern
- * `emitFieldCarryingWrap`'s per-field version uses for real 'branch' fields
- * (`todo-items-2-11-wrap-fix` branch, commit 0a6fa58df, not yet on this
- * branch's history — ported here scoped to this ONE synthetic content slot
- * rather than pulling in that commit's full multi-field version).
+ * `emitFieldCarryingWrap`'s per-field version needs for real 'branch' fields
+ * (see this function's commit message for provenance).
  *
  * Excludes any candidate key that coincides with a member `T.<TypeName>`
  * already declares (its OWN canonical `_<name>` storage key, from whatever
@@ -667,23 +679,15 @@ function buildSeparatedListWrapParamType(typeName: string, wireKeyTypes: Readonl
  *   fixed output key instead of the kind-projected name.
  *
  * - `_leading_sep` / `_trailing_sep`: whether an optional flank separator
- *   is present in THIS instance. `$other`'s entries carry no per-entry
- *   position data for literal (scalar-kindId) separators — verified:
- *   a `,` token appears as a bare NUMBER in `$other`, indistinguishable
- *   from any other `,` at a different position. Where content elements
- *   retain their own `$span` (not text-collapsed), comparing the
- *   CONTAINER's own `$span` against the first/last content element's
- *   `$span` is a direct, order-independent signal: the container span
- *   extends past its content's own extent exactly when a flank separator
- *   occupies that extra byte range (verified against real
- *   `object_type_content_comma` payloads — the one real case where BOTH
- *   `leadingMode` and `trailingMode` are simultaneously `'optional'`, so
- *   a pure `$other`-count can't disambiguate which side is occupied).
- *   Falls back to a `$other`-count comparison when content is
- *   text-collapsed (no per-element `$span`) — correct whenever the
- *   OPPOSITE flank direction is structurally `'none'`, true for every
- *   real grammar kind that reaches this branch today (all 3 python
- *   kinds: `leadingMode: 'none'`).
+ *   is present in THIS instance, verified against real
+ *   `object_type_content_comma`/`_semi` payloads (the one real case where
+ *   BOTH `leadingMode` and `trailingMode` are simultaneously `'optional'`)
+ *   and all 3 python kinds. See the emitted `_hasSeparatorFlank` runtime
+ *   helper's own doc comment (below, in the generated-boilerplate section
+ *   of this file) for the full span-comparison rationale and the
+ *   text-collapsed-content fallback's documented ambiguity guard — kept in
+ *   one place since that's what a maintainer debugging generated output
+ *   actually sees.
  *
  * - `_separator_kind`: only emitted when `separatorRule` is a nonterminal
  *   (Task 2). UNVERIFIED against real wire data — no real grammar kind in
@@ -742,11 +746,12 @@ function emitSeparatedListWrap(
 			.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries));
 		lines.push(`    _separator_kind: _separatorKindOf(data, [${candidateExprs.join(', ')}]),`);
 	}
+	const bothFlanksOptional = node.leadingMode === 'optional' && node.trailingMode === 'optional';
 	if (node.leadingMode === 'optional') {
-		lines.push('    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading"),');
+		lines.push(`    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", ${bothFlanksOptional}),`);
 	}
 	if (node.trailingMode === 'optional') {
-		lines.push('    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing"),');
+		lines.push(`    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", ${bothFlanksOptional}),`);
 	}
 	lines.push('');
 	lines.push(`    content() { ${accessorBody}; },`);
@@ -1417,19 +1422,41 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			...(usesHasSeparatorFlank
 				? [
 						'// _hasSeparatorFlank — whether an optional leading/trailing separator is',
-						'// present on this instance. Preferred signal: compare the container span',
-						'// against the first/last content element span (a literal separator’s',
-						'// $other entry is a bare kind-id number with no position of its own, so a',
-						'// container extending past the content extent is the direct evidence).',
-						'// Falls back to a $other-length vs. between-separator-count comparison when',
-						'// content is text-collapsed (no per-element span) — correct whenever the',
-						'// opposite flank direction is structurally "none".',
-						'function _hasSeparatorFlank(container: { $span?: { start: number; end: number } }, content: readonly unknown[], other: readonly unknown[] | undefined, edge: "leading" | "trailing"): boolean {',
+						'// present on this instance.',
+						'//',
+						'// Preferred signal: compare the container span against the first/last',
+						'// content element span. A literal separator\'s $other entry is a bare',
+						'// kind-id number with no position of its own (verified against real',
+						'// parsed payloads — a "," token is indistinguishable from any other ","',
+						'// at a different position), so it cannot answer "which side is this on".',
+						'// The container span extending past the content\'s own extent is direct,',
+						'// order-independent evidence instead: no separator ever falls OUTSIDE',
+						'// [firstContent.start, lastContent.end] except a leading/trailing flank.',
+						'//',
+						'// Falls back to a $other-length vs. between-separator-count comparison',
+						'// when content is text-collapsed (no per-element span survives — e.g. a',
+						'// bare-identifier tuple element arriving as the plain string "a"). That',
+						'// fallback is correct ONLY when the OPPOSITE flank direction is',
+						'// structurally \'none\' on this kind — otherwise a single extra $other',
+						'// entry is genuinely ambiguous between "this is the leading flank" and',
+						'// "this is the trailing flank", and the count alone cannot tell them',
+						'// apart (both queries would compute the identical boolean off the',
+						'// identical formula). `otherFlankOptional` is the codegen-time fact',
+						'// (`node.leadingMode === \'optional\' && node.trailingMode === \'optional\'`)',
+						'// that flags this — a kind combining both-optional flanks with',
+						'// text-collapsed content has no real-grammar coverage today (all such',
+						'// kinds currently retain per-element span), so this throws loudly rather',
+						'// than silently returning a wrong-for-one-edge answer if that combination',
+						'// is ever reached.',
+						'function _hasSeparatorFlank(container: { $span?: { start: number; end: number } }, content: readonly unknown[], other: readonly unknown[] | undefined, edge: "leading" | "trailing", otherFlankOptional: boolean): boolean {',
 						'  const containerSpan = container.$span;',
 						'  const anchor = edge === "leading" ? content[0] : content[content.length - 1];',
 						'  const anchorSpan = anchor && typeof anchor === "object" ? (anchor as { $span?: { start: number; end: number } }).$span : undefined;',
 						'  if (containerSpan && anchorSpan) {',
 						'    return edge === "leading" ? containerSpan.start < anchorSpan.start : containerSpan.end > anchorSpan.end;',
+						'  }',
+						'  if (otherFlankOptional) {',
+						'    throw new Error(`_hasSeparatorFlank: cannot disambiguate the "${edge}" flank from its opposite for a text-collapsed content element (no per-element $span) when BOTH flank directions are optional on this kind — the $other-count fallback is ambiguous here. This combination has no real-grammar coverage; a genuine order-aware mechanism is needed before this kind can support both-optional-flank capture.`);',
 						'  }',
 						'  const otherCount = Array.isArray(other) ? other.length : 0;',
 						'  const between = Math.max(content.length - 1, 0);',
