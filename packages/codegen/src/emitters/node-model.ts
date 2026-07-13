@@ -19,7 +19,7 @@
 
 import { CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
-import type { Rule } from '../types/rule.ts';
+import type { Rule, SeparatorFlankMode } from '../types/rule.ts';
 import type {
 	AssembledNode,
 	AssembledNonterminal,
@@ -144,8 +144,8 @@ interface SerializedMulti extends SerializedNodeBase {
 	modelType: 'multi';
 	nonEmpty: boolean;
 	separator?: string;
-	trailing?: boolean;
-	leading?: boolean;
+	trailing?: SeparatorFlankMode;
+	leading?: SeparatorFlankMode;
 	elementKinds: string[];
 }
 

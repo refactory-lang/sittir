@@ -210,8 +210,8 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 			 *  from RepeatRule<'link'>'s identical shape. */
 			readonly separator?: {
 				readonly value: Rule<Phase>;
-				readonly trailing?: boolean;
-				readonly leading?: boolean;
+				readonly trailing?: SeparatorFlankMode;
+				readonly leading?: SeparatorFlankMode;
 			};
 
 			/**
@@ -335,6 +335,18 @@ export type ChoiceRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly members: Rule<T>[];
 }
 
+/**
+ * A separator flank's (`leading`/`trailing`) presence state: `'mandatory'`
+ * — always present, no per-instance variability, compile-time renderable
+ * exactly like `'none'` (absence, i.e. the field itself is `undefined`) —
+ * or `'optional'`, the only state with genuine per-instance variability
+ * requiring runtime capture. `'mandatory'` and `'none'` are identical from
+ * a wire/storage and construct-surface point of view (neither needs a
+ * runtime field or factory option) — they differ only at render time
+ * (always-emit vs. never-emit).
+ */
+export type SeparatorFlankMode = 'mandatory' | 'optional';
+
 export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 	? RuleBase<T> & {
 			readonly type: typeof REPEAT;
@@ -345,8 +357,8 @@ export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 			 *  fields. */
 			readonly separator?: {
 				readonly value: Rule<T>;
-				readonly trailing?: boolean;
-				readonly leading?: boolean;
+				readonly trailing?: SeparatorFlankMode;
+				readonly leading?: SeparatorFlankMode;
 			};
 	  }
 	: T extends 'evaluate'
@@ -357,8 +369,8 @@ export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 			 *  reconstructed fresh by link's lift — not carried through, so
 			 *  this stays the original sibling shape (unchanged by PR-S). */
 			readonly separator?: string;
-			readonly trailing?: boolean;
-			readonly leading?: boolean;
+			readonly trailing?: SeparatorFlankMode;
+			readonly leading?: SeparatorFlankMode;
 	  }
 	: never;
 
@@ -372,8 +384,8 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 			 *  fields. */
 			readonly separator?: {
 				readonly value: Rule<T>;
-				readonly trailing?: boolean;
-				readonly leading?: boolean;
+				readonly trailing?: SeparatorFlankMode;
+				readonly leading?: SeparatorFlankMode;
 			};
 	  }
 	: T extends 'evaluate'
@@ -384,8 +396,8 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 			 *  reconstructed fresh by link's lift — not carried through, so
 			 *  this stays the original sibling shape (unchanged by PR-S). */
 			readonly separator?: string;
-			readonly trailing?: boolean;
-			readonly leading?: boolean;
+			readonly trailing?: SeparatorFlankMode;
+			readonly leading?: SeparatorFlankMode;
 	  }
 	: never;
 

@@ -2327,7 +2327,7 @@
       "hidden": true,
       "nonEmpty": true,
       "separator": ",",
-      "trailing": true,
+      "trailing": "optional",
       "elementKinds": [
         "expression",
         "list_splat",
@@ -3091,7 +3091,7 @@
       "hidden": true,
       "nonEmpty": true,
       "separator": ",",
-      "trailing": true,
+      "trailing": "optional",
       "elementKinds": [
         "parameter"
       ]
@@ -3104,7 +3104,7 @@
       "hidden": true,
       "nonEmpty": true,
       "separator": ",",
-      "trailing": true,
+      "trailing": "optional",
       "elementKinds": [
         "pattern"
       ]

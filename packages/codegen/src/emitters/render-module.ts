@@ -1567,8 +1567,23 @@ function buildTypedTemplateBody(
 			// See docs/superpowers/specs/2026-07-12-separator-as-slot-design.md
 			// ("Render" section).
 			const separatedList = node instanceof AssembledSeparatedList ? node : undefined;
-			const leadingExpr = separatedList?.leadingMode === 'optional' ? 'node.leading_sep.unwrap_or(false)' : 'false';
-			const trailingExpr = separatedList?.trailingMode === 'optional' ? 'node.trailing_sep.unwrap_or(false)' : 'false';
+			// Three-way branch on `SeparatorFlankMode`: `'optional'` reads the
+			// wire-captured per-instance bool; `'mandatory'` is always present
+			// (hardcoded `true`, no per-instance capture exists — see
+			// AssembledSeparatedList's `leadingMode`/`trailingMode` doc comment,
+			// node-map.ts); `'none'`/`undefined` is always absent (`false`).
+			const leadingExpr =
+				separatedList?.leadingMode === 'optional'
+					? 'node.leading_sep.unwrap_or(false)'
+					: separatedList?.leadingMode === 'mandatory'
+						? 'true'
+						: 'false';
+			const trailingExpr =
+				separatedList?.trailingMode === 'optional'
+					? 'node.trailing_sep.unwrap_or(false)'
+					: separatedList?.trailingMode === 'mandatory'
+						? 'true'
+						: 'false';
 			const separatorMatchLines =
 				separatedList?.separatorRule !== undefined
 					? buildSeparatorKindMatchLines(separatedList.separatorRule, fieldSepLiteral, kindIdByKind)

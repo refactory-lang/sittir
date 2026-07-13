@@ -2646,7 +2646,7 @@ export function absorbTrailingSeparator(members: Rule<'link'>[]): Rule<'link'>[]
             return rulesEqual(r.content, sep.value);
         };
         if (isSepRepeat && isOptionalSepLit(next, curSep!)) {
-            out.push({ ...(cur as RepeatRule | Repeat1Rule), separator: { ...curSep!, trailing: true } });
+            out.push({ ...(cur as RepeatRule | Repeat1Rule), separator: { ...curSep!, trailing: 'optional' } });
             i++;
             changed = true;
             continue;
@@ -2685,39 +2685,34 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
     if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
         return { type: REPEAT1, content: elem, separator: sep };
     }
-    // Case 2: [x, repeat(sep, x), optional(sep)] — trailing allowed.
+    // Case 2: [x, repeat(sep, x), optional(sep)] — genuinely OPTIONAL
+    // trailing (per-instance variability, needs runtime capture).
     if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
-        return { type: REPEAT1, content: elem, separator: { ...sep, trailing: true } };
+        return { type: REPEAT1, content: elem, separator: { ...sep, trailing: 'optional' } };
     }
-    // Case 3 [sep, x, repeat(sep, x)] — a MANDATORY leading separator — is
-    // deliberately NOT absorbed here. `AssembledSeparatedList.leadingMode`
-    // (node-map.ts) can only represent `'optional'`/`'none'` for a flank
-    // (see its doc comment: `.separator.leading` is `true` exclusively for
-    // an absorbed `optional(sep)` member; a bare, non-optional separator
-    // literal has no way to signal "always present" through that same
-    // boolean once absorbed). Absorbing a genuinely mandatory leading
-    // separator into `.separator.leading = true` here would therefore be
-    // silently misclassified as `'optional'` downstream, producing a
-    // factory default of `leading: false` and invalid rendered syntax for
-    // any caller who doesn't explicitly override it. Confirmed via a full
-    // regen of all 3 grammars that no current rule shape ever reaches this
-    // case (a prior version of this function DID absorb it — found and
-    // removed as part of separator-as-slot PR review). Leaving `[sep, x,
-    // repeat(sep, x)]` as a plain, un-lifted seq means it classifies as
-    // `'branch'` instead — the architecture this class's own doc comment
-    // already assumes is true for this shape.
+    // Case 3: [sep, x, repeat(sep, x)] — a MANDATORY leading separator
+    // (bare, not `optional(...)`-wrapped): always present, no per-instance
+    // variability. Stamped `leading: 'mandatory'` — a real, distinct
+    // `SeparatorFlankMode` value from Case 4's `'optional'`, not the same
+    // boolean `true` both used to share (which is what let a genuinely
+    // mandatory flank get misclassified as `'optional'` downstream, per
+    // `AssembledSeparatedList.leadingMode`'s doc comment, node-map.ts).
+    if (members.length === 3 && repeatIdx === 2 && rulesEqual(members[0]!, sep.value) && matchesElem(members[1]!)) {
+        return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'mandatory' } };
+    }
     // Case 4: [optional(sep), repeat(sep, x)] or
-    // [optional(sep), repeat(sep, x), optional(sep)] — optional leading
-    // separator (the flanking counterpart of Case 3's mandatory form), also
-    // absorbing a trailing optional on the far side when present. No case
-    // handled an OPTIONAL leading flank at all before this widening (Case 3
-    // only ever matched a bare, mandatory literal/structural separator).
+    // [optional(sep), repeat(sep, x), optional(sep)] — genuinely OPTIONAL
+    // leading separator (the flanking counterpart of Case 3's mandatory
+    // form), also absorbing a trailing optional on the far side when
+    // present. No case handled an OPTIONAL leading flank at all before this
+    // widening (Case 3 only ever matched a bare, mandatory literal/
+    // structural separator).
     if (repeatIdx === 1 && matchesOptionalSep(members[0]!)) {
         if (members.length === 2) {
-            return { type: REPEAT1, content: elem, separator: { ...sep, leading: true } };
+            return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'optional' } };
         }
         if (members.length === 3 && matchesOptionalSep(members[2]!)) {
-            return { type: REPEAT1, content: elem, separator: { ...sep, leading: true, trailing: true } };
+            return { type: REPEAT1, content: elem, separator: { ...sep, leading: 'optional', trailing: 'optional' } };
         }
     }
     return null;
@@ -2787,7 +2782,21 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
                     };
                     ctx.diagnostics.emit(diagnostic);
                 }
-                return { ...rule, content: sep.content, separator: { value: sep.separator, trailing: sep.trailing } };
+                // `sep.trailing` (list-patterns.ts's `detectRepeatSeparator`) is a
+                // POSITIONAL flag: the separator appears AFTER the content element
+                // within `repeat(seq(content, SEP))` — every iteration (including
+                // the last) unconditionally emits `SEP`, no per-instance
+                // omission possible. That is a genuinely MANDATORY trailing
+                // flank, not the `optional` kind `liftCommaSep`'s Case 2/4 stamp
+                // (this function, `liftSeparators`, is a separate, earlier lift
+                // that never sees an `optional(sep)`-wrapped shape — that shape
+                // only arises from the seq-of-3-members pattern `liftCommaSep`
+                // handles downstream in link).
+                return {
+                    ...rule,
+                    content: sep.content,
+                    separator: { value: sep.separator, trailing: sep.trailing ? 'mandatory' : undefined }
+                };
             }
             return { ...rule, content };
         }

@@ -1614,7 +1614,11 @@ function isSeparatedListShape(rule: Rule<'link'>): boolean {
 	const sep = rule.separator;
 	if (sep === undefined) return false;
 	if (isNonterminalRuleType(sep.value as Rule<'evaluate'>)) return true;
-	return sep.trailing === true || sep.leading === true;
+	// Only a genuinely OPTIONAL flank has per-instance variability worth
+	// this classification — 'mandatory' (always present) is compile-time
+	// renderable exactly like 'none' (absent), and stays classified as
+	// 'branch' via the pre-existing hasTrailing/hasLeading mechanism.
+	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 
 /**

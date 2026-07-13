@@ -50,7 +50,8 @@ import type {
 	EnumRule,
 	SupertypeRule,
 	Multiplicity,
-	RuleId
+	RuleId,
+	SeparatorFlankMode
 } from '../../types/rule.ts';
 import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '../../types/rule.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
@@ -3127,12 +3128,12 @@ export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> 
 	}
 
 	/** Whether a trailing separator is permitted. */
-	get trailing(): boolean | undefined {
+	get trailing(): SeparatorFlankMode | undefined {
 		return this.rule.separator?.trailing;
 	}
 
 	/** Whether a leading separator is permitted. */
-	get leading(): boolean | undefined {
+	get leading(): SeparatorFlankMode | undefined {
 		return this.rule.separator?.leading;
 	}
 }
@@ -3307,17 +3308,27 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 	 */
 	readonly separatorRule: Rule<'link'> | undefined;
 	/**
-	 * Leading/trailing flank state. Structurally, `RuleBase.separator`'s
-	 * `leading`/`trailing` are always `true` (optional flank permitted) or
-	 * absent (no flank) — link.ts's separator-lift pass
-	 * (`liftCommaSep`/`absorbTrailingSeparator`) only ever stamps `true`
-	 * when merging an `optional(sepLit)` member into the repeat; a
-	 * mandatory (non-optional) flank literal stays a separate SEQ member
-	 * outside the repeat and never reaches `.separator` — that shape
-	 * classifies as `'branch'`, not `'separatedList'`. So `'mandatory'` is
-	 * unreachable for the flanks specifically here — kept in the union only
-	 * for the *between* position (implicitly mandatory whenever a separator
-	 * exists at all, so not stored as a field on this class).
+	 * Leading/trailing flank state — a direct passthrough of
+	 * `RuleBase.separator`'s own `leading`/`trailing` (`SeparatorFlankMode`,
+	 * types/rule.ts): `'mandatory'`/`'optional'` when link.ts's
+	 * `liftCommaSep`/`absorbTrailingSeparator` absorbed a bare vs.
+	 * `optional(sepLit)`-wrapped flank member into the repeat, `'none'` when
+	 * the field is absent (no flank at all). `'mandatory'` and `'none'` are
+	 * identical from wrap/factory/from's point of view (neither needs
+	 * runtime capture or a factory option — both are compile-time known);
+	 * they differ only at render time, where `'mandatory'` must always emit
+	 * the separator and `'none'` must never emit it — see
+	 * `render-module.ts`'s `leadingExpr`/`trailingExpr` construction.
+	 * `isSeparatedListShape` (assemble.ts) only routes a rule here for a
+	 * literal separator when at least one flank is genuinely `'optional'`
+	 * (a nonterminal separator routes here regardless of flank state) — a
+	 * literal separator with ONLY `'mandatory'`/`'none'` flanks stays
+	 * classified as `'branch'`, rendered by the pre-existing
+	 * `hasTrailing`/`hasLeading` boolean mechanism instead. So a
+	 * literal-separator kind reaching this class always has at least one
+	 * `'optional'` flank; `'mandatory'` is only reachable here in
+	 * combination with a nonterminal separator or the OTHER flank being
+	 * `'optional'`.
 	 */
 	readonly leadingMode: 'mandatory' | 'optional' | 'none';
 	readonly trailingMode: 'mandatory' | 'optional' | 'none';
@@ -3366,8 +3377,8 @@ export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repea
 		const sep = rule.separator;
 		this.elements = deriveValuesForRule(rule.content, ctx, rule.type === REPEAT1 ? 'nonEmptyArray' : 'array');
 		this.separatorRule = opts.separatorRule;
-		this.leadingMode = sep?.leading === true ? 'optional' : 'none';
-		this.trailingMode = sep?.trailing === true ? 'optional' : 'none';
+		this.leadingMode = sep?.leading ?? 'none';
+		this.trailingMode = sep?.trailing ?? 'none';
 		this.simplifiedRule = opts.simplifiedRule;
 		this.renderRule = opts.renderRule;
 		this._slots = buildSlotsRecord(

@@ -861,7 +861,7 @@ describe('liftSeparators \u2014 flank absorption widened to structural rulesEqua
 		const lifted = liftSeparators(rule, ctx) as any;
 		expect(lifted.type).toBe('REPEAT1');
 		expect(lifted.content).toEqual({ type: 'SYMBOL', name: 'member' });
-		expect(lifted.separator).toEqual({ value: choiceSep(), trailing: true, leading: true });
+		expect(lifted.separator).toEqual({ value: choiceSep(), trailing: 'optional', leading: 'optional' });
 	});
 
 	it('still absorbs the ordinary literal optional(",") trailing-separator case unchanged', () => {
@@ -886,7 +886,7 @@ describe('liftSeparators \u2014 flank absorption widened to structural rulesEqua
 		const lifted = liftSeparators(rule, ctx) as any;
 		expect(lifted.type).toBe('REPEAT1');
 		expect(lifted.content).toEqual({ type: 'SYMBOL', name: 'member' });
-		expect(lifted.separator).toEqual({ value: { type: 'STRING', value: ',' }, trailing: true });
+		expect(lifted.separator).toEqual({ value: { type: 'STRING', value: ',' }, trailing: 'optional' });
 	});
 
 	it('absorbs a leading-only optional(choice(...)) flank with no trailing member present (Case 4, 2-member branch)', () => {
@@ -913,6 +913,6 @@ describe('liftSeparators \u2014 flank absorption widened to structural rulesEqua
 		const lifted = liftSeparators(rule, ctx) as any;
 		expect(lifted.type).toBe('REPEAT1');
 		expect(lifted.content).toEqual({ type: 'SYMBOL', name: 'member' });
-		expect(lifted.separator).toEqual({ value: choiceSep(), leading: true });
+		expect(lifted.separator).toEqual({ value: choiceSep(), leading: 'optional' });
 	});
 });

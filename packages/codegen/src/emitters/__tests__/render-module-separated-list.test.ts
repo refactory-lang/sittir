@@ -92,7 +92,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: sepChoice, trailing: true, leading: true }
+			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
 		const emitted = emitRenderModule('rust', [], nodeMap, GENERATED_ID_TABLES).transportRs.contents;
@@ -109,7 +109,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule('rust', [], nodeMap, GENERATED_ID_TABLES).transportRs.contents;
@@ -146,7 +146,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: sepChoice, trailing: true, leading: true }
+			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
 		const emitted = emitRenderModule(
@@ -161,6 +161,27 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		expect(emitted).toContain('separator: match node.separator_kind {');
 		expect(emitted).toContain('Some(3) => ",",');
 		expect(emitted).toContain('Some(4) => ";",');
+	});
+
+	it('hardcodes leading: true for a mandatory leading flank while trailing still reads the wire-captured optional flank', () => {
+		const rule: Repeat1Rule = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: { value: { type: STRING, value: ',' }, leading: 'mandatory', trailing: 'optional' }
+		};
+		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const emitted = emitRenderModule(
+			'rust',
+			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member | join(", ") }}' }],
+			nodeMap,
+			GENERATED_ID_TABLES
+		).transportRs.contents;
+
+		expect(emitted).toContain('leading: true,');
+		expect(emitted).toContain('trailing: node.trailing_sep.unwrap_or(false),');
+		// A 'mandatory' flank has no per-instance capture — no leading_sep field.
+		expect(emitted).not.toContain('pub leading_sep:');
+		expect(emitted).toContain('pub trailing_sep: Option<bool>,');
 	});
 
 	it('emits literal false/false and the plain literal separator for a mandatory literal separator (no capture fields)', () => {
@@ -187,7 +208,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(
@@ -205,7 +226,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, leading: true }
+			separator: { value: { type: STRING, value: ',' }, leading: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitRenderModule(

@@ -55,7 +55,7 @@ function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {
 	const rule: RepeatRule = {
 		type: REPEAT,
 		content: { type: CHOICE, members: [{ type: SYMBOL, name: 'memberA' }, { type: SYMBOL, name: 'memberB' }] },
-		separator: { value: { type: STRING, value: ',' }, trailing: true }
+		separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 	};
 	const contentRule: Rule<'link'> = rule.content;
 	const nodes = new Map<string, AssembledNode>();
@@ -84,7 +84,7 @@ describe('factories emitter — separatedList', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: sepChoice, trailing: true, leading: true }
+			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
 
@@ -106,7 +106,7 @@ describe('factories emitter — separatedList', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
@@ -123,7 +123,7 @@ describe('factories emitter — separatedList', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true, leading: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional', leading: 'optional' }
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 

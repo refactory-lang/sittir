@@ -1204,8 +1204,14 @@ function selectJoinFilter(rule: RenderRule, slot?: AssembledNonterminal): 'join'
 	// trailing/leading now live NESTED inside `separator` (PR-S) — no more
 	// top-level siblings on the rule to check directly.
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
-	const trailing = sep?.trailing === true;
-	const leading = sep?.leading === true;
+	// Presence check, not a specific `SeparatorFlankMode` value: a rule
+	// reaching this (non-`'separatedList'`-classified) function can only
+	// carry a `'mandatory'` flank here (a genuinely `'optional'` one would
+	// already have routed the rule to `'separatedList'` classification
+	// instead, see `isSeparatedListShape`, assemble.ts) — mirrors
+	// `collect-slots.ts`'s `hasTrailing`/`hasLeading` derivation.
+	const trailing = sep?.trailing !== undefined;
+	const leading = sep?.leading !== undefined;
 	if (trailing && leading) return 'joinWithFlanks';
 	if (trailing) return 'joinWithTrailing';
 	if (leading) return 'joinWithLeading';

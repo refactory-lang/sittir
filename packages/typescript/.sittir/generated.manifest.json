@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "48873ad40e1da6d4b6224dfee1f1c65390389137730f90fa21dec224c7176be5",
+  "source_hash": "09ad785dc19e2687fef5608419cb21a3e2df5175e4b6dac54c15dc0df3012788",
   "files": {
     "packages/typescript/.sittir/grammar.js": "d11ab0e0e844bd28d6c504ce43086954b06542fdc0b86a77b2a6c002ca5a724a",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",

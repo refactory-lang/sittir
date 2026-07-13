@@ -59,7 +59,7 @@ describe('from emitter — separatedList', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
@@ -85,7 +85,7 @@ describe('from emitter — separatedList', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 

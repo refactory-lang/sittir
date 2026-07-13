@@ -84,15 +84,15 @@ describe('deleteWrapper — repeat', () => {
 		const wrapped: RepeatRule = {
 			type: REPEAT,
 			content: sym('item'),
-			separator: { value: { type: 'STRING', value: ',' }, trailing: true, leading: false },
+			separator: { value: { type: 'STRING', value: ',' }, trailing: 'optional', leading: 'mandatory' },
 		};
 		const out = deleteWrapper(wrapped);
 		expect(out.type).toBe('SYMBOL');
 		expect(out.multiplicity).toBe('array');
 		expect(out.separator).toEqual({
 			value: { type: 'STRING', value: ',' },
-			trailing: true,
-			leading: false,
+			trailing: 'optional',
+			leading: 'mandatory',
 		});
 	});
 

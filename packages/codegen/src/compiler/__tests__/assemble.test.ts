@@ -522,9 +522,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 						{ type: STRING, value: ',' },
 						{ type: STRING, value: ';' }
 					]
-				},
-				trailing: false,
-				leading: false
+				}
 			}
 		};
 		expect(classifyNode('member_list', rule)).toBe('separatedList');
@@ -536,7 +534,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 			content: { type: SYMBOL, name: 'member' },
 			separator: {
 				value: { type: STRING, value: ',' },
-				trailing: true
+				trailing: 'optional'
 			}
 		};
 		expect(classifyNode('member_list', rule)).toBe('separatedList');
@@ -548,7 +546,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 			content: { type: SYMBOL, name: 'member' },
 			separator: {
 				value: { type: STRING, value: ',' },
-				leading: true
+				leading: 'optional'
 			}
 		};
 		expect(classifyNode('member_list', rule)).toBe('separatedList');
@@ -582,7 +580,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 						content: { type: SYMBOL, name: 'item' },
 						separator: {
 							value: { type: STRING, value: ',' },
-							trailing: true
+							trailing: 'optional'
 						}
 					}
 				}
@@ -604,7 +602,7 @@ describe('AssembledSeparatedList — construction', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: sepChoice, trailing: false, leading: false }
+			separator: { value: sepChoice }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: sepChoice,
@@ -623,7 +621,7 @@ describe('AssembledSeparatedList — construction', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: undefined,
@@ -640,7 +638,7 @@ describe('AssembledSeparatedList — construction', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, leading: true }
+			separator: { value: { type: STRING, value: ',' }, leading: 'optional' }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: undefined,
@@ -657,7 +655,7 @@ describe('AssembledSeparatedList — construction', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: undefined,
@@ -674,7 +672,7 @@ describe('AssembledSeparatedList — construction', () => {
 		const rule: RepeatRule = {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const node = new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: undefined,

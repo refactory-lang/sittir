@@ -41,7 +41,7 @@ describe('wrap emitter — separatedList', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: sepChoice, trailing: true, leading: true }
+			separator: { value: sepChoice, trailing: 'optional', leading: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
 		const emitted = emitWrap({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
@@ -57,7 +57,7 @@ describe('wrap emitter — separatedList', () => {
 		const rule: Repeat1Rule = {
 			type: REPEAT1,
 			content: { type: SYMBOL, name: 'member' },
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
 		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 		const emitted = emitWrap({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
