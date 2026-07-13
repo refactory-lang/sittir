@@ -897,10 +897,15 @@ export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap):
  * value, but not through the children surface used by wrap/from dispatch.
  */
 export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): ChildFactorySurface | null {
-	// TEMPORARY: 'separatedList' widened in alongside 'branch' (not 'group' —
-	// this function was never group-inclusive) for the same behavior-
-	// preserving stub reason as isSlotBearingCompound's call sites.
-	if (node.modelType !== 'branch' && node.modelType !== 'separatedList') return null;
+	// 'group' (e.g. `wrap.group()`'s own call site) and 'separatedList' both
+	// legitimately reach this function with a broad `AssembledNode` and
+	// correctly get `null` back — 'group' because this function was never
+	// group-inclusive, and 'separatedList' because it now has its own
+	// dedicated factory/wrap/from emission everywhere (Tasks 4/6); every
+	// remaining call site narrows its own node type to 'branch' before
+	// calling in, so the 'separatedList' branch this check used to carry is
+	// unreachable and has been dropped.
+	if (node.modelType !== 'branch') return null;
 	const shape = classifyFactoryShape(node, nodeMap);
 	if (shape === 'spread') return 'spread';
 	if (shape !== 'direct') return null;

@@ -1382,10 +1382,18 @@ function emitSeparatedListFactory(
 	// when nonEmpty) — a plain `T[]` rest capture isn't assignable to the
 	// tuple-shaped `NonEmptyArray<T>` the factory's own `elements` parameter
 	// requires. Independently computed from `node.nonEmpty` (the
-	// authoritative source) rather than via `childrenSetterRestType` —
-	// that helper derives multiplicity from `AssembledNonterminal.isMultiple`/
-	// `isNonEmpty`, which `buildSeparatedListContentSlot`'s synthetic slot
-	// (wrap.ts) doesn't reliably carry, so it isn't a safe drop-in here.
+	// authoritative source — `rule.type === REPEAT1`) rather than via
+	// `childrenSetterRestType`, which derives multiplicity from
+	// `AssembledNonterminal.isMultiple`/`isNonEmpty` — themselves derived
+	// from `slot.values`' own per-value `multiplicity` tags, so they
+	// generally DO reflect `contentSlot`'s real multiplicity. The narrow
+	// edge case that rules this out as a safe drop-in: if
+	// `deriveValuesForRule` (node-map.ts) ever resolves `node.elements` to
+	// an EMPTY array for some content-rule shape (e.g. an unresolved
+	// reference), `isMultiple`/`isNonEmpty` degrade to `false` on zero
+	// values, silently diverging from the true (still-repeated) rule shape
+	// — `node.nonEmpty` has no such degenerate case since it reads directly
+	// off `rule.type`, never off the derived value count.
 	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(vs${optionsArg}),`);
 	if (hasSeparatorKindOption) {
 		lines.push(`      separatorKind: (v: ${separatorKindUnion}) => ${fn}(elements, { ...options, separatorKind: v }),`);

@@ -11,11 +11,11 @@
  * capture/render/construct.
  */
 
-import { CHOICE, PATTERN, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, PATTERN, REPEAT, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFactories } from '../factories.ts';
 import { AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
-import type { Repeat1Rule, Rule } from '../../types/rule.ts';
+import type { Repeat1Rule, RepeatRule, Rule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
@@ -44,6 +44,32 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 
 function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
 	return emitFactories({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
+}
+
+function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {
+	// Plain REPEAT (not REPEAT1) deliberately — the elements type takes the
+	// bare-array form ("(A | B)[]") rather than NonEmptyArray<A | B>, which is
+	// the actual shape the union-parenthesization guard protects (a
+	// NonEmptyArray<...> wrapper never needs the extra parens; only a bare
+	// `[]` suffix appended directly to a multi-member union does).
+	const rule: RepeatRule = {
+		type: REPEAT,
+		content: { type: CHOICE, members: [{ type: SYMBOL, name: 'memberA' }, { type: SYMBOL, name: 'memberB' }] },
+		separator: { value: { type: STRING, value: ',' }, trailing: true }
+	};
+	const contentRule: Rule<'link'> = rule.content;
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set(
+		'member_list',
+		new AssembledSeparatedList('member_list', rule, undefined, {
+			separatorRule: undefined,
+			simplifiedRule: contentRule,
+			renderRule: contentRule
+		})
+	);
+	nodes.set('memberA', new AssembledPattern('memberA', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('memberB', new AssembledPattern('memberB', { type: PATTERN, value: '[0-9]+' }));
+	return makeNodeMapWith(nodes);
 }
 
 describe('factories emitter — separatedList', () => {
@@ -122,5 +148,17 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).not.toContain('_separator_kind');
 		expect(emitted).not.toContain('_leading_sep');
 		expect(emitted).not.toContain('_trailing_sep');
+	});
+
+	it('multi-kind element choice on a plain (non-nonEmpty) repeat: parenthesizes the union before appending []', () => {
+		const emitted = emit(makeMultiKindMemberNodeMap());
+
+		// Correct: the union is parenthesized before the array suffix.
+		expect(emitted).toContain('export function memberList(elements: (T.MemberA | T.MemberB)[], options');
+		// The precedence bug this guards against: `[]` binding to the LAST
+		// union member alone instead of the whole union.
+		expect(emitted).not.toContain('T.MemberA | T.MemberB[]');
+		// Same guard applies to the $children setter's rest-param type.
+		expect(emitted).toContain('$children: (...vs: (T.MemberA | T.MemberB)[])');
 	});
 });
