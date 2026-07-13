@@ -1175,6 +1175,22 @@ export function separatorToString(rule: RenderRule): string | undefined {
 }
 
 /**
+ * True when `rule` carries a genuinely nonterminal separator (Table 1,
+ * `isNonterminalRuleType`) — i.e. `separatorToString` returned `undefined`
+ * NOT because there's no separator at all, but because the separator's
+ * text isn't compile-time-known (a `choice(',', ';')`-shaped separator has
+ * no single fixed literal). Distinguishes the two `undefined` cases so
+ * `emitListSlot` can reference the transport struct's own runtime-resolved
+ * `.separator` field (populated by render-module.ts's
+ * `buildSeparatorKindMatchLines` from the wire-captured `_separator_kind`)
+ * instead of silently falling through to `DEFAULT_JOIN_SEPARATOR`.
+ */
+function isNonterminalSeparatorRule(rule: RenderRule): boolean {
+	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
+	return sep !== undefined && isNonterminalRuleType(sep.value as Rule<'evaluate'>);
+}
+
+/**
  * Pick the join-filter name based on a rule's flank metadata, reading
  * trailing/leading attributes directly off the rule.
  *
@@ -1257,6 +1273,17 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 	// `factorChoiceBranches` rebuilt a choice carrying only the rule id (not the
 	// separator), so the outer choice has no separator but the slot values do.
 	const ruleSep = separatorToString(rule);
+	// A genuinely nonterminal separator (e.g. `choice(',', ';')`) has no
+	// fixed compile-time text — `ruleSep` is `undefined` for that reason,
+	// not because there's no separator at all. Reference the transport
+	// struct's own `.separator` field (a runtime-resolved `&str`, populated
+	// by render-module.ts's `buildSeparatorKindMatchLines` from the wire-
+	// captured `_separator_kind`) instead of falling through to
+	// `DEFAULT_JOIN_SEPARATOR` — which would silently drop every separator
+	// occurrence (see docs/superpowers/specs/2026-07-12-separator-as-slot-design.md).
+	if (!allImmediate && ruleSep === undefined && isNonterminalSeparatorRule(rule)) {
+		return `{{ ${slotName} | ${filter}(${slotName}.separator) }}`;
+	}
 	const slotValueSep: string | undefined =
 		ruleSep === undefined && slot !== undefined
 			? slot.values.find(
