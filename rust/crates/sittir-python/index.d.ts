@@ -590,6 +590,7 @@ export interface ExpressionStatementTupleTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _expression: Array<ExpressionTransport>
+  _trailing_sep?: boolean
 }
 
 export interface FinallyClauseTransport {
@@ -842,6 +843,7 @@ export interface LambdaParametersTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _parameters: Box<AnyTransport>
+  _trailing_sep?: boolean
 }
 
 export interface LambdaTransport {
@@ -1457,6 +1459,7 @@ export interface WithClauseBareTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _with_item: Array<WithItemTransport>
+  _trailing_sep?: boolean
 }
 
 export interface WithClauseParenTransport {

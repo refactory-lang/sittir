@@ -12117,6 +12117,8 @@ pub struct ExpressionStatementTupleTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Vec<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for ExpressionStatementTupleTransport {
@@ -13567,6 +13569,8 @@ pub struct WithClauseBareTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_item"))]
     pub with_item: Vec<WithItemTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for WithClauseBareTransport {
@@ -17700,6 +17704,8 @@ pub struct LambdaParametersTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: Box<AnyTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for LambdaParametersTransport {
@@ -28976,7 +28982,7 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, d
             items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -29144,7 +29150,7 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std:
             items: with_item_buf.as_slice(),
             separator: ",",
             leading: false,
-            trailing: false,
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)

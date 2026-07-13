@@ -534,8 +534,15 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
  * `undefined` for whatever future kind first reaches this gap, rather
  * than failing loudly at codegen time the way `kindDiscriminantExpr`
  * (this file) already does for its own unresolvable-kind case.
+ *
+ * Exported for reuse by render-module.ts, which needs the SAME candidate
+ * set to resynthesize `_separator_kind`'s literal text on the render side
+ * (see `buildSeparatorKindMatchLines` there) — the render-side match arms
+ * must enumerate exactly the kinds this wire-capture walk can produce, or
+ * a real runtime `_separator_kind` value could hit the render match's
+ * fallback arm instead of its correct literal.
  */
-function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[] {
+export function collectSeparatorCandidateKindNames(rule: Rule<'link'>): string[] {
 	switch (rule.type) {
 		case 'STRING':
 			return [rule.value];

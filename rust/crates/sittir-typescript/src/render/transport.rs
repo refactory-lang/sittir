@@ -37244,6 +37244,10 @@ pub struct ObjectTypeContentCommaTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<ObjectTypeContentCommaContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading_sep"))]
+    pub leading_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for ObjectTypeContentCommaTransport {
@@ -37294,6 +37298,10 @@ pub struct ObjectTypeContentSemiTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<ObjectTypeContentSemiContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading_sep"))]
+    pub leading_sep: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]
+    pub trailing_sep: Option<bool>,
 }
 
 impl RenderableTransport for ObjectTypeContentSemiTransport {
@@ -55280,8 +55288,8 @@ fn render_object_type_content_comma(node: &ObjectTypeContentCommaTransport, dest
         content: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: ",",
-            leading: false,
-            trailing: false,
+            leading: node.leading_sep.unwrap_or(false),
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)
@@ -55301,8 +55309,8 @@ fn render_object_type_content_semi(node: &ObjectTypeContentSemiTransport, dest: 
         content: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: ";",
-            leading: false,
-            trailing: false,
+            leading: node.leading_sep.unwrap_or(false),
+            trailing: node.trailing_sep.unwrap_or(false),
         },
     };
     template.render_into(dest)

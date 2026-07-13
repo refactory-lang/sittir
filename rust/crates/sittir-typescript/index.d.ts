@@ -1918,6 +1918,8 @@ export interface ObjectTypeContentCommaTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<ObjectTypeContentCommaContentTransportSlot>
+  _leading_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface ObjectTypeContentSemiTransport {
@@ -1929,6 +1931,8 @@ export interface ObjectTypeContentSemiTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: Array<ObjectTypeContentSemiContentTransportSlot>
+  _leading_sep?: boolean
+  _trailing_sep?: boolean
 }
 
 export interface ObjectTypeContentTransport {
