@@ -10,12 +10,13 @@
  *   of the hardcoded `false`/literal every other list-shaped slot still uses.
  */
 
-import { CHOICE, PATTERN, REPEAT, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
-import type { Repeat1Rule, RepeatRule, Rule } from '../../types/rule.ts';
+import { AssembledBranch, AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
+import type { Repeat1Rule, RepeatRule, Rule, SeqRule } from '../../types/rule.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 import { emitRenderModule } from '../render-module.ts';
 
 const MEMBER_ELEMENT_RULE: Rule<'link'> = { type: SYMBOL, name: 'member' };
@@ -30,6 +31,35 @@ function makeMemberNodeMap(rule: Repeat1Rule | RepeatRule, opts: { separatorRule
 			renderRule: MEMBER_ELEMENT_RULE
 		})
 	);
+	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
+	return makeNodeMapWith(nodes);
+}
+
+/**
+ * Plain 'branch' node with a repeated NAMED field ('items', a list-shaped
+ * slot just like AssembledSeparatedList's content) — used to prove the
+ * `node instanceof AssembledSeparatedList` guard in buildTypedTemplateBody
+ * actually scopes the real leading/trailing/separator wiring to
+ * 'separatedList' kinds only, and doesn't leak onto ordinary list-shaped
+ * fields on other modelTypes (the exact mis-scoping class PR-T's original,
+ * reverted Task 4 attempt had).
+ */
+function makeBranchWithListFieldNodeMap() {
+	const parentRule: SeqRule<'link'> = {
+		type: SEQ,
+		members: [
+			{
+				type: FIELD,
+				name: 'items',
+				content: {
+					type: REPEAT1,
+					content: { type: SYMBOL, name: 'member' }
+				}
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('branch_with_list_field', new AssembledBranch('branch_with_list_field', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -169,5 +199,40 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 
 		expect(emitted).toContain('leading: false,');
 		expect(emitted).toContain('trailing: node.trailing_sep.unwrap_or(false),');
+	});
+
+	it('resolves only leading from the transport-struct field for a literal separator with an optional leading flank (mirror of the trailing-only case)', () => {
+		const rule: Repeat1Rule = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: { value: { type: STRING, value: ',' }, leading: true }
+		};
+		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const emitted = emitRenderModule(
+			'rust',
+			[{ filename: 'member_list.jinja', content: '{# @generated #}\n{{ member | join(", ") }}' }],
+			nodeMap,
+			GENERATED_ID_TABLES
+		).transportRs.contents;
+
+		expect(emitted).toContain('leading: node.leading_sep.unwrap_or(false),');
+		expect(emitted).toContain('trailing: false,');
+	});
+
+	it('leaves a plain branch kind\'s list-shaped field hardcoded leading:false/trailing:false and a plain literal separator (guard scoping)', () => {
+		const nodeMap = makeBranchWithListFieldNodeMap();
+		const emitted = emitRenderModule(
+			'rust',
+			[{ filename: 'branch_with_list_field.jinja', content: '{# @generated #}\n{{ items | join(", ") }}' }],
+			nodeMap,
+			GENERATED_ID_TABLES
+		).transportRs.contents;
+
+		expect(emitted).not.toContain('pub leading_sep:');
+		expect(emitted).not.toContain('pub trailing_sep:');
+		expect(emitted).not.toContain('pub separator_kind:');
+		expect(emitted).toContain('leading: false,');
+		expect(emitted).toContain('trailing: false,');
+		expect(emitted).not.toContain('separator: match node.separator_kind');
 	});
 });
