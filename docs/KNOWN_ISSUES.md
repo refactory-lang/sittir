@@ -2,6 +2,19 @@
 
 Running list of known, non-blocking gaps discovered during feature work — documented here rather than silently forgotten, but not urgent enough to have blocked the work that found them. When one gets fixed, delete its entry rather than marking it done.
 
+## Bug B's `emitSeparatedListWrap`/`emitFieldCarryingWrap` refactor introduced 3 new `tsgo --noEmit` type errors
+
+**Found during:** hidden-repeat-helper-visibility plan, Task 7's final whole-feature verification (`packages/codegen/tsconfig.build.json`).
+
+Comparing `tsgo --noEmit -p packages/codegen/tsconfig.build.json` at this feature's start (commit `4c3ca8edb`) vs. its end found 3 new errors, all traceable to the Bug B fix (`emitters/wrap.ts`'s `emitSeparatedListWrap`, which now derives the element slot's real name/storage key from the model instead of a hardcoded `_content`):
+
+- `emitters/wrap.ts(748,46): error TS2339: Property 'multiple' does not exist on type 'AssembledNonterminal'` — the `node.fields.find((f) => f.multiple)` canonical-field lookup assumes a `.multiple` property that isn't declared on the type `node.fields`'s elements actually resolve to at the type-checker level (though it is present at runtime — confirmed correct via extensive `validate:native` verification across all 3 grammars).
+- Two matching errors in `emitters/__tests__/wrap-separated-list-emit.test.ts(99-100)` — a test fixture constructing a `Rule<"link">` where `SimplifiedRule`/`RenderRule` is expected, likely needing the fixture's rule to be built at the right compiler phase rather than a type-level fix.
+
+**Status: non-blocking, deferred.** Per this project's established policy (type errors are cosmetic; gate on `validate:native`, not `tsgo`), these were not fixed as part of the feature that introduced them — `cargo check --workspace --features napi-bindings` is clean and the full `validate:native` sweep passed and improved on every grammar (rust 117→125, typescript 76→76, python 102→109 `read-render-parseAstMatchPass`) across the whole feature, confirming no runtime/render-correctness impact.
+
+**Fix, if/when prioritized:** widen `node.fields`'s declared element type in `wrap.ts` (or the field-model type it resolves to) to include `.multiple`, matching what's actually present at runtime; fix the test fixture's rule construction to match its declared phase type.
+
 ## `emitListSlot`'s nonterminal-separator fix doesn't cover the `slotValueSep` fallback path
 
 **Found during:** [separator-as-slot plan](superpowers/plans/2026-07-12-separator-as-slot-plan.md), Task 7 (`packages/codegen/src/emitters/templates.ts`).
