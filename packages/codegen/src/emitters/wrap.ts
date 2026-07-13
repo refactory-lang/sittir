@@ -584,6 +584,67 @@ function collectSeparatedListContentStorageKeys(contentSlot: AssembledNontermina
 }
 
 /**
+ * Union the wire-only `_<kind>` storage keys a separatedList wrap function
+ * body actually reads (`collectSeparatedListContentStorageKeys`) to the
+ * content slot's own element type — mirrors the SAME wire-widening pattern
+ * `emitFieldCarryingWrap`'s per-field version uses for real 'branch' fields
+ * (`todo-items-2-11-wrap-fix` branch, commit 0a6fa58df, not yet on this
+ * branch's history — ported here scoped to this ONE synthetic content slot
+ * rather than pulling in that commit's full multi-field version).
+ *
+ * Excludes any candidate key that coincides with a member `T.<TypeName>`
+ * already declares (its OWN canonical `_<name>` storage key, from whatever
+ * naming the Task-2 `_slots` stub's `types.ts` derivation picked for this
+ * kind — e.g. `_with_item` for `WithClauseBare`, already typed
+ * `NonEmptyArray<WithItem>` there) — re-declaring that same key with a
+ * different (optional, elemType-only) shape here would form an incoherent
+ * intersection.
+ */
+function collectSeparatedListWireKeyTypes(
+	contentSlot: AssembledNonterminal,
+	canonicalKeys: ReadonlySet<string>,
+	nodeMap: NodeMap
+): ReadonlyMap<string, string> {
+	const candidates = collectSeparatedListContentStorageKeys(contentSlot, nodeMap);
+	const elemType = fieldElementType(contentSlot, nodeMap);
+	const keyTypes = new Map<string, string>();
+	for (const k of candidates) {
+		if (canonicalKeys.has(k)) continue;
+		keyTypes.set(k, elemType);
+	}
+	// `resolveSlotStoreExpr` always appends the target `_content` storage key
+	// itself as a final probe fallback (its normal behavior for ANY slot
+	// whose nominal key isn't already among the concrete candidates — see
+	// its doc comment) — so `data._content` is read regardless, even though
+	// it is never a REAL wire key. Widen for it too unless `_content`
+	// already happens to be this kind's canonical key (the common case for
+	// genuinely multi-kind content, where `types.ts`'s own `_slots`-derived
+	// naming already fell back to the same generic 'content' name).
+	if (!canonicalKeys.has('_content')) keyTypes.set('_content', elemType);
+	return keyTypes;
+}
+
+/**
+ * Build a separatedList wrap function's `data` parameter type: the
+ * canonical `T.<TypeName>` interface widened with the wire-only members the
+ * function body actually reads — the concrete-kind content probe keys
+ * (`collectSeparatedListWireKeyTypes`), plus `$other` and `$span` (both read
+ * directly by `_hasSeparatorFlank` / `_separatorKindOf`, and neither
+ * declared on `T.<TypeName>` — that interface is the public, de-hoisted
+ * surface; `$other`/`$span` are raw-wire-only). All added members are
+ * optional, so real `T.<TypeName>` values remain assignable at existing
+ * call sites (no cast needed there).
+ */
+function buildSeparatedListWrapParamType(typeName: string, wireKeyTypes: ReadonlyMap<string, string>): string {
+	const members = [
+		...[...wireKeyTypes].map(([k, t]) => `readonly ${JSON.stringify(k)}?: ${t};`),
+		"readonly $other?: _NodeData['$other'];",
+		"readonly $span?: { start: number; end: number };"
+	];
+	return `T.${typeName} & { ${members.join(' ')} }`;
+}
+
+/**
  * Emit a wrap function for a `'separatedList'`-classified kind — REAL
  * per-instance separator capture, replacing the Task-2 stub's
  * `_slots`-based branch-reuse emission for wrap.ts specifically (other
@@ -641,9 +702,18 @@ function emitSeparatedListWrap(
 	if (!node.rawFactoryName) return undefined;
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`);
 
 	const contentSlot = buildSeparatedListContentSlot(node);
+	// `node.fields` (Task-2 `_slots` stub) is the SAME source `types.ts`
+	// derives `T.<TypeName>`'s declared members from — the canonical-key
+	// exclusion set for `collectSeparatedListWireKeyTypes` must match it
+	// exactly, or a still-declared key gets redundantly (and incoherently)
+	// re-widened.
+	const canonicalKeys = new Set(node.fields.map((f) => f.storageKey));
+	const wireKeyTypes = collectSeparatedListWireKeyTypes(contentSlot, canonicalKeys, nodeMap);
+	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
+	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
+
 	const storageInfo = resolveFieldStorageInfo(contentSlot, nodeMap, kindEntries);
 	const candidateStorageKeys = collectSeparatedListContentStorageKeys(contentSlot, nodeMap);
 	const contentModel: SlotModel = { name: 'content', storageKey: '_content', arity: 'many' };

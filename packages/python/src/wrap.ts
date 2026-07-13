@@ -413,7 +413,7 @@ export function wrapExceptClauseList(data: T.ExceptClauseList, tree: TreeHandle)
   return _node;
 }
 
-export function wrapExpressionStatementTuple(data: T.ExpressionStatementTuple, tree: TreeHandle) {
+export function wrapExpressionStatementTuple(data: T.ExpressionStatementTuple & { readonly "_comparison_operator"?: T.Expression; readonly "_not_operator"?: T.Expression; readonly "_boolean_operator"?: T.Expression; readonly "_lambda"?: T.Expression; readonly "_await"?: T.Expression; readonly "_binary_operator"?: T.Expression; readonly "_identifier"?: T.Expression; readonly "_keyword_identifier"?: T.Expression; readonly "_string"?: T.Expression; readonly "_concatenated_string"?: T.Expression; readonly "_integer"?: T.Expression; readonly "_float"?: T.Expression; readonly "_true"?: T.Expression; readonly "_false"?: T.Expression; readonly "_none"?: T.Expression; readonly "_unary_operator"?: T.Expression; readonly "_attribute"?: T.Expression; readonly "_subscript"?: T.Expression; readonly "_call"?: T.Expression; readonly "_list"?: T.Expression; readonly "_list_comprehension"?: T.Expression; readonly "_dictionary"?: T.Expression; readonly "_dictionary_comprehension"?: T.Expression; readonly "_set"?: T.Expression; readonly "_set_comprehension"?: T.Expression; readonly "_tuple"?: T.Expression; readonly "_parenthesized_expression"?: T.Expression; readonly "_generator_expression"?: T.Expression; readonly "_ellipsis"?: T.Expression; readonly "_list_splat_pattern"?: T.Expression; readonly "_conditional_expression"?: T.Expression; readonly "_named_expression"?: T.Expression; readonly "_as_pattern"?: T.Expression; readonly "_content"?: T.Expression; readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
   const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._comparison_operator, data._not_operator, data._boolean_operator, data._lambda, data._await, data._binary_operator, data._identifier, data._keyword_identifier, data._string, data._concatenated_string, data._integer, data._float, data._true, data._false, data._none, data._unary_operator, data._attribute, data._subscript, data._call, data._list, data._list_comprehension, data._dictionary, data._dictionary_comprehension, data._set, data._set_comprehension, data._tuple, data._parenthesized_expression, data._generator_expression, data._ellipsis, data._list_splat_pattern, data._conditional_expression, data._named_expression, data._as_pattern, data._content]), true, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span });
   return withMethods({
     ...data,
@@ -567,7 +567,7 @@ export function wrap_TuplePattern(data: T._TuplePattern, tree: TreeHandle) {
   return _node;
 }
 
-export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle) {
+export function wrapWithClauseBare(data: T.WithClauseBare & { readonly "_content"?: T.WithItem; readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
   const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._with_item, data._content]), true, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span });
   return withMethods({
     ...data,
@@ -1512,7 +1512,7 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle) {
   return _node;
 }
 
-export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle) {
+export function wrapLambdaParameters(data: T.LambdaParameters & { readonly "_identifier"?: T.Parameter; readonly "_typed_parameter"?: T.Parameter; readonly "_default_parameter"?: T.Parameter; readonly "_typed_default_parameter"?: T.Parameter; readonly "_list_splat_pattern"?: T.Parameter; readonly "_tuple_pattern"?: T.Parameter; readonly "_keyword_separator"?: T.Parameter; readonly "_positional_separator"?: T.Parameter; readonly "_dictionary_splat_pattern"?: T.Parameter; readonly "_content"?: T.Parameter; readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
   const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._identifier, data._typed_parameter, data._default_parameter, data._typed_default_parameter, data._list_splat_pattern, data._tuple_pattern, data._keyword_separator, data._positional_separator, data._dictionary_splat_pattern, data._content]), true, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span });
   return withMethods({
     ...data,
