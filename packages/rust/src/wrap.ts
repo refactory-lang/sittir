@@ -310,18 +310,31 @@ function _filterWrapChildrenByKind<T>(value: T | readonly T[] | undefined, allow
   });
 }
 
+export function wrap_ArgumentsGroup1(data: T._ArgumentsGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
+  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._attributed_argument]), true, "attributed_argument", { tree, nodeType: data.$type, slotName: "attributed_argument", span: (data as _NodeData).$span });
+  return withMethods({
+    ...data,
+    $type: TSKindId._ArgumentsGroup1 as const,
+    _attributed_argument: _content,
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", false),
+
+    attributed_argument() { return drillInAll<T.AttributedArgument>(this._attributed_argument as readonly T.AttributedArgument[] | undefined, tree); },
+    $with: {},
+  }, methodsEngine);
+}
+
 export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrayExpressionList as const,
     _attributes: normalizeRepeatedWrapSlot(data._attributes, false, "attributes", { tree, nodeType: data.$type, slotName: "attributes", span: (data as _NodeData).$span }),
-    _attributed_argument: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributed_argument, ["_attributed_argument","attributed_argument"]), false, "attributed_argument", { tree, nodeType: data.$type, slotName: "attributed_argument", span: (data as _NodeData).$span }),
+    _arguments_group1: normalizeSingularWrapSlot(data._arguments_group1, "arguments_group1", false, data.$type, { tree, nodeType: data.$type, slotName: "arguments_group1", span: (data as _NodeData).$span }),
 
     attributes() { return drillInAll<T.AttributeItem>(this._attributes as readonly T.AttributeItem[] | undefined, tree); },
-    attributedArguments() { return drillAsAll<T.AttributedArgument>(this._attributed_argument, tree, "attributed_argument", "_attributed_argument"); },
+    argumentsGroup1() { return drillIn<T.ArgumentsGroup1 | undefined>(this._arguments_group1, tree); },
     $with: {
       attributes: (...v: NonNullable<T.ArrayExpressionList['_attributes']>[number][]) => wrapArrayExpressionList({ ...data, _attributes: v }, tree),
-      attributedArguments: (...v: NonNullable<T.ArrayExpressionList['_attributed_argument']>[number][]) => wrapArrayExpressionList({ ...data, _attributed_argument: v }, tree),
+      argumentsGroup1: (v: NonNullable<T.ArrayExpressionList['_arguments_group1']>) => wrapArrayExpressionList({ ...data, _arguments_group1: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -527,6 +540,19 @@ export function wrapDelimTokens(data: T.DelimTokens, tree: TreeHandle) {
   return drillIn<T.DelimTokens>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["_non_delim_token","non_delim_token","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate","'","$","delim_token_tree"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
 
+export function wrap_EnumVariantListGroup1(data: T._EnumVariantListGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
+  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._attributed_enum_variant]), true, "attributed_enum_variant", { tree, nodeType: data.$type, slotName: "attributed_enum_variant", span: (data as _NodeData).$span });
+  return withMethods({
+    ...data,
+    $type: TSKindId._EnumVariantListGroup1 as const,
+    _attributed_enum_variant: _content,
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", false),
+
+    attributed_enum_variant() { return drillInAll<T.AttributedEnumVariant>(this._attributed_enum_variant as readonly T.AttributedEnumVariant[] | undefined, tree); },
+    $with: {},
+  }, methodsEngine);
+}
+
 export function wrapExpression(data: T.Expression, tree: TreeHandle) {
   return drillIn<T.Expression>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ["_expression_except_range","expression_except_range","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"]), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);
 }
@@ -545,6 +571,19 @@ export function wrapExpressionStatementWithSemi(data: T.ExpressionStatementWithS
     $with: { $children: (...vs: readonly [never]) => wrapExpressionStatementWithSemi({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
+}
+
+export function wrap_FieldDeclarationListGroup1(data: T._FieldDeclarationListGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
+  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._attributed_field_declaration]), true, "attributed_field_declaration", { tree, nodeType: data.$type, slotName: "attributed_field_declaration", span: (data as _NodeData).$span });
+  return withMethods({
+    ...data,
+    $type: TSKindId._FieldDeclarationListGroup1 as const,
+    _attributed_field_declaration: _content,
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", false),
+
+    attributed_field_declaration() { return drillInAll<T.AttributedFieldDeclaration>(this._attributed_field_declaration as readonly T.AttributedFieldDeclaration[] | undefined, tree); },
+    $with: {},
+  }, methodsEngine);
 }
 
 export function wrap_FieldInitializerListGroup1(data: T._FieldInitializerListGroup1 & { readonly "_shorthand_field_initializer"?: T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer; readonly "_field_initializer"?: T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer; readonly "_base_field_initializer"?: T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer; readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
@@ -791,6 +830,19 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle) {
     },
   }, methodsEngine);
   return _node;
+}
+
+export function wrap_OrderedFieldDeclarationListGroup1(data: T._OrderedFieldDeclarationListGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
+  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._attributed_ordered_field]), true, "attributed_ordered_field", { tree, nodeType: data.$type, slotName: "attributed_ordered_field", span: (data as _NodeData).$span });
+  return withMethods({
+    ...data,
+    $type: TSKindId._OrderedFieldDeclarationListGroup1 as const,
+    _attributed_ordered_field: _content,
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", false),
+
+    attributed_ordered_field() { return drillInAll<T.AttributedOrderedField>(this._attributed_ordered_field as readonly T.AttributedOrderedField[] | undefined, tree); },
+    $with: {},
+  }, methodsEngine);
 }
 
 export function wrap_ParametersGroup1(data: T._ParametersGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
@@ -1210,9 +1262,9 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Arguments as const,
-    _attributed_argument: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributed_argument, ["_attributed_argument","attributed_argument"]), false, "attributed_argument", { tree, nodeType: data.$type, slotName: "attributed_argument", span: (data as _NodeData).$span }),
+    _arguments_group1: normalizeSingularWrapSlot(data._arguments_group1, "arguments_group1", false, data.$type, { tree, nodeType: data.$type, slotName: "arguments_group1", span: (data as _NodeData).$span }),
 
-    attributedArguments() { return drillAsAll<T.AttributedArgument>(this._attributed_argument, tree, "attributed_argument", "_attributed_argument"); },
+    argumentsGroup1() { return drillIn<T.ArgumentsGroup1 | undefined>(this._arguments_group1, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapArguments({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -1740,9 +1792,9 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumVariantList as const,
-    _attributed_enum_variant: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributed_enum_variant, ["_attributed_enum_variant","attributed_enum_variant"]), false, "attributed_enum_variant", { tree, nodeType: data.$type, slotName: "attributed_enum_variant", span: (data as _NodeData).$span }),
+    _enum_variant_list_group1: normalizeSingularWrapSlot(data._enum_variant_list_group1, "enum_variant_list_group1", false, data.$type, { tree, nodeType: data.$type, slotName: "enum_variant_list_group1", span: (data as _NodeData).$span }),
 
-    attributedEnumVariants() { return drillAsAll<T.AttributedEnumVariant>(this._attributed_enum_variant, tree, "attributed_enum_variant", "_attributed_enum_variant"); },
+    enumVariantListGroup1() { return drillIn<T.EnumVariantListGroup1 | undefined>(this._enum_variant_list_group1, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapEnumVariantList({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -1821,9 +1873,9 @@ export function wrapFieldDeclarationList(data: T.FieldDeclarationList, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.FieldDeclarationList as const,
-    _attributed_field_declaration: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributed_field_declaration, ["_attributed_field_declaration","attributed_field_declaration"]), false, "attributed_field_declaration", { tree, nodeType: data.$type, slotName: "attributed_field_declaration", span: (data as _NodeData).$span }),
+    _field_declaration_list_group1: normalizeSingularWrapSlot(data._field_declaration_list_group1, "field_declaration_list_group1", false, data.$type, { tree, nodeType: data.$type, slotName: "field_declaration_list_group1", span: (data as _NodeData).$span }),
 
-    attributedFieldDeclarations() { return drillAsAll<T.AttributedFieldDeclaration>(this._attributed_field_declaration, tree, "attributed_field_declaration", "_attributed_field_declaration"); },
+    fieldDeclarationListGroup1() { return drillIn<T.FieldDeclarationListGroup1 | undefined>(this._field_declaration_list_group1, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapFieldDeclarationList({ ...data, $other: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -2564,11 +2616,11 @@ export function wrapOrderedFieldDeclarationList(data: T.OrderedFieldDeclarationL
   const _node = withMethods({
     ...data,
     $type: TSKindId.OrderedFieldDeclarationList as const,
-    _attributes: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributes, ["_attributed_ordered_field","attributed_ordered_field"]), false, "attributes", { tree, nodeType: data.$type, slotName: "attributes", span: (data as _NodeData).$span }),
+    _attributes: normalizeSingularWrapSlot(data._attributes, "attributes", false, data.$type, { tree, nodeType: data.$type, slotName: "attributes", span: (data as _NodeData).$span }),
 
-    attributes() { return drillAsAll<T.AttributedOrderedField>(this._attributes, tree, "attributed_ordered_field", "_attributed_ordered_field"); },
+    attributes() { return drillIn<T.OrderedFieldDeclarationListGroup1 | undefined>(this._attributes, tree); },
     $with: {
-      attributes: (...v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>[number][]) => wrapOrderedFieldDeclarationList({ ...data, _attributes: v }, tree),
+      attributes: (v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>) => wrapOrderedFieldDeclarationList({ ...data, _attributes: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3574,6 +3626,18 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
   return _node;
 }
 
+export function wrapArgumentsGroup1(data: T.ArgumentsGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
+  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._attributed_argument]), true, "attributed_argument", { tree, nodeType: data.$type, slotName: "attributed_argument", span: (data as _NodeData).$span });
+  return withMethods({
+    ...data,
+    _attributed_argument: _content,
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", false),
+
+    attributed_argument() { return drillInAll<T.AttributedArgument>(this._attributed_argument as readonly T.AttributedArgument[] | undefined, tree); },
+    $with: {},
+  }, methodsEngine);
+}
+
 export function wrapVisibilityModifierGroup1(data: T.VisibilityModifierGroup1, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
@@ -3585,6 +3649,30 @@ export function wrapVisibilityModifierGroup1(data: T.VisibilityModifierGroup1, t
   return _node;
 }
 
+export function wrapEnumVariantListGroup1(data: T.EnumVariantListGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
+  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._attributed_enum_variant]), true, "attributed_enum_variant", { tree, nodeType: data.$type, slotName: "attributed_enum_variant", span: (data as _NodeData).$span });
+  return withMethods({
+    ...data,
+    _attributed_enum_variant: _content,
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", false),
+
+    attributed_enum_variant() { return drillInAll<T.AttributedEnumVariant>(this._attributed_enum_variant as readonly T.AttributedEnumVariant[] | undefined, tree); },
+    $with: {},
+  }, methodsEngine);
+}
+
+export function wrapFieldDeclarationListGroup1(data: T.FieldDeclarationListGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
+  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._attributed_field_declaration]), true, "attributed_field_declaration", { tree, nodeType: data.$type, slotName: "attributed_field_declaration", span: (data as _NodeData).$span });
+  return withMethods({
+    ...data,
+    _attributed_field_declaration: _content,
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", false),
+
+    attributed_field_declaration() { return drillInAll<T.AttributedFieldDeclaration>(this._attributed_field_declaration as readonly T.AttributedFieldDeclaration[] | undefined, tree); },
+    $with: {},
+  }, methodsEngine);
+}
+
 export function wrapFieldInitializerListGroup1(data: T.FieldInitializerListGroup1 & { readonly "_shorthand_field_initializer"?: T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer; readonly "_field_initializer"?: T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer; readonly "_base_field_initializer"?: T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer; readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
   const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._shorthand_field_initializer, data._field_initializer, data._base_field_initializer, data._content]), true, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span });
   return withMethods({
@@ -3593,6 +3681,18 @@ export function wrapFieldInitializerListGroup1(data: T.FieldInitializerListGroup
     _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", false),
 
     content() { return drillInAll<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>(this._content as readonly (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[] | undefined, tree); },
+    $with: {},
+  }, methodsEngine);
+}
+
+export function wrapOrderedFieldDeclarationListGroup1(data: T.OrderedFieldDeclarationListGroup1 & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number }; }, tree: TreeHandle) {
+  const _content = normalizeRepeatedWrapSlot(_concatInSourceOrder([data._attributed_ordered_field]), true, "attributed_ordered_field", { tree, nodeType: data.$type, slotName: "attributed_ordered_field", span: (data as _NodeData).$span });
+  return withMethods({
+    ...data,
+    _attributed_ordered_field: _content,
+    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", false),
+
+    attributed_ordered_field() { return drillInAll<T.AttributedOrderedField>(this._attributed_ordered_field as readonly T.AttributedOrderedField[] | undefined, tree); },
     $with: {},
   }, methodsEngine);
 }
@@ -3682,6 +3782,7 @@ export function wrapWhereClauseGroup1(data: T.WhereClauseGroup1 & { readonly $ot
 }
 
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
+  '_arguments_group1': (d, t) => wrap_ArgumentsGroup1(d as unknown as T._ArgumentsGroup1, t),
   '_array_expression_list': (d, t) => wrapArrayExpressionList(d as unknown as T.ArrayExpressionList, t),
   '_array_expression_semi': (d, t) => wrapArrayExpressionSemi(d as unknown as T.ArrayExpressionSemi, t),
   '_attributed_argument': (d, t) => wrapAttributedArgument(d as unknown as T.AttributedArgument, t),
@@ -3697,9 +3798,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_delim_token_tree_bracket': (d, t) => wrapDelimTokenTreeBracket(d as unknown as T.DelimTokenTreeBracket, t),
   '_delim_token_tree_paren': (d, t) => wrapDelimTokenTreeParen(d as unknown as T.DelimTokenTreeParen, t),
   '_delim_tokens': (d, t) => wrapDelimTokens(d as unknown as T.DelimTokens, t),
+  '_enum_variant_list_group1': (d, t) => wrap_EnumVariantListGroup1(d as unknown as T._EnumVariantListGroup1, t),
   '_expression': (d, t) => wrapExpression(d as unknown as T.Expression, t),
   '_expression_except_range': (d, t) => wrapExpressionExceptRange(d as unknown as T.ExpressionExceptRange, t),
   '_expression_statement_with_semi': (d, t) => wrapExpressionStatementWithSemi(d as unknown as T.ExpressionStatementWithSemi, t),
+  '_field_declaration_list_group1': (d, t) => wrap_FieldDeclarationListGroup1(d as unknown as T._FieldDeclarationListGroup1, t),
   '_field_identifier': (d) => ({ ...d, $type: TSKindId.FieldIdentifier as const }),
   '_field_initializer_list_group1': (d, t) => wrap_FieldInitializerListGroup1(d as unknown as T._FieldInitializerListGroup1, t),
   '_field_pattern_named': (d, t) => wrapFieldPatternNamed(d as unknown as T.FieldPatternNamed, t),
@@ -3723,6 +3826,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_non_delim_token': (d, t) => wrapNonDelimToken(d as unknown as T.NonDelimToken, t),
   '_or_pattern_binary': (d, t) => wrapOrPatternBinary(d as unknown as T.OrPatternBinary, t),
   '_or_pattern_prefix': (d, t) => wrapOrPatternPrefix(d as unknown as T.OrPatternPrefix, t),
+  '_ordered_field_declaration_list_group1': (d, t) => wrap_OrderedFieldDeclarationListGroup1(d as unknown as T._OrderedFieldDeclarationListGroup1, t),
   '_parameters_group1': (d, t) => wrap_ParametersGroup1(d as unknown as T._ParametersGroup1, t),
   '_pattern': (d, t) => wrapPattern(d as unknown as T.Pattern, t),
   '_pointer_type_const': (d) => ({ ...d, $type: TSKindId.PointerTypeConst as const }),
@@ -3911,8 +4015,12 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'where_predicate': (d, t) => wrapWherePredicate(d as unknown as T.WherePredicate, t),
   'while_expression': (d, t) => wrapWhileExpression(d as unknown as T.WhileExpression, t),
   'yield_expression': (d, t) => wrapYieldExpression(d as unknown as T.YieldExpression, t),
+  'arguments_group1': (d, t) => wrapArgumentsGroup1(d as unknown as T.ArgumentsGroup1, t),
   'visibility_modifier_group1': (d, t) => wrapVisibilityModifierGroup1(d as unknown as T.VisibilityModifierGroup1, t),
+  'enum_variant_list_group1': (d, t) => wrapEnumVariantListGroup1(d as unknown as T.EnumVariantListGroup1, t),
+  'field_declaration_list_group1': (d, t) => wrapFieldDeclarationListGroup1(d as unknown as T.FieldDeclarationListGroup1, t),
   'field_initializer_list_group1': (d, t) => wrapFieldInitializerListGroup1(d as unknown as T.FieldInitializerListGroup1, t),
+  'ordered_field_declaration_list_group1': (d, t) => wrapOrderedFieldDeclarationListGroup1(d as unknown as T.OrderedFieldDeclarationListGroup1, t),
   'parameters_group1': (d, t) => wrapParametersGroup1(d as unknown as T.ParametersGroup1, t),
   'slice_pattern_group1': (d, t) => wrapSlicePatternGroup1(d as unknown as T.SlicePatternGroup1, t),
   'struct_pattern_group1': (d, t) => wrapStructPatternGroup1(d as unknown as T.StructPatternGroup1, t),

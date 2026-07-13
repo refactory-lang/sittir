@@ -292,19 +292,36 @@ function repeatHasGenuineSeparatorVariability(repeatRule: RuntimeRule): boolean 
 }
 
 /**
- * True iff `members` (post-flattening) contains EXACTLY ONE top-level
- * repeat/repeat1 member AND that one repeat has genuine separator
- * variability — see `repeatMemberHasGenuineSeparatorVariability`.
+ * True iff `members` (post-flattening) contains EXACTLY ONE separator-
+ * carrying top-level repeat/repeat1 member AND that one repeat has genuine
+ * separator variability — see `repeatMemberHasGenuineSeparatorVariability`.
  *
- * Scoped to the single-repeat case deliberately: a seq body representing a
- * genuine separated list (`commaSep1(E)` and its Task-1-confirmed real-world
- * shape) has exactly ONE top-level repeat carrying the list. A seq with
- * MULTIPLE top-level repeats is a different, compound shape outside this
- * qualification's design intent — declining to flag it reverts to the
- * existing inline-flat floor behavior (safe by construction, per this
- * file's existing "cannot regress below floor" convention) rather than
- * risking a false-positive match against an unrelated repeat elsewhere in
- * the same seq.
+ * Scoped to the single-SEPARATOR-CARRYING-repeat case deliberately: a seq
+ * body representing a genuine separated list (`commaSep1(E)` and its
+ * Task-1-confirmed real-world shape) has exactly ONE top-level repeat
+ * carrying the list's separator. The census here only counts repeats whose
+ * content itself has a `detectRepeatSeparator`-detectable separator shape —
+ * a repeat with NO separator shape at all can neither BE the separated
+ * list (it has nothing to flag as separator-variable) nor be the
+ * unrelated-repeat this guard exists to protect against (there's no
+ * separator to mis-match a sibling flank against). This matters for real
+ * grammar shapes like rust's `enum_variant_list`/`field_declaration_list`/
+ * `ordered_field_declaration_list`/`arguments`, whose per-element unit is
+ * `seq(repeat($.attribute_item), X)` — a per-element MODIFIER repeat with no
+ * separator of its own, which `flattenSeqMembers` surfaces as a second
+ * top-level repeat alongside the real list's separator-carrying repeat. A
+ * naive "exactly one repeat, of ANY shape" census (the original guard) saw
+ * 2 repeats there and bailed, leaving these kinds un-promoted; scoping the
+ * census to separator-carrying repeats only fixes that without reopening
+ * the original decoy-repeat false positive (the decoy CHOICE-with-no-
+ * string-arm test case still detects as separator-carrying via
+ * `detectRepeatSeparator`, so it's still correctly counted and the guard
+ * still declines to flag multi-separator-repeat compound seqs). A seq with
+ * MULTIPLE separator-carrying top-level repeats remains a different,
+ * compound shape outside this qualification's design intent — declining to
+ * flag it reverts to the existing inline-flat floor behavior (safe by
+ * construction, per this file's existing "cannot regress below floor"
+ * convention) rather than risking a false-positive match.
  */
 function seqHasGenuineSeparatorVariability(members: unknown[]): boolean {
 	const flat = flattenSeqMembers(members);
@@ -313,7 +330,11 @@ function seqHasGenuineSeparatorVariability(members: unknown[]): boolean {
 		const core = unwrapPrec(m);
 		if (!core || typeof core !== 'object') continue;
 		const ct = (core as Record<string, unknown>).type;
-		if (typeof ct === 'string' && isRepeatLike(ct)) repeatMembers.push(core as RuntimeRule);
+		if (typeof ct !== 'string' || !isRepeatLike(ct)) continue;
+		const content = (core as { content?: unknown }).content;
+		if (content && typeof content === 'object' && detectRepeatSeparator(content as RuntimeRule) !== null) {
+			repeatMembers.push(core as RuntimeRule);
+		}
 	}
 	if (repeatMembers.length !== 1) return false;
 	return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0]!, flat);

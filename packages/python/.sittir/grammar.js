@@ -678,7 +678,11 @@ function seqHasGenuineSeparatorVariability(members) {
     const core = unwrapPrec(m);
     if (!core || typeof core !== "object") continue;
     const ct = core.type;
-    if (typeof ct === "string" && isRepeatLike(ct)) repeatMembers.push(core);
+    if (typeof ct !== "string" || !isRepeatLike(ct)) continue;
+    const content = core.content;
+    if (content && typeof content === "object" && detectRepeatSeparator(content) !== null) {
+      repeatMembers.push(core);
+    }
   }
   if (repeatMembers.length !== 1) return false;
   return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat);

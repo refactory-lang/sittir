@@ -26,6 +26,7 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
+    ArgumentsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArgumentsGroup1 };
     AttributedArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedArgument };
     AttributedEnumVariant<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedEnumVariant };
     AttributedFieldDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedFieldDeclaration };
@@ -35,7 +36,9 @@ export interface IsGuards {
     DelimTokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DelimTokenTreeBrace };
     DelimTokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DelimTokenTreeBracket };
     DelimTokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DelimTokenTreeParen };
+    EnumVariantListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._EnumVariantListGroup1 };
     ExpressionStatementWithSemi<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExpressionStatementWithSemi };
+    FieldDeclarationListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FieldDeclarationListGroup1 };
     FieldInitializerListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FieldInitializerListGroup1 };
     FunctionTypeFnForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionTypeFnForm };
     FunctionTypeTraitForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionTypeTraitForm };
@@ -44,6 +47,7 @@ export interface IsGuards {
     MacroDefinitionBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroDefinitionBrace };
     MacroDefinitionBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroDefinitionBracket };
     MacroDefinitionParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroDefinitionParen };
+    OrderedFieldDeclarationListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._OrderedFieldDeclarationListGroup1 };
     ParametersGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ParametersGroup1 };
     ReferenceExpressionRawMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
     SlicePatternGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._SlicePatternGroup1 };
@@ -220,6 +224,7 @@ export interface IsGuards {
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
+    ArgumentsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArgumentsGroup1 };
     AttributedArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedArgument };
     AttributedEnumVariant(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedEnumVariant };
     AttributedFieldDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
@@ -229,7 +234,9 @@ export interface AssertGuards {
     DelimTokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBrace };
     DelimTokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBracket };
     DelimTokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeParen };
+    EnumVariantListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._EnumVariantListGroup1 };
     ExpressionStatementWithSemi(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionStatementWithSemi };
+    FieldDeclarationListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FieldDeclarationListGroup1 };
     FieldInitializerListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FieldInitializerListGroup1 };
     FunctionTypeFnForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeFnForm };
     FunctionTypeTraitForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeTraitForm };
@@ -238,6 +245,7 @@ export interface AssertGuards {
     MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
     MacroDefinitionBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
     MacroDefinitionParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionParen };
+    OrderedFieldDeclarationListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._OrderedFieldDeclarationListGroup1 };
     ParametersGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ParametersGroup1 };
     ReferenceExpressionRawMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
     SlicePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._SlicePatternGroup1 };
@@ -430,11 +438,11 @@ const _supertype_literal_ids = new Set<number>([311, 312, 128, 313, 125, 151]);
 const _supertype_literalPattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 310]);
 const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
 const _supertype_path_ids = new Set<number>([138, 1, 141, 139, 140, 243]);
-const _supertype_pattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 330]);
+const _supertype_pattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 334]);
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
-const _supertype_type_ids = new Set<number>([235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 419, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 423, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([138, 1, 141, 139, 140, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -636,11 +644,15 @@ const _kindIdByKind = new Map<string, number>([
     ["boolean_literal", TSKindId.BooleanLiteral],
     ["line_comment", TSKindId.LineComment],
     ["block_comment", TSKindId.BlockComment],
+    ["_enum_variant_list_group1", TSKindId._EnumVariantListGroup1],
+    ["_field_declaration_list_group1", TSKindId._FieldDeclarationListGroup1],
+    ["_ordered_field_declaration_list_group1", TSKindId._OrderedFieldDeclarationListGroup1],
     ["_where_clause_group1", TSKindId._WhereClauseGroup1],
     ["_use_list_group1", TSKindId._UseListGroup1],
     ["_parameters_group1", TSKindId._ParametersGroup1],
     ["_visibility_modifier_group1", TSKindId._VisibilityModifierGroup1],
     ["_use_bounds_group1", TSKindId._UseBoundsGroup1],
+    ["_arguments_group1", TSKindId._ArgumentsGroup1],
     ["_field_initializer_list_group1", TSKindId._FieldInitializerListGroup1],
     ["_tuple_pattern_group1", TSKindId._TuplePatternGroup1],
     ["_slice_pattern_group1", TSKindId._SlicePatternGroup1],
@@ -701,6 +713,7 @@ const _kindIdByKind = new Map<string, number>([
 ]);
 
 export const is = {
+    ArgumentsGroup1: _g(TSKindId._ArgumentsGroup1),
     AttributedArgument: _g(TSKindId.AttributedArgument),
     AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
     AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
@@ -710,7 +723,9 @@ export const is = {
     DelimTokenTreeBrace: _g(TSKindId.DelimTokenTreeBrace),
     DelimTokenTreeBracket: _g(TSKindId.DelimTokenTreeBracket),
     DelimTokenTreeParen: _g(TSKindId.DelimTokenTreeParen),
+    EnumVariantListGroup1: _g(TSKindId._EnumVariantListGroup1),
     ExpressionStatementWithSemi: _g(TSKindId.ExpressionStatementWithSemi),
+    FieldDeclarationListGroup1: _g(TSKindId._FieldDeclarationListGroup1),
     FieldInitializerListGroup1: _g(TSKindId._FieldInitializerListGroup1),
     FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
     FunctionTypeTraitForm: _g(TSKindId.FunctionTypeTraitForm),
@@ -719,6 +734,7 @@ export const is = {
     MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
     MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
     MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
+    OrderedFieldDeclarationListGroup1: _g(TSKindId._OrderedFieldDeclarationListGroup1),
     ParametersGroup1: _g(TSKindId._ParametersGroup1),
     ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
     SlicePatternGroup1: _g(TSKindId._SlicePatternGroup1),
@@ -919,6 +935,7 @@ function _makeAssertKind(guard: _AnyGuard) {
 }
 
 export const assert = {
+    ArgumentsGroup1: _makeAssert('ArgumentsGroup1', is.ArgumentsGroup1 as _AnyGuard),
     AttributedArgument: _makeAssert('AttributedArgument', is.AttributedArgument as _AnyGuard),
     AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
     AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
@@ -928,7 +945,9 @@ export const assert = {
     DelimTokenTreeBrace: _makeAssert('DelimTokenTreeBrace', is.DelimTokenTreeBrace as _AnyGuard),
     DelimTokenTreeBracket: _makeAssert('DelimTokenTreeBracket', is.DelimTokenTreeBracket as _AnyGuard),
     DelimTokenTreeParen: _makeAssert('DelimTokenTreeParen', is.DelimTokenTreeParen as _AnyGuard),
+    EnumVariantListGroup1: _makeAssert('EnumVariantListGroup1', is.EnumVariantListGroup1 as _AnyGuard),
     ExpressionStatementWithSemi: _makeAssert('ExpressionStatementWithSemi', is.ExpressionStatementWithSemi as _AnyGuard),
+    FieldDeclarationListGroup1: _makeAssert('FieldDeclarationListGroup1', is.FieldDeclarationListGroup1 as _AnyGuard),
     FieldInitializerListGroup1: _makeAssert('FieldInitializerListGroup1', is.FieldInitializerListGroup1 as _AnyGuard),
     FunctionTypeFnForm: _makeAssert('FunctionTypeFnForm', is.FunctionTypeFnForm as _AnyGuard),
     FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
@@ -937,6 +956,7 @@ export const assert = {
     MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
     MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
     MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
+    OrderedFieldDeclarationListGroup1: _makeAssert('OrderedFieldDeclarationListGroup1', is.OrderedFieldDeclarationListGroup1 as _AnyGuard),
     ParametersGroup1: _makeAssert('ParametersGroup1', is.ParametersGroup1 as _AnyGuard),
     ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
     SlicePatternGroup1: _makeAssert('SlicePatternGroup1', is.SlicePatternGroup1 as _AnyGuard),

@@ -163,8 +163,12 @@ export const _fromMap = {
   "where_predicate": wherePredicateFrom,
   "while_expression": whileExpressionFrom,
   "yield_expression": yieldExpressionFrom,
+  "arguments_group1": argumentsGroup1From,
   "visibility_modifier_group1": visibilityModifierGroup1From,
+  "enum_variant_list_group1": enumVariantListGroup1From,
+  "field_declaration_list_group1": fieldDeclarationListGroup1From,
   "field_initializer_list_group1": fieldInitializerListGroup1From,
+  "ordered_field_declaration_list_group1": orderedFieldDeclarationListGroup1From,
   "parameters_group1": parametersGroup1From,
   "slice_pattern_group1": slicePatternGroup1From,
   "struct_pattern_group1": structPatternGroup1From,
@@ -343,8 +347,12 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "visibility_modifier": TSKindId.VisibilityModifier,
   "where_clause": TSKindId.WhereClause,
   "yield_expression": TSKindId.YieldExpression,
+  "arguments_group1": TSKindId._ArgumentsGroup1,
   "visibility_modifier_group1": TSKindId._VisibilityModifierGroup1,
+  "enum_variant_list_group1": TSKindId._EnumVariantListGroup1,
+  "field_declaration_list_group1": TSKindId._FieldDeclarationListGroup1,
   "field_initializer_list_group1": TSKindId._FieldInitializerListGroup1,
+  "ordered_field_declaration_list_group1": TSKindId._OrderedFieldDeclarationListGroup1,
   "parameters_group1": TSKindId._ParametersGroup1,
   "slice_pattern_group1": TSKindId._SlicePatternGroup1,
   "struct_pattern_group1": TSKindId._StructPatternGroup1,
@@ -371,15 +379,15 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "_token_tree_pattern_brace": return F.tokenTreePatternBrace(...(children as Parameters<typeof F.tokenTreePatternBrace>));
     case "_token_tree_pattern_bracket": return F.tokenTreePatternBracket(...(children as Parameters<typeof F.tokenTreePatternBracket>));
     case "_token_tree_pattern_paren": return F.tokenTreePatternParen(...(children as Parameters<typeof F.tokenTreePatternParen>));
-    case "arguments": return F.arguments_(...(children as Parameters<typeof F.arguments_>));
+    case "arguments": return F.arguments_(children[0] as Parameters<typeof F.arguments_>[0]);
     case "array_expression": return F.arrayExpression(children[0] as Parameters<typeof F.arrayExpression>[0]);
     case "bracketed_type": return F.bracketedType(children[0] as Parameters<typeof F.bracketedType>[0]);
     case "declaration_list": return F.declarationList(...(children as Parameters<typeof F.declarationList>));
     case "delim_token_tree": return F.delimTokenTree(children[0] as Parameters<typeof F.delimTokenTree>[0]);
     case "else_clause": return F.elseClause(children[0] as Parameters<typeof F.elseClause>[0]);
-    case "enum_variant_list": return F.enumVariantList(...(children as Parameters<typeof F.enumVariantList>));
+    case "enum_variant_list": return F.enumVariantList(children[0] as Parameters<typeof F.enumVariantList>[0]);
     case "expression_statement": return F.expressionStatement(children[0] as Parameters<typeof F.expressionStatement>[0]);
-    case "field_declaration_list": return F.fieldDeclarationList(...(children as Parameters<typeof F.fieldDeclarationList>));
+    case "field_declaration_list": return F.fieldDeclarationList(children[0] as Parameters<typeof F.fieldDeclarationList>[0]);
     case "field_pattern": return F.fieldPattern(children[0] as Parameters<typeof F.fieldPattern>[0]);
     case "for_lifetimes": return F.forLifetimes(...(children as Parameters<typeof F.forLifetimes>));
     case "line_comment": return F.lineComment(children[0] as Parameters<typeof F.lineComment>[0]);
@@ -398,8 +406,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "visibility_modifier": return F.visibilityModifier(children[0] as Parameters<typeof F.visibilityModifier>[0]);
     case "where_clause": return F.whereClause(children[0] as Parameters<typeof F.whereClause>[0]);
     case "yield_expression": return F.yieldExpression(children[0] as Parameters<typeof F.yieldExpression>[0]);
+    case "arguments_group1": return F.argumentsGroup1(children as Parameters<typeof F.argumentsGroup1>[0]);
     case "visibility_modifier_group1": return F.visibilityModifierGroup1(children[0] as Parameters<typeof F.visibilityModifierGroup1>[0]);
+    case "enum_variant_list_group1": return F.enumVariantListGroup1(children as Parameters<typeof F.enumVariantListGroup1>[0]);
+    case "field_declaration_list_group1": return F.fieldDeclarationListGroup1(children as Parameters<typeof F.fieldDeclarationListGroup1>[0]);
     case "field_initializer_list_group1": return F.fieldInitializerListGroup1(children as Parameters<typeof F.fieldInitializerListGroup1>[0]);
+    case "ordered_field_declaration_list_group1": return F.orderedFieldDeclarationListGroup1(children as Parameters<typeof F.orderedFieldDeclarationListGroup1>[0]);
     case "parameters_group1": return F.parametersGroup1(children as Parameters<typeof F.parametersGroup1>[0]);
     case "slice_pattern_group1": return F.slicePatternGroup1(children as Parameters<typeof F.slicePatternGroup1>[0]);
     case "struct_pattern_group1": return F.structPatternGroup1(children as Parameters<typeof F.structPatternGroup1>[0]);
@@ -545,14 +557,13 @@ export function abstractTypeFrom(input: T.AbstractType.Loose): ReturnType<typeof
   });
 }
 
-export function arguments_From(...input: readonly (T.AttributedArgument | T.Arguments)[]): ReturnType<typeof F.arguments_> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Arguments) {
-    const data = input[0];
-    const stored = (data as unknown as { _attributed_argument?: unknown })._attributed_argument;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.arguments_(...(children as unknown as Parameters<typeof F.arguments_>));
+export function arguments_From(input?: T.ArgumentsGroup1 | T.Arguments): ReturnType<typeof F.arguments_> {
+  if (isNodeData(input) && input.$type === TSKindId.Arguments) {
+    const data = input;
+    const child = (data as unknown as { _arguments_group1?: unknown })._arguments_group1;
+    return F.arguments_(child as Parameters<typeof F.arguments_>[0]);
   }
-  return F.arguments_(...(input as unknown as Parameters<typeof F.arguments_>));
+  return F.arguments_(input as Parameters<typeof F.arguments_>[0]);
 }
 
 export function arrayExpressionFrom(input?: (T.ArrayExpressionSemi | T.ArrayExpressionList) | T.ArrayExpression): ReturnType<typeof F.arrayExpression> {
@@ -815,14 +826,13 @@ export function enumVariantFrom(input: T.EnumVariant.Loose): ReturnType<typeof F
   });
 }
 
-export function enumVariantListFrom(...input: readonly (T.AttributedEnumVariant | T.EnumVariantList)[]): ReturnType<typeof F.enumVariantList> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.EnumVariantList) {
-    const data = input[0];
-    const stored = (data as unknown as { _attributed_enum_variant?: unknown })._attributed_enum_variant;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.enumVariantList(...(children as unknown as Parameters<typeof F.enumVariantList>));
+export function enumVariantListFrom(input?: T.EnumVariantListGroup1 | T.EnumVariantList): ReturnType<typeof F.enumVariantList> {
+  if (isNodeData(input) && input.$type === TSKindId.EnumVariantList) {
+    const data = input;
+    const child = (data as unknown as { _enum_variant_list_group1?: unknown })._enum_variant_list_group1;
+    return F.enumVariantList(child as Parameters<typeof F.enumVariantList>[0]);
   }
-  return F.enumVariantList(...(input as unknown as Parameters<typeof F.enumVariantList>));
+  return F.enumVariantList(input as Parameters<typeof F.enumVariantList>[0]);
 }
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence): ReturnType<typeof F.escapeSequence> {
@@ -863,14 +873,13 @@ export function fieldDeclarationFrom(input: T.FieldDeclaration.Loose): ReturnTyp
   });
 }
 
-export function fieldDeclarationListFrom(...input: readonly (T.AttributedFieldDeclaration | T.FieldDeclarationList)[]): ReturnType<typeof F.fieldDeclarationList> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FieldDeclarationList) {
-    const data = input[0];
-    const stored = (data as unknown as { _attributed_field_declaration?: unknown })._attributed_field_declaration;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.fieldDeclarationList(...(children as unknown as Parameters<typeof F.fieldDeclarationList>));
+export function fieldDeclarationListFrom(input?: T.FieldDeclarationListGroup1 | T.FieldDeclarationList): ReturnType<typeof F.fieldDeclarationList> {
+  if (isNodeData(input) && input.$type === TSKindId.FieldDeclarationList) {
+    const data = input;
+    const child = (data as unknown as { _field_declaration_list_group1?: unknown })._field_declaration_list_group1;
+    return F.fieldDeclarationList(child as Parameters<typeof F.fieldDeclarationList>[0]);
   }
-  return F.fieldDeclarationList(...(input as unknown as Parameters<typeof F.fieldDeclarationList>));
+  return F.fieldDeclarationList(input as Parameters<typeof F.fieldDeclarationList>[0]);
 }
 
 export function fieldExpressionFrom(input: T.FieldExpression.Loose): ReturnType<typeof F.fieldExpression> {
@@ -1238,10 +1247,8 @@ export function orPatternFrom(input?: (T.OrPatternBinary | T.OrPatternPrefix) | 
 }
 
 export function orderedFieldDeclarationListFrom(input?: T.OrderedFieldDeclarationList.Loose): ReturnType<typeof F.orderedFieldDeclarationList> {
-  if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.orderedFieldDeclarationList>;
-  return F.orderedFieldDeclarationList({
-    attributes: _resolveManyBranch<T.AttributedOrderedField>(input?.attributes, "_attributed_ordered_field"),
-  });
+  if (input !== undefined && isNodeData(input) && (input.$type as string | number) === kindIdFromName("ordered_field_declaration_list")) return input as unknown as ReturnType<typeof F.orderedFieldDeclarationList>;
+  return F.orderedFieldDeclarationList(_resolveOneBranch<T.OrderedFieldDeclarationListGroup1>((input !== null && typeof input === 'object' && !isNodeData(input) && "attributes" in input ? input.attributes : input), "ordered_field_declaration_list_group1"));
 }
 
 export function parameterFrom(input: T.Parameter.Loose): ReturnType<typeof F.parameter> {
@@ -1764,12 +1771,28 @@ export function yieldExpressionFrom(input?: T.Expression | T.YieldExpression): R
   return F.yieldExpression(input as Parameters<typeof F.yieldExpression>[0]);
 }
 
+export function argumentsGroup1From(...input: readonly (T.AttributedArgument | T.ArgumentsGroup1)[]): ReturnType<typeof F.argumentsGroup1> {
+  return F.argumentsGroup1(input as Parameters<typeof F.argumentsGroup1>[0]);
+}
+
 export function visibilityModifierGroup1From(input?: (T.Self | T.Super | T.Crate | T.InPath) | T.VisibilityModifierGroup1): ReturnType<typeof F.visibilityModifierGroup1> {
   return F.visibilityModifierGroup1(input as Parameters<typeof F.visibilityModifierGroup1>[0]);
 }
 
+export function enumVariantListGroup1From(...input: readonly (T.AttributedEnumVariant | T.EnumVariantListGroup1)[]): ReturnType<typeof F.enumVariantListGroup1> {
+  return F.enumVariantListGroup1(input as Parameters<typeof F.enumVariantListGroup1>[0]);
+}
+
+export function fieldDeclarationListGroup1From(...input: readonly (T.AttributedFieldDeclaration | T.FieldDeclarationListGroup1)[]): ReturnType<typeof F.fieldDeclarationListGroup1> {
+  return F.fieldDeclarationListGroup1(input as Parameters<typeof F.fieldDeclarationListGroup1>[0]);
+}
+
 export function fieldInitializerListGroup1From(...input: readonly (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer | T.FieldInitializerListGroup1)[]): ReturnType<typeof F.fieldInitializerListGroup1> {
   return F.fieldInitializerListGroup1(input as Parameters<typeof F.fieldInitializerListGroup1>[0]);
+}
+
+export function orderedFieldDeclarationListGroup1From(...input: readonly (T.AttributedOrderedField | T.OrderedFieldDeclarationListGroup1)[]): ReturnType<typeof F.orderedFieldDeclarationListGroup1> {
+  return F.orderedFieldDeclarationListGroup1(input as Parameters<typeof F.orderedFieldDeclarationListGroup1>[0]);
 }
 
 export function parametersGroup1From(...input: readonly (T.AttributedParameter | T.ParametersGroup1)[]): ReturnType<typeof F.parametersGroup1> {

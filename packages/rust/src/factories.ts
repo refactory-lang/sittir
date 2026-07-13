@@ -22,20 +22,38 @@ const _leafRe_identifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_metavariable = /^(?:\$[a-zA-Z_]\w*)/u;
 const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 
+export function _argumentsGroup1(elements: NonEmptyArray<T.AttributedArgument>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, '_arguments_group1.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId._ArgumentsGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.AttributedArgument>) => _argumentsGroup1(vs, options),
+      trailing: (v: boolean) => _argumentsGroup1(elements, { ...options, trailing: v }),
+    },
+  }, methodsEngine);
+}
+
 export function _arrayExpressionList(config: Partial<T.ArrayExpressionList.Config> = {}) {
   const _attributes = config.attributes;
-  const _attributed_argument = config.attributedArgument;
+  const _arguments_group1 = config.argumentsGroup1;
   return withMethods({
     $type: TSKindId.ArrayExpressionList as const,
     $source: 2 as const,
     $named: true as const,
     _attributes,
-    _attributed_argument,
+    _arguments_group1,
     attributes() { return _attributes; },
-    attributedArguments() { return _attributed_argument; },
+    argumentsGroup1() { return _arguments_group1; },
     $with: {
       attributes: (...values: T.AttributeItem[]) => _arrayExpressionList({ ...config, attributes: values }),
-      attributedArguments: (...values: T.AttributedArgument[]) => _arrayExpressionList({ ...config, attributedArgument: values }),
+      argumentsGroup1: (value?: T.ArgumentsGroup1) => _arrayExpressionList({ ...config, argumentsGroup1: value }),
     },
   }, methodsEngine);
 }
@@ -242,6 +260,24 @@ export function delimTokenTreeParen(...children: T.DelimTokens[]) {
   }, methodsEngine);
 }
 
+export function _enumVariantListGroup1(elements: NonEmptyArray<T.AttributedEnumVariant>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, '_enum_variant_list_group1.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId._EnumVariantListGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => _enumVariantListGroup1(vs, options),
+      trailing: (v: boolean) => _enumVariantListGroup1(elements, { ...options, trailing: v }),
+    },
+  }, methodsEngine);
+}
+
 export function expressionStatementWithSemi(child: T.Expression) {
   const _expression = child;
   return withMethods({
@@ -251,6 +287,24 @@ export function expressionStatementWithSemi(child: T.Expression) {
     _expression,
     expression() { return _expression; },
     $with: { $child: (v: T.Expression) => expressionStatementWithSemi(v) },
+  }, methodsEngine);
+}
+
+export function _fieldDeclarationListGroup1(elements: NonEmptyArray<T.AttributedFieldDeclaration>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, '_field_declaration_list_group1.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId._FieldDeclarationListGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) => _fieldDeclarationListGroup1(vs, options),
+      trailing: (v: boolean) => _fieldDeclarationListGroup1(elements, { ...options, trailing: v }),
+    },
   }, methodsEngine);
 }
 
@@ -526,6 +580,24 @@ export function _orPatternPrefix(config: T.OrPatternPrefix.Config) {
     right() { return _right; },
     $with: {
       right: (value: T.Pattern) => _orPatternPrefix({ ...config, right: value }),
+    },
+  }, methodsEngine);
+}
+
+export function _orderedFieldDeclarationListGroup1(elements: NonEmptyArray<T.AttributedOrderedField>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, '_ordered_field_declaration_list_group1.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId._OrderedFieldDeclarationListGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.AttributedOrderedField>) => _orderedFieldDeclarationListGroup1(vs, options),
+      trailing: (v: boolean) => _orderedFieldDeclarationListGroup1(elements, { ...options, trailing: v }),
     },
   }, methodsEngine);
 }
@@ -985,15 +1057,15 @@ export function abstractType(config: T.AbstractType.Config) {
   }, methodsEngine);
 }
 
-export function arguments_(...children: T.AttributedArgument[]) {
-  const _attributed_argument = children;
+export function arguments_(child?: T.ArgumentsGroup1) {
+  const _arguments_group1 = child;
   return withMethods({
     $type: TSKindId.Arguments as const,
     $source: 2 as const,
     $named: true as const,
-    _attributed_argument,
-    attributedArguments() { return _attributed_argument; },
-    $with: { $children: (...vs: T.AttributedArgument[]) => arguments_(...vs) },
+    _arguments_group1,
+    argumentsGroup1() { return _arguments_group1; },
+    $with: { $child: (v: T.ArgumentsGroup1) => arguments_(v) },
   }, methodsEngine);
 }
 
@@ -1579,15 +1651,15 @@ export function enumVariant(config: T.EnumVariant.Config) {
   }, methodsEngine);
 }
 
-export function enumVariantList(...children: T.AttributedEnumVariant[]) {
-  const _attributed_enum_variant = children;
+export function enumVariantList(child?: T.EnumVariantListGroup1) {
+  const _enum_variant_list_group1 = child;
   return withMethods({
     $type: TSKindId.EnumVariantList as const,
     $source: 2 as const,
     $named: true as const,
-    _attributed_enum_variant,
-    attributedEnumVariants() { return _attributed_enum_variant; },
-    $with: { $children: (...vs: T.AttributedEnumVariant[]) => enumVariantList(...vs) },
+    _enum_variant_list_group1,
+    enumVariantListGroup1() { return _enum_variant_list_group1; },
+    $with: { $child: (v: T.EnumVariantListGroup1) => enumVariantList(v) },
   }, methodsEngine);
 }
 
@@ -1674,15 +1746,15 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
   }, methodsEngine);
 }
 
-export function fieldDeclarationList(...children: T.AttributedFieldDeclaration[]) {
-  const _attributed_field_declaration = children;
+export function fieldDeclarationList(child?: T.FieldDeclarationListGroup1) {
+  const _field_declaration_list_group1 = child;
   return withMethods({
     $type: TSKindId.FieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
-    _attributed_field_declaration,
-    attributedFieldDeclarations() { return _attributed_field_declaration; },
-    $with: { $children: (...vs: T.AttributedFieldDeclaration[]) => fieldDeclarationList(...vs) },
+    _field_declaration_list_group1,
+    fieldDeclarationListGroup1() { return _field_declaration_list_group1; },
+    $with: { $child: (v: T.FieldDeclarationListGroup1) => fieldDeclarationList(v) },
   }, methodsEngine);
 }
 
@@ -2519,8 +2591,8 @@ export function orPattern(child: (T.OrPatternBinary | T.OrPatternPrefix)) {
   }, methodsEngine);
 }
 
-export function orderedFieldDeclarationList(config: Partial<T.OrderedFieldDeclarationList.Config> = {}) {
-  const _attributes = config.attributes;
+export function orderedFieldDeclarationList(attributes?: T.OrderedFieldDeclarationList.Config['attributes']) {
+  const _attributes = attributes;
   return withMethods({
     $type: TSKindId.OrderedFieldDeclarationList as const,
     $source: 2 as const,
@@ -2528,7 +2600,7 @@ export function orderedFieldDeclarationList(config: Partial<T.OrderedFieldDeclar
     _attributes,
     attributes() { return _attributes; },
     $with: {
-      attributes: (...values: T.AttributedOrderedField[]) => orderedFieldDeclarationList({ ...config, attributes: values }),
+      attributes: (value?: T.OrderedFieldDeclarationList.Config['attributes']) => orderedFieldDeclarationList(value),
     },
   }, methodsEngine);
 }
@@ -3644,6 +3716,24 @@ export function yieldExpression(child?: T.Expression) {
   }, methodsEngine);
 }
 
+export function argumentsGroup1(elements: NonEmptyArray<T.AttributedArgument>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, 'arguments_group1.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId._ArgumentsGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.AttributedArgument>) => argumentsGroup1(vs, options),
+      trailing: (v: boolean) => argumentsGroup1(elements, { ...options, trailing: v }),
+    },
+  }, methodsEngine);
+}
+
 export function visibilityModifierGroup1(child: (T.Self | T.Super | T.Crate | T.InPath)) {
   const _content = child;
   return withMethods({
@@ -3653,6 +3743,42 @@ export function visibilityModifierGroup1(child: (T.Self | T.Super | T.Crate | T.
     _content,
     content() { return _content; },
     $with: { $child: (v: (T.Self | T.Super | T.Crate | T.InPath)) => visibilityModifierGroup1(v) },
+  }, methodsEngine);
+}
+
+export function enumVariantListGroup1(elements: NonEmptyArray<T.AttributedEnumVariant>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, 'enum_variant_list_group1.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId._EnumVariantListGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => enumVariantListGroup1(vs, options),
+      trailing: (v: boolean) => enumVariantListGroup1(elements, { ...options, trailing: v }),
+    },
+  }, methodsEngine);
+}
+
+export function fieldDeclarationListGroup1(elements: NonEmptyArray<T.AttributedFieldDeclaration>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, 'field_declaration_list_group1.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId._FieldDeclarationListGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) => fieldDeclarationListGroup1(vs, options),
+      trailing: (v: boolean) => fieldDeclarationListGroup1(elements, { ...options, trailing: v }),
+    },
   }, methodsEngine);
 }
 
@@ -3670,6 +3796,24 @@ export function fieldInitializerListGroup1(elements: NonEmptyArray<T.ShorthandFi
     $with: {
       $children: (...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>) => fieldInitializerListGroup1(vs, options),
       trailing: (v: boolean) => fieldInitializerListGroup1(elements, { ...options, trailing: v }),
+    },
+  }, methodsEngine);
+}
+
+export function orderedFieldDeclarationListGroup1(elements: NonEmptyArray<T.AttributedOrderedField>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, 'ordered_field_declaration_list_group1.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId._OrderedFieldDeclarationListGroup1 as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.AttributedOrderedField>) => orderedFieldDeclarationListGroup1(vs, options),
+      trailing: (v: boolean) => orderedFieldDeclarationListGroup1(elements, { ...options, trailing: v }),
     },
   }, methodsEngine);
 }
@@ -3851,6 +3995,7 @@ export function errorSentinel(text: string) {
 }
 
 export type FluentKindMap = {
+  "_arguments_group1": FluentNode<"_arguments_group1", T._ArgumentsGroup1.Config>;
   "_array_expression_list": T.ArrayExpressionList;
   "_array_expression_semi": T.ArrayExpressionSemi;
   "_attributed_argument": FluentNode<"_attributed_argument", T.AttributedArgument.Config>;
@@ -3864,7 +4009,9 @@ export type FluentKindMap = {
   "_delim_token_tree_brace": FluentNode<"_delim_token_tree_brace", T.DelimTokenTreeBrace.Config>;
   "_delim_token_tree_bracket": FluentNode<"_delim_token_tree_bracket", T.DelimTokenTreeBracket.Config>;
   "_delim_token_tree_paren": FluentNode<"_delim_token_tree_paren", T.DelimTokenTreeParen.Config>;
+  "_enum_variant_list_group1": FluentNode<"_enum_variant_list_group1", T._EnumVariantListGroup1.Config>;
   "_expression_statement_with_semi": FluentNode<"_expression_statement_with_semi", T.ExpressionStatementWithSemi.Config>;
+  "_field_declaration_list_group1": FluentNode<"_field_declaration_list_group1", T._FieldDeclarationListGroup1.Config>;
   "_field_identifier": T.FieldIdentifier;
   "_field_initializer_list_group1": FluentNode<"_field_initializer_list_group1", T._FieldInitializerListGroup1.Config>;
   "_field_pattern_named": T.FieldPatternNamed;
@@ -3884,6 +4031,7 @@ export type FluentKindMap = {
   "_match_block_arms": T.MatchBlockArms;
   "_or_pattern_binary": T.OrPatternBinary;
   "_or_pattern_prefix": T.OrPatternPrefix;
+  "_ordered_field_declaration_list_group1": FluentNode<"_ordered_field_declaration_list_group1", T._OrderedFieldDeclarationListGroup1.Config>;
   "_parameters_group1": FluentNode<"_parameters_group1", T._ParametersGroup1.Config>;
   "_range_expression_binary": T.RangeExpressionBinary;
   "_range_expression_postfix": T.RangeExpressionPostfix;
@@ -4065,8 +4213,12 @@ export type FluentKindMap = {
   "where_predicate": FluentNode<"where_predicate", T.WherePredicate.Config>;
   "while_expression": FluentNode<"while_expression", T.WhileExpression.Config>;
   "yield_expression": FluentNode<"yield_expression", T.YieldExpression.Config>;
+  "arguments_group1": FluentNode<"arguments_group1", T.ArgumentsGroup1.Config>;
   "visibility_modifier_group1": FluentNode<"visibility_modifier_group1", T.VisibilityModifierGroup1.Config>;
+  "enum_variant_list_group1": FluentNode<"enum_variant_list_group1", T.EnumVariantListGroup1.Config>;
+  "field_declaration_list_group1": FluentNode<"field_declaration_list_group1", T.FieldDeclarationListGroup1.Config>;
   "field_initializer_list_group1": FluentNode<"field_initializer_list_group1", T.FieldInitializerListGroup1.Config>;
+  "ordered_field_declaration_list_group1": FluentNode<"ordered_field_declaration_list_group1", T.OrderedFieldDeclarationListGroup1.Config>;
   "parameters_group1": FluentNode<"parameters_group1", T.ParametersGroup1.Config>;
   "slice_pattern_group1": FluentNode<"slice_pattern_group1", T.SlicePatternGroup1.Config>;
   "struct_pattern_group1": FluentNode<"struct_pattern_group1", T.StructPatternGroup1.Config>;
@@ -4082,6 +4234,7 @@ export type FluentKindMap = {
 };
 
 export const _factoryMap = {
+  "_arguments_group1": _argumentsGroup1,
   "_array_expression_list": _arrayExpressionList,
   "_array_expression_semi": _arrayExpressionSemi,
   "_attributed_argument": attributedArgument,
@@ -4095,7 +4248,9 @@ export const _factoryMap = {
   "_delim_token_tree_brace": delimTokenTreeBrace,
   "_delim_token_tree_bracket": delimTokenTreeBracket,
   "_delim_token_tree_paren": delimTokenTreeParen,
+  "_enum_variant_list_group1": _enumVariantListGroup1,
   "_expression_statement_with_semi": expressionStatementWithSemi,
+  "_field_declaration_list_group1": _fieldDeclarationListGroup1,
   "_field_identifier": fieldIdentifier,
   "_field_initializer_list_group1": _fieldInitializerListGroup1,
   "_field_pattern_named": _fieldPatternNamed,
@@ -4115,6 +4270,7 @@ export const _factoryMap = {
   "_match_block_arms": _matchBlockArms,
   "_or_pattern_binary": _orPatternBinary,
   "_or_pattern_prefix": _orPatternPrefix,
+  "_ordered_field_declaration_list_group1": _orderedFieldDeclarationListGroup1,
   "_parameters_group1": _parametersGroup1,
   "_range_expression_binary": _rangeExpressionBinary,
   "_range_expression_postfix": _rangeExpressionPostfix,
@@ -4296,8 +4452,12 @@ export const _factoryMap = {
   "where_predicate": wherePredicate,
   "while_expression": whileExpression,
   "yield_expression": yieldExpression,
+  "arguments_group1": argumentsGroup1,
   "visibility_modifier_group1": visibilityModifierGroup1,
+  "enum_variant_list_group1": enumVariantListGroup1,
+  "field_declaration_list_group1": fieldDeclarationListGroup1,
   "field_initializer_list_group1": fieldInitializerListGroup1,
+  "ordered_field_declaration_list_group1": orderedFieldDeclarationListGroup1,
   "parameters_group1": parametersGroup1,
   "slice_pattern_group1": slicePatternGroup1,
   "struct_pattern_group1": structPatternGroup1,

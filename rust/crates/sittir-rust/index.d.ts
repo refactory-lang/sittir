@@ -71,6 +71,30 @@ export interface AbstractTypeTransport {
   _trait: Box<AbstractTypeTraitTransportSlot>
 }
 
+export interface ArgumentsGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _attributed_argument: Array<AttributedArgumentTransport>
+  _trailing_sep?: boolean
+}
+
+export interface ArgumentsGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _attributed_argument: Array<AttributedArgumentTransport>
+  _trailing_sep?: boolean
+}
+
 export interface ArgumentsTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -79,7 +103,7 @@ export interface ArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_argument?: Array<AttributedArgumentTransport>
+  _arguments_group1?: ArgumentsGroup1Transport
 }
 
 export interface ArrayExpressionListTransport {
@@ -91,7 +115,7 @@ export interface ArrayExpressionListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
-  _attributed_argument?: Array<AttributedArgumentTransport>
+  _arguments_group1?: ArgumentsGroup1Transport
 }
 
 export interface ArrayExpressionSemiTransport {
@@ -658,6 +682,30 @@ export interface EnumItemTransport {
   _body: EnumVariantListTransport
 }
 
+export interface EnumVariantListGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _attributed_enum_variant: Array<AttributedEnumVariantTransport>
+  _trailing_sep?: boolean
+}
+
+export interface EnumVariantListGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _attributed_enum_variant: Array<AttributedEnumVariantTransport>
+  _trailing_sep?: boolean
+}
+
 export interface EnumVariantListTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -666,7 +714,7 @@ export interface EnumVariantListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_enum_variant?: Array<AttributedEnumVariantTransport>
+  _enum_variant_list_group1?: EnumVariantListGroup1Transport
 }
 
 export interface EnumVariantTransport {
@@ -741,6 +789,30 @@ export interface ExternModifierTransport {
   _string_literal?: StringLiteralTransport
 }
 
+export interface FieldDeclarationListGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _attributed_field_declaration: Array<AttributedFieldDeclarationTransport>
+  _trailing_sep?: boolean
+}
+
+export interface FieldDeclarationListGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _attributed_field_declaration: Array<AttributedFieldDeclarationTransport>
+  _trailing_sep?: boolean
+}
+
 export interface FieldDeclarationListTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -749,7 +821,7 @@ export interface FieldDeclarationListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_field_declaration?: Array<AttributedFieldDeclarationTransport>
+  _field_declaration_list_group1?: FieldDeclarationListGroup1Transport
 }
 
 export interface FieldDeclarationTransport {
@@ -1496,6 +1568,32 @@ export interface NonSpecialTokenTransport {
   _content?: Array<NonSpecialTokenContentTransportSlot>
 }
 
+export interface OrderedFieldDeclarationListGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _attributed_ordered_field: Array<AttributedOrderedFieldTransport>
+  _type?: _TypeTransport
+  _trailing_sep?: boolean
+}
+
+export interface OrderedFieldDeclarationListGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _attributed_ordered_field: Array<AttributedOrderedFieldTransport>
+  _type?: _TypeTransport
+  _trailing_sep?: boolean
+}
+
 export interface OrderedFieldDeclarationListTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1504,7 +1602,7 @@ export interface OrderedFieldDeclarationListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributes?: Array<AttributedOrderedFieldTransport>
+  _attributes?: OrderedFieldDeclarationListGroup1Transport
 }
 
 export interface OrPatternBinaryTransport {

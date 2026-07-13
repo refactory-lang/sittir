@@ -526,8 +526,23 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
+      "types": [
+        {
+          "type": "arguments_group1",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "arguments_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
       "types": [
         {
           "type": "attributed_argument",
@@ -571,11 +586,11 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "attributed_argument",
+          "type": "arguments_group1",
           "named": true
         }
       ]
@@ -2114,8 +2129,23 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
+      "types": [
+        {
+          "type": "enum_variant_list_group1",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "enum_variant_list_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
       "types": [
         {
           "type": "attributed_enum_variant",
@@ -2301,8 +2331,23 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
+      "types": [
+        {
+          "type": "field_declaration_list_group1",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "field_declaration_list_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
       "types": [
         {
           "type": "attributed_field_declaration",
@@ -4069,19 +4114,30 @@
     "named": true,
     "fields": {
       "attributes": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "attributed_ordered_field",
+            "type": "ordered_field_declaration_list_group1",
             "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "ordered_field_declaration_list_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attributed_ordered_field",
+          "named": true
+        }
+      ]
     }
   },
   {

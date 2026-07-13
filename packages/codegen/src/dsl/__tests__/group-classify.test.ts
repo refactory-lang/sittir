@@ -51,4 +51,23 @@ describe('isInlineSafe — exactly 1 non-choice field/symbol slot after dropping
   // Bare repeat body whose OWN separator is non-literal is also NOT
   // inline-safe (no enclosing seq needed for this check).
   it('bare repeat body with CHOICE-shaped inner separator is NOT inline-safe', () => expect(isInlineSafe({ type: 'REPEAT', content: seq(choice(str(','), sym('_semicolon')), sym('expr')) })).toBe(false));
+
+  // A per-element MODIFIER repeat with NO separator of its own (e.g. rust's
+  // `seq(repeat($.attribute_item), X)` per-element-attribute-list pattern,
+  // as seen in `enum_variant_list`/`field_declaration_list`/
+  // `ordered_field_declaration_list`/`arguments`) sits ALONGSIDE the real
+  // list's separator-carrying repeat once flattened. seqHasGenuineSeparator
+  // Variability's census must count only SEPARATOR-CARRYING repeats — a
+  // naive "exactly one repeat of any shape" census sees 2 repeats here and
+  // incorrectly bails (false negative), leaving these kinds un-promoted.
+  it('seq with a no-separator modifier repeat ALONGSIDE the real separator-carrying repeat is NOT inline-safe (modifier repeat does not count toward the census)', () =>
+    expect(
+      isInlineSafe(
+        seq(
+          seq({ type: 'REPEAT', content: sym('attribute_item') }, sym('expr')),
+          { type: 'REPEAT', content: seq(str(','), sym('expr')) },
+          opt(str(','))
+        )
+      )
+    ).toBe(false));
 });

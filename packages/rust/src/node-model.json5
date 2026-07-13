@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 382,
+  "nodeCount": 389,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -186,8 +186,14 @@
     }
   },
   "fieldAliasMap": {
-    "_array_expression_list.attributed_argument": {
+    "_arguments_group1.attributed_argument": {
       "attributed_argument": "_attributed_argument"
+    },
+    "_enum_variant_list_group1.attributed_enum_variant": {
+      "attributed_enum_variant": "_attributed_enum_variant"
+    },
+    "_field_declaration_list_group1.attributed_field_declaration": {
+      "attributed_field_declaration": "_attributed_field_declaration"
     },
     "_field_pattern_named.name": {
       "field_identifier": "identifier"
@@ -219,6 +225,9 @@
     "_non_special_token.content": {
       "primitive_type": "_primitive_type"
     },
+    "_ordered_field_declaration_list_group1.attributed_ordered_field": {
+      "attributed_ordered_field": "_attributed_ordered_field"
+    },
     "_parameters_group1.attributed_parameter": {
       "attributed_parameter": "_attributed_parameter"
     },
@@ -230,9 +239,6 @@
     },
     "abstract_type.trait": {
       "type_identifier": "identifier"
-    },
-    "arguments.attributed_argument": {
-      "attributed_argument": "_attributed_argument"
     },
     "array_expression.content": {
       "array_expression_semi": "_array_expression_semi",
@@ -268,17 +274,11 @@
     "enum_item.name": {
       "type_identifier": "identifier"
     },
-    "enum_variant_list.attributed_enum_variant": {
-      "attributed_enum_variant": "_attributed_enum_variant"
-    },
     "expression_statement.content": {
       "expression_statement_with_semi": "_expression_statement_with_semi"
     },
     "field_declaration.name": {
       "field_identifier": "identifier"
-    },
-    "field_declaration_list.attributed_field_declaration": {
-      "attributed_field_declaration": "_attributed_field_declaration"
     },
     "field_expression.field": {
       "field_identifier": "identifier"
@@ -338,9 +338,6 @@
     "or_pattern.content": {
       "or_pattern_binary": "_or_pattern_binary",
       "or_pattern_prefix": "_or_pattern_prefix"
-    },
-    "ordered_field_declaration_list.attributes": {
-      "attributed_ordered_field": "_attributed_ordered_field"
     },
     "pointer_type.content": {
       "pointer_type_const": "_pointer_type_const"
@@ -438,8 +435,20 @@
       "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
+    "arguments_group1.attributed_argument": {
+      "attributed_argument": "_attributed_argument"
+    },
     "visibility_modifier_group1.content": {
       "in_path": "_in_path"
+    },
+    "enum_variant_list_group1.attributed_enum_variant": {
+      "attributed_enum_variant": "_attributed_enum_variant"
+    },
+    "field_declaration_list_group1.attributed_field_declaration": {
+      "attributed_field_declaration": "_attributed_field_declaration"
+    },
+    "ordered_field_declaration_list_group1.attributed_ordered_field": {
+      "attributed_ordered_field": "_attributed_ordered_field"
     },
     "parameters_group1.attributed_parameter": {
       "attributed_parameter": "_attributed_parameter"
@@ -457,11 +466,11 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "attributed_argument": {
+      "arguments_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1076,11 +1085,11 @@
       }
     },
     "arguments": {
-      "attributed_argument": {
+      "arguments_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1616,11 +1625,11 @@
       }
     },
     "enum_variant_list": {
-      "attributed_enum_variant": {
+      "enum_variant_list_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1696,11 +1705,11 @@
       }
     },
     "field_declaration_list": {
-      "attributed_field_declaration": {
+      "field_declaration_list_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -2496,7 +2505,7 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3474,6 +3483,15 @@
         "nonEmpty": false
       }
     },
+    "arguments_group1": {
+      "attributed_argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "visibility_modifier_group1": {
       "content": {
         "unnamed": false,
@@ -3483,6 +3501,24 @@
         "nonEmpty": false
       }
     },
+    "enum_variant_list_group1": {
+      "attributed_enum_variant": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "field_declaration_list_group1": {
+      "attributed_field_declaration": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "field_initializer_list_group1": {
       "content": {
         "unnamed": false,
@@ -3490,6 +3526,15 @@
         "required": false,
         "multiple": true,
         "nonEmpty": false
+      }
+    },
+    "ordered_field_declaration_list_group1": {
+      "attributed_ordered_field": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "parameters_group1": {
@@ -3947,14 +3992,16 @@
       "children": []
     },
     {
-      "kind": "_arguments_optional1",
-      "modelType": "multi",
-      "typeName": "ArgumentsOptional1",
-      "irKey": "argumentsOptional1",
-      "hidden": true,
+      "kind": "_arguments_group1",
+      "modelType": "separatedList",
+      "typeName": "_ArgumentsGroup1",
+      "factoryName": "_argumentsGroup1",
+      "irKey": "_argumentsGroup1",
+      "hidden": false,
       "nonEmpty": true,
-      "separator": ",",
-      "trailing": "optional",
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
       "elementKinds": [
         "attributed_argument"
       ]
@@ -3992,25 +4039,25 @@
           }
         },
         {
-          "name": "attributed_argument",
-          "propertyName": "attributedArguments",
-          "paramName": "attributedArguments",
+          "name": "arguments_group1",
+          "propertyName": "argumentsGroup1",
+          "paramName": "argumentsGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_argument",
-              "parseKind": "attributed_argument",
+              "multiplicity": "optional",
+              "name": "arguments_group1",
+              "parseKind": "arguments_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_argument"
+              "arguments_group1"
             ]
           }
         }
@@ -4019,7 +4066,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "attributed_argument"
+        "arguments_group1"
       ]
     },
     {
@@ -5113,6 +5160,21 @@
       ]
     },
     {
+      "kind": "_enum_variant_list_group1",
+      "modelType": "separatedList",
+      "typeName": "_EnumVariantListGroup1",
+      "factoryName": "_enumVariantListGroup1",
+      "irKey": "_enumVariantListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_enum_variant"
+      ]
+    },
+    {
       "kind": "_error_sentinel",
       "modelType": "pattern",
       "typeName": "ErrorSentinel",
@@ -5323,6 +5385,21 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_field_declaration_list_group1",
+      "modelType": "separatedList",
+      "typeName": "_FieldDeclarationListGroup1",
+      "factoryName": "_fieldDeclarationListGroup1",
+      "irKey": "_fieldDeclarationListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_field_declaration"
+      ]
     },
     {
       "kind": "_field_identifier",
@@ -7133,6 +7210,21 @@
       "factoryShape": "config",
       "factoryFields": [
         "right"
+      ]
+    },
+    {
+      "kind": "_ordered_field_declaration_list_group1",
+      "modelType": "separatedList",
+      "typeName": "_OrderedFieldDeclarationListGroup1",
+      "factoryName": "_orderedFieldDeclarationListGroup1",
+      "irKey": "_orderedFieldDeclarationListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_ordered_field"
       ]
     },
     {
@@ -8972,34 +9064,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attributed_argument",
-          "propertyName": "attributedArguments",
-          "paramName": "attributedArguments",
+          "name": "arguments_group1",
+          "propertyName": "argumentsGroup1",
+          "paramName": "argumentsGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_argument",
-              "parseKind": "attributed_argument",
+              "multiplicity": "optional",
+              "name": "arguments_group1",
+              "parseKind": "arguments_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_argument"
+              "arguments_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "attributed_argument"
+        "arguments_group1"
       ]
+    },
+    {
+      "kind": "arguments_group1",
+      "modelType": "separatedList",
+      "typeName": "ArgumentsGroup1",
+      "factoryName": "argumentsGroup1",
+      "irKey": "argumentsGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_argument"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "array_expression",
@@ -11471,34 +11579,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attributed_enum_variant",
-          "propertyName": "attributedEnumVariants",
-          "paramName": "attributedEnumVariants",
+          "name": "enum_variant_list_group1",
+          "propertyName": "enumVariantListGroup1",
+          "paramName": "enumVariantListGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_enum_variant",
-              "parseKind": "attributed_enum_variant",
+              "multiplicity": "optional",
+              "name": "enum_variant_list_group1",
+              "parseKind": "enum_variant_list_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_enum_variant"
+              "enum_variant_list_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "attributed_enum_variant"
+        "enum_variant_list_group1"
       ]
+    },
+    {
+      "kind": "enum_variant_list_group1",
+      "modelType": "separatedList",
+      "typeName": "EnumVariantListGroup1",
+      "factoryName": "enumVariantListGroup1",
+      "irKey": "enumVariantListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_enum_variant"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "escape_sequence",
@@ -11805,34 +11929,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attributed_field_declaration",
-          "propertyName": "attributedFieldDeclarations",
-          "paramName": "attributedFieldDeclarations",
+          "name": "field_declaration_list_group1",
+          "propertyName": "fieldDeclarationListGroup1",
+          "paramName": "fieldDeclarationListGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_field_declaration",
-              "parseKind": "attributed_field_declaration",
+              "multiplicity": "optional",
+              "name": "field_declaration_list_group1",
+              "parseKind": "field_declaration_list_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_field_declaration"
+              "field_declaration_list_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "attributed_field_declaration"
+        "field_declaration_list_group1"
       ]
+    },
+    {
+      "kind": "field_declaration_list_group1",
+      "modelType": "separatedList",
+      "typeName": "FieldDeclarationListGroup1",
+      "factoryName": "fieldDeclarationListGroup1",
+      "irKey": "fieldDeclarationListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_field_declaration"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "field_expression",
@@ -15287,30 +15427,46 @@
           "propertyName": "attributes",
           "paramName": "attributes",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_ordered_field",
-              "parseKind": "attributed_ordered_field",
+              "multiplicity": "optional",
+              "name": "ordered_field_declaration_list_group1",
+              "parseKind": "ordered_field_declaration_list_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_ordered_field"
+              "ordered_field_declaration_list_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "attributes"
       ]
+    },
+    {
+      "kind": "ordered_field_declaration_list_group1",
+      "modelType": "separatedList",
+      "typeName": "OrderedFieldDeclarationListGroup1",
+      "factoryName": "orderedFieldDeclarationListGroup1",
+      "irKey": "orderedFieldDeclarationListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_ordered_field"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "parameter",

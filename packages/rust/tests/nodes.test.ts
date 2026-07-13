@@ -964,13 +964,13 @@ describe('or_pattern', () => {
 
 describe('ordered_field_declaration_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.orderedFieldDeclarationList({});
+    const node = ir.orderedFieldDeclarationList();
     expect(node.$type).toBe(TSKindId.OrderedFieldDeclarationList);
     expect(node.$source).toBe(2);
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.orderedFieldDeclarationList({});
-    expect(() => node.$render!()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.orderedFieldDeclarationList({ $type: TSKindId._OrderedFieldDeclarationListGroup1, $text: 'test', $source: 2, $named: true , _attributed_ordered_field: [{ $type: TSKindId.AttributedOrderedField, $text: 'test', $source: 2, $named: true , _type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any } as any] } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1678,11 +1678,47 @@ describe('yield_expression', () => {
   });
 });
 
+describe('arguments_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.argumentsGroup1({ attributedArgument: [{ $type: TSKindId.AttributedArgument, $text: 'test', $source: 2, $named: true , _expression: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any } as any] });
+    expect(node.$type).toBe(TSKindId._ArgumentsGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.argumentsGroup1({ attributedArgument: [{ $type: TSKindId.AttributedArgument, $text: 'test', $source: 2, $named: true , _expression: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
 describe('visibility_modifier_group1', () => {
   it('factory produces correct type', () => {
     const node = ir.visibilityModifierGroup1({ type: "self" } as never);
     expect(node.$type).toBe(TSKindId._VisibilityModifierGroup1);
     expect(node.$source).toBe(2);
+  });
+});
+
+describe('enum_variant_list_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.enumVariantListGroup1({ attributedEnumVariant: [{ $type: TSKindId.AttributedEnumVariant, $text: 'test', $source: 2, $named: true , _enum_variant: { $type: TSKindId.EnumVariant, $text: 'test', $source: 2, $named: true , _name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any } as any } as any] });
+    expect(node.$type).toBe(TSKindId._EnumVariantListGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.enumVariantListGroup1({ attributedEnumVariant: [{ $type: TSKindId.AttributedEnumVariant, $text: 'test', $source: 2, $named: true , _enum_variant: { $type: TSKindId.EnumVariant, $text: 'test', $source: 2, $named: true , _name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any } as any } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('field_declaration_list_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.fieldDeclarationListGroup1({ attributedFieldDeclaration: [{ $type: TSKindId.AttributedFieldDeclaration, $text: 'test', $source: 2, $named: true , _field_declaration: { $type: TSKindId.FieldDeclaration, $text: 'test', $source: 2, $named: true , _name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, _type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any } as any } as any] });
+    expect(node.$type).toBe(TSKindId._FieldDeclarationListGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.fieldDeclarationListGroup1({ attributedFieldDeclaration: [{ $type: TSKindId.AttributedFieldDeclaration, $text: 'test', $source: 2, $named: true , _field_declaration: { $type: TSKindId.FieldDeclaration, $text: 'test', $source: 2, $named: true , _name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, _type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any } as any } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1695,6 +1731,18 @@ describe('field_initializer_list_group1', () => {
   it('render does not throw on minimal config', () => {
     const node = ir.fieldInitializerListGroup1({});
     expect(() => node.$render!()).not.toThrow();
+  });
+});
+
+describe('ordered_field_declaration_list_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.orderedFieldDeclarationListGroup1({ attributedOrderedField: [{ $type: TSKindId.AttributedOrderedField, $text: 'test', $source: 2, $named: true , _type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any } as any] });
+    expect(node.$type).toBe(TSKindId._OrderedFieldDeclarationListGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.orderedFieldDeclarationListGroup1({ attributedOrderedField: [{ $type: TSKindId.AttributedOrderedField, $text: 'test', $source: 2, $named: true , _type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
