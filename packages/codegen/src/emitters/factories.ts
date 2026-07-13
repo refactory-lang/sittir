@@ -1317,20 +1317,29 @@ function emitSeparatedListFactory(
 	const elemTypeForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 	const elementsType = node.nonEmpty ? `NonEmptyArray<${elemType}>` : `${elemTypeForArray}[]`;
 
-	const candidateKindNames =
-		node.separatorRule !== undefined
-			? collectSeparatorCandidateKindNames(node.separatorRule).filter((k) => hasCatalogEntry(kindEntries, k))
-			: [];
-	const hasSeparatorKindOption = candidateKindNames.length > 0;
+	// Outer gate matches wrap.ts's `emitSeparatedListWrap` and render-module.ts's
+	// `renderTransportDataStruct` exactly: `node.separatorRule !== undefined`,
+	// NOT "at least one candidate resolves in the catalog" — the catalog
+	// filter is applied only to the candidate LIST inside, same as those two.
+	// Currently inert (no real grammar kind has a nonterminal separator), but
+	// keeps the three tasks' gating logic consistent rather than diverging on
+	// an edge case none of them can reach today.
+	const hasSeparatorKindOption = node.separatorRule !== undefined;
+	const candidateKindNames = hasSeparatorKindOption
+		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
+		: [];
 	const hasLeadingOption = node.leadingMode === 'optional';
 	const hasTrailingOption = node.trailingMode === 'optional';
 	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
 
+	// `never` when the separator is nonterminal but zero candidates resolve
+	// in the catalog (mirrors `childElementType`/`fieldElementType`'s own
+	// zero-parts fallback) — an uninhabited type communicates "no valid
+	// choice exists" rather than emitting an invalid empty union.
+	const separatorKindUnion = candidateKindNames.length > 0 ? candidateKindNames.map((k) => JSON.stringify(k)).join(' | ') : 'never';
+
 	const optionsTypeParts: string[] = [];
-	if (hasSeparatorKindOption) {
-		const union = candidateKindNames.map((k) => JSON.stringify(k)).join(' | ');
-		optionsTypeParts.push(`separatorKind?: ${union}`);
-	}
+	if (hasSeparatorKindOption) optionsTypeParts.push(`separatorKind?: ${separatorKindUnion}`);
 	if (hasLeadingOption) optionsTypeParts.push('leading?: boolean');
 	if (hasTrailingOption) optionsTypeParts.push('trailing?: boolean');
 	const optionsType = `{ ${optionsTypeParts.join('; ')} }`;
@@ -1346,10 +1355,14 @@ function emitSeparatedListFactory(
 	}
 	lines.push('  const _content = elements;');
 	if (hasSeparatorKindOption) {
-		const arms = candidateKindNames.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`).join(', ');
-		lines.push(
-			`  const _separator_kind = ({ ${arms} } as Record<string, number>)[options.separatorKind ?? ${JSON.stringify(candidateKindNames[0])}];`
-		);
+		if (candidateKindNames.length > 0) {
+			const arms = candidateKindNames.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`).join(', ');
+			lines.push(
+				`  const _separator_kind = ({ ${arms} } as Record<string, number>)[options.separatorKind ?? ${JSON.stringify(candidateKindNames[0])}];`
+			);
+		} else {
+			lines.push('  const _separator_kind = undefined;');
+		}
 	}
 	if (hasLeadingOption) lines.push('  const _leading_sep = options.leading ?? false;');
 	if (hasTrailingOption) lines.push('  const _trailing_sep = options.trailing ?? false;');
@@ -1368,11 +1381,14 @@ function emitSeparatedListFactory(
 	// Rest param type must match `elementsType` exactly (`NonEmptyArray<T>`
 	// when nonEmpty) — a plain `T[]` rest capture isn't assignable to the
 	// tuple-shaped `NonEmptyArray<T>` the factory's own `elements` parameter
-	// requires. Mirrors `childrenSetterRestType`'s same nonEmpty handling.
+	// requires. Independently computed from `node.nonEmpty` (the
+	// authoritative source) rather than via `childrenSetterRestType` —
+	// that helper derives multiplicity from `AssembledNonterminal.isMultiple`/
+	// `isNonEmpty`, which `buildSeparatedListContentSlot`'s synthetic slot
+	// (wrap.ts) doesn't reliably carry, so it isn't a safe drop-in here.
 	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(vs${optionsArg}),`);
 	if (hasSeparatorKindOption) {
-		const union = candidateKindNames.map((k) => JSON.stringify(k)).join(' | ');
-		lines.push(`      separatorKind: (v: ${union}) => ${fn}(elements, { ...options, separatorKind: v }),`);
+		lines.push(`      separatorKind: (v: ${separatorKindUnion}) => ${fn}(elements, { ...options, separatorKind: v }),`);
 	}
 	if (hasLeadingOption) lines.push(`      leading: (v: boolean) => ${fn}(elements, { ...options, leading: v }),`);
 	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}(elements, { ...options, trailing: v }),`);

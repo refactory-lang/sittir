@@ -303,11 +303,11 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
   switch (kind) {
     case "_comprehension_clauses": return F.comprehensionClauses(...(children as Parameters<typeof F.comprehensionClauses>));
-    case "_expression_statement_tuple": return F.expressionStatementTuple(...(children as Parameters<typeof F.expressionStatementTuple>));
+    case "_expression_statement_tuple": return F.expressionStatementTuple(children as unknown as Parameters<typeof F.expressionStatementTuple>[0]);
     case "_match_block": return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
     case "_simple_pattern_negative": return F.simplePatternNegative(...(children as Parameters<typeof F.simplePatternNegative>));
     case "_simple_statements": return F.simpleStatements(...(children as Parameters<typeof F.simpleStatements>));
-    case "_with_clause_bare": return F.withClauseBare(...(children as Parameters<typeof F.withClauseBare>));
+    case "_with_clause_bare": return F.withClauseBare(children as unknown as Parameters<typeof F.withClauseBare>[0]);
     case "_with_clause_paren": return F.withClauseParen(...(children as Parameters<typeof F.withClauseParen>));
     case "assert_statement": return F.assertStatement(...(children as Parameters<typeof F.assertStatement>));
     case "block": return F.block(...(children as Parameters<typeof F.block>));
@@ -320,7 +320,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "expression_statement": return F.expressionStatement(children[0] as Parameters<typeof F.expressionStatement>[0]);
     case "format_specifier": return F.formatSpecifier(...(children as Parameters<typeof F.formatSpecifier>));
     case "global_statement": return F.globalStatement(...(children as Parameters<typeof F.globalStatement>));
-    case "lambda_parameters": return F.lambdaParameters(children[0] as Parameters<typeof F.lambdaParameters>[0]);
+    case "lambda_parameters": return F.lambdaParameters(children as unknown as Parameters<typeof F.lambdaParameters>[0]);
     case "list": return F.list(children[0] as Parameters<typeof F.list>[0]);
     case "list_pattern": return F.listPattern(children[0] as Parameters<typeof F.listPattern>[0]);
     case "list_splat_pattern": return F.listSplatPattern(children[0] as Parameters<typeof F.listSplatPattern>[0]);
@@ -969,13 +969,14 @@ export function lambdaFrom(input: T.Lambda.Loose): ReturnType<typeof F.lambda> {
   });
 }
 
-export function lambdaParametersFrom(input?: T._Parameters | T.LambdaParameters): ReturnType<typeof F.lambdaParameters> {
-  if (isNodeData(input) && input.$type === TSKindId.LambdaParameters) {
-    const data = input;
-    const child = (data as unknown as { _parameters?: unknown })._parameters;
-    return F.lambdaParameters(child as Parameters<typeof F.lambdaParameters>[0]);
+export function lambdaParametersFrom(...input: readonly (T.Parameter | T.LambdaParameters)[]): ReturnType<typeof F.lambdaParameters> {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.LambdaParameters) {
+    const data = input[0];
+    const stored = (data as unknown as { _content?: unknown })._content;
+    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+    return F.lambdaParameters(children as unknown as Parameters<typeof F.lambdaParameters>[0]);
   }
-  return F.lambdaParameters(input as Parameters<typeof F.lambdaParameters>[0]);
+  return F.lambdaParameters(input as unknown as Parameters<typeof F.lambdaParameters>[0]);
 }
 
 export function lambdaWithinForInClauseFrom(input: T.LambdaWithinForInClause.Loose): ReturnType<typeof F.lambdaWithinForInClause> {
