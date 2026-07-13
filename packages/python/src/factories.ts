@@ -100,6 +100,18 @@ export function _assignmentTyped(config: T.AssignmentTyped.Config) {
   }, methodsEngine);
 }
 
+export function collectionElements(child: T.ElementList) {
+  const _element_list = child;
+  return withMethods({
+    $type: TSKindId.CollectionElements as const,
+    $source: 2 as const,
+    $named: true as const,
+    _element_list,
+    elementList() { return _element_list; },
+    $with: { $child: (v: T.ElementList) => collectionElements(v) },
+  }, methodsEngine);
+}
+
 export function _comparisonOperatorComparator(config: T.ComparisonOperatorComparator.Config) {
   const _operators = coerceKindEnumStorage(config.operators, [["<", TSKindId.Lt] as const, ["<=", TSKindId.LtEq] as const, ["==", TSKindId.EqEq] as const, ["!=", TSKindId.BangEq] as const, [">=", TSKindId.GtEq] as const, [">", TSKindId.Gt] as const, ["<>", TSKindId.LtGt] as const, ["in", TSKindId.In] as const, ["is", TSKindId.Is] as const]);
   const _primary_expression = config.primaryExpression;
@@ -170,6 +182,24 @@ export function _dictionaryGroup1(elements: NonEmptyArray<T.Pair | T.DictionaryS
     $with: {
       $children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => _dictionaryGroup1(vs, options),
       trailing: (v: boolean) => _dictionaryGroup1(elements, { ...options, trailing: v }),
+    },
+  }, methodsEngine);
+}
+
+export function elementList(elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, '_element_list.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId.ElementList as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>) => elementList(vs, options),
+      trailing: (v: boolean) => elementList(elements, { ...options, trailing: v }),
     },
   }, methodsEngine);
 }
@@ -329,6 +359,66 @@ export function notIn(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
+  }, methodsEngine);
+}
+
+export function parameterList(elements: NonEmptyArray<T.Parameter>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, '_parameter_list.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId.ParameterList as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.Parameter>) => parameterList(vs, options),
+      trailing: (v: boolean) => parameterList(elements, { ...options, trailing: v }),
+    },
+  }, methodsEngine);
+}
+
+export function _parameters(child: T.ParameterList) {
+  const _parameter_list = child;
+  return withMethods({
+    $type: TSKindId._Parameters as const,
+    $source: 2 as const,
+    $named: true as const,
+    _parameter_list,
+    parameterList() { return _parameter_list; },
+    $with: { $child: (v: T.ParameterList) => _parameters(v) },
+  }, methodsEngine);
+}
+
+export function patternGroup(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
+  _assertNonEmpty(elements, '_pattern_group.elements');
+  const _content = elements;
+  const _trailing_sep = options.trailing ?? false;
+  return withMethods({
+    $type: TSKindId.PatternGroup as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trailing_sep,
+    content() { return _content; },
+    $with: {
+      $children: (...vs: NonEmptyArray<T.Pattern>) => patternGroup(vs, options),
+      trailing: (v: boolean) => patternGroup(elements, { ...options, trailing: v }),
+    },
+  }, methodsEngine);
+}
+
+export function patterns(child: T.PatternGroup) {
+  const _pattern_group = child;
+  return withMethods({
+    $type: TSKindId.Patterns as const,
+    $source: 2 as const,
+    $named: true as const,
+    _pattern_group,
+    patternGroup() { return _pattern_group; },
+    $with: { $child: (v: T.PatternGroup) => patterns(v) },
   }, methodsEngine);
 }
 
@@ -1462,21 +1552,15 @@ export function lambda(config: T.Lambda.Config) {
   }, methodsEngine);
 }
 
-export function lambdaParameters(elements: NonEmptyArray<T.Parameter>, options: { trailing?: boolean } = {}) {
-  _assertNonEmpty(elements, 'lambda_parameters.elements');
-  const _content = elements;
-  const _trailing_sep = options.trailing ?? false;
+export function lambdaParameters(child: T._Parameters) {
+  const _parameters = child;
   return withMethods({
     $type: TSKindId.LambdaParameters as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    _trailing_sep,
-    content() { return _content; },
-    $with: {
-      $children: (...vs: NonEmptyArray<T.Parameter>) => lambdaParameters(vs, options),
-      trailing: (v: boolean) => lambdaParameters(elements, { ...options, trailing: v }),
-    },
+    _parameters,
+    parameters() { return _parameters; },
+    $with: { $child: (v: T._Parameters) => lambdaParameters(v) },
   }, methodsEngine);
 }
 
@@ -1508,15 +1592,17 @@ export function lineContinuation(text: string) {
   }, methodsEngine);
 }
 
-export function list(child?: T.CollectionElements) {
-  const _collection_elements = child;
+export function list(elementList?: T.List.Config['elementList']) {
+  const _element_list = elementList;
   return withMethods({
     $type: TSKindId.List as const,
     $source: 2 as const,
     $named: true as const,
-    _collection_elements,
-    collectionElements() { return _collection_elements; },
-    $with: { $child: (v: T.CollectionElements) => list(v) },
+    _element_list,
+    elementList() { return _element_list; },
+    $with: {
+      elementList: (value?: T.List.Config['elementList']) => list(value),
+    },
   }, methodsEngine);
 }
 
@@ -1538,15 +1624,17 @@ export function listComprehension(config: T.ListComprehension.Config) {
   }, methodsEngine);
 }
 
-export function listPattern(child?: T.Patterns) {
-  const _patterns = child;
+export function listPattern(patternGroup?: T.ListPattern.Config['patternGroup']) {
+  const _pattern_group = patternGroup;
   return withMethods({
     $type: TSKindId.ListPattern as const,
     $source: 2 as const,
     $named: true as const,
-    _patterns,
-    patterns() { return _patterns; },
-    $with: { $child: (v: T.Patterns) => listPattern(v) },
+    _pattern_group,
+    patternGroup() { return _pattern_group; },
+    $with: {
+      patternGroup: (value?: T.ListPattern.Config['patternGroup']) => listPattern(value),
+    },
   }, methodsEngine);
 }
 
@@ -1696,15 +1784,17 @@ export function pair(config: T.Pair.Config) {
   }, methodsEngine);
 }
 
-export function parameters(child?: T.Parameters) {
-  const _parameters = child;
+export function parameters(parameterList?: T.Parameters.Config['parameterList']) {
+  const _parameter_list = parameterList;
   return withMethods({
     $type: TSKindId.Parameters as const,
     $source: 2 as const,
     $named: true as const,
-    _parameters,
-    parameters() { return _parameters; },
-    $with: { $child: (v: T.Parameters) => parameters(v) },
+    _parameter_list,
+    parameterList() { return _parameter_list; },
+    $with: {
+      parameterList: (value?: T.Parameters.Config['parameterList']) => parameters(value),
+    },
   }, methodsEngine);
 }
 
@@ -1820,15 +1910,17 @@ export function returnStatement(child?: T.Expressions) {
   }, methodsEngine);
 }
 
-export function set(child: T.CollectionElements) {
-  const _collection_elements = child;
+export function set(elementList: T.Set.Config['elementList']) {
+  const _element_list = elementList;
   return withMethods({
     $type: TSKindId.Set as const,
     $source: 2 as const,
     $named: true as const,
-    _collection_elements,
-    collectionElements() { return _collection_elements; },
-    $with: { $child: (v: T.CollectionElements) => set(v) },
+    _element_list,
+    elementList() { return _element_list; },
+    $with: {
+      elementList: (value: T.Set.Config['elementList']) => set(value),
+    },
   }, methodsEngine);
 }
 
@@ -1991,27 +2083,31 @@ export function tryStatement(config: T.TryStatement.Config) {
   }, methodsEngine);
 }
 
-export function tuple(child?: T.CollectionElements) {
-  const _collection_elements = child;
+export function tuple(elementList?: T.Tuple.Config['elementList']) {
+  const _element_list = elementList;
   return withMethods({
     $type: TSKindId.Tuple as const,
     $source: 2 as const,
     $named: true as const,
-    _collection_elements,
-    collectionElements() { return _collection_elements; },
-    $with: { $child: (v: T.CollectionElements) => tuple(v) },
+    _element_list,
+    elementList() { return _element_list; },
+    $with: {
+      elementList: (value?: T.Tuple.Config['elementList']) => tuple(value),
+    },
   }, methodsEngine);
 }
 
-export function tuplePattern(child?: T.Patterns) {
-  const _patterns = child;
+export function tuplePattern(patternGroup?: T.TuplePattern.Config['patternGroup']) {
+  const _pattern_group = patternGroup;
   return withMethods({
     $type: TSKindId.TuplePattern as const,
     $source: 2 as const,
     $named: true as const,
-    _patterns,
-    patterns() { return _patterns; },
-    $with: { $child: (v: T.Patterns) => tuplePattern(v) },
+    _pattern_group,
+    patternGroup() { return _pattern_group; },
+    $with: {
+      patternGroup: (value?: T.TuplePattern.Config['patternGroup']) => tuplePattern(value),
+    },
   }, methodsEngine);
 }
 
@@ -2450,10 +2546,12 @@ export type FluentKindMap = {
   "_assignment_eq": T.AssignmentEq;
   "_assignment_type": T.AssignmentType;
   "_assignment_typed": T.AssignmentTyped;
+  "_collection_elements": FluentNode<"_collection_elements", T.CollectionElements.Config>;
   "_comparison_operator_comparator": T.ComparisonOperatorComparator;
   "_comprehension_clauses": FluentNode<"_comprehension_clauses", T.ComprehensionClauses.Config>;
   "_dict_pattern_group1": FluentNode<"_dict_pattern_group1", T._DictPatternGroup1.Config>;
   "_dictionary_group1": FluentNode<"_dictionary_group1", T._DictionaryGroup1.Config>;
+  "_element_list": FluentNode<"_element_list", T.ElementList.Config>;
   "_except_clause_as": T.ExceptClauseAs;
   "_except_clause_list": FluentNode<"_except_clause_list", T.ExceptClauseList.Config>;
   "_expression_statement_tuple": FluentNode<"_expression_statement_tuple", T.ExpressionStatementTuple.Config>;
@@ -2465,6 +2563,10 @@ export type FluentKindMap = {
   "_match_block": FluentNode<"_match_block", T.MatchBlock.Config>;
   "_match_block_block": T.MatchBlockBlock;
   "_not_in": T.NotIn;
+  "_parameter_list": FluentNode<"_parameter_list", T.ParameterList.Config>;
+  "_parameters": FluentNode<"_parameters", T._Parameters.Config>;
+  "_pattern_group": FluentNode<"_pattern_group", T.PatternGroup.Config>;
+  "_patterns": FluentNode<"_patterns", T.Patterns.Config>;
   "_simple_pattern_negative": FluentNode<"_simple_pattern_negative", T.SimplePatternNegative.Config>;
   "_simple_statements": FluentNode<"_simple_statements", T.SimpleStatements.Config>;
   "_slice_group1": FluentNode<"_slice_group1", T._SliceGroup1.Config>;
@@ -2610,10 +2712,12 @@ export const _factoryMap = {
   "_assignment_eq": _assignmentEq,
   "_assignment_type": _assignmentType,
   "_assignment_typed": _assignmentTyped,
+  "_collection_elements": collectionElements,
   "_comparison_operator_comparator": _comparisonOperatorComparator,
   "_comprehension_clauses": comprehensionClauses,
   "_dict_pattern_group1": _dictPatternGroup1,
   "_dictionary_group1": _dictionaryGroup1,
+  "_element_list": elementList,
   "_except_clause_as": _exceptClauseAs,
   "_except_clause_list": exceptClauseList,
   "_expression_statement_tuple": expressionStatementTuple,
@@ -2625,6 +2729,10 @@ export const _factoryMap = {
   "_match_block": matchBlock,
   "_match_block_block": _matchBlockBlock,
   "_not_in": notIn,
+  "_parameter_list": parameterList,
+  "_parameters": _parameters,
+  "_pattern_group": patternGroup,
+  "_patterns": patterns,
   "_simple_pattern_negative": simplePatternNegative,
   "_simple_statements": simpleStatements,
   "_slice_group1": _sliceGroup1,

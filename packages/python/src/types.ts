@@ -71,10 +71,12 @@ export const enum SyntaxKind {
   AssignmentEq = "_assignment_eq",
   AssignmentType = "_assignment_type",
   AssignmentTyped = "_assignment_typed",
+  CollectionElements = "_collection_elements",
   ComparisonOperatorComparator = "_comparison_operator_comparator",
   ComprehensionClauses = "_comprehension_clauses",
   _DictPatternGroup1 = "_dict_pattern_group1",
   _DictionaryGroup1 = "_dictionary_group1",
+  ElementList = "_element_list",
   ExceptClauseAs = "_except_clause_as",
   ExceptClauseAsOptional1 = "_except_clause_as_optional1",
   ExceptClauseList = "_except_clause_list",
@@ -86,6 +88,10 @@ export const enum SyntaxKind {
   _ListPatternGroup1 = "_list_pattern_group1",
   MatchBlock = "_match_block",
   MatchBlockBlock = "_match_block_block",
+  ParameterList = "_parameter_list",
+  _Parameters = "_parameters",
+  PatternGroup = "_pattern_group",
+  Patterns = "_patterns",
   RaiseStatementOptional1 = "_raise_statement_optional1",
   SimplePatternNegative = "_simple_pattern_negative",
   SimpleStatements = "_simple_statements",
@@ -564,7 +570,10 @@ export const enum TSKindId {
   _MatchBlockBlockRepeat1 = 287,
   _ExceptClauseListRepeat1 = 288,
   _AsPatternTarget = 289,
-  _FormatExpression = 290,
+  ElementList = 290,
+  _FormatExpression = 291,
+  ParameterList = 292,
+  PatternGroup = 293,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -857,7 +866,10 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [287, "_match_block_block_repeat1"],
   [288, "_except_clause_list_repeat1"],
   [289, "_as_pattern_target"],
-  [290, "_format_expression"],
+  [290, "_element_list"],
+  [291, "_format_expression"],
+  [292, "_parameter_list"],
+  [293, "_pattern_group"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1151,7 +1163,10 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_match_block_block_repeat1": return TSKindId._MatchBlockBlockRepeat1;
     case "_except_clause_list_repeat1": return TSKindId._ExceptClauseListRepeat1;
     case "_as_pattern_target": return TSKindId._AsPatternTarget;
+    case "_element_list": return TSKindId.ElementList;
     case "_format_expression": return TSKindId._FormatExpression;
+    case "_parameter_list": return TSKindId.ParameterList;
+    case "_pattern_group": return TSKindId.PatternGroup;
     case ";": return TSKindId.Semi;
     case ".": return TSKindId.Dot;
     case "(": return TSKindId.Lparen;
@@ -1220,7 +1235,10 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "except_clause_list": return TSKindId.ExceptClauseList;
     case "comparison_operator_comparator": return TSKindId.ComparisonOperatorComparator;
     case "as_pattern_target": return TSKindId._AsPatternTarget;
+    case "element_list": return TSKindId.ElementList;
     case "format_expression": return TSKindId._FormatExpression;
+    case "parameter_list": return TSKindId.ParameterList;
+    case "pattern_group": return TSKindId.PatternGroup;
     default: throw new TypeError(`unknown kind name ${kindName}`);
   }
 }
@@ -1426,6 +1444,12 @@ export interface AssignmentTyped {
   right(): RightHandSide;
 }
 
+export interface CollectionElements {
+  readonly $type: TSKindId.CollectionElements;
+  readonly _element_list: ElementList;
+  elementList(): ElementList;
+}
+
 export interface ComparisonOperatorComparator {
   readonly $type: TSKindId.ComparisonOperatorComparator;
   readonly _operators: number;
@@ -1459,6 +1483,12 @@ export interface _DictionaryGroup1 {
   readonly $type: TSKindId._DictionaryGroup1;
   readonly _content?: readonly (Pair | DictionarySplat)[];
   contents(): readonly (Pair | DictionarySplat)[];
+}
+
+export interface ElementList {
+  readonly $type: TSKindId.ElementList;
+  readonly _content?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  contents(): readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface ExceptClauseAs {
@@ -1529,6 +1559,30 @@ export interface MatchBlockBlock {
   readonly $type: TSKindId.MatchBlockBlock;
   readonly _alternative?: readonly (CaseClause)[];
   alternatives(): readonly (CaseClause)[];
+}
+
+export interface ParameterList {
+  readonly $type: TSKindId.ParameterList;
+  readonly _parameter: NonEmptyArray<Parameter>;
+  parameters(): NonEmptyArray<Parameter>;
+}
+
+export interface _Parameters {
+  readonly $type: TSKindId._Parameters;
+  readonly _parameter_list: ParameterList;
+  parameterList(): ParameterList;
+}
+
+export interface PatternGroup {
+  readonly $type: TSKindId.PatternGroup;
+  readonly _pattern: NonEmptyArray<Pattern>;
+  patterns(): NonEmptyArray<Pattern>;
+}
+
+export interface Patterns {
+  readonly $type: TSKindId.Patterns;
+  readonly _pattern_group: PatternGroup;
+  patternGroup(): PatternGroup;
 }
 
 export interface RaiseStatementOptional1 {
@@ -2063,8 +2117,8 @@ export interface LambdaWithinForInClause {
 
 export interface List {
   readonly $type: TSKindId.List;
-  readonly _collection_elements?: CollectionElements;
-  collectionElements(): CollectionElements | undefined;
+  readonly _element_list?: CollectionElements;
+  elementList(): CollectionElements | undefined;
 }
 
 export interface ListComprehension {
@@ -2077,8 +2131,8 @@ export interface ListComprehension {
 
 export interface ListPattern {
   readonly $type: TSKindId.ListPattern;
-  readonly _patterns?: Patterns;
-  patterns(): Patterns | undefined;
+  readonly _pattern_group?: Patterns;
+  patternGroup(): Patterns | undefined;
 }
 
 export interface ListSplat {
@@ -2145,8 +2199,8 @@ export interface Pair {
 
 export interface Parameters {
   readonly $type: TSKindId.Parameters;
-  readonly _parameters?: _Parameters;
-  parameters(): _Parameters | undefined;
+  readonly _parameter_list?: _Parameters;
+  parameterList(): _Parameters | undefined;
 }
 
 export interface ParenthesizedExpression {
@@ -2199,8 +2253,8 @@ export interface ReturnStatement {
 
 export interface Set {
   readonly $type: TSKindId.Set;
-  readonly _collection_elements: CollectionElements;
-  collectionElements(): CollectionElements;
+  readonly _element_list: CollectionElements;
+  elementList(): CollectionElements;
 }
 
 export interface SetComprehension {
@@ -2276,14 +2330,14 @@ export interface TryStatement {
 
 export interface Tuple {
   readonly $type: TSKindId.Tuple;
-  readonly _collection_elements?: CollectionElements;
-  collectionElements(): CollectionElements | undefined;
+  readonly _element_list?: CollectionElements;
+  elementList(): CollectionElements | undefined;
 }
 
 export interface TuplePattern {
   readonly $type: TSKindId.TuplePattern;
-  readonly _patterns?: Patterns;
-  patterns(): Patterns | undefined;
+  readonly _pattern_group?: Patterns;
+  patternGroup(): Patterns | undefined;
 }
 
 export interface Type {
@@ -2471,10 +2525,12 @@ export interface _AsPatternTree extends AnyTreeNode { readonly type: "_as_patter
 export interface AssignmentEqTree extends AnyTreeNode { readonly type: "_assignment_eq"; }
 export interface AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
 export interface AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
+export interface CollectionElementsTree extends AnyTreeNode { readonly type: "_collection_elements"; }
 export interface ComparisonOperatorComparatorTree extends AnyTreeNode { readonly type: "_comparison_operator_comparator"; }
 export interface ComprehensionClausesTree extends AnyTreeNode { readonly type: "_comprehension_clauses"; }
 export interface _DictPatternGroup1Tree extends AnyTreeNode { readonly type: "_dict_pattern_group1"; }
 export interface _DictionaryGroup1Tree extends AnyTreeNode { readonly type: "_dictionary_group1"; }
+export interface ElementListTree extends AnyTreeNode { readonly type: "_element_list"; }
 export interface ExceptClauseAsTree extends AnyTreeNode { readonly type: "_except_clause_as"; }
 export interface ExceptClauseAsOptional1Tree extends AnyTreeNode { readonly type: "_except_clause_as_optional1"; }
 export interface ExceptClauseListTree extends AnyTreeNode { readonly type: "_except_clause_list"; }
@@ -2486,6 +2542,10 @@ export interface _ListPatternTree extends AnyTreeNode { readonly type: "_list_pa
 export interface _ListPatternGroup1Tree extends AnyTreeNode { readonly type: "_list_pattern_group1"; }
 export interface MatchBlockTree extends AnyTreeNode { readonly type: "_match_block"; }
 export interface MatchBlockBlockTree extends AnyTreeNode { readonly type: "_match_block_block"; }
+export interface ParameterListTree extends AnyTreeNode { readonly type: "_parameter_list"; }
+export interface _ParametersTree extends AnyTreeNode { readonly type: "_parameters"; }
+export interface PatternGroupTree extends AnyTreeNode { readonly type: "_pattern_group"; }
+export interface PatternsTree extends AnyTreeNode { readonly type: "_patterns"; }
 export interface RaiseStatementOptional1Tree extends AnyTreeNode { readonly type: "_raise_statement_optional1"; }
 export interface SimplePatternNegativeTree extends AnyTreeNode { readonly type: "_simple_pattern_negative"; }
 export interface SimpleStatementsTree extends AnyTreeNode { readonly type: "_simple_statements"; }
@@ -2870,10 +2930,12 @@ export type PythonNode =
   | AssignmentEq
   | AssignmentType
   | AssignmentTyped
+  | CollectionElements
   | ComparisonOperatorComparator
   | ComprehensionClauses
   | _DictPatternGroup1
   | _DictionaryGroup1
+  | ElementList
   | ExceptClauseAs
   | ExceptClauseAsOptional1
   | ExceptClauseList
@@ -2885,6 +2947,10 @@ export type PythonNode =
   | _ListPatternGroup1
   | MatchBlock
   | MatchBlockBlock
+  | ParameterList
+  | _Parameters
+  | PatternGroup
+  | Patterns
   | RaiseStatementOptional1
   | SimplePatternNegative
   | SimpleStatements
@@ -3008,10 +3074,12 @@ export interface KindMap {
   '_assignment_eq': AssignmentEq;
   '_assignment_type': AssignmentType;
   '_assignment_typed': AssignmentTyped;
+  '_collection_elements': CollectionElements;
   '_comparison_operator_comparator': ComparisonOperatorComparator;
   '_comprehension_clauses': ComprehensionClauses;
   '_dict_pattern_group1': _DictPatternGroup1;
   '_dictionary_group1': _DictionaryGroup1;
+  '_element_list': ElementList;
   '_except_clause_as': ExceptClauseAs;
   '_except_clause_as_optional1': ExceptClauseAsOptional1;
   '_except_clause_list': ExceptClauseList;
@@ -3023,6 +3091,10 @@ export interface KindMap {
   '_list_pattern_group1': _ListPatternGroup1;
   '_match_block': MatchBlock;
   '_match_block_block': MatchBlockBlock;
+  '_parameter_list': ParameterList;
+  '_parameters': _Parameters;
+  '_pattern_group': PatternGroup;
+  '_patterns': Patterns;
   '_raise_statement_optional1': RaiseStatementOptional1;
   '_simple_pattern_negative': SimplePatternNegative;
   '_simple_statements': SimpleStatements;
@@ -3177,10 +3249,12 @@ export interface _AsPatternNs extends NodeNs<_AsPattern, LeafScalarMap, LeafStri
 export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CollectionElementsNs extends NodeNs<CollectionElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ComparisonOperatorComparatorNs extends NodeNs<ComparisonOperatorComparator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ComprehensionClausesNs extends NodeNs<ComprehensionClauses, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _DictPatternGroup1Ns extends NodeNs<_DictPatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _DictionaryGroup1Ns extends NodeNs<_DictionaryGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ElementListNs extends NodeNs<ElementList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseAsNs extends NodeNs<ExceptClauseAs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseAsOptional1Ns extends NodeNs<ExceptClauseAsOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseListNs extends NodeNs<ExceptClauseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3192,6 +3266,10 @@ export interface _ListPatternNs extends NodeNs<_ListPattern, LeafScalarMap, Leaf
 export interface _ListPatternGroup1Ns extends NodeNs<_ListPatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchBlockNs extends NodeNs<MatchBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchBlockBlockNs extends NodeNs<MatchBlockBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ParameterListNs extends NodeNs<ParameterList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ParametersNs extends NodeNs<_Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PatternGroupNs extends NodeNs<PatternGroup, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PatternsNs extends NodeNs<Patterns, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RaiseStatementOptional1Ns extends NodeNs<RaiseStatementOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SimplePatternNegativeNs extends NodeNs<SimplePatternNegative, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SimpleStatementsNs extends NodeNs<SimpleStatements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3314,10 +3392,12 @@ export interface NamespaceMap {
   '_assignment_eq': AssignmentEqNs;
   '_assignment_type': AssignmentTypeNs;
   '_assignment_typed': AssignmentTypedNs;
+  '_collection_elements': CollectionElementsNs;
   '_comparison_operator_comparator': ComparisonOperatorComparatorNs;
   '_comprehension_clauses': ComprehensionClausesNs;
   '_dict_pattern_group1': _DictPatternGroup1Ns;
   '_dictionary_group1': _DictionaryGroup1Ns;
+  '_element_list': ElementListNs;
   '_except_clause_as': ExceptClauseAsNs;
   '_except_clause_as_optional1': ExceptClauseAsOptional1Ns;
   '_except_clause_list': ExceptClauseListNs;
@@ -3329,6 +3409,10 @@ export interface NamespaceMap {
   '_list_pattern_group1': _ListPatternGroup1Ns;
   '_match_block': MatchBlockNs;
   '_match_block_block': MatchBlockBlockNs;
+  '_parameter_list': ParameterListNs;
+  '_parameters': _ParametersNs;
+  '_pattern_group': PatternGroupNs;
+  '_patterns': PatternsNs;
   '_raise_statement_optional1': RaiseStatementOptional1Ns;
   '_simple_pattern_negative': SimplePatternNegativeNs;
   '_simple_statements': SimpleStatementsNs;
@@ -3488,6 +3572,13 @@ export namespace AssignmentTyped {
   export type Tree = TreeFor<'_assignment_typed'>;
   export type Kind = '_assignment_typed';
 }
+export namespace CollectionElements {
+  export type Config = ConfigFor<'_collection_elements'>;
+  export type Fluent = FluentFor<'_collection_elements'>;
+  export type Loose = LooseFor<'_collection_elements'>;
+  export type Tree = TreeFor<'_collection_elements'>;
+  export type Kind = '_collection_elements';
+}
 export namespace ComparisonOperatorComparator {
   export type Config = ConfigFor<'_comparison_operator_comparator'>;
   export type Fluent = FluentFor<'_comparison_operator_comparator'>;
@@ -3515,6 +3606,13 @@ export namespace _DictionaryGroup1 {
   export type Loose = LooseFor<'_dictionary_group1'>;
   export type Tree = TreeFor<'_dictionary_group1'>;
   export type Kind = '_dictionary_group1';
+}
+export namespace ElementList {
+  export type Config = ConfigFor<'_element_list'>;
+  export type Fluent = FluentFor<'_element_list'>;
+  export type Loose = LooseFor<'_element_list'>;
+  export type Tree = TreeFor<'_element_list'>;
+  export type Kind = '_element_list';
 }
 export namespace ExceptClauseAs {
   export type Config = ConfigFor<'_except_clause_as'>;
@@ -3592,6 +3690,34 @@ export namespace MatchBlockBlock {
   export type Loose = LooseFor<'_match_block_block'>;
   export type Tree = TreeFor<'_match_block_block'>;
   export type Kind = '_match_block_block';
+}
+export namespace ParameterList {
+  export type Config = ConfigFor<'_parameter_list'>;
+  export type Fluent = FluentFor<'_parameter_list'>;
+  export type Loose = LooseFor<'_parameter_list'>;
+  export type Tree = TreeFor<'_parameter_list'>;
+  export type Kind = '_parameter_list';
+}
+export namespace _Parameters {
+  export type Config = ConfigFor<'_parameters'>;
+  export type Fluent = FluentFor<'_parameters'>;
+  export type Loose = LooseFor<'_parameters'>;
+  export type Tree = TreeFor<'_parameters'>;
+  export type Kind = '_parameters';
+}
+export namespace PatternGroup {
+  export type Config = ConfigFor<'_pattern_group'>;
+  export type Fluent = FluentFor<'_pattern_group'>;
+  export type Loose = LooseFor<'_pattern_group'>;
+  export type Tree = TreeFor<'_pattern_group'>;
+  export type Kind = '_pattern_group';
+}
+export namespace Patterns {
+  export type Config = ConfigFor<'_patterns'>;
+  export type Fluent = FluentFor<'_patterns'>;
+  export type Loose = LooseFor<'_patterns'>;
+  export type Tree = TreeFor<'_patterns'>;
+  export type Kind = '_patterns';
 }
 export namespace RaiseStatementOptional1 {
   export type Config = ConfigFor<'_raise_statement_optional1'>;

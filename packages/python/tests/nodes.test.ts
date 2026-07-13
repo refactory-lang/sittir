@@ -698,13 +698,9 @@ describe('lambda', () => {
 
 describe('lambda_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.lambdaParameters({ parameters: { $type: TSKindId._Parameters, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.lambdaParameters({ type: "_parameters" } as never);
     expect(node.$type).toBe(TSKindId.LambdaParameters);
     expect(node.$source).toBe(2);
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.lambdaParameters({ parameters: { $type: TSKindId._Parameters, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -735,6 +731,10 @@ describe('list', () => {
     expect(node.$type).toBe(TSKindId.List);
     expect(node.$source).toBe(2);
   });
+  it('render produces non-empty string', () => {
+    const node = ir.list({ $type: TSKindId.CollectionElements, $text: 'test', $source: 2, $named: true , _element_list: { $type: TSKindId.ElementList, $text: 'test', $source: 2, $named: true } as any } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
 });
 
 describe('list_comprehension', () => {
@@ -754,6 +754,10 @@ describe('list_pattern', () => {
     const node = ir.listPattern();
     expect(node.$type).toBe(TSKindId.ListPattern);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.listPattern({ $type: TSKindId.Patterns, $text: 'test', $source: 2, $named: true , _pattern_group: { $type: TSKindId.PatternGroup, $text: 'test', $source: 2, $named: true , _pattern: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] } as any } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -868,6 +872,10 @@ describe('parameters', () => {
     expect(node.$type).toBe(TSKindId.Parameters);
     expect(node.$source).toBe(2);
   });
+  it('render produces non-empty string', () => {
+    const node = ir.parameters({ $type: TSKindId._Parameters, $text: 'test', $source: 2, $named: true , _parameter_list: { $type: TSKindId.ParameterList, $text: 'test', $source: 2, $named: true , _parameter: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] } as any } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
 });
 
 describe('parenthesized_expression', () => {
@@ -949,9 +957,13 @@ describe('return_statement', () => {
 
 describe('set', () => {
   it('factory produces correct type', () => {
-    const node = ir.set({ type: "_collection_elements" } as never);
+    const node = ir.set({ $type: TSKindId.CollectionElements, $text: 'test', $source: 2, $named: true , _element_list: { $type: TSKindId.ElementList, $text: 'test', $source: 2, $named: true } as any } as any);
     expect(node.$type).toBe(TSKindId.Set);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.set({ $type: TSKindId.CollectionElements, $text: 'test', $source: 2, $named: true , _element_list: { $type: TSKindId.ElementList, $text: 'test', $source: 2, $named: true } as any } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1062,6 +1074,10 @@ describe('tuple', () => {
     expect(node.$type).toBe(TSKindId.Tuple);
     expect(node.$source).toBe(2);
   });
+  it('render produces non-empty string', () => {
+    const node = ir.tuple({ $type: TSKindId.CollectionElements, $text: 'test', $source: 2, $named: true , _element_list: { $type: TSKindId.ElementList, $text: 'test', $source: 2, $named: true } as any } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
 });
 
 describe('tuple_pattern', () => {
@@ -1069,6 +1085,10 @@ describe('tuple_pattern', () => {
     const node = ir.tuplePattern();
     expect(node.$type).toBe(TSKindId.TuplePattern);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.tuplePattern({ $type: TSKindId.Patterns, $text: 'test', $source: 2, $named: true , _pattern_group: { $type: TSKindId.PatternGroup, $text: 'test', $source: 2, $named: true , _pattern: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] } as any } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

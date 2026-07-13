@@ -297,7 +297,10 @@ pub const _WITH_CLAUSE_BARE_REPEAT1: KindId = KindId(286);
 pub const _MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(287);
 pub const _EXCEPT_CLAUSE_LIST_REPEAT1: KindId = KindId(288);
 pub const _AS_PATTERN_TARGET: KindId = KindId(289);
-pub const _FORMAT_EXPRESSION: KindId = KindId(290);
+pub const _ELEMENT_LIST: KindId = KindId(290);
+pub const _FORMAT_EXPRESSION: KindId = KindId(291);
+pub const _PARAMETER_LIST: KindId = KindId(292);
+pub const _PATTERN_GROUP: KindId = KindId(293);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -592,7 +595,10 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         287 => "_match_block_block_repeat1", // "_match_block_block_repeat1"
         288 => "_except_clause_list_repeat1", // "_except_clause_list_repeat1"
         289 => "as_pattern_target", // "_as_pattern_target"
-        290 => "format_expression", // "_format_expression"
+        290 => "element_list", // "_element_list"
+        291 => "format_expression", // "_format_expression"
+        292 => "parameter_list", // "_parameter_list"
+        293 => "pattern_group", // "_pattern_group"
         _ => "<unknown>",
     }
 }

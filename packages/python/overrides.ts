@@ -367,7 +367,60 @@ export default grammar(
 			// inline+gates the `as`.
 			_except_clause_as: ($) =>
 				seq(field('value', $.expression), optional($._except_clause_as_optional1)),
-			_except_clause_as_optional1: ($) => seq('as', field('alias', $.expression))
+			_except_clause_as_optional1: ($) => seq('as', field('alias', $.expression)),
+
+			// Track B (separator-as-slot follow-up): _collection_elements/
+			// _parameters/_patterns are grammar-authored, standalone hidden
+			// rules (not sittir enrich synthesis) carrying genuine optional
+			// trailing/leading separator flanks — confirmed live (Task 2).
+			// Unlike Track A's enrich-synthesized `_<parent>_group<N>`
+			// helpers, there is no enrich pass to hook a visible-promotion
+			// alias into; these are pre-existing base-grammar rules referenced
+			// directly by their parents (`parameters`/`lambda_parameters` for
+			// `_parameters`; `tuple_pattern`/`list_pattern` for `_patterns`;
+			// `list`/`set`/`tuple` for `_collection_elements`). Redefining
+			// each rule's OWN body as `alias(previous, $.<visibleName>)` makes
+			// tree-sitter emit ONE named node for it (instead of inlining the
+			// body at every reference site), so `classifyNode`'s existing
+			// `isSeparatedListShape` check routes it to
+			// `AssembledSeparatedList` instead of `AssembledMulti`'s dead-end
+			// 'multi' classification.
+			//
+			// Naming: `patterns` and `collection_elements` are free (no
+			// existing kind by those names in python's grammar). `parameters`
+			// is NOT free — python already has a distinct VISIBLE `parameters`
+			// kind (`seq('(', optional($._parameters), ')')`, the parenthesized
+			// wrapper) — aliasing `_parameters` to `$.parameters` would collide
+			// with it. Named the promoted list `parameter_list` instead
+			// (verified no existing `parameter_list` kind either).
+			// `parameters`'s own slot for `optional($._parameters)` is an
+			// UNNAMED (bare-symbol) reference — `buildSlot`'s field-name
+			// derivation falls back to the RAW symbol name minus its leading
+			// underscore (`_parameters` -> `parameters`), independent of
+			// what `_parameters` itself gets aliased to. That diverges from
+			// `emitters/templates.ts`'s slot-reference naming for this same
+			// position (which follows the ALIAS-RESOLVED render rule's name,
+			// `parameter_list`) whenever the alias target differs from the
+			// raw symbol's stripped name -- confirmed via a real cargo build
+			// failure (`ParametersTransport` has no field `parameter_list`;
+			// the actual generated struct field is `parameters`, but
+			// `parameters.jinja` referenced `parameter_list`). Explicitly
+			// field-wrapping this reference with the SAME name as the alias
+			// target realigns both derivations onto `parameter_list` and
+			// eliminates the divergence, without touching any emitter.
+			parameters: ($) => seq('(', optional(field('parameter_list', $._parameters)), ')'),
+			_parameters: ($, previous) => alias(previous, $.parameter_list),
+			// Same field-wrap realignment as `parameters` above, applied
+			// symmetrically to `_patterns`/`_collection_elements`'s reference
+			// sites — testing/confirming whether the same divergence applies
+			// uniformly (it does; see the fix comment on `parameters`).
+			tuple_pattern: ($) => seq('(', optional(field('pattern_group', $._patterns)), ')'),
+			list_pattern: ($) => seq('[', optional(field('pattern_group', $._patterns)), ']'),
+			_patterns: ($, previous) => alias(previous, $.pattern_group),
+			list: ($) => seq('[', optional(field('element_list', $._collection_elements)), ']'),
+			set: ($) => seq('{', field('element_list', $._collection_elements), '}'),
+			tuple: ($) => seq('(', optional(field('element_list', $._collection_elements)), ')'),
+			_collection_elements: ($, previous) => alias(previous, $.element_list)
 		}
 	}, enrichedBase)
 );

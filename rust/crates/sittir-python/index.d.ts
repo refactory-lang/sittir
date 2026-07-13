@@ -295,6 +295,17 @@ export interface ClassPatternTransport {
   _arguments?: ListPatternGroup1Transport
 }
 
+export interface CollectionElementsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _element_list: ElementListTransport
+}
+
 export interface ComparisonOperatorComparatorTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -545,6 +556,18 @@ export interface DottedNameTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _identifier: Array<IdentifierTransport>
+}
+
+export interface ElementListTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content?: Array<ElementListContentTransportSlot>
+  _trailing_sep?: boolean
 }
 
 export interface ElifClauseTransport {
@@ -917,8 +940,7 @@ export interface LambdaParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _parameters: Box<AnyTransport>
-  _trailing_sep?: boolean
+  _parameters: ParametersTransport
 }
 
 export interface LambdaTransport {
@@ -1000,7 +1022,7 @@ export interface ListPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _patterns?: Box<AnyTransport>
+  _pattern_group?: PatternsTransport
 }
 
 export interface ListSplatPatternTransport {
@@ -1033,7 +1055,7 @@ export interface ListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _collection_elements?: Box<AnyTransport>
+  _element_list?: CollectionElementsTransport
 }
 
 export interface MatchBlockBlockTransport {
@@ -1140,6 +1162,18 @@ export interface PairTransport {
   _value: Box<ExpressionTransport>
 }
 
+export interface ParameterListTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _parameter: Array<ParameterTransport>
+  _trailing_sep?: boolean
+}
+
 export interface ParametersTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1148,7 +1182,18 @@ export interface ParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _parameters?: Box<AnyTransport>
+  _parameter_list: ParameterListTransport
+}
+
+export interface ParametersTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _parameter_list?: ParametersTransport
 }
 
 export interface ParenthesizedExpressionTransport {
@@ -1173,6 +1218,18 @@ export interface ParenthesizedListSplatTransport {
   _content: Box<ParenthesizedListSplatContentTransportSlot>
 }
 
+export interface PatternGroupTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _pattern: Array<PatternTransport>
+  _trailing_sep?: boolean
+}
+
 export interface PatternListTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1182,6 +1239,17 @@ export interface PatternListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _pattern: Array<PatternTransport>
+}
+
+export interface PatternsTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _pattern_group: PatternGroupTransport
 }
 
 export interface PrintStatementTransport {
@@ -1262,7 +1330,7 @@ export interface SetTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _collection_elements: Box<AnyTransport>
+  _element_list: CollectionElementsTransport
 }
 
 export interface SimplePatternNegativeTransport {
@@ -1427,7 +1495,7 @@ export interface TuplePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _patterns?: Box<AnyTransport>
+  _pattern_group?: PatternsTransport
 }
 
 export interface TupleTransport {
@@ -1438,7 +1506,7 @@ export interface TupleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _collection_elements?: Box<AnyTransport>
+  _element_list?: CollectionElementsTransport
 }
 
 export interface TypeAliasStatementTransport {
