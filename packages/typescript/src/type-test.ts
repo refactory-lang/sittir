@@ -101,6 +101,8 @@ import type {
 	EnumAssignment,
 	EnumAssignmentTree,
 	EnumBody,
+	EnumBodyGroup1,
+	EnumBodyGroup1Tree,
 	EnumBodyTree,
 	EnumDeclaration,
 	EnumDeclarationTree,
@@ -109,6 +111,8 @@ import type {
 	EscapeSequence,
 	EscapeSequenceTree,
 	ExportClause,
+	ExportClauseGroup1,
+	ExportClauseGroup1Tree,
 	ExportClauseTree,
 	ExportSpecifier,
 	ExportSpecifierExportKind,
@@ -155,6 +159,8 @@ import type {
 	ForStatement,
 	ForStatementTree,
 	FormalParameters,
+	FormalParametersGroup1,
+	FormalParametersGroup1Tree,
 	FormalParametersTree,
 	FunctionDeclaration,
 	FunctionDeclarationTree,
@@ -263,6 +269,8 @@ import type {
 	Module,
 	ModuleTree,
 	NamedImports,
+	NamedImportsGroup1,
+	NamedImportsGroup1Tree,
 	NamedImportsTree,
 	NamespaceExport,
 	NamespaceExportTree,
@@ -292,15 +300,11 @@ import type {
 	ObjectTypeClosing,
 	ObjectTypeClosingTree,
 	ObjectTypeContent,
-	ObjectTypeContentComma,
-	ObjectTypeContentCommaTree,
-	ObjectTypeContentSemi,
-	ObjectTypeContentSemiTree,
 	ObjectTypeContentTree,
+	ObjectTypeGroup1,
+	ObjectTypeGroup1Tree,
 	ObjectTypeOpening,
 	ObjectTypeOpeningTree,
-	ObjectTypeOptional1,
-	ObjectTypeOptional1Tree,
 	ObjectTypeTree,
 	OmittingTypeAnnotation,
 	OmittingTypeAnnotationTree,
@@ -409,6 +413,8 @@ import type {
 	TupleParameter,
 	TupleParameterTree,
 	TupleType,
+	TupleTypeGroup1,
+	TupleTypeGroup1Tree,
 	TupleTypeTree,
 	TypeAliasDeclaration,
 	TypeAliasDeclarationTree,
@@ -460,8 +466,16 @@ import type {
 	YieldExpressionTree,
 	_AccessibilityModifier,
 	_AccessibilityModifierTree,
+	_ExportClauseGroup1,
+	_ExportClauseGroup1Tree,
+	_FormalParametersGroup1,
+	_FormalParametersGroup1Tree,
 	_ImportClauseGroup1,
-	_ImportClauseGroup1Tree
+	_ImportClauseGroup1Tree,
+	_NamedImportsGroup1,
+	_NamedImportsGroup1Tree,
+	_TupleTypeGroup1,
+	_TupleTypeGroup1Tree
 } from './types.js';
 import { TSKindId } from './types.js';
 
@@ -477,6 +491,9 @@ export type _Type_ClassBodyMethodSig = _TypeAssert<
 >;
 export type _Type_ClassHeritageExtendsClause = _TypeAssert<
 	_TypeExtends<ClassHeritageExtendsClause['$type'], TSKindId.ClassHeritageExtendsClause>
+>;
+export type _Type__ExportClauseGroup1 = _TypeAssert<
+	_TypeExtends<_ExportClauseGroup1['$type'], TSKindId._ExportClauseGroup1>
 >;
 export type _Type_ExportStatementDefault = _TypeAssert<
 	_TypeExtends<ExportStatementDefault['$type'], TSKindId.ExportStatementDefault>
@@ -503,6 +520,9 @@ export type _Type_ExportStatementTypeExport = _TypeAssert<
 	_TypeExtends<ExportStatementTypeExport['$type'], TSKindId.ExportStatementTypeExport>
 >;
 export type _Type_ForHeaderLhs = _TypeAssert<_TypeExtends<ForHeaderLhs['$type'], TSKindId.ForHeaderLhs>>;
+export type _Type__FormalParametersGroup1 = _TypeAssert<
+	_TypeExtends<_FormalParametersGroup1['$type'], TSKindId._FormalParametersGroup1>
+>;
 export type _Type_ImportClauseDefaultImport = _TypeAssert<
 	_TypeExtends<ImportClauseDefaultImport['$type'], TSKindId.ImportClauseDefaultImport>
 >;
@@ -514,12 +534,14 @@ export type _Type_JsxStartOpeningElement = _TypeAssert<
 >;
 export type _Type_JsxString = _TypeAssert<_TypeExtends<JsxString['$type'], '_jsx_string'>>;
 export type _Type_LhsExpression = _TypeAssert<_TypeExtends<LhsExpression['$type'], '_lhs_expression'>>;
-export type _Type_ObjectTypeOptional1 = _TypeAssert<
-	_TypeExtends<ObjectTypeOptional1['$type'], '_object_type_optional1'>
+export type _Type__NamedImportsGroup1 = _TypeAssert<
+	_TypeExtends<_NamedImportsGroup1['$type'], TSKindId._NamedImportsGroup1>
 >;
+export type _Type_ObjectTypeGroup1 = _TypeAssert<_TypeExtends<ObjectTypeGroup1['$type'], '_object_type_group1'>>;
 export type _Type_PublicFieldDefinitionDeclareFirst = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionDeclareFirst['$type'], TSKindId.PublicFieldDefinitionDeclareFirst>
 >;
+export type _Type__TupleTypeGroup1 = _TypeAssert<_TypeExtends<_TupleTypeGroup1['$type'], TSKindId._TupleTypeGroup1>>;
 export type _Type_AbstractClassDeclaration = _TypeAssert<
 	_TypeExtends<AbstractClassDeclaration['$type'], TSKindId.AbstractClassDeclaration>
 >;
@@ -669,12 +691,6 @@ export type _Type_ObjectAssignmentPattern = _TypeAssert<
 export type _Type_ObjectPattern = _TypeAssert<_TypeExtends<ObjectPattern['$type'], TSKindId.ObjectPattern>>;
 export type _Type_ObjectType = _TypeAssert<_TypeExtends<ObjectType['$type'], TSKindId.ObjectType>>;
 export type _Type_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContent['$type'], TSKindId.ObjectTypeContent>>;
-export type _Type_ObjectTypeContentComma = _TypeAssert<
-	_TypeExtends<ObjectTypeContentComma['$type'], TSKindId.ObjectTypeContentComma>
->;
-export type _Type_ObjectTypeContentSemi = _TypeAssert<
-	_TypeExtends<ObjectTypeContentSemi['$type'], TSKindId.ObjectTypeContentSemi>
->;
 export type _Type_OmittingTypeAnnotation = _TypeAssert<
 	_TypeExtends<OmittingTypeAnnotation['$type'], TSKindId.OmittingTypeAnnotation>
 >;
@@ -759,6 +775,13 @@ export type _Type_WithStatement = _TypeAssert<_TypeExtends<WithStatement['$type'
 export type _Type_YieldExpression = _TypeAssert<_TypeExtends<YieldExpression['$type'], TSKindId.YieldExpression>>;
 export type _Type_ImportClauseGroup1 = _TypeAssert<_TypeExtends<ImportClauseGroup1['$type'], 'import_clause_group1'>>;
 export type _Type_CatchClauseGroup1 = _TypeAssert<_TypeExtends<CatchClauseGroup1['$type'], 'catch_clause_group1'>>;
+export type _Type_EnumBodyGroup1 = _TypeAssert<_TypeExtends<EnumBodyGroup1['$type'], 'enum_body_group1'>>;
+export type _Type_ExportClauseGroup1 = _TypeAssert<_TypeExtends<ExportClauseGroup1['$type'], 'export_clause_group1'>>;
+export type _Type_FormalParametersGroup1 = _TypeAssert<
+	_TypeExtends<FormalParametersGroup1['$type'], 'formal_parameters_group1'>
+>;
+export type _Type_NamedImportsGroup1 = _TypeAssert<_TypeExtends<NamedImportsGroup1['$type'], 'named_imports_group1'>>;
+export type _Type_TupleTypeGroup1 = _TypeAssert<_TypeExtends<TupleTypeGroup1['$type'], 'tuple_type_group1'>>;
 export type _Type_ForHeaderOperator = _TypeAssert<_TypeExtends<ForHeaderOperator['$type'], TSKindId.In | TSKindId.Of>>;
 export type _Type_NumberOperator = _TypeAssert<_TypeExtends<NumberOperator['$type'], TSKindId.Dash | TSKindId.Plus>>;
 export type _Type__AccessibilityModifier = _TypeAssert<
@@ -884,6 +907,9 @@ export type _Tree_ClassBodyMethodSig = _TypeAssert<
 export type _Tree_ClassHeritageExtendsClause = _TypeAssert<
 	_TypeExtends<ClassHeritageExtendsClauseTree['type'], '_class_heritage_extends_clause'>
 >;
+export type _Tree__ExportClauseGroup1 = _TypeAssert<
+	_TypeExtends<_ExportClauseGroup1Tree['type'], '_export_clause_group1'>
+>;
 export type _Tree_ExportStatementDefault = _TypeAssert<
 	_TypeExtends<ExportStatementDefaultTree['type'], '_export_statement_default'>
 >;
@@ -909,6 +935,9 @@ export type _Tree_ExportStatementTypeExport = _TypeAssert<
 	_TypeExtends<ExportStatementTypeExportTree['type'], '_export_statement_type_export'>
 >;
 export type _Tree_ForHeaderLhs = _TypeAssert<_TypeExtends<ForHeaderLhsTree['type'], '_for_header_lhs'>>;
+export type _Tree__FormalParametersGroup1 = _TypeAssert<
+	_TypeExtends<_FormalParametersGroup1Tree['type'], '_formal_parameters_group1'>
+>;
 export type _Tree_ImportClauseDefaultImport = _TypeAssert<
 	_TypeExtends<ImportClauseDefaultImportTree['type'], '_import_clause_default_import'>
 >;
@@ -920,12 +949,14 @@ export type _Tree_JsxStartOpeningElement = _TypeAssert<
 >;
 export type _Tree_JsxString = _TypeAssert<_TypeExtends<JsxStringTree['type'], '_jsx_string'>>;
 export type _Tree_LhsExpression = _TypeAssert<_TypeExtends<LhsExpressionTree['type'], '_lhs_expression'>>;
-export type _Tree_ObjectTypeOptional1 = _TypeAssert<
-	_TypeExtends<ObjectTypeOptional1Tree['type'], '_object_type_optional1'>
+export type _Tree__NamedImportsGroup1 = _TypeAssert<
+	_TypeExtends<_NamedImportsGroup1Tree['type'], '_named_imports_group1'>
 >;
+export type _Tree_ObjectTypeGroup1 = _TypeAssert<_TypeExtends<ObjectTypeGroup1Tree['type'], '_object_type_group1'>>;
 export type _Tree_PublicFieldDefinitionDeclareFirst = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionDeclareFirstTree['type'], '_public_field_definition_declare_first'>
 >;
+export type _Tree__TupleTypeGroup1 = _TypeAssert<_TypeExtends<_TupleTypeGroup1Tree['type'], '_tuple_type_group1'>>;
 export type _Tree_AbstractClassDeclaration = _TypeAssert<
 	_TypeExtends<AbstractClassDeclarationTree['type'], 'abstract_class_declaration'>
 >;
@@ -1067,12 +1098,6 @@ export type _Tree_ObjectAssignmentPattern = _TypeAssert<
 export type _Tree_ObjectPattern = _TypeAssert<_TypeExtends<ObjectPatternTree['type'], 'object_pattern'>>;
 export type _Tree_ObjectType = _TypeAssert<_TypeExtends<ObjectTypeTree['type'], 'object_type'>>;
 export type _Tree_ObjectTypeContent = _TypeAssert<_TypeExtends<ObjectTypeContentTree['type'], 'object_type_content'>>;
-export type _Tree_ObjectTypeContentComma = _TypeAssert<
-	_TypeExtends<ObjectTypeContentCommaTree['type'], 'object_type_content_comma'>
->;
-export type _Tree_ObjectTypeContentSemi = _TypeAssert<
-	_TypeExtends<ObjectTypeContentSemiTree['type'], 'object_type_content_semi'>
->;
 export type _Tree_OmittingTypeAnnotation = _TypeAssert<
 	_TypeExtends<OmittingTypeAnnotationTree['type'], 'omitting_type_annotation'>
 >;
@@ -1155,6 +1180,17 @@ export type _Tree_ImportClauseGroup1 = _TypeAssert<
 	_TypeExtends<ImportClauseGroup1Tree['type'], 'import_clause_group1'>
 >;
 export type _Tree_CatchClauseGroup1 = _TypeAssert<_TypeExtends<CatchClauseGroup1Tree['type'], 'catch_clause_group1'>>;
+export type _Tree_EnumBodyGroup1 = _TypeAssert<_TypeExtends<EnumBodyGroup1Tree['type'], 'enum_body_group1'>>;
+export type _Tree_ExportClauseGroup1 = _TypeAssert<
+	_TypeExtends<ExportClauseGroup1Tree['type'], 'export_clause_group1'>
+>;
+export type _Tree_FormalParametersGroup1 = _TypeAssert<
+	_TypeExtends<FormalParametersGroup1Tree['type'], 'formal_parameters_group1'>
+>;
+export type _Tree_NamedImportsGroup1 = _TypeAssert<
+	_TypeExtends<NamedImportsGroup1Tree['type'], 'named_imports_group1'>
+>;
+export type _Tree_TupleTypeGroup1 = _TypeAssert<_TypeExtends<TupleTypeGroup1Tree['type'], 'tuple_type_group1'>>;
 export type _Tree_ForHeaderOperator = _TypeAssert<_TypeExtends<ForHeaderOperatorTree['type'], '__for_header_operator'>>;
 export type _Tree_NumberOperator = _TypeAssert<_TypeExtends<NumberOperatorTree['type'], '__number_operator'>>;
 export type _Tree__AccessibilityModifier = _TypeAssert<

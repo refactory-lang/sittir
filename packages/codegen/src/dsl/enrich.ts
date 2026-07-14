@@ -1199,6 +1199,23 @@ function canonicalStringifyClause(value: unknown): string {
 	const keys = Object.keys(obj).sort();
 	const parts: string[] = [];
 	for (const k of keys) {
+		// Runtime-only provenance stamps must not leak into this dedupe key.
+		// The sittir runtime's `createProxy` (compiler/evaluate.ts) stamps
+		// every `$.foo` reference with `_ref: { refType: 'symbol', from:
+		// currentRule, to: name }` — baking the PARENT rule's name into the
+		// body used for `visibleGroupSynthName`'s dedupe hash. Tree-sitter's
+		// own dsl.js runtime doesn't stamp this, so the two runtimes computed
+		// DIFFERENT hashes for the SAME structural body when a group is
+		// shared across parents (e.g. rust's `slice_pattern` and
+		// `tuple_struct_pattern` share one group body) — the sittir side
+		// would then mint a phantom per-parent duplicate the wire never
+		// populates, rendering as silently empty. `id`/`_ref` are the
+		// decisive keys to strip; `metadata`/`hidden`/`inline` are
+		// belt-and-braces (identical for identical structures, so stripping
+		// them can't change any dedupe decision). This function also keys
+		// `clauseDedupeMap`, so this fix realigns clause-hoist naming too —
+		// expected, not a separate concern.
+		if (k === 'id' || k === '_ref' || k === 'metadata' || k === 'hidden' || k === 'inline') continue;
 		const v = obj[k];
 		if (typeof v === 'function' || typeof v === 'undefined') continue;
 		parts.push(JSON.stringify(k) + ':' + canonicalStringifyClause(v));

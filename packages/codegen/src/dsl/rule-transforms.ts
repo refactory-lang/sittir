@@ -19,7 +19,7 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule } from '../types/rule.ts';
+import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, SeparatorFlankMode } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
@@ -149,10 +149,11 @@ export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boo
 		flagWalker.find(rule, (r) => {
 			const sep = (r as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 			if (typeof sep === 'object' && !Array.isArray(sep) && sep !== null) {
-				if ((sep as { trailing?: boolean; leading?: boolean })[flag] === true) return true;
+				if ((sep as { trailing?: SeparatorFlankMode; leading?: SeparatorFlankMode })[flag] !== undefined) return true;
 			}
 			return (
-				(r.type === REPEAT || r.type === REPEAT1) && (r as { trailing?: boolean; leading?: boolean })[flag] === true
+				(r.type === REPEAT || r.type === REPEAT1) &&
+				(r as { trailing?: SeparatorFlankMode; leading?: SeparatorFlankMode })[flag] !== undefined
 			);
 		}) !== undefined
 	);
@@ -518,6 +519,31 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
 			return {
 				...repArm,
 				separator: { value: { type: STRING, value: sepStr } as Rule, trailing: true }
+			} as AnyRule;
+		}
+	}
+
+	// Idiom B: [E, choice(sepString, E{array})]
+	if (next.type === CHOICE && next.members.length === 2) {
+		const sepArm = next.members.find((m) => m.type === STRING);
+		const repArm = next.members.find(
+			(m) => isArrayMult((m as { multiplicity?: Mult }).multiplicity) && sameSlotShape(head, m)
+		);
+		if (sepArm && repArm) {
+			const repSep = (repArm as { separator?: RuleBase<'normalize'>['separator'] }).separator;
+			if (repSep !== undefined) return repArm;
+			// Fall back to the choice's separator-string arm, marking it a
+			// genuinely OPTIONAL trailing separator — this codebase's
+			// convention (see `findRepeatFlag`'s doc comment) is that a bare
+			// `trailing` flag always meant "optional" (there's no mandatory-
+			// trailing shape anywhere in this compiler); confirmed via a full
+			// regen of all 3 grammars (with a temporary diagnostic) that this
+			// fallback never fires today — `repArm` already carries its own
+			// separator for every current grammar rule.
+			const sepStr = (sepArm as { value: string }).value;
+			return {
+				...repArm,
+				separator: { value: { type: STRING, value: sepStr } as Rule, trailing: 'optional' }
 			} as AnyRule;
 		}
 	}

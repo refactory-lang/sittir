@@ -117,8 +117,6 @@ export const _fromMap = {
 	object_pattern: objectPatternFrom,
 	object_type: objectTypeFrom,
 	object_type_content: objectTypeContentFrom,
-	object_type_content_comma: objectTypeContentCommaFrom,
-	object_type_content_semi: objectTypeContentSemiFrom,
 	omitting_type_annotation: omittingTypeAnnotationFrom,
 	opting_type_annotation: optingTypeAnnotationFrom,
 	optional_parameter: optionalParameterFrom,
@@ -186,6 +184,11 @@ export const _fromMap = {
 	yield_expression: yieldExpressionFrom,
 	import_clause_group1: importClauseGroup1From,
 	catch_clause_group1: catchClauseGroup1From,
+	enum_body_group1: enumBodyGroup1From,
+	export_clause_group1: exportClauseGroup1From,
+	formal_parameters_group1: formalParametersGroup1From,
+	named_imports_group1: namedImportsGroup1From,
+	tuple_type_group1: tupleTypeGroup1From,
 	html_comment: htmlCommentFrom,
 	'||': ororFrom,
 	jsx_text: jsxTextFrom
@@ -327,6 +330,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	class_heritage: TSKindId.ClassHeritage,
 	decorator: TSKindId.Decorator,
 	decorator_parenthesized_expression: TSKindId.DecoratorParenthesizedExpression,
+	enum_body: TSKindId.EnumBody,
 	export_clause: TSKindId.ExportClause,
 	export_statement: TSKindId.ExportStatement,
 	formal_parameters: TSKindId.FormalParameters,
@@ -336,8 +340,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	named_imports: TSKindId.NamedImports,
 	namespace_export: TSKindId.NamespaceExport,
 	object_type_content: TSKindId.ObjectTypeContent,
-	object_type_content_comma: TSKindId.ObjectTypeContentComma,
-	object_type_content_semi: TSKindId.ObjectTypeContentSemi,
 	parenthesized_expression: TSKindId.ParenthesizedExpression,
 	rest_pattern: TSKindId.RestPattern,
 	sequence_expression: TSKindId.SequenceExpression,
@@ -350,7 +352,12 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	type_parameters: TSKindId.TypeParameters,
 	type_query: TSKindId.TypeQuery,
 	update_expression: TSKindId.UpdateExpression,
-	import_clause_group1: TSKindId._ImportClauseGroup1
+	import_clause_group1: TSKindId._ImportClauseGroup1,
+	enum_body_group1: TSKindId._EnumBodyGroup1,
+	export_clause_group1: TSKindId._ExportClauseGroup1,
+	formal_parameters_group1: TSKindId._FormalParametersGroup1,
+	named_imports_group1: TSKindId._NamedImportsGroup1,
+	tuple_type_group1: TSKindId._TupleTypeGroup1
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
@@ -379,12 +386,14 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.decoratorParenthesizedExpression(
 				children[0] as Parameters<typeof F.decoratorParenthesizedExpression>[0]
 			);
+		case 'enum_body':
+			return F.enumBody(children[0] as Parameters<typeof F.enumBody>[0]);
 		case 'export_clause':
-			return F.exportClause(...(children as Parameters<typeof F.exportClause>));
+			return F.exportClause(children[0] as Parameters<typeof F.exportClause>[0]);
 		case 'export_statement':
 			return F.exportStatement(children[0] as Parameters<typeof F.exportStatement>[0]);
 		case 'formal_parameters':
-			return F.formalParameters(...(children as Parameters<typeof F.formalParameters>));
+			return F.formalParameters(children[0] as Parameters<typeof F.formalParameters>[0]);
 		case 'implements_clause':
 			return F.implementsClause(...(children as Parameters<typeof F.implementsClause>));
 		case 'import_clause':
@@ -392,15 +401,11 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'literal_type':
 			return F.literalType(children[0] as Parameters<typeof F.literalType>[0]);
 		case 'named_imports':
-			return F.namedImports(...(children as Parameters<typeof F.namedImports>));
+			return F.namedImports(children[0] as Parameters<typeof F.namedImports>[0]);
 		case 'namespace_export':
 			return F.namespaceExport(children[0] as Parameters<typeof F.namespaceExport>[0]);
 		case 'object_type_content':
-			return F.objectTypeContent(children[0] as Parameters<typeof F.objectTypeContent>[0]);
-		case 'object_type_content_comma':
-			return F.objectTypeContentComma(...(children as Parameters<typeof F.objectTypeContentComma>));
-		case 'object_type_content_semi':
-			return F.objectTypeContentSemi(...(children as Parameters<typeof F.objectTypeContentSemi>));
+			return F.objectTypeContent(children as Parameters<typeof F.objectTypeContent>[0]);
 		case 'parenthesized_expression':
 			return F.parenthesizedExpression(children[0] as Parameters<typeof F.parenthesizedExpression>[0]);
 		case 'rest_pattern':
@@ -416,7 +421,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'template_type':
 			return F.templateType(children[0] as Parameters<typeof F.templateType>[0]);
 		case 'tuple_type':
-			return F.tupleType(...(children as Parameters<typeof F.tupleType>));
+			return F.tupleType(children[0] as Parameters<typeof F.tupleType>[0]);
 		case 'type_arguments':
 			return F.typeArguments(...(children as Parameters<typeof F.typeArguments>));
 		case 'type_parameters':
@@ -427,6 +432,16 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.updateExpression(children[0] as Parameters<typeof F.updateExpression>[0]);
 		case 'import_clause_group1':
 			return F.importClauseGroup1(children[0] as Parameters<typeof F.importClauseGroup1>[0]);
+		case 'enum_body_group1':
+			return F.enumBodyGroup1(children as Parameters<typeof F.enumBodyGroup1>[0]);
+		case 'export_clause_group1':
+			return F.exportClauseGroup1(children as Parameters<typeof F.exportClauseGroup1>[0]);
+		case 'formal_parameters_group1':
+			return F.formalParametersGroup1(children as Parameters<typeof F.formalParametersGroup1>[0]);
+		case 'named_imports_group1':
+			return F.namedImportsGroup1(children as Parameters<typeof F.namedImportsGroup1>[0]);
+		case 'tuple_type_group1':
+			return F.tupleTypeGroup1(children as Parameters<typeof F.tupleTypeGroup1>[0]);
 		default:
 			return undefined;
 	}
@@ -1550,12 +1565,13 @@ export function enumAssignmentFrom(input: T.EnumAssignment.Loose): ReturnType<ty
 	});
 }
 
-export function enumBodyFrom(input?: T.EnumBody.Loose): ReturnType<typeof F.enumBody> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.enumBody>;
-	return F.enumBody({
-		name: _resolveMany<T.PropertyName>(input?.name, _K0, _K1),
-		enumAssignment: _resolveManyBranch<T.EnumAssignment>(input?.enumAssignment, 'enum_assignment')
-	});
+export function enumBodyFrom(input?: T.EnumBodyGroup1 | T.EnumBody): ReturnType<typeof F.enumBody> {
+	if (isNodeData(input) && input.$type === TSKindId.EnumBody) {
+		const data = input;
+		const child = (data as unknown as { _enum_body_group1?: unknown })._enum_body_group1;
+		return F.enumBody(child as Parameters<typeof F.enumBody>[0]);
+	}
+	return F.enumBody(input as Parameters<typeof F.enumBody>[0]);
 }
 
 export function enumDeclarationFrom(input: T.EnumDeclaration.Loose): ReturnType<typeof F.enumDeclaration> {
@@ -1572,16 +1588,13 @@ export function escapeSequenceFrom(input: string | T.EscapeSequence): ReturnType
 	return F.escapeSequence(input as Parameters<typeof F.escapeSequence>[0]);
 }
 
-export function exportClauseFrom(
-	...input: readonly (T.ExportSpecifier | T.ExportClause)[]
-): ReturnType<typeof F.exportClause> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExportClause) {
-		const data = input[0];
-		const stored = (data as unknown as { _export_specifier?: unknown })._export_specifier;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.exportClause(...(children as unknown as Parameters<typeof F.exportClause>));
+export function exportClauseFrom(input?: T.ExportClauseGroup1 | T.ExportClause): ReturnType<typeof F.exportClause> {
+	if (isNodeData(input) && input.$type === TSKindId.ExportClause) {
+		const data = input;
+		const child = (data as unknown as { _export_clause_group1?: unknown })._export_clause_group1;
+		return F.exportClause(child as Parameters<typeof F.exportClause>[0]);
 	}
-	return F.exportClause(...(input as unknown as Parameters<typeof F.exportClause>));
+	return F.exportClause(input as Parameters<typeof F.exportClause>[0]);
 }
 
 export function exportSpecifierFrom(input: T.ExportSpecifier.Loose): ReturnType<typeof F.exportSpecifier> {
@@ -1732,15 +1745,14 @@ export function forStatementFrom(input: T.ForStatement.Loose): ReturnType<typeof
 }
 
 export function formalParametersFrom(
-	...input: readonly (T.FormalParameter | T.FormalParameters)[]
+	input?: T.FormalParametersGroup1 | T.FormalParameters
 ): ReturnType<typeof F.formalParameters> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormalParameters) {
-		const data = input[0];
-		const stored = (data as unknown as { _formal_parameter?: unknown })._formal_parameter;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.formalParameters(...(children as unknown as Parameters<typeof F.formalParameters>));
+	if (isNodeData(input) && input.$type === TSKindId.FormalParameters) {
+		const data = input;
+		const child = (data as unknown as { _formal_parameters_group1?: unknown })._formal_parameters_group1;
+		return F.formalParameters(child as Parameters<typeof F.formalParameters>[0]);
 	}
-	return F.formalParameters(...(input as unknown as Parameters<typeof F.formalParameters>));
+	return F.formalParameters(input as Parameters<typeof F.formalParameters>[0]);
 }
 
 export function functionDeclarationFrom(input: T.FunctionDeclaration.Loose): ReturnType<typeof F.functionDeclaration> {
@@ -2233,16 +2245,13 @@ export function moduleFrom(input: T.Module.Loose): ReturnType<typeof F.module> {
 	});
 }
 
-export function namedImportsFrom(
-	...input: readonly (T.ImportSpecifier | T.NamedImports)[]
-): ReturnType<typeof F.namedImports> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.NamedImports) {
-		const data = input[0];
-		const stored = (data as unknown as { _import_specifier?: unknown })._import_specifier;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.namedImports(...(children as unknown as Parameters<typeof F.namedImports>));
+export function namedImportsFrom(input?: T.NamedImportsGroup1 | T.NamedImports): ReturnType<typeof F.namedImports> {
+	if (isNodeData(input) && input.$type === TSKindId.NamedImports) {
+		const data = input;
+		const child = (data as unknown as { _named_imports_group1?: unknown })._named_imports_group1;
+		return F.namedImports(child as Parameters<typeof F.namedImports>[0]);
 	}
-	return F.namedImports(...(input as unknown as Parameters<typeof F.namedImports>));
+	return F.namedImports(input as Parameters<typeof F.namedImports>[0]);
 }
 
 export function namespaceExportFrom(
@@ -2406,58 +2415,38 @@ export function objectTypeFrom(input: T.ObjectType.Loose): ReturnType<typeof F.o
 }
 
 export function objectTypeContentFrom(
-	input?: (T.ObjectTypeContentComma | T.ObjectTypeContentSemi) | T.ObjectTypeContent
+	...input: readonly (
+		| T.ExportStatement
+		| T.PropertySignature
+		| T.CallSignature
+		| T.ConstructSignature
+		| T.IndexSignature
+		| T.MethodSignature
+		| T.ObjectTypeContent
+	)[]
 ): ReturnType<typeof F.objectTypeContent> {
-	if (isNodeData(input) && input.$type === TSKindId.ObjectTypeContent) {
-		const data = input;
-		const child = (data as unknown as { _content?: unknown })._content;
-		return F.objectTypeContent(child as Parameters<typeof F.objectTypeContent>[0]);
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ObjectTypeContent) {
+		const data = input[0];
+		const stored = (data as unknown as { _content?: unknown })._content;
+		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.objectTypeContent(
+			children as Parameters<typeof F.objectTypeContent>[0],
+			{
+				separatorKind: (() => {
+					const sk = (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
+						._separator_kind;
+					return sk === undefined
+						? undefined
+						: ({ [TSKindId.Comma2]: ',', [TSKindId.Semi]: ';' } as Record<number, string>)[sk];
+				})(),
+				leading: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
+					._leading_sep,
+				trailing: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
+					._trailing_sep
+			} as Parameters<typeof F.objectTypeContent>[1]
+		);
 	}
 	return F.objectTypeContent(input as Parameters<typeof F.objectTypeContent>[0]);
-}
-
-export function objectTypeContentCommaFrom(
-	...input: readonly (
-		| (
-				| T.ExportStatement
-				| T.PropertySignature
-				| T.CallSignature
-				| T.ConstructSignature
-				| T.IndexSignature
-				| T.MethodSignature
-		  )
-		| T.ObjectTypeContentComma
-	)[]
-): ReturnType<typeof F.objectTypeContentComma> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ObjectTypeContentComma) {
-		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.objectTypeContentComma(...(children as unknown as Parameters<typeof F.objectTypeContentComma>));
-	}
-	return F.objectTypeContentComma(...(input as unknown as Parameters<typeof F.objectTypeContentComma>));
-}
-
-export function objectTypeContentSemiFrom(
-	...input: readonly (
-		| (
-				| T.ExportStatement
-				| T.PropertySignature
-				| T.CallSignature
-				| T.ConstructSignature
-				| T.IndexSignature
-				| T.MethodSignature
-		  )
-		| T.ObjectTypeContentSemi
-	)[]
-): ReturnType<typeof F.objectTypeContentSemi> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ObjectTypeContentSemi) {
-		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.objectTypeContentSemi(...(children as unknown as Parameters<typeof F.objectTypeContentSemi>));
-	}
-	return F.objectTypeContentSemi(...(input as unknown as Parameters<typeof F.objectTypeContentSemi>));
 }
 
 export function omittingTypeAnnotationFrom(
@@ -3017,14 +3006,13 @@ export function tupleParameterFrom(input: T.TupleParameter.Loose): ReturnType<ty
 	});
 }
 
-export function tupleTypeFrom(...input: readonly (T.TupleTypeMember | T.TupleType)[]): ReturnType<typeof F.tupleType> {
-	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TupleType) {
-		const data = input[0];
-		const stored = (data as unknown as { _tuple_type_member?: unknown })._tuple_type_member;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.tupleType(...(children as unknown as Parameters<typeof F.tupleType>));
+export function tupleTypeFrom(input?: T.TupleTypeGroup1 | T.TupleType): ReturnType<typeof F.tupleType> {
+	if (isNodeData(input) && input.$type === TSKindId.TupleType) {
+		const data = input;
+		const child = (data as unknown as { _tuple_type_group1?: unknown })._tuple_type_group1;
+		return F.tupleType(child as Parameters<typeof F.tupleType>[0]);
 	}
-	return F.tupleType(...(input as unknown as Parameters<typeof F.tupleType>));
+	return F.tupleType(input as Parameters<typeof F.tupleType>[0]);
 }
 
 export function typeAliasDeclarationFrom(
@@ -3289,6 +3277,36 @@ export function catchClauseGroup1From(input: T.CatchClauseGroup1.Loose): ReturnT
 		),
 		type: _resolveOneBranch<T.TypeAnnotation>(input.type, 'type_annotation')
 	});
+}
+
+export function enumBodyGroup1From(
+	...input: readonly (T.PropertyName | T.EnumAssignment | T.EnumBodyGroup1)[]
+): ReturnType<typeof F.enumBodyGroup1> {
+	return F.enumBodyGroup1(input as Parameters<typeof F.enumBodyGroup1>[0]);
+}
+
+export function exportClauseGroup1From(
+	...input: readonly (T.ExportSpecifier | T.ExportClauseGroup1)[]
+): ReturnType<typeof F.exportClauseGroup1> {
+	return F.exportClauseGroup1(input as Parameters<typeof F.exportClauseGroup1>[0]);
+}
+
+export function formalParametersGroup1From(
+	...input: readonly (T.FormalParameter | T.FormalParametersGroup1)[]
+): ReturnType<typeof F.formalParametersGroup1> {
+	return F.formalParametersGroup1(input as Parameters<typeof F.formalParametersGroup1>[0]);
+}
+
+export function namedImportsGroup1From(
+	...input: readonly (T.ImportSpecifier | T.NamedImportsGroup1)[]
+): ReturnType<typeof F.namedImportsGroup1> {
+	return F.namedImportsGroup1(input as Parameters<typeof F.namedImportsGroup1>[0]);
+}
+
+export function tupleTypeGroup1From(
+	...input: readonly (T.TupleTypeMember | T.TupleTypeGroup1)[]
+): ReturnType<typeof F.tupleTypeGroup1> {
+	return F.tupleTypeGroup1(input as Parameters<typeof F.tupleTypeGroup1>[0]);
 }
 
 export function htmlCommentFrom(input: string | T.HtmlComment): ReturnType<typeof F.htmlComment> {

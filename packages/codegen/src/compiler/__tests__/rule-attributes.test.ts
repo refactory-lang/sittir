@@ -27,9 +27,9 @@ describe('RuleBase attribute extensions', () => {
 		const r: SymbolRule = {
 			type: SYMBOL,
 			name: 'X',
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		expect((r.separator as { trailing?: boolean }).trailing).toBe(true);
+		expect((r.separator as { trailing?: string }).trailing).toBe('optional');
 	});
 
 	it('Multiplicity type union has expected values', () => {

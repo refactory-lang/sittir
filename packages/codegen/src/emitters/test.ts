@@ -110,6 +110,11 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		switch (node.modelType) {
 			case 'branch':
+			// TEMPORARY (separator-as-slot Task 2 follow-up — see
+			// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
+			// shares 'branch's test emission for byte-identical output
+			// pending Tasks 4-6's real per-instance capture.
+			case 'separatedList':
 				if (classifyChildFactorySurface(node, nodeMap) !== null) {
 					emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
 				} else {
@@ -139,7 +144,9 @@ function emitBranchTest(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
-	if (node.modelType !== 'branch') return;
+	// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+	// isSlotBearingCompound's doc comment (shared.ts).
+	if (node.modelType !== 'branch' && node.modelType !== 'separatedList') return;
 
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
@@ -221,7 +228,13 @@ function emitContainerTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (node.modelType !== 'branch' || classifyChildFactorySurface(node, nodeMap) === null) return;
+	// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+	// isSlotBearingCompound's doc comment (shared.ts).
+	if (
+		(node.modelType !== 'branch' && node.modelType !== 'separatedList') ||
+		classifyChildFactorySurface(node, nodeMap) === null
+	)
+		return;
 
 	// Container-shape branch factories take positional args: singular-
 	// child containers require one `child?` and repeated containers take
@@ -547,7 +560,10 @@ function buildDummyStub(
 	const node = nodeMap.nodes.get(kind);
 	const dummyText = node ? dummyTextForKind(kind, nodeMap) : 'test';
 	const base = dummyNodeLiteral(kind, dummyText, nodeMap, kindEntries);
-	if (!node || (node.modelType !== 'branch' && node.modelType !== 'group')) return base;
+	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+	// isSlotBearingCompound's doc comment (shared.ts).
+	if (!node || (node.modelType !== 'branch' && node.modelType !== 'group' && node.modelType !== 'separatedList'))
+		return base;
 	if (depth >= MAX_DUMMY_DEPTH || visiting.has(kind)) return base;
 
 	const nextVisiting = new Set(visiting);

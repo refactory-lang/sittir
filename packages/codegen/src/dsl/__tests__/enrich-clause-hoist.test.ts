@@ -13,7 +13,6 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
-
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
 
@@ -428,7 +427,14 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		expect(parent.members.length).toBe(3);
 
 		// It was folded into the hoisted list group as a 3rd (trailing) member.
-		const hoisted = rules['_parent_optional1'] as {
+		// This absorbed body is now a genuinely separator-variable repeat body
+		// (a top-level repeat with an adjacent stranded optional(',') flank), so
+		// per group-classify.ts's `isInlineSafe` qualification it takes the
+		// VISIBLE promotion path (`_parent_group1`, not the old hidden
+		// `_parent_optional1` inline-hoist) — same path a multi-slot/bare-choice
+		// body already uses. Absorption itself (this test's actual subject) is
+		// unaffected: the fold still happens before the isInlineSafe branch runs.
+		const hoisted = rules['_parent_group1'] as {
 			members: Array<{ type: string; content?: { type: string; value?: string } }>;
 		};
 		expect(hoisted.members.length).toBe(3);
@@ -479,7 +485,10 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		const parent = rules.parent as { members: unknown[] };
 		expect(parent.members.length).toBe(3);
 
-		const hoisted = rules['_parent_optional1'] as {
+		// A CHOICE-shaped separator (',' or ';') is itself a genuinely
+		// per-instance-variable separator, so this body also takes the VISIBLE
+		// promotion path (`_parent_group1`) — see the plain-STRING case above.
+		const hoisted = rules['_parent_group1'] as {
 			members: Array<{ type: string; content?: { type: string; value?: string } }>;
 		};
 		expect(hoisted.members.length).toBe(3);
@@ -556,5 +565,59 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		expect(hoisted.members[3]!.type).toBe('OPTIONAL');
 		expect(hoisted.members[3]!.content!.type).toBe('STRING');
 		expect(hoisted.members[3]!.content!.value).toBe(',');
+	});
+});
+
+// ---------------------------------------------------------------------------
+// canonicalStringifyClause's dedupe-key must ignore runtime-only provenance
+// stamps (`id`/`_ref`, plus the belt-and-braces `metadata`/`hidden`/`inline`)
+// so `visibleGroupSynthName`'s cross-parent dedupe (`groupDedupeMap`) treats
+// two STRUCTURALLY identical clause bodies as the same group even when the
+// sittir runtime's `createProxy` (compiler/evaluate.ts) has stamped each
+// `$.foo` reference with a PARENT-specific `_ref: { from: currentRule, ... }`
+// (tree-sitter's own dsl.js runtime never stamps this, so the two runtimes
+// would otherwise compute different dedupe hashes for the identical body —
+// confirmed on rust's `slice_pattern` / `tuple_struct_pattern`, which share
+// one group body: the un-deduped hash minted a phantom per-parent duplicate
+// the wire never populates, rendering as silently empty).
+// ---------------------------------------------------------------------------
+describe('enrich clause-hoist pass — cross-parent group dedupe ignores runtime-only stamps', () => {
+	it('two parents with a structurally-identical bare-choice clause body dedupe to ONE shared visible group, even when id/_ref provenance stamps differ', () => {
+		// Simulates the sittir runtime's createProxy provenance stamp
+		// (`id`/`_ref`) landing on an otherwise-identical clause body once per
+		// referencing parent — these tests build raw rule literals directly
+		// (bypassing the DSL proxy), so the stamps are injected by hand here.
+		const bareChoiceBody = (tag: string) => ({
+			type: 'SEQ',
+			members: [
+				{ type: 'STRING', value: '(' },
+				{
+					type: 'CHOICE',
+					members: [
+						{ type: 'SYMBOL', name: 'self', id: `${tag}-1`, _ref: { refType: 'symbol', from: tag, to: 'self' } },
+						{ type: 'SYMBOL', name: 'super', id: `${tag}-2`, _ref: { refType: 'symbol', from: tag, to: 'super' } }
+					]
+				},
+				{ type: 'STRING', value: ')' }
+			]
+		});
+		const input = mkGrammar({
+			parent_a: { type: 'OPTIONAL', content: bareChoiceBody('parent_a') },
+			parent_b: { type: 'OPTIONAL', content: bareChoiceBody('parent_b') }
+		});
+		const result = runEnrich(input);
+		const rules = result.grammar.rules;
+
+		const aliasA = (rules.parent_a as { content: { value?: string } }).content;
+		const aliasB = (rules.parent_b as { content: { value?: string } }).content;
+		expect(aliasA.value).toBeDefined();
+		// Both parents must resolve to the SAME shared visible-group name —
+		// the dedupe key must not diverge just because each body's members
+		// carry different id/_ref provenance stamps.
+		expect(aliasB.value).toBe(aliasA.value);
+
+		// Exactly ONE hidden backing rule was minted (shared), not one per parent.
+		const hiddenKeys = Object.keys(rules).filter((k) => k.startsWith('_') && k.endsWith('_group1'));
+		expect(hiddenKeys.length).toBe(1);
 	});
 });

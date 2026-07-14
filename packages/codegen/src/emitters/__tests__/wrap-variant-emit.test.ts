@@ -17,8 +17,20 @@ const wrapEmitterSource = readFileSync(new URL('../wrap.ts', import.meta.url), '
 function extractFunctionBody(source: string, functionName: string): string {
 	const start = source.indexOf(`function ${functionName}`);
 	if (start === -1) throw new Error(`Missing function ${functionName}`);
-	const end = source.indexOf('\n/**\n * Emit the inline `$with: { ... }` property for a wrap function literal.', start);
-	if (end === -1) throw new Error(`Missing end marker for function ${functionName}`);
+	// Bound the extraction at the NEXT top-level `function` declaration
+	// (generic — works for any of wrap.ts's consecutively-declared helpers,
+	// e.g. emitFieldStorageLines/emitFieldAccessorLines/emitFieldCarryingWrap),
+	// falling back to the doc-comment marker that has always immediately
+	// preceded `emitInlineWithProperty` (the function after
+	// emitFieldCarryingWrap) in case there is no further `function` in source.
+	const nextFunctionMarker = source.indexOf('\nfunction ', start + 1);
+	const docCommentMarker = source.indexOf(
+		'\n/**\n * Emit the inline `$with: { ... }` property for a wrap function literal.',
+		start
+	);
+	const candidates = [nextFunctionMarker, docCommentMarker].filter((i) => i !== -1);
+	if (candidates.length === 0) throw new Error(`Missing end marker for function ${functionName}`);
+	const end = Math.min(...candidates);
 	const fnSource = source.slice(start, end);
 	const bodyStart = fnSource.indexOf('{');
 	return fnSource.slice(bodyStart + 1).trimEnd();
@@ -100,8 +112,20 @@ describe('wrap emitter — polymorph variant stamping', () => {
 
 		expect(wrapEmitterSource).not.toContain('function resolveChildrenStoreExpr');
 		expect(wrapEmitterSource).not.toContain('function resolveChildrenAccessorBody');
-		expect(emitFieldCarryingWrapBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(4);
+		// Named-field storage/accessor drilling was extracted into
+		// emitFieldStorageLines/emitFieldAccessorLines (separator-as-slot Bug B
+		// follow-up — shared with emitSeparatedListWrap's multi-field case), so
+		// emitFieldCarryingWrap's OWN body now calls resolveSlotDrillExprs only
+		// for the unnamed-children slot (storage + accessor = 2), while the two
+		// extracted helpers each make their own single shared-resolver call —
+		// still ONE entrypoint (resolveSlotDrillExprs) for every slot, just
+		// spread across the 3 functions that now share it instead of 1.
+		expect(emitFieldCarryingWrapBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(2);
 		expect(emitFieldCarryingWrapBody).not.toMatch(/resolve[A-Za-z0-9_]*Children[A-Za-z0-9_]*\(/);
+		const emitFieldStorageLinesBody = extractFunctionBody(wrapEmitterSource, 'emitFieldStorageLines');
+		const emitFieldAccessorLinesBody = extractFunctionBody(wrapEmitterSource, 'emitFieldAccessorLines');
+		expect(emitFieldStorageLinesBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(1);
+		expect(emitFieldAccessorLinesBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(1);
 	});
 
 	it('keeps wrap-kind filtering aware of alias-target kinds', () => {
@@ -175,7 +199,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeTransparentHiddenSupertypeNodeMap() });
 
 		expect(wrapSrc).toContain(
-			"export function wrapExportStatementDefault(data: T.ExportStatementDefault & { readonly $other?: T.ExportStatementDefault | readonly T.ExportStatementDefault[]; }, tree: TreeHandle) {"
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault & { readonly $other?: T.ExportStatementDefault | readonly T.ExportStatementDefault[]; }, tree: TreeHandle) {'
 		);
 		expect(wrapSrc).toContain('return drillIn<T.ExportStatementDefault>(');
 		expect(wrapSrc).toContain(

@@ -125,7 +125,7 @@ describe('loop-driven emitters', () => {
 		const { wrap } = emitAll({ grammar: 'synth', nodeMap: makeHiddenSupertypeNodeMap() });
 
 		expect(wrap).toContain(
-			"export function wrapExportStatementDefault(data: T.ExportStatementDefault & { readonly $other?: T.ExportStatementDefault | readonly T.ExportStatementDefault[]; }, tree: TreeHandle) {"
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault & { readonly $other?: T.ExportStatementDefault | readonly T.ExportStatementDefault[]; }, tree: TreeHandle) {'
 		);
 		expect(wrap).toContain(
 			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"

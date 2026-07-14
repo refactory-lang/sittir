@@ -337,6 +337,54 @@ export function classHeritageExtendsClause(config: T.ClassHeritageExtendsClause.
 	);
 }
 
+export function _enumBodyGroup1(config: Partial<T._EnumBodyGroup1.Config> = {}) {
+	const _name = config.name;
+	const _enum_assignment = config.enumAssignment;
+	return withMethods(
+		{
+			$type: TSKindId._EnumBodyGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_name,
+			_enum_assignment,
+			names() {
+				return _name;
+			},
+			enumAssignments() {
+				return _enum_assignment;
+			},
+			$with: {
+				names: (...values: T.PropertyName[]) => _enumBodyGroup1({ ...config, name: values }),
+				enumAssignments: (...values: T.EnumAssignment[]) => _enumBodyGroup1({ ...config, enumAssignment: values })
+			}
+		},
+		methodsEngine
+	);
+}
+
+export function _exportClauseGroup1(elements: NonEmptyArray<T.ExportSpecifier>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, '_export_clause_group1.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		{
+			$type: TSKindId._ExportClauseGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			_trailing_sep,
+			content() {
+				return _content;
+			},
+			$with: {
+				$children: (...vs: NonEmptyArray<T.ExportSpecifier>) => _exportClauseGroup1(vs, options),
+				trailing: (v: boolean) => _exportClauseGroup1(elements, { ...options, trailing: v })
+			}
+		},
+		methodsEngine
+	);
+}
+
 export function exportStatementDefault(child: T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm) {
 	const _content = child;
 	return withMethods(
@@ -776,6 +824,32 @@ export function _forHeaderVarKind(config: T.ForHeaderVarKind.Config) {
 	);
 }
 
+export function _formalParametersGroup1(
+	elements: NonEmptyArray<T.FormalParameter>,
+	options: { trailing?: boolean } = {}
+) {
+	_assertNonEmpty(elements, '_formal_parameters_group1.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		{
+			$type: TSKindId._FormalParametersGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			_trailing_sep,
+			content() {
+				return _content;
+			},
+			$with: {
+				$children: (...vs: NonEmptyArray<T.FormalParameter>) => _formalParametersGroup1(vs, options),
+				trailing: (v: boolean) => _formalParametersGroup1(elements, { ...options, trailing: v })
+			}
+		},
+		methodsEngine
+	);
+}
+
 export function _fromClause(config: T.FromClause.Config) {
 	const _source = config.source;
 	return withMethods(
@@ -927,6 +1001,29 @@ export function _module(config: T._Module.Config) {
 			$with: {
 				name: (value: T.String | T.Identifier | T.NestedIdentifier) => _module({ ...config, name: value }),
 				body: (value?: T.StatementBlock) => _module({ ...config, body: value })
+			}
+		},
+		methodsEngine
+	);
+}
+
+export function _namedImportsGroup1(elements: NonEmptyArray<T.ImportSpecifier>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, '_named_imports_group1.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		{
+			$type: TSKindId._NamedImportsGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			_trailing_sep,
+			content() {
+				return _content;
+			},
+			$with: {
+				$children: (...vs: NonEmptyArray<T.ImportSpecifier>) => _namedImportsGroup1(vs, options),
+				trailing: (v: boolean) => _namedImportsGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
@@ -1167,6 +1264,29 @@ export function _publicFieldDefinitionStaticMods(config: Partial<T.PublicFieldDe
 				readonlyMarker: (
 					value?: NonNullable<Parameters<typeof _publicFieldDefinitionStaticMods>[0]>['readonlyMarker']
 				) => _publicFieldDefinitionStaticMods({ ...config, readonlyMarker: value })
+			}
+		},
+		methodsEngine
+	);
+}
+
+export function _tupleTypeGroup1(elements: NonEmptyArray<T.TupleTypeMember>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, '_tuple_type_group1.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		{
+			$type: TSKindId._TupleTypeGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			_trailing_sep,
+			content() {
+				return _content;
+			},
+			$with: {
+				$children: (...vs: NonEmptyArray<T.TupleTypeMember>) => _tupleTypeGroup1(vs, options),
+				trailing: (v: boolean) => _tupleTypeGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
@@ -2645,26 +2765,18 @@ export function enumAssignment(config: T.EnumAssignment.Config) {
 	);
 }
 
-export function enumBody(config: Partial<T.EnumBody.Config> = {}) {
-	const _name = config.name;
-	const _enum_assignment = config.enumAssignment;
+export function enumBody(child?: T.EnumBodyGroup1) {
+	const _enum_body_group1 = child;
 	return withMethods(
 		{
 			$type: TSKindId.EnumBody as const,
 			$source: 2 as const,
 			$named: true as const,
-			_name,
-			_enum_assignment,
-			names() {
-				return _name;
+			_enum_body_group1,
+			enumBodyGroup1() {
+				return _enum_body_group1;
 			},
-			enumAssignments() {
-				return _enum_assignment;
-			},
-			$with: {
-				names: (...values: T.PropertyName[]) => enumBody({ ...config, name: values }),
-				enumAssignments: (...values: T.EnumAssignment[]) => enumBody({ ...config, enumAssignment: values })
-			}
+			$with: { $child: (v: T.EnumBodyGroup1) => enumBody(v) }
 		},
 		methodsEngine
 	);
@@ -2716,18 +2828,18 @@ export function escapeSequence(text: string) {
 	);
 }
 
-export function exportClause(...children: T.ExportSpecifier[]) {
-	const _export_specifier = children;
+export function exportClause(child?: T.ExportClauseGroup1) {
+	const _export_clause_group1 = child;
 	return withMethods(
 		{
 			$type: TSKindId.ExportClause as const,
 			$source: 2 as const,
 			$named: true as const,
-			_export_specifier,
-			exportSpecifiers() {
-				return _export_specifier;
+			_export_clause_group1,
+			exportClauseGroup1() {
+				return _export_clause_group1;
 			},
-			$with: { $children: (...vs: T.ExportSpecifier[]) => exportClause(...vs) }
+			$with: { $child: (v: T.ExportClauseGroup1) => exportClause(v) }
 		},
 		methodsEngine
 	);
@@ -3006,18 +3118,18 @@ export function forStatement(config: T.ForStatement.Config) {
 	);
 }
 
-export function formalParameters(...children: T.FormalParameter[]) {
-	const _formal_parameter = children;
+export function formalParameters(child?: T.FormalParametersGroup1) {
+	const _formal_parameters_group1 = child;
 	return withMethods(
 		{
 			$type: TSKindId.FormalParameters as const,
 			$source: 2 as const,
 			$named: true as const,
-			_formal_parameter,
-			formalParameters() {
-				return _formal_parameter;
+			_formal_parameters_group1,
+			formalParametersGroup1() {
+				return _formal_parameters_group1;
 			},
-			$with: { $children: (...vs: T.FormalParameter[]) => formalParameters(...vs) }
+			$with: { $child: (v: T.FormalParametersGroup1) => formalParameters(v) }
 		},
 		methodsEngine
 	);
@@ -4184,18 +4296,18 @@ export function module(config: T.Module.Config) {
 	);
 }
 
-export function namedImports(...children: T.ImportSpecifier[]) {
-	const _import_specifier = children;
+export function namedImports(child?: T.NamedImportsGroup1) {
+	const _named_imports_group1 = child;
 	return withMethods(
 		{
 			$type: TSKindId.NamedImports as const,
 			$source: 2 as const,
 			$named: true as const,
-			_import_specifier,
-			importSpecifiers() {
-				return _import_specifier;
+			_named_imports_group1,
+			namedImportsGroup1() {
+				return _named_imports_group1;
 			},
-			$with: { $children: (...vs: T.ImportSpecifier[]) => namedImports(...vs) }
+			$with: { $child: (v: T.NamedImportsGroup1) => namedImports(v) }
 		},
 		methodsEngine
 	);
@@ -4544,91 +4656,50 @@ export function objectTypeFlow(config?: T.ObjectType.Flow.Config) {
 	);
 }
 
-export function objectTypeContent(child: T.ObjectTypeContentComma | T.ObjectTypeContentSemi) {
-	const _content = child;
+export function objectTypeContent(
+	elements: NonEmptyArray<
+		| T.ExportStatement
+		| T.PropertySignature
+		| T.CallSignature
+		| T.ConstructSignature
+		| T.IndexSignature
+		| T.MethodSignature
+	>,
+	options: { separatorKind?: ',' | ';'; leading?: boolean; trailing?: boolean } = {}
+) {
+	_assertNonEmpty(elements, 'object_type_content.elements');
+	const _content = elements;
+	const _separator_kind = ({ ',': TSKindId.Comma2, ';': TSKindId.Semi } as Record<string, number>)[
+		options.separatorKind ?? ','
+	];
+	const _leading_sep = options.leading ?? false;
+	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		{
 			$type: TSKindId.ObjectTypeContent as const,
 			$source: 2 as const,
 			$named: true as const,
 			_content,
+			_separator_kind,
+			_leading_sep,
+			_trailing_sep,
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T.ObjectTypeContentComma | T.ObjectTypeContentSemi) => objectTypeContent(v) }
-		},
-		methodsEngine
-	);
-}
-
-export function objectTypeContentComma(
-	...children: (
-		| T.ExportStatement
-		| T.PropertySignature
-		| T.CallSignature
-		| T.ConstructSignature
-		| T.IndexSignature
-		| T.MethodSignature
-	)[]
-) {
-	const _content = children;
-	return withMethods(
-		{
-			$type: TSKindId.ObjectTypeContentComma as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			contents() {
-				return _content;
-			},
 			$with: {
 				$children: (
-					...vs: (
+					...vs: NonEmptyArray<
 						| T.ExportStatement
 						| T.PropertySignature
 						| T.CallSignature
 						| T.ConstructSignature
 						| T.IndexSignature
 						| T.MethodSignature
-					)[]
-				) => objectTypeContentComma(...vs)
-			}
-		},
-		methodsEngine
-	);
-}
-
-export function objectTypeContentSemi(
-	...children: (
-		| T.ExportStatement
-		| T.PropertySignature
-		| T.CallSignature
-		| T.ConstructSignature
-		| T.IndexSignature
-		| T.MethodSignature
-	)[]
-) {
-	const _content = children;
-	return withMethods(
-		{
-			$type: TSKindId.ObjectTypeContentSemi as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			contents() {
-				return _content;
-			},
-			$with: {
-				$children: (
-					...vs: (
-						| T.ExportStatement
-						| T.PropertySignature
-						| T.CallSignature
-						| T.ConstructSignature
-						| T.IndexSignature
-						| T.MethodSignature
-					)[]
-				) => objectTypeContentSemi(...vs)
+					>
+				) => objectTypeContent(vs, options),
+				separatorKind: (v: ',' | ';') => objectTypeContent(elements, { ...options, separatorKind: v }),
+				leading: (v: boolean) => objectTypeContent(elements, { ...options, leading: v }),
+				trailing: (v: boolean) => objectTypeContent(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
@@ -5842,18 +5913,18 @@ export function tupleParameter(config: T.TupleParameter.Config) {
 	);
 }
 
-export function tupleType(...children: T.TupleTypeMember[]) {
-	const _tuple_type_member = children;
+export function tupleType(child?: T.TupleTypeGroup1) {
+	const _tuple_type_group1 = child;
 	return withMethods(
 		{
 			$type: TSKindId.TupleType as const,
 			$source: 2 as const,
 			$named: true as const,
-			_tuple_type_member,
-			tupleTypeMembers() {
-				return _tuple_type_member;
+			_tuple_type_group1,
+			tupleTypeGroup1() {
+				return _tuple_type_group1;
 			},
-			$with: { $children: (...vs: T.TupleTypeMember[]) => tupleType(...vs) }
+			$with: { $child: (v: T.TupleTypeGroup1) => tupleType(v) }
 		},
 		methodsEngine
 	);
@@ -6381,6 +6452,127 @@ export function catchClauseGroup1(config: T.CatchClauseGroup1.Config) {
 	);
 }
 
+export function enumBodyGroup1(
+	elements: NonEmptyArray<T.PropertyName | T.EnumAssignment>,
+	options: { trailing?: boolean } = {}
+) {
+	_assertNonEmpty(elements, 'enum_body_group1.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		{
+			$type: TSKindId._EnumBodyGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			_trailing_sep,
+			content() {
+				return _content;
+			},
+			$with: {
+				$children: (...vs: NonEmptyArray<T.PropertyName | T.EnumAssignment>) => enumBodyGroup1(vs, options),
+				trailing: (v: boolean) => enumBodyGroup1(elements, { ...options, trailing: v })
+			}
+		},
+		methodsEngine
+	);
+}
+
+export function exportClauseGroup1(elements: NonEmptyArray<T.ExportSpecifier>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, 'export_clause_group1.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		{
+			$type: TSKindId._ExportClauseGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			_trailing_sep,
+			content() {
+				return _content;
+			},
+			$with: {
+				$children: (...vs: NonEmptyArray<T.ExportSpecifier>) => exportClauseGroup1(vs, options),
+				trailing: (v: boolean) => exportClauseGroup1(elements, { ...options, trailing: v })
+			}
+		},
+		methodsEngine
+	);
+}
+
+export function formalParametersGroup1(
+	elements: NonEmptyArray<T.FormalParameter>,
+	options: { trailing?: boolean } = {}
+) {
+	_assertNonEmpty(elements, 'formal_parameters_group1.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		{
+			$type: TSKindId._FormalParametersGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			_trailing_sep,
+			content() {
+				return _content;
+			},
+			$with: {
+				$children: (...vs: NonEmptyArray<T.FormalParameter>) => formalParametersGroup1(vs, options),
+				trailing: (v: boolean) => formalParametersGroup1(elements, { ...options, trailing: v })
+			}
+		},
+		methodsEngine
+	);
+}
+
+export function namedImportsGroup1(elements: NonEmptyArray<T.ImportSpecifier>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, 'named_imports_group1.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		{
+			$type: TSKindId._NamedImportsGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			_trailing_sep,
+			content() {
+				return _content;
+			},
+			$with: {
+				$children: (...vs: NonEmptyArray<T.ImportSpecifier>) => namedImportsGroup1(vs, options),
+				trailing: (v: boolean) => namedImportsGroup1(elements, { ...options, trailing: v })
+			}
+		},
+		methodsEngine
+	);
+}
+
+export function tupleTypeGroup1(elements: NonEmptyArray<T.TupleTypeMember>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, 'tuple_type_group1.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		{
+			$type: TSKindId._TupleTypeGroup1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			_trailing_sep,
+			content() {
+				return _content;
+			},
+			$with: {
+				$children: (...vs: NonEmptyArray<T.TupleTypeMember>) => tupleTypeGroup1(vs, options),
+				trailing: (v: boolean) => tupleTypeGroup1(elements, { ...options, trailing: v })
+			}
+		},
+		methodsEngine
+	);
+}
+
 export function templateChars(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_template_chars: text must be non-empty`);
@@ -6478,6 +6670,8 @@ export type FluentKindMap = {
 	_class_body_method: T.ClassBodyMethod;
 	_class_body_method_sig: FluentNode<'_class_body_method_sig', T.ClassBodyMethodSig.Config>;
 	_class_heritage_extends_clause: FluentNode<'_class_heritage_extends_clause', T.ClassHeritageExtendsClause.Config>;
+	_enum_body_group1: T._EnumBodyGroup1;
+	_export_clause_group1: FluentNode<'_export_clause_group1', T._ExportClauseGroup1.Config>;
 	_export_statement_default: FluentNode<'_export_statement_default', T.ExportStatementDefault.Config>;
 	_export_statement_default_decl_arm: T.ExportStatementDefaultDeclArm;
 	_export_statement_default_decl_arm_default_kw: T.ExportStatementDefaultDeclArmDefaultKw;
@@ -6509,6 +6703,7 @@ export type FluentKindMap = {
 	_for_header_let_const_kind: T.ForHeaderLetConstKind;
 	_for_header_lhs: FluentNode<'_for_header_lhs', T.ForHeaderLhs.Config>;
 	_for_header_var_kind: T.ForHeaderVarKind;
+	_formal_parameters_group1: FluentNode<'_formal_parameters_group1', T._FormalParametersGroup1.Config>;
 	_from_clause: T.FromClause;
 	_import_clause_default_import: FluentNode<'_import_clause_default_import', T.ImportClauseDefaultImport.Config>;
 	_import_clause_group1: FluentNode<'_import_clause_group1', T._ImportClauseGroup1.Config>;
@@ -6516,6 +6711,7 @@ export type FluentKindMap = {
 	_index_signature_colon: T.IndexSignatureColon;
 	_initializer: T.Initializer;
 	_module: T._Module;
+	_named_imports_group1: FluentNode<'_named_imports_group1', T._NamedImportsGroup1.Config>;
 	_number: T._Number;
 	_parameter_name: T.ParameterName;
 	_parenthesized_expression_typed: T.ParenthesizedExpressionTyped;
@@ -6527,6 +6723,7 @@ export type FluentKindMap = {
 	>;
 	_public_field_definition_readonly_first: T.PublicFieldDefinitionReadonlyFirst;
 	_public_field_definition_static_mods: T.PublicFieldDefinitionStaticMods;
+	_tuple_type_group1: FluentNode<'_tuple_type_group1', T._TupleTypeGroup1.Config>;
 	_type_identifier: T.TypeIdentifier;
 	_type_query_call_expression: T.TypeQueryCallExpression;
 	_type_query_call_expression_in_type_annotation: T.TypeQueryCallExpressionInTypeAnnotation;
@@ -6649,8 +6846,6 @@ export type FluentKindMap = {
 	object_pattern: FluentNode<'object_pattern', T.ObjectPattern.Config>;
 	object_type: FluentNode<'object_type', T.ObjectType.Config>;
 	object_type_content: FluentNode<'object_type_content', T.ObjectTypeContent.Config>;
-	object_type_content_comma: FluentNode<'object_type_content_comma', T.ObjectTypeContentComma.Config>;
-	object_type_content_semi: FluentNode<'object_type_content_semi', T.ObjectTypeContentSemi.Config>;
 	omitting_type_annotation: FluentNode<'omitting_type_annotation', T.OmittingTypeAnnotation.Config>;
 	opting_type_annotation: FluentNode<'opting_type_annotation', T.OptingTypeAnnotation.Config>;
 	optional_parameter: FluentNode<'optional_parameter', T.OptionalParameter.Config>;
@@ -6718,6 +6913,11 @@ export type FluentKindMap = {
 	yield_expression: FluentNode<'yield_expression', T.YieldExpression.Config>;
 	import_clause_group1: FluentNode<'import_clause_group1', T.ImportClauseGroup1.Config>;
 	catch_clause_group1: FluentNode<'catch_clause_group1', T.CatchClauseGroup1.Config>;
+	enum_body_group1: FluentNode<'enum_body_group1', T.EnumBodyGroup1.Config>;
+	export_clause_group1: FluentNode<'export_clause_group1', T.ExportClauseGroup1.Config>;
+	formal_parameters_group1: FluentNode<'formal_parameters_group1', T.FormalParametersGroup1.Config>;
+	named_imports_group1: FluentNode<'named_imports_group1', T.NamedImportsGroup1.Config>;
+	tuple_type_group1: FluentNode<'tuple_type_group1', T.TupleTypeGroup1.Config>;
 	_template_chars: T.TemplateChars;
 	_ternary_qmark: T.TernaryQmark;
 	html_comment: T.HtmlComment;
@@ -6739,6 +6939,8 @@ export const _factoryMap = {
 	_class_body_method: _classBodyMethod,
 	_class_body_method_sig: classBodyMethodSig,
 	_class_heritage_extends_clause: classHeritageExtendsClause,
+	_enum_body_group1: _enumBodyGroup1,
+	_export_clause_group1: _exportClauseGroup1,
 	_export_statement_default: exportStatementDefault,
 	_export_statement_default_decl_arm: _exportStatementDefaultDeclArm,
 	_export_statement_default_decl_arm_default_kw: _exportStatementDefaultDeclArmDefaultKw,
@@ -6755,6 +6957,7 @@ export const _factoryMap = {
 	_for_header_let_const_kind: _forHeaderLetConstKind,
 	_for_header_lhs: forHeaderLhs,
 	_for_header_var_kind: _forHeaderVarKind,
+	_formal_parameters_group1: _formalParametersGroup1,
 	_from_clause: _fromClause,
 	_import_clause_default_import: importClauseDefaultImport,
 	_import_clause_group1: _importClauseGroup1,
@@ -6762,6 +6965,7 @@ export const _factoryMap = {
 	_index_signature_colon: _indexSignatureColon,
 	_initializer: _initializer,
 	_module: _module,
+	_named_imports_group1: _namedImportsGroup1,
 	_number: _number,
 	_parameter_name: _parameterName,
 	_parenthesized_expression_typed: _parenthesizedExpressionTyped,
@@ -6770,6 +6974,7 @@ export const _factoryMap = {
 	_public_field_definition_declare_first: publicFieldDefinitionDeclareFirst,
 	_public_field_definition_readonly_first: _publicFieldDefinitionReadonlyFirst,
 	_public_field_definition_static_mods: _publicFieldDefinitionStaticMods,
+	_tuple_type_group1: _tupleTypeGroup1,
 	_type_identifier: typeIdentifier,
 	_type_query_call_expression: _typeQueryCallExpression,
 	_type_query_call_expression_in_type_annotation: _typeQueryCallExpressionInTypeAnnotation,
@@ -6886,8 +7091,6 @@ export const _factoryMap = {
 	object_pattern: objectPattern,
 	object_type: objectType,
 	object_type_content: objectTypeContent,
-	object_type_content_comma: objectTypeContentComma,
-	object_type_content_semi: objectTypeContentSemi,
 	omitting_type_annotation: omittingTypeAnnotation,
 	opting_type_annotation: optingTypeAnnotation,
 	optional_parameter: optionalParameter,
@@ -6955,6 +7158,11 @@ export const _factoryMap = {
 	yield_expression: yieldExpression,
 	import_clause_group1: importClauseGroup1,
 	catch_clause_group1: catchClauseGroup1,
+	enum_body_group1: enumBodyGroup1,
+	export_clause_group1: exportClauseGroup1,
+	formal_parameters_group1: formalParametersGroup1,
+	named_imports_group1: namedImportsGroup1,
+	tuple_type_group1: tupleTypeGroup1,
 	_template_chars: templateChars,
 	_ternary_qmark: ternaryQmark,
 	html_comment: htmlComment,

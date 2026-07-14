@@ -676,10 +676,43 @@ export const ir = {
 	wherePredicate: _attach(FR.wherePredicateFrom, { from: FR.wherePredicateFrom, strict: F.wherePredicate }),
 	whileExpression: _attach(FR.whileExpressionFrom, { from: FR.whileExpressionFrom, strict: F.whileExpression }),
 	yieldExpression: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+	argumentsGroup1: _attach(FR.argumentsGroup1From, { from: FR.argumentsGroup1From, strict: F.argumentsGroup1 }),
 	visibilityModifierGroup1: _attach(FR.visibilityModifierGroup1From, {
 		from: FR.visibilityModifierGroup1From,
 		strict: F.visibilityModifierGroup1
 	}),
+	enumVariantListGroup1: _attach(FR.enumVariantListGroup1From, {
+		from: FR.enumVariantListGroup1From,
+		strict: F.enumVariantListGroup1
+	}),
+	fieldDeclarationListGroup1: _attach(FR.fieldDeclarationListGroup1From, {
+		from: FR.fieldDeclarationListGroup1From,
+		strict: F.fieldDeclarationListGroup1
+	}),
+	fieldInitializerListGroup1: _attach(FR.fieldInitializerListGroup1From, {
+		from: FR.fieldInitializerListGroup1From,
+		strict: F.fieldInitializerListGroup1
+	}),
+	orderedFieldDeclarationListGroup1: _attach(FR.orderedFieldDeclarationListGroup1From, {
+		from: FR.orderedFieldDeclarationListGroup1From,
+		strict: F.orderedFieldDeclarationListGroup1
+	}),
+	parametersGroup1: _attach(FR.parametersGroup1From, { from: FR.parametersGroup1From, strict: F.parametersGroup1 }),
+	slicePatternGroup1: _attach(FR.slicePatternGroup1From, {
+		from: FR.slicePatternGroup1From,
+		strict: F.slicePatternGroup1
+	}),
+	structPatternGroup1: _attach(FR.structPatternGroup1From, {
+		from: FR.structPatternGroup1From,
+		strict: F.structPatternGroup1
+	}),
+	tuplePatternGroup1: _attach(FR.tuplePatternGroup1From, {
+		from: FR.tuplePatternGroup1From,
+		strict: F.tuplePatternGroup1
+	}),
+	useBoundsGroup1: _attach(FR.useBoundsGroup1From, { from: FR.useBoundsGroup1From, strict: F.useBoundsGroup1 }),
+	useListGroup1: _attach(FR.useListGroup1From, { from: FR.useListGroup1From, strict: F.useListGroup1 }),
+	whereClauseGroup1: _attach(FR.whereClauseGroup1From, { from: FR.whereClauseGroup1From, strict: F.whereClauseGroup1 }),
 
 	// Keyword factories
 	crate: F.crate,

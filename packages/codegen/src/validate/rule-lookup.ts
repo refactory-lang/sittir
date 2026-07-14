@@ -75,6 +75,12 @@ function classify(node: AssembledNode): RenderKindPath {
 	switch (node.modelType) {
 		case 'branch':
 		case 'group':
+		// TEMPORARY (separator-as-slot Task 2 follow-up — see
+		// isSlotBearingCompound's doc comment, emitters/shared.ts):
+		// 'separatedList' shares 'branch'/'group's template render path for
+		// byte-identical output pending Tasks 4-6's real per-instance
+		// capture.
+		case 'separatedList':
 			return 'template';
 		case 'pattern':
 		case 'keyword':

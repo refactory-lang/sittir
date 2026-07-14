@@ -54,6 +54,7 @@ import type {
 	AssembledBranch,
 	AssembledNode,
 	AssembledNonterminal,
+	AssembledSeparatedList,
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
@@ -278,6 +279,12 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 			throw new Error(
 				`emitOne: 'multi' node reached emitOne (should be skipped by classifyTemplateEmission): ${node.kind}`
 			);
+		// TEMPORARY (separator-as-slot Task 2 follow-up — see
+		// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
+		// shares 'branch's template emission for byte-identical output pending
+		// Tasks 4-6's real per-instance capture.
+		case 'separatedList':
+			return emitBranchTemplate(node, ctxK);
 		default: {
 			const _exhaustive: never = node;
 			throw new Error(`emitOne: unhandled modelType ${(_exhaustive as AssembledNode).modelType}`);
@@ -296,7 +303,9 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 // required).
 // ---------------------------------------------------------------------------
 
-export function emitBranchTemplate(node: AssembledBranch, ctx: EmitCtx): string {
+// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+// isSlotBearingCompound's doc comment (shared.ts).
+export function emitBranchTemplate(node: AssembledBranch | AssembledSeparatedList, ctx: EmitCtx): string {
 	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free) instead
 	// of rule (RawRule, wrapper-bearing). Wrapper attributes (fieldName,
 	// multiplicity, separator) are now on the leaf rules themselves.
@@ -1181,6 +1190,22 @@ export function separatorToString(rule: RenderRule): string | undefined {
 }
 
 /**
+ * True when `rule` carries a genuinely nonterminal separator (Table 1,
+ * `isNonterminalRuleType`) — i.e. `separatorToString` returned `undefined`
+ * NOT because there's no separator at all, but because the separator's
+ * text isn't compile-time-known (a `choice(',', ';')`-shaped separator has
+ * no single fixed literal). Distinguishes the two `undefined` cases so
+ * `emitListSlot` can reference the transport struct's own runtime-resolved
+ * `.separator` field (populated by render-module.ts's
+ * `buildSeparatorKindMatchLines` from the wire-captured `_separator_kind`)
+ * instead of silently falling through to `DEFAULT_JOIN_SEPARATOR`.
+ */
+function isNonterminalSeparatorRule(rule: RenderRule): boolean {
+	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
+	return sep !== undefined && isNonterminalRuleType(sep.value as Rule<'evaluate'>);
+}
+
+/**
  * Pick the join-filter name based on a rule's flank metadata, reading
  * trailing/leading attributes directly off the rule.
  *
@@ -1197,8 +1222,14 @@ function selectJoinFilter(
 	// trailing/leading now live NESTED inside `separator` (PR-S) — no more
 	// top-level siblings on the rule to check directly.
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
-	const trailing = sep?.trailing === true;
-	const leading = sep?.leading === true;
+	// Presence check, not a specific `SeparatorFlankMode` value: a rule
+	// reaching this (non-`'separatedList'`-classified) function can only
+	// carry a `'mandatory'` flank here (a genuinely `'optional'` one would
+	// already have routed the rule to `'separatedList'` classification
+	// instead, see `isSeparatedListShape`, assemble.ts) — mirrors
+	// `collect-slots.ts`'s `hasTrailing`/`hasLeading` derivation.
+	const trailing = sep?.trailing !== undefined;
+	const leading = sep?.leading !== undefined;
 	if (trailing && leading) return 'joinWithFlanks';
 	if (trailing) return 'joinWithTrailing';
 	if (leading) return 'joinWithLeading';
@@ -1264,6 +1295,17 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 	// `factorChoiceBranches` rebuilt a choice carrying only the rule id (not the
 	// separator), so the outer choice has no separator but the slot values do.
 	const ruleSep = separatorToString(rule);
+	// A genuinely nonterminal separator (e.g. `choice(',', ';')`) has no
+	// fixed compile-time text — `ruleSep` is `undefined` for that reason,
+	// not because there's no separator at all. Reference the transport
+	// struct's own `.separator` field (a runtime-resolved `&str`, populated
+	// by render-module.ts's `buildSeparatorKindMatchLines` from the wire-
+	// captured `_separator_kind`) instead of falling through to
+	// `DEFAULT_JOIN_SEPARATOR` — which would silently drop every separator
+	// occurrence (see docs/superpowers/specs/2026-07-12-separator-as-slot-design.md).
+	if (!allImmediate && ruleSep === undefined && isNonterminalSeparatorRule(rule)) {
+		return `{{ ${slotName} | ${filter}(${slotName}.separator) }}`;
+	}
 	const slotValueSep: string | undefined =
 		ruleSep === undefined && slot !== undefined
 			? slot.values.find(
@@ -1797,6 +1839,11 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 			case 'multi':
 				// These modelTypes don't emit templates; classifyTemplateEmission
 				// should have already skipped them, so this is a safety fallback.
+				break;
+			// TEMPORARY: 'separatedList' shares 'branch's template emission —
+			// see isSlotBearingCompound's doc comment (shared.ts).
+			case 'separatedList':
+				te.emitBranch(node);
 				break;
 			default: {
 				const _exhaustive: never = node;

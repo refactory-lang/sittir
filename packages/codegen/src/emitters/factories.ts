@@ -16,7 +16,12 @@ import {
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import { type AssembledNode, type AssembledNonterminal, AssembledGroup } from '../compiler/model/node-map.ts';
+import {
+	type AssembledNode,
+	type AssembledNonterminal,
+	type AssembledSeparatedList,
+	AssembledGroup
+} from '../compiler/model/node-map.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef, allSlotsOf } from '../compiler/model/node-map.ts';
 import {
 	stampExpressionFor,
@@ -43,6 +48,7 @@ import {
 	type RefineKindInfo,
 	type RefineFormInfo
 } from './refine-emit.ts';
+import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFactoriesConfig {
@@ -85,9 +91,19 @@ export interface EmitFactoriesConfig {
  *   `NonEmptyArray` is conditional on any field having `nonEmpty: true`
  *   (rust has none; typescript + python do). `Edit` was previously
  *   imported but no emitted body references it — dropped.
+ *
+ *   Also checks `AssembledSeparatedList.nonEmpty` directly (a REPEAT1
+ *   source rule) rather than through `allSlotsOf`'s `.fields` (the Task-2
+ *   stub) — the stub can misderive a kind's real elements arity (see
+ *   `emitSeparatedListFactory`'s doc comment), so it can't be trusted for
+ *   this detection either.
  */
 function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
-	return [...nodeMap.nodes.values()].some((n) => allSlotsOf(n).some((f) => isNonEmpty(f)));
+	for (const n of nodeMap.nodes.values()) {
+		if (n.modelType === 'separatedList' && n.nonEmpty) return true;
+		if (allSlotsOf(n).some((f) => isNonEmpty(f))) return true;
+	}
+	return false;
 }
 
 function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
@@ -310,7 +326,9 @@ function buildFactoryMapEntries(
 		// never appear at runtime; no factory was emitted for them, so no map
 		// entry either. Lockstep with emitPerNodeFactories.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		const fluent = node.modelType === 'branch';
+		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+		// isSlotBearingCompound's doc comment (shared.ts).
+		const fluent = node.modelType === 'branch' || node.modelType === 'separatedList';
 		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
 		if (!classified) continue;
 		const shape = classified === 'spread' ? 'children' : classified;
@@ -459,6 +477,24 @@ export namespace factory {
 	): void {
 		const result = emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries);
 		output.push(result);
+	}
+
+	/**
+	 * Emit a `'separatedList'` factory — dedicated construct surface built
+	 * directly from `AssembledSeparatedList`'s own real fields (`elements`/
+	 * `separatorRule`/`leadingMode`/`trailingMode`), bypassing the Task-2
+	 * `_slots` stub entirely (see `AssembledSeparatedList`'s doc comment,
+	 * node-map.ts). Replaces the former `branch(...)` routing for this
+	 * modelType.
+	 */
+	export function separatedList(
+		output: string[],
+		node: AssembledSeparatedList,
+		nodeMap: NodeMap,
+		kindEntries: readonly KindEnumEntry[] | undefined
+	): void {
+		const result = emitSeparatedListFactory(node, nodeMap, kindEntries);
+		if (result) output.push(result);
 	}
 }
 
@@ -848,7 +884,7 @@ function emitSingleFieldFactory(
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
 	const variantName = node.modelType === 'group' ? resolvePolymorphFormVariantName(node as AssembledGroup) : undefined;
 	const elemType = `T.${node.typeName}.Config['${soleField.configKey}']`;
-	const paramName = soleField.propertyName;
+	const paramName = soleField.paramName;
 	const fieldOptional = !isRequired(soleField);
 	const optMark = fieldOptional ? '?' : '';
 
@@ -1205,6 +1241,156 @@ function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): str
 }
 
 // ---------------------------------------------------------------------------
+// SeparatedList factory (separator-as-slot Task 6)
+// ---------------------------------------------------------------------------
+
+/**
+ * Emit a `'separatedList'` factory function.
+ *
+ * Signature: `fn(elements: T[] | NonEmptyArray<T>, options?: {...})` —
+ * `elements` is always positional (a separatedList's whole rule identity is
+ * array multiplicity, so there's never a singular-content case, unlike
+ * `emitContainerFactory`). `options` is a SECOND, trailing parameter
+ * (`elements` can't itself be a rest/spread param followed by more
+ * arguments) and is emitted ONLY when at least one of
+ * `separatorKind`/`leading`/`trailing` genuinely varies per-instance —
+ * `mandatory`/`none` flank modes and a literal separator are all
+ * compile-time-known and need no runtime parameter at all, mirroring
+ * exactly which fields `emitSeparatedListWrap` (wrap.ts, Task 4) and
+ * `renderTransportDataStruct` (render-module.ts, Task 5) conditionally
+ * capture/emit.
+ *
+ * Storage keys (`_content`/`_separator_kind`/`_leading_sep`/`_trailing_sep`)
+ * and the `content()` getter match wrap.ts's `emitSeparatedListWrap` naming
+ * exactly (Task 4) — the same three per-instance concepts share one naming
+ * scheme across capture/render/construct, rather than a fourth bespoke one
+ * here. This deliberately diverges from the Task-2 `_slots` stub's
+ * kind-derived naming still declared on `T.<TypeName>` in types.ts (e.g.
+ * `_with_item`/`withItems()`) — safe because the factory's return type is
+ * always inferred, never assigned against that stale interface (confirmed
+ * by wrap.ts's own `content()`/`_content` divergence from the same stale
+ * interface, already shipped and gated in Task 4).
+ *
+ * Bypasses `node.fields`/`.slots` (the Task-2 stub) entirely, reading
+ * `node.elements`/`.nonEmpty`/`.leadingMode`/`.trailingMode`/`.separatorRule`
+ * directly — the stub can misderive a kind's real shape for a rule that's
+ * an alias of a hidden rule (empirically found: python's `lambda_parameters`,
+ * whose rule id resolves through hidden `_parameters`, currently gets a
+ * WRONG singular `child: T.Parameters` factory under the stub instead of
+ * the real REPEAT1 array — this function fixes that as a side effect of
+ * bypassing the stub, the same way Task 4's wrap.ts fix did for the wrap
+ * side).
+ */
+function emitSeparatedListFactory(
+	node: AssembledSeparatedList,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	if (!node.rawFactoryName) return undefined;
+	const fn = node.rawFactoryName;
+
+	const contentSlot = buildSeparatedListContentSlot(node);
+	const elemType = fieldElementType(contentSlot, nodeMap);
+	// `fieldElementType` doesn't parenthesize multi-member unions (unlike
+	// `childElementType`) — guard the bare-array case the same way
+	// `emitFieldCarryingFactory`'s `$with` setter block already does for
+	// verbatim multiple fields, or `A | B[]` binds `[]` to `B` alone.
+	const elemTypeForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
+	const elementsType = node.nonEmpty ? `NonEmptyArray<${elemType}>` : `${elemTypeForArray}[]`;
+
+	// Outer gate matches wrap.ts's `emitSeparatedListWrap` and render-module.ts's
+	// `renderTransportDataStruct` exactly: `node.separatorRule !== undefined`,
+	// NOT "at least one candidate resolves in the catalog" — the catalog
+	// filter is applied only to the candidate LIST inside, same as those two.
+	// Currently inert (no real grammar kind has a nonterminal separator), but
+	// keeps the three tasks' gating logic consistent rather than diverging on
+	// an edge case none of them can reach today.
+	const hasSeparatorKindOption = node.separatorRule !== undefined;
+	const candidateKindNames = hasSeparatorKindOption
+		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
+		: [];
+	const hasLeadingOption = node.leadingMode === 'optional';
+	const hasTrailingOption = node.trailingMode === 'optional';
+	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
+
+	// `never` when the separator is nonterminal but zero candidates resolve
+	// in the catalog (mirrors `childElementType`/`fieldElementType`'s own
+	// zero-parts fallback) — an uninhabited type communicates "no valid
+	// choice exists" rather than emitting an invalid empty union.
+	const separatorKindUnion =
+		candidateKindNames.length > 0 ? candidateKindNames.map((k) => JSON.stringify(k)).join(' | ') : 'never';
+
+	const optionsTypeParts: string[] = [];
+	if (hasSeparatorKindOption) optionsTypeParts.push(`separatorKind?: ${separatorKindUnion}`);
+	if (hasLeadingOption) optionsTypeParts.push('leading?: boolean');
+	if (hasTrailingOption) optionsTypeParts.push('trailing?: boolean');
+	const optionsType = `{ ${optionsTypeParts.join('; ')} }`;
+
+	const lines: string[] = [];
+	lines.push(
+		hasOptions
+			? `export function ${fn}(elements: ${elementsType}, options: ${optionsType} = {}) {`
+			: `export function ${fn}(elements: ${elementsType}) {`
+	);
+	if (node.nonEmpty) {
+		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
+	}
+	lines.push('  const _content = elements;');
+	if (hasSeparatorKindOption) {
+		if (candidateKindNames.length > 0) {
+			const arms = candidateKindNames
+				.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`)
+				.join(', ');
+			lines.push(
+				`  const _separator_kind = ({ ${arms} } as Record<string, number>)[options.separatorKind ?? ${JSON.stringify(candidateKindNames[0])}];`
+			);
+		} else {
+			lines.push('  const _separator_kind = undefined;');
+		}
+	}
+	if (hasLeadingOption) lines.push('  const _leading_sep = options.leading ?? false;');
+	if (hasTrailingOption) lines.push('  const _trailing_sep = options.trailing ?? false;');
+
+	lines.push('  return withMethods({');
+	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
+	lines.push('    $source: 2 as const,');
+	lines.push('    $named: true as const,');
+	lines.push('    _content,');
+	if (hasSeparatorKindOption) lines.push('    _separator_kind,');
+	if (hasLeadingOption) lines.push('    _leading_sep,');
+	if (hasTrailingOption) lines.push('    _trailing_sep,');
+	lines.push('    content() { return _content; },');
+	lines.push('    $with: {');
+	const optionsArg = hasOptions ? ', options' : '';
+	// Rest param type must match `elementsType` exactly (`NonEmptyArray<T>`
+	// when nonEmpty) — a plain `T[]` rest capture isn't assignable to the
+	// tuple-shaped `NonEmptyArray<T>` the factory's own `elements` parameter
+	// requires. Independently computed from `node.nonEmpty` (the
+	// authoritative source — `rule.type === REPEAT1`) rather than via
+	// `childrenSetterRestType`, which derives multiplicity from
+	// `AssembledNonterminal.isMultiple`/`isNonEmpty` — themselves derived
+	// from `slot.values`' own per-value `multiplicity` tags, so they
+	// generally DO reflect `contentSlot`'s real multiplicity. The narrow
+	// edge case that rules this out as a safe drop-in: if
+	// `deriveValuesForRule` (node-map.ts) ever resolves `node.elements` to
+	// an EMPTY array for some content-rule shape (e.g. an unresolved
+	// reference), `isMultiple`/`isNonEmpty` degrade to `false` on zero
+	// values, silently diverging from the true (still-repeated) rule shape
+	// — `node.nonEmpty` has no such degenerate case since it reads directly
+	// off `rule.type`, never off the derived value count.
+	lines.push(`      $children: (...vs: ${elementsType}) => ${fn}(vs${optionsArg}),`);
+	if (hasSeparatorKindOption) {
+		lines.push(`      separatorKind: (v: ${separatorKindUnion}) => ${fn}(elements, { ...options, separatorKind: v }),`);
+	}
+	if (hasLeadingOption) lines.push(`      leading: (v: boolean) => ${fn}(elements, { ...options, leading: v }),`);
+	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}(elements, { ...options, trailing: v }),`);
+	lines.push('    },');
+	lines.push('  }, methodsEngine);');
+	lines.push('}');
+	return lines.join('\n');
+}
+
+// ---------------------------------------------------------------------------
 // Text factory (leaves, keywords, enums)
 // ---------------------------------------------------------------------------
 
@@ -1419,6 +1605,10 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		factory.group(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
+	emitSeparatedList(node: AssembledSeparatedList): void {
+		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries);
+	}
+
 	emitRefineForms(kind: string, node: AssembledNode): void {
 		const refineInfo = this.#refineByKind.get(kind);
 		if (!refineInfo) return;
@@ -1457,6 +1647,9 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'group':
 				this.emitGroup(node);
+				break;
+			case 'separatedList':
+				this.emitSeparatedList(node);
 				break;
 			default:
 				break;

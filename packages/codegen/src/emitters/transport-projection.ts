@@ -41,6 +41,11 @@ function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean
 		case 'keyword':
 		case 'token':
 		case 'enum':
+		// TEMPORARY (separator-as-slot Task 2 follow-up — see
+		// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
+		// shares 'branch's transport-concreteness for byte-identical output
+		// pending Tasks 4-6's real per-instance capture.
+		case 'separatedList':
 			return true;
 		case 'group':
 			return !nodeMap.polymorphFormKinds.has(node.kind);

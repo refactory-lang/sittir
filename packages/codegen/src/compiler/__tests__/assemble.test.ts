@@ -18,9 +18,9 @@ import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../
 import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
-import type { Rule } from '../../types/rule.ts';
+import type { Rule, RepeatRule, Repeat1Rule } from '../../types/rule.ts';
 import type { SimplifiedGrammar } from '../types.ts';
-import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../model/node-map.ts';
+import { deriveSlots, isRequired, isMultiple, allSlotsOf, AssembledSeparatedList } from '../model/node-map.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
 // from a grammar `field(name, ...)` wrapper (excludes kind-derived
@@ -146,6 +146,14 @@ describe('Assemble — classifyNode', () => {
 			content: { type: SYMBOL, name: 'item' }
 		};
 		expect(classifyNode('items', rule)).toBe('branch');
+	});
+
+	it('does NOT classify a bare repeat with no separator as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT,
+			content: { type: SYMBOL, name: 'item' }
+		};
+		expect(classifyNode('items_no_sep', rule)).toBe('branch');
 	});
 
 	it('classifies visible choice with same field set as branch', () => {
@@ -507,6 +515,182 @@ describe('Assemble — classifyNode', () => {
 		// name as-is" fallback preserves `_simple_pattern_negative` itself as
 		// the subtype entry — never its inner integer/float leaf types.
 		expect(subtypes).toEqual(['identifier', '_simple_pattern_negative']);
+	});
+});
+
+describe('Assemble — classifyNode — separatedList', () => {
+	it('classifies a rule with a nonterminal separator as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: {
+				value: {
+					type: CHOICE,
+					members: [
+						{ type: STRING, value: ',' },
+						{ type: STRING, value: ';' }
+					]
+				}
+			}
+		};
+		expect(classifyNode('member_list', rule)).toBe('separatedList');
+	});
+
+	it('classifies a rule with a literal separator and an optional trailing flank as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: {
+				value: { type: STRING, value: ',' },
+				trailing: 'optional'
+			}
+		};
+		expect(classifyNode('member_list', rule)).toBe('separatedList');
+	});
+
+	it('classifies a rule with a literal separator and an optional leading flank as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: {
+				value: { type: STRING, value: ',' },
+				leading: 'optional'
+			}
+		};
+		expect(classifyNode('member_list', rule)).toBe('separatedList');
+	});
+
+	it('does NOT classify a rule with a literal separator and no flank as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: {
+				value: { type: STRING, value: ',' }
+			}
+		};
+		expect(classifyNode('member_list', rule)).toBe('branch');
+	});
+
+	it('does NOT classify a branch with one array-multiplicity field among several named fields as separatedList', () => {
+		const rule: Rule<'link'> = {
+			type: SEQ,
+			members: [
+				{
+					type: FIELD,
+					name: 'name',
+					content: { type: SYMBOL, name: 'identifier' }
+				},
+				{
+					type: FIELD,
+					name: 'items',
+					content: {
+						type: REPEAT1,
+						content: { type: SYMBOL, name: 'item' },
+						separator: {
+							value: { type: STRING, value: ',' },
+							trailing: 'optional'
+						}
+					}
+				}
+			]
+		};
+		expect(classifyNode('some_branch', rule)).toBe('branch');
+	});
+});
+
+describe('AssembledSeparatedList — construction', () => {
+	it('derives elements/separatorRule/leadingMode/trailingMode for a nonterminal separator', () => {
+		const sepChoice: Rule<'link'> = {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
+		const rule: Repeat1Rule = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: { value: sepChoice }
+		};
+		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+			separatorRule: sepChoice,
+			simplifiedRule: { type: SYMBOL, name: 'member' },
+			renderRule: { type: SYMBOL, name: 'member' }
+		});
+
+		expect(node.elements).toHaveLength(1);
+		expect(node.elements[0]).toMatchObject({ multiplicity: 'nonEmptyArray' });
+		expect(node.separatorRule).toBe(sepChoice);
+		expect(node.leadingMode).toBe('none');
+		expect(node.trailingMode).toBe('none');
+	});
+
+	it('derives separatorRule=undefined and trailingMode=optional for a literal separator with an optional trailing flank', () => {
+		const rule: Repeat1Rule = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+		};
+		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+			separatorRule: undefined,
+			simplifiedRule: { type: SYMBOL, name: 'member' },
+			renderRule: { type: SYMBOL, name: 'member' }
+		});
+
+		expect(node.separatorRule).toBeUndefined();
+		expect(node.trailingMode).toBe('optional');
+		expect(node.leadingMode).toBe('none');
+	});
+
+	it('derives separatorRule=undefined and leadingMode=optional for a literal separator with an optional leading flank', () => {
+		const rule: Repeat1Rule = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: { value: { type: STRING, value: ',' }, leading: 'optional' }
+		};
+		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+			separatorRule: undefined,
+			simplifiedRule: { type: SYMBOL, name: 'member' },
+			renderRule: { type: SYMBOL, name: 'member' }
+		});
+
+		expect(node.separatorRule).toBeUndefined();
+		expect(node.leadingMode).toBe('optional');
+		expect(node.trailingMode).toBe('none');
+	});
+
+	it('derives nonEmptyArray-multiplicity elements for a repeat1 rule', () => {
+		const rule: Repeat1Rule = {
+			type: REPEAT1,
+			content: { type: SYMBOL, name: 'member' },
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+		};
+		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+			separatorRule: undefined,
+			simplifiedRule: { type: SYMBOL, name: 'member' },
+			renderRule: { type: SYMBOL, name: 'member' }
+		});
+
+		expect(node.elements).toHaveLength(1);
+		expect(node.elements[0]).toMatchObject({ multiplicity: 'nonEmptyArray' });
+		expect(node.nonEmpty).toBe(true);
+	});
+
+	it('derives array-multiplicity elements for a plain repeat rule', () => {
+		const rule: RepeatRule = {
+			type: REPEAT,
+			content: { type: SYMBOL, name: 'member' },
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+		};
+		const node = new AssembledSeparatedList('member_list', rule, undefined, {
+			separatorRule: undefined,
+			simplifiedRule: { type: SYMBOL, name: 'member' },
+			renderRule: { type: SYMBOL, name: 'member' }
+		});
+
+		expect(node.elements).toHaveLength(1);
+		expect(node.elements[0]).toMatchObject({ multiplicity: 'array' });
+		expect(node.nonEmpty).toBe(false);
 	});
 });
 

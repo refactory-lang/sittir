@@ -8,6 +8,9 @@ import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
 	AssembledNode,
+	AssembledBranch,
+	AssembledGroup,
+	AssembledSeparatedList,
 	BranchSlotClass,
 	FieldStorageInfo
 } from '../compiler/model/node-map.ts';
@@ -26,6 +29,23 @@ import {
 	deriveChildrenCardinality,
 	allSlotsOf
 } from '../compiler/model/node-map.ts';
+
+/**
+ * TEMPORARY (separator-as-slot Task 2 follow-up — see
+ * `AssembledSeparatedList`'s doc comment, compiler/model/node-map.ts): the
+ * render/wrap/factory pipeline currently treats `'separatedList'` nodes
+ * exactly like `'branch'`/`'group'` (slot-bearing compounds) for
+ * byte-identical emission, pending Tasks 4-6's real per-instance capture.
+ * Centralizes the widened modelType check so the several call sites that
+ * used to gate on `'branch'|'group'` alone stay in sync. Remove once
+ * 'separatedList' gets its own dedicated emission and this predicate's
+ * call sites revert to `'branch'|'group'` only.
+ */
+export function isSlotBearingCompound(
+	node: AssembledNode
+): node is AssembledBranch | AssembledGroup | AssembledSeparatedList {
+	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
+}
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { hasCatalogEntry } from './kind-discriminant.ts';
 
@@ -726,7 +746,7 @@ export type ChildFactorySurface = 'direct' | 'spread';
  * @param nodeMap - The assembled node map, needed by the filtering helpers.
  */
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
-	if (node.modelType !== 'branch' && node.modelType !== 'group') {
+	if (!isSlotBearingCompound(node)) {
 		return { tag: 'multiSlot' };
 	}
 
@@ -759,7 +779,7 @@ export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): Bran
  */
 export function computeSlotClasses(nodeMap: NodeMap): void {
 	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType === 'branch' || node.modelType === 'group') {
+		if (isSlotBearingCompound(node)) {
 			node.slotClass = classifyBranchSlots(node, nodeMap);
 		}
 	}
@@ -775,7 +795,7 @@ export function computeSlotClasses(nodeMap: NodeMap): void {
  * collapse to one field.
  */
 export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
-	if (node.modelType !== 'branch' && node.modelType !== 'group') return undefined;
+	if (!isSlotBearingCompound(node)) return undefined;
 	if (node.kind.startsWith('_')) return undefined;
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 	if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'singular') return undefined;
@@ -825,6 +845,14 @@ export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap):
  * value, but not through the children surface used by wrap/from dispatch.
  */
 export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): ChildFactorySurface | null {
+	// 'group' (e.g. `wrap.group()`'s own call site) and 'separatedList' both
+	// legitimately reach this function with a broad `AssembledNode` and
+	// correctly get `null` back — 'group' because this function was never
+	// group-inclusive, and 'separatedList' because it now has its own
+	// dedicated factory/wrap/from emission everywhere (Tasks 4/6); every
+	// remaining call site narrows its own node type to 'branch' before
+	// calling in, so the 'separatedList' branch this check used to carry is
+	// unreachable and has been dropped.
 	if (node.modelType !== 'branch') return null;
 	const shape = classifyFactoryShape(node, nodeMap);
 	if (shape === 'spread') return 'spread';
@@ -854,7 +882,10 @@ export function classifyFactoryShape(
 			return 'text';
 		case 'token':
 			return options?.includeTokenText ? 'text' : null;
-		case 'branch': {
+		case 'branch':
+		// TEMPORARY: 'separatedList' shares 'branch's factory-shape logic —
+		// see isSlotBearingCompound's doc comment.
+		case 'separatedList': {
 			const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 			if (slotClass.tag === 'singleSlot') {
 				if (!node.kind.startsWith('_') && slotClass.arity === 'singular') return 'direct';

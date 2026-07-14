@@ -15,9 +15,9 @@
  * skips them), so there is no emit function to exercise for that modelType.
  */
 
-import { SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import type { Rule, SeqRule, StringRule, SymbolRule } from '../../types/rule.ts';
+import type { ChoiceRule, Rule, SeqRule, StringRule, SymbolRule } from '../../types/rule.ts';
 import type {
 	AssembledBranch,
 	AssembledGroup,
@@ -135,6 +135,71 @@ describe('emitBranchTemplate', () => {
 			} as unknown as EmitCtx['nodeMap']
 		});
 		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ left }} + {{ right }}');
+	});
+});
+
+describe('emitBranchTemplate — separatedList nonterminal separator', () => {
+	it("references the transport struct's own `.separator` field instead of a hardcoded literal when the separator is nonterminal", () => {
+		// Mirrors the real shape AssembledSeparatedList.renderRule carries for
+		// a rule like `object_type_content: seq(optional(choice(',', ';')),
+		// seq(member, repeat(seq(choice(',', ';'), member))), optional(choice(',', ';')))`
+		// after link.ts's liftCommaSep + wrapper-deletion: a CHOICE-of-members
+		// rule stamped with `multiplicity: 'nonEmptyArray'` and a nonterminal
+		// `separator.value` (itself a CHOICE of STRING literals), leading+trailing.
+		const sepChoice: ChoiceRule = {
+			type: CHOICE,
+			members: [
+				{ type: STRING, value: ',' },
+				{ type: STRING, value: ';' }
+			]
+		};
+		const member: SymbolRule = { type: SYMBOL, name: 'property_signature', id: 'rMember' };
+		const rule: ChoiceRule = {
+			type: CHOICE,
+			id: 'rContent',
+			members: [member],
+			multiplicity: 'nonEmptyArray',
+			separator: { value: sepChoice, trailing: true, leading: true }
+		} as unknown as ChoiceRule;
+		const slot = makeSlot({
+			name: 'content',
+			propertyName: 'contents',
+			storageName: '_content',
+			hasTrailing: true,
+			hasLeading: true
+		});
+		const ctx = makeCtx({
+			nodeMap: {
+				slotByRuleId: new Map([['rContent', slot]]),
+				nodeByRuleId: new Map(),
+				nodes: new Map()
+			} as unknown as EmitCtx['nodeMap']
+		});
+		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ content | joinWithFlanks(content.separator) }}');
+	});
+
+	it('still falls back to a compile-time literal when the separator is a plain STRING (not nonterminal)', () => {
+		const member: SymbolRule = { type: SYMBOL, name: 'property_signature', id: 'rMember2' };
+		const rule: ChoiceRule = {
+			type: CHOICE,
+			id: 'rContent2',
+			members: [member],
+			multiplicity: 'nonEmptyArray',
+			separator: { value: { type: STRING, value: ',' } }
+		} as unknown as ChoiceRule;
+		const slot = makeSlot({
+			name: 'content',
+			propertyName: 'contents',
+			storageName: '_content'
+		});
+		const ctx = makeCtx({
+			nodeMap: {
+				slotByRuleId: new Map([['rContent2', slot]]),
+				nodeByRuleId: new Map(),
+				nodes: new Map()
+			} as unknown as EmitCtx['nodeMap']
+		});
+		expect(emitBranchTemplate(mockBranch(rule), ctx)).toBe('{{ content | join(",") }}');
 	});
 });
 

@@ -28,6 +28,7 @@ import {
 	AssembledBranch,
 	AssembledEnum,
 	AssembledGroup,
+	AssembledSeparatedList,
 	deriveUnnamedChildrenCardinality,
 	isMultiple,
 	isRequired,
@@ -50,7 +51,7 @@ import {
 	classifySlot,
 	type SlotClass
 } from './transport-common.ts';
-import { keywordPresenceValue, slotLiteralValues } from './shared.ts';
+import { keywordPresenceValue, slotLiteralValues, isSlotBearingCompound } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
@@ -62,6 +63,8 @@ import {
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { CodegenEmitter } from './emitter.ts';
+import { collectSeparatorCandidateKindNames } from './wrap.ts';
+import type { Rule } from '../types/rule.ts';
 
 /** Grammars the emitter supports. Matches the three per-grammar packages. */
 export type Grammar = 'rust' | 'typescript' | 'python';
@@ -136,7 +139,9 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 	// No per-node accumulation needed — emitRenderModule reads the full nodeMap.
 	emitLeaf(_node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void {}
 
-	emitBranch(_node: Extract<AssembledNode, { modelType: 'branch' }>): void {}
+	// TEMPORARY: 'separatedList' widened in alongside 'branch' (no-op body,
+	// same as 'branch') — see isSlotBearingCompound's doc comment (shared.ts).
+	emitBranch(_node: Extract<AssembledNode, { modelType: 'branch' }> | AssembledSeparatedList): void {}
 
 	emitGroup(_node: Extract<AssembledNode, { modelType: 'group' }>): void {}
 
@@ -503,7 +508,7 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 }
 
 function renderSlotAuditVariantsOf(
-	node: Extract<AssembledNode, { modelType: 'branch' | 'group' }>
+	node: Extract<AssembledNode, { modelType: 'branch' | 'group' | 'separatedList' }>
 ): readonly (readonly AssembledNonterminal[])[] {
 	return [Object.values(node.slots)];
 }
@@ -515,7 +520,7 @@ function renderSlotAuditKey(slot: AssembledNonterminal): string {
 }
 
 function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
-	if (node === undefined || (node.modelType !== 'branch' && node.modelType !== 'group')) {
+	if (node === undefined || !isSlotBearingCompound(node)) {
 		return {
 			named: [],
 			unnamed: [],
@@ -843,10 +848,22 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 		if (!node.userFacing) continue;
 		// Separator — scan slot values for stamped separators (set by
 		// deriveSlotsRawFromLeafAttr via stampSeparatorOnValues for named
-		// field slots). Falls back to node.separator (AssembledBranch
-		// simplified-rule separator) for container-shaped nodes whose
-		// separator lives on the simplified rule rather than slot values.
-		if (node instanceof AssembledBranch || node instanceof AssembledGroup) {
+		// field slots). Falls back to node.separator (AssembledBranch /
+		// AssembledSeparatedList simplified-rule-or-raw-rule separator) for
+		// container-shaped nodes whose separator lives on the rule rather
+		// than slot values.
+		//
+		// TEMPORARY (separator-as-slot Task 2 follow-up — see
+		// isSlotBearingCompound's doc comment, emitters/shared.ts):
+		// AssembledSeparatedList widened in alongside AssembledBranch/
+		// AssembledGroup so this scan (and its fallback) doesn't silently
+		// skip 'separatedList' nodes. AssembledBranch.separator is
+		// permanently dead (0/468 branches ever had a REPEAT-shaped
+		// simplifiedRule — wrapper-deletion always converts it to a leaf
+		// attribute first) but AssembledSeparatedList.separator is NOT dead:
+		// its `rule` is always the raw REPEAT/REPEAT1 rule by construction,
+		// so the fallback is live for it even though it's a no-op for branch.
+		if (node instanceof AssembledBranch || node instanceof AssembledGroup || node instanceof AssembledSeparatedList) {
 			let sep: string | undefined;
 			// 1. Check field slot values for a stamped separator.
 			const allSlots = node.fields;
@@ -858,11 +875,12 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 					}
 				}
 			}
-			// 2. Fall back to AssembledBranch.separator (from simplified rule)
-			//    for list-container nodes where the separator lives on the
-			//    top-level repeat and children are inferred/positional (no
-			//    deriveSlotsRawFromLeafAttr path).
-			if (sep === undefined && node instanceof AssembledBranch) {
+			// 2. Fall back to AssembledBranch/AssembledSeparatedList.separator
+			//    (from simplified rule / raw rule) for list-container nodes
+			//    where the separator lives on the top-level repeat and
+			//    children are inferred/positional (no deriveSlotsRawFromLeafAttr
+			//    path).
+			if (sep === undefined && (node instanceof AssembledBranch || node instanceof AssembledSeparatedList)) {
 				sep = node.separator ?? undefined;
 			}
 			if (sep !== undefined) separators.set(kind, sep);
@@ -970,6 +988,11 @@ function buildSlotWriteCall(cls: SlotClass, expr: string): string {
  * @param usedSupertypeNames - supertype typeNames actually used as slot types;
  *   only these get render helpers emitted. Passed from renderTransportSupport
  *   (single derivation, DRY).
+ * @param kindIdByKind - Map<kind, u16 id>, same source `renderTransportSupport`
+ *   already computes for supertype/per-slot enum dispatch (`buildKindIdByKind`).
+ *   Threaded through so `'separatedList'` kinds with a nonterminal separator
+ *   can resolve each candidate arm's numeric KindId for the render-side
+ *   `_separator_kind` → literal match (see `buildSeparatorKindMatchLines`).
  */
 function renderTypedDispatch(
 	structs: EmittedStruct[],
@@ -977,14 +1000,15 @@ function renderTypedDispatch(
 	literals: readonly TransportLiteral[],
 	meta: MetaData,
 	nodeMap: NodeMap,
-	usedSupertypeNames: ReadonlySet<string> = new Set()
+	usedSupertypeNames: ReadonlySet<string> = new Set(),
+	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined
 ): string[] {
 	const structsByKind = new Map(structs.map((s) => [s.kind, s]));
 	const lines: string[] = [];
 
 	// ---- per-kind fns ----------------------------------------------------
 	for (const node of nodes) {
-		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap));
+		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind));
 	}
 
 	// ---- per-supertype render helpers ------------------------------------
@@ -1097,17 +1121,21 @@ function renderTypedKindFn(
 	node: AssembledNode,
 	structsByKind: Map<string, EmittedStruct>,
 	meta: MetaData,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
-		case 'group': {
+		case 'group':
+		// TEMPORARY: 'separatedList' shares 'branch'/'group's typed-render
+		// path — see isSlotBearingCompound's doc comment (shared.ts).
+		case 'separatedList': {
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
 				// No template for this kind — fall back to joining children/text.
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind);
 		}
 		case 'pattern':
 		case 'keyword':
@@ -1228,7 +1256,13 @@ function buildFieldMixedByName(fields: readonly AssembledNonterminal[]): Readonl
  * Emit a branch/container/group typed render fn that builds the template
  * struct from the typed transport fields.
  */
-function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: MetaData, nodeMap: NodeMap): string[] {
+function renderTypedBranchFn(
+	node: AssembledNode,
+	struct: EmittedStruct,
+	meta: MetaData,
+	nodeMap: NodeMap,
+	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined
+): string[] {
 	const lines: string[] = [];
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
@@ -1244,7 +1278,18 @@ function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: M
 	const fieldMixedByName = buildFieldMixedByName(allSlots);
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(struct, nodeSeparator, fieldKindsByName, fieldMixedByName, nodeMap, slotModel));
+	lines.push(
+		...buildTypedTemplateBody(
+			struct,
+			nodeSeparator,
+			fieldKindsByName,
+			fieldMixedByName,
+			nodeMap,
+			slotModel,
+			node,
+			kindIdByKind
+		)
+	);
 	lines.push(`}`);
 	lines.push('');
 
@@ -1309,6 +1354,47 @@ function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false
 }
 
 /**
+ * Emit `match node.separator_kind { Some(<id>) => "<lit>", ..., _ => <fallback> }`
+ * lines resolving a `'separatedList'` node's per-instance nonterminal-separator
+ * KindId back to its compile-time-known literal text (design doc's "Render"
+ * section: the render side never stores separator text, only resynthesizes it).
+ *
+ * Candidates come from `collectSeparatorCandidateKindNames` — the SAME walk
+ * wrap.ts's `_separator_kind` wire capture uses (kind-discriminant.ts), so the
+ * match arms enumerate exactly the kinds a real `_separator_kind` value can
+ * hold. For a `STRING` arm, `rule.value` doubles as both the catalog lookup
+ * key (an anon token's literal text IS its `symbolName`, per
+ * `buildKindIdByKind`) and the literal text to emit — a nonterminal
+ * separator's arms are themselves just literals (no real grammar kind has one
+ * today; see `emitSeparatedListWrap`'s doc comment, wrap.ts).
+ *
+ * Returns `undefined` (caller falls back to the plain literal `fallbackSeparator`)
+ * when `kindIdByKind` is unavailable (no parser.c-derived numeric dispatch) or
+ * none of the candidates resolve to a known id — codegen must still emit a
+ * syntactically valid expression in that case.
+ */
+function buildSeparatorKindMatchLines(
+	separatorRule: Rule<'link'>,
+	fallbackSeparator: string,
+	kindIdByKind: ReadonlyMap<string, number> | undefined
+): string[] | undefined {
+	if (kindIdByKind === undefined) return undefined;
+	const arms: string[] = [];
+	for (const name of collectSeparatorCandidateKindNames(separatorRule)) {
+		const id = kindIdByKind.get(name);
+		if (id === undefined) continue;
+		arms.push(`Some(${id}) => ${JSON.stringify(name)},`);
+	}
+	if (arms.length === 0) return undefined;
+	return [
+		`separator: match node.separator_kind {`,
+		...arms.map((arm) => `    ${arm}`),
+		`    _ => ${fallbackSeparator},`,
+		`},`
+	];
+}
+
+/**
  * Build the function body that constructs a template struct from typed
  * transport fields and calls `template.render_into(dest)`.
  *
@@ -1338,6 +1424,14 @@ function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false
  *   vs Box<AnyTransport> via `hasAnyConcreteChildKind`).
  * @param childrenCls - slot classification for the children slot. Falls back
  *   to heterogeneous when not provided.
+ * @param node - the assembled node this struct was built for. Only consulted
+ *   for `'separatedList'`-classified nodes, to wire real per-instance
+ *   `leading`/`trailing`/`separator` values into list slots' `ListNonterminalView`
+ *   instead of the hardcoded `false`/`sepLiteral` every other kind still uses
+ *   (see the `f.view === 'list' || f.multiple` branch below).
+ * @param kindIdByKind - Map<kind, u16 id>, needed to resolve a nonterminal
+ *   separator's candidate arms to their numeric KindId for the `_separator_kind`
+ *   match (see `buildSeparatorKindMatchLines`).
  */
 function buildTypedTemplateBody(
 	struct: EmittedStruct,
@@ -1345,7 +1439,9 @@ function buildTypedTemplateBody(
 	fieldKindsByName: ReadonlyMap<string, readonly string[]> = new Map(),
 	fieldMixedByName: ReadonlySet<string> = new Set(),
 	nodeMap: NodeMap | undefined = undefined,
-	slotModel: RenderSlotModel | undefined = undefined
+	slotModel: RenderSlotModel | undefined = undefined,
+	node: AssembledNode | undefined = undefined,
+	kindIdByKind: ReadonlyMap<string, number> | undefined = undefined
 ): string[] {
 	const lines: string[] = [];
 	const templateName = struct.name;
@@ -1468,11 +1564,43 @@ function buildTypedTemplateBody(
 			// fallback away once slot value stamping covers all kinds).
 			const items = f.hasTransportField ? `${rIdent}_buf.as_slice()` : '&[]';
 			const fieldSepLiteral = f.separator !== undefined ? JSON.stringify(f.separator) : sepLiteral;
+			// 'separatedList' kinds carry real per-instance leading/trailing/
+			// separator-kind capture (Task 4's wire fields, mirrored onto this
+			// struct by renderTransportDataStruct) — resolve them here instead
+			// of the `false`/literal every other list-shaped slot still uses.
+			// See docs/superpowers/specs/2026-07-12-separator-as-slot-design.md
+			// ("Render" section).
+			const separatedList = node instanceof AssembledSeparatedList ? node : undefined;
+			// Three-way branch on `SeparatorFlankMode`: `'optional'` reads the
+			// wire-captured per-instance bool; `'mandatory'` is always present
+			// (hardcoded `true`, no per-instance capture exists — see
+			// AssembledSeparatedList's `leadingMode`/`trailingMode` doc comment,
+			// node-map.ts); `'none'`/`undefined` is always absent (`false`).
+			const leadingExpr =
+				separatedList?.leadingMode === 'optional'
+					? 'node.leading_sep.unwrap_or(false)'
+					: separatedList?.leadingMode === 'mandatory'
+						? 'true'
+						: 'false';
+			const trailingExpr =
+				separatedList?.trailingMode === 'optional'
+					? 'node.trailing_sep.unwrap_or(false)'
+					: separatedList?.trailingMode === 'mandatory'
+						? 'true'
+						: 'false';
+			const separatorMatchLines =
+				separatedList?.separatorRule !== undefined
+					? buildSeparatorKindMatchLines(separatedList.separatorRule, fieldSepLiteral, kindIdByKind)
+					: undefined;
 			lines.push(`        ${templateIdent}: ListNonterminalView {`);
 			lines.push(`            items: ${items},`);
-			lines.push(`            separator: ${fieldSepLiteral},`);
-			lines.push(`            leading: false,`);
-			lines.push(`            trailing: false,`);
+			if (separatorMatchLines !== undefined) {
+				lines.push(...separatorMatchLines.map((l) => `            ${l}`));
+			} else {
+				lines.push(`            separator: ${fieldSepLiteral},`);
+			}
+			lines.push(`            leading: ${leadingExpr},`);
+			lines.push(`            trailing: ${trailingExpr},`);
 			lines.push(`        },`);
 		} else if (f.required) {
 			// Required single-value slot (view='scalar' or view='field', non-list).
@@ -1779,7 +1907,7 @@ function renderTransportSupport(
 			// Typed dispatch: render_transport_dispatch + per-kind render_<kind>_transport fns.
 			// These are emitted AFTER renderGrammarRenderable() so Renderable::Node is in scope,
 			// and BEFORE renderTransportEntry() so render_transport can call render_transport_dispatch.
-			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames),
+			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind),
 			...renderTransportEntry()
 		].join('\n')
 	);
@@ -3193,6 +3321,12 @@ function renderTransportDataStruct(
 	switch (node.modelType) {
 		case 'branch':
 		case 'group':
+		// TEMPORARY (separator-as-slot Task 2 follow-up — see
+		// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
+		// shares 'branch's transport struct field emission for
+		// byte-identical output pending Tasks 4-6's real per-instance
+		// capture.
+		case 'separatedList':
 			lines.push(...renderTransportMetadataFields(true));
 			// Per cleanup-rules §E1: named and unnamed slots emit symmetric per-slot
 			// transport fields. JS factories write `_<storageName>` keys for every
@@ -3239,6 +3373,32 @@ function renderTransportDataStruct(
 						lines.push(...renderTransportField(innerSlot, helperNode.kind, helperNode.typeName, nodeMap, true));
 						// Track to avoid emitting the same inner field from multiple helpers.
 						emittedStorageNames.add(innerSlot.storageName);
+					}
+				}
+				// Task 4's wire capture (wrap.ts's `emitSeparatedListWrap`) emits
+				// `_leading_sep`/`_trailing_sep`/`_separator_kind` sibling wire keys
+				// ONLY when the corresponding grammar-level mode/rule actually needs
+				// per-instance capture (design's "Field shape and wire capture"
+				// section) — mirror that same gating here so the struct never
+				// declares a field the wire can't populate.
+				if (node instanceof AssembledSeparatedList) {
+					if (node.leadingMode === 'optional') {
+						lines.push(
+							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_leading_sep"))]',
+							'    pub leading_sep: Option<bool>,'
+						);
+					}
+					if (node.trailingMode === 'optional') {
+						lines.push(
+							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_sep"))]',
+							'    pub trailing_sep: Option<bool>,'
+						);
+					}
+					if (node.separatorRule !== undefined) {
+						lines.push(
+							'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator_kind"))]',
+							'    pub separator_kind: Option<u16>,'
+						);
 					}
 				}
 			}

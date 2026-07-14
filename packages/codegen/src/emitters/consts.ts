@@ -33,6 +33,11 @@ export function emitConsts(config: EmitConstsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
+			// TEMPORARY (separator-as-slot Task 2 follow-up — see
+			// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
+			// shares 'branch's consts emission for byte-identical output
+			// pending Tasks 4-6's real per-instance capture.
+			case 'separatedList':
 				nodeKinds.push(kind);
 				break;
 			case 'pattern':
@@ -618,12 +623,15 @@ function pascalCaseFromCamel(s: string): string {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Yield the fields of a node — branch or group. */
+/** Yield the fields of a node — branch, group, or (TEMPORARY, see
+ * isSlotBearingCompound's doc comment, shared.ts) separatedList. */
 function fieldsOfNode(node: AssembledNode): readonly AssembledNonterminal[] {
 	switch (node.modelType) {
 		case 'branch':
 			return node.fields;
 		case 'group':
+			return node.fields;
+		case 'separatedList':
 			return node.fields;
 		default:
 			return [];
@@ -633,6 +641,9 @@ function fieldsOfNode(node: AssembledNode): readonly AssembledNonterminal[] {
 function getFields(node: AssembledNode) {
 	switch (node.modelType) {
 		case 'branch':
+		// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
+		// isSlotBearingCompound's doc comment (shared.ts).
+		case 'separatedList':
 			return node.fields;
 		default:
 			return [];

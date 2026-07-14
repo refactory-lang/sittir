@@ -619,15 +619,79 @@ function seqHasTopLevelRepeat(members) {
   }
   return false;
 }
+function isNonterminalSeparatorType(t) {
+  return isChoiceType(t) || isSymbolType(t) || typeEq(t, "PATTERN");
+}
+function repeatHasNonterminalSeparator(repeatRule) {
+  const content = repeatRule.content;
+  if (!content || typeof content !== "object") return false;
+  const detected = detectRepeatSeparator(content);
+  if (!detected) return false;
+  return isNonterminalSeparatorType(detected.separator.type);
+}
+function isOptionalSeparatorFlank(member, sepValue) {
+  if (!member || typeof member !== "object") return false;
+  const r = member;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (isOptionalType(t)) {
+    const content = r.content;
+    if (!content || typeof content !== "object") return false;
+    const cr = content;
+    return isStringType(typeof cr.type === "string" ? cr.type : "") && cr.value === sepValue;
+  }
+  if (isChoiceType(t)) {
+    const members = r.members;
+    if (!Array.isArray(members) || members.length !== 2) return false;
+    const hasBlank = members.some(
+      (m) => m && typeof m === "object" && isBlankType(m.type)
+    );
+    const hasMatchingLiteral = members.some(
+      (m) => m && typeof m === "object" && isStringType(
+        typeof m.type === "string" ? m.type : ""
+      ) && m.value === sepValue
+    );
+    return hasBlank && hasMatchingLiteral;
+  }
+  return false;
+}
+function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings) {
+  if (repeatHasNonterminalSeparator(repeatRule)) return true;
+  const content = repeatRule.content;
+  if (!content || typeof content !== "object") return false;
+  const detected = detectRepeatSeparator(content);
+  if (!detected || !isStringType(detected.separator.type)) return false;
+  const sepValue = detected.separator.value;
+  if (typeof sepValue !== "string") return false;
+  return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
+}
+function repeatHasGenuineSeparatorVariability(repeatRule) {
+  return repeatHasNonterminalSeparator(repeatRule);
+}
+function seqHasGenuineSeparatorVariability(members) {
+  const flat = flattenSeqMembers(members);
+  const repeatMembers = [];
+  for (const m of flat) {
+    const core = unwrapPrec(m);
+    if (!core || typeof core !== "object") continue;
+    const ct = core.type;
+    if (typeof ct !== "string" || !isRepeatLike(ct)) continue;
+    const content = core.content;
+    if (content && typeof content === "object" && detectRepeatSeparator(content) !== null) {
+      repeatMembers.push(core);
+    }
+  }
+  if (repeatMembers.length !== 1) return false;
+  return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat);
+}
 function isInlineSafe(seqBody) {
   if (!seqBody || typeof seqBody !== "object") return false;
   const r = seqBody;
   const t = typeof r.type === "string" ? r.type : "";
-  if (isRepeatLike(t)) return true;
+  if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody);
   if (!isSeqType(t)) return false;
   const members = r.members;
   if (!Array.isArray(members)) return false;
-  if (seqHasTopLevelRepeat(members)) return true;
+  if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members);
   const slots = collectSlots(members);
   if (slots.length !== 1) return false;
   const core = unwrapPrec(slots[0]);
@@ -1315,6 +1379,7 @@ function canonicalStringifyClause(value) {
   const keys = Object.keys(obj).sort();
   const parts = [];
   for (const k of keys) {
+    if (k === "id" || k === "_ref" || k === "metadata" || k === "hidden" || k === "inline") continue;
     const v = obj[k];
     if (typeof v === "function" || typeof v === "undefined") continue;
     parts.push(JSON.stringify(k) + ":" + canonicalStringifyClause(v));
@@ -2637,12 +2702,6 @@ var overrides_default = grammar(
         [$._call_signature, $.constructor_type],
         [$.template_string, $.template_literal_type],
         [$.object, $.object_pattern, $.object_type],
-        // object_type_content comma/semi split: a single-member body
-        // (`{ a }`) has no delimiter yet, so it matches BOTH
-        // object_type_content_comma and object_type_content_semi until a
-        // `,`/`;` appears. Declare the GLR conflict so tree-sitter forks
-        // and resolves once the delimiter (or `}`) disambiguates.
-        [$.object_type_content_comma, $.object_type_content_semi],
         [$.primary_expression, $.rest_pattern, $.primary_type],
         [$.primary_expression, $.rest_pattern, $.literal_type],
         [$.primary_expression, $.rest_pattern, $.predefined_type],
@@ -3541,20 +3600,23 @@ var overrides_default = grammar(
             flow: { "opening:": "{|", "closing:": "|}" }
           }
         ),
-        // object_type_content — NEW visible rule: the member list is a
-        // comma-delimited OR semicolon-delimited list. Each delimiter form
-        // is its OWN visible rule (`object_type_content_comma` /
-        // `_semi`) so each carries its own render template with its own
-        // separator — a single shared template would render both forms with
-        // one separator and DROP the `;` on round-trip (`{ a; }` → `{ a }`).
-        // The visible per-delimiter rules also give tree-sitter explicit LR
-        // states to keep the `,`-list and `;`-list parses distinct.
-        object_type_content: ($) => choice($.object_type_content_comma, $.object_type_content_semi),
-        // Comma-delimited member list. `sepBy1` is written out as
-        // `seq(member, repeat(seq(',', member)))` so the DSL lifts it to
-        // `repeat1(member, ',')` and absorbs the bare `optional(',')` flanks
-        // into the repeat's leading/trailing flags (no phantom content slot).
-        object_type_content_comma: ($) => {
+        // object_type_content — a single visible rule whose separator is
+        // itself a nonterminal `choice(',', ';')`. Under the separator-as-
+        // slot model (docs/superpowers/specs/2026-07-12-separator-as-slot-
+        // design.md), a rule-shaped separator's per-instance kind is
+        // captured on the wire (`_separator_kind`) and resynthesized at
+        // render time from a compile-time KindId→literal match — so one
+        // shared rule can correctly preserve either delimiter, unlike the
+        // old comma/semi split this replaces (which needed two rules only
+        // because the previous model could store just one compile-time-
+        // constant separator string per rule). This also lets a genuinely
+        // mixed-delimiter instance (`{ a, b; c }`, legal upstream) parse
+        // and round-trip instead of hitting an ERROR node, though a mixed
+        // instance's per-gap delimiter choice isn't individually preserved
+        // (`_separator_kind` assumes a uniform separator — out of scope,
+        // see the design doc).
+        object_type_content: ($) => {
+          const SEP = () => choice(",", ";");
           const member = choice(
             $.export_statement,
             $.property_signature,
@@ -3563,19 +3625,7 @@ var overrides_default = grammar(
             $.index_signature,
             $.method_signature
           );
-          return seq(optional(","), seq(member, repeat(seq(",", member))), optional(","));
-        },
-        // Semicolon-delimited member list (same shape, `;` separator).
-        object_type_content_semi: ($) => {
-          const member = choice(
-            $.export_statement,
-            $.property_signature,
-            $.call_signature,
-            $.construct_signature,
-            $.index_signature,
-            $.method_signature
-          );
-          return seq(optional(";"), seq(member, repeat(seq(";", member))), optional(";"));
+          return seq(optional(SEP()), seq(member, repeat(seq(SEP(), member))), optional(SEP()));
         }
         // interface_body is a tree-sitter alias target of object_type —
         // it has no base rule of its own, so there's nothing to refine

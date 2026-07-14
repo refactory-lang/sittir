@@ -45,6 +45,9 @@ export interface IsGuards {
 	ClassHeritageExtendsClause<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ClassHeritageExtendsClause };
+	ExportClauseGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId._ExportClauseGroup1 };
 	ExportStatementDefault<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ExportStatementDefault };
@@ -70,15 +73,22 @@ export interface IsGuards {
 		v: T
 	): v is T & { readonly $type: TSKindId.ExportStatementTypeExport };
 	ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
+	FormalParametersGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId._FormalParametersGroup1 };
 	ImportClauseDefaultImport<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ImportClauseDefaultImport };
 	ImportClauseGroup1<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId._ImportClauseGroup1 };
+	NamedImportsGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId._NamedImportsGroup1 };
 	PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+	TupleTypeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TupleTypeGroup1 };
 	abstractClassDeclaration<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
@@ -236,12 +246,6 @@ export interface IsGuards {
 	objectTypeContent<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ObjectTypeContent };
-	objectTypeContentComma<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ObjectTypeContentComma };
-	objectTypeContentSemi<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ObjectTypeContentSemi };
 	omittingTypeAnnotation<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.OmittingTypeAnnotation };
@@ -372,6 +376,7 @@ export interface AssertGuards {
 	ClassHeritageExtendsClause(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ClassHeritageExtendsClause };
+	ExportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportClauseGroup1 };
 	ExportStatementDefault(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ExportStatementDefault };
@@ -397,13 +402,18 @@ export interface AssertGuards {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ExportStatementTypeExport };
 	ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
+	FormalParametersGroup1(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId._FormalParametersGroup1 };
 	ImportClauseDefaultImport(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
 	ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseGroup1 };
+	NamedImportsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._NamedImportsGroup1 };
 	PublicFieldDefinitionDeclareFirst(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+	TupleTypeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TupleTypeGroup1 };
 	abstractClassDeclaration(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
@@ -519,10 +529,6 @@ export interface AssertGuards {
 	objectPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectPattern };
 	objectType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectType };
 	objectTypeContent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
-	objectTypeContentComma(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ObjectTypeContentComma };
-	objectTypeContentSemi(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContentSemi };
 	omittingTypeAnnotation(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.OmittingTypeAnnotation };
@@ -651,7 +657,7 @@ const _supertype_primaryExpression_ids = new Set<number>([
 	235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	334, 335, 424, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349
+	334, 335, 426, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349
 ]);
 const _supertype_statement_ids = new Set<number>([
 	167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203
@@ -897,13 +903,16 @@ const _kindIdByKind = new Map<string, number>([
 	['union_type', TSKindId.UnionType],
 	['intersection_type', TSKindId.IntersectionType],
 	['function_type', TSKindId.FunctionType],
+	['_export_clause_group1', TSKindId._ExportClauseGroup1],
 	['_import_clause_group1', TSKindId._ImportClauseGroup1],
+	['_named_imports_group1', TSKindId._NamedImportsGroup1],
 	['_catch_clause_group1', TSKindId._CatchClauseGroup1],
+	['_formal_parameters_group1', TSKindId._FormalParametersGroup1],
+	['_enum_body_group1', TSKindId._EnumBodyGroup1],
+	['_tuple_type_group1', TSKindId._TupleTypeGroup1],
 	['_ambient_declaration_global', TSKindId.AmbientDeclarationGlobal],
 	['_ambient_declaration_module', TSKindId.AmbientDeclarationModule],
 	['object_type_content', TSKindId.ObjectTypeContent],
-	['object_type_content_comma', TSKindId.ObjectTypeContentComma],
-	['object_type_content_semi', TSKindId.ObjectTypeContentSemi],
 	['_export_statement_default', TSKindId.ExportStatementDefault],
 	['_export_statement_default_from_arm', TSKindId.ExportStatementDefaultFromArm],
 	['_export_statement_default_decl_arm', TSKindId.ExportStatementDefaultDeclArm],
@@ -944,6 +953,7 @@ export const is = {
 	ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
 	ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
 	ClassHeritageExtendsClause: _g(TSKindId.ClassHeritageExtendsClause),
+	ExportClauseGroup1: _g(TSKindId._ExportClauseGroup1),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
 	ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
 	ExportStatementDefaultFromArmClauseFrom: _g(TSKindId.ExportStatementDefaultFromArmClauseFrom),
@@ -953,9 +963,12 @@ export const is = {
 	ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
 	ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
 	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
+	FormalParametersGroup1: _g(TSKindId._FormalParametersGroup1),
 	ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
 	ImportClauseGroup1: _g(TSKindId._ImportClauseGroup1),
+	NamedImportsGroup1: _g(TSKindId._NamedImportsGroup1),
 	PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
+	TupleTypeGroup1: _g(TSKindId._TupleTypeGroup1),
 	abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
 	abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
 	addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
@@ -1053,8 +1066,6 @@ export const is = {
 	objectPattern: _g(TSKindId.ObjectPattern),
 	objectType: _g(TSKindId.ObjectType),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
-	objectTypeContentComma: _g(TSKindId.ObjectTypeContentComma),
-	objectTypeContentSemi: _g(TSKindId.ObjectTypeContentSemi),
 	omittingTypeAnnotation: _g(TSKindId.OmittingTypeAnnotation),
 	optingTypeAnnotation: _g(TSKindId.OptingTypeAnnotation),
 	optionalParameter: _g(TSKindId.OptionalParameter),
@@ -1167,6 +1178,7 @@ export const assert = {
 	ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
 	ClassBodyMethodSig: _makeAssert('ClassBodyMethodSig', is.ClassBodyMethodSig as _AnyGuard),
 	ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
+	ExportClauseGroup1: _makeAssert('ExportClauseGroup1', is.ExportClauseGroup1 as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
 	ExportStatementDefaultFromArm: _makeAssert(
 		'ExportStatementDefaultFromArm',
@@ -1191,12 +1203,15 @@ export const assert = {
 	),
 	ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
 	ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
+	FormalParametersGroup1: _makeAssert('FormalParametersGroup1', is.FormalParametersGroup1 as _AnyGuard),
 	ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
 	ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
+	NamedImportsGroup1: _makeAssert('NamedImportsGroup1', is.NamedImportsGroup1 as _AnyGuard),
 	PublicFieldDefinitionDeclareFirst: _makeAssert(
 		'PublicFieldDefinitionDeclareFirst',
 		is.PublicFieldDefinitionDeclareFirst as _AnyGuard
 	),
+	TupleTypeGroup1: _makeAssert('TupleTypeGroup1', is.TupleTypeGroup1 as _AnyGuard),
 	abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
 	abstractMethodSignature: _makeAssert('abstractMethodSignature', is.abstractMethodSignature as _AnyGuard),
 	addingTypeAnnotation: _makeAssert('addingTypeAnnotation', is.addingTypeAnnotation as _AnyGuard),
@@ -1303,8 +1318,6 @@ export const assert = {
 	objectPattern: _makeAssert('objectPattern', is.objectPattern as _AnyGuard),
 	objectType: _makeAssert('objectType', is.objectType as _AnyGuard),
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
-	objectTypeContentComma: _makeAssert('objectTypeContentComma', is.objectTypeContentComma as _AnyGuard),
-	objectTypeContentSemi: _makeAssert('objectTypeContentSemi', is.objectTypeContentSemi as _AnyGuard),
 	omittingTypeAnnotation: _makeAssert('omittingTypeAnnotation', is.omittingTypeAnnotation as _AnyGuard),
 	optingTypeAnnotation: _makeAssert('optingTypeAnnotation', is.optingTypeAnnotation as _AnyGuard),
 	optionalParameter: _makeAssert('optionalParameter', is.optionalParameter as _AnyGuard),

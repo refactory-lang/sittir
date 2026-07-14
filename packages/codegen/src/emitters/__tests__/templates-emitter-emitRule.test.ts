@@ -397,7 +397,7 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 			name: 'item',
 			id: 'r12',
 			multiplicity: 'array',
-			separator: { value: { type: STRING, value: ',' }, trailing: true }
+			separator: { value: { type: STRING, value: ',' }, trailing: 'mandatory' }
 		};
 		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({

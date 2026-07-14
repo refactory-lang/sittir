@@ -52,7 +52,7 @@ function kindDiscriminantOrLiteral(
 	if (!hasEntry) return JSON.stringify(kind);
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
-import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, AssembledSeparatedList } from '../compiler/model/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledGroup,
@@ -78,7 +78,9 @@ import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 
-type StructuralNode = AssembledBranch | AssembledGroup;
+// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+// isSlotBearingCompound's doc comment (shared.ts).
+type StructuralNode = AssembledBranch | AssembledGroup | AssembledSeparatedList;
 
 export interface EmitTypesConfig {
 	grammar: string;
@@ -426,6 +428,11 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
+			// TEMPORARY (separator-as-slot Task 2 follow-up — see
+			// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
+			// shares 'branch's type-interface emission for byte-identical
+			// output pending Tasks 4-6's real per-instance capture.
+			case 'separatedList':
 				structNodes.push(node);
 				break;
 			case 'group':

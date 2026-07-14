@@ -55,6 +55,12 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 			case 'supertype':
 			case 'multi':
 				break;
+			// TEMPORARY: 'separatedList' shares 'branch's emission — see
+			// isSlotBearingCompound's doc comment (shared.ts, emitters).
+			case 'separatedList':
+				templateEmitter.emitBranch?.(node);
+				renderModuleEmitter.emitBranch?.(node);
+				break;
 		}
 	}
 

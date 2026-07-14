@@ -431,8 +431,15 @@ function buildSlot(
 	// undefined) post-PR-S — no more string/array shapes to type-dispatch on.
 	// OR with `findRepeatFlag`'s full-tree walk as a fallback for shapes `sep`
 	// (own separator ?? inheritedSeparator ?? nested-arm scan) didn't reach.
-	const hasTrailing = isMultiSlot && (sep?.trailing === true || findRepeatFlag(rule, 'trailing'));
-	const hasLeading = isMultiSlot && (sep?.leading === true || findRepeatFlag(rule, 'leading'));
+	// Checks flank PRESENCE (`!== undefined`), not a specific
+	// `SeparatorFlankMode` value: a rule reaching this (non-`'separatedList'`-
+	// classified, see `isSeparatedListShape`, assemble.ts) can only carry a
+	// `'mandatory'` flank here — a genuinely `'optional'` one would already
+	// have routed the whole rule to `'separatedList'` classification instead,
+	// so this presence check and an explicit `=== 'mandatory'` check are
+	// equivalent for any rule that actually reaches this code path.
+	const hasTrailing = isMultiSlot && (sep?.trailing !== undefined || findRepeatFlag(rule, 'trailing'));
+	const hasLeading = isMultiSlot && (sep?.leading !== undefined || findRepeatFlag(rule, 'leading'));
 
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
 	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);

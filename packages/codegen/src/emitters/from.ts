@@ -17,8 +17,9 @@ import {
 	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
-import { AssembledBranch } from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, AssembledSeparatedList } from '../compiler/model/node-map.ts';
+
+type BranchLikeForFrom = Extract<AssembledNode, { modelType: 'branch' }>;
 import {
 	isAutoStampField,
 	isRequired,
@@ -37,6 +38,7 @@ import {
 	classifyFromEmission
 } from './shared.ts';
 import { fieldElementType } from './factories.ts';
+import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -294,7 +296,7 @@ export namespace from {
 	 */
 	export function branch(
 		output: string[],
-		node: Extract<AssembledNode, { modelType: 'branch' }>,
+		node: BranchLikeForFrom,
 		nodeMap: NodeMap,
 		intern: KindInterner,
 		kindEntries: readonly KindEnumEntry[] | undefined
@@ -317,6 +319,20 @@ export namespace from {
 		}
 		output.push(result);
 	}
+
+	/**
+	 * Emit a `'separatedList'` from() resolver — dedicated construct/
+	 * reconstruction surface, see `emitSeparatedListFrom`'s doc comment.
+	 */
+	export function separatedList(
+		output: string[],
+		node: AssembledSeparatedList,
+		nodeMap: NodeMap,
+		kindEntries: readonly KindEnumEntry[] | undefined
+	): void {
+		const result = emitSeparatedListFrom(node, kindEntries, nodeMap);
+		if (result) output.push(result);
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -325,7 +341,9 @@ export namespace from {
 
 interface BranchLikeNode {
 	readonly kind: string;
-	readonly modelType: 'branch' | 'group';
+	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
+	// isSlotBearingCompound's doc comment (shared.ts).
+	readonly modelType: 'branch' | 'group' | 'separatedList';
 	readonly typeName: string;
 	readonly fromInputTypeName: string;
 	readonly rawFactoryName?: string;
@@ -392,8 +410,14 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!targetNode) return null;
 	if (!targetNode.rawFactoryName) return null;
 
-	const branchTarget = targetNode instanceof AssembledBranch ? targetNode : null;
-	const childSurface = branchTarget?.modelType === 'branch' ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
+	// 'separatedList' is EXCLUDED here (unlike 'branch') — its Task-6 factory
+	// signature always requires an `elements` argument (never a zero-arg
+	// `F.x()` call, even for a plain `repeat` whose elements COULD be an
+	// empty array — the array itself is still a mandatory argument, not a
+	// default). `instanceof AssembledBranch` can't recognize
+	// AssembledSeparatedList, so narrow on modelType instead.
+	const branchTarget = targetNode.modelType === 'branch' ? targetNode : null;
+	const childSurface = branchTarget !== null ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
 	// Positional-child factories (`direct`/`spread`): the sole slot backing
 	// them always lives in `.fields` now, so there is no separate child slot
 	// to check for requiredness — the factory is always callable with zero
@@ -404,6 +428,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	}
 
 	// Branch / group with fields: check if the factory config is all-optional.
+	// 'separatedList' excluded — see this function's doc comment above.
 	if (targetNode.modelType !== 'branch' && targetNode.modelType !== 'group') {
 		return null;
 	}
@@ -413,11 +438,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	return targetNode.rawFactoryName;
 }
 
-function emitBranchFrom(
-	node: Extract<AssembledNode, { modelType: 'branch' }>,
-	nodeMap: NodeMap,
-	intern: KindInterner
-): string {
+function emitBranchFrom(node: BranchLikeForFrom, nodeMap: NodeMap, intern: KindInterner): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const fields = node.fields;
@@ -552,6 +573,91 @@ function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] 
 }
 
 /**
+ * Shared body for a rest-param (`...input`) from() resolver that reconstructs
+ * either from a flat list of already-resolved elements or by unwrapping an
+ * existing self-NodeData value's storage. Both `emitRepeatedContainerFrom`
+ * (container-shape branches — spreads the resolved elements into the
+ * factory's `(...children: T[])` rest param) and `emitSeparatedListFrom`
+ * (`'separatedList'` kinds — passes the resolved elements as the single
+ * `elements: T[] | NonEmptyArray<T>` array argument, Task 6) share this exact
+ * three-shape structure (numeric-discriminant gate, self-NodeData unwrap,
+ * fresh-input fallback); they differ ONLY in how the final call expression is
+ * built from a resolved variable name, which `buildCallExpr` parameterizes.
+ *
+ * @param fn - The `fromX` function name to emit.
+ * @param factory - The `F.<factoryName>` reference string.
+ * @param tName - The `T.<TypeName>` reference string.
+ * @param elementType - The child element type union string.
+ * @param kind - The grammar kind string for the self-NodeData check.
+ * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
+ * @param nodeMap - The assembled node map (used for member-name derivation).
+ * @param storageKey - The wire storage key to unwrap on the self-NodeData path.
+ * @param buildCallExpr - Builds the final `factory(...)` call expression from
+ *   a resolved variable name (`'input'` or `'children'`) — spread-via-unknown
+ *   for container-shape factories, direct array cast for `'separatedList'`.
+ * @param childrenTypeAnnotation - Optional explicit type annotation for the
+ *   self-NodeData-unwrap `children` local (e.g. `': readonly unknown[]'`) —
+ *   `emitSeparatedListFrom` needs this so its direct (non-`unknown`-laundered)
+ *   cast type-checks; the local's inferred type otherwise widens to `any[]`
+ *   via the `Array.isArray` ternary, which a direct cast rejects even though
+ *   the runtime value is the same. `emitRepeatedContainerFrom` doesn't need
+ *   it since its cast still routes through `unknown` first.
+ * @returns The emitted function source string.
+ */
+function emitRestParamFromResolver(
+	fn: string,
+	factory: string,
+	tName: string,
+	elementType: string,
+	kind: string,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap,
+	storageKey: string,
+	// `isSelfUnwrap` distinguishes the two call sites below: `true` inside
+	// the self-NodeData-unwrap branch (a `data` local naming the original
+	// wrapped node is in scope, so a caller like `emitSeparatedListFrom` can
+	// read per-instance facts off it — e.g. preserving `_separator_kind`/
+	// `_leading_sep`/`_trailing_sep` when reconstructing an already-wrapped
+	// separatedList node); `false` for the fresh-input path, where no such
+	// source node exists to read facts from.
+	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
+	childrenTypeAnnotation = ''
+): string {
+	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
+	// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
+	// requires numeric $type). Skip the node-data pass-through guard entirely
+	// — the check would always be false at runtime anyway.
+	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
+	if (!hasNumericDiscriminant) {
+		return [
+			`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
+			`  return ${buildCallExpr('input', false)};`,
+			'}'
+		].join('\n');
+	}
+	// The accepted-input union allows callers to hand back an existing
+	// <kind> NodeData OR a flat list of element children. The single-arg
+	// self-NodeData path unwraps the storage key; otherwise every item must
+	// already be an element. The storage value is typed as singular-or-array
+	// on the loose `AnyNodeData` shape; normalize to an array before the
+	// boundary cast.
+	const storageAccess = SAFE_IDENT_KEY.test(storageKey)
+		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
+		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
+	return [
+		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
+		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
+		`    const data = input[0];`,
+		`    const stored = ${storageAccess};`,
+		`    const children${childrenTypeAnnotation} = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
+		`    return ${buildCallExpr('children', true)};`,
+		`  }`,
+		`  return ${buildCallExpr('input', false)};`,
+		'}'
+	].join('\n');
+}
+
+/**
  * Emits the repeated-children variant of a container from() function, using
  * rest-parameter spread syntax.
  *
@@ -559,11 +665,6 @@ function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] 
  * Singular-child containers take one positional arg (`child?: T`); repeated-
  * child containers take `...children: T[]`. The from function has to match
  * the factory's signature at the call sites it forwards to.
- *
- * `data.$other` is undefined for empty collections that readNode represents
- * without a children slot, and singular-child containers may carry one scalar
- * child rather than an array. Normalize to an array before spreading so the
- * rebuilt factory call matches both shapes.
  *
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
@@ -584,46 +685,20 @@ function emitRepeatedContainerFrom(
 	nodeMap: NodeMap,
 	storageKey: string
 ): string {
-	// The accepted-input union allows callers to hand back an existing
-	// <kind> NodeData OR a flat list of element children. The single-arg
-	// self-NodeData path unwraps the post-unification per-slot storage key
-	// (`data._<slot.storageName>`); otherwise every item must already be an
-	// element. The `as readonly ${elementType}[]` assertion funnels the
-	// post-guard input into the factory's accepted shape — at this point any
-	// `${tName}` element has been ruled out by structural selection. The
-	// unwrap branch's storage value is typed as singular-or-array on the loose
-	// `AnyNodeData` shape; normalize to an array before the boundary cast.
-	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
-	// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
-	// requires numeric $type). Skip the node-data pass-through guard entirely
-	// — the check would always be false at runtime anyway.
-	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
-	if (!hasNumericDiscriminant) {
-		return [
-			`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
-			// as unknown as Parameters<>: elementType may include separator literals (e.g. ",")
-			// the factory doesn't accept directly. Route through unknown.
-			`  return ${factory}(...(input as unknown as Parameters<typeof ${factory}>));`,
-			'}'
-		].join('\n');
-	}
-	const storageAccess = SAFE_IDENT_KEY.test(storageKey)
-		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
-		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
-	return [
-		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
-		`    const data = input[0];`,
-		// as unknown as Parameters<>: normalized children still include string|number
-		// separator literals; factory accepts only semantic nodes.
-		`    const stored = ${storageAccess};`,
-		`    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
-		`    return ${factory}(...(children as unknown as Parameters<typeof ${factory}>));`,
-		`  }`,
-		// as unknown as Parameters<>: input may include separator literals.
-		`  return ${factory}(...(input as unknown as Parameters<typeof ${factory}>));`,
-		'}'
-	].join('\n');
+	// as unknown as Parameters<>: elementType/children may include separator
+	// literals (e.g. ",") the factory doesn't accept directly as a spread
+	// element. Route through unknown.
+	return emitRestParamFromResolver(
+		fn,
+		factory,
+		tName,
+		elementType,
+		kind,
+		kindEntries,
+		nodeMap,
+		storageKey,
+		(varExpr) => `${factory}(...(${varExpr} as unknown as Parameters<typeof ${factory}>))`
+	);
 }
 
 /**
@@ -717,6 +792,130 @@ function emitContainerFrom(
 		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
 	}
 	return emitSingularContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
+}
+
+/**
+ * Emit a `'separatedList'` from() resolver — dedicated construct/
+ * reconstruction surface built directly from `AssembledSeparatedList`'s own
+ * real fields, bypassing the Task-2 `_slots` stub entirely (see
+ * `AssembledSeparatedList`'s doc comment, node-map.ts, and
+ * `emitSeparatedListFactory`'s doc comment, factories.ts).
+ *
+ * Shares `emitRestParamFromResolver`'s three-shape structure with
+ * `emitRepeatedContainerFrom` (see that function's doc comment for the
+ * shared shape), with ONE deliberate difference in the call expression: the
+ * resolved elements are passed to the factory as the `elements` ARRAY
+ * argument directly (`factory(children as Parameters<typeof
+ * factory>[0])`), never spread and never indexed — factories.ts's Task 6
+ * signature is `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`,
+ * not the old `factory(...children: T[])` `emitRepeatedContainerFrom`
+ * assumes. Before this function existed, `classifyChildFactorySurface`'s
+ * stub-based 'spread'/'direct' classification routed `'separatedList'`
+ * kinds through the SAME spread/index call shape `emitRepeatedContainerFrom`
+ * still uses for real container-shape branches — which silently bound
+ * `children[0]` to `elements` and `children[1]` to `options` instead of the
+ * whole array once the Task 6 factory signature landed (found in
+ * spec-compliance review of Task 6, confirmed via code reading:
+ * `_assertNonEmpty` is a no-op outside `SITTIR_DEBUG`, so the mis-binding
+ * compiled and ran silently rather than throwing).
+ *
+ * Deliberately NOT `as unknown as Parameters<...>` (the cast pattern that
+ * let the original bug hide from tsgo undetected) — empirically confirmed
+ * (`tsgo` against a scratch repro) that a DIRECT cast from a `readonly`
+ * array type to the tuple-shaped `NonEmptyArray<T>` target IS accepted as
+ * "sufficiently overlapping" (tsgo TS2352's own comparability rule), for
+ * both the rest-param `input` (already `readonly (...)[]`-typed) and the
+ * self-NodeData-unwrap `children` local, PROVIDED that local carries an
+ * explicit `readonly unknown[]` annotation — its inferred type otherwise
+ * widens to `any[]` (via the `Array.isArray` ternary), which tsgo does
+ * reject directly. A narrower cast means a genuinely wrong shape at one of
+ * these two remaining opaque-`unknown`-origin sites (the self-NodeData
+ * unwrap's `stored` read, and `_wrapWithChildren`'s own `children` param)
+ * would now surface as a real tsgo error instead of silently laundering
+ * through `unknown`, closing the exact gap that let this bug ship
+ * undetected the first time.
+ *
+ * `options` is omitted on the fresh-input path (no source node exists there
+ * to read per-instance facts from — the factory's own defaults apply, same
+ * as before this fix). On the self-NodeData-unwrap path, `options` IS built
+ * from the original wrapped node's own `_separator_kind`/`_leading_sep`/
+ * `_trailing_sep` — calling `from()` on an already-wrapped separatedList
+ * node used to silently reconstruct it with the factory's DEFAULTS (comma,
+ * no flanks) regardless of what the original instance actually was, e.g.
+ * `objectTypeContentFrom()` on a wrapped semicolon-delimited node would
+ * change its rendered syntax back to a comma. Gated identically to
+ * `emitSeparatedListFactory`'s own options surface (`node.separatorRule !==
+ * undefined` / `leadingMode === 'optional'` / `trailingMode === 'optional'`)
+ * so only fields the factory actually accepts get passed. `separatorKind`
+ * needs a NUMBER→NAME reverse lookup since the wire stores a KindId but the
+ * factory's `options.separatorKind` takes one of the candidate NAME
+ * strings — built the same way `emitSeparatedListFactory`'s forward
+ * (name→id) lookup is, just with the object literal's key/value swapped.
+ */
+function emitSeparatedListFrom(
+	node: AssembledSeparatedList,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): string | undefined {
+	if (!node.rawFactoryName || !node.fromFunctionName) return undefined;
+	const fn = node.fromFunctionName;
+	const factory = `F.${node.rawFactoryName}`;
+	const tName = `T.${node.typeName}`;
+	const contentSlot = buildSeparatedListContentSlot(node);
+	const elemType = fieldElementType(contentSlot, nodeMap);
+
+	// Mirrors emitSeparatedListFactory's own gating exactly (see that
+	// function's doc comment, factories.ts) — kept consistent across
+	// capture/render/construct/reconstruct rather than diverging.
+	const hasSeparatorKindOption = node.separatorRule !== undefined;
+	const candidateKindNames = hasSeparatorKindOption
+		? collectSeparatorCandidateKindNames(node.separatorRule!).filter((k) => hasCatalogEntry(kindEntries, k))
+		: [];
+	const hasLeadingOption = node.leadingMode === 'optional';
+	const hasTrailingOption = node.trailingMode === 'optional';
+	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
+
+	const buildOptionsPreservingCall = (varExpr: string): string => {
+		// `data`'s ambient type has no arbitrary storage keys (same reason
+		// `storageAccess` above needs its own `unknown` cast) — read the
+		// three per-instance fields through one shared cast rather than
+		// three separate ones.
+		const sourceFields =
+			'(data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })';
+		const optionParts: string[] = [];
+		if (candidateKindNames.length > 0) {
+			const reverseArms = candidateKindNames
+				.map((k) => `[${kindDiscriminantExpr(k, nodeMap, kindEntries)}]: ${JSON.stringify(k)}`)
+				.join(', ');
+			// IIFE (not a bare ternary) so the `_separator_kind` read is
+			// narrowed by a single `const`, not two independent casts — a
+			// ternary re-reading the cast expression twice can't correlate
+			// the `undefined` check with the second read, tripping tsgo's
+			// "undefined can't be used as an index type" (TS2538).
+			optionParts.push(
+				`separatorKind: (() => { const sk = ${sourceFields}._separator_kind; return sk === undefined ? undefined : ({ ${reverseArms} } as Record<number, string>)[sk]; })()`
+			);
+		}
+		if (hasLeadingOption) optionParts.push(`leading: ${sourceFields}._leading_sep`);
+		if (hasTrailingOption) optionParts.push(`trailing: ${sourceFields}._trailing_sep`);
+		return `${factory}(${varExpr} as Parameters<typeof ${factory}>[0], { ${optionParts.join(', ')} } as Parameters<typeof ${factory}>[1])`;
+	};
+
+	return emitRestParamFromResolver(
+		fn,
+		factory,
+		tName,
+		elemType,
+		node.kind,
+		kindEntries,
+		nodeMap,
+		'_content',
+		(varExpr, isSelfUnwrap) =>
+			isSelfUnwrap && hasOptions
+				? buildOptionsPreservingCall(varExpr)
+				: `${factory}(${varExpr} as Parameters<typeof ${factory}>[0])`,
+		': readonly unknown[]'
+	);
 }
 
 /**
@@ -909,6 +1108,9 @@ function classifyKindsForResolver(
 			case 'supertype':
 			case 'branch':
 			case 'group':
+			// TEMPORARY: 'separatedList' shares 'branch'/'group's from()
+			// dispatch — see isSlotBearingCompound's doc comment (shared.ts).
+			case 'separatedList':
 				branchKinds.push(t);
 				break;
 		}
@@ -1290,18 +1492,26 @@ function emitRequireFieldHelper(lines: string[]): void {
 interface WrapChildrenEntry {
 	readonly kind: string;
 	readonly factoryName: string;
-	readonly childSurface: 'direct' | 'spread';
+	readonly childSurface: 'direct' | 'spread' | 'array';
 	readonly kindIdExpr: string;
 }
 
 /**
- * Collects all branch kinds that accept `$other` (catch-all children) — used by the
- * `_wrapWithChildren` runtime dispatch table in generated from.ts.
+ * Collects all branch/separatedList kinds that accept `$other` (catch-all
+ * children) — used by the `_wrapWithChildren` runtime dispatch table in
+ * generated from.ts.
  *
  * @remarks
  * Child-surface branches wrap through the same taxonomy used by the factory
  * emitter: direct unnamed-child factories call `F.kind(children[0])`, while
- * spread-child factories call `F.kind(...children)`.
+ * spread-child factories call `F.kind(...children)`. `'separatedList'`
+ * kinds are handled separately with `childSurface: 'array'` (`F.kind(children
+ * as ...)`, the whole array as the single `elements` argument) — routing
+ * them through `classifyChildFactorySurface`'s stub-based 'direct'/'spread'
+ * classification here would reproduce the same real from() mis-binding bug
+ * `emitSeparatedListFrom`'s doc comment (this file) documents; every
+ * `'separatedList'` kind unconditionally gets an `'array'` entry regardless
+ * of what the stub would have classified it as.
  *
  * @param nodeMap - The assembled node map.
  * @param kindEntries - Kind enum entries for TSKindId emission.
@@ -1313,13 +1523,13 @@ function collectWrapChildrenEntries(
 ): WrapChildrenEntry[] {
 	const entries: WrapChildrenEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== 'branch') continue;
+		if (node.modelType !== 'branch' && node.modelType !== 'separatedList') continue;
 		if (!node.rawFactoryName) continue;
 		if (kind.startsWith('_') && !node.userFacing) continue;
 		if (!kindEntries) continue;
 		const entry = findKindEntry(kindEntries, kind);
 		if (!entry) continue;
-		const childSurface = classifyChildFactorySurface(node, nodeMap);
+		const childSurface = node.modelType === 'separatedList' ? 'array' : classifyChildFactorySurface(node, nodeMap);
 		if (!childSurface) continue;
 		entries.push({
 			kind,
@@ -1371,6 +1581,17 @@ function emitWrapWithChildrenTable(
 		if (e.childSurface === 'spread') {
 			lines.push(
 				`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(...(children as Parameters<typeof F.${e.factoryName}>));`
+			);
+		} else if (e.childSurface === 'array') {
+			// 'separatedList' — the whole array IS the `elements` argument, never
+			// spread and never indexed. See `emitSeparatedListFrom`'s doc comment.
+			// Direct cast (no `as unknown` intermediate) — `children`'s own
+			// declared param type is already `readonly unknown[]`, which tsgo
+			// accepts as directly comparable to the tuple-shaped
+			// `NonEmptyArray<T>` target (confirmed empirically; see
+			// `emitSeparatedListFrom`'s doc comment for the same finding).
+			lines.push(
+				`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(children as Parameters<typeof F.${e.factoryName}>[0]);`
 			);
 		} else {
 			lines.push(
@@ -1633,8 +1854,12 @@ export class FromEmitter implements CodegenEmitter<string> {
 		from.leaf(this.#output, node);
 	}
 
-	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
+	emitBranch(node: BranchLikeForFrom): void {
 		from.branch(this.#output, node, this.#nodeMap, this.#internKinds, this.#kindEntries);
+	}
+
+	emitSeparatedList(node: AssembledSeparatedList): void {
+		from.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
 	dispatchNode(kind: string, node: AssembledNode): void {
@@ -1654,6 +1879,9 @@ export class FromEmitter implements CodegenEmitter<string> {
 			case 'enum':
 			case 'keyword':
 				this.emitLeaf(node);
+				break;
+			case 'separatedList':
+				this.emitSeparatedList(node);
 				break;
 			default:
 				break;

@@ -625,15 +625,79 @@ function seqHasTopLevelRepeat(members) {
   }
   return false;
 }
+function isNonterminalSeparatorType(t) {
+  return isChoiceType(t) || isSymbolType(t) || typeEq(t, "PATTERN");
+}
+function repeatHasNonterminalSeparator(repeatRule) {
+  const content = repeatRule.content;
+  if (!content || typeof content !== "object") return false;
+  const detected = detectRepeatSeparator(content);
+  if (!detected) return false;
+  return isNonterminalSeparatorType(detected.separator.type);
+}
+function isOptionalSeparatorFlank(member, sepValue) {
+  if (!member || typeof member !== "object") return false;
+  const r = member;
+  const t = typeof r.type === "string" ? r.type : "";
+  if (isOptionalType(t)) {
+    const content = r.content;
+    if (!content || typeof content !== "object") return false;
+    const cr = content;
+    return isStringType(typeof cr.type === "string" ? cr.type : "") && cr.value === sepValue;
+  }
+  if (isChoiceType(t)) {
+    const members = r.members;
+    if (!Array.isArray(members) || members.length !== 2) return false;
+    const hasBlank = members.some(
+      (m) => m && typeof m === "object" && isBlankType(m.type)
+    );
+    const hasMatchingLiteral = members.some(
+      (m) => m && typeof m === "object" && isStringType(
+        typeof m.type === "string" ? m.type : ""
+      ) && m.value === sepValue
+    );
+    return hasBlank && hasMatchingLiteral;
+  }
+  return false;
+}
+function repeatMemberHasGenuineSeparatorVariability(repeatRule, siblings) {
+  if (repeatHasNonterminalSeparator(repeatRule)) return true;
+  const content = repeatRule.content;
+  if (!content || typeof content !== "object") return false;
+  const detected = detectRepeatSeparator(content);
+  if (!detected || !isStringType(detected.separator.type)) return false;
+  const sepValue = detected.separator.value;
+  if (typeof sepValue !== "string") return false;
+  return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
+}
+function repeatHasGenuineSeparatorVariability(repeatRule) {
+  return repeatHasNonterminalSeparator(repeatRule);
+}
+function seqHasGenuineSeparatorVariability(members) {
+  const flat = flattenSeqMembers(members);
+  const repeatMembers = [];
+  for (const m of flat) {
+    const core = unwrapPrec(m);
+    if (!core || typeof core !== "object") continue;
+    const ct = core.type;
+    if (typeof ct !== "string" || !isRepeatLike(ct)) continue;
+    const content = core.content;
+    if (content && typeof content === "object" && detectRepeatSeparator(content) !== null) {
+      repeatMembers.push(core);
+    }
+  }
+  if (repeatMembers.length !== 1) return false;
+  return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat);
+}
 function isInlineSafe(seqBody) {
   if (!seqBody || typeof seqBody !== "object") return false;
   const r = seqBody;
   const t = typeof r.type === "string" ? r.type : "";
-  if (isRepeatLike(t)) return true;
+  if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody);
   if (!isSeqType(t)) return false;
   const members = r.members;
   if (!Array.isArray(members)) return false;
-  if (seqHasTopLevelRepeat(members)) return true;
+  if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members);
   const slots = collectSlots(members);
   if (slots.length !== 1) return false;
   const core = unwrapPrec(slots[0]);
@@ -1321,6 +1385,7 @@ function canonicalStringifyClause(value) {
   const keys = Object.keys(obj).sort();
   const parts = [];
   for (const k of keys) {
+    if (k === "id" || k === "_ref" || k === "metadata" || k === "hidden" || k === "inline") continue;
     const v = obj[k];
     if (typeof v === "function" || typeof v === "undefined") continue;
     parts.push(JSON.stringify(k) + ":" + canonicalStringifyClause(v));
@@ -2900,7 +2965,108 @@ var overrides_default = grammar(
         // explicitly hoisted to `_except_clause_as_optional1` so the emitter
         // inline+gates the `as`.
         _except_clause_as: ($) => seq(field("value", $.expression), optional($._except_clause_as_optional1)),
-        _except_clause_as_optional1: ($) => seq("as", field("alias", $.expression))
+        _except_clause_as_optional1: ($) => seq("as", field("alias", $.expression)),
+        // Track B (separator-as-slot follow-up): _collection_elements/
+        // _parameters/_patterns are grammar-authored, standalone hidden
+        // rules (not sittir enrich synthesis) carrying genuine optional
+        // trailing/leading separator flanks — confirmed live (Task 2).
+        // Unlike Track A's enrich-synthesized `_<parent>_group<N>`
+        // helpers, there is no enrich pass to hook a visible-promotion
+        // alias into; these are pre-existing base-grammar rules referenced
+        // directly by their parents (`parameters`/`lambda_parameters` for
+        // `_parameters`; `tuple_pattern`/`list_pattern` for `_patterns`;
+        // `list`/`set`/`tuple` for `_collection_elements`).
+        //
+        // IMPORTANT — alias the SYMBOL at each REFERENCE SITE, never the
+        // hidden rule's OWN body. An earlier version of this fix redefined
+        // each hidden rule's body as `alias(previous, $.visibleName)`
+        // (`previous` being the rule's SEQ content, not a symbol).
+        // Tree-sitter's `flatten_grammar` doesn't wrap a non-symbol alias
+        // in a single container node — it pushes the alias down onto
+        // EVERY symbol step of the flattened production. `_parameters`'s
+        // production flattens to `[pattern, _patterns_repeat1?, ','?]`-
+        // shaped steps, so BOTH the first element and the hidden
+        // repeat-continuation helper each individually surfaced as
+        // separate `pattern_group`/`parameter_list` nodes — confirmed via
+        // probe-kind: `tuple_pattern` on `(a, b)` produced
+        // `pattern_group("a")` AND a second `pattern_group(", b")`, while
+        // the IR (correctly) expects exactly one value for that singular
+        // slot. Track A's already-proven mechanism aliases the SYMBOL at
+        // the reference site instead (`alias($._hiddenRule,
+        // $.visibleName)`), which produces exactly one container node
+        // regardless of the hidden rule's own internal structure
+        // (confirmed already working in this codebase: `_list_pattern_
+        // group1` is shared across 3 different parent rules, each
+        // aliasing the symbol at its own reference site, and correctly
+        // produces one node per occurrence). Applying that same pattern
+        // here.
+        //
+        // Naming: `patterns` and `collection_elements` are free (no
+        // existing kind by those names in python's grammar). `parameters`
+        // is NOT free — python already has a distinct VISIBLE `parameters`
+        // kind (`seq('(', optional($._parameters), ')')`, the parenthesized
+        // wrapper) — aliasing `_parameters` to `$.parameters` would collide
+        // with it. Named the promoted list `parameter_list` instead
+        // (verified no existing `parameter_list` kind either).
+        //
+        // `field()`-wrapping each reference site with the SAME name as
+        // the alias target is still required (orthogonal to the body-vs-
+        // reference-site fix above): `buildSlot`'s field-name derivation
+        // for an unnamed (bare-symbol) reference falls back to the RAW
+        // symbol name minus its leading underscore (`_parameters` ->
+        // `parameters`), independent of what the referenced symbol
+        // resolves to via alias. That diverges from
+        // `emitters/templates.ts`'s slot-reference naming for this same
+        // position (which follows the ALIAS-RESOLVED render rule's name,
+        // `parameter_list`) whenever the alias target differs from the
+        // raw symbol's stripped name — confirmed via a real cargo build
+        // failure (`ParametersTransport` has no field `parameter_list`).
+        // Explicitly field-wrapping each reference with the SAME name as
+        // its alias target realigns both derivations and eliminates the
+        // divergence, without touching any emitter.
+        // NOTE on field(): do NOT field()-wrap these alias references.
+        // `link.ts`'s `mintContentAliasKinds` (the pass that actually
+        // registers the visible kind from a reference-site alias) only
+        // mints when the alias is the IMMEDIATE content of `optional(...)`
+        // / a 2-member `CHOICE[x, BLANK]` (`isClauseHoistVisibleGroupAlias`'s
+        // `parentIsOptionalSeq` check) — its structural walk treats `field()`
+        // as an opaque wrapper (falls through the generic `content` case,
+        // which resets `parentIsOptionalSeq` to `false`), so interposing a
+        // `field()` between `optional(...)` and the alias silently
+        // prevents the mint entirely (confirmed: with field() present, the
+        // promoted kinds vanished — `no NodeMap render path`, kind absent
+        // from node-model.json5). This also means Bug 1's field()-wrap
+        // workaround (from the earlier body-alias mechanism) is no longer
+        // needed at all: with the reference resolving THROUGH the alias to
+        // the real `parameter_list`/`pattern_group`/`element_list` kind
+        // (not the mismatched `_parameters`/`_patterns`/
+        // `_collection_elements` hidden name), `buildSlot`'s bare-symbol
+        // field-name fallback (strip leading `_`) already produces the
+        // SAME name `emitters/templates.ts` derives — no divergence to
+        // paper over.
+        parameters: ($) => seq("(", optional(alias($._parameters, $.parameter_list)), ")"),
+        // `lambda_parameters`'s base definition is the bare symbol
+        // `$ => $._parameters` (its whole body IS the reference). Aliasing
+        // this reference site too is a deliberate decision, not an
+        // oversight: `_parameters`'s separator variability is a property
+        // of the RULE, not of which parent references it — leaving this
+        // site unaliased would silently revert `lambda_parameters` to the
+        // ORIGINAL pre-feature behavior (hidden, AssembledMulti-
+        // classified, separator unreachable), defeating this feature for
+        // that reference site. (No `optional(...)` needed for the mint
+        // here — `parameters`'s reference site above already satisfies
+        // `parentIsOptionalSeq` and mints the kind; this site just needs
+        // to resolve through the same alias.)
+        lambda_parameters: ($) => alias($._parameters, $.parameter_list),
+        tuple_pattern: ($) => seq("(", optional(alias($._patterns, $.pattern_group)), ")"),
+        list_pattern: ($) => seq("[", optional(alias($._patterns, $.pattern_group)), "]"),
+        list: ($) => seq("[", optional(alias($._collection_elements, $.element_list)), "]"),
+        // `set`'s reference is MANDATORY (base: `seq('{', $._collection_elements, '}')`,
+        // no `optional(...)`) — it can't itself satisfy `parentIsOptionalSeq`,
+        // but doesn't need to: `list`/`tuple`'s optional-wrapped references
+        // mint the kind; this site just resolves through the same alias.
+        set: ($) => seq("{", alias($._collection_elements, $.element_list), "}"),
+        tuple: ($) => seq("(", optional(alias($._collection_elements, $.element_list)), ")")
       }
     },
     enrichedBase

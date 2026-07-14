@@ -24,6 +24,7 @@
  */
 
 import { typeEq, type RuntimeRule } from '../types/runtime-shapes.ts';
+import type { SeparatorFlankMode } from '../types/rule.ts';
 
 /**
  * The nested separator fact's shape (`{value, trailing?, leading?}`, PR-S),
@@ -35,8 +36,8 @@ import { typeEq, type RuntimeRule } from '../types/runtime-shapes.ts';
  */
 interface SeparatorFact {
 	readonly value: RuntimeRule;
-	readonly trailing?: boolean;
-	readonly leading?: boolean;
+	readonly trailing?: SeparatorFlankMode;
+	readonly leading?: SeparatorFlankMode;
 }
 
 /**

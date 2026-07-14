@@ -171,7 +171,13 @@ export type RustGrammar = {
 		type: 'arguments';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'attributed_argument'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'arguments_group1'; named: true }] };
+	};
+	readonly arguments_group1: {
+		type: 'arguments_group1';
+		named: true;
+		fields: {};
+		children: { multiple: true; required: true; types: [{ type: 'attributed_argument'; named: true }] };
 	};
 	readonly array_expression: {
 		type: 'array_expression';
@@ -187,7 +193,7 @@ export type RustGrammar = {
 		type: 'array_expression_list';
 		named: true;
 		fields: { attributes: { multiple: true; required: false; types: [{ type: 'attribute_item'; named: true }] } };
-		children: { multiple: true; required: false; types: [{ type: 'attributed_argument'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'arguments_group1'; named: true }] };
 	};
 	readonly array_expression_semi: {
 		type: 'array_expression_semi';
@@ -718,7 +724,13 @@ export type RustGrammar = {
 		type: 'enum_variant_list';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'attributed_enum_variant'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'enum_variant_list_group1'; named: true }] };
+	};
+	readonly enum_variant_list_group1: {
+		type: 'enum_variant_list_group1';
+		named: true;
+		fields: {};
+		children: { multiple: true; required: true; types: [{ type: 'attributed_enum_variant'; named: true }] };
 	};
 	readonly expression_statement: {
 		type: 'expression_statement';
@@ -777,7 +789,13 @@ export type RustGrammar = {
 		type: 'field_declaration_list';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'attributed_field_declaration'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'field_declaration_list_group1'; named: true }] };
+	};
+	readonly field_declaration_list_group1: {
+		type: 'field_declaration_list_group1';
+		named: true;
+		fields: {};
+		children: { multiple: true; required: true; types: [{ type: 'attributed_field_declaration'; named: true }] };
 	};
 	readonly field_expression: {
 		type: 'field_expression';
@@ -809,15 +827,24 @@ export type RustGrammar = {
 		named: true;
 		fields: {
 			initializers: {
-				multiple: true;
+				multiple: false;
 				required: false;
-				types: [
-					{ type: ','; named: false },
-					{ type: 'base_field_initializer'; named: true },
-					{ type: 'field_initializer'; named: true },
-					{ type: 'shorthand_field_initializer'; named: true }
-				];
+				types: [{ type: 'field_initializer_list_group1'; named: true }];
 			};
+		};
+	};
+	readonly field_initializer_list_group1: {
+		type: 'field_initializer_list_group1';
+		named: true;
+		fields: {};
+		children: {
+			multiple: true;
+			required: true;
+			types: [
+				{ type: 'base_field_initializer'; named: true },
+				{ type: 'field_initializer'; named: true },
+				{ type: 'shorthand_field_initializer'; named: true }
+			];
 		};
 	};
 	readonly field_pattern: {
@@ -1381,11 +1408,17 @@ export type RustGrammar = {
 		named: true;
 		fields: {
 			attributes: {
-				multiple: true;
+				multiple: false;
 				required: false;
-				types: [{ type: ','; named: false }, { type: 'attributed_ordered_field'; named: true }];
+				types: [{ type: 'ordered_field_declaration_list_group1'; named: true }];
 			};
 		};
+	};
+	readonly ordered_field_declaration_list_group1: {
+		type: 'ordered_field_declaration_list_group1';
+		named: true;
+		fields: {};
+		children: { multiple: true; required: true; types: [{ type: 'attributed_ordered_field'; named: true }] };
 	};
 	readonly outer_doc_comment_marker: { type: 'outer_doc_comment_marker'; named: true; fields: {} };
 	readonly parameter: {
@@ -1405,7 +1438,13 @@ export type RustGrammar = {
 		type: 'parameters';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'attributed_parameter'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'parameters_group1'; named: true }] };
+	};
+	readonly parameters_group1: {
+		type: 'parameters_group1';
+		named: true;
+		fields: {};
+		children: { multiple: true; required: true; types: [{ type: 'attributed_parameter'; named: true }] };
 	};
 	readonly parenthesized_expression: {
 		type: 'parenthesized_expression';
@@ -1688,7 +1727,13 @@ export type RustGrammar = {
 		type: 'slice_pattern';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: '_pattern'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'slice_pattern_group1'; named: true }] };
+	};
+	readonly slice_pattern_group1: {
+		type: 'slice_pattern_group1';
+		named: true;
+		fields: {};
+		children: { multiple: true; required: true; types: [{ type: '_pattern'; named: true }] };
 	};
 	readonly source_file: {
 		type: 'source_file';
@@ -1781,20 +1826,22 @@ export type RustGrammar = {
 		type: 'struct_pattern';
 		named: true;
 		fields: {
-			fields: {
-				multiple: true;
-				required: false;
-				types: [
-					{ type: ','; named: false },
-					{ type: 'field_pattern'; named: true },
-					{ type: 'remaining_field_pattern'; named: true }
-				];
-			};
+			fields: { multiple: false; required: false; types: [{ type: 'struct_pattern_group1'; named: true }] };
 			type: {
 				multiple: false;
 				required: true;
 				types: [{ type: 'scoped_type_identifier'; named: true }, { type: 'type_identifier'; named: true }];
 			};
+		};
+	};
+	readonly struct_pattern_group1: {
+		type: 'struct_pattern_group1';
+		named: true;
+		fields: {};
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'field_pattern'; named: true }, { type: 'remaining_field_pattern'; named: true }];
 		};
 	};
 	readonly token_binding_pattern: {
@@ -2070,16 +2117,16 @@ export type RustGrammar = {
 	readonly tuple_pattern: {
 		type: 'tuple_pattern';
 		named: true;
-		fields: {
-			elements: {
-				multiple: true;
-				required: false;
-				types: [
-					{ type: ','; named: false },
-					{ type: '_pattern'; named: true },
-					{ type: 'closure_expression'; named: true }
-				];
-			};
+		fields: { elements: { multiple: false; required: false; types: [{ type: 'tuple_pattern_group1'; named: true }] } };
+	};
+	readonly tuple_pattern_group1: {
+		type: 'tuple_pattern_group1';
+		named: true;
+		fields: {};
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: '_pattern'; named: true }, { type: 'closure_expression'; named: true }];
 		};
 	};
 	readonly tuple_struct_pattern: {
@@ -2096,7 +2143,7 @@ export type RustGrammar = {
 				];
 			};
 		};
-		children: { multiple: true; required: false; types: [{ type: '_pattern'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'slice_pattern_group1'; named: true }] };
 	};
 	readonly tuple_type: {
 		type: 'tuple_type';
@@ -2222,16 +2269,16 @@ export type RustGrammar = {
 	readonly use_bounds: {
 		type: 'use_bounds';
 		named: true;
-		fields: {
-			bounds: {
-				multiple: true;
-				required: false;
-				types: [
-					{ type: ','; named: false },
-					{ type: 'lifetime'; named: true },
-					{ type: 'type_identifier'; named: true }
-				];
-			};
+		fields: { bounds: { multiple: false; required: false; types: [{ type: 'use_bounds_group1'; named: true }] } };
+	};
+	readonly use_bounds_group1: {
+		type: 'use_bounds_group1';
+		named: true;
+		fields: {};
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'lifetime'; named: true }, { type: 'type_identifier'; named: true }];
 		};
 	};
 	readonly use_declaration: {
@@ -2261,9 +2308,15 @@ export type RustGrammar = {
 		type: 'use_list';
 		named: true;
 		fields: {};
+		children: { multiple: false; required: false; types: [{ type: 'use_list_group1'; named: true }] };
+	};
+	readonly use_list_group1: {
+		type: 'use_list_group1';
+		named: true;
+		fields: {};
 		children: {
 			multiple: true;
-			required: false;
+			required: true;
 			types: [
 				{ type: 'crate'; named: true },
 				{ type: 'identifier'; named: true },
@@ -2356,7 +2409,13 @@ export type RustGrammar = {
 		type: 'where_clause';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: false; types: [{ type: 'where_predicate'; named: true }] };
+		children: { multiple: false; required: false; types: [{ type: 'where_clause_group1'; named: true }] };
+	};
+	readonly where_clause_group1: {
+		type: 'where_clause_group1';
+		named: true;
+		fields: {};
+		children: { multiple: true; required: true; types: [{ type: 'where_predicate'; named: true }] };
 	};
 	readonly where_predicate: {
 		type: 'where_predicate';

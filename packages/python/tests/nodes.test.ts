@@ -35,13 +35,18 @@ describe('aliased_import', () => {
 
 describe('argument_list', () => {
 	it('factory produces correct type', () => {
-		const node = ir.argumentList({});
+		const node = ir.argumentList();
 		expect(node.$type).toBe(TSKindId.ArgumentList);
 		expect(node.$source).toBe(2);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.argumentList({});
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.argumentList({
+			$type: TSKindId._ArgumentListGroup1,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -572,25 +577,21 @@ describe('delete_statement', () => {
 
 describe('dict_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.dictPattern({});
+		const node = ir.dictPattern();
 		expect(node.$type).toBe(TSKindId.DictPattern);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.dictPattern({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
 describe('dictionary', () => {
 	it('factory produces correct type', () => {
-		const node = ir.dictionary({});
+		const node = ir.dictionary();
 		expect(node.$type).toBe(TSKindId.Dictionary);
 		expect(node.$source).toBe(2);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.dictionary({});
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.dictionary({ $type: TSKindId._DictionaryGroup1, $text: 'test', $source: 2, $named: true } as any);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -1867,6 +1868,104 @@ describe('yield', () => {
 		const node = ir.yield();
 		expect(node.$type).toBe(TSKindId.Yield);
 		expect(node.$source).toBe(2);
+	});
+});
+
+describe('list_pattern_group1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.listPatternGroup1({
+			casePattern: [
+				{
+					$type: TSKindId.CasePattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId._ListPatternGroup1);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.listPatternGroup1({
+			casePattern: [
+				{
+					$type: TSKindId.CasePattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('argument_list_group1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.argumentListGroup1({});
+		expect(node.$type).toBe(TSKindId._ArgumentListGroup1);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.argumentListGroup1({});
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('dict_pattern_group1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.dictPatternGroup1({
+			dictPatternKv: {
+				$type: TSKindId.KeyValuePattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_key: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any,
+				_value: {
+					$type: TSKindId.CasePattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId._DictPatternGroup1);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.dictPatternGroup1({
+			dictPatternKv: {
+				$type: TSKindId.KeyValuePattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_key: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any,
+				_value: {
+					$type: TSKindId.CasePattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
+			} as any
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('dictionary_group1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.dictionaryGroup1({});
+		expect(node.$type).toBe(TSKindId._DictionaryGroup1);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.dictionaryGroup1({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 

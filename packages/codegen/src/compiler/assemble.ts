@@ -36,6 +36,7 @@ import type {
 	SupertypeRule
 } from '../types/rule.ts';
 import { isLinkSymbol, isEnumChoiceRule } from '../types/rule.ts';
+import { isNonterminalRuleType } from './rule-catalog.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
 import { collectGeneratedKindEntries, type GeneratedIdTables, type GeneratedKindEntry } from './generated-metadata.ts';
@@ -49,6 +50,7 @@ import {
 	AssembledSupertype,
 	AssembledGroup,
 	AssembledMulti,
+	AssembledSeparatedList,
 	drainParseKindCollisionDiagnostics,
 	drainDeriveShapeDiagnostics,
 	drainAssembleWarnings,
@@ -406,6 +408,32 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 						);
 					}
 					nodes.set(kind, new AssembledMulti(kind, shape.repeat));
+					break;
+				}
+				case 'separatedList': {
+					const listRule = inlinedRule as RepeatRule | Repeat1Rule;
+					const sep = listRule.separator;
+					const separatorRule = sep && isNonterminalRuleType(sep.value as Rule<'evaluate'>) ? sep.value : undefined;
+					nodes.set(
+						kind,
+						new AssembledSeparatedList(
+							kind,
+							listRule,
+							{ kindEntries },
+							{
+								separatorRule,
+								// TEMPORARY behavior-preserving stub (see
+								// AssembledSeparatedList's doc comment) — the SAME
+								// simplifiedRule/renderRule/parseKindCollisionContext
+								// the 'branch' case above passes, so wrap/render/
+								// factory emission reusing 'branch's code path stays
+								// byte-identical to pre-Task-2 output.
+								simplifiedRule,
+								renderRule,
+								parseKindCollisionContext
+							}
+						)
+					);
 					break;
 				}
 			}
@@ -1562,9 +1590,35 @@ export function classifyNode(
 	}
 
 	if (isHiddenRepeatHelper(kind, rule, opts?.parentAliasedKinds)) return 'multi';
+	if (isSeparatedListShape(rule)) return 'separatedList';
 	const branchOrContainer = classifyBranchOrContainer(rule);
 	if (branchOrContainer !== null) return branchOrContainer;
 	return classifyTerminalFallback(kind, rule);
+}
+
+/**
+ * A rule whose ENTIRE top-level structure is a repeated list with genuine
+ * per-instance separator variability — either the separator itself is
+ * nonterminal (multiple possible literal kinds), or it's a literal
+ * separator with an optional (not mandatory, not absent) leading/trailing
+ * flank. See docs/superpowers/specs/2026-07-12-separator-as-slot-design.md.
+ *
+ * Does NOT match a branch that merely HAS one array-multiplicity field
+ * among several named fields (that stays 'branch', unchanged) — only a
+ * rule whose own top-level type IS repeat/repeat1 qualifies, which is
+ * exactly the same shape gate `isHiddenRepeatHelper` uses via
+ * `extractRepeatShape` for the (unrelated) hidden-multi case above.
+ */
+function isSeparatedListShape(rule: Rule<'link'>): boolean {
+	if (rule.type !== REPEAT && rule.type !== REPEAT1) return false;
+	const sep = rule.separator;
+	if (sep === undefined) return false;
+	if (isNonterminalRuleType(sep.value as Rule<'evaluate'>)) return true;
+	// Only a genuinely OPTIONAL flank has per-instance variability worth
+	// this classification — 'mandatory' (always present) is compile-time
+	// renderable exactly like 'none' (absent), and stays classified as
+	// 'branch' via the pre-existing hasTrailing/hasLeading mechanism.
+	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 
 /**

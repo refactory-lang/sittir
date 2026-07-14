@@ -654,13 +654,9 @@ describe('enum_assignment', () => {
 
 describe('enum_body', () => {
 	it('factory produces correct type', () => {
-		const node = ir.enumBody({});
+		const node = ir.enumBody();
 		expect(node.$type).toBe(TSKindId.EnumBody);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.enumBody({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -1714,25 +1710,13 @@ describe('object_type', () => {
 
 describe('object_type_content', () => {
 	it('factory produces correct type', () => {
-		const node = ir.objectTypeContent({ type: 'object_type_content_comma' } as never);
+		const node = ir.objectTypeContent({});
 		expect(node.$type).toBe(TSKindId.ObjectTypeContent);
 		expect(node.$source).toBe(2);
 	});
-});
-
-describe('object_type_content_comma', () => {
-	it('factory produces correct type', () => {
-		const node = ir.objectTypeContentComma();
-		expect(node.$type).toBe(TSKindId.ObjectTypeContentComma);
-		expect(node.$source).toBe(2);
-	});
-});
-
-describe('object_type_content_semi', () => {
-	it('factory produces correct type', () => {
-		const node = ir.objectTypeContentSemi();
-		expect(node.$type).toBe(TSKindId.ObjectTypeContentSemi);
-		expect(node.$source).toBe(2);
+	it('render does not throw on minimal config', () => {
+		const node = ir.objectTypeContent({});
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -2719,6 +2703,130 @@ describe('catch_clause_group1', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.catchClauseGroup1({
 			parameter: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('enum_body_group1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.enumBodyGroup1({});
+		expect(node.$type).toBe(TSKindId._EnumBodyGroup1);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.enumBodyGroup1({});
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('export_clause_group1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.exportClauseGroup1({
+			exportSpecifier: [
+				{
+					$type: TSKindId.ExportSpecifier,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId._ExportClauseGroup1);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.exportClauseGroup1({
+			exportSpecifier: [
+				{
+					$type: TSKindId.ExportSpecifier,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('formal_parameters_group1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.formalParametersGroup1({
+			formalParameter: [
+				{
+					$type: TSKindId.RequiredParameter,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId._FormalParametersGroup1);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.formalParametersGroup1({
+			formalParameter: [
+				{
+					$type: TSKindId.RequiredParameter,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_pattern: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('named_imports_group1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.namedImportsGroup1({
+			importSpecifier: [
+				{
+					$type: TSKindId.ImportSpecifier,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$type).toBe(TSKindId._NamedImportsGroup1);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.namedImportsGroup1({
+			importSpecifier: [
+				{
+					$type: TSKindId.ImportSpecifier,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('tuple_type_group1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tupleTypeGroup1({
+			tupleTypeMember: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId._TupleTypeGroup1);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.tupleTypeGroup1({
+			tupleTypeMember: [{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

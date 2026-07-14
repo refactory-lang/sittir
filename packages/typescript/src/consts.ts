@@ -5,6 +5,7 @@ export const NODE_KINDS = [
 	'_arrow_function_parameter',
 	'_class_body_method_sig',
 	'_class_heritage_extends_clause',
+	'_export_clause_group1',
 	'_export_statement_default',
 	'_export_statement_default_from_arm',
 	'_export_statement_default_from_arm_clause_from',
@@ -14,13 +15,16 @@ export const NODE_KINDS = [
 	'_export_statement_namespace_export',
 	'_export_statement_type_export',
 	'_for_header_lhs',
+	'_formal_parameters_group1',
 	'_import_clause_default_import',
 	'_import_clause_group1',
 	'_jsx_start_opening_element',
 	'_jsx_string',
 	'_lhs_expression',
-	'_object_type_optional1',
+	'_named_imports_group1',
+	'_object_type_group1',
 	'_public_field_definition_declare_first',
+	'_tuple_type_group1',
 	'abstract_class_declaration',
 	'abstract_method_signature',
 	'adding_type_annotation',
@@ -64,8 +68,10 @@ export const NODE_KINDS = [
 	'else_clause',
 	'enum_assignment',
 	'enum_body',
+	'enum_body_group1',
 	'enum_declaration',
 	'export_clause',
+	'export_clause_group1',
 	'export_specifier',
 	'export_statement',
 	'expression_statement',
@@ -77,6 +83,7 @@ export const NODE_KINDS = [
 	'for_in_statement',
 	'for_statement',
 	'formal_parameters',
+	'formal_parameters_group1',
 	'function_declaration',
 	'function_expression',
 	'function_signature',
@@ -117,6 +124,7 @@ export const NODE_KINDS = [
 	'method_signature',
 	'module',
 	'named_imports',
+	'named_imports_group1',
 	'namespace_export',
 	'namespace_import',
 	'nested_identifier',
@@ -128,8 +136,6 @@ export const NODE_KINDS = [
 	'object_pattern',
 	'object_type',
 	'object_type_content',
-	'object_type_content_comma',
-	'object_type_content_semi',
 	'omitting_type_annotation',
 	'opting_type_annotation',
 	'optional_parameter',
@@ -167,6 +173,7 @@ export const NODE_KINDS = [
 	'try_statement',
 	'tuple_parameter',
 	'tuple_type',
+	'tuple_type_group1',
 	'type_alias_declaration',
 	'type_annotation',
 	'type_arguments',
@@ -709,25 +716,27 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	union_type: 349,
 	intersection_type: 350,
 	function_type: 351,
-	_import_clause_group1: 352,
-	object_type_content: 356,
-	object_type_content_comma: 357,
-	object_type_content_semi: 358,
-	_export_statement_default: 359,
-	_export_statement_default_from_arm: 360,
-	_arrow_function_parameter: 363,
-	_class_heritage_extends_clause: 364,
-	_import_clause_default_import: 365,
-	_export_statement_default_from_arm_star_from: 368,
-	_export_statement_default_from_arm_ns_from: 369,
-	_export_statement_default_from_arm_clause_from: 370,
-	_class_body_method_sig: 373,
-	_for_header_lhs: 375,
-	_export_statement_type_export: 379,
-	_export_statement_equals_export: 380,
-	_export_statement_namespace_export: 381,
-	_public_field_definition_declare_first: 417,
-	_type_identifier: 424
+	_export_clause_group1: 352,
+	_import_clause_group1: 353,
+	_named_imports_group1: 354,
+	_formal_parameters_group1: 356,
+	_tuple_type_group1: 358,
+	object_type_content: 361,
+	_export_statement_default: 362,
+	_export_statement_default_from_arm: 363,
+	_arrow_function_parameter: 366,
+	_class_heritage_extends_clause: 367,
+	_import_clause_default_import: 368,
+	_export_statement_default_from_arm_star_from: 371,
+	_export_statement_default_from_arm_ns_from: 372,
+	_export_statement_default_from_arm_clause_from: 373,
+	_class_body_method_sig: 376,
+	_for_header_lhs: 378,
+	_export_statement_type_export: 382,
+	_export_statement_equals_export: 383,
+	_export_statement_namespace_export: 384,
+	_public_field_definition_declare_first: 419,
+	_type_identifier: 426
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -982,25 +991,27 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[349]: 'union_type',
 	[350]: 'intersection_type',
 	[351]: 'function_type',
-	[352]: '_import_clause_group1',
-	[356]: 'object_type_content',
-	[357]: 'object_type_content_comma',
-	[358]: 'object_type_content_semi',
-	[359]: '_export_statement_default',
-	[360]: '_export_statement_default_from_arm',
-	[363]: '_arrow_function_parameter',
-	[364]: '_class_heritage_extends_clause',
-	[365]: '_import_clause_default_import',
-	[368]: '_export_statement_default_from_arm_star_from',
-	[369]: '_export_statement_default_from_arm_ns_from',
-	[370]: '_export_statement_default_from_arm_clause_from',
-	[373]: '_class_body_method_sig',
-	[375]: '_for_header_lhs',
-	[379]: '_export_statement_type_export',
-	[380]: '_export_statement_equals_export',
-	[381]: '_export_statement_namespace_export',
-	[417]: '_public_field_definition_declare_first',
-	[424]: '_type_identifier'
+	[352]: '_export_clause_group1',
+	[353]: '_import_clause_group1',
+	[354]: '_named_imports_group1',
+	[356]: '_formal_parameters_group1',
+	[358]: '_tuple_type_group1',
+	[361]: 'object_type_content',
+	[362]: '_export_statement_default',
+	[363]: '_export_statement_default_from_arm',
+	[366]: '_arrow_function_parameter',
+	[367]: '_class_heritage_extends_clause',
+	[368]: '_import_clause_default_import',
+	[371]: '_export_statement_default_from_arm_star_from',
+	[372]: '_export_statement_default_from_arm_ns_from',
+	[373]: '_export_statement_default_from_arm_clause_from',
+	[376]: '_class_body_method_sig',
+	[378]: '_for_header_lhs',
+	[382]: '_export_statement_type_export',
+	[383]: '_export_statement_equals_export',
+	[384]: '_export_statement_namespace_export',
+	[419]: '_public_field_definition_declare_first',
+	[426]: '_type_identifier'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1335,95 +1346,92 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'union_type', id: 349, enumName: 'UnionType', cName: 'sym_union_type' },
 	{ name: 'intersection_type', id: 350, enumName: 'IntersectionType', cName: 'sym_intersection_type' },
 	{ name: 'function_type', id: 351, enumName: 'FunctionType', cName: 'sym_function_type' },
-	{ name: '_import_clause_group1', id: 352, enumName: 'ImportClauseGroup1', cName: 'sym__import_clause_group1' },
-	{ name: 'object_type_content', id: 356, enumName: 'ObjectTypeContent', cName: 'sym_object_type_content' },
+	{ name: '_export_clause_group1', id: 352, enumName: 'ExportClauseGroup1', cName: 'sym__export_clause_group1' },
+	{ name: '_import_clause_group1', id: 353, enumName: 'ImportClauseGroup1', cName: 'sym__import_clause_group1' },
+	{ name: '_named_imports_group1', id: 354, enumName: 'NamedImportsGroup1', cName: 'sym__named_imports_group1' },
 	{
-		name: 'object_type_content_comma',
-		id: 357,
-		enumName: 'ObjectTypeContentComma',
-		cName: 'sym_object_type_content_comma'
+		name: '_formal_parameters_group1',
+		id: 356,
+		enumName: 'FormalParametersGroup1',
+		cName: 'sym__formal_parameters_group1'
 	},
-	{
-		name: 'object_type_content_semi',
-		id: 358,
-		enumName: 'ObjectTypeContentSemi',
-		cName: 'sym_object_type_content_semi'
-	},
+	{ name: '_tuple_type_group1', id: 358, enumName: 'TupleTypeGroup1', cName: 'sym__tuple_type_group1' },
+	{ name: 'object_type_content', id: 361, enumName: 'ObjectTypeContent', cName: 'sym_object_type_content' },
 	{
 		name: '_export_statement_default',
-		id: 359,
+		id: 362,
 		enumName: 'ExportStatementDefault',
 		cName: 'sym__export_statement_default'
 	},
 	{
 		name: '_export_statement_default_from_arm',
-		id: 360,
+		id: 363,
 		enumName: 'ExportStatementDefaultFromArm',
 		cName: 'sym__export_statement_default_from_arm'
 	},
 	{
 		name: '_arrow_function_parameter',
-		id: 363,
+		id: 366,
 		enumName: 'ArrowFunctionParameter',
 		cName: 'sym__arrow_function_parameter'
 	},
 	{
 		name: '_class_heritage_extends_clause',
-		id: 364,
+		id: 367,
 		enumName: 'ClassHeritageExtendsClause',
 		cName: 'sym__class_heritage_extends_clause'
 	},
 	{
 		name: '_import_clause_default_import',
-		id: 365,
+		id: 368,
 		enumName: 'ImportClauseDefaultImport',
 		cName: 'sym__import_clause_default_import'
 	},
 	{
 		name: '_export_statement_default_from_arm_star_from',
-		id: 368,
+		id: 371,
 		enumName: 'ExportStatementDefaultFromArmStarFrom',
 		cName: 'sym__export_statement_default_from_arm_star_from'
 	},
 	{
 		name: '_export_statement_default_from_arm_ns_from',
-		id: 369,
+		id: 372,
 		enumName: 'ExportStatementDefaultFromArmNsFrom',
 		cName: 'sym__export_statement_default_from_arm_ns_from'
 	},
 	{
 		name: '_export_statement_default_from_arm_clause_from',
-		id: 370,
+		id: 373,
 		enumName: 'ExportStatementDefaultFromArmClauseFrom',
 		cName: 'sym__export_statement_default_from_arm_clause_from'
 	},
-	{ name: '_class_body_method_sig', id: 373, enumName: 'ClassBodyMethodSig', cName: 'sym__class_body_method_sig' },
-	{ name: '_for_header_lhs', id: 375, enumName: 'ForHeaderLhs', cName: 'sym__for_header_lhs' },
+	{ name: '_class_body_method_sig', id: 376, enumName: 'ClassBodyMethodSig', cName: 'sym__class_body_method_sig' },
+	{ name: '_for_header_lhs', id: 378, enumName: 'ForHeaderLhs', cName: 'sym__for_header_lhs' },
 	{
 		name: '_export_statement_type_export',
-		id: 379,
+		id: 382,
 		enumName: 'ExportStatementTypeExport',
 		cName: 'sym__export_statement_type_export'
 	},
 	{
 		name: '_export_statement_equals_export',
-		id: 380,
+		id: 383,
 		enumName: 'ExportStatementEqualsExport',
 		cName: 'sym__export_statement_equals_export'
 	},
 	{
 		name: '_export_statement_namespace_export',
-		id: 381,
+		id: 384,
 		enumName: 'ExportStatementNamespaceExport',
 		cName: 'sym__export_statement_namespace_export'
 	},
 	{
 		name: '_public_field_definition_declare_first',
-		id: 417,
+		id: 419,
 		enumName: 'AliasPublicFieldDefinitionDeclareFirst',
 		cName: 'alias_sym_public_field_definition_declare_first'
 	},
-	{ name: '_type_identifier', id: 424, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
+	{ name: '_type_identifier', id: 426, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
 ] as const;
 
 export const enum TSFieldId {
@@ -1770,6 +1778,7 @@ export const FIELD_MAP: Record<
 		{ name: 'extendsClause', required: true, multiple: false },
 		{ name: 'implementsClause', required: false, multiple: false }
 	],
+	_export_clause_group1: [{ name: 'exportSpecifiers', required: true, multiple: true }],
 	_export_statement_default: [{ name: 'content', required: true, multiple: false }],
 	_export_statement_default_from_arm: [
 		{ name: 'content', required: true, multiple: false },
@@ -1798,6 +1807,7 @@ export const FIELD_MAP: Record<
 		{ name: 'semicolon', required: false, multiple: false }
 	],
 	_for_header_lhs: [{ name: 'left', required: true, multiple: false }],
+	_formal_parameters_group1: [{ name: 'formalParameters', required: true, multiple: true }],
 	_import_clause_default_import: [
 		{ name: 'importIdentifier', required: true, multiple: false },
 		{ name: 'importClauseGroup1', required: false, multiple: false }
@@ -1806,11 +1816,10 @@ export const FIELD_MAP: Record<
 	_jsx_start_opening_element: [{ name: 'jsxOpeningElementContent', required: false, multiple: false }],
 	_jsx_string: [{ name: 'contents', required: false, multiple: true }],
 	_lhs_expression: [{ name: 'content', required: true, multiple: false }],
-	_object_type_optional1: [
-		{ name: 'contents', required: false, multiple: true },
-		{ name: 'semicolon', required: false, multiple: false }
-	],
+	_named_imports_group1: [{ name: 'importSpecifiers', required: true, multiple: true }],
+	_object_type_group1: [{ name: 'contents', required: false, multiple: true }],
 	_public_field_definition_declare_first: [{ name: 'accessibilityModifier', required: false, multiple: false }],
+	_tuple_type_group1: [{ name: 'tupleTypeMembers', required: true, multiple: true }],
 	abstract_class_declaration: [
 		{ name: 'decorators', required: false, multiple: true },
 		{ name: 'name', required: true, multiple: false },
@@ -1953,7 +1962,8 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'value', required: true, multiple: false }
 	],
-	enum_body: [
+	enum_body: [{ name: 'enumBodyGroup1', required: false, multiple: false }],
+	enum_body_group1: [
 		{ name: 'names', required: false, multiple: true },
 		{ name: 'enumAssignments', required: false, multiple: true }
 	],
@@ -1962,7 +1972,8 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'body', required: true, multiple: false }
 	],
-	export_clause: [{ name: 'exportSpecifiers', required: false, multiple: true }],
+	export_clause: [{ name: 'exportClauseGroup1', required: false, multiple: false }],
+	export_clause_group1: [{ name: 'exportSpecifiers', required: true, multiple: true }],
 	export_specifier: [
 		{ name: 'exportKind', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },
@@ -1999,7 +2010,8 @@ export const FIELD_MAP: Record<
 		{ name: 'increment', required: false, multiple: false },
 		{ name: 'body', required: true, multiple: false }
 	],
-	formal_parameters: [{ name: 'formalParameters', required: false, multiple: true }],
+	formal_parameters: [{ name: 'formalParametersGroup1', required: false, multiple: false }],
+	formal_parameters_group1: [{ name: 'formalParameters', required: true, multiple: true }],
 	function_declaration: [
 		{ name: 'asyncMarker', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },
@@ -2174,7 +2186,8 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'body', required: false, multiple: false }
 	],
-	named_imports: [{ name: 'importSpecifiers', required: false, multiple: true }],
+	named_imports: [{ name: 'namedImportsGroup1', required: false, multiple: false }],
+	named_imports_group1: [{ name: 'importSpecifiers', required: true, multiple: true }],
 	namespace_export: [{ name: 'moduleExportName', required: true, multiple: false }],
 	namespace_import: [{ name: 'identifier', required: true, multiple: false }],
 	nested_identifier: [
@@ -2202,9 +2215,7 @@ export const FIELD_MAP: Record<
 		{ name: 'members', required: false, multiple: false },
 		{ name: 'closing', required: true, multiple: false }
 	],
-	object_type_content: [{ name: 'content', required: true, multiple: false }],
-	object_type_content_comma: [{ name: 'contents', required: false, multiple: true }],
-	object_type_content_semi: [{ name: 'contents', required: false, multiple: true }],
+	object_type_content: [{ name: 'contents', required: false, multiple: true }],
 	omitting_type_annotation: [{ name: 'type', required: true, multiple: false }],
 	opting_type_annotation: [{ name: 'type', required: true, multiple: false }],
 	optional_parameter: [
@@ -2325,7 +2336,8 @@ export const FIELD_MAP: Record<
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'type', required: true, multiple: false }
 	],
-	tuple_type: [{ name: 'tupleTypeMembers', required: false, multiple: true }],
+	tuple_type: [{ name: 'tupleTypeGroup1', required: false, multiple: false }],
+	tuple_type_group1: [{ name: 'tupleTypeMembers', required: true, multiple: true }],
 	type_alias_declaration: [
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'typeParameters', required: false, multiple: false },

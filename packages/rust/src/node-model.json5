@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 374,
+  "nodeCount": 389,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -186,8 +186,14 @@
     }
   },
   "fieldAliasMap": {
-    "_array_expression_list.attributed_argument": {
+    "_arguments_group1.attributed_argument": {
       "attributed_argument": "_attributed_argument"
+    },
+    "_enum_variant_list_group1.attributed_enum_variant": {
+      "attributed_enum_variant": "_attributed_enum_variant"
+    },
+    "_field_declaration_list_group1.attributed_field_declaration": {
+      "attributed_field_declaration": "_attributed_field_declaration"
     },
     "_field_pattern_named.name": {
       "field_identifier": "identifier"
@@ -219,14 +225,20 @@
     "_non_special_token.content": {
       "primitive_type": "_primitive_type"
     },
+    "_ordered_field_declaration_list_group1.attributed_ordered_field": {
+      "attributed_ordered_field": "_attributed_ordered_field"
+    },
+    "_parameters_group1.attributed_parameter": {
+      "attributed_parameter": "_attributed_parameter"
+    },
+    "_use_bounds_group1.content": {
+      "type_identifier": "identifier"
+    },
     "_visibility_modifier_group1.content": {
       "in_path": "_in_path"
     },
     "abstract_type.trait": {
       "type_identifier": "identifier"
-    },
-    "arguments.attributed_argument": {
-      "attributed_argument": "_attributed_argument"
     },
     "array_expression.content": {
       "array_expression_semi": "_array_expression_semi",
@@ -262,17 +274,11 @@
     "enum_item.name": {
       "type_identifier": "identifier"
     },
-    "enum_variant_list.attributed_enum_variant": {
-      "attributed_enum_variant": "_attributed_enum_variant"
-    },
     "expression_statement.content": {
       "expression_statement_with_semi": "_expression_statement_with_semi"
     },
     "field_declaration.name": {
       "field_identifier": "identifier"
-    },
-    "field_declaration_list.attributed_field_declaration": {
-      "attributed_field_declaration": "_attributed_field_declaration"
     },
     "field_expression.field": {
       "field_identifier": "identifier"
@@ -332,12 +338,6 @@
     "or_pattern.content": {
       "or_pattern_binary": "_or_pattern_binary",
       "or_pattern_prefix": "_or_pattern_prefix"
-    },
-    "ordered_field_declaration_list.attributes": {
-      "attributed_ordered_field": "_attributed_ordered_field"
-    },
-    "parameters.attributed_parameter": {
-      "attributed_parameter": "_attributed_parameter"
     },
     "pointer_type.content": {
       "pointer_type_const": "_pointer_type_const"
@@ -428,9 +428,6 @@
     "union_item.name": {
       "type_identifier": "identifier"
     },
-    "use_bounds.bounds": {
-      "type_identifier": "identifier"
-    },
     "visibility_modifier.content": {
       "visibility_modifier_pub": "_visibility_modifier_pub"
     },
@@ -438,8 +435,26 @@
       "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
+    "arguments_group1.attributed_argument": {
+      "attributed_argument": "_attributed_argument"
+    },
     "visibility_modifier_group1.content": {
       "in_path": "_in_path"
+    },
+    "enum_variant_list_group1.attributed_enum_variant": {
+      "attributed_enum_variant": "_attributed_enum_variant"
+    },
+    "field_declaration_list_group1.attributed_field_declaration": {
+      "attributed_field_declaration": "_attributed_field_declaration"
+    },
+    "ordered_field_declaration_list_group1.attributed_ordered_field": {
+      "attributed_ordered_field": "_attributed_ordered_field"
+    },
+    "parameters_group1.attributed_parameter": {
+      "attributed_parameter": "_attributed_parameter"
+    },
+    "use_bounds_group1.content": {
+      "type_identifier": "identifier"
     }
   },
   "factorySlots": {
@@ -451,11 +466,11 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "attributed_argument": {
+      "arguments_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1070,11 +1085,11 @@
       }
     },
     "arguments": {
-      "attributed_argument": {
+      "arguments_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1610,11 +1625,11 @@
       }
     },
     "enum_variant_list": {
-      "attributed_enum_variant": {
+      "enum_variant_list_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1690,11 +1705,11 @@
       }
     },
     "field_declaration_list": {
-      "attributed_field_declaration": {
+      "field_declaration_list_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1742,7 +1757,7 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -2490,7 +2505,7 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -2518,11 +2533,11 @@
       }
     },
     "parameters": {
-      "attributed_parameter": {
+      "parameters_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -2801,11 +2816,11 @@
       }
     },
     "slice_pattern": {
-      "pattern": {
+      "slice_pattern_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -2929,7 +2944,7 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3112,7 +3127,7 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3124,11 +3139,11 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "pattern": {
+      "slice_pattern_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3348,7 +3363,7 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3369,11 +3384,11 @@
       }
     },
     "use_list": {
-      "use_clause": {
+      "use_list_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3412,11 +3427,11 @@
       }
     },
     "where_clause": {
-      "where_predicate": {
+      "where_clause_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3468,6 +3483,15 @@
         "nonEmpty": false
       }
     },
+    "arguments_group1": {
+      "attributed_argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "visibility_modifier_group1": {
       "content": {
         "unnamed": false,
@@ -3475,6 +3499,105 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "enum_variant_list_group1": {
+      "attributed_enum_variant": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "field_declaration_list_group1": {
+      "attributed_field_declaration": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "field_initializer_list_group1": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "ordered_field_declaration_list_group1": {
+      "attributed_ordered_field": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "parameters_group1": {
+      "attributed_parameter": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "slice_pattern_group1": {
+      "pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "struct_pattern_group1": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "tuple_pattern_group1": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "use_bounds_group1": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "use_list_group1": {
+      "use_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "where_clause_group1": {
+      "where_predicate": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     }
   },
@@ -3869,6 +3992,21 @@
       "children": []
     },
     {
+      "kind": "_arguments_group1",
+      "modelType": "separatedList",
+      "typeName": "_ArgumentsGroup1",
+      "factoryName": "_argumentsGroup1",
+      "irKey": "_argumentsGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_argument"
+      ]
+    },
+    {
       "kind": "_array_expression_list",
       "modelType": "group",
       "typeName": "ArrayExpressionList",
@@ -3901,25 +4039,25 @@
           }
         },
         {
-          "name": "attributed_argument",
-          "propertyName": "attributedArguments",
-          "paramName": "attributedArguments",
+          "name": "arguments_group1",
+          "propertyName": "argumentsGroup1",
+          "paramName": "argumentsGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_argument",
-              "parseKind": "attributed_argument",
+              "multiplicity": "optional",
+              "name": "arguments_group1",
+              "parseKind": "arguments_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_argument"
+              "arguments_group1"
             ]
           }
         }
@@ -3928,7 +4066,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "attributes",
-        "attributed_argument"
+        "arguments_group1"
       ]
     },
     {
@@ -5022,39 +5160,19 @@
       ]
     },
     {
-      "kind": "_enum_variant_optional1",
-      "modelType": "group",
-      "typeName": "EnumVariantOptional1",
-      "factoryName": "_enumVariantOptional1",
-      "irKey": "enumVariantOptional1",
+      "kind": "_enum_variant_list_group1",
+      "modelType": "separatedList",
+      "typeName": "_EnumVariantListGroup1",
+      "factoryName": "_enumVariantListGroup1",
+      "irKey": "_enumVariantListGroup1",
       "hidden": false,
-      "name": "_enum_variant_optional1",
-      "fields": [
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "parseKind": "_expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
-          }
-        }
-      ],
-      "children": []
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_enum_variant"
+      ]
     },
     {
       "kind": "_error_sentinel",
@@ -5269,6 +5387,21 @@
       "children": []
     },
     {
+      "kind": "_field_declaration_list_group1",
+      "modelType": "separatedList",
+      "typeName": "_FieldDeclarationListGroup1",
+      "factoryName": "_fieldDeclarationListGroup1",
+      "irKey": "_fieldDeclarationListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_field_declaration"
+      ]
+    },
+    {
       "kind": "_field_identifier",
       "modelType": "pattern",
       "typeName": "FieldIdentifier",
@@ -5276,6 +5409,23 @@
       "irKey": "fieldIdentifier",
       "hidden": false,
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*"
+    },
+    {
+      "kind": "_field_initializer_list_group1",
+      "modelType": "separatedList",
+      "typeName": "_FieldInitializerListGroup1",
+      "factoryName": "_fieldInitializerListGroup1",
+      "irKey": "_fieldInitializerListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "shorthand_field_initializer",
+        "field_initializer",
+        "base_field_initializer"
+      ]
     },
     {
       "kind": "_field_pattern_named",
@@ -5341,41 +5491,6 @@
       ]
     },
     {
-      "kind": "_for_expression_optional1",
-      "modelType": "group",
-      "typeName": "ForExpressionOptional1",
-      "factoryName": "_forExpressionOptional1",
-      "irKey": "forExpressionOptional1",
-      "hidden": false,
-      "name": "_for_expression_optional1",
-      "fields": [
-        {
-          "name": "label",
-          "propertyName": "label",
-          "paramName": "label",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "label",
-              "parseKind": "label",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "label"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "_foreign_mod_item_semi",
       "modelType": "token",
       "typeName": "ForeignModItemSemi",
@@ -5384,76 +5499,6 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";"
-    },
-    {
-      "kind": "_function_item_optional1",
-      "modelType": "group",
-      "typeName": "FunctionItemOptional1",
-      "factoryName": "_functionItemOptional1",
-      "irKey": "functionItemOptional1",
-      "hidden": false,
-      "name": "_function_item_optional1",
-      "fields": [
-        {
-          "name": "return_type",
-          "propertyName": "returnType",
-          "paramName": "returnType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type",
-              "parseKind": "_type",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_type"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "_function_signature_item_optional1",
-      "modelType": "group",
-      "typeName": "FunctionSignatureItemOptional1",
-      "factoryName": "_functionSignatureItemOptional1",
-      "irKey": "functionSignatureItemOptional1",
-      "hidden": false,
-      "name": "_function_signature_item_optional1",
-      "fields": [
-        {
-          "name": "return_type",
-          "propertyName": "returnType",
-          "paramName": "returnType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type",
-              "parseKind": "_type",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_type"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_function_type_fn_form",
@@ -5492,41 +5537,6 @@
       "factoryFields": [
         "function_modifiers"
       ]
-    },
-    {
-      "kind": "_function_type_optional1",
-      "modelType": "group",
-      "typeName": "FunctionTypeOptional1",
-      "factoryName": "_functionTypeOptional1",
-      "irKey": "functionTypeOptional1",
-      "hidden": false,
-      "name": "_function_type_optional1",
-      "fields": [
-        {
-          "name": "return_type",
-          "propertyName": "returnType",
-          "paramName": "returnType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type",
-              "parseKind": "_type",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_type"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_function_type_trait_form",
@@ -6059,41 +6069,6 @@
       "name": "_let_declaration_optional2",
       "fields": [
         {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "parseKind": "_expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "_let_declaration_optional3",
-      "modelType": "group",
-      "typeName": "LetDeclarationOptional3",
-      "factoryName": "_letDeclarationOptional3",
-      "irKey": "letDeclarationOptional3",
-      "hidden": false,
-      "name": "_let_declaration_optional3",
-      "fields": [
-        {
           "name": "alternative",
           "propertyName": "alternative",
           "paramName": "alternative",
@@ -6262,41 +6237,6 @@
         "raw_string_literal",
         "string_literal"
       ]
-    },
-    {
-      "kind": "_loop_expression_optional1",
-      "modelType": "group",
-      "typeName": "LoopExpressionOptional1",
-      "factoryName": "_loopExpressionOptional1",
-      "irKey": "loopExpressionOptional1",
-      "hidden": false,
-      "name": "_loop_expression_optional1",
-      "fields": [
-        {
-          "name": "label",
-          "propertyName": "label",
-          "paramName": "label",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "label",
-              "parseKind": "label",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "label"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_macro_definition_brace",
@@ -7273,6 +7213,21 @@
       ]
     },
     {
+      "kind": "_ordered_field_declaration_list_group1",
+      "modelType": "separatedList",
+      "typeName": "_OrderedFieldDeclarationListGroup1",
+      "factoryName": "_orderedFieldDeclarationListGroup1",
+      "irKey": "_orderedFieldDeclarationListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_ordered_field"
+      ]
+    },
+    {
       "kind": "_outer_block_doc_comment_marker",
       "modelType": "token",
       "typeName": "OuterBlockDocCommentMarker",
@@ -7291,6 +7246,21 @@
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
       "text": "/"
+    },
+    {
+      "kind": "_parameters_group1",
+      "modelType": "separatedList",
+      "typeName": "_ParametersGroup1",
+      "factoryName": "_parametersGroup1",
+      "irKey": "_parametersGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_parameter"
+      ]
     },
     {
       "kind": "_path",
@@ -7858,6 +7828,21 @@
       ]
     },
     {
+      "kind": "_slice_pattern_group1",
+      "modelType": "separatedList",
+      "typeName": "_SlicePatternGroup1",
+      "factoryName": "_slicePatternGroup1",
+      "irKey": "_slicePatternGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_pattern"
+      ]
+    },
+    {
       "kind": "_statement",
       "modelType": "supertype",
       "typeName": "Statement",
@@ -7888,41 +7873,6 @@
         "union_item",
         "use_declaration"
       ]
-    },
-    {
-      "kind": "_static_item_optional1",
-      "modelType": "group",
-      "typeName": "StaticItemOptional1",
-      "factoryName": "_staticItemOptional1",
-      "irKey": "staticItemOptional1",
-      "hidden": false,
-      "name": "_static_item_optional1",
-      "fields": [
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "parseKind": "_expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "_struct_item_brace",
@@ -8059,6 +8009,22 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";"
+    },
+    {
+      "kind": "_struct_pattern_group1",
+      "modelType": "separatedList",
+      "typeName": "_StructPatternGroup1",
+      "factoryName": "_structPatternGroup1",
+      "irKey": "_structPatternGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "field_pattern",
+        "remaining_field_pattern"
+      ]
     },
     {
       "kind": "_token_binding_pattern_type",
@@ -8364,6 +8330,22 @@
       ]
     },
     {
+      "kind": "_tuple_pattern_group1",
+      "modelType": "separatedList",
+      "typeName": "_TuplePatternGroup1",
+      "factoryName": "_tuplePatternGroup1",
+      "irKey": "_tuplePatternGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_pattern",
+        "closure_expression"
+      ]
+    },
+    {
       "kind": "_type",
       "modelType": "supertype",
       "typeName": "_Type",
@@ -8554,6 +8536,22 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_use_bounds_group1",
+      "modelType": "separatedList",
+      "typeName": "_UseBoundsGroup1",
+      "factoryName": "_useBoundsGroup1",
+      "irKey": "_useBoundsGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "lifetime",
+        "_type_identifier"
+      ]
+    },
+    {
       "kind": "_use_clause",
       "modelType": "supertype",
       "typeName": "UseClause",
@@ -8571,6 +8569,21 @@
         "use_as_clause",
         "use_list",
         "use_wildcard"
+      ]
+    },
+    {
+      "kind": "_use_list_group1",
+      "modelType": "separatedList",
+      "typeName": "_UseListGroup1",
+      "factoryName": "_useListGroup1",
+      "irKey": "_useListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_use_clause"
       ]
     },
     {
@@ -8887,39 +8900,19 @@
       "children": []
     },
     {
-      "kind": "_while_expression_optional1",
-      "modelType": "group",
-      "typeName": "WhileExpressionOptional1",
-      "factoryName": "_whileExpressionOptional1",
-      "irKey": "whileExpressionOptional1",
+      "kind": "_where_clause_group1",
+      "modelType": "separatedList",
+      "typeName": "_WhereClauseGroup1",
+      "factoryName": "_whereClauseGroup1",
+      "irKey": "_whereClauseGroup1",
       "hidden": false,
-      "name": "_while_expression_optional1",
-      "fields": [
-        {
-          "name": "label",
-          "propertyName": "label",
-          "paramName": "label",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "label",
-              "parseKind": "label",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "label"
-            ]
-          }
-        }
-      ],
-      "children": []
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "where_predicate"
+      ]
     },
     {
       "kind": "_wildcard_pattern",
@@ -9071,34 +9064,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attributed_argument",
-          "propertyName": "attributedArguments",
-          "paramName": "attributedArguments",
+          "name": "arguments_group1",
+          "propertyName": "argumentsGroup1",
+          "paramName": "argumentsGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_argument",
-              "parseKind": "attributed_argument",
+              "multiplicity": "optional",
+              "name": "arguments_group1",
+              "parseKind": "arguments_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_argument"
+              "arguments_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "attributed_argument"
+        "arguments_group1"
       ]
+    },
+    {
+      "kind": "arguments_group1",
+      "modelType": "separatedList",
+      "typeName": "ArgumentsGroup1",
+      "factoryName": "argumentsGroup1",
+      "irKey": "argumentsGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_argument"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "array_expression",
@@ -11570,34 +11579,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attributed_enum_variant",
-          "propertyName": "attributedEnumVariants",
-          "paramName": "attributedEnumVariants",
+          "name": "enum_variant_list_group1",
+          "propertyName": "enumVariantListGroup1",
+          "paramName": "enumVariantListGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_enum_variant",
-              "parseKind": "attributed_enum_variant",
+              "multiplicity": "optional",
+              "name": "enum_variant_list_group1",
+              "parseKind": "enum_variant_list_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_enum_variant"
+              "enum_variant_list_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "attributed_enum_variant"
+        "enum_variant_list_group1"
       ]
+    },
+    {
+      "kind": "enum_variant_list_group1",
+      "modelType": "separatedList",
+      "typeName": "EnumVariantListGroup1",
+      "factoryName": "enumVariantListGroup1",
+      "irKey": "enumVariantListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_enum_variant"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "escape_sequence",
@@ -11904,34 +11929,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attributed_field_declaration",
-          "propertyName": "attributedFieldDeclarations",
-          "paramName": "attributedFieldDeclarations",
+          "name": "field_declaration_list_group1",
+          "propertyName": "fieldDeclarationListGroup1",
+          "paramName": "fieldDeclarationListGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_field_declaration",
-              "parseKind": "attributed_field_declaration",
+              "multiplicity": "optional",
+              "name": "field_declaration_list_group1",
+              "parseKind": "field_declaration_list_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_field_declaration"
+              "field_declaration_list_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "attributed_field_declaration"
+        "field_declaration_list_group1"
       ]
+    },
+    {
+      "kind": "field_declaration_list_group1",
+      "modelType": "separatedList",
+      "typeName": "FieldDeclarationListGroup1",
+      "factoryName": "fieldDeclarationListGroup1",
+      "irKey": "fieldDeclarationListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_field_declaration"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "field_expression",
@@ -12110,46 +12151,48 @@
           "propertyName": "initializers",
           "paramName": "initializers",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "shorthand_field_initializer",
-              "parseKind": "shorthand_field_initializer",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "field_initializer",
-              "parseKind": "field_initializer",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "base_field_initializer",
-              "parseKind": "base_field_initializer",
+              "multiplicity": "optional",
+              "name": "field_initializer_list_group1",
+              "parseKind": "field_initializer_list_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "shorthand_field_initializer",
-              "field_initializer",
-              "base_field_initializer"
+              "field_initializer_list_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "initializers"
       ]
+    },
+    {
+      "kind": "field_initializer_list_group1",
+      "modelType": "separatedList",
+      "typeName": "FieldInitializerListGroup1",
+      "factoryName": "fieldInitializerListGroup1",
+      "irKey": "fieldInitializerListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "shorthand_field_initializer",
+        "field_initializer",
+        "base_field_initializer"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "field_pattern",
@@ -15384,30 +15427,46 @@
           "propertyName": "attributes",
           "paramName": "attributes",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_ordered_field",
-              "parseKind": "attributed_ordered_field",
+              "multiplicity": "optional",
+              "name": "ordered_field_declaration_list_group1",
+              "parseKind": "ordered_field_declaration_list_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_ordered_field"
+              "ordered_field_declaration_list_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "attributes"
       ]
+    },
+    {
+      "kind": "ordered_field_declaration_list_group1",
+      "modelType": "separatedList",
+      "typeName": "OrderedFieldDeclarationListGroup1",
+      "factoryName": "orderedFieldDeclarationListGroup1",
+      "irKey": "orderedFieldDeclarationListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_ordered_field"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "parameter",
@@ -15511,34 +15570,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attributed_parameter",
-          "propertyName": "attributedParameters",
-          "paramName": "attributedParameters",
+          "name": "parameters_group1",
+          "propertyName": "parametersGroup1",
+          "paramName": "parametersGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_attributed_parameter",
-              "parseKind": "attributed_parameter",
+              "multiplicity": "optional",
+              "name": "parameters_group1",
+              "parseKind": "parameters_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_attributed_parameter"
+              "parameters_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "attributed_parameter"
+        "parameters_group1"
       ]
+    },
+    {
+      "kind": "parameters_group1",
+      "modelType": "separatedList",
+      "typeName": "ParametersGroup1",
+      "factoryName": "parametersGroup1",
+      "irKey": "parametersGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "attributed_parameter"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "parenthesized_expression",
@@ -16841,34 +16916,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "pattern",
-          "propertyName": "patterns",
-          "paramName": "patterns",
+          "name": "slice_pattern_group1",
+          "propertyName": "slicePatternGroup1",
+          "paramName": "slicePatternGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_pattern",
-              "parseKind": "_pattern",
+              "multiplicity": "optional",
+              "name": "slice_pattern_group1",
+              "parseKind": "slice_pattern_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_pattern"
+              "slice_pattern_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "pattern"
+        "slice_pattern_group1"
       ]
+    },
+    {
+      "kind": "slice_pattern_group1",
+      "modelType": "separatedList",
+      "typeName": "SlicePatternGroup1",
+      "factoryName": "slicePatternGroup1",
+      "irKey": "slicePatternGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_pattern"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "source_file",
@@ -17397,29 +17488,21 @@
           "propertyName": "fields",
           "paramName": "fields",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "field_pattern",
-              "parseKind": "field_pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "remaining_field_pattern",
-              "parseKind": "remaining_field_pattern",
+              "multiplicity": "optional",
+              "name": "struct_pattern_group1",
+              "parseKind": "struct_pattern_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "field_pattern",
-              "remaining_field_pattern"
+              "struct_pattern_group1"
             ]
           }
         }
@@ -17430,6 +17513,23 @@
         "type",
         "fields"
       ]
+    },
+    {
+      "kind": "struct_pattern_group1",
+      "modelType": "separatedList",
+      "typeName": "StructPatternGroup1",
+      "factoryName": "structPatternGroup1",
+      "irKey": "structPatternGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "field_pattern",
+        "remaining_field_pattern"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "super",
@@ -18214,38 +18314,47 @@
           "propertyName": "elements",
           "paramName": "elements",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_pattern",
-              "parseKind": "_pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "closure_expression",
-              "parseKind": "closure_expression",
+              "multiplicity": "optional",
+              "name": "tuple_pattern_group1",
+              "parseKind": "tuple_pattern_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_pattern",
-              "closure_expression"
+              "tuple_pattern_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "elements"
       ]
+    },
+    {
+      "kind": "tuple_pattern_group1",
+      "modelType": "separatedList",
+      "typeName": "TuplePatternGroup1",
+      "factoryName": "tuplePatternGroup1",
+      "irKey": "tuplePatternGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_pattern",
+        "closure_expression"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "tuple_struct_pattern",
@@ -18295,25 +18404,25 @@
           }
         },
         {
-          "name": "pattern",
-          "propertyName": "patterns",
-          "paramName": "patterns",
+          "name": "slice_pattern_group1",
+          "propertyName": "slicePatternGroup1",
+          "paramName": "slicePatternGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_pattern",
-              "parseKind": "_pattern",
+              "multiplicity": "optional",
+              "name": "slice_pattern_group1",
+              "parseKind": "slice_pattern_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_pattern"
+              "slice_pattern_group1"
             ]
           }
         }
@@ -18322,7 +18431,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "type",
-        "pattern"
+        "slice_pattern_group1"
       ]
     },
     {
@@ -19202,38 +19311,47 @@
           "propertyName": "bounds",
           "paramName": "bounds",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "lifetime",
-              "parseKind": "lifetime",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "identifier",
-              "parseKind": "type_identifier",
+              "multiplicity": "optional",
+              "name": "use_bounds_group1",
+              "parseKind": "use_bounds_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "lifetime",
-              "identifier"
+              "use_bounds_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
         "bounds"
       ]
+    },
+    {
+      "kind": "use_bounds_group1",
+      "modelType": "separatedList",
+      "typeName": "UseBoundsGroup1",
+      "factoryName": "useBoundsGroup1",
+      "irKey": "useBoundsGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "lifetime",
+        "_type_identifier"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "use_declaration",
@@ -19306,34 +19424,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "use_clause",
-          "propertyName": "useClauses",
-          "paramName": "useClauses",
+          "name": "use_list_group1",
+          "propertyName": "useListGroup1",
+          "paramName": "useListGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_use_clause",
-              "parseKind": "_use_clause",
+              "multiplicity": "optional",
+              "name": "use_list_group1",
+              "parseKind": "use_list_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_use_clause"
+              "use_list_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "use_clause"
+        "use_list_group1"
       ]
+    },
+    {
+      "kind": "use_list_group1",
+      "modelType": "separatedList",
+      "typeName": "UseListGroup1",
+      "factoryName": "useListGroup1",
+      "irKey": "useListGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "_use_clause"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "use_wildcard",
@@ -19562,34 +19696,50 @@
       "hidden": false,
       "fields": [
         {
-          "name": "where_predicate",
-          "propertyName": "wherePredicates",
-          "paramName": "wherePredicates",
+          "name": "where_clause_group1",
+          "propertyName": "whereClauseGroup1",
+          "paramName": "whereClauseGroup1",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "where_predicate",
-              "parseKind": "where_predicate",
+              "multiplicity": "optional",
+              "name": "where_clause_group1",
+              "parseKind": "where_clause_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "where_predicate"
+              "where_clause_group1"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
-        "where_predicate"
+        "where_clause_group1"
       ]
+    },
+    {
+      "kind": "where_clause_group1",
+      "modelType": "separatedList",
+      "typeName": "WhereClauseGroup1",
+      "factoryName": "whereClauseGroup1",
+      "irKey": "whereClauseGroup1",
+      "hidden": false,
+      "nonEmpty": true,
+      "hasNonterminalSeparator": false,
+      "leadingMode": "none",
+      "trailingMode": "optional",
+      "elementKinds": [
+        "where_predicate"
+      ],
+      "factoryShape": "spread"
     },
     {
       "kind": "where_predicate",
