@@ -26,6 +26,7 @@ import {
 	keywordPresenceKind,
 	resolveFieldStorageInfo
 } from './shared.ts';
+import { buildSeparatedListContentSlot } from './wrap.ts';
 
 export interface EmitTestsConfig {
 	grammar: string;
@@ -110,16 +111,14 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		switch (node.modelType) {
 			case 'branch':
-			// TEMPORARY (separator-as-slot Task 2 follow-up — see
-			// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
-			// shares 'branch's test emission for byte-identical output
-			// pending Tasks 4-6's real per-instance capture.
-			case 'separatedList':
 				if (classifyChildFactorySurface(node, nodeMap) !== null) {
 					emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
 				} else {
 					emitBranchTest(lines, node, kind, key, nodeMap, kindEntries);
 				}
+				break;
+			case 'separatedList':
+				emitSeparatedListTest(lines, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'pattern':
 				emitLeafTest(lines, node, kind, key, kindEntries, nodeMap);
@@ -144,9 +143,7 @@ function emitBranchTest(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
-	// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
-	// isSlotBearingCompound's doc comment (shared.ts).
-	if (node.modelType !== 'branch' && node.modelType !== 'separatedList') return;
+	if (node.modelType !== 'branch') return;
 
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
@@ -228,13 +225,7 @@ function emitContainerTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
-	// isSlotBearingCompound's doc comment (shared.ts).
-	if (
-		(node.modelType !== 'branch' && node.modelType !== 'separatedList') ||
-		classifyChildFactorySurface(node, nodeMap) === null
-	)
-		return;
+	if (node.modelType !== 'branch' || classifyChildFactorySurface(node, nodeMap) === null) return;
 
 	// Container-shape branch factories take positional args: singular-
 	// child containers require one `child?` and repeated containers take
@@ -262,6 +253,45 @@ function emitContainerTest(
 	lines.push(`    const node = ir.${key}(${placeholder});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
+	lines.push('  });');
+	lines.push('});');
+	lines.push('');
+}
+
+/**
+ * SeparatedList factories (`emitSeparatedListFactory`, factories.ts) take a
+ * positional `elements` array — never a config object — so this mirrors that
+ * function's own derivation of the content slot ({@link
+ * buildSeparatedListContentSlot}) rather than routing through
+ * `emitBranchTest`'s field-config-object shape. `dummyValue` already wraps a
+ * multi-valued slot in a one-element array literal, which both satisfies
+ * `nonEmpty` lists' `_assertNonEmpty` runtime check and guarantees non-empty
+ * render output — so no separate empty-config render-test branch is needed
+ * here (unlike `emitBranchTest`, which must accommodate an all-optional
+ * minimal config).
+ */
+function emitSeparatedListTest(
+	lines: string[],
+	node: AssembledNode,
+	kind: string,
+	key: string,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): void {
+	if (node.modelType !== 'separatedList') return;
+
+	const contentSlot = buildSeparatedListContentSlot(node);
+	const elementsArg = dummyValue(contentSlot, nodeMap, kindEntries);
+
+	lines.push(`describe('${kind}', () => {`);
+	lines.push(`  it('factory produces correct type', () => {`);
+	lines.push(`    const node = ir.${key}(${elementsArg});`);
+	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
+	lines.push(`    expect(node.$source).toBe(2);`);
+	lines.push('  });');
+	lines.push(`  it('render produces non-empty string', () => {`);
+	lines.push(`    const node = ir.${key}(${elementsArg});`);
+	lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');
