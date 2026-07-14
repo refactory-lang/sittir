@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { alias, buildRuleCatalog, choice, seq } from '../../evaluate.ts';
-import { link } from '../../link.ts';
-import { normalizeGrammar } from '../../normalize.ts';
-import { assemble, AssembleCtx } from '../../assemble.ts';
-import type { RawGrammar } from '../../types.ts';
+import { alias, buildRuleCatalog, choice, seq } from '../../compiler/evaluate.ts';
+import { link } from '../../compiler/link.ts';
+import { normalizeGrammar } from '../../compiler/normalize.ts';
+import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
+import type { RawGrammar } from '../../compiler/types.ts';
 import { diagnoseParseKindCollisions } from '../parsekind-collisions.ts';
 
 function buildNodeMap(rules: Record<string, unknown>) {

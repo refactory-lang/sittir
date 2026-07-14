@@ -72,7 +72,7 @@ import { simplifyRule, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { deriveStructuralVariantChildren } from './variant-structural.ts';
 import { inlineRefs, extractRepeatShape } from '../dsl/rule-transforms.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
-import type { ParseKindCollisionDiagnostic } from './diagnostics/parsekind-collisions.ts';
+import type { ParseKindCollisionDiagnostic } from '../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';

@@ -83,7 +83,7 @@ import {
 	diagnoseParseKindCollisions,
 	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
-} from '../diagnostics/parsekind-collisions.ts';
+} from '../../types/parsekind-collisions.ts';
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 
 // ============================================================================
