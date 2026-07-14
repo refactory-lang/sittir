@@ -316,31 +316,7 @@ export type TypescriptGrammar = {
 			parameter: {
 				multiple: false;
 				required: true;
-				types: [
-					{ type: 'any'; named: false },
-					{ type: 'async'; named: false },
-					{ type: 'boolean'; named: false },
-					{ type: 'declare'; named: false },
-					{ type: 'export'; named: false },
-					{ type: 'get'; named: false },
-					{ type: 'identifier'; named: true },
-					{ type: 'let'; named: false },
-					{ type: 'module'; named: false },
-					{ type: 'namespace'; named: false },
-					{ type: 'new'; named: false },
-					{ type: 'number'; named: false },
-					{ type: 'object'; named: false },
-					{ type: 'override'; named: false },
-					{ type: 'private'; named: false },
-					{ type: 'protected'; named: false },
-					{ type: 'public'; named: false },
-					{ type: 'readonly'; named: false },
-					{ type: 'set'; named: false },
-					{ type: 'static'; named: false },
-					{ type: 'string'; named: false },
-					{ type: 'symbol'; named: false },
-					{ type: 'type'; named: false }
-				];
+				types: [{ type: 'identifier'; named: true }, { type: 'reserved_identifier'; named: true }];
 			};
 		};
 	};
@@ -419,33 +395,12 @@ export type TypescriptGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'any'; named: false },
-					{ type: 'async'; named: false },
-					{ type: 'boolean'; named: false },
-					{ type: 'declare'; named: false },
-					{ type: 'export'; named: false },
-					{ type: 'get'; named: false },
 					{ type: 'identifier'; named: true },
-					{ type: 'let'; named: false },
 					{ type: 'member_expression'; named: true },
-					{ type: 'module'; named: false },
-					{ type: 'namespace'; named: false },
-					{ type: 'new'; named: false },
 					{ type: 'non_null_expression'; named: true },
-					{ type: 'number'; named: false },
-					{ type: 'object'; named: false },
-					{ type: 'override'; named: false },
 					{ type: 'parenthesized_expression'; named: true },
-					{ type: 'private'; named: false },
-					{ type: 'protected'; named: false },
-					{ type: 'public'; named: false },
-					{ type: 'readonly'; named: false },
-					{ type: 'set'; named: false },
-					{ type: 'static'; named: false },
-					{ type: 'string'; named: false },
-					{ type: 'subscript_expression'; named: true },
-					{ type: 'symbol'; named: false },
-					{ type: 'type'; named: false }
+					{ type: 'reserved_identifier'; named: true },
+					{ type: 'subscript_expression'; named: true }
 				];
 			};
 			operator: {
@@ -1467,31 +1422,7 @@ export type TypescriptGrammar = {
 			name: {
 				multiple: false;
 				required: true;
-				types: [
-					{ type: 'any'; named: false },
-					{ type: 'async'; named: false },
-					{ type: 'boolean'; named: false },
-					{ type: 'declare'; named: false },
-					{ type: 'export'; named: false },
-					{ type: 'get'; named: false },
-					{ type: 'identifier'; named: true },
-					{ type: 'let'; named: false },
-					{ type: 'module'; named: false },
-					{ type: 'namespace'; named: false },
-					{ type: 'new'; named: false },
-					{ type: 'number'; named: false },
-					{ type: 'object'; named: false },
-					{ type: 'override'; named: false },
-					{ type: 'private'; named: false },
-					{ type: 'protected'; named: false },
-					{ type: 'public'; named: false },
-					{ type: 'readonly'; named: false },
-					{ type: 'set'; named: false },
-					{ type: 'static'; named: false },
-					{ type: 'string'; named: false },
-					{ type: 'symbol'; named: false },
-					{ type: 'type'; named: false }
-				];
+				types: [{ type: 'identifier'; named: true }, { type: 'reserved_identifier'; named: true }];
 			};
 		};
 	};

@@ -966,7 +966,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     groupDedupeMap,
     visibleGroupHiddenNames
   );
-  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag);
+  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
   r = unaliasResult.rule;
   for (const diagnostic of unaliasResult.diagnostics) {
     recordUnaliasDiagnostic(diagnostic);
@@ -1763,7 +1763,7 @@ function collectUnaliasCandidates(node, path, rulesBag, out) {
       targetName: aliasRule.value,
       storageKind,
       resolvedBody,
-      aliasSite: { path, content: aliasRule.content }
+      aliasSite: { path, content: aliasRule.content, named: aliasRule.named }
     });
     return;
   }
@@ -1806,7 +1806,7 @@ function rewriteUnaliasAt(node, path, replacement) {
   return { ...node, content: rest.length > 0 ? rewriteUnaliasAt(content, rest, replacement) : replacement };
 }
 var GRANULARITY_MISMATCH_EXCLUSIONS = /* @__PURE__ */ new Set(["_suite"]);
-function applyUnaliasDistinct(ruleName, rule, rulesBag) {
+function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules) {
   if (GRANULARITY_MISMATCH_EXCLUSIONS.has(ruleName)) return { rule, diagnostics: [] };
   const candidates = [];
   collectUnaliasCandidates(rule, [], rulesBag, candidates);
@@ -1818,6 +1818,7 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag) {
     byTargetName.set(candidate.targetName, bucket);
   }
   const toDrop = /* @__PURE__ */ new Set();
+  const toRetarget = /* @__PURE__ */ new Map();
   const diagnostics = [];
   for (const [targetName, bucket] of byTargetName) {
     if (bucket.length < 2 || !bucket.some((c) => c.aliasSite)) continue;
@@ -1830,16 +1831,39 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag) {
     }));
     const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName: targetName, values });
     for (const diagnostic of resolution.diagnostics) {
-      diagnostics.push({ ...diagnostic, severity: "info" });
+      let anyActed = false;
       for (const candidate of bucket) {
-        if (candidate.aliasSite) toDrop.add(candidate);
+        if (!candidate.aliasSite || candidate.storageKind === void 0) continue;
+        const isHidden = candidate.storageKind.startsWith("_");
+        if (!isHidden) {
+          toDrop.add(candidate);
+          anyActed = true;
+          continue;
+        }
+        const strippedName = candidate.storageKind.replace(/^_+/, "");
+        const collides = strippedName in rulesBag || strippedName in kwRules || strippedName in clauseGroupRules;
+        if (collides) {
+          continue;
+        }
+        toRetarget.set(candidate, strippedName);
+        anyActed = true;
       }
+      if (anyActed) diagnostics.push({ ...diagnostic, severity: "info" });
     }
   }
-  if (toDrop.size === 0) return { rule, diagnostics: [] };
+  if (toDrop.size === 0 && toRetarget.size === 0) return { rule, diagnostics: [] };
   let result = rule;
   for (const candidate of toDrop) {
     result = rewriteUnaliasAt(result, candidate.aliasSite.path, candidate.aliasSite.content);
+  }
+  for (const [candidate, strippedName] of toRetarget) {
+    const retargeted = {
+      type: "ALIAS",
+      content: candidate.aliasSite.content,
+      named: candidate.aliasSite.named,
+      value: strippedName
+    };
+    result = rewriteUnaliasAt(result, candidate.aliasSite.path, retargeted);
   }
   return { rule: result, diagnostics };
 }

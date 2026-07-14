@@ -904,11 +904,12 @@ export const enum TSKindId {
 	PublicFieldDefinitionDeclareFirst = 419,
 	PublicFieldDefinitionReadonlyFirst = 420,
 	PublicFieldDefinitionStaticMods = 421,
-	ShorthandPropertyIdentifier = 422,
-	ShorthandPropertyIdentifierPattern = 423,
-	StatementIdentifier = 424,
-	_ThisType = 425,
-	TypeIdentifier = 426
+	ReservedIdentifier = 422,
+	ShorthandPropertyIdentifier = 423,
+	ShorthandPropertyIdentifierPattern = 424,
+	StatementIdentifier = 425,
+	_ThisType = 426,
+	TypeIdentifier = 427
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1333,11 +1334,12 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[419, '_public_field_definition_declare_first'],
 	[420, '_public_field_definition_readonly_first'],
 	[421, '_public_field_definition_static_mods'],
-	[422, '_shorthand_property_identifier'],
-	[423, '_shorthand_property_identifier_pattern'],
-	[424, '_statement_identifier'],
-	[425, '_this_type'],
-	[426, '_type_identifier']
+	[422, '_reserved_identifier'],
+	[423, '_shorthand_property_identifier'],
+	[424, '_shorthand_property_identifier_pattern'],
+	[425, '_statement_identifier'],
+	[426, '_this_type'],
+	[427, '_type_identifier']
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -2184,6 +2186,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PublicFieldDefinitionReadonlyFirst;
 		case '_public_field_definition_static_mods':
 			return TSKindId.PublicFieldDefinitionStaticMods;
+		case '_reserved_identifier':
+			return TSKindId.ReservedIdentifier;
 		case '_shorthand_property_identifier':
 			return TSKindId.ShorthandPropertyIdentifier;
 		case '_shorthand_property_identifier_pattern':
@@ -2422,6 +2426,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PublicFieldDefinitionReadonlyFirst;
 		case 'public_field_definition_static_mods':
 			return TSKindId.PublicFieldDefinitionStaticMods;
+		case 'reserved_identifier':
+			return TSKindId.ReservedIdentifier;
 		case 'shorthand_property_identifier':
 			return TSKindId.ShorthandPropertyIdentifier;
 		case 'shorthand_property_identifier_pattern':
@@ -5082,7 +5088,7 @@ export type ObjectTypeClosing = Terminal<TSKindId.Rbrace | TSKindId.PipeRbrace, 
 export type ObjectTypeOpening = Terminal<TSKindId.Lbrace | TSKindId.LbracePipe, '{' | '{|'>;
 export type Operator = Terminal<TSKindId.PlusPlus | TSKindId.DashDash, '++' | '--'>;
 export type PublicFieldDefinitionOptionalityMarker = Terminal<TSKindId.Qmark | TSKindId.Bang, '?' | '!'>;
-export type ReservedIdentifier = Terminal<'_reserved_identifier', string>;
+export type ReservedIdentifier = Terminal<TSKindId.ReservedIdentifier, string>;
 export type Semicolon = Terminal<'_semicolon', string>;
 export type StringOpening = Terminal<TSKindId.Dquote | TSKindId.Squote, '"' | "'">;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;

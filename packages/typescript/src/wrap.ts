@@ -805,7 +805,12 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
 			}),
 
 			parameter() {
-				return drillIn<T.ReservedIdentifier | T.Identifier>(this._parameter, tree);
+				return drillAs<T.ReservedIdentifier | T.Identifier>(
+					this._parameter,
+					tree,
+					'reserved_identifier',
+					'_reserved_identifier'
+				);
 			},
 			$with: {
 				parameter: (v: NonNullable<T.ArrowFunctionParameter['_parameter']>) =>
@@ -2279,7 +2284,12 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 			}),
 
 			name() {
-				return drillIn<T.Identifier | T.ReservedIdentifier>(this._name, tree);
+				return drillAs<T.Identifier | T.ReservedIdentifier>(
+					this._name,
+					tree,
+					'reserved_identifier',
+					'_reserved_identifier'
+				);
 			},
 			indexType() {
 				return drillIn<T.Type>(this._index_type, tree);
@@ -4189,14 +4199,14 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
 			}),
 
 			left() {
-				return drillIn<
+				return drillAs<
 					| T.MemberExpression
 					| T.SubscriptExpression
 					| T.ReservedIdentifier
 					| T.Identifier
 					| T.ParenthesizedExpression
 					| T.NonNullExpression
-				>(this._left, tree);
+				>(this._left, tree, 'reserved_identifier', '_reserved_identifier');
 			},
 			operator() {
 				return this._operator;
@@ -11716,6 +11726,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapPublicFieldDefinitionReadonlyFirst(d as unknown as T.PublicFieldDefinitionReadonlyFirst, t),
 	_public_field_definition_static_mods: (d, t) =>
 		wrapPublicFieldDefinitionStaticMods(d as unknown as T.PublicFieldDefinitionStaticMods, t),
+	_reserved_identifier: (d) => ({ ...d, $type: TSKindId.ReservedIdentifier as const }),
 	_shorthand_property_identifier: (d, t) =>
 		wrapShorthandPropertyIdentifier(d as unknown as T.ShorthandPropertyIdentifier, t),
 	_shorthand_property_identifier_pattern: (d, t) =>

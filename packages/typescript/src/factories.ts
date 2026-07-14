@@ -1270,6 +1270,20 @@ export function _publicFieldDefinitionStaticMods(config: Partial<T.PublicFieldDe
 	);
 }
 
+export function reservedIdentifier(text: string) {
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
+		throw new Error(`_reserved_identifier: text must be non-empty`);
+	return withMethods(
+		{
+			$type: TSKindId.ReservedIdentifier as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function _tupleTypeGroup1(elements: NonEmptyArray<T.TupleTypeMember>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_tuple_type_group1.elements');
 	const _content = elements;
@@ -6723,6 +6737,7 @@ export type FluentKindMap = {
 	>;
 	_public_field_definition_readonly_first: T.PublicFieldDefinitionReadonlyFirst;
 	_public_field_definition_static_mods: T.PublicFieldDefinitionStaticMods;
+	_reserved_identifier: T.ReservedIdentifier;
 	_tuple_type_group1: FluentNode<'_tuple_type_group1', T._TupleTypeGroup1.Config>;
 	_type_identifier: T.TypeIdentifier;
 	_type_query_call_expression: T.TypeQueryCallExpression;
@@ -6974,6 +6989,7 @@ export const _factoryMap = {
 	_public_field_definition_declare_first: publicFieldDefinitionDeclareFirst,
 	_public_field_definition_readonly_first: _publicFieldDefinitionReadonlyFirst,
 	_public_field_definition_static_mods: _publicFieldDefinitionStaticMods,
+	_reserved_identifier: reservedIdentifier,
 	_tuple_type_group1: _tupleTypeGroup1,
 	_type_identifier: typeIdentifier,
 	_type_query_call_expression: _typeQueryCallExpression,

@@ -429,11 +429,12 @@ pub const _PUBLIC_FIELD_DEFINITION_ACCESSOR_OPT: KindId = KindId(418);
 pub const _PUBLIC_FIELD_DEFINITION_DECLARE_FIRST: KindId = KindId(419);
 pub const _PUBLIC_FIELD_DEFINITION_READONLY_FIRST: KindId = KindId(420);
 pub const _PUBLIC_FIELD_DEFINITION_STATIC_MODS: KindId = KindId(421);
-pub const _SHORTHAND_PROPERTY_IDENTIFIER: KindId = KindId(422);
-pub const _SHORTHAND_PROPERTY_IDENTIFIER_PATTERN: KindId = KindId(423);
-pub const _STATEMENT_IDENTIFIER: KindId = KindId(424);
-pub const _THIS_TYPE: KindId = KindId(425);
-pub const _TYPE_IDENTIFIER: KindId = KindId(426);
+pub const _RESERVED_IDENTIFIER: KindId = KindId(422);
+pub const _SHORTHAND_PROPERTY_IDENTIFIER: KindId = KindId(423);
+pub const _SHORTHAND_PROPERTY_IDENTIFIER_PATTERN: KindId = KindId(424);
+pub const _STATEMENT_IDENTIFIER: KindId = KindId(425);
+pub const _THIS_TYPE: KindId = KindId(426);
+pub const _TYPE_IDENTIFIER: KindId = KindId(427);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -860,11 +861,12 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         419 => "public_field_definition_declare_first", // "_public_field_definition_declare_first"
         420 => "public_field_definition_readonly_first", // "_public_field_definition_readonly_first"
         421 => "public_field_definition_static_mods", // "_public_field_definition_static_mods"
-        422 => "shorthand_property_identifier", // "_shorthand_property_identifier"
-        423 => "shorthand_property_identifier_pattern", // "_shorthand_property_identifier_pattern"
-        424 => "statement_identifier", // "_statement_identifier"
-        425 => "this_type", // "_this_type"
-        426 => "type_identifier", // "_type_identifier"
+        422 => "reserved_identifier", // "_reserved_identifier"
+        423 => "shorthand_property_identifier", // "_shorthand_property_identifier"
+        424 => "shorthand_property_identifier_pattern", // "_shorthand_property_identifier_pattern"
+        425 => "statement_identifier", // "_statement_identifier"
+        426 => "this_type", // "_this_type"
+        427 => "type_identifier", // "_type_identifier"
         _ => "<unknown>",
     }
 }

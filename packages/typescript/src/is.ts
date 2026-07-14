@@ -640,11 +640,11 @@ const _supertype_jsxChild_ids = new Set<number>([163]);
 const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
 const _supertype_moduleExportName_ids = new Set<number>([1, 247]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 422]);
 const _supertype_propertyName_ids = new Set<number>([1, 106, 247, 105, 265]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1]);
-const _supertype_statementIdentifier_ids = new Set<number>([1]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 422]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 422]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 422]);
 const _supertype_tupleTypeMember_ids = new Set<number>([308, 309, 310, 311]);
 const _supertype_declaration_ids = new Set<number>([
 	224, 226, 221, 184, 183, 271, 282, 283, 284, 293, 290, 288, 286, 281
@@ -654,10 +654,10 @@ const _supertype_expression_ids = new Set<number>([
 ]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268
+	235, 234, 209, 114, 1, 422, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	334, 335, 426, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349
+	334, 335, 427, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349
 ]);
 const _supertype_statement_ids = new Set<number>([
 	167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203
@@ -946,6 +946,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_public_field_definition_declare_first', TSKindId.PublicFieldDefinitionDeclareFirst],
 	['_public_field_definition_readonly_first', TSKindId.PublicFieldDefinitionReadonlyFirst],
 	['_public_field_definition_static_mods', TSKindId.PublicFieldDefinitionStaticMods],
+	['_reserved_identifier', TSKindId.ReservedIdentifier],
 	['_type_identifier', TSKindId.TypeIdentifier]
 ]);
 

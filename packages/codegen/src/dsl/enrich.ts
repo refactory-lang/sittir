@@ -312,11 +312,11 @@ function applyEnrichPasses(
 		groupDedupeMap,
 		visibleGroupHiddenNames
 	);
-	// Base-grammar un-aliasing: drop alias($.X, $.Y) sites where X's storage
-	// kind is structurally distinct from the other value(s) sharing parse
-	// kind Y (parsekind-noninjective). Runs after clause-hoist has settled so
-	// it sees the final member shape.
-	const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag);
+	// Base-grammar un-aliasing: drop (visible X) or retarget (hidden X)
+	// alias($.X, $.Y) sites where X's storage kind is structurally distinct
+	// from the other value(s) sharing parse kind Y (parsekind-noninjective).
+	// Runs after clause-hoist has settled so it sees the final member shape.
+	const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
 	r = unaliasResult.rule;
 	for (const diagnostic of unaliasResult.diagnostics) {
 		recordUnaliasDiagnostic(diagnostic);
@@ -1691,7 +1691,7 @@ interface UnaliasCandidate {
 	readonly targetName: string;
 	readonly storageKind: string | undefined;
 	readonly resolvedBody: RuntimeRule;
-	readonly aliasSite?: { readonly path: readonly (string | number)[]; readonly content: Rule };
+	readonly aliasSite?: { readonly path: readonly (string | number)[]; readonly content: Rule; readonly named: boolean };
 }
 
 /**
@@ -1719,7 +1719,7 @@ function collectUnaliasCandidates(
 	const t = (node as { type?: string }).type;
 	if (!t) return;
 	if (t === 'ALIAS') {
-		const aliasRule = node as unknown as { content: Rule; value: string };
+		const aliasRule = node as unknown as { content: Rule; value: string; named: boolean };
 		const storageKind = isSymbolType(aliasRule.content.type)
 			? (aliasRule.content as unknown as { name?: string }).name
 			: undefined;
@@ -1730,7 +1730,7 @@ function collectUnaliasCandidates(
 			targetName: aliasRule.value,
 			storageKind,
 			resolvedBody,
-			aliasSite: { path, content: aliasRule.content }
+			aliasSite: { path, content: aliasRule.content, named: aliasRule.named }
 		});
 		return; // do not descend into the alias's own content
 	}
@@ -1783,7 +1783,7 @@ function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replac
 }
 
 /**
- * @internal — drop `alias($.X, $.Y)` sites where `X`'s rule body is
+ * @internal — resolve `alias($.X, $.Y)` sites where `X`'s rule body is
  * structurally distinct from the other value(s) sharing parse kind `Y`
  * (a `parsekind-noninjective` collision), so each storage kind surfaces under
  * its own name at read time instead of being coerced onto a shared kind.
@@ -1803,6 +1803,30 @@ function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replac
  * two can disagree (see `GRANULARITY_MISMATCH_EXCLUSIONS` below). The
  * diagnostic is downgraded to non-blocking severity and kept only as an
  * audit trail of the auto-fix, not a build-blocking error.
+ *
+ * Per firing candidate, the fix branches on whether `X`'s OWN top-level rule
+ * (`rulesBag[X]`) is hidden (leading `_`, tree-sitter/sittir convention) or
+ * visible:
+ *   - visible → DROP the alias at this site (`alias($.X, $.Y)` → bare `$.X`),
+ *     unchanged from this pass's original behavior — `X` already produces an
+ *     independent named CST node once un-aliased.
+ *   - hidden → RETARGET the alias at this site, from `alias($.X, $.Y)` to
+ *     `alias($.X, $.<X-without-leading-underscore>)`. A hidden rule produces
+ *     no CST node of its own if merely un-aliased (tree-sitter inlines its
+ *     raw content wherever referenced) — aliasing IS the standard mechanism
+ *     for giving a hidden rule independent visibility, so retargeting to a
+ *     non-colliding name keeps it visible instead of dropping visibility
+ *     altogether. Guarded: if the stripped name already exists as a rule
+ *     (`rulesBag`/`kwRules`/`clauseGroupRules`), do NOT retarget — leave this
+ *     specific candidate's alias untouched and do not downgrade its
+ *     diagnostic (stays at original `error` severity, still-blocking, same as
+ *     if this pass declined to act).
+ *
+ * Strictly single-site: only the rule passed in is inspected/rewritten — no
+ * cross-rule sweep. Other occurrences of the same `alias($.X, $.Y)` pair in
+ * sibling top-level rules are untouched by this call (each such rule gets its
+ * own independent call from `applyEnrichPasses`, and is fixed only if ITS OWN
+ * local bucket independently diagnoses a collision).
  */
 // KNOWN GRANULARITY MISMATCH (2026-07-14, see docs/KNOWN_ISSUES.md): this
 // pass's raw pre-simplify rulesEqual disagrees with the assemble-time
@@ -1816,7 +1840,9 @@ const GRANULARITY_MISMATCH_EXCLUSIONS = new Set(['_suite']);
 function applyUnaliasDistinct(
 	ruleName: string,
 	rule: Rule,
-	rulesBag: Record<string, Rule>
+	rulesBag: Record<string, Rule>,
+	kwRules: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>
 ): { rule: Rule; diagnostics: ParseKindCollisionDiagnostic[] } {
 	if (GRANULARITY_MISMATCH_EXCLUSIONS.has(ruleName)) return { rule, diagnostics: [] };
 	const candidates: UnaliasCandidate[] = [];
@@ -1830,7 +1856,11 @@ function applyUnaliasDistinct(
 		byTargetName.set(candidate.targetName, bucket);
 	}
 
+	// Per-candidate resolution: 'drop' (visible storage kind — bare content
+	// replaces the alias site) or a retarget name (hidden storage kind — a
+	// faithful new ALIAS node with the same content/named, stripped value).
 	const toDrop = new Set<UnaliasCandidate>();
+	const toRetarget = new Map<UnaliasCandidate, string>();
 	const diagnostics: ParseKindCollisionDiagnostic[] = [];
 
 	for (const [targetName, bucket] of byTargetName) {
@@ -1847,23 +1877,56 @@ function applyUnaliasDistinct(
 		}));
 		const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName: targetName, values });
 		for (const diagnostic of resolution.diagnostics) {
-			diagnostics.push({ ...diagnostic, severity: 'info' });
 			// diagnoseParseKindCollisions reasons in aggregate over the bucket and
 			// doesn't identify which specific site(s) collided — since the
-			// diagnostic only fires on genuine structural distinctness, dropping
+			// diagnostic only fires on genuine structural distinctness, acting on
 			// every alias site in the bucket is always correct (never safe to
-			// keep one aliased and not another once distinctness is proven).
+			// keep one aliased and not another once distinctness is proven). Each
+			// site independently branches drop vs. retarget vs. decline-with-
+			// original-severity below.
+			let anyActed = false;
 			for (const candidate of bucket) {
-				if (candidate.aliasSite) toDrop.add(candidate);
+				if (!candidate.aliasSite || candidate.storageKind === undefined) continue;
+				const isHidden = candidate.storageKind.startsWith('_');
+				if (!isHidden) {
+					toDrop.add(candidate);
+					anyActed = true;
+					continue;
+				}
+				const strippedName = candidate.storageKind.replace(/^_+/, '');
+				const collides =
+					strippedName in rulesBag || strippedName in kwRules || strippedName in clauseGroupRules;
+				if (collides) {
+					// Name-collision guard: leave this candidate's alias untouched;
+					// its diagnostic keeps original (error) severity below — do not
+					// downgrade or suppress it.
+					continue;
+				}
+				toRetarget.set(candidate, strippedName);
+				anyActed = true;
 			}
+			// Only downgrade/record the diagnostic when at least one candidate in
+			// this bucket was actually acted on (dropped or retargeted); a bucket
+			// where every candidate was declined via the name-collision guard must
+			// keep firing at its original error severity, unchanged.
+			if (anyActed) diagnostics.push({ ...diagnostic, severity: 'info' });
 		}
 	}
 
-	if (toDrop.size === 0) return { rule, diagnostics: [] };
+	if (toDrop.size === 0 && toRetarget.size === 0) return { rule, diagnostics: [] };
 
 	let result = rule;
 	for (const candidate of toDrop) {
 		result = rewriteUnaliasAt(result, candidate.aliasSite!.path, candidate.aliasSite!.content);
+	}
+	for (const [candidate, strippedName] of toRetarget) {
+		const retargeted = {
+			type: 'ALIAS',
+			content: candidate.aliasSite!.content,
+			named: candidate.aliasSite!.named,
+			value: strippedName
+		} as unknown as Rule;
+		result = rewriteUnaliasAt(result, candidate.aliasSite!.path, retargeted);
 	}
 	return { rule: result, diagnostics };
 }

@@ -3,10 +3,14 @@
  * un-aliasing pass (`applyUnaliasDistinct`, `dsl/enrich.ts`).
  *
  * The pass walks each rule's ALIAS nodes, groups them by target name, and
- * drops any alias whose source rule is structurally distinct from its
- * siblings sharing that target — resolving the `parsekind-noninjective`
- * collision at the source instead of merging distinct storage kinds onto
- * one parse kind.
+ * either drops or retargets any alias whose source rule is structurally
+ * distinct from its siblings sharing that target — resolving the
+ * `parsekind-noninjective` collision at the source instead of merging
+ * distinct storage kinds onto one parse kind. Visible storage kinds are
+ * dropped (they already surface under their own name once un-aliased);
+ * hidden storage kinds (leading `_`) are retargeted to a non-colliding
+ * alias name instead, since un-aliasing alone would not give them an
+ * independent CST node.
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
@@ -120,6 +124,102 @@ describe('enrich — base-grammar un-aliasing', () => {
 		};
 		const optionalMember = parent.members.find((m) => m.type === 'OPTIONAL')!;
 		expect(optionalMember.content?.type).toBe('ALIAS');
+		expect(drainUnaliasDiagnostics()).toHaveLength(0);
+	});
+
+	it('retargets (not drops) an alias whose storage kind is a HIDDEN rule', () => {
+		// Mirrors the real typescript collision: primary_expression collapses
+		// [_reserved_identifier, identifier] onto parse kind 'identifier'.
+		// _reserved_identifier is hidden (leading '_') — its own rule body
+		// produces no independent CST node if merely un-aliased (tree-sitter
+		// inlines it wherever referenced), so dropping the alias (as a visible
+		// storage kind would get) is wrong here. It must be RETARGETED to a
+		// non-colliding name instead: alias($._reserved_identifier,
+		// $.identifier) -> alias($._reserved_identifier, $.reserved_identifier).
+		resetUnaliasDiagnostics();
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			choice: (...m: unknown[]) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const base = {
+			grammar: {
+				name: 'test',
+				rules: {
+					_reserved_identifier: g.choice('declare', 'type'),
+					identifier: g.seq(g.sym('word')),
+					word: 'x',
+					primary_expression: g.choice(
+						g.sym('identifier'),
+						g.alias(g.sym('_reserved_identifier'), g.sym('identifier'))
+					)
+				}
+			}
+		};
+
+		const result = enrich(base) as typeof base;
+
+		const primary = result.grammar.rules.primary_expression as unknown as {
+			members: Array<{ type: string; value?: string; content?: { type: string; name?: string } }>;
+		};
+		const aliasMember = primary.members.find((m) => m.type === 'ALIAS')!;
+		expect(aliasMember).toBeDefined();
+		// Retargeted, not dropped: still an ALIAS, still wrapping the hidden
+		// storage symbol, but under the stripped (non-colliding) name.
+		expect(aliasMember.value).toBe('reserved_identifier');
+		expect(aliasMember.content?.type).toBe('SYMBOL');
+		expect(aliasMember.content?.name).toBe('_reserved_identifier');
+
+		const diagnostics = drainUnaliasDiagnostics();
+		expect(diagnostics).toHaveLength(1);
+		expect(diagnostics[0]!.severity).not.toBe('error');
+	});
+
+	it('name-collision guard: declines to retarget when the stripped name already exists, leaving the alias untouched at original severity', () => {
+		// Same shape as the retarget case above, but 'reserved_identifier'
+		// (the stripped name) is already a real rule in the grammar — auto-
+		// retargeting would collide with it, so this pass must decline: leave
+		// the alias site exactly as-is and NOT downgrade the diagnostic (the
+		// later assemble-time parsekind-noninjective check still fires at its
+		// original 'error' severity, same as if this pass didn't exist for
+		// this case).
+		resetUnaliasDiagnostics();
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			choice: (...m: unknown[]) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const base = {
+			grammar: {
+				name: 'test',
+				rules: {
+					_reserved_identifier: g.choice('declare', 'type'),
+					identifier: g.seq(g.sym('word')),
+					reserved_identifier: g.seq('already_taken'),
+					word: 'x',
+					primary_expression: g.choice(
+						g.sym('identifier'),
+						g.alias(g.sym('_reserved_identifier'), g.sym('identifier'))
+					)
+				}
+			}
+		};
+
+		const result = enrich(base) as typeof base;
+
+		const primary = result.grammar.rules.primary_expression as unknown as {
+			members: Array<{ type: string; value?: string; content?: { type: string; name?: string } }>;
+		};
+		const aliasMember = primary.members.find((m) => m.type === 'ALIAS')!;
+		expect(aliasMember).toBeDefined();
+		// Untouched: still aliased to the ORIGINAL (colliding) target name.
+		expect(aliasMember.value).toBe('identifier');
+		expect(aliasMember.content?.name).toBe('_reserved_identifier');
+
+		// No diagnostic recorded by this pass — it declined to act, so nothing
+		// is downgraded (the assemble-time check keeps its own error severity).
 		expect(drainUnaliasDiagnostics()).toHaveLength(0);
 	});
 

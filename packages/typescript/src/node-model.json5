@@ -149,6 +149,9 @@
     "_ambient_declaration_module.name": {
       "property_identifier": "identifier"
     },
+    "_arrow_function_parameter.parameter": {
+      "reserved_identifier": "_reserved_identifier"
+    },
     "_export_statement_default.content": {
       "export_statement_default_from_arm": "_export_statement_default_from_arm",
       "export_statement_default_decl_arm": "_export_statement_default_decl_arm"
@@ -171,6 +174,9 @@
     },
     "_for_header_lhs.left": {
       "identifier": "_reserved_identifier"
+    },
+    "_index_signature_colon.name": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "_jsx_opening_element_content.name": {
       "member_expression": "nested_identifier"
@@ -224,6 +230,9 @@
     },
     "assignment_expression.left": {
       "identifier": "_reserved_identifier"
+    },
+    "augmented_assignment_expression.left": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "break_statement.label": {
       "statement_identifier": "identifier"
@@ -4615,7 +4624,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_reserved_identifier",
-              "parseKind": "_reserved_identifier",
+              "parseKind": "reserved_identifier",
               "unresolved": true
             },
             {
@@ -6958,7 +6967,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_reserved_identifier",
-              "parseKind": "_reserved_identifier",
+              "parseKind": "reserved_identifier",
               "unresolved": true
             }
           ],
@@ -10649,7 +10658,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_reserved_identifier",
-              "parseKind": "_reserved_identifier",
+              "parseKind": "reserved_identifier",
               "unresolved": true
             },
             {
