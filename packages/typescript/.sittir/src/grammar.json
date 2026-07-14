@@ -2684,13 +2684,8 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "jsx_identifier"
-          },
-          "named": true,
-          "value": "identifier"
+          "type": "SYMBOL",
+          "name": "jsx_identifier"
         },
         {
           "type": "SYMBOL",
@@ -2903,13 +2898,8 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "unescaped_double_jsx_string_fragment"
-                    },
-                    "named": true,
-                    "value": "string_fragment"
+                    "type": "SYMBOL",
+                    "name": "unescaped_double_jsx_string_fragment"
                   },
                   {
                     "type": "SYMBOL",
@@ -2937,13 +2927,8 @@
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "unescaped_single_jsx_string_fragment"
-                    },
-                    "named": true,
-                    "value": "string_fragment"
+                    "type": "SYMBOL",
+                    "name": "unescaped_single_jsx_string_fragment"
                   },
                   {
                     "type": "SYMBOL",
@@ -3939,13 +3924,8 @@
               "name": "subscript_expression"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
-              },
-              "named": true,
-              "value": "identifier"
+              "type": "SYMBOL",
+              "name": "_reserved_identifier"
             },
             {
               "type": "SYMBOL",
@@ -5137,13 +5117,8 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "ALIAS",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "unescaped_double_string_fragment"
-                      },
-                      "named": true,
-                      "value": "string_fragment"
+                      "type": "SYMBOL",
+                      "name": "unescaped_double_string_fragment"
                     },
                     {
                       "type": "SYMBOL",
@@ -5158,13 +5133,8 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "ALIAS",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "unescaped_single_string_fragment"
-                      },
-                      "named": true,
-                      "value": "string_fragment"
+                      "type": "SYMBOL",
+                      "name": "unescaped_single_string_fragment"
                     },
                     {
                       "type": "SYMBOL",
@@ -9327,13 +9297,8 @@
                 "name": "this"
               },
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "predefined_type"
-                },
-                "named": true,
-                "value": "identifier"
+                "type": "SYMBOL",
+                "name": "predefined_type"
               }
             ]
           }
@@ -11653,13 +11618,8 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_reserved_identifier"
-            },
-            "named": true,
-            "value": "identifier"
+            "type": "SYMBOL",
+            "name": "_reserved_identifier"
           },
           {
             "type": "SYMBOL",
@@ -11790,13 +11750,8 @@
                 "name": "identifier"
               },
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_reserved_identifier"
-                },
-                "named": true,
-                "value": "identifier"
+                "type": "SYMBOL",
+                "name": "_reserved_identifier"
               }
             ]
           }

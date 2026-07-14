@@ -2306,8 +2306,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Dquote;
 		case "'":
 			return TSKindId.Squote;
-		case 'string_fragment':
-			return TSKindId.UnescapedDoubleStringFragment;
 		case '`':
 			return TSKindId.Bquote;
 		case '${':
@@ -2332,6 +2330,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PlusPlus;
 		case '--':
 			return TSKindId.DashDash;
+		case 'string_fragment':
+			return TSKindId.TemplateChars;
 		case 'export_clause_group1':
 			return TSKindId._ExportClauseGroup1;
 		case 'import_clause_group1':
@@ -5620,15 +5620,11 @@ export interface UndefinedTree extends AnyTreeNode {
 export interface UnescapedDoubleJsxStringFragmentTree extends AnyTreeNode {
 	readonly type: 'unescaped_double_jsx_string_fragment';
 }
-export interface UnescapedDoubleStringFragmentTree extends AnyTreeNode {
-	readonly type: 'unescaped_double_string_fragment';
-}
+export interface UnescapedDoubleStringFragmentTree extends TreeNode<'unescaped_double_string_fragment'> {}
 export interface UnescapedSingleJsxStringFragmentTree extends AnyTreeNode {
 	readonly type: 'unescaped_single_jsx_string_fragment';
 }
-export interface UnescapedSingleStringFragmentTree extends AnyTreeNode {
-	readonly type: 'unescaped_single_string_fragment';
-}
+export interface UnescapedSingleStringFragmentTree extends TreeNode<'unescaped_single_string_fragment'> {}
 export interface TemplateCharsTree extends AnyTreeNode {
 	readonly type: '_template_chars';
 }

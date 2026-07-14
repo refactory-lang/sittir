@@ -805,12 +805,7 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
 			}),
 
 			parameter() {
-				return drillAs<T.ReservedIdentifier | T.Identifier>(
-					this._parameter,
-					tree,
-					'identifier',
-					'_reserved_identifier'
-				);
+				return drillIn<T.ReservedIdentifier | T.Identifier>(this._parameter, tree);
 			},
 			$with: {
 				parameter: (v: NonNullable<T.ArrowFunctionParameter['_parameter']>) =>
@@ -2284,7 +2279,7 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 			}),
 
 			name() {
-				return drillAs<T.Identifier | T.ReservedIdentifier>(this._name, tree, 'identifier', '_reserved_identifier');
+				return drillIn<T.Identifier | T.ReservedIdentifier>(this._name, tree);
 			},
 			indexType() {
 				return drillIn<T.Type>(this._index_type, tree);
@@ -4194,14 +4189,14 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
 			}),
 
 			left() {
-				return drillAs<
+				return drillIn<
 					| T.MemberExpression
 					| T.SubscriptExpression
 					| T.ReservedIdentifier
 					| T.Identifier
 					| T.ParenthesizedExpression
 					| T.NonNullExpression
-				>(this._left, tree, 'identifier', '_reserved_identifier');
+				>(this._left, tree);
 			},
 			operator() {
 				return this._operator;
@@ -9851,11 +9846,11 @@ export function wrapString(data: T.String, tree: TreeHandle) {
 				return this._opening;
 			},
 			contents() {
-				return drillAsAll<T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment>(
-					this._contents,
-					tree,
-					'string_fragment',
-					'unescaped_single_string_fragment'
+				return drillInAll<T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment>(
+					this._contents as
+						| readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment)[]
+						| undefined,
+					tree
 				);
 			},
 			closing() {
@@ -10927,7 +10922,7 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
 			}),
 
 			name() {
-				return drillAs<T.Identifier | T.This | T.PredefinedType>(this._name, tree, 'identifier', 'predefined_type');
+				return drillIn<T.Identifier | T.This | T.PredefinedType>(this._name, tree);
 			},
 			type() {
 				return drillIn<T.Type>(this._type, tree);

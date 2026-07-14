@@ -1,114 +1,6 @@
 [
   {
     "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "error",
-    "grammar": "typescript",
-    "ownerKind": "_arrow_function_parameter",
-    "slotName": "parameter",
-    "message": "Slot 'parameter' of kind '_arrow_function_parameter' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'.",
-    "proposal": "Slot 'parameter' of kind '_arrow_function_parameter' collapses distinct storage kinds [_reserved_identifier, identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "error",
-    "grammar": "typescript",
-    "ownerKind": "_index_signature_colon",
-    "slotName": "name",
-    "message": "Slot 'name' of kind '_index_signature_colon' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'.",
-    "proposal": "Slot 'name' of kind '_index_signature_colon' collapses distinct storage kinds [identifier, _reserved_identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "identifier",
-        "_reserved_identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "error",
-    "grammar": "typescript",
-    "ownerKind": "_jsx_string",
-    "slotName": "content",
-    "message": "Slot 'content' of kind '_jsx_string' collapses [unescaped_double_jsx_string_fragment, unescaped_single_jsx_string_fragment] onto parse kind 'string_fragment'.",
-    "proposal": "Slot 'content' of kind '_jsx_string' collapses distinct storage kinds [unescaped_double_jsx_string_fragment, unescaped_single_jsx_string_fragment] onto parse kind 'string_fragment'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "string_fragment",
-      "storageKinds": [
-        "unescaped_double_jsx_string_fragment",
-        "unescaped_single_jsx_string_fragment"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "error",
-    "grammar": "typescript",
-    "ownerKind": "augmented_assignment_expression",
-    "slotName": "left",
-    "message": "Slot 'left' of kind 'augmented_assignment_expression' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'.",
-    "proposal": "Slot 'left' of kind 'augmented_assignment_expression' collapses distinct storage kinds [_reserved_identifier, identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "error",
-    "grammar": "typescript",
-    "ownerKind": "string",
-    "slotName": "contents",
-    "message": "Slot 'contents' of kind 'string' collapses [unescaped_double_string_fragment, unescaped_single_string_fragment] onto parse kind 'string_fragment'.",
-    "proposal": "Slot 'contents' of kind 'string' collapses distinct storage kinds [unescaped_double_string_fragment, unescaped_single_string_fragment] onto parse kind 'string_fragment'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "string_fragment",
-      "storageKinds": [
-        "unescaped_double_string_fragment",
-        "unescaped_single_string_fragment"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "error",
-    "grammar": "typescript",
-    "ownerKind": "type_predicate",
-    "slotName": "name",
-    "message": "Slot 'name' of kind 'type_predicate' collapses [identifier, predefined_type] onto parse kind 'identifier'.",
-    "proposal": "Slot 'name' of kind 'type_predicate' collapses distinct storage kinds [identifier, predefined_type] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "identifier",
-        "predefined_type"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "seq-with-nested-seq",
     "severity": "error",
     "grammar": "typescript",
@@ -419,6 +311,132 @@
     "canProceed": true,
     "details": {
       "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_augmented_assignment_lhs",
+    "slotName": "identifier",
+    "message": "Slot 'identifier' of kind '_augmented_assignment_lhs' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'.",
+    "proposal": "Slot 'identifier' of kind '_augmented_assignment_lhs' collapses distinct storage kinds [_reserved_identifier, identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "_reserved_identifier",
+        "identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_jsx_identifier",
+    "slotName": "identifier",
+    "message": "Slot 'identifier' of kind '_jsx_identifier' collapses [jsx_identifier, identifier] onto parse kind 'identifier'.",
+    "proposal": "Slot 'identifier' of kind '_jsx_identifier' collapses distinct storage kinds [jsx_identifier, identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "jsx_identifier",
+        "identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_jsx_string",
+    "slotName": "string_fragment",
+    "message": "Slot 'string_fragment' of kind '_jsx_string' collapses [unescaped_double_jsx_string_fragment, unescaped_single_jsx_string_fragment] onto parse kind 'string_fragment'.",
+    "proposal": "Slot 'string_fragment' of kind '_jsx_string' collapses distinct storage kinds [unescaped_double_jsx_string_fragment, unescaped_single_jsx_string_fragment] onto parse kind 'string_fragment'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "string_fragment",
+      "storageKinds": [
+        "unescaped_double_jsx_string_fragment",
+        "unescaped_single_jsx_string_fragment"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "arrow_function",
+    "slotName": "identifier",
+    "message": "Slot 'identifier' of kind 'arrow_function' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'.",
+    "proposal": "Slot 'identifier' of kind 'arrow_function' collapses distinct storage kinds [_reserved_identifier, identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "_reserved_identifier",
+        "identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "index_signature",
+    "slotName": "identifier",
+    "message": "Slot 'identifier' of kind 'index_signature' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'.",
+    "proposal": "Slot 'identifier' of kind 'index_signature' collapses distinct storage kinds [identifier, _reserved_identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "identifier",
+        "_reserved_identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "string",
+    "slotName": "string_fragment",
+    "message": "Slot 'string_fragment' of kind 'string' collapses [unescaped_double_string_fragment, unescaped_single_string_fragment] onto parse kind 'string_fragment'.",
+    "proposal": "Slot 'string_fragment' of kind 'string' collapses distinct storage kinds [unescaped_double_string_fragment, unescaped_single_string_fragment] onto parse kind 'string_fragment'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "string_fragment",
+      "storageKinds": [
+        "unescaped_double_string_fragment",
+        "unescaped_single_string_fragment"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "type_predicate",
+    "slotName": "identifier",
+    "message": "Slot 'identifier' of kind 'type_predicate' collapses [identifier, predefined_type] onto parse kind 'identifier'.",
+    "proposal": "Slot 'identifier' of kind 'type_predicate' collapses distinct storage kinds [identifier, predefined_type] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "identifier",
+        "predefined_type"
+      ]
     }
   }
 ]

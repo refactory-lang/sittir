@@ -76,7 +76,12 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { detectRepeatSeparator, firstStringOfChoice } from './list-patterns.ts';
+import { detectRepeatSeparator, firstStringOfChoice, rulesEqual } from './list-patterns.ts';
+import {
+	diagnoseParseKindCollisions,
+	type ParseKindCollisionDiagnostic,
+	type ParseKindCollisionValue
+} from '../types/parsekind-collisions.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { ruleMatchesEmpty, isInlineSafe } from './group-classify.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
@@ -307,6 +312,15 @@ function applyEnrichPasses(
 		groupDedupeMap,
 		visibleGroupHiddenNames
 	);
+	// Base-grammar un-aliasing: drop alias($.X, $.Y) sites where X's storage
+	// kind is structurally distinct from the other value(s) sharing parse
+	// kind Y (parsekind-noninjective). Runs after clause-hoist has settled so
+	// it sees the final member shape.
+	const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag);
+	r = unaliasResult.rule;
+	for (const diagnostic of unaliasResult.diagnostics) {
+		recordUnaliasDiagnostic(diagnostic);
+	}
 	return r;
 }
 
@@ -1592,6 +1606,266 @@ function applyClauseHoist(
 	}
 
 	return rule;
+}
+
+// ---------------------------------------------------------------------------
+// Base-grammar un-aliasing (parsekind-noninjective auto-fix)
+// ---------------------------------------------------------------------------
+
+/**
+ * Assign a stable cluster-id string to each value in `values`, where two
+ * values get the SAME id iff `rulesEqual` (dsl/list-patterns.ts) says they're
+ * structurally equal. Used as `diagnoseParseKindCollisions`'s
+ * `structuralSignature` input — that function only needs values sharing a
+ * signature to be groupable via `distinct()`, not a globally-canonical hash,
+ * so an arbitrary-but-consistent per-call cluster index is sufficient and
+ * avoids hand-rolling a serializer (DRY: reuses the existing, already
+ * separator-shape-aware `rulesEqual` instead).
+ *
+ * @internal — exported for testing only.
+ */
+export function clusterSignatures(values: readonly RuntimeRule[]): string[] {
+	const clusterOf: string[] = [];
+	const representatives: RuntimeRule[] = [];
+	for (const value of values) {
+		const existingIdx = representatives.findIndex((rep) => rulesEqual(rep, value));
+		if (existingIdx === -1) {
+			representatives.push(value);
+			clusterOf.push(String(representatives.length - 1));
+		} else {
+			clusterOf.push(String(existingIdx));
+		}
+	}
+	return clusterOf;
+}
+
+// Module-level accumulator, mirroring the exact pattern used by the later,
+// assemble-time parsekind-noninjective check (compiler/model/node-map.ts's
+// _parseKindCollisionDiagnostics / recordParseKindCollisionDiagnostic /
+// resetParseKindCollisionDiagnostics / drainParseKindCollisionDiagnostics):
+// a dedupe-by-key Set alongside the array, and drain resets both.
+const _unaliasDiagnostics: ParseKindCollisionDiagnostic[] = [];
+const _unaliasDiagnosticsSeen = new Set<string>();
+
+function unaliasDiagnosticKey(diagnostic: ParseKindCollisionDiagnostic): string {
+	return [
+		diagnostic.code,
+		diagnostic.ownerKind,
+		diagnostic.slotName,
+		diagnostic.parseKind,
+		diagnostic.storageKinds.join(',')
+	].join(' ');
+}
+
+function recordUnaliasDiagnostic(diagnostic: ParseKindCollisionDiagnostic): void {
+	const key = unaliasDiagnosticKey(diagnostic);
+	if (_unaliasDiagnosticsSeen.has(key)) return;
+	_unaliasDiagnosticsSeen.add(key);
+	_unaliasDiagnostics.push(diagnostic);
+}
+
+/** @internal — exported for testing only, matching this file's existing convention. */
+export function resetUnaliasDiagnostics(): void {
+	_unaliasDiagnostics.length = 0;
+	_unaliasDiagnosticsSeen.clear();
+}
+
+/** @internal — exported for testing only, matching this file's existing convention. */
+export function drainUnaliasDiagnostics(): ParseKindCollisionDiagnostic[] {
+	const out = [..._unaliasDiagnostics];
+	resetUnaliasDiagnostics();
+	return out;
+}
+
+/**
+ * @internal — a single value contributing to a target-name bucket: either an
+ * ALIAS site (`aliasSite` set, eligible to be dropped) or a bare SYMBOL
+ * reference sharing the same target name (its own storage kind IS its parse
+ * kind — never dropped, but must be counted so `diagnoseParseKindCollisions`
+ * sees the full set of colliding storage kinds, matching the real base-grammar
+ * shape `choice($.generic_type, alias($.generic_type_with_turbofish,
+ * $.generic_type))` where the bare `$.generic_type` branch is what makes the
+ * collision detectable at all).
+ */
+interface UnaliasCandidate {
+	readonly targetName: string;
+	readonly storageKind: string | undefined;
+	readonly resolvedBody: RuntimeRule;
+	readonly aliasSite?: { readonly path: readonly (string | number)[]; readonly content: Rule };
+}
+
+/**
+ * @internal — walk `node` collecting every ALIAS site and bare SYMBOL leaf,
+ * resolving each to its referenced rule body via `rulesBag` for structural
+ * comparison. Mirrors the descent pattern used elsewhere in this file
+ * (`countSymbolsInRepeat`): SEQ/CHOICE members, REPEAT/OPTIONAL/PREC/FIELD
+ * content. Does not descend into an ALIAS's own content (its resolved body is
+ * looked up directly instead) — mirrors `applyClauseHoist`'s treatment of its
+ * own synthesized wrappers as opaque once classified.
+ *
+ * Includes the OPTIONAL case (absent from `applyClauseHoist`'s own descent,
+ * which is `optional(seq(...))`-specific rather than a generic walker):
+ * sittir's own evaluate runtime produces bare `OPTIONAL` nodes (not always
+ * the tree-sitter-CLI-lowered `CHOICE[x,BLANK]` form) before tree-sitter's
+ * `grammar()` runs, so a base-grammar alias can sit directly under an
+ * `optional(...)` at this phase.
+ */
+function collectUnaliasCandidates(
+	node: Rule,
+	path: readonly (string | number)[],
+	rulesBag: Record<string, Rule>,
+	out: UnaliasCandidate[]
+): void {
+	const t = (node as { type?: string }).type;
+	if (!t) return;
+	if (t === 'ALIAS') {
+		const aliasRule = node as unknown as { content: Rule; value: string };
+		const storageKind = isSymbolType(aliasRule.content.type)
+			? (aliasRule.content as unknown as { name?: string }).name
+			: undefined;
+		const resolvedBody = normalizeMember(
+			(storageKind !== undefined ? rulesBag[storageKind] : undefined) ?? aliasRule.content
+		);
+		out.push({
+			targetName: aliasRule.value,
+			storageKind,
+			resolvedBody,
+			aliasSite: { path, content: aliasRule.content }
+		});
+		return; // do not descend into the alias's own content
+	}
+	if (isSymbolType(t)) {
+		const name = (node as unknown as { name?: string }).name;
+		if (typeof name === 'string') {
+			const resolvedBody = normalizeMember(rulesBag[name] ?? node);
+			out.push({ targetName: name, storageKind: name, resolvedBody });
+		}
+		return;
+	}
+	if (isFieldType(t)) {
+		const content = (node as unknown as { content?: Rule }).content;
+		if (content) collectUnaliasCandidates(content, [...path, 'content'], rulesBag, out);
+		return;
+	}
+	if (isSeqType(t) || isChoiceType(t)) {
+		const members = (node as unknown as { members?: Rule[] }).members;
+		if (Array.isArray(members)) {
+			members.forEach((m, i) => collectUnaliasCandidates(m, [...path, 'members', i], rulesBag, out));
+		}
+		return;
+	}
+	if (isRepeatType(t) || isOptionalType(t) || isPrecWrapper(node as { type: string })) {
+		const content = (node as unknown as { content?: Rule }).content;
+		if (content) collectUnaliasCandidates(content, [...path, 'content'], rulesBag, out);
+		return;
+	}
+	// STRING / PATTERN / TOKEN / BLANK — leaves, nothing to collect.
+}
+
+/**
+ * @internal — replace the node at `path` (as recorded by
+ * `collectUnaliasCandidates`) with `replacement`. `path` alternates
+ * `'members', <index>` (SEQ/CHOICE) and `'content'` (FIELD/OPTIONAL/
+ * REPEAT/REPEAT1/PREC*) segments, mirroring that function's own descent.
+ */
+function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replacement: Rule): Rule {
+	if (path.length === 0) return replacement;
+	const [key, ...rest] = path;
+	if (key === 'members') {
+		const idx = rest[0] as number;
+		const members = (node as unknown as { members: Rule[] }).members.slice();
+		members[idx] = rest.length > 1 ? rewriteUnaliasAt(members[idx]!, rest.slice(1), replacement) : replacement;
+		return { ...node, members } as Rule;
+	}
+	// key === 'content'
+	const content = (node as unknown as { content: Rule }).content;
+	return { ...node, content: rest.length > 0 ? rewriteUnaliasAt(content, rest, replacement) : replacement } as Rule;
+}
+
+/**
+ * @internal — drop `alias($.X, $.Y)` sites where `X`'s rule body is
+ * structurally distinct from the other value(s) sharing parse kind `Y`
+ * (a `parsekind-noninjective` collision), so each storage kind surfaces under
+ * its own name at read time instead of being coerced onto a shared kind.
+ *
+ * Reuses `diagnoseParseKindCollisions` (the same decision function the
+ * later, assemble-time check calls) fed by locally-computed storage/parse
+ * kind facts — its comparison logic is phase-agnostic, so it is not
+ * reimplemented here. Structurally-identical collisions (the common,
+ * intentional case, e.g. multiple hidden rules aliased to one shared display
+ * name) merge with no diagnostic, unchanged from `diagnoseParseKindCollisions`'s
+ * existing behavior. Only genuinely-distinct collisions trigger a rewrite.
+ * This is usually safe (a distinct-storage-kind collision makes read-time
+ * dispatch non-injective regardless of author intent), but "distinct" here
+ * is judged by `rulesEqual` over RAW, pre-simplify rule shapes — a shallower
+ * notion than the assemble-time check's post-simplify/catalog-resolved
+ * `structuralSignatureOfValue`/`canonicalRuleSignature` comparison, and the
+ * two can disagree (see `GRANULARITY_MISMATCH_EXCLUSIONS` below). The
+ * diagnostic is downgraded to non-blocking severity and kept only as an
+ * audit trail of the auto-fix, not a build-blocking error.
+ */
+// KNOWN GRANULARITY MISMATCH (2026-07-14, see docs/KNOWN_ISSUES.md): this
+// pass's raw pre-simplify rulesEqual disagrees with the assemble-time
+// check's post-simplify/catalog-resolved structuralSignatureOfValue for
+// this rule — _simple_statements/block/_newline read as distinct raw
+// shapes here but the assemble-time check has never flagged them,
+// suggesting they reduce to equivalent post-simplify behavior. Skip until
+// investigated, rather than ship an unreviewed python grammar change.
+const GRANULARITY_MISMATCH_EXCLUSIONS = new Set(['_suite']);
+
+function applyUnaliasDistinct(
+	ruleName: string,
+	rule: Rule,
+	rulesBag: Record<string, Rule>
+): { rule: Rule; diagnostics: ParseKindCollisionDiagnostic[] } {
+	if (GRANULARITY_MISMATCH_EXCLUSIONS.has(ruleName)) return { rule, diagnostics: [] };
+	const candidates: UnaliasCandidate[] = [];
+	collectUnaliasCandidates(rule, [], rulesBag, candidates);
+	if (candidates.length === 0) return { rule, diagnostics: [] };
+
+	const byTargetName = new Map<string, UnaliasCandidate[]>();
+	for (const candidate of candidates) {
+		const bucket = byTargetName.get(candidate.targetName) ?? [];
+		bucket.push(candidate);
+		byTargetName.set(candidate.targetName, bucket);
+	}
+
+	const toDrop = new Set<UnaliasCandidate>();
+	const diagnostics: ParseKindCollisionDiagnostic[] = [];
+
+	for (const [targetName, bucket] of byTargetName) {
+		// A collision needs at least one ALIAS site (only aliasing can make a
+		// storage kind's parse kind differ from its own name) plus 2+ entries
+		// overall sharing the target name.
+		if (bucket.length < 2 || !bucket.some((c) => c.aliasSite)) continue;
+		const signatures = clusterSignatures(bucket.map((c) => c.resolvedBody));
+		const values: ParseKindCollisionValue<UnaliasCandidate>[] = bucket.map((candidate, i) => ({
+			original: candidate,
+			parseKind: targetName,
+			storageKind: candidate.storageKind,
+			structuralSignature: signatures[i]!
+		}));
+		const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName: targetName, values });
+		for (const diagnostic of resolution.diagnostics) {
+			diagnostics.push({ ...diagnostic, severity: 'info' });
+			// diagnoseParseKindCollisions reasons in aggregate over the bucket and
+			// doesn't identify which specific site(s) collided — since the
+			// diagnostic only fires on genuine structural distinctness, dropping
+			// every alias site in the bucket is always correct (never safe to
+			// keep one aliased and not another once distinctness is proven).
+			for (const candidate of bucket) {
+				if (candidate.aliasSite) toDrop.add(candidate);
+			}
+		}
+	}
+
+	if (toDrop.size === 0) return { rule, diagnostics: [] };
+
+	let result = rule;
+	for (const candidate of toDrop) {
+		result = rewriteUnaliasAt(result, candidate.aliasSite!.path, candidate.aliasSite!.content);
+	}
+	return { rule: result, diagnostics };
 }
 
 /**

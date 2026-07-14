@@ -518,6 +518,47 @@ function makeRuleMetadata(shape) {
 }
 
 // packages/codegen/src/dsl/list-patterns.ts
+function separatorFactsEqual(a, b) {
+  if (a === void 0 || b === void 0) return a === b;
+  return a.trailing === b.trailing && a.leading === b.leading && rulesEqual(a.value, b.value);
+}
+function rulesEqual(a, b) {
+  const ta = a.type.toLowerCase();
+  if (ta !== b.type.toLowerCase()) return false;
+  const A = a;
+  const B = b;
+  switch (ta) {
+    case "string":
+    case "pattern":
+      return A.value === B.value;
+    case "symbol":
+      return A.name === B.name;
+    case "enum": {
+      const am = A.members;
+      const bm = B.members;
+      return am.length === bm.length && am.every((m, i) => m.value === bm[i].value);
+    }
+    case "seq":
+    case "choice": {
+      const am = A.members;
+      const bm = B.members;
+      return am.length === bm.length && am.every((m, i) => rulesEqual(m, bm[i]));
+    }
+    case "optional":
+      return rulesEqual(A.content, B.content);
+    case "repeat":
+    case "repeat1": {
+      const aObj = typeof A.separator === "object" && A.separator !== null;
+      const bObj = typeof B.separator === "object" && B.separator !== null;
+      const sepEqual = aObj && bObj ? separatorFactsEqual(A.separator, B.separator) : A.separator === B.separator;
+      return sepEqual && rulesEqual(A.content, B.content);
+    }
+    case "field":
+      return A.name === B.name && rulesEqual(A.content, B.content);
+    default:
+      return false;
+  }
+}
 function firstStringOfChoice(r) {
   if (!typeEq(r.type, "CHOICE")) return null;
   const members = r.members ?? [];
@@ -538,6 +579,68 @@ function detectRepeatSeparator(resolved) {
   if (firstIsChoice && !secondIsStr) return { content: second, separator: first };
   if (secondIsChoice && !firstIsStr) return { content: first, separator: second, trailing: true };
   return null;
+}
+
+// packages/codegen/src/types/parsekind-collisions.ts
+function diagnoseParseKindCollisions(input) {
+  const byParseKind = /* @__PURE__ */ new Map();
+  for (const value of input.values) {
+    if (value.parseKind === void 0 || value.storageKind === void 0) continue;
+    const bucket = byParseKind.get(value.parseKind) ?? [];
+    bucket.push(value);
+    byParseKind.set(value.parseKind, bucket);
+  }
+  const mergedByParseKind = /* @__PURE__ */ new Map();
+  const diagnostics = [];
+  for (const [parseKind, bucket] of byParseKind) {
+    const storageKinds = distinct(bucket.map((value) => value.storageKind));
+    if (storageKinds.length <= 1) continue;
+    const signatures = distinct(bucket.map((value) => value.structuralSignature));
+    if (signatures.length === 1) {
+      mergedByParseKind.set(parseKind, pickRepresentative(bucket, parseKind));
+      continue;
+    }
+    diagnostics.push({
+      code: "parsekind-noninjective",
+      severity: "error",
+      message: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses [${storageKinds.join(", ")}] onto parse kind '${parseKind}'.`,
+      canProceed: true,
+      ownerKind: input.ownerKind,
+      slotName: input.slotName,
+      shape: "propose-distinct-alias",
+      parseKind,
+      storageKinds,
+      proposal: `Slot '${input.slotName}' of kind '${input.ownerKind}' collapses distinct storage kinds [${storageKinds.join(", ")}] onto parse kind '${parseKind}'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.`
+    });
+  }
+  if (mergedByParseKind.size === 0) {
+    return { values: input.values.map((value) => value.original), diagnostics };
+  }
+  const emittedParseKinds = /* @__PURE__ */ new Set();
+  const values = [];
+  for (const value of input.values) {
+    const parseKind = value.parseKind;
+    if (parseKind === void 0) {
+      values.push(value.original);
+      continue;
+    }
+    const merged = mergedByParseKind.get(parseKind);
+    if (!merged) {
+      values.push(value.original);
+      continue;
+    }
+    if (emittedParseKinds.has(parseKind)) continue;
+    values.push(merged.original);
+    emittedParseKinds.add(parseKind);
+  }
+  return { values, diagnostics };
+}
+function pickRepresentative(bucket, parseKind) {
+  const preferred = bucket.find((value) => value.preferRepresentative) ?? bucket.find((value) => value.storageKind === parseKind);
+  return preferred ?? bucket[0];
+}
+function distinct(values) {
+  return [...new Set(values)];
 }
 
 // packages/codegen/src/dsl/group-classify.ts
@@ -859,6 +962,11 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     groupDedupeMap,
     visibleGroupHiddenNames
   );
+  const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag);
+  r = unaliasResult.rule;
+  for (const diagnostic of unaliasResult.diagnostics) {
+    recordUnaliasDiagnostic(diagnostic);
+  }
   return r;
 }
 function extractSupertypeNames(base2, hasWrapper) {
@@ -1606,6 +1714,130 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     return { ...rule, content: newContent };
   }
   return rule;
+}
+function clusterSignatures(values) {
+  const clusterOf = [];
+  const representatives = [];
+  for (const value of values) {
+    const existingIdx = representatives.findIndex((rep) => rulesEqual(rep, value));
+    if (existingIdx === -1) {
+      representatives.push(value);
+      clusterOf.push(String(representatives.length - 1));
+    } else {
+      clusterOf.push(String(existingIdx));
+    }
+  }
+  return clusterOf;
+}
+var _unaliasDiagnostics = [];
+var _unaliasDiagnosticsSeen = /* @__PURE__ */ new Set();
+function unaliasDiagnosticKey(diagnostic) {
+  return [
+    diagnostic.code,
+    diagnostic.ownerKind,
+    diagnostic.slotName,
+    diagnostic.parseKind,
+    diagnostic.storageKinds.join(",")
+  ].join(" ");
+}
+function recordUnaliasDiagnostic(diagnostic) {
+  const key = unaliasDiagnosticKey(diagnostic);
+  if (_unaliasDiagnosticsSeen.has(key)) return;
+  _unaliasDiagnosticsSeen.add(key);
+  _unaliasDiagnostics.push(diagnostic);
+}
+function collectUnaliasCandidates(node, path, rulesBag, out) {
+  const t = node.type;
+  if (!t) return;
+  if (t === "ALIAS") {
+    const aliasRule = node;
+    const storageKind = isSymbolType(aliasRule.content.type) ? aliasRule.content.name : void 0;
+    const resolvedBody = normalizeMember(
+      (storageKind !== void 0 ? rulesBag[storageKind] : void 0) ?? aliasRule.content
+    );
+    out.push({
+      targetName: aliasRule.value,
+      storageKind,
+      resolvedBody,
+      aliasSite: { path, content: aliasRule.content }
+    });
+    return;
+  }
+  if (isSymbolType(t)) {
+    const name = node.name;
+    if (typeof name === "string") {
+      const resolvedBody = normalizeMember(rulesBag[name] ?? node);
+      out.push({ targetName: name, storageKind: name, resolvedBody });
+    }
+    return;
+  }
+  if (isFieldType(t)) {
+    const content = node.content;
+    if (content) collectUnaliasCandidates(content, [...path, "content"], rulesBag, out);
+    return;
+  }
+  if (isSeqType(t) || isChoiceType(t)) {
+    const members = node.members;
+    if (Array.isArray(members)) {
+      members.forEach((m, i) => collectUnaliasCandidates(m, [...path, "members", i], rulesBag, out));
+    }
+    return;
+  }
+  if (isRepeatType(t) || isOptionalType(t) || isPrecWrapper(node)) {
+    const content = node.content;
+    if (content) collectUnaliasCandidates(content, [...path, "content"], rulesBag, out);
+    return;
+  }
+}
+function rewriteUnaliasAt(node, path, replacement) {
+  if (path.length === 0) return replacement;
+  const [key, ...rest] = path;
+  if (key === "members") {
+    const idx = rest[0];
+    const members = node.members.slice();
+    members[idx] = rest.length > 1 ? rewriteUnaliasAt(members[idx], rest.slice(1), replacement) : replacement;
+    return { ...node, members };
+  }
+  const content = node.content;
+  return { ...node, content: rest.length > 0 ? rewriteUnaliasAt(content, rest, replacement) : replacement };
+}
+var GRANULARITY_MISMATCH_EXCLUSIONS = /* @__PURE__ */ new Set(["_suite"]);
+function applyUnaliasDistinct(ruleName, rule, rulesBag) {
+  if (GRANULARITY_MISMATCH_EXCLUSIONS.has(ruleName)) return { rule, diagnostics: [] };
+  const candidates = [];
+  collectUnaliasCandidates(rule, [], rulesBag, candidates);
+  if (candidates.length === 0) return { rule, diagnostics: [] };
+  const byTargetName = /* @__PURE__ */ new Map();
+  for (const candidate of candidates) {
+    const bucket = byTargetName.get(candidate.targetName) ?? [];
+    bucket.push(candidate);
+    byTargetName.set(candidate.targetName, bucket);
+  }
+  const toDrop = /* @__PURE__ */ new Set();
+  const diagnostics = [];
+  for (const [targetName, bucket] of byTargetName) {
+    if (bucket.length < 2 || !bucket.some((c) => c.aliasSite)) continue;
+    const signatures = clusterSignatures(bucket.map((c) => c.resolvedBody));
+    const values = bucket.map((candidate, i) => ({
+      original: candidate,
+      parseKind: targetName,
+      storageKind: candidate.storageKind,
+      structuralSignature: signatures[i]
+    }));
+    const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName: targetName, values });
+    for (const diagnostic of resolution.diagnostics) {
+      diagnostics.push({ ...diagnostic, severity: "info" });
+      for (const candidate of bucket) {
+        if (candidate.aliasSite) toDrop.add(candidate);
+      }
+    }
+  }
+  if (toDrop.size === 0) return { rule, diagnostics: [] };
+  let result = rule;
+  for (const candidate of toDrop) {
+    result = rewriteUnaliasAt(result, candidate.aliasSite.path, candidate.aliasSite.content);
+  }
+  return { rule: result, diagnostics };
 }
 function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules) {
   const key = canonicalStringifyClause(seqBody);
@@ -3539,14 +3771,24 @@ var overrides_default = grammar(
         // / `closing` are real field-wrapped choices in the override
         // grammar; refine correlates them so the double/single forms
         // share one NodeData shape with auto-stamped delimiters.
+        //
+        // The double/single fragment tokens surface under their OWN names
+        // (not coerced onto a shared `string_fragment` alias): the two
+        // tokens are structurally distinct (different quote-char patterns),
+        // so aliasing them onto one parse kind was read-time non-injective
+        // (parsekind-noninjective) — the same class of collision the new
+        // enrich un-aliasing pass auto-drops at the base-grammar layer;
+        // this override reintroduces an equivalent alias independently
+        // (it wholesale-replaces the rule after enrich runs), so it needs
+        // the same fix applied here directly.
         string: ($) => refine(
           seq(
             field("opening", choice('"', "'")),
             field(
               "contents",
               choice(
-                repeat(choice(alias($.unescaped_double_string_fragment, $.string_fragment), $.escape_sequence)),
-                repeat(choice(alias($.unescaped_single_string_fragment, $.string_fragment), $.escape_sequence))
+                repeat(choice($.unescaped_double_string_fragment, $.escape_sequence)),
+                repeat(choice($.unescaped_single_string_fragment, $.escape_sequence))
               )
             ),
             field("closing", choice('"', "'"))

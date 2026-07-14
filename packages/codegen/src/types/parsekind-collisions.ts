@@ -1,8 +1,13 @@
-import type { Diagnostic } from './diagnostics.ts';
+import type { Diagnostic, Severity } from './diagnostics.ts';
 
 export interface ParseKindCollisionDiagnostic extends Diagnostic {
 	readonly code: 'parsekind-noninjective';
-	readonly severity: 'error';
+	// 'error' is what diagnoseParseKindCollisions itself always produces (below);
+	// widened to the full Severity so a caller (e.g. dsl/enrich.ts's
+	// applyUnaliasDistinct) can downgrade the diagnostic when it auto-fixes the
+	// collision instead of just reporting it — the shape is otherwise identical,
+	// so this stays one type rather than a second near-duplicate interface.
+	readonly severity: Severity;
 	readonly message: string;
 	readonly canProceed: true;
 	readonly ownerKind: string;

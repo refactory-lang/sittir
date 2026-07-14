@@ -5237,13 +5237,8 @@
                     "name": "_path"
                   },
                   {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "generic_type_with_turbofish"
-                    },
-                    "named": true,
-                    "value": "generic_type"
+                    "type": "SYMBOL",
+                    "name": "generic_type_with_turbofish"
                   },
                   {
                     "type": "SYMBOL",

@@ -312,7 +312,37 @@ export type TypescriptGrammar = {
 	readonly arrow_function_parameter: {
 		type: 'arrow_function_parameter';
 		named: true;
-		fields: { parameter: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] } };
+		fields: {
+			parameter: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: 'any'; named: false },
+					{ type: 'async'; named: false },
+					{ type: 'boolean'; named: false },
+					{ type: 'declare'; named: false },
+					{ type: 'export'; named: false },
+					{ type: 'get'; named: false },
+					{ type: 'identifier'; named: true },
+					{ type: 'let'; named: false },
+					{ type: 'module'; named: false },
+					{ type: 'namespace'; named: false },
+					{ type: 'new'; named: false },
+					{ type: 'number'; named: false },
+					{ type: 'object'; named: false },
+					{ type: 'override'; named: false },
+					{ type: 'private'; named: false },
+					{ type: 'protected'; named: false },
+					{ type: 'public'; named: false },
+					{ type: 'readonly'; named: false },
+					{ type: 'set'; named: false },
+					{ type: 'static'; named: false },
+					{ type: 'string'; named: false },
+					{ type: 'symbol'; named: false },
+					{ type: 'type'; named: false }
+				];
+			};
+		};
 	};
 	readonly as_expression: {
 		type: 'as_expression';
@@ -389,11 +419,33 @@ export type TypescriptGrammar = {
 				multiple: false;
 				required: true;
 				types: [
+					{ type: 'any'; named: false },
+					{ type: 'async'; named: false },
+					{ type: 'boolean'; named: false },
+					{ type: 'declare'; named: false },
+					{ type: 'export'; named: false },
+					{ type: 'get'; named: false },
 					{ type: 'identifier'; named: true },
+					{ type: 'let'; named: false },
 					{ type: 'member_expression'; named: true },
+					{ type: 'module'; named: false },
+					{ type: 'namespace'; named: false },
+					{ type: 'new'; named: false },
 					{ type: 'non_null_expression'; named: true },
+					{ type: 'number'; named: false },
+					{ type: 'object'; named: false },
+					{ type: 'override'; named: false },
 					{ type: 'parenthesized_expression'; named: true },
-					{ type: 'subscript_expression'; named: true }
+					{ type: 'private'; named: false },
+					{ type: 'protected'; named: false },
+					{ type: 'public'; named: false },
+					{ type: 'readonly'; named: false },
+					{ type: 'set'; named: false },
+					{ type: 'static'; named: false },
+					{ type: 'string'; named: false },
+					{ type: 'subscript_expression'; named: true },
+					{ type: 'symbol'; named: false },
+					{ type: 'type'; named: false }
 				];
 			};
 			operator: {
@@ -1251,7 +1303,6 @@ export type TypescriptGrammar = {
 			type_arguments: { multiple: false; required: true; types: [{ type: 'type_arguments'; named: true }] };
 		};
 	};
-	readonly identifier: { type: 'identifier'; named: true; fields: {} };
 	readonly if_statement: {
 		type: 'if_statement';
 		named: true;
@@ -1413,7 +1464,35 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			index_type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
-			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			name: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: 'any'; named: false },
+					{ type: 'async'; named: false },
+					{ type: 'boolean'; named: false },
+					{ type: 'declare'; named: false },
+					{ type: 'export'; named: false },
+					{ type: 'get'; named: false },
+					{ type: 'identifier'; named: true },
+					{ type: 'let'; named: false },
+					{ type: 'module'; named: false },
+					{ type: 'namespace'; named: false },
+					{ type: 'new'; named: false },
+					{ type: 'number'; named: false },
+					{ type: 'object'; named: false },
+					{ type: 'override'; named: false },
+					{ type: 'private'; named: false },
+					{ type: 'protected'; named: false },
+					{ type: 'public'; named: false },
+					{ type: 'readonly'; named: false },
+					{ type: 'set'; named: false },
+					{ type: 'static'; named: false },
+					{ type: 'string'; named: false },
+					{ type: 'symbol'; named: false },
+					{ type: 'type'; named: false }
+				];
+			};
 		};
 	};
 	readonly index_type_query: {
@@ -2094,7 +2173,11 @@ export type TypescriptGrammar = {
 			contents: {
 				multiple: true;
 				required: false;
-				types: [{ type: 'escape_sequence'; named: true }, { type: 'string_fragment'; named: true }];
+				types: [
+					{ type: 'escape_sequence'; named: true },
+					{ type: 'unescaped_double_string_fragment'; named: true },
+					{ type: 'unescaped_single_string_fragment'; named: true }
+				];
 			};
 			opening: { multiple: false; required: true; types: [{ type: '"'; named: false }, { type: "'"; named: false }] };
 		};
@@ -2299,7 +2382,11 @@ export type TypescriptGrammar = {
 			name: {
 				multiple: false;
 				required: true;
-				types: [{ type: 'identifier'; named: true }, { type: 'this'; named: true }];
+				types: [
+					{ type: 'identifier'; named: true },
+					{ type: 'predefined_type'; named: true },
+					{ type: 'this'; named: true }
+				];
 			};
 			type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
 		};
@@ -2547,6 +2634,7 @@ export type TypescriptGrammar = {
 	readonly _anonymous_global: { type: 'global'; named: false };
 	readonly hash_bang_line: { type: 'hash_bang_line'; named: true };
 	readonly html_comment: { type: 'html_comment'; named: true; extra: true };
+	readonly identifier: { type: 'identifier'; named: true };
 	readonly _anonymous_if: { type: 'if'; named: false };
 	readonly _anonymous_implements: { type: 'implements'; named: false };
 	readonly _anonymous_import: { type: 'import'; named: false };
@@ -2599,6 +2687,8 @@ export type TypescriptGrammar = {
 	readonly type_identifier: { type: 'type_identifier'; named: true };
 	readonly _anonymous_typeof: { type: 'typeof'; named: false };
 	readonly undefined: { type: 'undefined'; named: true };
+	readonly unescaped_double_string_fragment: { type: 'unescaped_double_string_fragment'; named: true };
+	readonly unescaped_single_string_fragment: { type: 'unescaped_single_string_fragment'; named: true };
 	readonly '_anonymous_unique symbol': { type: 'unique symbol'; named: false };
 	readonly _anonymous_unknown: { type: 'unknown'; named: false };
 	readonly _anonymous_using: { type: 'using'; named: false };

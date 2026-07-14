@@ -364,9 +364,6 @@
     "scoped_identifier.path": {
       "generic_type": "generic_type_with_turbofish"
     },
-    "scoped_type_identifier.path": {
-      "generic_type": "generic_type_with_turbofish"
-    },
     "scoped_type_identifier.name": {
       "type_identifier": "identifier"
     },
@@ -16529,7 +16526,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "generic_type_with_turbofish",
-              "parseKind": "generic_type",
+              "parseKind": "generic_type_with_turbofish",
               "unresolved": true
             },
             {
