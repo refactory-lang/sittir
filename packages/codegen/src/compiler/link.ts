@@ -58,7 +58,6 @@ import {
 	isOptional,
 	isField
 } from '../types/rule.ts';
-import { isStringType } from '../types/runtime-shapes.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import {
 	collectGeneratedKindEntries,
